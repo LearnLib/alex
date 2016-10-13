@@ -14,82 +14,86 @@
  * limitations under the License.
  */
 
-import {ActionService} from '../services/ActionService';
+import {ActionService} from "../services/ActionService";
 
 const actionService = new ActionService();
 
-/** The symbol model */
+/**
+ * The symbol model.
+ */
 export class AlphabetSymbol {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the symbol from
+     * Constructor.
+     *
+     * @param {object} obj - The object to create the symbol from.
      */
     constructor(obj = {}) {
 
         /**
-         * The unique name of the symbol
+         * The unique name of the symbol.
          * @type {string}
          */
         this.name = obj.name || null;
 
         /**
-         * The unique abbreviation of the symbol
+         * The unique abbreviation of the symbol.
          * @type {string}
          */
         this.abbreviation = obj.abbreviation || null;
 
         /**
-         * The id of the group the symbol should be created in
+         * The id of the group the symbol should be created in.
          * @type {number}
          */
         this.group = obj.group || 0;
 
         /**
-         * The id of the symbol
+         * The id of the symbol.
          * @type {number}
          */
         this.id = obj.id;
 
         /**
-         * The revision of the symbol
+         * The revision of the symbol.
          * @type {number}
          */
         this.revision = obj.revision;
 
         /**
-         * The id of the project the symbol belongs to
+         * The id of the project the symbol belongs to.
          * @type {number}
          */
         this.project = obj.project;
 
         /**
-         * The id of the group the symbol belongs to
+         * The id of the group the symbol belongs to.
          * @type {number}
          */
         this.group = obj.group;
 
         /**
-         * The id of the user the symbol belongs to
+         * The id of the user the symbol belongs to.
          * @type {number}
          */
         this.user = obj.user;
 
         /**
-         * The flag if the symbol has been deleted
+         * The flag if the symbol has been deleted.
          * @type {boolean}
          */
         this.hidden = obj.hidden;
 
         /**
-         * The actions of the symbol
+         * The actions of the symbol.
          * @type {Action[]}
          */
         this.actions = obj.actions ? obj.actions.map(action => actionService.create(action)) : [];
     }
 
     /**
-     * Gets the number of enabled actions
+     * Gets the number of enabled actions.
+     *
      * @returns {number}
      */
     countEnabledActions() {
@@ -97,7 +101,8 @@ export class AlphabetSymbol {
     }
 
     /**
-     * Gets the symbol as id revision pair
+     * Gets the symbol as id revision pair.
+     *
      * @returns {{id: number, revision: number}}
      */
     getIdRevisionPair() {
@@ -108,7 +113,8 @@ export class AlphabetSymbol {
     }
 
     /**
-     * Gets a reduced version of the symbol that can be used to export it
+     * Gets a reduced version of the symbol that can be used to export it.
+     *
      * @returns {{name: *, abbreviation: *, actions: Action[]}}
      */
     getExportableSymbol() {

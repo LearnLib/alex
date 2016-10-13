@@ -14,23 +14,28 @@
  * limitations under the License.
  */
 
-/** The factory for the Clipboard */
+/**
+ * The factory for the Clipboard.
+ */
 export class ClipboardService {
 
-    /** Constructor */
+    /**
+     * Constructor.
+     */
     constructor() {
 
         /**
-         * The map of clipboard entries
+         * The map of clipboard entries.
          * @type {Map}
          */
         this.entries = new Map();
     }
 
     /**
-     * Copies an item to the Clipboard
-     * @param {string} key - The key the data is saved under
-     * @param {any} data - the data to copy to the clipboard
+     * Copies an item to the Clipboard.
+     *
+     * @param {string} key - The key the data is saved under.
+     * @param {any} data - the data to copy to the clipboard.
      */
     copy(key, data) {
         this.entries.set(key, {
@@ -40,9 +45,10 @@ export class ClipboardService {
     }
 
     /**
-     * Cuts an item to the clipboard
-     * @param {string} key - The key under which the data is accessed
-     * @param {any} data - The data to store
+     * Cuts an item to the clipboard.
+     *
+     * @param {string} key - The key under which the data is accessed.
+     * @param {any} data - The data to store.
      */
     cut(key, data) {
         this.entries.set(key, {
@@ -52,8 +58,9 @@ export class ClipboardService {
     }
 
     /**
-     * Pastes an item from the clipboard. Deletes the item if mode has been 'cut'
-     * @param {string} key - The key whose data to get
+     * Pastes an item from the clipboard. Deletes the item if mode has been 'cut'.
+     *
+     * @param {string} key - The key whose data to get.
      * @returns {any|null}
      */
     paste(key) {

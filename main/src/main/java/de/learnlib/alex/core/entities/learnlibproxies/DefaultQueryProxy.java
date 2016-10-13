@@ -41,7 +41,6 @@ import java.util.Objects;
 @Embeddable
 public class DefaultQueryProxy implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 4759682392322006213L;
 
     /** Create one static ObjectMapper to (de-)serialize the Proxy for the DB. */

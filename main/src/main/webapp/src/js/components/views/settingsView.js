@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-import SettingsResource from '../../resources/SettingsResource';
-
 /**
  * The component for the about page.
- * Usage: <settings-view></settings-view>.
  */
 class SettingsView {
 
     /**
      * Constructor.
+     *
      * @param {SettingsResource} SettingsResource
      * @param {ToastService} ToastService
      */
@@ -55,6 +53,5 @@ class SettingsView {
 export const settingsView = {
     controller: SettingsView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/settings.html'
+    templateUrl: 'html/components/views/settings.html'
 };
-

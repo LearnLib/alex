@@ -14,29 +14,32 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
-/** Clicks on a link with a specific text value */
+/**
+ * Clicks on a link with a specific text value.
+ */
 export class ClickLinkByTextWebAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
-     * @constructor
+     * Constructor.
+     *
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.WEB_CLICK_LINK_BY_TEXT, obj);
 
         /**
-         * The text of the link
+         * The text of the link.
          * @type {*|string}
          */
         this.value = obj.value || '';
     }
 
     /**
-     * A string presentation of the actions
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

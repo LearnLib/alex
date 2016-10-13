@@ -20,14 +20,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import de.learnlib.alex.algorithms.LearnAlgorithmFactory;
 import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.learner.connectors.WebBrowser;
+import de.learnlib.alex.utils.AlgorithmDeserializer;
+import de.learnlib.alex.utils.AlgorithmSerializer;
 import net.automatalib.automata.transout.MealyMachine;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.NaturalId;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -38,7 +41,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -53,11 +58,13 @@ import java.util.Set;
  * (duration, #EQ, ...).
  */
 @Entity
+@Table(
+    uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "project_id", "testNo"})
+)
 @JsonPropertyOrder(alphabetic = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerResult implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 4619722174562257862L;
 
     /** The id of the LearnerResult in the DB. */
@@ -84,8 +91,11 @@ public class LearnerResult implements Serializable {
     /** The Alphabet used while learning. */
     private AlphabetProxy sigma;
 
-    /** The algorithm to use during the learning. */
-    private LearnAlgorithms algorithm;
+    /** The {@link Algorithm} to use during the learning. */
+    private Algorithm algorithm;
+
+    /** The {@link LearnAlgorithmFactory} corresponding to the algorithm field. */
+    private transient LearnAlgorithmFactory algorithmFactory;
 
     /** The browser to use during the learning. */
     private WebBrowser browser;
@@ -143,8 +153,7 @@ public class LearnerResult implements Serializable {
     /**
      * @return Get the user of the result.
      */
-    @NaturalId
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JsonIgnore
     public User getUser() {
         return user;
@@ -175,8 +184,7 @@ public class LearnerResult implements Serializable {
      *
      * @return The connected Project.
      */
-    @NaturalId
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JsonIgnore
     public Project getProject() {
         return project;
@@ -212,7 +220,6 @@ public class LearnerResult implements Serializable {
      *
      * @return The no. of the related test run.
      */
-    @NaturalId
     @Column(nullable = false)
     public Long getTestNo() {
         return testNo;
@@ -231,8 +238,10 @@ public class LearnerResult implements Serializable {
     /**
      * @return Get the steps of the result.
      */
-    @OneToMany(mappedBy = "result")
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @OneToMany(
+            mappedBy = "result",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    )
     @OrderBy("stepNo ASC")
     public List<LearnerResultStep> getSteps() {
         return steps;
@@ -310,8 +319,8 @@ public class LearnerResult implements Serializable {
      *
      * @return The Alphabet of the learning process & the hypothesis.
      */
-    @JsonProperty("sigma")
     @Column(name = "sigma", columnDefinition = "BLOB")
+    @JsonProperty("sigma")
     public AlphabetProxy getSigma() {
         return sigma;
     }
@@ -330,16 +339,35 @@ public class LearnerResult implements Serializable {
     /**
      * @return The algorithm to use during the learning.
      */
-    @Enumerated
-    public LearnAlgorithms getAlgorithm() {
+    @Embedded
+    @JsonSerialize(using = AlgorithmSerializer.class)
+    @JsonDeserialize(using = AlgorithmDeserializer.class)
+    public Algorithm getAlgorithm() {
         return algorithm;
     }
 
     /**
      * @param algorithm The new algorithm to use during the learning.
      */
-    public void setAlgorithm(LearnAlgorithms algorithm) {
-        this.algorithm = algorithm;
+    public void setAlgorithm(Algorithm algorithm) {
+        this.algorithm        = algorithm;
+        this.algorithmFactory = null;
+    }
+
+    /**
+     * @return Get the currently attached {@link LearnAlgorithmFactory}.
+     */
+    @Transient
+    @JsonIgnore
+    public LearnAlgorithmFactory getAlgorithmFactory() {
+        return algorithmFactory;
+    }
+
+    /**
+     * @param algorithmFactory Set a new {@link LearnAlgorithmFactory}.
+     */
+    public void setAlgorithmFactory(LearnAlgorithmFactory algorithmFactory) {
+        this.algorithmFactory = algorithmFactory;
     }
 
     /**
@@ -465,22 +493,19 @@ public class LearnerResult implements Serializable {
         }
     }
 
-    //CHECKSTYLE.OFF: NeedBraces|OperatorWrap - auto generated by IntelliJ IDEA
+    @SuppressWarnings("checkstyle:needbraces") // Auto generated by IntelliJ
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LearnerResult that = (LearnerResult) o;
-        return Objects.equals(user, that.user) &&
-                Objects.equals(project, that.project) &&
-                Objects.equals(testNo, that.testNo);
+        LearnerResult result = (LearnerResult) o;
+        return Objects.equals(id, result.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(user, project, testNo);
+        return Objects.hash(id);
     }
-    //CHECKSTYLE.ON: NeedBraces|OperatorWrap
 
     @Override
     public String toString() {

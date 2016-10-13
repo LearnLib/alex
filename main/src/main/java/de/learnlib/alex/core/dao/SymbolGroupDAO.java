@@ -74,8 +74,8 @@ public interface SymbolGroupDAO {
     /**
      * Get a list of all groups withing one project.
      *
-     * @param userId
-     *         The id of the owner of the group
+     * @param user
+     *         The owner of the group.
      * @param projectId
      *         The project the groups should belong to.
      * @param embedFields
@@ -84,8 +84,7 @@ public interface SymbolGroupDAO {
      * @throws NotFoundException
      *         If no project with the given id was found.
      */
-    // TODO: most of the others methods use a User object. So, should this method be changed to use objects as well?
-    List<SymbolGroup> getAll(long userId, long projectId, EmbeddableFields... embedFields) throws NotFoundException;
+    List<SymbolGroup> getAll(User user, long projectId, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**
      * Get one group.

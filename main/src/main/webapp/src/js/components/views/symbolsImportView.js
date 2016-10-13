@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
-import {events} from '../../constants';
-import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
+import _ from "lodash";
+import {events} from "../../constants";
+import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
 
 /**
  * The controller that handles the import of symbols from a *.json file.
@@ -24,7 +24,8 @@ import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 class SymbolsImportView {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $scope
      * @param {SessionService} SessionService
      * @param {SymbolResource} SymbolResource
@@ -37,25 +38,25 @@ class SymbolsImportView {
         this.ToastService = ToastService;
 
         /**
-         * The project that is in the session
+         * The project that is in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * The symbols that will be uploaded
+         * The symbols that will be uploaded.
          * @type {AlphabetSymbol[]}
          */
         this.symbols = [];
 
         /**
-         * The list of selected symbols
+         * The list of selected symbols.
          * @type {AlphabetSymbol[]}
          */
         this.selectedSymbols = [];
 
         /**
-         * If references to symbol ids from executeSymbol actions should be adjusted or not
+         * If references to symbol ids from executeSymbol actions should be adjusted or not.
          * @type {boolean}
          */
         this.adjustReferences = true;
@@ -74,11 +75,11 @@ class SymbolsImportView {
     /**
      * Creates instances of Symbols from the json string from the *.json file and puts them in the scope.
      *
-     * @param {string} data - The json string of loaded symbols
+     * @param {string} data - The json string of loaded symbols.
      */
     fileLoaded(data) {
         try {
-            this.symbols = angular.fromJson(data).map(s => {
+            this.symbols = JSON.parse(data).map(s => {
                 s.id = _.uniqueId();
                 return new AlphabetSymbol(s);
             });
@@ -139,7 +140,7 @@ class SymbolsImportView {
      * Changes the name and/or the abbreviation a symbol before uploading it to prevent naming conflicts in the
      * database.
      *
-     * @param {AlphabetSymbol} updatedSymbol - The updated symbol
+     * @param {AlphabetSymbol} updatedSymbol - The updated symbol.
      */
     updateSymbol(updatedSymbol) {
 
@@ -168,5 +169,5 @@ class SymbolsImportView {
 export const symbolsImportView = {
     controller: SymbolsImportView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/symbols-import.html'
+    templateUrl: 'html/components/views/symbols-import.html'
 };

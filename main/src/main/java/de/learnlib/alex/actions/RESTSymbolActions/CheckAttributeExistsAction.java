@@ -21,6 +21,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.utils.JSONHelpers;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
@@ -34,8 +38,11 @@ import javax.persistence.Entity;
 @JsonTypeName("rest_checkAttributeExists")
 public class CheckAttributeExistsAction extends RESTSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 6739027451651950338L;
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The name of the attribute to check for. */
     @NotBlank
@@ -75,7 +82,12 @@ public class CheckAttributeExistsAction extends RESTSymbolAction {
     public ExecuteResult execute(WebServiceConnector target) {
         String body = target.getBody();
 
-        if (JSONHelpers.getAttributeValue(body, getAttributeWithVariableValues()) != null) {
+        boolean result = JSONHelpers.getAttributeValue(body, getAttributeWithVariableValues()) != null;
+
+        LOGGER.info(LEARNER_MARKER, "Check if the attribute '{}' exists in '{}' => {} "
+                                        + "(ignoreFailure: {}, negated: {}).",
+                    attribute, body, result, ignoreFailure, negated);
+        if (result) {
             return getSuccessOutput();
         } else {
             return getFailedOutput();

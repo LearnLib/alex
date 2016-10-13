@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {LearnConfiguration} from '../../entities/LearnConfiguration';
-import {events, webBrowser, learnAlgorithm, eqOracleType} from '../../constants';
+import {LearnConfiguration} from "../../entities/LearnConfiguration";
+import {events, webBrowser, learnAlgorithm, eqOracleType} from "../../constants";
 
 /**
  * The controller for the modal dialog where you can set the settings for an upcoming test run.
@@ -24,7 +24,8 @@ import {events, webBrowser, learnAlgorithm, eqOracleType} from '../../constants'
 class LearnSetupSettingsModalController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModalInstance
      * @param modalData
      * @param {ToastService} ToastService
@@ -33,60 +34,71 @@ class LearnSetupSettingsModalController {
      * @param {SettingsResource} SettingsResource
      */
     // @ngInject
-    constructor($uibModalInstance, modalData, ToastService, EventBus, EqOracleService, SettingsResource) {
+    constructor($scope, $uibModalInstance, modalData, ToastService, EventBus, EqOracleService, SettingsResource) {
         this.$uibModalInstance = $uibModalInstance;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
         this.EqOracleService = EqOracleService;
 
-        /** The constants for eqOracles types */
+        /**
+         * The constants for eqOracles types.
+         */
         this.eqOracles = eqOracleType;
 
         /**
-         * The model for the select input that holds a type for an eqOracle
+         * The model for the select input that holds a type for an eqOracle.
          * @type {string}
          */
         this.selectedEqOracle = modalData.learnConfiguration.eqOracle.type;
 
         /**
-         * The constants for learnAlgorithm names
+         * The constants for learnAlgorithm names.
          */
         this.learnAlgorithms = learnAlgorithm;
 
         /**
-         * The web driver enum
+         * The web driver enum.
          */
         this.webBrowser = null;
 
-        SettingsResource.get().then(settings => {
-            let supportedBrowsers = {
-                HTMLUNITDRIVER: 'htmlunitdriver'
-            };
-            
-            for (let key in webBrowser) {
-                if (key === 'HTMLUNITDRIVER') continue;
-                if (settings.driver[webBrowser[key]].trim() !== "") {
-                    supportedBrowsers[key] = webBrowser[key];
-                }
-            }
-
-            this.webBrowser = supportedBrowsers;
-        });
+        SettingsResource.getSupportedBrowserEnum().then(supportedBrowsers =>
+            this.webBrowser = supportedBrowsers);
 
         /**
-         * The LearnConfiguration to be edited
+         * The LearnConfiguration to be edited.
          * @type {LearnConfiguration}
          */
         this.learnConfiguration = modalData.learnConfiguration;
+
+        // listen on the file loaded event
+        EventBus.on(events.FILE_LOADED, (evt, data) => {
+            this.fileLoaded(data.file);
+        }, $scope);
+    }
+
+    fileLoaded(data) {
+        if (this.learnConfiguration.eqOracle.type !== this.eqOracles.HYPOTHESIS) {
+            return;
+        }
+
+        try {
+            this.learnConfiguration.eqOracle.hypothesis = JSON.parse(data);
+        } catch (e) {
+            this.ToastService.danger('<p><strong>Loading json file failed</strong></p> The file is not properly formatted');
+        }
     }
 
 
-    /** Sets the Eq Oracle of the learn configuration depending on the selected value */
+    /**
+     * Sets the Eq Oracle of the learn configuration depending on the selected value.
+     */
     setEqOracle() {
         this.learnConfiguration.eqOracle = this.EqOracleService.createFromType(this.selectedEqOracle);
     }
 
-    /** Close the modal dialog and pass the edited learn configuration instance. */
+    /**
+     * Close the modal dialog and pass the edited learn configuration instance.
+     */
     ok() {
         this.ToastService.success('Learn configuration updated');
         this.EventBus.emit(events.LEARN_CONFIG_UPDATED, {
@@ -95,7 +107,9 @@ class LearnSetupSettingsModalController {
         this.$uibModalInstance.dismiss();
     }
 
-    /** Close the modal dialog. */
+    /**
+     * Close the modal dialog.
+     */
     close() {
         this.$uibModalInstance.dismiss();
     }
@@ -108,8 +122,8 @@ class LearnSetupSettingsModalController {
  *
  * Attribute 'learnConfiguration' should be the model with a LearnConfiguration object instance.
  *
- * @param $uibModal - The ui.boostrap $modal service
- * @returns {{restrict: string, scope: {learnConfiguration: string}, link: link}}
+ * @param $uibModal - The ui.boostrap $modal service.
+ * @returns {{restrict: string, scope: {learnConfiguration: string}, link: Function}}
  */
 // @ngInject
 export function learnSetupSettingsModalHandle($uibModal) {
@@ -118,23 +132,21 @@ export function learnSetupSettingsModalHandle($uibModal) {
         scope: {
             learnConfiguration: '='
         },
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/modals/learn-setup-settings-modal.html',
-                controller: LearnSetupSettingsModalController,
-                controllerAs: 'vm',
-                resolve: {
-                    modalData: function () {
-                        return {
-                            learnConfiguration: new LearnConfiguration(scope.learnConfiguration)
-                        };
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/learn-setup-settings-modal.html',
+                    controller: LearnSetupSettingsModalController,
+                    controllerAs: 'vm',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                learnConfiguration: new LearnConfiguration(scope.learnConfiguration)
+                            };
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
+    };
 }

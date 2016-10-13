@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import {events} from '../constants';
+import {events} from "../constants";
 
-/** The controller for the sidebar */
+/**
+ * The controller for the sidebar.
+ */
 class Sidebar {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $scope
      * @param $document
      * @param $state
@@ -34,19 +37,19 @@ class Sidebar {
         this.$document = $document;
 
         /**
-         * The project that is stored in the session
+         * The project that is stored in the session.
          * @type {Project|null}
          */
         this.project = this.SessionService.getProject();
 
         /**
-         * The user that is in the session
+         * The user that is in the session.
          * @type {User|null}
          */
         this.user = this.SessionService.getUser();
 
         /**
-         * Indicator for the collapsed state
+         * Indicator for the collapsed state.
          * @type {boolean}
          */
         this.collapsed = false;
@@ -62,14 +65,18 @@ class Sidebar {
         }, $scope);
     }
 
-    /** Removes the project object from the session and redirect to the start page */
+    /**
+     * Removes the project object from the session and redirect to the start page.
+     */
     closeProject() {
         this.SessionService.removeProject();
         this.project = null;
         this.$state.go('projects');
     }
 
-    /** Remove project & user from the session */
+    /**
+     * Remove project & user from the session.
+     */
     logout() {
         this.SessionService.removeProject();
         this.SessionService.removeUser();
@@ -78,7 +85,9 @@ class Sidebar {
         this.$state.go('home');
     }
 
-    /** Toggles the collapsed state **/
+    /**
+     * Toggles the collapsed state.
+     */
     toggleCollapse() {
         this.collapsed = !this.collapsed;
         const body = this.$document[0].body;
@@ -90,9 +99,9 @@ class Sidebar {
     }
 
     /**
-     * Checks if at least one of the passed arguments is the current state name. Arguments should be strings
+     * Checks if at least one of the passed arguments is the current state name. Arguments should be strings.
      *
-     * @param {...String} states
+     * @param {...String} states - The states the item belongs to.
      * @returns {boolean}
      */
     isState(...states) {

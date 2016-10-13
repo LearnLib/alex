@@ -38,7 +38,6 @@ import java.util.stream.Stream;
 @JsonTypeName("sample")
 public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -110995671060498443L;
 
     /**
@@ -46,7 +45,6 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
      */
     public static class InputOutputPair implements Serializable {
 
-        /** to be serializable. */
         private static final long serialVersionUID = 2200629936714510637L;
 
         /** The input. */

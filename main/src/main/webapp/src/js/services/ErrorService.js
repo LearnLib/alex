@@ -20,16 +20,15 @@ let instance = null;
 /**
  * Used to store an error message and can redirect to the error page.
  *
- * @param $state - The ui.router $state service
+ * @param $state - The ui.router $state service.
  * @returns {{getErrorMessage: getErrorMessage, setErrorMessage: setErrorMessage}}
- * @constructor
  */
 export class ErrorService {
 
     /**
-     * Constructor
-     * @param $state - The ui.router $state service
-     * @returns {*}
+     * Constructor.
+     *
+     * @param $state - The ui.router $state service.
      */
     // @ngInject
     constructor($state) {
@@ -44,7 +43,8 @@ export class ErrorService {
     }
 
     /**
-     * Gets the error message and removes it from the service
+     * Gets the error message and removes it from the service.
+     *
      * @returns {string|null}
      */
     getErrorMessage() {
@@ -54,8 +54,9 @@ export class ErrorService {
     }
 
     /**
-     * Sets the error message
-     * @param {string} message
+     * Sets the error message.
+     *
+     * @param {string} message - The message to display.
      */
     setErrorMessage(message) {
         this.errorMessage = message;

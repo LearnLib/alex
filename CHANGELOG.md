@@ -1,3 +1,14 @@
+# ALEX v1.2
+
+## Features
+
+* New actions:
+    * Press special keys like enter, ctrl, etc.
+    * Check the value of an elements attribute
+* New equivalence oracle: hypothesis
+* Test symbols without starting a learning process
+* Support for the edge driver
+
 # ALEX v1.1.2
 
 ## Breaking Changes

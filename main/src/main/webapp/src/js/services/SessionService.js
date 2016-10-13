@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import {events} from '../constants';
-import {User} from '../entities/User';
-import {Project} from '../entities/Project';
+import {events} from "../constants";
+import {User} from "../entities/User";
+import {Project} from "../entities/Project";
 
 /**
  * The session that is used in this application to save data in the session storage of the browser to store data in
  * between page refreshes in the same tab. So the project doesn't have to be fetched from the server every time the
- * page refreshes
+ * page refreshes.
  */
 export class SessionService {
 
     /**
      * Constructor.
+     *
      * @param {EventBus} EventBus
      */
     // @ngInject
@@ -35,46 +36,55 @@ export class SessionService {
     }
 
     /**
-     * Get the stored project object from the session storage
+     * Get the stored project object from the session storage.
+     *
      * @return {Project}
      */
     getProject() {
         const project = sessionStorage.getItem('project');
-        return project === null ? null : new Project(angular.fromJson(project));
+        return project === null ? null : new Project(JSON.parse(project));
     }
 
     /**
-     * Save a project into the session storage end emit the 'project.opened' event
-     * @param {Project} project
+     * Save a project into the session storage end emit the 'project.opened' event.
+     *
+     * @param {Project} project - The project to save in the sessionStorage.
      */
     saveProject(project) {
-        sessionStorage.setItem('project', angular.toJson(project));
+        sessionStorage.setItem('project', JSON.stringify(project));
         this.EventBus.emit(events.PROJECT_OPENED, {project: project});
     }
 
-    /** Remove the stored project from session storage an emit the 'project.closed' event */
+    /**
+     * Remove the stored project from session storage an emit the 'project.closed' event.
+     */
     removeProject() {
         sessionStorage.removeItem('project');
     }
 
-    /** Gets the instance of the user that is logged in **/
+    /**
+     * Gets the instance of the user that is logged in.
+     */
     getUser() {
         const user = sessionStorage.getItem('user');
-        return user === null ? null : new User(angular.fromJson(user));
+        return user === null ? null : new User(JSON.parse(user));
     }
 
     /**
      * Saves the user in the session
-     * @param {User} user
-     * @param {object|null} jwt
+     *
+     * @param {User} user - The user to save in the sessionStorage.
+     * @param {object|null} jwt - The jwt to save in the sessionStorage.
      */
     saveUser(user, jwt = null) {
-        sessionStorage.setItem('user', angular.toJson(user));
+        sessionStorage.setItem('user', JSON.stringify(user));
         if (jwt) sessionStorage.setItem('jwt', jwt);
         this.EventBus.emit(events.USER_LOGGED_IN, {user: user});
     }
 
-    /** Removes the user and its jwt from the session storage */
+    /**
+     * Removes the user and its jwt from the session storage.
+     */
     removeUser() {
         sessionStorage.removeItem('user');
         sessionStorage.removeItem('jwt');

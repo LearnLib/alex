@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
-import {events} from '../../constants';
+import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
+import {events} from "../../constants";
 
 /**
  * Handles the behaviour of the modal to edit an existing symbol and updates the edited symbol on the server.
@@ -23,12 +23,13 @@ import {events} from '../../constants';
 export class SymbolEditModalController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModalInstance
      * @param modalData
-     * @param SymbolResource
-     * @param ToastService
-     * @param EventBus
+     * @param {SymbolResource} SymbolResource
+     * @param {ToastService} ToastService
+     * @param {EventBus} EventBus
      */
     // @ngInject
     constructor($uibModalInstance, modalData, SymbolResource, ToastService, EventBus) {
@@ -39,30 +40,32 @@ export class SymbolEditModalController {
         this.EventBus = EventBus;
 
         /**
-         * The symbol to edit
+         * The symbol to edit.
          * @type {AlphabetSymbol}
          */
         this.symbol = modalData.symbol;
 
         /**
-         * A copy of the old symbol
+         * A copy of the old symbol.
          * @type {AlphabetSymbol}
          */
         this.symbolCopy = new AlphabetSymbol(modalData.symbol);
 
         /**
-         * The error message that is displayed when update fails
+         * The error message that is displayed when update fails.
          * @type {null|string}
          */
         this.errorMsg = null;
     }
 
-    /** Make a request to the API in order to update the symbol. Close the modal on success. */
+    /**
+     * Make a request to the API in order to update the symbol. Close the modal on success.
+     */
     updateSymbol() {
         this.errorMsg = null;
 
         // do not update on server
-        if (angular.isDefined(this.modalData.updateOnServer) && !this.modalData.updateOnServer) {
+        if ((typeof this.modalData.updateOnServer !== "undefined") && !this.modalData.updateOnServer) {
             this.EventBus.emit(events.SYMBOL_UPDATED, {
                 newSymbol: this.symbol,
                 oldSymbol: this.symbolCopy
@@ -83,7 +86,9 @@ export class SymbolEditModalController {
             });
     }
 
-    /** Close the modal dialog */
+    /**
+     * Close the modal dialog.
+     */
     close() {
         this.$uibModalInstance.dismiss();
     }
@@ -93,10 +98,10 @@ export class SymbolEditModalController {
  * The directive that handles the modal window for the editing of a new symbol. It attaches an click event to the
  * attached element that opens the modal dialog.
  *
- * Use it as an attribute like 'symbol-edit-modal-handle'
+ * Use it as an attribute like 'symbol-edit-modal-handle'.
  *
- * @param $uibModal - The $modal service
- * @returns {{restrict: string, scope: {symbol: string, updateOnServer: string}, link: link}}
+ * @param $uibModal - The $modal service.
+ * @returns {{restrict: string, scope: {symbol: string, updateOnServer: string}, link: Function}}
  */
 // @ngInject
 export function symbolEditModalHandle($uibModal) {
@@ -106,24 +111,22 @@ export function symbolEditModalHandle($uibModal) {
             symbol: '=',
             updateOnServer: '='
         },
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/modals/symbol-edit-modal.html',
-                controller: SymbolEditModalController,
-                controllerAs: 'vm',
-                resolve: {
-                    modalData: function () {
-                        return {
-                            symbol: new AlphabetSymbol(scope.symbol),
-                            updateOnServer: scope.updateOnServer
-                        };
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/symbol-edit-modal.html',
+                    controller: SymbolEditModalController,
+                    controllerAs: 'vm',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                symbol: new AlphabetSymbol(scope.symbol),
+                                updateOnServer: scope.updateOnServer
+                            };
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
+    };
 }

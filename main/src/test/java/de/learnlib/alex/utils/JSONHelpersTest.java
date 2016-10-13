@@ -28,7 +28,7 @@ import static org.junit.Assert.assertThat;
 
 public class JSONHelpersTest {
 
-    private final String json = "{\"field\": 2}";
+    private static final String JSON = "{\"field\": 2}";
 
     @Test
     public void shouldAlwaysGetTheCorrectAttributeValue() {
@@ -36,7 +36,7 @@ public class JSONHelpersTest {
         String json3 = "{\"field\": [{\"sub\": 0}]}";
         String json4 = "{\"field\": {\"sub\": 0}}";
 
-        assertEquals(JSONHelpers.getAttributeValue(json, "field"), "2");
+        assertEquals(JSONHelpers.getAttributeValue(JSON, "field"), "2");
         assertEquals(JSONHelpers.getAttributeValue(json2, "[0].field"), "1");
         assertEquals(JSONHelpers.getAttributeValue(json3, "field[0].sub"), "0");
         assertEquals(JSONHelpers.getAttributeValue(json4, "field.sub"), "0");
@@ -64,7 +64,7 @@ public class JSONHelpersTest {
 
     @Test
     public void shouldReturnNullIfJSONPathIsInvalidOnGetValue() {
-        assertNull(JSONHelpers.getAttributeValue(json, "(field"));
+        assertNull(JSONHelpers.getAttributeValue(JSON, "(field"));
     }
 
     @Test
@@ -145,6 +145,6 @@ public class JSONHelpersTest {
 
     @Test
     public void shouldReturnNullIfJSONPathIsInvalidOnGetType() {
-        assertNull(JSONHelpers.getAttributeType(json, "!=field"));
+        assertNull(JSONHelpers.getAttributeType(JSON, "!=field"));
     }
 }

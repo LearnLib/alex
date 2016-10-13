@@ -39,6 +39,7 @@ import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByJSONAttributeAct
 import de.learnlib.alex.actions.StoreSymbolActions.SetVariableByNodeAttributeAction;
 import de.learnlib.alex.actions.WaitAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAction;
+import de.learnlib.alex.actions.WebSymbolActions.CheckNodeAttributeValueAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckPageTitleAction;
 import de.learnlib.alex.actions.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.alex.actions.WebSymbolActions.ClearAction;
@@ -48,6 +49,7 @@ import de.learnlib.alex.actions.WebSymbolActions.ExecuteScriptAction;
 import de.learnlib.alex.actions.WebSymbolActions.FillAction;
 import de.learnlib.alex.actions.WebSymbolActions.GotoAction;
 import de.learnlib.alex.actions.WebSymbolActions.MoveMouseAction;
+import de.learnlib.alex.actions.WebSymbolActions.PressKeyAction;
 import de.learnlib.alex.actions.WebSymbolActions.SelectAction;
 import de.learnlib.alex.actions.WebSymbolActions.SubmitAction;
 import de.learnlib.alex.actions.WebSymbolActions.WaitForNodeAction;
@@ -55,7 +57,7 @@ import de.learnlib.alex.actions.WebSymbolActions.WaitForTitleAction;
 import de.learnlib.alex.actions.WebSymbolActions.WebSymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.utils.SearchHelper;
-import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -64,6 +66,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -76,7 +79,10 @@ import java.io.Serializable;
  * Abstract super type of how a Action for Symbols should look & work like.
  */
 @Entity
-@Table(name = "ACTIONS")
+@Table(
+        name = "ACTIONS",
+        indexes = @Index(columnList = "userId, projectId, symbolId, number")
+)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("SUPER")
@@ -96,6 +102,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "setVariableByNodeAttribute", value = SetVariableByNodeAttributeAction.class),
         // Web Actions
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
+        @JsonSubTypes.Type(name = "web_checkNodeAttributeValue", value = CheckNodeAttributeValueAction.class),
         @JsonSubTypes.Type(name = "web_checkForNode", value = CheckNodeAction.class),
         @JsonSubTypes.Type(name = "web_checkForText", value = CheckTextWebAction.class),
         @JsonSubTypes.Type(name = "web_checkPageTitle", value = CheckPageTitleAction.class),
@@ -106,6 +113,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
         @JsonSubTypes.Type(name = "web_goto", value = GotoAction.class),
         @JsonSubTypes.Type(name = "web_moveMouse", value = MoveMouseAction.class),
+        @JsonSubTypes.Type(name = "web_pressKey", value = PressKeyAction.class),
         @JsonSubTypes.Type(name = "web_submit", value = SubmitAction.class),
         @JsonSubTypes.Type(name = "web_select", value = SelectAction.class),
         @JsonSubTypes.Type(name = "web_waitForTitle", value = WaitForTitleAction.class),
@@ -129,28 +137,28 @@ public abstract class SymbolAction implements Serializable {
     protected Long id;
 
     /** The user the actions belongs to. */
-    @NaturalId
     @ManyToOne
     @JoinColumn(name = "userId")
     @JsonIgnore
     protected User user;
 
     /** The project the actions belongs to. */
-    @NaturalId
     @ManyToOne
     @JoinColumn(name = "projectId")
     @JsonIgnore
     protected Project project;
 
     /** The symbol the action belongs to. */
-    @NaturalId
     @ManyToOne
     @JoinColumn(name = "symbolId")
     @JsonIgnore
     protected Symbol symbol;
 
     /** The position the action has in the actions list of the Symbol. */
-    @NaturalId
+    @GeneratedValue(generator = "symbol_action_number_generator")
+    @GenericGenerator(
+            name = "symbol_action_number_generator",
+            strategy = "de.learnlib.alex.core.entities.validators.SymbolActionNumberGenerator")
     @JsonIgnore
     protected int number;
 

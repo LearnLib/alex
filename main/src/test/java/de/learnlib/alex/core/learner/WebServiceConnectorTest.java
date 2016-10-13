@@ -31,8 +31,8 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -120,8 +120,6 @@ public class WebServiceConnectorTest {
 
     private WebTarget createWebTarget() {
         Response response = createResponse();
-        Invocation.Builder headerBuilder = mock(Invocation.Builder.class);
-        Invocation.Builder cookieBuilder = mock(Invocation.Builder.class);
         WebTarget subTarget = mock(WebTarget.class);
         WebTarget target = mock(WebTarget.class);
 
@@ -130,9 +128,7 @@ public class WebServiceConnectorTest {
         given(builder.put(Entity.json(FAKE_MESSAGE))).willReturn(response);
         given(builder.delete()).willReturn(response);
 
-        given(cookieBuilder.cookie(any(Cookie.class))).willReturn(builder);
-        given(headerBuilder.header(anyString(), anyString())).willReturn(cookieBuilder);
-        given(subTarget.request()).willReturn(headerBuilder);
+        given(subTarget.request()).willReturn(builder);
         given(target.path(FAKE_URL)).willReturn(subTarget);
         given(target.path("/")).willReturn(subTarget);
 

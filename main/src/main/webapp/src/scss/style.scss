@@ -593,9 +593,36 @@ body {
     border: 1px solid #555;
     color: #555;
     opacity: .6;
+
+    &:hover {
+      color: #555;
+    }
   }
 
   &.label-primary {
     border: 1px solid #337ab7;
+  }
+}
+
+.modal-dialog {
+  .modal-content {
+    border: 0;
+    border-top: 5px solid $color-blue-dark;
+    border-radius: 0;
+  }
+  .modal-footer {
+    padding: 10px 15px;
+    background: #f2f2f2;
+  }
+}
+
+.table-rest-call-action {
+  display: block;
+  max-height: 200px;
+  overflow: auto;
+  width: 100%;
+
+  td, th {
+    min-width: 120px;
   }
 }

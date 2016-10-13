@@ -15,13 +15,13 @@
  */
 
 /**
- * The class for the learn result widget
- * Use: <latest-learn-result-widget></latest-learn-result-widget>
+ * The class for the learn result widget.
  */
 class LatestLearnResultWidget {
 
     /**
      * Constructor.
+     *
      * @param {SessionService} SessionService
      * @param {LearnResultResource} LearnResultResource
      */
@@ -29,13 +29,13 @@ class LatestLearnResultWidget {
     constructor(SessionService, LearnResultResource) {
 
         /**
-         * The latest learning result
+         * The latest learning result.
          * @type {null|LearnResult}
          */
         this.result = null;
 
         /**
-         * The project that is in the session
+         * The project that is in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();

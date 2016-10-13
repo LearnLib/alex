@@ -23,7 +23,7 @@
  * @param SessionService - The SessionService
  */
 class HtmlElementPickerComponent {
-    
+
     /**
      * Constructor.
      * @param {SessionService} SessionService
@@ -97,7 +97,7 @@ class HtmlElementPickerComponent {
     loadUrl() {
         const self = this;
 
-        this.iframe.attr('src', this.proxyUrl + this.project.baseUrl + '/' + (this.url === null ? '' : this.url));
+        this.iframe.attr('src', this.proxyUrl + this.project.baseUrl + (this.url === null ? '/' : this.url));
         this.iframe.on('load', () => {
             angular.element(this.iframe.contents()[0].body.getElementsByTagName('a'))
                 .on('click', function () {
@@ -106,7 +106,7 @@ class HtmlElementPickerComponent {
                         if (this.getAttribute('href') !== '' && this.getAttribute('href')[0] !== '#') {
                             self.$scope.$apply(() => {
                                 self.url = decodeURIComponent(_this.getAttribute('href'))
-                                    .replace(self.proxyUrl + self.project.baseUrl + '/', '');
+                                    .replace(window.location.origin + '/' + self.proxyUrl + self.project.baseUrl, '', '');
                             });
                         }
                     }
@@ -120,7 +120,6 @@ class HtmlElementPickerComponent {
      *
      * @param el  - The element to get the unique css path from
      * @returns {String} - The unique css path ot the element
-     * @private
      */
     getCssPath(el) {
         var names = [];
@@ -168,7 +167,7 @@ class HtmlElementPickerComponent {
      * @param e - js event
      */
     handleClick(e) {
-        if (angular.isDefined(e)) {
+        if (typeof e !== "undefined") {
             e.preventDefault();
             e.stopPropagation();
         }
@@ -180,7 +179,7 @@ class HtmlElementPickerComponent {
 
         angular.element(this.iframe.contents()[0].body).off('mousemove', this.mouseMoveHandler);
         angular.element(this.iframe.contents()[0].body).off('click', this.clickHandler);
-        angular.element(document.body).off('keyup', this.keyUpHandler);
+        document.body.removeEventListener('keyup', this.keyUpHandler);
     }
 
     /**
@@ -242,7 +241,7 @@ class HtmlElementPickerComponent {
 
             iframeBody.on('mousemove', this.mouseMoveHandler);
             iframeBody.one('click', this.clickHandler);
-            angular.element(document.body).on('keyup', this.keyUpHandler);
+            document.body.addEventListener('keyup', this.keyUpHandler, false);
         } else {
             this.handleClick();
             this.selector = null;

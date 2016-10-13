@@ -27,13 +27,11 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.jose4j.lang.JoseException;
-import org.springframework.context.annotation.Configuration;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 
-@Configuration
+//@Configuration
 public class ALEXTestApplication extends ResourceConfig {
 
     private User admin;
@@ -60,9 +58,12 @@ public class ALEXTestApplication extends ResourceConfig {
     }
 
     private void registerFeatures() {
+        packages("de.learnlib.alex.rest.exceptions");
+
         register(MultiPartFeature.class);
         register(RolesAllowedDynamicFeature.class); // allow protecting routes with user roles
         register(AuthenticationFilter.class);
+        register(JacksonConfiguration.class);
     }
 
     private void bindUserDAO(final UserDAO userDAO) {
@@ -75,11 +76,18 @@ public class ALEXTestApplication extends ResourceConfig {
     }
 
     private void initAdmin(UserDAO userDAO) throws NotFoundException {
+/*
         admin = mock(User.class);
         given(admin.getId()).willReturn(1L);
         given(admin.getEmail()).willReturn("admin@alex.example");
         given(admin.getRole()).willReturn(UserRole.ADMIN);
         given(admin.isValidPassword(anyString())).willReturn(true);
+*/
+        admin = new User();
+        admin.setId(1L);
+        admin.setEmail("admin@alex.example");
+        admin.setPassword("admin");
+        admin.setRole(UserRole.ADMIN);
 
         given(userDAO.getById(admin.getId())).willReturn(admin);
         given(userDAO.getByEmail(admin.getEmail())).willReturn(admin);

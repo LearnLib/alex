@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
+import {events} from "../../constants";
 
-/** The controller for the admin users page */
+/**
+ * The controller for the admin users page.
+ */
 class AdminUsersView {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $scope
      * @param {UserResource} UserResource
      * @param {EventBus} EventBus
@@ -34,19 +37,19 @@ class AdminUsersView {
         this.EventBus = EventBus;
 
         /**
-         * The user that is logged in
+         * The user that is logged in.
          * @type {null|User}
          */
         this.user = SessionService.getUser();
 
         /**
-         * All registered users
+         * All registered users.
          * @type {User[]}
          */
         this.users = [];
 
         /**
-         * All selected users
+         * All selected users.
          * @type {User[]}
          */
         this.selectedUsers = [];
@@ -95,5 +98,5 @@ class AdminUsersView {
 export const adminUsersView = {
     controller: AdminUsersView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/admin-users.html'
+    templateUrl: 'html/components/views/admin-users.html'
 };

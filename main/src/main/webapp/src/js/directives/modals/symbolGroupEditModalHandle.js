@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-import {SymbolGroup} from '../../entities/SymbolGroup';
-import {events} from '../../constants';
+import {SymbolGroup} from "../../entities/SymbolGroup";
+import {events} from "../../constants";
 
 /**
  * The controller that handles the modal dialog for deleting and updating a symbol group. The modal data that is
- * passed must have an property 'group' whose value should be an instance of SymbolGroup
+ * passed must have an property 'group' whose value should be an instance of SymbolGroup.
  */
 export class SymbolGroupEditModalController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModalInstance
      * @param modalData
-     * @param SymbolGroupResource
-     * @param ToastService
-     * @param EventBus
+     * @param {SymbolGroupResource} SymbolGroupResource
+     * @param {ToastService} ToastService
+     * @param {EventBus} EventBus
      */
     // @ngInject
     constructor($uibModalInstance, modalData, SymbolGroupResource, ToastService, EventBus) {
@@ -39,19 +40,21 @@ export class SymbolGroupEditModalController {
         this.EventBus = EventBus;
 
         /**
-         * The symbol group that should be edited
+         * The symbol group that should be edited.
          * @type {SymbolGroup}
          */
         this.group = modalData.group;
 
         /**
-         * An error message that can be displayed in the template
+         * An error message that can be displayed in the template.
          * @type {null|String}
          */
         this.errorMsg = null;
     }
-    
-    /** Updates the symbol group under edit and closes the modal dialog on success */
+
+    /**
+     * Updates the symbol group under edit and closes the modal dialog on success.
+     */
     updateGroup() {
         this.errorMsg = null;
 
@@ -68,7 +71,9 @@ export class SymbolGroupEditModalController {
             });
     }
 
-    /** Deletes the symbol group under edit and closes the modal dialog on success */
+    /**
+     * Deletes the symbol group under edit and closes the modal dialog on success.
+     */
     deleteGroup() {
         this.errorMsg = null;
 
@@ -85,7 +90,9 @@ export class SymbolGroupEditModalController {
             });
     }
 
-    /** Closes the modal dialog */
+    /**
+     * Closes the modal dialog.
+     */
     close() {
         this.$uibModalInstance.dismiss();
     }
@@ -96,12 +103,12 @@ export class SymbolGroupEditModalController {
  * The directive that handles the opening of the modal for editing or deleting a symbol group. Can only be used as
  * attribute and attaches a click event to the source element that opens the modal.
  *
- * Attribute 'group' - The model for the symbol group
+ * Attribute 'group' - The model for the symbol group.
  *
- * Use: '<button symbol-group-edit-modal group="..." on-updated="..." on-deleted="...">Click Me!</button>'
+ * Use: '<button symbol-group-edit-modal group="..." on-updated="..." on-deleted="...">Click Me!</button>'.
  *
- * @param $uibModal - The ui.bootstrap $modal service
- * @returns {{scope: {group: string}, link: link}}
+ * @param $uibModal - The ui.bootstrap $modal service.
+ * @returns {{scope: {group: string}, link: Function}}
  */
 // @ngInject
 export function symbolGroupEditModalHandle($uibModal) {
@@ -110,21 +117,19 @@ export function symbolGroupEditModalHandle($uibModal) {
         scope: {
             group: '='
         },
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/modals/symbol-group-edit-modal.html',
-                controller: SymbolGroupEditModalController,
-                controllerAs: 'vm',
-                resolve: {
-                    modalData: function () {
-                        return {group: new SymbolGroup(scope.group)};
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/symbol-group-edit-modal.html',
+                    controller: SymbolGroupEditModalController,
+                    controllerAs: 'vm',
+                    resolve: {
+                        modalData: function () {
+                            return {group: new SymbolGroup(scope.group)};
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
+    };
 }

@@ -121,8 +121,6 @@ public class WaitForTitleActionTest {
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
-        WebElement element = mock(WebElement.class);
-        given(webSiteConnector.getElement("#node")).willReturn(element);
         action.setWaitCriterion(WaitForTitleAction.WaitCriterion.IS);
         action.setMaxWaitTime(0); // don't really wait to keep the test speed high
 

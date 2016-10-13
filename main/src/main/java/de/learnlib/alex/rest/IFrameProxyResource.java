@@ -18,6 +18,8 @@ package de.learnlib.alex.rest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -40,6 +42,7 @@ import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +55,13 @@ import java.util.Map;
 @Path("proxy")
 public class IFrameProxyResource {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final int REQUEST_TIMEOUT_TIME = 10000; // in ms
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker REST_MARKER     = MarkerManager.getMarker("REST");
+    private static final Marker RESOURCE_MARKER = MarkerManager.getMarker("IFRAME_PROXY_RESOURCE")
+                                                                    .setParents(REST_MARKER);
 
     /** Get the UriInfo from the Context. */
     @Context
@@ -71,21 +79,25 @@ public class IFrameProxyResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response doGetProxy(@QueryParam("url") String url, @HeaderParam("Cookie") String cookies) {
-        LOGGER.trace("IFrameProxyResource.doGetProxy(" + url + ", " + cookies + ").");
+        LOGGER.traceEntry("doGetProxy({}, {}).", url, cookies);
 
         try {
-            Connection connection = Jsoup.connect(url);
-            connection = parseAndProcessCookies(connection, cookies);
-            connection = connection.method(Connection.Method.GET);
+            Connection.Response response = Jsoup.connect(url)
+                    .method(Connection.Method.GET)
+                    .cookies(parseCookies(cookies))
+                    .timeout(REQUEST_TIMEOUT_TIME)
+                    .followRedirects(true)
+                    .execute();
 
-            return createResponse(connection);
-        } catch (IllegalArgumentException e) { // Java 1.6 has no multi catch
-            LOGGER.info("Bad URL: {}", url);
-            LOGGER.info(e);
+            LOGGER.traceExit(response);
+            return createResponse(response);
+        } catch (IllegalArgumentException e) {
+            LOGGER.info(RESOURCE_MARKER, "Bad URL: {}", url);
+            LOGGER.traceExit(e);
             return Response.status(Status.BAD_REQUEST).entity("400 - Bad Request: Unknown URL").build();
         } catch (IOException e) {
-            LOGGER.info("Bad request type: {}", url);
-            LOGGER.info(e);
+            LOGGER.info(RESOURCE_MARKER, "Bad request type: {}", url);
+            LOGGER.traceExit(e);
             return Response.status(Status.BAD_REQUEST).entity("400 - Bad Request: Unknown request type").build();
         }
     }
@@ -107,52 +119,57 @@ public class IFrameProxyResource {
     public Response doPostProxy(@QueryParam("url") String url,
                                 @HeaderParam("Cookie") String cookies,
                                 MultivaluedMap<String, String> body) {
-        LOGGER.trace("IFrameProxyResource.doPostProxy(" + url + ", " + cookies + ", " + body + ").");
+        LOGGER.traceEntry("doPostProxy({}, {}, {}).", url, cookies, body);
 
         try {
-            Connection connection = Jsoup.connect(url);
-            connection = parseAndProcessCookies(connection, cookies);
-            connection = parseAndProcessFormData(connection, body);
-            connection = connection.method(Connection.Method.POST);
+            Connection.Response response = Jsoup.connect(url)
+                    .method(Connection.Method.POST)
+                    .cookies(parseCookies(cookies))
+                    .data(parseFormData(body))
+                    .timeout(REQUEST_TIMEOUT_TIME)
+                    .followRedirects(true)
+                    .execute();
 
-            return createResponse(connection);
+            LOGGER.traceExit(response);
+            return createResponse(response);
         } catch (IllegalArgumentException e) {
-            LOGGER.info("Bad URL: {}", url);
-            LOGGER.info(e);
+            LOGGER.info(RESOURCE_MARKER, "Bad URL: {}", url);
+            LOGGER.traceExit(e);
             return Response.status(Status.BAD_REQUEST).entity("400 - Bad Request: Unknown URL").build();
         } catch (IOException e) {
-            LOGGER.info("Bad request type: {}", url);
-            LOGGER.info(e);
+            LOGGER.info(RESOURCE_MARKER, "Bad request type: {}", url);
+            LOGGER.traceExit(e);
             return Response.status(Status.BAD_REQUEST).entity("400 - Bad Request: Unknown request type").build();
         }
     }
 
-    private Connection parseAndProcessCookies(Connection connection, String cookies) {
-        if (cookies == null) {
-            return connection;
+    private Map<String, String> parseCookies(String cookies) {
+        Map<String, String> cookieMap = new HashMap<>();
+        if (cookies != null) {
+            for (String cookie : cookies.split(";")) {
+                String[] keyValuePair = cookie.split("=");
+                String key = keyValuePair[0].trim();
+                String value = keyValuePair[1].trim();
+                cookieMap.put(key, value);
+            }
         }
-
-        for (String cookie : cookies.split(";")) {
-            String[] keyValuePair = cookie.split("=");
-            String key = keyValuePair[0].trim();
-            String value = keyValuePair[1].trim();
-            connection = connection.cookie(key, value);
-        }
-        return connection;
+        return cookieMap;
     }
 
-    private Connection parseAndProcessFormData(Connection connection, MultivaluedMap<String, String> body) {
+    private Map<String,String> parseFormData(MultivaluedMap<String, String> body) {
+        Map<String, String> formData = new HashMap<>();
         for (Map.Entry<String, List<String>> entry : body.entrySet()) {
             String key = entry.getKey();
             for (String value : entry.getValue()) {
-                connection = connection.data(key, value);
+                System.out.println(key);
+                System.out.println(value);
+                formData.put(key, value);
             }
         }
-        return connection;
+        return formData;
     }
 
-    private Response createResponse(Connection connection) throws IOException {
-        Connection.Response response = connection.execute();
+    private Response createResponse(Connection.Response response) throws IOException {
         Document doc = response.parse();
         proxiefy(doc);
         List<NewCookie> cookieList = new LinkedList<>();
@@ -165,7 +182,7 @@ public class IFrameProxyResource {
     /**
      * Changes all references to other sites, images, ... in one Document to an absolute path or to a path using this
      * proxy.
-     * 
+     *
      * @param doc
      *            The Document to change.
      */
@@ -193,7 +210,7 @@ public class IFrameProxyResource {
 
     /**
      * Changes an URL in one attribute of an element to an absolute path. Is 'absolutify a real word?
-     * 
+     *
      * @param elem
      *            The Element having the relative attribute.
      * @param attribute

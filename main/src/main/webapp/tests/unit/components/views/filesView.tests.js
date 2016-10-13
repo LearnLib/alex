@@ -33,6 +33,20 @@ describe('filesView', () => {
         expect(controller.files).toEqual(ENTITIES.files);
     }
 
+    it('should show a message if loading files failed', () => {
+        const d1 = $q.defer();
+        spyOn(FileResource, 'getAll').and.returnValue(d1.promise);
+        d1.reject({data: {message: 'error'}});
+
+        spyOn(ToastService, 'danger').and.callThrough();
+
+        const element = angular.element("<files-view></files-view>");
+        $compile(element)($rootScope);
+        $rootScope.$digest();
+
+        expect(ToastService.danger).toHaveBeenCalled();
+    });
+
     it('should delete a file', () => {
         createComponent();
 

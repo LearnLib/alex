@@ -15,16 +15,13 @@
  */
 
 /**
- * The directive of the dashboard widget that displays the current status of the learner
- *
- * Use: <widget title="...">
- *          <learner-status-widget></learner-status-widget>
- *      </widget>
+ * The directive of the dashboard widget that displays the current status of the learner.
  */
 class LearnerStatusWidget {
 
     /**
      * Constructor.
+     *
      * @param {LearnerResource} LearnerResource
      * @param {ToastService} ToastService
      */
@@ -34,19 +31,19 @@ class LearnerStatusWidget {
         this.ToastService = ToastService;
 
         /**
-         * Whether the learner is actively learning an application
+         * Whether the learner is actively learning an application.
          * @type {boolean}
          */
         this.isActive = false;
 
         /**
-         * Whether the learner has finished learning an application
+         * Whether the learner has finished learning an application.
          * @type {boolean}
          */
         this.hasFinished = false;
 
         /**
-         * The intermediate or final learning result
+         * The intermediate or final learning result.
          * @type {null|LearnResult}
          */
         this.result = null;
@@ -66,7 +63,9 @@ class LearnerStatusWidget {
             });
     }
 
-    /** Induces the Learner to stop learning after the current hypothesis model */
+    /**
+     * Induces the Learner to stop learning after the current hypothesis model.
+     */
     abort() {
         this.LearnerResource.stop().then(() => {
             this.ToastService.info('The Learner stops with the next hypothesis');

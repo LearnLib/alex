@@ -18,86 +18,100 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.repositories.CounterRepository;
+import de.learnlib.alex.core.repositories.ProjectRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.alex.utils.HibernateUtil;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
+import de.learnlib.alex.utils.ValidationExceptionHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Inject;
+import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.List;
 
 /**
  * Implementation of a CounterDAO using Hibernate.
  */
-@Repository
+@Service
 public class CounterDAOImpl implements CounterDAO {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    /** The ProjectRepository to use. Will be injected. */
+    private ProjectRepository projectRepository;
+
+    /** The CounterRepository to use. Will be injected. */
+    private CounterRepository counterRepository;
+
+    /**
+     * Creates a new CounterDAO.
+     *
+     * @param projectRepository
+     *         The ProjectRepository to use.
+     * @param counterRepository
+     *         The CounterRepository to use.
+     */
+    @Inject
+    public CounterDAOImpl(ProjectRepository projectRepository, CounterRepository counterRepository) {
+        this.projectRepository = projectRepository;
+        this.counterRepository = counterRepository;
+    }
+
     @Override
+    @Transactional
     public void create(Counter counter) throws ValidationException {
-        HibernateUtil.beginTransaction();
-        Session session = HibernateUtil.getSession();
         try {
-            Project project = session.load(Project.class, counter.getProjectId());
+            Project project = projectRepository.findOne(counter.getProjectId());
             counter.setProject(project);
 
-            session.save(counter);
+            counterRepository.save(counter);
 
-            HibernateUtil.commitTransaction();
-        } catch (javax.validation.ConstraintViolationException
-                | org.hibernate.exception.ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
-            throw new ValidationException("The counter could not be created because it is invalid.", e);
+        // error handling
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.info("Counter creation failed:", e);
+            throw new javax.validation.ValidationException("Counter could not be created.", e);
+        } catch (TransactionSystemException e) {
+            LOGGER.info("Counter creation failed:", e);
+            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
+            throw ValidationExceptionHelper.createValidationException("Counter was not created:", cve);
         }
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Counter> getAll(Long userId, Long projectId) throws NotFoundException {
-        HibernateUtil.beginTransaction();
-        Session session = HibernateUtil.getSession();
-
-        if (session.get(Project.class, projectId) == null) {
+        Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
+        if (project == null) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
-        @SuppressWarnings("Should always return a list of Counters.")
-        List<Counter> result = session.createCriteria(Counter.class)
-                .add(Restrictions.eq("project.id", projectId))
-                .add(Restrictions.eq("user.id", userId))
-                .list();
-
-        HibernateUtil.commitTransaction();
-        return result;
+        return counterRepository.findByUser_IdAndProject(userId, project);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Counter get(Long userId, Long projectId, String name) throws NotFoundException {
-        HibernateUtil.beginTransaction();
-        Session session = HibernateUtil.getSession();
         try {
-            Counter result = get(session, userId, projectId, name);
+            Counter result = get_(userId, projectId, name);
 
-            HibernateUtil.commitTransaction();
             return result;
         } catch (NotFoundException e) {
-            HibernateUtil.rollbackTransaction();
             throw e;
         }
     }
 
-    private Counter get(Session session, Long userId, Long projectId, String name) throws NotFoundException {
-        if (session.get(Project.class, projectId) == null) {
+    private Counter get_(Long userId, Long projectId, String name) throws NotFoundException {
+        Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
+        if (project == null) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
-        @SuppressWarnings("Should always return a list of Counters.")
-        Counter result = (Counter) session.createCriteria(Counter.class)
-                .add(Restrictions.eq("project.id", projectId))
-                .add(Restrictions.eq("user.id", userId))
-                .add(Restrictions.eq("name", name))
-                .uniqueResult();
-
+        Counter result = counterRepository.findByUser_IdAndProjectAndName(userId, project, name);
         if (result == null) {
             throw new NotFoundException("Could not find the counter with the name '" + name
                     + "' in the project " + projectId + "!");
@@ -107,42 +121,36 @@ public class CounterDAOImpl implements CounterDAO {
     }
 
     @Override
+    @Transactional
     public void update(Counter counter) throws NotFoundException, ValidationException {
-        HibernateUtil.beginTransaction();
-        Session session = HibernateUtil.getSession();
-
         try {
-            get(session, counter.getUserId(), counter.getProjectId(), counter.getName()); // check if the counter exists
-            session.merge(counter);
+            get_(counter.getUserId(), counter.getProjectId(), counter.getName()); // check if the counter exists
+            counterRepository.save(counter);
 
-            HibernateUtil.commitTransaction();
-        } catch (HibernateException e) {
-            HibernateUtil.rollbackTransaction();
-            throw new ValidationException("You cannot change the project or name of the counter.", e);
+        // error handling
+        } catch (DataIntegrityViolationException e) {
+            LOGGER.info("Counter update failed:", e);
+            throw new javax.validation.ValidationException("Counter could not be updated.", e);
+        } catch (TransactionSystemException e) {
+            LOGGER.info("Counter update failed:", e);
+            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
+            throw ValidationExceptionHelper.createValidationException("Counter was not created.", cve);
         } catch (NotFoundException e) {
-            HibernateUtil.rollbackTransaction();
             throw e;
         }
     }
 
     @Override
+    @Transactional
     public void delete(Long userId, Long projectId, String... names) throws NotFoundException {
-        HibernateUtil.beginTransaction();
-        Session session = HibernateUtil.getSession();
+        Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
 
-        @SuppressWarnings("Should always return a list of Counters.")
-        List<Counter> counters = session.createCriteria(Counter.class)
-                .add(Restrictions.in("name", names))
-                .add(Restrictions.eq("project.id", projectId))
-                .add(Restrictions.eq("user.id", userId))
-                .list();
+        List<Counter> counters = counterRepository.findAllByUser_IdAndProjectAndNameIn(userId, project, names);
 
         if (names.length == counters.size()) { // all counters found -> delete them & success
-            counters.forEach(session::delete);
-            HibernateUtil.commitTransaction();
+            counterRepository.delete(counters);
         } else {
-            HibernateUtil.rollbackTransaction();
-            throw new NotFoundException("Could not delete the counter(s), becauser at least one does not exists!");
+            throw new NotFoundException("Could not delete the counter(s), because at least one does not exists!");
         }
     }
 }

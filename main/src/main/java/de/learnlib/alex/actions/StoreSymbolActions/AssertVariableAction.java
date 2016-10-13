@@ -21,6 +21,10 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
@@ -35,8 +39,11 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("assertVariable")
 public class AssertVariableAction extends SymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 6363724455992504221L;
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER  = MarkerManager.getMarker("LEARNER");
 
     /**
      * The name of the variable to assert.
@@ -102,18 +109,21 @@ public class AssertVariableAction extends SymbolAction {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
         String variableValue = storeConnector.get(name);
 
+        boolean result;
         if (regexp) {
-            if (variableValue.matches(value)) {
-                return getSuccessOutput();
-            } else {
-                return getFailedOutput();
-            }
+            result = variableValue.matches(value);
         } else {
-            if (variableValue.equals(value)) {
-                return getSuccessOutput();
-            } else {
-                return getFailedOutput();
-            }
+            result = variableValue.equals(value);
+        }
+
+        LOGGER.info(LEARNER_MARKER, "Asserting variable '{}' with value '{}' against '{}' => {} "
+                                        + "(regex: {}, ignoreFailure: {}, negated: {}).",
+                    name, variableValue, value, result, regexp, ignoreFailure, negated);
+
+        if (result) {
+            return getSuccessOutput();
+        } else {
+            return getFailedOutput();
         }
     }
 

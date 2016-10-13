@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {webBrowser} from "../constants";
+
 /**
  * The resource that handles http calls to the API to do CRUD operations on projects.
  */
@@ -21,6 +23,7 @@ export class SettingsResource {
 
     /**
      * Constructor.
+     *
      * @param $http
      */
     // @ngInject
@@ -30,20 +33,44 @@ export class SettingsResource {
 
     /**
      * Get application specific settings.
+     *
+     * @returns {Promise}
      */
     get() {
         return this.$http.get(`rest/settings`)
-            .then(response => angular.fromJson(response.data));
+            .then(response => response.data);
     }
 
     /**
      * Update application specific settings.
-     * 
+     *
      * @param {Object} settings - The updated settings object.
-     * @returns {*}
+     * @returns {Promise}
      */
     update(settings) {
         return this.$http.put(`rest/settings`, settings)
-            .then(response => angular.fromJson(response.data));
+            .then(response => response.data);
+    }
+
+    /**
+     * Get the supported browser enum.
+     *
+     * @returns {Promise}
+     */
+    getSupportedBrowserEnum() {
+        return this.get().then(settings => {
+            let supportedBrowsers = {
+                HTMLUNITDRIVER: 'htmlunitdriver'
+            };
+
+            for (let key in webBrowser) {
+                if (key === 'HTMLUNITDRIVER') continue;
+                if (settings.driver[webBrowser[key]].trim() !== "") {
+                    supportedBrowsers[key] = webBrowser[key];
+                }
+            }
+
+            return supportedBrowsers;
+        });
     }
 }

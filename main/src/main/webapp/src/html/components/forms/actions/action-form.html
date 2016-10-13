@@ -1,0 +1,62 @@
+<div ng-if="vm.action !== null">
+    <div ng-switch on="vm.action.type">
+
+        <!-- web actions -->
+        <action-form-check-for-node action="vm.action" ng-switch-when="web_checkForNode"></action-form-check-for-node>
+        <action-form-check-for-text action="vm.action" ng-switch-when="web_checkForText"></action-form-check-for-text>
+        <action-form-check-page-title action="vm.action" ng-switch-when="web_checkPageTitle"></action-form-check-page-title>
+        <action-form-clear-input action="vm.action" ng-switch-when="web_clear"></action-form-clear-input>
+        <action-form-click action="vm.action" ng-switch-when="web_click"></action-form-click>
+        <action-form-click-link-by-text action="vm.action" ng-switch-when="web_clickLinkByText"></action-form-click-link-by-text>
+        <action-form-execute-script action="vm.action" ng-switch-when="web_executeScript"></action-form-execute-script>
+        <action-form-move-mouse action="vm.action" ng-switch-when="web_moveMouse"></action-form-move-mouse>
+        <action-form-open action="vm.action" ng-switch-when="web_goto"></action-form-open>
+        <action-form-select action="vm.action" ng-switch-when="web_select"></action-form-select>
+        <action-form-send-keys action="vm.action" ng-switch-when="web_fill"></action-form-send-keys>
+        <action-form-submit action="vm.action" ng-switch-when="web_submit"></action-form-submit>
+        <action-form-wait-for-node action="vm.action" ng-switch-when="web_waitForNode"></action-form-wait-for-node>
+        <action-form-wait-for-title action="vm.action" ng-switch-when="web_waitForTitle"></action-form-wait-for-title>
+        <action-form-press-key action="vm.action" ng-switch-when="web_pressKey"></action-form-press-key>
+        <action-form-check-node-attribute-value action="vm.action" ng-switch-when="web_checkNodeAttributeValue"></action-form-check-node-attribute-value>
+
+        <!-- rest actions -->
+        <action-form-call action="vm.action" ng-switch-when="rest_call"></action-form-call>
+        <action-form-check-attribute-exists action="vm.action" ng-switch-when="rest_checkAttributeExists"></action-form-check-attribute-exists>
+        <action-form-check-attribute-type action="vm.action" ng-switch-when="rest_checkAttributeType"></action-form-check-attribute-type>
+        <action-form-check-attribute-value action="vm.action" ng-switch-when="rest_checkAttributeValue"></action-form-check-attribute-value>
+        <action-form-check-header-field action="vm.action" ng-switch-when="rest_checkHeaderField"></action-form-check-header-field>
+        <action-form-check-http-body action="vm.action" ng-switch-when="rest_checkForText"></action-form-check-http-body>
+        <action-form-check-status action="vm.action" ng-switch-when="rest_checkStatus"></action-form-check-status>
+
+        <!-- general actions -->
+        <action-form-assert-counter action="vm.action" ng-switch-when="assertCounter"></action-form-assert-counter>
+        <action-form-assert-variable action="vm.action" ng-switch-when="assertVariable"></action-form-assert-variable>
+        <action-form-execute-symbol action="vm.action" symbols="vm.symbols" ng-switch-when="executeSymbol"></action-form-execute-symbol>
+        <action-form-increment-counter action="vm.action" ng-switch-when="incrementCounter"></action-form-increment-counter>
+        <action-form-set-counter action="vm.action" ng-switch-when="setCounter"></action-form-set-counter>
+        <action-form-set-variable action="vm.action" ng-switch-when="setVariable"></action-form-set-variable>
+        <action-form-set-variable-by-cookie action="vm.action" ng-switch-when="setVariableByCookie"></action-form-set-variable-by-cookie>
+        <action-form-set-variable-by-html action="vm.action" ng-switch-when="setVariableByHTML"></action-form-set-variable-by-html>
+        <action-form-set-variable-by-json action="vm.action" ng-switch-when="setVariableByJSON"></action-form-set-variable-by-json>
+        <action-form-set-variable-by-node-attribute action="vm.action" ng-switch-when="setVariableByNodeAttribute"></action-form-set-variable-by-node-attribute>
+        <action-form-wait action="vm.action" ng-switch-when="wait"></action-form-wait>
+    </div>
+    <hr>
+    <p>
+        <a href="" ng-click="vm.showOptions = !vm.showOptions">
+            <i class="fa fa-gear fa-fw"></i> Advanced Options
+        </a>
+    </p>
+    <div uib-collapse="!vm.showOptions">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" ng-model="vm.action.negated"> Negate
+            </label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" ng-model="vm.action.ignoreFailure"> Ignore Failure
+            </label>
+        </div>
+    </div>
+</div>

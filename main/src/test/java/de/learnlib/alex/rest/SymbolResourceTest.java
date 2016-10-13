@@ -49,8 +49,8 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -106,6 +106,7 @@ public class SymbolResourceTest extends JerseyTest {
         given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID)).willReturn(project);
 
         group = new SymbolGroup();
+        group.setId(0L);
         group.setName("Symbol Resource Test Group");
 
         symbol = new Symbol();
@@ -283,6 +284,8 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnAllSymbolsThatAreVisible() throws NotFoundException {
+        symbol.setSymbolId(SYMBOL_TEST_ID);
+        symbol2.setSymbolId(SYMBOL_TEST_ID + 1);
         symbols.remove(symbol2);
         given(symbolDAO.getAllWithLatestRevision(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.VISIBLE))
                 .willReturn(symbols);
@@ -301,6 +304,8 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnAllSymbolsIncludingHiddenOnes() throws NotFoundException {
+        symbol.setSymbolId(SYMBOL_TEST_ID);
+        symbol2.setSymbolId(SYMBOL_TEST_ID + 1);
         symbols.remove(symbol2);
         given(symbolDAO.getAllWithLatestRevision(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL))
                 .willReturn(symbols);
@@ -382,6 +387,7 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target(path).request().header("Authorization", adminToken).put(Entity.json(symbol));
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
+        symbol.setUser(admin); // the user is provided over the auth token.
         verify(symbolDAO).update(symbol);
     }
 

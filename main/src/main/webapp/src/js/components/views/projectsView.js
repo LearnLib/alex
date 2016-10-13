@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
-import {events} from '../../constants';
+import {events} from "../../constants";
 
 /**
- * The controller that shows the page to manage projects
+ * The controller that shows the page to manage projects.
  */
 class ProjectsView {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $scope
      * @param $state
      * @param {SessionService} SessionService
@@ -35,7 +35,7 @@ class ProjectsView {
     constructor($scope, $state, SessionService, ProjectResource, EventBus, ToastService) {
 
         /**
-         * The list of all projects
+         * The list of all projects.
          * @type {Project[]}
          */
         this.projects = [];
@@ -63,13 +63,14 @@ class ProjectsView {
         // listen on project update event
         EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
             const project = data.project;
-            const i = _.findIndex(this.projects, {id: project.id});
+            const i = this.projects.findIndex(p => p.id === project.id);
             if (i > -1) this.projects[i] = project;
         }, $scope);
 
         // listen on project delete event
         EventBus.on(events.PROJECT_DELETED, (evt, data) => {
-            _.remove(this.projects, {id: data.project.id});
+            const i = this.projects.findIndex(p => p.id === data.project.id);
+            if (i > -1) this.projects.splice(i, 1);
         }, $scope);
     }
 }
@@ -77,5 +78,5 @@ class ProjectsView {
 export const projectsView = {
     controller: ProjectsView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/projects.html'
+    templateUrl: 'html/components/views/projects.html'
 };

@@ -15,12 +15,13 @@
  */
 
 /**
- * Use: <symbol-list-item symbol="..."></symbol-list-item>
+ * Use: <symbol-list-item symbol="..."></symbol-list-item>.
  */
 class SymbolListItem {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $attrs
      */
     // @ngInject
@@ -36,7 +37,7 @@ class SymbolListItem {
          * Flag that indicates if the checkbox should be displayed.
          * @type {boolean}
          */
-        this.isSelectable = angular.isDefined($attrs.selectionModel);
+        this.isSelectable = typeof $attrs.selectionModel !== "undefined";
     }
 
     /**

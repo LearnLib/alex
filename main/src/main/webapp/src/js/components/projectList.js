@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {events} from '../constants';
+import {events} from "../constants";
 
 /**
  * The directive that displays a list of projects.
@@ -24,7 +24,8 @@ import {events} from '../constants';
 class ProjectList {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $state
      * @param {ProjectResource} ProjectResource
      * @param {SymbolGroupResource} SymbolGroupResource
@@ -48,8 +49,9 @@ class ProjectList {
     }
 
     /**
-     * Save a project into the sessionStorage and redirect to its dashboard
-     * @param {Project} project - The project to work on
+     * Save a project into the sessionStorage and redirect to its dashboard.
+     *
+     * @param {Project} project - The project to work on.
      */
     openProject(project) {
         this.SessionService.saveProject(project);
@@ -58,8 +60,9 @@ class ProjectList {
     }
 
     /**
-     * Deletes a project
-     * @param {Project} project - The project to delete
+     * Deletes a project.
+     *
+     * @param {Project} project - The project to delete.
      */
     deleteProject(project) {
         this.PromptService.confirm('Do you really want to delete this project? All related data will be lost.')
@@ -77,31 +80,53 @@ class ProjectList {
 
     /**
      * Downloads the project in an importable format.
-     * @param {Project} project
+     *
+     * @param {Project} project.
      */
     exportProject(project) {
-        this.ProjectResource.get(project.id).then(project => {
-            this.SymbolGroupResource.getAll(project.id, true).then(groups => {
-                groups.forEach(group => {
-                    delete group.id;
-                    delete group.project;
-                    delete group.user;
+        this.ProjectResource.getForExport(project.id)
+            .then(p => {
+                delete p.id;
+                delete p.user;
 
-                    group.symbols = group.symbols.map(symbol => symbol.getExportableSymbol());
+                delete p.counters;
+                delete p.testResults;
+                delete p.symbolAmount;
+
+                this.prepareGroupForExport(p.defaultGroup);
+
+                p.groups.forEach(group => {
+                    this.prepareGroupForExport(group);
                 });
 
-                delete project.id;
-                delete project.user;
-                project.defaultGroup = groups.shift();
-                project.groups = groups;
 
                 this.PromptService.prompt("Enter a filename for the project").then(filename => {
-                    this.DownloadService.downloadObject(project, filename);
+                    this.DownloadService.downloadObject(p, filename);
                     this.ToastService.success('The project has been exported.');
                 });
             });
+    }
+
+    prepareGroupForExport(group) {
+        delete group.id;
+        delete group.project;
+        delete group.user;
+        delete group.symbolAmount;
+
+        group.symbols.forEach(symbol => {
+            delete symbol.user;
+            delete symbol.project;
+            delete symbol.group;
+            delete symbol.id;
+            delete symbol.revision;
+            delete symbol.hidden;
+
+            symbol.actions.forEach(action => {
+                delete action.symbolToExecuteName;
+            });
         });
     }
+
 }
 
 export const projectList = {

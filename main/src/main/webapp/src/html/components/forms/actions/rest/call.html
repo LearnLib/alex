@@ -1,0 +1,154 @@
+<h4><strong>Call Url</strong></h4>
+
+<p class="text-muted">Make a HTTP request to an URL (relative to your projects base url)</p>
+<hr>
+
+<div class="form-group">
+    <input class="form-control" type="text" placeholder="url" ng-model="vm.action.url">
+</div>
+
+<div class="form-group">
+    <select class="form-control" ng-options="m for m in ['DELETE', 'GET', 'POST', 'PUT']"
+            ng-model="vm.action.method">
+        <option value="" disabled>Select a Method</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Data</label>
+
+    <div ng-model="vm.action.data" ui-ace="vm.aceOptions"></div>
+</div>
+
+<uib-tabset>
+    <uib-tab heading="HTTP Headers">
+
+        <br>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-5 no-padding-right">
+                    <input class="form-control" type="text" ng-model="vm.header.name" placeholder="Header Name">
+                </div>
+                <div class="col-xs-5 no-padding-right">
+                    <input class="form-control" type="text" ng-model="vm.header.value" placeholder="Header Value">
+                </div>
+                <div class="col-xs-2">
+                    <a class="btn btn-default btn-block btn-sm" ng-click="vm.addHeader()">
+                        <i class="fa fa-plus"></i>
+                    </a>
+                </div>
+            </div>
+            <br>
+            <ul class="list-group list-group-condensed">
+                <li class="list-group-item" ng-repeat="(key, value) in vm.action.headers">
+                    <i class="fa fa-trash fa-fw pull-right" ng-click="vm.action.removeHeader(key)"></i>
+                    <strong ng-bind="key"></strong>: <span ng-bind="vm.action.headers[key]"></span>
+                </li>
+            </ul>
+        </div>
+
+    </uib-tab>
+    <uib-tab heading="Authentication">
+        <br>
+
+        <div class="form-group">
+            <label class="control-label">Name</label>
+            <input class="form-control" type="text" ng-model="vm.action.credentials.name" placeholder="Name">
+        </div>
+        <div class="form-group">
+            <label class="control-label">Password</label>
+            <input class="form-control" type="text" ng-model="vm.action.credentials.password" placeholder="Password">
+        </div>
+
+    </uib-tab>
+    <uib-tab heading="Cookies">
+        <br>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-xs-5 no-padding-right">
+                    <input class="form-control" type="text" ng-model="vm.cookie.name" placeholder="Cookie Name">
+                </div>
+                <div class="col-xs-5 no-padding-right">
+                    <input class="form-control" type="text" ng-model="vm.cookie.value" placeholder="Cookie Value">
+                </div>
+                <div class="col-xs-2">
+                    <a class="btn btn-default btn-block btn-sm" ng-click="vm.addCookie()">
+                        <i class="fa fa-plus"></i>
+                    </a>
+                </div>
+            </div>
+            <br>
+            <ul class="list-group list-group-condensed">
+                <li class="list-group-item" ng-repeat="(key, value) in vm.action.cookies">
+                    <i class="fa fa-trash fa-fw pull-right" ng-click="vm.action.removeCookie(key)"></i>
+                    <strong ng-bind="key"></strong>: <span ng-bind="vm.action.cookies[key]"></span>
+                </li>
+            </ul>
+        </div>
+
+    </uib-tab>
+</uib-tabset>
+
+<hr>
+
+<p>
+    <a class="btn btn-default btn-sm" style="text-align: left" ng-click="vm.test()">
+        <strong>Test the action</strong><br>
+        <em>Variables and counters will not work</em>
+    </a>
+</p>
+
+<div class="alert alert-danger" ng-if="vm.error">
+    <i class="fa fa-close fa-fw pull-right" ng-click="vm.error = null"></i>
+    {{vm.error}}
+</div>
+
+<div class="panel panel-default" ng-if="vm.testResult !== null">
+    <div class="panel-body" style="padding: 10px">
+        <i class="fa fa-fw fa-close pull-right" ng-click="vm.testResult = null"></i>
+        <div class="form-group">
+            <label>Status</label> <br>
+            {{vm.testResult.status}}
+        </div>
+        <div class="form-group">
+            <label>Body</label>
+            <pre ng-bind="vm.testResult.body" style="max-height: 200px;"></pre>
+        </div>
+        <div class="form-group">
+            <label>Cookies</label>
+            <table class="table table-striped table-condensed table-rest-call-action">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="(name,value) in vm.testResult.cookies">
+                        <td ng-bind="name"></td>
+                        <td ng-bind="value"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group">
+            <label>Headers</label>
+            <table class="table table-striped table-condensed table-rest-call-action">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="(name,value) in vm.testResult.headers">
+                    <td ng-bind="name"></td>
+                    <td ng-bind="value"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

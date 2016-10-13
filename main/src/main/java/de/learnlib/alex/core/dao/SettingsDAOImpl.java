@@ -17,65 +17,64 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Settings;
-import de.learnlib.alex.utils.HibernateUtil;
-import org.hibernate.Session;
-import org.springframework.stereotype.Repository;
+import de.learnlib.alex.core.repositories.SettingsRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.inject.Inject;
 import javax.validation.ValidationException;
 
 /**
- * Implementation of a SettingsDAO using Hibernate.
+ * Implementation of a SettingsDAO using Spring Data.
  */
-@Repository
+@Service
 public class SettingsDAOImpl implements SettingsDAO {
 
+    /** The SettingsRepository to use. Will be injected. */
+    private SettingsRepository settingsRepository;
+
+    /**
+     * Creates a new SettingsDAO.
+     *
+     * @param settingsRepository
+     *         The SettingsRepository to use.
+     */
+    @Inject
+    public SettingsDAOImpl(SettingsRepository settingsRepository) {
+        this.settingsRepository = settingsRepository;
+    }
+
     @Override
+    @Transactional
     public void create(Settings settings) throws ValidationException {
-        HibernateUtil.beginTransaction();
-        Session session = HibernateUtil.getSession();
-
-        try {
-            if (session.createCriteria(Settings.class).uniqueResult() != null) {
-                throw new ValidationException("The settings have already been created.");
-            }
-
-            session.save(settings);
-            HibernateUtil.commitTransaction();
-        } catch (javax.validation.ConstraintViolationException
-                | org.hibernate.exception.ConstraintViolationException e) {
-            HibernateUtil.rollbackTransaction();
-            throw new ValidationException("The settings could not be created because it is invalid.", e);
+        if (settingsRepository.count() == 1) {
+            throw new ValidationException("The settings have already been created.");
         }
+
+        settingsRepository.save(settings);
+
+        updateDriverSystemProperties(settings.getDriverSettings());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Settings get() {
-        HibernateUtil.beginTransaction();
-        Session session = HibernateUtil.getSession();
-
-        Settings settings = (Settings) session.createCriteria(Settings.class)
-                .uniqueResult();
-
-        HibernateUtil.commitTransaction();
-
-        if (settings == null) {
-            HibernateUtil.rollbackTransaction();
-        }
-
-        return settings;
+        return settingsRepository.get();
     }
 
     @Override
-    public void update(Settings settings) throws Exception {
-        HibernateUtil.beginTransaction();
-        Session session = HibernateUtil.getSession();
+    @Transactional
+    public void update(Settings settings) {
+        settingsRepository.save(settings);
 
-        try {
-            session.update(settings);
-            HibernateUtil.commitTransaction();
-        } catch (Exception e) {
-            HibernateUtil.rollbackTransaction();
-            throw e;
-        }
+        updateDriverSystemProperties(settings.getDriverSettings());
+    }
+
+    private void updateDriverSystemProperties(Settings.DriverSettings driverSettings) {
+        System.setProperty("webdriver.chrome.driver", driverSettings.getChrome());
+        System.setProperty("webdriver.gecko.driver",  driverSettings.getFirefox());
+        System.setProperty("webdriver.edge.driver", driverSettings.getEdge());
     }
 }

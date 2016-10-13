@@ -22,6 +22,8 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -34,11 +36,11 @@ import javax.persistence.Entity;
 @JsonTypeName("wait")
 public class WaitAction extends WebSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 7122950041811279742L;
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * The duration to wait in ms.
@@ -68,10 +70,11 @@ public class WaitAction extends WebSymbolAction {
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
+            LOGGER.info(LEARNER_MARKER, "Waiting for {} ms.", duration);
             Thread.sleep(duration);
             return getSuccessOutput();
         } catch (InterruptedException e) {
-            LOGGER.error("WaitAction failed to wait.", e);
+            LOGGER.error(LEARNER_MARKER, "Failed to wait.", e);
             return getFailedOutput();
         }
     }

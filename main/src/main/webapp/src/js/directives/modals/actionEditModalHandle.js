@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
+import {events} from "../../constants";
 
-/** The controller for the modal dialog that handles the editing of an action. */
+/**
+ * The controller for the modal dialog that handles the editing of an action.
+ */
 export class ActionEditModalController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModalInstance
      * @param modalData
-     * @param ActionService
-     * @param SymbolResource
-     * @param SessionService
-     * @param EventBus
+     * @param {ActionService} ActionService
+     * @param {SymbolResource} SymbolResource
+     * @param {SessionService} SessionService
+     * @param {EventBus} EventBus
      */
     // @ngInject
     constructor($uibModalInstance, modalData, ActionService, SymbolResource, SessionService, EventBus) {
@@ -38,14 +41,14 @@ export class ActionEditModalController {
         const project = SessionService.getProject();
 
         /**
-         * The copy of the action that should be edited
+         * The copy of the action that should be edited.
          * @type {Object}
          */
         this.action = modalData.action;
 
         /**
-         * The list of symbols
-         * @type {Array}
+         * The list of symbols.
+         * @type {Symbol[]}
          */
         this.symbols = [];
 
@@ -55,13 +58,17 @@ export class ActionEditModalController {
         });
     }
 
-    /** Close the modal dialog and pass the updated action to the handle that called it */
+    /**
+     * Close the modal dialog and pass the updated action to the handle that called it.
+     */
     updateAction() {
         this.EventBus.emit(events.ACTION_UPDATED, {action: this.action});
         this.$uibModalInstance.dismiss();
     }
 
-    /** Close the modal dialog without passing any data */
+    /**
+     * Close the modal dialog without passing any data.
+     */
     closeModal() {
         this.$uibModalInstance.dismiss();
     }
@@ -80,7 +87,7 @@ export class ActionEditModalController {
  *
  * @param $uibModal - The modal service
  * @param ActionService - ActionService
- * @returns {{restrict: string, scope: {action: string}, link: link}}
+ * @returns {{restrict: string, scope: {action: string}, link: Function}}
  */
 // @ngInject
 export function actionEditModalHandle($uibModal, ActionService) {
@@ -89,29 +96,27 @@ export function actionEditModalHandle($uibModal, ActionService) {
         scope: {
             action: '='
         },
-        link: link
-    };
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/action-edit-modal.html',
+                    controller: ActionEditModalController,
+                    controllerAs: 'vm',
+                    resolve: {
+                        modalData: function () {
 
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/modals/action-edit-modal.html',
-                controller: ActionEditModalController,
-                controllerAs: 'vm',
-                resolve: {
-                    modalData: function () {
+                            // copy the id because it gets lost otherwise
+                            const id = scope.action._id;
+                            const action = ActionService.create(scope.action);
+                            action._id = id;
 
-                        // copy the id because it gets lost otherwise
-                        const id = scope.action._id;
-                        const action = ActionService.create(scope.action);
-                        action._id = id;
-
-                        return {
-                            action: action
-                        };
+                            return {
+                                action: action
+                            };
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
+    };
 }

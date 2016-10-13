@@ -14,44 +14,45 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
 /**
  * Checks if a property of a JSON object in a HTTP response body has a specific value or matches a regular
- * expression
+ * expression.
  */
 export class CheckAttributeValueRestAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
-     * @constructor
+     * Constructor.
+     *
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.REST_CHECK_ATTRIBUTE_VALUE, obj);
 
         /**
-         * The JSON property
+         * The JSON property.
          * @type {string}
          */
         this.attribute = obj.attribute || '';
 
         /**
-         * The value that is searched for in the property
+         * The value that is searched for in the property.
          * @type {*|string}
          */
         this.value = obj.value || '';
 
         /**
-         * Whether the value is a regular expression
+         * Whether the value is a regular expression.
          * @type {*|boolean}
          */
         this.regexp = obj.regexp || false;
     }
 
     /**
-     * A string presentation of the actions
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

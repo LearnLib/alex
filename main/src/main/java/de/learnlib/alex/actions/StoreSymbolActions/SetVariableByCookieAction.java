@@ -23,6 +23,10 @@ import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -39,6 +43,10 @@ import java.util.Map;
 @DiscriminatorValue("setVariableByCookie")
 @JsonTypeName("setVariableByCookie")
 public class SetVariableByCookieAction extends SetVariableAction {
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Enum to differentiate web & REST cookies.
@@ -72,7 +80,6 @@ public class SetVariableByCookieAction extends SetVariableAction {
 
     }
 
-    /** to be serializable. */
     private static final long serialVersionUID = 5093001294341313128L;
 
     /**
@@ -119,16 +126,28 @@ public class SetVariableByCookieAction extends SetVariableAction {
                     cookieValue = cookie.getValue();
                 }
             } else {
+                LOGGER.warn(LEARNER_MARKER, "Could not set the variable '{}' to the cookie '{}' "
+                                    + "because the type '{}' is not supported (ignoreFailure: {}, negated: {})!",
+                            name, value, cookieType, ignoreFailure, negated);
                 return getFailedOutput();
             }
 
             if (cookieValue != null) {
                 storeConnector.set(name, cookieValue);
+                LOGGER.info(LEARNER_MARKER, "Set the variable '{}' to the value '{}' of the cookie '{}:{}' "
+                                                + "(ignoreFailure: {}, negated: {}).",
+                            name, cookieValue, cookieType, value, ignoreFailure, negated);
                 return getSuccessOutput();
             } else {
+                LOGGER.info(LEARNER_MARKER, "Could not set the variable '{}' to the cookie '{}:{}' "
+                                                + "because the cookie was not found (ignoreFailure: {}, negated: {})!",
+                            name, cookieType, value, ignoreFailure, negated);
                 return getFailedOutput();
             }
         } catch (IllegalStateException | NoSuchElementException e) {
+            LOGGER.warn(LEARNER_MARKER, "Could not set the variable '{}' to the cookie '{}' because of an error "
+                                            + "(ignoreFailure: {}, negated: {})!",
+                        name, value, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

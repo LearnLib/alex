@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
-import {events} from '../../constants';
-import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
+import _ from "lodash";
+import {events} from "../../constants";
+import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
 
 /**
  * The controller that handles CRUD operations on symbols and symbol groups.
@@ -25,6 +25,7 @@ class SymbolsView {
 
     /**
      * Constructor.
+     *
      * @param $scope
      * @param {SessionService} SessionService
      * @param {SymbolResource} SymbolResource
@@ -37,26 +38,25 @@ class SymbolsView {
     // @ngInject
     constructor($scope, SessionService, SymbolResource, SymbolGroupResource, ToastService, DownloadService,
                 EventBus, PromptService) {
-
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
         this.DownloadService = DownloadService;
         this.PromptService = PromptService;
 
         /**
-         * The project that is saved in the session
+         * The project that is saved in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * The model for selected symbols
+         * The model for selected symbols.
          * @type {AlphabetSymbol[]}
          */
         this.selectedSymbols = [];
 
         /**
-         * The symbol groups that belong to the project
+         * The symbol groups that belong to the project.
          * @type {SymbolGroup[]}
          */
         this.groups = [];
@@ -100,15 +100,15 @@ class SymbolsView {
     /**
      * Finds the symbol group object from a given symbol. Returns undefined if no symbol group was found.
      *
-     * @param symbol - The symbol whose group object should be found
-     * @returns {SymbolGroup|undefined} - The found symbol group or undefined
+     * @param symbol - The symbol whose group object should be found.
+     * @returns {SymbolGroup|undefined} - The found symbol group or undefined.
      */
     findGroupFromSymbol(symbol) {
         return this.groups.find(g =>g.id === symbol.group);
     }
 
     /**
-     * Extracts all symbols from all symbol groups and merges them into a single array
+     * Extracts all symbols from all symbol groups and merges them into a single array.
      *
      * @returns {AlphabetSymbol[]}
      */
@@ -117,9 +117,9 @@ class SymbolsView {
     }
 
     /**
-     * Adds a single new symbol to the scope by finding its corresponding group and adding it there
+     * Adds a single new symbol to the scope by finding its corresponding group and adding it there.
      *
-     * @param {AlphabetSymbol} symbol - The symbol that should be added
+     * @param {AlphabetSymbol} symbol - The symbol that should be added.
      */
     addSymbol(symbol) {
         this.findGroupFromSymbol(symbol).symbols.push(symbol);
@@ -127,9 +127,9 @@ class SymbolsView {
 
     /**
      * Removes a list of symbols from the scope by finding the group of each symbol and removing it from
-     * it
+     * it.
      *
-     * @param {AlphabetSymbol[]} symbols - The symbols that should be removed
+     * @param {AlphabetSymbol[]} symbols - The symbols that should be removed.
      */
     removeSymbols(symbols) {
         symbols.forEach(symbol => {
@@ -139,18 +139,18 @@ class SymbolsView {
     }
 
     /**
-     * Updates an existing symbol
+     * Updates an existing symbol.
      *
-     * @param {AlphabetSymbol} updatedSymbol - The updated symbol object
+     * @param {AlphabetSymbol} updatedSymbol - The updated symbol object.
      */
     updateSymbol(updatedSymbol) {
         this.updateSymbols([updatedSymbol]);
     }
 
     /**
-     * Updates multiple existing symbols
+     * Updates multiple existing symbols.
      *
-     * @param {AlphabetSymbol[]} updatedSymbols - The updated symbol objects
+     * @param {AlphabetSymbol[]} updatedSymbols - The updated symbol objects.
      */
     updateSymbols(updatedSymbols) {
         updatedSymbols.forEach(symbol => {
@@ -168,8 +168,8 @@ class SymbolsView {
     /**
      * Moves a list of existing symbols into another group.
      *
-     * @param {AlphabetSymbol[]} symbols - The symbols that should be moved
-     * @param {SymbolGroup} group - The group the symbols should be moved into
+     * @param {AlphabetSymbol[]} symbols - The symbols that should be moved.
+     * @param {SymbolGroup} group - The group the symbols should be moved into.
      */
     moveSymbolsToGroup(symbols, group) {
         const toGroup = this.groups.find(g => g.id === group.id);
@@ -184,13 +184,13 @@ class SymbolsView {
     }
 
     /**
-     * Deletes a single symbol from the server and from the scope if the deletion was successful
+     * Deletes a single symbol from the server and from the scope if the deletion was successful.
      *
-     * @param {AlphabetSymbol} symbol - The symbol to be deleted
+     * @param {AlphabetSymbol} symbol - The symbol to be deleted.
      */
     deleteSymbol(symbol) {
         this.SymbolResource.remove(symbol)
-            .success(() => {
+            .then(() => {
                 this.ToastService.success('Symbol <strong>' + symbol.name + '</strong> deleted');
                 this.removeSymbols([symbol]);
             })
@@ -200,11 +200,11 @@ class SymbolsView {
     }
 
     /**
-     * Deletes all symbols that the user selected from the server and the scope, if the deletion was successful
+     * Deletes all symbols that the user selected from the server and the scope, if the deletion was successful.
      */
     deleteSelectedSymbols() {
         this.SymbolResource.removeMany(this.selectedSymbols)
-            .success(() => {
+            .then(() => {
                 this.ToastService.success('Symbols deleted');
                 this.removeSymbols(this.selectedSymbols);
             })
@@ -215,9 +215,9 @@ class SymbolsView {
 
     /**
      * Updates a symbol group in the scope by changing its name property to the one of the groups that is passed
-     * as a parameter
+     * as a parameter.
      *
-     * @param {SymbolGroup} updatedGroup - The updated symbol group
+     * @param {SymbolGroup} updatedGroup - The updated symbol group.
      */
     updateGroup(updatedGroup) {
         const group = this.groups.find(g => g.id === updatedGroup.id);
@@ -225,9 +225,9 @@ class SymbolsView {
     }
 
     /**
-     * Removes a symbol group from the scope and also removes its symbols
+     * Removes a symbol group from the scope and also removes its symbols.
      *
-     * @param {SymbolGroup} group
+     * @param {SymbolGroup} group - The group to delete.
      */
     deleteGroup(group) {
         this.removeSymbols(group.symbols);
@@ -279,5 +279,5 @@ class SymbolsView {
 export const symbolsView = {
     controller: SymbolsView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/symbols.html'
+    templateUrl: 'html/components/views/symbols.html'
 };

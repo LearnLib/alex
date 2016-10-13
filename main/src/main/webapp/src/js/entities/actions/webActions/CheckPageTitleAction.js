@@ -14,34 +14,38 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
-/** Searches for a piece of text or a regular expression in the HTML document */
+/**
+ * Searches for a piece of text or a regular expression in the HTML document.
+ */
 export class CheckPageTitleAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
+     * Constructor.
+     *
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.WEB_CHECK_PAGE_TITLE, obj);
 
         /**
-         * The page title to look for or the regexp to match the title against
+         * The page title to look for or the regexp to match the title against.
          * @type {*|string}
          */
         this.title = obj.title || '';
 
         /**
-         * If the title should be interpreted as regexp
+         * If the title should be interpreted as regexp.
          * @type {*|boolean}
          */
         this.regexp = obj.regexp || false;
     }
 
     /**
-     * A string presentation of the actions
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

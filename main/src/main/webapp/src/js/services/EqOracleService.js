@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-import {eqOracleType} from '../constants';
-import {RandomEqOracle, CompleteEqOracle, SampleEqOracle, WMethodEqOracle} from '../entities/EqOracle';
+import {eqOracleType} from "../constants";
+import {RandomEqOracle, CompleteEqOracle, SampleEqOracle, WMethodEqOracle, HypothesisEqOracle} from "../entities/EqOracle";
 
-/** The service to create new eq oracles */
+/**
+ * The service to create new eq oracles.
+ */
 export class EqOracleService {
 
     /**
-     * Creates an eqOracle from a given type
-     * @param obj
+     * Creates an eqOracle from a given type.
+     *
+     * @param {*} obj - The object to create the eq oracle from.
      * @returns {*}
      */
     create(obj) {
@@ -35,14 +38,17 @@ export class EqOracleService {
                 return new SampleEqOracle(obj.counterExamples);
             case eqOracleType.WMETHOD:
                 return new WMethodEqOracle(obj.maxDepth);
+            case eqOracleType.HYPOTHESIS:
+                return new HypothesisEqOracle(obj.hypothesis);
             default:
                 return null;
         }
     }
 
     /**
-     * The type of the eqOracle to create
-     * @param {string} type
+     * The type of the eqOracle to create.
+     *
+     * @param {string} type - The type to create the eq oracle from.
      * @returns {*}
      */
     createFromType(type) {

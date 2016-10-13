@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
+import _ from "lodash";
 
 /**
- * The service that helps transforming learn results into chart data that is required by n3-line-chart
+ * The service that helps transforming learn results into chart data that is required by n3-line-chart.
  */
 export class LearnerResultChartService {
 
     /**
-     * Creates chart data for a single final result
+     * Creates chart data for a single final result.
+     *
      * @param {LearnResult} result
      * @returns {{context, options, data}|*}
      */
@@ -33,7 +34,6 @@ export class LearnerResultChartService {
     }
 
     /**
-     *
      * @param {LearnResult} result
      */
     createDataSingleComplete(result) {
@@ -83,10 +83,10 @@ export class LearnerResultChartService {
 
         result.steps.forEach((step, i) => {
             data.eqs.dataset.push({x: i + 1, y: step.statistics.eqsUsed});
-            data.mqs.dataset.push({x: i + 1, y: step.statistics.mqsUsed});
-            data.symbols.dataset.push({x: i + 1, y: step.statistics.symbolsUsed});
+            data.mqs.dataset.push({x: i + 1, y: step.statistics.mqsUsed.total});
+            data.symbols.dataset.push({x: i + 1, y: step.statistics.symbolsUsed.total});
             data.sigma.dataset.push({x: i + 1, y: result.sigma.length});
-            data.duration.dataset.push({x: i + 1, y: step.statistics.duration});
+            data.duration.dataset.push({x: i + 1, y: step.statistics.duration.total});
         });
 
         return {
@@ -144,10 +144,10 @@ export class LearnerResultChartService {
         results.forEach((result, i) => {
             let j = i + 1;
             data.eqs.dataset.push({x: j, y: result.statistics.eqsUsed});
-            data.mqs.dataset.push({x: j, y: result.statistics.mqsUsed});
-            data.symbols.dataset.push({x: j, y: result.statistics.symbolsUsed});
+            data.mqs.dataset.push({x: j, y: result.statistics.mqsUsed.total});
+            data.symbols.dataset.push({x: j, y: result.statistics.symbolsUsed.total});
             data.sigma.dataset.push({x: j, y: result.sigma.length});
-            data.duration.dataset.push({x: j, y: result.statistics.duration});
+            data.duration.dataset.push({x: j, y: result.statistics.duration.total});
         });
 
         const last = results.length + 1;
@@ -202,17 +202,29 @@ export class LearnerResultChartService {
             }
         };
 
-        const data = {eqs: {dataset: []}, mqs: {dataset: []}, symbols: {dataset: []}, sigma: {dataset: []}, duration: {dataset: []}};
-        const values = {eqs: {dataset: []}, mqs: {dataset: []}, symbols: {dataset: []}, sigma: {dataset: []}, duration: {dataset: []}};
+        const data = {
+            eqs: {dataset: []},
+            mqs: {dataset: []},
+            symbols: {dataset: []},
+            sigma: {dataset: []},
+            duration: {dataset: []}
+        };
+        const values = {
+            eqs: {dataset: []},
+            mqs: {dataset: []},
+            symbols: {dataset: []},
+            sigma: {dataset: []},
+            duration: {dataset: []}
+        };
 
         results.forEach((result, i) => {
 
             // extract all values from the results
             const eqs = result.steps.map(s => s.statistics.eqsUsed);
-            const mqs = result.steps.map(s => s.statistics.mqsUsed);
-            const symbols = result.steps.map(s => s.statistics.symbolsUsed);
+            const mqs = result.steps.map(s => s.statistics.mqsUsed.total);
+            const symbols = result.steps.map(s => s.statistics.symbolsUsed.total);
             const sigma = result.steps.map(s => result.sigma.length);
-            const duration = result.steps.map(s => s.statistics.duration);
+            const duration = result.steps.map(s => s.statistics.duration.total);
 
             // fill all other values with zeroes in order to
             // reduce visual bugs

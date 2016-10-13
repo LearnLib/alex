@@ -26,7 +26,6 @@ import java.io.Serializable;
  */
 public class CompactMealyTransitionProxy implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -5676454094797505993L;
 
     /** The number of the state on which the transition starts. */

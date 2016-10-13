@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
+import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
 
 /**
- * The controller for the page where the revision history if a symbol is listed and old revisions can be restored
+ * The controller for the page where the revision history if a symbol is listed and old revisions can be restored.
  */
 class SymbolsHistoryView {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $stateParams
      * @param {SymbolResource} SymbolResource
      * @param {SessionService} SessionService
@@ -38,13 +39,13 @@ class SymbolsHistoryView {
         const project = SessionService.getProject();
 
         /**
-         * All revisions of a symbol
+         * All revisions of a symbol.
          * @type {AlphabetSymbol[]}
          */
         this.revisions = [];
 
         /**
-         * The most current version of a symbol
+         * The most current version of a symbol.
          * @type {AlphabetSymbol}
          */
         this.latestRevision = null;
@@ -61,8 +62,9 @@ class SymbolsHistoryView {
     }
 
     /**
-     * Restores a previous revision of a symbol by updating the latest with the properties of the revision
-     * @param {AlphabetSymbol} revision - The revision of the symbol that should be restored
+     * Restores a previous revision of a symbol by updating the latest with the properties of the revision.
+     *
+     * @param {AlphabetSymbol} revision - The revision of the symbol that should be restored.
      */
     restoreRevision(revision) {
         const symbol = new AlphabetSymbol(this.latestRevision);
@@ -88,5 +90,5 @@ class SymbolsHistoryView {
 export const symbolsHistoryView = {
     controller: SymbolsHistoryView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/symbols-history.html'
+    templateUrl: 'html/components/views/symbols-history.html'
 };

@@ -34,7 +34,6 @@ import java.io.Serializable;
 @JsonTypeName("complete")
 public class CompleteExplorationEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 8363769818889990904L;
 
     /** The minimal depth to explore, i.e. minimal length of words to test. */

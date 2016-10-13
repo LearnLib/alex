@@ -23,22 +23,34 @@ import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.ReadOutputConfig;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
+import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.WebBrowser;
+import de.learnlib.alex.core.services.LearnAlgorithmService;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.oracles.ResetCounterSUL;
+import net.automatalib.automata.transout.impl.compact.CompactMealy;
+import net.automatalib.util.automata.Automata;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+import org.apache.logging.log4j.ThreadContext;
+import org.apache.tomcat.util.descriptor.web.ContextHandler;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,6 +74,10 @@ public class Learner {
     /** How many concurrent threads the system can handle. */
     private static final int MAX_CONCURRENT_THREADS = 2;
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
+
     /** The SymbolDAO to use. */
     @Inject
     private SymbolDAO symbolDAO;
@@ -69,6 +85,10 @@ public class Learner {
     /** The LearnerResultDAO to use. */
     @Inject
     private LearnerResultDAO learnerResultDAO;
+
+    /** The {@link LearnAlgorithmService} to use. */
+    @Inject
+    private LearnAlgorithmService algorithmService;
 
     /**
      * Factory to create a new ContextHandler.
@@ -98,7 +118,7 @@ public class Learner {
      * The SymbolDAO and LearnerResultDAO must be externally injected.
      */
     public Learner() {
-        this.userThreads   = new HashMap<>();
+        this.userThreads      = new HashMap<>();
         this.executorService = Executors.newFixedThreadPool(MAX_CONCURRENT_THREADS);
     }
 
@@ -109,18 +129,31 @@ public class Learner {
      *         The SymbolDAO to use.
      * @param learnerResultDAO
      *         The LearnerResultDAO to use.
+     * @param algorithmService
+     *         The AlgorithmService to use.
      * @param contextHandlerFactory
      *         The factory that will be used to create new context handler.
      * @param learnerThreadFactory
      *         The factory to create the learner threads.
      */
-    Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO,
-                   ConnectorContextHandlerFactory contextHandlerFactory, LearnerThreadFactory learnerThreadFactory) {
+    Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO, LearnAlgorithmService algorithmService,
+            ConnectorContextHandlerFactory contextHandlerFactory, LearnerThreadFactory learnerThreadFactory) {
         this();
-        this.symbolDAO = symbolDAO;
-        this.learnerResultDAO = learnerResultDAO;
+        this.symbolDAO             = symbolDAO;
+        this.learnerResultDAO      = learnerResultDAO;
+        this.algorithmService      = algorithmService;
         this.contextHandlerFactory = contextHandlerFactory;
-        this.learnerThreadFactory = learnerThreadFactory;
+        this.learnerThreadFactory  = learnerThreadFactory;
+    }
+
+    /**
+     * Used only for testing.
+     *
+     * @param contextHandler
+     *         The new context handler to use.
+     */
+    void setContextHandler(ConnectorContextHandler contextHandler) {
+        this.contextHandler = contextHandler;
     }
 
     /**
@@ -162,7 +195,7 @@ public class Learner {
 
         // get the sul here once so that the timer doesn't get '0' for .getStatisticalData.getCount() after continuing
         // a learning process
-        learnThread.getResetCounterSUL();
+        //learnThread.getResetCounterSUL();
     }
 
     private LearnerResult createLearnerResult(User user, Project project, LearnerConfiguration configuration)
@@ -195,6 +228,7 @@ public class Learner {
 
         learnerResult.setBrowser(configuration.getBrowser());
         learnerResult.setAlgorithm(configuration.getAlgorithm());
+        learnerResult.setAlgorithmFactory(algorithmService.getLearnAlgorithm(configuration.getAlgorithm()));
         learnerResult.setComment(configuration.getComment());
         learnerResultDAO.create(learnerResult);
         learnerResultDAO.createStep(learnerResult, configuration);
@@ -389,41 +423,6 @@ public class Learner {
     }
 
     /**
-     * Get the number of executed MQs in the current learn process.
-     *
-     * @param user
-     *         The User that wants to his MQs used.
-     * @return null if the learnThread has not been started or the number of executed MQs in the current learn process
-     */
-    public Long getMQsUsed(User user) {
-        LearnerThread learnerThread = userThreads.get(user);
-
-        if (learnerThread == null) {
-            return null;
-        } else {
-            ResetCounterSUL resetCounterSUL = learnerThread.getResetCounterSUL();
-            return resetCounterSUL.getStatisticalData().getCount();
-        }
-    }
-
-    /**
-     * Get the date and time when the learner started learning.
-     *
-     * @param user
-     *         The user that wants to see his latest start date.
-     * @return The date and time when the learner started learning.
-     */
-    public ZonedDateTime getStartDate(User user) {
-        LearnerThread learnerThread = userThreads.get(user);
-
-        if (learnerThread == null) {
-            return null;
-        } else {
-            return getResult(user).getStatistics().getStartDate();
-        }
-    }
-
-    /**
      * Determine the output of the SUL by testing a sequence of input symbols.
      *
      * @param user
@@ -440,23 +439,91 @@ public class Learner {
      */
     public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols)
             throws LearnerException {
-        if (contextHandler == null) {
-            // todo: remove hardcoded browser
-            contextHandler = contextHandlerFactory.createContext(project, WebBrowser.HTMLUNITDRIVER);
-        }
-        contextHandler.setResetSymbol(resetSymbol);
+        ThreadContext.put("userId", String.valueOf(user.getId()));
+        ThreadContext.put("testNo", "readOutputs");
+        ThreadContext.put("indent", "");
+        LOGGER.traceEntry();
+        LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
 
+        contextHandler.setResetSymbol(resetSymbol);
         ConnectorManager connectors = contextHandler.createContext();
 
+        return readOutputs(symbols, connectors);
+    }
+
+    /**
+     * Determine the output of the SUL by testing a sequence of input symbols.
+     *
+     * @param user
+     *         The user in which context the test should happen.
+     * @param project
+     *         The project in which context the test should happen.
+     * @param resetSymbol
+     *         The reset symbol to use.
+     * @param symbols
+     *         The symbol sequence to execute in order to generate the output sequence.
+     * @param readOutputConfig
+     *         The config for reading the outputs.
+     * @return The following output sequence.
+     * @throws LearnerException
+     *         If something went wrong while testing the symbols.
+     */
+    public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols,
+                                    ReadOutputConfig readOutputConfig)
+            throws LearnerException {
+        ThreadContext.put("userId", String.valueOf(user.getId()));
+        ThreadContext.put("testNo", "readOutputs");
+        ThreadContext.put("indent", "");
+        LOGGER.traceEntry();
+        LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
+
+        ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(project, readOutputConfig.getBrowser());
+        contextHandler.setResetSymbol(resetSymbol);
+        ConnectorManager connectors = contextHandler.createContext();
+
+        return readOutputs(symbols, connectors);
+    }
+
+    private List<String> readOutputs(List<Symbol> symbols, ConnectorManager connectors) {
+        LOGGER.traceEntry();
         try {
             List<String> output = symbols.stream().map(s ->
                     s.execute(connectors).toString()).collect(Collectors.toList());
             connectors.dispose();
+
+            LOGGER.traceExit(output);
             return output;
         } catch (Exception e) {
             connectors.dispose();
+
+            LOGGER.traceExit(e);
             throw new LearnerException("Could not read the outputs", e);
         }
     }
 
+    /**
+     * Compare two MealyMachines and calculate their separating word.
+     *
+     * @param mealy1
+     *         The first Mealy to compare.
+     * @param mealy2
+     *         The second Mealy to compare.
+     * @return If the machines are different: The corresponding separating word; otherwise: ""
+     */
+    public String compare(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {
+        Alphabet alphabetProxy1 = mealy1.createAlphabet();
+        Alphabet alphabetProxy2 = mealy1.createAlphabet();
+
+        CompactMealy mealyMachine1 = mealy1.createMealyMachine(alphabetProxy1);
+        CompactMealy mealyMachine2 = mealy2.createMealyMachine(alphabetProxy2);
+
+        Word separatingWord = Automata.findSeparatingWord(mealyMachine1, mealyMachine2, alphabetProxy1);
+
+        String result = "";
+        if (separatingWord != null) {
+            result = separatingWord.toString();
+        }
+
+        return result;
+    }
 }

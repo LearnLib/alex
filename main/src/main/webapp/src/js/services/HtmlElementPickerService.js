@@ -18,7 +18,7 @@
 let instance = null;
 
 /**
- * The service fot the html element picker
+ * The service fot the html element picker.
  */
 export class HtmlElementPickerService {
 
@@ -27,9 +27,9 @@ export class HtmlElementPickerService {
      */
     constructor() {
         if (instance !== null) return instance;
-        
+
         /**
-         * The promise that is used to communicate between the picker and the handle
+         * The promise that is used to communicate between the picker and the handle.
          * @type {Promise|null}
          */
         this.deferred = null;

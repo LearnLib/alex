@@ -17,7 +17,7 @@
 /**
  * The component that displays a single symbol group.
  *
- * Use: <symbol-group-list-item group="..." editable="..."></symbol-group-list-item>
+ * Use: <symbol-group-list-item group="..." editable="..."></symbol-group-list-item>.
  *
  * Set attribute 'editable' to 'true' so that an icon to edit the group is displayed. Omit it
  * otherwise.
@@ -25,14 +25,15 @@
 class SymbolGroupListItem {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $attrs
      */
     // @ngInject
     constructor($attrs) {
 
         /**
-         * If the option to edit the group should be displayed
+         * If the option to edit the group should be displayed.
          * @type {boolean}
          */
         this.editable = $attrs.editable === 'true';

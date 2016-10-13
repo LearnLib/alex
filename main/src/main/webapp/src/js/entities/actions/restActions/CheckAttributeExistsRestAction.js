@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
 /**
  * Checks in a HTTP response body that is formatted in JSON if a specific attribute exists.
- * E.g. object.attribute.anotherAttribute
+ * E.g. object.attribute.anotherAttribute.
  */
 export class CheckAttributeExistsRestAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
-     * @constructor
+     * Constructor.
+     *
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.REST_CHECK_ATTRIBUTE_EXISTS, obj);
 
         /**
-         * The JSON property
+         * The JSON property.
          * @type {string}
          */
         this.attribute = obj.attribute || '';
     }
 
     /**
-     * A string presentation of the actions
+     * A string representation of the action.
      * @returns {string}
      */
     toString() {

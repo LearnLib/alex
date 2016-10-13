@@ -42,12 +42,12 @@ public class LearnerStatusTest {
         LearnerResult learnerResult = new LearnerResult();
         Statistics statistics = new Statistics();
         statistics.setStartDate(ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00"));
-        statistics.setMqsUsed(0L);
+        statistics.setMqsUsed(new Statistics.DetailedStatistics(1L, 1L));
         learnerResult.setStatistics(statistics);
         learnerResult.setTestNo(0L);
 
         String expectedJSON = "{\"active\":true,\"project\":0,\"statistics\":"
-                                + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},\"testNo\":0}";
+                                + "{\"mqsUsed\":2,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},\"testNo\":0}";
 
         LearnerStatus status = new LearnerStatus(learnerResult);
 

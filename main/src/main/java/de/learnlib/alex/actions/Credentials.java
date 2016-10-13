@@ -3,12 +3,15 @@ package de.learnlib.alex.actions;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 /**
  * Helper class to store and transfer authentication credentials, i.e. user name / email and password.
  */
 @Embeddable
-public class Credentials {
+public class Credentials implements Serializable {
+
+    private static final long serialVersionUID = 4146724090787542690L;
 
     /** The name to use for authentication. */
     private String name;

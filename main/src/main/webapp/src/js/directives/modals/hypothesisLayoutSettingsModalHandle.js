@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
+import {events} from "../../constants";
 
-/** The controller that handles the modal dialog for changing the layout settings of a hypothesis */
+/**
+ * The controller that handles the modal dialog for changing the layout settings of a hypothesis.
+ */
 export class HypothesisLayoutSettingsController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModalInstance
      * @param modalData
      * @param EventBus
@@ -31,7 +34,7 @@ export class HypothesisLayoutSettingsController {
         this.EventBus = EventBus;
 
         /**
-         * The default layout settings for a hypothesis
+         * The default layout settings for a hypothesis.
          * @type {{nodesep: number, edgesep: number, ranksep: number}}
          */
         this.defaultLayoutProperties = {
@@ -49,18 +52,24 @@ export class HypothesisLayoutSettingsController {
         }
     }
 
-    /** Closes the modal window and passes the updated layout settings */
+    /**
+     * Closes the modal window and passes the updated layout settings.
+     */
     update() {
         this.EventBus.emit(events.HYPOTHESIS_LAYOUT_UPDATED, {settings: this.layoutSettings});
         this.close();
     }
 
-    /** Closes the modal window */
+    /**
+     * Closes the modal window.
+     */
     close() {
         this.$uibModalInstance.dismiss();
     }
 
-    /** Sets the layout settings to its default values */
+    /**
+     * Sets the layout settings to its default values.
+     */
     defaultLayoutSettings() {
         this.layoutSettings = this.defaultLayoutProperties;
     }
@@ -76,10 +85,10 @@ export class HypothesisLayoutSettingsController {
  *
  * Attribute 'layoutSettings' {Object} should be the model that is passed to the hypothesis directive.
  *
- * Use: '<button hypothesis-layout-settings-modal-handle layout-settings="...">Click Me!</button>'
+ * Use: '<button hypothesis-layout-settings-modal-handle layout-settings="...">Click Me!</button>'.
  *
- * @param $uibModal - The ui.boostrap $modal service
- * @returns {{restrict: string, scope: {layoutSettings: string}, link: link}}
+ * @param $uibModal - The ui.boostrap $modal service.
+ * @returns {{restrict: string, scope: {layoutSettings: string}, link: Function}}
  */
 // @ngInject
 export function hypothesisLayoutSettingsModalHandle($uibModal) {
@@ -88,23 +97,21 @@ export function hypothesisLayoutSettingsModalHandle($uibModal) {
         scope: {
             layoutSettings: '='
         },
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/modals/hypothesis-layout-settings-modal.html',
-                controller: HypothesisLayoutSettingsController,
-                controllerAs: 'vm',
-                resolve: {
-                    modalData: function () {
-                        return {
-                            layoutSettings: angular.copy(scope.layoutSettings)
-                        };
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/hypothesis-layout-settings-modal.html',
+                    controller: HypothesisLayoutSettingsController,
+                    controllerAs: 'vm',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                layoutSettings: angular.copy(scope.layoutSettings)
+                            };
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
+    };
 }

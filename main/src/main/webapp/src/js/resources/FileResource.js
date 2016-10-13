@@ -20,7 +20,8 @@
 export class FileResource {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $http
      */
     // @ngInject
@@ -29,9 +30,9 @@ export class FileResource {
     }
 
     /**
-     * Fetches all available files from the server that belong to a project
+     * Fetches all available files from the server that belong to a project.
      *
-     * @param {number} projectId - The id of the project
+     * @param {number} projectId - The id of the project.
      */
     getAll(projectId) {
         return this.$http.get(`rest/projects/${projectId}/files`)
@@ -39,10 +40,10 @@ export class FileResource {
     }
 
     /**
-     * Deletes a single file from the server
+     * Deletes a single file from the server.
      *
-     * @param {number} projectId - The id of the project
-     * @param {File} file - The file object to be deleted
+     * @param {number} projectId - The id of the project.
+     * @param {File} file - The file object to be deleted.
      */
     remove(projectId, file) {
         const encodedFileName = encodeURI(file.name);

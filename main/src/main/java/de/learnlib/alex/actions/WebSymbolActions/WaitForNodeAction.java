@@ -7,8 +7,11 @@ import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.utils.CSSUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -26,13 +29,11 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("web_waitForNode")
 public class WaitForNodeAction extends WebSymbolAction {
 
-    /**
-     * to be serializable.
-     */
     private static final long serialVersionUID = 4029222122474954117L;
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Enumeration to specify the wait criterion.
@@ -180,11 +181,13 @@ public class WaitForNodeAction extends WebSymbolAction {
             }
             return getSuccessOutput();
         } catch (TimeoutException e) {
-            LOGGER.info("Waiting on the node '" + selector + "' (criterion: '" + waitCriterion + "') timed out.");
+            LOGGER.info(LEARNER_MARKER, "Waiting on the node '{}' (criterion: '{}') timed out.",
+                        selector, waitCriterion);
+            return getFailedOutput();
+        } catch (NoSuchElementException e) {
+            LOGGER.info(LEARNER_MARKER, "The node with the selector {} (criterion: '{}') could not be found.",
+                    selector, waitCriterion);
             return getFailedOutput();
         }
-
     }
-
-
 }

@@ -4,12 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
-import de.learnlib.alex.core.dao.SettingsDAOImpl;
-import de.learnlib.alex.core.entities.Settings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.MarionetteDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -28,11 +27,13 @@ public enum WebBrowser {
     FIREFOX(MarionetteDriver.class),
 
     /** Simple & headless browser. This is the default driver. */
-    HTMLUNITDRIVER(HtmlUnitDriver.class);
+    HTMLUNITDRIVER(HtmlUnitDriver.class),
+
+    /** Use Microsoft Edge. */
+    EDGE(EdgeDriver.class);
 
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("leaner");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The connected WebDriver class. */
     private Class webDriverClass;
@@ -73,8 +74,6 @@ public enum WebBrowser {
      *          If the instantiation of the driver failed.
      */
     public WebDriver getWebDriver() throws Exception {
-        Settings settings = new SettingsDAOImpl().get();
-
         try {
             switch (this) {
                 case HTMLUNITDRIVER:
@@ -82,17 +81,18 @@ public enum WebBrowser {
                     enableJavaScript(driver);
                     return driver;
                 case CHROME:
-                    System.setProperty("webdriver.chrome.driver", settings.getDriverSettings().getChrome());
                     DesiredCapabilities chromeCapabilities = DesiredCapabilities.chrome();
                     return new ChromeDriver(chromeCapabilities);
                 case FIREFOX:
-                    System.setProperty("webdriver.gecko.driver", settings.getDriverSettings().getFirefox());
                     DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
                     return new MarionetteDriver(firefoxCapabilities);
+                case EDGE:
+                    DesiredCapabilities edgeCapabilities = DesiredCapabilities.edge();
+                    return new EdgeDriver(edgeCapabilities);
                 default:
                     throw new Exception();
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOGGER.warn("Could not create a WebDriver.", e);
             throw e;
         }

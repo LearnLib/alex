@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {chartMode} from '../../constants';
+import {chartMode} from "../../constants";
 
 /**
  * The controller for the learn statistics page.
@@ -23,6 +23,7 @@ class StatisticsCompareView {
 
     /**
      * Constructor.
+     *
      * @param {SessionService} SessionService
      * @param {LearnResultResource} LearnResultResource
      * @param {LearnerResultChartService} LearnerResultChartService
@@ -35,7 +36,6 @@ class StatisticsCompareView {
     // @ngInject
     constructor(SessionService, LearnResultResource, LearnerResultChartService, ToastService, $stateParams, $state,
                 DownloadService, PromptService) {
-
         this.LearnResultResource = LearnResultResource;
         this.LearnerResultChartService = LearnerResultChartService;
         this.ToastService = ToastService;
@@ -61,37 +61,37 @@ class StatisticsCompareView {
         }
 
         /**
-         * The project that is in the session
+         * The project that is in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * The list of test result nos that are used for the chart
+         * The list of test result nos that are used for the chart.
          * @type{number[]}
          */
         this.testNos = $stateParams.testNos.split(',').map(t => Number.parseInt(t));
 
         /**
-         * Make the chart mode dictionary available in the view
+         * Make the chart mode dictionary available in the view.
          * @type {object}
          */
         this.chartMode = chartMode;
 
         /**
-         * The data to fill the charts
+         * The data to fill the charts.
          * @type {object}
          */
         this.chartData = {};
 
         /**
-         * The selected chart mode
+         * The selected chart mode.
          * @type {string}
          */
         this.selectedChartMode = $stateParams.mode;
 
         /**
-         * If the charts should be shown in two columns
+         * If the charts should be shown in two columns.
          * @type {boolean}
          */
         this.showInColumns = true;
@@ -113,7 +113,9 @@ class StatisticsCompareView {
     }
 
     /**
-     * @param {number} testNo
+     * Create chart data for a single final learn result.
+     *
+     * @param {number} testNo - The test number to create charts for.
      */
     createChartSingleFinal(testNo) {
         this.LearnResultResource.get(this.project.id, testNo)
@@ -123,7 +125,9 @@ class StatisticsCompareView {
     }
 
     /**
-     * @param {number} testNo
+     * Create chart data for a single complete learn result.
+     *
+     * @param {number} testNo - The test number to create charts for.
      */
     createChartSingleComplete(testNo) {
         this.LearnResultResource.get(this.project.id, testNo)
@@ -133,7 +137,9 @@ class StatisticsCompareView {
     }
 
     /**
-     * @param {number[]} testNos
+     * Create chart data for multiple final learn results.
+     *
+     * @param {number[]} testNos - The test numbers to create charts for.
      */
     createChartMultipleFinal(testNos) {
         this.LearnResultResource.getAll(this.project.id).then(results => {
@@ -145,7 +151,9 @@ class StatisticsCompareView {
     }
 
     /**
-     * @param {number[]} testNos
+     * Create chart data for multiple complete learn results.
+     *
+     * @param {number[]} testNos - The test numbers to create charts for.
      */
     createChartMultipleComplete(testNos) {
         this.LearnResultResource.getAll(this.project.id).then(results => {
@@ -187,6 +195,11 @@ class StatisticsCompareView {
         }, 100);
     }
 
+    /**
+     * Download the chart as svg.
+     *
+     * @param {string} selector - The selector of the svg.
+     */
     downloadChart(selector) {
         this.PromptService.prompt("Enter a name for the svg file")
             .then(filename => {
@@ -198,5 +211,5 @@ class StatisticsCompareView {
 export const statisticsCompareView = {
     controller: StatisticsCompareView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/statistics-compare.html'
+    templateUrl: 'html/components/views/statistics-compare.html'
 };

@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
+import net.automatalib.words.impl.SimpleAlphabet;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -34,6 +35,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Proxy around a {@link MealyMachine} from the LearnLib.
@@ -44,7 +47,6 @@ import java.util.Map;
 @Embeddable
 public class CompactMealyMachineProxy implements Serializable {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -5155147869595906457L;
 
     /** Create one static ObjectMapper to (de-)serialize the Proxy for the DB. */
@@ -238,6 +240,21 @@ public class CompactMealyMachineProxy implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Create an Alphabet based on the proxy.
+     *
+     * @return An Alphabet with all the proxy input symbols.
+     */
+    @Transient
+    @JsonIgnore
+    public Alphabet<String> createAlphabet() {
+        Set<String> inputs = edges.stream().map(CompactMealyTransitionProxy::getInput)
+                                           .collect(Collectors.toSet());
+
+        Alphabet<String> alphabet = new SimpleAlphabet<>(inputs);
+        return alphabet;
     }
 
     /**

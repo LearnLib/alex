@@ -18,112 +18,95 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
+import de.learnlib.alex.core.repositories.UserRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.utils.IdsList;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.TransactionSystemException;
 
+import javax.persistence.RollbackException;
+import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class UserDAOImplTest {
 
-    private static final String ADMIN_MAIL = "UserDAOImplTest@alex-tests.example";
     private static final int TEST_USER_COUNT = 3;
 
-    private static UserDAO userDAO;
+    @Mock
+    private UserRepository userRepository;
 
-    private User admin;
-
-    private User user;
-
-    @BeforeClass
-    public static void beforeClass() throws NotFoundException {
-        userDAO = new UserDAOImpl();
-
-        try {
-            userDAO.getByEmail(ADMIN_MAIL);
-        } catch (NotFoundException e) {
-            User u = new User();
-            u.setEmail(ADMIN_MAIL);
-            u.setEncryptedPassword("alex");
-            u.setRole(UserRole.ADMIN);
-            userDAO.create(u);
-        }
-    }
+    private UserDAO userDAO;
 
     @Before
     public void setUp() throws NotFoundException {
-        admin = userDAO.getByEmail(ADMIN_MAIL);
-
-        user = new User();
-        user.setEmail("test@mail.de");
-        user.setEncryptedPassword("test");
-    }
-
-    @After
-    public void tearDown() throws NotFoundException {
-        List<User> users = userDAO.getAll();
-        for (User u : users) {
-            if (!u.equals(admin)) {
-                userDAO.delete(u.getId());
-            }
-        }
-
-        assertEquals(1, userDAO.getAll().size());
+        userDAO = new UserDAOImpl(userRepository);
     }
 
     @Test
     public void shouldCreateAValidUser() throws NotFoundException {
+        User user = createUser();
+
         userDAO.create(user);
 
-        User userFromDB = userDAO.getByEmail("test@mail.de");
-        assertEquals(user, userFromDB);
-        assertEquals(UserRole.REGISTERED, userFromDB.getRole());
+        verify(userRepository).save(user);
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotCreateAUserWithoutEmail() {
-        user.setEmail(null);
+    public void shouldHandleTransactionSystemExceptionsOnUserCreationGracefully() {
+        User user = createUser();
+        ConstraintViolationException constraintViolationException;
+        constraintViolationException = new ConstraintViolationException("User is not valid!", new HashSet<>());
+        RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
+        TransactionSystemException transactionSystemException;
+        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
+                                                                    rollbackException);
+        given(userRepository.save(user)).willThrow(transactionSystemException);
 
         userDAO.create(user);
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotCreateAUserWithoutPassword() {
-        user.setPassword(null);
+    public void shouldHandleConstraintViolationExceptionOnUserCreationGracefully() {
+        User user = createUser();
+        given(userRepository.save(user)).willThrow(ConstraintViolationException.class);
 
         userDAO.create(user);
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotCreateAUserWithANonUniqueEmail() {
-        user.setEmail(ADMIN_MAIL);
+    public void shouldHandleDataIntegrityViolationExceptionOnUserCreationGracefully() {
+        User user = createUser();
+        given(userRepository.save(user)).willThrow(DataIntegrityViolationException.class);
 
         userDAO.create(user);
     }
 
     @Test
     public void shouldGetAllUsers() {
-        List<User> users = new ArrayList<>();
-        for (int i = 0; i  < TEST_USER_COUNT; i++) {
-            User u = new User();
-            u.setEmail("user-" + String.valueOf(i) + "@mail.de");
-            u.setEncryptedPassword("test");
-            userDAO.create(u);
-            users.add(u);
-        }
-        users.add(admin);
+        List<User> users = createUsersList();
+        given(userRepository.findAll()).willReturn(users);
 
         List<User> allUsers = userDAO.getAll();
 
+        assertThat(allUsers.size(), is(equalTo(users.size())));
         for (User u : allUsers) {
             assertTrue(users.contains(u));
         }
@@ -131,141 +114,148 @@ public class UserDAOImplTest {
 
     @Test
     public void shouldOnlyGetAllAdmins() {
-        for (int i = 0; i  < TEST_USER_COUNT; i++) {
-            User u = new User();
-            u.setEmail("test" + i + "@mail.de");
-            u.setEncryptedPassword("test");
-            userDAO.create(u);
-        }
-        List<User> admins = new ArrayList<>();
-        for (int i = 0; i  < TEST_USER_COUNT; i++) {
-            User u = new User();
-            u.setEmail("admin" + i + "@mail.de");
-            u.setRole(UserRole.ADMIN);
-            u.setEncryptedPassword("test");
-            userDAO.create(u);
-            admins.add(u);
-        }
-        admins.add(admin);
+        List<User> users = createUsersList();
+        given(userRepository.findByRole(UserRole.ADMIN)).willReturn(users);
 
         List<User> allAdmins = userDAO.getAllByRole(UserRole.ADMIN);
-        assertEquals(admins.size(), admins.size());
+
+        assertThat(allAdmins.size(), is(equalTo(users.size())));
         for (User u : allAdmins) {
-            assertEquals(UserRole.ADMIN, u.getRole());
-            assertTrue(admins.contains(u));
+            assertTrue(users.contains(u));
         }
     }
 
     @Test
     public void shouldGetAllRegisteredUsers() {
-        List<User> registered = new ArrayList<>();
-        for (int i = 0; i  < TEST_USER_COUNT; i++) {
-            User u = new User();
-            u.setEmail("test" + i + "@mail.de");
-            u.setEncryptedPassword("test");
-            userDAO.create(u);
-            registered.add(u);
-        }
-        for (int i = 0; i  < TEST_USER_COUNT; i++) {
-            User u = new User();
-            u.setEmail("admin" + i + "@mail.de");
-            u.setRole(UserRole.ADMIN);
-            u.setEncryptedPassword("test");
-            userDAO.create(u);
-        }
+        List<User> users = createUsersList();
+        given(userRepository.findByRole(UserRole.REGISTERED)).willReturn(users);
 
         List<User> allRegistered = userDAO.getAllByRole(UserRole.REGISTERED);
-        assertEquals(registered.size(), allRegistered.size());
+
+        assertThat(allRegistered.size(), is(equalTo(users.size())));
         for (User u : allRegistered) {
-            assertEquals(UserRole.REGISTERED, u.getRole());
-            assertTrue(registered.contains(u));
+            assertTrue(users.contains(u));
         }
     }
 
     @Test
     public void shouldGetByID() throws NotFoundException {
-        userDAO.create(user);
+        User user = createUser();
+        given(userRepository.findOne(user.getId())).willReturn(user);
 
         User userFromDB = userDAO.getById(user.getId());
+
         assertEquals(user, userFromDB);
-        assertEquals(UserRole.REGISTERED, userFromDB.getRole());
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionIfTheUserCanNotBeFoundByID() throws NotFoundException {
-        userDAO.getById(Long.valueOf(TEST_USER_COUNT));
+        userDAO.getById((long) TEST_USER_COUNT);
     }
 
     @Test
     public void shouldGetByEmail() throws NotFoundException {
-        userDAO.create(user);
+        User user = createUser();
+        given(userRepository.findOneByEmail(user.getEmail())).willReturn(user);
 
         User userFromDB = userDAO.getByEmail(user.getEmail());
+
         assertEquals(user, userFromDB);
-        assertEquals(UserRole.REGISTERED, userFromDB.getRole());
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionIfTheUserCanNotBeFoundByEmail() throws NotFoundException {
+        User user = createUser();
+        given(userRepository.findOneByEmail(user.getEmail())).willReturn(null);
+
         userDAO.getByEmail(user.getEmail());
     }
 
     @Test
-    public void shouldUpdateUser() throws NotFoundException {
-        userDAO.create(user);
+    public void shouldUpdateAUser() throws NotFoundException {
+        User user = createUser();
 
-        user.setEmail("new_email@alex.example");
         userDAO.update(user);
 
-        User userFromDB = userDAO.getById(user.getId());
-        assertEquals(user, userFromDB);
+        verify(userRepository).save(user);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void shouldHandleTransactionSystemExceptionsOnUserUpdateGracefully() {
+        User user = createUser();
+        ConstraintViolationException constraintViolationException;
+        constraintViolationException = new ConstraintViolationException("User is not valid!", new HashSet<>());
+        RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
+        TransactionSystemException transactionSystemException;
+        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
+                                                                    rollbackException);
+        given(userRepository.save(user)).willThrow(transactionSystemException);
+
+        userDAO.update(user);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void shouldHandleConstraintViolationExceptionOnUserUpdateGracefully() {
+        User user = createUser();
+        given(userRepository.save(user)).willThrow(ConstraintViolationException.class);
+
+        userDAO.update(user);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void shouldHandleDataIntegrityViolationExceptionOnUserUpdateGracefully() {
+        User user = createUser();
+        given(userRepository.save(user)).willThrow(DataIntegrityViolationException.class);
+
+        userDAO.update(user);
     }
 
     @Test
     public void shouldDeleteARegisteredUser() throws NotFoundException {
-        User u = new User();
-        u.setEmail("test@mail.de");
-        u.setEncryptedPassword("test");
-        userDAO.create(u);
+        User user = createUser();
+        given(userRepository.findOne(user.getId())).willReturn(user);
 
-        userDAO.delete(u.getId());
+        userDAO.delete(user.getId());
 
-        try {
-            userDAO.getById(u.getId());
-            fail();
-        } catch (NotFoundException e) {
-            // success
-        }
+        verify(userRepository).delete(user);
     }
 
     @Test
     public void shouldDeleteAnAdminIfThereAreMoreThanOne() throws NotFoundException {
-        User u = new User();
-        u.setEmail("test@mail.de");
-        u.setEncryptedPassword("test");
-        u.setRole(UserRole.ADMIN);
-        userDAO.create(u);
+        List<User> admins = createUsersList();
+        admins.forEach(u -> u.setRole(UserRole.ADMIN));
+        User adminToDelete = admins.get(0);
+        given(userRepository.findOne(adminToDelete.getId())).willReturn(adminToDelete);
+        given(userRepository.findByRole(UserRole.ADMIN)).willReturn(admins);
 
-        List<User> admins = userDAO.getAllByRole(UserRole.ADMIN);
-        assertEquals(admins.size(), 2);
-        userDAO.delete(u.getId());
-        admins = userDAO.getAllByRole(UserRole.ADMIN);
-        assertEquals(admins.size(), 1);
-        assertTrue(!admins.contains(u));
+        userDAO.delete(adminToDelete.getId());
+
+        verify(userRepository).delete(adminToDelete);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void shouldNotDeleteTheLastAdmin() throws NotFoundException {
+        User admin = createAdmin();
+        given(userRepository.findOne(admin.getId())).willReturn(admin);
+        given(userRepository.findByRole(UserRole.ADMIN)).willReturn(Collections.singletonList(admin));
+
+        userDAO.delete(admin.getId());
     }
 
     @Test
     public void shouldDeleteMultipleUsers() throws NotFoundException {
         User user1 = new User();
+        user1.setId(42L);
         user1.setEmail("user1@mail.de");
         user1.setEncryptedPassword("test");
-
+        //
         User user2 = new User();
+        user2.setId(21L);
         user2.setEmail("user2@mail.de");
         user2.setEncryptedPassword("test");
-
-        userDAO.create(user1);
-        userDAO.create(user2);
+        //
+        given(userRepository.findOne(42L)).willReturn(user1);
+        given(userRepository.findOne(21L)).willReturn(user2);
 
         IdsList ids = new IdsList(String.valueOf(user1.getId()) + "," + String.valueOf(user2.getId()));
         userDAO.delete(ids);
@@ -276,6 +266,7 @@ public class UserDAOImplTest {
     @Test(expected = NotFoundException.class)
     public void shouldNotDeleteMultipleUsersOnNotFound() throws NotFoundException {
         User user1 = new User();
+        user1.setId(42L);
         user1.setEmail("user1@mail.de");
         user1.setEncryptedPassword("test");
 
@@ -292,6 +283,32 @@ public class UserDAOImplTest {
 
     @Test(expected = NotFoundException.class)
     public void shouldNotDeleteOnlyExistingAdmin() throws NotFoundException {
+        User admin = createAdmin();
         userDAO.delete(admin.getId());
     }
+
+    private User createUser() {
+        User user = new User();
+        user.setEmail("user@text.example");
+        user.setEncryptedPassword("alex");
+        return user;
+    }
+
+    private User createAdmin() {
+        User admin = createUser();
+        admin.setRole(UserRole.ADMIN);
+        return admin;
+    }
+
+    private List<User> createUsersList() {
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i  < TEST_USER_COUNT; i++) {
+            User u = new User();
+            u.setEmail("user-" + String.valueOf(i) + "@mail.de");
+            u.setEncryptedPassword("test");
+            users.add(u);
+        }
+        return users;
+    }
+
 }

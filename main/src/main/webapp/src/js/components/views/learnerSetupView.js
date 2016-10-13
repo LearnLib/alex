@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
-import {events} from '../../constants';
-import {LearnConfiguration} from '../../entities/LearnConfiguration';
+import _ from "lodash";
+import {events} from "../../constants";
+import {LearnConfiguration} from "../../entities/LearnConfiguration";
 
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
@@ -25,67 +25,67 @@ class LearnerSetupView {
 
     /**
      * Constructor.
+     *
      * @param $scope
      * @param $state
-     * @param SymbolGroupResource
-     * @param SessionService
-     * @param LearnerResource
-     * @param ToastService
-     * @param LearnResultResource
-     * @param EventBus
+     * @param {SymbolGroupResource} SymbolGroupResource
+     * @param {SessionService} SessionService
+     * @param {LearnerResource} LearnerResource
+     * @param {ToastService} ToastService
+     * @param {LearnResultResource} LearnResultResource
+     * @param {EventBus} EventBus
      */
     // @ngInject
     constructor($scope, $state, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource,
                 EventBus) {
-
         this.$state = $state;
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
 
         /**
-         * The project that is in the session
+         * The project that is in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * All symbol groups that belong the the sessions project
+         * All symbol groups that belong the the sessions project.
          * @type {SymbolGroup[]}
          */
         this.groups = [];
 
         /**
-         * The learn results of previous learn processes
+         * The learn results of previous learn processes.
          * @type {LearnResult[]}
          */
         this.learnResults = [];
 
         /**
-         * A list of all symbols of all groups that is used in order to select them
+         * A list of all symbols of all groups that is used in order to select them.
          * @type {AlphabetSymbol[]}
          */
         this.allSymbols = [];
 
         /**
-         * A list of selected Symbols
+         * A list of selected Symbols.
          * @type {AlphabetSymbol[]}
          */
         this.selectedSymbols = [];
 
         /**
-         * The configuration that is send to the server for learning
+         * The configuration that is send to the server for learning.
          * @type {LearnConfiguration}
          */
         this.learnConfiguration = new LearnConfiguration();
 
         /**
-         * The symbol that should be used as a reset symbol
+         * The symbol that should be used as a reset symbol.
          * @type {AlphabetSymbol|null}
          */
         this.resetSymbol = null;
 
         /**
-         * Indicates whether there is a learning process that can be continued (the last one)
+         * Indicates whether there is a learning process that can be continued (the last one).
          * @type {boolean}
          */
         this.canContinueLearnProcess = false;
@@ -130,8 +130,9 @@ class LearnerSetupView {
     }
 
     /**
-     * Sets the reset symbol
-     * @param {AlphabetSymbol} symbol - The symbol that will be used to reset the sul
+     * Sets the reset symbol.
+     *
+     * @param {AlphabetSymbol} symbol - The symbol that will be used to reset the sul.
      */
     setResetSymbol(symbol) {
         this.resetSymbol = symbol;
@@ -155,7 +156,7 @@ class LearnerSetupView {
 
                 // start learning
                 this.LearnerResource.start(this.project.id, this.learnConfiguration)
-                    .success(() => {
+                    .then(() => {
                         this.ToastService.success('Learn process started successfully.');
                         this.$state.go('learnerStart');
                     })
@@ -169,8 +170,9 @@ class LearnerSetupView {
     }
 
     /**
-     * Reuse the properties of a previous learn result for the current one
-     * @param {LearnResult} result
+     * Reuse the properties of a previous learn result for the current one.
+     *
+     * @param {LearnResult} result - The learn result from that the configuration should be reused.
      */
     reuseConfigurationFromResult(result) {
         this.learnConfiguration.algorithm = result.algorithm;
@@ -192,5 +194,5 @@ class LearnerSetupView {
 export const learnerSetupView = {
     controller: LearnerSetupView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/learner-setup.html'
+    templateUrl: 'html/components/views/learner-setup.html'
 };

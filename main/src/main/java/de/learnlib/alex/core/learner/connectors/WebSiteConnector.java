@@ -18,33 +18,16 @@ package de.learnlib.alex.core.learner.connectors;
 
 import de.learnlib.alex.actions.Credentials;
 import de.learnlib.alex.core.learner.BaseUrlManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Connector to communicate with a WebSite.
  * This is a facade around Seleniums {@link WebDriver}.
  */
 public class WebSiteConnector implements Connector {
-
-    /** How long we should wait before doing the next step. Introduced by Selenium. */
-    private static final int IMPLICITLY_WAIT_TIME = 1;
-
-    /** Max. time to wait for a request before timing out. Introduced by Selenium. */
-    private static final int PAGE_LOAD_TIMEOUT_TIME = 30;
-
-    /** Max. time to wait for JavaScript to load before aborting */
-    private static final int JAVASCRIPT_LOADING_THRESHOLD = 5000; // 5 seconds
-
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("leaner");
 
     /** The browser to use. */
     private WebBrowser browser;
@@ -74,13 +57,11 @@ public class WebSiteConnector implements Connector {
     @Override
     public void reset() throws Exception {
         this.driver = browser.getWebDriver();
-        this.driver.manage().timeouts().implicitlyWait(IMPLICITLY_WAIT_TIME, TimeUnit.SECONDS);
-        this.driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT_TIME, TimeUnit.SECONDS);
     }
 
     @Override
     public void dispose() {
-        this.driver.close();
+        this.driver.quit();
     }
 
     /**
@@ -95,18 +76,6 @@ public class WebSiteConnector implements Connector {
     public void get(String path, Credentials credentials) {
         String url = getAbsoluteUrl(path, credentials);
         driver.get(url);
-
-        // wait for page to have loaded everything
-        // or cancel after a certain time has passed
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        String pageLoadStatus;
-        long startTime = System.currentTimeMillis();
-        long timePassed;
-        do {
-            pageLoadStatus = (String) js.executeScript("return document.readyState");
-            timePassed = System.currentTimeMillis() - startTime;
-        } while (!pageLoadStatus.equals("complete") && timePassed <= JAVASCRIPT_LOADING_THRESHOLD);
-        LOGGER.debug("Page at {} loaded in {}ms (page load status: {}).", path, timePassed, pageLoadStatus);
     }
 
     /**

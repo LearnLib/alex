@@ -16,7 +16,6 @@
 
 import _ from "lodash";
 import {graphlib, dagre, render as Renderer} from "dagre-d3";
-import d3 from "d3/d3";
 
 const STYLE = {
     edgeLabel: 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 10px',
@@ -29,12 +28,13 @@ const STYLE = {
  * The component for displaying a discrimination tree in an svg element.
  * Expects another property 'data' which holds the string representation of the discrimination tree.
  *
- * Use it like: '<discrimination-tree data="...."></discrimination-tree>'
+ * Use it like: '<discrimination-tree data="...."></discrimination-tree>'.
  */
 class DiscriminationTreeComponent {
 
     /**
      * Constructor.
+     *
      * @param $scope
      * @param $element
      */
@@ -57,7 +57,7 @@ class DiscriminationTreeComponent {
         // render the new discrimination tree when property 'data' changes
         $scope.$watch('vm.data', data => {
             if (data) {
-                const graph = this.createGraph(angular.fromJson(data));
+                const graph = this.createGraph(JSON.parse(data));
                 this.layout(graph);
                 this.render();
             }
@@ -80,10 +80,10 @@ class DiscriminationTreeComponent {
     }
 
     /**
-     * Creates a graph structure from a discrimination tree in order to layout it with the given dagreD3 library
+     * Creates a graph structure from a discrimination tree in order to layout it with the given dagreD3 library.
      *
-     * @param {Object} dt - The discrimination tree
-     * @returns {{nodes: Array, edges: Array}} - The tree as graph representation
+     * @param {Object} dt - The discrimination tree.
+     * @returns {{nodes: Array, edges: Array}} - The tree as graph representation.
      */
     createGraph(dt) {
         const nodes = [];
@@ -140,9 +140,9 @@ class DiscriminationTreeComponent {
     }
 
     /**
-     * Creates positions for nodes and edges of the discrimination tree that can be rendered with dagreD3
+     * Creates positions for nodes and edges of the discrimination tree that can be rendered with dagreD3.
      *
-     * @param {Object} graph - The discrimination tree as graph
+     * @param {Object} graph - The discrimination tree as graph.
      */
     layout(graph) {
 
@@ -189,10 +189,10 @@ class DiscriminationTreeComponent {
         const xCenterOffset = (this.svgContainer.clientWidth - this.graph.graph().width) / 2;
         this.svgGroup.setAttribute("transform", "translate(" + xCenterOffset + ", 100)");
 
-        // swap defs and paths children of .edgepaths because arrows are not shown
-        // on export otherwise <.<
-        _.forEach(this.svg.querySelectorAll('.edgePath'), edgePath => {
-            edgePath.insertBefore(edgePath.childNodes[1], edgePath.firstChild);
+        // adjust marker ids so that they are still visible after the export
+        _.forEach(this.svg.querySelectorAll('.path'), path => {
+            const markerId = "#" + path.getAttribute('marker-end').split(')')[0].split('#')[1];
+            path.setAttribute('marker-end', `url(${markerId})`);
         });
 
         const zoomHandler = () => {

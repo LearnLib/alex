@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.actions.StoreSymbolActions;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
@@ -25,13 +24,14 @@ import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -42,13 +42,11 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("setVariableByNodeAttribute")
 public class SetVariableByNodeAttributeAction extends SymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 8998187003156355834L;
 
-    /** Use the learner logger. */
-    @Transient
-    @JsonIgnore
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The name of the variable. */
     @NotBlank
@@ -116,8 +114,9 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
 
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info("Could not set the variable '" + name + "' to the value of the attribute "
-                                + "of the HTML node '" + node + "'.");
+            LOGGER.info(LEARNER_MARKER, "Could not set the variable '{}' to the value of the attribute "
+                                            + "of the HTML node '{}'.",
+                        name, node);
             return getFailedOutput();
         }
     }

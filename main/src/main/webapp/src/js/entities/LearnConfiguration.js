@@ -14,50 +14,53 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm, webBrowser} from '../constants';
-import {RandomEqOracle} from '../entities/EqOracle';
+import {learnAlgorithm, webBrowser} from "../constants";
+import {RandomEqOracle} from "../entities/EqOracle";
 
-/** The model for a learn configuration */
+/**
+ * The model for a learn configuration.
+ */
 export class LearnConfiguration {
 
     /**
-     * Constructor
-     * @param obj - The object to create a learn configuration from
+     * Constructor.
+     *
+     * @param {*} obj - The object to create a learn configuration from.
      */
     constructor(obj = {}) {
 
         /**
-         * The list of id/revision pairs of symbols to learn
+         * The list of id/revision pairs of symbols to learn.
          * @type {{id:number, revision:number}[]}
          */
         this.symbols = obj.symbols || [];
 
         /**
-         * The max amount of hypotheses to generate
+         * The max amount of hypotheses to generate.
          * @type {number}
          */
         this.maxAmountOfStepsToLearn = obj.maxAmountOfStepsToLearn || -1;
 
         /**
-         * The EQ oracle to user
+         * The EQ oracle to user.
          * @type {*|RandomEqOracle}
          */
         this.eqOracle = obj.eqOracle || new RandomEqOracle(1, 10, 20);
 
         /**
-         * The algorithm to use for learning
+         * The algorithm to use for learning.
          * @type {string}
          */
         this.algorithm = obj.learnAlgorithm || learnAlgorithm.TTT;
 
         /**
-         * The id/revision pair of the reset symbol
+         * The id/revision pair of the reset symbol.
          * @type {{id:number,revision:number}|null}
          */
         this.resetSymbol = obj.resetSymbol || null;
 
         /**
-         * A comment
+         * A comment.
          * @type {string|null}
          */
         this.comment = obj.comment || null;
@@ -70,16 +73,18 @@ export class LearnConfiguration {
     }
 
     /**
-     * Adds a symbol to the configuration
-     * @param {AlphabetSymbol} symbol - The symbol to add to the config
+     * Adds a symbol to the configuration.
+     *
+     * @param {AlphabetSymbol} symbol - The symbol to add to the config.
      */
     addSymbol(symbol) {
         this.symbols.push(symbol.getIdRevisionPair());
     }
 
     /**
-     * Sets the reset symbols for the configuration
-     * @param {AlphabetSymbol} symbol - The reset symbol to use
+     * Sets the reset symbols for the configuration.
+     *
+     * @param {AlphabetSymbol} symbol - The reset symbol to use.
      */
     setResetSymbol(symbol) {
         this.resetSymbol = symbol.getIdRevisionPair();

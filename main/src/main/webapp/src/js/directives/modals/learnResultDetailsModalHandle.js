@@ -18,13 +18,12 @@
  * The controller that is used to display the details of a learn result in a modal dialog. The data that is passed
  * to this controller should be an object with a property 'result' which contains a learn result object. If none is
  * given, nothing will be displayed.
- *
- * @constructor
  */
 export class LearnResultDetailsModalController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModalInstance
      * @param modalData
      */
@@ -33,19 +32,19 @@ export class LearnResultDetailsModalController {
         this.$uibModalInstance = $uibModalInstance;
 
         /**
-         * The result to display information from
+         * The result to display information from.
          * @type {LearnResult[]}
          */
         this.result = modalData.result;
 
         /**
-         * The index of the current step
+         * The index of the current step.
          * @type {number}
          */
         this.current = modalData.current;
 
         /**
-         * The data of the tabs that are displayed
+         * The data of the tabs that are displayed.
          * @type {*[]}
          */
         this.tabs = [
@@ -59,7 +58,9 @@ export class LearnResultDetailsModalController {
         }
     }
 
-    /** Close the modal window  */
+    /**
+     * Close the modal window.
+     */
     ok() {
         this.$uibModalInstance.dismiss();
     }
@@ -71,10 +72,10 @@ export class LearnResultDetailsModalController {
  * an attribute and expects a second attribute 'result' which should be the LearnResult whose details should be
  * shown. Attaches a click event on the element that opens the modal.
  *
- * Use it like this: '<button learn-result-details-modal-handle result="...">Click me!</button>'
+ * Use it like this: '<button learn-result-details-modal-handle result="...">Click me!</button>'.
  *
- * @param $uibModal - The modal service
- * @returns {{restrict: string, scope: {result: string}, link: link}}
+ * @param $uibModal - The modal service.
+ * @returns {{restrict: string, scope: {result: string}, link: Function}}
  */
 // @ngInject
 export function learnResultDetailsModalHandle($uibModal) {
@@ -84,24 +85,22 @@ export function learnResultDetailsModalHandle($uibModal) {
             result: '=',
             current: '='
         },
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/modals/learn-result-details-modal.html',
-                controller: LearnResultDetailsModalController,
-                controllerAs: 'vm',
-                resolve: {
-                    modalData: function () {
-                        return {
-                            result: scope.result,
-                            current: scope.current
-                        };
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/learn-result-details-modal.html',
+                    controller: LearnResultDetailsModalController,
+                    controllerAs: 'vm',
+                    resolve: {
+                        modalData: function () {
+                            return {
+                                result: scope.result,
+                                current: scope.current
+                            };
+                        }
                     }
-                }
+                });
             });
-        });
-    }
+        }
+    };
 }

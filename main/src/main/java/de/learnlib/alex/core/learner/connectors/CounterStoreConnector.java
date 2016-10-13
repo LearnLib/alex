@@ -17,21 +17,23 @@
 package de.learnlib.alex.core.learner.connectors;
 
 import de.learnlib.alex.core.dao.CounterDAO;
-import de.learnlib.alex.core.dao.CounterDAOImpl;
 import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
 
 /**
  * Connector to store and manage counters.
  */
+@Service
 public class CounterStoreConnector implements Connector {
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * The DAO to persist the counters to and fetch the counters from.
@@ -39,17 +41,10 @@ public class CounterStoreConnector implements Connector {
     private CounterDAO counterDAO;
 
     /**
-     * Default constructor.
-     * Creates a new CounterDAO object.
-     */
-    public CounterStoreConnector() {
-        this(new CounterDAOImpl());
-    }
-
-    /**
      * Constructor.
      * @param counterDAO An instance of a counter dao.
      */
+    @Inject
     public CounterStoreConnector(CounterDAO counterDAO) {
         this.counterDAO = counterDAO;
     }
@@ -81,8 +76,7 @@ public class CounterStoreConnector implements Connector {
         } catch (NotFoundException e) {
             createCounter(userId, projectId, name, value);
         }
-        LOGGER.debug("Set the counter '" + name + "' in the project <" + projectId + "> "
-                     + "of user <" + userId + "> to '" + value + "'.");
+        LOGGER.debug("Set the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId, userId, value);
     }
 
     /**
@@ -103,8 +97,8 @@ public class CounterStoreConnector implements Connector {
         } catch (NotFoundException e) {
             counter = createCounter(userId, projectId, name, 1);
         }
-        LOGGER.debug("Incremented the counter '" + name + "' in the project <" + projectId + "> "
-                     + "of user <" + userId + "> to '" + counter.getValue() + "'.");
+        LOGGER.debug("Incremented the counter '{}' in the project <{}> of user <{}> to '{}'.",
+                     name, projectId, userId, counter.getValue());
     }
 
     /**
@@ -121,6 +115,10 @@ public class CounterStoreConnector implements Connector {
         try {
             Counter counter;
             counter = counterDAO.get(userId, projectId, name);
+
+            LOGGER.debug("Got the counter '{}' in the project <{}> of user <{}> with the value '{}'.",
+                         name, projectId, userId, counter.getValue());
+
             return counter.getValue();
         } catch (NotFoundException e) {
             throw new IllegalStateException("The counter '" + name + "' was not set and has no value!");

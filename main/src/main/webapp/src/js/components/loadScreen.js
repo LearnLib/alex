@@ -15,12 +15,13 @@
  */
 
 /**
- * The components of the load screen
+ * The components of the load screen.
  */
 class LoadScreen {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $scope
      * @param $http
      */
@@ -28,7 +29,7 @@ class LoadScreen {
     constructor($scope, $http) {
 
         /**
-         * If the load screen is visible or not
+         * If the load screen is visible or not.
          * @type {boolean}
          */
         this.visible = false;

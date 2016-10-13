@@ -45,8 +45,8 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 public class LearnerResultResourceTest extends JerseyTest {
@@ -230,7 +230,7 @@ public class LearnerResultResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).delete();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(learnerResultDAO).delete(admin, PROJECT_ID, RESULT_ID);
+        verify(learnerResultDAO).delete(learner, admin, PROJECT_ID, RESULT_ID);
     }
 
     @Test
@@ -239,7 +239,7 @@ public class LearnerResultResourceTest extends JerseyTest {
                                 .request().header("Authorization", adminToken).delete();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(learnerResultDAO).delete(admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        verify(learnerResultDAO).delete(learner, admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
     }
 
     @Test
@@ -251,7 +251,8 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnAnErrorIfYouTryToDeleteAnInvalidTestNo() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, admin, PROJECT_ID,
+                                                                          RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
                             .request().header("Authorization", adminToken).delete();
@@ -262,7 +263,7 @@ public class LearnerResultResourceTest extends JerseyTest {
     @Test
     public void shouldReturnAnErrorIfYouTryToDeleteAnActiveTestNo() throws NotFoundException {
         willThrow(ValidationException.class).given(learnerResultDAO)
-                                                .delete(admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+                                                .delete(learner, admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
                             .request().header("Authorization", adminToken).delete();
@@ -272,7 +273,8 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatNoTestNumberToDeleteIsHandledProperly() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, admin, PROJECT_ID,
+                                                                          RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/,,,,")
                             .request().header("Authorization", adminToken).delete();
@@ -282,7 +284,8 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatANotValidTestNumberStringOnDeletionIsHandledProperly() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, admin, PROJECT_ID,
+                                                                          RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/foobar")
                             .request().header("Authorization", adminToken).delete();

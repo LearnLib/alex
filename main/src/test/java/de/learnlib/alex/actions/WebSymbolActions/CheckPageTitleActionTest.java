@@ -148,10 +148,6 @@ public class CheckPageTitleActionTest {
         given((webSiteConnector.getDriver())).willReturn(driver);
         given(driver.getTitle()).willReturn("This is the wrong title");
 
-        CounterStoreConnector counterStoreConnector = mock(CounterStoreConnector.class);
-        given(connectors.getConnector(CounterStoreConnector.class)).willReturn(counterStoreConnector);
-        given(counterStoreConnector.get(USER_ID, PROJECT_ID, "title")).willReturn(1);
-
         checkNode.setTitle("f[o0]+bar");
         checkNode.setRegexp(true);
 

@@ -19,11 +19,9 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.learnlib.alex.core.entities.validators.UniqueProjectName;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -31,22 +29,25 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * Representation of a testing project with different symbols.
  */
 @Entity
+@Table(
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "name"})
+)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@UniqueProjectName
 public class Project implements Serializable {
 
-    /**
-     * to be serializable.
-     */
     private static final long serialVersionUID = -6760395646972200067L;
 
     /**
@@ -60,6 +61,11 @@ public class Project implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JsonIgnore
     private User user;
+
+    /** The plain ID of the User to be used in the JSON. */
+    @Transient
+    @JsonProperty("user")
+    private Long userId;
 
     /**
      * The name of the project. This property is required & must be unique.
@@ -85,16 +91,20 @@ public class Project implements Serializable {
     /**
      * The list of groups in the project.
      */
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @OneToMany(
+            mappedBy = "project",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    )
     @JsonProperty("groups")
     private Set<SymbolGroup> groups;
 
     /**
      * The default group of the project.
      */
-    @OneToOne
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @OneToOne(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private SymbolGroup defaultGroup;
 
     /**
@@ -106,9 +116,11 @@ public class Project implements Serializable {
     /**
      * The symbols used to test.
      */
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
-    @JsonProperty("symbols")
+    @OneToMany(
+            mappedBy = "project",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @JsonIgnore
     private Set<Symbol> symbols;
 
     /**
@@ -120,16 +132,20 @@ public class Project implements Serializable {
     /**
      * The results of the test for the project.
      */
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @OneToMany(
+            mappedBy = "project",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private Set<LearnerResult> testResults;
 
     /**
      * The counters of the project.
      */
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.REMOVE})
+    @OneToMany(
+            mappedBy = "project",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private Set<Counter> counters;
 
@@ -148,9 +164,11 @@ public class Project implements Serializable {
     public Project(Long projectId) {
         this.id = projectId;
         this.groups = new HashSet<>();
-        this.nextGroupId = 1L;
+        this.nextGroupId = 0L;
         this.symbols = new HashSet<>();
         this.nextSymbolId = 1L;
+
+        this.userId = 0L;
     }
 
     /**
@@ -185,6 +203,11 @@ public class Project implements Serializable {
     @JsonIgnore
     public void setUser(User user) {
         this.user = user;
+        if (user == null) {
+            this.userId = 0L;
+        } else {
+            this.userId = user.getId();
+        }
     }
 
     /**
@@ -192,11 +215,7 @@ public class Project implements Serializable {
      */
     @JsonProperty("user")
     public Long getUserId() {
-        if (user == null) {
-            return 0L;
-        } else {
-            return user.getId();
-        }
+        return userId;
     }
 
     /**
@@ -204,7 +223,8 @@ public class Project implements Serializable {
      */
     @JsonProperty("user")
     public void setUserId(Long userId) {
-        user = new User(userId);
+        this.user = null;
+        this.userId = userId;
     }
 
     /**
@@ -266,7 +286,6 @@ public class Project implements Serializable {
      *
      * @return The related groups.
      */
-    @JsonIgnore
     public Set<SymbolGroup> getGroups() {
         return groups;
     }
@@ -343,6 +362,7 @@ public class Project implements Serializable {
     /**
      * @param symbols the symbols to set
      */
+    @JsonIgnore
     public void setSymbols(Set<Symbol> symbols) {
         this.symbols = symbols;
     }
@@ -396,7 +416,7 @@ public class Project implements Serializable {
      *
      * @return The test results of the project.
      */
-    @JsonProperty("testResults")
+    @JsonProperty
     public Set<LearnerResult> getTestResults() {
         return testResults;
     }
@@ -414,7 +434,7 @@ public class Project implements Serializable {
     /**
      * @return All the counters of the Project.
      */
-    @JsonProperty("counters")
+    @JsonProperty
     public Set<Counter> getCounters() {
         return counters;
     }
@@ -427,24 +447,19 @@ public class Project implements Serializable {
         this.counters = counters;
     }
 
-    //CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber|NeedBraces - auto generated by IntelliJ IDEA
     @Override
+    @SuppressWarnings("checkstyle:needbraces") // Auto generated by IntelliJ
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Project)) return false;
-
+        if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-
-        if (id != null ? !id.equals(project.getId()) : project.getId() != null) return false;
-
-        return true;
+        return Objects.equals(id, project.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return Objects.hash(id);
     }
-    //CHECKSTYLE.ON: AvoidInlineConditionals|MagicNumber|NeedBraces
 
     @Override
     public String toString() {

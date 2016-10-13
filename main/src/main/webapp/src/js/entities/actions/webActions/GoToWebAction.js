@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
-/** Opens a URL */
+/**
+ * Opens a URL.
+ */
 export class GoToWebAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
-     * @constructor
+     * Constructor.
+     *
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.WEB_GO_TO, obj);
 
         /**
-         * The url that is called
+         * The url that is called.
          * @type {*|string}
          */
         this.url = obj.url || '';
@@ -42,7 +44,8 @@ export class GoToWebAction extends Action {
     }
 
     /**
-     * The string representation of the action
+     * The string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
+import {events} from "../../constants";
 
-/** The controller for the modal dialog that handles the creation of a new action. */
+/**
+ * The controller for the modal dialog that handles the creation of a new action.
+ */
 export class ActionCreateModalController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModalInstance
-     * @param ActionService
-     * @param SymbolResource
-     * @param SessionService
-     * @param EventBus
+     * @param {ActionService} ActionService
+     * @param {SymbolResource} SymbolResource
+     * @param {SessionService} SessionService
+     * @param {EventBus} EventBus
      */
     // @ngInject
     constructor($uibModalInstance, ActionService, SymbolResource, SessionService, EventBus) {
@@ -36,13 +39,13 @@ export class ActionCreateModalController {
         const project = SessionService.getProject();
 
         /**
-         * The model for the new action
+         * The model for the new action.
          * @type {null|Object}
          */
         this.action = null;
 
         /**
-         * All symbols of the project
+         * All symbols of the project.
          * @type {AlphabetSymbol[]}
          */
         this.symbols = [];
@@ -55,25 +58,31 @@ export class ActionCreateModalController {
 
     /**
      * Creates a new instance of an Action by a type that was clicked in the modal dialog.
-     * @param {string} type - The type of the action that should be created
+     * @param {string} type - The type of the action that should be created.
      */
     selectNewActionType(type) {
         this.action = this.ActionService.createFromType(type);
     }
 
-    /** Closes the modal dialog an passes the created action back to the handle that called the modal */
+    /**
+     * Closes the modal dialog an passes the created action back to the handle that called the modal.
+     */
     createAction() {
         this.EventBus.emit(events.ACTION_CREATED, {action: this.action});
         this.$uibModalInstance.dismiss();
     }
 
-    /** Creates a new action in the background without closing the dialog */
+    /**
+     * Creates a new action in the background without closing the dialog.
+     */
     createActionAndContinue() {
         this.EventBus.emit(events.ACTION_CREATED, {action: this.action});
         this.action = null;
     }
 
-    /** Closes the modal dialog without passing any data */
+    /**
+     * Closes the modal dialog without passing any data.
+     */
     closeModal() {
         this.$uibModalInstance.dismiss();
     }
@@ -85,27 +94,25 @@ export class ActionCreateModalController {
  * the attached element. It attaches a click event to the element that opens the modal dialog. Does NOT saves the
  * action on the server.
  *
- * Can be used like this: '<button action-create-modal-handle>Click Me!</button>'
+ * Can be used like this: '<button action-create-modal-handle>Click Me!</button>'.
  *
- * @param $uibModal - The modal service
- * @returns {{restrict: string, scope: {}, link: link}}
+ * @param $uibModal - The modal service.
+ * @returns {{restrict: string, scope: {}, link: Function}}
  */
 // @ngInject
 export function actionCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {},
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/modals/action-create-modal.html',
-                size: 'lg',
-                controller: ActionCreateModalController,
-                controllerAs: 'vm'
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/action-create-modal.html',
+                    size: 'lg',
+                    controller: ActionCreateModalController,
+                    controllerAs: 'vm'
+                });
             });
-        });
-    }
+        }
+    };
 }

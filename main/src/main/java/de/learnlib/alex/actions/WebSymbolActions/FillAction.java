@@ -23,6 +23,8 @@ import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.utils.CSSUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -39,11 +41,11 @@ import javax.persistence.Entity;
 @JsonTypeName("web_fill")
 public class FillAction extends WebSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 8595076806577663223L;
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * The node to look for.
@@ -51,14 +53,14 @@ public class FillAction extends WebSymbolAction {
      */
     @NotBlank
     @Column(columnDefinition = "CLOB")
-    private String node;
+    protected String node;
 
     /**
      * The Value to insert.
      * @requiredField
      */
     @NotBlank
-    private String value;
+    protected String value;
 
     /**
      * Get the node to look for.
@@ -128,10 +130,14 @@ public class FillAction extends WebSymbolAction {
             WebElement element = connector.getElement(CSSUtils.escapeSelector(nodeWithVariables));
             element.clear();
             element.sendKeys(valueWithVariables);
+
+            LOGGER.info("Filled the element '{}' with {}'(ignoreFailure: {}, negated: {}).",
+                        node, value, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info("Could not find the element '" + nodeWithVariables + "' to fill it with '"
-                                + valueWithVariables + "'.", e);
+            LOGGER.info(LEARNER_MARKER, "Could not find the element '{}' to fill it with '{}' "
+                                            + "(ignoreFailure: {}, negated: {}).",
+                        nodeWithVariables, valueWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

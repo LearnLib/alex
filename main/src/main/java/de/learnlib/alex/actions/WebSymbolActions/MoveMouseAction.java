@@ -20,6 +20,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import de.learnlib.alex.utils.CSSUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -39,10 +43,11 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("web_moveMouse")
 public class MoveMouseAction extends WebSymbolAction {
 
-    /**
-     * to be serializable.
-     */
     private static final long serialVersionUID = -3477841410719285695L;
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * The selector of the element.
@@ -126,13 +131,22 @@ public class MoveMouseAction extends WebSymbolAction {
 
             if (node == null || node.trim().equals("")) {
                 actions.moveByOffset(offsetX, offsetY);
+                LOGGER.info(LEARNER_MARKER, "Moved the mouse to the position ({}, {}) "
+                                                + "(ignoreFailure: {}, negated: {}).",
+                            offsetX, offsetY, ignoreFailure, negated);
             } else {
                 WebElement element = connector.getElement(CSSUtils.escapeSelector(insertVariableValues(node)));
                 actions.moveToElement(element, offsetX, offsetY);
+                LOGGER.info(LEARNER_MARKER, "Moved the mouse to the element '{}' "
+                                                + "(ignoreFailure: {}, negated: {}).",
+                            node, ignoreFailure, negated);
             }
 
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
+            LOGGER.info(LEARNER_MARKER, "Could not move the mouse to the element '{}' or the position ({}, {}) "
+                                            + "(ignoreFailure: {}, negated: {}).",
+                        node, offsetX, offsetY, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

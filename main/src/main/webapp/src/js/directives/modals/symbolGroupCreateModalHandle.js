@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
-import {SymbolGroup} from '../../entities/SymbolGroup';
+import {events} from "../../constants";
+import {SymbolGroup} from "../../entities/SymbolGroup";
 
-/** The controller for the modal dialog that handles the creation of a new symbol group. */
+/**
+ * The controller for the modal dialog that handles the creation of a new symbol group.
+ */
 export class SymbolGroupCreateModalController {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $uibModalInstance
-     * @param SessionService
-     * @param SymbolGroupResource
-     * @param ToastService
-     * @param EventBus
+     * @param {SessionService} SessionService
+     * @param {SymbolGroupResource} SymbolGroupResource
+     * @param {ToastService} ToastService
+     * @param {EventBus} EventBus
      */
     // @ngInject
     constructor($uibModalInstance, SessionService, SymbolGroupResource, ToastService, EventBus) {
@@ -36,26 +39,28 @@ export class SymbolGroupCreateModalController {
         this.EventBus = EventBus;
 
         /**
-         * The project that is in the session
+         * The project that is in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * The new symbol group
+         * The new symbol group.
          * @type {SymbolGroup}
          */
         this.group = new SymbolGroup();
 
         /**
-         * An error message that can be displayed in the modal template
+         * An error message that can be displayed in the modal template.
          * @type {String|null}
          */
         this.errorMsg = null;
     }
 
 
-    /** Creates a new symbol group and closes the modal on success and passes the newly created symbol group */
+    /**
+     * Creates a new symbol group and closes the modal on success and passes the newly created symbol group.
+     */
     createGroup() {
         this.errorMsg = null;
 
@@ -72,7 +77,9 @@ export class SymbolGroupCreateModalController {
             });
     }
 
-    /** Close the modal. */
+    /**
+     * Close the modal.
+     */
     close() {
         this.$uibModalInstance.dismiss();
     }
@@ -83,25 +90,23 @@ export class SymbolGroupCreateModalController {
  * The directive for handling the opening of the modal for creating a new symbol group. Can only be used as
  * an attribute and attaches a click event to its source element.
  *
- * Use: '<button symbol-group-create-modal-handle>Click Me!</button>'
+ * Use: '<button symbol-group-create-modal-handle>Click Me!</button>'.
  *
- * @param $uibModal - The ui.bootstrap $modal service
- * @returns {{restrict: string, link: link}}
+ * @param $uibModal - The ui.bootstrap $modal service.
+ * @returns {{restrict: string, link: Function}}
  */
 // @ngInject
 export function symbolGroupCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
-        link: link
-    };
-
-    function link(scope, el) {
-        el.on('click', () => {
-            $uibModal.open({
-                templateUrl: 'html/modals/symbol-group-create-modal.html',
-                controller: SymbolGroupCreateModalController,
-                controllerAs: 'vm'
+        link(scope, el) {
+            el.on('click', () => {
+                $uibModal.open({
+                    templateUrl: 'html/directives/modals/symbol-group-create-modal.html',
+                    controller: SymbolGroupCreateModalController,
+                    controllerAs: 'vm'
+                });
             });
-        });
-    }
+        }
+    };
 }

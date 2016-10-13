@@ -19,10 +19,10 @@
  * event to the source element that opens the picker. On first start, it loads the page that is defined in the
  * projects baseUrl. On following calls the last visited page is loaded.
  *
- * Attribute 'model' is the model for the XPath
- * Attribute 'text' is the model for the .textContent value of the selected element
+ * Attribute 'model' is the model for the XPath.
+ * Attribute 'text' is the model for the .textContent value of the selected element.
  *
- * Use: '<button html-element-picker model="..." text="...">Click Me!</button>'
+ * Use: '<button html-element-picker model="..." text="...">Click Me!</button>'.
  *
  * @param $document
  * @param $compile
@@ -38,31 +38,29 @@ export function htmlElementPickerHandle($document, $compile, $q, HtmlElementPick
             selectorModel: '=model',
             textModel: '=text'
         },
-        link: link
+        link(scope, el) {
+            el.on('click', () => {
+
+                // create a new element picker under the current scope and append to the body
+                const picker = $compile('<html-element-picker></html-element-picker>')(scope);
+                $document.find('body').prepend(picker);
+
+                HtmlElementPickerService.deferred = $q.defer();
+                HtmlElementPickerService.deferred.promise
+                    .then(data => {
+
+                        // copy the selected selector and .textContent value to the scopes models
+                        if (typeof scope.selectorModel !== "undefined") {
+                            scope.selectorModel = data.selector;
+                        }
+                        if (typeof scope.textModel !== "undefined") {
+                            scope.textModel = data.textContent;
+                        }
+                    })
+                    .finally(() => {
+                        picker.remove();
+                    });
+            });
+        }
     };
-
-    function link(scope, el) {
-        el.on('click', () => {
-
-            // create a new element picker under the current scope and append to the body
-            const picker = $compile('<html-element-picker></html-element-picker>')(scope);
-            $document.find('body').prepend(picker);
-
-            HtmlElementPickerService.deferred = $q.defer();
-            HtmlElementPickerService.deferred.promise
-                .then(data => {
-
-                    // copy the selected selector and .textContent value to the scopes models
-                    if (angular.isDefined(scope.selectorModel)) {
-                        scope.selectorModel = data.selector;
-                    }
-                    if (angular.isDefined(scope.textModel)) {
-                        scope.textModel = data.textContent;
-                    }
-                })
-                .finally(() => {
-                    picker.remove();
-                });
-        });
-    }
 }

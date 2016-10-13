@@ -21,6 +21,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import de.learnlib.alex.utils.SearchHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
@@ -35,8 +39,11 @@ import java.util.List;
 @JsonTypeName("rest_checkHeaderField")
 public class CheckHeaderFieldAction extends RESTSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = -7234083244640666736L;
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The key of the header field to check for the value. */
     @NotBlank
@@ -121,32 +128,41 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
     public ExecuteResult execute(WebServiceConnector connector) {
         List<Object> headerFieldValues = connector.getHeaders().get(key);
         if (headerFieldValues == null) {
+            LOGGER.info(LEARNER_MARKER, "Could header {} against the value {}, because the header was not found "
+                                            + "(regExp: {}, ignoreFailure: {}, negated: {}).",
+                        key, value, regexp, ignoreFailure, negated);
             return getFailedOutput();
         }
 
+        boolean result;
         if (regexp) {
-            return searchWithRegex(headerFieldValues);
+            result = searchWithRegex(headerFieldValues);
         } else {
-            return search(headerFieldValues);
+            result = search(headerFieldValues);
         }
-    }
 
-    private ExecuteResult search(List<Object> headerFieldValues) {
-        if (headerFieldValues.contains(getValueWithVariableValues())) {
+        LOGGER.info(LEARNER_MARKER, "Checked header {} with the value {} against {} => {}"
+                                        + "(regExp: {}, ignoreFailure: {}, negated: {}).",
+                    key, headerFieldValues, value, result, regexp, ignoreFailure, negated);
+        if (result) {
             return getSuccessOutput();
         } else {
             return getFailedOutput();
         }
     }
 
-    private ExecuteResult searchWithRegex(List<Object> headerFieldValues) {
+    private boolean search(List<Object> headerFieldValues) {
+        return headerFieldValues.contains(getValueWithVariableValues());
+    }
+
+    private boolean searchWithRegex(List<Object> headerFieldValues) {
         for (Object headerFieldValue : headerFieldValues) {
             String headerFieldValueAsString = headerFieldValue.toString();
             if (SearchHelper.searchWithRegex(getValueWithVariableValues(), headerFieldValueAsString)) {
-                return getSuccessOutput();
+                return true;
             }
         }
-        return getFailedOutput();
+        return false;
     }
 
 }

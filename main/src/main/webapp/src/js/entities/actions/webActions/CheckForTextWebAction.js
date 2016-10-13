@@ -14,34 +14,38 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
-/** Searches for a piece of text or a regular expression in the HTML document */
+/**
+ * Searches for a piece of text or a regular expression in the HTML document.
+ */
 export class CheckForTextWebAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
+     * Constructor.
+     *
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.WEB_CHECK_TEXT, obj);
 
         /**
-         * The piece of text to look for
+         * The piece of text to look for.
          * @type {*|string}
          */
         this.value = obj.value || '';
 
         /**
-         * Whether the value is a regular expression
+         * Whether the value is a regular expression.
          * @type {*|boolean}
          */
         this.regexp = obj.regexp || false;
     }
 
     /**
-     * A string presentation of the actions
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

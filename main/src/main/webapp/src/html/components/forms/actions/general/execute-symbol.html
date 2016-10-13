@@ -1,0 +1,52 @@
+<h4><strong>Execute Symbol</strong></h4>
+<p class="text-muted">
+    Execute the actions of another symbol
+</p>
+<hr>
+
+<div class="row">
+    <div class="col-xs-8 no-padding-right">
+        <div class="form-group">
+            <label>Choose a symbol</label>
+            <input class="form-control" list="symbolsList" type="text" placeholder="The name of the symbol"
+                   ng-model="vm.name" ng-change="vm.action.setSymbol(vm.name, vm.symbols)">
+            <datalist id="symbolsList">
+                <option ng-repeat="symbol in vm.symbols" value="{{symbol.name}}"></option>
+            </datalist>
+        </div>
+    </div>
+    <div class="col-xs-4">
+        <div class="form-group" ng-if="vm.name">
+            <label>Rev.</label>
+            <input class="form-control" type="number" min="0" ng-model="vm.action.symbolToExecute.revision"
+                   max="{{vm.action.getModel().maxRevision}}">
+        </div>
+    </div>
+</div>
+
+<div ng-if="vm.action.getModel().name">
+    <hr>
+    <div class="form-group">
+        <div class="panel panel-default">
+            <div class="panel-body clearfix" style="padding: 5px 10px;">
+                <a href="" class="btn btn-default btn-sm pull-right" uib-tooltip="Update to latest revision"
+                   tooltip-placement="left" ng-if="!vm.action.useLatestRevision"
+                   ng-click="vm.action.updateRevision(vm.symbols)">
+                    <i class="fa fa-refresh"></i>
+                </a>
+                <strong ng-bind="vm.action.getModel().name"></strong> <br>
+                <em class="text-muted" ng-if="!vm.action.useLatestRevision">
+                    Revision <span ng-bind="vm.action.symbolToExecute.revision"></span>
+                </em>
+                <em class="text-muted" ng-if="vm.action.useLatestRevision">
+                    Latest revision
+                </em>
+            </div>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" ng-model="vm.action.useLatestRevision"> Always use the latest revision
+            </label>
+        </div>
+    </div>
+</div>

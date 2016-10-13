@@ -27,6 +27,7 @@ import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,8 +39,7 @@ import java.util.Map;
 public class SymbolMapper
         implements Mapper<String, String, ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult> {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** Map to manage the symbols according to their name in the Alphabet. */
     private Map<String, Symbol> symbols;
@@ -92,13 +92,17 @@ public class SymbolMapper
 
     /**
      * Get the alphabet for the learning process as required by the LearnLib.
+     * Sorted by key ascending.
      *
      * @return The alphabet.
      */
     public Alphabet<String> getAlphabet() {
         Alphabet<String> sigma = new SimpleAlphabet<>();
 
-        sigma.addAll(symbols.keySet());
+        // sort the alphabet for a more consistent learning behavior
+        List<String> sortedSymbolList = new ArrayList<>(symbols.keySet());
+        sortedSymbolList.sort(String::compareTo);
+        sigma.addAll(sortedSymbolList);
 
         return sigma;
     }

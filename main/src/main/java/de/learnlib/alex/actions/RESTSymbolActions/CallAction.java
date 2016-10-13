@@ -23,6 +23,8 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
@@ -31,7 +33,11 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -46,34 +52,46 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CallAction extends RESTSymbolAction {
 
-    /** to be serializable. */
     private static final long serialVersionUID = 7971257988991996022L;
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Enumeration to specify the HTTP method.
      */
     public enum Method {
-        /** Refers to the GET method. */
+        /**
+         * Refers to the GET method.
+         */
         GET,
 
-        /** Refers to the POST method. */
+        /**
+         * Refers to the POST method.
+         */
         POST,
 
-        /** Refers to the PUT method. */
+        /**
+         * Refers to the PUT method.
+         */
         PUT,
 
-        /** Refers to the DELETE method. */
+        /**
+         * Refers to the DELETE method.
+         */
         DELETE
     }
 
-    /** The method to use for the call. */
+    /**
+     * The method to use for the call.
+     */
     @NotNull
     private Method method;
 
-    /** The url to call. This is just the suffix which will be appended to the base url. */
+    /**
+     * The url to call. This is just the suffix which will be appended to the base url.
+     */
     @NotBlank
     private String url;
 
@@ -97,7 +115,9 @@ public class CallAction extends RESTSymbolAction {
     @Lob
     private HashMap<String, String> cookies; // OM NOM NOM NOM!!!
 
-    /** Optional data to sent with a POST or PUT request. */
+    /**
+     * Optional data to sent with a POST or PUT request.
+     */
     @Column(columnDefinition = "CLOB")
     private String data;
 
@@ -121,8 +141,7 @@ public class CallAction extends RESTSymbolAction {
     /**
      * Select a method to use for the request.
      *
-     * @param method
-     *         The new method to use.
+     * @param method The new method to use.
      */
     public void setMethod(Method method) {
         this.method = method;
@@ -150,8 +169,7 @@ public class CallAction extends RESTSymbolAction {
     /**
      * Set the URL to send the request to.
      *
-     * @param url
-     *         The URL to call.
+     * @param url The URL to call.
      */
     public void setUrl(String url) {
         this.url = url;
@@ -182,8 +200,7 @@ public class CallAction extends RESTSymbolAction {
      * Set the map of request headers.
      * Every header can have multiple values, see {@link #getHeaders()} for more information.
      *
-     * @param headers
-     *         The new request headers.
+     * @param headers The new request headers.
      */
     public void setHeaders(HashMap<String, String> headers) {
         this.headers = headers;
@@ -208,7 +225,7 @@ public class CallAction extends RESTSymbolAction {
             return new Credentials();
         }
 
-        String name     = insertVariableValues(credentials.getName());
+        String name = insertVariableValues(credentials.getName());
         String password = insertVariableValues(credentials.getPassword());
 
         return new Credentials(name, password);
@@ -247,8 +264,7 @@ public class CallAction extends RESTSymbolAction {
     /**
      * Set a new map of cookies for the request.
      *
-     * @param cookies
-     *         The new cookies.
+     * @param cookies The new cookies.
      */
     public void setCookies(HashMap<String, String> cookies) {
         this.cookies = cookies;
@@ -276,8 +292,7 @@ public class CallAction extends RESTSymbolAction {
     /**
      * Set the optional data which will be send together with a POST or PUT request.
      *
-     * @param data
-     *         The data to include in the next POST/ PUT request.
+     * @param data The data to include in the next POST/ PUT request.
      */
     public void setData(String data) {
         this.data = data;
@@ -286,43 +301,105 @@ public class CallAction extends RESTSymbolAction {
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         try {
-            LOGGER.info("Do REST request '" + method + " " + url + "' "
-                        + "(ignoreFailure : " + ignoreFailure + ", negated: " + negated + ").");
+            LOGGER.info(LEARNER_MARKER, "Doing REST request '{} {}' (ignoreFailure: {}, negated: {}).",
+                    method, url, ignoreFailure, negated);
 
             doRequest(target);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info("Could not call " + getUrlWithVariableValues(), e);
+            LOGGER.info(LEARNER_MARKER, "Could not call {}.", getUrlWithVariableValues(), e);
             return getFailedOutput();
         }
     }
 
     private void doRequest(WebServiceConnector target) {
         Map<String, String> requestHeaders = getHeadersWithVariableValues();
-        if (credentials != null) {
+        if (credentials != null && credentials.areValid()) {
+            LOGGER.info(LEARNER_MARKER, "Using credentials '{}'.", credentials);
             requestHeaders.put("Authorization", "Basic " + getCredentialsWithVariableValues().toBase64());
         }
 
         switch (method) {
             case GET:
                 target.get(getUrlWithVariableValues(), requestHeaders,
-                           getCookiesWithVariableValues());
+                        getCookiesWithVariableValues());
                 break;
             case POST:
                 target.post(getUrlWithVariableValues(), requestHeaders,
-                            getCookiesWithVariableValues(), getDataWithVariableValues());
+                        getCookiesWithVariableValues(), getDataWithVariableValues());
                 break;
             case PUT:
                 target.put(getUrlWithVariableValues(), requestHeaders,
-                           getCookiesWithVariableValues(), getDataWithVariableValues());
+                        getCookiesWithVariableValues(), getDataWithVariableValues());
                 break;
             case DELETE:
                 target.delete(getUrlWithVariableValues(), requestHeaders,
-                              getCookiesWithVariableValues());
+                        getCookiesWithVariableValues());
                 break;
             default:
-                LOGGER.warn("tried to make a call to a REST API with an unknown method '" + method.name() + "'.");
+                LOGGER.error(LEARNER_MARKER, "Tried to make a call to a REST API with an unknown method '{}'.",
+                        method.name());
         }
     }
 
+    /**
+     * Execute an HTTP request without counters and variables.
+     *
+     * @param baseUrl The base url of the project.
+     * @return The response of the request.
+     */
+    public TestResult testRequest(String baseUrl) {
+        if (credentials != null && credentials.areValid()) {
+            headers.put("Authorization", "Basic " + credentials.toBase64());
+        }
+
+        final WebTarget target = ClientBuilder.newClient().target(baseUrl + url);
+        final Invocation.Builder builder = target.request();
+        headers.forEach(builder::header);
+        cookies.forEach(builder::cookie);
+
+        Response response;
+        switch (method) {
+            case GET:
+                response = builder.get();
+                break;
+            case POST:
+                response = builder.post(javax.ws.rs.client.Entity.json(data));
+                break;
+            case PUT:
+                response = builder.put(javax.ws.rs.client.Entity.json(data));
+                break;
+            case DELETE:
+                response = builder.delete();
+                break;
+            default:
+                return null;
+        }
+
+        final TestResult result = new TestResult();
+        result.status = response.getStatus();
+        result.body = response.readEntity(String.class);
+
+        response.getCookies().values().forEach(cookie -> {
+            result.cookies.put(cookie.getName(), cookie.getValue());
+        });
+
+        response.getStringHeaders().forEach((key, obj) -> {
+            String value = obj.toString();
+            value = value.substring(1, value.length() - 1);
+            result.headers.put(key, value);
+        });
+
+        return result;
+    }
+
+    /**
+     * The result object for the {@link #testRequest(String)} method.
+     */
+    public static class TestResult {
+        public int status;
+        public String body;
+        public Map<String, String> cookies = new HashMap<>();
+        public Map<String, String> headers = new HashMap<>();
+    }
 }

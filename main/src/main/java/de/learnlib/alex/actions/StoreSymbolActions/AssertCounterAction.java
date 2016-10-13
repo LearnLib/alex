@@ -22,6 +22,10 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
@@ -76,23 +80,26 @@ public class AssertCounterAction extends SymbolAction {
 
     }
 
-    /** to be serializable. */
     private static final long serialVersionUID = -8210218030257177422L;
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER  = MarkerManager.getMarker("LEARNER");
+
     /**
-     * The name of the variable to assert.
+     * The name of the counter to assert.
      */
     @NotBlank
     private String name;
 
     /**
-     * The value to assert the variable content with.
+     * The value to assert the counter content with.
      */
     @NotNull
     private Integer value;
 
     /**
-     * The method to compare the counterVariable value with the one given.
+     * The method to compare the counter value with the one given.
      */
     @NotNull
     private Operator operator;
@@ -165,6 +172,10 @@ public class AssertCounterAction extends SymbolAction {
                 result = false;
                 break;
         }
+
+        LOGGER.info(LEARNER_MARKER, "Asserting counter '{}' with value '{}' against '{}' using {} => {} "
+                                        + "(ignoreFailure: {}, negated: {}).",
+                    name, counterValue, value, operator, result, ignoreFailure, negated);
 
         if (result) {
             return getSuccessOutput();

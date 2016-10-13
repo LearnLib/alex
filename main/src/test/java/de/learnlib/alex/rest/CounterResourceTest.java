@@ -77,7 +77,7 @@ public class CounterResourceTest extends JerseyTest {
     public void setUp() throws Exception {
         super.setUp();
 
-        given(admin.getId()).willReturn(USER_TEST_ID);
+        admin.setId(USER_TEST_ID);
         given(project.getId()).willReturn(PROJECT_TEST_ID);
 
         counters = new Counter[2];

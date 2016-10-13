@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm, eqOracleType, userRole, webBrowser} from './constants';
+import {learnAlgorithm, eqOracleType, userRole, webBrowser} from "./constants";
 
 /**
- * The filter to format a EQ type constant to something more readable
+ * The filter to format a EQ type constant to something more readable.
+ *
  * @returns {Function}
  */
 export function formatEqOracle() {
@@ -31,6 +32,8 @@ export function formatEqOracle() {
                 return 'Sample';
             case  eqOracleType.WMETHOD:
                 return 'W-Method';
+            case  eqOracleType.HYPOTHESIS:
+                return 'Hypothesis';
             default:
                 return type;
         }
@@ -39,7 +42,8 @@ export function formatEqOracle() {
 
 
 /**
- * The filter to format a user role
+ * The filter to format a user role.
+ *
  * @returns {Function}
  */
 export function formatUserRole() {
@@ -57,7 +61,8 @@ export function formatUserRole() {
 
 
 /**
- * Formats the web browser dictionary
+ * Formats the web browser dictionary.
+ *
  * @returns {Function}
  */
 export function formatWebBrowser() {
@@ -69,6 +74,8 @@ export function formatWebBrowser() {
                 return 'Chrome';
             case webBrowser.FIREFOX:
                 return 'Firefox';
+            case webBrowser.EDGE:
+                return 'Edge';
             default:
                 return browser;
         }
@@ -77,7 +84,8 @@ export function formatWebBrowser() {
 
 
 /**
- * The filter to format a learn algorithm name to something more readable
+ * The filter to format a learn algorithm name to something more readable.
+ *
  * @returns {Function}
  */
 export function formatAlgorithm() {
@@ -98,7 +106,8 @@ export function formatAlgorithm() {
 }
 
 /**
- * The filter takes a number representing milliseconds and formats it to [h] [min] s
+ * The filter takes a number representing milliseconds and formats it to [h] [min] s.
+ *
  * @returns {Function}
  */
 export function formatMilliseconds() {

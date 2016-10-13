@@ -46,6 +46,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * REST API to manage the projects.
@@ -55,8 +56,7 @@ import java.util.List;
 @RolesAllowed({"REGISTERED"})
 public class ProjectResource {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** Context information about the URI. */
     @Context
@@ -85,11 +85,15 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(Project project) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("ProjectResource.create(" + project + ") for user " + user + ".");
+        LOGGER.traceEntry("create({}) for user {}.", project, user);
+        Response response;
 
         // make sure that if an user for a project is given, it the correct user id.
         if (project.getUser() != null && !user.equals(project.getUser())) {
-            throw new ValidationException("The given user id does not belong to the current user!");
+            ValidationException e = new ValidationException("The given user id does not belong to the current user!");
+            LOGGER.catching(e);
+            response = ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.FORBIDDEN, e);
+            return LOGGER.traceExit(response);
         }
 
         project.setUser(user);
@@ -97,10 +101,12 @@ public class ProjectResource {
         try {
             projectDAO.create(project);
             String projectURL = uri.getBaseUri() + "projects/" + project.getId();
-            return Response.status(Status.CREATED).header("Location", projectURL).entity(project).build();
+            response = Response.status(Status.CREATED).header("Location", projectURL).entity(project).build();
         } catch (ValidationException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.BAD_REQUEST, e);
+            LOGGER.catching(e);
+            response = ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.BAD_REQUEST, e);
         }
+        return LOGGER.traceExit(response);
     }
 
     /**
@@ -110,7 +116,7 @@ public class ProjectResource {
      *         By default no related objects are included in the projects. However you can ask to include them with
      *         this parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'.
      *         You can request multiple by just put a ',' between them.
-     * @return All projects in a list.
+     * @return All projects in a list. This list can be empty.
      * @responseType java.util.List<de.learnlib.alex.core.entities.Project>
      * @successResponse 200 OK
      */
@@ -118,16 +124,19 @@ public class ProjectResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("ProjectResource.getAll(" + embed + ") for user " + user + ".");
+        LOGGER.traceEntry("getAll({}) for user {}.", embed, user);
 
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
             embeddableFields = parseEmbeddableFields(embed);
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
         }
 
         List<Project> projects = projectDAO.getAll(user, embeddableFields);
+
+        LOGGER.traceExit(projects);
         return ResponseHelper.renderList(projects, Status.OK);
     }
 
@@ -141,6 +150,7 @@ public class ProjectResource {
      *         this parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'.
      *         You can request multiple by just put a ',' between them.
      * @return The project or an error message.
+     * @throws NotFoundException If the requested Project could not be found.
      * @responseType de.learnlib.alex.core.entities.Project
      * @successResponse 200 OK
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -148,9 +158,9 @@ public class ProjectResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("id") long projectId, @QueryParam("embed") String embed) {
+    public Response get(@PathParam("id") long projectId, @QueryParam("embed") String embed) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("ProjectResource.get(" + projectId + ", " + embed + ") for user " + user + ".");
+        LOGGER.traceEntry("get({}, {}) for user {}.", projectId, embed, user);
 
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
@@ -158,15 +168,16 @@ public class ProjectResource {
             Project project = projectDAO.getByID(user.getId(), projectId, embeddableFields);
 
             if (project.getUser().equals(user)) {
+                LOGGER.traceExit(project);
                 return Response.ok(project).build();
             } else {
                 throw new UnauthorizedException("You are not allowed to view this project");
             }
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
-        } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.NOT_FOUND, null);
         } catch (UnauthorizedException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.UNAUTHORIZED, e);
         }
     }
@@ -179,6 +190,7 @@ public class ProjectResource {
      * @param project
      *            The new values
      * @return On success the updated project (enhanced with information from the DB); an error message on failure.
+     * @throws NotFoundException If the given Project could not be found.
      * @responseType de.learnlib.alex.core.entities.Project
      * @successResponse 200 OK
      * @errorResponse   400 bad request `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
@@ -188,25 +200,29 @@ public class ProjectResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") long id, Project project) {
+    public Response update(@PathParam("id") long id, Project project) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("ProjectResource.update(" + id + ", " + project + ") for user " + user + ".");
+        LOGGER.traceEntry("update({}, {}) for user {}.", id, project, user);
 
         if (id != project.getId()) {
+            LOGGER.traceExit("Wrong Project ID");
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             try {
-                if (project.getUser() == null || user.equals(project.getUser())) {
-                    projectDAO.update(project);
-                    return Response.ok(project).build();
-                } else {
+                if (
+                        (project.getUser() != null && !user.equals(project.getUser()))
+                        || (project.getUserId() != 0 && !Objects.equals(project.getUserId(), user.getId()))) {
                     throw new UnauthorizedException("You are not allowed to update this project");
                 }
-            } catch (NotFoundException e) {
-                return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.NOT_FOUND, e);
+                project.setUser(user);
+                projectDAO.update(project);
+                LOGGER.traceExit(project);
+                return Response.ok(project).build();
             } catch (ValidationException e) {
+                LOGGER.traceExit(e);
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.BAD_REQUEST, e);
             } catch (UnauthorizedException e) {
+                LOGGER.traceExit(e);
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.UNAUTHORIZED, e);
             }
         }
@@ -218,27 +234,30 @@ public class ProjectResource {
      * @param projectId
      *            The ID of the project.
      * @return On success no content will be returned; an error message on failure.
+     * @throws NotFoundException If the given Project could not be found.
      * @successResponse 204 OK & no content
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") long projectId) {
+    public Response delete(@PathParam("id") long projectId) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("ProjectResource.delete(" + projectId + ") for user " + user + ".");
+        LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
 
         try {
             Project project = projectDAO.getByID(user.getId(), projectId);
-            if (project.getUser().equals(user)) {
-                projectDAO.delete(user.getId(), projectId);
-                return Response.status(Status.NO_CONTENT).build();
-            } else {
-                throw new UnauthorizedException("You are not allowed to delete this project");
+            if ((project.getUser() != null && !user.equals(project.getUser()))
+                    || (project.getUserId() != 0 && !Objects.equals(project.getUserId(), user.getId()))) {
+                throw new UnauthorizedException("You are not allowed to update this project");
             }
-        } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.NOT_FOUND, e);
+
+            project.setUser(user);
+            projectDAO.delete(user.getId(), projectId);
+            LOGGER.traceExit("Project {} deleted", projectId);
+            return Response.status(Status.NO_CONTENT).build();
         } catch (UnauthorizedException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.UNAUTHORIZED, e);
         }
     }

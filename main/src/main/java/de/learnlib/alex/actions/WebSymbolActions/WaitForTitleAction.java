@@ -6,6 +6,8 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -23,13 +25,11 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("web_waitForTitle")
 public class WaitForTitleAction extends WebSymbolAction {
 
-    /**
-     * to be serializable.
-     */
     private static final long serialVersionUID = -7416267361597106520L;
 
-    /** Use the learner logger. */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Enumeration to specify the wait criterion.
@@ -160,8 +160,9 @@ public class WaitForTitleAction extends WebSymbolAction {
 
             return getSuccessOutput();
         } catch (TimeoutException e) {
-            LOGGER.info("Waiting on the title '" + value + "' (criterion: '" + waitCriterion + "') timed out. "
-                                + "Last known title was '" + connector.getDriver().getTitle() + "'.");
+            LOGGER.info(LEARNER_MARKER, "Waiting on the title '{}' (criterion: '{}') timed out. "
+                                            + "Last known title was '{}'.",
+                        value, waitCriterion, connector.getDriver().getTitle());
             return getFailedOutput();
         }
     }

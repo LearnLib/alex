@@ -21,6 +21,8 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.JavascriptExecutor;
 
@@ -36,15 +38,11 @@ import javax.persistence.Entity;
 @JsonTypeName("web_executeScript")
 public class ExecuteScriptAction extends WebSymbolAction {
 
-    /**
-     * to be serializable.
-     */
     private static final long serialVersionUID = 6118333853615934954L;
 
-    /**
-     * Use the learner logger.
-     */
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * The javascript to execute.
@@ -75,9 +73,13 @@ public class ExecuteScriptAction extends WebSymbolAction {
     public ExecuteResult execute(WebSiteConnector connector) {
         if (connector.getDriver() instanceof JavascriptExecutor) {
             ((JavascriptExecutor) connector.getDriver()).executeScript(script);
+
+            LOGGER.info(LEARNER_MARKER, "JavaScript {} successfully executed (ignoreFailure: {}, negated: {}).",
+                        ignoreFailure, negated);
             return getSuccessOutput();
         } else {
-            LOGGER.info("This driver does not support JavaScript!");
+            LOGGER.info(LEARNER_MARKER, "This driver does not support JavaScript (ignoreFailure: {}, negated: {})!",
+                        ignoreFailure, negated);
             return getFailedOutput();
         }
     }

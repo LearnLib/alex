@@ -109,7 +109,7 @@ public class LearnerStatus {
         this.projectId = learnerResult.getProjectId();
         this.testNo = learnerResult.getTestNo();
         this.statistics = new LearnerStatusStatistics(learnerResult.getStatistics().getStartDate(),
-                                                      learnerResult.getStatistics().getMqsUsed());
+                                                      learnerResult.getStatistics().getMqsUsed().getTotal());
     }
 
     /**
@@ -150,5 +150,10 @@ public class LearnerStatus {
      */
     public LearnerStatusStatistics getStatistics() {
         return statistics;
+    }
+
+    @Override
+    public String toString() {
+        return "LearnerStatus for Project " + projectId + " and Test No. " + testNo + ": " + active;
     }
 }

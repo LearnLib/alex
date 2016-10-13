@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import _ from 'lodash';
+import _ from "lodash";
 
 /**
  * The controller for listing all final test results.
@@ -23,6 +23,7 @@ class ResultsView {
 
     /**
      * Constructor.
+     *
      * @param $state
      * @param {SessionService} SessionService
      * @param {LearnResultResource} LearnResultResource
@@ -37,19 +38,19 @@ class ResultsView {
         this.LearnResultResource = LearnResultResource;
 
         /**
-         * The project that is in the session
+         * The project that is in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * All final test results of a project
+         * All final test results of a project.
          * @type {LearnResult[]}
          */
         this.results = [];
 
         /**
-         * The test results the user selected
+         * The test results the user selected.
          * @type {LearnResult[]}
          */
         this.selectedResults = [];
@@ -61,9 +62,9 @@ class ResultsView {
     }
 
     /**
-     * Deletes a test result from the server after prompting the user for confirmation
+     * Deletes a test result from the server after prompting the user for confirmation.
      *
-     * @param {LearnResult} result - The test result that should be deleted
+     * @param {LearnResult} result - The test result that should be deleted.
      */
     deleteResult(result) {
         this.PromptService.confirm("Do you want to permanently delete this result? Changes cannot be undone.")
@@ -80,13 +81,13 @@ class ResultsView {
     }
 
     /**
-     * Deletes selected test results from the server after prompting the user for confirmation
+     * Deletes selected test results from the server after prompting the user for confirmation.
      */
     deleteResults() {
         if (this.selectedResults.length > 0) {
             this.PromptService.confirm("Do you want to permanently delete theses results? Changes cannot be undone.")
                 .then(() => {
-                    this.LearnResultResource.remove(this.selectedResults)
+                    this.LearnResultResource.removeMany(this.selectedResults)
                         .then(() => {
                             this.ToastService.success('Learn results deleted');
                             this.selectedResults.forEach(result => {
@@ -103,7 +104,7 @@ class ResultsView {
     }
 
     /**
-     * Opens the learning result compare view with the selected results opened
+     * Opens the learning result compare view with the selected results opened.
      */
     openSelectedResults() {
         if (this.selectedResults.length > 0) {
@@ -116,5 +117,5 @@ class ResultsView {
 export const resultsView = {
     controller: ResultsView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/results.html'
+    templateUrl: 'html/components/views/results.html'
 };

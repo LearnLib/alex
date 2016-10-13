@@ -1,60 +1,83 @@
 package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Settings;
-import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.alex.utils.HibernateUtil;
-import org.hibernate.Session;
-import org.junit.After;
-import org.junit.BeforeClass;
+import de.learnlib.alex.core.repositories.SettingsRepository;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.validation.ValidationException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SettingsDAOImplTest {
 
-    private static SettingsDAOImpl settingsDAO;
+    private static final String PATH_TO_CHROME  = "path/to/chrome";
+    private static final String PATH_TO_FIREFOX = "path/to/firefox";
+    private static final String PATH_TO_EDGE = "path/to/edge";
 
-    @BeforeClass
-    public static void beforeClass() {
-        settingsDAO = new SettingsDAOImpl();
-    }
+    @Mock
+    private SettingsRepository settingsRepository;
 
-    @After
-    public void tearDown() throws NotFoundException {
-        HibernateUtil.beginTransaction();
-        Session session = HibernateUtil.getSession();
-        Settings settings = (Settings) session.createCriteria(Settings.class).uniqueResult();
-        if (settings != null) {
-            session.delete(settings);
-        }
-        HibernateUtil.commitTransaction();
+    private SettingsDAO settingsDAO;
+
+    @Before
+    public void setUp() {
+        settingsDAO = new SettingsDAOImpl(settingsRepository);
     }
 
     @Test
-    public void shouldCreateSettingsObject() {
+    public void shouldCreateTheSettings() throws ValidationException {
         Settings settings = new Settings();
+
         settingsDAO.create(settings);
-        assertNotNull(settings.getId());
+
+        verify(settingsRepository).save(settings);
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldFailToCreateIfSettingsAlreadyExist() {
-        Settings settings1 = new Settings();
-        settingsDAO.create(settings1);
+    public void shouldCreateTheSettingsOnlyOnce() throws ValidationException {
+        Settings settings = new Settings();
+        //
+        settingsDAO.create(settings);
+        //
+        given(settingsRepository.count()).willReturn(1L);
 
-        Settings settings2 = new Settings();
-        settingsDAO.create(settings2);
+        settingsDAO.create(settings); // should fail
     }
 
     @Test
-    public void shouldGetSettingsOnceCreated() {
-        Settings settings1 = new Settings();
-        settingsDAO.create(settings1);
-        assertNotNull(settingsDAO.get());
+    public void shouldSetTheDriverPropertiesOnCreation() {
+        Settings settings = new Settings();
+        settings.getDriverSettings().setChrome(PATH_TO_CHROME);
+        settings.getDriverSettings().setFirefox(PATH_TO_FIREFOX);
+        settings.getDriverSettings().setEdge(PATH_TO_EDGE);
+
+        settingsDAO.create(settings);
+
+        assertThat(System.getProperty("webdriver.chrome.driver"), is(equalTo(PATH_TO_CHROME)));
+        assertThat(System.getProperty("webdriver.gecko.driver"),  is(equalTo(PATH_TO_FIREFOX)));
+        assertThat(System.getProperty("webdriver.edge.driver"), is(equalTo(PATH_TO_EDGE)));
+    }
+
+    @Test
+    public void shouldGetTheSettings() {
+        Settings settings = new Settings();
+        //
+        given(settingsRepository.get()).willReturn(settings);
+
+        Settings s = settingsDAO.get();
+
+        assertThat(s, is(equalTo(settings)));
     }
 
     @Test
@@ -63,27 +86,37 @@ public class SettingsDAOImplTest {
     }
 
     @Test
-    public void shouldUpdateSettings() throws Exception {
-        Settings settings1 = new Settings();
-        settingsDAO.create(settings1);
+    public void shouldUpdateTheSettings() {
+        Settings settings = new Settings();
+        //
+        settingsDAO.create(settings);
 
-        String chromePath = "new/path/to/chrome";
-        String firefoxPath = "new/path/to/firefox";
+        settingsDAO.update(settings);
 
-        settings1.getDriverSettings().setChrome(chromePath);
-        settings1.getDriverSettings().setFirefox(firefoxPath);
-        settingsDAO.update(settings1);
-
-        assertEquals(settings1.getDriverSettings().getChrome(), chromePath);
-        assertEquals(settings1.getDriverSettings().getFirefox(), firefoxPath);
+        verify(settingsRepository, times(2)).save(settings); // only 1 x creation & 1 x update should call save
     }
 
-    @Test(expected = Exception.class)
-    public void shouldFailToUpdate() throws Exception {
-        Settings settings1 = new Settings();
-        settingsDAO.create(settings1);
+    @Test
+    public void shouldSetTheDriverPropertiesOnUpdate() {
+        Settings settings = new Settings();
+        settings.getDriverSettings().setChrome(PATH_TO_CHROME);
+        settings.getDriverSettings().setFirefox(PATH_TO_FIREFOX);
+        settings.getDriverSettings().setEdge(PATH_TO_EDGE);
+        //
+        settingsDAO.create(settings);
+        //
+        String chromePath  = "new/" + PATH_TO_CHROME;
+        String firefoxPath = "new/" + PATH_TO_FIREFOX;
+        String edgePath = "new/" + PATH_TO_EDGE;
+        settings.getDriverSettings().setChrome(chromePath);
+        settings.getDriverSettings().setFirefox(firefoxPath);
+        settings.getDriverSettings().setEdge(edgePath);
 
-        settings1.setId(-1L);
-        settingsDAO.update(settings1);
+        settingsDAO.update(settings);
+
+        assertThat(System.getProperty("webdriver.chrome.driver"), is(equalTo("new/" + PATH_TO_CHROME)));
+        assertThat(System.getProperty("webdriver.gecko.driver"),  is(equalTo("new/" + PATH_TO_FIREFOX)));
+        assertThat(System.getProperty("webdriver.edge.driver"),  is(equalTo("new/" + PATH_TO_EDGE)));
     }
+
 }

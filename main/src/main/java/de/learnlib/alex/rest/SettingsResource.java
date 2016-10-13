@@ -42,12 +42,7 @@ import javax.ws.rs.core.UriInfo;
 @Path("/settings")
 public class SettingsResource {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
-
-    /** Context information about the URI. */
-    @Context
-    private UriInfo uri;
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The {@link SettingsDAO} to use. */
     @Inject
@@ -62,15 +57,18 @@ public class SettingsResource {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"REGISTERED"})
     public Response get() {
-        LOGGER.trace("SettingsResource.get()");
+        LOGGER.traceEntry("get()");
 
         try {
             Settings settings = settingsDAO.get();
             if (settings == null) {
                 throw new Exception("The settings have not been created yet.");
             }
+
+            LOGGER.traceExit(settings);
             return Response.ok(settings).build();
         } catch (Exception e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SettingsResource.get",
                     Response.Status.BAD_REQUEST, e);
         }
@@ -87,11 +85,13 @@ public class SettingsResource {
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"ADMIN"})
     public Response update(Settings settings) {
-        LOGGER.trace("SettingsResource.update()");
+        LOGGER.traceEntry("update({})", settings);
 
         try {
             settings.checkValidity();
             settingsDAO.update(settings);
+
+            LOGGER.traceExit(settings);
             return Response.ok(settings).build();
         } catch (Exception e) {
             return ResourceErrorHandler.createRESTErrorMessage("SettingsResource.update",

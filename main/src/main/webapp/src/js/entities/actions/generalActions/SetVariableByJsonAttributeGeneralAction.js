@@ -14,34 +14,38 @@
  * limitations under the License.
  */
 
-import {Action} from '../Action';
-import {actionType} from '../../../constants';
+import {Action} from "../Action";
+import {actionType} from "../../../constants";
 
-/** Extracts the text content value of an element and saves it value in a variable */
+/**
+ * Extracts the text content value of an element and saves it value in a variable.
+ */
 export class SetVariableByJsonAttributeGeneralAction extends Action {
 
     /**
-     * Constructor
-     * @param {object} obj - The object to create the action from
+     * Constructor.
+     *
+     * @param {object} obj - The object to create the action from.
      */
     constructor(obj) {
         super(actionType.GENERAL_SET_VARIABLE_BY_JSON, obj);
 
         /**
-         * The name of the variable
+         * The name of the variable.
          * @type {*|string}
          */
         this.name = obj.name || '';
 
         /**
-         * The JSON property
+         * The JSON property.
          * @type {string}
          */
         this.value = obj.value || '';
     }
 
     /**
-     * A string presentation of the actions
+     * A string representation of the action.
+     *
      * @returns {string}
      */
     toString() {

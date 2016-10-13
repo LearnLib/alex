@@ -21,7 +21,6 @@ import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.security.UserPrincipal;
-import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
 import de.learnlib.alex.utils.StringList;
 import org.apache.logging.log4j.LogManager;
@@ -47,8 +46,7 @@ import java.util.List;
 @Path("/projects/{project_id}/counters")
 public class CounterResource {
 
-    /** Use the logger for the server part. */
-    private static final Logger LOGGER = LogManager.getLogger("server");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The CounterDAO to use. */
     @Inject
@@ -63,22 +61,21 @@ public class CounterResource {
      *
      * @param projectId
      *         The Project ID.
-     * @return A List of the counters within the project.
+     * @return A List of the counters within the project. This list can be empty.
+     * @throws NotFoundException If the related User or Project could not be found.
      * @responseType java.util.List<de.learnlib.alex.core.entities.Counter>
      * @successResponse 200 OK
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllCounters(@PathParam("project_id") Long projectId) {
+    public Response getAllCounters(@PathParam("project_id") Long projectId) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("CounterResource.getAllCounters(" + projectId + ") for user " + user.toString() + ".");
+        LOGGER.traceEntry("getAllCounters({}) for user {}.", projectId, user);
 
-        try {
-            List<Counter> counters = counterDAO.getAll(user.getId(), projectId);
-            return ResponseHelper.renderList(counters, Response.Status.OK);
-        } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.getAll", Response.Status.NOT_FOUND, e);
-        }
+        List<Counter> counters = counterDAO.getAll(user.getId(), projectId);
+
+        LOGGER.traceExit(counters);
+        return ResponseHelper.renderList(counters, Response.Status.OK);
     }
 
     /**
@@ -89,23 +86,21 @@ public class CounterResource {
      * @param name
      *         The name of the counter to remove.
      * @return Nothing if everything went OK.
+     * @throws NotFoundException If the given Counter or the related User or Project could not be found.
      * @successResponse 204 OK & no content
      */
     @DELETE
     @Path("/{counter_name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name) {
+    public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("CounterResource.deleteCounter(" + projectId + ", " + name +  ") for user " + user + ".");
+        LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, name, user);
 
-        try {
-            counterDAO.delete(user.getId(), projectId, name);
-            return Response.status(Response.Status.NO_CONTENT).build();
-        } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.deleteCounter",
-                                                               Response.Status.NOT_FOUND,
-                                                               e);
-        }
+        counterDAO.delete(user.getId(), projectId, name);
+
+        LOGGER.traceExit("Counter {} deleted.", name);
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 
     /**
@@ -116,24 +111,22 @@ public class CounterResource {
      * @param names
      *         The names of the counters to remove.
      * @return Nothing if everything went OK.
+     * @throws NotFoundException If the given Counters or the related User or Project could not be found.
      * @successResponse 204 OK & no content
      */
     @DELETE
     @Path("/batch/{counter_names}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCounter(@PathParam("project_id") Long projectId,
-                                  @PathParam("counter_names") StringList names) {
+                                  @PathParam("counter_names") StringList names)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.trace("CounterResource.deleteCounter(" + projectId + ", " + names +  ") for user " + user + ".");
+        LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, names, user);
 
-        try {
-            counterDAO.delete(user.getId(), projectId, names.toArray(new String[names.size()]));
-            return Response.status(Response.Status.NO_CONTENT).build();
-        } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.deleteCounter",
-                                                               Response.Status.NOT_FOUND,
-                                                               e);
-        }
+        counterDAO.delete(user.getId(), projectId, names.toArray(new String[names.size()]));
+
+        LOGGER.traceExit("Counter(s) {} deleted.", names);
+        return Response.status(Response.Status.NO_CONTENT).build();
 
     }
 

@@ -25,7 +25,8 @@ import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
 class SymbolsActionsView {
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param $scope
      * @param $stateParams
      * @param {SymbolResource} SymbolResource
@@ -42,32 +43,31 @@ class SymbolsActionsView {
     // @ngInject
     constructor($scope, $stateParams, SymbolResource, SessionService, ToastService, ErrorService,
                 ActionService, ClipboardService, $state, PromptService, EventBus, dragulaService) {
-
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
         this.ActionService = ActionService;
         this.ClipboardService = ClipboardService;
 
         /**
-         * The project that is stored in the session
+         * The project that is stored in the session.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
         /**
-         * The symbol whose actions are managed
+         * The symbol whose actions are managed.
          * @type {AlphabetSymbol|null}
          */
         this.symbol = null;
 
         /**
-         * The list of selected actions
+         * The list of selected actions.
          * @type {Object[]}
          */
         this.selectedActions = [];
 
         /**
-         * Whether there are unsaved changes to the symbol
+         * Whether there are unsaved changes to the symbol.
          * @type {boolean}
          */
         this.hasChanged = false;
@@ -102,6 +102,16 @@ class SymbolsActionsView {
             }
         });
 
+        const keyDownHandler = (e) => {
+            if (e.ctrlKey && e.which === 83) {
+                e.preventDefault();
+                this.saveChanges();
+                return false;
+            }
+        };
+
+        document.addEventListener('keydown', keyDownHandler);
+
         // listen on action created event
         EventBus.on(events.ACTION_CREATED, (evt, data) => {
             this.addAction(data.action);
@@ -121,12 +131,17 @@ class SymbolsActionsView {
         $scope.$on('actionList.drop-model', () => {
             this.hasChanged = true;
         });
+
+        $scope.$on('$destroy', () => {
+            dragulaService.destroy($scope, 'actionList');
+            document.removeEventListener('keydown', keyDownHandler);
+        });
     }
 
     /**
-     * Deletes a list of actions
+     * Deletes a list of actions.
      *
-     * @param {Object[]} actions - The actions to be deleted
+     * @param {Object[]} actions - The actions to be deleted.
      */
     deleteActions(actions) {
         if (actions.length > 0) {
@@ -139,9 +154,9 @@ class SymbolsActionsView {
     }
 
     /**
-     * Adds a new action to the list of actions of the symbol and gives it a temporary unique id
+     * Adds a new action to the list of actions of the symbol and gives it a temporary unique id.
      *
-     * @param {Object} action
+     * @param {Object} action - The action to add.
      */
     addAction(action) {
         action._id = _.uniqueId();
@@ -151,15 +166,15 @@ class SymbolsActionsView {
     }
 
     /**
-     * Updates an existing action
+     * Updates an existing action.
      *
-     * @param {Object} updatedAction
+     * @param {Object} updatedAction - The updated action.
      */
     updateAction(updatedAction) {
         const action = this.symbol.actions.find(a => a._id === updatedAction._id);
-        _.forIn(action, (v, k) => {
-            action[k] = updatedAction[k];
-        });
+        for (let prop in action) {
+            action[prop] = updatedAction[prop];
+        }
         this.ToastService.success('Action updated');
         this.hasChanged = true;
     }
@@ -168,6 +183,10 @@ class SymbolsActionsView {
      * Saves the changes that were made to the symbol by updating it on the server.
      */
     saveChanges() {
+        if (!this.hasChanged) {
+            this.ToastService.info('There are no changes to save.');
+            return;
+        }
 
         // make a copy of the symbol
         const symbolToUpdate = new AlphabetSymbol(this.symbol);
@@ -185,9 +204,9 @@ class SymbolsActionsView {
     }
 
     /**
-     * Copies actions to the clipboard
+     * Copies actions to the clipboard.
      *
-     * @param {Object[]} actions
+     * @param {Object[]} actions - The actions to copy.
      */
     copyActions(actions) {
         this.ClipboardService.copy('actions', angular.copy(actions));
@@ -195,9 +214,9 @@ class SymbolsActionsView {
     }
 
     /**
-     * Copies actions to the clipboard and removes them from the scope
+     * Copies actions to the clipboard and removes them from the scope.
      *
-     * @param {Object[]} actions
+     * @param {Object[]} actions - The actions to cut.
      */
     cutActions(actions) {
         this.ClipboardService.cut('actions', angular.copy(actions));
@@ -207,7 +226,7 @@ class SymbolsActionsView {
     }
 
     /**
-     * Pastes the actions from the clipboard to the end of of the action list
+     * Pastes the actions from the clipboard to the end of of the action list.
      */
     pasteActions() {
         let actions = this.ClipboardService.paste('actions');
@@ -222,9 +241,9 @@ class SymbolsActionsView {
     }
 
     /**
-     * Toggles the disabled flag on an action
+     * Toggles the disabled flag on an action.
      *
-     * @param {Object} action
+     * @param {Object} action - The action to enable or disable.
      */
     toggleDisableAction(action) {
         action.disabled = !action.disabled;
@@ -235,5 +254,5 @@ class SymbolsActionsView {
 export const symbolsActionsView = {
     controller: SymbolsActionsView,
     controllerAs: 'vm',
-    templateUrl: 'html/pages/symbols-actions.html'
+    templateUrl: 'html/components/views/symbols-actions.html'
 };

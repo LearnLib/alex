@@ -83,7 +83,7 @@ public class SettingsResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String json = response.readEntity(String.class);
-        String expectedJSON = "{\"driver\":{\"chrome\":\"\",\"firefox\":\"\"},\"id\":1}";
+        String expectedJSON = "{\"driver\":{\"chrome\":\"\",\"edge\":\"\",\"firefox\":\"\"},\"id\":1}";
         assertEquals(expectedJSON, json);
     }
 
@@ -101,7 +101,7 @@ public class SettingsResourceTest extends JerseyTest {
 
     @Test
     public void shouldUpdateTheSettings() throws Exception {
-        String json = "{\"id\":1,\"driver\":{\"chrome\":\"\",\"firefox\":\"\"}}";
+        String json = "{\"id\":1,\"driver\":{\"chrome\":\"\",\"edge\":\"\",\"firefox\":\"\"}}";
 
         Response response = target("/settings")
                                 .request()
