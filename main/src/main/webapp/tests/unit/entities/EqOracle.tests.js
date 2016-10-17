@@ -22,7 +22,8 @@ describe('EqOracle', () => {
             type: eqOracleType.RANDOM,
             minLength: 5,
             maxLength: 10,
-            maxNoOfTests: 20
+            maxNoOfTests: 20,
+            seed: 42
         };
 
         expect(angular.toJson(oracle)).toEqual(angular.toJson(expectedOracle));

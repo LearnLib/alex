@@ -44,6 +44,9 @@ public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProx
     /** The maximal length of the random generated words. */
     private int maxLength;
 
+    /** The seed to use for the random number generator. */
+    private int seed;
+
     /** How many words should be created before ending the oracle with the assumption that no counter example exists. */
     private int maxNoOfTests;
 
@@ -54,6 +57,7 @@ public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProx
         this.minLength = 1;
         this.maxLength = 1;
         this.maxNoOfTests = 1;
+        this.seed = RANDOM_SEED;
     }
 
     /**
@@ -66,10 +70,11 @@ public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProx
      * @param maxNoOfTests
      *         Highest amount of generated word before ending the search.
      */
-    public MealyRandomWordsEQOracleProxy(int minLength, int maxLength, int maxNoOfTests) {
+    public MealyRandomWordsEQOracleProxy(int minLength, int maxLength, int maxNoOfTests, int seed) {
         this.minLength = minLength;
         this.maxLength = maxLength;
         this.maxNoOfTests = maxNoOfTests;
+        this.seed = seed;
     }
 
     /**
@@ -130,6 +135,20 @@ public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProx
         this.maxNoOfTests = maxNoOfTests;
     }
 
+    /**
+     * @return The seed for the random number generator.
+     */
+    public int getSeed() {
+        return seed;
+    }
+
+    /**
+     * @param seed The seed for the random number generator.
+     */
+    public void setSeed(int seed) {
+        this.seed = seed;
+    }
+
     @Override
     public void checkParameters() throws IllegalArgumentException {
         if (minLength < 0 || maxLength < 0) {
@@ -148,7 +167,7 @@ public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProx
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>>
     createEqOracle(SULOracle<String, String> membershipOracle) {
         return new RandomWordsEQOracle.MealyRandomWordsEQOracle<>(membershipOracle, minLength, maxLength, maxNoOfTests,
-                                                                    new Random(RANDOM_SEED));
+                                                                    new Random(seed));
     }
 
 }

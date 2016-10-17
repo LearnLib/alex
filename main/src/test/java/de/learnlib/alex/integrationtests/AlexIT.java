@@ -100,7 +100,8 @@ public class AlexIT {
     private void learn() throws InterruptedException {
         String url = BASE_URL + "/learner/start/" + projectId;
         String json = "{\"algorithm\":\"TTT\", \"browser\":\"htmlunitdriver\", \"eqOracle\": "
-                            + "{\"type\": \"random_word\", \"minLength\": 1, \"maxLength\": 20, \"maxNoOfTests\" : 40},"
+                            + "{\"type\": \"random_word\", \"minLength\": 1, \"maxLength\": 20, \"maxNoOfTests\" : 40, "
+                            + "\"seed\": 42},"
                         + "\"maxAmountOfStepsToLearn\": -1,"
                         + "\"resetSymbol\": {\"id\": 1, \"revision\": 1},"
                         + "\"symbols\":["

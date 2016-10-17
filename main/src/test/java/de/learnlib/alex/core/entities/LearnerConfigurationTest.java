@@ -40,7 +40,7 @@ public class LearnerConfigurationTest {
     public void shouldCreateTheCorrectDefaultJSON() throws JsonProcessingException {
         String expectedJSON = "{\"algorithm\":\"TTT\",\"browser\":\"htmlunitdriver\",\"comment\":\"\",\"eqOracle\":"
                                     + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
-                                + "\"maxLength\":" + EQ_MAX_VALUE + ",\"maxNoOfTests\":1},"
+                                + "\"maxLength\":" + EQ_MAX_VALUE + ",\"seed\":42,\"maxNoOfTests\":1},"
                                 + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
                                 + "\"user\":null}";
 

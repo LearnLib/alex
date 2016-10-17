@@ -58,7 +58,8 @@
       "type" : "random_word",
       "minLength" : 1,
       "maxLength" : 5,
-      "maxNoOfTests" : 10
+      "maxNoOfTests" : 10,
+      "seed": 42
     },
     "hypothesis" : {
       "nodes" : [ 0, 1 ],

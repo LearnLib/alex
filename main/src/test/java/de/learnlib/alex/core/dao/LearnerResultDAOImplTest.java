@@ -56,7 +56,8 @@ public class LearnerResultDAOImplTest {
     private static final long USER_ID    = 21L;
     private static final long PROJECT_ID = 42L;
     private static final int RESULTS_AMOUNT = 3;
-    private static final MealyRandomWordsEQOracleProxy EXAMPLE_EQ_ORACLE = new MealyRandomWordsEQOracleProxy(1, 5, 10);
+    private static final MealyRandomWordsEQOracleProxy EXAMPLE_EQ_ORACLE =
+            new MealyRandomWordsEQOracleProxy(1, 5, 10, 42);
 
     @Mock
     private LearnerResultRepository learnerResultRepository;

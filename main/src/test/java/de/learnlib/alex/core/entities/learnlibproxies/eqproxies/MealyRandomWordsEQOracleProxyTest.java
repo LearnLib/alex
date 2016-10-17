@@ -23,6 +23,7 @@ public class MealyRandomWordsEQOracleProxyTest {
 
     public static final int MAX_LENGTH = 10;
     public static final int MAX_NO_OF_TESTS = 10;
+    public static final int SEED = 42;
 
     private MealyRandomWordsEQOracleProxy eqOracle;
 
@@ -32,6 +33,7 @@ public class MealyRandomWordsEQOracleProxyTest {
         eqOracle.setMinLength(1);
         eqOracle.setMaxLength(MAX_LENGTH);
         eqOracle.setMaxNoOfTests(MAX_NO_OF_TESTS);
+        eqOracle.setSeed(SEED);
     }
 
     @Test

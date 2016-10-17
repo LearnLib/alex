@@ -53,7 +53,7 @@ ENTITIES.groups = [
 ];
 
 ENTITIES.eqOracles = {
-    random: {type: 'random_word', minLength: 2, maxLength: 5, maxNoOfTests: 10},
+    random: {type: 'random_word', minLength: 2, maxLength: 5, maxNoOfTests: 10, seed: 42},
     complete: {type: 'complete', minDepth: 2, maxDepth: 5},
     sample: {type: 'sample', counterExamples: [{input: 's1', output: 'OK'}, {input: 's2', output: 'FAILED'}]},
     wmethod: {type: 'wmethod', maxDepth: 2}
@@ -63,7 +63,7 @@ ENTITIES.learnConfigurations = [
     {
         symbols: [{id: 2, revision: 1}, {id: 3, revision: 1}],
         maxAmountOfStepsToLearn: -1,
-        eqOracle: {type: 'random_word', minLength: 2, maxLength: 5, maxNoOfTests: 10},
+        eqOracle: {type: 'random_word', minLength: 2, maxLength: 5, maxNoOfTests: 10, seed: 42},
         algorithm: 'TTT',
         resetSymbol: {id: 1, revision: 1},
         comment: null,
@@ -100,7 +100,7 @@ ENTITIES.learnResults = [{
     "steps": [{
         "algorithmInformation": "+====+====+\n|    | s1 |\n+====+====+\n| ε  | OK |\n+====+====+\n| s1 | OK |\n+====+====+\n",
         "counterExample": "",
-        "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 10, "maxNoOfTests": 20},
+        "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 10, "maxNoOfTests": 20, "seed": 42},
         "hypothesis": {"nodes": [0], "initNode": 0, "edges": [{"from": 0, "input": "s1", "to": 0, "output": "OK"}]},
         "statistics": {
             "duration": {
@@ -126,7 +126,7 @@ ENTITIES.learnResults = [{
     },{
         "algorithmInformation": "+====+====+\n|    | s1 |\n+====+====+\n| ε  | OK |\n+====+====+\n| s1 | OK |\n+====+====+\n",
         "counterExample": "",
-        "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 10, "maxNoOfTests": 20},
+        "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 10, "maxNoOfTests": 20, "seed": 42},
         "hypothesis": {"nodes": [0], "initNode": 0, "edges": [{"from": 0, "input": "s1", "to": 0, "output": "OK"}]},
         "statistics": {
             "duration": {
@@ -182,7 +182,7 @@ ENTITIES.learnResults = [{
     "steps": [{
         "algorithmInformation": "+====+====+\n|    | s1 |\n+====+====+\n| ε  | OK |\n+====+====+\n| s1 | OK |\n+====+====+\n",
         "counterExample": "",
-        "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 10, "maxNoOfTests": 20},
+        "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 10, "maxNoOfTests": 20, "seed": 42},
         "hypothesis": {"nodes": [0], "initNode": 0, "edges": [{"from": 0, "input": "s1", "to": 0, "output": "OK"}]},
         "statistics": {
             "duration": {
@@ -208,7 +208,7 @@ ENTITIES.learnResults = [{
     }, {
         "algorithmInformation": "+====+====+\n|    | s1 |\n+====+====+\n| ε  | OK |\n+====+====+\n| s1 | OK |\n+====+====+\n",
         "counterExample": "",
-        "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 10, "maxNoOfTests": 20},
+        "eqOracle": {"type": "random_word", "minLength": 1, "maxLength": 10, "maxNoOfTests": 20, "seed": 42},
         "hypothesis": {"nodes": [0], "initNode": 0, "edges": [{"from": 0, "input": "s1", "to": 0, "output": "OK"}]},
         "statistics": {
             "duration": {
