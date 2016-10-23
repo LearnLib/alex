@@ -40,7 +40,7 @@ From here on, more symbols can be added and learned.
 
 It can be that the learner has not learned the application correctly, i.e. there is a word in the model that has a different output than the actual application.
 In fact, one can never be a 100% sure if the model actually represents the system under learning.
-How to check for and handle these mistakes is described in the [user manual](http://learnlib.github.io/alex/book/1.1.2/contents/user-manual/index.html).
+How to check for and handle these mistakes is described in the [user manual](http://learnlib.github.io/alex/book/1.2.0/contents/user-manual/index.html).
 
 If you want to know more about Active Automata Learning, you can find some resources at [Google Scholar](https://scholar.google.de/scholar?hl=de&q=active+automata+learning) or the homepage of the [LearnLib](http://learnlib.de/).
 
@@ -82,15 +82,17 @@ To install and run ALEX, execute the following commands in a directory of your c
 
 ## Further reading
 
-* [Frontend user manual](http://learnlib.github.io/alex/book/1.1.2/contents/user-manual/index.html)
-* [Screencasts](http://learnlib.github.io/alex/book/1.1.2/contents/screencasts/index.html)
-* [Developer docs](http://learnlib.github.io/alex/book/1.1.2/contents/developer-documents/index.html)
+* [Examples to get started](http://learnlib.github.io/alex/book/1.2.0/contents/examples/index.html)
+* [Frontend user manual](http://learnlib.github.io/alex/book/1.2.0/contents/user-manual/index.html)
+* [Screencasts](http://learnlib.github.io/alex/book/1.2.0/contents/screencasts/index.html)
+* [Developer docs](http://learnlib.github.io/alex/book/1.2.0/contents/developer-documents/index.html)
 
 ## FAQs
 
 **Is ALEX ready for production use?** <br>
-ALEX has already been used by a class at the TU Dortmund University as a tool to test a student project.
-As far as we are concerned, we used the application to learn applications like Bugzilla and parts of the famous Wordpress.
+ALEX has already been used by a class at the TU Dortmund University as a tool to test a student project for the last two years.
+As far as we are concerned, we used the application to learn applications like [Bugzilla](https://www.bugzilla.org/), 
+parts of the famous [Wordpress](https://wordpress.org/) and the majority of the [TodoMVC](http://todomvc.com/) project.
 
 **Could I potentially learn any available application that is accessible over the internet?** <br>
 Yes, you could, but really should not do that, since testing usually takes a lot of traffic, and your test targets may not like it.
@@ -100,8 +102,8 @@ The primary use case is to use ALEX for testing applications that are installed 
 **Do I really not have to have any programming experience?** <br>
 Yes and no, it depends on how you define programming experience.
 We made the best efforts to abstract all necessary steps to test a web application with ease.
-While modelling Selenium tests, it may eventually be helpful to have basic understanding of HTML and CSS.
-The same goes for modelling REST tests where it is needed that you can write JSON documents.
+While modeling Selenium tests, it may eventually be helpful to have basic understanding of HTML and CSS.
+The same goes for modeling REST tests where it is needed that you can write JSON documents.
 But to our understanding neither JSON, HTML nor CSS are programming languages.
 
 **How potent does my system have to be to run tests?** <br>
@@ -115,9 +117,3 @@ Initially, we did not develop ALEX as a solution to all situations that may occu
 If you think a key feature is missing, feel free to submit an issue and we will see what we can do.
 
 *Note: Surprisingly, neither of the above questions have been asked at any point in time. But it it still a neat way to package information that do not fit anywhere else in the documentation.*
-
-[java]:   https://java.com
-[maven]:  https://maven.apache.org
-[nodejs]: https://nodejs.org
-[grunt]:  http://gruntjs.com
-[bower]:  http://bower.io
