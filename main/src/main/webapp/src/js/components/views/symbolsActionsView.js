@@ -94,11 +94,17 @@ class SymbolsActionsView {
         const offHandler = $scope.$on('$stateChangeStart', (event, toState) => {
             if (this.hasChanged) {
                 event.preventDefault();
-                PromptService.confirm('There are unsaved changes. Do you still want to continue and discard them?')
+                PromptService.confirm('Do you want to save the changes?')
                     .then(() => {
+                        this.saveChanges().then(() => {
+                            offHandler();
+                            $state.go(toState);
+                        });
+                    })
+                    .catch(() => {
                         offHandler();
                         $state.go(toState);
-                    });
+                    })
             }
         });
 
@@ -192,7 +198,7 @@ class SymbolsActionsView {
         const symbolToUpdate = new AlphabetSymbol(this.symbol);
 
         // update the symbol
-        this.SymbolResource.update(symbolToUpdate)
+        return this.SymbolResource.update(symbolToUpdate)
             .then(updatedSymbol => {
                 this.symbol.revision = updatedSymbol.revision;
                 this.ToastService.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
