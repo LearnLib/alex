@@ -75,7 +75,7 @@ class LearnerStartView {
          * Flag for showing or hiding the sidebar.
          * @type {boolean}
          */
-        this.showSidebar = false;
+        this.showSidebar = true;
 
         /**
          * The amount of executed MQs in the active learn process.

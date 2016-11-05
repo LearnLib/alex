@@ -16,45 +16,17 @@
   left: $sidebar-width / 2;
 }
 
-.toast-success {
-  background-color: $brand-success;
-}
-
-.toast-info {
-  background-color: $brand-info;
-}
-
-.toast-error {
-  background-color: $brand-danger;
-}
-
 body {
   overflow-x: hidden;
 
   &.layout-collapsed {
 
-    .learn-start-wrapper {
-      left: 0;
+    #alex {
+      .sidebar-wrapper {
+        min-width: $sidebar-width-collapsed;
+        max-width: $sidebar-width-collapsed;
+      }
     }
-
-    #toast-container {
-      left: $sidebar-width-collapsed / 2
-    }
-
-    .view,
-    .action-bar.fixed,
-    .learn-results-compare-wrapper,
-    .learn-start-wrapper {
-      margin-left: $sidebar-width-collapsed;
-    }
-
-    .learn-results-compare-wrapper {
-      left: 0;
-    }
-  }
-
-  &.has-fixed-action-bar {
-    padding-top: 42px;
   }
 }
 
@@ -96,20 +68,18 @@ body {
 }
 
 .view {
-  margin-left: $sidebar-width;
-  min-width: 320px;
-  transition: margin 200ms;
+  @include position(absolute, 0, 0, 0, 0);
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .view-body {
   position: relative;
   padding: 15px 0;
-
-  &.about {
-    .content-section {
-      margin-bottom: 60px;
-    }
-  }
+  flex-grow: 1;
+  overflow: auto;
 }
 
 .view-header {
@@ -131,6 +101,30 @@ body {
     font-size: 14px;
     font-weight: 700;
     color: rgba(0, 0, 0, 0.5)
+  }
+}
+
+#alex {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+
+  .sidebar-wrapper {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 240px;
+    max-width: 240px;
+  }
+
+  .view-wrapper {
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: 100%;
+    overflow: auto;
+    position: relative;
   }
 }
 
@@ -241,31 +235,6 @@ body {
 
 /* Bootstrap Extensions & Modifications
 ============================================================================== */
-
-.list-group-minimal {
-  .list-group-item {
-
-    border-radius: 0;
-    border-right: 0;
-    border-top: 0;
-    background: none;
-
-    &.active {
-      background: #fff;
-      color: #333;
-      border-bottom: 1px solid #ddd;
-
-      &:hover {
-        background: #fff;
-      }
-    }
-
-    &:hover {
-      cursor: pointer;
-      background: rgba(0, 0, 0, 0.02)
-    }
-  }
-}
 
 .form-condensed {
   .form-group {
@@ -409,7 +378,7 @@ body {
     transition: opacity, margin 100ms;
     border: 1px solid #dadada;
     border-radius: 4px;
-    box-shadow: 0 2px 2px rgba(0,0,0,.075);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, .075);
 
     .symbol-list-item {
       border-bottom: 0;
@@ -454,51 +423,6 @@ body {
   }
 }
 
-.learn-results-panel {
-  border-right: 1px solid #ddd;
-
-  .close-button {
-    margin-left: 5px
-  }
-
-  .learn-results-panel-navigation {
-    margin-right: 7px;
-  }
-}
-
-.panel-sidebar {
-  position: absolute;
-  right: 0;
-  transform: translate(340px, 0);
-  bottom: 0;
-  top: 42px;
-  width: 340px;
-  background: #f2f2f2;
-  border: 1px solid #e7e7e7;
-  z-index: 1;
-  overflow: auto;
-  padding: 16px;
-  transition: transform 200ms;
-
-  &.show {
-    transform: translate(0, 0);
-  }
-
-  .panel {
-    border-radius: 0;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-bottom: 2px solid #ddd;
-
-    .panel-heading {
-      padding: 10px 15px;
-    }
-
-    .panel-body {
-      padding: 10px 15px;
-    }
-  }
-}
 
 .action-types-accordion {
   margin-bottom: 0;
@@ -529,8 +453,8 @@ body {
 }
 
 .learn-results-compare-wrapper {
-  @include position(absolute, 0, 0, 0, $sidebar-width);
-  transition: left .2s;
+  @include position(absolute, 0, 0, 0, 0);
+  display: flex;
 
   .add-panel-button {
     position: absolute;
@@ -551,9 +475,16 @@ body {
   }
 }
 
+learn-result-panel {
+  flex: 1;
+  position: relative;
+}
+
 .learn-result-panel {
   @include position(absolute, 0, 0, 0, 0);
   border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
 
   .learn-result-panel-header {
     height: 42px;
@@ -567,8 +498,8 @@ body {
     }
   }
   .learn-result-panel-body {
-    @include position(absolute, 42px, 0, 0, 0);
-    overflow: auto;
+    position: relative;
+    flex: 1;
 
     .alx-container {
       padding-top: 15px;
@@ -577,15 +508,28 @@ body {
   }
 }
 
+
 .learn-start-wrapper {
-  @include position(absolute, 0, 0, 0, $sidebar-width);
-  transition: left .2s;
+  @include position(absolute, 0, 0, 0, 0);
+  display: flex;
+
+  .panel-sidebar {
+    display: none;
+    max-width: 340px;
+    padding: 7px 15px;
+    background: #f7f7f7;
+    overflow: auto;
+
+    &.show {
+      display: block;
+    }
+  }
 }
 
 .learn-loading-indicator {
-  margin-top: 54px;
+  width: 100%;
+  margin-top: 60px;
 }
-
 
 .label-reset {
   &.label-default {

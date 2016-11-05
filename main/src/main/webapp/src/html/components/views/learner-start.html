@@ -1,4 +1,4 @@
-<div id="view-learner-start">
+<div class="view">
     <view-header title="ALEX is learning"></view-header>
 
     <div class="learn-start-wrapper">
@@ -28,6 +28,17 @@
             </table>
         </div>
 
+        <learn-result-panel result="vm.result" ng-if="vm.result && !vm.active">
+            <div class="btn-group btn-group-sm learn-result-panel-resume-button">
+                <button class="btn btn-success" ng-click="vm.resumeLearning()">Resume</button>
+                <button class="btn btn-success" ng-click="vm.toggleSidebar()"
+                        uib-tooltip="{{vm.showSidebar ? 'Close settings' : 'Show settings'}}"
+                tooltip-placement="left">
+                    <i class="fa fa-fw" ng-class="vm.showSidebar ? 'fa-close' : 'fa-gear'"></i>
+                </button>
+            </div>
+        </learn-result-panel>
+
         <div class="panel-sidebar" ng-class="{'show': vm.showSidebar}" ng-if="!vm.active && vm.resumeConfig !== null">
             <learn-resume-settings-widget configuration="vm.resumeConfig">
             </learn-resume-settings-widget>
@@ -38,15 +49,5 @@
                     result="vm.result">
             </counterexamples-widget>
         </div>
-
-        <learn-result-panel result="vm.result" ng-if="vm.result && !vm.active">
-            <div class="btn-group btn-group-sm learn-result-panel-resume-button">
-                <button class="btn btn-success" ng-click="vm.resumeLearning()">Resume</button>
-                <button class="btn btn-success" ng-click="vm.toggleSidebar()">
-                    <i class="fa fa-fw" ng-class="vm.showSidebar ? 'fa-close' : 'fa-gear'"></i>
-                </button>
-            </div>
-        </learn-result-panel>
-
     </div>
 </div>

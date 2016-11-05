@@ -69,18 +69,6 @@ export class SymbolResource {
     }
 
     /**
-     * Fetch all revisions of a symbol.
-     *
-     * @param {number} projectId - The id of the project the symbol belongs to.
-     * @param {number} symbolId - The id of the symbol whose revisions should be fetched.
-     * @returns {*}
-     */
-    getRevisions(projectId, symbolId) {
-        return this.$http.get(`rest/projects/${projectId}/symbols/${symbolId}/complete`)
-            .then(response => response.data.map(s => new AlphabetSymbol(s)));
-    }
-
-    /**
      * Creates a new symbol.
      *
      * @param {number} projectId - The id of the project the symbol should belong to.

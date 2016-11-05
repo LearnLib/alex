@@ -112,21 +112,6 @@ describe('SymbolResource', () => {
         })
     });
 
-    it('should get all revisions of a symbol', () => {
-        const symbol = ENTITIES.symbols[0];
-        const uri = `rest/projects/${symbol.project}/symbols/${symbol.id}/complete`;
-        spyOn($http, 'get').and.callThrough();
-
-        $httpBackend.whenGET(uri).respond(200, ENTITIES.symbols);
-        const promise = SymbolResource.getRevisions(symbol.project, symbol.id);
-        $httpBackend.flush();
-
-        expect($http.get).toHaveBeenCalledWith(uri);
-        promise.then((symbols) => {
-            symbols.forEach(s => expect(s instanceof AlphabetSymbol).toBe(true));
-        });
-    });
-
     it('should update a single symbol', () => {
         spyOn($http, 'put').and.callThrough();
         const symbol = ENTITIES.symbols[0];

@@ -67,12 +67,6 @@ export class AlphabetSymbol {
         this.project = obj.project;
 
         /**
-         * The id of the group the symbol belongs to.
-         * @type {number}
-         */
-        this.group = obj.group;
-
-        /**
          * The id of the user the symbol belongs to.
          * @type {number}
          */

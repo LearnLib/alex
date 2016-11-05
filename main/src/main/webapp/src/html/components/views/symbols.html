@@ -1,4 +1,4 @@
-<div id="view-symbols">
+<div class="view">
     <view-header title="Manage Symbols"></view-header>
 
     <action-bar>
@@ -52,7 +52,7 @@
         </div>
     </action-bar>
 
-    <div class="view-body has-sub-nav">
+    <div class="view-body">
         <div class="alx-container-fluid">
 
             <div class="symbol-group-list">
@@ -87,12 +87,6 @@
                                     <li>
                                         <a ui-sref="symbolsActions({symbolId:symbol.id})">
                                             <i class="fa fa-list-ol fa-fw"></i> Actions
-                                        </a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li>
-                                        <a ui-sref="symbolsHistory({symbolId:symbol.id})">
-                                            <i class="fa fa-history fa-fw"></i> Restore
                                         </a>
                                     </li>
                                 </ul>
