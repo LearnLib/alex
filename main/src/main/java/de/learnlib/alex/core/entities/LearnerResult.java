@@ -273,15 +273,15 @@ public class LearnerResult implements Serializable {
     /**
      * Return the reset symbol as ID and revision pair for the JSON output.
      *
-     * @return The ID and revision pair of the reset symbol.
+     * @return The ID of the reset symbol.
      */
     @Transient
     @JsonProperty("resetSymbol")
-    public IdRevisionPair getResetSymbolAsIdRevisionPair() {
+    public Long getResetSymbolAsId() {
         if (resetSymbol == null) {
-            return new IdRevisionPair();
+            return null;
         } else {
-            return resetSymbol.getIdRevisionPair();
+            return resetSymbol.getId();
         }
     }
 
@@ -304,14 +304,14 @@ public class LearnerResult implements Serializable {
     /**
      * Return the set of symbol as List of ID and revision pairs for the JSON output.
      *
-     * @return The ID and revision pairs of the symbols.
+     * @return The IDs of the symbols.
      */
     @Transient
     @JsonProperty("symbols")
-    public List<IdRevisionPair> getSymbolAsIdRevisionPair() {
-        List<IdRevisionPair> pairs = new LinkedList<>();
-        symbols.stream().map(Symbol::getIdRevisionPair).forEach(pairs::add);
-        return pairs;
+    public List<Long> getSymbolAsIds() {
+        List<Long> ids = new LinkedList<>();
+        symbols.stream().map(Symbol::getId).forEach(ids::add);
+        return ids;
     }
 
     /**

@@ -20,7 +20,6 @@ import de.learnlib.alex.ALEXTestApplication;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
@@ -43,17 +42,14 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import java.time.ZonedDateTime;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.*;
 
 public class LearnerResourceTest extends JerseyTest {
 
@@ -61,10 +57,8 @@ public class LearnerResourceTest extends JerseyTest {
     private static final long PROJECT_TEST_ID = 1;
     private static final long TEST_NO = 2;
     private static final long RESET_SYMBOL_TEST_ID = 3;
-    private static final String START_JSON = "{\"symbols\": ["
-                                               + "{\"id\": 1, \"revision\": 1},"
-                                               + "{\"id\": 2, \"revision\": 4}"
-                                           + "],\"resetSymbol\":{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1}"
+    private static final String START_JSON = "{\"symbols\": [1,2]"
+                                           + ",\"resetSymbol\":" + RESET_SYMBOL_TEST_ID
                                            + ",\"algorithm\":\"DHC\", \"eqOracle\": {\"type\": \"complete\"}}";
     private static final String RESUME_JSON = "{\"eqOracle\": {\"type\": \"complete\"}}";
 
@@ -112,7 +106,7 @@ public class LearnerResourceTest extends JerseyTest {
 
         given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID, ProjectDAO.EmbeddableFields.ALL)).willReturn(project);
         Symbol resetSymbol = mock(Symbol.class);
-        given(symbolDAO.get(admin, PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L)))
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, RESET_SYMBOL_TEST_ID))
                 .willReturn(resetSymbol);
 
         LearnerResult result = new LearnerResult();
@@ -371,12 +365,8 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReadTheCorrectOutput() {
-        String json = "{\"resetSymbol\":"
-                        + "{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"
-                    + "\"symbols\": ["
-                        + "{\"id\": 1, \"revision\": 1},"
-                        + "{\"id\": 2, \"revision\": 4}"
-                    + "]}";
+        String json = "{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ","
+                    + "\"symbols\": [1,2]}";
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
 
@@ -385,8 +375,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldCreateEmptyOutputForNoSymbols() throws NotFoundException {
-        String json = "{\"resetSymbol\":"
-                + "{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"
+        String json = "{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ","
                 + "\"symbols\": []}";
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
@@ -400,12 +389,8 @@ public class LearnerResourceTest extends JerseyTest {
         given(learner.readOutputs(any(), any(), any(), anyList()))
                 .willThrow(LearnerException.class);
 
-        String json = "{\"resetSymbol\":"
-                + "{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"
-                + "\"symbols\": ["
-                + "{\"id\": 1, \"revision\": 1},"
-                + "{\"id\": 2, \"revision\": 4}"
-                + "]}";
+        String json = "{\"resetSymbol\":"  + RESET_SYMBOL_TEST_ID + ","
+                + "\"symbols\": [1,2]}";
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
 
@@ -416,12 +401,8 @@ public class LearnerResourceTest extends JerseyTest {
     public void shouldReturn404IfOutputShouldBeCreatedForANotExistingProject() throws NotFoundException {
         given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID)).willThrow(NotFoundException.class);
 
-        String json = "{\"resetSymbol\":"
-                + "{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"
-                + "\"symbols\": ["
-                + "{\"id\": 1, \"revision\": 1},"
-                + "{\"id\": 2, \"revision\": 4}"
-                + "]}";
+        String json = "{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ","
+                + "\"symbols\": [1,2]}";
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
 
@@ -431,15 +412,11 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfOutputShouldBeCreatedWithANotExistingResetSymbol() throws NotFoundException {
-        given(symbolDAO.get(admin, PROJECT_TEST_ID, new IdRevisionPair(RESET_SYMBOL_TEST_ID, 1L)))
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, RESET_SYMBOL_TEST_ID))
                 .willThrow(NotFoundException.class);
 
-        String json = "{\"resetSymbol\":"
-                        + "{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"
-                    + "\"symbols\": ["
-                        + "{\"id\": 1, \"revision\": 1},"
-                        + "{\"id\": 2, \"revision\": 4}"
-                    + "]}";
+        String json = "{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ","
+                    + "\"symbols\": [1,2]}";
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
 
@@ -449,10 +426,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfOutputShouldBeCreatedWithoutAnyResetSymbol() throws NotFoundException {
-        String json = "{\"symbols\": ["
-                        + "{\"id\": 1, \"revision\": 1},"
-                        + "{\"id\": 2, \"revision\": 4}"
-                    + "]}";
+        String json = "{\"symbols\": [1,2]}";
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
 
@@ -462,14 +436,10 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfOutputShouldBeCreatedWithForNotExistingSymbols() throws NotFoundException {
-        given(symbolDAO.get(admin, PROJECT_TEST_ID, new IdRevisionPair(2L, 2L))).willThrow(NotFoundException.class);
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, 2L)).willThrow(NotFoundException.class);
 
-        String json = "{\"resetSymbol\":"
-                        + "{\"id\": " + RESET_SYMBOL_TEST_ID + ", \"revision\": 1},"
-                    + "\"symbols\": ["
-                        + "{\"id\": 1, \"revision\": 1},"
-                        + "{\"id\": 2, \"revision\": 2}"
-                    + "]}";
+        String json = "{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ","
+                    + "\"symbols\": [1,2]}";
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
 

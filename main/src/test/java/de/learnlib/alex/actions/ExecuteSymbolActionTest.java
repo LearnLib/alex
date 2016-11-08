@@ -18,7 +18,6 @@ package de.learnlib.alex.actions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
-import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
@@ -48,7 +47,6 @@ public class ExecuteSymbolActionTest {
     @Before
     public void setUp() throws Exception {
         given(symbol.getId()).willReturn(1L);
-        given(symbol.getRevision()).willReturn(1L);
 
         action = new ExecuteSymbolAction();
         action.setSymbolToExecute(symbol);
@@ -62,7 +60,7 @@ public class ExecuteSymbolActionTest {
 
         ExecuteSymbolAction action2 = mapper.readValue(json, ExecuteSymbolAction.class);
 
-        assertEquals(new IdRevisionPair(1L, 1L), action2.getSymbolToExecuteAsIdRevisionPair());
+        assertTrue(1L == action2.getSymbolToExecuteAsId());
     }
 
     @Test
@@ -74,8 +72,8 @@ public class ExecuteSymbolActionTest {
 
         assertTrue(obj instanceof ExecuteSymbolAction);
         ExecuteSymbolAction objAsAction = (ExecuteSymbolAction) obj;
-        IdRevisionPair symbolToExecuteAsIdRevisionPair = objAsAction.getSymbolToExecuteAsIdRevisionPair();
-        assertEquals(new IdRevisionPair(1L, 1L), symbolToExecuteAsIdRevisionPair);
+        Long symbolToExecuteAsId = objAsAction.getSymbolToExecuteAsId();
+        assertTrue(1L == symbolToExecuteAsId);
     }
 
     @Test

@@ -28,10 +28,7 @@
     } ]
   },
   "project" : 3,
-  "resetSymbol" : {
-    "id" : null,
-    "revision" : null
-  },
+  "resetSymbol" : null,
   "sigma" : [ "0", "1" ],
   "statistics" : {
     "duration" : {

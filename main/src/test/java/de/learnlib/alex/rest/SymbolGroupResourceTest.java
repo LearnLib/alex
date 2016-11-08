@@ -178,7 +178,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
         Response response = target(path).request().header("Authorization", adminToken).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO).getAllWithLatestRevision(admin, PROJECT_TEST_ID, group1.getId());
+        verify(symbolDAO).getAll(admin, PROJECT_TEST_ID, group1.getId());
     }
 
     @Test

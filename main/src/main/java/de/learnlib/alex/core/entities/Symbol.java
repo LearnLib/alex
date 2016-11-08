@@ -31,7 +31,6 @@ import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -57,7 +56,9 @@ import java.util.Objects;
 @Entity
 @Table(
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"userId", "projectId", "id", "revision"}, name = "Unique ID & Revision per User & project")
+                @UniqueConstraint(
+                        columnNames = {"userId", "projectId", "id"},
+                        name = "Unique ID & Revision per User & project")
         }
 )
 @JsonPropertyOrder(alphabetic = true)
@@ -74,6 +75,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     /** The ID of the Symbol in the DB. */
     private Long symbolId;
+
+    /** THe id of the symbol in the project. */
+    private Long id;
 
     /** The User that owns the Symbol. */
     private User user;
@@ -92,9 +96,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     /** The plain ID of the Group to be used in the JSON. */
     private Long groupId;
-
-    /** The ID and revision of the symbol. */
-    private IdRevisionPair idRevisionPair;
 
     /**
      * The name of the symbol.
@@ -121,7 +122,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * Default constructor.
      */
     public Symbol() {
-        this.idRevisionPair = new IdRevisionPair();
         this.actions = new LinkedList<>();
     }
 
@@ -292,37 +292,15 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     /**
-     * Get the ID and revision of the symbol as pair.
-     *
-     * @return The current ID and revision pair.
-     */
-    @Embedded
-    @JsonIgnore
-    public IdRevisionPair getIdRevisionPair() {
-        return idRevisionPair;
-    }
-
-    /**
-     * Set a new ID and Revision pair.
-     *
-     * @param idRevisionPair
-     *         The new ID and revision.
-     */
-    @JsonIgnore
-    public void setIdRevisionPair(IdRevisionPair idRevisionPair) {
-        this.idRevisionPair = idRevisionPair;
-    }
-
-    /**
      * Get the ID of the symbol.
      *
      * @return The ID.
      * @requiredField
      */
-    @Transient
+//    @Transient
     @JsonProperty
     public Long getId() {
-        return this.idRevisionPair.getId();
+        return this.id;
     }
 
     /**
@@ -333,30 +311,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @JsonProperty
     public void setId(Long id) {
-        this.idRevisionPair.setId(id);
-    }
-
-    /**
-     * Get the revision of the symbol.
-     *
-     * @return The revision.
-     * @requiredField
-     */
-    @Transient
-    @JsonProperty
-    public Long getRevision() {
-        return this.idRevisionPair.getRevision();
-    }
-
-    /**
-     * Set the revision of the symbol.
-     *
-     * @param revision
-     *            The new revision.
-     */
-    @JsonProperty
-    public void setRevision(Long revision) {
-        this.idRevisionPair.setRevision(revision);
+        this.id = id;
     }
 
     /**
@@ -468,7 +423,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @Override
     public ExecuteResult execute(ConnectorManager connector) throws SULException {
-        LOGGER.info(LEARNER_MARKER, "Executing Symbol {} ({})...", idRevisionPair.toString(), name);
+        LOGGER.info(LEARNER_MARKER, "Executing Symbol {} ({})...", String.valueOf(id), name);
         if (LOGGER.isEnabled(Level.INFO, LEARNER_MARKER)) {
             LoggerUtil.increaseIndent();
         }
@@ -489,7 +444,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         if (LOGGER.isEnabled(Level.INFO, LEARNER_MARKER)) {
             LoggerUtil.decreaseIndent();
         }
-        LOGGER.info(LEARNER_MARKER, "Executed the Symbol {} ({}) => {}.", idRevisionPair.toString(), name, result);
+        LOGGER.info(LEARNER_MARKER, "Executed the Symbol {} ({}) => {}.", String.valueOf(id), name, result);
         return result;
     }
 
@@ -516,12 +471,12 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         return Objects.equals(getUserId(), symbol.getUserId()) &&
                 Objects.equals(getProjectId(), symbol.getProjectId()) &&
                 Objects.equals(getGroupId(), symbol.getGroupId()) &&
-                Objects.equals(getIdRevisionPair(), symbol.getIdRevisionPair());
+                Objects.equals(getId(), symbol.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUserId(), getProjectId(), getGroupId(), getIdRevisionPair());
+        return Objects.hash(getUserId(), getProjectId(), getGroupId(), getId());
     }
 
     @Override
@@ -533,8 +488,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             amountOfActions = actions.size();
         }
 
-        return "Symbol[" + symbolId + "] " + this.user + this.project + "/" + this.getId() + "/" + this.getRevision()
-                + ", " + name + "(" + abbreviation + ") #actions: " + amountOfActions;
+        return "Symbol[" + symbolId + "] " + this.user + this.project + "/" + this.getId() + ", "
+                + name + "(" + abbreviation + ") #actions: " + amountOfActions;
     }
 
 }

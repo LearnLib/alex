@@ -131,7 +131,7 @@ public class LearnerTest {
 
     @Test(expected = IllegalStateException.class)
     public void shouldOnlyStartTheThreadOnce() throws NotFoundException {
-        given(symbolDAO.getAll(any(User.class), any(Long.class), any(List.class))).willReturn(new LinkedList<>());
+        given(symbolDAO.getByIds(any(User.class), any(Long.class), any(List.class))).willReturn(new LinkedList<>());
         given(learnerResultDAO.createStep(any(LearnerResult.class), any(LearnerConfiguration.class)))
                 .willReturn(new LearnerResultStep());
         given(learnerThread.isFinished()).willReturn(false);

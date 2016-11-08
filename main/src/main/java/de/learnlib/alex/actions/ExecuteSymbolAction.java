@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
-import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
@@ -58,7 +57,7 @@ public class ExecuteSymbolAction extends SymbolAction {
      */
     @Transient
     @JsonProperty("symbolToExecute")
-    private IdRevisionPair symbolToExecuteAsIdRevisionPair;
+    private Long symbolToExecuteAsId;
 
     /**
      * The actual reference to the Symbol that will be executed.
@@ -69,20 +68,15 @@ public class ExecuteSymbolAction extends SymbolAction {
     private Symbol symbolToExecute;
 
     /**
-     * Indicates if the latest revision of the symbol should be used.
-     */
-    private boolean useLatestRevision;
-
-    /**
      * Get the reference to the Symbol which will be executed.
      *
      * @return The reference as IdRevisionPair. Just add the project id ;)
      */
-    public IdRevisionPair getSymbolToExecuteAsIdRevisionPair() {
-        if (symbolToExecuteAsIdRevisionPair == null) {
-            return new IdRevisionPair(symbolToExecute);
+    public Long getSymbolToExecuteAsId() {
+        if (symbolToExecuteAsId == null) {
+            return symbolToExecute.getId();
         }
-        return symbolToExecuteAsIdRevisionPair;
+        return symbolToExecuteAsId;
     }
 
     /**
@@ -91,8 +85,8 @@ public class ExecuteSymbolAction extends SymbolAction {
      *
      * @param symbolToExecuteAsIdRevisionPair The new IdRevisionPair of the Symbol to execute.
      */
-    public void setSymbolToExecuteAsIdRevisionPair(IdRevisionPair symbolToExecuteAsIdRevisionPair) {
-        this.symbolToExecuteAsIdRevisionPair = symbolToExecuteAsIdRevisionPair;
+    public void setSymbolToExecuteAsId(Long symbolToExecuteAsId) {
+        this.symbolToExecuteAsId = symbolToExecuteAsId;
     }
 
     /**
@@ -129,24 +123,6 @@ public class ExecuteSymbolAction extends SymbolAction {
         return symbolToExecute.getName();
     }
 
-    /**
-     * Checks if the latest revision of the symbols should be used.
-     *
-     * @return if the latest revision should be used.
-     */
-    public boolean isUseLatestRevision() {
-        return useLatestRevision;
-    }
-
-    /**
-     * Sets the flag that indicates if the latest revision of the symbol should be used.
-     *
-     * @param useLatestRevision the flag
-     */
-    public void setUseLatestRevision(boolean useLatestRevision) {
-        this.useLatestRevision = useLatestRevision;
-    }
-
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         if (symbolToExecute == null) {
@@ -154,8 +130,8 @@ public class ExecuteSymbolAction extends SymbolAction {
                         ignoreFailure, negated);
             return getFailedOutput();
         }
-        LOGGER.info(LEARNER_MARKER, "Executing other Symbol <{}:{}> (ignoreFailure: {}, negated: {}).",
-                    symbolToExecute.getId(), symbolToExecute.getRevision(), ignoreFailure, negated);
+        LOGGER.info(LEARNER_MARKER, "Executing other Symbol <{}> (ignoreFailure: {}, negated: {}).",
+                    symbolToExecute.getId(), ignoreFailure, negated);
         if (LOGGER.isEnabled(Level.INFO, LEARNER_MARKER)) {
             LoggerUtil.increaseIndent();
         }
@@ -165,8 +141,8 @@ public class ExecuteSymbolAction extends SymbolAction {
         if (LOGGER.isEnabled(Level.INFO, LEARNER_MARKER)) {
             LoggerUtil.decreaseIndent();
         }
-        LOGGER.info(LEARNER_MARKER, "Executed other Symbol <{}:{}> => {} (ignoreFailure: {}, negated: {}).",
-                    symbolToExecute.getId(), symbolToExecute.getRevision(), symbolResult, ignoreFailure, negated);
+        LOGGER.info(LEARNER_MARKER, "Executed other Symbol <{}> => {} (ignoreFailure: {}, negated: {}).",
+                    symbolToExecute.getId(), symbolResult, ignoreFailure, negated);
         if (symbolResult == ExecuteResult.OK) {
             return getSuccessOutput();
         } else {

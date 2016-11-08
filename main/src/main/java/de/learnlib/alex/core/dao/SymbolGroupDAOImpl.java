@@ -217,7 +217,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             group.getSymbols().forEach(s -> SymbolDAOImpl.loadLazyRelations(symbolDAO, s));
         } else if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
             try {
-                List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(user, group.getProjectId(), group.getId());
+                List<Symbol> symbols = symbolDAO.getAll(user, group.getProjectId(), group.getId());
                 group.setSymbols(new HashSet<>(symbols));
             } catch (NotFoundException e) {
                 group.setSymbols(null);
@@ -254,7 +254,6 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             symbol.setUser(user);
             project.addSymbol(symbol);
             symbol.setGroup(group);
-            symbol.setRevision(0L);
             symbol.setId(symbolId);
             project.setNextSymbolId(symbolId + 1);
 
