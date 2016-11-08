@@ -337,48 +337,6 @@ public class SymbolDAOImplTest {
     }
 
     @Test
-    public void shouldGetAllRevisionOfASymbol() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-        //
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-        //
-        SymbolGroup group = new SymbolGroup();
-        group.setId(GROUP_ID);
-        //
-        Symbol symbol = new Symbol();
-        symbol.setUser(user);
-        symbol.setProject(project);
-        symbol.setGroup(group);
-        //
-        given(symbolRepository.findOne(USER_ID, PROJECT_ID, SYMBOL_ID)).willReturn(Collections.singletonList(symbol));
-
-        List<Symbol> symbolRevisionInDB = symbolDAO.getWithAllRevisions(user, PROJECT_ID, SYMBOL_ID);
-
-        assertThat(symbolRevisionInDB.size(), is(equalTo(1)));
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionIfYouTryToGetAllRevisionOfANotExistingSymbol() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-        //
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-        //
-        SymbolGroup group = new SymbolGroup();
-        group.setId(GROUP_ID);
-        //
-        Symbol symbol = new Symbol();
-        symbol.setUser(user);
-        symbol.setProject(project);
-        symbol.setGroup(group);
-
-        symbolDAO.getWithAllRevisions(user, symbol.getProjectId(), -1L); // should fail
-    }
-
-    @Test
     public void shouldUpdateASymbol() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);

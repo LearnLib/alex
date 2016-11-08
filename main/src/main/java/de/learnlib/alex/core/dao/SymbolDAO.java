@@ -200,21 +200,6 @@ public interface SymbolDAO {
     Symbol getWithLatestRevision(User user, Long projectId, Long id) throws NotFoundException;
 
     /**
-     * Get all Revisions of one Symbol.
-     *
-     * @param user
-     *         The owner of the Symbol.
-     * @param projectId
-     *         The Project the Symbol belongs to.
-     * @param id
-     *         The ID of the Symbol within the Project.
-     * @return A List of all Revision. Sorted with the earliest in the beginning.
-     * @throws NotFoundException
-     *         If the Symbol could not be found.
-     */
-    List<Symbol> getWithAllRevisions(User user, Long projectId, Long id) throws NotFoundException;
-
-    /**
      * Update a symbol.
      *
      * @param symbol

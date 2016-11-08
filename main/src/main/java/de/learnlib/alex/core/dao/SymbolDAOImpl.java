@@ -328,21 +328,6 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Symbol> getWithAllRevisions(User user, Long projectId, Long id) throws NotFoundException {
-        List<Symbol> result = symbolRepository.findOne(user.getId(), projectId, id);
-
-        if (result.isEmpty()) {
-            throw new NotFoundException("Could not find symbols in the project " + projectId
-                                                     + " with the id " + id + ".");
-        }
-
-        result.forEach(s -> loadLazyRelations(this, s));
-
-        return result;
-    }
-
-    @Override
     @Transactional
     public void update(Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException {
         // update

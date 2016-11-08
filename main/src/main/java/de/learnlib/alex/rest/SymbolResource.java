@@ -298,32 +298,6 @@ public class SymbolResource {
     }
 
     /**
-     * Get a Symbol by its ID.
-     * This returns all revisions of a symbol
-     *
-     * @param projectId The ID of the project.
-     * @param id        The ID of the symbol.
-     * @return A Symbol matching the projectID & ID or a not found response.
-     * @throws NotFoundException If the requested Symbol or the related Project or Group could not be found.
-     * @responseType    java.util.List<de.learnlib.alex.core.entities.Symbol>
-     * @successResponse 200 OK
-     * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
-     */
-    @GET
-    @Path("/{id}/complete")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getComplete(@PathParam("project_id") Long projectId, @PathParam("id") Long id)
-            throws NotFoundException {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("getComplete({}, {})  for user {}.", projectId, id, user);
-
-        List<Symbol> symbols = symbolDAO.getWithAllRevisions(user, projectId, id);
-
-        LOGGER.traceExit(symbols);
-        return ResponseHelper.renderList(symbols, Status.OK);
-    }
-
-    /**
      * Get a Symbol by its ID & revision.
      *
      * @param projectId The ID of the project.

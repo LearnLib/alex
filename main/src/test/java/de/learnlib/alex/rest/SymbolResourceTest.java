@@ -345,31 +345,6 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldGetTheRightSymbolWithAllRevisions() throws NotFoundException {
-        given(symbolDAO.getWithAllRevisions(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbols);
-
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/complete";
-        Response response = target(path).request().header("Authorization", adminToken).get();
-
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() {
-        });
-        assertEquals(2, responseSymbols.size());
-        verify(symbolDAO).getWithAllRevisions(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID);
-    }
-
-    @Test
-    public void shouldReturn404WhenSymbolWithAllRevisionCanNotBeFound() throws NotFoundException {
-        given(symbolDAO.getWithAllRevisions(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willThrow(NotFoundException.class);
-
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/complete";
-        Response response = target(path).request().header("Authorization", adminToken).get();
-
-        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(symbolDAO).getWithAllRevisions(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID);
-    }
-
-    @Test
     public void shouldGetTheRightSymbolWithRevision() throws NotFoundException {
         given(symbolDAO.get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID, SYMBOL_TEST_REV)).willReturn(symbol);
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + ":" + SYMBOL_TEST_REV;
