@@ -31,21 +31,13 @@ export class ExecuteSymbolGeneralAction extends Action {
         super(actionType.GENERAL_EXECUTE_SYMBOL, obj);
 
         /**
-         * idRevisionPair.
-         * @type {*|{id: null, revision: null}}
+         * id.
+         * @type {number}
          */
-        this.symbolToExecute = obj.symbolToExecute || {id: null, revision: null};
-
-        /**
-         * The flag that indicates if the latest revision of the symbol should be used
-         * without explicitly declaring it every time.
-         * @type {boolean}
-         */
-        this.useLatestRevision = obj.useLatestRevision || true;
+        this.symbolToExecute = obj.symbolToExecute || nul;
 
         let model = {
             name: obj.symbolToExecuteName || null,
-            maxRevision: null
         };
 
         if (typeof obj.getModel !== "undefined") {
@@ -61,25 +53,7 @@ export class ExecuteSymbolGeneralAction extends Action {
      * @returns {string}
      */
     toString() {
-        if (this.useLatestRevision) {
-            return `Execute Symbol ${this.getModel().name} with the latest revision`;
-        } else {
-            return `Execute symbol ${this.getModel().name}, rev. ${this.symbolToExecute.revision}`;
-        }
-    }
-
-    /**
-     * Update the revision of the symbol to execute.
-     *
-     * @param {AlphabetSymbol[]} symbols - The available symbols in the scope.
-     */
-    updateRevision(symbols) {
-        for (let i = 0; i < symbols.length; i++) {
-            if (symbols[i].id === this.symbolToExecute.id) {
-                this.symbolToExecute.revision = symbols[i].revision;
-                break;
-            }
-        }
+        return `Execute Symbol ${this.getModel().name}.`;
     }
 
     /**
@@ -92,9 +66,8 @@ export class ExecuteSymbolGeneralAction extends Action {
         this.getModel().maxRevision = null;
         for (let i = 0; i < symbols.length; i++) {
             if (symbols[i].name === name) {
-                this.symbolToExecute = symbols[i].getIdRevisionPair();
+                this.symbolToExecute = symbols[i].id;
                 this.getModel().name = name;
-                this.getModel().maxRevision = symbols[i].revision;
                 break;
             }
         }

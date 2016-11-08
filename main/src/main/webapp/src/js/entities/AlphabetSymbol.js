@@ -55,12 +55,6 @@ export class AlphabetSymbol {
         this.id = obj.id;
 
         /**
-         * The revision of the symbol.
-         * @type {number}
-         */
-        this.revision = obj.revision;
-
-        /**
          * The id of the project the symbol belongs to.
          * @type {number}
          */
@@ -92,18 +86,6 @@ export class AlphabetSymbol {
      */
     countEnabledActions() {
         return this.actions.filter(action => !action.disabled).length;
-    }
-
-    /**
-     * Gets the symbol as id revision pair.
-     *
-     * @returns {{id: number, revision: number}}
-     */
-    getIdRevisionPair() {
-        return {
-            id: this.id,
-            revision: this.revision
-        };
     }
 
     /**

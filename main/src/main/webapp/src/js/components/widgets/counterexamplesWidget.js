@@ -129,11 +129,11 @@ class CounterexamplesWidget {
         const test = () => {
             const testSymbols = [];
 
-            // find id/revision pairs of symbols from abbreviation in learnResult
+            // find ids of symbols from abbreviation in learnResult
             for (let i = 0; i < this.counterExample.length; i++) {
                 for (let j = 0; j < this.symbols.length; j++) {
                     if (this.counterExample[i].input === this.symbols[j].abbreviation) {
-                        testSymbols.push(this.symbols[j].getIdRevisionPair());
+                        testSymbols.push(this.symbols[j].id());
                     }
                 }
             }

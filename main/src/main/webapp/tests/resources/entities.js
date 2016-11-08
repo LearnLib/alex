@@ -29,9 +29,9 @@ ENTITIES.files = [
 ];
 
 ENTITIES.symbols = [
-    {id: 1, revision: 1, name: 's1', abbreviation: 's1', group: 1, project: 1, user: 1, actions: [], hidden: false},
-    {id: 2, revision: 1, name: 's2', abbreviation: 's2', group: 1, project: 1, user: 1, actions: [], hidden: true},
-    {id: 3, revision: 1, name: 's3', abbreviation: 's3', group: 1, project: 1, user: 1, actions: [], hidden: false}
+    {id: 1, name: 's1', abbreviation: 's1', group: 1, project: 1, user: 1, actions: [], hidden: false},
+    {id: 2, name: 's2', abbreviation: 's2', group: 1, project: 1, user: 1, actions: [], hidden: true},
+    {id: 3, name: 's3', abbreviation: 's3', group: 1, project: 1, user: 1, actions: [], hidden: false}
 ];
 
 ENTITIES.groups = [
@@ -61,11 +61,11 @@ ENTITIES.eqOracles = {
 
 ENTITIES.learnConfigurations = [
     {
-        symbols: [{id: 2, revision: 1}, {id: 3, revision: 1}],
+        symbols: [2,3],
         maxAmountOfStepsToLearn: -1,
         eqOracle: {type: 'random_word', minLength: 2, maxLength: 5, maxNoOfTests: 10, seed: 42},
         algorithm: 'TTT',
-        resetSymbol: {id: 1, revision: 1},
+        resetSymbol: 1,
         comment: null,
         browser: 'htmlunitdriver'
     }
@@ -76,7 +76,7 @@ ENTITIES.learnResults = [{
     "browser": "htmlunitdriver",
     "hypothesis": {"nodes": [0], "initNode": 0, "edges": [{"from": 0, "input": "s1", "to": 0, "output": "OK"}]},
     "project": 2,
-    "resetSymbol": {"id": 1, "revision": 2},
+    "resetSymbol": 1,
     "sigma": ["s1"],
     "statistics": {
         "duration": {
@@ -150,7 +150,7 @@ ENTITIES.learnResults = [{
         "stepNo": 1,
         "stepsToLearn": -1
     }],
-    "symbols": [{"id": 1, "revision": 2}],
+    "symbols": [1],
     "testNo": 1,
     "user": 1
 }, {
@@ -158,7 +158,7 @@ ENTITIES.learnResults = [{
     "browser": "htmlunitdriver",
     "hypothesis": {"nodes": [0], "initNode": 0, "edges": [{"from": 0, "input": "s1", "to": 0, "output": "OK"}]},
     "project": 2,
-    "resetSymbol": {"id": 1, "revision": 2},
+    "resetSymbol": 1,
     "sigma": ["s1"],
     "statistics": {
         "duration": {
@@ -232,7 +232,7 @@ ENTITIES.learnResults = [{
         "stepNo": 1,
         "stepsToLearn": -1
     }],
-    "symbols": [{"id": 1, "revision": 2}],
+    "symbols": [1],
     "testNo": 2,
     "user": 1
 }];

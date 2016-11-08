@@ -17,7 +17,7 @@ describe('ExecuteSymbolGeneralAction', () => {
             negated: false,
             ignoreFailure: false,
             disabled: false,
-            symbolToExecute: {id: null, revision: null},
+            symbolToExecute: null,
             useLatestRevision: true
         };
         const action = new ExecuteSymbolGeneralAction({});
