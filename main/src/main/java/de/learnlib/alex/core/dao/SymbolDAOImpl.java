@@ -40,6 +40,7 @@ import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,11 +86,8 @@ public class SymbolDAOImpl implements SymbolDAO {
     public void create(Symbol symbol) throws ValidationException {
         LOGGER.traceEntry("create({})", symbol);
         try {
-            // create the symbol
             createOne(symbol);
             setExecuteToSymbols(symbolRepository, symbol);
-
-        // error handling
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Symbol creation failed:", e);
             throw new ValidationException("Symbol could not be created.", e);
@@ -118,7 +116,6 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Transactional
     public void create(List<Symbol> symbols) throws ValidationException {
         try {
-            // create the symbol
             symbols.forEach(this::createOne);
 
             // set execute symbols
@@ -127,31 +124,21 @@ public class SymbolDAOImpl implements SymbolDAO {
             for (Symbol symbol : symbols) {
                 setExecuteToSymbols(symbolRepository, symbol, symbolMap);
             }
-
-        // error handling
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Symbol creation failed:", e);
             throw new ValidationException("Symbol could not be created.", e);
         } catch (NotFoundException e) {
-            symbols.forEach(s -> {
-                s.setId(null);
-            });
+            symbols.forEach(s -> s.setId(null));
             throw new ValidationException("Could not create a symbol because it has a reference to another"
                                                   + " unknown symbol.", e);
         } catch (javax.validation.ConstraintViolationException e) {
-            symbols.forEach(s -> {
-                s.setId(null);
-            });
+            symbols.forEach(s -> s.setId(null));
             throw ValidationExceptionHelper.createValidationException("Symbols were not created:", e);
         } catch (org.hibernate.exception.ConstraintViolationException e) {
-            symbols.forEach(s -> {
-                s.setId(null);
-            });
+            symbols.forEach(s -> s.setId(null));
             throw new ValidationException("Symbols were not created: " + e.getMessage(), e);
         } catch (IllegalStateException e) {
-            symbols.forEach(s -> {
-                s.setId(null);
-            });
+            symbols.forEach(s -> s.setId(null));
             throw new ValidationException("Could not create symbol because it was invalid.", e);
         }
     }
@@ -171,9 +158,9 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new ValidationException("To create a symbol its name and abbreviation must be unique.");
         }
 
-        Long userId    = symbol.getUserId();
+        Long userId = symbol.getUserId();
         Long projectId = symbol.getProjectId();
-        Long groupId   = symbol.getGroupId();
+        Long groupId = symbol.getGroupId();
 
         Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
         if (project == null) {
@@ -211,9 +198,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
 
         // get the symbols
-        @SuppressWarnings("unchecked") // should return a list of Symbols
         List<Symbol> result = symbolRepository.findByIds(user.getId(), projectId, ids);
-
         if (result.isEmpty()) {
             throw new NotFoundException("Could not find symbols in the project " + projectId
                                                 + " with the group ids.");
@@ -291,7 +276,6 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Override
     @Transactional
     public void update(Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException {
-        // update
         try {
             Symbol updatedSymbol = update_(symbol);
             List<SymbolAction> actions = updatedSymbol.getActions();
@@ -303,8 +287,6 @@ public class SymbolDAOImpl implements SymbolDAO {
                 }
             }
             setExecuteToSymbols(symbolRepository, updatedSymbol);
-
-        // error handling
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Symbol update failed:", e);
             throw new ValidationException("Symbol could not be updated.", e);
@@ -337,32 +319,20 @@ public class SymbolDAOImpl implements SymbolDAO {
             for (Symbol symbol : updatedSymbols) {
                 setExecuteToSymbols(symbolRepository, symbol, symbolMap);
             }
-
-            // error handling
         } catch (javax.validation.ConstraintViolationException e) {
-            symbols.forEach(s -> {
-                s.setId(null);
-            });
+            symbols.forEach(s -> s.setId(null));
             throw ValidationExceptionHelper.createValidationException("Symbols were not updated:", e);
         } catch (org.hibernate.exception.ConstraintViolationException e) {
-            symbols.forEach(s -> {
-                s.setId(null);
-            });
+            symbols.forEach(s -> s.setId(null));
             throw new ValidationException("Symbols were not updated: " + e.getMessage(), e);
         } catch (IllegalStateException e) {
-            symbols.forEach(s -> {
-                s.setId(null);
-            });
+            symbols.forEach(s -> s.setId(null));
             throw new ValidationException("Could not update the Symbols because one is not valid.", e);
         } catch (IllegalArgumentException e) {
-            symbols.forEach(s -> {
-                s.setId(null);
-            });
+            symbols.forEach(s -> s.setId(null));
             throw e;
         } catch (NotFoundException e) {
-            symbols.forEach(s -> {
-                s.setId(null);
-            });
+            symbols.forEach(s -> s.setId(null));
             throw new NotFoundException("Could not update the Symbol because it was nowhere to be found.", e);
         }
     }
@@ -382,6 +352,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         Symbol symbolInDB;
         try {
             symbolInDB = get(symbol.getUser(), symbol.getProjectId(), symbol.getId());
+            symbol.setSymbolId(symbol.getId());
             symbol.setProject(symbolInDB.getProject());
         } catch (NotFoundException e) {
             throw new NotFoundException("Update failed: Could not find the symbols with the id " + symbol.getId()
@@ -396,11 +367,8 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                                                         symbol.getProjectId(),
                                                                                         symbol.getGroupId());
 
-        symbol.setSymbolId(0L);
         symbol.setGroup(newGroup);
-
         beforeSymbolSave(symbol);
-
         symbol = symbolRepository.save(symbol);
 
         // update group
@@ -415,77 +383,54 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Override
     @Transactional
     public void move(Symbol symbol, Long newGroupId) throws NotFoundException {
-        try {
-            move_(symbol, newGroupId);
-        } catch (NotFoundException e) {
-            throw e;
-        }
+        move(Collections.singletonList(symbol), newGroupId);
     }
 
     @Override
     @Transactional
     public void move(List<Symbol> symbols, Long newGroupId) throws NotFoundException  {
-        try {
-            for (Symbol s : symbols) {
-                move_(s, newGroupId);
+        for (Symbol symbol : symbols) {
+            SymbolGroup oldGroup = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(symbol.getUserId(),
+                    symbol.getProjectId(),
+                    symbol.getGroupId());
+
+            SymbolGroup newGroup = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(symbol.getUserId(),
+                    symbol.getProjectId(),
+                    newGroupId);
+
+            if (newGroup == null) {
+                throw new NotFoundException("The group with the id " + newGroupId + " does not exist!");
             }
-        } catch (NotFoundException e) {
-            throw e;
-        }
-    }
 
-    private void move_(Symbol symbol, Long newGroupId) throws NotFoundException {
-        SymbolGroup oldGroup = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(symbol.getUserId(),
-                                                                                        symbol.getProjectId(),
-                                                                                        symbol.getGroupId());
-
-        SymbolGroup newGroup = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(symbol.getUserId(),
-                                                                                        symbol.getProjectId(),
-                                                                                        newGroupId);
-
-        if (newGroup == null) {
-            throw new NotFoundException("The group with the id " + newGroupId + " does not exist!");
-        }
-
-        if (!newGroup.equals(oldGroup)) {
-            Symbol s = symbolRepository.findOne(symbol.getUserId(), symbol.getProjectId(), symbol.getId());
-            newGroup.addSymbol(s);
+            if (!newGroup.equals(oldGroup)) {
+                Symbol s = symbolRepository.findOne(symbol.getUserId(), symbol.getProjectId(), symbol.getId());
+                newGroup.addSymbol(s);
+            }
         }
     }
 
     @Override
     @Transactional
     public void hide(Long userId, Long projectId, List<Long> ids) throws NotFoundException {
-        // update
-        try {
-            for (Long id : ids) {
-                Symbol symbol = getSymbol(userId, projectId, id);
-                loadLazyRelations(this, symbol);
-                symbol.setHidden(true);
-                symbolRepository.save(symbol);
-            }
-        } catch (NotFoundException e) {
-            throw  e;
+        for (Long id : ids) {
+            Symbol symbol = getSymbol(userId, projectId, id);
+            loadLazyRelations(this, symbol);
+            symbol.setHidden(true);
+            symbolRepository.save(symbol);
         }
     }
 
     @Override
     @Transactional
     public void show(Long userId, Long projectId, List<Long> ids) throws NotFoundException {
-        // update
-        try {
-            for (Long id : ids) {
-                Symbol symbol = getSymbol(userId, projectId, id);
-                symbol.setHidden(false);
-                symbolRepository.save(symbol);
-            }
-        } catch (IllegalArgumentException e) {
-            throw  e;
+        for (Long id : ids) {
+            Symbol symbol = getSymbol(userId, projectId, id);
+            symbol.setHidden(false);
+            symbolRepository.save(symbol);
         }
     }
 
-    private Symbol getSymbol(Long userId, Long projectId, Long symbolId)
-            throws NotFoundException {
+    private Symbol getSymbol(Long userId, Long projectId, Long symbolId) throws NotFoundException {
         Symbol symbol = symbolRepository.findOne(userId, projectId, symbolId);
 
         if (symbol == null) {
@@ -539,7 +484,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbols.forEach(s -> symbolMap.put(s.getId(), s));
 
         for (Symbol symbol : symbols) {
-            SymbolDAOImpl.setExecuteToSymbols(symbolRepository, symbol, symbolMap);
+            setExecuteToSymbols(symbolRepository, symbol, symbolMap);
         }
     }
 

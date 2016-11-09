@@ -343,16 +343,6 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldGetTheRightSymbolWithRevision() throws NotFoundException {
-        given(symbolDAO.get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + ":" + SYMBOL_TEST_REV;
-        Response response = target(path).request().header("Authorization", adminToken).get();
-
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        verify(symbolDAO).get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID);
-    }
-
-    @Test
     public void shouldUpdateTheRightSymbol() throws NotFoundException {
         symbol.setUser(null);
 
@@ -437,7 +427,7 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldResponseWith404IfIdRevisionPairsContainsUnexistantSymbolIds() throws NotFoundException {
+    public void shouldResponseWith404IfIdsContainNonexistentSymbolIds() throws NotFoundException {
         given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, ids)).willThrow(NotFoundException.class);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/1,2";

@@ -34,7 +34,7 @@ export class ExecuteSymbolGeneralAction extends Action {
          * id.
          * @type {number}
          */
-        this.symbolToExecute = obj.symbolToExecute || nul;
+        this.symbolToExecute = obj.symbolToExecute || null;
 
         let model = {
             name: obj.symbolToExecuteName || null,
