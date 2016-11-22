@@ -24,6 +24,7 @@ import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.SymbolActionRepository;
 import de.learnlib.alex.core.repositories.SymbolGroupRepository;
 import de.learnlib.alex.core.repositories.SymbolRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -63,6 +64,9 @@ public class SymbolDAOImpl implements SymbolDAO {
     /** The SymbolRepository to use. Will be injected. */
     private SymbolRepository symbolRepository;
 
+    /** The SymbolActionRepository to use. Will be injected. */
+    private SymbolActionRepository symbolActionRepository;
+
     /**
      * Creates a new SymbolDAO.
      *
@@ -72,13 +76,16 @@ public class SymbolDAOImpl implements SymbolDAO {
      *         The SymbolGroupRepository to use.
      * @param symbolRepository
      *         The SymbolRepository to use.
+     * @param symbolActionRepository
+     *         The SymbolActionRepository to use.
      */
     @Inject
     public SymbolDAOImpl(ProjectRepository projectRepository, SymbolGroupRepository symbolGroupRepository,
-                         SymbolRepository symbolRepository) {
+                         SymbolRepository symbolRepository, SymbolActionRepository symbolActionRepository) {
         this.projectRepository = projectRepository;
         this.symbolGroupRepository = symbolGroupRepository;
         this.symbolRepository = symbolRepository;
+        this.symbolActionRepository = symbolActionRepository;
     }
 
     @Override
@@ -349,35 +356,22 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new ValidationException("To update a symbol its name and abbreviation must be unique.");
         }
 
-        Symbol symbolInDB;
         try {
-            symbolInDB = get(symbol.getUser(), symbol.getProjectId(), symbol.getId());
-            symbol.setSymbolId(symbol.getId());
+            Symbol symbolInDB = get(symbol.getUser(), symbol.getProjectId(), symbol.getId());
+            symbol.setSymbolId(symbolInDB.getSymbolId());
             symbol.setProject(symbolInDB.getProject());
+            symbol.setGroup(symbolInDB.getGroup());
+
+            symbolActionRepository.deleteBySymbol_Id(symbolInDB.getSymbolId());
         } catch (NotFoundException e) {
             throw new NotFoundException("Update failed: Could not find the symbols with the id " + symbol.getId()
                                                 + " in the project " + symbol.getProjectId() + ".");
         }
 
-        SymbolGroup oldGroup = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(symbol.getUserId(),
-                                                                                        symbol.getProjectId(),
-                                                                                        symbolInDB.getGroupId());
+        // TODO update the group but it currently breaks the update process, use the move method for this atm
 
-        SymbolGroup newGroup = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(symbol.getUserId(),
-                                                                                        symbol.getProjectId(),
-                                                                                        symbol.getGroupId());
-
-        symbol.setGroup(newGroup);
         beforeSymbolSave(symbol);
-        symbol = symbolRepository.save(symbol);
-
-        // update group
-        if (!newGroup.equals(oldGroup)) {
-            Symbol s = symbolRepository.findOne(symbol.getUserId(), symbol.getProjectId(), symbol.getId());
-            newGroup.addSymbol(s);
-        }
-
-        return symbol;
+        return symbolRepository.save(symbol);
     }
 
     @Override
@@ -459,14 +453,11 @@ public class SymbolDAOImpl implements SymbolDAO {
      *         The symbol.
      */
     public static void beforeSymbolSave(Symbol symbol) {
-        User user = symbol.getUser();
-        Project project = symbol.getProject();
-
         for (int i = 0; i < symbol.getActions().size(); i++) {
             SymbolAction action = symbol.getActions().get(i);
             action.setId(null);
-            action.setUser(user);
-            action.setProject(project);
+            action.setUser(symbol.getUser());
+            action.setProject(symbol.getProject());
             action.setSymbol(symbol);
             action.setNumber(i);
         }

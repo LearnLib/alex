@@ -297,7 +297,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @return The ID.
      * @requiredField
      */
-//    @Transient
     @JsonProperty
     public Long getId() {
         return this.id;
@@ -384,7 +383,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @OneToMany(
             mappedBy = "symbol",
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+            cascade = {CascadeType.ALL})
     @OrderBy("number ASC")
     @JsonProperty
     public List<SymbolAction> getActions() {
