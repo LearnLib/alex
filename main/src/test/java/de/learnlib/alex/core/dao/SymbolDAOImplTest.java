@@ -351,9 +351,9 @@ public class SymbolDAOImplTest {
         symbol.setProject(project);
         symbol.setGroup(group);
         //
-        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
-                .willReturn(group);
+//        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID)).willReturn(group);
         given(symbolRepository.findOne(USER_ID, PROJECT_ID, symbol.getId())).willReturn(symbol);
+        given(symbolRepository.save(symbol)).willReturn(symbol);
 
         symbolDAO.update(symbol);
 
@@ -401,8 +401,7 @@ public class SymbolDAOImplTest {
         symbol.setProject(project);
         symbol.setGroup(group);
         //
-        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
-                                                                                                     .willReturn(group);
+//        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID)).willReturn(group);
         given(symbolRepository.findOne(USER_ID, PROJECT_ID, symbol.getId())).willReturn(symbol);
         given(symbolRepository.save(symbol)).willThrow(DataIntegrityViolationException.class);
 
@@ -432,8 +431,7 @@ public class SymbolDAOImplTest {
         transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
                                                                     rollbackException);
         //
-        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
-                .willReturn(group);
+//        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID)).willReturn(group);
         given(symbolRepository.findOne(USER_ID, PROJECT_ID, symbol.getId())).willReturn(symbol);
         given(symbolRepository.save(symbol)).willThrow(transactionSystemException);
 

@@ -60,7 +60,6 @@ public class SymbolResourceTest extends JerseyTest {
     private static final long USER_TEST_ID = 1;
     private static final long PROJECT_TEST_ID = 10;
     private static final long SYMBOL_TEST_ID = 1;
-    private static final long SYMBOL_TEST_REV = 3;
 
     @Mock
     private ProjectDAO projectDAO;
@@ -151,7 +150,7 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldCreateValidSymbolWithoutProjectOrRevision() throws IOException, NotFoundException {
+    public void shouldCreateValidSymbolWithoutProject() throws IOException, NotFoundException {
         String json = "{\"abbreviation\":\"srts\",\"actions\":[],\"id\":1,"
                 + "\"name\":\"Symbol Resource Test Symbol\"}";
 
@@ -214,7 +213,7 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldCreateValidSymbolsWithoutProjectOrRevision() throws IOException {
+    public void shouldCreateValidSymbolsWithoutProject() throws IOException {
         // given
         symbol.setProject(null);
         ObjectMapper mapper = new ObjectMapper();
@@ -412,10 +411,10 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldGetSymbolsByAListOfIdRevisionPairs() throws NotFoundException {
+    public void shouldGetSymbolsByAListOfIds() throws NotFoundException {
         given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, ids)).willReturn(symbols);
 
-        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/batch/1:1,2:1").request()
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/batch/1,2").request()
                                 .header("Authorization", adminToken).get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() { });
@@ -479,7 +478,7 @@ public class SymbolResourceTest extends JerseyTest {
         ids.add(symbol.getId());
         ids.add(symbol2.getId());
 
-        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, ids)).willReturn(symbols);
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, ids)).willReturn(symbols);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId()
                     + "/moveTo/" + group.getId();
@@ -495,7 +494,8 @@ public class SymbolResourceTest extends JerseyTest {
         ids.add(symbol.getId());
         ids.add(symbol2.getId());
 
-        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, ids)).willThrow(NotFoundException.class);
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, ids))
+                .willThrow(NotFoundException.class);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId()
                     + "/moveTo/" + group.getId();
@@ -511,7 +511,7 @@ public class SymbolResourceTest extends JerseyTest {
         ids.add(symbol.getId());
         ids.add(symbol2.getId());
 
-        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, ids)).willReturn(symbols);
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, ids)).willReturn(symbols);
         willThrow(NotFoundException.class).given(symbolDAO).move(symbols, group.getId());
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId()
@@ -541,7 +541,7 @@ public class SymbolResourceTest extends JerseyTest {
         ids.add(symbol.getId());
         ids.add(symbol2.getId());
 
-        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, ids)).willReturn(symbols);
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, ids)).willReturn(symbols);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/"
                     + symbol.getId() + "," + symbol2.getId() + "/hide";
@@ -601,7 +601,7 @@ public class SymbolResourceTest extends JerseyTest {
         ids.add(symbol.getId());
         ids.add(symbol2.getId());
 
-        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, ids)).willReturn(symbols);
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, ids)).willReturn(symbols);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + ","
                                                                          + symbol2.getId() + "/show";
