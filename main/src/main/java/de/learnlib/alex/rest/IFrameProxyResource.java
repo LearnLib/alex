@@ -55,6 +55,7 @@ import java.util.Map;
 @Path("proxy")
 public class IFrameProxyResource {
 
+    /** The timeout time in ms. */
     private static final int REQUEST_TIMEOUT_TIME = 10000; // in ms
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -156,7 +157,7 @@ public class IFrameProxyResource {
         return cookieMap;
     }
 
-    private Map<String,String> parseFormData(MultivaluedMap<String, String> body) {
+    private Map<String, String> parseFormData(MultivaluedMap<String, String> body) {
         Map<String, String> formData = new HashMap<>();
         for (Map.Entry<String, List<String>> entry : body.entrySet()) {
             String key = entry.getKey();

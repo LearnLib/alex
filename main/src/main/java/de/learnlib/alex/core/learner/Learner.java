@@ -475,9 +475,10 @@ public class Learner {
         LOGGER.traceEntry();
         LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
 
-        ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(project, readOutputConfig.getBrowser());
-        contextHandler.setResetSymbol(resetSymbol);
-        ConnectorManager connectors = contextHandler.createContext();
+        ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(
+                project, readOutputConfig.getBrowser());
+        ctxHandler.setResetSymbol(resetSymbol);
+        ConnectorManager connectors = ctxHandler.createContext();
 
         return readOutputs(symbols, connectors);
     }

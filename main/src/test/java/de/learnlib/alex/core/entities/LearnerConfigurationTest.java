@@ -74,8 +74,9 @@ public class LearnerConfigurationTest {
 
     @Test
     public void shouldReadJSONCorrectly() throws IOException, URISyntaxException {
-        String json = "{\"symbols\": [1,2],\"algorithm\":\"DHC\", \"browser\": \"firefox\", \"eqOracle\": {\"type\": \"complete\"}}";
-        //
+        String json = "{\"symbols\": [1,2],\"algorithm\":\"DHC\", \"browser\": \"firefox\", \"eqOracle\": "
+                + "{\"type\": \"complete\"}}";
+
         ObjectMapper mapper = new ObjectMapper();
 
         LearnerConfiguration configuration = mapper.readValue(json, LearnerConfiguration.class);

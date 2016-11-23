@@ -397,9 +397,57 @@ public class CallAction extends RESTSymbolAction {
      * The result object for the {@link #testRequest(String)} method.
      */
     public static class TestResult {
-        public int status;
-        public String body;
-        public Map<String, String> cookies = new HashMap<>();
-        public Map<String, String> headers = new HashMap<>();
+
+        /** The status of the HTTP response. */
+        private int status;
+
+        /** The body of the HTTP response. */
+        private String body;
+
+        /** The cookies of the HTTP response. */
+        private Map<String, String> cookies = new HashMap<>();
+
+        /** The headers of the HTTP response. */
+        private Map<String, String> headers = new HashMap<>();
+
+        /** @return The status. */
+        public int getStatus() {
+            return status;
+        }
+
+        /** @param status The status. */
+        public void setStatus(int status) {
+            this.status = status;
+        }
+
+        /** @return The body. */
+        public String getBody() {
+            return body;
+        }
+
+        /** @param body The body. */
+        public void setBody(String body) {
+            this.body = body;
+        }
+
+        /** @return The cookies. */
+        public Map<String, String> getCookies() {
+            return cookies;
+        }
+
+        /** @param cookies The cookies. */
+        public void setCookies(Map<String, String> cookies) {
+            this.cookies = cookies;
+        }
+
+        /** @return The header. */
+        public Map<String, String> getHeaders() {
+            return headers;
+        }
+
+        /** @param headers The headers. */
+        public void setHeaders(Map<String, String> headers) {
+            this.headers = headers;
+        }
     }
 }

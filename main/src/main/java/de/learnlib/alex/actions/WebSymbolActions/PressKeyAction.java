@@ -65,17 +65,17 @@ public class PressKeyAction extends WebSymbolAction {
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
         String unescapedKey = StringEscapeUtils.unescapeJava(this.key);
-        Keys key = Keys.getKeyFromUnicode(unescapedKey.toCharArray()[0]);
+        Keys keyToPress = Keys.getKeyFromUnicode(unescapedKey.toCharArray()[0]);
 
         try {
             WebElement element = connector.getElement(CSSUtils.escapeSelector(insertVariableValues(node)));
-            element.sendKeys(key);
+            element.sendKeys(keyToPress);
             LOGGER.info(LEARNER_MARKER, "Pressed the key '{}' on the element '{}' (ignoreFailure: {}, negated: {}).",
-                    key.toString(), node, ignoreFailure, negated);
+                    keyToPress.toString(), node, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not press key '{}' on element '{}' (ignoreFailure: {}, negated: {}).",
-                    key.toString(), node, ignoreFailure, negated, e);
+                    keyToPress.toString(), node, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

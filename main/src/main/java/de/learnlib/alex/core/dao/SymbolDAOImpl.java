@@ -94,7 +94,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         LOGGER.traceEntry("create({})", symbol);
         try {
             createOne(symbol);
-            setExecuteToSymbols(symbolRepository, symbol);
+            setExecuteToSymbols(symbol);
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Symbol creation failed:", e);
             throw new ValidationException("Symbol could not be created.", e);
@@ -243,7 +243,8 @@ public class SymbolDAOImpl implements SymbolDAO {
     public List<Symbol> getAll(User user, Long projectId, Long groupId,
                                SymbolVisibilityLevel visibilityLevel)
             throws NotFoundException {
-        List<Symbol> symbols = symbolRepository.findAll(user.getId(), projectId, groupId, visibilityLevel.getCriterion());
+        List<Symbol> symbols = symbolRepository.findAll(user.getId(), projectId, groupId,
+                                                        visibilityLevel.getCriterion());
 
         symbols.forEach(s -> loadLazyRelations(this, s));
 
@@ -284,16 +285,16 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Transactional
     public void update(Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException {
         try {
-            Symbol updatedSymbol = update_(symbol);
+            Symbol updatedSymbol = doUpdate(symbol);
             List<SymbolAction> actions = updatedSymbol.getActions();
-            for(int i = 0; i < actions.size(); i++) {
+            for (int i = 0; i < actions.size(); i++) {
                 SymbolAction action = actions.get(i);
                 if (action instanceof ExecuteSymbolAction) {
                     Long id = ((ExecuteSymbolAction) symbol.getActions().get(i)).getSymbolToExecuteAsId();
                     ((ExecuteSymbolAction) action).setSymbolToExecuteAsId(id);
                 }
             }
-            setExecuteToSymbols(symbolRepository, updatedSymbol);
+            setExecuteToSymbols(updatedSymbol);
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Symbol update failed:", e);
             throw new ValidationException("Symbol could not be updated.", e);
@@ -313,11 +314,10 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Override
     @Transactional
     public void update(List<Symbol> symbols) throws IllegalArgumentException, NotFoundException, ValidationException {
-        // update
         try {
             List<Symbol> updatedSymbols = new LinkedList<>();
             for (Symbol symbol : symbols) {
-                Symbol updatedSymbol = update_(symbol);
+                Symbol updatedSymbol = doUpdate(symbol);
                 updatedSymbols.add(updatedSymbol);
             }
 
@@ -344,7 +344,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
-    private Symbol update_(Symbol symbol) throws IllegalArgumentException, NotFoundException {
+    private Symbol doUpdate(Symbol symbol) throws IllegalArgumentException, NotFoundException {
         // checks for valid symbol
         if (symbol.getProjectId() == null) {
             throw new NotFoundException("Update failed: Could not find the project with the id + "
@@ -463,12 +463,22 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
-    private void setExecuteToSymbols(SymbolRepository symbolRepository, Symbol symbol) throws NotFoundException {
+    private void setExecuteToSymbols(Symbol symbol) throws NotFoundException {
         Map<Long, Symbol> symbolMap = new HashMap<>();
         symbolMap.put(symbol.getId(), symbol);
         setExecuteToSymbols(symbolRepository, symbol, symbolMap);
     }
 
+    /**
+     * Update references to executed symbols from {@link ExecuteSymbolAction}.
+     *
+     * @param symbolRepository
+     *          An instance of the repository.
+     * @param symbols
+     *          The symbols that should be updated.
+     * @throws NotFoundException
+     *          If a symbol could not be found.
+     */
     public static void setExecuteToSymbols(SymbolRepository symbolRepository, Collection<Symbol> symbols)
             throws NotFoundException {
         Map<Long, Symbol> symbolMap = new HashMap<>();
@@ -498,7 +508,8 @@ public class SymbolDAOImpl implements SymbolDAO {
 
                 Symbol symbolToExecute = cachedSymbols.get(id);
                 if (symbolToExecute == null) { // it was not in the set of cached symbols
-                    symbolToExecute = symbolRepository.findOne(action.getUser().getId(), action.getProject().getId(), id);
+                    symbolToExecute = symbolRepository.findOne(action.getUser().getId(), action.getProject().getId(),
+                                                               id);
                 }
 
                 if (symbolToExecute == null) {

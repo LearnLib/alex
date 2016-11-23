@@ -69,12 +69,16 @@ public interface SymbolRepository extends JpaRepository<Symbol, Long> {
     /**
      * Get symbols of a user and project with a specific name.
      *
+     * @param symbolId
+     *      The ID of the symbol.
      * @param userId
-     *      The ID of the user the symbols belong to.
+     *      The ID of the user the symbol belong to.
      * @param projectId
      *      The ID of the project the symbol belongs to.
      * @param name
-     *      The name of the Symbol.
+     *      The name of the symbol.
+     * @param abbreviation
+     *      The abbreviation of the symbol.
      * @return The symbols.
      */
     @Query("SELECT COUNT(s) "

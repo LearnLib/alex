@@ -80,7 +80,8 @@ public class SymbolDAOImplTest {
 
     @Before
     public void setUp() {
-        symbolDAO = new SymbolDAOImpl(projectRepository, symbolGroupRepository, symbolRepository, symbolActionRepository);
+        symbolDAO = new SymbolDAOImpl(projectRepository, symbolGroupRepository, symbolRepository,
+                                      symbolActionRepository);
     }
 
     @Test
@@ -339,19 +340,21 @@ public class SymbolDAOImplTest {
     public void shouldUpdateASymbol() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
+
         Symbol symbol = new Symbol();
         symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
-        //
-//        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID)).willReturn(group);
+
+//      given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
+//          .willReturn(group);
+
         given(symbolRepository.findOne(USER_ID, PROJECT_ID, symbol.getId())).willReturn(symbol);
         given(symbolRepository.save(symbol)).willReturn(symbol);
 
@@ -364,20 +367,20 @@ public class SymbolDAOImplTest {
     public void shouldFailToUpdateASymbolsWithADuplicateNameOrAbbreviationWithinOneProject() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
+
         Symbol symbol = new Symbol();
         symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
         symbol.setName("Test");
         symbol.setAbbreviation("test");
-        //
+
         given(symbolRepository.countSymbolsWithSameNameOrAbbreviation(symbol.getId(), USER_ID,
                                                                       PROJECT_ID, "Test", "test"))
                 .willReturn(1L);
@@ -401,7 +404,8 @@ public class SymbolDAOImplTest {
         symbol.setProject(project);
         symbol.setGroup(group);
         //
-//        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID)).willReturn(group);
+//        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
+//          .willReturn(group);
         given(symbolRepository.findOne(USER_ID, PROJECT_ID, symbol.getId())).willReturn(symbol);
         given(symbolRepository.save(symbol)).willThrow(DataIntegrityViolationException.class);
 
@@ -431,7 +435,8 @@ public class SymbolDAOImplTest {
         transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
                                                                     rollbackException);
         //
-//        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID)).willReturn(group);
+//        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
+//          .willReturn(group);
         given(symbolRepository.findOne(USER_ID, PROJECT_ID, symbol.getId())).willReturn(symbol);
         given(symbolRepository.save(symbol)).willThrow(transactionSystemException);
 

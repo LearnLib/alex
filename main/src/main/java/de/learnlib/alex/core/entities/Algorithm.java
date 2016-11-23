@@ -1,7 +1,5 @@
 package de.learnlib.alex.core.entities;
 
-import de.learnlib.alex.annotations.LearnAlgorithm;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;

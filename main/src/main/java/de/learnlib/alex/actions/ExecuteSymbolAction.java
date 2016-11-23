@@ -83,7 +83,7 @@ public class ExecuteSymbolAction extends SymbolAction {
      * Set a new reference to the Symbol to execute.
      * This does not update the actual Symbol!
      *
-     * @param symbolToExecuteAsIdRevisionPair The new IdRevisionPair of the Symbol to execute.
+     * @param symbolToExecuteAsId The new id of the Symbol to execute.
      */
     public void setSymbolToExecuteAsId(Long symbolToExecuteAsId) {
         this.symbolToExecuteAsId = symbolToExecuteAsId;

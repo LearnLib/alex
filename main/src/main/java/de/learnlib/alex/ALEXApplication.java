@@ -193,13 +193,18 @@ public class ALEXApplication extends ResourceConfig {
         LOGGER.info("{} LearnAlgorithms found.", algorithms.size());
     }
 
+    /**
+     * HTTP request filter that is required for the {@link IFrameProxyResource} to work properly.
+     *
+     * @return The filter.
+     */
     @Bean
     public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
         return new HiddenHttpMethodFilter() {
             @Override
             protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain filterChain) throws ServletException, IOException {
-                if ("POST".equals(request.getMethod())
+                if (request.getMethod().equals("POST")
                         && request.getContentType().equals(MediaType.APPLICATION_FORM_URLENCODED_VALUE)) {
                     filterChain.doFilter(request, response);
                 } else {

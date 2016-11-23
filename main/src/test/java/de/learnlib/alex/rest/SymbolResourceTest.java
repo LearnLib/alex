@@ -474,11 +474,11 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldMoveMultipleSymbols() throws NotFoundException {
-        List<Long> ids = new ArrayList<>();
-        ids.add(symbol.getId());
-        ids.add(symbol2.getId());
+        List<Long> symbolIds = new ArrayList<>();
+        symbolIds.add(symbol.getId());
+        symbolIds.add(symbol2.getId());
 
-        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, ids)).willReturn(symbols);
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, symbolIds)).willReturn(symbols);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId()
                     + "/moveTo/" + group.getId();
@@ -490,11 +490,11 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatMovingSymbolsThatDoNotExistsIsHandedProperly() throws NotFoundException {
-        List<Long> ids = new ArrayList<>();
-        ids.add(symbol.getId());
-        ids.add(symbol2.getId());
+        List<Long> symbolIds = new ArrayList<>();
+        symbolIds.add(symbol.getId());
+        symbolIds.add(symbol2.getId());
 
-        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, ids))
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, symbolIds))
                 .willThrow(NotFoundException.class);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId()
@@ -507,11 +507,11 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatMovingMultipleSymbolsIntoTheVoidIsHandedProperly() throws NotFoundException {
-        List<Long> ids = new ArrayList<>();
-        ids.add(symbol.getId());
-        ids.add(symbol2.getId());
+        List<Long> symbolIds = new ArrayList<>();
+        symbolIds.add(symbol.getId());
+        symbolIds.add(symbol2.getId());
 
-        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, ids)).willReturn(symbols);
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, symbolIds)).willReturn(symbols);
         willThrow(NotFoundException.class).given(symbolDAO).move(symbols, group.getId());
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId()
@@ -537,11 +537,11 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldHideMultipleSymbols() throws NotFoundException {
-        List<Long> ids = new ArrayList<>();
-        ids.add(symbol.getId());
-        ids.add(symbol2.getId());
+        List<Long> symbolIds = new ArrayList<>();
+        symbolIds.add(symbol.getId());
+        symbolIds.add(symbol2.getId());
 
-        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, ids)).willReturn(symbols);
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, symbolIds)).willReturn(symbols);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/"
                     + symbol.getId() + "," + symbol2.getId() + "/hide";
@@ -550,7 +550,7 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2, responseSymbols.size());
-        verify(symbolDAO).hide(USER_TEST_ID, PROJECT_TEST_ID, ids);
+        verify(symbolDAO).hide(USER_TEST_ID, PROJECT_TEST_ID, symbolIds);
     }
 
     @Test
@@ -597,11 +597,11 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldShowMultipleSymbols() throws NotFoundException {
-        List<Long> ids = new ArrayList<>();
-        ids.add(symbol.getId());
-        ids.add(symbol2.getId());
+        List<Long> symbolIds = new ArrayList<>();
+        symbolIds.add(symbol.getId());
+        symbolIds.add(symbol2.getId());
 
-        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, ids)).willReturn(symbols);
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, symbolIds)).willReturn(symbols);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + ","
                                                                          + symbol2.getId() + "/show";
@@ -610,7 +610,7 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2, responseSymbols.size());
-        verify(symbolDAO).show(USER_TEST_ID, PROJECT_TEST_ID, ids);
+        verify(symbolDAO).show(USER_TEST_ID, PROJECT_TEST_ID, symbolIds);
     }
 
     @Test

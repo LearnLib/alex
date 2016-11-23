@@ -69,6 +69,8 @@ public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProx
      *         The maximal length of the random generated words.
      * @param maxNoOfTests
      *         Highest amount of generated word before ending the search.
+     * @param seed
+     *         The seed for the random number generator.
      */
     public MealyRandomWordsEQOracleProxy(int minLength, int maxLength, int maxNoOfTests, int seed) {
         this.minLength = minLength;

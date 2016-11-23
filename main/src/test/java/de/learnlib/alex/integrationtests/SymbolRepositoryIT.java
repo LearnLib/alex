@@ -276,7 +276,6 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         symbolRepository.save(symbol2rev1);
         //
         List<Long> ids = Arrays.asList(symbol1rev0.getId(), symbol2rev1.getId());
-
         List<Symbol> symbolsFromDB = symbolRepository.findByIds(user.getId(), project.getId(), ids);
 
         assertThat(symbolsFromDB.size(), is(equalTo(2)));
@@ -285,7 +284,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         assertThat(symbolsFromDB, not(hasItem(equalTo(symbol2rev0))));
         assertThat(symbolsFromDB, hasItem(equalTo(symbol2rev1)));
     }
-    
+
     @Test
     public void shouldFetchSymbolsWithHighestRevisions() {
         User user = createUser("alex@test.example");

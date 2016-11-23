@@ -127,10 +127,8 @@ public class LearnerResource {
         LOGGER.traceEntry("start({}, {}) for user {}.", projectId, configuration, user);
 
         try {
-            if (
-                    (configuration.getUserId() != null && !user.getId().equals(configuration.getUserId()))
-                            || (configuration.getProjectId() != null && !configuration.getProjectId().equals(projectId))
-                    ) {
+            if ((configuration.getUserId() != null && !user.getId().equals(configuration.getUserId()))
+                    || (configuration.getProjectId() != null && !configuration.getProjectId().equals(projectId))) {
                 throw new IllegalArgumentException("If an user or a project is provided in the configuration, "
                         + "they must match the parameters in the path!");
             }
@@ -328,6 +326,18 @@ public class LearnerResource {
     }
 
     // TODO: create a new resource/dao for words and move this method there then.
+    /**
+     * Get the outputs of a word when executed to the SUL.
+     *
+     * @param projectId
+     *          The id of the project.
+     * @param readOutputConfig
+     *          The config that is used to query the SUL.
+     * @return
+     *          A response with the output of the word.
+     * @throws NotFoundException
+     *          If a symbol could not be found.
+     */
     @POST
     @Path("/words/{project_id}/outputs")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -366,22 +376,20 @@ public class LearnerResource {
     // load all from SymbolDAO always orders the Symbols by ID
     private List<Symbol> loadSymbols(User user, Long projectId, List<Long> ids) throws NotFoundException {
         List<Symbol> symbols = new LinkedList<>();
-
-        for(Long id:ids) {
+        for (Long id : ids) {
             Symbol symbol = symbolDAO.get(user, projectId, id);
             symbols.add(symbol);
         }
-
         return symbols;
     }
 
     /**
      * Test of two hypotheses are equal or not.
      * If a difference was found the separating word will be returned.
-     * Otherwise, i.e. the hypotheses are equal,
+     * Otherwise, i.e. the hypotheses are equal.
      *
      * @param mealyMachineProxies A List of two (!) hypotheses, which will be compared.
-     * @return '{"seperatingWord": "<seperating word, if any"}'
+     * @return '{"seperatingWord": "seperating word, if any"}'
      */
     @POST
     @Path("/compare/")

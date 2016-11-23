@@ -342,7 +342,8 @@ public class LearnerThread extends Thread {
             try {
                 learner.refineHypothesis(counterExampleDefaultProxy);
             } catch (NullPointerException e) {
-                throw new LearnerException("Presumably the detected counterexample '" + counterExampleDefaultProxy + "' was not a real counterexample!");
+                throw new LearnerException("Presumably the detected counterexample '" + counterExampleDefaultProxy
+                        + "' was not a real counterexample!");
             } finally {
                 storeLearnerMetaData();
             }

@@ -211,7 +211,8 @@ public class LearnerResultStepRepositoryIT extends AbstractRepositoryIT {
         LearnerResult result3 = createLearnerResult(user, project, 2L);
         learnerResultRepository.save(result3);
 
-        List<LearnerResult> results = learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(user, project, 0L, 2L);
+        List<LearnerResult> results = learnerResultRepository
+                .findByUser_IdAndProject_IdAndTestNoIn(user, project, 0L, 2L);
 
         assertThat(results.size(), is(equalTo(2)));
         assertThat(results, hasItem(equalTo(result1)));

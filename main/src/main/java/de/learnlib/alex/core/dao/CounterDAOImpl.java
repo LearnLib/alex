@@ -68,10 +68,7 @@ public class CounterDAOImpl implements CounterDAO {
         try {
             Project project = projectRepository.findOne(counter.getProjectId());
             counter.setProject(project);
-
             counterRepository.save(counter);
-
-        // error handling
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Counter creation failed:", e);
             throw new javax.validation.ValidationException("Counter could not be created.", e);
@@ -96,16 +93,10 @@ public class CounterDAOImpl implements CounterDAO {
     @Override
     @Transactional(readOnly = true)
     public Counter get(Long userId, Long projectId, String name) throws NotFoundException {
-        try {
-            Counter result = get_(userId, projectId, name);
-
-            return result;
-        } catch (NotFoundException e) {
-            throw e;
-        }
+        return doGet(userId, projectId, name);
     }
 
-    private Counter get_(Long userId, Long projectId, String name) throws NotFoundException {
+    private Counter doGet(Long userId, Long projectId, String name) throws NotFoundException {
         Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
         if (project == null) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
@@ -124,10 +115,8 @@ public class CounterDAOImpl implements CounterDAO {
     @Transactional
     public void update(Counter counter) throws NotFoundException, ValidationException {
         try {
-            get_(counter.getUserId(), counter.getProjectId(), counter.getName()); // check if the counter exists
+            doGet(counter.getUserId(), counter.getProjectId(), counter.getName()); // check if the counter exists
             counterRepository.save(counter);
-
-        // error handling
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Counter update failed:", e);
             throw new javax.validation.ValidationException("Counter could not be updated.", e);
