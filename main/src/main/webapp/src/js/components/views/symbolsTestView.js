@@ -108,7 +108,7 @@ export const symbolsTestView = {
 
             this.outputs = [];
             this.isExecuting = true;
-            const symbols = this.word.map(s => s.getIdRevisionPair());
+            const symbols = this.word.map(s => s.id);
             const resetSymbol = symbols.shift();
 
             const readOutputConfig = {

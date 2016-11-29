@@ -190,8 +190,6 @@ export class LearnerResultChartService {
             });
         });
 
-        console.log(data);
-
         return {
             context: result,
             options: options,
@@ -343,8 +341,6 @@ export class LearnerResultChartService {
                 data[prop].dataset.push(r);
             });
         });
-
-        console.log(data);
 
         return {
             context: results,
