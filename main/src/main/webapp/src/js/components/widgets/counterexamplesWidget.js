@@ -133,7 +133,7 @@ class CounterexamplesWidget {
             for (let i = 0; i < this.counterExample.length; i++) {
                 for (let j = 0; j < this.symbols.length; j++) {
                     if (this.counterExample[i].input === this.symbols[j].abbreviation) {
-                        testSymbols.push(this.symbols[j].id());
+                        testSymbols.push(this.symbols[j].id);
                     }
                 }
             }

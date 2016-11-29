@@ -63,10 +63,42 @@
                     <hr>
                 </div>
 
+                <table class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th>Browser</th>
+                            <th>Algorithm</th>
+                            <th>Sigma</th>
+                            <th>Equivalence Queries</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="!vm.chartData.context.length">
+                        <tr>
+                            <td><strong>Test <span ng-bind="vm.chartData.context.testNo"></span></strong></td>
+                            <td ng-bind="vm.chartData.context.browser | formatWebBrowser"></td>
+                            <td ng-bind="vm.chartData.context.algorithm | formatAlgorithm"></td>
+                            <td ng-bind="vm.chartData.context.sigma.length"></td>
+                            <td ng-bind="vm.chartData.context.statistics.eqsUsed"></td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="vm.chartData.context.length">
+                    <tr ng-repeat="result in vm.chartData.context">
+                        <td><strong>Test <span ng-bind="result.testNo"></span></strong></td>
+                        <td ng-bind="result.browser | formatWebBrowser"></td>
+                        <td ng-bind="result.algorithm | formatAlgorithm"></td>
+                        <td ng-bind="result.sigma.length"></td>
+                        <td ng-bind="result.statistics.eqsUsed"></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <hr>
+
                 <div class="row" ng-if="vm.chartData.options">
                     <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
 
-                        <widget title="#Membership Queries (total)" id="chart-eqs">
+                        <widget title="#Membership Queries" id="chart-eqs">
                             <div style="width: 100%; height: 450px">
                                 <linechart data="vm.chartData.data.mqs" options="vm.chartData.options"></linechart>
                             </div>
@@ -75,7 +107,7 @@
                                 <i class="fa fa-fw fa-download"></i> Download SVG
                             </button>
                         </widget>
-                        <widget title="Duration in ms (total)" id="chart-duration">
+                        <widget title="Duration (in ms)" id="chart-duration">
                             <div style="width: 100%; height: 450px">
                                 <linechart data="vm.chartData.data.duration" options="vm.chartData.options"></linechart>
                             </div>
@@ -86,27 +118,7 @@
                         </widget>
                     </div>
                     <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
-                        <widget title="#Equivalence Queries" id="chart-mqs">
-                            <div style="width: 100%; height: 450px">
-                                <linechart data="vm.chartData.data.eqs" options="vm.chartData.options"></linechart>
-                            </div>
-                            <hr>
-                            <button class="btn btn-xs btn-default pull-right" ng-click="vm.downloadChart('#chart-mqs')">
-                                <i class="fa fa-fw fa-download"></i> Download SVG
-                            </button>
-                        </widget>
-                        <widget title="|Sigma|" id="chart-sigma">
-                            <div style="width: 100%; height: 450px">
-                                <linechart data="vm.chartData.data.sigma" options="vm.chartData.options"></linechart>
-                            </div>
-                            <hr>
-                            <button class="btn btn-xs btn-default pull-right" ng-click="vm.downloadChart('#chart-sigma')">
-                                <i class="fa fa-fw fa-download"></i> Download SVG
-                            </button>
-                        </widget>
-                    </div>
-                    <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
-                        <widget title="#Symbol Calls (total)" id="chart-symbols">
+                        <widget title="#Symbol Calls" id="chart-symbols">
                             <div style="width: 100%; height: 450px">
                                 <linechart data="vm.chartData.data.symbols" options="vm.chartData.options"></linechart>
                             </div>

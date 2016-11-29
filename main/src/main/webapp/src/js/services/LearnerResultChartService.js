@@ -74,18 +74,14 @@ export class LearnerResultChartService {
         };
 
         const data = {
-            eqs: {dataset: [{x: 0, y: 0}]},
             mqs: {dataset: [{x: 0, y: 0}]},
             symbols: {dataset: [{x: 0, y: 0}]},
-            sigma: {dataset: [{x: 0, y: 0}]},
             duration: {dataset: [{x: 0, y: 0}]}
         };
 
         result.steps.forEach((step, i) => {
-            data.eqs.dataset.push({x: i + 1, y: step.statistics.eqsUsed});
             data.mqs.dataset.push({x: i + 1, y: step.statistics.mqsUsed.total});
             data.symbols.dataset.push({x: i + 1, y: step.statistics.symbolsUsed.total});
-            data.sigma.dataset.push({x: i + 1, y: result.sigma.length});
             data.duration.dataset.push({x: i + 1, y: step.statistics.duration.total});
         });
 
@@ -134,27 +130,21 @@ export class LearnerResultChartService {
         };
 
         const data = {
-            eqs: {dataset: [{x: 0, y: 0}]},
             mqs: {dataset: [{x: 0, y: 0}]},
             symbols: {dataset: [{x: 0, y: 0}]},
-            sigma: {dataset: [{x: 0, y: 0}]},
             duration: {dataset: [{x: 0, y: 0}]}
         };
 
         results.forEach((result, i) => {
             let j = i + 1;
-            data.eqs.dataset.push({x: j, y: result.statistics.eqsUsed});
             data.mqs.dataset.push({x: j, y: result.statistics.mqsUsed.total});
             data.symbols.dataset.push({x: j, y: result.statistics.symbolsUsed.total});
-            data.sigma.dataset.push({x: j, y: result.sigma.length});
             data.duration.dataset.push({x: j, y: result.statistics.duration.total});
         });
 
         const last = results.length + 1;
-        data.eqs.dataset.push({x: last, y: 0});
         data.mqs.dataset.push({x: last, y: 0});
         data.symbols.dataset.push({x: last, y: 0});
-        data.sigma.dataset.push({x: last, y: 0});
         data.duration.dataset.push({x: last, y: 0});
 
         return {
@@ -166,7 +156,7 @@ export class LearnerResultChartService {
 
     createDataMultipleComplete(results) {
         const colors = ['#4B6396', '#3BA3B8', '#3BB877', '#8ACF36', '#E8E835', '#F7821B', '#F74F1B', '#C01BF7'];
-        const props = ['eqs', 'mqs', 'symbols', 'sigma', 'duration'];
+        const props = ['mqs', 'symbols', 'duration'];
 
         // find value from test results where #steps is max
         let maxSteps = 0;
@@ -203,41 +193,31 @@ export class LearnerResultChartService {
         };
 
         const data = {
-            eqs: {dataset: []},
             mqs: {dataset: []},
             symbols: {dataset: []},
-            sigma: {dataset: []},
             duration: {dataset: []}
         };
         const values = {
-            eqs: {dataset: []},
             mqs: {dataset: []},
             symbols: {dataset: []},
-            sigma: {dataset: []},
             duration: {dataset: []}
         };
 
         results.forEach((result, i) => {
 
             // extract all values from the results
-            const eqs = result.steps.map(s => s.statistics.eqsUsed);
             const mqs = result.steps.map(s => s.statistics.mqsUsed.total);
             const symbols = result.steps.map(s => s.statistics.symbolsUsed.total);
-            const sigma = result.steps.map(s => result.sigma.length);
             const duration = result.steps.map(s => s.statistics.duration.total);
 
             // fill all other values with zeroes in order to
             // reduce visual bugs
-            while (eqs.length < maxSteps) eqs.push(0);
             while (mqs.length < maxSteps) mqs.push(0);
             while (symbols.length < maxSteps) symbols.push(0);
-            while (sigma.length < maxSteps) sigma.push(0);
             while (duration.length < maxSteps) duration.push(0);
 
-            values.eqs.dataset.push(eqs);
             values.mqs.dataset.push(mqs);
             values.symbols.dataset.push(symbols);
-            values.sigma.dataset.push(sigma);
             values.duration.dataset.push(duration);
 
             // add options for specific area
