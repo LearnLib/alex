@@ -13,24 +13,88 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import _ from "lodash";
+
+const MARGIN_OPTIONS = {
+    top: 20,
+    right: 50,
+    bottom: 20,
+    left: 50
+};
+
+const GRID_OPTIONS = {
+    x: false,
+    y: true
+};
 
 /**
  * The service that helps transforming learn results into chart data that is required by n3-line-chart.
  */
 export class LearnerResultChartService {
 
-    /**
-     * Creates chart data for a single final result.
-     *
-     * @param {LearnResult} result
-     * @returns {{context, options, data}|*}
-     */
     createDataSingleFinal(result) {
-        const data = this.createDataMultipleFinal([result]);
-        data.context = result;
-        return data;
+        const options = {
+            margin: MARGIN_OPTIONS,
+            grid: GRID_OPTIONS,
+            series: [{
+                axis: 'y',
+                dataset: 'dataset',
+                key: 'y',
+                label: ' ',
+                color: "#4B6396",
+                type: ['column'],
+                id: 'mySeries0'
+            }],
+            axes: {
+                x: {
+                    key: 'x',
+                    type: 'linear',
+                    ticks: [0, 1, 2, 3, 4],
+                    tickFormat: (value, index) => {
+                        return [" ", "Total", "Learner", "EQ Oracle", " "][index];
+                    }
+                },
+                y: {
+                    min: 0
+                }
+            }
+        };
+
+        const data = {
+            mqs: {
+                dataset: [
+                    {x: 0, y: 0},
+                    {x: 1, y: result.statistics.mqsUsed.total},
+                    {x: 2, y: result.statistics.mqsUsed.learner},
+                    {x: 3, y: result.statistics.mqsUsed.eqOracle},
+                    {x: 4, y: 0},
+                ]
+            },
+            symbols: {
+                dataset: [
+                    {x: 0, y: 0},
+                    {x: 1, y: result.statistics.symbolsUsed.total},
+                    {x: 2, y: result.statistics.symbolsUsed.learner},
+                    {x: 3, y: result.statistics.symbolsUsed.eqOracle},
+                    {x: 4, y: 0},
+                ]
+            },
+            duration: {
+                dataset: [
+                    {x: 0, y: 0},
+                    {x: 1, y: result.statistics.duration.total},
+                    {x: 2, y: result.statistics.duration.learner},
+                    {x: 3, y: result.statistics.duration.eqOracle},
+                    {x: 4, y: 0},
+                ]
+            }
+        };
+
+        return {
+            context: result,
+            options: options,
+            data: data
+        };
     }
 
     /**
@@ -38,25 +102,37 @@ export class LearnerResultChartService {
      */
     createDataSingleComplete(result) {
         const options = {
-            margin: {
-                top: 20,
-                right: 50,
-                bottom: 20,
-                left: 50
-            },
-            grid: {
-                x: false,
-                y: true
-            },
-            series: [{
-                axis: 'y',
-                dataset: 'dataset',
-                key: 'y',
-                label: ' ',
-                color: "#4B6396",
-                type: ['dot', 'line', 'area'],
-                id: 'mySeries0'
-            }],
+            margin: MARGIN_OPTIONS,
+            grid: GRID_OPTIONS,
+            series: [
+                {
+                    axis: 'y',
+                    dataset: 'dataset',
+                    key: 'y0',
+                    label: 'Total',
+                    color: '#4B6396',
+                    type: ['dot', 'line', 'area'],
+                    id: 'mySeries0'
+                },
+                {
+                    axis: 'y',
+                    dataset: 'dataset',
+                    key: 'y1',
+                    label: 'Learner',
+                    color: '#3BB877',
+                    type: ['dot', 'line', 'area'],
+                    id: 'mySeries1'
+                },
+                {
+                    axis: 'y',
+                    dataset: 'dataset',
+                    key: 'y2',
+                    label: 'EQ Oracle',
+                    color: '#C01BF7',
+                    type: ['dot', 'line', 'area'],
+                    id: 'mySeries2'
+                }
+            ],
             axes: {
                 x: {
                     key: 'x',
@@ -74,16 +150,47 @@ export class LearnerResultChartService {
         };
 
         const data = {
-            mqs: {dataset: [{x: 0, y: 0}]},
-            symbols: {dataset: [{x: 0, y: 0}]},
-            duration: {dataset: [{x: 0, y: 0}]}
+            mqs: {
+                dataset: [
+                    {x: 0, y0: 0, y1: 0, y2: 0}
+                ]
+            },
+            symbols: {
+                dataset: [
+                    {x: 0, y0: 0, y1: 0, y2: 0}
+                ]
+            },
+            duration: {
+                dataset: [
+                    {x: 0, y0: 0, y1: 0, y2: 0}
+                ]
+            }
         };
 
         result.steps.forEach((step, i) => {
-            data.mqs.dataset.push({x: i + 1, y: step.statistics.mqsUsed.total});
-            data.symbols.dataset.push({x: i + 1, y: step.statistics.symbolsUsed.total});
-            data.duration.dataset.push({x: i + 1, y: step.statistics.duration.total});
+            i = i + 1;
+
+            data.mqs.dataset.push({
+                x: i,
+                y0: step.statistics.mqsUsed.total,
+                y1: step.statistics.mqsUsed.learner,
+                y2: step.statistics.mqsUsed.eqOracle
+            });
+            data.symbols.dataset.push({
+                x: i,
+                y0: step.statistics.symbolsUsed.total,
+                y1: step.statistics.symbolsUsed.learner,
+                y2: step.statistics.symbolsUsed.eqOracle
+            });
+            data.duration.dataset.push({
+                x: i,
+                y0: step.statistics.duration.total,
+                y1: step.statistics.duration.learner,
+                y2: step.statistics.duration.eqOracle
+            });
         });
+
+        console.log(data);
 
         return {
             context: result,
@@ -94,16 +201,8 @@ export class LearnerResultChartService {
 
     createDataMultipleFinal(results) {
         const options = {
-            margin: {
-                top: 20,
-                right: 50,
-                bottom: 20,
-                left: 50
-            },
-            grid: {
-                x: false,
-                y: true
-            },
+            margin: MARGIN_OPTIONS,
+            grid: GRID_OPTIONS,
             series: [{
                 axis: 'y',
                 dataset: 'dataset',
@@ -165,16 +264,8 @@ export class LearnerResultChartService {
         });
 
         const options = {
-            margin: {
-                top: 20,
-                right: 50,
-                bottom: 20,
-                left: 50
-            },
-            grid: {
-                x: false,
-                y: true
-            },
+            margin: MARGIN_OPTIONS,
+            grid: GRID_OPTIONS,
             series: [],
             axes: {
                 x: {
@@ -197,6 +288,7 @@ export class LearnerResultChartService {
             symbols: {dataset: []},
             duration: {dataset: []}
         };
+
         const values = {
             mqs: {dataset: []},
             symbols: {dataset: []},
@@ -251,6 +343,8 @@ export class LearnerResultChartService {
                 data[prop].dataset.push(r);
             });
         });
+
+        console.log(data);
 
         return {
             context: results,

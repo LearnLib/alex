@@ -105,7 +105,7 @@ export function config($stateProvider, $urlRouterProvider) {
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Statistics'}
         })
         .state('statisticsCompare', {
-            url: '/statistics/{testNos:string}/compare/{mode:string}',
+            url: '/statistics/{testNos:string}',
             template: '<statistics-compare-view></statistics-compare-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Statistics > Compare'}
         })

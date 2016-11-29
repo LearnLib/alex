@@ -82,11 +82,6 @@ export const events = {
     RESULT_SELECTED: 'result:selected'
 };
 
-export const chartMode = {
-    CUMULATED: 'cumulated',
-    COMPLETE: 'complete'
-};
-
 export const actionType = {
 
     // web actions

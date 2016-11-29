@@ -9,11 +9,11 @@
     <action-bar>
         <div class="btn-group btn-group-sm">
             <button class="btn btn-default" ng-click="vm.switchToFinal()"
-                    ng-class="{'active':vm.selectedChartMode === vm.chartMode.CUMULATED}">
+                    ng-class="{'active': [vm.chartModes.SINGLE_FINAL,vm.chartModes.MULTIPLE_FINAL].indexOf(vm.chartMode) > -1}">
                 <i class="fa fa-fw fa-bar-chart"></i> Cumulated
             </button>
             <button class="btn btn-default" ng-click="vm.switchToComplete()"
-                    ng-class="{'active':vm.selectedChartMode === vm.chartMode.COMPLETE}">
+                    ng-class="{'active': [vm.chartModes.SINGLE_COMPLETE,vm.chartModes.MULTIPLE_COMPLETE].indexOf(vm.chartMode) > -1}">
                 <i class="fa fa-fw fa-area-chart"></i> Complete
             </button>
         </div>
@@ -27,116 +27,75 @@
     <div class="view-body has-sub-nav">
         <div class="alx-container-fluid">
 
-            <div ng-if="vm.selectedChartMode !== null">
+            <table class="table table-condensed table-striped">
+                <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>Browser</th>
+                    <th>Algorithm</th>
+                    <th>Sigma</th>
+                    <th>Equivalence Queries</th>
+                </tr>
+                </thead>
+                <tbody ng-if="!vm.chartData.context.length">
+                <tr>
+                    <td><strong>Test <span ng-bind="vm.chartData.context.testNo"></span></strong></td>
+                    <td ng-bind="vm.chartData.context.browser | formatWebBrowser"></td>
+                    <td ng-bind="vm.chartData.context.algorithm | formatAlgorithm"></td>
+                    <td ng-bind="vm.chartData.context.sigma.length"></td>
+                    <td ng-bind="vm.chartData.context.statistics.eqsUsed"></td>
+                </tr>
+                </tbody>
+                <tbody ng-if="vm.chartData.context.length">
+                <tr ng-repeat="result in vm.chartData.context">
+                    <td><strong>Test <span ng-bind="result.testNo"></span></strong></td>
+                    <td ng-bind="result.browser | formatWebBrowser"></td>
+                    <td ng-bind="result.algorithm | formatAlgorithm"></td>
+                    <td ng-bind="result.sigma.length"></td>
+                    <td ng-bind="result.statistics.eqsUsed"></td>
+                </tr>
+                </tbody>
+            </table>
 
-                <div ng-if="vm.selectedChartMode === vm.chartMode.CUMULATED && vm.testNos.length === 1">
-                    <h3>Test <span ng-bind="vm.chartData.context.testNo"></span> (Cumulated)</h3>
-                    <a href="" learn-result-details-modal-handle result="vm.chartData.context">
-                        <i class="fa fa-fw fa-info-circle"></i> Details
-                    </a>
-                    <hr>
+            <hr>
+
+            <div class="row" ng-if="vm.chartData.options">
+                <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
+
+                    <widget title="#Membership Queries" id="chart-eqs">
+                        <div style="width: 100%; height: 450px">
+                            <linechart data="vm.chartData.data.mqs" options="vm.chartData.options"></linechart>
+                        </div>
+                        <hr>
+                        <button class="btn btn-xs btn-default pull-right" ng-click="vm.downloadChart('#chart-eqs')">
+                            <i class="fa fa-fw fa-download"></i> Download SVG
+                        </button>
+                    </widget>
+                    <widget title="Duration (in ms)" id="chart-duration">
+                        <div style="width: 100%; height: 450px">
+                            <linechart data="vm.chartData.data.duration" options="vm.chartData.options"></linechart>
+                        </div>
+                        <hr>
+                        <button class="btn btn-xs btn-default pull-right"
+                                ng-click="vm.downloadChart('#chart-duration')">
+                            <i class="fa fa-fw fa-download"></i> Download SVG
+                        </button>
+                    </widget>
                 </div>
-
-                <div ng-if="vm.selectedChartMode === vm.chartMode.COMPLETE && vm.testNos.length === 1">
-                    <h3>Test <span ng-bind="vm.chartData.context.testNo"></span> (All Steps)</h3>
-                    <a href="" learn-result-details-modal-handle result="vm.chartData.context">
-                        <i class="fa fa-fw fa-info-circle"></i> Details
-                    </a>
-                    <hr>
-                </div>
-
-                <div ng-if="vm.selectedChartMode === vm.chartMode.CUMULATED && vm.testNos.length > 1">
-                    <h3>Tests:
-                    <span ng-repeat="result in vm.chartData.context">
-                        <span ng-bind="result.testNo"></span>,&nbsp;
-                    </span> (Cumulated)
-                    </h3>
-                    <hr>
-                </div>
-
-                <div ng-if="vm.selectedChartMode === vm.chartMode.COMPLETE && vm.testNos.length > 1">
-                    <h3>Tests:
-                    <span ng-repeat="result in vm.chartData.context">
-                        <span ng-bind="result.testNo"></span>,&nbsp;
-                    </span> (All Steps)
-                    </h3>
-                    <hr>
-                </div>
-
-                <table class="table table-condensed table-striped">
-                    <thead>
-                        <tr>
-                            <th>&nbsp;</th>
-                            <th>Browser</th>
-                            <th>Algorithm</th>
-                            <th>Sigma</th>
-                            <th>Equivalence Queries</th>
-                        </tr>
-                    </thead>
-                    <tbody ng-if="!vm.chartData.context.length">
-                        <tr>
-                            <td><strong>Test <span ng-bind="vm.chartData.context.testNo"></span></strong></td>
-                            <td ng-bind="vm.chartData.context.browser | formatWebBrowser"></td>
-                            <td ng-bind="vm.chartData.context.algorithm | formatAlgorithm"></td>
-                            <td ng-bind="vm.chartData.context.sigma.length"></td>
-                            <td ng-bind="vm.chartData.context.statistics.eqsUsed"></td>
-                        </tr>
-                    </tbody>
-                    <tbody ng-if="vm.chartData.context.length">
-                    <tr ng-repeat="result in vm.chartData.context">
-                        <td><strong>Test <span ng-bind="result.testNo"></span></strong></td>
-                        <td ng-bind="result.browser | formatWebBrowser"></td>
-                        <td ng-bind="result.algorithm | formatAlgorithm"></td>
-                        <td ng-bind="result.sigma.length"></td>
-                        <td ng-bind="result.statistics.eqsUsed"></td>
-                    </tr>
-                    </tbody>
-                </table>
-
-                <hr>
-
-                <div class="row" ng-if="vm.chartData.options">
-                    <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
-
-                        <widget title="#Membership Queries" id="chart-eqs">
-                            <div style="width: 100%; height: 450px">
-                                <linechart data="vm.chartData.data.mqs" options="vm.chartData.options"></linechart>
-                            </div>
-                            <hr>
-                            <button class="btn btn-xs btn-default pull-right" ng-click="vm.downloadChart('#chart-eqs')">
-                                <i class="fa fa-fw fa-download"></i> Download SVG
-                            </button>
-                        </widget>
-                        <widget title="Duration (in ms)" id="chart-duration">
-                            <div style="width: 100%; height: 450px">
-                                <linechart data="vm.chartData.data.duration" options="vm.chartData.options"></linechart>
-                            </div>
-                            <hr>
-                            <button class="btn btn-xs btn-default pull-right" ng-click="vm.downloadChart('#chart-duration')">
-                                <i class="fa fa-fw fa-download"></i> Download SVG
-                            </button>
-                        </widget>
-                    </div>
-                    <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
-                        <widget title="#Symbol Calls" id="chart-symbols">
-                            <div style="width: 100%; height: 450px">
-                                <linechart data="vm.chartData.data.symbols" options="vm.chartData.options"></linechart>
-                            </div>
-                            <hr>
-                            <button class="btn btn-xs btn-default pull-right" ng-click="vm.downloadChart('#chart-symbols')">
-                                <i class="fa fa-fw fa-download"></i> Download SVG
-                            </button>
-                        </widget>
-                    </div>
+                <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
+                    <widget title="#Symbol Calls" id="chart-symbols">
+                        <div style="width: 100%; height: 450px">
+                            <linechart data="vm.chartData.data.symbols" options="vm.chartData.options"></linechart>
+                        </div>
+                        <hr>
+                        <button class="btn btn-xs btn-default pull-right"
+                                ng-click="vm.downloadChart('#chart-symbols')">
+                            <i class="fa fa-fw fa-download"></i> Download SVG
+                        </button>
+                    </widget>
                 </div>
             </div>
-
-            <div ng-if="vm.selectedChartMode === null">
-                <div class="alert alert-info">
-                    You haven't selected a chart mode.
-                </div>
-            </div>
-
         </div>
+
     </div>
 </div>

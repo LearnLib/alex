@@ -67,7 +67,7 @@ export const latestLearnResultWidget = {
                 <a class="btn btn-xs btn-default" ui-sref="resultsCompare({testNos: [vm.result.testNo]})">
                     <i class="fa fa-fw fa-eye"></i> View hypothesis
                 </a>
-                <a class="btn btn-xs btn-default" ui-sref="statisticsCompare({testNos: [vm.result.testNo], mode: 'cumulated'})">
+                <a class="btn btn-xs btn-default" ui-sref="statisticsCompare({testNos: [vm.result.testNo]})">
                     <i class="fa fa-fw fa-bar-chart-o"></i> View statistics
                 </a>
             </div>
