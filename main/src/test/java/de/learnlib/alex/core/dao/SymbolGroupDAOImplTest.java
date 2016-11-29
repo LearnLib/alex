@@ -20,6 +20,7 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.SymbolActionRepository;
 import de.learnlib.alex.core.repositories.SymbolGroupRepository;
 import de.learnlib.alex.core.repositories.SymbolRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -62,11 +63,15 @@ public class SymbolGroupDAOImplTest {
     @Mock
     private SymbolRepository symbolRepository;
 
+    @Mock
+    private SymbolActionRepository symbolActionRepository;
+
     private SymbolGroupDAO symbolGroupDAO;
 
     @Before
     public void setUp() {
-        symbolGroupDAO = new SymbolGroupDAOImpl(projectRepository, symbolGroupRepository, symbolRepository);
+        symbolGroupDAO = new SymbolGroupDAOImpl(projectRepository, symbolGroupRepository, symbolRepository,
+                                                symbolActionRepository);
     }
 
     @Test

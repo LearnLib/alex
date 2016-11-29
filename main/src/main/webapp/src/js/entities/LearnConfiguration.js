@@ -30,8 +30,8 @@ export class LearnConfiguration {
     constructor(obj = {}) {
 
         /**
-         * The list of id/revision pairs of symbols to learn.
-         * @type {{id:number, revision:number}[]}
+         * The list of ids of symbols to learn.
+         * @type {number[]}
          */
         this.symbols = obj.symbols || [];
 
@@ -54,8 +54,8 @@ export class LearnConfiguration {
         this.algorithm = obj.learnAlgorithm || learnAlgorithm.TTT;
 
         /**
-         * The id/revision pair of the reset symbol.
-         * @type {{id:number,revision:number}|null}
+         * The id of the reset symbol.
+         * @type {number}
          */
         this.resetSymbol = obj.resetSymbol || null;
 
@@ -78,7 +78,7 @@ export class LearnConfiguration {
      * @param {AlphabetSymbol} symbol - The symbol to add to the config.
      */
     addSymbol(symbol) {
-        this.symbols.push(symbol.getIdRevisionPair());
+        this.symbols.push(symbol.id);
     }
 
     /**
@@ -87,6 +87,6 @@ export class LearnConfiguration {
      * @param {AlphabetSymbol} symbol - The reset symbol to use.
      */
     setResetSymbol(symbol) {
-        this.resetSymbol = symbol.getIdRevisionPair();
+        this.resetSymbol = symbol.id;
     }
 }

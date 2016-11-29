@@ -74,11 +74,9 @@ public class LearnerConfigurationTest {
 
     @Test
     public void shouldReadJSONCorrectly() throws IOException, URISyntaxException {
-        String json = "{\"symbols\": ["
-                            + "{\"id\": 1, \"revision\": 1},"
-                            + "{\"id\": 2, \"revision\": 4}"
-                        + "],\"algorithm\":\"DHC\", \"browser\": \"firefox\", \"eqOracle\": {\"type\": \"complete\"}}";
-        //
+        String json = "{\"symbols\": [1,2],\"algorithm\":\"DHC\", \"browser\": \"firefox\", \"eqOracle\": "
+                + "{\"type\": \"complete\"}}";
+
         ObjectMapper mapper = new ObjectMapper();
 
         LearnerConfiguration configuration = mapper.readValue(json, LearnerConfiguration.class);
@@ -86,9 +84,8 @@ public class LearnerConfigurationTest {
         assertEquals(ALGORITHM, configuration.getAlgorithm());
         assertEquals(WebBrowser.FIREFOX, configuration.getBrowser());
         assertTrue(configuration.getEqOracle() instanceof CompleteExplorationEQOracleProxy);
-        assertEquals(2, configuration.getSymbolsAsIdRevisionPairs().size());
-        LinkedList<IdRevisionPair> idRevisionPairs = new LinkedList<>(configuration.getSymbolsAsIdRevisionPairs());
-        assertEquals(Long.valueOf(1L), idRevisionPairs.get(0).getId());
-        assertEquals(Long.valueOf(1L), idRevisionPairs.get(0).getRevision());
+        assertEquals(2, configuration.getSymbolsAsIds().size());
+        LinkedList<Long> ids = new LinkedList<>(configuration.getSymbolsAsIds());
+        assertEquals(Long.valueOf(1L), ids.get(0));
     }
 }

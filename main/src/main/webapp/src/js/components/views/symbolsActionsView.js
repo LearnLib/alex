@@ -200,7 +200,6 @@ class SymbolsActionsView {
         // update the symbol
         return this.SymbolResource.update(symbolToUpdate)
             .then(updatedSymbol => {
-                this.symbol.revision = updatedSymbol.revision;
                 this.ToastService.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
                 this.hasChanged = false;
             })

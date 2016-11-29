@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.ALEXTestApplication;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
@@ -43,14 +42,16 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -59,7 +60,6 @@ public class SymbolResourceTest extends JerseyTest {
     private static final long USER_TEST_ID = 1;
     private static final long PROJECT_TEST_ID = 10;
     private static final long SYMBOL_TEST_ID = 1;
-    private static final long SYMBOL_TEST_REV = 3;
 
     @Mock
     private ProjectDAO projectDAO;
@@ -76,7 +76,7 @@ public class SymbolResourceTest extends JerseyTest {
     private Symbol symbol;
     private Symbol symbol2;
     private List<Symbol> symbols;
-    private List<IdRevisionPair> idRevisionPairs;
+    private List<Long> ids;
 
     @Override
     protected Application configure() {
@@ -111,7 +111,6 @@ public class SymbolResourceTest extends JerseyTest {
 
         symbol = new Symbol();
         symbol.setId(SYMBOL_TEST_ID);
-        symbol.setRevision(1L);
         symbol.setName("Symbol Resource Test Symbol");
         symbol.setAbbreviation("srts");
         symbol.setUser(admin);
@@ -120,7 +119,6 @@ public class SymbolResourceTest extends JerseyTest {
 
         symbol2 = new Symbol();
         symbol2.setId(SYMBOL_TEST_ID + 1);
-        symbol2.setRevision(1L);
         symbol2.setName("Symbol Resource Test Symbol 2");
         symbol2.setAbbreviation("srts 2");
         symbol2.setUser(admin);
@@ -131,9 +129,9 @@ public class SymbolResourceTest extends JerseyTest {
         symbols.add(symbol);
         symbols.add(symbol2);
 
-        idRevisionPairs = new LinkedList<>();
-        idRevisionPairs.add(symbol.getIdRevisionPair());
-        idRevisionPairs.add(symbol2.getIdRevisionPair());
+        ids = new LinkedList<>();
+        ids.add(symbol.getId());
+        ids.add(symbol2.getId());
     }
 
     @Test
@@ -152,13 +150,13 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldCreateValidSymbolWithoutProjectOrRevision() throws IOException, NotFoundException {
+    public void shouldCreateValidSymbolWithoutProject() throws IOException, NotFoundException {
         String json = "{\"abbreviation\":\"srts\",\"actions\":[],\"id\":1,"
                 + "\"name\":\"Symbol Resource Test Symbol\"}";
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request()
                                 .header("Authorization", adminToken).post(Entity.json(json));
-        given(symbolDAO.getWithLatestRevision(admin, 0L, SYMBOL_TEST_ID)).willReturn(symbol);
+        given(symbolDAO.get(admin, 0L, SYMBOL_TEST_ID)).willReturn(symbol);
 
         assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
     }
@@ -170,7 +168,7 @@ public class SymbolResourceTest extends JerseyTest {
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request()
                                 .header("Authorization", adminToken).post(Entity.json(json));
-        given(symbolDAO.getWithLatestRevision(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
 
         assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
         verify(symbolDAO).create(symbol);
@@ -184,7 +182,7 @@ public class SymbolResourceTest extends JerseyTest {
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request()
                                 .header("Authorization", adminToken).post(Entity.json(json));
-        given(symbolDAO.getWithLatestRevision(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
 
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         verify(symbolDAO, never()).create(symbol);
@@ -215,10 +213,9 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldCreateValidSymbolsWithoutProjectOrRevision() throws IOException {
+    public void shouldCreateValidSymbolsWithoutProject() throws IOException {
         // given
         symbol.setProject(null);
-        symbol2.setRevision(0L);
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writerWithType(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
 
@@ -241,7 +238,7 @@ public class SymbolResourceTest extends JerseyTest {
         // when
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/batch").request()
                                 .header("Authorization", adminToken).post(Entity.json(json));
-        given(symbolDAO.getWithLatestRevision(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
 
         // then
         assertSymbolListCreation(response);
@@ -255,7 +252,7 @@ public class SymbolResourceTest extends JerseyTest {
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/batch").request()
                                 .header("Authorization", adminToken).post(Entity.json(json));
-        given(symbolDAO.getWithLatestRevision(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
 
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         verify(symbolDAO, never()).create(symbols);
@@ -287,7 +284,7 @@ public class SymbolResourceTest extends JerseyTest {
         symbol.setSymbolId(SYMBOL_TEST_ID);
         symbol2.setSymbolId(SYMBOL_TEST_ID + 1);
         symbols.remove(symbol2);
-        given(symbolDAO.getAllWithLatestRevision(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.VISIBLE))
+        given(symbolDAO.getAll(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.VISIBLE))
                 .willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").request()
@@ -296,10 +293,10 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],\"group\":0,"
                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
-                + "\"project\":10,\"revision\":1,\"user\":" + USER_TEST_ID + "}]";
+                + "\"project\":10,\"user\":" + USER_TEST_ID + "}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(symbolDAO).getAllWithLatestRevision(admin, project.getId(), SymbolVisibilityLevel.VISIBLE);
+        verify(symbolDAO).getAll(admin, project.getId(), SymbolVisibilityLevel.VISIBLE);
     }
 
     @Test
@@ -307,7 +304,7 @@ public class SymbolResourceTest extends JerseyTest {
         symbol.setSymbolId(SYMBOL_TEST_ID);
         symbol2.setSymbolId(SYMBOL_TEST_ID + 1);
         symbols.remove(symbol2);
-        given(symbolDAO.getAllWithLatestRevision(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL))
+        given(symbolDAO.getAll(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL))
                 .willReturn(symbols);
 
         Response response = target("/projects/" + project.getId() + "/symbols").queryParam("visibility", "all")
@@ -316,67 +313,32 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],\"group\":0,"
                                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
-                                + "\"project\":10,\"revision\":1,\"user\":" + USER_TEST_ID + "}]";
+                                + "\"project\":10,\"user\":" + USER_TEST_ID + "}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(symbolDAO).getAllWithLatestRevision(admin, project.getId(), SymbolVisibilityLevel.ALL);
+        verify(symbolDAO).getAll(admin, project.getId(), SymbolVisibilityLevel.ALL);
     }
 
     @Test
     public void shouldGetTheRightSymbol() throws NotFoundException {
-        given(symbolDAO.getWithLatestRevision(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID).request()
                                 .header("Authorization", adminToken).get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO).getWithLatestRevision(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID);
+        verify(symbolDAO).get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID);
     }
 
     @Test
     public void shouldReturn404WhenSymbolNotFound() throws NotFoundException {
-        given(symbolDAO.getWithLatestRevision(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID))
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID))
                 .willThrow(NotFoundException.class);
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID).request()
                                 .header("Authorization", adminToken).get();
 
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(symbolDAO).getWithLatestRevision(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID);
-    }
-
-    @Test
-    public void shouldGetTheRightSymbolWithAllRevisions() throws NotFoundException {
-        given(symbolDAO.getWithAllRevisions(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbols);
-
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/complete";
-        Response response = target(path).request().header("Authorization", adminToken).get();
-
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() {
-        });
-        assertEquals(2, responseSymbols.size());
-        verify(symbolDAO).getWithAllRevisions(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID);
-    }
-
-    @Test
-    public void shouldReturn404WhenSymbolWithAllRevisionCanNotBeFound() throws NotFoundException {
-        given(symbolDAO.getWithAllRevisions(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willThrow(NotFoundException.class);
-
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/complete";
-        Response response = target(path).request().header("Authorization", adminToken).get();
-
-        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(symbolDAO).getWithAllRevisions(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID);
-    }
-
-    @Test
-    public void shouldGetTheRightSymbolWithRevision() throws NotFoundException {
-        given(symbolDAO.get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID, SYMBOL_TEST_REV)).willReturn(symbol);
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + ":" + SYMBOL_TEST_REV;
-        Response response = target(path).request().header("Authorization", adminToken).get();
-
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        verify(symbolDAO).get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID, SYMBOL_TEST_REV);
+        verify(symbolDAO).get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID);
     }
 
     @Test
@@ -449,46 +411,46 @@ public class SymbolResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldGetSymbolsByAListOfIdRevisionPairs() throws NotFoundException {
-        given(symbolDAO.getAll(admin, PROJECT_TEST_ID, idRevisionPairs)).willReturn(symbols);
+    public void shouldGetSymbolsByAListOfIds() throws NotFoundException {
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, ids)).willReturn(symbols);
 
-        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/batch/1:1,2:1").request()
+        Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/batch/1,2").request()
                                 .header("Authorization", adminToken).get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2, responseSymbols.size());
-        assertEquals(responseSymbols.get(0).getIdRevisionPair(), idRevisionPairs.get(0));
-        assertEquals(responseSymbols.get(1).getIdRevisionPair(), idRevisionPairs.get(1));
+        assertEquals(responseSymbols.get(0).getId(), ids.get(0));
+        assertEquals(responseSymbols.get(1).getId(), ids.get(1));
 
-        verify(symbolDAO).getAll(admin, PROJECT_TEST_ID, idRevisionPairs);
+        verify(symbolDAO).getByIds(admin, PROJECT_TEST_ID, ids);
     }
 
     @Test
-    public void shouldResponseWith404IfIdRevisionPairsContainsUnexistantSymbolIds() throws NotFoundException {
-        given(symbolDAO.getAll(admin, PROJECT_TEST_ID, idRevisionPairs)).willThrow(NotFoundException.class);
+    public void shouldResponseWith404IfIdsContainNonexistentSymbolIds() throws NotFoundException {
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, ids)).willThrow(NotFoundException.class);
 
-        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/1:1,2:1";
+        String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/1,2";
         Response response = target(path).request().header("Authorization", adminToken).get();
 
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(symbolDAO).getAll(admin, PROJECT_TEST_ID, idRevisionPairs);
+        verify(symbolDAO).getByIds(admin, PROJECT_TEST_ID, ids);
     }
 
     @Test
     public void shouldMoveASymbol() throws NotFoundException {
-        given(symbolDAO.getWithLatestRevision(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/moveTo/" + group.getId();
         Response response = target(path).request().header("Authorization", adminToken).put(Entity.json(""));
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        verify(symbolDAO).getWithLatestRevision(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID);
+        verify(symbolDAO).get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID);
         verify(symbolDAO).move(symbol, group.getId());
     }
 
     @Test
     public void ensureThatMovingASymbolThatDoesNotExistsIsHandedProperly() throws NotFoundException {
-        given(symbolDAO.getWithLatestRevision(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID))
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID))
                 .willThrow(NotFoundException.class);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/moveTo/" + group.getId();
@@ -500,7 +462,7 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatMovingASymbolIntoTheVoidIsHandedProperly() throws NotFoundException {
-        given(symbolDAO.getWithLatestRevision(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, SYMBOL_TEST_ID)).willReturn(symbol);
         willThrow(NotFoundException.class).given(symbolDAO).move(symbol, group.getId());
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/moveTo/" + group.getId();
@@ -512,8 +474,11 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldMoveMultipleSymbols() throws NotFoundException {
-        given(symbolDAO.getByIdsWithLatestRevision(admin, PROJECT_TEST_ID, symbol.getId(), symbol2.getId()))
-                .willReturn(symbols);
+        List<Long> symbolIds = new ArrayList<>();
+        symbolIds.add(symbol.getId());
+        symbolIds.add(symbol2.getId());
+
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, symbolIds)).willReturn(symbols);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId()
                     + "/moveTo/" + group.getId();
@@ -525,7 +490,11 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatMovingSymbolsThatDoNotExistsIsHandedProperly() throws NotFoundException {
-        given(symbolDAO.getByIdsWithLatestRevision(admin, PROJECT_TEST_ID, symbol.getId(), symbol2.getId()))
+        List<Long> symbolIds = new ArrayList<>();
+        symbolIds.add(symbol.getId());
+        symbolIds.add(symbol2.getId());
+
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, symbolIds))
                 .willThrow(NotFoundException.class);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId()
@@ -538,8 +507,11 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatMovingMultipleSymbolsIntoTheVoidIsHandedProperly() throws NotFoundException {
-        given(symbolDAO.getByIdsWithLatestRevision(admin, PROJECT_TEST_ID, symbol.getId(), symbol2.getId()))
-                .willReturn(symbols);
+        List<Long> symbolIds = new ArrayList<>();
+        symbolIds.add(symbol.getId());
+        symbolIds.add(symbol2.getId());
+
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, symbolIds)).willReturn(symbols);
         willThrow(NotFoundException.class).given(symbolDAO).move(symbols, group.getId());
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + "," + symbol2.getId()
@@ -552,7 +524,7 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldHideASymbol() throws NotFoundException {
-        given(symbolDAO.getWithLatestRevision(admin, PROJECT_TEST_ID, symbol.getId())).willReturn(symbol);
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, symbol.getId())).willReturn(symbol);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/hide";
         Response response = target(path).request().header("Authorization", adminToken).post(null);
@@ -560,13 +532,16 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         Symbol responseSymbol = response.readEntity(Symbol.class);
         assertEquals(symbol, responseSymbol);
-        verify(symbolDAO).hide(USER_TEST_ID, PROJECT_TEST_ID, symbol.getId());
+        verify(symbolDAO).hide(USER_TEST_ID, PROJECT_TEST_ID, Collections.singletonList(symbol.getId()));
     }
 
     @Test
     public void shouldHideMultipleSymbols() throws NotFoundException {
-        given(symbolDAO.getByIdsWithLatestRevision(admin, PROJECT_TEST_ID, symbol.getId(), symbol2.getId()))
-                .willReturn(symbols);
+        List<Long> symbolIds = new ArrayList<>();
+        symbolIds.add(symbol.getId());
+        symbolIds.add(symbol2.getId());
+
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, symbolIds)).willReturn(symbols);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/"
                     + symbol.getId() + "," + symbol2.getId() + "/hide";
@@ -575,13 +550,14 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2, responseSymbols.size());
-        verify(symbolDAO).hide(USER_TEST_ID, PROJECT_TEST_ID, symbol.getId(), symbol2.getId());
+        verify(symbolDAO).hide(USER_TEST_ID, PROJECT_TEST_ID, symbolIds);
     }
 
     @Test
     public void shouldReturn404OnHideWhenSymbolNotFound() throws NotFoundException {
-        given(symbolDAO.getWithLatestRevision(admin, PROJECT_TEST_ID, symbol.getId())).willReturn(symbol);
-        willThrow(new NotFoundException()).given(symbolDAO).hide(USER_TEST_ID, PROJECT_TEST_ID, SYMBOL_TEST_ID);
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, symbol.getId())).willReturn(symbol);
+        willThrow(new NotFoundException()).given(symbolDAO).hide(USER_TEST_ID, PROJECT_TEST_ID,
+                Collections.singletonList(SYMBOL_TEST_ID));
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/hide";
         Response response = target(path).request().header("Authorization", adminToken).post(null);
 
@@ -594,7 +570,7 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target(path).request().header("Authorization", adminToken).post(null);
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO, never()).hide(eq(USER_TEST_ID), eq(PROJECT_TEST_ID), any(Long[].class));
+        verify(symbolDAO, never()).hide(eq(USER_TEST_ID), eq(PROJECT_TEST_ID), any(List.class));
     }
 
     @Test
@@ -603,12 +579,12 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target(path).request().header("Authorization", adminToken).post(null);
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO, never()).hide(eq(USER_TEST_ID), eq(PROJECT_TEST_ID), any(Long[].class));
+        verify(symbolDAO, never()).hide(eq(USER_TEST_ID), eq(PROJECT_TEST_ID), any(List.class));
     }
 
     @Test
     public void shouldShowASymbol() throws NotFoundException {
-        given(symbolDAO.getWithLatestRevision(admin, PROJECT_TEST_ID, symbol.getId())).willReturn(symbol);
+        given(symbolDAO.get(admin, PROJECT_TEST_ID, symbol.getId())).willReturn(symbol);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + symbol.getId() + "/show";
         Response response = target(path).request().header("Authorization", adminToken).post(null);
@@ -616,13 +592,16 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         Symbol responseSymbol = response.readEntity(Symbol.class);
         assertEquals(symbol, responseSymbol);
-        verify(symbolDAO).show(USER_TEST_ID, PROJECT_TEST_ID, symbol.getId());
+        verify(symbolDAO).show(USER_TEST_ID, PROJECT_TEST_ID, Collections.singletonList(symbol.getId()));
     }
 
     @Test
     public void shouldShowMultipleSymbols() throws NotFoundException {
-        given(symbolDAO.getByIdsWithLatestRevision(admin, PROJECT_TEST_ID, symbol.getId(), symbol2.getId()))
-                .willReturn(symbols);
+        List<Long> symbolIds = new ArrayList<>();
+        symbolIds.add(symbol.getId());
+        symbolIds.add(symbol2.getId());
+
+        given(symbolDAO.getByIds(admin, PROJECT_TEST_ID, SymbolVisibilityLevel.ALL, symbolIds)).willReturn(symbols);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/batch/" + symbol.getId() + ","
                                                                          + symbol2.getId() + "/show";
@@ -631,12 +610,13 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         List<Symbol> responseSymbols = response.readEntity(new GenericType<List<Symbol>>() { });
         assertEquals(2, responseSymbols.size());
-        verify(symbolDAO).show(USER_TEST_ID, PROJECT_TEST_ID, symbol.getId(), symbol2.getId());
+        verify(symbolDAO).show(USER_TEST_ID, PROJECT_TEST_ID, symbolIds);
     }
 
     @Test
     public void shouldReturn404OnShowWhenSymbolNotFound() throws NotFoundException {
-        willThrow(new NotFoundException()).given(symbolDAO).show(USER_TEST_ID, PROJECT_TEST_ID, SYMBOL_TEST_ID);
+        willThrow(new NotFoundException()).given(symbolDAO).show(USER_TEST_ID, PROJECT_TEST_ID,
+                Collections.singletonList(SYMBOL_TEST_ID));
         String path = "/projects/" + PROJECT_TEST_ID + "/symbols/" + SYMBOL_TEST_ID + "/show";
         Response response = target(path).request().header("Authorization", adminToken).post(null);
 
@@ -649,7 +629,7 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target(path).request().header("Authorization", adminToken).post(null);
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO, never()).show(eq(USER_TEST_ID), eq(PROJECT_TEST_ID), any(Long[].class));
+        verify(symbolDAO, never()).show(eq(USER_TEST_ID), eq(PROJECT_TEST_ID), any(List.class));
     }
 
     @Test
@@ -658,7 +638,7 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target(path).request().header("Authorization", adminToken).post(null);
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
 
-        verify(symbolDAO, never()).show(eq(USER_TEST_ID), eq(PROJECT_TEST_ID), any(Long[].class));
+        verify(symbolDAO, never()).show(eq(USER_TEST_ID), eq(PROJECT_TEST_ID), any(List.class));
     }
 
 }

@@ -1,6 +1,5 @@
 {
     "id": 1,
-    "revision": 1,
     "name" : "Test Symbol",
     "abbreviation" : "test_symb",
     "actions" : [

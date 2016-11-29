@@ -33,7 +33,7 @@ public class SymbolSet {
      */
     @Transient
     @JsonProperty("resetSymbol")
-    private IdRevisionPair resetSymbolAsIdRevisionPair;
+    private Long resetSymbolAsId;
 
     /**
      * The actual Symbols that should be used as a reset Symbol.
@@ -49,7 +49,7 @@ public class SymbolSet {
      */
     @Transient
     @JsonProperty("symbols")
-    private List<IdRevisionPair> symbolsAsIdRevisionPairs;
+    private List<Long> symbolsAsIds;
 
     /**
      * The actual list of Symbols used during the learning.
@@ -64,18 +64,18 @@ public class SymbolSet {
      *
      * @return The link to the reset symbol.
      */
-    public IdRevisionPair getResetSymbolAsIdRevisionPair() {
-        return resetSymbolAsIdRevisionPair;
+    public Long getResetSymbolAsId() {
+        return resetSymbolAsId;
     }
 
     /**
      * Set the IdRevisionPair of the reset symbol. This updates not the reset symbol itself.
      *
-     * @param resetSymbolAsIdRevisionPair
-     *         The new pair of the reset symbol.
+     * @param resetSymbolAsId
+     *         The new id of the reset symbol.
      */
-    public void setResetSymbolAsIdRevisionPair(IdRevisionPair resetSymbolAsIdRevisionPair) {
-        this.resetSymbolAsIdRevisionPair = resetSymbolAsIdRevisionPair;
+    public void setResetSymbolAsId(Long resetSymbolAsId) {
+        this.resetSymbolAsId = resetSymbolAsId;
     }
 
     /**
@@ -100,18 +100,18 @@ public class SymbolSet {
      *
      * @return A List of IdRevisionPair referring to symbols that must be used during the learning.
      */
-    public List<IdRevisionPair> getSymbolsAsIdRevisionPairs() {
-        return symbolsAsIdRevisionPairs;
+    public List<Long> getSymbolsAsIds() {
+        return symbolsAsIds;
     }
 
     /**
-     * Set a List of IdRevisionPairs to find all the symbols that must be used during a learning process.
+     * Set a List of ids to find all the symbols that must be used during a learning process.
      *
-     * @param symbolsAsIdRevisionPairs
-     *         The List of IdRevisionPairs to refer to symbols that must be used during the learning.
+     * @param symbolsAsIds
+     *         The List of ids to refer to symbols that must be used during the learning.
      */
-    public void setSymbolsAsIdRevisionPairs(List<IdRevisionPair> symbolsAsIdRevisionPairs) {
-        this.symbolsAsIdRevisionPairs = symbolsAsIdRevisionPairs;
+    public void setSymbolsAsIds(List<Long> symbolsAsIds) {
+        this.symbolsAsIds = symbolsAsIds;
     }
 
     /**

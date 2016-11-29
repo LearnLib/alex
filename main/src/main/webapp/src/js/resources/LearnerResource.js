@@ -91,8 +91,8 @@ export class LearnerResource {
      * Verifies a possible counterexample.
      *
      * @param {number} projectId - The project id.
-     * @param {{id: number, revision: number}} resetSymbol - The id/revision pair of the reset symbol.
-     * @param {{id: number, revision: number}[]} symbols - The list of id/revision pairs of symbols.
+     * @param {number} resetSymbol - The id of the reset symbol.
+     * @param {number} symbols - The list of ids of symbols.
      * @returns {*}
      */
     readOutputs(projectId, resetSymbol, symbols) {

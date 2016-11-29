@@ -132,8 +132,10 @@ public interface LearnerResultDAO {
     /**
      * Remove a complete test run of a project.
      *
+     * @param learner
+     *         The learner.
      * @param user
-     *         The user of the LearnerResult
+     *         The user of the LearnerResult.
      * @param projectId
      *         The project id.
      * @param testNo

@@ -18,13 +18,13 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.actions.WaitAction;
 import de.learnlib.alex.actions.WebSymbolActions.ClearAction;
-import de.learnlib.alex.core.entities.IdRevisionPair;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.SymbolActionRepository;
 import de.learnlib.alex.core.repositories.SymbolGroupRepository;
 import de.learnlib.alex.core.repositories.SymbolRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -73,11 +73,15 @@ public class SymbolDAOImplTest {
     @Mock
     private SymbolRepository symbolRepository;
 
+    @Mock
+    private SymbolActionRepository symbolActionRepository;
+
     private SymbolDAO symbolDAO;
 
     @Before
     public void setUp() {
-        symbolDAO = new SymbolDAOImpl(projectRepository, symbolGroupRepository, symbolRepository);
+        symbolDAO = new SymbolDAOImpl(projectRepository, symbolGroupRepository, symbolRepository,
+                                      symbolActionRepository);
     }
 
     @Test
@@ -187,14 +191,14 @@ public class SymbolDAOImplTest {
         //
         List<Symbol> symbols = createWebSymbolTestList(user, project, group);
         //
-        List<IdRevisionPair> pairs = new LinkedList<>();
-        pairs.add(new IdRevisionPair(symbols.get(0).getId(), 1L));
-        pairs.add(new IdRevisionPair(symbols.get(2).getId(), 1L));
-        pairs.add(new IdRevisionPair(symbols.get(3).getId(), 2L));
+        List<Long> ids = new LinkedList<>();
+        ids.add(symbols.get(0).getId());
+        ids.add(symbols.get(2).getId());
+        ids.add(symbols.get(3).getId());
         //
-        given(symbolRepository.findAll(USER_ID, PROJECT_ID, pairs)).willReturn(symbols);
+        given(symbolRepository.findByIds(USER_ID, PROJECT_ID, ids)).willReturn(symbols);
 
-        List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId(), pairs);
+        List<Symbol> symbolsFromDB = symbolDAO.getByIds(user, project.getId(), ids);
 
         assertThat(symbolsFromDB.size(), is(equalTo(symbols.size())));
         for (Symbol s : symbolsFromDB) {
@@ -208,9 +212,9 @@ public class SymbolDAOImplTest {
         //
         Project project = new Project();
         //
-        List<IdRevisionPair> pairs = Collections.emptyList();
+        List<Long> ids = Collections.emptyList();
 
-        List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId(), pairs);
+        List<Symbol> symbolsFromDB = symbolDAO.getByIds(user, project.getId(), ids);
 
         assertEquals(0, symbolsFromDB.size());
     }
@@ -229,10 +233,9 @@ public class SymbolDAOImplTest {
         List<Symbol> symbols = createTestSymbolLists(user, project, group);
         //
         given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
-        given(symbolRepository.findAllWithHighestRevision(USER_ID, PROJECT_ID, new Boolean[] {false}))
-                                                                                                   .willReturn(symbols);
+        given(symbolRepository.findAll(USER_ID, PROJECT_ID, new Boolean[] {false})).willReturn(symbols);
 
-        List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(user, project.getId(),
+        List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId(),
                                                                         SymbolVisibilityLevel.VISIBLE);
 
         assertThat(symbolsFromDB.size(), is(equalTo(symbols.size())));
@@ -255,10 +258,9 @@ public class SymbolDAOImplTest {
         List<Symbol> symbols = createTestSymbolLists(user, project, group);
         //
         given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
-        given(symbolRepository.findAllWithHighestRevision(USER_ID, PROJECT_ID, new Boolean[] {true, false}))
-                                                                                                   .willReturn(symbols);
+        given(symbolRepository.findAll(USER_ID, PROJECT_ID, new Boolean[] {true, false})).willReturn(symbols);
 
-        List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(user, project.getId(),
+        List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId(),
                                                                         SymbolVisibilityLevel.ALL);
 
         assertThat(symbolsFromDB.size(), is(equalTo(symbols.size())));
@@ -280,10 +282,9 @@ public class SymbolDAOImplTest {
         //
         List<Symbol> symbols = createTestSymbolLists(user, project, group);
         //
-        given(symbolRepository.findAllWithHighestRevision(USER_ID, PROJECT_ID, GROUP_ID, new Boolean[] {true, false}))
-                                                                                                   .willReturn(symbols);
+        given(symbolRepository.findAll(USER_ID, PROJECT_ID, GROUP_ID, new Boolean[] {true, false})).willReturn(symbols);
 
-        List<Symbol> symbolsFromDB = symbolDAO.getAllWithLatestRevision(user, project.getId(), group.getId(),
+        List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId(), group.getId(),
                                                                         SymbolVisibilityLevel.ALL);
 
         assertThat(symbolsFromDB.size(), is(equalTo(symbols.size())));
@@ -309,10 +310,9 @@ public class SymbolDAOImplTest {
         symbol.setProject(project);
         symbol.setGroup(group);
         //
-        given(symbolRepository.findAllWithHighestRevision(USER_ID, PROJECT_ID, SYMBOL_ID))
-                                                                         .willReturn(Collections.singletonList(symbol));
+        given(symbolRepository.findOne(USER_ID, PROJECT_ID, SYMBOL_ID)).willReturn(symbol);
 
-        Symbol symb2 = symbolDAO.getWithLatestRevision(user, symbol.getProjectId(), symbol.getId());
+        Symbol symb2 = symbolDAO.get(user, symbol.getProjectId(), symbol.getId());
 
         assertEquals(symbol, symb2);
     }
@@ -333,72 +333,30 @@ public class SymbolDAOImplTest {
         symbol.setProject(project);
         symbol.setGroup(group);
 
-        symbolDAO.getWithLatestRevision(user, symbol.getProjectId(), -1L); // should fail
-    }
-
-    @Test
-    public void shouldGetAllRevisionOfASymbol() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-        //
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-        //
-        SymbolGroup group = new SymbolGroup();
-        group.setId(GROUP_ID);
-        //
-        Symbol symbol = new Symbol();
-        symbol.setUser(user);
-        symbol.setProject(project);
-        symbol.setGroup(group);
-        //
-        given(symbolRepository.findOne(USER_ID, PROJECT_ID, SYMBOL_ID)).willReturn(Collections.singletonList(symbol));
-
-        List<Symbol> symbolRevisionInDB = symbolDAO.getWithAllRevisions(user, PROJECT_ID, SYMBOL_ID);
-
-        assertThat(symbolRevisionInDB.size(), is(equalTo(1)));
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionIfYouTryToGetAllRevisionOfANotExistingSymbol() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-        //
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-        //
-        SymbolGroup group = new SymbolGroup();
-        group.setId(GROUP_ID);
-        //
-        Symbol symbol = new Symbol();
-        symbol.setUser(user);
-        symbol.setProject(project);
-        symbol.setGroup(group);
-
-        symbolDAO.getWithAllRevisions(user, symbol.getProjectId(), -1L); // should fail
+        symbolDAO.get(user, symbol.getProjectId(), -1L); // should fail
     }
 
     @Test
     public void shouldUpdateASymbol() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
+
         Symbol symbol = new Symbol();
         symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
-        symbol.setRevision(0L);
-        //
-        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
-                                                                                                     .willReturn(group);
-        given(symbolRepository.findAllWithHighestRevision(USER_ID, PROJECT_ID, symbol.getId()))
-                                                                         .willReturn(Collections.singletonList(symbol));
+
+//      given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
+//          .willReturn(group);
+
+        given(symbolRepository.findOne(USER_ID, PROJECT_ID, symbol.getId())).willReturn(symbol);
+        given(symbolRepository.save(symbol)).willReturn(symbol);
 
         symbolDAO.update(symbol);
 
@@ -409,22 +367,21 @@ public class SymbolDAOImplTest {
     public void shouldFailToUpdateASymbolsWithADuplicateNameOrAbbreviationWithinOneProject() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
+
         Symbol symbol = new Symbol();
         symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
-        symbol.setRevision(0L);
         symbol.setName("Test");
         symbol.setAbbreviation("test");
-        //
-        given(symbolRepository.countSymbolsWithSameNameOrAbbreviation(symbol.getIdRevisionPair().getId(), USER_ID,
+
+        given(symbolRepository.countSymbolsWithSameNameOrAbbreviation(symbol.getId(), USER_ID,
                                                                       PROJECT_ID, "Test", "test"))
                 .willReturn(1L);
 
@@ -446,12 +403,10 @@ public class SymbolDAOImplTest {
         symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
-        symbol.setRevision(0L);
         //
-        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
-                                                                                                     .willReturn(group);
-        given(symbolRepository.findAllWithHighestRevision(USER_ID, PROJECT_ID, symbol.getId()))
-                                                                         .willReturn(Collections.singletonList(symbol));
+//        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
+//          .willReturn(group);
+        given(symbolRepository.findOne(USER_ID, PROJECT_ID, symbol.getId())).willReturn(symbol);
         given(symbolRepository.save(symbol)).willThrow(DataIntegrityViolationException.class);
 
         symbolDAO.update(symbol); // should fail
@@ -472,7 +427,6 @@ public class SymbolDAOImplTest {
         symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
-        symbol.setRevision(0L);
         //
         ConstraintViolationException constraintViolationException;
         constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
@@ -481,10 +435,9 @@ public class SymbolDAOImplTest {
         transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
                                                                     rollbackException);
         //
-        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
-                                                                                                     .willReturn(group);
-        given(symbolRepository.findAllWithHighestRevision(USER_ID, PROJECT_ID, symbol.getId()))
-                                                                         .willReturn(Collections.singletonList(symbol));
+//        given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
+//          .willReturn(group);
+        given(symbolRepository.findOne(USER_ID, PROJECT_ID, symbol.getId())).willReturn(symbol);
         given(symbolRepository.save(symbol)).willThrow(transactionSystemException);
 
         symbolDAO.update(symbol); // should fail
@@ -515,9 +468,8 @@ public class SymbolDAOImplTest {
         symbol.setProject(project);
         symbol.setGroup(group1);
         symbol.setId(SYMBOL_ID);
-        symbol.setRevision(0L);
         //
-        given(symbolRepository.findOne(USER_ID, PROJECT_ID, SYMBOL_ID)).willReturn(Collections.singletonList(symbol));
+        given(symbolRepository.findOne(USER_ID, PROJECT_ID, SYMBOL_ID)).willReturn(symbol);
 
         symbolDAO.move(symbol, GROUP_ID + 1);
 
@@ -541,7 +493,6 @@ public class SymbolDAOImplTest {
         symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
-        symbol.setRevision(0L);
 
         symbolDAO.move(symbol, -1L); // should fail
     }
@@ -569,7 +520,7 @@ public class SymbolDAOImplTest {
         List<Symbol> symbols = createTestSymbolLists(user, project, group1);
         //
         symbols.forEach(s -> {
-            given(symbolRepository.findOne(USER_ID, PROJECT_ID, s.getId())).willReturn(Collections.singletonList(s));
+            given(symbolRepository.findOne(USER_ID, PROJECT_ID, s.getId())).willReturn(s);
         });
 
         symbolDAO.move(symbols, GROUP_ID + 1);
@@ -613,18 +564,17 @@ public class SymbolDAOImplTest {
         symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
-        symbol.setRevision(0L);
         //
-        given(symbolRepository.findOne(USER_ID, PROJECT_ID, SYMBOL_ID)).willReturn(Collections.singletonList(symbol));
+        given(symbolRepository.findOne(USER_ID, PROJECT_ID, SYMBOL_ID)).willReturn(symbol);
 
-        symbolDAO.hide(USER_ID, PROJECT_ID, SYMBOL_ID);
+        symbolDAO.hide(USER_ID, PROJECT_ID, Collections.singletonList(SYMBOL_ID));
 
         assertTrue(symbol.isHidden());
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldNotHideAnythingByInvalidID() throws NotFoundException {
-        symbolDAO.hide(USER_ID, PROJECT_ID, -1L); // should fail
+        symbolDAO.hide(USER_ID, PROJECT_ID, Collections.singletonList(-1L)); // should fail
     }
 
     @Test
@@ -642,20 +592,19 @@ public class SymbolDAOImplTest {
         symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
-        symbol.setRevision(0L);
         //
-        given(symbolRepository.findOne(USER_ID, PROJECT_ID, SYMBOL_ID)).willReturn(Collections.singletonList(symbol));
+        given(symbolRepository.findOne(USER_ID, PROJECT_ID, SYMBOL_ID)).willReturn(symbol);
         //
-        symbolDAO.hide(USER_ID, PROJECT_ID, SYMBOL_ID);
+        symbolDAO.hide(USER_ID, PROJECT_ID, Collections.singletonList(SYMBOL_ID));
 
-        symbolDAO.show(USER_ID, PROJECT_ID, SYMBOL_ID);
+        symbolDAO.show(USER_ID, PROJECT_ID, Collections.singletonList(SYMBOL_ID));
 
         assertFalse(symbol.isHidden());
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldNotShowAnythingByInvalidID() throws NotFoundException {
-        symbolDAO.show(USER_ID, PROJECT_ID, -1L); // should fail
+        symbolDAO.show(USER_ID, PROJECT_ID, Collections.singletonList(-1L)); // should fail
     }
 
     private List<Symbol> createTestSymbolLists(User user, Project project, SymbolGroup group) throws NotFoundException {
@@ -683,7 +632,6 @@ public class SymbolDAOImplTest {
             s.setUser(user);
             project.getSymbols().add(s);
             s.setId((long) i);
-            s.setRevision(1L);
             s.setGroup(group);
             s.setName("Test Symbol - Get All Web No. " + i);
             s.setAbbreviation("web_all_" + i);
@@ -700,8 +648,6 @@ public class SymbolDAOImplTest {
                 if (i == SYMBOL_LIST_SIZE - 1) {
                     s.setHidden(true);
                 }
-
-                s.setRevision(2L);
             }
             returnList.add(s);
         }

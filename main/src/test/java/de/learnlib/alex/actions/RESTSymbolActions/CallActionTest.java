@@ -28,16 +28,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.ws.rs.core.MultivaluedMap;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.eq;
@@ -48,7 +45,6 @@ public class CallActionTest {
 
     public static final String TEST_BASE_URL = "http://example.com/api";
     public static final String TEST_API_PATH = "/test";
-    public static final String TEST_API_URL = TEST_BASE_URL + TEST_API_PATH;
 
     @Mock
     private WebServiceConnector connector;

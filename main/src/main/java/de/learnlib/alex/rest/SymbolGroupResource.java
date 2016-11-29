@@ -217,7 +217,7 @@ public class SymbolGroupResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getSymbols({}, {}) for user {}.", projectId, id, user);
 
-        List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(user, projectId, id);
+        List<Symbol> symbols = symbolDAO.getAll(user, projectId, id);
 
         LOGGER.traceExit(symbols);
         return ResponseHelper.renderList(symbols, Response.Status.OK);
