@@ -19,8 +19,8 @@ package de.learnlib.alex.core.entities.learnlibproxies.eqproxies;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.api.EquivalenceOracle;
+import de.learnlib.api.MembershipOracle;
 import de.learnlib.eqtests.basic.SimulatorEQOracle;
-import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
@@ -65,7 +65,7 @@ public class HypothesisEQOracleProxy extends AbstractEquivalenceOracleProxy impl
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>>
-    createEqOracle(SULOracle<String, String> membershipOracle) {
+    createEqOracle(MembershipOracle.MealyMembershipOracle<String, String> membershipOracle) {
         Alphabet<String> alphabet = hypothesis.createAlphabet();
         CompactMealy<String, String> compactMealy = hypothesis.createMealyMachine(alphabet);
         return new SimulatorEQOracle.MealySimulatorEQOracle<>(compactMealy);

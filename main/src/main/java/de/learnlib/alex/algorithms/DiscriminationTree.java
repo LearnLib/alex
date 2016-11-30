@@ -21,8 +21,8 @@ import de.learnlib.algorithms.discriminationtree.hypothesis.HState;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealyBuilder;
 import de.learnlib.api.LearningAlgorithm;
+import de.learnlib.api.MembershipOracle;
 import de.learnlib.discriminationtree.DTNode;
-import de.learnlib.oracles.SULOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
@@ -33,8 +33,8 @@ import net.automatalib.words.Word;
 public class DiscriminationTree implements LearnAlgorithmFactory {
 
     @Override
-    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
-                                                                        SULOracle<String, String> oracle) {
+    public LearningAlgorithm.MealyLearner<String, String> createLearner(
+            Alphabet<String> sigma, MembershipOracle.MealyMembershipOracle<String, String> oracle) {
         return new DTLearnerMealyBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
     }
 

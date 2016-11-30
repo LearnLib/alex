@@ -32,13 +32,11 @@ import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.api.EquivalenceOracle;
 import de.learnlib.api.LearningAlgorithm.MealyLearner;
 import de.learnlib.api.SUL;
-import de.learnlib.cache.sul.SULCache;
-import de.learnlib.cache.sul.SULCaches;
+import de.learnlib.cache.mealy.MealyCacheOracle;
 import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.mapper.Mappers;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.oracles.DefaultQuery;
-import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -78,11 +76,6 @@ public class LearnerThread extends Thread {
     private final AlexSUL<String, String> sul;
 
     /**
-     * The actual System Under Learning put into a cache.
-     */
-    private SULCache<String, String> cachedSUL;
-
-    /**
      * The DAO to remember the learn results.
      */
     private final LearnerResultDAO learnerResultDAO;
@@ -110,7 +103,10 @@ public class LearnerThread extends Thread {
     /**
      * The membership oracle.
      */
-    private final SULOracle<String, String> mqOracle;
+    private final MealyCacheOracle<String, String> mqOracle;
+
+    /** The mapped SUL. */
+    private final SUL<String, String> mappedSUL;
 
     /**
      * Constructor to set the LearnerThread up.
@@ -137,11 +133,11 @@ public class LearnerThread extends Thread {
                                   ExecuteResult,
                                   ConnectorManager>
                 ceiSUL = new ContextExecutableInputSUL<>(context);
-        SUL<String, String> mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
-        this.cachedSUL = SULCaches.createCache(this.sigma, mappedSUL);
-        this.sul = new AlexSUL<>(cachedSUL);
+        this.mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
+        this.sul = new AlexSUL<>(mappedSUL);
 
-        this.mqOracle = new SULOracle<>(sul);
+        MultiSULOracle<String, String> multiSULOracle = new MultiSULOracle<>(sul, 1);
+        this.mqOracle = MealyCacheOracle.createDAGCacheOracle(this.sigma, multiSULOracle);
 
         LearnAlgorithmFactory algorithm = result.getAlgorithmFactory();
         this.learner = algorithm.createLearner(sigma, mqOracle);
@@ -157,7 +153,8 @@ public class LearnerThread extends Thread {
      * @param learner          Don't create a new learner, instead use this one.
      * @param symbols          The Symbols to use.
      */
-    public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, SULCache<String, String> existingSUL,
+    public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, SUL<String, String> mappedSUL,
+                         MealyCacheOracle<String, String> existingSUL,
                          MealyLearner<String, String> learner, Symbol... symbols) {
         this.finished = false;
         this.learnerResultDAO = learnerResultDAO;
@@ -168,11 +165,10 @@ public class LearnerThread extends Thread {
         this.sigma = symbolMapper.getAlphabet();
         result.setSigma(AlphabetProxy.createFrom(sigma));
 
-        this.cachedSUL = existingSUL;
-        this.sul = new AlexSUL<>(cachedSUL);
+        this.mappedSUL = mappedSUL;
+        this.sul = new AlexSUL<>(mappedSUL);
 
-        this.mqOracle = new SULOracle<>(sul);
-
+        this.mqOracle = existingSUL;
         this.learner = learner;
     }
 
@@ -200,15 +196,6 @@ public class LearnerThread extends Thread {
     }
 
     /**
-     * Get the actual SUL used for the learning process wrapped in a cache..
-     *
-     * @return The SUL used for the learning process put into a cache.
-     */
-    public SULCache<String, String> getCachedSUL() {
-        return cachedSUL;
-    }
-
-    /**
      * Get the learner used by the LearnerThread.
      *
      * @return The learner used by the thread.
@@ -224,6 +211,16 @@ public class LearnerThread extends Thread {
      */
     public List<Symbol> getSymbols() {
         return symbolMapper.getSymbols();
+    }
+
+    /** @return The MQ oracle. */
+    public MealyCacheOracle<String, String> getMqOracle() {
+        return mqOracle;
+    }
+
+    /** @return the mapped SUL. */
+    public SUL<String, String> getMappedSUL() {
+        return mappedSUL;
     }
 
     @Override
@@ -254,6 +251,8 @@ public class LearnerThread extends Thread {
             LOGGER.traceExit();
         }
     }
+
+
 
     /**
      * Get the {@link AlexSUL}.

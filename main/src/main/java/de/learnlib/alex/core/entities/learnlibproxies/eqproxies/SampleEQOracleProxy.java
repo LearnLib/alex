@@ -18,8 +18,8 @@ package de.learnlib.alex.core.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.api.EquivalenceOracle;
+import de.learnlib.api.MembershipOracle;
 import de.learnlib.eqtests.basic.SampleSetEQOracle;
-import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 import org.hibernate.validator.constraints.NotBlank;
@@ -156,8 +156,8 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
     }
 
     @Override
-    public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>>
-    createEqOracle(SULOracle<String, String> membershipOracle) {
+    public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
+            MembershipOracle.MealyMembershipOracle<String, String> membershipOracle) {
         SampleSetEQOracle newEQ = new SampleSetEQOracle(false);
 
         for (List<InputOutputPair> counterExample : counterExamples) {

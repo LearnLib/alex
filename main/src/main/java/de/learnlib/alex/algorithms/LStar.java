@@ -22,7 +22,7 @@ import de.learnlib.algorithms.features.observationtable.writer.ObservationTableA
 import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealy;
 import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealyBuilder;
 import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.oracles.SULOracle;
+import de.learnlib.api.MembershipOracle;
 import net.automatalib.words.Alphabet;
 
 /**
@@ -32,8 +32,8 @@ import net.automatalib.words.Alphabet;
 public class LStar implements LearnAlgorithmFactory {
 
     @Override
-    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
-                                                                        SULOracle<String, String> oracle) {
+    public LearningAlgorithm.MealyLearner<String, String> createLearner(
+            Alphabet<String> sigma, MembershipOracle.MealyMembershipOracle<String, String> oracle) {
         return new ExtensibleLStarMealyBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
     }
 

@@ -4,7 +4,7 @@ import de.learnlib.alex.algorithms.LearnAlgorithmFactory;
 import de.learnlib.alex.annotations.LearnAlgorithm;
 import de.learnlib.alex.core.entities.Algorithm;
 import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.oracles.SULOracle;
+import de.learnlib.api.MembershipOracle;
 import net.automatalib.words.Alphabet;
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class LearnAlgorithmServiceTest {
 
         @Override
         public LearningAlgorithm.MealyLearner<String, String>
-        createLearner(Alphabet<String> sigma, SULOracle<String, String> oracle) {
+        createLearner(Alphabet<String> sigma, MembershipOracle.MealyMembershipOracle<String, String> oracle) {
             return null;
         }
 
@@ -44,7 +44,7 @@ public class LearnAlgorithmServiceTest {
 
         @Override
         public LearningAlgorithm.MealyLearner<String, String>
-        createLearner(Alphabet<String> sigma, SULOracle<String, String> oracle) {
+        createLearner(Alphabet<String> sigma, MembershipOracle.MealyMembershipOracle<String, String> oracle) {
             return null;
         }
 
