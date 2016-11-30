@@ -108,6 +108,9 @@ public class LearnerThread extends Thread {
     /** The mapped SUL. */
     private final SUL<String, String> mappedSUL;
 
+    /** The number of mqs executed in parallel. */
+    private int maxConcurrentQueries;
+
     /**
      * Constructor to set the LearnerThread up.
      *
@@ -123,6 +126,7 @@ public class LearnerThread extends Thread {
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
         this.currentStep = result.getSteps().get(result.getSteps().size() - 1); // get the latest step
+        this.maxConcurrentQueries = context.getMaxConcurrentQueries();
 
         Symbol[] symbolsArray = readSymbolArray(); // use the symbols in the result to create the symbol array.
         this.symbolMapper = new SymbolMapper(symbolsArray);
@@ -136,7 +140,7 @@ public class LearnerThread extends Thread {
         this.mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
         this.sul = new AlexSUL<>(mappedSUL);
 
-        MultiSULOracle<String, String> multiSULOracle = new MultiSULOracle<>(sul, 1);
+        MultiSULOracle<String, String> multiSULOracle = new MultiSULOracle<>(sul);
         this.mqOracle = MealyCacheOracle.createDAGCacheOracle(this.sigma, multiSULOracle);
 
         LearnAlgorithmFactory algorithm = result.getAlgorithmFactory();
@@ -154,12 +158,13 @@ public class LearnerThread extends Thread {
      * @param symbols          The Symbols to use.
      */
     public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, SUL<String, String> mappedSUL,
-                         MealyCacheOracle<String, String> existingSUL,
+                         MealyCacheOracle<String, String> existingSUL, int maxConcurrentQueries,
                          MealyLearner<String, String> learner, Symbol... symbols) {
         this.finished = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
         this.currentStep = result.getSteps().get(result.getSteps().size() - 1); // get the latest step
+        this.maxConcurrentQueries = maxConcurrentQueries;
 
         this.symbolMapper = new SymbolMapper(symbols);
         this.sigma = symbolMapper.getAlphabet();
@@ -389,7 +394,7 @@ public class LearnerThread extends Thread {
         LOGGER.traceEntry();
 
         EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
-        eqOracle = currentStep.getEqOracle().createEqOracle(mqOracle);
+        eqOracle = currentStep.getEqOracle().createEqOracle(mqOracle, maxConcurrentQueries);
         DefaultQuery<String, Word<String>> newCounterExample;
         newCounterExample = eqOracle.findCounterExample(learner.getHypothesisModel(), sigma);
 
@@ -424,4 +429,8 @@ public class LearnerThread extends Thread {
         LOGGER.traceExit();
     }
 
+    /** @return The number of mqs executed in parallel. */
+    public int getMaxConcurrentQueries() {
+        return maxConcurrentQueries;
+    }
 }

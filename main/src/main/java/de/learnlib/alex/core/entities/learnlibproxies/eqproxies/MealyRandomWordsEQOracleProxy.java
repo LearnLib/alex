@@ -145,7 +145,8 @@ public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProx
     }
 
     /**
-     * @param seed The seed for the random number generator.
+     * @param seed
+     *         The seed for the random number generator.
      */
     public void setSeed(int seed) {
         this.seed = seed;
@@ -160,16 +161,15 @@ public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProx
             throw new IllegalArgumentException(
                     "Random Word EQ Oracle: max depth must be greater or equal to min depth.");
         } else if (maxNoOfTests < 1) {
-            throw new IllegalArgumentException(
-                    "Random Word EQ Oracle: max no of test must be greater than 0.");
+            throw new IllegalArgumentException("Random Word EQ Oracle: max no of test must be greater than 0.");
         }
     }
 
     @Override
-    public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>>
-    createEqOracle(MembershipOracle.MealyMembershipOracle<String, String> membershipOracle) {
+    public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
+            MembershipOracle.MealyMembershipOracle<String, String> membershipOracle, int batchSize) {
         return new RandomWordsEQOracle.MealyRandomWordsEQOracle<>(membershipOracle, minLength, maxLength, maxNoOfTests,
-                                                                    new Random(seed));
+                                                                  new Random(seed), batchSize);
     }
 
 }

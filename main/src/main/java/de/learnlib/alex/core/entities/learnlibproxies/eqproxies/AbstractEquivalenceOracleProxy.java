@@ -59,9 +59,11 @@ public abstract class AbstractEquivalenceOracleProxy implements Serializable {
      *
      * @param membershipOracle
      *         The MQ oracle to test against a hypothesis.
+     * @param batchSize
+     *         The size of the MQ batch.
      * @return An EquivalenceOracle from the LearnLib based on the proxy.
      */
     public abstract EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle.MealyMembershipOracle<String, String> membershipOracle);
+            MembershipOracle.MealyMembershipOracle<String, String> membershipOracle, int batchSize);
 
 }

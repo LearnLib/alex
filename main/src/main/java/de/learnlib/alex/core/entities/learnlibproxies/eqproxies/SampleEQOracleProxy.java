@@ -157,7 +157,7 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle.MealyMembershipOracle<String, String> membershipOracle) {
+            MembershipOracle.MealyMembershipOracle<String, String> membershipOracle, int batchSize) {
         SampleSetEQOracle newEQ = new SampleSetEQOracle(false);
 
         for (List<InputOutputPair> counterExample : counterExamples) {

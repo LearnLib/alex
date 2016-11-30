@@ -51,7 +51,8 @@ public class LearnerThreadFactory {
         LearningAlgorithm.MealyLearner<String, String> learner = previousThread.getLearner();
 
         return new LearnerThread(learnerResultDAO, learnerResult, previousThread.getMappedSUL(),
-                                 previousThread.getMqOracle(), learner, symbols);
+                                 previousThread.getMqOracle(), previousThread.getMaxConcurrentQueries(), learner,
+                                 symbols);
     }
 
 }

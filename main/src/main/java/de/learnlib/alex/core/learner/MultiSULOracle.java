@@ -32,22 +32,19 @@ import java.util.concurrent.*;
 public class MultiSULOracle<I, O> implements MealyMembershipOracle<I, O> {
 
     private final SUL<I, O> sul;
-    private final int maxConcurrentQueries;
 
-    public MultiSULOracle(SUL<I, O> sul, int maxConcurrentQueries) {
+    public MultiSULOracle(SUL<I, O> sul) {
         this.sul = sul;
-        this.maxConcurrentQueries = maxConcurrentQueries;
     }
 
     @Override
     public void processQueries(Collection<? extends Query<I, Word<O>>> queries) {
         if (queries.size() > 0) {
-            processQueries(sul, queries, maxConcurrentQueries);
+            processQueries(sul, queries);
         }
     }
 
-    private static <I, O> void processQueries(SUL<I, O> sul, Collection<? extends Query<I, Word<O>>> queries,
-                                              int maxConcurrentQueries) {
+    private static <I, O> void processQueries(SUL<I, O> sul, Collection<? extends Query<I, Word<O>>> queries) {
         ExecutorService executor = Executors.newFixedThreadPool(queries.size());
 
         List<Future<Word<O>>> futures = new ArrayList<>(); // stores the futures with the words
