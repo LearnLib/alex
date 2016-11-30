@@ -35,6 +35,9 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
     /** The number of mqs executed in parallel. */
     private int maxConcurrentQueries;
 
+    /** The number of active contexts. */
+    private int numberOfActiveContexts = 0;
+
     /** The symbol used to reset the SUL. */
     private Symbol resetSymbol;
 
@@ -77,6 +80,7 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
         ConnectorManager connectorManager;
         try {
             connectorManager = pool.take();
+            numberOfActiveContexts++;
         } catch (InterruptedException e) {
             throw new LearnerException("An error occurred while creating a new context.", e);
         }
@@ -106,6 +110,10 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
     public void disposeContext(ConnectorManager connectorManager) {
         try {
             pool.put(connectorManager);
+            numberOfActiveContexts--;
+            if (numberOfActiveContexts == 0) {
+                connectorManager.getConnector(CounterStoreConnector.class).saveCounters();
+            }
             connectorManager.dispose();
         } catch (InterruptedException e) {
             throw new LearnerException(e.getMessage(), e);

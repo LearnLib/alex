@@ -46,6 +46,7 @@ public class IncrementCounterActionTest {
     private static final Long USER_ID = 3L;
     private static final Long PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
+    private static final String PROJECT_URL = "http://localhost:8000";
 
     @Mock
     private User user;
@@ -97,7 +98,7 @@ public class IncrementCounterActionTest {
         ExecuteResult result = incrementAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).increment(USER_ID, PROJECT_ID, TEST_NAME);
+        verify(counters).increment(USER_ID, PROJECT_ID, PROJECT_URL, TEST_NAME);
     }
 
 }

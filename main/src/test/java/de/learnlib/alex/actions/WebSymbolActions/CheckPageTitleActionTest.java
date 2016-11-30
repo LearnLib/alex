@@ -45,6 +45,7 @@ public class CheckPageTitleActionTest {
 
     private static final long USER_ID = 1;
     private static final long PROJECT_ID = 1;
+    private static final String PROJECT_URL = "http://localhost:8000";
 
     private static final String TEST_TITLE = "Awesome Title No. {{#title}}";
 
@@ -103,7 +104,7 @@ public class CheckPageTitleActionTest {
 
         CounterStoreConnector counterStoreConnector = mock(CounterStoreConnector.class);
         given(connectors.getConnector(CounterStoreConnector.class)).willReturn(counterStoreConnector);
-        given(counterStoreConnector.get(USER_ID, PROJECT_ID, "title")).willReturn(1);
+        given(counterStoreConnector.get(PROJECT_URL, "title")).willReturn(1);
 
         assertEquals(OK, checkNode.executeAction(connectors));
     }
@@ -119,7 +120,7 @@ public class CheckPageTitleActionTest {
 
         CounterStoreConnector counterStoreConnector = mock(CounterStoreConnector.class);
         given(connectors.getConnector(CounterStoreConnector.class)).willReturn(counterStoreConnector);
-        given(counterStoreConnector.get(USER_ID, PROJECT_ID, "title")).willReturn(1);
+        given(counterStoreConnector.get(PROJECT_URL, "title")).willReturn(1);
 
         assertEquals(FAILED, checkNode.executeAction(connectors));
     }

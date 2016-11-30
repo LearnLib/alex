@@ -20,6 +20,7 @@ import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
 import de.learnlib.alex.core.learner.connectors.FileStoreConnector;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
+import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -109,8 +110,9 @@ public final class SearchHelper {
             String variableValue;
             switch (text.charAt(variableStartPos + 2)) {
                 case '#': // counter
+                    String url = connector.getConnector(WebSiteConnector.class).getBaseUrl();
                     variableValue = String.valueOf(connector.getConnector(CounterStoreConnector.class)
-                            .get(userId, projectId, variableName));
+                            .get(url, variableName));
                     result.append(variableValue);
                     break;
                 case '$': // variable:

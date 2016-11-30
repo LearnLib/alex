@@ -45,6 +45,7 @@ public class AssertCounterActionTest {
     private static final Long PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
     private static final Integer TEST_VALUE = 42;
+    private static final String PROJECT_URL = "http://localhost:8000";
 
     @Mock
     private User user;
@@ -58,6 +59,7 @@ public class AssertCounterActionTest {
     public void setUp() {
         given(user.getId()).willReturn(USER_ID);
         given(project.getId()).willReturn(PROJECT_ID);
+        given(project.getBaseUrl()).willReturn(PROJECT_URL);
 
         assertAction = new AssertCounterAction();
         assertAction.setUser(user);
@@ -100,17 +102,17 @@ public class AssertCounterActionTest {
         assertAction.setOperator(AssertCounterAction.Operator.LESS_THAN);
 
         // <
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE - 1);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE - 1);
         ExecuteResult result = assertAction.execute(connector);
         assertEquals("LESS fails on <", ExecuteResult.OK, result);
 
         // ==
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE);
         result = assertAction.execute(connector);
         assertEquals("LESS fails on ==", ExecuteResult.FAILED, result);
 
         // >
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE + 1);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE + 1);
         result = assertAction.execute(connector);
         assertEquals("LESS fails on >", ExecuteResult.FAILED, result);
     }
@@ -123,17 +125,17 @@ public class AssertCounterActionTest {
         assertAction.setOperator(AssertCounterAction.Operator.LESS_OR_EQUAL);
 
         // <
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE - 1);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE - 1);
         ExecuteResult result = assertAction.execute(connector);
         assertEquals("LESS_OR_EQUAL fails on <", ExecuteResult.OK, result);
 
         // ==
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE);
         result = assertAction.execute(connector);
         assertEquals("LESS_OR_EQUAL fails on ==", ExecuteResult.OK, result);
 
         // >
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE + 1);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE + 1);
         result = assertAction.execute(connector);
         assertEquals("LESS_OR_EQUAL fails on >", ExecuteResult.FAILED, result);
     }
@@ -146,17 +148,17 @@ public class AssertCounterActionTest {
         assertAction.setOperator(AssertCounterAction.Operator.EQUAL);
 
         // <
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE - 1);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE - 1);
         ExecuteResult result = assertAction.execute(connector);
         assertEquals("EQUALS fails on <", ExecuteResult.FAILED, result);
 
         // ==
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE);
         result = assertAction.execute(connector);
         assertEquals("EQUALS fails on ==", ExecuteResult.OK, result);
 
         // >
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE + 1);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE + 1);
         result = assertAction.execute(connector);
         assertEquals("EQUALS fails on >", ExecuteResult.FAILED, result);
     }
@@ -169,17 +171,17 @@ public class AssertCounterActionTest {
         assertAction.setOperator(AssertCounterAction.Operator.GREATER_OR_EQUAL);
 
         // <
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE - 1);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE - 1);
         ExecuteResult result = assertAction.execute(connector);
         assertEquals("GREATER_OR_EQUAL fails on <", ExecuteResult.FAILED, result);
 
         // ==
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE);
         result = assertAction.execute(connector);
         assertEquals("GREATER_OR_EQUAL fails on ==", ExecuteResult.OK, result);
 
         // >
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE + 1);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE + 1);
         result = assertAction.execute(connector);
         assertEquals("GREATER_OR_EQUAL fails on >", ExecuteResult.OK, result);
     }
@@ -192,17 +194,17 @@ public class AssertCounterActionTest {
         assertAction.setOperator(AssertCounterAction.Operator.GREATER_THAN);
 
         // <
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE - 1);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE - 1);
         ExecuteResult result = assertAction.execute(connector);
         assertEquals("GREATER fails on <", ExecuteResult.FAILED, result);
 
         // ==
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE);
         result = assertAction.execute(connector);
         assertEquals("GREATER fails on ==", ExecuteResult.FAILED, result);
 
         // >
-        given(counters.get(USER_ID, PROJECT_ID, TEST_NAME)).willReturn(TEST_VALUE + 1);
+        given(counters.get(PROJECT_URL, TEST_NAME)).willReturn(TEST_VALUE + 1);
         result = assertAction.execute(connector);
         assertEquals("GREATER fails on >", ExecuteResult.OK, result);
     }

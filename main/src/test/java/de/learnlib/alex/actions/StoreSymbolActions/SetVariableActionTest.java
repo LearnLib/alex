@@ -41,6 +41,7 @@ public class SetVariableActionTest {
 
     private static long USER_ID    = 21;
     private static long PROJECT_ID = 42;
+    private static final String PROJECT_URL = "http://localhost:8000";
 
     private static final String TEST_VALUE = "foobar";
     private static final String TEST_NAME  = "variable";
@@ -102,7 +103,7 @@ public class SetVariableActionTest {
         ConnectorManager connector = mock(ConnectorManager.class);
         //
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        given(counters.get(USER_ID, PROJECT_ID, "counter")).willReturn(2);
+        given(counters.get(PROJECT_URL, "counter")).willReturn(2);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
         //
         VariableStoreConnector variables = mock(VariableStoreConnector.class);

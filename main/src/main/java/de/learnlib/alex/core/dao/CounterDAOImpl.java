@@ -130,6 +130,11 @@ public class CounterDAOImpl implements CounterDAO {
     }
 
     @Override
+    public void update(List<Counter> counters) {
+        counterRepository.save(counters);
+    }
+
+    @Override
     @Transactional
     public void delete(Long userId, Long projectId, String... names) throws NotFoundException {
         Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);

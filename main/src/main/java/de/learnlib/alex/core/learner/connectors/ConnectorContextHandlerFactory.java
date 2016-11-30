@@ -51,6 +51,7 @@ public class ConnectorContextHandlerFactory {
         urls.addAll(project.getMirrorUrls());
 
         urls.forEach(url -> {
+            counterStoreConnector.registerUrl(url, project);
             ConnectorManager connectorManager = new ConnectorManager();
             connectorManager.addConnector(WebSiteConnector.class, new WebSiteConnector(url, browser));
             connectorManager.addConnector(WebServiceConnector.class, new WebServiceConnector(url));
