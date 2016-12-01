@@ -183,7 +183,7 @@ class LearnerSetupView {
         this.groups.forEach(group => {
             group.symbols.forEach(symbol => {
                 symbol._selected = result.symbols.indexOf(symbol.id) > -1;
-                if (symbol.id === result.resetSymbol.id) {
+                if (symbol.id === result.resetSymbol) {
                     this.resetSymbol = symbol;
                 }
             });
