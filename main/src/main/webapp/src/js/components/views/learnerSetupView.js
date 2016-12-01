@@ -177,13 +177,13 @@ class LearnerSetupView {
     reuseConfigurationFromResult(result) {
         this.learnConfiguration.algorithm = result.algorithm;
         this.learnConfiguration.eqOracle = result.steps[0].eqOracle;
-        this.learnConfiguration.maxAmountOfStepsToLearn = result.stepsToLearn;
+        this.learnConfiguration.maxAmountOfStepsToLearn = result.maxAmountOfStepsToLearn;
+        this.learnConfiguration.browser = result.browser;
 
-        const ids = result.symbols.map(s => s.id);
         this.groups.forEach(group => {
             group.symbols.forEach(symbol => {
-                symbol._selected = ids.indexOf(symbol.id) > -1;
-                if (symbol.id === result.resetSymbol.id) {
+                symbol._selected = result.symbols.indexOf(symbol.id) > -1;
+                if (symbol.id === result.resetSymbol) {
                     this.resetSymbol = symbol;
                 }
             });
