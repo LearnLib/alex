@@ -53,11 +53,11 @@ public class ConnectorContextHandlerFactory {
         urls.forEach(url -> {
             counterStoreConnector.registerUrl(url, project);
             ConnectorManager connectorManager = new ConnectorManager();
-            connectorManager.addConnector(WebSiteConnector.class, new WebSiteConnector(url, browser));
-            connectorManager.addConnector(WebServiceConnector.class, new WebServiceConnector(url));
-            connectorManager.addConnector(CounterStoreConnector.class, counterStoreConnector);
-            connectorManager.addConnector(VariableStoreConnector.class, new VariableStoreConnector());
-            connectorManager.addConnector(FileStoreConnector.class, new FileStoreConnector());
+            connectorManager.addConnector(new WebSiteConnector(url, browser));
+            connectorManager.addConnector(new WebServiceConnector(url));
+            connectorManager.addConnector(counterStoreConnector);
+            connectorManager.addConnector(new VariableStoreConnector());
+            connectorManager.addConnector(new FileStoreConnector());
             context.addConnectorManager(connectorManager);
         });
 

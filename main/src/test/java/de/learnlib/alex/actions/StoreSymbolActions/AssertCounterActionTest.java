@@ -23,6 +23,7 @@ import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
+import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,8 +42,6 @@ import static org.mockito.Mockito.mock;
 @RunWith(MockitoJUnitRunner.class)
 public class AssertCounterActionTest {
 
-    private static final Long USER_ID = 3L;
-    private static final Long PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
     private static final Integer TEST_VALUE = 42;
     private static final String PROJECT_URL = "http://localhost:8000";
@@ -57,10 +56,6 @@ public class AssertCounterActionTest {
 
     @Before
     public void setUp() {
-        given(user.getId()).willReturn(USER_ID);
-        given(project.getId()).willReturn(PROJECT_ID);
-        given(project.getBaseUrl()).willReturn(PROJECT_URL);
-
         assertAction = new AssertCounterAction();
         assertAction.setUser(user);
         assertAction.setProject(project);
@@ -97,8 +92,14 @@ public class AssertCounterActionTest {
     @Test
     public void ensureThatLessWorks() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
+
+        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
+        given(webSiteConnector.getBaseUrl()).willReturn(PROJECT_URL);
+
         ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
+
         assertAction.setOperator(AssertCounterAction.Operator.LESS_THAN);
 
         // <
@@ -120,8 +121,14 @@ public class AssertCounterActionTest {
     @Test
     public void ensureThatLessOrEqualsWorks() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
+
+        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
+        given(webSiteConnector.getBaseUrl()).willReturn(PROJECT_URL);
+
         ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
+
         assertAction.setOperator(AssertCounterAction.Operator.LESS_OR_EQUAL);
 
         // <
@@ -143,8 +150,14 @@ public class AssertCounterActionTest {
     @Test
     public void ensureThatEqualsWorks() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
+
+        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
+        given(webSiteConnector.getBaseUrl()).willReturn(PROJECT_URL);
+
         ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
+
         assertAction.setOperator(AssertCounterAction.Operator.EQUAL);
 
         // <
@@ -166,8 +179,14 @@ public class AssertCounterActionTest {
     @Test
     public void ensureThatGreaterOrEqualsWorks() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
+
+        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
+        given(webSiteConnector.getBaseUrl()).willReturn(PROJECT_URL);
+
         ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
+
         assertAction.setOperator(AssertCounterAction.Operator.GREATER_OR_EQUAL);
 
         // <
@@ -189,8 +208,14 @@ public class AssertCounterActionTest {
     @Test
     public void ensureThatGreaterWorks() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
+
+        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
+        given(webSiteConnector.getBaseUrl()).willReturn(PROJECT_URL);
+
         ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
+
         assertAction.setOperator(AssertCounterAction.Operator.GREATER_THAN);
 
         // <

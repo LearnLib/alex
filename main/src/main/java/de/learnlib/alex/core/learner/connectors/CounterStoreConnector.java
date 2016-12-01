@@ -107,13 +107,19 @@ public class CounterStoreConnector implements Connector {
      *         The value of the counter.
      */
     public void set(Long userId, Long projectId, String url, String name, Integer value) {
-        if (this.countersMap.get(url).containsKey(name)) {
-            Counter counter = this.countersMap.get(url).get(name);
+        Map<String, Counter> urlCounterMap = this.countersMap.get(url);
+        if (urlCounterMap == null) {
+            return;
+        }
+
+        Counter counter = urlCounterMap.get(name);
+        if (counter != null) {
             counter.setValue(value);
         } else {
-            Counter counter = createCounter(userId, projectId, name, value);
-            this.countersMap.get(url).put(name, counter);
+            counter = createCounter(userId, projectId, name, value);
+            urlCounterMap.put(name, counter);
         }
+
         LOGGER.debug("Set the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId, userId, value);
     }
 
@@ -132,14 +138,19 @@ public class CounterStoreConnector implements Connector {
      *         The name of the counter to increment.
      */
     public void increment(Long userId, Long projectId, String url, String name) {
-        Counter counter;
-        if (this.countersMap.get(url).containsKey(name)) {
-            counter = this.countersMap.get(url).get(name);
+        Map<String, Counter> urlCounterMap = this.countersMap.get(url);
+        if (urlCounterMap == null) {
+            return;
+        }
+
+        Counter counter = urlCounterMap.get(name);
+        if (counter != null) {
             counter.setValue(counter.getValue() + 1);
         } else {
             counter = createCounter(userId, projectId, name, 1);
-            this.countersMap.get(url).put(name, counter);
+            urlCounterMap.put(name, counter);
         }
+
         LOGGER.debug("Incremented the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId, userId,
                      counter.getValue());
     }

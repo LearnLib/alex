@@ -23,6 +23,7 @@ import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
+import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -90,10 +91,15 @@ public class IncrementCounterActionTest {
     }
 
     @Test
-    public void shouldSuccessfulIncrementCounter() {
+    public void shouldSuccessfullyIncrementCounter() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
+
+        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
+        given(webSiteConnector.getBaseUrl()).willReturn(PROJECT_URL);
+
         ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
+        given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
 
         ExecuteResult result = incrementAction.execute(connector);
 

@@ -34,6 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -461,7 +462,7 @@ public class Project implements Serializable {
      * @return The mirror URLs for the project.
      */
     public List<String> getMirrorUrls() {
-        return Arrays.asList(mirrorUrls.split(","));
+        return mirrorUrls.equals("") ? new ArrayList<>() : Arrays.asList(mirrorUrls.split(","));
     }
 
     /**

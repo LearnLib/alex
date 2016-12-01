@@ -22,6 +22,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -82,6 +84,20 @@ public class ProjectTest {
         assertTrue(p.getSymbols() != null);
         // symbols are not included in the Project directly, instead they're parts of groups now
         assertEquals(0, p.getSymbolsSize());
+    }
+
+    @Test
+    public void shouldGetAndSetMirrorUrlsCorrectly() {
+        Project p = new Project();
+        assertEquals(0, p.getMirrorUrls().size());
+
+        p.setMirrorUrls(new ArrayList<>());
+        assertEquals(0, p.getMirrorUrls().size());
+
+        List<String> urls = Arrays.asList("http://localhost:8080", "http://localhost:8081");
+        p.setMirrorUrls(urls);
+
+        assertEquals(2, p.getMirrorUrls().size());
     }
 
     @Test

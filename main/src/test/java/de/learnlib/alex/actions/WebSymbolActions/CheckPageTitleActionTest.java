@@ -95,16 +95,15 @@ public class CheckPageTitleActionTest {
 
     @Test
     public void shouldReturnOKIfTitleWasFoundWithoutRegex() {
-        ConnectorManager connectors = mock(ConnectorManager.class);
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
-        given(connectors.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
         WebDriver driver = mock(WebDriver.class);
         given((webSiteConnector.getDriver())).willReturn(driver);
-        given(driver.getTitle()).willReturn("Awesome Title No. 1");
+        given(driver.getTitle()).willReturn("Awesome Title No. 0");
 
         CounterStoreConnector counterStoreConnector = mock(CounterStoreConnector.class);
+        ConnectorManager connectors = mock(ConnectorManager.class);
+        given(connectors.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
         given(connectors.getConnector(CounterStoreConnector.class)).willReturn(counterStoreConnector);
-        given(counterStoreConnector.get(PROJECT_URL, "title")).willReturn(1);
 
         assertEquals(OK, checkNode.executeAction(connectors));
     }
@@ -120,7 +119,6 @@ public class CheckPageTitleActionTest {
 
         CounterStoreConnector counterStoreConnector = mock(CounterStoreConnector.class);
         given(connectors.getConnector(CounterStoreConnector.class)).willReturn(counterStoreConnector);
-        given(counterStoreConnector.get(PROJECT_URL, "title")).willReturn(1);
 
         assertEquals(FAILED, checkNode.executeAction(connectors));
     }

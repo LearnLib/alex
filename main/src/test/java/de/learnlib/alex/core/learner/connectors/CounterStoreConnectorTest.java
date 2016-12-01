@@ -18,6 +18,8 @@ package de.learnlib.alex.core.learner.connectors;
 
 import de.learnlib.alex.core.dao.CounterDAOImpl;
 import de.learnlib.alex.core.entities.Counter;
+import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +27,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.mockito.ArgumentMatchers.any;
+import java.util.Collections;
+
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -62,22 +65,31 @@ public class CounterStoreConnectorTest {
 
     @Test
     public void shouldCorrectlyUpdateACounter() throws NotFoundException {
-        given(counterDAO.get(USER_ID, PROJECT_ID, COUNTER_NAME)).willReturn(counter);
+        given(counter.getName()).willReturn(COUNTER_NAME);
+        given(counterDAO.getAll(USER_ID, PROJECT_ID)).willReturn(Collections.singletonList(counter));
 
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        project.setUser(new User(USER_ID));
+        connector.registerUrl(PROJECT_URL, project);
         connector.set(USER_ID, PROJECT_ID, PROJECT_URL, COUNTER_NAME, COUNTER_VALUE);
 
-        verify(counterDAO).update(any(Counter.class));
         verify(counter).setValue(COUNTER_VALUE);
     }
 
     @Test
     public void shouldIncrementACounter() throws NotFoundException {
+        given(counter.getName()).willReturn(COUNTER_NAME);
         given(counter.getValue()).willReturn(COUNTER_VALUE);
-        given(counterDAO.get(USER_ID, PROJECT_ID, COUNTER_NAME)).willReturn(counter);
+        given(counterDAO.getAll(USER_ID, PROJECT_ID)).willReturn(Collections.singletonList(counter));
+
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        project.setUser(new User(USER_ID));
+        connector.registerUrl(PROJECT_URL, project);
 
         connector.increment(USER_ID, PROJECT_ID, PROJECT_URL, COUNTER_NAME);
 
-        verify(counterDAO).update(any(Counter.class));
         verify(counter).setValue(COUNTER_VALUE + 1);
     }
 

@@ -24,6 +24,7 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
+import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -100,15 +101,19 @@ public class SetVariableActionTest {
 
     @Test
     public void shouldSuccessfulSetTheVariableValueWithCounter() {
-        ConnectorManager connector = mock(ConnectorManager.class);
-        //
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
         given(counters.get(PROJECT_URL, "counter")).willReturn(2);
-        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
-        //
+
+        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
+        given(webSiteConnector.getBaseUrl()).willReturn(PROJECT_URL);
+
         VariableStoreConnector variables = mock(VariableStoreConnector.class);
+
+        ConnectorManager connector = mock(ConnectorManager.class);
+        given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
+        given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
-        //
+
         setAction.setValue(TEST_VALUE + "{{#counter}}");
 
         ExecuteResult result = setAction.executeAction(connector);

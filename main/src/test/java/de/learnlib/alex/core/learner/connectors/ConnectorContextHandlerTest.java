@@ -25,8 +25,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConnectorContextHandlerTest {
@@ -44,34 +47,51 @@ public class ConnectorContextHandlerTest {
 
     @Test
     public void shouldCreateTheContextCorrectly() throws Exception {
-// TODO
-//        given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.OK);
-//        Connector connector1 = mock(VariableStoreConnector.class);
-//        handler.addConnector(connector1);
-//        Connector connector2 = mock(CounterStoreConnector.class);
-//        handler.addConnector(connector2);
-//
-//        ConnectorManager context = handler.createContext();
-//
-//        assertEquals(connector1, context.getConnector(connector1.getClass()));
-//        assertEquals(connector2, context.getConnector(connector2.getClass()));
-//        verify(connector1).reset();
-//        verify(connector2).reset();
-//        verify(resetSymbol).execute(any(ConnectorManager.class));
+        given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.OK);
+
+        ConnectorManager connectorManager = new ConnectorManager();
+        Connector connector1 = mock(VariableStoreConnector.class);
+        Connector connector2 = mock(CounterStoreConnector.class);
+        connectorManager.addConnector(connector1);
+        connectorManager.addConnector(connector2);
+        handler.addConnectorManager(connectorManager);
+        ConnectorManager context = handler.createContext();
+
+        assertEquals(connector1, context.getConnector(connector1.getClass()));
+        assertEquals(connector2, context.getConnector(connector2.getClass()));
+        verify(connector1).reset();
+        verify(connector2).reset();
+        verify(resetSymbol).execute(any(ConnectorManager.class));
     }
 
     @Test(expected = LearnerException.class)
     public void shouldThrowAnExceptionIfTheResetSymbolExecutionFailed() {
         given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.FAILED);
 
+        handler.addConnectorManager(createConnectorManager());
         handler.createContext(); // should fail
     }
 
-    @Test(expected = LearnerException.class)
-    public void shouldThrowAnExceptionIfTheResetSymbolExecutionCrashed() {
-        given(resetSymbol.execute(any(ConnectorManager.class))).willThrow(Exception.class);
+//    @Test(expected = LearnerException.class)
+//    public void shouldThrowAnExceptionIfTheResetSymbolExecutionCrashed() {
+//        given(resetSymbol.execute(any(ConnectorManager.class))).willThrow(Exception.class);
+//
+//        handler.createContext(); // should fail
+//    }
 
-        handler.createContext(); // should fail
+    @Test
+    public void shouldHaveTheCorrectAmountOfMaxConcurrentQueries() {
+        handler.addConnectorManager(createConnectorManager());
+        handler.addConnectorManager(createConnectorManager());
+        assertEquals(handler.getMaxConcurrentQueries(), 2);
     }
 
+    private ConnectorManager createConnectorManager() {
+        ConnectorManager connectorManager = new ConnectorManager();
+        Connector connector1 = mock(VariableStoreConnector.class);
+        Connector connector2 = mock(CounterStoreConnector.class);
+        connectorManager.addConnector(connector1);
+        connectorManager.addConnector(connector2);
+        return  connectorManager;
+    }
 }
