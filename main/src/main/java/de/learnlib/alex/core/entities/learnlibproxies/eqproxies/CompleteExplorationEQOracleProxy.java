@@ -17,9 +17,9 @@
 package de.learnlib.alex.core.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.core.learner.eqOracles.CompleteExplorationEQOracle;
 import de.learnlib.api.EquivalenceOracle;
 import de.learnlib.api.MembershipOracle;
-import de.learnlib.eqtests.basic.CompleteExplorationEQOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
@@ -113,7 +113,7 @@ public class CompleteExplorationEQOracleProxy extends AbstractEquivalenceOracleP
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
             MembershipOracle.MealyMembershipOracle<String, String> membershipOracle, int batchSize) {
-        return new CompleteExplorationEQOracle(membershipOracle, minDepth, maxDepth);
+        return new CompleteExplorationEQOracle(membershipOracle, minDepth, maxDepth, batchSize);
     }
 
 }
