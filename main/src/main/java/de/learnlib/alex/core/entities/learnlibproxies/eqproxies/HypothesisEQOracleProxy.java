@@ -65,7 +65,7 @@ public class HypothesisEQOracleProxy extends AbstractEquivalenceOracleProxy impl
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle.MealyMembershipOracle<String, String> membershipOracle, int batchSize) {
+            MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
         Alphabet<String> alphabet = hypothesis.createAlphabet();
         CompactMealy<String, String> compactMealy = hypothesis.createMealyMachine(alphabet);
         return new SimulatorEQOracle.MealySimulatorEQOracle<>(compactMealy);

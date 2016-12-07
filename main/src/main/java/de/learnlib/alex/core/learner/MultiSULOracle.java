@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.core.learner;
 
-import de.learnlib.api.MembershipOracle.MealyMembershipOracle;
+import de.learnlib.api.MembershipOracle;
 import de.learnlib.api.Query;
 import de.learnlib.api.SUL;
 import net.automatalib.words.Word;
@@ -26,11 +26,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @ParametersAreNonnullByDefault
-public class MultiSULOracle<I, O> implements MealyMembershipOracle<I, O> {
-
+public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
     private final SUL<I, O> sul;
 
     public MultiSULOracle(SUL<I, O> sul) {

@@ -167,7 +167,7 @@ public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProx
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle.MealyMembershipOracle<String, String> membershipOracle, int batchSize) {
+            MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
         return new RandomWordsEQOracle.MealyRandomWordsEQOracle<>(membershipOracle, minLength, maxLength, maxNoOfTests,
                                                                   new Random(seed), batchSize);
     }

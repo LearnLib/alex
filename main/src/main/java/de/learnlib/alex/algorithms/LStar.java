@@ -24,6 +24,7 @@ import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealyBuilder;
 import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.api.MembershipOracle;
 import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 
 /**
  * Class that provides the LearnLib implementation of the extended L* algorithm for ALEX.
@@ -33,7 +34,7 @@ public class LStar implements LearnAlgorithmFactory {
 
     @Override
     public LearningAlgorithm.MealyLearner<String, String> createLearner(
-            Alphabet<String> sigma, MembershipOracle.MealyMembershipOracle<String, String> oracle) {
+            Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle) {
         return new ExtensibleLStarMealyBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
     }
 

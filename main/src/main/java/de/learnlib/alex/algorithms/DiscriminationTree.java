@@ -34,7 +34,7 @@ public class DiscriminationTree implements LearnAlgorithmFactory {
 
     @Override
     public LearningAlgorithm.MealyLearner<String, String> createLearner(
-            Alphabet<String> sigma, MembershipOracle.MealyMembershipOracle<String, String> oracle) {
+            Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle) {
         return new DTLearnerMealyBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
     }
 

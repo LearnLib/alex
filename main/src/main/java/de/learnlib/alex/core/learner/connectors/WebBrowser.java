@@ -6,12 +6,15 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.MarionetteDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.lang.reflect.Field;
 
@@ -75,23 +78,33 @@ public enum WebBrowser {
      */
     public WebDriver getWebDriver() throws Exception {
         try {
+            WebDriver driver;
             switch (this) {
                 case HTMLUNITDRIVER:
-                    HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.BEST_SUPPORTED);
-                    enableJavaScript(driver);
-                    return driver;
+                    driver = new HtmlUnitDriver(BrowserVersion.BEST_SUPPORTED);
+                    enableJavaScript((HtmlUnitDriver) driver);
+                    break;
                 case CHROME:
                     DesiredCapabilities chromeCapabilities = DesiredCapabilities.chrome();
-                    return new ChromeDriver(chromeCapabilities);
+                    driver = new ChromeDriver(chromeCapabilities);
+                    break;
                 case FIREFOX:
                     DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
-                    return new MarionetteDriver(firefoxCapabilities);
+                    driver = new MarionetteDriver(firefoxCapabilities);
+                    break;
                 case EDGE:
                     DesiredCapabilities edgeCapabilities = DesiredCapabilities.edge();
-                    return new EdgeDriver(edgeCapabilities);
+                    driver = new EdgeDriver(edgeCapabilities);
+                    break;
                 default:
                     throw new Exception();
             }
+
+            // wait until the browser is loaded
+            new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) wd ->
+                    ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
+
+            return driver;
         } catch (Throwable e) {
             LOGGER.warn("Could not create a WebDriver.", e);
             throw e;
