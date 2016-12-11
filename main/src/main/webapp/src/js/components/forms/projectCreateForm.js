@@ -73,6 +73,7 @@ class ProjectCreateForm {
                 this.ToastService.success(`Project "${createdProject.name}" created`);
                 this.EventBus.emit(events.PROJECT_CREATED, {project: createdProject});
                 this.project = new Project();
+                this.mirrorUrls = "";
 
                 // set the form to its original state
                 this.form.$setPristine();

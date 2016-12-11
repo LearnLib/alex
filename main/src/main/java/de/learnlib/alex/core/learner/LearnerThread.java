@@ -112,6 +112,8 @@ public class LearnerThread extends Thread {
     /** The number of mqs executed in parallel. */
     private int maxConcurrentQueries;
 
+    private EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
+
     /**
      * Constructor to set the LearnerThread up.
      *
@@ -138,7 +140,7 @@ public class LearnerThread extends Thread {
                 ceiSUL = new ContextExecutableInputSUL<>(context);
         this.mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
         this.sul = new AlexSUL<>(mappedSUL);
-        this.mqOracle = MealyCacheOracle.createDAGCacheOracle(this.sigma, new MultiSULOracle<>(sul));
+        this.mqOracle = MealyCacheOracle.createTreeCacheOracle(this.sigma, new MultiSULOracle<>(sul));
 
         LearnAlgorithmFactory algorithm = result.getAlgorithmFactory();
         this.learner = algorithm.createLearner(sigma, mqOracle);
@@ -393,8 +395,10 @@ public class LearnerThread extends Thread {
     private void findCounterExample() {
         LOGGER.traceEntry();
 
-        EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
-        eqOracle = currentStep.getEqOracle().createEqOracle(mqOracle, maxConcurrentQueries);
+        if (eqOracle == null) {
+            eqOracle = currentStep.getEqOracle().createEqOracle(mqOracle, maxConcurrentQueries);
+        }
+
         DefaultQuery<String, Word<String>> newCounterExample;
         newCounterExample = eqOracle.findCounterExample(learner.getHypothesisModel(), sigma);
 

@@ -47,16 +47,11 @@ public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
         }
     }
 
-    private static <I, O> void processQueries(SUL<I, O> sul, Collection<? extends Query<I, Word<O>>> queries) {
+    private void processQueries(SUL<I, O> sul, Collection<? extends Query<I, Word<O>>> queries) {
         ExecutorService executor = Executors.newFixedThreadPool(queries.size());
 
-        List<Future<Word<O>>> futures = new ArrayList<>(); // stores the futures with the words
-        List<Query<I, Word<O>>> qs = new ArrayList<>();
-
         for (Query<I, Word<O>> q : queries) {
-            qs.add(q);
-
-            Callable<Word<O>> worker = () -> {
+            Runnable worker = () -> {
 
                 // forking the sul allows us to pose multiple
                 // queries in parallel to multiple suls
@@ -76,26 +71,17 @@ public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
                         wb.add(forkedSul.step(sym));
                     }
 
-                    return wb.toWord();
+                    q.answer(wb.toWord());
                 } finally {
                     forkedSul.post();
                 }
             };
 
-            Future<Word<O>> submit = executor.submit(worker);
-            futures.add(submit);
+            executor.submit(worker);
         }
 
         executor.shutdown();
         while (!executor.isTerminated()) { // wait for all futures to finish
-        }
-        for (int i = 0; i < futures.size(); i++) {
-            try {
-                Word<O> output = futures.get(i).get();
-                qs.get(i).answer(output);
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
         }
     }
 }
