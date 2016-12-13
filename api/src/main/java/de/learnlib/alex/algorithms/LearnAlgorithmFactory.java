@@ -17,8 +17,9 @@
 package de.learnlib.alex.algorithms;
 
 import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.oracles.SULOracle;
+import de.learnlib.api.MembershipOracle;
 import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 
 /**
  * Interface to describe how a new Learner will be created.
@@ -33,17 +34,20 @@ public interface LearnAlgorithmFactory {
      *         The Alphabet to use.
      * @param oracle
      *         The MQ oracle.
+     *
      * @return A new Learner.
      */
-    LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
-                                                                 SULOracle<String, String> oracle);
+    LearningAlgorithm.MealyLearner<String, String> createLearner(
+            Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle);
 
     /**
      * Read the internal data of an algorithm.
      *
      * @param learner
      *         The learner to extract the internal data from.
+     *
      * @return The internal data as a nice JSON string.
+     *
      * @throws IllegalArgumentException
      *         If the algorithm has the wrong type or no internal data.
      */

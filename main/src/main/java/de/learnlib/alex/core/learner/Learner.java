@@ -190,10 +190,6 @@ public class Learner {
         contextHandler.setResetSymbol(learnerResult.getResetSymbol());
         LearnerThread learnThread = learnerThreadFactory.createThread(learnerResult, contextHandler);
         startThread(user, learnThread);
-
-        // get the sul here once so that the timer doesn't get '0' for .getStatisticalData.getCount() after continuing
-        // a learning process
-        //learnThread.getResetCounterSUL();
     }
 
     private LearnerResult createLearnerResult(User user, Project project, LearnerConfiguration configuration)

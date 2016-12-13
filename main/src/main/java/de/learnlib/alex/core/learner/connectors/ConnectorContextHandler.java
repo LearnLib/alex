@@ -21,32 +21,48 @@ import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.mapper.ContextExecutableInputSUL;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 /**
  * ContextHandler for the connectors.
  */
 public class ConnectorContextHandler implements ContextExecutableInputSUL.ContextHandler<ConnectorManager> {
 
+    /** The pool with the managers for the sul. */
+    private BlockingQueue<ConnectorManager> pool;
+
+    /** The number of mqs executed in parallel. */
+    private int maxConcurrentQueries;
+
+    /** The number of active contexts. */
+    private int numberOfActiveContexts = 0;
+
     /** The symbol used to reset the SUL. */
     private Symbol resetSymbol;
-
-    /** The manager which holds all the connectors. */
-    private ConnectorManager connectors;
 
     /**
      * Default constructor.
      */
     public ConnectorContextHandler() {
-        this.connectors = new ConnectorManager();
+        this.pool = new LinkedBlockingQueue<>();
+        this.maxConcurrentQueries = 0;
     }
 
     /**
      * Add a connector to the set of connectors.
      *
-     * @param connector
-     *         The new connector.
+     * @param connectorManager
+     *         The new connector manager.
      */
-    public void addConnector(Connector connector) {
-        this.connectors.addConnector(connector.getClass(), connector);
+    public void addConnectorManager(ConnectorManager connectorManager) {
+        maxConcurrentQueries++;
+        try {
+            pool.put(connectorManager);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
     }
 
     /**
@@ -61,23 +77,23 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
 
     @Override
     public ConnectorManager createContext() throws LearnerException {
-        for (Connector connector : connectors) {
-            try {
-                connector.reset();
-            } catch (Exception e) {
-                throw new LearnerException(e.getMessage(), e);
-            }
+        ConnectorManager connectorManager;
+        try {
+            connectorManager = pool.take();
+            numberOfActiveContexts++;
+        } catch (InterruptedException e) {
+            throw new LearnerException("An error occurred while creating a new context.", e);
         }
 
-        executeResetSymbol();
+        try {
+            for (Connector connector : connectorManager) connector.reset();
+        } catch (Exception e) {
+            throw new LearnerException("An error occurred while resetting a connector.", e);
+        }
 
-        return connectors;
-    }
-
-    private void executeResetSymbol() throws LearnerException {
         ExecuteResult resetResult;
         try {
-            resetResult = resetSymbol.execute(connectors);
+            resetResult = resetSymbol.execute(connectorManager);
         } catch (Exception e) {
             throw new LearnerException("An error occurred while executing the reset symbol.", e);
         }
@@ -86,11 +102,26 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
             throw new LearnerException("The execution of the reset symbol failed on step "
                                                + resetResult.getFailedActionNumber() + ".");
         }
+
+        return connectorManager;
     }
 
     @Override
-    public void disposeContext(ConnectorManager connector) {
-        connectors.dispose();
+    public void disposeContext(ConnectorManager connectorManager) {
+        try {
+            pool.put(connectorManager);
+            numberOfActiveContexts--;
+            if (numberOfActiveContexts == 0) {
+                connectorManager.getConnector(CounterStoreConnector.class).saveCounters();
+            }
+            connectorManager.dispose();
+        } catch (InterruptedException e) {
+            throw new LearnerException(e.getMessage(), e);
+        }
     }
 
+    /** @return The number of mqs executed in parallel. */
+    public int getMaxConcurrentQueries() {
+        return maxConcurrentQueries;
+    }
 }

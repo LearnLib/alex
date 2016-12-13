@@ -48,6 +48,12 @@ class ProjectCreateForm {
          */
         this.projectToImport = null;
 
+        /**
+         * The mirror urls separated by \n.
+         * @type {string}
+         */
+        this.mirrorUrls = "";
+
         EventBus.on(events.FILE_LOADED, (evt, data) => {
             this.projectToImport = JSON.parse(data.file);
         }, $scope);
@@ -57,11 +63,17 @@ class ProjectCreateForm {
      * Creates a new project.
      */
     createProject() {
+        this.mirrorUrls.split('\n').forEach(url => {
+            const trimmedUrl = url.trim();
+            if (trimmedUrl !== '') this.project.mirrorUrls.push(trimmedUrl);
+        });
+
         this.ProjectResource.create(this.project)
             .then(createdProject => {
                 this.ToastService.success(`Project "${createdProject.name}" created`);
                 this.EventBus.emit(events.PROJECT_CREATED, {project: createdProject});
                 this.project = new Project();
+                this.mirrorUrls = "";
 
                 // set the form to its original state
                 this.form.$setPristine();

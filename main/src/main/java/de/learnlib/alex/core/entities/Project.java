@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -33,8 +34,11 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -150,6 +154,12 @@ public class Project implements Serializable {
     private Set<Counter> counters;
 
     /**
+     * The URLs of the mirrors of the application.
+     */
+    @Column(columnDefinition = "CLOB")
+    private String mirrorUrls;
+
+    /**
      * Default constructor.
      */
     public Project() {
@@ -169,6 +179,7 @@ public class Project implements Serializable {
         this.nextSymbolId = 1L;
 
         this.userId = 0L;
+        this.mirrorUrls = "";
     }
 
     /**
@@ -445,6 +456,20 @@ public class Project implements Serializable {
     @JsonIgnore
     public void setCounters(Set<Counter> counters) {
         this.counters = counters;
+    }
+
+    /**
+     * @return The mirror URLs for the project.
+     */
+    public List<String> getMirrorUrls() {
+        return mirrorUrls.equals("") ? new ArrayList<>() : Arrays.asList(mirrorUrls.split(","));
+    }
+
+    /**
+     * @param mirrorUrls The mirror URLs for the project.
+     */
+    public void setMirrorUrls(List<String> mirrorUrls) {
+        this.mirrorUrls = String.join(",", mirrorUrls);
     }
 
     @Override

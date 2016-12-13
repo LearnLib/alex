@@ -31,14 +31,13 @@ import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.api.EquivalenceOracle;
 import de.learnlib.api.LearningAlgorithm.MealyLearner;
+import de.learnlib.api.MembershipOracle;
 import de.learnlib.api.SUL;
-import de.learnlib.cache.sul.SULCache;
-import de.learnlib.cache.sul.SULCaches;
+import de.learnlib.cache.mealy.MealyCacheOracle;
 import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.mapper.Mappers;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.oracles.DefaultQuery;
-import de.learnlib.oracles.SULOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -78,11 +77,6 @@ public class LearnerThread extends Thread {
     private final AlexSUL<String, String> sul;
 
     /**
-     * The actual System Under Learning put into a cache.
-     */
-    private SULCache<String, String> cachedSUL;
-
-    /**
      * The DAO to remember the learn results.
      */
     private final LearnerResultDAO learnerResultDAO;
@@ -110,7 +104,15 @@ public class LearnerThread extends Thread {
     /**
      * The membership oracle.
      */
-    private final SULOracle<String, String> mqOracle;
+    private final MembershipOracle<String, Word<String>> mqOracle;
+
+    /** The mapped SUL. */
+    private final SUL<String, String> mappedSUL;
+
+    /** The number of mqs executed in parallel. */
+    private int maxConcurrentQueries;
+
+    private EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
 
     /**
      * Constructor to set the LearnerThread up.
@@ -127,21 +129,18 @@ public class LearnerThread extends Thread {
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
         this.currentStep = result.getSteps().get(result.getSteps().size() - 1); // get the latest step
+        this.maxConcurrentQueries = context.getMaxConcurrentQueries();
 
         Symbol[] symbolsArray = readSymbolArray(); // use the symbols in the result to create the symbol array.
         this.symbolMapper = new SymbolMapper(symbolsArray);
         this.sigma = symbolMapper.getAlphabet();
         this.result.setSigma(AlphabetProxy.createFrom(sigma));
 
-        ContextExecutableInputSUL<ContextExecutableInput<ExecuteResult, ConnectorManager>,
-                                  ExecuteResult,
-                                  ConnectorManager>
+        ContextExecutableInputSUL<ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult, ConnectorManager>
                 ceiSUL = new ContextExecutableInputSUL<>(context);
-        SUL<String, String> mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
-        this.cachedSUL = SULCaches.createCache(this.sigma, mappedSUL);
-        this.sul = new AlexSUL<>(cachedSUL);
-
-        this.mqOracle = new SULOracle<>(sul);
+        this.mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
+        this.sul = new AlexSUL<>(mappedSUL);
+        this.mqOracle = MealyCacheOracle.createTreeCacheOracle(this.sigma, new MultiSULOracle<>(sul));
 
         LearnAlgorithmFactory algorithm = result.getAlgorithmFactory();
         this.learner = algorithm.createLearner(sigma, mqOracle);
@@ -151,28 +150,34 @@ public class LearnerThread extends Thread {
      * Advanced constructor to set the LearnerThread up.
      * Most likely to be used when resuming a learn process.
      *
-     * @param learnerResultDAO The DAO to persists the results.
-     * @param result           The result to update, including the proper configuration.
-     * @param existingSUL      The existing SULCache.
-     * @param learner          Don't create a new learner, instead use this one.
-     * @param symbols          The Symbols to use.
+     * @param learnerResultDAO
+     *         The DAO to persists the results.
+     * @param result
+     *         The result to update, including the proper configuration.
+     * @param existingSUL
+     *         The existing SULCache.
+     * @param learner
+     *         Don't create a new learner, instead use this one.
+     * @param symbols
+     *         The Symbols to use.
      */
-    public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, SULCache<String, String> existingSUL,
+    public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, SUL<String, String> mappedSUL,
+                         MembershipOracle<String, Word<String>> existingSUL, int maxConcurrentQueries,
                          MealyLearner<String, String> learner, Symbol... symbols) {
         this.finished = false;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
         this.currentStep = result.getSteps().get(result.getSteps().size() - 1); // get the latest step
+        this.maxConcurrentQueries = maxConcurrentQueries;
 
         this.symbolMapper = new SymbolMapper(symbols);
         this.sigma = symbolMapper.getAlphabet();
         result.setSigma(AlphabetProxy.createFrom(sigma));
 
-        this.cachedSUL = existingSUL;
-        this.sul = new AlexSUL<>(cachedSUL);
+        this.mappedSUL = mappedSUL;
+        this.sul = new AlexSUL<>(mappedSUL);
 
-        this.mqOracle = new SULOracle<>(sul);
-
+        this.mqOracle = existingSUL;
         this.learner = learner;
     }
 
@@ -200,15 +205,6 @@ public class LearnerThread extends Thread {
     }
 
     /**
-     * Get the actual SUL used for the learning process wrapped in a cache..
-     *
-     * @return The SUL used for the learning process put into a cache.
-     */
-    public SULCache<String, String> getCachedSUL() {
-        return cachedSUL;
-    }
-
-    /**
      * Get the learner used by the LearnerThread.
      *
      * @return The learner used by the thread.
@@ -224,6 +220,16 @@ public class LearnerThread extends Thread {
      */
     public List<Symbol> getSymbols() {
         return symbolMapper.getSymbols();
+    }
+
+    /** @return The MQ oracle. */
+    public MembershipOracle<String, Word<String>> getMqOracle() {
+        return mqOracle;
+    }
+
+    /** @return the mapped SUL. */
+    public SUL<String, String> getMappedSUL() {
+        return mappedSUL;
     }
 
     @Override
@@ -255,6 +261,7 @@ public class LearnerThread extends Thread {
         }
     }
 
+
     /**
      * Get the {@link AlexSUL}.
      *
@@ -273,9 +280,8 @@ public class LearnerThread extends Thread {
     }
 
     private boolean continueLearning() {
-        return currentStep.getCounterExample() != null
-                && (currentStep.getStepsToLearn() > 0 || currentStep.getStepsToLearn() == -1)
-                && !Thread.interrupted();
+        return currentStep.getCounterExample() != null && (currentStep.getStepsToLearn() > 0
+                || currentStep.getStepsToLearn() == -1) && !Thread.interrupted();
     }
 
     private void learnOneStep() throws NotFoundException {
@@ -323,7 +329,7 @@ public class LearnerThread extends Thread {
         LearnerResultStep previousStep;
         if (currentStep.getStatistics().getDuration().getTotal() > 0) {
             previousStep = currentStep;
-            currentStep  = learnerResultDAO.createStep(result);
+            currentStep = learnerResultDAO.createStep(result);
         } else {
             previousStep = result.getSteps().get((int) (currentStep.getStepNo() - 1));
         }
@@ -343,7 +349,7 @@ public class LearnerThread extends Thread {
                 learner.refineHypothesis(counterExampleDefaultProxy);
             } catch (NullPointerException e) {
                 throw new LearnerException("Presumably the detected counterexample '" + counterExampleDefaultProxy
-                        + "' was not a real counterexample!");
+                                                   + "' was not a real counterexample!");
             } finally {
                 storeLearnerMetaData();
             }
@@ -364,8 +370,8 @@ public class LearnerThread extends Thread {
         long startTime = statistics.getStartTime();
         long currentTime = System.nanoTime();
         statistics.getDuration().setLearner(currentTime - startTime);
-        LOGGER.info(LEARNER_MARKER, "Duration of the learning: {} (start: {}, end: {}).",
-                    statistics.getDuration(), startTime, currentTime);
+        LOGGER.info(LEARNER_MARKER, "Duration of the learning: {} (start: {}, end: {}).", statistics.getDuration(),
+                    startTime, currentTime);
 
         statistics.getMqsUsed().setLearner(sul.getResetCount());
         statistics.getSymbolsUsed().setLearner(sul.getSymbolUsedCount());
@@ -389,8 +395,10 @@ public class LearnerThread extends Thread {
     private void findCounterExample() {
         LOGGER.traceEntry();
 
-        EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
-        eqOracle = currentStep.getEqOracle().createEqOracle(mqOracle);
+        if (eqOracle == null) {
+            eqOracle = currentStep.getEqOracle().createEqOracle(mqOracle, maxConcurrentQueries);
+        }
+
         DefaultQuery<String, Word<String>> newCounterExample;
         newCounterExample = eqOracle.findCounterExample(learner.getHypothesisModel(), sigma);
 
@@ -425,4 +433,8 @@ public class LearnerThread extends Thread {
         LOGGER.traceExit();
     }
 
+    /** @return The number of mqs executed in parallel. */
+    public int getMaxConcurrentQueries() {
+        return maxConcurrentQueries;
+    }
 }

@@ -50,6 +50,12 @@ export class ProjectSettingsModalController {
         this.project = modalData.project;
 
         /**
+         * The mirror URLs of the project.
+         * @type {string[]}
+         */
+        this.mirrorUrls = this.project.mirrorUrls.join('\n');
+
+        /**
          * An error message that is displayed on a failed updated.
          * @type {null|string}
          */
@@ -61,6 +67,12 @@ export class ProjectSettingsModalController {
      */
     updateProject() {
         this.error = null;
+
+        this.project.mirrorUrls = [];
+        this.mirrorUrls.split('\n').forEach(url => {
+            const trimmedUrl = url.trim();
+            if (trimmedUrl !== '') this.project.mirrorUrls.push(trimmedUrl);
+        });
 
         this.ProjectResource.update(this.project)
             .then(updatedProject => {

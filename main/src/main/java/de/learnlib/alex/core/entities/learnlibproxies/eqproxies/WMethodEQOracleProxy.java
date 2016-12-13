@@ -17,9 +17,9 @@
 package de.learnlib.alex.core.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.core.learner.eqOracles.WMethodEQOracle;
 import de.learnlib.api.EquivalenceOracle;
-import de.learnlib.eqtests.basic.WMethodEQOracle;
-import de.learnlib.oracles.SULOracle;
+import de.learnlib.api.MembershipOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
@@ -75,7 +75,7 @@ public class WMethodEQOracleProxy extends AbstractEquivalenceOracleProxy impleme
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            SULOracle<String, String> membershipOracle) {
-        return new WMethodEQOracle.MealyWMethodEQOracle<>(this.maxDepth, membershipOracle);
+            MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
+        return new WMethodEQOracle.MealyWMethodEQOracle<>(this.maxDepth, membershipOracle, batchSize);
     }
 }

@@ -25,12 +25,12 @@ public class ConnectorManagerTest {
 
     @Test
     public void shouldDisposeAllConnectors() {
-        Connector connector1 = mock(Connector.class);
-        Connector connector2 = mock(Connector.class);
+        Connector connector1 = mock(WebSiteConnector.class);
+        Connector connector2 = mock(WebServiceConnector.class);
 
         ConnectorManager manager = new ConnectorManager();
-        manager.addConnector(VariableStoreConnector.class, connector1);
-        manager.addConnector(CounterStoreConnector.class, connector2);
+        manager.addConnector(connector1);
+        manager.addConnector(connector2);
 
         manager.dispose();
 

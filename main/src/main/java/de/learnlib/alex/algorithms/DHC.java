@@ -19,8 +19,9 @@ package de.learnlib.alex.algorithms;
 import de.learnlib.alex.annotations.LearnAlgorithm;
 import de.learnlib.algorithms.dhc.mealy.MealyDHCBuilder;
 import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.oracles.SULOracle;
+import de.learnlib.api.MembershipOracle;
 import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 
 /**
  * Class that provides the LearnLib implementation of the DHC algorithm for ALEX.
@@ -29,8 +30,8 @@ import net.automatalib.words.Alphabet;
 public class DHC implements LearnAlgorithmFactory {
 
     @Override
-    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
-                                                                        SULOracle<String, String> oracle) {
+    public LearningAlgorithm.MealyLearner<String, String> createLearner(
+            Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle) {
         return new MealyDHCBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
     }
 

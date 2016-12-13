@@ -93,6 +93,10 @@ export const projectDetailsWidget = {
                     <td><strong>URL</strong></td>
                     <td><a href="{{vm.project.baseUrl}}" target="_blank" ng-bind="vm.project.baseUrl"></a></td>
                 </tr>
+                <tr> 
+                    <td><strong>Mirrors</strong></td> 
+                    <td ng-bind="vm.project.mirrorUrls.length"></td> 
+                </tr> 
                 <tr>
                     <td><strong>#Groups</strong></td>
                     <td ng-bind="vm.numberOfGroups"></td>

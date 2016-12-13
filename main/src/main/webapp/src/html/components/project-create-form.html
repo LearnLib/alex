@@ -60,6 +60,16 @@
             </div>
 
             <div class="form-group">
+                <label class="control-label">Mirror URLs</label>
+                <textarea ng-model="vm.mirrorUrls"
+                          name="mirrorUrls"
+                          placeholder="Enter alternative URLs the project can be accessed. One per line."
+                          class="form-control"
+                          rows="3">
+                </textarea>
+            </div>
+
+            <div class="form-group">
                 <button type="submit"
                         class="btn btn-sm btn-primary">
                     Create Project

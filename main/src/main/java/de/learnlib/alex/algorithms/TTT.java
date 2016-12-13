@@ -21,7 +21,7 @@ import de.learnlib.algorithms.ttt.base.DTNode;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
 import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.oracles.SULOracle;
+import de.learnlib.api.MembershipOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
@@ -32,8 +32,8 @@ import net.automatalib.words.Word;
 public class TTT implements LearnAlgorithmFactory {
 
     @Override
-    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
-                                                                        SULOracle<String, String> oracle) {
+    public LearningAlgorithm.MealyLearner<String, String> createLearner(
+            Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle) {
         return new TTTLearnerMealyBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
     }
 
