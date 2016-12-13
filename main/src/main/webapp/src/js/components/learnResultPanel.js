@@ -41,6 +41,8 @@ class LearnResultPanel {
      */
     // @ngInject
     constructor($scope, DownloadService, EventBus, PromptService) {
+        this.$scope = $scope;
+        this.EventBus = EventBus;
         this.DownloadService = DownloadService;
         this.PromptService = PromptService;
 
@@ -71,6 +73,9 @@ class LearnResultPanel {
          * @type {number}
          */
         this.mode = this.modes.HYPOTHESIS;
+    }
+
+    $onInit() {
 
         /**
          * The index of the step from the results that should be shown.
@@ -78,14 +83,14 @@ class LearnResultPanel {
          */
         this.pointer = this.result.steps.length - 1;
 
-        $scope.$watch(() => this.result, () => {
+        this.$scope.$watch(() => this.result, () => {
             if (this.result) this.pointer = this.result.steps.length - 1;
         });
 
         // wait for hypothesis layout settings to change
-        EventBus.on(events.HYPOTHESIS_LAYOUT_UPDATED, (evt, data) => {
+        this.EventBus.on(events.HYPOTHESIS_LAYOUT_UPDATED, (evt, data) => {
             this.layoutSettings = data.settings;
-        }, $scope);
+        }, this.$scope);
     }
 
     /**

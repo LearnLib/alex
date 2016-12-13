@@ -63,12 +63,14 @@ class ProjectDetailsWidget {
                 let counter = 0;
                 groups.forEach(g => counter += g.symbols.length);
                 this.numberOfSymbols = counter;
-            });
+            })
+            .catch(err => console.log(err));
 
         LearnResultResource.getAll(this.project.id)
             .then(results => {
                 this.numberOfTests = results.length;
-            });
+            })
+            .catch(err => console.log(err));
 
         // listen on project update event
         EventBus.on(events.PROJECT_UPDATED, (evt, data) => {

@@ -113,15 +113,18 @@ class LearnerSetupView {
                         .then(groups => {
                             this.groups = groups;
                             this.allSymbols = _.flatten(this.groups.map(g => g.symbols));
-                        });
+                        })
+                        .catch(err => console.log(err));
 
                     // load learn results so that their configuration can be reused
                     LearnResultResource.getAll(this.project.id)
                         .then(learnResults => {
                             this.learnResults = learnResults;
-                        });
+                        })
+                        .catch(err => console.log(err));
                 }
-            });
+            })
+            .catch(err => console.log(err));
 
         // get the status to check if there is a learn process that can be continued
         this.LearnerResource.getStatus().then(data => {

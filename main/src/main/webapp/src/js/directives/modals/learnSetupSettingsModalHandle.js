@@ -28,6 +28,7 @@ class LearnSetupSettingsModalController {
      *
      * @param $uibModalInstance
      * @param modalData
+     * @param $scope
      * @param {ToastService} ToastService
      * @param {EventBus} EventBus
      * @param {EqOracleService} EqOracleService
@@ -61,8 +62,9 @@ class LearnSetupSettingsModalController {
          */
         this.webBrowser = null;
 
-        SettingsResource.getSupportedBrowserEnum().then(supportedBrowsers =>
-            this.webBrowser = supportedBrowsers);
+        SettingsResource.getSupportedBrowserEnum()
+            .then(supportedBrowsers => this.webBrowser = supportedBrowsers)
+            .catch(err => console.log(err));
 
         /**
          * The LearnConfiguration to be edited.

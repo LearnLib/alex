@@ -79,7 +79,8 @@ class ResultsCompareView {
                             this.panels.push(result);
                         }
                     });
-                });
+                })
+                .catch(err => console.log(err));
         }
 
         EventBus.on(events.RESULT_SELECTED, (evt, data) => {

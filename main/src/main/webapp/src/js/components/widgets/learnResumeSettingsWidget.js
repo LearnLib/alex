@@ -39,6 +39,9 @@ class LearnResumeSettingsWidget {
          * @type {Object}
          */
         this.eqOracles = eqOracleType;
+    }
+
+    $onInit() {
 
         /**
          * The selected eq oracle type from the select box.

@@ -33,7 +33,8 @@ class SettingsView {
         this.settings = null;
 
         this.SettingsResource.get()
-            .then(settings => this.settings = settings);
+            .then(settings => this.settings = settings)
+            .catch(err => console.log(err));
     }
 
     /**

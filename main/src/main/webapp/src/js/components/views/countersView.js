@@ -52,9 +52,11 @@ class CountersView {
         this.selectedCounters = [];
 
         // load all existing counters from the server
-        this.CounterResource.getAll(this.project.id).then(counters => {
-            this.counters = counters;
-        });
+        this.CounterResource.getAll(this.project.id)
+            .then(counters => {
+                this.counters = counters;
+            })
+            .catch(err => console.log(err));
     }
 
 

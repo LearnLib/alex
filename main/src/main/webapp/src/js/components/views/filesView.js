@@ -88,7 +88,8 @@ class FilesView {
 
                 const i = this.files.findIndex(f => f.name === file.name);
                 if (i > -1) this.files.splice(i, 1);
-            });
+            })
+            .catch(err => console.log(err));
     }
 
     /**

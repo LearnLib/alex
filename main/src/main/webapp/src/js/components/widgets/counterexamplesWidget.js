@@ -155,15 +155,18 @@ class CounterexamplesWidget {
                     } else {
                         deferred.reject();
                     }
-                });
+                })
+                .catch(err => console.log(err));
         };
 
         // fetch symbols only once and cache them
         if (this.symbols.length === 0) {
-            this.SymbolResource.getAll(this.result.project).then(symbols => {
-                this.symbols = symbols;
-                test();
-            });
+            this.SymbolResource.getAll(this.result.project)
+                .then(symbols => {
+                    this.symbols = symbols;
+                    test();
+                })
+                .catch(err => console.log(err));
         } else {
             test();
         }

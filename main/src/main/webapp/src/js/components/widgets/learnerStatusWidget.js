@@ -60,16 +60,19 @@ class LearnerStatusWidget {
                             }
                         });
                 }
-            });
+            })
+            .catch(err => console.log(err));
     }
 
     /**
      * Induces the Learner to stop learning after the current hypothesis model.
      */
     abort() {
-        this.LearnerResource.stop().then(() => {
-            this.ToastService.info('The Learner stops with the next hypothesis');
-        });
+        this.LearnerResource.stop()
+            .then(() => {
+                this.ToastService.info('The Learner stops with the next hypothesis');
+            })
+            .catch(err => console.log(err));
     }
 }
 

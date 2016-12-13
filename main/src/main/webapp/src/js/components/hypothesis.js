@@ -69,28 +69,28 @@ class HypothesisComponent {
 
         d3.select(this.svg).style(STYLE.svg);
 
-        $scope.$watch('vm.data', data => {
-            if (data) {
-                this.data = data;
-                this.init();
-            }
-        });
-
-        $scope.$watch('vm.layoutSettings', settings => {
-            if (settings) {
-                this.layoutSettings = settings;
-                this.init();
-            }
-        });
-
         $scope.$on('$destroy', () => {
             window.removeEventListener('resize', this.resizeHandler);
         });
 
         // do this whole stuff so that the size of the svg adjusts to the window
         window.addEventListener('resize', this.resizeHandler);
+    }
 
-        this.init();
+    $onInit() {
+        this.$scope.$watch('vm.data', data => {
+            if (data) {
+                this.data = data;
+                this.init();
+            }
+        });
+
+        this.$scope.$watch('vm.layoutSettings', settings => {
+            if (settings) {
+                this.layoutSettings = settings;
+                this.init();
+            }
+        });
     }
 
     init() {

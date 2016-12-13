@@ -57,7 +57,8 @@ class StatisticsView {
         this.LearnResultResource.getAll(this.project.id)
             .then(results => {
                 this.results = results;
-            });
+            })
+            .catch(err => console.log(err));
     }
 
     /**

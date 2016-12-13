@@ -137,7 +137,8 @@ class LearnerStartView {
                         this.mqsUsed = data.statistics.mqsUsed;
                         this.duration = Date.now() - Date.parse(data.statistics.startDate);
                     }
-                });
+                })
+                .catch(err => console.log(err));
         }, this.intervalTime);
     }
 

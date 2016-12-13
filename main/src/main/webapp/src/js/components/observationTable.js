@@ -35,7 +35,9 @@ class ObservationTable {
                 s2: []
             }
         };
+    }
 
+    $onInit() {
         this.build();
     }
 

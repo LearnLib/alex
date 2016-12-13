@@ -62,9 +62,11 @@ class SymbolsView {
         this.groups = [];
 
         // fetch all symbol groups and include all symbols
-        SymbolGroupResource.getAll(this.project.id, true).then(groups => {
-            this.groups = groups;
-        });
+        SymbolGroupResource.getAll(this.project.id, true)
+            .then(groups => {
+                this.groups = groups;
+            })
+            .catch(err => console.log(err));
 
         // listen on group create event
         EventBus.on(events.GROUP_CREATED, (evt, data) => {
