@@ -67,9 +67,16 @@ export class LearnConfiguration {
 
         /**
          * The browser to use.
-         * @type {string|null}
+         * @type {any}
          */
-        this.browser = obj.browser || webBrowser.HTMLUNITDRIVER;
+        this.browser = obj.browser || {
+                driver: webBrowser.HTMLUNITDRIVER,
+                width: screen.width,
+                height: screen.height
+            };
+
+        if (!this.browser.width) this.browser.width = screen.width;
+        if (!this.browser.height) this.browser.height = screen.height;
     }
 
     /**

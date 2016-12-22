@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.core.learner.connectors;
 
+import de.learnlib.alex.core.entities.BrowserConfig;
 import de.learnlib.alex.core.entities.Project;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class ConnectorContextHandlerFactory {
      *
      * @return A ContextHandler for the project with all the connectors.
      */
-    public ConnectorContextHandler createContext(Project project, WebBrowser browser) {
+    public ConnectorContextHandler createContext(Project project, BrowserConfig browser) {
         ConnectorContextHandler context = new ConnectorContextHandler();
 
         List<String> urls = new ArrayList<>();

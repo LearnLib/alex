@@ -40,7 +40,9 @@
                 <tbody ng-if="!vm.chartData.context.length">
                 <tr>
                     <td><strong>Test <span ng-bind="vm.chartData.context.testNo"></span></strong></td>
-                    <td ng-bind="vm.chartData.context.browser | formatWebBrowser"></td>
+                    <td>
+                        {{vm.chartData.context.browser.driver | formatWebBrowser}} ({{vm.chartData.context.browser.width}}px x {{vm.chartData.context.browser.height}}px)
+                    </td>
                     <td ng-bind="vm.chartData.context.algorithm | formatAlgorithm"></td>
                     <td ng-bind="vm.chartData.context.sigma.length"></td>
                     <td ng-bind="vm.chartData.context.statistics.eqsUsed"></td>
@@ -49,7 +51,9 @@
                 <tbody ng-if="vm.chartData.context.length">
                 <tr ng-repeat="result in vm.chartData.context">
                     <td><strong>Test <span ng-bind="result.testNo"></span></strong></td>
-                    <td ng-bind="result.browser | formatWebBrowser"></td>
+                    <td>
+                        {{result.browser.driver | formatWebBrowser}} ({{result.browser.width}}px x {{result.browser.height}}px)
+                    </td>
                     <td ng-bind="result.algorithm | formatAlgorithm"></td>
                     <td ng-bind="result.sigma.length"></td>
                     <td ng-bind="result.statistics.eqsUsed"></td>

@@ -18,6 +18,7 @@ package de.learnlib.alex.core.learner;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
+import de.learnlib.alex.core.entities.BrowserConfig;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
@@ -28,7 +29,6 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
-import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.core.services.LearnAlgorithmService;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.junit.Before;
@@ -44,8 +44,8 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -89,8 +89,11 @@ public class LearnerTest {
 
     @Before
     public void setUp() {
-        given(learnerConfiguration.getBrowser()).willReturn(WebBrowser.HTMLUNITDRIVER);
-        given(contextHandlerFactory.createContext(project, WebBrowser.HTMLUNITDRIVER))
+
+        BrowserConfig browserConfig = new BrowserConfig();
+
+        given(learnerConfiguration.getBrowser()).willReturn(browserConfig);
+        given(contextHandlerFactory.createContext(project, browserConfig))
                 .willReturn(contextHandler);
         given(learnerThreadFactory.createThread(any(LearnerResult.class), any(ConnectorContextHandler.class)))
                 .willReturn(learnerThread);

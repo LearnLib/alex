@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
+import de.learnlib.alex.core.entities.BrowserConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -72,11 +74,12 @@ public enum WebBrowser {
     /**
      * Create an instance of a web driver given by the given class.
      *
+     * @param config The browser config.
      * @return An instance of a web driver.
      * @throws Exception
      *          If the instantiation of the driver failed.
      */
-    public WebDriver getWebDriver() throws Exception {
+    public WebDriver getWebDriver(BrowserConfig config) throws Exception {
         try {
             WebDriver driver;
             switch (this) {
@@ -98,6 +101,10 @@ public enum WebBrowser {
                     break;
                 default:
                     throw new Exception();
+            }
+
+            if (config.getHeight() != 0 && config.getWidth() != 0) {
+                driver.manage().window().setSize(new Dimension(config.getWidth(), config.getHeight()));
             }
 
             // wait until the browser is loaded

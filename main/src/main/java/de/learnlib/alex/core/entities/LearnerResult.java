@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import de.learnlib.alex.algorithms.LearnAlgorithmFactory;
 import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
-import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.utils.AlgorithmDeserializer;
 import de.learnlib.alex.utils.AlgorithmSerializer;
 import net.automatalib.automata.transout.MealyMachine;
@@ -34,7 +33,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -98,7 +96,7 @@ public class LearnerResult implements Serializable {
     private transient LearnAlgorithmFactory algorithmFactory;
 
     /** The browser to use during the learning. */
-    private WebBrowser browser;
+    private BrowserConfig browser;
 
     /** A comment to describe the intention / setting of the learn process.
      *  This field is optional. */
@@ -123,7 +121,7 @@ public class LearnerResult implements Serializable {
     public LearnerResult() {
         this.symbols = new HashSet<>();
         this.steps = new LinkedList<>();
-        this.browser = WebBrowser.HTMLUNITDRIVER;
+        this.browser = new BrowserConfig();
         this.comment = "";
         this.statistics = new Statistics();
     }
@@ -373,15 +371,15 @@ public class LearnerResult implements Serializable {
     /**
      * @return The browser to use during the learning.
      */
-    @Enumerated
-    public WebBrowser getBrowser() {
+    @Embedded
+    public BrowserConfig getBrowser() {
         return browser;
     }
 
     /**
      * @param browser The new browser to use during the learning.
      */
-    public void setBrowser(WebBrowser browser) {
+    public void setBrowser(BrowserConfig browser) {
         this.browser = browser;
     }
 
@@ -475,8 +473,6 @@ public class LearnerResult implements Serializable {
     public void setErrorText(String errorText) {
         this.errorText = errorText;
     }
-
-
 
     /**
      * Did some kind of error occurred during the learning, i.e. the error text property is set.

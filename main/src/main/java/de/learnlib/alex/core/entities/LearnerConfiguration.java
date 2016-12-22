@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.utils.AlgorithmDeserializer;
 import de.learnlib.alex.utils.AlgorithmSerializer;
 
@@ -60,7 +59,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     private Algorithm algorithm;
 
     /** The browser to use during the learn process. */
-    private WebBrowser browser;
+    private BrowserConfig browser;
 
     /** A shot comment to describe the learn set up. */
     private String comment;
@@ -72,6 +71,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
         this.symbolsAsIds = new HashSet<>();
         this.algorithm = new Algorithm("TTT", "");
         this.comment = "";
+        this.browser = new BrowserConfig();
     }
 
     /**
@@ -143,18 +143,14 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     /**
      * @return The browser to use for the learning.
      */
-    public WebBrowser getBrowser() {
-        if (browser == null) {
-            return WebBrowser.HTMLUNITDRIVER;
-        } else {
-            return browser;
-        }
+    public BrowserConfig getBrowser() {
+        return browser;
     }
 
     /**
      * @param browser The new browser to use for the learning process.
      */
-    public void setBrowser(WebBrowser browser) {
+    public void setBrowser(BrowserConfig browser) {
         this.browser = browser;
     }
 

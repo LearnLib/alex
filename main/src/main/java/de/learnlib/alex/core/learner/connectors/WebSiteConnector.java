@@ -17,6 +17,7 @@
 package de.learnlib.alex.core.learner.connectors;
 
 import de.learnlib.alex.actions.Credentials;
+import de.learnlib.alex.core.entities.BrowserConfig;
 import de.learnlib.alex.core.learner.BaseUrlManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -30,7 +31,7 @@ import org.openqa.selenium.WebElement;
 public class WebSiteConnector implements Connector {
 
     /** The browser to use. */
-    private WebBrowser browser;
+    private BrowserConfig browser;
 
     /** A managed base url to use. */
     private BaseUrlManager baseUrl;
@@ -46,7 +47,7 @@ public class WebSiteConnector implements Connector {
      * @param browser
      *         The browser to use for further request.
      */
-    public WebSiteConnector(String baseUrl, WebBrowser browser) {
+    public WebSiteConnector(String baseUrl, BrowserConfig browser) {
         this.baseUrl = new BaseUrlManager(baseUrl);
         this.browser = browser;
     }
@@ -56,7 +57,7 @@ public class WebSiteConnector implements Connector {
      */
     @Override
     public void reset() throws Exception {
-        this.driver = browser.getWebDriver();
+        this.driver = browser.getDriver().getWebDriver(browser);
     }
 
     @Override
@@ -134,6 +135,11 @@ public class WebSiteConnector implements Connector {
      */
     private String getAbsoluteUrl(String path, Credentials credentials) {
         return baseUrl.getAbsoluteUrl(path, credentials);
+    }
+
+    /** @return The browser config. */
+    public BrowserConfig getBrowser() {
+        return browser;
     }
 
     /**

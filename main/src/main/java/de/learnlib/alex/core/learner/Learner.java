@@ -31,7 +31,6 @@ import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOraclePr
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
-import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.core.services.LearnAlgorithmService;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -185,8 +184,7 @@ public class Learner {
 
         LearnerResult learnerResult = createLearnerResult(user, project, configuration);
 
-        WebBrowser browser = configuration.getBrowser();
-        contextHandler = contextHandlerFactory.createContext(project, browser);
+        contextHandler = contextHandlerFactory.createContext(project, configuration.getBrowser());
         contextHandler.setResetSymbol(learnerResult.getResetSymbol());
         LearnerThread learnThread = learnerThreadFactory.createThread(learnerResult, contextHandler);
         startThread(user, learnThread);

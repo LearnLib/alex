@@ -38,8 +38,11 @@ public class LearnerConfigurationTest {
 
     @Test
     public void shouldCreateTheCorrectDefaultJSON() throws JsonProcessingException {
-        String expectedJSON = "{\"algorithm\":\"TTT\",\"browser\":\"htmlunitdriver\",\"comment\":\"\",\"eqOracle\":"
-                                    + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
+        String expectedJSON = "{\"algorithm\":\"TTT\","
+                                + "\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":null,\"width\":null},"
+                                + "\"comment\":\"\","
+                                + "\"eqOracle\":"
+                                + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
                                 + "\"maxLength\":" + EQ_MAX_VALUE + ",\"seed\":42,\"maxNoOfTests\":1},"
                                 + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
                                 + "\"user\":null}";
@@ -54,7 +57,9 @@ public class LearnerConfigurationTest {
 
     @Test
     public void shouldCreateTheCorrectJSON() throws JsonProcessingException {
-        String expectedJSON = "{\"algorithm\":\"DHC\",\"browser\":\"htmlunitdriver\",\"comment\":\"test\",\"eqOracle\":"
+        String expectedJSON = "{\"algorithm\":\"DHC\","
+                                +  "\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":null,\"width\":null},"
+                                + "\"comment\":\"test\",\"eqOracle\":"
                                 + "{\"type\":\"complete\",\"minDepth\":" + EQ_MIN_VALUE + ","
                                     + "\"maxDepth\":" + EQ_MAX_VALUE + "},"
                                 + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
@@ -74,7 +79,8 @@ public class LearnerConfigurationTest {
 
     @Test
     public void shouldReadJSONCorrectly() throws IOException, URISyntaxException {
-        String json = "{\"symbols\": [1,2],\"algorithm\":\"DHC\", \"browser\": \"firefox\", \"eqOracle\": "
+        String json = "{\"symbols\": [1,2],\"algorithm\":\"DHC\", \"browser\": {\"driver\": \"firefox\", \"width\": 1, "
+                + "\"height\": 1}, \"eqOracle\": "
                 + "{\"type\": \"complete\"}}";
 
         ObjectMapper mapper = new ObjectMapper();
@@ -82,7 +88,7 @@ public class LearnerConfigurationTest {
         LearnerConfiguration configuration = mapper.readValue(json, LearnerConfiguration.class);
 
         assertEquals(ALGORITHM, configuration.getAlgorithm());
-        assertEquals(WebBrowser.FIREFOX, configuration.getBrowser());
+        assertEquals(WebBrowser.FIREFOX, configuration.getBrowser().getDriver());
         assertTrue(configuration.getEqOracle() instanceof CompleteExplorationEQOracleProxy);
         assertEquals(2, configuration.getSymbolsAsIds().size());
         LinkedList<Long> ids = new LinkedList<>(configuration.getSymbolsAsIds());
