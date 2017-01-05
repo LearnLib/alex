@@ -130,13 +130,13 @@ public class MoveMouseAction extends WebSymbolAction {
             Actions actions = new Actions(connector.getDriver());
 
             if (node == null || node.trim().equals("")) {
-                actions.moveByOffset(offsetX, offsetY);
+                actions.moveByOffset(offsetX, offsetY).build().perform();
                 LOGGER.info(LEARNER_MARKER, "Moved the mouse to the position ({}, {}) "
                                                 + "(ignoreFailure: {}, negated: {}).",
                             offsetX, offsetY, ignoreFailure, negated);
             } else {
                 WebElement element = connector.getElement(CSSUtils.escapeSelector(insertVariableValues(node)));
-                actions.moveToElement(element, offsetX, offsetY);
+                actions.moveToElement(element, offsetX, offsetY).build().perform();
                 LOGGER.info(LEARNER_MARKER, "Moved the mouse to the element '{}' "
                                                 + "(ignoreFailure: {}, negated: {}).",
                             node, ignoreFailure, negated);
