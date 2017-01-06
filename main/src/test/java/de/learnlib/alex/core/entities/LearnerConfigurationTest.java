@@ -45,7 +45,7 @@ public class LearnerConfigurationTest {
                                 + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
                                 + "\"maxLength\":" + EQ_MAX_VALUE + ",\"seed\":42,\"maxNoOfTests\":1},"
                                 + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
-                                + "\"user\":null}";
+                                + "\"useMQCache\":true,\"user\":null}";
 
         LearnerConfiguration configuration = new LearnerConfiguration();
 
@@ -63,7 +63,7 @@ public class LearnerConfigurationTest {
                                 + "{\"type\":\"complete\",\"minDepth\":" + EQ_MIN_VALUE + ","
                                     + "\"maxDepth\":" + EQ_MAX_VALUE + "},"
                                 + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
-                                + "\"user\":null}";
+                                + "\"useMQCache\":true,\"user\":null}";
 
         LearnerConfiguration configuration = new LearnerConfiguration();
 

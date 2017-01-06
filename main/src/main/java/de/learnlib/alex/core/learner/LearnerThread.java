@@ -140,7 +140,12 @@ public class LearnerThread extends Thread {
                 ceiSUL = new ContextExecutableInputSUL<>(context);
         this.mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
         this.sul = new AlexSUL<>(mappedSUL);
-        this.mqOracle = MealyCacheOracle.createTreeCacheOracle(this.sigma, new MultiSULOracle<>(sul));
+
+        if (result.isUseMQCache()) {
+            this.mqOracle = MealyCacheOracle.createTreeCacheOracle(this.sigma, new MultiSULOracle<>(sul));
+        } else {
+            this.mqOracle = new MultiSULOracle<>(sul);
+        }
 
         LearnAlgorithmFactory algorithm = result.getAlgorithmFactory();
         this.learner = algorithm.createLearner(sigma, mqOracle);

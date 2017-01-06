@@ -77,6 +77,12 @@ export class LearnConfiguration {
 
         if (!this.browser.width) this.browser.width = screen.width;
         if (!this.browser.height) this.browser.height = screen.height;
+
+        /**
+         * If membership queries should be cached.
+         * @type {boolean}
+         */
+        this.useMQCache = obj.useMQCache || true;
     }
 
     /**

@@ -110,6 +110,12 @@ export class LearnResult {
          */
         this.comment = obj.comment;
 
+        /**
+         * If membership queries should be cached.
+         * @type {boolean}
+         */
+        this.useMQCache = obj.useMQCache;
+
         // convert ns to ms
         LearnResult.convertNsToMs(this.statistics.duration);
 

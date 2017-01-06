@@ -64,6 +64,9 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
     /** A shot comment to describe the learn set up. */
     private String comment;
 
+    /** If membership queries should be cached. */
+    private boolean useMQCache;
+
     /**
      * Default constructor.
      */
@@ -72,6 +75,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
         this.algorithm = new Algorithm("TTT", "");
         this.comment = "";
         this.browser = new BrowserConfig();
+        this.useMQCache = true;
     }
 
     /**
@@ -175,4 +179,13 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
         this.comment = comment;
     }
 
+    /** @return {@link LearnerConfiguration#useMQCache}. */
+    public boolean isUseMQCache() {
+        return useMQCache;
+    }
+
+    /** @param useMQCache {@link LearnerConfiguration#useMQCache}. */
+    public void setUseMQCache(boolean useMQCache) {
+        this.useMQCache = useMQCache;
+    }
 }

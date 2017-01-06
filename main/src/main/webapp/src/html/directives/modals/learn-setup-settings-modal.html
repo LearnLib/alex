@@ -183,6 +183,14 @@
 
                 <hr>
 
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="vm.learnConfiguration.useMQCache"> Cache membership queries
+                    </label>
+                </div>
+
+                <hr>
+
                 <div class="form-group">
                     <label class="control-label">Max Amount of Steps to Learn (-1 := learn until no counter example can be found)</label>
                     <input name="max_steps" required min="-1" ng-model="vm.learnConfiguration.maxAmountOfStepsToLearn"

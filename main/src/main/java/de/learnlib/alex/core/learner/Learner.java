@@ -222,6 +222,7 @@ public class Learner {
         learnerResult.setAlgorithm(configuration.getAlgorithm());
         learnerResult.setAlgorithmFactory(algorithmService.getLearnAlgorithm(configuration.getAlgorithm()));
         learnerResult.setComment(configuration.getComment());
+        learnerResult.setUseMQCache(configuration.isUseMQCache());
         learnerResultDAO.create(learnerResult);
         learnerResultDAO.createStep(learnerResult, configuration);
 
