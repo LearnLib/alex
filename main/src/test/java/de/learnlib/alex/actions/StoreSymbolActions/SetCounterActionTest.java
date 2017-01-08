@@ -46,7 +46,7 @@ public class SetCounterActionTest {
     private static final Long USER_ID = 3L;
     private static final Long PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
-    private static final Integer TEST_VALUE = 42;
+    private static final String TEST_VALUE = "42";
     private static final String PROJECT_URL = "http://localhost:8000";
 
     @Mock
@@ -67,6 +67,7 @@ public class SetCounterActionTest {
         setAction.setProject(project);
         setAction.setName(TEST_NAME);
         setAction.setValue(TEST_VALUE);
+        setAction.setValueType(SetCounterAction.ValueType.NUMBER);
     }
 
     @Test
@@ -106,8 +107,6 @@ public class SetCounterActionTest {
         ExecuteResult result = setAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).set(USER_ID, PROJECT_ID, PROJECT_URL, TEST_NAME, TEST_VALUE);
+        verify(counters).set(USER_ID, PROJECT_ID, PROJECT_URL, TEST_NAME, Integer.parseInt(TEST_VALUE));
     }
-
-
 }

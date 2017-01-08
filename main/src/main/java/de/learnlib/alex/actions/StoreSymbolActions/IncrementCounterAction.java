@@ -21,6 +21,7 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
+import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +31,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Increment a counter by 1.
@@ -46,6 +48,21 @@ public class IncrementCounterAction extends SymbolAction {
     /** The name of the counter to increment. */
     @NotBlank
     private String name;
+
+    /** The value by which the counter should be incremented. */
+    @NotNull
+    private int incrementBy;
+
+    @Override
+    public ExecuteResult execute(ConnectorManager connector) {
+        CounterStoreConnector counterConnector = connector.getConnector(CounterStoreConnector.class);
+        String url = connector.getConnector(WebSiteConnector.class).getBaseUrl();
+        counterConnector.incrementBy(getUser().getId(), project.getId(), url, name, incrementBy);
+
+        LOGGER.info(LEARNER_MARKER, "Incremented counter '{}' by '{}' (ignoreFailure: {}, negated: {}).",
+                    name, incrementBy, ignoreFailure, negated);
+        return getSuccessOutput();
+    }
 
     /**
      * Get the name of the counter.
@@ -66,14 +83,11 @@ public class IncrementCounterAction extends SymbolAction {
         this.name = name;
     }
 
-    @Override
-    public ExecuteResult execute(ConnectorManager connector) {
-        CounterStoreConnector storeConnector = connector.getConnector(CounterStoreConnector.class);
-        String url = connector.getConnector(WebSiteConnector.class).getBaseUrl();
-        storeConnector.increment(user.getId(), project.getId(), url, name);
+    public int getIncrementBy() {
+        return incrementBy;
+    }
 
-        LOGGER.info(LEARNER_MARKER, "Incremented counter '{}' (ignoreFailure: {}, negated: {}).",
-                    name, ignoreFailure, negated);
-        return getSuccessOutput();
+    public void setIncrementBy(int incrementBy) {
+        this.incrementBy = incrementBy;
     }
 }

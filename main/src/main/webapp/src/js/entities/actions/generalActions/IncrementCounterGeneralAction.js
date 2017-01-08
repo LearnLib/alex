@@ -35,6 +35,12 @@ export class IncrementCounterGeneralAction extends Action {
          * @type {*|string}
          */
         this.name = obj.name || '';
+
+        /**
+         * By which value the counter should be incremented.
+         * @type {number}
+         */
+        this.incrementBy = obj.incrementBy || 1;
     }
 
     /**
@@ -43,6 +49,6 @@ export class IncrementCounterGeneralAction extends Action {
      * @returns {string}
      */
     toString() {
-        return 'Increment counter "' + this.name + '"';
+        return 'Increment counter "' + this.name + '" by "' + this.incrementBy + '"';
     }
 }

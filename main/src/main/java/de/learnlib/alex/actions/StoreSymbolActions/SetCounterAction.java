@@ -21,6 +21,7 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
+import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,13 +47,69 @@ public class SetCounterAction extends SymbolAction {
 
     private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
-    /** The name of the counter to set a new value to. */
+    /**
+     * How {@link SetCounterAction#value} should be interpreted.
+     */
+    public enum ValueType {
+
+        /**
+         * As number.
+         */
+        NUMBER,
+
+        /**
+         * As value from a current variable.
+         */
+        VARIABLE
+    }
+
+    /**
+     * The name of the counter to set a new value to.
+     */
     @NotBlank
     private String name;
 
-    /** The new value. */
+    /**
+     * The new value.
+     */
     @NotNull
-    private Integer counterValue;
+    private String value;
+
+    /**
+     * How {@link SetCounterAction#value} should be interpreted.
+     */
+    @NotNull
+    private ValueType valueType;
+
+    @Override
+    public ExecuteResult execute(ConnectorManager connector) {
+        CounterStoreConnector counterStoreConnector = connector.getConnector(CounterStoreConnector.class);
+        VariableStoreConnector variableStoreConnector = connector.getConnector(VariableStoreConnector.class);
+        String url = connector.getConnector(WebSiteConnector.class).getBaseUrl();
+
+        int val;
+        try {
+            switch (valueType) {
+                case VARIABLE:
+                    val = Integer.parseInt(variableStoreConnector.get(value));
+                    break;
+                case NUMBER:
+                    val = Integer.parseInt(value);
+                    break;
+                default:
+                    val = 0;
+                    break;
+            }
+        } catch (NumberFormatException | IllegalStateException e) {
+            return getFailedOutput();
+        }
+
+        counterStoreConnector.set(getUser().getId(), project.getId(), url, name, val);
+
+        LOGGER.info(LEARNER_MARKER, "Set the counter '{}' to the value '{}' (ignoreFailure: {}, negated: {}).",
+                name, value, ignoreFailure, negated);
+        return getSuccessOutput();
+    }
 
     /**
      * @return The name of the counter to set.
@@ -71,25 +128,24 @@ public class SetCounterAction extends SymbolAction {
     /**
      * @return The value to set the counter to.
      */
-    public Integer getValue() {
-        return counterValue;
+    public String getValue() {
+        return value;
     }
 
     /**
      * @param value The new value to set the counter to.
      */
-    public void setValue(Integer value) {
-        this.counterValue = value;
+    public void setValue(String value) {
+        this.value = value;
     }
 
-    @Override
-    public ExecuteResult execute(ConnectorManager connector) {
-        CounterStoreConnector storeConnector = connector.getConnector(CounterStoreConnector.class);
-        String url = connector.getConnector(WebSiteConnector.class).getBaseUrl();
-        storeConnector.set(getUser().getId(), project.getId(), url, name, counterValue);
+    /** @return {@link SetCounterAction#value}. */
+    public ValueType getValueType() {
+        return valueType;
+    }
 
-        LOGGER.info(LEARNER_MARKER, "Set the counter '{}' to the value '{}' (ignoreFailure: {}, negated: {}).",
-                    name, counterValue, ignoreFailure, negated);
-        return getSuccessOutput();
+    /** @param valueType {@link SetCounterAction#value}. */
+    public void setValueType(ValueType valueType) {
+        this.valueType = valueType;
     }
 }

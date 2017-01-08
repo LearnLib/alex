@@ -4,14 +4,22 @@
     Set the value of a counter variable
 </p>
 <hr>
-<label>Name</label>
 
 <div class="form-group">
+    <label>Name</label>
     <input type="text" class="form-control" ng-model="vm.action.name"
            placeholder="The name of the counter">
 </div>
-<label>Value</label>
 
 <div class="form-group">
-    <input type="number" class="form-control" ng-model="vm.action.value" placeholder="0">
+    <label>Value</label>
+    <input type="text" class="form-control" ng-model="vm.action.value" placeholder="0">
+</div>
+
+<div class="form-group">
+    <label>Value type</label>
+    <select class="form-control" ng-options="m for m in ['NUMBER', 'VARIABLE']"
+            ng-model="vm.action.valueType">
+        <option value="" disabled>Select a type</option>
+    </select>
 </div>

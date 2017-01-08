@@ -83,11 +83,12 @@ public class CounterStoreConnector implements Connector {
      */
     public void registerUrl(String url, Project project) {
         try {
-            List<Counter> counters = counterDAO.getAll(project.getUserId(), project.getId());
+            List<Counter> counters = counterDAO.getAll(project.getUser().getId(), project.getId());
             Map<String, Counter> map = new HashMap<>();
             counters.forEach(counter -> map.put(counter.getName(), counter));
             this.countersMap.put(url, map);
         } catch (NotFoundException e) {
+            this.countersMap.put(url, new HashMap<>());
         }
     }
 
@@ -107,17 +108,12 @@ public class CounterStoreConnector implements Connector {
      *         The value of the counter.
      */
     public void set(Long userId, Long projectId, String url, String name, Integer value) {
-        Map<String, Counter> urlCounterMap = this.countersMap.get(url);
-        if (urlCounterMap == null) {
-            return;
-        }
-
-        Counter counter = urlCounterMap.get(name);
-        if (counter != null) {
-            counter.setValue(value);
-        } else {
+        Counter counter = countersMap.get(url).get(name);
+        if (counter == null) {
             counter = createCounter(userId, projectId, name, value);
-            urlCounterMap.put(name, counter);
+            countersMap.get(url).put(name, counter);
+        } else {
+            countersMap.get(url).get(name).setValue(value);
         }
 
         LOGGER.debug("Set the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId, userId, value);
@@ -138,21 +134,21 @@ public class CounterStoreConnector implements Connector {
      *         The name of the counter to increment.
      */
     public void increment(Long userId, Long projectId, String url, String name) {
-        Map<String, Counter> urlCounterMap = this.countersMap.get(url);
-        if (urlCounterMap == null) {
-            return;
-        }
+        incrementBy(userId, projectId, url, name, 1);
+    }
 
-        Counter counter = urlCounterMap.get(name);
-        if (counter != null) {
-            counter.setValue(counter.getValue() + 1);
-        } else {
+    public void incrementBy(Long userId, Long projectId, String url, String name, int incrementBy) {
+        Counter counter = countersMap.get(url).get(name);
+        if (counter == null) {
             counter = createCounter(userId, projectId, name, 1);
-            urlCounterMap.put(name, counter);
+            countersMap.get(url).put(name, counter);
+        } else {
+            counter = countersMap.get(url).get(name);
+            counter.setValue(counter.getValue() + incrementBy);
         }
 
         LOGGER.debug("Incremented the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId, userId,
-                     counter.getValue());
+                counter.getValue());
     }
 
     /**

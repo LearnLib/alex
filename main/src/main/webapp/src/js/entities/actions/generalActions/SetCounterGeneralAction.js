@@ -40,7 +40,13 @@ export class SetCounterGeneralAction extends Action {
          * The value of the counter.
          * @type {*|string}
          */
-        this.value = obj.value || '';
+        this.value = obj.value || '0';
+
+        /**
+         * How the value is handled.
+         * @type {string}
+         */
+        this.valueType = obj.valueType || 'NUMBER';
     }
 
     /**
