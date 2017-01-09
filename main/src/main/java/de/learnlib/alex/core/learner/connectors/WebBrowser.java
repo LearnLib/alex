@@ -12,6 +12,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.MarionetteDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -19,6 +20,7 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.lang.reflect.Field;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Enum to select the browser used by Selenium.
@@ -93,7 +95,7 @@ public enum WebBrowser {
                     break;
                 case FIREFOX:
                     DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
-                    driver = new MarionetteDriver(firefoxCapabilities);
+                    driver = new FirefoxDriver(firefoxCapabilities);
                     break;
                 case EDGE:
                     DesiredCapabilities edgeCapabilities = DesiredCapabilities.edge();
@@ -106,6 +108,8 @@ public enum WebBrowser {
             if (config.getHeight() != 0 && config.getWidth() != 0) {
                 driver.manage().window().setSize(new Dimension(config.getWidth(), config.getHeight()));
             }
+
+            driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
 
             // wait until the browser is loaded
             new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) wd ->

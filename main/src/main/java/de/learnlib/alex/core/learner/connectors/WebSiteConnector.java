@@ -76,7 +76,7 @@ public class WebSiteConnector implements Connector {
      */
     public void get(String path, Credentials credentials) {
         String url = getAbsoluteUrl(path, credentials);
-        driver.get(url);
+        driver.navigate().to(url);
     }
 
     /**
