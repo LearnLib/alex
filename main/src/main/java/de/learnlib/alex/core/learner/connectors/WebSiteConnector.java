@@ -19,10 +19,9 @@ package de.learnlib.alex.core.learner.connectors;
 import de.learnlib.alex.actions.Credentials;
 import de.learnlib.alex.core.entities.BrowserConfig;
 import de.learnlib.alex.core.learner.BaseUrlManager;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Connector to communicate with a WebSite.
@@ -77,6 +76,12 @@ public class WebSiteConnector implements Connector {
     public void get(String path, Credentials credentials) {
         String url = getAbsoluteUrl(path, credentials);
         driver.navigate().to(url);
+
+        // wait until the browser is loaded
+        if (driver instanceof JavascriptExecutor) {
+            new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) wd ->
+                    ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
+        }
     }
 
     /**

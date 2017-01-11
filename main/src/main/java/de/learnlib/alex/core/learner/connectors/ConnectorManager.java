@@ -40,7 +40,6 @@ public class ConnectorManager implements Iterable<Connector> {
     /**
      * Adds a new connector to the manager.
      *
-     * @param type      The class of the connector to add.
      * @param connector The instance of the connector to add.
      */
     public void addConnector(Connector connector) {

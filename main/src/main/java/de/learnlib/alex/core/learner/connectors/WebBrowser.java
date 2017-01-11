@@ -8,16 +8,13 @@ import de.learnlib.alex.core.entities.BrowserConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.MarionetteDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +28,7 @@ public enum WebBrowser {
     CHROME(ChromeDriver.class),
 
     /** Use Mozilla Firefox. */
-    FIREFOX(MarionetteDriver.class),
+    FIREFOX(FirefoxDriver.class),
 
     /** Simple & headless browser. This is the default driver. */
     HTMLUNITDRIVER(HtmlUnitDriver.class),
@@ -41,6 +38,8 @@ public enum WebBrowser {
 
 
     private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final int MAX_RETRIES = 3;
 
     /** The connected WebDriver class. */
     private Class webDriverClass;
@@ -82,44 +81,55 @@ public enum WebBrowser {
      *          If the instantiation of the driver failed.
      */
     public WebDriver getWebDriver(BrowserConfig config) throws Exception {
-        try {
-            WebDriver driver;
-            switch (this) {
-                case HTMLUNITDRIVER:
-                    driver = new HtmlUnitDriver(BrowserVersion.BEST_SUPPORTED);
-                    enableJavaScript((HtmlUnitDriver) driver);
-                    break;
-                case CHROME:
-                    DesiredCapabilities chromeCapabilities = DesiredCapabilities.chrome();
-                    driver = new ChromeDriver(chromeCapabilities);
-                    break;
-                case FIREFOX:
-                    DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
-                    driver = new FirefoxDriver(firefoxCapabilities);
-                    break;
-                case EDGE:
-                    DesiredCapabilities edgeCapabilities = DesiredCapabilities.edge();
-                    driver = new EdgeDriver(edgeCapabilities);
-                    break;
-                default:
-                    throw new Exception();
+        int retries = 0;
+        while (retries < MAX_RETRIES) {
+            WebDriver driver = null;
+
+            try {
+                switch (this) {
+                    case HTMLUNITDRIVER:
+                        driver = new HtmlUnitDriver(BrowserVersion.BEST_SUPPORTED);
+                        enableJavaScript((HtmlUnitDriver) driver);
+                        break;
+                    case CHROME:
+                        ChromeOptions chromeOptions = new ChromeOptions();
+                        chromeOptions.addArguments("--no-sandbox");
+
+                        DesiredCapabilities chromeCapabilities = DesiredCapabilities.chrome();
+                        chromeCapabilities.setCapability("recreateChromeDriverSessions", true);
+                        chromeCapabilities.setCapability("chromeOptions", chromeOptions);
+
+                        driver = new ChromeDriver(chromeCapabilities);
+                        break;
+                    case FIREFOX:
+                        DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
+                        driver = new FirefoxDriver(firefoxCapabilities);
+                        break;
+                    case EDGE:
+                        DesiredCapabilities edgeCapabilities = DesiredCapabilities.edge();
+                        driver = new EdgeDriver(edgeCapabilities);
+                        break;
+                    default:
+                        throw new Exception("Unsupported Webdriver");
+                }
+
+                driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+                driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
+
+                if (config.getHeight() != 0 && config.getWidth() != 0) {
+                    driver.manage().window().setSize(new Dimension(config.getWidth(), config.getHeight()));
+                }
+
+                return driver;
+            } catch (Exception e) {
+                LOGGER.warn("Could not create a WebDriver.", e);
+                if (driver != null) driver.quit();
             }
 
-            if (config.getHeight() != 0 && config.getWidth() != 0) {
-                driver.manage().window().setSize(new Dimension(config.getWidth(), config.getHeight()));
-            }
-
-            driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-
-            // wait until the browser is loaded
-            new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) wd ->
-                    ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
-
-            return driver;
-        } catch (Throwable e) {
-            LOGGER.warn("Could not create a WebDriver.", e);
-            throw e;
+            retries++;
         }
+
+        throw new Exception("Could not create a WebDriver");
     }
 
     /**

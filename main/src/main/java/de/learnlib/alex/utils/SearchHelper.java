@@ -73,7 +73,7 @@ public final class SearchHelper {
     public static boolean searchWithRegex(String regex, String text) {
         Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
         Matcher matcher = pattern.matcher(text);
-        return matcher.matches();
+        return matcher.find();
     }
 
     /**
