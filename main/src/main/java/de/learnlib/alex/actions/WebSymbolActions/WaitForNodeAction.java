@@ -58,7 +58,12 @@ public class WaitForNodeAction extends WebSymbolAction {
         /**
          * If an element is removed from the DOM tree.
          */
-        REMOVED;
+        REMOVED,
+
+        /**
+         * If an element is clickable.
+         */
+        CLICKABLE;
 
         /**
          * Parser function to handle the enum names case insensitive.
@@ -175,6 +180,9 @@ public class WaitForNodeAction extends WebSymbolAction {
                     break;
                 case REMOVED:
                     wait.until(ExpectedConditions.stalenessOf(connector.getElement(selector)));
+                    break;
+                case CLICKABLE:
+                    wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(selector)));
                     break;
                 default:
                     return getFailedOutput();
