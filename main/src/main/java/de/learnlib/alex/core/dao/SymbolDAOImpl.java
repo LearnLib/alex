@@ -361,14 +361,11 @@ public class SymbolDAOImpl implements SymbolDAO {
             symbol.setSymbolId(symbolInDB.getSymbolId());
             symbol.setProject(symbolInDB.getProject());
             symbol.setGroup(symbolInDB.getGroup());
-
-            symbolActionRepository.deleteBySymbol_Id(symbolInDB.getSymbolId());
+            symbolActionRepository.delete(symbolInDB.getActions());
         } catch (NotFoundException e) {
             throw new NotFoundException("Update failed: Could not find the symbols with the id " + symbol.getId()
                                                 + " in the project " + symbol.getProjectId() + ".");
         }
-
-        // TODO update the group but it currently breaks the update process, use the move method for this atm
 
         beforeSymbolSave(symbol);
         return symbolRepository.save(symbol);

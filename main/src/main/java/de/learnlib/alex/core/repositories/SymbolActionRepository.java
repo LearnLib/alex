@@ -26,16 +26,4 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 public interface SymbolActionRepository extends JpaRepository<SymbolAction, Long> {
-
-    /**
-     * Deletes all actions of a specified symbol.
-     *
-     * @param symbolId
-     *          The id of the symbol.
-     * @return
-     *          The number of deleted actions.
-     */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
-    Long deleteBySymbol_Id(Long symbolId);
 }
