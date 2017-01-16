@@ -51,6 +51,14 @@ class LearnResumeSettingsWidget {
     }
 
     /**
+     * Load hypothesis.
+     * @param hypothesis
+     */
+    loadHypothesis(hypothesis) {
+        this.configuration.eqOracle.hypothesis = JSON.parse(hypothesis);
+    }
+
+    /**
      * Creates a new eq oracle object from the selected type and assigns it to the configuration.
      */
     setEqOracle() {

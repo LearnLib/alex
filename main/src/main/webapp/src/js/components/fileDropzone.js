@@ -57,9 +57,13 @@ class FileDropzone {
      */
     onLoad(e) {
         this.$scope.$apply(() => {
-            this.EventBus.emit(events.FILE_LOADED, {
-                file: e.target.result
-            });
+            if (this.onLoaded()) {
+                this.onLoaded()(e.target.result);
+            } else {
+                this.EventBus.emit(events.FILE_LOADED, {
+                    file: e.target.result
+                });
+            }
         });
     }
 
@@ -115,6 +119,9 @@ class FileDropzone {
 export const fileDropzone = {
     controller: FileDropzone,
     transclude: true,
+    bindings: {
+        onLoaded: '&'
+    },
     template: `
         <div class="alert alert-info" ng-transclude></div>
     `

@@ -8,16 +8,24 @@
             </div>
         </div>
 
-        <learn-result-panel ng-repeat="result in vm.panels track by $index" result="result">
+        <learn-result-panel ng-repeat="result in vm.panels track by $index" result="result" index="$index" on-step="vm.onStep.bind(vm)">
             <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="vm.closePanel($index)">
                 <i class="fa fa-close"></i>
             </button>
         </learn-result-panel>
 
-        <div class="add-panel-button text-center" uib-tooltip="Add result" tooltip-placement="left"
-             result-list-modal-handle results="vm.results">
-            <i class="fa fa-2x fa-plus"></i>
+        <div class="buttons">
+            <div class="separating-word-panel-button text-center"
+                 uib-tooltip="Show separating word"
+                 tooltip-placement="left"
+                 ng-if="vm.panels.length === 2"
+                 ng-click="vm.showSeparatingWord()">
+                <i class="fa fa-2x fa-bolt"></i>
+            </div>
+            <div class="add-panel-button text-center" uib-tooltip="Add result" tooltip-placement="left"
+                 result-list-modal-handle results="vm.results">
+                <i class="fa fa-2x fa-plus"></i>
+            </div>
         </div>
-
     </div>
 </div>

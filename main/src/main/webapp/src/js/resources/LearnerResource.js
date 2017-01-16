@@ -111,4 +111,9 @@ export class LearnerResource {
         return this.$http.post(`rest/learner/words/${projectId}/outputs`, readOutputConfig)
             .then(response => response.data);
     }
+
+    compare(hypA, hypB) {
+        return this.$http.post(`rest/learner/compare`, [hypA, hypB])
+            .then(response => response.data);
+    }
 }

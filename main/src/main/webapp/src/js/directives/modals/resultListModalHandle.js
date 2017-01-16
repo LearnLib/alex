@@ -13,14 +13,16 @@ export class ResultListModalController {
      * @param {EventBus} EventBus
      * @param {ProjectResource} ProjectResource
      * @param {LearnResultResource} LearnResultResource
+     * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor(modalData, $uibModalInstance, EventBus, ProjectResource, LearnResultResource) {
+    constructor(modalData, $uibModalInstance, EventBus, ProjectResource, LearnResultResource, ToastService) {
         this.results = modalData.results;
         this.$uibModalInstance = $uibModalInstance;
         this.EventBus = EventBus;
         this.LearnResultResource = LearnResultResource;
         this.projects = [];
+        this.ToastService = ToastService;
 
         ProjectResource.getAll()
             .then(projects => this.projects = projects)
@@ -52,6 +54,21 @@ export class ResultListModalController {
     }
 
     /**
+     * Loads a hypothesis from a json file.
+     * @param {string} hypothesis - The hypothesis as string
+     */
+    loadResultFromFile(hypothesis) {
+        try {
+            this.EventBus.emit(events.RESULT_SELECTED, {result: {
+                steps: [{hypothesis: JSON.parse(hypothesis)}]
+            }});
+            this.close();
+        } catch(e) {
+            this.ToastService.danger('Could not parse the file.')
+        }
+    }
+
+    /**
      * Closes the modal.
      */
     close() {
@@ -69,42 +86,7 @@ export function resultListModalHandle($uibModal) {
         link(scope, el) {
             el.on('click', () => {
                 $uibModal.open({
-                    template: `
-                        <div class="modal-header">
-                            <a class="btn btn-default btn-icon pull-right" ng-click="vm.close()">
-                                <i class="fa fa-close fa-fw"></i>
-                            </a>
-                            <h4>
-                                <strong ng-if="vm.results">Select a result</strong>
-                                <strong ng-if="!vm.results">Select a project</strong>
-                            </h4>
-                        </div>
-                        <div class="modal-body">
-                            <div ng-if="vm.results">
-                                <button class="btn btn-sm btn-primary" ng-click="vm.switchProject()">
-                                    <i class="fa fa-fw fa-exchange"></i> Change project
-                                </button>
-                                <hr>
-                                <div class="list-group">
-                                    <a class="list-group-item" ng-repeat="result in vm.results | orderBy:'-testNo':false" ng-click="vm.selectResult(result)">
-                                        <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
-                                        <strong>Test No <span ng-bind="result.testNo"></span></strong>,
-                                        [<span ng-bind="(result.algorithm|formatAlgorithm)"></span>]
-                                        <br>
-                                        <p class="text-muted" style="margin-bottom: 0">
-                                            Started: <span ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
-                                        </p>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="list-group" ng-if="!vm.results">
-                                <a class="list-group-item" ng-repeat="project in vm.projects" ng-click="vm.selectProject(project)">
-                                    <strong ng-bind="project.name"></strong><br>
-                                    <span class="text-muted" ng-bind="project.baseUrl"></span>
-                                </a>
-                            </div>
-                        </div>
-                    `,
+                    templateUrl: 'html/directives/modals/result-list-modal.html',
                     controller: ResultListModalController,
                     controllerAs: 'vm',
                     resolve: {

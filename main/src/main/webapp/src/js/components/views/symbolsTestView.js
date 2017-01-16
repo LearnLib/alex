@@ -131,5 +131,5 @@ export const symbolsTestView = {
         }
     },
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/symbols-test-view.html'
+    templateUrl: 'html/components/views/symbols-test.html'
 };

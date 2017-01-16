@@ -12,7 +12,7 @@
                             <strong>{{group.name}}</strong>
                         </div>
                         <div class="list-group">
-                            <a href class="list-group-item" ng-repeat="symbol in group.symbols"
+                            <a href class="list-group-item" ng-repeat="symbol in group.symbols | orderBy:'name'"
                                ng-click="vm.word.push(symbol); vm.outputs = []">
                                 {{symbol.name}}
                             </a>

@@ -456,21 +456,33 @@ body {
   @include position(absolute, 0, 0, 0, 0);
   display: flex;
 
-  .add-panel-button {
+  .buttons {
     position: absolute;
     z-index: 1000;
     right: 12px;
     bottom: 12px;
-    width: 42px;
-    height: 42px;
-    border-radius: 21px;
-    color: #fff;
-    background: #5cb85c;
-    padding-top: 11px;
-    cursor: pointer;
-    opacity: 0.75;
-    &:hover {
-      opacity: 1.0;
+
+    .add-panel-button, .separating-word-panel-button {
+      float: left;
+      width: 42px;
+      height: 42px;
+      border-radius: 21px;
+      color: #fff;
+      padding-top: 11px;
+      cursor: pointer;
+      opacity: 0.75;
+      margin-left: 12px;
+      &:hover {
+        opacity: 1.0;
+      }
+    }
+
+    .add-panel-button {
+      background: #5cb85c;
+    }
+
+    .separating-word-panel-button {
+      background: #0f6ab4;
     }
   }
 }

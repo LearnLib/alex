@@ -82,6 +82,7 @@ class LearnResultPanel {
          * @type {number}
          */
         this.pointer = this.result.steps.length - 1;
+        this.emitStep();
 
         this.$scope.$watch(() => this.result, () => {
             if (this.result) this.pointer = this.result.steps.length - 1;
@@ -161,10 +162,20 @@ class LearnResultPanel {
     }
 
     /**
+     * Emits the index of the currently shown step.
+     */
+    emitStep() {
+        if (this.index >= 0 && this.onStep()) {
+            this.onStep()(this.index, this.pointer);
+        }
+    }
+
+    /**
      * Shows the first result of the test process.
      */
     firstStep() {
         this.pointer = 0;
+        this.emitStep();
     }
 
     /**
@@ -175,6 +186,7 @@ class LearnResultPanel {
             this.lastStep();
         } else {
             this.pointer--;
+            this.emitStep();
         }
     }
 
@@ -186,6 +198,7 @@ class LearnResultPanel {
             this.firstStep();
         } else {
             this.pointer++;
+            this.emitStep();
         }
     }
 
@@ -194,6 +207,7 @@ class LearnResultPanel {
      */
     lastStep() {
         this.pointer = this.result.steps.length - 1;
+        this.emitStep();
     }
 }
 
@@ -203,6 +217,8 @@ export const learnResultPanel = {
     controller: LearnResultPanel,
     controllerAs: 'vm',
     bindings: {
-        result: '='
+        result: '=',
+        index: '=',
+        onStep: '&'
     }
 };

@@ -66,6 +66,7 @@ public class IncrementCounterActionTest {
         incrementAction.setUser(user);
         incrementAction.setProject(project);
         incrementAction.setName(TEST_NAME);
+        incrementAction.setIncrementBy(1);
     }
 
     @Test
@@ -104,7 +105,6 @@ public class IncrementCounterActionTest {
         ExecuteResult result = incrementAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).increment(USER_ID, PROJECT_ID, PROJECT_URL, TEST_NAME);
+        verify(counters).incrementBy(USER_ID, PROJECT_ID, PROJECT_URL, TEST_NAME, 1);
     }
-
 }

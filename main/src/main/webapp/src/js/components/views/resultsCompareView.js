@@ -32,14 +32,19 @@ class ResultsCompareView {
      * @param {LearnResultResource} LearnResultResource
      * @param {ErrorService} ErrorService
      * @param {EventBus} EventBus
+     * @param {LearnerResource} LearnerResource
+     * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor($timeout, $scope, $uibModal, $stateParams, SessionService, LearnResultResource, ErrorService, EventBus) {
+    constructor($timeout, $scope, $uibModal, $stateParams, SessionService, LearnResultResource, ErrorService, EventBus,
+                LearnerResource, ToastService) {
         this.$timeout = $timeout;
         this.$uibModal = $uibModal;
         this.LearnResultResource = LearnResultResource;
         this.ErrorService = ErrorService;
         this.EventBus = EventBus;
+        this.LearnerResource = LearnerResource;
+        this.ToastService = ToastService;
 
         /**
          * The project that is in the session.
@@ -58,6 +63,9 @@ class ResultsCompareView {
          * @type {LearnResult[][]}
          */
         this.panels = [];
+
+        /** The indeces of the steps that are displayed. */
+        this.panelPointers = [];
 
         /**
          * The list of layout settings for the current hypothesis that is shown in a panel.
@@ -106,9 +114,56 @@ class ResultsCompareView {
     closePanel(index) {
         this.panels[index] = null;
         this.panels.splice(index, 1);
+        this.panelPointers.splice(index, 1);
         window.setTimeout(() => {
             window.dispatchEvent(new Event('resize'));
         }, 100);
+    }
+
+    /**
+     * Get the pointer to the step of the displayed hypotheses.
+     * @param {number} index
+     * @param {number} pointer
+     */
+    onStep(index, pointer) {
+        this.panelPointers[index] = pointer;
+    }
+
+    /**
+     * Test if a separating word between the first two displayed hypotheses can be found.
+     */
+    showSeparatingWord() {
+        const hypA = this.panels[0].steps[this.panelPointers[0]].hypothesis;
+        const hypB = this.panels[1].steps[this.panelPointers[1]].hypothesis;
+
+        this.LearnerResource.compare(hypA, hypB)
+            .then(data => {
+                if (data.separatingWord === "") {
+                    this.ToastService.info("The two hypotheses are identical");
+                } else {
+                    this.$uibModal.open({
+                        template: `
+                            <div class="modal-body">
+                                <h4>Separating word</h4>
+                                <strong ng-bind="vm.word"></strong>
+                            </div>
+                            <div class="modal-footer">
+                                <a class="btn btn-default btn-sm" ng-click="vm.close()">Close</a>
+                            </div>
+                        `,
+                        resolve: {
+                            word: () => data.separatingWord
+                        },
+                        // @ngInject
+                        controller: function ($uibModalInstance, word) {
+                            this.word = word;
+                            this.close = () => $uibModalInstance.close();
+                        },
+                        controllerAs: 'vm',
+                    })
+                }
+            })
+            .catch(err => this.ToastService.danger(err.data.message));
     }
 }
 

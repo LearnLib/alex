@@ -35,6 +35,7 @@ import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
+import net.automatalib.words.Alphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -384,15 +385,15 @@ public class LearnerResource {
     }
 
     /**
-     * Test of two hypotheses are equal or not.
+     * Test if two hypotheses are equal or not.
      * If a difference was found the separating word will be returned.
      * Otherwise, i.e. the hypotheses are equal.
      *
      * @param mealyMachineProxies A List of two (!) hypotheses, which will be compared.
-     * @return '{"seperatingWord": "seperating word, if any"}'
+     * @return '{"separatingWord": "separating word, if any"}'
      */
     @POST
-    @Path("/compare/")
+    @Path("/compare")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response compareTwoUploaded(List<CompactMealyMachineProxy> mealyMachineProxies) {
@@ -400,13 +401,22 @@ public class LearnerResource {
         LOGGER.traceEntry("compareTwoUploaded({}) for user {}.", mealyMachineProxies, user);
 
         if (mealyMachineProxies.size() != 2) {
-            IllegalArgumentException e = new IllegalArgumentException("You need to specify exactly two hypothesis!");
+            IllegalArgumentException e = new IllegalArgumentException("You need to specify exactly two hypotheses!");
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
+        }
+
+        // make sure both hypotheses consist of the same alphabet
+        Alphabet<String> sigmaA = mealyMachineProxies.get(0).createAlphabet();
+        Alphabet<String> sigmaB = mealyMachineProxies.get(1).createAlphabet();
+
+        if (sigmaA.size() != sigmaB.size() || !sigmaA.containsAll(sigmaB)) {
+            IllegalArgumentException e = new IllegalArgumentException("The alphabets of the hypotheses are not identical!");
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
         }
 
         String separatingWord = learner.compare(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
 
         LOGGER.traceExit(separatingWord);
-        return Response.ok("{\"seperatingWord\": \"" + separatingWord + "\"}").build();
+        return Response.ok("{\"separatingWord\": \"" + separatingWord + "\"}").build();
     }
 }
