@@ -49,6 +49,7 @@ import {SetVariableByNodeGeneralAction} from "../entities/actions/generalActions
 import {SetVariableByNodeAttributeGeneralAction} from "../entities/actions/generalActions/SetVariableByNodeAttributeGeneralAction";
 import {SetVariableGeneralAction} from "../entities/actions/generalActions/SetVariableGeneralAction";
 import {SetVariableByNodeCountAction} from "../entities/actions/generalActions/SetVariableByNodeCountAction";
+import {SetVariableByRegexGroup} from "../entities/actions/generalActions/SetVariableByRegexGroup";
 import {WaitGeneralAction} from "../entities/actions/generalActions/WaitGeneralAction";
 
 /**
@@ -134,6 +135,8 @@ export class ActionService {
                 return new SetVariableByNodeAttributeGeneralAction(data);
             case actionType.GENERAL_SET_VARIABLE_BY_NODE_COUNT:
                 return new SetVariableByNodeCountAction(data);
+            case actionType.GENERAL_SET_VARIABLE_BY_REGEX_GROUP:
+                return new SetVariableByRegexGroup(data);
             case actionType.WAIT:
                 return new WaitGeneralAction(data);
             case actionType.WAIT_FOR_TITLE:

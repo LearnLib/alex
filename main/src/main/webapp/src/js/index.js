@@ -150,6 +150,7 @@ import {
     actionFormSetVariableByJson,
     actionFormSetVariableByNodeAttribute,
     actionFormSetVariableByNodeCount,
+    actionFormSetVariableByRegexGroup,
     actionFormWait
 } from "./components/forms/actions/generalActionForms";
 
@@ -309,6 +310,7 @@ angular
     .component('actionFormSetVariableByJson', actionFormSetVariableByJson)
     .component('actionFormSetVariableByNodeAttribute', actionFormSetVariableByNodeAttribute)
     .component('actionFormSetVariableByNodeCount', actionFormSetVariableByNodeCount)
+    .component('actionFormSetVariableByRegexGroup', actionFormSetVariableByRegexGroup)
     .component('actionFormWait', actionFormWait)
 
     // misc components

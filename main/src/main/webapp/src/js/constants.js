@@ -122,6 +122,7 @@ export const actionType = {
     GENERAL_SET_VARIABLE_BY_HTML: 'setVariableByHTML',
     GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE: 'setVariableByNodeAttribute',
     GENERAL_SET_VARIABLE_BY_NODE_COUNT: 'setVariableByNodeCount',
+    GENERAL_SET_VARIABLE_BY_REGEX_GROUP: 'setVariableByRegexGroup',
     GENERAL_SET_VARIABLE: 'setVariable',
     WAIT: 'wait'
 };

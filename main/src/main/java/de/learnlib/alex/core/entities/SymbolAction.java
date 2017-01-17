@@ -93,6 +93,7 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "setVariableByCookie", value = SetVariableByCookieAction.class),
         @JsonSubTypes.Type(name = "setVariableByNodeAttribute", value = SetVariableByNodeAttributeAction.class),
         @JsonSubTypes.Type(name = "setVariableByNodeCount", value = SetVariableByNodeCountAction.class),
+        @JsonSubTypes.Type(name = "setVariableByRegexGroup", value = SetVariableByRegexGroup.class),
         // Web Actions
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
         @JsonSubTypes.Type(name = "web_checkNodeAttributeValue", value = CheckNodeAttributeValueAction.class),
