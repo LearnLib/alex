@@ -1,4 +1,7 @@
 {
     "type": "web_submit",
-    "node": "#node"
+    "node": {
+        "selector": "#node",
+        "type": "CSS"
+    }
 }

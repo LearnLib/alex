@@ -11,7 +11,7 @@ describe('SetVariableByNodeGeneralAction', () => {
         expect(angular.isFunction(action.toString)).toBe(true);
     });
 
-    it('should have create a default action', () => {
+    it('should create a default action', () => {
         const expectedAction = {
             type: actionType.GENERAL_SET_VARIABLE_BY_HTML,
             negated: false,
@@ -19,7 +19,10 @@ describe('SetVariableByNodeGeneralAction', () => {
             disabled: false,
 
             name: '',
-            value: ''
+            node: {
+                selector: '',
+                type: 'CSS'
+            }
         };
         const action = new SetVariableByNodeGeneralAction({});
         expect(angular.toJson(action)).toEqual(angular.toJson(expectedAction));

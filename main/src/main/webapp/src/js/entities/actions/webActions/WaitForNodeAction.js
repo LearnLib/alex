@@ -39,9 +39,9 @@ export class WaitForNodeAction extends Action {
 
         /**
          * The css selector of the element.
-         * @type {*|string}
+         * @type {any}
          */
-        this.node = obj.node || '';
+        this.node = obj.node || {selector: '', type: 'CSS'};
 
         /**
          * The time to wait for the change at max.
@@ -56,7 +56,7 @@ export class WaitForNodeAction extends Action {
      * @returns {string}
      */
     toString() {
-        let text = `Wait until the element ${this.node} `;
+        let text = `Wait until the element "${this.node.selector}" `;
         switch (this.waitCriterion) {
             case 'VISIBLE':
                 text += `is visible `;

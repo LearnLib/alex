@@ -1,3 +1,13 @@
+# ALEX v1.2.1
+
+## Features
+
+* New actions:
+    * Set a variable by node count
+    * Set a variable by regex
+* Switch between XPath and CSS selectors in actions
+* Experimental parallel test execution support
+
 # ALEX v1.2
 
 ## Features

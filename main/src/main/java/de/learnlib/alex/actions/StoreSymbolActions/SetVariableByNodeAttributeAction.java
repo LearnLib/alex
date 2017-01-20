@@ -19,6 +19,7 @@ package de.learnlib.alex.actions.StoreSymbolActions;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
@@ -29,8 +30,8 @@ import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
@@ -54,8 +55,8 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
 
     /** The node to look for. */
     @NotNull
-    @Column(columnDefinition = "CLOB")
-    protected String node;
+    @Embedded
+    protected WebElementLocator node;
 
     /** The attribute name of the node to look for. */
     @NotNull
@@ -78,14 +79,14 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
     /**
      * @return The node to get the attribute from.
      */
-    public String getNode() {
+    public WebElementLocator getNode() {
         return node;
     }
 
     /**
      * @param node The new identifier for the node to get the attribute from.
      */
-    public void setNode(String node) {
+    public void setNode(WebElementLocator node) {
         this.node = node;
     }
 

@@ -111,6 +111,7 @@ import {learnResultListItem} from "./components/learnResultListItem";
 import {hypothesis} from "./components/hypothesis";
 import {discriminationTree} from "./components/discriminationTree";
 import {htmlElementPicker} from "./components/htmlElementPicker";
+import {nodeFormGroup} from "./components/forms/nodeFormGroup";
 import {
     actionFormCheckForNode,
     actionFormCheckForText,
@@ -262,6 +263,7 @@ angular
     .component('userEditForm', userEditForm)
     .component('userLoginForm', userLoginForm)
     .component('userRegisterForm', userRegisterForm)
+    .component('nodeFormGroup', nodeFormGroup)
 
     // widgets components
     .component('widget', widget)

@@ -18,7 +18,10 @@ describe('MoveMouseAction', () => {
             ignoreFailure: false,
             disabled: false,
 
-            node: null,
+            node: {
+                selector: null,
+                type: 'CSS'
+            },
             offsetX: 0,
             offsetY: 0
         };

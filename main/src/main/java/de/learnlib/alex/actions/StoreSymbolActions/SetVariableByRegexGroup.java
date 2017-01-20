@@ -97,13 +97,13 @@ public class SetVariableByRegexGroup extends SymbolAction {
             }
 
             if (!matchFound) {
-                LOGGER.info(LEARNER_MARKER, "Could not find a string that matches regex '{}' " +
-                        "(ignoreFailure: {}, negated: {})", regex, ignoreFailure, negated);
+                LOGGER.info(LEARNER_MARKER, "Could not find a string that matches regex '{}' "
+                        + "(ignoreFailure: {}, negated: {})", regex, ignoreFailure, negated);
                 return getFailedOutput();
             }
         } catch (IndexOutOfBoundsException e) {
-            LOGGER.info(LEARNER_MARKER, "Could not find group {} in regex '{}' " +
-                    "(ignoreFailure: {}, negated: {})", mthGroup, regex, ignoreFailure, negated);
+            LOGGER.info(LEARNER_MARKER, "Could not find group {} in regex '{}' "
+                    + "(ignoreFailure: {}, negated: {})", mthGroup, regex, ignoreFailure, negated);
             return getFailedOutput();
         }
 

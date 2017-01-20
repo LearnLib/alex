@@ -32,9 +32,9 @@ export class PressKeyAction extends Action {
 
         /**
          * The CSS selector of an element.
-         * @type {*|string}
+         * @type {any}
          */
-        this.node = obj.node || null;
+        this.node = obj.node || {selector: null, type: 'CSS'};
 
         /**
          * The unicode of the key to press.
@@ -49,6 +49,10 @@ export class PressKeyAction extends Action {
      * @returns {string}
      */
     toString() {
-        return 'Press a key';
+        if (this.node.selector === null || this.node.selector.trim() === '') {
+            return `Press a key`;
+        } else {
+            return `Press a key on "${this.node.selector}"`;
+        }
     }
 }

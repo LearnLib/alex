@@ -21,7 +21,6 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
-import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,29 +63,22 @@ public class IncrementCounterAction extends SymbolAction {
         return getSuccessOutput();
     }
 
-    /**
-     * Get the name of the counter.
-     *
-     * @return The counter name.
-     */
+    /** @return {@link #name}. */
     public String getName() {
         return name;
     }
 
-    /**
-     * Set a new counter by its name.
-     *
-     * @param name
-     *         The new name of the counter to use.
-     */
+    /** @param name {@link #name}. */
     public void setName(String name) {
         this.name = name;
     }
 
+    /** @return {@link #incrementBy}. */
     public int getIncrementBy() {
         return incrementBy;
     }
 
+    /** @param incrementBy {@link #incrementBy}. */
     public void setIncrementBy(int incrementBy) {
         this.incrementBy = incrementBy;
     }

@@ -32,15 +32,15 @@ export class SetVariableByNodeGeneralAction extends Action {
 
         /**
          * The name of the variable.
-         * @type {*|string}
+         * @type {string}
          */
         this.name = obj.name || '';
 
         /**
          * The selector of the node.
-         * @type {*|string}
+         * @type {any}
          */
-        this.value = obj.value || '';
+        this.node = obj.node || {selector: '', type: 'CSS'};
     }
 
     /**
@@ -49,6 +49,6 @@ export class SetVariableByNodeGeneralAction extends Action {
      * @returns {string}
      */
     toString() {
-        return 'Set variable "' + this.name + '" to the value of the element "' + this.value + '"';
+        return `Set variable "${this.name}" to the value of the element "${this.node.selector}"`;
     }
 }

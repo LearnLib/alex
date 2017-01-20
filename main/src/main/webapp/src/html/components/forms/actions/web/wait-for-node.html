@@ -37,16 +37,7 @@
     </label>
 </div>
 
-<label>Element</label>
-<div class="form-group">
-    <input class="form-control" type="text" placeholder="The selector of the element" ng-model="vm.action.node">
-</div>
-
-<div class="form-group">
-    <a class="btn btn-default btn-sm" html-element-picker-handle model="vm.action.node">
-        <i class="fa fa-magic fa-fw"></i>&nbsp; Element Picker
-    </a>
-</div>
+<node-form-group node="vm.action.node"></node-form-group>
 
 <label>Max. wait time (seconds)</label>
 <div class="form-group">

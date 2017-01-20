@@ -32,9 +32,9 @@ export class CheckNodeAttributeValueAction extends Action {
 
         /**
          * The selector of the element.
-         * @type {string}
+         * @type {any}
          */
-        this.node = obj.node || '';
+        this.node = obj.node || {selector: '', type: 'CSS'};
 
         /**
          * The attribute name of the element to check.
@@ -62,7 +62,7 @@ export class CheckNodeAttributeValueAction extends Action {
      */
     toString() {
         return `
-            Check if the attribute "${this.attribute}" of the element "${this.node}" 
+            Check if the attribute "${this.attribute}" of the element "${this.node.selector}" 
             ${this.checkMethod.toLowerCase()} "${this.value}"`;
     }
 }

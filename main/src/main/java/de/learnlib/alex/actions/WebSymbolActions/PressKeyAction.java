@@ -18,8 +18,8 @@ package de.learnlib.alex.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
-import de.learnlib.alex.utils.CSSUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,8 +30,8 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
@@ -52,9 +52,9 @@ public class PressKeyAction extends WebSymbolAction {
     /**
      * The selector of the element.
      */
-    @Column(columnDefinition = "CLOB")
     @NotNull
-    private String node;
+    @Embedded
+    private WebElementLocator node;
 
     /**
      * The escaped string representation of the unicode that represents the key.
@@ -68,7 +68,8 @@ public class PressKeyAction extends WebSymbolAction {
         Keys keyToPress = Keys.getKeyFromUnicode(unescapedKey.toCharArray()[0]);
 
         try {
-            WebElement element = connector.getElement(CSSUtils.escapeSelector(insertVariableValues(node)));
+            node.setSelector(insertVariableValues(node.getSelector()));
+            WebElement element = connector.getElement(node);
             element.sendKeys(keyToPress);
             LOGGER.info(LEARNER_MARKER, "Pressed the key '{}' on the element '{}' (ignoreFailure: {}, negated: {}).",
                     keyToPress.toString(), node, ignoreFailure, negated);
@@ -83,14 +84,14 @@ public class PressKeyAction extends WebSymbolAction {
     /**
      * @return The node.
      */
-    public String getNode() {
+    public WebElementLocator getNode() {
         return node;
     }
 
     /**
      * @param node The node.
      */
-    public void setNode(String node) {
+    public void setNode(WebElementLocator node) {
         this.node = node;
     }
 

@@ -16,12 +16,17 @@
 
 package de.learnlib.alex.core.learner.connectors;
 
+import com.gargoylesoftware.htmlunit.javascript.host.css.CSS;
 import de.learnlib.alex.actions.Credentials;
 import de.learnlib.alex.core.entities.BrowserConfig;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.BaseUrlManager;
+import de.learnlib.alex.utils.CSSUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.List;
 
 /**
  * Connector to communicate with a WebSite.
@@ -87,14 +92,35 @@ public class WebSiteConnector implements Connector {
     /**
      * Get a {@link WebElement} from the site using a valid css query.
      *
-     * @param query
+     * @param locator
      *         The query to search for the element.
      * @return A WebElement.
      * @throws NoSuchElementException
-     *         If no Element was found.
+     *         If no element was found.
      */
-    public WebElement getElement(String query) throws NoSuchElementException {
-        return driver.findElement(By.cssSelector(query));
+    public WebElement getElement(WebElementLocator locator) throws NoSuchElementException {
+        if (locator.getType().equals(WebElementLocator.Type.CSS)) {
+            return driver.findElement(By.cssSelector(CSSUtils.escapeSelector(locator.getSelector())));
+        } else {
+            return driver.findElement(By.xpath(locator.getSelector()));
+        }
+    }
+
+    /**
+     * Same as {@link #getElement(WebElementLocator)} but returns a list of web elements.
+     *
+     * @param locator
+     *          The query to search for the element.
+     * @return  A list of elements.
+     * @throws NoSuchElementException
+     *          If no element was found.
+     */
+    public List<WebElement> getElements(WebElementLocator locator) throws NoSuchElementException {
+        if (locator.getType().equals(WebElementLocator.Type.CSS)) {
+            return driver.findElements(By.cssSelector(CSSUtils.escapeSelector(locator.getSelector())));
+        } else {
+            return driver.findElements(By.xpath(locator.getSelector()));
+        }
     }
 
     /**

@@ -32,9 +32,9 @@ export class FillWebAction extends Action {
 
         /**
          * The CSS selector of an element.
-         * @type {*|string}
+         * @type {any}
          */
-        this.node = obj.node || '';
+        this.node = obj.node || {selector: '', type: 'CSS'};
 
         /**
          * The value it should be filled with.
@@ -49,6 +49,6 @@ export class FillWebAction extends Action {
      * @returns {string}
      */
     toString() {
-        return `Fill input "${this.node}" with "${this.value}"`;
+        return `Fill input "${this.node.selector}" with "${this.value}"`;
     }
 }

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,12 +53,18 @@ public class FillActionTest {
 
     private FillAction f;
 
+    private WebElementLocator node;
+
     @Before
     public void setUp() {
+        node = new WebElementLocator();
+        node.setSelector("#node");
+        node.setType(WebElementLocator.Type.CSS);
+
         f = new FillAction();
         f.setUser(user);
         f.setProject(project);
-        f.setNode("#node");
+        f.setNode(node);
         f.setValue("Lorem Ipsum");
     }
 
@@ -79,7 +86,7 @@ public class FillActionTest {
 
         assertTrue(obj instanceof FillAction);
         FillAction objAsAction = (FillAction) obj;
-        assertEquals("#input", objAsAction.getNode());
+        assertEquals("#input", objAsAction.getNode().getSelector());
         assertEquals("Lorem Ipsum", objAsAction.getValue());
     }
 
@@ -87,7 +94,7 @@ public class FillActionTest {
     public void shouldReturnOKIfNodeCouldBeFilled() {
         WebSiteConnector connector = mock(WebSiteConnector.class);
         WebElement element = mock(WebElement.class);
-        given(connector.getElement("#node")).willReturn(element);
+        given(connector.getElement(node)).willReturn(element);
 
         assertEquals(OK, f.execute(connector));
         verify(element).sendKeys(f.getValue());
@@ -96,7 +103,7 @@ public class FillActionTest {
     @Test
     public void shouldReturnFaliedIfNodeCouldNotBeFilled() {
         WebSiteConnector connector = mock(WebSiteConnector.class);
-        when(connector.getElement("#node")).thenThrow(new NoSuchElementException(""));
+        when(connector.getElement(node)).thenThrow(new NoSuchElementException(""));
 
         assertEquals(ExecuteResult.FAILED, f.execute(connector));
     }

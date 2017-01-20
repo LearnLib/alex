@@ -32,9 +32,9 @@ export class ClearWebAction extends Action {
 
         /**
          * The CSS selector of an element.
-         * @type {*|string}
+         * @type {any}
          */
-        this.node = obj.node || '';
+        this.node = obj.node || {selector: '', type: 'CSS'};
     }
 
     /**
@@ -43,6 +43,6 @@ export class ClearWebAction extends Action {
      * @returns {string}
      */
     toString() {
-        return `Clear input "${this.node}"`;
+        return `Clear input "${this.node.selector}"`;
     }
 }

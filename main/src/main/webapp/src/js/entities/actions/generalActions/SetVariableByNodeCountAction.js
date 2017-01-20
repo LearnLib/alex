@@ -32,15 +32,15 @@ export class SetVariableByNodeCountAction extends Action {
 
         /**
          * The name of the variable.
-         * @type {*|string}
+         * @type {string}
          */
         this.name = obj.name || '';
 
         /**
          * The selector of the node(s).
-         * @type {*|string}
+         * @type {any}
          */
-        this.selector = obj.selector || '';
+        this.node = obj.node || {selector: '', type: 'CSS'};
     }
 
     /**
@@ -49,6 +49,6 @@ export class SetVariableByNodeCountAction extends Action {
      * @returns {string}
      */
     toString() {
-        return 'Set variable "' + this.name + '" to the number of elements with the selector "' + this.selector+ '"';
+        return `Set variable "${this.name}" to the number of elements with the selector "${this.node.selector}"`;
     }
 }

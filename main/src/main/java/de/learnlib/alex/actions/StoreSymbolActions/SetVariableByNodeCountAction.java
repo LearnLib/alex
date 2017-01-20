@@ -19,6 +19,7 @@ package de.learnlib.alex.actions.StoreSymbolActions;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
@@ -27,10 +28,10 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
-import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
@@ -54,21 +55,22 @@ public class SetVariableByNodeCountAction extends SymbolAction {
 
     /** The selector of the elements. */
     @NotNull
-    private String selector;
+    @Embedded
+    private WebElementLocator node;
 
     @Override
     protected ExecuteResult execute(ConnectorManager connector) {
         int nodeCount = 0;
+        node.setSelector(insertVariableValues(node.getSelector()));
 
         try {
             nodeCount = connector.getConnector(WebSiteConnector.class)
-                    .getDriver()
-                    .findElements(By.cssSelector(insertVariableValues(this.selector)))
+                    .getElements(node)
                     .size();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not find elements with the selector '{}' "
                         + "(ignoreFailure: {}, negated: {}).",
-                    selector, ignoreFailure, negated);
+                    node, ignoreFailure, negated);
         }
 
         connector.getConnector(VariableStoreConnector.class)
@@ -77,19 +79,23 @@ public class SetVariableByNodeCountAction extends SymbolAction {
         return getSuccessOutput();
     }
 
+    /** @return {@link #name}. */
     public String getName() {
         return name;
     }
 
+    /** @param name {@link #name}. */
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getSelector() {
-        return selector;
+    /** @return {@link #node}. */
+    public WebElementLocator getNode() {
+        return node;
     }
 
-    public void setSelector(String selector) {
-        this.selector = selector;
+    /** @param node {@link #node}. */
+    public void setNode(WebElementLocator node) {
+        this.node = node;
     }
 }

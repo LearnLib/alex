@@ -4,20 +4,10 @@
     Set a variable to the amount of nodes that match a given selector.
 </p>
 <hr>
-<label>Name</label>
 
 <div class="form-group">
-    <input type="text" class="form-control" ng-model="vm.action.name"
-           placeholder="The name of the variable">
-</div>
-<label>Selector</label>
-
-<div class="form-group">
-    <input class="form-control" ng-model="vm.action.selector" placeholder="The CSS3 selector to the element">
+    <label>Name</label>
+    <input type="text" class="form-control" ng-model="vm.action.name" placeholder="The name of the variable">
 </div>
 
-<div class="form-group">
-    <a class="btn btn-default btn-sm" html-element-picker-handle model="vm.action.selector">
-        <i class="fa fa-magic fa-fw"></i>&nbsp; WebPicker
-    </a>
-</div>
+<node-form-group node="vm.action.node"></node-form-group>

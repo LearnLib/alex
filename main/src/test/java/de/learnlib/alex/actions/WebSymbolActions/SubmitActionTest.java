@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,12 +53,18 @@ public class SubmitActionTest {
 
     private SubmitAction s;
 
+    private WebElementLocator node;
+
     @Before
     public void setUp() {
+        node = new WebElementLocator();
+        node.setSelector("#node");
+        node.setType(WebElementLocator.Type.CSS);
+
         s = new SubmitAction();
         s.setUser(user);
         s.setProject(project);
-        s.setNode("#node");
+        s.setNode(node);
     }
 
     @Test
@@ -78,14 +85,14 @@ public class SubmitActionTest {
 
         assertTrue(obj instanceof SubmitAction);
         SubmitAction objAsAction = (SubmitAction) obj;
-        assertEquals("#node", objAsAction.getNode());
+        assertEquals(node, objAsAction.getNode());
     }
 
     @Test
     public void shouldReturnOKIfNodeCouldBeSubmited() {
         WebSiteConnector connector = mock(WebSiteConnector.class);
         WebElement element = mock(WebElement.class);
-        given(connector.getElement("#node")).willReturn(element);
+        given(connector.getElement(node)).willReturn(element);
 
         assertEquals(OK, s.execute(connector));
         verify(element).submit();
@@ -94,7 +101,7 @@ public class SubmitActionTest {
     @Test
     public void shouldReturnFaliedIfNodeCouldNotBeSubmited() {
         WebSiteConnector connector = mock(WebSiteConnector.class);
-        when(connector.getElement("#node")).thenThrow(new NoSuchElementException(""));
+        when(connector.getElement(node)).thenThrow(new NoSuchElementException(""));
 
         assertEquals(ExecuteResult.FAILED, s.execute(connector));
     }

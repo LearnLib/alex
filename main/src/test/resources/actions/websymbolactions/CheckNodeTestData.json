@@ -1,4 +1,7 @@
 {
     "type": "web_checkForNode",
-    "value": "#node"
+    "node": {
+        "selector": "#node",
+        "type": "CSS"
+    }
 }

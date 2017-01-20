@@ -18,8 +18,8 @@ package de.learnlib.alex.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
-import de.learnlib.alex.utils.CSSUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -28,8 +28,8 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -52,8 +52,8 @@ public class MoveMouseAction extends WebSymbolAction {
     /**
      * The selector of the element.
      */
-    @Column(columnDefinition = "CLOB")
-    private String node;
+    @Embedded
+    private WebElementLocator node;
 
     /**
      * The amount in px to move the mouse in x direction from the current position.
@@ -92,7 +92,7 @@ public class MoveMouseAction extends WebSymbolAction {
      *
      * @return the node
      */
-    public String getNode() {
+    public WebElementLocator getNode() {
         return node;
     }
 
@@ -101,7 +101,7 @@ public class MoveMouseAction extends WebSymbolAction {
      *
      * @param node the node
      */
-    public void setNode(String node) {
+    public void setNode(WebElementLocator node) {
         this.node = node;
     }
 
@@ -129,13 +129,14 @@ public class MoveMouseAction extends WebSymbolAction {
         try {
             Actions actions = new Actions(connector.getDriver());
 
-            if (node == null || node.trim().equals("")) {
+            if (node == null || node.getSelector().trim().equals("")) {
                 actions.moveByOffset(offsetX, offsetY).build().perform();
                 LOGGER.info(LEARNER_MARKER, "Moved the mouse to the position ({}, {}) "
                                                 + "(ignoreFailure: {}, negated: {}).",
                             offsetX, offsetY, ignoreFailure, negated);
             } else {
-                WebElement element = connector.getElement(CSSUtils.escapeSelector(insertVariableValues(node)));
+                node.setSelector(insertVariableValues(node.getSelector()));
+                WebElement element = connector.getElement(node);
                 actions.moveToElement(element, offsetX, offsetY).build().perform();
                 LOGGER.info(LEARNER_MARKER, "Moved the mouse to the element '{}' "
                                                 + "(ignoreFailure: {}, negated: {}).",

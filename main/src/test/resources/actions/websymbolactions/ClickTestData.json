@@ -1,5 +1,8 @@
 {
     "type": "web_click",
-    "node": "#node",
+    "node": {
+        "selector": "#node",
+        "type": "CSS"
+    },
     "doubleClick": false
 }

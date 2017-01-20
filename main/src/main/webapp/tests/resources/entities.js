@@ -5,9 +5,9 @@ ENTITIES.settings = {
 };
 
 ENTITIES.projects = [
-    {id: 1, name: 'project1', baseUrl: 'http://localhost', user: 1, description: null},
-    {id: 2, name: 'project2', baseUrl: 'http://localhost', user: 2, description: null},
-    {id: 3, name: 'project3', baseUrl: 'http://localhost', user: 3, description: null}
+    {id: 1, name: 'project1', baseUrl: 'http://localhost', user: 1, description: null, mirrorUrls: []},
+    {id: 2, name: 'project2', baseUrl: 'http://localhost', user: 2, description: null, mirrorUrls: []},
+    {id: 3, name: 'project3', baseUrl: 'http://localhost', user: 3, description: null, mirrorUrls: []}
 ];
 
 ENTITIES.users = [

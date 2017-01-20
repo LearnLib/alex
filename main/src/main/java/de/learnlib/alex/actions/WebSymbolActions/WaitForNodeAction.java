@@ -3,21 +3,19 @@ package de.learnlib.alex.actions.WebSymbolActions;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
-import de.learnlib.alex.utils.CSSUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.hibernate.validator.constraints.NotBlank;
-import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
@@ -88,9 +86,9 @@ public class WaitForNodeAction extends WebSymbolAction {
     /**
      * The css selector of the element.
      */
-    @NotBlank
-    @Column(columnDefinition = "CLOB")
-    private String node;
+    @NotNull
+    @Embedded
+    private WebElementLocator node;
 
     /**
      * Which criterion is used to wait for the title.
@@ -109,7 +107,7 @@ public class WaitForNodeAction extends WebSymbolAction {
      *
      * @return The selector of the element
      */
-    public String getNode() {
+    public WebElementLocator getNode() {
         return node;
     }
 
@@ -118,7 +116,7 @@ public class WaitForNodeAction extends WebSymbolAction {
      *
      * @param node The selector of the element
      */
-    public void setNode(String node) {
+    public void setNode(WebElementLocator node) {
         this.node = node;
     }
 
@@ -165,24 +163,24 @@ public class WaitForNodeAction extends WebSymbolAction {
         }
 
         WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
-        String selector = CSSUtils.escapeSelector(insertVariableValues(node));
+        node.setSelector(insertVariableValues(node.getSelector()));
 
         try {
             switch (waitCriterion) {
                 case VISIBLE:
-                    wait.until(ExpectedConditions.visibilityOf(connector.getElement(selector)));
+                    wait.until(ExpectedConditions.visibilityOf(connector.getElement(node)));
                     break;
                 case INVISIBLE:
-                    wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(selector)));
+                    wait.until(ExpectedConditions.invisibilityOfElementLocated(node.getBy()));
                     break;
                 case ADDED:
-                    wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(selector)));
+                    wait.until(ExpectedConditions.presenceOfElementLocated(node.getBy()));
                     break;
                 case REMOVED:
-                    wait.until(ExpectedConditions.stalenessOf(connector.getElement(selector)));
+                    wait.until(ExpectedConditions.stalenessOf(connector.getElement(node)));
                     break;
                 case CLICKABLE:
-                    wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(selector)));
+                    wait.until(ExpectedConditions.elementToBeClickable(node.getBy()));
                     break;
                 default:
                     return getFailedOutput();
@@ -190,11 +188,11 @@ public class WaitForNodeAction extends WebSymbolAction {
             return getSuccessOutput();
         } catch (TimeoutException e) {
             LOGGER.info(LEARNER_MARKER, "Waiting on the node '{}' (criterion: '{}') timed out.",
-                        selector, waitCriterion);
+                        node, waitCriterion);
             return getFailedOutput();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "The node with the selector {} (criterion: '{}') could not be found.",
-                    selector, waitCriterion);
+                    node, waitCriterion);
             return getFailedOutput();
         }
     }

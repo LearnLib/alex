@@ -18,11 +18,7 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.actions.WaitAction;
 import de.learnlib.alex.actions.WebSymbolActions.ClearAction;
-import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.entities.SymbolGroup;
-import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
-import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.*;
 import de.learnlib.alex.core.repositories.ProjectRepository;
 import de.learnlib.alex.core.repositories.SymbolActionRepository;
 import de.learnlib.alex.core.repositories.SymbolGroupRepository;
@@ -642,8 +638,12 @@ public class SymbolDAOImplTest {
 
             if (i > SYMBOL_LIST_SIZE / 2) {
                 s.setName(s.getName() + " 2");
+                WebElementLocator node = new WebElementLocator();
+                node.setSelector("#node-id");
+                node.setType(WebElementLocator.Type.CSS);
+
                 ClearAction newAction = new ClearAction();
-                newAction.setNode("#node-id");
+                newAction.setNode(node);
                 s.addAction(newAction);
                 if (i == SYMBOL_LIST_SIZE - 1) {
                     s.setHidden(true);

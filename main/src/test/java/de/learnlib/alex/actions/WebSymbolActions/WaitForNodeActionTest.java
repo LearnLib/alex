@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,12 +56,18 @@ public class WaitForNodeActionTest {
 
     private WaitForNodeAction action;
 
+    private WebElementLocator node;
+
     @Before
     public void setUp() {
+        node = new WebElementLocator();
+        node.setSelector("#node");
+        node.setType(WebElementLocator.Type.CSS);
+
         action = new WaitForNodeAction();
         action.setUser(user);
         action.setProject(project);
-        action.setNode("#node");
+        action.setNode(node);
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.VISIBLE);
         action.setMaxWaitTime(ONE_MINUTE);
     }
@@ -85,7 +92,7 @@ public class WaitForNodeActionTest {
 
         assertTrue(obj instanceof WaitForNodeAction);
         WaitForNodeAction objAsAction = (WaitForNodeAction) obj;
-        assertEquals("#node", objAsAction.getNode());
+        assertEquals(node, objAsAction.getNode());
         assertEquals(WaitForNodeAction.WaitCriterion.ADDED, objAsAction.getWaitCriterion());
         assertEquals(ONE_MINUTE, objAsAction.getMaxWaitTime());
     }
@@ -96,7 +103,7 @@ public class WaitForNodeActionTest {
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
         WebElement element = mock(WebElement.class);
-        given(webSiteConnector.getElement("#node")).willReturn(element);
+        given(webSiteConnector.getElement(node)).willReturn(element);
         given(element.isDisplayed()).willReturn(true);
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.VISIBLE);
         action.setMaxWaitTime(ONE_MINUTE);
@@ -143,7 +150,7 @@ public class WaitForNodeActionTest {
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
         WebElement element = mock(WebElement.class);
-        given(webSiteConnector.getElement("#node")).willReturn(element);
+        given(webSiteConnector.getElement(node)).willReturn(element);
         given(element.isEnabled()).willThrow(StaleElementReferenceException.class);
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.REMOVED);
         action.setMaxWaitTime(ONE_MINUTE);
@@ -159,7 +166,7 @@ public class WaitForNodeActionTest {
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
         WebElement element = mock(WebElement.class);
-        given(webSiteConnector.getElement("#node")).willReturn(element);
+        given(webSiteConnector.getElement(node)).willReturn(element);
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.VISIBLE);
         action.setMaxWaitTime(0); // don't really wait to keep the test speed high
 
