@@ -35,6 +35,12 @@ export class ExecuteScriptAction extends Action {
          * @type {string}
          */
         this.script = obj.script || null;
+
+        /**
+         * The name of the variable the return value can be stored into.
+         * @type {string}
+         */
+        this.name = obj.name || null;
     }
 
     /**
@@ -43,6 +49,10 @@ export class ExecuteScriptAction extends Action {
      * @returns {string}
      */
     toString() {
-        return 'Execute JavaScript in the browser';
+        let output = 'Execute JavaScript in the browser';
+        if (this.name && this.name.trim() !== "") {
+            output += ` and store the result in variable "${this.name}"`;
+        }
+        return output;
     }
 }

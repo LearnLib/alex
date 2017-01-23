@@ -2,7 +2,7 @@
     <strong>Execute JavaScript</strong>
 </h4>
 
-<p class="text-muted">Execute JavaScript in the browser <strong>if it supports it.</strong></p>
+<p class="text-muted">Execute JavaScript in the browser <strong>if it supports it.</strong> and store the return value in a variable</p>
 <hr>
 
 <div class="form-group">
@@ -10,6 +10,11 @@
 
     <div ng-model="vm.action.script"
          ui-ace="{useWrapMode : true, showGutter: true, theme:'eclipse', mode: 'javascript', workerPath: '/node_modules/ace-builds/src-min/'}"></div>
+</div>
+
+<div class="form-group">
+    <label>Variable</label>
+    <input class="form-control" type="text" ng-model="vm.action.name" placeholder="The variable the return value can be saved in">
 </div>
 
 <div class="alert alert-info alert-condensed">
