@@ -30,7 +30,7 @@
                                         <i class="fa fa-ellipsis-v" style="margin-right: -2px"></i>
                                         <i class="fa fa-ellipsis-v"></i>
                                     </span>
-                                    <i class="fa fa-fw fa-close text-muted pull-right" ng-click="vm.word.splice($index, 1); ; vm.outputs = []"></i>
+                                    <i class="fa fa-fw fa-close text-muted pull-right" ng-click="vm.word.splice($index, 1); vm.outputs = []"></i>
                                     <span class="label label-primary pull-right" style="margin-right: 10px" ng-if="$index === 0">Reset</span>
 
                                     {{symbol.name}}

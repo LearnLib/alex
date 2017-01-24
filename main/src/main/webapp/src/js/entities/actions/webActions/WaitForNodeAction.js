@@ -71,7 +71,7 @@ export class WaitForNodeAction extends Action {
                 text += `is removed from the DOM `;
                 break;
             case 'CLICKABLE':
-                text += `is clickable`;
+                text += `is clickable `;
                 break;
             default:
                 break;

@@ -50,7 +50,7 @@ export class ClickWebAction extends Action {
      */
     toString() {
         if (this.doubleClick) {
-            return `Double click on "${this.node.selector} (${this.node.type})"`;
+            return `Double click on "${this.node.selector}"`;
         } else {
             return `Click on "${this.node.selector}"`;
         }
