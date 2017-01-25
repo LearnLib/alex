@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {events} from "../constants";
-
 /**
  * This component makes any element a place to drop files from the local pc. Currently this directive only
  * supports to read files as a text.
@@ -29,13 +27,11 @@ class FileDropzone {
      *
      * @param $scope
      * @param $element
-     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor($scope, $element, EventBus) {
+    constructor($scope, $element) {
         this.$scope = $scope;
         this.$element = $element;
-        this.EventBus = EventBus;
 
         /** The file reader */
         this.fileReader = new FileReader();
@@ -60,9 +56,7 @@ class FileDropzone {
             if (this.onLoaded()) {
                 this.onLoaded()(e.target.result);
             } else {
-                this.EventBus.emit(events.FILE_LOADED, {
-                    file: e.target.result
-                });
+                throw 'Attribute "on-loaded" has not been specified';
             }
         });
     }

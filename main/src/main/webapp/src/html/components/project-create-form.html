@@ -86,7 +86,7 @@
     <uib-tab heading="Import">
         <br>
 
-        <file-dropzone>
+        <file-dropzone on-loaded="vm.loadProjectFromFile.bind(vm)">
             Drag and drop a json file with the project here or click on it.
         </file-dropzone>
 

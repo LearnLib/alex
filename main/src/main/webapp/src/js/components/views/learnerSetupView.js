@@ -26,18 +26,15 @@ class LearnerSetupView {
     /**
      * Constructor.
      *
-     * @param $scope
      * @param $state
      * @param {SymbolGroupResource} SymbolGroupResource
      * @param {SessionService} SessionService
      * @param {LearnerResource} LearnerResource
      * @param {ToastService} ToastService
      * @param {LearnResultResource} LearnResultResource
-     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor($scope, $state, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource,
-                EventBus) {
+    constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource) {
         this.$state = $state;
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
@@ -90,10 +87,6 @@ class LearnerSetupView {
          */
         this.canContinueLearnProcess = false;
 
-        EventBus.on(events.LEARN_CONFIG_UPDATED, (evt, data) => {
-            this.learnConfiguration = data.learnConfiguration;
-        }, $scope);
-
         // make sure that there isn't any other learn process active
         // redirect to the load screen in case there is an active one
         this.LearnerResource.isActive()
@@ -132,11 +125,12 @@ class LearnerSetupView {
         });
     }
 
-    /**
-     * Sets the reset symbol.
-     *
-     * @param {AlphabetSymbol} symbol - The symbol that will be used to reset the sul.
-     */
+    /** @param {LearnConfiguration} config - The config to use. */
+    setLearnConfiguration(config) {
+        this.learnConfiguration = config;
+    }
+
+    /** @param {AlphabetSymbol} symbol - The symbol that will be used to reset the sul. */
     setResetSymbol(symbol) {
         this.resetSymbol = symbol;
     }

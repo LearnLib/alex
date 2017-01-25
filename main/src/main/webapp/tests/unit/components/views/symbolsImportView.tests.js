@@ -45,15 +45,6 @@ describe('symbolsImportView', () => {
         expect(controller.updateSymbol).toHaveBeenCalledWith(data.newSymbol);
     });
 
-    it('should display all symbols from a file on event: FILE_LOADED', () => {
-        createComponent();
-        spyOn(controller, 'fileLoaded').and.returnValue(null);
-        const file = {name: 'filename'};
-        EventBus.emit(events.FILE_LOADED, {file: file});
-        $rootScope.$digest();
-        expect(controller.fileLoaded).toHaveBeenCalledWith(file);
-    });
-
     it('should load all symbols from a file', () => {
         createComponent();
         const symbols = ENTITIES.symbols.map(s => new AlphabetSymbol(s));

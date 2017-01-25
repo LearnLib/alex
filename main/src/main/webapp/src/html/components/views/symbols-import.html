@@ -33,7 +33,7 @@
     <div class="view-body has-sub-nav">
         <div class="alx-container-fluid">
 
-            <file-dropzone ng-if="vm.symbols.length === 0">
+            <file-dropzone ng-if="vm.symbols.length === 0" on-loaded="vm.fileLoaded.bind(vm)">
                 Drag and drop *.json file here or click to upload
             </file-dropzone>
 

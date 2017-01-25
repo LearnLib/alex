@@ -72,12 +72,6 @@ export const events = {
     SYMBOL_UPDATED: 'symbol:updated',
     SYMBOLS_MOVED: 'symbols:moved',
 
-    // learn config related events
-    LEARN_CONFIG_UPDATED: 'learnConfig:updated',
-
-    // file related events
-    FILE_LOADED: 'file:loaded',
-
     // results related events
     RESULT_SELECTED: 'result:selected'
 };

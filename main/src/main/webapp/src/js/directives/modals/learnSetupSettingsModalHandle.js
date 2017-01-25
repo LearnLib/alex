@@ -15,7 +15,7 @@
  */
 
 import {LearnConfiguration} from "../../entities/LearnConfiguration";
-import {events, webBrowser, learnAlgorithm, eqOracleType} from "../../constants";
+import {learnAlgorithm, eqOracleType} from "../../constants";
 
 /**
  * The controller for the modal dialog where you can set the settings for an upcoming test run.
@@ -28,18 +28,18 @@ class LearnSetupSettingsModalController {
      *
      * @param $uibModalInstance
      * @param modalData
-     * @param $scope
      * @param {ToastService} ToastService
      * @param {EventBus} EventBus
      * @param {EqOracleService} EqOracleService
      * @param {SettingsResource} SettingsResource
      */
     // @ngInject
-    constructor($scope, $uibModalInstance, modalData, ToastService, EventBus, EqOracleService, SettingsResource) {
+    constructor($uibModalInstance, modalData, ToastService, EventBus, EqOracleService, SettingsResource) {
         this.$uibModalInstance = $uibModalInstance;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
         this.EqOracleService = EqOracleService;
+        this.onUpdate = modalData.onUpdate;
 
         /**
          * The constants for eqOracles types.
@@ -71,13 +71,13 @@ class LearnSetupSettingsModalController {
          * @type {LearnConfiguration}
          */
         this.learnConfiguration = modalData.learnConfiguration;
-
-        // listen on the file loaded event
-        EventBus.on(events.FILE_LOADED, (evt, data) => {
-            this.fileLoaded(data.file);
-        }, $scope);
     }
 
+    /**
+     * Load a hypothesis from a JSON file.
+     *
+     * @param {string} data - A hypothesis as JSON.
+     */
     fileLoaded(data) {
         if (this.learnConfiguration.eqOracle.type !== this.eqOracles.HYPOTHESIS) {
             return;
@@ -103,9 +103,7 @@ class LearnSetupSettingsModalController {
      */
     ok() {
         this.ToastService.success('Learn configuration updated');
-        this.EventBus.emit(events.LEARN_CONFIG_UPDATED, {
-            learnConfiguration: this.learnConfiguration
-        });
+        this.onUpdate(this.learnConfiguration);
         this.$uibModalInstance.dismiss();
     }
 
@@ -132,7 +130,8 @@ export function learnSetupSettingsModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
-            learnConfiguration: '='
+            learnConfiguration: '=',
+            onUpdate: '&'
         },
         link(scope, el) {
             el.on('click', () => {
@@ -143,7 +142,8 @@ export function learnSetupSettingsModalHandle($uibModal) {
                     resolve: {
                         modalData: function () {
                             return {
-                                learnConfiguration: new LearnConfiguration(scope.learnConfiguration)
+                                learnConfiguration: new LearnConfiguration(scope.learnConfiguration),
+                                onUpdate: scope.onUpdate()
                             };
                         }
                     }

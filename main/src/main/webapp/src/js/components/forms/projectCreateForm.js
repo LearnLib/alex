@@ -25,13 +25,12 @@ class ProjectCreateForm {
     /**
      * Constructor.
      *
-     * @param $scope
      * @param {ProjectResource} ProjectResource
      * @param {ToastService} ToastService
      * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor($scope, ProjectResource, ToastService, EventBus) {
+    constructor(ProjectResource, ToastService, EventBus) {
         this.ProjectResource = ProjectResource;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
@@ -53,10 +52,15 @@ class ProjectCreateForm {
          * @type {string}
          */
         this.mirrorUrls = "";
+    }
 
-        EventBus.on(events.FILE_LOADED, (evt, data) => {
-            this.projectToImport = JSON.parse(data.file);
-        }, $scope);
+    /**
+     * Loads a project from a json file.
+     *
+     * @param {string} projectAsJson - The project to import.
+     */
+    loadProjectFromFile(projectAsJson) {
+        this.projectToImport = JSON.parse(projectAsJson);
     }
 
     /**
