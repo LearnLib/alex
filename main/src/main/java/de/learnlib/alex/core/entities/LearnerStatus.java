@@ -39,6 +39,9 @@ public class LearnerStatus {
     /** The current test no. */
     private final Long testNo;
 
+    /** The current step number. */
+    private final Long stepNo;
+
     /** The statistics of the learner. */
     private final LearnerStatusStatistics statistics;
 
@@ -88,12 +91,13 @@ public class LearnerStatus {
     }
 
     /**
-     * Constructor for a status of an incative thread.
+     * Constructor for a status of an inactive thread.
      */
     public LearnerStatus() {
         this.active = false;
         this.projectId = null;
         this.testNo = null;
+        this.stepNo = null;
         this.statistics = null;
     }
 
@@ -105,9 +109,9 @@ public class LearnerStatus {
      */
     public LearnerStatus(LearnerResult learnerResult) {
         this.active = true;
-
         this.projectId = learnerResult.getProjectId();
         this.testNo = learnerResult.getTestNo();
+        this.stepNo = (long) learnerResult.getSteps().size();
         this.statistics = new LearnerStatusStatistics(learnerResult.getStatistics().getStartDate(),
                                                       learnerResult.getStatistics().getMqsUsed().getTotal());
     }
@@ -150,6 +154,11 @@ public class LearnerStatus {
      */
     public LearnerStatusStatistics getStatistics() {
         return statistics;
+    }
+
+    /** @return {@link #stepNo}. */
+    public Long getStepNo() {
+        return stepNo;
     }
 
     @Override

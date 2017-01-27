@@ -538,6 +538,14 @@ learn-result-panel {
   }
 }
 
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
 .learn-loading-indicator {
   width: 100%;
   margin-top: 60px;

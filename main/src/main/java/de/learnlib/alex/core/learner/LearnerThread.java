@@ -142,7 +142,7 @@ public class LearnerThread extends Thread {
         this.sul = new AlexSUL<>(mappedSUL);
 
         if (result.isUseMQCache()) {
-            this.mqOracle = MealyCacheOracle.createTreeCacheOracle(this.sigma, new MultiSULOracle<>(sul));
+            this.mqOracle = MealyCacheOracle.createDAGCacheOracle(this.sigma, new MultiSULOracle<>(sul));
         } else {
             this.mqOracle = new MultiSULOracle<>(sul);
         }

@@ -113,6 +113,10 @@ public enum WebBrowser {
                         throw new Exception("Unsupported Webdriver");
                 }
 
+                if (retries > 0 ) {
+                    TimeUnit.SECONDS.sleep(1);
+                }
+
                 driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
                 driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
 

@@ -84,6 +84,12 @@ class LearnerStartView {
         this.mqsUsed = null;
 
         /**
+         * The current step number.
+         * @type {number}
+         */
+        this.stepNo = 1;
+
+        /**
          * The time it took to learn.
          * @type {number}
          */
@@ -107,7 +113,15 @@ class LearnerStartView {
         this.interval = this.$interval(() => {
             this.LearnerResource.isActive()
                 .then(data => {
-                    if (data.statistics) this.mqsUsed = data.statistics.mqsUsed;
+                    if (data.active && data.stepNo > this.stepNo) {
+                        this.stepNo = data.stepNo;
+                        this.LearnResultResource.get(this.project.id, data.testNo)
+                            .then(result => {
+                                result.steps.pop();
+                                this.result = result;
+                            })
+                            .catch(err => console.log(err));
+                    }
 
                     if (!data.active) {
                         this.LearnerResource.getStatus().then(result => {

@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.core.learner.connectors;
 
-import com.gargoylesoftware.htmlunit.javascript.host.css.CSS;
 import de.learnlib.alex.actions.Credentials;
 import de.learnlib.alex.core.entities.BrowserConfig;
 import de.learnlib.alex.core.entities.WebElementLocator;
@@ -27,12 +26,15 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Connector to communicate with a WebSite.
  * This is a facade around Seleniums {@link WebDriver}.
  */
 public class WebSiteConnector implements Connector {
+
+    private static final int MAX_RETRIES = 3;
 
     /** The browser to use. */
     private BrowserConfig browser;
@@ -78,14 +80,33 @@ public class WebSiteConnector implements Connector {
      * @param credentials
      *         The credential to use. Can be null.
      */
-    public void get(String path, Credentials credentials) {
+    public void get(String path, Credentials credentials) throws Exception {
         String url = getAbsoluteUrl(path, credentials);
-        driver.navigate().to(url);
+        int numRetries = 0;
+        while (numRetries < MAX_RETRIES) {
+            try {
+                driver.navigate().to(url);
 
-        // wait until the browser is loaded
-        if (driver instanceof JavascriptExecutor) {
-            new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) wd ->
-                    ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
+                // wait until the browser is loaded
+                if (driver instanceof JavascriptExecutor) {
+                    new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) wd ->
+                            ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
+                }
+
+                break;
+            } catch (Exception e1) {
+                numRetries++;
+                try {
+                    dispose();
+                    reset();
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (Exception e2) {
+                }
+            }
+        }
+
+        if (numRetries == MAX_RETRIES) {
+            throw new Exception("Error connecting with the web driver.");
         }
     }
 
