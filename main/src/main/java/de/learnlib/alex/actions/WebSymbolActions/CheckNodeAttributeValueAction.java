@@ -19,6 +19,7 @@ package de.learnlib.alex.actions.WebSymbolActions;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +30,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
@@ -87,8 +89,9 @@ public class CheckNodeAttributeValueAction extends WebSymbolAction {
     /**
      * The selector of the element.
      */
-    @NotBlank
-    private String node;
+    @NotNull
+    @Embedded
+    private WebElementLocator node;
 
     /**
      * The attribute name of the element to check.
@@ -111,7 +114,8 @@ public class CheckNodeAttributeValueAction extends WebSymbolAction {
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
         try {
-            WebElement element = connector.getElement(insertVariableValues(node));
+            node.setSelector(insertVariableValues(node.getSelector()));
+            WebElement element = connector.getElement(node);
             String attributeValue = element.getAttribute(attribute);
             if (attributeValue == null) {
                 LOGGER.info(LEARNER_MARKER, "Attribute '{}' not found on element '{}'",
@@ -155,14 +159,14 @@ public class CheckNodeAttributeValueAction extends WebSymbolAction {
     /**
      * @return The selector of the element.
      */
-    public String getNode() {
+    public WebElementLocator getNode() {
         return node;
     }
 
     /**
      * @param node The selector of the element.
      */
-    public void setNode(String node) {
+    public void setNode(WebElementLocator node) {
         this.node = node;
     }
 

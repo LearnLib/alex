@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,13 +52,19 @@ public class CheckNodeActionTest {
 
     private CheckNodeAction checkNode;
 
+    private WebElementLocator node;
+
     @Before
     public void setUp() {
+        node = new WebElementLocator();
+        node.setSelector("#node");
+        node.setType(WebElementLocator.Type.CSS);
+
         checkNode = new CheckNodeAction();
         checkNode.setUser(user);
         checkNode.setProject(project);
-        checkNode.setValue("#node");
-}
+        checkNode.setNode(node);
+    }
 
     @Test
     public void testJSON() throws IOException {
@@ -65,7 +72,7 @@ public class CheckNodeActionTest {
         String json = mapper.writeValueAsString(checkNode);
         CheckNodeAction c2 = mapper.readValue(json, CheckNodeAction.class);
 
-        assertEquals(checkNode.getValue(), c2.getValue());
+        assertEquals(checkNode.getNode(), c2.getNode());
     }
 
     @Test
@@ -77,14 +84,15 @@ public class CheckNodeActionTest {
 
         assertTrue(obj instanceof CheckNodeAction);
         CheckNodeAction objAsAction = (CheckNodeAction) obj;
-        assertEquals("#node", objAsAction.getValue());
+        assertEquals("#node", objAsAction.getNode().getSelector());
+        assertEquals(WebElementLocator.Type.CSS, objAsAction.getNode().getType());
     }
 
     @Test
     public void shouldReturnOKIfNodeWasFound() {
         WebSiteConnector connector = mock(WebSiteConnector.class);
         WebElement element = mock(WebElement.class);
-        given(connector.getElement("#node")).willReturn(element);
+        given(connector.getElement(node)).willReturn(element);
 
         assertEquals(OK, checkNode.execute(connector));
     }
@@ -92,7 +100,7 @@ public class CheckNodeActionTest {
     @Test
     public void shouldReturnFaliedIfNodeWasNotFound() {
         WebSiteConnector connector = mock(WebSiteConnector.class);
-        when(connector.getElement("#node")).thenThrow(new NoSuchElementException(""));
+        when(connector.getElement(node)).thenThrow(new NoSuchElementException(""));
 
         assertEquals(ExecuteResult.FAILED, checkNode.execute(connector));
     }

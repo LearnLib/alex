@@ -129,11 +129,11 @@ class CounterexamplesWidget {
         const test = () => {
             const testSymbols = [];
 
-            // find id/revision pairs of symbols from abbreviation in learnResult
+            // find ids of symbols from abbreviation in learnResult
             for (let i = 0; i < this.counterExample.length; i++) {
                 for (let j = 0; j < this.symbols.length; j++) {
                     if (this.counterExample[i].input === this.symbols[j].abbreviation) {
-                        testSymbols.push(this.symbols[j].getIdRevisionPair());
+                        testSymbols.push(this.symbols[j].id);
                     }
                 }
             }
@@ -155,15 +155,18 @@ class CounterexamplesWidget {
                     } else {
                         deferred.reject();
                     }
-                });
+                })
+                .catch(err => console.log(err));
         };
 
         // fetch symbols only once and cache them
         if (this.symbols.length === 0) {
-            this.SymbolResource.getAll(this.result.project).then(symbols => {
-                this.symbols = symbols;
-                test();
-            });
+            this.SymbolResource.getAll(this.result.project)
+                .then(symbols => {
+                    this.symbols = symbols;
+                    test();
+                })
+                .catch(err => console.log(err));
         } else {
             test();
         }

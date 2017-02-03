@@ -69,9 +69,13 @@ export const symbolsTestView = {
 
             /**
              * The browser to execute the word in.
-             * @type {null|string}
+             * @type {any}
              */
-            this.selectedBrowser = null;
+            this.browserConfig = {
+                driver: null,
+                width: screen.width,
+                height: screen.height
+            };
 
             /**
              * The outputs of the executed word.
@@ -101,19 +105,19 @@ export const symbolsTestView = {
          * Executes the word that has been build.
          */
         executeWord() {
-            if (this.selectedBrowser === null) {
+            if (this.browserConfig.driver === null) {
                 this.ToastService.info("Select a web driver.");
                 return;
             }
 
             this.outputs = [];
             this.isExecuting = true;
-            const symbols = this.word.map(s => s.getIdRevisionPair());
+            const symbols = this.word.map(s => s.id);
             const resetSymbol = symbols.shift();
 
             const readOutputConfig = {
                 symbols: {resetSymbol, symbols},
-                browser: this.selectedBrowser
+                browser: this.browserConfig
             };
 
             this.LearnerResource.testWord(this.project.id, readOutputConfig)
@@ -127,5 +131,5 @@ export const symbolsTestView = {
         }
     },
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/symbols-test-view.html'
+    templateUrl: 'html/components/views/symbols-test.html'
 };

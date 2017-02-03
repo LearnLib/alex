@@ -60,6 +60,16 @@
             </div>
 
             <div class="form-group">
+                <label class="control-label">Mirror URLs</label>
+                <textarea ng-model="vm.mirrorUrls"
+                          name="mirrorUrls"
+                          placeholder="Enter alternative URLs the project can be accessed. One per line."
+                          class="form-control"
+                          rows="3">
+                </textarea>
+            </div>
+
+            <div class="form-group">
                 <button type="submit"
                         class="btn btn-sm btn-primary">
                     Create Project
@@ -76,7 +86,7 @@
     <uib-tab heading="Import">
         <br>
 
-        <file-dropzone>
+        <file-dropzone on-loaded="vm.loadProjectFromFile.bind(vm)">
             Drag and drop a json file with the project here or click on it.
         </file-dropzone>
 

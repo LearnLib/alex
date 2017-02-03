@@ -1,6 +1,9 @@
 {
     "type" : "web_waitForNode",
-    "node" : "#node",
+    "node" : {
+        "selector": "#node",
+        "type": "CSS"
+    },
     "waitCriterion" : "added",
     "maxWaitTime" : 60
 }

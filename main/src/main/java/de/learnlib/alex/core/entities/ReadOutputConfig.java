@@ -1,7 +1,5 @@
 package de.learnlib.alex.core.entities;
 
-import de.learnlib.alex.core.learner.connectors.WebBrowser;
-
 /**
  * Helper object that is used to test words.
  */
@@ -15,7 +13,7 @@ public class ReadOutputConfig {
     /**
      * The web browser the word should be executed in.
      */
-    private WebBrowser browser;
+    private BrowserConfig browser;
 
     /**
      * Constructor.
@@ -40,14 +38,14 @@ public class ReadOutputConfig {
     /**
      * @return The browser.
      */
-    public WebBrowser getBrowser() {
+    public BrowserConfig getBrowser() {
         return browser;
     }
 
     /**
      * @param browser The browser.
      */
-    public void setBrowser(WebBrowser browser) {
+    public void setBrowser(BrowserConfig browser) {
         this.browser = browser;
     }
 }

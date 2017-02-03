@@ -16,10 +16,17 @@
 
 package de.learnlib.alex.core.learner.connectors;
 
+import de.learnlib.alex.core.dao.CounterDAO;
+import de.learnlib.alex.core.entities.BrowserConfig;
+import de.learnlib.alex.core.entities.Counter;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.exceptions.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Factor to create a ContextHandler which knows all available connectors.
@@ -27,31 +34,46 @@ import javax.inject.Inject;
 @Service
 public class ConnectorContextHandlerFactory {
 
-    /** The CounterStoreConnector to use. Will be injected. */
-    @Inject
-    private CounterStoreConnector counterStoreConnector;
+    /** The {@link CounterDAO}. */
+    @Autowired
+    private CounterDAO counterDAO;
 
     /**
      * Factor to create a ContextHandler which knows all available connectors.
      *
+     * @param user
+     *         The user that executes the learning experiment.
      * @param project
      *         The current project in which the context should be.
      * @param browser
      *         The browser to use for the frontend learning.
+     *
      * @return A ContextHandler for the project with all the connectors.
      */
-    public ConnectorContextHandler createContext(Project project, WebBrowser browser) {
+    public ConnectorContextHandler createContext(User user, Project project, BrowserConfig browser) {
         ConnectorContextHandler context = new ConnectorContextHandler();
-        String baseUrl = project.getBaseUrl();
 
-        context.addConnector(new WebSiteConnector(baseUrl, browser));
-        context.addConnector(new WebServiceConnector(baseUrl));
-        context.addConnector(counterStoreConnector);
-        context.addConnector(new VariableStoreConnector());
-        context.addConnector(new FileStoreConnector());
+        List<String> urls = new ArrayList<>();
+        urls.add(project.getBaseUrl());
+        urls.addAll(project.getMirrorUrls());
+
+        List<Counter> counters;
+        try {
+            counters = counterDAO.getAll(user.getId(), project.getId());
+        } catch (NotFoundException e) {
+            counters = new ArrayList<>();
+        }
+
+        for (String url: urls) {
+            ConnectorManager connectorManager = new ConnectorManager();
+            connectorManager.addConnector(new WebSiteConnector(url, browser));
+            connectorManager.addConnector(new WebServiceConnector(url));
+            connectorManager.addConnector(new CounterStoreConnector(counterDAO, user, project, counters));
+            connectorManager.addConnector(new VariableStoreConnector());
+            connectorManager.addConnector(new FileStoreConnector());
+            context.addConnectorManager(connectorManager);
+        }
 
         return context;
     }
-
-
 }

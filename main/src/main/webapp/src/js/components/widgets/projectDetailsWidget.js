@@ -63,12 +63,14 @@ class ProjectDetailsWidget {
                 let counter = 0;
                 groups.forEach(g => counter += g.symbols.length);
                 this.numberOfSymbols = counter;
-            });
+            })
+            .catch(err => console.log(err));
 
         LearnResultResource.getAll(this.project.id)
             .then(results => {
                 this.numberOfTests = results.length;
-            });
+            })
+            .catch(err => console.log(err));
 
         // listen on project update event
         EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
@@ -93,6 +95,10 @@ export const projectDetailsWidget = {
                     <td><strong>URL</strong></td>
                     <td><a href="{{vm.project.baseUrl}}" target="_blank" ng-bind="vm.project.baseUrl"></a></td>
                 </tr>
+                <tr> 
+                    <td><strong>Mirrors</strong></td> 
+                    <td ng-bind="vm.project.mirrorUrls.length"></td> 
+                </tr> 
                 <tr>
                     <td><strong>#Groups</strong></td>
                     <td ng-bind="vm.numberOfGroups"></td>

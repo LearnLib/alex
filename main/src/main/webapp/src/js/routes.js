@@ -69,11 +69,6 @@ export function config($stateProvider, $urlRouterProvider) {
             template: '<symbols-trash-view></symbols-trash-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Trash'}
         })
-        .state('symbolsHistory', {
-            url: '/symbols/{symbolId:int}/history',
-            template: '<symbols-history-view></symbols-history-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > History'}
-        })
         .state('symbolsActions', {
             url: '/symbols/{symbolId:int}/actions',
             template: '<symbols-actions-view></symbols-actions-view>',
@@ -110,7 +105,7 @@ export function config($stateProvider, $urlRouterProvider) {
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Statistics'}
         })
         .state('statisticsCompare', {
-            url: '/statistics/{testNos:string}/compare/{mode:string}',
+            url: '/statistics/{testNos:string}',
             template: '<statistics-compare-view></statistics-compare-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Statistics > Compare'}
         })

@@ -27,6 +27,7 @@ import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -116,5 +117,17 @@ public class SymbolMapper
         List<Symbol> list = new LinkedList<>();
         list.addAll(symbols.values());
         return list;
+    }
+
+    @Override
+    public boolean canFork() {
+        return true;
+    }
+
+    @Nonnull
+    @Override
+    public Mapper<String, String, ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult> fork()
+            throws UnsupportedOperationException {
+        return new SymbolMapper(symbols.values().toArray(new Symbol[symbols.values().size()]));
     }
 }

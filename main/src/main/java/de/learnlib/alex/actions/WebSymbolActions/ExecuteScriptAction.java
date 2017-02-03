@@ -18,6 +18,9 @@ package de.learnlib.alex.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
+import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,10 +28,12 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import java.util.List;
 
 /**
  * Action to execute JavaScript on the opened browser.
@@ -36,7 +41,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("web_executeScript")
 @JsonTypeName("web_executeScript")
-public class ExecuteScriptAction extends WebSymbolAction {
+public class ExecuteScriptAction extends SymbolAction {
 
     private static final long serialVersionUID = 6118333853615934954L;
 
@@ -52,35 +57,60 @@ public class ExecuteScriptAction extends WebSymbolAction {
     private String script;
 
     /**
-     * Get the script to execute.
-     *
-     * @return The script to execute.
+     * The name of the variable to store the result into.
      */
+    private String name;
+
+    /** @return {@link #script}. */
     public String getScript() {
         return script;
     }
 
-    /**
-     * Set the script to execute.
-     *
-     * @param script The script to execute.
-     */
+    /** @param script {@link #script}. */
     public void setScript(String script) {
         this.script = script;
     }
 
+    /** @return {@link #name}. */
+    public String getName() {
+        return name;
+    }
+
+    /** @param name {@link #name}. */
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
-    public ExecuteResult execute(WebSiteConnector connector) {
-        if (connector.getDriver() instanceof JavascriptExecutor) {
-            ((JavascriptExecutor) connector.getDriver()).executeScript(script);
+    public ExecuteResult execute(ConnectorManager connector) {
+        WebSiteConnector webSiteConnector = connector.getConnector(WebSiteConnector.class);
+        VariableStoreConnector variableStoreConnector = connector.getConnector(VariableStoreConnector.class);
+
+        if (webSiteConnector.getDriver() instanceof JavascriptExecutor) {
+            Object returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeScript(script);
+
+            if (name != null) {
+                if (returnValue == null) {
+                    variableStoreConnector.set(name, "null");
+                } else if (returnValue instanceof Double || returnValue instanceof Long
+                           || returnValue instanceof Boolean) {
+                    variableStoreConnector.set(name, String.valueOf(returnValue));
+                } else if (returnValue instanceof WebElement || returnValue instanceof List) {
+                    LOGGER.info(LEARNER_MARKER, "WebElements and lists as return values are not supported.");
+                    return getFailedOutput();
+                } else {
+                    variableStoreConnector.set(name, (String) returnValue);
+                }
+            }
 
             LOGGER.info(LEARNER_MARKER, "JavaScript {} successfully executed (ignoreFailure: {}, negated: {}).",
-                        ignoreFailure, negated);
+                    ignoreFailure, negated);
             return getSuccessOutput();
         } else {
             LOGGER.info(LEARNER_MARKER, "This driver does not support JavaScript (ignoreFailure: {}, negated: {})!",
-                        ignoreFailure, negated);
+                    ignoreFailure, negated);
             return getFailedOutput();
         }
     }
+
 }

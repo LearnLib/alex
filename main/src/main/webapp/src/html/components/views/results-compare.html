@@ -1,23 +1,31 @@
-<div id="view-results-compare">
+<div class="view">
     <div class="learn-results-compare-wrapper">
 
-        <learn-result-panel ng-repeat="result in vm.panels track by $index"
-                            result="result" index="{{$index}}" from="{{vm.panels.length}}">
-            <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="vm.closePanel($index)">
-                <i class="fa fa-close"></i>
-            </button>
-        </learn-result-panel>
-
-        <div class="alx-container" ng-if="vm.panels.length === 0" style="padding-top: 14px;">
+        <div class="container" ng-if="vm.panels.length === 0">
             <div class="alert alert-info" result-list-modal-handle results="vm.results">
                 <i class="fa fa-plus-square fa-fw"></i>
                 <strong>Click to add a new panel</strong> or click on the green button on the bottom right
             </div>
         </div>
 
-        <div class="add-panel-button text-center" uib-tooltip="Add result" tooltip-placement="left"
-             result-list-modal-handle results="vm.results">
-            <i class="fa fa-2x fa-plus"></i>
+        <learn-result-panel ng-repeat="result in vm.panels track by $index" result="result" index="$index" on-step="vm.onStep.bind(vm)">
+            <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="vm.closePanel($index)">
+                <i class="fa fa-close"></i>
+            </button>
+        </learn-result-panel>
+
+        <div class="buttons">
+            <div class="separating-word-panel-button text-center"
+                 uib-tooltip="Show separating word"
+                 tooltip-placement="left"
+                 ng-if="vm.panels.length === 2"
+                 ng-click="vm.showSeparatingWord()">
+                <i class="fa fa-2x fa-bolt"></i>
+            </div>
+            <div class="add-panel-button text-center" uib-tooltip="Add result" tooltip-placement="left"
+                 result-list-modal-handle results="vm.results">
+                <i class="fa fa-2x fa-plus"></i>
+            </div>
         </div>
     </div>
 </div>

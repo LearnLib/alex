@@ -72,19 +72,8 @@ export const events = {
     SYMBOL_UPDATED: 'symbol:updated',
     SYMBOLS_MOVED: 'symbols:moved',
 
-    // learn config related events
-    LEARN_CONFIG_UPDATED: 'learnConfig:updated',
-
-    // file related events
-    FILE_LOADED: 'file:loaded',
-
     // results related events
     RESULT_SELECTED: 'result:selected'
-};
-
-export const chartMode = {
-    CUMULATED: 'cumulated',
-    COMPLETE: 'complete'
 };
 
 export const actionType = {
@@ -126,6 +115,8 @@ export const actionType = {
     GENERAL_SET_VARIABLE_BY_JSON: 'setVariableByJSON',
     GENERAL_SET_VARIABLE_BY_HTML: 'setVariableByHTML',
     GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE: 'setVariableByNodeAttribute',
+    GENERAL_SET_VARIABLE_BY_NODE_COUNT: 'setVariableByNodeCount',
+    GENERAL_SET_VARIABLE_BY_REGEX_GROUP: 'setVariableByRegexGroup',
     GENERAL_SET_VARIABLE: 'setVariable',
     WAIT: 'wait'
 };

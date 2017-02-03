@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
-import de.learnlib.alex.utils.CSSUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -103,14 +102,17 @@ public class SelectAction extends FillAction {
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            WebElement selectElement = connector.getElement(CSSUtils.escapeSelector(getNodeWithVariableValues()));
+            String valueWithVariables = insertVariableValues(value);
+            node.setSelector(insertVariableValues(node.getSelector()));
+
+            WebElement selectElement = connector.getElement(node);
             Select select = new Select(selectElement);
             switch (selectBy) {
                 case VALUE:
-                    select.selectByValue(getValueWithVariableValues());
+                    select.selectByValue(valueWithVariables);
                     break;
                 case TEXT:
-                    select.selectByVisibleText(getValueWithVariableValues());
+                    select.selectByVisibleText(valueWithVariables);
                     break;
                 case INDEX:
                     select.selectByIndex(Integer.parseInt(getValue()));

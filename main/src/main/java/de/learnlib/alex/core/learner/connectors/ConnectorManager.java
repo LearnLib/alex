@@ -40,11 +40,10 @@ public class ConnectorManager implements Iterable<Connector> {
     /**
      * Adds a new connector to the manager.
      *
-     * @param type      The class of the connector to add.
      * @param connector The instance of the connector to add.
      */
-    public void addConnector(Class<? extends Connector> type, Connector connector) {
-        this.connectors.put(type, connector);
+    public void addConnector(Connector connector) {
+        this.connectors.put(connector.getClass(), connector);
     }
 
     /**

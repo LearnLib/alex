@@ -16,20 +16,20 @@
 
 package de.learnlib.alex.actions.WebSymbolActions;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
-import de.learnlib.alex.utils.CSSUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Action to check for a specific element/ a specific text.
@@ -45,51 +45,33 @@ public class CheckNodeAction extends WebSymbolAction {
 
     private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
-    /** The value the site is checked for. */
-    @NotBlank
-    private String value;
+    /** The node on the site that is checked for. */
+    @NotNull
+    @Embedded
+    private WebElementLocator node;
 
-    /**
-     * Get the value to check.
-     * 
-     * @return The value to check.
-     */
-    public String getValue() {
-        return value;
+    /** @return {@link #node}. */
+    public WebElementLocator getNode() {
+        return node;
     }
 
-    /**
-     * Get the value to check.
-     * All variables and counters will be replaced with their values.
-     *
-     * @return The value to check.
-     */
-    @JsonIgnore
-    public String getValueWithVariableValues() {
-        return insertVariableValues(value);
-    }
-
-    /**
-     * Set the value to check for.
-     * 
-     * @param value
-     *            The new value.
-     */
-    public void setValue(String value) {
-        this.value = value;
+    /** @param node {@link #node}. */
+    public void setNode(WebElementLocator node) {
+        this.node = node;
     }
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            connector.getElement(CSSUtils.escapeSelector(getValueWithVariableValues()));
+            node.setSelector(insertVariableValues(node.getSelector()));
+            connector.getElement(node);
 
             LOGGER.info(LEARNER_MARKER, "Found the node '{}' (ignoreFailure: {}, negated: {}).",
-                        value, ignoreFailure, negated);
+                        node, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not find the node '{}' (ignoreFailure: {}, negated: {}).",
-                        value, ignoreFailure, negated, e);
+                        node, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

@@ -11,14 +11,16 @@ describe('CheckForNodeWebAction', () => {
         expect(angular.isFunction(action.toString)).toBe(true);
     });
 
-    it('should have create a default action', () => {
+    it('should create a default action', () => {
         const expectedAction = {
             type: actionType.WEB_CHECK_NODE,
             negated: false,
             ignoreFailure: false,
             disabled: false,
-
-            value: ''
+            node: {
+                selector: '',
+                type: 'CSS'
+            }
         };
         const action = new CheckForNodeWebAction({});
         expect(angular.toJson(action)).toEqual(angular.toJson(expectedAction));

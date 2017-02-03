@@ -39,12 +39,23 @@ class LearnResumeSettingsWidget {
          * @type {Object}
          */
         this.eqOracles = eqOracleType;
+    }
+
+    $onInit() {
 
         /**
          * The selected eq oracle type from the select box.
          * @type {string}
          */
         this.selectedEqOracle = this.configuration.eqOracle.type;
+    }
+
+    /**
+     * Load hypothesis.
+     * @param hypothesis
+     */
+    loadHypothesis(hypothesis) {
+        this.configuration.eqOracle.hypothesis = JSON.parse(hypothesis);
     }
 
     /**

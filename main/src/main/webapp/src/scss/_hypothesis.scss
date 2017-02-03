@@ -9,7 +9,10 @@
 }
 
 .hypothesis {
+  width: 100%;
+
   .edgeLabel tspan {
+
     &:hover {
       cursor: pointer;
       fill: #428bca;

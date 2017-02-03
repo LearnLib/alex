@@ -19,15 +19,23 @@ package de.learnlib.alex.rest;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.entities.*;
+import de.learnlib.alex.core.entities.LearnerConfiguration;
+import de.learnlib.alex.core.entities.LearnerResult;
+import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
+import de.learnlib.alex.core.entities.LearnerStatus;
+import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.ReadOutputConfig;
+import de.learnlib.alex.core.entities.Symbol;
+import de.learnlib.alex.core.entities.SymbolSet;
+import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.learner.Learner;
-import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.security.UserPrincipal;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
+import net.automatalib.words.Alphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -36,13 +44,11 @@ import org.apache.logging.log4j.MarkerManager;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -122,10 +128,8 @@ public class LearnerResource {
         LOGGER.traceEntry("start({}, {}) for user {}.", projectId, configuration, user);
 
         try {
-            if (
-                    (configuration.getUserId() != null && !user.getId().equals(configuration.getUserId()))
-                            || (configuration.getProjectId() != null && !configuration.getProjectId().equals(projectId))
-                    ) {
+            if ((configuration.getUserId() != null && !user.getId().equals(configuration.getUserId()))
+                    || (configuration.getProjectId() != null && !configuration.getProjectId().equals(projectId))) {
                 throw new IllegalArgumentException("If an user or a project is provided in the configuration, "
                         + "they must match the parameters in the path!");
             }
@@ -304,13 +308,13 @@ public class LearnerResource {
         try {
             Project project = projectDAO.getByID(user.getId(), projectId);
 
-            IdRevisionPair resetSymbolAsIdRevisionPair = symbolSet.getResetSymbolAsIdRevisionPair();
-            if (resetSymbolAsIdRevisionPair == null) {
+            Long resetSymbolAsId = symbolSet.getResetSymbolAsId();
+            if (resetSymbolAsId == null) {
                 throw new NotFoundException("No reset symbol specified!");
             }
 
-            Symbol       resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsIdRevisionPair);
-            List<Symbol> symbols     = loadSymbols(user, projectId, symbolSet.getSymbolsAsIdRevisionPairs());
+            Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsId);
+            List<Symbol> symbols = loadSymbols(user, projectId, symbolSet.getSymbolsAsIds());
 
             List<String> results = learner.readOutputs(user, project, resetSymbol, symbols);
 
@@ -323,6 +327,18 @@ public class LearnerResource {
     }
 
     // TODO: create a new resource/dao for words and move this method there then.
+    /**
+     * Get the outputs of a word when executed to the SUL.
+     *
+     * @param projectId
+     *          The id of the project.
+     * @param readOutputConfig
+     *          The config that is used to query the SUL.
+     * @return
+     *          A response with the output of the word.
+     * @throws NotFoundException
+     *          If a symbol could not be found.
+     */
     @POST
     @Path("/words/{project_id}/outputs")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -336,13 +352,13 @@ public class LearnerResource {
         try {
             Project project = projectDAO.getByID(user.getId(), projectId);
 
-            IdRevisionPair resetSymbolAsIdRevisionPair = readOutputConfig.getSymbols().getResetSymbolAsIdRevisionPair();
-            if (resetSymbolAsIdRevisionPair == null) {
+            Long resetSymbolAsId = readOutputConfig.getSymbols().getResetSymbolAsId();
+            if (resetSymbolAsId == null) {
                 throw new NotFoundException("No reset symbol specified!");
             }
 
-            Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsIdRevisionPair);
-            List<Symbol> symbols = loadSymbols(user, projectId, readOutputConfig.getSymbols().getSymbolsAsIdRevisionPairs());
+            Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsId);
+            List<Symbol> symbols = loadSymbols(user, projectId, readOutputConfig.getSymbols().getSymbolsAsIds());
 
             Symbol dummyResetSymbol = new Symbol();
             ArrayList<Symbol> s = new ArrayList<>();
@@ -359,28 +375,25 @@ public class LearnerResource {
     }
 
     // load all from SymbolDAO always orders the Symbols by ID
-    private List<Symbol> loadSymbols(User user, Long projectId, List<IdRevisionPair> idRevisionPairs)
-            throws NotFoundException {
+    private List<Symbol> loadSymbols(User user, Long projectId, List<Long> ids) throws NotFoundException {
         List<Symbol> symbols = new LinkedList<>();
-
-        for (IdRevisionPair pair : idRevisionPairs) {
-            Symbol symbol = symbolDAO.get(user, projectId, pair);
+        for (Long id : ids) {
+            Symbol symbol = symbolDAO.get(user, projectId, id);
             symbols.add(symbol);
         }
-
         return symbols;
     }
 
     /**
-     * Test of two hypotheses are equal or not.
+     * Test if two hypotheses are equal or not.
      * If a difference was found the separating word will be returned.
-     * Otherwise, i.e. the hypotheses are equal,
+     * Otherwise, i.e. the hypotheses are equal.
      *
      * @param mealyMachineProxies A List of two (!) hypotheses, which will be compared.
-     * @return '{"seperatingWord": "<seperating word, if any"}'
+     * @return '{"separatingWord": "separating word, if any"}'
      */
     @POST
-    @Path("/compare/")
+    @Path("/compare")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response compareTwoUploaded(List<CompactMealyMachineProxy> mealyMachineProxies) {
@@ -388,13 +401,22 @@ public class LearnerResource {
         LOGGER.traceEntry("compareTwoUploaded({}) for user {}.", mealyMachineProxies, user);
 
         if (mealyMachineProxies.size() != 2) {
-            IllegalArgumentException e = new IllegalArgumentException("You need to specify exactly two hypothesis!");
+            IllegalArgumentException e = new IllegalArgumentException("You need to specify exactly two hypotheses!");
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
+        }
+
+        // make sure both hypotheses consist of the same alphabet
+        Alphabet<String> sigmaA = mealyMachineProxies.get(0).createAlphabet();
+        Alphabet<String> sigmaB = mealyMachineProxies.get(1).createAlphabet();
+
+        if (sigmaA.size() != sigmaB.size() || !sigmaA.containsAll(sigmaB)) {
+            IllegalArgumentException e = new IllegalArgumentException("The alphabets of the hypotheses are not identical!");
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
         }
 
         String separatingWord = learner.compare(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
 
         LOGGER.traceExit(separatingWord);
-        return Response.ok("{\"seperatingWord\": \"" + separatingWord + "\"}").build();
+        return Response.ok("{\"separatingWord\": \"" + separatingWord + "\"}").build();
     }
 }

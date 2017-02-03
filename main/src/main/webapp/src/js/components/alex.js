@@ -24,10 +24,14 @@
  */
 export const alex = {
     template: `
+        <load-screen></load-screen>
         <div id="alex">
-            <load-screen></load-screen>
-            <sidebar></sidebar>
-            <div ui-view class="view animate-view"></div>
+            <div class="sidebar-wrapper">
+                <sidebar></sidebar>
+            </div>
+            <div class="view-wrapper">
+                <div ui-view></div>
+            </div>
         </div>
     `
 };

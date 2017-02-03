@@ -1,6 +1,9 @@
 {
   "type": "setVariableByNodeAttribute",
   "name": "variable",
-  "node": "node",
+  "node": {
+    "selector": "node",
+    "type": "CSS"
+  },
   "attribute": "attribute"
 }

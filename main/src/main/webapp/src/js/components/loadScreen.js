@@ -36,7 +36,7 @@ class LoadScreen {
 
         // watch for pending http requests and make the load screen visible
         $scope.$watch(() => $http.pendingRequests.length > 0, value => {
-            this.visible = value ? true : false;
+            this.visible = value;
         });
 
     }

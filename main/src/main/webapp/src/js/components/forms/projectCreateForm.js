@@ -25,13 +25,12 @@ class ProjectCreateForm {
     /**
      * Constructor.
      *
-     * @param $scope
      * @param {ProjectResource} ProjectResource
      * @param {ToastService} ToastService
      * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor($scope, ProjectResource, ToastService, EventBus) {
+    constructor(ProjectResource, ToastService, EventBus) {
         this.ProjectResource = ProjectResource;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
@@ -48,20 +47,37 @@ class ProjectCreateForm {
          */
         this.projectToImport = null;
 
-        EventBus.on(events.FILE_LOADED, (evt, data) => {
-            this.projectToImport = JSON.parse(data.file);
-        }, $scope);
+        /**
+         * The mirror urls separated by \n.
+         * @type {string}
+         */
+        this.mirrorUrls = "";
+    }
+
+    /**
+     * Loads a project from a json file.
+     *
+     * @param {string} projectAsJson - The project to import.
+     */
+    loadProjectFromFile(projectAsJson) {
+        this.projectToImport = JSON.parse(projectAsJson);
     }
 
     /**
      * Creates a new project.
      */
     createProject() {
+        this.mirrorUrls.split('\n').forEach(url => {
+            const trimmedUrl = url.trim();
+            if (trimmedUrl !== '') this.project.mirrorUrls.push(trimmedUrl);
+        });
+
         this.ProjectResource.create(this.project)
             .then(createdProject => {
                 this.ToastService.success(`Project "${createdProject.name}" created`);
                 this.EventBus.emit(events.PROJECT_CREATED, {project: createdProject});
                 this.project = new Project();
+                this.mirrorUrls = "";
 
                 // set the form to its original state
                 this.form.$setPristine();

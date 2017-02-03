@@ -1,8 +1,4 @@
 {
   "type": "executeSymbol",
-  "symbolToExecute": {
-    "id": 1,
-    "revision": 1
-  },
-  "useLatestRevision": false
+  "symbolToExecute": 1
 }

@@ -26,18 +26,15 @@ class LearnerSetupView {
     /**
      * Constructor.
      *
-     * @param $scope
      * @param $state
      * @param {SymbolGroupResource} SymbolGroupResource
      * @param {SessionService} SessionService
      * @param {LearnerResource} LearnerResource
      * @param {ToastService} ToastService
      * @param {LearnResultResource} LearnResultResource
-     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor($scope, $state, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource,
-                EventBus) {
+    constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource) {
         this.$state = $state;
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
@@ -90,10 +87,6 @@ class LearnerSetupView {
          */
         this.canContinueLearnProcess = false;
 
-        EventBus.on(events.LEARN_CONFIG_UPDATED, (evt, data) => {
-            this.learnConfiguration = data.learnConfiguration;
-        }, $scope);
-
         // make sure that there isn't any other learn process active
         // redirect to the load screen in case there is an active one
         this.LearnerResource.isActive()
@@ -113,15 +106,18 @@ class LearnerSetupView {
                         .then(groups => {
                             this.groups = groups;
                             this.allSymbols = _.flatten(this.groups.map(g => g.symbols));
-                        });
+                        })
+                        .catch(err => console.log(err));
 
                     // load learn results so that their configuration can be reused
                     LearnResultResource.getAll(this.project.id)
                         .then(learnResults => {
                             this.learnResults = learnResults;
-                        });
+                        })
+                        .catch(err => console.log(err));
                 }
-            });
+            })
+            .catch(err => console.log(err));
 
         // get the status to check if there is a learn process that can be continued
         this.LearnerResource.getStatus().then(data => {
@@ -129,11 +125,12 @@ class LearnerSetupView {
         });
     }
 
-    /**
-     * Sets the reset symbol.
-     *
-     * @param {AlphabetSymbol} symbol - The symbol that will be used to reset the sul.
-     */
+    /** @param {LearnConfiguration} config - The config to use. */
+    setLearnConfiguration(config) {
+        this.learnConfiguration = config;
+    }
+
+    /** @param {AlphabetSymbol} symbol - The symbol that will be used to reset the sul. */
     setResetSymbol(symbol) {
         this.resetSymbol = symbol;
     }
@@ -177,13 +174,13 @@ class LearnerSetupView {
     reuseConfigurationFromResult(result) {
         this.learnConfiguration.algorithm = result.algorithm;
         this.learnConfiguration.eqOracle = result.steps[0].eqOracle;
-        this.learnConfiguration.maxAmountOfStepsToLearn = result.stepsToLearn;
+        this.learnConfiguration.maxAmountOfStepsToLearn = result.maxAmountOfStepsToLearn;
+        this.learnConfiguration.browser = result.browser;
 
-        const ids = result.symbols.map(s => s.id);
         this.groups.forEach(group => {
             group.symbols.forEach(symbol => {
-                symbol._selected = ids.indexOf(symbol.id) > -1;
-                if (symbol.id === result.resetSymbol.id) {
+                symbol._selected = result.symbols.indexOf(symbol.id) > -1;
+                if (symbol.id === result.resetSymbol) {
                     this.resetSymbol = symbol;
                 }
             });

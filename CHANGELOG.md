@@ -1,3 +1,21 @@
+# ALEX v1.2.1
+
+## Breaking Changes
+
+* Actions that deal with web elements have to be updated:
+
+    ```
+        node: {selector: '...', type: 'CSS|XPATH'}
+    ```
+
+## Features
+
+* New actions:
+    * Set a variable by node count
+    * Set a variable by regex
+* Switch between XPath and CSS selectors in actions
+* Experimental parallel test execution support
+
 # ALEX v1.2
 
 ## Features

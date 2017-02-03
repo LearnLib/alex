@@ -64,6 +64,7 @@ public class IncrementCounterActionTest {
         incrementAction.setUser(user);
         incrementAction.setProject(project);
         incrementAction.setName(TEST_NAME);
+        incrementAction.setIncrementBy(1);
     }
 
     @Test
@@ -89,15 +90,15 @@ public class IncrementCounterActionTest {
     }
 
     @Test
-    public void shouldSuccessfulIncrementCounter() {
+    public void shouldSuccessfullyIncrementCounter() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
+
         ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
 
         ExecuteResult result = incrementAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).increment(USER_ID, PROJECT_ID, TEST_NAME);
+        verify(counters).incrementBy(USER_ID, PROJECT_ID, TEST_NAME, 1);
     }
-
 }

@@ -149,7 +149,7 @@ public class AssertCounterAction extends SymbolAction {
     @Override
     protected ExecuteResult execute(ConnectorManager connector) {
         CounterStoreConnector storeConnector = connector.getConnector(CounterStoreConnector.class);
-        Integer counterValue = storeConnector.get(getUser().getId(), project.getId(), name);
+        Integer counterValue = storeConnector.get(name);
         boolean result;
 
         switch (operator) {

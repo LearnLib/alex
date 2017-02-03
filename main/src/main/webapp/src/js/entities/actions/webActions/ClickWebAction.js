@@ -32,9 +32,9 @@ export class ClickWebAction extends Action {
 
         /**
          * The CSS selector of an element.
-         * @type {*|string}
+         * @type {any}
          */
-        this.node = obj.node || '';
+        this.node = obj.node || {selector: '', type: 'CSS'};
 
         /**
          * If a double click should be executed.
@@ -50,9 +50,9 @@ export class ClickWebAction extends Action {
      */
     toString() {
         if (this.doubleClick) {
-            return `Double click on "${this.node}"`;
+            return `Double click on "${this.node.selector}"`;
         } else {
-            return `Click on "${this.node}"`;
+            return `Click on "${this.node.selector}"`;
         }
     }
 }

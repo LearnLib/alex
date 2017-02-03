@@ -18,8 +18,6 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.Settings;
 import de.learnlib.alex.core.repositories.SettingsRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

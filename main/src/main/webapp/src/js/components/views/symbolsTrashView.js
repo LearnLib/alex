@@ -53,9 +53,11 @@ class SymbolsTrashView {
         this.selectedSymbols = [];
 
         // fetch all deleted symbols and save them in scope
-        this.SymbolResource.getAll(this.project.id, true).then(symbols => {
-            this.symbols = symbols;
-        });
+        this.SymbolResource.getAll(this.project.id, true)
+            .then(symbols => {
+                this.symbols = symbols;
+            })
+            .catch(err => console.log(err));
     }
 
     /**

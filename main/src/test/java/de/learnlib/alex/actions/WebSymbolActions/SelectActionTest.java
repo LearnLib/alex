@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,15 +57,21 @@ public class SelectActionTest {
 
     private SelectAction s;
 
+    private WebElementLocator node;
+
     @Before
     public void setUp() {
         given(user.getId()).willReturn(USER_ID);
         given(project.getId()).willReturn(PROJECT_ID);
 
+        node = new WebElementLocator();
+        node.setSelector("#node");
+        node.setType(WebElementLocator.Type.CSS);
+
         s = new SelectAction();
         s.setUser(user);
         s.setProject(project);
-        s.setNode("#node");
+        s.setNode(node);
         s.setValue("Lorem Ipsum");
         s.setSelectBy(SelectAction.SelectByType.TEXT);
     }
@@ -89,7 +96,7 @@ public class SelectActionTest {
 
         assertTrue(obj instanceof SelectAction);
         SelectAction objAsAction = (SelectAction) obj;
-        assertEquals("#input", objAsAction.getNode());
+        assertEquals(node, objAsAction.getNode());
         assertEquals("Lorem Ipsum", objAsAction.getValue());
         assertEquals(SelectAction.SelectByType.TEXT, objAsAction.getSelectBy());
     }
@@ -98,7 +105,7 @@ public class SelectActionTest {
     public void shouldReturnOkIfValueWasSelectedByValue() {
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebElement selectElement = mock(WebElement.class);
-        given(webSiteConnector.getElement("#node")).willReturn(selectElement);
+        given(webSiteConnector.getElement(node)).willReturn(selectElement);
         given(selectElement.getTagName()).willReturn("select");
         WebElement itemElement = mock(WebElement.class);
         List<WebElement> itemElements = new LinkedList<>();
@@ -117,7 +124,7 @@ public class SelectActionTest {
     public void shouldReturnOkIfValueWasSelectedByText() {
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebElement selectElement = mock(WebElement.class);
-        given(webSiteConnector.getElement("#node")).willReturn(selectElement);
+        given(webSiteConnector.getElement(node)).willReturn(selectElement);
         given(selectElement.getTagName()).willReturn("select");
         WebElement itemElement = mock(WebElement.class);
         List<WebElement> itemElements = new LinkedList<>();
@@ -136,7 +143,7 @@ public class SelectActionTest {
     public void shouldReturnOkIfValueWasSelectedByIndex() {
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebElement selectElement = mock(WebElement.class);
-        given(webSiteConnector.getElement("#node")).willReturn(selectElement);
+        given(webSiteConnector.getElement(node)).willReturn(selectElement);
         given(selectElement.getTagName()).willReturn("select");
         List<WebElement> itemElements = new LinkedList<>();
         given(selectElement.findElements(By.tagName("option"))).willReturn(itemElements);
@@ -156,7 +163,7 @@ public class SelectActionTest {
     public void shouldReturnFailedIfValueIsNotAnIndexNumber() {
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebElement selectElement = mock(WebElement.class);
-        given(webSiteConnector.getElement("#node")).willReturn(selectElement);
+        given(webSiteConnector.getElement(node)).willReturn(selectElement);
         given(selectElement.getTagName()).willReturn("select");
         s.setValue("definite not a number");
         s.setSelectBy(SelectAction.SelectByType.INDEX);
@@ -169,7 +176,7 @@ public class SelectActionTest {
     @Test
     public void shouldReturnFailedIfTheNodeCouldNotBeFound() {
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
-        given(webSiteConnector.getElement("#node")).willThrow(NoSuchElementException.class);
+        given(webSiteConnector.getElement(node)).willThrow(NoSuchElementException.class);
 
         ExecuteResult result = s.execute(webSiteConnector);
 

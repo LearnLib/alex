@@ -11,14 +11,17 @@ describe('SelectWebAction', () => {
         expect(angular.isFunction(action.toString)).toBe(true);
     });
 
-    it('should have create a default action', () => {
+    it('should create a default action', () => {
         const expectedAction = {
             type: actionType.WEB_SELECT,
             negated: false,
             ignoreFailure: false,
             disabled: false,
 
-            node: '',
+            node: {
+                selector: '',
+                type: 'CSS'
+            },
             value: '',
             selectBy: 'TEXT'
         };

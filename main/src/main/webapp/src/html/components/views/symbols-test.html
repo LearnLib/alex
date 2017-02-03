@@ -1,4 +1,4 @@
-<div id="view-symbols-import">
+<div class="view">
     <view-header title="Test Symbols"></view-header>
 
     <div class="view-body">
@@ -12,7 +12,7 @@
                             <strong>{{group.name}}</strong>
                         </div>
                         <div class="list-group">
-                            <a href class="list-group-item" ng-repeat="symbol in group.symbols"
+                            <a href class="list-group-item" ng-repeat="symbol in group.symbols | orderBy:'name'"
                                ng-click="vm.word.push(symbol); vm.outputs = []">
                                 {{symbol.name}}
                             </a>
@@ -30,7 +30,7 @@
                                         <i class="fa fa-ellipsis-v" style="margin-right: -2px"></i>
                                         <i class="fa fa-ellipsis-v"></i>
                                     </span>
-                                    <i class="fa fa-fw fa-close text-muted pull-right" ng-click="vm.word.splice($index, 1); ; vm.outputs = []"></i>
+                                    <i class="fa fa-fw fa-close text-muted pull-right" ng-click="vm.word.splice($index, 1); vm.outputs = []"></i>
                                     <span class="label label-primary pull-right" style="margin-right: 10px" ng-if="$index === 0">Reset</span>
 
                                     {{symbol.name}}
@@ -45,9 +45,27 @@
 
                         <div class="form-group">
                             <label class="control-label">Select a web driver</label>
-                            <select class="form-control" ng-options="(v|formatWebBrowser) for (k,v) in vm.browser" ng-model="vm.selectedBrowser">
+                            <select class="form-control" ng-options="(v|formatWebBrowser) for (k,v) in vm.browser" ng-model="vm.browserConfig.driver">
                                 <option value="" disabled>Select a Webdriver</option>
                             </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="control-label">Width</label>
+                                    <input class="form-control" type="number" placeholder="Browser width in px"
+                                           ng-model="vm.browserConfig.width">
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="control-label">Height</label>
+                                    <input class="form-control" type="number" placeholder="Browser height in px"
+                                           ng-model="vm.browserConfig.height">
+                                </div>
+
+                            </div>
                         </div>
 
                         <button class="btn btn-sm btn-primary" ng-click="vm.executeWord()" ng-if="!vm.isExecuting">Execute word</button>

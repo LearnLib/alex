@@ -40,6 +40,7 @@ class DiscriminationTreeComponent {
      */
     // @ngInject
     constructor($scope, $element) {
+        this.$scope = $scope;
 
         // the svg where the discrimination tree is drawn into
         this.svg = $element.find('svg')[0];
@@ -54,15 +55,6 @@ class DiscriminationTreeComponent {
 
         this.graph = null;
 
-        // render the new discrimination tree when property 'data' changes
-        $scope.$watch('vm.data', data => {
-            if (data) {
-                const graph = this.createGraph(JSON.parse(data));
-                this.layout(graph);
-                this.render();
-            }
-        });
-
         const resizeHandler = this.fitSize.bind(this);
 
         // resize the svg to its parents size on window resize
@@ -71,6 +63,18 @@ class DiscriminationTreeComponent {
 
         $scope.$on('$destroy', () => {
             window.removeEventListener('resize', resizeHandler);
+        });
+    }
+
+    $onInit() {
+
+        // render the new discrimination tree when property 'data' changes
+        this.$scope.$watch('vm.data', data => {
+            if (data) {
+                const graph = this.createGraph(JSON.parse(data));
+                this.layout(graph);
+                this.render();
+            }
         });
     }
 

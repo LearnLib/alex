@@ -47,7 +47,8 @@ public class LearnerStatusTest {
         learnerResult.setTestNo(0L);
 
         String expectedJSON = "{\"active\":true,\"project\":0,\"statistics\":"
-                                + "{\"mqsUsed\":2,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},\"testNo\":0}";
+                                + "{\"mqsUsed\":2,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},\"stepNo\":0,"
+                                + "\"testNo\":0}";
 
         LearnerStatus status = new LearnerStatus(learnerResult);
 

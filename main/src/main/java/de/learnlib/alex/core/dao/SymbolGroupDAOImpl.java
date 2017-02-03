@@ -21,6 +21,7 @@ import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolGroup;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.repositories.ProjectRepository;
+import de.learnlib.alex.core.repositories.SymbolActionRepository;
 import de.learnlib.alex.core.repositories.SymbolGroupRepository;
 import de.learnlib.alex.core.repositories.SymbolRepository;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -77,15 +78,18 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
      *         The SymbolGroupRepository to use.
      * @param symbolRepository
      *         The SymbolRepository to use.
+     * @param symbolActionRepository
+     *         The SymbolActionRepository to use.
      */
     @Inject
     public SymbolGroupDAOImpl(ProjectRepository projectRepository, SymbolGroupRepository symbolGroupRepository,
-                              SymbolRepository symbolRepository) {
+                              SymbolRepository symbolRepository, SymbolActionRepository symbolActionRepository) {
         this.projectRepository = projectRepository;
         this.symbolGroupRepository = symbolGroupRepository;
         this.symbolRepository = symbolRepository;
 
-        this.symbolDAO = new SymbolDAOImpl(projectRepository, symbolGroupRepository, symbolRepository);
+        this.symbolDAO = new SymbolDAOImpl(projectRepository, symbolGroupRepository, symbolRepository,
+                                           symbolActionRepository);
     }
 
     @Override
@@ -217,7 +221,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             group.getSymbols().forEach(s -> SymbolDAOImpl.loadLazyRelations(symbolDAO, s));
         } else if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
             try {
-                List<Symbol> symbols = symbolDAO.getAllWithLatestRevision(user, group.getProjectId(), group.getId());
+                List<Symbol> symbols = symbolDAO.getAll(user, group.getProjectId(), group.getId());
                 group.setSymbols(new HashSet<>(symbols));
             } catch (NotFoundException e) {
                 group.setSymbols(null);
@@ -254,7 +258,6 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             symbol.setUser(user);
             project.addSymbol(symbol);
             symbol.setGroup(group);
-            symbol.setRevision(0L);
             symbol.setId(symbolId);
             project.setNextSymbolId(symbolId + 1);
 

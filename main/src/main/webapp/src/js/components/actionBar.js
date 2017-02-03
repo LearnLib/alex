@@ -14,54 +14,11 @@
  * limitations under the License.
  */
 
-const bodyClassName = 'has-fixed-action-bar';
-const actionBarClassName = 'fixed';
-
 /**
  * The component that is used for the sticky sub navigation that mostly contains call to action buttons for the
  * current view.
  */
-// @ngInject
 class ActionBar {
-
-    /**
-     * Constructor.
-     *
-     * @param $scope
-     * @param $element
-     */
-    constructor($scope, $element) {
-
-        /**
-         * The root element of the component.
-         */
-        this.rootEl = $element.children()[0];
-
-        /**
-         * The scroll handler.
-         */
-        this.scrollHandler = this.handleResize.bind(this);
-
-        window.addEventListener('scroll', this.scrollHandler, false);
-
-        $scope.$on('$destroy', () => {
-            window.removeEventListener('scroll', this.scrollHandler, false);
-            document.body.classList.remove(bodyClassName);
-        });
-    }
-
-    /**
-     * Depending on the scroll y value, toggles classes for fixing the action bar on the top.
-     */
-    handleResize() {
-        if (window.scrollY >= 42) {
-            this.rootEl.classList.add(actionBarClassName);
-            document.body.classList.add(bodyClassName);
-        } else {
-            this.rootEl.classList.remove(actionBarClassName);
-            document.body.classList.remove(bodyClassName);
-        }
-    }
 }
 
 export const actionBar = {

@@ -19,7 +19,10 @@ describe('WaitForNodeAction', () => {
             disabled: false,
 
             waitCriterion: 'VISIBLE',
-            node: '',
+            node: {
+                selector: '',
+                type: 'CSS'
+            },
             maxWaitTime: 10
         };
         const action = new WaitForNodeAction({});

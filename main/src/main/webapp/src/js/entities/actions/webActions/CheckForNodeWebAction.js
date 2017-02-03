@@ -32,9 +32,9 @@ export class CheckForNodeWebAction extends Action {
 
         /**
          * The selector of the node to search.
-         * @type {string}
+         * @type {any}
          */
-        this.value = obj.value || '';
+        this.node = obj.node || {selector: '', type: 'CSS'};
     }
 
     /**
@@ -43,6 +43,6 @@ export class CheckForNodeWebAction extends Action {
      * @returns {string}
      */
     toString() {
-        return 'Search for element "' + this.value + '"';
+        return `Search for element "${this.node.selector}"`;
     }
 }

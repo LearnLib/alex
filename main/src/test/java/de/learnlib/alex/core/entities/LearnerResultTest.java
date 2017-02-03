@@ -48,7 +48,8 @@ public class LearnerResultTest {
 
     private static final Algorithm TTT = new Algorithm("TTT", "");
 
-    private static final MealyRandomWordsEQOracleProxy EXAMPLE_EQ_ORACLE = new MealyRandomWordsEQOracleProxy(1, 5, 10);
+    private static final MealyRandomWordsEQOracleProxy EXAMPLE_EQ_ORACLE =
+            new MealyRandomWordsEQOracleProxy(1, 5, 10, 42);
 
     @Test
     @Ignore

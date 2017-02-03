@@ -19,6 +19,7 @@ package de.learnlib.alex.actions.StoreSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
@@ -50,11 +51,17 @@ public class SetVariableByNodeAttributeActionTest {
 
     private SetVariableByNodeAttributeAction setAction;
 
+    private WebElementLocator node;
+
     @Before
     public void setUp() {
+        node = new WebElementLocator();
+        node.setSelector(NODE);
+        node.setType(WebElementLocator.Type.CSS);
+
         setAction = new SetVariableByNodeAttributeAction();
         setAction.setName(VARIABLE);
-        setAction.setNode(NODE);
+        setAction.setNode(node);
         setAction.setAttribute(ATTRIBUTE_NAME);
     }
 
@@ -81,7 +88,7 @@ public class SetVariableByNodeAttributeActionTest {
         assertTrue(obj instanceof SetVariableByNodeAttributeAction);
         SetVariableByNodeAttributeAction objAsAction = (SetVariableByNodeAttributeAction) obj;
         assertEquals(VARIABLE, objAsAction.getName());
-        assertEquals(NODE, objAsAction.getNode());
+        assertEquals(node, objAsAction.getNode());
         assertEquals(ATTRIBUTE_NAME, objAsAction.getAttribute());
     }
 
@@ -94,7 +101,7 @@ public class SetVariableByNodeAttributeActionTest {
         WebElement element = mock(WebElement.class);
         given(element.getAttribute(ATTRIBUTE_NAME)).willReturn(ATTRIBUTE_VALUE);
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
-        given(webSiteConnector.getElement(NODE)).willReturn(element);
+        given(webSiteConnector.getElement(node)).willReturn(element);
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
 
         ExecuteResult result = setAction.execute(connector);
@@ -110,7 +117,7 @@ public class SetVariableByNodeAttributeActionTest {
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
 
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
-        given(webSiteConnector.getElement(NODE)).willThrow(NoSuchElementException.class);
+        given(webSiteConnector.getElement(node)).willThrow(NoSuchElementException.class);
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
 
         ExecuteResult result = setAction.execute(connector);

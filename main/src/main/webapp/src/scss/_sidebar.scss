@@ -2,7 +2,10 @@
 @import "mixins";
 
 #sidebar-header {
-  height: 42px;
+  flex-grow: 1;
+  flex-shrink: 1;
+  max-height: 42px;
+  min-height: 42px;
   background: $color-blue-darker;
 
   .sidebar-header-button {
@@ -44,9 +47,10 @@
 }
 
 #sidebar-body {
-  @include position(absolute, 42px, 0, 0, 0);
-
-  overflow-y: auto;
+  flex-grow: 1;
+  flex-shrink: 1;
+  height: 100%;
+  overflow: auto;
   overflow-x: hidden;
 }
 
@@ -62,10 +66,6 @@ body {
         .toggle-button {
           width: $sidebar-width-collapsed;
         }
-      }
-
-      #sidebar-body {
-        overflow: inherit;
       }
 
       .sidebar-group {
@@ -92,13 +92,12 @@ body {
 }
 
 #sidebar {
-  @include position(fixed, 0, null, 0, 0);
+  @include position(absolute, 0, 0, 0, 0);
 
   width: $sidebar-width;
-  float: left;
   background: $color-blue-dark;
-  transition: width 200ms;
-  z-index: 100;
+  display: flex;
+  flex-direction: column;
 
   .sidebar-group {
 
@@ -107,7 +106,6 @@ body {
       padding: 7px 20px;
       font-size: 1.25em;
       margin-top: 14px;
-      transition: padding 200ms;
     }
 
     .sidebar-group-item {
@@ -115,7 +113,6 @@ body {
       display: block;
       padding: 7px 0;
       text-decoration: none;
-      transition: padding 200ms, height 200ms, background 100ms;
       height: 31px;
       cursor: pointer;
 
@@ -132,7 +129,6 @@ body {
         width: $sidebar-width-collapsed;
         text-align: center;
         float: left;
-        transition: font-size 200ms;
       }
     }
   }

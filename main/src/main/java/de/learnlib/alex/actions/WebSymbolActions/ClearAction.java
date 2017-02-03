@@ -16,21 +16,20 @@
 
 package de.learnlib.alex.actions.WebSymbolActions;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
-import de.learnlib.alex.utils.CSSUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Action to clear on a specific element.
@@ -47,28 +46,17 @@ public class ClearAction extends WebSymbolAction {
     private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The node to look for. */
-    @NotBlank
-    @Column(columnDefinition = "CLOB")
-    private String node;
+    @NotNull
+    @Embedded
+    private WebElementLocator node;
 
     /**
      * Get the node to look for.
      *
      * @return The node to look for.
      */
-    public String getNode() {
+    public WebElementLocator getNode() {
         return node;
-    }
-
-    /**
-     * Get the node to look for.
-     * All variables and counters will be replaced with their values.
-     *
-     * @return The node to look for.
-     */
-    @JsonIgnore
-    public String getNodeWithVariableValues() {
-        return insertVariableValues(node);
     }
 
     /**
@@ -77,14 +65,15 @@ public class ClearAction extends WebSymbolAction {
      * @param node
      *         The new node to check for.
      */
-    public void setNode(String node) {
+    public void setNode(WebElementLocator node) {
         this.node = node;
     }
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            connector.getElement(CSSUtils.escapeSelector(getNodeWithVariableValues())).clear();
+            node.setSelector(insertVariableValues(node.getSelector()));
+            connector.getElement(node).clear();
 
             LOGGER.info(LEARNER_MARKER, "Cleared the element '{}' (ignoreFailure: {}, negated: {}).",
                         node, ignoreFailure, negated);

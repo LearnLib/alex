@@ -83,7 +83,7 @@ public class GotoActionTest {
     }
 
     @Test
-    public void shouldReturnOKIfTheUrlCouldBeFound() {
+    public void shouldReturnOKIfTheUrlCouldBeFound() throws Exception {
         WebSiteConnector connector = mock(WebSiteConnector.class);
 
         assertEquals(ExecuteResult.OK, g.execute(connector));
@@ -91,7 +91,7 @@ public class GotoActionTest {
     }
 
     @Test
-    public void shouldReturnFailedIfTheUrlCouldNotBeFound() {
+    public void shouldReturnFailedIfTheUrlCouldNotBeFound() throws Exception {
         WebSiteConnector connector = mock(WebSiteConnector.class);
         willThrow(Exception.class).given(connector).get(eq(FAKE_URL), any(Credentials.class));
 

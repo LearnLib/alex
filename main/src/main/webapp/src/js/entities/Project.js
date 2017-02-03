@@ -55,5 +55,11 @@ export class Project {
          * @type{number}
          */
         this.user = obj.user;
+
+        /**
+         * The URLs of the mirrors of the application
+         * @type {string[]}
+         */
+        this.mirrorUrls = obj.mirrorUrls || [];
     }
 }

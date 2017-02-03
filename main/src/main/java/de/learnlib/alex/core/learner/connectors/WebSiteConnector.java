@@ -17,11 +17,20 @@
 package de.learnlib.alex.core.learner.connectors;
 
 import de.learnlib.alex.actions.Credentials;
+import de.learnlib.alex.core.entities.BrowserConfig;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.BaseUrlManager;
+import de.learnlib.alex.utils.CSSUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Connector to communicate with a WebSite.
@@ -29,8 +38,11 @@ import org.openqa.selenium.WebElement;
  */
 public class WebSiteConnector implements Connector {
 
+    /** How often it should be tried to navigate to a given URL. */
+    private static final int MAX_RETRIES = 5;
+
     /** The browser to use. */
-    private WebBrowser browser;
+    private BrowserConfig browser;
 
     /** A managed base url to use. */
     private BaseUrlManager baseUrl;
@@ -46,7 +58,7 @@ public class WebSiteConnector implements Connector {
      * @param browser
      *         The browser to use for further request.
      */
-    public WebSiteConnector(String baseUrl, WebBrowser browser) {
+    public WebSiteConnector(String baseUrl, BrowserConfig browser) {
         this.baseUrl = new BaseUrlManager(baseUrl);
         this.browser = browser;
     }
@@ -56,7 +68,7 @@ public class WebSiteConnector implements Connector {
      */
     @Override
     public void reset() throws Exception {
-        this.driver = browser.getWebDriver();
+        this.driver = browser.getDriver().getWebDriver(browser);
     }
 
     @Override
@@ -72,23 +84,71 @@ public class WebSiteConnector implements Connector {
      *         The path to send the request to.
      * @param credentials
      *         The credential to use. Can be null.
+     * @throws Exception
+     *         If the application could not connect to the web driver.
      */
-    public void get(String path, Credentials credentials) {
+    public void get(String path, Credentials credentials) throws Exception {
         String url = getAbsoluteUrl(path, credentials);
-        driver.get(url);
+        int numRetries = 0;
+        while (numRetries < MAX_RETRIES) {
+            try {
+                driver.navigate().to(url);
+
+                // wait until the browser is loaded
+                if (driver instanceof JavascriptExecutor) {
+                    new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) wd ->
+                            ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
+                }
+
+                break;
+            } catch (Exception e1) {
+                numRetries++;
+                try {
+                    dispose();
+                    reset();
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (Exception e2) {
+                }
+            }
+        }
+
+        if (numRetries == MAX_RETRIES) {
+            throw new Exception("Error connecting with the web driver.");
+        }
     }
 
     /**
      * Get a {@link WebElement} from the site using a valid css query.
      *
-     * @param query
+     * @param locator
      *         The query to search for the element.
      * @return A WebElement.
      * @throws NoSuchElementException
-     *         If no Element was found.
+     *         If no element was found.
      */
-    public WebElement getElement(String query) throws NoSuchElementException {
-        return driver.findElement(By.cssSelector(query));
+    public WebElement getElement(WebElementLocator locator) throws NoSuchElementException {
+        if (locator.getType().equals(WebElementLocator.Type.CSS)) {
+            return driver.findElement(By.cssSelector(CSSUtils.escapeSelector(locator.getSelector())));
+        } else {
+            return driver.findElement(By.xpath(locator.getSelector()));
+        }
+    }
+
+    /**
+     * Same as {@link #getElement(WebElementLocator)} but returns a list of web elements.
+     *
+     * @param locator
+     *          The query to search for the element.
+     * @return  A list of elements.
+     * @throws NoSuchElementException
+     *          If no element was found.
+     */
+    public List<WebElement> getElements(WebElementLocator locator) throws NoSuchElementException {
+        if (locator.getType().equals(WebElementLocator.Type.CSS)) {
+            return driver.findElements(By.cssSelector(CSSUtils.escapeSelector(locator.getSelector())));
+        } else {
+            return driver.findElements(By.xpath(locator.getSelector()));
+        }
     }
 
     /**
@@ -134,6 +194,11 @@ public class WebSiteConnector implements Connector {
      */
     private String getAbsoluteUrl(String path, Credentials credentials) {
         return baseUrl.getAbsoluteUrl(path, credentials);
+    }
+
+    /** @return The browser config. */
+    public BrowserConfig getBrowser() {
+        return browser;
     }
 
     /**

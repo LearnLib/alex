@@ -1,12 +1,14 @@
 {
     "id": 1,
-    "revision": 1,
     "name" : "Test Symbol",
     "abbreviation" : "test_symb",
     "actions" : [
         {
             "type": "web_checkForNode",
-            "value": "#node"
+            "node": {
+                "selector": "#node",
+                "type": "CSS"
+            }
         },
         {
             "type": "web_checkForText",
@@ -14,25 +16,36 @@
         },
         {
             "type": "web_clear",
-            "node": "#node"
+            "node": {
+                "selector": "#node",
+                "type": "CSS"
+            }
         },
         {
             "type": "web_click",
-            "node": "#node"
+            "node": {
+                "selector": "#node",
+                "type": "CSS"
+            }
         },
         {
             "type" : "web_fill",
-            "node" : "#input",
+            "node" : {
+                "selector": "#input",
+                "type": "CSS"
+            },
             "value" : "Lorem Ipsum"
         },
         {
             "type": "web_submit",
-            "node": "#node"
+            "node": {
+                "selector": "#node",
+                "type": "CSS"
+            }
         },
         {
             "type": "wait",
             "duration": 1000
-            
         }
     ]
 }

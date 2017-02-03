@@ -33,9 +33,9 @@ export class MoveMouseAction extends Action {
 
         /**
          * The CSS selector of an select element
-         * @type {*|string}
+         * @type {any}
          */
-        this.node = obj.node || null;
+        this.node = obj.node || {selector: null, type: 'CSS'};
 
         /**
          * The amount in px to move the mouse in x direction from the current position.
@@ -56,10 +56,10 @@ export class MoveMouseAction extends Action {
      * @returns {string}
      */
     toString() {
-        if (this.node === null || this.node.trim() === '') {
+        if (this.node.selector === null || this.node.selector.trim() === '') {
             return `Move mouse by ${this.offsetX}px (x), ${this.offsetY}px (y)`;
         } else {
-            return `Move mouse to element "${this.node}" with offset: ${this.offsetX}px (x), ${this.offsetY}px (y)`;
+            return `Move mouse to element "${this.node.selector}" with offset: ${this.offsetX}px (x), ${this.offsetY}px (y)`;
         }
     }
 }

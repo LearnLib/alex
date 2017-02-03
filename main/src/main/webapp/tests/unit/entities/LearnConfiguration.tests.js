@@ -10,7 +10,7 @@ describe('LearnConfiguration', () => {
         const expectedConfig = {
             symbols: [],
             maxAmountOfStepsToLearn: -1,
-            eqOracle: {type: 'random_word', minLength: 1, maxLength: 10, maxNoOfTests: 20},
+            eqOracle: {type: 'random_word', minLength: 1, maxLength: 10, maxNoOfTests: 20, seed: 42},
             algorithm: 'TTT',
             resetSymbol: null,
             comment: null,
@@ -28,23 +28,21 @@ describe('LearnConfiguration', () => {
         expect(angular.toJson(config)).toEqual(angular.toJson(expectedConfig))
     });
 
-    it('should add a symbol to the symbols list as id revision pair', () => {
+    it('should add a symbol to the symbols list as id', () => {
         const config = new LearnConfiguration();
         const symbol = new AlphabetSymbol(ENTITIES.symbols[0]);
-        const pair = symbol.getIdRevisionPair();
 
         const pre = config.symbols.length;
         config.addSymbol(symbol);
         expect(config.symbols.length).toBe(pre + 1);
-        expect(config.symbols.find(p => p.id === pair.id)).toEqual(pair);
+        expect(config.symbols.find(p => p.id === symbol.id)).toEqual(symbol.id);
     });
 
-    it('should set a symbols as id revision pair as reset symbol', () => {
+    it('should set a symbols as id as reset symbol', () => {
         const config = new LearnConfiguration();
         const symbol = new AlphabetSymbol(ENTITIES.symbols[0]);
-        const pair = symbol.getIdRevisionPair();
 
         config.setResetSymbol(symbol);
-        expect(config.resetSymbol).toEqual(symbol.getIdRevisionPair())
+        expect(config.resetSymbol).toEqual(symbol.id)
     });
 });

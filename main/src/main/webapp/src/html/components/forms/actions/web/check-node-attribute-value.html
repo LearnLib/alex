@@ -5,16 +5,7 @@
 </p>
 <hr>
 
-<div class="form-group">
-    <label class="control-label">Element</label>
-    <input class="form-control" type="text" placeholder="CSS selector" ng-model="vm.action.node" required minlength="1">
-</div>
-
-<div class="form-group">
-    <a class="btn btn-default btn-sm" html-element-picker-handle model="vm.action.node">
-        <i class="fa fa-magic fa-fw"></i>&nbsp; Element Picker
-    </a>
-</div>
+<node-form-group node="vm.action.node"></node-form-group>
 
 <div class="form-group">
     <label class="control-label">Attribute</label>

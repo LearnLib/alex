@@ -11,14 +11,16 @@ describe('FillWebAction', () => {
         expect(angular.isFunction(action.toString)).toBe(true);
     });
 
-    it('should have create a default action', () => {
+    it('should create a default action', () => {
         const expectedAction = {
             type: actionType.WEB_FILL,
             negated: false,
             ignoreFailure: false,
             disabled: false,
-
-            node: '',
+            node: {
+                selector: '',
+                type: 'CSS'
+            },
             value: ''
         };
         const action = new FillWebAction({});

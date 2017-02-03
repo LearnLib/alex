@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {chartMode} from "../../constants";
-
 /**
  * The controller for the learn statistics page.
  */
@@ -51,14 +49,16 @@ class StatisticsCompareView {
             return;
         }
 
-        // make sure the mode if acceptable
-        if ($stateParams.mode !== chartMode.CUMULATED
-            && $stateParams.mode !== chartMode.COMPLETE) {
-
-            this.ToastService.danger('The chart mode should be cumulated or complete');
-            this.$state.go('statistics');
-            return;
-        }
+        /**
+         * The available chart display modes.
+         * @type {any}
+         */
+        this.chartModes = {
+            SINGLE_FINAL: 0,
+            SINGLE_COMPLETE: 1,
+            MULTIPLE_FINAL: 2,
+            MULTIPLE_COMPLETE: 3
+        };
 
         /**
          * The project that is in the session.
@@ -74,9 +74,10 @@ class StatisticsCompareView {
 
         /**
          * Make the chart mode dictionary available in the view.
-         * @type {object}
+         * Per default, display the cumulated charts.
+         * @type {number}
          */
-        this.chartMode = chartMode;
+        this.chartMode = this.testNos.length > 1 ? this.chartModes.MULTIPLE_FINAL : this.chartModes.SINGLE_FINAL;
 
         /**
          * The data to fill the charts.
@@ -85,107 +86,84 @@ class StatisticsCompareView {
         this.chartData = {};
 
         /**
-         * The selected chart mode.
-         * @type {string}
-         */
-        this.selectedChartMode = $stateParams.mode;
-
-        /**
          * If the charts should be shown in two columns.
          * @type {boolean}
          */
         this.showInColumns = true;
 
-        // depending on the mode, create a different chart
-        if (this.selectedChartMode === chartMode.CUMULATED) {
-            if (this.testNos.length === 1) {
-                this.createChartSingleFinal(this.testNos[0]);
-            } else {
-                this.createChartMultipleFinal(this.testNos);
-            }
-        } else {
-            if (this.testNos.length === 1) {
-                this.createChartSingleComplete(this.testNos[0]);
-            } else {
-                this.createChartMultipleComplete(this.testNos);
-            }
+        // create the charts
+        this.createChartData();
+    }
+
+    /**
+     * Create chart data for the given mode and learn results.
+     */
+    createChartData() {
+        switch (this.chartMode) {
+            case this.chartModes.SINGLE_FINAL:
+                this.LearnResultResource.get(this.project.id, this.testNos[0])
+                    .then(result => {
+                        this.chartData = this.LearnerResultChartService.createDataSingleFinal(result);
+                    });
+                break;
+            case this.chartModes.SINGLE_COMPLETE:
+                this.LearnResultResource.get(this.project.id, this.testNos[0])
+                    .then(result => {
+                        this.chartData = this.LearnerResultChartService.createDataSingleComplete(result);
+                    });
+                break;
+            case this.chartModes.MULTIPLE_FINAL:
+                this.LearnResultResource.getAll(this.project.id).then(results => {
+
+                    // get all results and filter because there is still no other api endpoint
+                    const resultsFromTestNos = results.filter(r => this.testNos.indexOf(r.testNo) > -1);
+                    this.chartData = this.LearnerResultChartService.createDataMultipleFinal(resultsFromTestNos);
+                });
+                break;
+            case this.chartModes.MULTIPLE_COMPLETE:
+                this.LearnResultResource.getAll(this.project.id).then(results => {
+
+                    // get all results and filter because there is still no other api endpoint
+                    const resultsFromTestNos = results.filter(r => this.testNos.indexOf(r.testNo) > -1);
+                    this.chartData = this.LearnerResultChartService.createDataMultipleComplete(resultsFromTestNos);
+                });
+                break;
+            default:
+                break;
         }
     }
 
-    /**
-     * Create chart data for a single final learn result.
-     *
-     * @param {number} testNo - The test number to create charts for.
-     */
-    createChartSingleFinal(testNo) {
-        this.LearnResultResource.get(this.project.id, testNo)
-            .then(result => {
-                this.chartData = this.LearnerResultChartService.createDataSingleFinal(result);
-            });
-    }
-
-    /**
-     * Create chart data for a single complete learn result.
-     *
-     * @param {number} testNo - The test number to create charts for.
-     */
-    createChartSingleComplete(testNo) {
-        this.LearnResultResource.get(this.project.id, testNo)
-            .then(result => {
-                this.chartData = this.LearnerResultChartService.createDataSingleComplete(result);
-            });
-    }
-
-    /**
-     * Create chart data for multiple final learn results.
-     *
-     * @param {number[]} testNos - The test numbers to create charts for.
-     */
-    createChartMultipleFinal(testNos) {
-        this.LearnResultResource.getAll(this.project.id).then(results => {
-
-            // get all results and filter because there is still no other api endpoint
-            const resultsFromTestNos = results.filter(r => testNos.indexOf(r.testNo) > -1);
-            this.chartData = this.LearnerResultChartService.createDataMultipleFinal(resultsFromTestNos);
-        });
-    }
-
-    /**
-     * Create chart data for multiple complete learn results.
-     *
-     * @param {number[]} testNos - The test numbers to create charts for.
-     */
-    createChartMultipleComplete(testNos) {
-        this.LearnResultResource.getAll(this.project.id).then(results => {
-
-            // get all results and filter because there is still no other api endpoint
-            const resultsFromTestNos = results.filter(r => testNos.indexOf(r.testNo) > -1);
-            this.chartData = this.LearnerResultChartService.createDataMultipleComplete(resultsFromTestNos);
-        });
-    }
-
+    /** Switch the view to final. */
     switchToFinal() {
-        if (this.selectedChartMode === chartMode.COMPLETE) {
-            this.$state.go('statisticsCompare', {
-                testNos: this.testNos.join(','),
-                mode: chartMode.CUMULATED
-            });
-        } else {
-            this.ToastService.info('You are already in the cumulated mode');
+        switch (this.chartMode) {
+            case this.chartModes.SINGLE_COMPLETE:
+                this.chartMode = this.chartModes.SINGLE_FINAL;
+                break;
+            case this.chartModes.MULTIPLE_COMPLETE:
+                this.chartMode = this.chartModes.MULTIPLE_FINAL;
+                break;
+            default:
+                break;
         }
+        this.createChartData();
     }
 
+    /** Switch the view to complete. */
     switchToComplete() {
-        if (this.selectedChartMode === chartMode.CUMULATED) {
-            this.$state.go('statisticsCompare', {
-                testNos: this.testNos.join(','),
-                mode: chartMode.COMPLETE
-            });
-        } else {
-            this.ToastService.info('You are already in the complete mode');
+        switch (this.chartMode) {
+            case this.chartModes.SINGLE_FINAL:
+                this.chartMode = this.chartModes.SINGLE_COMPLETE;
+                break;
+            case this.chartModes.MULTIPLE_FINAL:
+                this.chartMode = this.chartModes.MULTIPLE_COMPLETE;
+                break;
+            default:
+                break;
         }
+        this.createChartData();
     }
 
+    /** Toggle the layout of the charts. */
     toggleShowInColumns() {
         this.showInColumns = !this.showInColumns;
 

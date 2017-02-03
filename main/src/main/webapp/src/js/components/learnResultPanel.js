@@ -24,12 +24,10 @@ import {learnAlgorithm, events} from "../constants";
  * can for example be the list of all intermediate results of a complete test or multiple single results from
  * multiple tests.
  *
- * An additional attribute 'index' can be passed that marks the index of the panel in case there are multiple.
- *
  * Content that is written inside the tag will be displayed a the top right corner beside the index browser. So
  * just add small texts or additional buttons in there.
  *
- * Use it like '<learn-result-panel results="..." index="..."> ... </learn-result-panel>'
+ * Use it like '<learn-result-panel results="..."> ... </learn-result-panel>'
  */
 class LearnResultPanel {
 
@@ -37,13 +35,14 @@ class LearnResultPanel {
      * Constructor.
      *
      * @param $scope
-     * @param $element
      * @param {DownloadService} DownloadService
      * @param {EventBus} EventBus
      * @param {PromptService} PromptService
      */
     // @ngInject
-    constructor($scope, $element, DownloadService, EventBus, PromptService) {
+    constructor($scope, DownloadService, EventBus, PromptService) {
+        this.$scope = $scope;
+        this.EventBus = EventBus;
         this.DownloadService = DownloadService;
         this.PromptService = PromptService;
 
@@ -74,28 +73,25 @@ class LearnResultPanel {
          * @type {number}
          */
         this.mode = this.modes.HYPOTHESIS;
+    }
+
+    $onInit() {
 
         /**
          * The index of the step from the results that should be shown.
          * @type {number}
          */
         this.pointer = this.result.steps.length - 1;
+        this.emitStep();
 
-        $scope.$watch(() => this.from, () => {
-            const from = this.from || 1;
-            const index = this.index || 0;
-            $element.children()[0].style.width = (100 / from) + '%';
-            $element.children()[0].style.left = ((100 / from) * (index)) + '%';
-        });
-
-        $scope.$watch(() => this.result, () => {
+        this.$scope.$watch(() => this.result, () => {
             if (this.result) this.pointer = this.result.steps.length - 1;
         });
 
         // wait for hypothesis layout settings to change
-        EventBus.on(events.HYPOTHESIS_LAYOUT_UPDATED, (evt, data) => {
+        this.EventBus.on(events.HYPOTHESIS_LAYOUT_UPDATED, (evt, data) => {
             this.layoutSettings = data.settings;
-        }, $scope);
+        }, this.$scope);
     }
 
     /**
@@ -166,10 +162,20 @@ class LearnResultPanel {
     }
 
     /**
+     * Emits the index of the currently shown step.
+     */
+    emitStep() {
+        if (this.index >= 0 && this.onStep()) {
+            this.onStep()(this.index, this.pointer);
+        }
+    }
+
+    /**
      * Shows the first result of the test process.
      */
     firstStep() {
         this.pointer = 0;
+        this.emitStep();
     }
 
     /**
@@ -180,6 +186,7 @@ class LearnResultPanel {
             this.lastStep();
         } else {
             this.pointer--;
+            this.emitStep();
         }
     }
 
@@ -191,6 +198,7 @@ class LearnResultPanel {
             this.firstStep();
         } else {
             this.pointer++;
+            this.emitStep();
         }
     }
 
@@ -199,6 +207,7 @@ class LearnResultPanel {
      */
     lastStep() {
         this.pointer = this.result.steps.length - 1;
+        this.emitStep();
     }
 }
 
@@ -209,7 +218,7 @@ export const learnResultPanel = {
     controllerAs: 'vm',
     bindings: {
         result: '=',
-        index: '@',
-        from: '@'
+        index: '=',
+        onStep: '&'
     }
 };

@@ -61,11 +61,6 @@ class SymbolsImportView {
          */
         this.adjustReferences = true;
 
-        // listen on the file loaded event
-        EventBus.on(events.FILE_LOADED, (evt, data) => {
-            this.fileLoaded(data.file);
-        }, $scope);
-
         // listen on the symbol updated event
         EventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
             this.updateSymbol(data.newSymbol);

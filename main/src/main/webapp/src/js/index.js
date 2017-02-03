@@ -79,7 +79,6 @@ import {statisticsCompareView} from "./components/views/statisticsCompareView";
 import {statisticsView} from "./components/views/statisticsView";
 import {symbolsActionsView} from "./components/views/symbolsActionsView";
 import {symbolsView} from "./components/views/symbolsView";
-import {symbolsHistoryView} from "./components/views/symbolsHistoryView";
 import {symbolsImportView} from "./components/views/symbolsImportView";
 import {symbolsTestView} from "./components/views/symbolsTestView";
 import {symbolsTrashView} from "./components/views/symbolsTrashView";
@@ -112,6 +111,7 @@ import {learnResultListItem} from "./components/learnResultListItem";
 import {hypothesis} from "./components/hypothesis";
 import {discriminationTree} from "./components/discriminationTree";
 import {htmlElementPicker} from "./components/htmlElementPicker";
+import {nodeFormGroup} from "./components/forms/nodeFormGroup";
 import {
     actionFormCheckForNode,
     actionFormCheckForText,
@@ -150,6 +150,8 @@ import {
     actionFormSetVariableByHtml,
     actionFormSetVariableByJson,
     actionFormSetVariableByNodeAttribute,
+    actionFormSetVariableByNodeCount,
+    actionFormSetVariableByRegexGroup,
     actionFormWait
 } from "./components/forms/actions/generalActionForms";
 
@@ -250,7 +252,6 @@ angular
     .component('statisticsView', statisticsView)
     .component('symbolsActionsView', symbolsActionsView)
     .component('symbolsView', symbolsView)
-    .component('symbolsHistoryView', symbolsHistoryView)
     .component('symbolsImportView', symbolsImportView)
     .component('symbolsTestView', symbolsTestView)
     .component('symbolsTrashView', symbolsTrashView)
@@ -262,6 +263,7 @@ angular
     .component('userEditForm', userEditForm)
     .component('userLoginForm', userLoginForm)
     .component('userRegisterForm', userRegisterForm)
+    .component('nodeFormGroup', nodeFormGroup)
 
     // widgets components
     .component('widget', widget)
@@ -309,6 +311,8 @@ angular
     .component('actionFormSetVariableByHtml', actionFormSetVariableByHtml)
     .component('actionFormSetVariableByJson', actionFormSetVariableByJson)
     .component('actionFormSetVariableByNodeAttribute', actionFormSetVariableByNodeAttribute)
+    .component('actionFormSetVariableByNodeCount', actionFormSetVariableByNodeCount)
+    .component('actionFormSetVariableByRegexGroup', actionFormSetVariableByRegexGroup)
     .component('actionFormWait', actionFormWait)
 
     // misc components

@@ -20,7 +20,7 @@ package de.learnlib.alex.core.entities.learnlibproxies.eqproxies;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.api.EquivalenceOracle;
-import de.learnlib.oracles.SULOracle;
+import de.learnlib.api.MembershipOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
@@ -59,9 +59,11 @@ public abstract class AbstractEquivalenceOracleProxy implements Serializable {
      *
      * @param membershipOracle
      *         The MQ oracle to test against a hypothesis.
+     * @param batchSize
+     *         The size of the MQ batch.
      * @return An EquivalenceOracle from the LearnLib based on the proxy.
      */
-    public abstract EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>>
-    createEqOracle(SULOracle<String, String> membershipOracle);
+    public abstract EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
+            MembershipOracle<String, Word<String>> membershipOracle, int batchSize);
 
 }

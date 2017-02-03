@@ -93,15 +93,15 @@ describe('SymbolResource', () => {
         expect(promise.then).toBeDefined();
     });
 
-    it('should get a list of symbols by given id revision pairs', () => {
-        const pairs = ENTITIES.symbols.map(s => new AlphabetSymbol(s).getIdRevisionPair());
-        const concatenatedPairs = pairs.map(p => p.id + ':' + p.revision).join(',');
+    it('should get a list of symbols by given ids', () => {
+        const ids = ENTITIES.symbols.map(s => new AlphabetSymbol(s).id());
+        const concatenatedIds = ids.map(p => p.id).join(',');
         const projectId = ENTITIES.symbols[0].project;
-        const uri = `rest/projects/${projectId}/symbols/batch/${concatenatedPairs}`;
+        const uri = `rest/projects/${projectId}/symbols/batch/${concatenatedIds}`;
 
         spyOn($http, 'get').and.callThrough();
         $httpBackend.whenGET(uri).respond(200, ENTITIES.symbols);
-        const promise = SymbolResource.getManyByIdRevisionPairs(projectId, pairs);
+        const promise = SymbolResource.getManyByIds(projectId, ids);
         $httpBackend.flush();
 
         expect($http.get).toHaveBeenCalledWith(uri);
@@ -110,21 +110,6 @@ describe('SymbolResource', () => {
                 expect(s instanceof AlphabetSymbol).toBe(true)
             });
         })
-    });
-
-    it('should get all revisions of a symbol', () => {
-        const symbol = ENTITIES.symbols[0];
-        const uri = `rest/projects/${symbol.project}/symbols/${symbol.id}/complete`;
-        spyOn($http, 'get').and.callThrough();
-
-        $httpBackend.whenGET(uri).respond(200, ENTITIES.symbols);
-        const promise = SymbolResource.getRevisions(symbol.project, symbol.id);
-        $httpBackend.flush();
-
-        expect($http.get).toHaveBeenCalledWith(uri);
-        promise.then((symbols) => {
-            symbols.forEach(s => expect(s instanceof AlphabetSymbol).toBe(true));
-        });
     });
 
     it('should update a single symbol', () => {

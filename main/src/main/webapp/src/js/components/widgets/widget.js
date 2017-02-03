@@ -21,18 +21,6 @@
  * 'title' is the text to display in the header of the panel.
  */
 class Widget {
-
-    /**
-     * Constructor.
-     */
-    constructor() {
-
-        /**
-         * The title of the widget.
-         * @type {string}
-         */
-        this.title = '&nbsp;';
-    }
 }
 
 export const widget = {
@@ -44,7 +32,7 @@ export const widget = {
     transclude: true,
     template: `
       <div class="panel panel-default">
-          <div class="panel-heading">
+          <div class="panel-heading" ng-if="vm.title">
             <strong class="text-muted" ng-bind="vm.title"></strong>
           </div>
           <div class="panel-body" ng-transclude></div>

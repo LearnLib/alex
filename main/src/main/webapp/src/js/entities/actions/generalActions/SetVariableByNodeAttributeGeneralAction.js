@@ -38,9 +38,9 @@ export class SetVariableByNodeAttributeGeneralAction extends Action {
 
         /**
          * The selector of the node.
-         * @type {*|string}
+         * @type {any}
          */
-        this.node = obj.node || '';
+        this.node = obj.node || {selector: '', type: 'CSS'};
 
         /**
          * The attribute of the element.
@@ -55,6 +55,7 @@ export class SetVariableByNodeAttributeGeneralAction extends Action {
      * @returns {string}
      */
     toString() {
-        return `Set variable "${this.name}" to the value of the attribute "${this.attribute}" of the element "${this.node}"`;
+        return `Set variable "${this.name}" to the value of the attribute "${this.attribute}" of the element 
+                "${this.node.selector}"`;
     }
 }

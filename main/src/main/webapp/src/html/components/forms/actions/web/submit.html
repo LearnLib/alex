@@ -5,10 +5,4 @@
 </p>
 <hr>
 
-<div class="form-group">
-    <label class="control-label">CSS selector</label>
-    <input class="form-control" type="text" placeholder="CSS selector" ng-model="vm.action.node">
-</div>
-<a class="btn btn-default btn-sm" html-element-picker-handle model="vm.action.node">
-    <i class="fa fa-magic fa-fw"></i>&nbsp; Element Picker
-</a>
+<node-form-group node="vm.action.node"></node-form-group>

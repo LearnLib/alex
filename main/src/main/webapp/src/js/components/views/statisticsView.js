@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {chartMode} from "../../constants";
-
 /**
  * The controller for the statistics page.
  */
@@ -59,53 +57,18 @@ class StatisticsView {
         this.LearnResultResource.getAll(this.project.id)
             .then(results => {
                 this.results = results;
-            });
+            })
+            .catch(err => console.log(err));
     }
 
     /**
-     * Gathers the testNos of selected results and redirects to the compare view.
+     * Redirect to the statistics page for the selected results.
+     *
+     * @param {LearnResult|LearnResult[]} results - The result[s] to shows statistics of.
      */
-    createChartSelectedFinalResults() {
-        if (this.selectedResults.length > 0) {
-            const testNos = this.selectedResults.map(r => r.testNo).join(',');
-            this.$state.go('statisticsCompare', {
-                testNos: testNos,
-                mode: chartMode.CUMULATED
-            });
-        }
-    }
-
-    /**
-     * Gathers the testNos of selected results and redirects to the compare view.
-     */
-    createChartSelectedCompleteResults() {
-        if (this.selectedResults.length > 0) {
-            const testNos = this.selectedResults.map(r => r.testNo).join(',');
-            this.$state.go('statisticsCompare', {
-                testNos: testNos,
-                mode: chartMode.COMPLETE
-            });
-        }
-    }
-
-    /**
-     * Redirects to the compare view.
-     */
-    createChartCompleteResult(result) {
-        this.$state.go('statisticsCompare', {
-            testNos: result.testNo,
-            mode: chartMode.COMPLETE
-        });
-    }
-
-    /**
-     * Redirects to the compare view.
-     */
-    createChartFinalResult(result) {
-        this.$state.go('statisticsCompare', {
-            testNos: result.testNo,
-            mode: chartMode.CUMULATED
-        });
+    showStatistics(results) {
+        const testNos = results.length ? this.selectedResults.map(r => r.testNo).join(',') : results.testNo;
+        this.$state.go('statisticsCompare', {testNos});
     }
 
     /**

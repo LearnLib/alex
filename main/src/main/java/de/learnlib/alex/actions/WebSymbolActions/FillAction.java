@@ -16,11 +16,10 @@
 
 package de.learnlib.alex.actions.WebSymbolActions;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.ExecuteResult;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
-import de.learnlib.alex.utils.CSSUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -29,9 +28,10 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Action to enter a text into a specific element.
@@ -49,15 +49,13 @@ public class FillAction extends WebSymbolAction {
 
     /**
      * The node to look for.
-     * @requiredField
      */
-    @NotBlank
-    @Column(columnDefinition = "CLOB")
-    protected String node;
+    @NotNull
+    @Embedded
+    protected WebElementLocator node;
 
     /**
      * The Value to insert.
-     * @requiredField
      */
     @NotBlank
     protected String value;
@@ -67,19 +65,8 @@ public class FillAction extends WebSymbolAction {
      *
      * @return The node to look for.
      */
-    public String getNode() {
+    public WebElementLocator getNode() {
         return node;
-    }
-
-    /**
-     * Get the node to look for.
-     * All variables and counters will be replaced with their values.
-     *
-     * @return The node to look for.
-     */
-    @JsonIgnore
-    public String getNodeWithVariableValues() {
-        return insertVariableValues(node);
     }
 
     /**
@@ -88,7 +75,7 @@ public class FillAction extends WebSymbolAction {
      * @param node
      *         The new node to check for.
      */
-    public void setNode(String node) {
+    public void setNode(WebElementLocator node) {
         this.node = node;
     }
 
@@ -99,17 +86,6 @@ public class FillAction extends WebSymbolAction {
      */
     public String getValue() {
         return value;
-    }
-
-    /**
-     * Get the value used to fill the element.
-     * All variables and counters will be replaced with their values.
-     *
-     * @return The value.
-     */
-    @JsonIgnore
-    public String getValueWithVariableValues() {
-        return insertVariableValues(value);
     }
 
     /**
@@ -124,10 +100,10 @@ public class FillAction extends WebSymbolAction {
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
-        String nodeWithVariables = getNodeWithVariableValues();
-        String valueWithVariables = getValueWithVariableValues();
+        node.setSelector(insertVariableValues(node.getSelector()));
+        String valueWithVariables = insertVariableValues(value);
         try {
-            WebElement element = connector.getElement(CSSUtils.escapeSelector(nodeWithVariables));
+            WebElement element = connector.getElement(node);
             element.clear();
             element.sendKeys(valueWithVariables);
 
@@ -137,7 +113,7 @@ public class FillAction extends WebSymbolAction {
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not find the element '{}' to fill it with '{}' "
                                             + "(ignoreFailure: {}, negated: {}).",
-                        nodeWithVariables, valueWithVariables, ignoreFailure, negated, e);
+                        node, valueWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

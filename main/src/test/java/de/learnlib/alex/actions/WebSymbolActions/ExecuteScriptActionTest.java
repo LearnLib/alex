@@ -18,6 +18,7 @@ package de.learnlib.alex.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.Project;
+import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.entities.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,7 +66,7 @@ public class ExecuteScriptActionTest {
         ObjectMapper mapper = new ObjectMapper();
 
         File file = new File(getClass().getResource("/actions/websymbolactions/ExecuteScriptTestData.json").toURI());
-        WebSymbolAction obj = mapper.readValue(file, WebSymbolAction.class);
+        SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
         assertTrue(obj instanceof ExecuteScriptAction);
         ExecuteScriptAction objAsAction = (ExecuteScriptAction) obj;

@@ -31,7 +31,7 @@ export class EqOracleService {
     create(obj) {
         switch (obj.type) {
             case eqOracleType.RANDOM:
-                return new RandomEqOracle(obj.minLength, obj.maxLength, obj.maxNoOfTests);
+                return new RandomEqOracle(obj.minLength, obj.maxLength, obj.maxNoOfTests, obj.seed);
             case eqOracleType.COMPLETE:
                 return new CompleteEqOracle(obj.minDepth, obj.maxDepth);
             case eqOracleType.SAMPLE:

@@ -28,6 +28,7 @@ public class LearnerThreadFactory {
      *         The newly created LearnResult with the configuration.
      * @param contextHandler
      *         The Connectors to use.
+     *
      * @return A brand new learn thread. You have to start it by calling the .run() method on it.
      */
     public LearnerThread createThread(LearnerResult learnerResult, ConnectorContextHandler contextHandler) {
@@ -41,6 +42,7 @@ public class LearnerThreadFactory {
      *         The previous thread which provides the actual algorithm and other properties.
      * @param learnerResult
      *         The learner result with the new configuration in the current last step.
+     *
      * @return The new LearnerThread. You have to start it by calling the .run() method on it.
      */
     public LearnerThread createThread(LearnerThread previousThread, LearnerResult learnerResult) {
@@ -48,7 +50,9 @@ public class LearnerThreadFactory {
         Symbol[] symbols = symbolsList.toArray(new Symbol[symbolsList.size()]);
         LearningAlgorithm.MealyLearner<String, String> learner = previousThread.getLearner();
 
-        return new LearnerThread(learnerResultDAO, learnerResult, previousThread.getCachedSUL(), learner, symbols);
+        return new LearnerThread(learnerResultDAO, learnerResult, previousThread.getMappedSUL(),
+                                 previousThread.getMqOracle(), previousThread.getMaxConcurrentQueries(), learner,
+                                 symbols);
     }
 
 }

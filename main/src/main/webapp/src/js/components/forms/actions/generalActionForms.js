@@ -98,6 +98,22 @@ export const actionFormSetVariableByNodeAttribute = {
     controllerAs: 'vm'
 };
 
+export const actionFormSetVariableByNodeCount = {
+    templateUrl: 'html/components/forms/actions/general/set-variable-by-node-count.html',
+    bindings: {
+        action: '='
+    },
+    controllerAs: 'vm'
+};
+
+export const actionFormSetVariableByRegexGroup = {
+    templateUrl: 'html/components/forms/actions/general/set-variable-by-regex-group.html',
+    bindings: {
+        action: '='
+    },
+    controllerAs: 'vm'
+};
+
 export const actionFormWait = {
     templateUrl: 'html/components/forms/actions/general/wait.html',
     bindings: {

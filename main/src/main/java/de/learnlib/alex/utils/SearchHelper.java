@@ -72,7 +72,7 @@ public final class SearchHelper {
     public static boolean searchWithRegex(String regex, String text) {
         Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
         Matcher matcher = pattern.matcher(text);
-        return matcher.matches();
+        return matcher.find();
     }
 
     /**
@@ -110,7 +110,7 @@ public final class SearchHelper {
             switch (text.charAt(variableStartPos + 2)) {
                 case '#': // counter
                     variableValue = String.valueOf(connector.getConnector(CounterStoreConnector.class)
-                            .get(userId, projectId, variableName));
+                            .get(variableName));
                     result.append(variableValue);
                     break;
                 case '$': // variable:

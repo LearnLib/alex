@@ -11,12 +11,37 @@ export class ResultListModalController {
      * @param modalData
      * @param $uibModalInstance
      * @param {EventBus} EventBus
+     * @param {ProjectResource} ProjectResource
+     * @param {LearnResultResource} LearnResultResource
+     * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor(modalData, $uibModalInstance, EventBus) {
+    constructor(modalData, $uibModalInstance, EventBus, ProjectResource, LearnResultResource, ToastService) {
         this.results = modalData.results;
         this.$uibModalInstance = $uibModalInstance;
         this.EventBus = EventBus;
+        this.LearnResultResource = LearnResultResource;
+        this.projects = [];
+        this.ToastService = ToastService;
+
+        ProjectResource.getAll()
+            .then(projects => this.projects = projects)
+            .catch(err => console.log(err));
+    }
+
+    /** Switches the view. */
+    switchProject() {
+        this.results = null;
+    }
+
+    /**
+     * Selects a project of which the learn results should be displayed.
+     * @param {Project} project
+     */
+    selectProject(project) {
+        this.LearnResultResource.getAll(project.id)
+            .then(results => this.results = results)
+            .catch(err => console.log(err));
     }
 
     /**
@@ -26,6 +51,21 @@ export class ResultListModalController {
     selectResult(result) {
         this.EventBus.emit(events.RESULT_SELECTED, {result: result});
         this.close();
+    }
+
+    /**
+     * Loads a hypothesis from a json file.
+     * @param {string} hypothesis - The hypothesis as string
+     */
+    loadResultFromFile(hypothesis) {
+        try {
+            this.EventBus.emit(events.RESULT_SELECTED, {result: {
+                steps: [{hypothesis: JSON.parse(hypothesis)}]
+            }});
+            this.close();
+        } catch(e) {
+            this.ToastService.danger('Could not parse the file.')
+        }
     }
 
     /**
@@ -46,27 +86,7 @@ export function resultListModalHandle($uibModal) {
         link(scope, el) {
             el.on('click', () => {
                 $uibModal.open({
-                    template: `
-                        <div class="modal-header">
-                            <a class="btn btn-default btn-icon pull-right" ng-click="vm.close()">
-                                <i class="fa fa-close fa-fw"></i>
-                            </a>
-                            <h4><strong>Select a result</strong></h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="list-group">
-                                <a class="list-group-item" ng-repeat="result in vm.results | orderBy:'-testNo':false" ng-click="vm.selectResult(result)">
-                                    <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
-                                    <strong>Test No <span ng-bind="result.testNo"></span></strong>,
-                                    [<span ng-bind="(result.algorithm|formatAlgorithm)"></span>]
-                                    <br>
-                                    <p class="text-muted" style="margin-bottom: 0">
-                                        Started: <span ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
-                                    </p>
-                                </a>
-                             </div>
-                        </div>
-                    `,
+                    templateUrl: 'html/directives/modals/result-list-modal.html',
                     controller: ResultListModalController,
                     controllerAs: 'vm',
                     resolve: {

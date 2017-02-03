@@ -19,6 +19,7 @@ package de.learnlib.alex.actions.StoreSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
+import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
@@ -49,11 +50,17 @@ public class SetVariableByHTMLElementActionTest {
 
     private SetVariableByHTMLElementAction setAction;
 
+    private WebElementLocator node;
+
     @Before
     public void setUp() {
+        node = new WebElementLocator();
+        node.setSelector(NODE_NAME);
+        node.setType(WebElementLocator.Type.CSS);
+
         setAction = new SetVariableByHTMLElementAction();
         setAction.setName(VARIABLE);
-        setAction.setValue(NODE_NAME);
+        setAction.setNode(node);
     }
 
     @Test
@@ -63,7 +70,7 @@ public class SetVariableByHTMLElementActionTest {
         SetVariableByHTMLElementAction declareAction2 = mapper.readValue(json, SetVariableByHTMLElementAction.class);
 
         assertEquals(setAction.getName(), declareAction2.getName());
-        assertEquals(setAction.getValue(), declareAction2.getValue());
+        assertEquals(setAction.getNode(), declareAction2.getNode());
     }
 
     @Test
@@ -77,7 +84,7 @@ public class SetVariableByHTMLElementActionTest {
         assertTrue(obj instanceof SetVariableByHTMLElementAction);
         SetVariableByHTMLElementAction objAsAction = (SetVariableByHTMLElementAction) obj;
         assertEquals(VARIABLE, objAsAction.getName());
-        assertEquals(NODE_NAME, objAsAction.getValue());
+        assertEquals(node, objAsAction.getNode());
     }
 
     @Test
@@ -89,7 +96,7 @@ public class SetVariableByHTMLElementActionTest {
         WebElement element = mock(WebElement.class);
         given(element.getText()).willReturn(NODE_VALUE);
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
-        given(webSiteConnector.getElement(NODE_NAME)).willReturn(element);
+        given(webSiteConnector.getElement(node)).willReturn(element);
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
 
         ExecuteResult result = setAction.execute(connector);
@@ -105,7 +112,7 @@ public class SetVariableByHTMLElementActionTest {
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
 
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
-        given(webSiteConnector.getElement(NODE_NAME)).willThrow(NoSuchElementException.class);
+        given(webSiteConnector.getElement(node)).willThrow(NoSuchElementException.class);
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
 
         ExecuteResult result = setAction.execute(connector);

@@ -17,8 +17,8 @@ describe('IncrementCounterGeneralAction', () => {
             negated: false,
             ignoreFailure: false,
             disabled: false,
-
-            name: ''
+            name: '',
+            incrementBy: 1,
         };
         const action = new IncrementCounterGeneralAction({});
         expect(angular.toJson(action)).toEqual(angular.toJson(expectedAction));

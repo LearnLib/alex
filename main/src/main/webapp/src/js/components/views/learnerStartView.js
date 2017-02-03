@@ -75,13 +75,19 @@ class LearnerStartView {
          * Flag for showing or hiding the sidebar.
          * @type {boolean}
          */
-        this.showSidebar = false;
+        this.showSidebar = true;
 
         /**
          * The amount of executed MQs in the active learn process.
          * @type {number}
          */
         this.mqsUsed = null;
+
+        /**
+         * The current step number.
+         * @type {number}
+         */
+        this.stepNo = 1;
 
         /**
          * The time it took to learn.
@@ -107,7 +113,15 @@ class LearnerStartView {
         this.interval = this.$interval(() => {
             this.LearnerResource.isActive()
                 .then(data => {
-                    if (data.statistics) this.mqsUsed = data.statistics.mqsUsed;
+                    if (data.active && data.stepNo > this.stepNo) {
+                        this.stepNo = data.stepNo;
+                        this.LearnResultResource.get(this.project.id, data.testNo)
+                            .then(result => {
+                                result.steps.pop();
+                                this.result = result;
+                            })
+                            .catch(err => console.log(err));
+                    }
 
                     if (!data.active) {
                         this.LearnerResource.getStatus().then(result => {
@@ -137,7 +151,8 @@ class LearnerStartView {
                         this.mqsUsed = data.statistics.mqsUsed;
                         this.duration = Date.now() - Date.parse(data.statistics.startDate);
                     }
-                });
+                })
+                .catch(err => console.log(err));
         }, this.intervalTime);
     }
 

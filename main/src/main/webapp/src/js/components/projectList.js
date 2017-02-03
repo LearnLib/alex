@@ -118,7 +118,6 @@ class ProjectList {
             delete symbol.project;
             delete symbol.group;
             delete symbol.id;
-            delete symbol.revision;
             delete symbol.hidden;
 
             symbol.actions.forEach(action => {

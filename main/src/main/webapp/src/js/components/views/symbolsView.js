@@ -62,9 +62,11 @@ class SymbolsView {
         this.groups = [];
 
         // fetch all symbol groups and include all symbols
-        SymbolGroupResource.getAll(this.project.id, true).then(groups => {
-            this.groups = groups;
-        });
+        SymbolGroupResource.getAll(this.project.id, true)
+            .then(groups => {
+                this.groups = groups;
+            })
+            .catch(err => console.log(err));
 
         // listen on group create event
         EventBus.on(events.GROUP_CREATED, (evt, data) => {
@@ -160,7 +162,6 @@ class SymbolsView {
                 group.symbols[i].name = symbol.name;
                 group.symbols[i].abbreviation = symbol.abbreviation;
                 group.symbols[i].group = symbol.group;
-                group.symbols[i].revision = symbol.revision;
             }
         });
     }
@@ -235,7 +236,7 @@ class SymbolsView {
     }
 
     /**
-     * Deletes all properties that are not needed for downloading symbols which are the id, revision, project, group
+     * Deletes all properties that are not needed for downloading symbols which are the id, project, group
      * and hidden properties. They are removed so that they can later be uploaded and created like new symbols.
      */
     exportSelectedSymbols() {
@@ -251,7 +252,6 @@ class SymbolsView {
             symbols.forEach(symbol => {
                 symbol.actions.forEach(action => {
                     if (action.type === 'executeSymbol') {
-                        action.symbolToExecute.revision = 1;
                         symbols.forEach((s, i) => {
                             if (s.id === action.symbolToExecute.id) {
                                 action.symbolToExecute.id = i + 1;

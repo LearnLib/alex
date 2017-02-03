@@ -91,8 +91,8 @@ export class LearnerResource {
      * Verifies a possible counterexample.
      *
      * @param {number} projectId - The project id.
-     * @param {{id: number, revision: number}} resetSymbol - The id/revision pair of the reset symbol.
-     * @param {{id: number, revision: number}[]} symbols - The list of id/revision pairs of symbols.
+     * @param {number} resetSymbol - The id of the reset symbol.
+     * @param {number} symbols - The list of ids of symbols.
      * @returns {*}
      */
     readOutputs(projectId, resetSymbol, symbols) {
@@ -109,6 +109,11 @@ export class LearnerResource {
      */
     testWord(projectId, readOutputConfig) {
         return this.$http.post(`rest/learner/words/${projectId}/outputs`, readOutputConfig)
+            .then(response => response.data);
+    }
+
+    compare(hypA, hypB) {
+        return this.$http.post(`rest/learner/compare`, [hypA, hypB])
             .then(response => response.data);
     }
 }

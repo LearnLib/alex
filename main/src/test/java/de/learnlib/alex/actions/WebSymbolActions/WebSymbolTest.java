@@ -104,7 +104,7 @@ public class WebSymbolTest {
 
         Symbol symbolFromMapper = mapper.readValue(json, Symbol.class);
         assertEquals(symbol.getProjectId(), symbolFromMapper.getProjectId());
-        assertEquals(symbol.getIdRevisionPair(), symbolFromMapper.getIdRevisionPair());
+        assertEquals(symbol.getId(), symbolFromMapper.getId());
         assertEquals(symbol.getAbbreviation(), symbolFromMapper.getAbbreviation());
         assertEquals(symbol.getName(), symbolFromMapper.getName());
         assertEquals(symbol.getGroupId(), symbolFromMapper.getGroupId());
@@ -119,7 +119,7 @@ public class WebSymbolTest {
                         + "\"value\":\"F[oO0]+\",\"regexp\":true},"
                     + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
                         + "\"duration\":" + ONE_SECOND + "}"
-                + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":null,\"revision\":null,\"user\":null}";
+                + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":null,\"user\":null}";
         symbol.setUser(null);
         symbol.setProject(null);
 
@@ -144,7 +144,7 @@ public class WebSymbolTest {
                                     + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
                                         + "\"duration\":" + ONE_SECOND + "}"
                                 + "],\"group\":2,\"hidden\":false,\"id\":null,\"name\":\"WebSymbol\",\"project\":1,"
-                                + "\"revision\":null,\"user\":42}";
+                                + "\"user\":42}";
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(symbol);
 

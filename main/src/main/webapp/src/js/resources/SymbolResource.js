@@ -56,27 +56,14 @@ export class SymbolResource {
     }
 
     /**
-     * Gets a list of symbols by a list of id/revision pairs.
+     * Gets a list of symbols by a list of ids.
      *
      * @param {number} projectId - The id of the project.
-     * @param {{id:number,revision:number}[]} idRevisionPairs - The list of id/revision pairs.
+     * @param {number[]} ids - The list of id pairs.
      * @returns {*}
      */
-    getManyByIdRevisionPairs(projectId, idRevisionPairs) {
-        const pairs = idRevisionPairs.map(pair => pair.id + ':' + pair.revision).join(',');
-        return this.$http.get(`rest/projects/${projectId}/symbols/batch/${pairs}`)
-            .then(response => response.data.map(s => new AlphabetSymbol(s)));
-    }
-
-    /**
-     * Fetch all revisions of a symbol.
-     *
-     * @param {number} projectId - The id of the project the symbol belongs to.
-     * @param {number} symbolId - The id of the symbol whose revisions should be fetched.
-     * @returns {*}
-     */
-    getRevisions(projectId, symbolId) {
-        return this.$http.get(`rest/projects/${projectId}/symbols/${symbolId}/complete`)
+    getManyByIds(projectId, ids) {
+        return this.$http.get(`rest/projects/${projectId}/symbols/batch/${ids.join(',')}`)
             .then(response => response.data.map(s => new AlphabetSymbol(s)));
     }
 
@@ -104,7 +91,7 @@ export class SymbolResource {
     }
 
     /**
-     * Move symbols to another group without creating a new revision.
+     * Move symbols to another group.
      *
      * @param {AlphabetSymbol|AlphabetSymbol[]} symbols - The symbol[s] to be moved to another group.
      * @param {SymbolGroup} group - The id of the symbol group.
@@ -117,7 +104,7 @@ export class SymbolResource {
     }
 
     /**
-     * Updates a single symbol and increments its revision number.
+     * Updates a single symbol.
      *
      * @param {AlphabetSymbol} symbol - The symbol to be updated.
      * @returns {*}

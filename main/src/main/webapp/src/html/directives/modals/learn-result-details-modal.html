@@ -29,7 +29,9 @@
         </tr>
         <tr>
             <td>Web Driver</td>
-            <td ng-bind="(vm.result.browser|formatWebBrowser)"></td>
+            <td>
+                {{vm.result.browser.driver | formatWebBrowser}} ({{vm.result.browser.width}}px x {{vm.result.browser.height}}px)
+            </td>
         </tr>
     </table>
 

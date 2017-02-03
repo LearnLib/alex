@@ -86,11 +86,10 @@ export class ActionEditModalController {
  * Can be used like this: '<button action-edit-modal-handle action="...">Click Me!</button>'
  *
  * @param $uibModal - The modal service
- * @param ActionService - ActionService
  * @returns {{restrict: string, scope: {action: string}, link: Function}}
  */
 // @ngInject
-export function actionEditModalHandle($uibModal, ActionService) {
+export function actionEditModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -107,7 +106,7 @@ export function actionEditModalHandle($uibModal, ActionService) {
 
                             // copy the id because it gets lost otherwise
                             const id = scope.action._id;
-                            const action = ActionService.create(scope.action);
+                            const action = JSON.parse(JSON.stringify(scope.action));
                             action._id = id;
 
                             return {

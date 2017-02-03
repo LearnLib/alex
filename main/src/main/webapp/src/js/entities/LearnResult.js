@@ -51,14 +51,14 @@ export class LearnResult {
         this.project = obj.project;
 
         /**
-         * The id revision pair of the reset symbol.
+         * The id of the reset symbol.
          * @type {*}
          */
         this.resetSymbol = obj.resetSymbol;
 
         /**
          * The alphabet the process has been learned with.
-         * @type {{id:number,revision:number}[]}
+         * @type {number[]}
          */
         this.sigma = obj.sigma;
 
@@ -109,6 +109,12 @@ export class LearnResult {
          * @type {string}
          */
         this.comment = obj.comment;
+
+        /**
+         * If membership queries should be cached.
+         * @type {boolean}
+         */
+        this.useMQCache = obj.useMQCache;
 
         // convert ns to ms
         LearnResult.convertNsToMs(this.statistics.duration);

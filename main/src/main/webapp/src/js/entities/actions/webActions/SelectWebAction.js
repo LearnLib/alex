@@ -32,9 +32,9 @@ export class SelectWebAction extends Action {
 
         /**
          * The CSS selector of an select element.
-         * @type {*|string}
+         * @type {any}
          */
-        this.node = obj.node || '';
+        this.node = obj.node || {selector: '', type: 'CSS'};
 
         /**
          * The value of the select input that should be selected.
@@ -55,6 +55,6 @@ export class SelectWebAction extends Action {
      * @returns {string}
      */
     toString() {
-        return 'Select value "' + this.value + '" from select input "' + this.node + '"';
+        return `Select value "${this.value}" from select input "${this.node.selector}"`;
     }
 }

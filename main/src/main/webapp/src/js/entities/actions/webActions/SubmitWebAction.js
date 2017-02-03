@@ -32,9 +32,9 @@ export class SubmitWebAction extends Action {
 
         /**
          * The CSS selector of an element.
-         * @type {*|string}
+         * @type {any}
          */
-        this.node = obj.node || '';
+        this.node = obj.node || {selector: '', type: 'CSS'};
     }
 
     /**
@@ -43,6 +43,6 @@ export class SubmitWebAction extends Action {
      * @returns {string}
      */
     toString() {
-        return `Submit form "${this.node}"`;
+        return `Submit form "${this.node.selector}"`;
     }
 }

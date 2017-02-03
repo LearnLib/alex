@@ -29,6 +29,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Increment a counter by 1.
@@ -46,32 +47,37 @@ public class IncrementCounterAction extends SymbolAction {
     @NotBlank
     private String name;
 
-    /**
-     * Get the name of the counter.
-     *
-     * @return The counter name.
-     */
+    /** The value by which the counter should be incremented. */
+    @NotNull
+    private int incrementBy;
+
+    @Override
+    public ExecuteResult execute(ConnectorManager connector) {
+        CounterStoreConnector counterConnector = connector.getConnector(CounterStoreConnector.class);
+        counterConnector.incrementBy(getUser().getId(), project.getId(), name, incrementBy);
+
+        LOGGER.info(LEARNER_MARKER, "Incremented counter '{}' by '{}' (ignoreFailure: {}, negated: {}).",
+                    name, incrementBy, ignoreFailure, negated);
+        return getSuccessOutput();
+    }
+
+    /** @return {@link #name}. */
     public String getName() {
         return name;
     }
 
-    /**
-     * Set a new counter by its name.
-     *
-     * @param name
-     *         The new name of the counter to use.
-     */
+    /** @param name {@link #name}. */
     public void setName(String name) {
         this.name = name;
     }
 
-    @Override
-    public ExecuteResult execute(ConnectorManager connector) {
-        CounterStoreConnector storeConnector = connector.getConnector(CounterStoreConnector.class);
-        storeConnector.increment(user.getId(), project.getId(), name);
+    /** @return {@link #incrementBy}. */
+    public int getIncrementBy() {
+        return incrementBy;
+    }
 
-        LOGGER.info(LEARNER_MARKER, "Incremented counter '{}' (ignoreFailure: {}, negated: {}).",
-                    name, ignoreFailure, negated);
-        return getSuccessOutput();
+    /** @param incrementBy {@link #incrementBy}. */
+    public void setIncrementBy(int incrementBy) {
+        this.incrementBy = incrementBy;
     }
 }

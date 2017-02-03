@@ -100,19 +100,11 @@ public class AlexIT {
     private void learn() throws InterruptedException {
         String url = BASE_URL + "/learner/start/" + projectId;
         String json = "{\"algorithm\":\"TTT\", \"browser\":\"htmlunitdriver\", \"eqOracle\": "
-                            + "{\"type\": \"random_word\", \"minLength\": 1, \"maxLength\": 20, \"maxNoOfTests\" : 40},"
+                            + "{\"type\": \"random_word\", \"minLength\": 1, \"maxLength\": 20, \"maxNoOfTests\" : 40, "
+                            + "\"seed\": 42},"
                         + "\"maxAmountOfStepsToLearn\": -1,"
-                        + "\"resetSymbol\": {\"id\": 1, \"revision\": 1},"
-                        + "\"symbols\":["
-                            + "{\"id\":  3, \"revision\": 1},"
-                            + "{\"id\":  4, \"revision\": 1},"
-                            + "{\"id\":  5, \"revision\": 1},"
-                            + "{\"id\":  6, \"revision\": 1},"
-                            + "{\"id\":  7, \"revision\": 1},"
-                            + "{\"id\":  8, \"revision\": 1},"
-                            + "{\"id\":  9, \"revision\": 1},"
-                            + "{\"id\": 10, \"revision\": 1}"
-                        + "]}";
+                        + "\"resetSymbol\": 1,"
+                        + "\"symbols\":[3,4,5,6,7,8,9,10]}";
         Response response = client.target(url).request().header("Authorization", token).post(Entity.json(json));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 

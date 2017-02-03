@@ -19,14 +19,6 @@ describe('AlphabetSymbol', () => {
         expect(symbol.countEnabledActions()).toBe(1);
     });
 
-    it('should get the id revision pair of the symbol', () => {
-        const expected = {
-            id: symbol.id,
-            revision: symbol.revision
-        };
-        expect(symbol.getIdRevisionPair()).toEqual(expected);
-    });
-
     it('should get the representation of the symbol that is needed to export it', () => {
         const expected = {
             name: symbol.name,

@@ -26,13 +26,11 @@ import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.ReadOutputConfig;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.User;
-import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
-import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import de.learnlib.alex.core.services.LearnAlgorithmService;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -45,7 +43,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.ThreadContext;
-import org.apache.tomcat.util.descriptor.web.ContextHandler;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -187,15 +184,10 @@ public class Learner {
 
         LearnerResult learnerResult = createLearnerResult(user, project, configuration);
 
-        WebBrowser browser = configuration.getBrowser();
-        contextHandler = contextHandlerFactory.createContext(project, browser);
+        contextHandler = contextHandlerFactory.createContext(user, project, configuration.getBrowser());
         contextHandler.setResetSymbol(learnerResult.getResetSymbol());
         LearnerThread learnThread = learnerThreadFactory.createThread(learnerResult, contextHandler);
         startThread(user, learnThread);
-
-        // get the sul here once so that the timer doesn't get '0' for .getStatisticalData.getCount() after continuing
-        // a learning process
-        //learnThread.getResetCounterSUL();
     }
 
     private LearnerResult createLearnerResult(User user, Project project, LearnerConfiguration configuration)
@@ -215,14 +207,14 @@ public class Learner {
         learnerResult.setProject(project);
 
         try {
-            Symbol resetSymbol = symbolDAO.get(user, project.getId(), configuration.getResetSymbolAsIdRevisionPair());
+            Symbol resetSymbol = symbolDAO.get(user, project.getId(), configuration.getResetSymbolAsId());
             learnerResult.setResetSymbol(resetSymbol);
         } catch (NotFoundException e) { // Extra exception to emphasize that this is the reset symbol.
             throw new NotFoundException("Could not find the reset symbol!", e);
         }
 
-        List<Symbol> symbolsAsList = symbolDAO.getAll(user, project.getId(),
-                                                      new LinkedList<>(configuration.getSymbolsAsIdRevisionPairs()));
+        List<Symbol> symbolsAsList = symbolDAO.getByIds(user, project.getId(),
+                                                        new LinkedList<>(configuration.getSymbolsAsIds()));
         Set<Symbol> symbols = new HashSet<>(symbolsAsList);
         learnerResult.setSymbols(symbols);
 
@@ -230,6 +222,7 @@ public class Learner {
         learnerResult.setAlgorithm(configuration.getAlgorithm());
         learnerResult.setAlgorithmFactory(algorithmService.getLearnAlgorithm(configuration.getAlgorithm()));
         learnerResult.setComment(configuration.getComment());
+        learnerResult.setUseMQCache(configuration.isUseMQCache());
         learnerResultDAO.create(learnerResult);
         learnerResultDAO.createStep(learnerResult, configuration);
 
@@ -477,9 +470,10 @@ public class Learner {
         LOGGER.traceEntry();
         LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
 
-        ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(project, readOutputConfig.getBrowser());
-        contextHandler.setResetSymbol(resetSymbol);
-        ConnectorManager connectors = contextHandler.createContext();
+        ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(
+                user, project, readOutputConfig.getBrowser());
+        ctxHandler.setResetSymbol(resetSymbol);
+        ConnectorManager connectors = ctxHandler.createContext();
 
         return readOutputs(symbols, connectors);
     }

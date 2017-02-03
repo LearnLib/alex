@@ -26,7 +26,6 @@ import de.learnlib.alex.core.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.security.UserPrincipal;
-import de.learnlib.alex.utils.IdRevisionPairList;
 import de.learnlib.alex.utils.IdsList;
 import de.learnlib.alex.utils.ResourceErrorHandler;
 import de.learnlib.alex.utils.ResponseHelper;
@@ -52,6 +51,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -236,7 +236,7 @@ public class SymbolResource {
 
         List<Symbol> symbols;
         try {
-            symbols = symbolDAO.getAllWithLatestRevision(user, projectId, visibilityLevel);
+            symbols = symbolDAO.getAll(user, projectId, visibilityLevel);
         } catch (NotFoundException e) {
             symbols = new LinkedList<>();
         }
@@ -246,27 +246,26 @@ public class SymbolResource {
     }
 
     /**
-     * Get Symbols by a list of id/revision pairs.
+     * Get Symbols by a list of ids.
      *
      * @param projectId       The ID of the project
-     * @param idRevisionPairs The non empty list of id revision pairs.
-     *                        Pattern: id_1:rev_1,...,id_n,rev_n
-     * @return A list of the symbols whose id:revision pairs were given
+     * @param ids The non empty list of ids.
+     * @return A list of the symbols whose ids were given
      * @throws NotFoundException If the requested Symbols or the related Projects or Groups could not be found.
      * @responseType java.util.List<de.learnlib.alex.core.entities.Symbol>
      * @successResponse 200 OK
      * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @GET
-    @Path("/batch/{idRevisionPairs}")
+    @Path("/batch/{ids}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getByIdRevisionPairs(@PathParam("project_id") Long projectId,
-                                         @PathParam("idRevisionPairs") IdRevisionPairList idRevisionPairs)
+                                         @PathParam("ids") IdsList ids)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("getByIdRevisionPairs({}, {}) for user {}.", projectId, idRevisionPairs, user);
+        LOGGER.traceEntry("getByIdRevisionPairs({}, {}) for user {}.", projectId, ids, user);
 
-        List<Symbol> symbols = symbolDAO.getAll(user, projectId, idRevisionPairs);
+        List<Symbol> symbols = symbolDAO.getByIds(user, projectId, ids);
 
         LOGGER.traceExit(symbols);
         return ResponseHelper.renderList(symbols, Status.OK);
@@ -274,7 +273,6 @@ public class SymbolResource {
 
     /**
      * Get a Symbol by its ID.
-     * This returns only the latest revision of the symbol.
      *
      * @param projectId The ID of the project.
      * @param id        The ID of the symbol.
@@ -291,61 +289,7 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {})  for user {}.", projectId, id, user);
 
-        Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, id);
-
-        LOGGER.traceExit(symbol);
-        return Response.ok(symbol).build();
-    }
-
-    /**
-     * Get a Symbol by its ID.
-     * This returns all revisions of a symbol
-     *
-     * @param projectId The ID of the project.
-     * @param id        The ID of the symbol.
-     * @return A Symbol matching the projectID & ID or a not found response.
-     * @throws NotFoundException If the requested Symbol or the related Project or Group could not be found.
-     * @responseType    java.util.List<de.learnlib.alex.core.entities.Symbol>
-     * @successResponse 200 OK
-     * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
-     */
-    @GET
-    @Path("/{id}/complete")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getComplete(@PathParam("project_id") Long projectId, @PathParam("id") Long id)
-            throws NotFoundException {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("getComplete({}, {})  for user {}.", projectId, id, user);
-
-        List<Symbol> symbols = symbolDAO.getWithAllRevisions(user, projectId, id);
-
-        LOGGER.traceExit(symbols);
-        return ResponseHelper.renderList(symbols, Status.OK);
-    }
-
-    /**
-     * Get a Symbol by its ID & revision.
-     *
-     * @param projectId The ID of the project.
-     * @param id        The ID of the symbol.
-     * @param revision  The revision of the symbol.
-     * @return A Symbol matching the projectID, ID & revision or a not found response.
-     * @throws NotFoundException If the requested Symbol or the related Project or Group could not be found.
-     * @responseType de.learnlib.alex.core.entities.Symbol
-     * @successResponse 200 OK
-     * @errorResponse   404 not found `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
-     */
-    @GET
-    @Path("/{id}:{revision}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getWithRevision(@PathParam("project_id") Long projectId,
-                                    @PathParam("id") Long id,
-                                    @PathParam("revision") long revision)
-            throws NotFoundException {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("getWithRevision({}, {}, {}) for user {}.", projectId, id, revision, user);
-
-        Symbol symbol = symbolDAO.get(user, projectId, id, revision);
+        Symbol symbol = symbolDAO.get(user, projectId, id);
 
         LOGGER.traceExit(symbol);
         return Response.ok(symbol).build();
@@ -475,7 +419,7 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolId, groupId, user);
 
-        Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, symbolId);
+        Symbol symbol = symbolDAO.get(user, projectId, symbolId);
         symbolDAO.move(symbol, groupId);
 
         LOGGER.traceExit(symbol);
@@ -501,8 +445,7 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolIds, groupId, user);
 
-        List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId,
-                                                                    symbolIds.toArray(new Long[symbolIds.size()]));
+        List<Symbol> symbols = symbolDAO.getByIds(user, projectId, SymbolVisibilityLevel.ALL, symbolIds);
         symbolDAO.move(symbols, groupId);
 
         LOGGER.traceExit(symbols);
@@ -527,10 +470,10 @@ public class SymbolResource {
         LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, id, user);
 
         try {
-            Symbol s = symbolDAO.getWithLatestRevision(user, projectId, id);
+            Symbol s = symbolDAO.get(user, projectId, id);
             if (s.getUser().equals(user)) {
-                symbolDAO.hide(user.getId(), projectId, id);
-                Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, id);
+                symbolDAO.hide(user.getId(), projectId, Collections.singletonList(id));
+                Symbol symbol = symbolDAO.get(user, projectId, id);
 
                 LOGGER.traceExit(symbol);
                 return Response.ok(symbol).build();
@@ -561,9 +504,8 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, ids, user);
 
-        Long[] idsArray = ids.toArray(new Long[ids.size()]);
-        List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId, idsArray);
-        symbolDAO.hide(user.getId(), projectId, idsArray);
+        List<Symbol> symbols = symbolDAO.getByIds(user, projectId, SymbolVisibilityLevel.ALL, ids);
+        symbolDAO.hide(user.getId(), projectId, ids);
 
         LOGGER.traceExit(symbols);
         return ResponseHelper.renderList(symbols, Status.OK);
@@ -586,8 +528,8 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("show({}, {}) for user {}.", projectId, id, user);
 
-        symbolDAO.show(user.getId(), projectId, id);
-        Symbol symbol = symbolDAO.getWithLatestRevision(user, projectId, id);
+        symbolDAO.show(user.getId(), projectId, Collections.singletonList(id));
+        Symbol symbol = symbolDAO.get(user, projectId, id);
 
         LOGGER.traceExit(symbol);
         return Response.ok(symbol).build();
@@ -611,9 +553,8 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("show({}, {}) for user {}.", projectId, ids, user);
 
-        Long[] idsArray = ids.toArray(new Long[ids.size()]);
-        symbolDAO.show(user.getId(), projectId, idsArray);
-        List<Symbol> symbols = symbolDAO.getByIdsWithLatestRevision(user, projectId, idsArray);
+        symbolDAO.show(user.getId(), projectId, ids);
+        List<Symbol> symbols = symbolDAO.getByIds(user, projectId, SymbolVisibilityLevel.ALL, ids);
 
         LOGGER.traceExit(symbols);
         return ResponseHelper.renderList(symbols, Status.OK);

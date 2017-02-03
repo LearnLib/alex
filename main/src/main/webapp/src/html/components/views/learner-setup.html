@@ -1,4 +1,4 @@
-<div id="view-learner-setup">
+<div class="view">
     <view-header title="Learn Process Setup"></view-header>
 
     <action-bar>
@@ -10,14 +10,15 @@
                     Start Learning
                 </button>
                 <button class="btn btn-primary" learn-setup-settings-modal-handle
-                        learn-configuration="vm.learnConfiguration">
+                        learn-configuration="vm.learnConfiguration"
+                        on-update="vm.setLearnConfiguration.bind(vm)">
                     <i class="fa fa-gear"></i>
                 </button>
             </div>
 
             <div class="pull-right" style="margin-right: 6px">
                 <a ui-sref="learnerStart" class="btn btn-info btn-sm" ng-if="vm.canContinueLearnProcess">
-                    Continue
+                    Resume Last Process
                 </a>
             </div>
         </div>

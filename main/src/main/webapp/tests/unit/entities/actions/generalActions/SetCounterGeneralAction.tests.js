@@ -19,7 +19,8 @@ describe('SetCounterGeneralAction', () => {
             disabled: false,
 
             name: '',
-            value: ''
+            value: '0',
+            valueType: 'NUMBER'
         };
         const action = new SetCounterGeneralAction({});
         expect(angular.toJson(action)).toEqual(angular.toJson(expectedAction));
