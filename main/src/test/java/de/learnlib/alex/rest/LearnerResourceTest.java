@@ -135,7 +135,7 @@ public class LearnerResourceTest extends JerseyTest {
         String expectedJSON = "{"
                                 + "\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":"
                                   + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},"
-                                + "\"testNo\":" + TEST_NO
+                                + "\"stepNo\":0,\"testNo\":" + TEST_NO
                               + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).start(eq(admin), eq(project), any(LearnerConfiguration.class));
@@ -222,7 +222,7 @@ public class LearnerResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":"
                                     + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},"
-                                + "\"testNo\":" + TEST_NO + "}";
+                                + "\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).resume(any(User.class), any(LearnerResumeConfiguration.class));
     }
@@ -294,7 +294,7 @@ public class LearnerResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":"
                                     + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},"
-                                + "\"testNo\":" + TEST_NO + "}";
+                                + "\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).stop(admin);
     }
@@ -321,7 +321,7 @@ public class LearnerResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":"
                                         + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},"
-                                + "\"testNo\":" + TEST_NO + "}";
+                                + "\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
     }
 

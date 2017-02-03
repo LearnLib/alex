@@ -102,7 +102,7 @@ public class SetVariableActionTest {
     @Test
     public void shouldSuccessfulSetTheVariableValueWithCounter() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
-        given(counters.get(PROJECT_URL, "counter")).willReturn(2);
+        given(counters.get("counter")).willReturn(2);
 
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         given(webSiteConnector.getBaseUrl()).willReturn(PROJECT_URL);

@@ -23,19 +23,28 @@ import net.automatalib.words.Word;
 import net.automatalib.words.WordBuilder;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
+/**
+ * Oracle that allows batched execution of membership queries to multiple suls.
+ *
+ * @param <I> Input symbol type.
+ * @param <O> Output symbol type.
+ */
 @ParametersAreNonnullByDefault
 public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
+
+    /** The sul the membership queries should be posed to. */
     private final SUL<I, O> sul;
 
+    /**
+     * Constructor.
+     *
+     * @param sul
+     *          The sul the membership queries should be posed to.
+     */
     public MultiSULOracle(SUL<I, O> sul) {
         this.sul = sul;
     }
@@ -84,4 +93,5 @@ public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
         while (!executor.isTerminated()) { // wait for all futures to finish
         }
     }
+
 }

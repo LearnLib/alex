@@ -21,7 +21,11 @@ import de.learnlib.alex.core.entities.BrowserConfig;
 import de.learnlib.alex.core.entities.WebElementLocator;
 import de.learnlib.alex.core.learner.BaseUrlManager;
 import de.learnlib.alex.utils.CSSUtils;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -34,7 +38,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class WebSiteConnector implements Connector {
 
-    private static final int MAX_RETRIES = 3;
+    /** How often it should be tried to navigate to a given URL. */
+    private static final int MAX_RETRIES = 5;
 
     /** The browser to use. */
     private BrowserConfig browser;
@@ -79,6 +84,8 @@ public class WebSiteConnector implements Connector {
      *         The path to send the request to.
      * @param credentials
      *         The credential to use. Can be null.
+     * @throws Exception
+     *         If the application could not connect to the web driver.
      */
     public void get(String path, Credentials credentials) throws Exception {
         String url = getAbsoluteUrl(path, credentials);

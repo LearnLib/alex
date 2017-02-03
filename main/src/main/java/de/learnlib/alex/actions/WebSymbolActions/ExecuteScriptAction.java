@@ -26,7 +26,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.aspectj.weaver.ast.Var;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
@@ -93,7 +92,8 @@ public class ExecuteScriptAction extends SymbolAction {
             if (name != null) {
                 if (returnValue == null) {
                     variableStoreConnector.set(name, "null");
-                } else if (returnValue instanceof Double || returnValue instanceof Long || returnValue instanceof Boolean) {
+                } else if (returnValue instanceof Double || returnValue instanceof Long
+                           || returnValue instanceof Boolean) {
                     variableStoreConnector.set(name, String.valueOf(returnValue));
                 } else if (returnValue instanceof WebElement || returnValue instanceof List) {
                     LOGGER.info(LEARNER_MARKER, "WebElements and lists as return values are not supported.");

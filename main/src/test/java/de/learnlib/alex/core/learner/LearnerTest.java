@@ -93,7 +93,7 @@ public class LearnerTest {
         BrowserConfig browserConfig = new BrowserConfig();
 
         given(learnerConfiguration.getBrowser()).willReturn(browserConfig);
-        given(contextHandlerFactory.createContext(project, browserConfig))
+        given(contextHandlerFactory.createContext(user, project, browserConfig))
                 .willReturn(contextHandler);
         given(learnerThreadFactory.createThread(any(LearnerResult.class), any(ConnectorContextHandler.class)))
                 .willReturn(learnerThread);

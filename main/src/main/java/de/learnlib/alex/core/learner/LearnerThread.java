@@ -25,6 +25,7 @@ import de.learnlib.alex.core.entities.Statistics;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.DefaultQueryProxy;
+import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.exceptions.LearnerException;
@@ -49,6 +50,7 @@ import org.apache.logging.log4j.ThreadContext;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -112,6 +114,7 @@ public class LearnerThread extends Thread {
     /** The number of mqs executed in parallel. */
     private int maxConcurrentQueries;
 
+    /** The equivalence oracle to use. */
     private EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
 
     /**
@@ -165,6 +168,10 @@ public class LearnerThread extends Thread {
      *         Don't create a new learner, instead use this one.
      * @param symbols
      *         The Symbols to use.
+     * @param maxConcurrentQueries
+     *          The amount of queries to execute in parallel.
+     * @param mappedSUL
+     *          The mapped SUL.
      */
     public LearnerThread(LearnerResultDAO learnerResultDAO, LearnerResult result, SUL<String, String> mappedSUL,
                          MembershipOracle<String, Word<String>> existingSUL, int maxConcurrentQueries,
@@ -349,11 +356,17 @@ public class LearnerThread extends Thread {
         // Get the counter example from the previous step and use it to refine the hypothesis (if possible).
         DefaultQueryProxy counterExample = previousStep.getCounterExample();
         if (counterExample != null) {
-            DefaultQuery<String, Word<String>> counterExampleDefaultProxy = counterExample.createDefaultProxy();
+            DefaultQuery<String, Word<String>> counterexample = counterExample.createDefaultProxy();
+
+            // for long randomly generated words, check if there is a shorter prefix that is also a counterexample
+            if (previousStep.getEqOracle() instanceof MealyRandomWordsEQOracleProxy) {
+                counterexample = findShortestPrefix(counterexample);
+            }
+
             try {
-                learner.refineHypothesis(counterExampleDefaultProxy);
+                learner.refineHypothesis(counterexample);
             } catch (NullPointerException e) {
-                throw new LearnerException("Presumably the detected counterexample '" + counterExampleDefaultProxy
+                throw new LearnerException("Presumably the detected counterexample '" + counterexample
                                                    + "' was not a real counterexample!");
             } finally {
                 storeLearnerMetaData();
@@ -365,6 +378,32 @@ public class LearnerThread extends Thread {
         storeCounterExampleSearchMetaData();
 
         LOGGER.traceExit();
+    }
+
+    /**
+     * Given a counterexample, est if there is a shorter prefix that is also a counterexample.
+     *
+     * @param ce The counterexample.
+     * @return The prefix.
+     */
+    private DefaultQuery<String, Word<String>> findShortestPrefix(DefaultQuery<String, Word<String>> ce) {
+        Word<String> input = ce.getInput();
+        Word<String> output = ce.getOutput();
+
+        int i;
+        for (i = 0; i <= input.size(); i++) {
+            Word<String> prefix = input.subWord(0, i);
+            Word<String> sulOutput = output.subWord(0, i);
+            Word<String> hypOutput = learner.getHypothesisModel().computeOutput(prefix);
+            if (!Objects.equals(sulOutput, hypOutput)) {
+                break;
+            }
+        }
+
+        DefaultQuery<String, Word<String>> prefix = new DefaultQuery<>(input.subWord(0, i));
+        prefix.answer(output.subWord(0, i));
+
+        return prefix;
     }
 
     private void storeLearnerMetaData() throws NotFoundException {

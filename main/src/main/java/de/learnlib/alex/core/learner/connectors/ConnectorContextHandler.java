@@ -32,12 +32,6 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
     /** The pool with the managers for the sul. */
     private BlockingQueue<ConnectorManager> pool;
 
-    /** The number of mqs executed in parallel. */
-    private int maxConcurrentQueries;
-
-    /** The number of active contexts. */
-    private int numberOfActiveContexts = 0;
-
     /** The symbol used to reset the SUL. */
     private Symbol resetSymbol;
 
@@ -46,7 +40,6 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
      */
     public ConnectorContextHandler() {
         this.pool = new LinkedBlockingQueue<>();
-        this.maxConcurrentQueries = 0;
     }
 
     /**
@@ -56,7 +49,6 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
      *         The new connector manager.
      */
     public void addConnectorManager(ConnectorManager connectorManager) {
-        maxConcurrentQueries++;
         try {
             pool.put(connectorManager);
         } catch (InterruptedException e) {
@@ -80,13 +72,14 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
         ConnectorManager connectorManager;
         try {
             connectorManager = pool.take();
-            numberOfActiveContexts++;
         } catch (InterruptedException e) {
             throw new LearnerException("An error occurred while creating a new context.", e);
         }
 
         try {
-            for (Connector connector : connectorManager) connector.reset();
+            for (Connector connector : connectorManager) {
+                connector.reset();
+            }
         } catch (Exception e) {
             throw new LearnerException("An error occurred while resetting a connector.", e);
         }
@@ -110,10 +103,6 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
     public void disposeContext(ConnectorManager connectorManager) {
         try {
             pool.put(connectorManager);
-            numberOfActiveContexts--;
-            if (numberOfActiveContexts == 0) {
-                connectorManager.getConnector(CounterStoreConnector.class).saveCounters();
-            }
             connectorManager.dispose();
         } catch (InterruptedException e) {
             throw new LearnerException(e.getMessage(), e);
@@ -122,6 +111,6 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
 
     /** @return The number of mqs executed in parallel. */
     public int getMaxConcurrentQueries() {
-        return maxConcurrentQueries;
+        return pool.size();
     }
 }

@@ -23,7 +23,6 @@ import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
-import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,7 +46,6 @@ public class SetCounterActionTest {
     private static final Long PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
     private static final String TEST_VALUE = "42";
-    private static final String PROJECT_URL = "http://localhost:8000";
 
     @Mock
     private User user;
@@ -97,16 +95,12 @@ public class SetCounterActionTest {
     public void shouldSuccessfulSetTheCounterValue() {
         CounterStoreConnector counters = mock(CounterStoreConnector.class);
 
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
-        given(webSiteConnector.getBaseUrl()).willReturn(PROJECT_URL);
-
         ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counters);
-        given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
 
         ExecuteResult result = setAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).set(USER_ID, PROJECT_ID, PROJECT_URL, TEST_NAME, Integer.parseInt(TEST_VALUE));
+        verify(counters).set(USER_ID, PROJECT_ID, TEST_NAME, Integer.parseInt(TEST_VALUE));
     }
 }

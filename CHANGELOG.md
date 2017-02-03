@@ -1,5 +1,13 @@
 # ALEX v1.2.1
 
+## Breaking Changes
+
+* Actions that deal with web elements have to be updated:
+
+    ```
+        node: {selector: '...', type: 'CSS|XPATH'}
+    ```
+
 ## Features
 
 * New actions:

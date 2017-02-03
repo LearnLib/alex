@@ -23,10 +23,7 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,32 +31,40 @@ import java.util.Map;
 /**
  * Connector to store and manage counters.
  */
-@Service
 public class CounterStoreConnector implements Connector {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     /**
-     * The DAO to persist the counters to and fetch the counters from.
+     * The map that keeps track of all counters used by different urls.
+     * url -> (counterName -> counterValue).
      */
+    private Map<String, Integer> countersMap;
+
+    /** An instance of the counterDAO. */
     private CounterDAO counterDAO;
 
-    /**
-     * The map that keeps track of all counters used by different urls.
-     * url -> (counterName -> counter).
-     */
-    private Map<String, Map<String, Counter>> countersMap;
+    /** The current project. */
+    private Project project;
+
+    /** The user that executes the experiment. */
+    private User user;
 
     /**
      * Constructor.
-     *
      * @param counterDAO
-     *         An instance of a counter dao.
+     *          An instance of the counterDAO.
+     * @param project
+     *          The current project.
+     * @param counterList
+     *          The list of counters in the database to initialize the map with.
      */
-    @Inject
-    public CounterStoreConnector(CounterDAO counterDAO) {
+    public CounterStoreConnector(CounterDAO counterDAO, User user, Project project, List<Counter> counterList) {
         this.counterDAO = counterDAO;
+        this.project = project;
+        this.user = user;
         this.countersMap = new HashMap<>();
+        counterList.forEach(counter -> this.countersMap.put(counter.getName(), counter.getValue()));
     }
 
     @Override
@@ -69,27 +74,39 @@ public class CounterStoreConnector implements Connector {
 
     @Override
     public void dispose() {
-        // nothing to do here
+
+        // get all counters from the db
+        Map<String, Counter> counters = new HashMap<>();
+        try {
+            counterDAO.getAll(user.getId(), project.getId()).forEach(c -> counters.put(c.getName(), c));
+        } catch (NotFoundException e) {
+        }
+
+        // create counters that have not yet been created
+        // update counters that have been created
+        for (String name: countersMap.keySet()) {
+            try {
+                boolean counterExists = counters.containsKey(name);
+                if (counterExists) {
+                    counters.get(name).setValue(Math.max(counters.get(name).getValue(), countersMap.get(name)));
+                    counterDAO.update(counters.get(name));
+                } else {
+                    Counter counter = createCounter(user.getId(), project.getId(), name, countersMap.get(name));
+                    counterDAO.create(counter);
+                }
+            } catch (NotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    /**
-     * Register a URL of a project. For every URL a new entry in {@link #countersMap} is created with the
-     * counters that are in the db to keep track of the counters for each URL.
-     *
-     * @param url
-     *         The URL to register.
-     * @param project
-     *         The project that belongs to the URL.
-     */
-    public void registerUrl(String url, Project project) {
-        try {
-            List<Counter> counters = counterDAO.getAll(project.getUser().getId(), project.getId());
-            Map<String, Counter> map = new HashMap<>();
-            counters.forEach(counter -> map.put(counter.getName(), counter));
-            this.countersMap.put(url, map);
-        } catch (NotFoundException e) {
-            this.countersMap.put(url, new HashMap<>());
-        }
+    private Counter createCounter(Long userId, Long projectId, String name, Integer value) {
+        Counter counter = new Counter();
+        counter.setUser(new User(userId));
+        counter.setProject(new Project(projectId));
+        counter.setName(name);
+        counter.setValue(value);
+        return counter;
     }
 
     /**
@@ -100,21 +117,13 @@ public class CounterStoreConnector implements Connector {
      *         The id of the user.
      * @param projectId
      *         The id of the project.
-     * @param url
-     *         The url of the sul.
      * @param name
      *         The name of the counter.
      * @param value
      *         The value of the counter.
      */
-    public void set(Long userId, Long projectId, String url, String name, Integer value) {
-        Counter counter = countersMap.get(url).get(name);
-        if (counter == null) {
-            counter = createCounter(userId, projectId, name, value);
-            countersMap.get(url).put(name, counter);
-        } else {
-            countersMap.get(url).get(name).setValue(value);
-        }
+    public void set(Long userId, Long projectId, String name, Integer value) {
+        countersMap.put(name, value);
 
         LOGGER.debug("Set the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId, userId, value);
     }
@@ -128,34 +137,27 @@ public class CounterStoreConnector implements Connector {
      *         The id of the user.
      * @param projectId
      *         The id of the project.
-     * @param url
-     *         The url of the sul.
      * @param name
      *         The name of the counter to increment.
      */
-    public void increment(Long userId, Long projectId, String url, String name) {
-        incrementBy(userId, projectId, url, name, 1);
+    public void increment(Long userId, Long projectId, String name) {
+        incrementBy(userId, projectId, name, 1);
     }
 
-    public void incrementBy(Long userId, Long projectId, String url, String name, int incrementBy) {
-        Counter counter = countersMap.get(url).get(name);
-        if (counter == null) {
-            counter = createCounter(userId, projectId, name, 1);
-            countersMap.get(url).put(name, counter);
+    public void incrementBy(Long userId, Long projectId, String name, int incrementBy) {
+        if (countersMap.containsKey(name)) {
+            countersMap.put(name, countersMap.get(name) + incrementBy);
         } else {
-            counter = countersMap.get(url).get(name);
-            counter.setValue(counter.getValue() + incrementBy);
+            countersMap.put(name, 1);
         }
 
         LOGGER.debug("Incremented the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId, userId,
-                counter.getValue());
+                countersMap.get(name));
     }
 
     /**
      * Get the value of an existing counter.
      *
-     * @param url
-     *         The url of the project or a mirror.
      * @param name
      *         The name of the counter.
      *
@@ -166,71 +168,7 @@ public class CounterStoreConnector implements Connector {
      * @throws IllegalStateException
      *         If the counter 'name' has not been set yet.
      */
-    public Integer get(String url, String name) throws IllegalStateException {
-        return this.countersMap.get(url).get(name).getValue();
-    }
-
-    /**
-     * Create a new counter with a name and an initial, non negative value.
-     * The name of the counter should not exist in the database.
-     *
-     * @param userId
-     *         The id of the user.
-     * @param projectId
-     *         The id of the project.
-     * @param name
-     *         The name of the counter.
-     * @param value
-     *         The initial value of the counter.
-     *
-     * @return The created counter.
-     */
-    private Counter createCounter(Long userId, Long projectId, String name, Integer value) {
-        Counter counter = new Counter();
-        counter.setUser(new User(userId));
-        counter.setProject(new Project(projectId));
-        counter.setName(name);
-        counter.setValue(value);
-        return counter;
-    }
-
-    /**
-     * Creates and|or updates the maximum value for each counter stored in {@link #countersMap}.
-     */
-    public void saveCounters() {
-
-        // Find all counters that have been initialized, but are not yet persisted and create them.
-        // We don't care for their value yet as this is done in the next iteration.
-        List<String> createdCounterNames = new ArrayList<>();
-        countersMap.keySet().forEach(url -> countersMap.get(url).keySet().forEach(name -> {
-            Counter counter = countersMap.get(url).get(name);
-            if (counter.getCounterId() == null && !createdCounterNames.contains(name)) {
-                counterDAO.create(counter);
-
-                // make sure all urls have the newly created counter
-                // otherwise there will be a constraint violation exception in the next run
-                countersMap.values().forEach(stringCounterMap -> stringCounterMap.put(name, counter.clone()));
-                createdCounterNames.add(name);
-            }
-        }));
-
-        // Find max values for each counter.
-        // The map then contains new counters with their maximum value from all urls.
-        Map<String, Counter> maxCounterValues = new HashMap<>();    // counterName -> Counter
-        countersMap.keySet().forEach(url -> countersMap.get(url).entrySet().forEach(entry -> {
-            Counter counter = entry.getValue().clone();
-            if (maxCounterValues.containsKey(entry.getKey())) {
-                int max = Math.max(maxCounterValues.get(entry.getKey()).getValue(), entry.getValue().getValue());
-                counter.setValue(max);
-            }
-            maxCounterValues.put(entry.getKey(), counter);
-        }));
-
-        // Update the counters in {@link #countersMap}
-        countersMap.keySet().forEach(url -> countersMap.get(url).entrySet().forEach(
-                entry -> entry.setValue(maxCounterValues.get(entry.getKey()))));
-
-        // Persist the maximum value of each counter.
-        counterDAO.update(new ArrayList<>(maxCounterValues.values()));
+    public Integer get(String name) throws IllegalStateException {
+        return this.countersMap.get(name);
     }
 }

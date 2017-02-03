@@ -22,7 +22,6 @@ import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
 import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
-import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -85,7 +84,6 @@ public class SetCounterAction extends SymbolAction {
     public ExecuteResult execute(ConnectorManager connector) {
         CounterStoreConnector counterStoreConnector = connector.getConnector(CounterStoreConnector.class);
         VariableStoreConnector variableStoreConnector = connector.getConnector(VariableStoreConnector.class);
-        String url = connector.getConnector(WebSiteConnector.class).getBaseUrl();
 
         int val;
         try {
@@ -104,7 +102,7 @@ public class SetCounterAction extends SymbolAction {
             return getFailedOutput();
         }
 
-        counterStoreConnector.set(getUser().getId(), project.getId(), url, name, val);
+        counterStoreConnector.set(getUser().getId(), project.getId(), name, val);
 
         LOGGER.info(LEARNER_MARKER, "Set the counter '{}' to the value '{}' (ignoreFailure: {}, negated: {}).",
                 name, value, ignoreFailure, negated);

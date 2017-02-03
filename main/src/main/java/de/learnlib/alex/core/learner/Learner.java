@@ -184,7 +184,7 @@ public class Learner {
 
         LearnerResult learnerResult = createLearnerResult(user, project, configuration);
 
-        contextHandler = contextHandlerFactory.createContext(project, configuration.getBrowser());
+        contextHandler = contextHandlerFactory.createContext(user, project, configuration.getBrowser());
         contextHandler.setResetSymbol(learnerResult.getResetSymbol());
         LearnerThread learnThread = learnerThreadFactory.createThread(learnerResult, contextHandler);
         startThread(user, learnThread);
@@ -471,7 +471,7 @@ public class Learner {
         LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
 
         ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(
-                project, readOutputConfig.getBrowser());
+                user, project, readOutputConfig.getBrowser());
         ctxHandler.setResetSymbol(resetSymbol);
         ConnectorManager connectors = ctxHandler.createContext();
 

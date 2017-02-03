@@ -41,7 +41,7 @@ public class SearchHelperTest {
         VariableStoreConnector variables = mock(VariableStoreConnector.class);
         given(variables.get("name")).willReturn("Jon Doe");
         CounterStoreConnector counter = mock(CounterStoreConnector.class);
-        given(counter.get(PROJECT_URL, "counter")).willReturn(COUNTER_VALUE);
+        given(counter.get("counter")).willReturn(COUNTER_VALUE);
         ConnectorManager connector = mock(ConnectorManager.class);
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         given(webSiteConnector.getBaseUrl()).willReturn(PROJECT_URL);

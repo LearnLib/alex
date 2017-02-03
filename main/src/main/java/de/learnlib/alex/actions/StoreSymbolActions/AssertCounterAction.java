@@ -22,7 +22,6 @@ import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.SymbolAction;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.core.learner.connectors.CounterStoreConnector;
-import de.learnlib.alex.core.learner.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -150,8 +149,7 @@ public class AssertCounterAction extends SymbolAction {
     @Override
     protected ExecuteResult execute(ConnectorManager connector) {
         CounterStoreConnector storeConnector = connector.getConnector(CounterStoreConnector.class);
-        String url = connector.getConnector(WebSiteConnector.class).getBaseUrl();
-        Integer counterValue = storeConnector.get(url, name);
+        Integer counterValue = storeConnector.get(name);
         boolean result;
 
         switch (operator) {

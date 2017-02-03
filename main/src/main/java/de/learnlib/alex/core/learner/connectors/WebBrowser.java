@@ -36,10 +36,19 @@ public enum WebBrowser {
     /** Use Microsoft Edge. */
     EDGE(EdgeDriver.class);
 
-
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final int MAX_RETRIES = 3;
+    /** How often the browser should be restarted on error. */
+    private static final int MAX_RETRIES = 5;
+
+    /** Selenium page load timeout. */
+    private static final int PAGE_LOAD_TIMEOUT = 10;
+
+    /** Selenium script timeout. */
+    private static final int SCRIPT_TIMEOUT = 10;
+
+    /** How long the current Thread should sleep if the browser has to be restarted. */
+    private static final int SLEEP_TIME = 1;
 
     /** The connected WebDriver class. */
     private Class webDriverClass;
@@ -113,12 +122,12 @@ public enum WebBrowser {
                         throw new Exception("Unsupported Webdriver");
                 }
 
-                if (retries > 0 ) {
-                    TimeUnit.SECONDS.sleep(1);
+                if (retries > 0) {
+                    TimeUnit.SECONDS.sleep(SLEEP_TIME);
                 }
 
-                driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-                driver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
+                driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT, TimeUnit.SECONDS);
+                driver.manage().timeouts().setScriptTimeout(SCRIPT_TIMEOUT, TimeUnit.SECONDS);
 
                 if (config.getHeight() != 0 && config.getWidth() != 0) {
                     driver.manage().window().setSize(new Dimension(config.getWidth(), config.getHeight()));
@@ -127,7 +136,9 @@ public enum WebBrowser {
                 return driver;
             } catch (Exception e) {
                 LOGGER.warn("Could not create a WebDriver.", e);
-                if (driver != null) driver.quit();
+                if (driver != null) {
+                    driver.quit();
+                }
             }
 
             retries++;
