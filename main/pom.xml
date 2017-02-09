@@ -169,6 +169,11 @@
         </dependency>
         <dependency>
             <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-kearns-vazirani</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
             <artifactId>learnlib-lstar-generic</artifactId>
             <version>${learnlib.version}</version>
         </dependency>

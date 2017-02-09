@@ -18,7 +18,8 @@ export const learnAlgorithm = {
     LSTAR: 'LSTAR',
     DHC: 'DHC',
     DISCRIMINATION_TREE: 'DISCRIMINATION_TREE',
-    TTT: 'TTT'
+    TTT: 'TTT',
+    KEARNS_VAZIRANI: 'KEARNS_VAZIRANI'
 };
 
 export const webBrowser = {
