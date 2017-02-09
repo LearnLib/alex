@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.core.learner;
 
+import com.rits.cloning.Cloner;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
@@ -45,6 +46,9 @@ public class SymbolMapper
     /** Map to manage the symbols according to their name in the Alphabet. */
     private Map<String, Symbol> symbols;
 
+    /** Java object cloner. */
+    private Cloner cloner;
+
     /**
      * Constructor.
      * Initialize the map abbreviation -> symbol.
@@ -53,6 +57,7 @@ public class SymbolMapper
      */
     public SymbolMapper(Symbol... symbols) {
         this.symbols = new HashMap<>();
+        this.cloner = new Cloner();
 
         for (Symbol s : symbols) {
             this.symbols.put(s.getAbbreviation(), s);
@@ -128,6 +133,7 @@ public class SymbolMapper
     @Override
     public Mapper<String, String, ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult> fork()
             throws UnsupportedOperationException {
-        return new SymbolMapper(symbols.values().toArray(new Symbol[symbols.values().size()]));
+        Symbol[] symbolsArray = symbols.values().toArray(new Symbol[symbols.values().size()]);
+        return new SymbolMapper(cloner.deepClone(symbolsArray));
     }
 }

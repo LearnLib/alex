@@ -188,7 +188,7 @@
             <version>${learnlib.version}</version>
         </dependency>
 
-        <!-- we need the uum webdriver for selenium testing/learning -->
+        <!-- selenium testing -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
@@ -220,6 +220,12 @@
             <version>${selenium.version}</version>
         </dependency>
 
+        <!-- Cloning Java objects -->
+        <dependency>
+            <groupId>uk.com.robust-it</groupId>
+            <artifactId>cloning</artifactId>
+            <version>1.9.2</version>
+        </dependency>
 
         <dependency>
             <groupId>xml-apis</groupId>
