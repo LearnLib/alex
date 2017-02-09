@@ -132,11 +132,10 @@ public class LearnerResourceTest extends JerseyTest {
                                 .post(Entity.json(START_JSON));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{"
-                                + "\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":"
-                                  + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},"
-                                + "\"stepNo\":0,\"testNo\":" + TEST_NO
-                              + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
+                + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":0,\"eqOracle\":0,"
+                + "\"total\":0},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
+                + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).start(eq(admin), eq(project), any(LearnerConfiguration.class));
     }
@@ -220,9 +219,11 @@ public class LearnerResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":"
-                                    + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},"
-                                + "\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
+                + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":0,\"eqOracle\":0,"
+                + "\"total\":0},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
+                + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
+
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).resume(any(User.class), any(LearnerResumeConfiguration.class));
     }
@@ -292,9 +293,10 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/stop").request().header("Authorization", adminToken).get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":"
-                                    + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},"
-                                + "\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
+                + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":0,\"eqOracle\":0,"
+                + "\"total\":0},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
+                + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).stop(admin);
     }
@@ -319,9 +321,10 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/active").request().header("Authorization", adminToken).get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":"
-                                        + "{\"mqsUsed\":0,\"startDate\":\"1970-01-01T00:00:00.000+00:00\"},"
-                                + "\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
+        String expectedJSON = "{\"active\":true,\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
+                + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":0,\"eqOracle\":0,"
+                + "\"total\":0},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
+                + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
         assertEquals(expectedJSON, response.readEntity(String.class));
     }
 

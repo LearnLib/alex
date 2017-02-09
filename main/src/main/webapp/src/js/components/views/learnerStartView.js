@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import _ from "lodash";
+import {LearnResult} from '../../entities/LearnResult';
 
 /**
  * The controller for showing a load screen during the learning and shows all learn results from the current test
@@ -78,10 +78,10 @@ class LearnerStartView {
         this.showSidebar = true;
 
         /**
-         * The amount of executed MQs in the active learn process.
-         * @type {number}
+         * Detailed statistics about the active process.
+         * @type {any}
          */
-        this.mqsUsed = null;
+        this.statistics = null;
 
         /**
          * The current step number.
@@ -130,7 +130,7 @@ class LearnerStartView {
                             } else {
                                 this.result = result;
 
-                                const lastStep = _.last(this.result.steps);
+                                const lastStep = this.result.steps[this.result.steps.length - 1];
                                 this.resumeConfig = {
                                     eqOracle: lastStep.eqOracle,
                                     maxAmountOfStepsToLearn: lastStep.stepsToLearn
@@ -148,7 +148,9 @@ class LearnerStartView {
                     }
 
                     if (data.statistics) {
-                        this.mqsUsed = data.statistics.mqsUsed;
+                        this.statistics = data.statistics;
+                        LearnResult.convertNsToMs(this.statistics.duration);
+
                         this.duration = Date.now() - Date.parse(data.statistics.startDate);
                     }
                 })

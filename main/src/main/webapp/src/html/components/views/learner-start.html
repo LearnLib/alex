@@ -9,22 +9,39 @@
                 </button>
                 <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp; Application is learning ...
             </div>
-            <hr>
-            <h3>Statistics</h3>
-            <table class="table table-condensed">
-                <col width="120">
-                <tr>
-                    <td><strong>Time passed</strong></td>
-                    <td ng-bind="(vm.duration | formatMilliseconds)"></td>
-                </tr>
-                <tr>
-                    <td><strong>MQs executed</strong></td>
-                    <td>
-                        <span ng-show="vm.mqsUsed" ng-bind="vm.mqsUsed"></span>
-                        <span ng-show="!vm.mqsUsed">Not yet available</span>
-                    </td>
-                </tr>
-            </table>
+
+            <div ng-if="vm.statistics">
+                <table class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th width="140">&nbsp;</th>
+                            <th>Total</th>
+                            <th>Learner</th>
+                            <th>EQ Oracle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Time passed</strong></td>
+                            <td ng-bind="(vm.duration | formatMilliseconds)"></td>
+                            <td ng-bind="(vm.statistics.duration.learner | formatMilliseconds)"></td>
+                            <td ng-bind="(vm.statistics.duration.eqOracle | formatMilliseconds)"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>MQs executed</strong></td>
+                            <td ng-bind="vm.statistics.mqsUsed.total"></td>
+                            <td ng-bind="vm.statistics.mqsUsed.learner"></td>
+                            <td ng-bind="vm.statistics.mqsUsed.eqOracle"></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Symbols executed</strong></td>
+                            <td ng-bind="vm.statistics.symbolsUsed.total"></td>
+                            <td ng-bind="vm.statistics.symbolsUsed.learner"></td>
+                            <td ng-bind="vm.statistics.symbolsUsed.eqOracle"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <view-header title="Current result" ng-if="vm.result" style="border-top: 1px solid #ddd"></view-header>

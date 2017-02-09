@@ -16,12 +16,9 @@
 
 package de.learnlib.alex.core.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import java.time.ZonedDateTime;
 
 /**
  * Class to provide information about the current learn process.
@@ -43,52 +40,7 @@ public class LearnerStatus {
     private final Long stepNo;
 
     /** The statistics of the learner. */
-    private final LearnerStatusStatistics statistics;
-
-    /**
-     * Statistics Class for the learner status.
-     */
-    @JsonPropertyOrder(alphabetic = true)
-    public static class LearnerStatusStatistics {
-
-        /** When the learning started. */
-        private final ZonedDateTime startDate;
-
-        /** How many MQ where issued. */
-        private final Long mqsUsed;
-
-        /**
-         * @param startDate When the learning was started.
-         * @param mqsUsed How many MQ where issued during the learning.
-         */
-        public LearnerStatusStatistics(ZonedDateTime startDate, Long mqsUsed) {
-            this.startDate = startDate;
-            this.mqsUsed = mqsUsed;
-        }
-
-        /**
-         * @return When the learning was started.
-         */
-        @JsonIgnore
-        public ZonedDateTime getStartDate() {
-            return startDate;
-        }
-
-        /**
-         * @return When the learning was started as nice ISO 8160 string, including milliseconds and zone.
-         */
-        @JsonProperty("startDate")
-        public String getStartDateAsString() {
-            return startDate.format(Statistics.DATE_TIME_FORMATTER);
-        }
-
-        /**
-         * @return How many MQ where issued during the learning.
-         */
-        public Long getMqsUsed() {
-            return mqsUsed;
-        }
-    }
+    private final Statistics statistics;
 
     /**
      * Constructor for a status of an inactive thread.
@@ -112,8 +64,7 @@ public class LearnerStatus {
         this.projectId = learnerResult.getProjectId();
         this.testNo = learnerResult.getTestNo();
         this.stepNo = (long) learnerResult.getSteps().size();
-        this.statistics = new LearnerStatusStatistics(learnerResult.getStatistics().getStartDate(),
-                                                      learnerResult.getStatistics().getMqsUsed().getTotal());
+        this.statistics = learnerResult.getStatistics();
     }
 
     /**
@@ -152,7 +103,7 @@ public class LearnerStatus {
      *
      * @return Additional statistics, e.g. the start date.
      */
-    public LearnerStatusStatistics getStatistics() {
+    public Statistics getStatistics() {
         return statistics;
     }
 
