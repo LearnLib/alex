@@ -5,13 +5,13 @@ In this section, some of the best practices for using ALEX are written down. The
 
 ## Symbol modelling
 
-When modelling symbols, the granularity of modelling your application matters and it is advised that you **think in features**. Here is the reason why:
+When modelling symbols, the granularity of modelling your application matters and it is advised that you **think in use cases**. Here is the reason why:
 
 For example, if you create a new symbol for each possible click on each link or button, you might have a very detailed and concrete model of your application, but it will not be visually observable. Additionally, learning will usually take much longer as the number of symbols grows.
 
 On the contrary, you should not treat a symbol as a whole integration test. For example you could create a symbol _TestAuthenticationSystem_ that creates a user, logs him in and then out. This has several disadvantages. You do not test at any other point of your application if a logout is possible without explicitly modelling it twice. Furthermore, the learned model will most likely not represent your _real system_ very accurately.  
 
-Instead, we think it is good if you create something in between those extremes. As already mentioned, try modelling **atomic features** of your application. As an example, have a look at Wordpress. Possible symbols could be:
+Instead, we think it is good if you create something in between those extremes. As already mentioned, try modelling **use cases** of your application. As an example, have a look at Wordpress. Possible symbols could be:
 
 - Login
 - Logout
@@ -59,9 +59,17 @@ Before you start a learn process, you can configure some parameters like the alg
 - If the duration of the test is crucial to you, **do not use any other algorithm than the TTT**, it is the fastest algorithm out there right now.
 - The default settings for the Random Word oracle is ok for models that you expect not to get bigger than 4 to 6 states. There is no real rule of thumb here, but if you expect hypotheses bigger that that, adjust the parameters correspondingly.
 - The complete oracle can be used when you can run your tests over night or the weekend, or for a really small alphabet size. Same as with the W-Method oracle, since it works similarly.
+- Enabling the membership query cache is preferred.
+
+
+## Learning JavaScript enabled applications
+
+- For the execution of the experiments, don't choose a headless web browser like the HTML Unit Driver. Instead, configure ALEX to use either Chrome or Firefox.
+- When modelling symbols for JavaScript heavy websites, e.g. single page applications, make use of the *wait for node* action when interacting with elements of the website. This way, Selenium can handle dynamic changes of the DOM better.
 
 
 ## Further tips
 
 - Try to avoid cyclic symbol calls, e.g. do not create a symbol A that calls symbol B that calls symbol A. The algorithm does not prevent cyclic symbol calls and will run forever.
 - Sometimes, you might get an error message while learning that says something like: *expected symbol ok ok failed(1) but got symbol ok failed(2) ok*. This error can, in most cases, be reduced to a non deterministic system or a faulty modelling, triggered by a counter that has not been incremented or something like that.
+- If possible, make use of the possibility to define multiple URLs where the target application can be accessed under. This way, membership queries can be executed in parallel which saves a lot of time, especially equivalence queries. 

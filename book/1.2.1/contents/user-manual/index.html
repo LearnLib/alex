@@ -321,7 +321,7 @@
                 <a href="../developer-documents/extend.html">
             
                     
-                    How To Extend ALEX
+                    Extend ALEX
             
                 </a>
             
@@ -380,74 +380,77 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="user-manual">User Manual</h1>
-<p>Here you can find a detailed explanation of the concepts and ways to use ALEX, regarding the RESTful API that powers the application as well as the graphical client for it.
-This document covers the necessary parts to understand and use both parts.</p>
-<p>If you find bugs of any kind relating this application or inaccuracies in this manual,
+<p>Here we present a detailed explanation of the concepts and ways to use ALEX.
+If you find bugs of any kind relating this application or inaccuracies in this manual,
 <a href="mailto:alexander.bainczyk@tu-dortmund.de,alexander.schieweck@tu-dortmund.de" target="_blank">let us</a> know.</p>
 <h2 id="description-and-features">Description and Features</h2>
-<p>ALEX offers a simplicity-oriented way to model and execute tests on web applications and web services that are based
-on active automata learning. Based on the function set of the <a href="http://learnlib.de/" title="LearnLib" target="_blank">LearnLib</a>
+<p>ALEX offers a simplicity-oriented way to model and execute learning experiments for web applications and web services
+using active automata learning. Based on the function set of the <a href="http://learnlib.de/" title="LearnLib" target="_blank">LearnLib</a>
 and inspired by the <a href="http://ls5-www.cs.tu-dortmund.de/projects/learnlib/download.php" target="_blank">LearnLib Studio</a> the
 application lays a focus on the ease to use of the tool while offering an extensive feature set:</p>
 <ul>
-<li>Active Automata Learning of web applications and web services</li>
+<li>Inferring Mealy machines of web applications and web services using active automata learning techniques</li>
 <li>Support for managing and learning multiple applications</li>
 <li>Graphical symbol construction</li>
 <li>Graphical learn process modelling</li>
 <li>Automatic generation and visualization of<ul>
 <li>Hypotheses</li>
-<li>Internal data structures (Observation Table and Discrimination Tree)</li>
+<li>Internal data structures (Observation table and Discrimination tree)</li>
 <li>Statistics regarding learn results</li>
 </ul>
 </li>
 <li>Simultaneous learning of web applications and web services</li>
-<li>Supported algorithms: L*, TTT, Discrimination Tree, DHC</li>
-<li>Supported equivalence oracles: Random Word, Complete, Sample, W-Method, Hypothesis</li>
+<li>Algorithms: L*, TTT, Discrimination Tree, DHC, Kearns &amp; Vazirani</li>
+<li>Equivalence oracles: Random Word, Complete, Sample, W-Method, Hypothesis</li>
 <li>Import and export of symbol sets and projects</li>
 <li>Export of hypotheses as JSON and SVG</li>
 <li>Export of internal data structures</li>
+<li>Export of statistics</li>
+<li>And more...</li>
 </ul>
 <h2 id="working-objects">Working Objects</h2>
-<p>Project
-:   A project is the main object that the following objects belong to. It is bound to a unique name and a URL that
-    starts with <em>\&quot;http[s]://\&quot;</em>. This property defines the root URL of an application to be learned. In ALEX it is
+<dl>
+    <dt>Project</dt>
+    <dd>A project is the main object that the following objects belong to. It is bound to a unique name and a URL that
+    starts with *&quot;http\[s\]://&quot;*. This property defines the root URL of the application under testing. In ALEX it is
     allowed to create and manage multiple projects, thus, for example, allowing to treat a web application and a web
-    service as different projects or managing multiple complete different applications.</p>
-<p>Symbol Group
-:   Symbol group are logical container for symbols. They allow to group symbols, for example by their purpose or a
-    feature. They are defined by a unique name. For every project, there is a default group with the name Default Group
-    which can not be deleted.</p>
-<p>Symbol
-:   Symbols are used by the learner to learn an application. They are defined by a unique name and an abbreviation.
-    The latter is shown as an edge label of the learned model of an application to make it visually clear. Each symbol
-    consists of an ordered list of actions that define the actual logic of the symbol once it is executed.</p>
-<p>Action
-:   Actions are atomic operations on an application. In ALEX, there are three types. <strong>Web</strong> actions are
-    inspired by Selenium and directly interact with the web interface of an application that for example is clicking a
+    service as different projects or managing multiple complete different applications. A project can have multiple URLs
+    where *the same* application can be accessed to make use of parallelisation techniques.</dd>
+    <dt>Symbol Group</dt>
+    <dd>Each project has a list of symbol groups. Symbol groups are logical container for symbols. They allow to group 
+    symbols, for example by their purpose or a feature. They are defined by a unique name. For every project, there is 
+    a default group with the name <em>&quot;Default Group&quot;</em> which can not be deleted.</dd>
+    <dt>Symbol</dt>
+    <dd>Symbols are used by the learner to learn an application. They are defined by a unique name and an abbreviation.
+    The latter is shown as an edge label of the inferred model to make it visually clear. Each symbol
+    consists of an ordered list of actions that define the actual logic of the symbol once it is executed.</dd>
+    <dt>Action</dt>
+    <dd>Actions are atomic operations on an application. In ALEX, there are three types. <strong>Web</strong> actions are
+    inspired by Selenium and directly interact with the web interface of an application that is for example is clicking a
     button, filling out input fields and submitting forms. <strong>REST</strong> actions allow to define actions with
-    a REST API and <strong>General</strong> actions allow interoperability between actions and symbols.</p>
-<p>Learn Configuration
-:   For each learn process, a learn configuration has to be created. It consists of an alphabet, which is a set
+    a REST API and <strong>General actions allow interoperability between actions and symbols.</strong></dd>
+    <dt>Learn Configuration</dt>
+    <dd>For each learn process, a learn configuration has to be created. It consists of an alphabet, which is a set
     of created symbols, a reset symbol (a symbol that is used to reset an application before each MQ), a learn
-    algorithm and an equivalence oracle. Of cause the length the alphabet has to contain at least one symbol and reset
-    symbol is required as well.</p>
-<p>Learn Resume Configuration
-:     A learn resume configuration is needed when the learner finished learning and the user wants to continue the
-      process. Therefore, it only consists of an equivalence oracle.</p>
-<p>Learn Result
-:   As soon as a learn process has finished, a learn result is generated for each step the learner took to generate
+    algorithm, an equivalence oracle and some other parameters. Of cause the length the alphabet has to contain at 
+    least one symbol and reset symbol is required as well.</dd>
+    <dt>Learn Result</dt>
+    <dd>As soon as a learn process has finished, a learn result is generated for each step the learner took to generate
     the final hypothesis. For each step, it contains the actual learn configuration, statistics and the hypothesis as
-    a JSON representation.</p>
+    a JSON representation.</dd>
+</dl>
+
+
 <h2 id="workflow">Workflow</h2>
 <p>When working with ALEX, the workflow for learning a web application starting with the creation of a project and resulting
 in the generation of a model of this application follows a common pattern. The next chapters deal with an in-depth view
 on the points listed below:</p>
 <ol>
-<li>Create a project with the root URL the learned application is accessible under</li>
+<li>Create a project with the root URL where the target application can be accessed</li>
 <li>Optionally create several symbol groups</li>
 <li>Create a set of symbols, including one that handles the reset logic</li>
 <li>Create actions for each symbol</li>
-<li>Model a learn process and start learning</li>
+<li>Configure a learning process and start learning</li>
 <li>Display the hypothesis, internal data structures, analyze the statistics</li>
 </ol>
 <h2 id="frontend">Frontend</h2>
@@ -506,11 +509,11 @@ on the following URLs lead to different parts of the application.</port\></p>
 <td>Create, update &amp; delete symbol groups and symbols</td>
 </tr>
 <tr>
-<td>/symbols/\<symbolid\>/actions</symbolid\></td>
+<td>/symbols/&lt;symbolId&gt;/actions</td>
 <td>Manage actions of a specific symbol</td>
 </tr>
 <tr>
-<td>/symbols/\<symbolid\>/history</symbolid\></td>
+<td>/symbols/&lt;symbolId&gt;/history</td>
 <td>Restore old revisions of a specific symbol</td>
 </tr>
 <tr>
@@ -530,7 +533,7 @@ on the following URLs lead to different parts of the application.</port\></p>
 <td>Lists all finished final learning results of a project</td>
 </tr>
 <tr>
-<td>/results/\<testnos\>/compare</testnos\></td>
+<td>/results/&lt;testNos&gt;/compare</td>
 <td>Show the hypotheses of the processes with <testnos></testnos></td>
 </tr>
 <tr>
@@ -542,24 +545,31 @@ on the following URLs lead to different parts of the application.</port\></p>
 <td>Show a list of learner results and choose some for stats</td>
 </tr>
 <tr>
-<td>/statistics/\<testnos\>/compare</testnos\></td>
+<td>/statistics/&lt;testNos&gt;/compare</td>
 <td>Show statistics for learner results with <testnos></testnos></td>
 </tr>
 </tbody>
 </table>
 <p><em>Except for the about, help, error and the home page, all other routes require that a user is logged in and a project has been created and is opened.</em></p>
+<h3 id="user-management">User Management</h3>
+<p>There are two roles in ALEX: <em>ADMIN</em> and <em>USER</em> where admins are allowed to update and delete normal users. 
+At the first start a default admin account is created which you can use instantly to login into the application:</p>
+<p>Email: &#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0; <em>admin@alex.example</em><br>
+Password: <em>admin</em></p>
 <h3 id="application-settings">Application Settings</h3>
 <p>There are some global application specific settings only admins can edit.</p>
 <h4 id="webdriver">Webdriver</h4>
-<p>For learning web applications, we use Selenium to interact with web browsers. Per default, only the headless HTMLUnitDriver is supported, but it does not work very well with websites that make heavy use of JavaScript. Luckily, there are third party drivers, that allow executing tests on Firefox, Chrome etc. In order to use them, you have to download the corresponding executables and specify them in ALEX on the settings page as depicted in the following image (here for Windows):</p>
+<p>For learning web applications, we use Selenium to interact with web browsers. 
+Per default, only the headless HTMLUnitDriver is supported, but it does not work very well with websites that make heavy use of JavaScript.
+Luckily, there are third party drivers, that allow executing tests on Firefox, Chrome etc. 
+In order to use them, you have to download the corresponding executables and specify them in ALEX on the settings page as depicted in the following image (here for Windows):</p>
 <p><img src="../../assets/images/settings.jpg" alt="Comparison of hypotheses"></p>
 <h3 id="project-management">Project Management</h3>
-<p>Projects are the entities that are used to manage multiple applications separately in ALEX. You can for example create
-a project for your application in version x and another one for version x+1 while having a different set of symbols and
-saved learn results.</p>
+<p>Projects are the entities that are used to manage multiple target applications in ALEX. You can for example create
+a project for your application in version x and another one for version x+1 while having a different sets of input symbols.</p>
 <p>Most of the URLs listed in the previous section require a project to be <em>opened</em>, which means has been selected from the
 applications start page. It is then saved in the session storage of the web browser. In case a project is persisted no
-other project can be opened in the same tab. The use of multiple tabs allow to open and work with multiple projects at a
+other project can be opened in the same tab. The use of multiple tabs allows to open and work with multiple projects at a
 time. In order to switch to another project of the same tab, it has to be <em>closed</em>. That means it has to be removed from
 the session storage, either by clicking the menu item from the main navigation or by closing the current tab.</p>
 <h4 id="create-edit-and-delete-projects">Create, Edit and Delete Projects</h4>
@@ -587,6 +597,11 @@ the session storage, either by clicking the menu item from the main navigation o
 <td>A description of your project</td>
 <td>no</td>
 </tr>
+<tr>
+<td>Mirror URLs</td>
+<td>Alternative URLs where the target is accessible under</td>
+<td>no</td>
+</tr>
 </tbody>
 </table>
 <p>The URL of a new project has to start with <em>http://</em> or <em>https://</em> followed by at least one further character for the
@@ -607,6 +622,9 @@ deleting of a project, all these values are deleted from the server, too.</p>
 corresponding project. Import it in the same view by clicking on the import tab. Then, drag the json file in the visible
 field and click on the button \&quot;Import Project\&quot;. Change the name of the project in case there is already one with the
 same name.</p>
+<div class="alert alert-info">Project export and import might be buggy.</div>
+
+
 <h3 id="symbol-management">Symbol Management</h3>
 <h4 id="symbol-groups">Symbol Groups</h4>
 <p>With symbol groups symbols of a project can be organized. For example you can create a group that contains symbols that
@@ -647,11 +665,11 @@ several properties.</p>
 </tbody>
 </table>
 <p>Note that once you <em>delete</em> a symbol it is not permanently removed from the server, but hidden. As a consequence, they
-can be made visible by going to <em>/symbols/trash</em> or by clicking the corresponding menu entry in the main menu. There, a
+can be made visible by going to <em>/symbols/trash</em> or by clicking the corresponding menu entry in the sidebar. There, a
 list of all hidden symbols is given. Recovering a symbol makes it appear again in the group it previously was in. In
 case the group has been deleted, the symbol is moved to the default group.</p>
 <h4 id="actions">Actions</h4>
-<p>The function of a symbol is defined by its actions and their execution order. An action can be understood as a real
+<p>The functionality of a symbol is defined by its actions and their execution order. An action can be understood as a real
 interaction with a system, like clicking on buttons, submitting forms, making requests to an API and so on.</p>
 <p>In order to manage actions of a single symbol, go to <em>/symbols/\<symbolid\>/actions</symbolid\></em> or click on the link below a symbol
 under <em>/symbols</em>. Here, actions can be created, edited, deleted and ordered. The list that is shown represents the order
@@ -696,7 +714,7 @@ and ALEX offers a subset of these that are presented in the table below.</p>
 </thead>
 <tbody>
 <tr>
-<td>Check attribute</td>
+<td>Check Attribute</td>
 <td>Checks the value of an attribute of an element</td>
 </tr>
 <tr>
@@ -740,7 +758,7 @@ and ALEX offers a subset of these that are presented in the table below.</p>
 <td>Move the cursor to a specific element or coordinates</td>
 </tr>
 <tr>
-<td>Press key</td>
+<td>Press Key</td>
 <td>Press a special key on the keyboard</td>
 </tr>
 <tr>
@@ -763,10 +781,10 @@ and ALEX offers a subset of these that are presented in the table below.</p>
 </table>
 <p>More detailed information about all the parameters of each web action is omitted as this point, since the forms in the
 front-end should be labeled sufficiently.</p>
-<p>If you play around a little with the action editor, you may realize that most web actions require you to enter a CSS path
-to an affected element. This may be not that easy to find out in case you are not very familiar with HTML. So, there is
-a button that is labeled with <em>\&quot;Element Picker\&quot;</em>. This is a special feature of ALEX for selecting HTML elements from your
-website directly without having to know HTML.</p>
+<p>If you play around a little with the action editor, you may realize that most web actions require you to enter a CSS or
+and XPath selector to an affected element. This may be not that easy to find out in case you are not very familiar with 
+HTML. So, there is a button that is labeled with <em>&quot;Element Picker&quot;</em>. This is a special feature of ALEX for selecting 
+HTML elements from your website directly without having to know HTML. Note that this only extracts CSS selectors.</p>
 <h6 id="html-element-picker">HTML Element Picker</h6>
 <p>The HTML element picker has been tested but it can not be ensured that picking the right element works in all possible
 use cases. If the HTML picker should fail you can still get the CSS path of an element with the developer tools of your
@@ -779,12 +797,12 @@ be applied with Firefox.</p>
 <li>Load a URL by entering a path relative to the base URL of the project in the URL bar on the top left.</li>
 <li>Click on the button with the wand symbol. All elements should now get a thick red border as soon as you hover over it.</li>
 <li>Click on the element you need the CSS path from. The selection mode should be disabled.</li>
-<li>Click on the button with the label \&quot;ok\&quot; on the top right. The CSS path should automatically be entered in the correct
+<li>Click on the button with the label &quot;ok&quot; on the top right. The CSS path should automatically be entered in the correct
 input element.</li>
 </ol>
 <p>In the case that clicking on an element does not work as indented, probably because of some JavaScript, pressing the
-\&quot;Ctrl\&quot; button on the keyboard has the same effect as a click, but does not fire a click event.</p>
-<p>For some actions, like \&quot;CheckText\&quot;, the HTML element picker can be used as well. With the same method, it automatically
+&quot;Ctrl&quot; button on the keyboard has the same effect as a click, but does not fire a click event.</p>
+<p>For some actions, like &quot;CheckText&quot;, the HTML element picker can be used as well. With the same method, it automatically
 extracts the textContent value of an element and pastes the content to the corresponding input field. This also works
 with the &quot;Fill&quot; action. Enter a value in the desired input field, select the element with the HTML element picker and it
 extracts both, the value and the CSS path of it.</p>
@@ -804,27 +822,27 @@ shows a list of available actions.</p>
 <td>Do a REST Call.</td>
 </tr>
 <tr>
-<td>CheckAttributeExists</td>
+<td>Check Attribute Exists</td>
 <td>Check if the response has an specific attribute.</td>
 </tr>
 <tr>
-<td>CheckAttributeType</td>
+<td>Check Attribute Type</td>
 <td>Check if an attribute in the response has a specific type.</td>
 </tr>
 <tr>
-<td>CheckAttributeValue</td>
+<td>Check Attribute Value</td>
 <td>Check if an attribute in the response has a specific value.</td>
 </tr>
 <tr>
-<td>CheckHeaderField</td>
+<td>Check Header Field</td>
 <td>Check if the response has a certain header field.</td>
 </tr>
 <tr>
-<td>CheckStatus</td>
+<td>Check Status</td>
 <td>Check if a previous response returned the expected HTTP status.</td>
 </tr>
 <tr>
-<td>CheckText</td>
+<td>Check Text</td>
 <td>Check the response body.</td>
 </tr>
 </tbody>
@@ -844,44 +862,52 @@ String and Integer values to other actions.</p>
 </thead>
 <tbody>
 <tr>
-<td>AssertCounter</td>
+<td>Assert Counter</td>
 <td>Asserts the value of a counter.</td>
 </tr>
 <tr>
-<td>AssertVariable</td>
+<td>Assert Variable</td>
 <td>Asserts the value of a variable.</td>
 </tr>
 <tr>
-<td>IncrementCounter</td>
-<td>Increment a counter.</td>
+<td>Increment Counter</td>
+<td>Increment a counter by a given value.</td>
 </tr>
 <tr>
 <td>Execute Symbol</td>
 <td>Include and execute another symbol.</td>
 </tr>
 <tr>
-<td>SetCounter</td>
+<td>Set Counter</td>
 <td>Set a counter to a new value.</td>
 </tr>
 <tr>
-<td>SetVariable</td>
+<td>Set Variable</td>
 <td>Set a variable to a new value.</td>
 </tr>
 <tr>
-<td>SetVariableByCookie</td>
+<td>Set Variable by Cookie</td>
 <td>Set a variable to the value of a cookie</td>
 </tr>
 <tr>
-<td>SetVariableByHTMLElement</td>
+<td>Set Variable by HTML Element</td>
 <td>Set a variable to a value form a website element.</td>
 </tr>
 <tr>
-<td>SetVariableByJSONAttribute</td>
+<td>Set Variable by JSON Attribute</td>
 <td>Set a variable to a value form a JSON response.</td>
 </tr>
 <tr>
-<td>SetVariableByNodeAttribute</td>
+<td>Set Variable by Node Attribute</td>
 <td>Set a variable to the value of an attribute of an element.</td>
+</tr>
+<tr>
+<td>Set Variable by Node Count</td>
+<td>Set a variable to the number of elements matching a selector.</td>
+</tr>
+<tr>
+<td>Set Variable by Regex Group</td>
+<td>Set a variable to a group in a regex match.</td>
 </tr>
 <tr>
 <td>Wait</td>
@@ -890,25 +916,34 @@ String and Integer values to other actions.</p>
 </tbody>
 </table>
 <div class="alert alert-info">
-    The wait action can be useful for background tasks or AJAX calls, but should be used with care because it can slow
+    The wait action can be useful for background tasks or AJAX calls, but should be used with caution because it can slow
     down the learn process.
 </div>
 
 
 <h5 id="working-with-counters-variables-and-files">Working with Counters, Variables and Files</h5>
-<p>Many web applications handle dynamic data and allow file uploads. In order to model and learn such behaviours and to
+<p>Many web applications handle dynamic data and allow file uploads. In order to model and learn such behaviors and to
 allow interaction between different symbols, actions and learn processes, <em>counters</em>, <em>variables</em> and <em>files</em> are
 introduced.</p>
-<p>Counter
-:   As the name indicates counters are integer values that are persisted in the database per project. They
-    can be incremented and set at will. Commonly they are used to create multiple objects of the same kind. Counters
-    can help to model a system reset and thereby allow a consecutive execution of multiple learn processes without
-    having to manually reset the application in between every test.   </p>
-<p>Variables
-:   Variables can only contain String values and are kept alive during a membership query.</p>
-<p>Files
-:   In order to learn websites that allow its users to upload files, this feature can be used as well. Make sure the
-    file that should be uploaded for learn purposes has been imported to the project of the website.</p>
+<dl>
+    <dt>Counter</dt>
+    <dd>
+        As the name indicates counters are integer values that are persisted in the database per project. They
+        can be incremented and set at will. Commonly they are used to create multiple objects of the same kind. Counters
+        can help to model a system reset and thereby allow a consecutive execution of multiple learn processes without
+        having to manually reset the application in between every test.
+    </dd>
+    <dt>Variables</dt>
+    <dd>
+        Variables can only contain String values and are kept alive for a single membership query.
+    </dd>
+    <dt>Files</dt>
+    <dd>
+        In order to learn websites that allow its users to upload files, this feature can be used as well. Make sure the
+        file that should be uploaded for learn purposes has been imported to the project of the website.
+    </dd>
+</dl>
+
 <p>In order to make use of those in actions, there is a notation that has to be used in action fields, as presented in the
 following table.</p>
 <table>
@@ -966,16 +1001,14 @@ element on a page</p>
 }, ... ]
 </code></pre>
 <div class="alert alert-warning">
-    Be aware that currently, due to the limitations of the used Selenium webdriver, the uploading of files only works if
+    Be aware that currently, due to the limitations of the used Selenium webdriver, the upload of files only works if
     a learn process is executed with enabled javascript, which is enabled by default.
 </div>
 
-<h4 id="revision-management">Revision Management</h4>
-<p>Changing a symbol in any way results in the creation of a new revision of it. A previous state of a symbol can be
-recovered.</p>
+
 <h4 id="export--import">Export &amp; Import</h4>
 <p>If you want to save a set of symbols for another project or use already existing ones, the export and import function
-might be of interest for you. Note that when exporting symbols, their revision, id and group are deleted in order to be
+might be of interest for you. Note that when exporting symbols, their id and group are deleted in order to be
 compatible with other projects.</p>
 <p>ALEX supports the import from and export in a JSON file. Technically, the possibility of creating symbols with a simple
 text editor by hand and uploading them to the system is given. Therefore, the file has to look as follows:</p>
@@ -994,46 +1027,89 @@ following components:</p>
 <li>An algorithm</li>
 <li>A parametrized equivalence oracle</li>
 <li>A maximum amount of steps to learn</li>
+<li>A specification of a web browser</li>
 </ul>
-<p>Algorithm
-:   There are currently four algorithms supported: L*, Discrimination Tree, DHC and TTT.</p>
-<p>Equivalence oracle
-:    ALEX supports four kinds of oracles. Those are: <em>Random Word</em>, <em>Complete</em>, <em>W-Method&quot;, ** and the last one is
-    </em>Sample<em>. The first three oracles approximate equivalence queries automatically to find counterexamples while when using
-    </em>Sample*, you are asked to search and enter them by yourself in between iterations.   </p>
-<p>Steps to learn
-:   You can also define how many hypotheses should be generated at maximum. When the learner stops, you can still continue
-    learning from this point.</p>
-<p>Comment
-:   Furthermore a comment can be added that makes it easier to identify a specific learn result between others. The
-    comment is a string value with a maximum amount of 120 characters.</p>
-<p>Driver
-:   Choose a web browser where the tests should be run in. Per default, the headless HTML Unit Driver is selected. For all others, make sure you have it installed, otherwise the application might crash.</p>
-<p>The mentioned equivalence oracles have different strategies on how to find counterexamples. Each one can be configured with different parameters that define their behaviour.</p>
-<p>Random Word
-:       The Random Word oracle approximates equivalence queries by generating random words from learned symbol set and
+<dl>
+    <dt>Algorithm</dt>
+    <dd>
+        There are currently five algorithms supported: L*, Discrimination Tree, DHC, Kearns &amp; Vazirani and TTT.
+    </dd>
+    <dt>Equivalence oracle</dt>
+    <dd>
+        ALEX supports five kinds of oracles. Those are: <em>Random Word</em>, <em>Complete</em>, <em>W-Method</em>, <em>Sample</em> and <em>Hypothesis</em>. 
+        The first three oracles approximate equivalence queries automatically to find counterexamples while when using
+        <em>Sample</em>, you are asked to search and enter them by yourself in between iterations. 
+        If the <em>Hypothesis</em> EQ oracle is used, the shortest separating word between the learned and the given model is used as counterexample.
+        This however presumes that the alphabets of both models are equal.
+    </dd>
+    <dt>Steps to learn</dt>
+    <dd>
+        You can also define how many hypotheses should be generated at maximum. When the learner stops, you can still continue
+        learning from this point.
+    </dd>
+    <dt>Comment</dt>
+    <dd>
+        Furthermore a comment can be added that makes it easier to identify a specific learn result between others. The
+        comment is a string value with a maximum amount of 120 characters.
+    </dd>
+    <dt>Web driver</dt>
+    <dd>
+        Choose a web browser where the tests should be run in. 
+        Per default, the headless HTML Unit Driver is selected. 
+        For all others, make sure you have it installed, otherwise the application might crash.
+        Also, define the size of the browser window. 
+        If the height and width are set to <em>0px</em>, the web drivers predefined dimensions are used.
+    </dd>
+    <dt>Membership query cache</dt>
+    <dd>
+        If membership queries should be cached. Enabling this option often reduces the total learning time.
+    </dd>
+</dl>
+
+<p>The mentioned equivalence oracles have different strategies on how to find counterexamples. 
+Each one can be configured with different parameters that define their behaviour.</p>
+<dl>
+    <dt>Random Word</dt>
+    <dd>
+        The Random Word oracle approximates equivalence queries by generating random words from learned symbol set and
         executes them on the learned applications. The oracles expects three parameters: <em>minLength</em> defines the
         minimum length of a generated word, <em>maxLength</em> the maximum length and <em>numberOfWords</em> the amount
-        of randomly generated words to test.</p>
-<p>Complete
-:       This oracle generates all possible word within some limits. <em>minDepth</em> describes the minimum length of
-        a generated word, <em>maxDepth</em> the maximum length.</p>
-<p>Sample
-:       If this oracle is chosen, counterexamples are searched by hand by the user.</p>
-<p>W-Method
-:       Uses the W-Method introduced in &quot;Testing software design modeled by finite state machines&quot; by T.S. Chow.
-        This method can be restricted with a maximum depth.</p>
-<p>Hypothesis
-:       Uses an ideal model of an application to search for separating words and uses them as counterexamples.
-        The abbreviations should match with the ideal model.</p>
-<p>In order to simplify the modeling phase, only the alphabet and the reset symbol has to be chosen. As default, the TTT algorithm is selected in combination with the random word oracle. A click on the button with the label &quot;start&quot; starts the learning process with the given configuration. The user gets redirected to a loading screen where the generated hypothesis is displayed as soon as the server generated one.</p>
+        of randomly generated words to test.
+    </dd>
+    <dt>Complete</dt>
+    <dd>
+        This oracle generates all possible word within some limits. <em>minDepth</em> describes the minimum length of
+        a generated word, <em>maxDepth</em> the maximum length.
+    </dd>
+    <dt>Sample</dt>
+    <dd>
+        If this oracle is chosen, counterexamples are searched by hand by the user.
+    </dd>
+    <dt>W-Method</dt>
+    <dd>
+        Uses the W-Method introduced in &quot;Testing software design modeled by finite state machines&quot; by T.S. Chow.
+        This method can be restricted with a maximum depth.
+    </dd>
+    <dt>Hypothesis</dt>
+    <dd>
+        Uses an ideal model of an application to search for separating words and uses them as counterexamples.
+        Note that the input alphabets should be the same.
+    </dd>
+</dl>  
+
+<p>In order to simplify the modeling phase, only the alphabet and the reset symbol has to be chosen. 
+As default, the TTT algorithm is selected in combination with the random word oracle. 
+A click on the button with the label &quot;start&quot; starts the learning process with the given configuration. 
+The user gets redirected to a loading screen where the generated hypothesis is displayed as soon as the server generated one.</p>
 <div class="alert alert-info">
     The usage of the TTT algorithm is generally preferred from a users view as it outperforms the other algorithms in
     terms of speed. Furthermore, the default eq oracle configuration should be adjusted as it is chosen like it is for
     very small applications.
 </div>
 
-<p>While ALEX is learning there are some restrictions concerning the functionality. You can not delete the current project as the instance is required by the learner. Due to the architecture of ALEX, there can always only be one learning process at a time.</p>
+<p>While ALEX is learning there are some restrictions concerning the functionality. 
+You can not delete the current project as the instance is required by the learner. 
+Due to the architecture of ALEX, there can always only be one learning process at a time.</p>
 <p>While the learning screen is shown, the number of already executed MQs and the time that has passed since the learn
 process started are displayed.</p>
 <div class="alert alert-warning">
@@ -1051,15 +1127,15 @@ section <a href="#Learning_Experiment_Analysis" title="Learning Experiment Analy
 labeled from 0 to n. The green node represents the initial state. Depending on the failed or successful execution of a
 symbol, edges are labeled as follows:</p>
 <ul>
-<li>\<abbreviation\>/OK</abbreviation\></li>
-<li>\<abbreviation\>/FAILED(\<number\>)</number\></abbreviation\></li>
+<li>&lt;abbreviation&gt;/OK</li>
+<li>&lt;abbreviation&gt;/FAILED(&lt;number&gt;)</li>
 </ul>
 <p>The first one indicates that the symbol with the displayed abbreviation could be executed successfully. The second one
 shows that the execution of the symbol has failed. The number gives a hint on what action resulted in the failure. The
 expression <em>FAILED(1)</em> for example tells that the first action of the symbol has failed to execute correctly.</p>
 <h4 id="internal-data-structures">Internal Data Structures</h4>
-<p>ALEX provides the visualisation of the <em>Observation Table</em> that is used by the <em>L** algorithm and the </em>Discrimination
-Tree* from the equally named algorithm. Both are saved for each iteration the learner executes and can be displayed in
+<p>ALEX provides the visualisation of the <em>Observation Table</em> that is used by the <em>LStar</em> algorithm and the <em>Discrimination
+Tree</em> from the equally named algorithm. Both are saved for each iteration the learner executes and can be displayed in
 the same panel corresponding hypothesis is presented in. While observation tables can be exported as a CSV file,
 discrimination trees can be downloaded in the SVG format.</p>
 <h4 id="testing-counterexamples">Testing Counterexamples</h4>
@@ -1069,9 +1145,9 @@ this patter:</p>
 <ol>
 <li>Choose the equivalence oracle <em>Sample</em> from the widget in the sidebar</li>
 <li>Create a word by clicking on the labels of the hypothesis</li>
-<li>In the widget click on the button <em>\&quot;Test\&quot;</em></li>
+<li>In the widget click on the button <em>&quot;Test&quot;</em></li>
 <li>A notification will tell whether the word is a counterexample or not</li>
-<li>Click on the button <em>\&quot;Add\&quot;</em> to add the counterexample the list that is considered for refinement</li>
+<li>Click on the button <em>&quot;Add&quot;</em> to add the counterexample the list that is considered for refinement</li>
 <li>Proceed with step 1 or resume the learn process</li>
 </ol>
 <p>Note that while testing a word and it results in being a counterexample, its output labels are automatically switched
@@ -1079,11 +1155,6 @@ to the actual output sequence. The list of symbols can be arranged with drag and
 words. Once a counterexample has been added to the list, it can be edited by clicking on it.</p>
 <p>The server assumes that all words given by a user for the refinement actually are counterexamples. If this is not the
 case the learn process may fail and the application may have to be restarted by killing the running process.</p>
-<div class="alert alert-info">
-    It is recommended to always check for counterexamples manually after a hypothesis has been created.
-</div>
-
-
 <h3 id="learning-experiment-analysis">Learning Experiment Analysis</h3>
 <p>After having learned an application, their test results are available for an analysis. This can happen in two ways
 that the next sections deals with.</p>
@@ -1159,7 +1230,7 @@ In case the learn result is deleted, the statistics can not be shown any longer.
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"User Manual","level":"1.2","depth":1,"next":{"title":"Examples","level":"1.3","depth":1,"path":"contents/examples/README.md","ref":"contents/examples/README.md","articles":[{"title":"ToDo","level":"1.3.1","depth":2,"path":"contents/examples/todo/README.md","ref":"contents/examples/todo/README.md","articles":[{"title":"Installation","level":"1.3.1.1","depth":3,"path":"contents/examples/todo/installation.md","ref":"contents/examples/todo/installation.md","articles":[]},{"title":"Project Setup","level":"1.3.1.2","depth":3,"path":"contents/examples/todo/project-setup.md","ref":"contents/examples/todo/project-setup.md","articles":[]},{"title":"Symbol Setup","level":"1.3.1.3","depth":3,"path":"contents/examples/todo/symbol-setup.md","ref":"contents/examples/todo/symbol-setup.md","articles":[]},{"title":"Actions Setup","level":"1.3.1.4","depth":3,"path":"contents/examples/todo/actions-setup.md","ref":"contents/examples/todo/actions-setup.md","articles":[]},{"title":"Learn","level":"1.3.1.5","depth":3,"path":"contents/examples/todo/learn.md","ref":"contents/examples/todo/learn.md","articles":[]},{"title":"Refine","level":"1.3.1.6","depth":3,"path":"contents/examples/todo/refine.md","ref":"contents/examples/todo/refine.md","articles":[]},{"title":"View Results","level":"1.3.1.7","depth":3,"path":"contents/examples/todo/results.md","ref":"contents/examples/todo/results.md","articles":[]}]},{"title":"TodoMVC","level":"1.3.2","depth":2,"path":"contents/examples/todomvc/README.md","ref":"contents/examples/todomvc/README.md","articles":[]},{"title":"Wordpress","level":"1.3.3","depth":2,"path":"contents/examples/wordpress/README.md","ref":"contents/examples/wordpress/README.md","articles":[]}]},"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["collapsible-menu"],"styles":{"website":"assets/styles/website.css"},"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.2.1"},"title":"ALEX","language":"en","links":{"sidebar":{" ":"#","Homepage":"http://learnlib.github.io/alex"}},"gitbook":"3.2.2","description":"Documentation for ALEX","direction":"ltr"},"file":{"path":"contents/user-manual/README.md","mtime":"2017-02-03T20:14:32.504Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-02-03T20:24:52.996Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"User Manual","level":"1.2","depth":1,"next":{"title":"Examples","level":"1.3","depth":1,"path":"contents/examples/README.md","ref":"contents/examples/README.md","articles":[{"title":"ToDo","level":"1.3.1","depth":2,"path":"contents/examples/todo/README.md","ref":"contents/examples/todo/README.md","articles":[{"title":"Installation","level":"1.3.1.1","depth":3,"path":"contents/examples/todo/installation.md","ref":"contents/examples/todo/installation.md","articles":[]},{"title":"Project Setup","level":"1.3.1.2","depth":3,"path":"contents/examples/todo/project-setup.md","ref":"contents/examples/todo/project-setup.md","articles":[]},{"title":"Symbol Setup","level":"1.3.1.3","depth":3,"path":"contents/examples/todo/symbol-setup.md","ref":"contents/examples/todo/symbol-setup.md","articles":[]},{"title":"Actions Setup","level":"1.3.1.4","depth":3,"path":"contents/examples/todo/actions-setup.md","ref":"contents/examples/todo/actions-setup.md","articles":[]},{"title":"Learn","level":"1.3.1.5","depth":3,"path":"contents/examples/todo/learn.md","ref":"contents/examples/todo/learn.md","articles":[]},{"title":"Refine","level":"1.3.1.6","depth":3,"path":"contents/examples/todo/refine.md","ref":"contents/examples/todo/refine.md","articles":[]},{"title":"View Results","level":"1.3.1.7","depth":3,"path":"contents/examples/todo/results.md","ref":"contents/examples/todo/results.md","articles":[]}]},{"title":"TodoMVC","level":"1.3.2","depth":2,"path":"contents/examples/todomvc/README.md","ref":"contents/examples/todomvc/README.md","articles":[]},{"title":"Wordpress","level":"1.3.3","depth":2,"path":"contents/examples/wordpress/README.md","ref":"contents/examples/wordpress/README.md","articles":[]}]},"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["collapsible-menu"],"styles":{"website":"assets/styles/website.css"},"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.2.1"},"title":"ALEX","language":"en","links":{"sidebar":{" ":"#","Homepage":"http://learnlib.github.io/alex"}},"gitbook":"3.2.2","description":"Documentation for ALEX","direction":"ltr"},"file":{"path":"contents/user-manual/README.md","mtime":"2017-02-23T10:02:15.554Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-02-23T10:04:15.717Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

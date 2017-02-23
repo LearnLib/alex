@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>How To Extend ALEX · ALEX</title>
+        <title>Extend ALEX · ALEX</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.2">
@@ -319,7 +319,7 @@
                 <a href="extend.html">
             
                     
-                    How To Extend ALEX
+                    Extend ALEX
             
                 </a>
             
@@ -362,7 +362,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="../.." >How To Extend ALEX</a>
+        <a href="../.." >Extend ALEX</a>
     </h1>
 </div>
 
@@ -381,10 +381,30 @@
 <p><em>ALEX</em> is designed to be expandable to some extend.</p>
 <h2 id="add-a-new-algorithm">Add a new algorithm</h2>
 <p>Create new class in the algorithm package with implements <code>LearnAlgorithmFactory</code> and
-annotate it with <code>@LearnAlgorithm(name = &quot;...&quot;)</code>.</p>
-<p>Implement the methods. </p>
+annotate it with <code>@LearnAlgorithm(name = &quot;...&quot;)</code>. Implement the methods. </p>
 <h2 id="add-a-new-action">Add a new action</h2>
-<p>Extend <code>SymbolAction</code> and implement the method <code>execute(ConnectorManager connector)</code>.</p>
+<p>Extend <code>SymbolAction</code> and implement the method <code>execute(ConnectorManager connector)</code> and add the new JSON sub type to the <code>SymbolAction</code> class like in the following:</p>
+<pre><code class="lang-Java">   <span class="hljs-comment">// MyNewAction.java</span>
+   <span class="hljs-meta">@Entity</span>
+   <span class="hljs-meta">@DiscriminatorValue</span>(<span class="hljs-string">&quot;new_action_name&quot;</span>)
+   <span class="hljs-meta">@JsonTypeName</span>(<span class="hljs-string">&quot;new_action_name&quot;</span>)
+   <span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyNewAction</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">SymbolAction</span> </span>{
+       <span class="hljs-meta">@Override</span>
+       <span class="hljs-function"><span class="hljs-keyword">public</span> ExecuteResult <span class="hljs-title">execute</span><span class="hljs-params">(ConnectorManager connector)</span> </span>{
+           <span class="hljs-comment">// ...</span>
+       }
+   }
+
+   <span class="hljs-comment">// SymbolAction.java</span>
+   <span class="hljs-comment">// ...</span>
+   <span class="hljs-meta">@JsonSubTypes</span>({
+        <span class="hljs-comment">// ...</span>
+        <span class="hljs-meta">@JsonSubTypes</span>.Type(name = <span class="hljs-string">&quot;new_action_name&quot;</span>, value = MyNewAction.class),
+   })
+   <span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SymbolAction</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Serializable</span> </span>{
+        <span class="hljs-comment">// ...</span>
+   }
+</code></pre>
 <p>Use <code>return getSuccessOutput();</code> or <code>return getFailedOutput();</code> instead of directly <code>return OK;</code> or <code>return FAILED;</code>.
 So the new action supports the <em>negated</em> attribute.</p>
 <p>Also use <code>insertVariableValues(String text)</code> when possible to allow the use of variable and counters in the properties.</p>
@@ -427,7 +447,7 @@ So the new action supports the <em>negated</em> attribute.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"How To Extend ALEX","level":"1.5.2","depth":2,"previous":{"title":"REST API","level":"1.5.1","depth":2,"path":"contents/developer-documents/REST.md","ref":"contents/developer-documents/REST.md","articles":[]},"dir":"ltr"},"config":{"plugins":["collapsible-menu"],"styles":{"website":"assets/styles/website.css"},"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.2.1"},"title":"ALEX","language":"en","links":{"sidebar":{" ":"#","Homepage":"http://learnlib.github.io/alex"}},"gitbook":"3.2.2","description":"Documentation for ALEX","direction":"ltr"},"file":{"path":"contents/developer-documents/extend.md","mtime":"2017-02-03T19:43:20.248Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-02-03T20:24:52.996Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Extend ALEX","level":"1.5.2","depth":2,"previous":{"title":"REST API","level":"1.5.1","depth":2,"path":"contents/developer-documents/REST.md","ref":"contents/developer-documents/REST.md","articles":[]},"dir":"ltr"},"config":{"plugins":["collapsible-menu"],"styles":{"website":"assets/styles/website.css"},"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.2.1"},"title":"ALEX","language":"en","links":{"sidebar":{" ":"#","Homepage":"http://learnlib.github.io/alex"}},"gitbook":"3.2.2","description":"Documentation for ALEX","direction":"ltr"},"file":{"path":"contents/developer-documents/extend.md","mtime":"2017-02-10T20:59:20.956Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-02-23T10:04:15.717Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

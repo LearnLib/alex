@@ -321,7 +321,7 @@
                 <a href="../developer-documents/extend.html">
             
                     
-                    How To Extend ALEX
+                    Extend ALEX
             
                 </a>
             
@@ -382,10 +382,10 @@
                                 <h1 id="best-practices">Best practices</h1>
 <p>In this section, some of the best practices for using ALEX are written down. These rely on our own experiences while modelling and learning several web applications and REST interfaces.</p>
 <h2 id="symbol-modelling">Symbol modelling</h2>
-<p>When modelling symbols, the granularity of modelling your application matters and it is advised that you <strong>think in features</strong>. Here is the reason why:</p>
+<p>When modelling symbols, the granularity of modelling your application matters and it is advised that you <strong>think in use cases</strong>. Here is the reason why:</p>
 <p>For example, if you create a new symbol for each possible click on each link or button, you might have a very detailed and concrete model of your application, but it will not be visually observable. Additionally, learning will usually take much longer as the number of symbols grows.</p>
 <p>On the contrary, you should not treat a symbol as a whole integration test. For example you could create a symbol <em>TestAuthenticationSystem</em> that creates a user, logs him in and then out. This has several disadvantages. You do not test at any other point of your application if a logout is possible without explicitly modelling it twice. Furthermore, the learned model will most likely not represent your <em>real system</em> very accurately.  </p>
-<p>Instead, we think it is good if you create something in between those extremes. As already mentioned, try modelling <strong>atomic features</strong> of your application. As an example, have a look at Wordpress. Possible symbols could be:</p>
+<p>Instead, we think it is good if you create something in between those extremes. As already mentioned, try modelling <strong>use cases</strong> of your application. As an example, have a look at Wordpress. Possible symbols could be:</p>
 <ul>
 <li>Login</li>
 <li>Logout</li>
@@ -415,11 +415,18 @@ In ALEX, you can specify HTTP headers in the <em>Call</em> action.</p>
 <li>If the duration of the test is crucial to you, <strong>do not use any other algorithm than the TTT</strong>, it is the fastest algorithm out there right now.</li>
 <li>The default settings for the Random Word oracle is ok for models that you expect not to get bigger than 4 to 6 states. There is no real rule of thumb here, but if you expect hypotheses bigger that that, adjust the parameters correspondingly.</li>
 <li>The complete oracle can be used when you can run your tests over night or the weekend, or for a really small alphabet size. Same as with the W-Method oracle, since it works similarly.</li>
+<li>Enabling the membership query cache is preferred.</li>
+</ul>
+<h2 id="learning-javascript-enabled-applications">Learning JavaScript enabled applications</h2>
+<ul>
+<li>For the execution of the experiments, don&apos;t choose a headless web browser like the HTML Unit Driver. Instead, configure ALEX to use either Chrome or Firefox.</li>
+<li>When modelling symbols for JavaScript heavy websites, e.g. single page applications, make use of the <em>wait for node</em> action when interacting with elements of the website. This way, Selenium can handle dynamic changes of the DOM better.</li>
 </ul>
 <h2 id="further-tips">Further tips</h2>
 <ul>
 <li>Try to avoid cyclic symbol calls, e.g. do not create a symbol A that calls symbol B that calls symbol A. The algorithm does not prevent cyclic symbol calls and will run forever.</li>
 <li>Sometimes, you might get an error message while learning that says something like: <em>expected symbol ok ok failed(1) but got symbol ok failed(2) ok</em>. This error can, in most cases, be reduced to a non deterministic system or a faulty modelling, triggered by a counter that has not been incremented or something like that.</li>
+<li>If possible, make use of the possibility to define multiple URLs where the target application can be accessed under. This way, membership queries can be executed in parallel which saves a lot of time, especially equivalence queries. </li>
 </ul>
 
                                 
@@ -464,7 +471,7 @@ In ALEX, you can specify HTTP headers in the <em>Call</em> action.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Best Practices","level":"1.4","depth":1,"next":{"title":"Developer Documents","level":"1.5","depth":1,"path":"contents/developer-documents/README.md","ref":"contents/developer-documents/README.md","articles":[{"title":"REST API","level":"1.5.1","depth":2,"path":"contents/developer-documents/REST.md","ref":"contents/developer-documents/REST.md","articles":[]},{"title":"How To Extend ALEX","level":"1.5.2","depth":2,"path":"contents/developer-documents/extend.md","ref":"contents/developer-documents/extend.md","articles":[]}]},"previous":{"title":"Wordpress","level":"1.3.3","depth":2,"path":"contents/examples/wordpress/README.md","ref":"contents/examples/wordpress/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["collapsible-menu"],"styles":{"website":"assets/styles/website.css"},"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.2.1"},"title":"ALEX","language":"en","links":{"sidebar":{" ":"#","Homepage":"http://learnlib.github.io/alex"}},"gitbook":"3.2.2","description":"Documentation for ALEX","direction":"ltr"},"file":{"path":"contents/best-practices/README.md","mtime":"2017-02-03T19:43:20.232Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-02-03T20:24:52.996Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Best Practices","level":"1.4","depth":1,"next":{"title":"Developer Documents","level":"1.5","depth":1,"path":"contents/developer-documents/README.md","ref":"contents/developer-documents/README.md","articles":[{"title":"REST API","level":"1.5.1","depth":2,"path":"contents/developer-documents/REST.md","ref":"contents/developer-documents/REST.md","articles":[]},{"title":"Extend ALEX","level":"1.5.2","depth":2,"path":"contents/developer-documents/extend.md","ref":"contents/developer-documents/extend.md","articles":[]}]},"previous":{"title":"Wordpress","level":"1.3.3","depth":2,"path":"contents/examples/wordpress/README.md","ref":"contents/examples/wordpress/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["collapsible-menu"],"styles":{"website":"assets/styles/website.css"},"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.2.1"},"title":"ALEX","language":"en","links":{"sidebar":{" ":"#","Homepage":"http://learnlib.github.io/alex"}},"gitbook":"3.2.2","description":"Documentation for ALEX","direction":"ltr"},"file":{"path":"contents/best-practices/README.md","mtime":"2017-02-10T20:48:41.492Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-02-23T10:04:15.717Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

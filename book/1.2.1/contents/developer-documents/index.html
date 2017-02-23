@@ -321,7 +321,7 @@
                 <a href="extend.html">
             
                     
-                    How To Extend ALEX
+                    Extend ALEX
             
                 </a>
             
@@ -381,14 +381,50 @@
                                 
                                 <h1 id="developer-docs">Developer docs</h1>
 <p>Some documents that are useful for developers.</p>
-<h2 id="build-a-release">Build a release</h2>
-<p>To build a packaged version of ALEX from the source, make sure you checked out the repository and enter the following commands in the terminal:</p>
-<pre><code class="lang-bash">mvn clean package
+<h2 id="setup-alex-for-development">Setup ALEX for development</h2>
+<p>Make sure your machine has the following software installed:</p>
+<ol>
+<li>Java JDK 8 or greater</li>
+<li>Node.js v6.9.* or higher</li>
+<li>Git</li>
+<li>Maven 3.3.*</li>
+</ol>
+<p>Clone the repository and install the frontend dependencies.</p>
+<pre><code class="lang-bash">git <span class="hljs-built_in">clone</span> https://github.com/LearnLib/alex.git
+<span class="hljs-built_in">cd</span> alex/main/src/main/webapp
+npm install
 </code></pre>
-<p>Afterwards the <em>ALEX-xxx.war</em> archive is created in the <code>target</code> directory.</p>
+<p>Go back to the root folder and execute the following to install all java related dependencies:</p>
+<pre><code class="lang-bash">mvn install [-DskipTests]
+</code></pre>
+<p>You are done! Add the optional parameter <em>-DskipTests</em> in order to skip the execution of frontend tests.</p>
+<h2 id="test-alex">Test ALEX</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mvn test</code></td>
+<td>Execute all backend unit tests</td>
+</tr>
+<tr>
+<td><code>mvn checkstyle:check</code></td>
+<td>Check if the code style is according to the specifications</td>
+</tr>
+</tbody>
+</table>
+<h2 id="building-release">Building release</h2>
+<p>To build a packaged version of ALEX from the source, navigate to the root folder of the repository and enter the following commands in the terminal:</p>
+<pre><code class="lang-bash">mvn clean package [-DskipTests]
+</code></pre>
+<p>Afterwards the <em>ALEX-xxx.war</em> archive is created in the <code>main/target</code> directory.</p>
 <h2 id="command-line-arguments">Command Line Arguments</h2>
 <p>alex.dbpath
-:   The path where the HSQL DB lives.
+:   The path where the HSQL DB is stored.
     E.g.: alex.dbpath=mem:testdb</p>
 <h2 id="deploy-with-docker">Deploy with Docker</h2>
 <p>Another way to test and / or release ALEX involves the tool <a href="https://www.docker.com" target="_blank">Docker</a>.
@@ -493,7 +529,7 @@ So be careful in which environment you use the application.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Developer Documents","level":"1.5","depth":1,"next":{"title":"REST API","level":"1.5.1","depth":2,"path":"contents/developer-documents/REST.md","ref":"contents/developer-documents/REST.md","articles":[]},"previous":{"title":"Best Practices","level":"1.4","depth":1,"path":"contents/best-practices/README.md","ref":"contents/best-practices/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["collapsible-menu"],"styles":{"website":"assets/styles/website.css"},"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.2.1"},"title":"ALEX","language":"en","links":{"sidebar":{" ":"#","Homepage":"http://learnlib.github.io/alex"}},"gitbook":"3.2.2","description":"Documentation for ALEX","direction":"ltr"},"file":{"path":"contents/developer-documents/README.md","mtime":"2017-02-03T20:12:02.347Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-02-03T20:24:52.996Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Developer Documents","level":"1.5","depth":1,"next":{"title":"REST API","level":"1.5.1","depth":2,"path":"contents/developer-documents/REST.md","ref":"contents/developer-documents/REST.md","articles":[]},"previous":{"title":"Best Practices","level":"1.4","depth":1,"path":"contents/best-practices/README.md","ref":"contents/best-practices/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["collapsible-menu"],"styles":{"website":"assets/styles/website.css"},"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.2.1"},"title":"ALEX","language":"en","links":{"sidebar":{" ":"#","Homepage":"http://learnlib.github.io/alex"}},"gitbook":"3.2.2","description":"Documentation for ALEX","direction":"ltr"},"file":{"path":"contents/developer-documents/README.md","mtime":"2017-02-10T21:37:46.095Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-02-23T10:04:15.717Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

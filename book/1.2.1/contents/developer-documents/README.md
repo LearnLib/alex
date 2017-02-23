@@ -2,21 +2,56 @@
 
 Some documents that are useful for developers.
 
-## Build a release
 
-To build a packaged version of ALEX from the source, make sure you checked out the repository and enter the following commands in the terminal:
+## Setup ALEX for development
+
+Make sure your machine has the following software installed:
+
+1. Java JDK 8 or greater
+2. Node.js v6.9.* or higher
+3. Git
+4. Maven 3.3.*
+
+Clone the repository and install the frontend dependencies.
 
 ```bash
-mvn clean package
+git clone https://github.com/LearnLib/alex.git
+cd alex/main/src/main/webapp
+npm install
 ```
 
-Afterwards the *ALEX-xxx.war* archive is created in the `target` directory.
+Go back to the root folder and execute the following to install all java related dependencies:
+
+```bash
+mvn install [-DskipTests]
+```
+
+You are done! Add the optional parameter *-DskipTests* in order to skip the execution of frontend tests.
+
+
+## Test ALEX
+
+| Command                   | Description                                                 |
+|---------------------------|-------------------------------------------------------------|
+| `mvn test`                | Execute all backend unit tests                              |
+| `mvn checkstyle:check`    | Check if the code style is according to the specifications  |
+
+
+## Building release
+
+To build a packaged version of ALEX from the source, navigate to the root folder of the repository and enter the following commands in the terminal:
+
+```bash
+mvn clean package [-DskipTests]
+```
+
+Afterwards the *ALEX-xxx.war* archive is created in the `main/target` directory.
 
 
 ## Command Line Arguments
 
 alex.dbpath
-:   The path where the HSQL DB lives.
+:   The path where the HSQL DB is stored.
     E.g.: alex.dbpath=mem:testdb
 
 

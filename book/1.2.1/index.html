@@ -319,7 +319,7 @@
                 <a href="contents/developer-documents/extend.html">
             
                     
-                    How To Extend ALEX
+                    Extend ALEX
             
                 </a>
             
@@ -378,7 +378,7 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="alex">ALEX</h1>
-<p>Automata Learning Experience (ALEX) is a web application that allows you run automated tests on web applications and JSON-based REST services using Active Automata Learning.</p>
+<p>Automata Learning EXperience (ALEX) is a web application that allows you easily infer models of web applications and JSON-based REST services using active automata learning.</p>
 <h2 id="how-it-works">How it works</h2>
 <p>Let us take a look at the example of an authentication system.
 For an integration test you would probably write tests using Selenium or something else that check the following behavior:</p>
@@ -415,8 +415,12 @@ How to check for and handle these mistakes is described in the <a href="http://l
 As the application runs on JAVA, any other system with an installed JVM should do fine.
 We also advise to use a modern web browser like Google Chrome &gt;= v46, Mozilla Firefox &gt;= v42 or Microsoft Edge with JavaScript enabled in order to run the front-end properly.</p>
 <p>After the first start, you can login as admin backend using the account below.</p>
-<p>Email: <em>admin@alex.example</em> <br>
-Password: <em>admin</em></p>
+<div class="alert alert-info">
+    <strong>Admin Account</strong><br>
+    Email: admin@alex.example <br>
+    Password: admin
+</div>
+
 <h4 id="using-the-packaged-version">Using the packaged version</h4>
 <p>Make sure you have Java 8 installed on your system.</p>
 <ol>
@@ -429,12 +433,14 @@ Password: <em>admin</em></p>
 <ul>
 <li>Java JDK 8</li>
 <li>Maven 3</li>
-<li>Node.js v4.6.* and the NPM</li>
+<li>Node.js v6.9.* and the NPM</li>
 </ul>
 <p>To install and run ALEX, execute the following commands in a directory of your choice:</p>
 <ol>
 <li><code>git clone https://github.com/LearnLib/alex.git</code></li>
-<li><code>cd alex</code></li>
+<li><code>cd alex/main/src/main/webapp</code></li>
+<li><code>npm install</code></li>
+<li><code>cd ../../../..</code></li>
 <li><code>mvn install [-DskipTests]</code></li>
 <li><code>cd main</code></li>
 <li><code>mvn spring-boot:run [-Dport=XXXX]</code></li>
@@ -442,7 +448,7 @@ Password: <em>admin</em></p>
 </ol>
 <h2 id="further-reading">Further reading</h2>
 <ul>
-<li><a href="http://learnlib.github.io/alex/book/1.2.1/contents/user-manual/index.html" target="_blank">Frontend user manual</a></li>
+<li><a href="http://learnlib.github.io/alex/book/1.2.1/contents/user-manual/index.html" target="_blank">User manual</a></li>
 <li><a href="http://learnlib.github.io/alex/book/1.2.1/contents/developer-documents/index.html" target="_blank">Developer docs</a></li>
 </ul>
 <h2 id="faqs">FAQs</h2>
@@ -451,7 +457,7 @@ ALEX has already been used by a class at the TU Dortmund University as a tool to
 As far as we are concerned, we used the application to learn applications like Bugzilla and parts of the famous Wordpress.</p>
 <p><strong>Could I potentially learn any available application that is accessible over the internet?</strong> <br>
 Yes, you could, but really should not do that, since testing usually takes a lot of traffic, and your test targets may not like it.
-But we do not programmatically prohibit it either.
+But we do not pragmatically prohibit it either.
 The primary use case is to use ALEX for testing applications that are installed locally or in the same network.</p>
 <p><strong>Do I really not have to have any programming experience?</strong> <br>
 Yes and no, it depends on how you define programming experience.
@@ -467,7 +473,6 @@ But feel free to test it on your Raspberry PI.</p>
 <p><strong>I want to learn a specific feature of my application but ALEX does not provide a way to model it. What can I do?</strong> <br>
 Initially, we did not develop ALEX as a solution to all situations that may occur in a web application, but to the most common ones.
 If you think a key feature is missing, feel free to submit an issue and we will see what we can do.</p>
-<p><em>Note: Surprisingly, neither of the above questions have been asked at any point in time. But it it still a neat way to package information that do not fit anywhere else in the documentation.</em></p>
 
                                 
                                 </section>
@@ -507,7 +512,7 @@ If you think a key feature is missing, feel free to submit an issue and we will 
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Introduction","level":"1.1","depth":1,"next":{"title":"User Manual","level":"1.2","depth":1,"path":"contents/user-manual/README.md","ref":"contents/user-manual/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["collapsible-menu"],"styles":{"website":"assets/styles/website.css"},"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.2.1"},"title":"ALEX","language":"en","links":{"sidebar":{" ":"#","Homepage":"http://learnlib.github.io/alex"}},"gitbook":"3.2.2","description":"Documentation for ALEX","direction":"ltr"},"file":{"path":"README.md","mtime":"2017-02-03T20:01:25.793Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-02-03T20:24:52.996Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Introduction","level":"1.1","depth":1,"next":{"title":"User Manual","level":"1.2","depth":1,"path":"contents/user-manual/README.md","ref":"contents/user-manual/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["collapsible-menu"],"styles":{"website":"assets/styles/website.css"},"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.2.1"},"title":"ALEX","language":"en","links":{"sidebar":{" ":"#","Homepage":"http://learnlib.github.io/alex"}},"gitbook":"3.2.2","description":"Documentation for ALEX","direction":"ltr"},"file":{"path":"README.md","mtime":"2017-02-10T22:57:05.384Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-02-23T10:04:15.717Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>

@@ -321,7 +321,7 @@
                 <a href="extend.html">
             
                     
-                    How To Extend ALEX
+                    Extend ALEX
             
                 </a>
             
@@ -395,7 +395,7 @@ swagger-ui incapable to render this information
 <a href="https://github.com/swagger-api/swagger-ui/issues/1526" target="_blank">issues</a> about that).</p>
 <h2 id="actions">Actions</h2>
 <p>Swagger does not show the actions, so here we go.
-Every actions can also have two special attributes</p>
+Every action can also have three special attributes</p>
 <pre><code class="lang-json">{
     ...
     <span class="hljs-string">&quot;negated&quot;</span>: <span class="hljs-literal">true</span>|<span class="hljs-literal">false</span>,
@@ -404,22 +404,29 @@ Every actions can also have two special attributes</p>
 }
 </code></pre>
 <h3 id="web-actions">Web Actions</h3>
-<pre><code class="lang-`json">{
-    &quot;type&quot;: &quot;web_checkNodeAttributeValue&quot;,
-    &quot;node&quot;: &quot;#node&quot;,
-    &quot;attribute&quot;: &quot;class&quot;,
-    &quot;value&quot;: &quot;visible&quot;,
-    &quot;checkMethod&quot;: &quot;IS|CONTAINS|MATCHES&quot;
+<pre><code class="lang-json">{
+    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;web_checkForNode&quot;</span>,
+    <span class="hljs-string">&quot;node&quot;</span>: {
+      <span class="hljs-string">&quot;selector&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;CSS|XPATH&quot;</span>
+    }
 }
 </code></pre>
 <pre><code class="lang-json">{
-    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;web_checkForNode&quot;</span>,
-    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>
+    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;web_checkNodeAttributeValue&quot;</span>,
+    <span class="hljs-string">&quot;node&quot;</span>: {
+      <span class="hljs-string">&quot;selector&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;CSS|XPATH&quot;</span>
+    },
+    <span class="hljs-string">&quot;attribute&quot;</span>: <span class="hljs-string">&quot;class&quot;</span>,
+    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;visible&quot;</span>,
+    <span class="hljs-string">&quot;checkMethod&quot;</span>: <span class="hljs-string">&quot;IS|CONTAINS|MATCHES&quot;</span>
 }
 </code></pre>
 <pre><code class="lang-json">{
     <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;web_checkForText&quot;</span>,
-    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;Lorem Ipsum&quot;</span>
+    <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;Lorem Ipsum&quot;</span>,
+    <span class="hljs-string">&quot;regexp&quot;</span>: <span class="hljs-literal">true</span>|<span class="hljs-literal">false</span>
 }
 </code></pre>
 <pre><code class="lang-json">{
@@ -430,7 +437,10 @@ Every actions can also have two special attributes</p>
 </code></pre>
 <pre><code class="lang-json">{
     <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;web_clear&quot;</span>,
-    <span class="hljs-string">&quot;node&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>
+    <span class="hljs-string">&quot;node&quot;</span>: {
+      <span class="hljs-string">&quot;selector&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;CSS|XPATH&quot;</span>
+    }
 }
 </code></pre>
 <pre><code class="lang-json">{
@@ -440,46 +450,80 @@ Every actions can also have two special attributes</p>
 </code></pre>
 <pre><code class="lang-json">{
     <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;web_click&quot;</span>,
-    <span class="hljs-string">&quot;node&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>
+    <span class="hljs-string">&quot;node&quot;</span>: {
+      <span class="hljs-string">&quot;selector&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;CSS|XPATH&quot;</span>
+    },
+    <span class="hljs-string">&quot;doubleClick&quot;</span>: <span class="hljs-literal">true</span>|<span class="hljs-literal">false</span>
 }
 </code></pre>
 <pre><code class="lang-json">{
     <span class="hljs-string">&quot;type&quot;</span> : <span class="hljs-string">&quot;web_fill&quot;</span>,
-    <span class="hljs-string">&quot;node&quot;</span> : <span class="hljs-string">&quot;#input&quot;</span>,
+    <span class="hljs-string">&quot;node&quot;</span>: {
+      <span class="hljs-string">&quot;selector&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;CSS|XPATH&quot;</span>
+    },
     <span class="hljs-string">&quot;value&quot;</span> : <span class="hljs-string">&quot;Lorem Ipsum&quot;</span>
 }
 </code></pre>
 <pre><code class="lang-json">{
     <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;web_goto&quot;</span>,
-    <span class="hljs-string">&quot;url&quot;</span>:  <span class="hljs-string">&quot;http://example.com&quot;</span>
+    <span class="hljs-string">&quot;url&quot;</span>:  <span class="hljs-string">&quot;http://example.com&quot;</span>,
+    <span class="hljs-string">&quot;credentials&quot;</span>: {
+      <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;username&quot;</span>,
+      <span class="hljs-string">&quot;password&quot;</span>: <span class="hljs-string">&quot;password&quot;</span>
+    }
+}
+</code></pre>
+<pre><code class="lang-json">{
+    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;web_pressKey&quot;</span>,
+    <span class="hljs-string">&quot;node&quot;</span>: {
+      <span class="hljs-string">&quot;selector&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;CSS|XPATH&quot;</span>
+    },
+    <span class="hljs-string">&quot;key&quot;</span>: <span class="hljs-string">&quot;ESC|ENTER|...&quot;</span>
 }
 </code></pre>
 <pre><code class="lang-json">{
     <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;web_executeScript&quot;</span>,
-    <span class="hljs-string">&quot;script&quot;</span>: <span class="hljs-string">&quot;window.alert(&apos;hi!&apos;)&quot;</span>
+    <span class="hljs-string">&quot;script&quot;</span>: <span class="hljs-string">&quot;window.alert(&apos;hi!&apos;)&quot;</span>,
+    <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;variableName&quot;</span>
 }
 </code></pre>
 <pre><code class="lang-json">{
     <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;web_select&quot;</span>,
-    <span class="hljs-string">&quot;node&quot;</span>: <span class="hljs-string">&quot;#input&quot;</span>,
+    <span class="hljs-string">&quot;node&quot;</span>: {
+      <span class="hljs-string">&quot;selector&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;CSS|XPATH&quot;</span>
+    },
+    <span class="hljs-string">&quot;selectBy&quot;</span>: <span class="hljs-string">&quot;VALUE|TEXT|INDEX&quot;</span>,
     <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;Lorem Ipsum&quot;</span>
 }
 </code></pre>
 <pre><code class="lang-json">{
     <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;web_submit&quot;</span>,
-    <span class="hljs-string">&quot;node&quot;</span>: <span class="hljs-string">&quot;#node_id&quot;</span>
+    <span class="hljs-string">&quot;node&quot;</span>: {
+      <span class="hljs-string">&quot;selector&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;CSS|XPATH&quot;</span>
+    }
 }
 </code></pre>
 <pre><code class="lang-json">{
     <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;web_moveMouse&quot;</span>,
-    <span class="hljs-string">&quot;node&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+    <span class="hljs-string">&quot;node&quot;</span>: {
+      <span class="hljs-string">&quot;selector&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;CSS|XPATH&quot;</span>
+    },
     <span class="hljs-string">&quot;offsetX&quot;</span>: <span class="hljs-number">10</span>,
     <span class="hljs-string">&quot;offsetY&quot;</span>: <span class="hljs-number">10</span>
 }
 </code></pre>
 <pre><code class="lang-json">{
     <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;web_waitForNode&quot;</span>,
-    <span class="hljs-string">&quot;node&quot;</span>: <span class="hljs-string">&quot;#node_id&quot;</span>,
+    <span class="hljs-string">&quot;node&quot;</span>: {
+      <span class="hljs-string">&quot;selector&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+      <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;CSS|XPATH&quot;</span>
+    },
     <span class="hljs-string">&quot;maxWaitTime&quot;</span>: <span class="hljs-number">2000</span>,
     <span class="hljs-string">&quot;waitCriterion&quot;</span>: <span class="hljs-string">&quot;VISIBLE|INVISIBLE|ADDED|REMOVED&quot;</span>
 }
@@ -492,7 +536,6 @@ Every actions can also have two special attributes</p>
 }
 </code></pre>
 <h3 id="rest-actions">Rest Actions</h3>
-<p>Call a url:</p>
 <pre><code class="lang-json">{
   <span class="hljs-string">&quot;type&quot;</span> : <span class="hljs-string">&quot;rest_call&quot;</span>,
   <span class="hljs-string">&quot;method&quot;</span> : <span class="hljs-string">&quot;GET|POST|PUT|DELETE&quot;</span>,
@@ -553,19 +596,31 @@ Every actions can also have two special attributes</p>
 </code></pre>
 <pre><code class="lang-json">{
   <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;incrementCounter&quot;</span>,
-  <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;counter&quot;</span>
+  <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;counter&quot;</span>,
+  <span class="hljs-string">&quot;incrementBy&quot;</span>: <span class="hljs-number">1</span>
 }
 </code></pre>
 <pre><code class="lang-json">{
   <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;setCounter&quot;</span>,
   <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;counter&quot;</span>,
-  <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-number">42</span>
+  <span class="hljs-string">&quot;valueType&quot;</span>: <span class="hljs-string">&quot;NUMBER|VARIABLE&quot;</span>,
+  <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-number">42</span>|<span class="hljs-string">&quot;variableName&quot;</span>
+}
+</code></pre>
+<pre><code class="lang-json">{
+  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;setVariableByCookie&quot;</span>,
+  <span class="hljs-string">&quot;cookieType&quot;</span>: <span class="hljs-string">&quot;WEB|REST&quot;</span>,
+  <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;variable&quot;</span>,
+  <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;foobar&quot;</span>
 }
 </code></pre>
 <pre><code class="lang-json">{
   <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;setVariableByHTML&quot;</span>,
   <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;variable&quot;</span>,
-  <span class="hljs-string">&quot;value&quot;</span>: <span class="hljs-string">&quot;foobar&quot;</span>
+  <span class="hljs-string">&quot;node&quot;</span>: {
+    <span class="hljs-string">&quot;selector&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;CSS|XPATH&quot;</span>
+  }
 }
 </code></pre>
 <pre><code class="lang-json">{
@@ -577,8 +632,28 @@ Every actions can also have two special attributes</p>
 <pre><code class="lang-json">{
   <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;setVariableByNodeAttribute&quot;</span>,
   <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;variable&quot;</span>,
-  <span class="hljs-string">&quot;node&quot;</span>: <span class="hljs-string">&quot;#nodeId&quot;</span>,
+  <span class="hljs-string">&quot;node&quot;</span>: {
+    <span class="hljs-string">&quot;selector&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;CSS|XPATH&quot;</span>
+  },
   <span class="hljs-string">&quot;attribute&quot;</span>: <span class="hljs-string">&quot;href&quot;</span> 
+}
+</code></pre>
+<pre><code class="lang-json">{
+  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;setVariableByRegexGroup&quot;</span>,
+  <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;variable&quot;</span>,
+  <span class="hljs-string">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^foo(.*?)bar&quot;</span>,
+  <span class="hljs-string">&quot;nthMatch&quot;</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-string">&quot;mthGroup&quot;</span>: <span class="hljs-number">1</span>
+}
+</code></pre>
+<pre><code class="lang-json">{
+  <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;setVariableByRege&quot;</span>,
+  <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;variable&quot;</span>,
+  <span class="hljs-string">&quot;node&quot;</span>: {
+    <span class="hljs-string">&quot;selector&quot;</span>: <span class="hljs-string">&quot;#node&quot;</span>,
+    <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;CSS|XPATH&quot;</span>
+  },
 }
 </code></pre>
 <pre><code class="lang-json">{
@@ -590,10 +665,7 @@ Every actions can also have two special attributes</p>
 <h3 id="misc-actions">Misc. Actions</h3>
 <pre><code class="lang-json">{
     <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;executeSymbol&quot;</span>,
-    <span class="hljs-string">&quot;symbolToExecute&quot;</span>: {
-        <span class="hljs-string">&quot;id&quot;</span>: <span class="hljs-number">42</span>,
-        <span class="hljs-string">&quot;revision&quot;</span>: <span class="hljs-number">1</span>
-    }
+    <span class="hljs-string">&quot;symbolToExecute&quot;</span>: <span class="hljs-number">42</span>
 }
 </code></pre>
 <pre><code class="lang-json">{
@@ -633,7 +705,7 @@ Every actions can also have two special attributes</p>
                 </a>
                 
                 
-                <a href="extend.html" class="navigation navigation-next " aria-label="Next page: How To Extend ALEX">
+                <a href="extend.html" class="navigation navigation-next " aria-label="Next page: Extend ALEX">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -644,7 +716,7 @@ Every actions can also have two special attributes</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5.1","depth":2,"next":{"title":"How To Extend ALEX","level":"1.5.2","depth":2,"path":"contents/developer-documents/extend.md","ref":"contents/developer-documents/extend.md","articles":[]},"previous":{"title":"Developer Documents","level":"1.5","depth":1,"path":"contents/developer-documents/README.md","ref":"contents/developer-documents/README.md","articles":[{"title":"REST API","level":"1.5.1","depth":2,"path":"contents/developer-documents/REST.md","ref":"contents/developer-documents/REST.md","articles":[]},{"title":"How To Extend ALEX","level":"1.5.2","depth":2,"path":"contents/developer-documents/extend.md","ref":"contents/developer-documents/extend.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["collapsible-menu"],"styles":{"website":"assets/styles/website.css"},"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.2.1"},"title":"ALEX","language":"en","links":{"sidebar":{" ":"#","Homepage":"http://learnlib.github.io/alex"}},"gitbook":"3.2.2","description":"Documentation for ALEX","direction":"ltr"},"file":{"path":"contents/developer-documents/REST.md","mtime":"2017-02-03T19:43:20.248Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-02-03T20:24:52.996Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"REST API","level":"1.5.1","depth":2,"next":{"title":"Extend ALEX","level":"1.5.2","depth":2,"path":"contents/developer-documents/extend.md","ref":"contents/developer-documents/extend.md","articles":[]},"previous":{"title":"Developer Documents","level":"1.5","depth":1,"path":"contents/developer-documents/README.md","ref":"contents/developer-documents/README.md","articles":[{"title":"REST API","level":"1.5.1","depth":2,"path":"contents/developer-documents/REST.md","ref":"contents/developer-documents/REST.md","articles":[]},{"title":"Extend ALEX","level":"1.5.2","depth":2,"path":"contents/developer-documents/extend.md","ref":"contents/developer-documents/extend.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["collapsible-menu"],"styles":{"website":"assets/styles/website.css"},"pluginsConfig":{"collapsible-menu":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{"version":"1.2.1"},"title":"ALEX","language":"en","links":{"sidebar":{" ":"#","Homepage":"http://learnlib.github.io/alex"}},"gitbook":"3.2.2","description":"Documentation for ALEX","direction":"ltr"},"file":{"path":"contents/developer-documents/REST.md","mtime":"2017-02-10T21:34:17.161Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-02-23T10:04:15.717Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

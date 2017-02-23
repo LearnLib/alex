@@ -22,7 +22,7 @@ swagger-ui incapable to render this information
 Actions
 -------
 Swagger does not show the actions, so here we go.
-Every actions can also have two special attributes
+Every action can also have three special attributes
 
 ```json
 {
@@ -35,10 +35,23 @@ Every actions can also have two special attributes
 
 ### Web Actions
 
-````json
+```json
+{
+    "type": "web_checkForNode",
+    "node": {
+      "selector": "#node",
+      "type": "CSS|XPATH"
+    }
+}
+```
+
+```json
 {
     "type": "web_checkNodeAttributeValue",
-    "node": "#node",
+    "node": {
+      "selector": "#node",
+      "type": "CSS|XPATH"
+    },
     "attribute": "class",
     "value": "visible",
     "checkMethod": "IS|CONTAINS|MATCHES"
@@ -47,15 +60,9 @@ Every actions can also have two special attributes
 
 ```json
 {
-    "type": "web_checkForNode",
-    "value": "#node"
-}
-```
-
-```json
-{
     "type": "web_checkForText",
-    "value": "Lorem Ipsum"
+    "value": "Lorem Ipsum",
+    "regexp": true|false
 }
 ```
 
@@ -70,7 +77,10 @@ Every actions can also have two special attributes
 ```json
 {
     "type": "web_clear",
-    "node": "#node"
+    "node": {
+      "selector": "#node",
+      "type": "CSS|XPATH"
+    }
 }
 ```
 
@@ -84,14 +94,21 @@ Every actions can also have two special attributes
 ```json
 {
     "type": "web_click",
-    "node": "#node"
+    "node": {
+      "selector": "#node",
+      "type": "CSS|XPATH"
+    },
+    "doubleClick": true|false
 }
 ```
 
 ```json
 {
     "type" : "web_fill",
-    "node" : "#input",
+    "node": {
+      "selector": "#node",
+      "type": "CSS|XPATH"
+    },
     "value" : "Lorem Ipsum"
 }
 ```
@@ -99,21 +116,41 @@ Every actions can also have two special attributes
 ```json
 {
     "type": "web_goto",
-    "url":  "http://example.com"
+    "url":  "http://example.com",
+    "credentials": {
+      "name": "username",
+      "password": "password"
+    }
+}
+```
+
+```json
+{
+    "type": "web_pressKey",
+    "node": {
+      "selector": "#node",
+      "type": "CSS|XPATH"
+    },
+    "key": "ESC|ENTER|..."
 }
 ```
 
 ```json
 {
     "type": "web_executeScript",
-    "script": "window.alert('hi!')"
+    "script": "window.alert('hi!')",
+    "name": "variableName"
 }
 ```
 
 ```json
 {
     "type": "web_select",
-    "node": "#input",
+    "node": {
+      "selector": "#node",
+      "type": "CSS|XPATH"
+    },
+    "selectBy": "VALUE|TEXT|INDEX",
     "value": "Lorem Ipsum"
 }
 ```
@@ -121,14 +158,20 @@ Every actions can also have two special attributes
 ```json
 {
     "type": "web_submit",
-    "node": "#node_id"
+    "node": {
+      "selector": "#node",
+      "type": "CSS|XPATH"
+    }
 }
 ```
 
 ```json
 {
     "type": "web_moveMouse",
-    "node": "#node",
+    "node": {
+      "selector": "#node",
+      "type": "CSS|XPATH"
+    },
     "offsetX": 10,
     "offsetY": 10
 }
@@ -137,7 +180,10 @@ Every actions can also have two special attributes
 ```json
 {
     "type": "web_waitForNode",
-    "node": "#node_id",
+    "node": {
+      "selector": "#node",
+      "type": "CSS|XPATH"
+    },
     "maxWaitTime": 2000,
     "waitCriterion": "VISIBLE|INVISIBLE|ADDED|REMOVED"
 }
@@ -153,7 +199,6 @@ Every actions can also have two special attributes
 ```
 
 ### Rest Actions
-Call a url:
 
 ```json
 {
@@ -235,7 +280,8 @@ Call a url:
 ```json
 {
   "type": "incrementCounter",
-  "name": "counter"
+  "name": "counter",
+  "incrementBy": 1
 }
 ```
 
@@ -243,7 +289,17 @@ Call a url:
 {
   "type": "setCounter",
   "name": "counter",
-  "value": 42
+  "valueType": "NUMBER|VARIABLE",
+  "value": 42|"variableName"
+}
+```
+
+```json
+{
+  "type": "setVariableByCookie",
+  "cookieType": "WEB|REST",
+  "name": "variable",
+  "value": "foobar"
 }
 ```
 
@@ -251,7 +307,10 @@ Call a url:
 {
   "type": "setVariableByHTML",
   "name": "variable",
-  "value": "foobar"
+  "node": {
+    "selector": "#node",
+    "type": "CSS|XPATH"
+  }
 }
 ```
 
@@ -267,8 +326,32 @@ Call a url:
 {
   "type": "setVariableByNodeAttribute",
   "name": "variable",
-  "node": "#nodeId",
+  "node": {
+    "selector": "#node",
+    "type": "CSS|XPATH"
+  },
   "attribute": "href" 
+}
+```
+
+```json
+{
+  "type": "setVariableByRegexGroup",
+  "name": "variable",
+  "regex": "^foo(.*?)bar",
+  "nthMatch": 1,
+  "mthGroup": 1
+}
+```
+
+```json
+{
+  "type": "setVariableByRege",
+  "name": "variable",
+  "node": {
+    "selector": "#node",
+    "type": "CSS|XPATH"
+  },
 }
 ```
 
@@ -285,10 +368,7 @@ Call a url:
 ```json
 {
     "type": "executeSymbol",
-    "symbolToExecute": {
-        "id": 42,
-        "revision": 1
-    }
+    "symbolToExecute": 42
 }
 ```
 
