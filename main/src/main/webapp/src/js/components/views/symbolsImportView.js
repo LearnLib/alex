@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import _ from "lodash";
+import remove from "lodash/remove";
+import uniqueId from "lodash/uniqueId";
+import max from "lodash/max";
 import {events} from "../../constants";
 import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
 
@@ -75,7 +77,7 @@ class SymbolsImportView {
     fileLoaded(data) {
         try {
             this.symbols = JSON.parse(data).map(s => {
-                s.id = _.uniqueId();
+                s.id = uniqueId();
                 return new AlphabetSymbol(s);
             });
         } catch (e) {
@@ -91,7 +93,7 @@ class SymbolsImportView {
         if (this.selectedSymbols.length > 0) {
             this.SymbolResource.getAll(this.project.id)
                 .then(existingSymbols => {
-                    let maxId = _.max(existingSymbols, 'id');
+                    let maxId = max(existingSymbols, 'id');
                     maxId = typeof maxId === "undefined" ? 0 : maxId;
                     const symbols = this.selectedSymbols.map(s => new AlphabetSymbol(s));
                     symbols.forEach(symbol => {
@@ -112,7 +114,7 @@ class SymbolsImportView {
                         .then(createdSymbols => {
                             this.ToastService.success('Symbols uploaded');
                             createdSymbols.forEach(symbol => {
-                                _.remove(this.symbols, {name: symbol.name});
+                                remove(this.symbols, {name: symbol.name});
                             });
                         })
                         .catch(() => {
@@ -127,7 +129,7 @@ class SymbolsImportView {
      */
     removeSelectedSymbols() {
         this.selectedSymbols.forEach(symbol => {
-            _.remove(this.symbols, {name: symbol.name});
+            remove(this.symbols, {name: symbol.name});
         });
     }
 

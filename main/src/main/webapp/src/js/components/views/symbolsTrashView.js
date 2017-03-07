@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import _ from "lodash";
+import remove from "lodash/remove";
 
 /**
  * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover
@@ -69,7 +69,7 @@ class SymbolsTrashView {
         this.SymbolResource.recover(symbol)
             .then(() => {
                 this.ToastService.success('Symbol ' + symbol.name + ' recovered');
-                _.remove(this.symbols, {id: symbol.id});
+                remove(this.symbols, {id: symbol.id});
             })
             .catch(response => {
                 this.ToastService.danger('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + response.data.message);
@@ -85,7 +85,7 @@ class SymbolsTrashView {
                 .then(() => {
                     this.ToastService.success('Symbols recovered');
                     this.selectedSymbols.forEach(symbol => {
-                        _.remove(this.symbols, {id: symbol.id});
+                        remove(this.symbols, {id: symbol.id});
                     });
                     this.selectedSymbols = [];
                 })

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import _ from "lodash";
+import forEach from "lodash/forEach";
 import {graphlib, dagre, render as Renderer} from "dagre-d3";
 import {events} from "../constants";
 
@@ -159,8 +159,8 @@ class HypothesisComponent {
         });
 
         // add edges to the rendered graph and combine <label[]>
-        _.forEach(graph, (k, from) => {
-            _.forEach(k, (labels, to) => {
+        forEach(graph, (k, from) => {
+            forEach(k, (labels, to) => {
                 this.graph.setEdge(from, to, {
                     label: labels.join('\n'),
                     labeloffset: 5,
@@ -191,7 +191,7 @@ class HypothesisComponent {
         this.svgGroup.setAttribute("transform", "translate(" + xCenterOffset + ", 100)");
 
         // adjust marker ids so that they are still visible after the export
-        _.forEach(this.svg.querySelectorAll('.path'), path => {
+        forEach(this.svg.querySelectorAll('.path'), path => {
             const markerId = "#" + path.getAttribute('marker-end').split(')')[0].split('#')[1];
             path.setAttribute('marker-end', `url(${markerId})`);
         });

@@ -139,6 +139,13 @@
             <version>1.9.2</version>
         </dependency>
 
+        <!-- guava for selenium wait conditions -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
+        </dependency>
+
         <!-- JsonPath -->
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>

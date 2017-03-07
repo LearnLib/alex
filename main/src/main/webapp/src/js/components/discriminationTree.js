@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import _ from "lodash";
+import find from "lodash/find";
+import forEach from "lodash/forEach"
 import {graphlib, dagre, render as Renderer} from "dagre-d3";
 
 const STYLE = {
@@ -107,7 +108,7 @@ class DiscriminationTreeComponent {
             }
 
             // add node if not exists
-            if (!_.find(nodes, node.discriminator)) {
+            if (!find(nodes, node.discriminator)) {
                 nodes.push(node.discriminator);
             }
 
@@ -194,7 +195,7 @@ class DiscriminationTreeComponent {
         this.svgGroup.setAttribute("transform", "translate(" + xCenterOffset + ", 100)");
 
         // adjust marker ids so that they are still visible after the export
-        _.forEach(this.svg.querySelectorAll('.path'), path => {
+        forEach(this.svg.querySelectorAll('.path'), path => {
             const markerId = "#" + path.getAttribute('marker-end').split(')')[0].split('#')[1];
             path.setAttribute('marker-end', `url(${markerId})`);
         });

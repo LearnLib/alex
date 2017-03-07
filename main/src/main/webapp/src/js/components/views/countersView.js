@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import _ from "lodash";
+import remove from "lodash/remove";
 
 /**
  * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.
@@ -69,7 +69,7 @@ class CountersView {
         this.CounterResource.remove(this.project.id, counter)
             .then(() => {
                 this.ToastService.success('Counter "' + counter.name + '" deleted');
-                _.remove(this.counters, {name: counter.name});
+                remove(this.counters, {name: counter.name});
             })
             .catch(response => {
                 this.ToastService.danger('<p><strong>Deleting counter "' + counter.name + '" failed</strong></p>' + response.data.message);
@@ -85,7 +85,7 @@ class CountersView {
                 .then(() => {
                     this.ToastService.success('Counters deleted');
                     this.selectedCounters.forEach(counter => {
-                        _.remove(this.counters, {name: counter.name});
+                        remove(this.counters, {name: counter.name});
                     });
                 })
                 .catch(response => {

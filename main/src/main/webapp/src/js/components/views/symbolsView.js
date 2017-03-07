@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import _ from "lodash";
+import flatten from "lodash/flatten";
+import remove from "lodash/remove";
 import {events} from "../../constants";
 import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
 
@@ -115,7 +116,7 @@ class SymbolsView {
      * @returns {AlphabetSymbol[]}
      */
     getAllSymbols() {
-        return _.flatten(this.groups.map(g => g.symbols));
+        return flatten(this.groups.map(g => g.symbols));
     }
 
     /**
@@ -136,7 +137,7 @@ class SymbolsView {
     removeSymbols(symbols) {
         symbols.forEach(symbol => {
             const group = this.findGroupFromSymbol(symbol);
-            _.remove(group.symbols, {id: symbol.id});
+            remove(group.symbols, {id: symbol.id});
         });
     }
 
@@ -232,7 +233,7 @@ class SymbolsView {
      */
     deleteGroup(group) {
         this.removeSymbols(group.symbols);
-        _.remove(this.groups, {id: group.id});
+        remove(this.groups, {id: group.id});
     }
 
     /**

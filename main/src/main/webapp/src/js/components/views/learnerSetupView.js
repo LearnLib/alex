@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import _ from "lodash";
-import {events} from "../../constants";
+import flatten from "lodash/flatten";
 import {LearnConfiguration} from "../../entities/LearnConfiguration";
 
 /**
@@ -105,7 +104,7 @@ class LearnerSetupView {
                     SymbolGroupResource.getAll(this.project.id, true)
                         .then(groups => {
                             this.groups = groups;
-                            this.allSymbols = _.flatten(this.groups.map(g => g.symbols));
+                            this.allSymbols = flatten(this.groups.map(g => g.symbols));
                         })
                         .catch(err => console.log(err));
 
