@@ -338,20 +338,6 @@
                             <goal>repackage</goal>
                         </goals>
                     </execution>
-                    <!--<execution>
-                        <id>server-start</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>server-stop</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>-->
                 </executions>
             </plugin>
 
