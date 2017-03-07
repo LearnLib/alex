@@ -98,5 +98,5 @@ class AdminUsersView {
 export const adminUsersView = {
     controller: AdminUsersView,
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/admin-users.html'
+    templateUrl: 'html/components/views/admin-users-view.html'
 };

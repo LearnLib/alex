@@ -170,5 +170,5 @@ class ResultsCompareView {
 export const resultsCompareView = {
     controller: ResultsCompareView,
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/results-compare.html'
+    templateUrl: 'html/components/views/results-compare-view.html'
 };

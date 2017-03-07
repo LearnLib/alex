@@ -52,6 +52,10 @@ class UserEditForm {
          * The model for the input of the users mail.
          * @type {string}
          */
+        this.email = null;
+    }
+
+    $onInit() {
         this.email = this.user.email;
     }
 
@@ -122,48 +126,10 @@ class UserEditForm {
 }
 
 export const userEditForm = {
+    templateUrl: 'html/components/forms/user-edit-form.html',
     bindings: {
         user: '='
     },
     controller: UserEditForm,
-    controllerAs: 'vm',
-    template: `
-        <h3>Password</h3>
-        <form ng-submit="vm.changePassword()">
-            <div class="form-group">
-                <label>Old password</label>
-                <input class="form-control" type="password" ng-model="vm.oldPassword" placeholder="Enter your old password">
-            </div>
-            <div class="form-group">
-                <label>New password</label>
-                <input class="form-control" type="password" ng-model="vm.newPassword" placeholder="Enter your new password">
-            </div>
-            <button class="btn btn-primary btn-sm">Change password</button>
-        </form>
-        <hr>
-
-        <h3>Email</h3>
-        <form name="vm.mailForm" ng-submit="vm.changeEmail()">
-            <div class="form-group">
-                <label>Email</label>
-                <input class="form-control" name="mail" type="email" ng-model="vm.email" placeholder="Enter an email address" required />
-            </div>
-            <div class="help-block" ng-messages="vm.mailForm.mail.$error" ng-if="vm.mailForm.mail.$touched">
-                <div class="alert alert-danger alert-condensed" ng-message="required">
-                    The email is required
-                </div>
-                <div class="alert alert-danger alert-condensed" ng-message="email">
-                    You have to enter a valid email address
-                </div>
-            </div>
-            <button class="btn btn-primary btn-sm">Change Email</button>
-        </form>
-        <hr>
-
-        <div class="text-right">
-            <button class="btn btn-sm btn-default" ng-click="vm.deleteUser()">
-                <i class="fa fa-fw fa-trash-o"></i> Delete Profile
-            </button>
-        </div>
-    `
+    controllerAs: 'vm'
 };

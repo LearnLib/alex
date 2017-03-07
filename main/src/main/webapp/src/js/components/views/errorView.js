@@ -44,17 +44,7 @@ class ErrorView {
 }
 
 export const errorView = {
+    templateUrl: 'html/components/views/error-view.html',
     controller: ErrorView,
-    controllerAs: 'vm',
-    template: `
-        <div class="alx-container">
-            <div class="text-center alert-container">
-                <div class="alert alert-danger">
-                    <i class="fa fa-5x fa-warning"></i>
-                    <h3>Something went wrong!</h3>
-                    <p ng-bind="::vm.errorMessage"></p>
-                </div>
-            </div>
-        </div>
-    `
+    controllerAs: 'vm'
 };

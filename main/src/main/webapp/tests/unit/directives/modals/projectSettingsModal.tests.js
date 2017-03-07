@@ -1,8 +1,8 @@
 import {Project} from '../../../../src/js/entities/Project';
 import {events} from '../../../../src/js/constants';
-import {ProjectSettingsModalController} from '../../../../src/js/directives/modals/projectSettingsModalHandle';
+import {ProjectSettingsModalController} from '../../.././projectSettingsModalHandle';
 
-describe('ProjectSettingsModalController', () => {
+describe('ProjectSettingsModalComponent', () => {
     let ProjectResource, LearnerResource, $controller, EventBus, ToastService, scope, $uibModal, $compile, $q;
 
     let controller, project, modalInstance, deferred, element;

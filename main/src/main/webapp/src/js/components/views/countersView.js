@@ -98,5 +98,5 @@ class CountersView {
 export const countersView = {
     controller: CountersView,
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/counters.html'
+    templateUrl: 'html/components/views/counters-view.html'
 };

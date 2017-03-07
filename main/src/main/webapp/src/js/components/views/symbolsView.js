@@ -279,5 +279,5 @@ class SymbolsView {
 export const symbolsView = {
     controller: SymbolsView,
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/symbols.html'
+    templateUrl: 'html/components/views/symbols-view.html'
 };

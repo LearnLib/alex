@@ -1,0 +1,22 @@
+<div class="learn-result-list-item">
+    <checkbox model="vm.result" class="pull-left" selection-model-ignore></checkbox>
+    <div class="learn-result-list-item-content">
+        <div class="pull-right" ng-transclude></div>
+        <span class="label label-danger pull-right" ng-show="vm.result.error">Failed</span>
+        <strong>
+            <a ui-sref="resultsCompare({testNos: [vm.result.testNo]})" ng-if="vm.linkTo === 'hypothesis'">
+                Test No <span ng-bind="vm.result.testNo"></span>
+            </a>
+            <a ui-sref="statisticsCompare({testNos: [vm.result.testNo], mode: 'cumulated'})" ng-if="vm.linkTo === 'statistics'">
+                Test No <span ng-bind="vm.result.testNo"></span>
+            </a>
+        </strong>,
+        [<span ng-bind="(vm.result.algorithm|formatAlgorithm)"></span>]
+        <div class="text-muted">
+            <em>
+                Started: <span ng-bind="(vm.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
+            </em>
+        </div>
+        <div class="comment text-muted" ng-if="vm.result.comment" ng-bind="vm.result.comment"></div>
+    </div>
+</div>

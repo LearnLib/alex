@@ -1,6 +1,6 @@
 import {AlphabetSymbol} from '../../../../src/js/entities/AlphabetSymbol';
 import {events} from '../../../../src/js/constants';
-import {SymbolCreateModalController} from '../../../../src/js/directives/modals/symbolCreateModalHandle';
+import {SymbolCreateModalController} from '../../.././symbolCreateModalHandle';
 
 describe('symbolCreateModal', () => {
     let $controller, $uibModal, $q, $compile, $rootScope, SymbolGroupResource, SymbolResource, ToastService, SessionService;

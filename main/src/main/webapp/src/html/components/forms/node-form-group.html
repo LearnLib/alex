@@ -1,0 +1,23 @@
+<div class="row">
+    <div class="col-xs-9">
+        <div class="form-group">
+            <label class="control-label">Selector</label>
+            <input class="form-control" type="text" placeholder="CSS selector" ng-model="vm.node.selector">
+        </div>
+    </div>
+    <div class="col-xs-3 no-padding-left">
+        <div class="form-group">
+            <label class="control-label">&nbsp;</label>
+            <select class="form-control" ng-options="m for m in ['CSS', 'XPATH']" ng-model="vm.node.type">
+                <option value="" disabled>Select a type</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-xs-12">
+        <div class="form-group">
+            <a class="btn btn-default btn-sm" html-element-picker-handle model="vm.node.selector">
+                <i class="fa fa-magic fa-fw"></i>&nbsp; Element Picker
+            </a>
+        </div>
+    </div>
+</div>

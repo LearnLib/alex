@@ -1,5 +1,5 @@
 import {Project} from '../../../../src/js/entities/Project';
-import {ActionEditModalController} from '../../../../src/js/directives/modals/actionEditModalHandle';
+import {ActionEditModalController} from '../../.././actionEditModalHandle';
 
 describe('ActionEditModalController', () => {
     let $controller, $rootScope, $q, $compile, $uibModal;

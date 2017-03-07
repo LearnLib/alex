@@ -107,7 +107,7 @@ class ProjectCreateForm {
 }
 
 export const projectCreateForm = {
+    templateUrl: 'html/components/forms/project-create-form.html',
     controller: ProjectCreateForm,
-    controllerAs: 'vm',
-    templateUrl: 'html/components/project-create-form.html'
+    controllerAs: 'vm'
 };

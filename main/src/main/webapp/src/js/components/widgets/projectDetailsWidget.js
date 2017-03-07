@@ -32,12 +32,8 @@ class ProjectDetailsWidget {
      */
     // @ngInject
     constructor($scope, SessionService, SymbolGroupResource, LearnResultResource, EventBus) {
-
-        /**
-         * The project in sessionStorage.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.SymbolGroupResource = SymbolGroupResource;
+        this.LearnResultResource = LearnResultResource;
 
         /**
          * The number of symbol groups of the project.
@@ -57,7 +53,15 @@ class ProjectDetailsWidget {
          */
         this.numberOfTests = null;
 
-        SymbolGroupResource.getAll(this.project.id, true)
+        // listen on project update event
+        EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
+            this.project = data.project;
+            SessionService.saveProject(data.project);
+        }, $scope);
+    }
+
+    $onInit() {
+        this.SymbolGroupResource.getAll(this.project.id, true)
             .then(groups => {
                 this.numberOfGroups = groups.length;
                 let counter = 0;
@@ -66,56 +70,19 @@ class ProjectDetailsWidget {
             })
             .catch(err => console.log(err));
 
-        LearnResultResource.getAll(this.project.id)
+        this.LearnResultResource.getAll(this.project.id)
             .then(results => {
                 this.numberOfTests = results.length;
             })
             .catch(err => console.log(err));
-
-        // listen on project update event
-        EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
-            this.project = data.project;
-            SessionService.saveProject(data.project);
-        }, $scope);
     }
 }
 
 export const projectDetailsWidget = {
+    templateUrl: 'html/components/widgets/project-details-widget.html',
+    bindings: {
+        project: '='
+    },
     controller: ProjectDetailsWidget,
-    controllerAs: 'vm',
-    template: `
-        <widget title="Project details">
-            <table class="table table-condensed">
-                <tbody>
-                <tr>
-                    <td><strong>Name</strong></td>
-                    <td ng-bind="vm.project.name"></td>
-                </tr>
-                <tr>
-                    <td><strong>URL</strong></td>
-                    <td><a href="{{vm.project.baseUrl}}" target="_blank" ng-bind="vm.project.baseUrl"></a></td>
-                </tr>
-                <tr> 
-                    <td><strong>Mirrors</strong></td> 
-                    <td ng-bind="vm.project.mirrorUrls.length"></td> 
-                </tr> 
-                <tr>
-                    <td><strong>#Groups</strong></td>
-                    <td ng-bind="vm.numberOfGroups"></td>
-                </tr>
-                <tr>
-                    <td><strong>#Symbols</strong></td>
-                    <td ng-bind="vm.numberOfSymbols"></td>
-                </tr>
-                <tr>
-                    <td><strong>#Tests</strong></td>
-                    <td ng-bind="vm.numberOfTests"></td>
-                </tr>
-                </tbody>
-            </table>
-            <button class="btn btn-default btn-xs" project-settings-modal-handle project="vm.project">
-                <i class="fa fa-fw fa-edit"></i> Edit project
-            </button>
-        </widget>
-    `
+    controllerAs: 'vm'
 };

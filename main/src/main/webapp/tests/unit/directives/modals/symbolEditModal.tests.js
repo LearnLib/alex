@@ -1,4 +1,4 @@
-import {SymbolEditModalController} from '../../../../src/js/directives/modals/symbolEditModalHandle';
+import {SymbolEditModalController} from '../../.././symbolEditModalHandle';
 import {AlphabetSymbol} from '../../../../src/js/entities/AlphabetSymbol';
 
 describe('symbolEditModal', () => {

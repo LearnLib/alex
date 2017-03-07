@@ -1,5 +1,5 @@
 import {User} from '../../../../src/js/entities/User';
-import {UserEditModalController} from '../../../../src/js/directives/modals/userEditModalHandle';
+import {UserEditModalController} from '../../.././userEditModalHandle';
 import {events} from '../../../../src/js/constants';
 
 describe('userEditModal', () => {

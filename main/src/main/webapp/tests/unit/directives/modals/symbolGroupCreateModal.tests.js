@@ -1,9 +1,9 @@
 import {Project} from '../../../../src/js/entities/Project';
 import {SymbolGroup} from '../../../../src/js/entities/SymbolGroup';
 import {events} from '../../../../src/js/constants';
-import {SymbolGroupCreateModalController} from '../../../../src/js/directives/modals/symbolGroupCreateModalHandle';
+import {SymbolGroupCreateModalController} from '../../.././symbolGroupCreateModalHandle';
 
-describe('SymbolGroupCreateModalController', () => {
+describe('SymbolGroupCreateModalComponent', () => {
     let SessionService, SymbolGroupResource, $compile, $uibModal, $q, $controller, EventBus, ToastService, $rootScope;
 
     let controller, project, modalInstance, deferred, element, scope;

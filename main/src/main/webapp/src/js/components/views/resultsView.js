@@ -119,5 +119,5 @@ class ResultsView {
 export const resultsView = {
     controller: ResultsView,
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/results.html'
+    templateUrl: 'html/components/views/results-view.html'
 };

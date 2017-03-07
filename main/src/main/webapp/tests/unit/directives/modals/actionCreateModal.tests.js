@@ -1,6 +1,6 @@
 import {Project} from '../../../../src/js/entities/Project';
 import {actionType} from '../../../../src/js/constants';
-import {ActionCreateModalController} from '../../../../src/js/directives/modals/actionCreateModalHandle';
+import {ActionCreateModalController} from '../../.././actionCreateModalHandle';
 
 describe('ActionCreateModalController', () => {
     let $controller, $rootScope, $q;
