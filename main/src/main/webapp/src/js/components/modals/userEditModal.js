@@ -64,11 +64,12 @@ export class UserEditModalComponent {
          * The model for the input of the users mail.
          * @type {string}
          */
-        this.email = this.user.email;
+        this.email = null;
     }
 
     $onInit() {
         this.user = this.resolve.modalData.user;
+        this.email = this.user.email;
     }
 
     /**

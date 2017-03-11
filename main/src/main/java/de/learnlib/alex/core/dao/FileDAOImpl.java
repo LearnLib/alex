@@ -18,6 +18,7 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.UploadableFile;
 import de.learnlib.alex.exceptions.NotFoundException;
+import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -28,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,11 +47,8 @@ public class FileDAOImpl implements FileDAO {
      * The path of the upload directory as String.
      * This will be injected by Spring and is configured in the applications.properties file.
      */
-    @Value("${alex.uploadspath}")
-    private String uploadPathAsString;
-
-    /** Path to the root of the upload directory. */
-    private java.nio.file.Path uploadedDirectoryBaseLocation;
+    @Value("${alex.filesRootDir}")
+    private String filesRootDir;
 
     /**
      * Create the uploads directory, if necessary.
@@ -57,9 +56,7 @@ public class FileDAOImpl implements FileDAO {
      */
     @PostConstruct
     private void init() {
-        this.uploadedDirectoryBaseLocation = Paths.get(uploadPathAsString);
-
-        File uploadBaseDirectory = uploadedDirectoryBaseLocation.toFile();
+        File uploadBaseDirectory =  Paths.get(filesRootDir, "users").toFile();
         if (!uploadBaseDirectory.exists()) {
             uploadBaseDirectory.mkdirs();
         }
@@ -69,9 +66,7 @@ public class FileDAOImpl implements FileDAO {
     public void create(Long userId, Long projectId, InputStream uploadedInputStream,
                        FormDataContentDisposition fileDetail)
             throws IOException, IllegalStateException {
-        java.nio.file.Path uploadedDirectoryLocation = Paths.get(uploadedDirectoryBaseLocation.toString(),
-                                                                 String.valueOf(userId),
-                                                                 String.valueOf(projectId));
+        Path uploadedDirectoryLocation = Paths.get(getUploadsDir(userId, projectId));
 
         File uploadDirectory = uploadedDirectoryLocation.toFile();
         if (!uploadDirectory.exists()) {
@@ -82,7 +77,7 @@ public class FileDAOImpl implements FileDAO {
             throw new IllegalStateException("Could not find the right directory to upload the file.");
         }
 
-        java.nio.file.Path uploadedFileLocation = Paths.get(uploadedDirectoryLocation.toString(),
+        Path uploadedFileLocation = Paths.get(uploadedDirectoryLocation.toString(),
                                                             fileDetail.getFileName());
 
         if (uploadedFileLocation.toFile().exists()) {
@@ -118,7 +113,7 @@ public class FileDAOImpl implements FileDAO {
     public String getAbsoluteFilePath(Long userId, Long projectId, String fileName) throws NotFoundException {
         File uploadDirectory = getUploadDirectory(userId, projectId);
 
-        java.nio.file.Path uploadedFileLocation = Paths.get(uploadDirectory.getPath(), fileName);
+        Path uploadedFileLocation = Paths.get(uploadDirectory.getPath(), fileName);
         File file = uploadedFileLocation.toFile();
 
         if (!file.exists()) {
@@ -132,7 +127,7 @@ public class FileDAOImpl implements FileDAO {
     public void delete(Long userId, Long projectId, String fileName) throws NotFoundException {
         File uploadDirectory = getUploadDirectory(userId, projectId);
 
-        java.nio.file.Path uploadedFileLocation = Paths.get(uploadDirectory.getPath(), fileName);
+        Path uploadedFileLocation = Paths.get(uploadDirectory.getPath(), fileName);
         File file = uploadedFileLocation.toFile();
 
         if (!file.exists()) {
@@ -142,10 +137,24 @@ public class FileDAOImpl implements FileDAO {
         file.delete();
     }
 
+    @Override
+    public void deleteProjectDirectory(Long userId, Long projectId) throws IOException {
+        File dir = Paths.get(getProjectDir(userId, projectId)).toFile();
+        if (dir.exists()) {
+            FileUtils.deleteDirectory(dir);
+        }
+    }
+
+    @Override
+    public void deleteUserDirectory(Long userId) throws IOException {
+        File dir = Paths.get(getUserDir(userId)).toFile();
+        if (dir.exists()) {
+            FileUtils.deleteDirectory(dir);
+        }
+    }
+
     private File getUploadDirectory(Long userId, Long projectId) throws NotFoundException {
-        java.nio.file.Path uploadedDirectoryLocation = Paths.get(uploadedDirectoryBaseLocation.toString(),
-                                                                 String.valueOf(userId),
-                                                                 String.valueOf(projectId));
+        Path uploadedDirectoryLocation = Paths.get(getUploadsDir(userId, projectId));
         File uploadDirectory = uploadedDirectoryLocation.toFile();
 
         if (!uploadDirectory.exists() || !uploadDirectory.isDirectory()) {
@@ -173,5 +182,16 @@ public class FileDAOImpl implements FileDAO {
         }
     }
 
+    private String getUserDir(Long userId) {
+        return Paths.get(filesRootDir, "users", String.valueOf(userId)).toString();
+    }
+
+    private String getProjectDir(Long userId, Long projectId) {
+        return Paths.get(getUserDir(userId), "projects", String.valueOf(projectId)).toString();
+    }
+
+    private String getUploadsDir(Long userId, Long projectId) {
+        return Paths.get(getProjectDir(userId, projectId), "uploads").toString();
+    }
 
 }

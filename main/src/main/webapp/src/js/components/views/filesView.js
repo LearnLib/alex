@@ -99,7 +99,8 @@ class FilesView {
         let error = false;
         const countFiles = this.files.length;
 
-        const next = () => {
+        let next;
+        next = () => {
             this.progress = 0;
             if (this.filesToUpload.length > 0) {
                 const file = this.filesToUpload[0];

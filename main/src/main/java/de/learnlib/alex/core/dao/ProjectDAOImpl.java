@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -65,6 +66,9 @@ public class ProjectDAOImpl implements ProjectDAO {
     /** The SymbolDAO to use. Will be injected. */
     private SymbolDAO symbolDAO;
 
+    /** The FileDAO to use. Will be injected. */
+    private FileDAO fileDAO;
+
     /**
      * Creates a new ProjectDAO.
      *
@@ -74,13 +78,16 @@ public class ProjectDAOImpl implements ProjectDAO {
      *         The SymbolRepository to use.
      * @param symbolDAO
      *         The SymbolDAO to use.
+     * @param fileDAO
+     *         The FileDAO to use.
      */
     @Inject
     public ProjectDAOImpl(ProjectRepository projectRepository,  SymbolRepository symbolRepository,
-                          SymbolDAO symbolDAO) {
+                          SymbolDAO symbolDAO, FileDAO fileDAO) {
         this.projectRepository = projectRepository;
         this.symbolRepository = symbolRepository;
         this.symbolDAO = symbolDAO;
+        this.fileDAO = fileDAO;
     }
 
     @Override
@@ -232,6 +239,11 @@ public class ProjectDAOImpl implements ProjectDAO {
         }
 
         projectRepository.delete(project);
+        try {
+            fileDAO.deleteProjectDirectory(userId, projectId);
+        } catch (IOException e) {
+            LOGGER.info("The project has been deleted, the directory, however, not.");
+        }
     }
 
     /**
