@@ -240,6 +240,17 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label>Xvfb display port</label>
+                    <input class="form-control" type="number" min="0" ng-model="vm.learnConfiguration.browser.xvfbDisplayPort">
+                    <p class="help-block">
+                        For running headless Chrome and Firefox.
+                        Make sure a virtual display is running with Xvfb under this port.
+                        E.g. <kbd>Xvfb :51 -screen 0 1280x720x16</kbd>.
+                        Only works with Linux.
+                    </p>
+                </div>
+
             </uib-tab>
         </uib-tabset>
 

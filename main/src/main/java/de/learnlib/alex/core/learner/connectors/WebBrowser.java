@@ -4,15 +4,19 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.google.common.collect.ImmutableMap;
 import de.learnlib.alex.core.entities.BrowserConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -108,11 +112,28 @@ public enum WebBrowser {
                         chromeCapabilities.setCapability("recreateChromeDriverSessions", true);
                         chromeCapabilities.setCapability("chromeOptions", chromeOptions);
 
-                        driver = new ChromeDriver(chromeCapabilities);
+                        if (config.getXvfbDisplayPort() == null) {
+                            driver = new ChromeDriver(chromeCapabilities);
+                        } else {
+                            ChromeDriverService service = new ChromeDriverService.Builder()
+                                    .usingAnyFreePort()
+                                    .withEnvironment(ImmutableMap.of("DISPLAY", ":" + String.valueOf(config.getXvfbDisplayPort())))
+                                    .build();
+                            driver = new ChromeDriver(service, chromeCapabilities);
+                        }
+
                         break;
                     case FIREFOX:
                         DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
-                        driver = new FirefoxDriver(firefoxCapabilities);
+
+                        if (config.getXvfbDisplayPort() == null) {
+                            driver = new FirefoxDriver(firefoxCapabilities);
+                        } else {
+                            FirefoxBinary binary = new FirefoxBinary();
+                            binary.setEnvironmentProperty("DISPLAY", ":" + String.valueOf(config.getXvfbDisplayPort()));
+                            driver = new FirefoxDriver(binary, null, firefoxCapabilities);
+                        }
+
                         break;
                     case EDGE:
                         DesiredCapabilities edgeCapabilities = DesiredCapabilities.edge();

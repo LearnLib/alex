@@ -35,6 +35,9 @@ public class BrowserConfig {
     /** The browser height. */
     private Integer height;
 
+    /** The port for the virtual xvfb display. Only works with linux. */
+    private Integer xvfbDisplayPort;
+
     /** Constructor. */
     public BrowserConfig() {
         this.driver = WebBrowser.HTMLUNITDRIVER;
@@ -77,5 +80,15 @@ public class BrowserConfig {
      */
     public void setHeight(Integer height) {
         this.height = height < 0 ? 0 : height;
+    }
+
+    /** @return {@link #xvfbDisplayPort} */
+    public Integer getXvfbDisplayPort() {
+        return xvfbDisplayPort;
+    }
+
+    /** @param xvfbDisplayPort {@link #xvfbDisplayPort} */
+    public void setXvfbDisplayPort(Integer xvfbDisplayPort) {
+        this.xvfbDisplayPort = xvfbDisplayPort;
     }
 }
