@@ -4,12 +4,10 @@
         <a href="#home" class="sidebar-header-button logo-button">
             <img src="assets/images/favicon.png" height="18" width="18"> <strong>LEX</strong>
         </a>
-        <a href="" class="sidebar-header-button toggle-button" ng-click="vm.toggleCollapse()"
-           uib-tooltip="{{vm.collapsed ? 'Show Sidebar' : 'Hide Sidebar'}}" tooltip-placement="right">
+        <a href="" class="sidebar-header-button toggle-button" ng-click="vm.toggleCollapse()">
             <i class="fa" ng-class="vm.collapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
         </a>
-        <a ui-sref="about" class="sidebar-header-button about-button"
-           uib-tooltip="About ALEX" tooltip-placement="left">
+        <a ui-sref="about" class="sidebar-header-button about-button">
             <i class="fa fa-question-circle"></i>
         </a>
     </header>
