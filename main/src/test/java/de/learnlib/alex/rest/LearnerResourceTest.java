@@ -42,6 +42,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -122,7 +123,7 @@ public class LearnerResourceTest extends JerseyTest {
         given(learner.isActive(admin)).willReturn(true);
         given(learner.getResult(admin)).willReturn(result);
 
-        LearnerStatus learnerStatus = new LearnerStatus(result, Learner.LearnerPhase.LEARNING);
+        LearnerStatus learnerStatus = new LearnerStatus(result, Learner.LearnerPhase.LEARNING, new ArrayList<>());
         given(learner.getStatus(admin)).willReturn(learnerStatus);
     }
 
@@ -132,7 +133,8 @@ public class LearnerResourceTest extends JerseyTest {
                                 .post(Entity.json(START_JSON));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"learnerPhase\":\"LEARNING\",\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
+        String expectedJSON = "{\"active\":true,\"currentQueries\":[],\"learnerPhase\":\"LEARNING\","
+                + "\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
                 + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":0,\"eqOracle\":0,"
                 + "\"total\":0},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
                 + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
@@ -219,7 +221,8 @@ public class LearnerResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"learnerPhase\":\"LEARNING\",\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
+        String expectedJSON = "{\"active\":true,\"currentQueries\":[],\"learnerPhase\":\"LEARNING\","
+                + "\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
                 + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":0,\"eqOracle\":0,"
                 + "\"total\":0},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
                 + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
@@ -293,7 +296,8 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/stop").request().header("Authorization", adminToken).get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"learnerPhase\":\"LEARNING\",\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
+        String expectedJSON = "{\"active\":true,\"currentQueries\":[],\"learnerPhase\":\"LEARNING\","
+                + "\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
                 + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":0,\"eqOracle\":0,"
                 + "\"total\":0},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
                 + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
@@ -321,7 +325,8 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/active").request().header("Authorization", adminToken).get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"learnerPhase\":\"LEARNING\",\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
+        String expectedJSON = "{\"active\":true,\"currentQueries\":[],\"learnerPhase\":\"LEARNING\","
+                + "\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
                 + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":0,\"eqOracle\":0,"
                 + "\"total\":0},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
                 + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":" + TEST_NO + "}";

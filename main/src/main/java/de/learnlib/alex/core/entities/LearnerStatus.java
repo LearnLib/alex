@@ -19,7 +19,10 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.core.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.core.learner.Learner;
+
+import java.util.List;
 
 /**
  * Class to provide information about the current learn process.
@@ -46,6 +49,9 @@ public class LearnerStatus {
     /** The phase the learner is in. */
     private final Learner.LearnerPhase learnerPhase;
 
+    /** The list of queries that are processed atm. */
+    private final List<DefaultQueryProxy> currentQueries;
+
     /**
      * Constructor for a status of an inactive thread.
      */
@@ -56,6 +62,7 @@ public class LearnerStatus {
         this.stepNo = null;
         this.statistics = null;
         this.learnerPhase = null;
+        this.currentQueries = null;
     }
 
     /**
@@ -64,13 +71,15 @@ public class LearnerStatus {
      * @param learnerResult
      *         The result that contain the interesting statistics and information for the status..
      */
-    public LearnerStatus(LearnerResult learnerResult, Learner.LearnerPhase learnerPhase) {
+    public LearnerStatus(LearnerResult learnerResult, Learner.LearnerPhase learnerPhase,
+                         List<DefaultQueryProxy> currentQueries) {
         this.active = true;
         this.projectId = learnerResult.getProjectId();
         this.testNo = learnerResult.getTestNo();
         this.stepNo = (long) learnerResult.getSteps().size();
         this.statistics = learnerResult.getStatistics();
         this.learnerPhase = learnerPhase;
+        this.currentQueries = currentQueries;
     }
 
     /**
@@ -121,6 +130,11 @@ public class LearnerStatus {
     /** @return {@link #learnerPhase}. */
     public Learner.LearnerPhase getLearnerPhase() {
         return learnerPhase;
+    }
+
+    /** @return {@link #currentQueries}. */
+    public List<DefaultQueryProxy> getCurrentQueries() {
+        return currentQueries;
     }
 
     @Override

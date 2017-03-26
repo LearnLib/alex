@@ -27,6 +27,7 @@ import de.learnlib.alex.core.entities.ReadOutputConfig;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
+import de.learnlib.alex.core.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
@@ -393,7 +394,11 @@ public class Learner {
         if (!active) {
             status = new LearnerStatus(); // not active
         } else {
-            status = new LearnerStatus(getResult(user), getCurrentPhase(user)); // active
+            LearnerThread thread = userThreads.get(user);
+            LearnerPhase phase = thread != null ? thread.getPhase() : null;
+            List<DefaultQueryProxy> queries = thread != null ? thread.getCurrentQueries() : null;
+
+            status = new LearnerStatus(getResult(user), phase, queries); // active
         }
 
         return status;
@@ -418,18 +423,6 @@ public class Learner {
     }
 
     /**
-     * Get the current phase of the learning process.
-     *
-     * @param user
-     *         The user that wants to see the phase.
-     * @return The current phase of the LearnerThread.
-     */
-    public LearnerPhase getCurrentPhase(User user) {
-        LearnerThread thread = userThreads.get(user);
-        return thread != null ? thread.getPhase() : null;
-    }
-
-    /**
      * Determine the output of the SUL by testing a sequence of input symbols.
      *
      * @param user
@@ -439,7 +432,7 @@ public class Learner {
      * @param resetSymbol
      *         The reset symbol to use.
      * @param symbols
-     *         The symbol sequence to execute in order to generate the output sequence.
+     *         The symbol sequence to process in order to generate the output sequence.
      * @return The following output sequence.
      * @throws LearnerException
      *         If something went wrong while testing the symbols.
@@ -468,7 +461,7 @@ public class Learner {
      * @param resetSymbol
      *         The reset symbol to use.
      * @param symbols
-     *         The symbol sequence to execute in order to generate the output sequence.
+     *         The symbol sequence to process in order to generate the output sequence.
      * @param readOutputConfig
      *         The config for reading the outputs.
      * @return The following output sequence.

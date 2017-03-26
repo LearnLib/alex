@@ -107,6 +107,12 @@ class LearnerStartView {
          */
         this.learnerPhase = null;
 
+        /**
+         * The queries that are executed atm by the learner.
+         * @type {any[]}
+         */
+        this.currentQueries = null;
+
         // stop polling when you leave the page
         $scope.$on("$destroy", () => {
             this.$interval.cancel(this.interval);
@@ -124,6 +130,7 @@ class LearnerStartView {
             this.LearnerResource.isActive()
                 .then(data => {
                     this.learnerPhase = data.learnerPhase;
+                    this.currentQueries = data.currentQueries;
 
                     if (data.active && data.stepNo > this.stepNo) {
                         this.stepNo = data.stepNo;

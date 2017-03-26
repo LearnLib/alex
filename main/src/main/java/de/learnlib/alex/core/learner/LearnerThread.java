@@ -49,6 +49,7 @@ import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.ThreadContext;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -120,6 +121,9 @@ public class LearnerThread extends Thread {
     /** The phase of the learner. */
     private Learner.LearnerPhase learnerPhase;
 
+    /** The queries that are executed at the moment. */
+    private List<DefaultQueryProxy> currentQueries;
+
     /**
      * Constructor to set the LearnerThread up.
      *
@@ -136,6 +140,7 @@ public class LearnerThread extends Thread {
         this.result = result;
         this.currentStep = result.getSteps().get(result.getSteps().size() - 1); // get the latest step
         this.maxConcurrentQueries = context.getMaxConcurrentQueries();
+        this.currentQueries = new ArrayList<>();
 
         Symbol[] symbolsArray = readSymbolArray(); // use the symbols in the result to create the symbol array.
         this.symbolMapper = new SymbolMapper(symbolsArray);
@@ -147,10 +152,18 @@ public class LearnerThread extends Thread {
         this.mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
         this.sul = new AlexSUL<>(mappedSUL);
 
+        // monitor which queries are being processed.
+        QueryMonitorSULOracle<String, String> oracle = new QueryMonitorSULOracle<>(new MultiSULOracle<>(sul));
+        oracle.addPostProcessingListener(queries -> {
+            List<DefaultQueryProxy> currentQueries = new ArrayList<>();
+            queries.forEach(query -> currentQueries.add(DefaultQueryProxy.createFrom(new DefaultQuery<>(query))));
+            this.currentQueries = currentQueries;
+        });
+
         if (result.isUseMQCache()) {
-            this.mqOracle = MealyCacheOracle.createDAGCacheOracle(this.sigma, new MultiSULOracle<>(sul));
+            this.mqOracle = MealyCacheOracle.createDAGCacheOracle(this.sigma, oracle);
         } else {
-            this.mqOracle = new MultiSULOracle<>(sul);
+            this.mqOracle = oracle;
         }
 
         LearnAlgorithmFactory algorithm = result.getAlgorithmFactory();
@@ -172,7 +185,7 @@ public class LearnerThread extends Thread {
      * @param symbols
      *         The Symbols to use.
      * @param maxConcurrentQueries
-     *          The amount of queries to execute in parallel.
+     *          The amount of queries to process in parallel.
      * @param mappedSUL
      *          The mapped SUL.
      */
@@ -463,8 +476,14 @@ public class LearnerThread extends Thread {
         LOGGER.traceExit();
     }
 
+    /** @return {@link #learnerPhase}. */
     public Learner.LearnerPhase getPhase() {
         return learnerPhase;
+    }
+
+    /** @return {@link #currentQueries}. */
+    public List<DefaultQueryProxy> getCurrentQueries() {
+        return currentQueries;
     }
 
     private void storeCounterExampleSearchMetaData() {
