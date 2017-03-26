@@ -117,6 +117,9 @@ public class LearnerThread extends Thread {
     /** The equivalence oracle to use. */
     private EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
 
+    /** The phase of the learner. */
+    private Learner.LearnerPhase learnerPhase;
+
     /**
      * Constructor to set the LearnerThread up.
      *
@@ -323,6 +326,7 @@ public class LearnerThread extends Thread {
         result.getStatistics().setStartDate(statistics.getStartDate());
 
         // learn
+        learnerPhase = Learner.LearnerPhase.LEARNING;
         learner.startLearning();
         storeLearnerMetaData();
 
@@ -364,6 +368,7 @@ public class LearnerThread extends Thread {
             }
 
             try {
+                learnerPhase = Learner.LearnerPhase.LEARNING;
                 learner.refineHypothesis(counterexample);
             } catch (NullPointerException e) {
                 throw new LearnerException("Presumably the detected counterexample '" + counterexample
@@ -444,6 +449,7 @@ public class LearnerThread extends Thread {
         }
 
         DefaultQuery<String, Word<String>> newCounterExample;
+        learnerPhase = Learner.LearnerPhase.EQUIVALENCE_TESTING;
         newCounterExample = eqOracle.findCounterExample(learner.getHypothesisModel(), sigma);
 
         // remember the counter example, if any
@@ -455,6 +461,10 @@ public class LearnerThread extends Thread {
         LOGGER.info(LEARNER_MARKER, "The new counter example is '{}'.", newCounterExample);
 
         LOGGER.traceExit();
+    }
+
+    public Learner.LearnerPhase getPhase() {
+        return learnerPhase;
     }
 
     private void storeCounterExampleSearchMetaData() {

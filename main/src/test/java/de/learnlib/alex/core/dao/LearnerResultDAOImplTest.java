@@ -366,7 +366,7 @@ public class LearnerResultDAOImplTest {
         result.setTestNo(0L);
         Long[] testNos = new Long[] {0L, 1L};
         //
-        LearnerStatus status = new LearnerStatus(result);
+        LearnerStatus status = new LearnerStatus(result, Learner.LearnerPhase.LEARNING);
         given(learner.getStatus(user)).willReturn(status);
 
         learnerResultDAO.delete(learner, user, PROJECT_ID, testNos); // should fail

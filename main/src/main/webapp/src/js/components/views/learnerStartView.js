@@ -95,7 +95,17 @@ class LearnerStartView {
          */
         this.duration = 0;
 
+        /**
+         * The resume configuration.
+         * @type {any}
+         */
         this.resumeConfig = null;
+
+        /**
+         * The current phase of the learner.
+         * @type {string}
+         */
+        this.learnerPhase = null;
 
         // stop polling when you leave the page
         $scope.$on("$destroy", () => {
@@ -113,6 +123,8 @@ class LearnerStartView {
         this.interval = this.$interval(() => {
             this.LearnerResource.isActive()
                 .then(data => {
+                    this.learnerPhase = data.learnerPhase;
+
                     if (data.active && data.stepNo > this.stepNo) {
                         this.stepNo = data.stepNo;
                         this.LearnResultResource.get(this.project.id, data.testNo)

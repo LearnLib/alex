@@ -19,6 +19,7 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.core.learner.Learner;
 
 /**
  * Class to provide information about the current learn process.
@@ -42,6 +43,9 @@ public class LearnerStatus {
     /** The statistics of the learner. */
     private final Statistics statistics;
 
+    /** The phase the learner is in. */
+    private final Learner.LearnerPhase learnerPhase;
+
     /**
      * Constructor for a status of an inactive thread.
      */
@@ -51,6 +55,7 @@ public class LearnerStatus {
         this.testNo = null;
         this.stepNo = null;
         this.statistics = null;
+        this.learnerPhase = null;
     }
 
     /**
@@ -59,12 +64,13 @@ public class LearnerStatus {
      * @param learnerResult
      *         The result that contain the interesting statistics and information for the status..
      */
-    public LearnerStatus(LearnerResult learnerResult) {
+    public LearnerStatus(LearnerResult learnerResult, Learner.LearnerPhase learnerPhase) {
         this.active = true;
         this.projectId = learnerResult.getProjectId();
         this.testNo = learnerResult.getTestNo();
         this.stepNo = (long) learnerResult.getSteps().size();
         this.statistics = learnerResult.getStatistics();
+        this.learnerPhase = learnerPhase;
     }
 
     /**
@@ -110,6 +116,11 @@ public class LearnerStatus {
     /** @return {@link #stepNo}. */
     public Long getStepNo() {
         return stepNo;
+    }
+
+    /** @return {@link #learnerPhase}. */
+    public Learner.LearnerPhase getLearnerPhase() {
+        return learnerPhase;
     }
 
     @Override

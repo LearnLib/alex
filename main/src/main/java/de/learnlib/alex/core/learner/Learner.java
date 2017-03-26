@@ -75,6 +75,12 @@ public class Learner {
 
     private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
+    /** Indicator for in which phase the learner currently is. */
+    public enum LearnerPhase {
+        LEARNING,
+        EQUIVALENCE_TESTING
+    }
+
     /** The SymbolDAO to use. */
     @Inject
     private SymbolDAO symbolDAO;
@@ -93,18 +99,14 @@ public class Learner {
     @Inject
     private ConnectorContextHandlerFactory contextHandlerFactory;
 
-    /**
-     * The current ContextHandler.
-     */
+    /** The current ContextHandler. */
     private ConnectorContextHandler contextHandler;
 
     /** The factory to create the learner threads. */
     @Inject
     private LearnerThreadFactory learnerThreadFactory;
 
-    /**
-     * The last thread of an user, if one exists.
-     */
+    /** The last thread of an user, if one exists. */
     private final Map<User, LearnerThread> userThreads;
 
     /** The executer service will take care of creating and scheduling the actual OS threads. */
@@ -391,7 +393,7 @@ public class Learner {
         if (!active) {
             status = new LearnerStatus(); // not active
         } else {
-            status = new LearnerStatus(getResult(user)); // active
+            status = new LearnerStatus(getResult(user), getCurrentPhase(user)); // active
         }
 
         return status;
@@ -413,6 +415,18 @@ public class Learner {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Get the current phase of the learning process.
+     *
+     * @param user
+     *         The user that wants to see the phase.
+     * @return The current phase of the LearnerThread.
+     */
+    public LearnerPhase getCurrentPhase(User user) {
+        LearnerThread thread = userThreads.get(user);
+        return thread != null ? thread.getPhase() : null;
     }
 
     /**

@@ -46,12 +46,12 @@ public class LearnerStatusTest {
         learnerResult.setStatistics(statistics);
         learnerResult.setTestNo(0L);
 
-        String expectedJSON = "{\"active\":true,\"project\":0,\"statistics\":{\"duration\":{\"learner\":0,"
+        String expectedJSON = "{\"active\":true,\"learnerPhase\":\"LEARNING\",\"project\":0,\"statistics\":{\"duration\":{\"learner\":0,"
                 + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":1,\"eqOracle\":1,"
                 + "\"total\":2},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
                 + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":0}";
 
-        LearnerStatus status = new LearnerStatus(learnerResult);
+        LearnerStatus status = new LearnerStatus(learnerResult, Learner.LearnerPhase.LEARNING);
 
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(status);

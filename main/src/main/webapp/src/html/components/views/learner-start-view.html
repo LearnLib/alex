@@ -3,11 +3,16 @@
 
     <div class="learn-start-wrapper flex-column" ng-if="vm.active">
         <div class="alx-container-fluid learn-loading-indicator">
-            <div class="alert alert-info">
-                <button class="btn btn-info btn-xs pull-right" ng-click="vm.abort()">
-                    <i class="fa fa-close fa-fw"></i> Abort
-                </button>
-                <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp; Application is learning ...
+            <div>
+                <div class="alert alert-info">
+                    <button class="btn btn-info btn-xs pull-right" ng-click="vm.abort()">
+                        <i class="fa fa-close fa-fw"></i> Abort
+                    </button>
+                    <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp; Application is
+                    <span ng-if="!vm.learnerPhase">...</span>
+                    <strong ng-if="vm.learnerPhase === 'LEARNING'">learning</strong>
+                    <strong ng-if="vm.learnerPhase === 'EQUIVALENCE_TESTING'">equivalence testing</strong>
+                </div>
             </div>
 
             <div ng-if="vm.statistics">
@@ -44,7 +49,7 @@
             </div>
         </div>
 
-        <view-header title="Current result" ng-if="vm.result" style="border-top: 1px solid #ddd"></view-header>
+        <view-header title="Current hypothesis" ng-if="vm.result" style="border-top: 1px solid #ddd"></view-header>
         <learn-result-panel result="vm.result" ng-if="vm.result"></learn-result-panel>
     </div>
 
