@@ -29,10 +29,9 @@ export class LearnSetupSettingsModalComponent {
      * @param {ToastService} ToastService
      * @param {EventBus} EventBus
      * @param {EqOracleService} EqOracleService
-     * @param {SettingsResource} SettingsResource
      */
     // @ngInject
-    constructor(ToastService, EventBus, EqOracleService, SettingsResource) {
+    constructor(ToastService, EventBus, EqOracleService) {
         this.ToastService = ToastService;
         this.EventBus = EventBus;
         this.EqOracleService = EqOracleService;
@@ -58,15 +57,6 @@ export class LearnSetupSettingsModalComponent {
          * The constants for learnAlgorithm names.
          */
         this.learnAlgorithms = learnAlgorithm;
-
-        /**
-         * The web driver enum.
-         */
-        this.webBrowser = null;
-
-        SettingsResource.getSupportedBrowserEnum()
-            .then(supportedBrowsers => this.webBrowser = supportedBrowsers)
-            .catch(err => console.log(err));
     }
 
     $onInit() {

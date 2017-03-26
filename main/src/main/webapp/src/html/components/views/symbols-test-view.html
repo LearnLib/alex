@@ -43,30 +43,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label class="control-label">Select a web driver</label>
-                            <select class="form-control" ng-options="(v|formatWebBrowser) for (k,v) in vm.browser" ng-model="vm.browserConfig.driver">
-                                <option value="" disabled>Select a Webdriver</option>
-                            </select>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <div class="form-group">
-                                    <label class="control-label">Width</label>
-                                    <input class="form-control" type="number" placeholder="Browser width in px"
-                                           ng-model="vm.browserConfig.width">
-                                </div>
-                            </div>
-                            <div class="col-xs-6">
-                                <div class="form-group">
-                                    <label class="control-label">Height</label>
-                                    <input class="form-control" type="number" placeholder="Browser height in px"
-                                           ng-model="vm.browserConfig.height">
-                                </div>
-
-                            </div>
-                        </div>
+                        <browser-config-form config="vm.browserConfig"></browser-config-form>
 
                         <button class="btn btn-sm btn-primary" ng-click="vm.executeWord()" ng-if="!vm.isExecuting">Execute word</button>
                         <button class="btn btn-sm btn-primary" disabled ng-if="vm.isExecuting">

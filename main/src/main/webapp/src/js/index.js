@@ -102,6 +102,7 @@ import {projectCreateForm} from "./components/forms/projectCreateForm";
 import {userEditForm} from "./components/forms/userEditForm";
 import {userLoginForm} from "./components/forms/userLoginForm";
 import {userRegisterForm} from "./components/forms/userRegisterForm";
+import {browserConfigFormComponent} from "./components/forms/browserConfigForm";
 import {widget} from "./components/widgets/widget";
 import {projectDetailsWidget} from "./components/widgets/projectDetailsWidget";
 import {learnResumeSettingsWidget} from "./components/widgets/learnResumeSettingsWidget";
@@ -295,6 +296,7 @@ angular
     .component('userLoginForm', userLoginForm)
     .component('userRegisterForm', userRegisterForm)
     .component('nodeFormGroup', nodeFormGroup)
+    .component('browserConfigForm', browserConfigFormComponent)
 
     // widgets components
     .component('widget', widget)

@@ -30,10 +30,9 @@ export const symbolsTestView = {
          * @param {SessionService} SessionService
          * @param {LearnerResource} LearnerResource
          * @param {ToastService} ToastService
-         * @param {SettingsResource} SettingsResource
          */
         // @ngInject
-        constructor($scope, SymbolGroupResource, SessionService, LearnerResource, dragulaService, ToastService, SettingsResource) {
+        constructor($scope, SymbolGroupResource, SessionService, LearnerResource, dragulaService, ToastService) {
             this.LearnerResource = LearnerResource;
             this.ToastService = ToastService;
 
@@ -62,12 +61,6 @@ export const symbolsTestView = {
             this.isExecuting = false;
 
             /**
-             * The enum with supported browsers.
-             * @type {null|*}
-             */
-            this.browser = null;
-
-            /**
              * The browser to execute the word in.
              * @type {any}
              */
@@ -84,10 +77,8 @@ export const symbolsTestView = {
             this.outputs = [];
 
             SymbolGroupResource.getAll(this.project.id, true)
-                .then(groups => this.groups = groups);
-
-            SettingsResource.getSupportedBrowserEnum()
-                .then(supportedBrowsers => this.browser = supportedBrowsers);
+                .then(groups => this.groups = groups)
+                .catch(err => console.log(err));
 
             dragulaService.options($scope, 'word', {
                 removeOnSpill: false,
