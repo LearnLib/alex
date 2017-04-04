@@ -30,6 +30,8 @@ import de.learnlib.alex.core.entities.SymbolSet;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.learner.Learner;
+import de.learnlib.alex.core.repositories.LearnerResultRepository;
+import de.learnlib.alex.core.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
 import de.learnlib.alex.security.UserPrincipal;
@@ -75,33 +77,31 @@ public class LearnerResource {
     private static final Marker RESOURCE_MARKER = MarkerManager.getMarker("LEARNER_RESOURCE")
             .setParents(LEARNER_MARKER, REST_MARKER);
 
-    /**
-     * The {@link ProjectDAO} to use.
-     */
+    /** The {@link ProjectDAO} to use. */
     @Inject
     private ProjectDAO projectDAO;
 
-    /**
-     * The {@link SymbolDAO} to use.
-     */
+    /** The {@link SymbolDAO} to use. */
     @Inject
     private SymbolDAO symbolDAO;
 
-    /**
-     * The {@link LearnerResultDAO} to use.
-     */
+    /** The {@link LearnerResultDAO} to use. */
     @Inject
     private LearnerResultDAO learnerResultDAO;
 
-    /**
-     * The {@link Learner learner} to use.
-     */
+    /** The {@link LearnerResultStepRepository} to use. */
+    @Inject
+    private LearnerResultStepRepository learnerResultStepRepository;
+
+    /** The {@link LearnerResultRepository} to use. */
+    @Inject
+    private LearnerResultRepository learnerResultRepository;
+
+    /** The {@link Learner learner} to use. */
     @Inject
     private Learner learner;
 
-    /**
-     * The security context containing the user of the request.
-     */
+    /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
 
@@ -156,7 +156,7 @@ public class LearnerResource {
      * The server must not be restarted
      *
      * @param projectId     The project to learn.
-     * @param testRunNo     The number of the test run which should be resumed.
+     * @param testNo     The number of the test run which should be resumed.
      * @param configuration The configuration to specify the settings for the next learning steps.
      * @return The status of the current learn process.
      * @throws NotFoundException If the previous learn job or the related Project could not be found.
@@ -167,32 +167,48 @@ public class LearnerResource {
      * @errorResponse 404 not found    `de.learnlib.alex.utils.ResourceErrorHandler.RESTError
      */
     @POST
-    @Path("/resume/{project_id}/{test_run}")
+    @Path("/resume/{project_id}/{test_no}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response resume(@PathParam("project_id") long projectId,
-                           @PathParam("test_run") long testRunNo,
+                           @PathParam("test_no") long testNo,
                            LearnerResumeConfiguration configuration)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testRunNo, configuration, user);
+        LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
 
         try {
-            projectDAO.getByID(user.getId(), projectId); // check if project exists
+            Project project = projectDAO.getByID(user.getId(), projectId); // check if project exists
+            LearnerResult result = learnerResultDAO.get(user.getId(), projectId, testNo, true);
 
-            LearnerResult lastResult = learner.getResult(user);
-            if (lastResult == null) {
+            if (result == null) {
                 throw new NotFoundException("No last result to resume found!");
             }
 
-            if (lastResult.getProjectId() != projectId || lastResult.getTestNo() != testRunNo) {
+            if (result.getProjectId() != projectId || result.getTestNo() != testNo) {
                 LOGGER.info(RESOURCE_MARKER,
                         "could not resume the learner of another project or with an wrong test run.");
                 throw new IllegalArgumentException("The given project id or test no does not match "
                         + "with the latest learn result!");
             }
 
-            learner.resume(user, configuration);
+            if (configuration.getStepNo() < 0 || configuration.getStepNo() > result.getSteps().size()) {
+                throw new IllegalArgumentException("The step number is not valid.");
+            }
+
+            // remove all steps after the one where learning should be continued from
+            if (result.getSteps().size() > 1) {
+                result.getSteps().stream()
+                        .filter(step -> step.getStepNo() > configuration.getStepNo())
+                        .forEach(learnerResultStepRepository::delete);
+                learnerResultStepRepository.flush();
+                result = learnerResultDAO.get(user.getId(), projectId, testNo, true);
+                result.setHypothesis(result.getSteps().get(result.getSteps().size() - 1).getHypothesis());
+                result.getStatistics().setEqsUsed(result.getSteps().size());
+                learnerResultRepository.saveAndFlush(result);
+            }
+
+            learner.resume(user, project, result, configuration);
             LearnerStatus status = learner.getStatus(user);
 
             LOGGER.traceExit(status);

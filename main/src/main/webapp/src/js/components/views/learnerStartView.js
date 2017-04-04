@@ -26,6 +26,7 @@ class LearnerStartView {
      * Constructor.
      *
      * @param $scope
+     * @param $state
      * @param $interval
      * @param {SessionService} SessionService
      * @param {LearnerResource} LearnerResource
@@ -34,8 +35,9 @@ class LearnerStartView {
      * @param {ErrorService} ErrorService
      */
     // @ngInject
-    constructor($scope, $interval, SessionService, LearnerResource, LearnResultResource, ToastService, ErrorService) {
+    constructor($scope, $state, $interval, SessionService, LearnerResource, LearnResultResource, ToastService, ErrorService) {
         this.$interval = $interval;
+        this.$state = $state;
         this.LearnerResource = LearnerResource;
         this.LearnResultResource = LearnResultResource;
         this.ToastService = ToastService;
@@ -118,7 +120,17 @@ class LearnerStartView {
             this.$interval.cancel(this.interval);
         });
 
-        this.poll();
+        if (this.$state.params.result !== null) {
+            this.result = this.$state.params.result;
+            this.stepNo = this.result.steps.length;
+            this.resumeConfig = {
+                eqOracle: this.result.steps[this.stepNo - 1].eqOracle,
+                maxAmountOfStepsToLearn: this.result.steps[this.stepNo - 1].stepsToLearn,
+                stepNo: this.stepNo
+            };
+        } else {
+            this.poll();
+        }
     }
 
     /**
@@ -152,7 +164,8 @@ class LearnerStartView {
                                 const lastStep = this.result.steps[this.result.steps.length - 1];
                                 this.resumeConfig = {
                                     eqOracle: lastStep.eqOracle,
-                                    maxAmountOfStepsToLearn: lastStep.stepsToLearn
+                                    maxAmountOfStepsToLearn: lastStep.stepsToLearn,
+                                    stepNo: result.steps.length
                                 };
                             }
 
@@ -194,6 +207,13 @@ class LearnerStartView {
         this.LearnerResource.resume(this.project.id, this.result.testNo, this.resumeConfig)
             .then(() => {
                 this.poll();
+                this.stepNo = this.resumeConfig.stepNo;
+                this.LearnResultResource.get(this.project.id, this.result.testNo)
+                    .then(result => {
+                        result.steps.pop();
+                        this.result = result;
+                    })
+                    .catch(err => console.log(err));
             })
             .catch(response => {
                 this.ToastService.danger('<p><strong>Resume learning failed!</strong></p>' + response.data.message);

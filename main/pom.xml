@@ -199,6 +199,11 @@
             <artifactId>learnlib-basic-eqtests</artifactId>
             <version>${learnlib.version}</version>
         </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-simulator</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
 
         <!-- selenium testing -->
         <dependency>

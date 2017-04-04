@@ -96,15 +96,6 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Transactional
     public void create(SymbolGroup group) throws ValidationException {
         LOGGER.traceEntry("create({})", group);
-        /*
-        if (group.getProject() == null) {
-            throw new ValidationException("To create a SymbolGroup it must have a Project.");
-        }
-
-        if (group.getId() != null) {
-            throw new ValidationException("To create a SymbolGroup it must not have an id.");
-        }
-        */
 
         try {
             Project project = projectRepository.findOneByUser_IdAndId(group.getUserId(), group.getProjectId());

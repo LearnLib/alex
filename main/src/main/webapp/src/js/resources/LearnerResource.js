@@ -112,6 +112,12 @@ export class LearnerResource {
             .then(response => response.data);
     }
 
+    /**
+     * Compare two hypotheses and return the separating word.
+     *
+     * @param {any} hypA - The first hypothesis.
+     * @param {any} hypB - The second hypothesis.
+     */
     compare(hypA, hypB) {
         return this.$http.post(`rest/learner/compare`, [hypA, hypB])
             .then(response => response.data);

@@ -32,7 +32,7 @@ import java.util.List;
  * @param <O> Output symbol type.
  */
 @ParametersAreNonnullByDefault
-public class QueryMonitorSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
+public class QueryMonitorOracle<I, O> implements MembershipOracle<I, Word<O>> {
 
     /**
      * The query listener interface.
@@ -61,7 +61,7 @@ public class QueryMonitorSULOracle<I, O> implements MembershipOracle<I, Word<O>>
      * @param delegate
      *          The membership oracle the queries are delegated to.
      */
-    public QueryMonitorSULOracle(MembershipOracle<I, Word<O>> delegate) {
+    public QueryMonitorOracle(MembershipOracle<I, Word<O>> delegate) {
         this.delegate = delegate;
         this.preProcessListeners = new ArrayList<>();
         this.postProcessListeners = new ArrayList<>();

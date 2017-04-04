@@ -103,10 +103,6 @@ public class Learner {
     /** The current ContextHandler. */
     private ConnectorContextHandler contextHandler;
 
-    /** The factory to create the learner threads. */
-    @Inject
-    private LearnerThreadFactory learnerThreadFactory;
-
     /** The last thread of an user, if one exists. */
     private final Map<User, LearnerThread> userThreads;
 
@@ -133,17 +129,14 @@ public class Learner {
      *         The AlgorithmService to use.
      * @param contextHandlerFactory
      *         The factory that will be used to create new context handler.
-     * @param learnerThreadFactory
-     *         The factory to create the learner threads.
      */
     Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO, LearnAlgorithmService algorithmService,
-            ConnectorContextHandlerFactory contextHandlerFactory, LearnerThreadFactory learnerThreadFactory) {
+            ConnectorContextHandlerFactory contextHandlerFactory) {
         this();
         this.symbolDAO             = symbolDAO;
         this.learnerResultDAO      = learnerResultDAO;
         this.algorithmService      = algorithmService;
         this.contextHandlerFactory = contextHandlerFactory;
-        this.learnerThreadFactory  = learnerThreadFactory;
     }
 
     /**
@@ -189,7 +182,7 @@ public class Learner {
 
         contextHandler = contextHandlerFactory.createContext(user, project, configuration.getBrowser());
         contextHandler.setResetSymbol(learnerResult.getResetSymbol());
-        LearnerThread learnThread = learnerThreadFactory.createThread(learnerResult, contextHandler);
+        LearnerThread learnThread = new LearnerThread(learnerResultDAO, learnerResult, contextHandler);
         startThread(user, learnThread);
     }
 
@@ -237,7 +230,11 @@ public class Learner {
      *
      * @param user
      *         The user that wants to restart his latest thread.
-     * @param newConfiguration
+     * @param project
+     *         The project that is learned.
+     * @param result
+     *         The result of a previous process.
+     * @param config
      *         The configuration to use for the next learning steps.
      * @throws IllegalArgumentException
      *         If the new configuration has errors.
@@ -246,25 +243,29 @@ public class Learner {
      * @throws NotFoundException
      *         If the symbols specified in the configuration could not be found.
      */
-    public void resume(User user, LearnerResumeConfiguration newConfiguration)
+    public void resume(User user, Project project, LearnerResult result, LearnerResumeConfiguration config)
             throws IllegalArgumentException, IllegalStateException, NotFoundException {
         preStartCheck(user);
 
-        newConfiguration.checkConfiguration(); // throws IllegalArgumentException if something is wrong
-        validateCounterExample(user, newConfiguration);
+        config.checkConfiguration(); // throws IllegalArgumentException if something is wrong
+        validateCounterExample(user, config);
 
-        // get the previousThread and the LearnResult
-        LearnerThread previousThread = userThreads.get(user);
-        if (previousThread == null) {
-            throw new IllegalStateException("No previous learn process to resume was found!");
-        }
+        result.setAlgorithmFactory(algorithmService.getLearnAlgorithm(result.getAlgorithm()));
+        Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbolAsId());
+        result.setResetSymbol(resetSymbol);
 
-        LearnerResult learnerResult = previousThread.getResult();
+        List<Symbol> symbolsAsList = symbolDAO.getByIds(user, project.getId(),
+                new LinkedList<>(result.getSymbolsAsIds()));
+        Set<Symbol> symbols = new HashSet<>(symbolsAsList);
+        result.setSymbols(symbols);
 
         // create the new step
-        learnerResultDAO.createStep(learnerResult, newConfiguration);
+        learnerResultDAO.createStep(result, config);
 
-        LearnerThread learnThread = learnerThreadFactory.createThread(previousThread, learnerResult);
+        contextHandler = contextHandlerFactory.createContext(user, project, result.getBrowser());
+        contextHandler.setResetSymbol(result.getResetSymbol());
+
+        LearnerThread learnThread = new LearnerThread(learnerResultDAO, result, contextHandler, config.getStepNo());
         startThread(user, learnThread);
     }
 

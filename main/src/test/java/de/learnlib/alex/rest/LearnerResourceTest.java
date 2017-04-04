@@ -228,7 +228,7 @@ public class LearnerResourceTest extends JerseyTest {
                 + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
 
         assertEquals(expectedJSON, response.readEntity(String.class));
-        verify(learner).resume(any(User.class), any(LearnerResumeConfiguration.class));
+        verify(learner).resume(any(User.class), any(Project.class), any(LearnerResult.class), any(LearnerResumeConfiguration.class));
     }
 
     @Test
@@ -239,7 +239,7 @@ public class LearnerResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).resume(any(User.class), any(LearnerConfiguration.class));
+        verify(learner, never()).resume(any(User.class), any(Project.class), any(LearnerResult.class), any(LearnerConfiguration.class));
     }
 
     @Test
@@ -248,7 +248,7 @@ public class LearnerResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        verify(learner, never()).resume(any(User.class), any(LearnerConfiguration.class));
+        verify(learner, never()).resume(any(User.class), any(Project.class), any(LearnerResult.class), any(LearnerConfiguration.class));
     }
 
     @Test
@@ -257,12 +257,12 @@ public class LearnerResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));
 
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        verify(learner, never()).resume(any(User.class), any(LearnerConfiguration.class));
+        verify(learner, never()).resume(any(User.class), any(Project.class), any(LearnerResult.class), any(LearnerConfiguration.class));
     }
 
     @Test
     public void shouldReturn302IfTheUserHasAnActiveLearnProcess() throws NotFoundException {
-        willThrow(IllegalStateException.class).given(learner).resume(eq(admin), any(LearnerResumeConfiguration.class));
+        willThrow(IllegalStateException.class).given(learner).resume(eq(admin), any(Project.class), any(LearnerResult.class), any(LearnerResumeConfiguration.class));
 
         Response response = target("/learner/resume/" + PROJECT_TEST_ID + "/"  + TEST_NO).request()
                                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));
@@ -272,7 +272,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfTheSymbolsOfTheLearnerAreGone() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learner).resume(eq(admin), any(LearnerResumeConfiguration.class));
+        willThrow(NotFoundException.class).given(learner).resume(eq(admin), any(Project.class), any(LearnerResult.class), any(LearnerResumeConfiguration.class));
 
         Response response = target("/learner/resume/" + PROJECT_TEST_ID + "/"  + TEST_NO).request()
                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));
@@ -283,7 +283,7 @@ public class LearnerResourceTest extends JerseyTest {
     @Test
     public void shouldReturn404IfTheResumeConfigurationWasInvalid() throws NotFoundException {
         willThrow(IllegalArgumentException.class)
-                .given(learner).resume(eq(admin), any(LearnerResumeConfiguration.class));
+                .given(learner).resume(eq(admin), any(Project.class), any(LearnerResult.class), any(LearnerResumeConfiguration.class));
 
         Response response = target("/learner/resume/" + PROJECT_TEST_ID + "/"  + TEST_NO).request()
                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));

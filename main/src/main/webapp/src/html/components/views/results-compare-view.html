@@ -2,6 +2,7 @@
     <div class="learn-results-compare-wrapper">
 
         <div class="container" ng-if="vm.panels.length === 0">
+            <p></p>
             <div class="alert alert-info" result-list-modal-handle results="vm.results">
                 <i class="fa fa-plus-square fa-fw"></i>
                 <strong>Click to add a new panel</strong> or click on the green button on the bottom right
@@ -23,6 +24,7 @@
                 <i class="fa fa-2x fa-bolt"></i>
             </div>
             <div class="add-panel-button text-center" uib-tooltip="Add result" tooltip-placement="left"
+                 ng-if="vm.panels.length < 3"
                  result-list-modal-handle results="vm.results">
                 <i class="fa fa-2x fa-plus"></i>
             </div>

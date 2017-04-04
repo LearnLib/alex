@@ -1,13 +1,20 @@
 <widget title="Resume configuration">
+
     <div class="form-group">
-        <label class="control-label">EQ Oracle</label><br>
+        <label class="control-label">Step from where to continue</label><br>
+        <input class="form-control" type="number" min="1" max="{{vm.result.steps.length}}" ng-model="vm.configuration.stepNo">
+        </input>
+    </div>
+
+    <hr class="separator-small">
+
+    <div class="form-group">
+        <label class="control-label">Equivalence oracle</label><br>
         <select class="form-control" ng-model="vm.selectedEqOracle" ng-change="vm.setEqOracle()"
                 ng-options="(v|formatEqOracle) for (k,v) in vm.eqOracles">
             <option value="" disabled>select a method</option>
         </select>
     </div>
-
-    <hr class="separator-small">
 
     <div class="form-horizontal form-condensed" ng-if="vm.configuration.eqOracle.type === vm.eqOracles.RANDOM">
 
@@ -84,8 +91,9 @@
     </div>
 
     <div class="form-group">
-        <label class="control-label">Steps to Learn (-1 := learn until no counter example can be found)</label>
+        <label class="control-label">Steps to learn</label>
         <input ng-model="vm.configuration.maxAmountOfStepsToLearn" class="form-control"
                type="number" required min="-1" placeholder="-1">
+        <p class="help-block">(-1 := learn until no counterexample can be found)</p>
     </div>
 </widget>

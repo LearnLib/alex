@@ -80,9 +80,6 @@ public class LearnerTest {
     private LearnerResultDAO learnerResultDAO;
 
     @Mock
-    private LearnerThreadFactory learnerThreadFactory;
-
-    @Mock
     private LearnerThread learnerThread;
 
     private Learner learner;
@@ -95,11 +92,11 @@ public class LearnerTest {
         given(learnerConfiguration.getBrowser()).willReturn(browserConfig);
         given(contextHandlerFactory.createContext(user, project, browserConfig))
                 .willReturn(contextHandler);
-        given(learnerThreadFactory.createThread(any(LearnerResult.class), any(ConnectorContextHandler.class)))
-                .willReturn(learnerThread);
-
-        learner = new Learner(symbolDAO, learnerResultDAO, algorithmService,
-                              contextHandlerFactory, learnerThreadFactory);
+//        given(learnerThreadFactory.createThread(any(LearnerResult.class), any(ConnectorContextHandler.class)))
+//                .willReturn(learnerThread);
+//
+//        learner = new Learner(symbolDAO, learnerResultDAO, algorithmService,
+//                              contextHandlerFactory, learnerThreadFactory);
     }
 
     @Test
@@ -113,7 +110,7 @@ public class LearnerTest {
         learner.start(user, project, learnerConfiguration);
         given(learnerThread.isFinished()).willReturn(true);
 
-        learner.resume(user, learnerConfiguration);
+//        learner.resume(user, learnerConfiguration, 0);
     }
 
     @Test

@@ -87,7 +87,8 @@ export function config($stateProvider, $urlRouterProvider) {
         .state('learnerStart', {
             url: '/learner/start',
             template: '<learner-start-view></learner-start-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Learning'}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Learning'},
+            params: {result: null}
         })
         .state('results', {
             url: '/results',

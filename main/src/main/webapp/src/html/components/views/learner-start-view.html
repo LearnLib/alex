@@ -83,7 +83,7 @@
         </learn-result-panel>
 
         <div class="panel-sidebar" ng-class="{'show': vm.showSidebar}" ng-if="vm.resumeConfig !== null">
-            <learn-resume-settings-widget configuration="vm.resumeConfig">
+            <learn-resume-settings-widget configuration="vm.resumeConfig" result="vm.result">
             </learn-resume-settings-widget>
 
             <counterexamples-widget
