@@ -43,7 +43,7 @@ public enum WebBrowser {
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** How often the browser should be restarted on error. */
-    private static final int MAX_RETRIES = 5;
+    private static final int MAX_RETRIES = 10;
 
     /** Selenium page load timeout. */
     private static final int PAGE_LOAD_TIMEOUT = 10;
@@ -52,7 +52,7 @@ public enum WebBrowser {
     private static final int SCRIPT_TIMEOUT = 10;
 
     /** How long the current Thread should sleep if the browser has to be restarted. */
-    private static final int SLEEP_TIME = 1;
+    private static final int SLEEP_TIME = 5;
 
     /** The connected WebDriver class. */
     private Class webDriverClass;

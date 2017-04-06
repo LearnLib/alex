@@ -119,9 +119,6 @@ public class ProjectDAOImpl implements ProjectDAO {
                     SymbolGroupDAOImpl.beforePersistGroup(group);
                 });
 
-                // set execute symbols
-                SymbolDAOImpl.setExecuteToSymbols(symbolRepository, project.getSymbols());
-
                 // set a default group if none is provided
                 if (project.getDefaultGroup() == null) {
                     Iterator<SymbolGroup> groups = project.getGroups().iterator();
@@ -141,7 +138,6 @@ public class ProjectDAOImpl implements ProjectDAO {
 
             Project createdProject = projectRepository.save(project);
             project.setId(createdProject.getId());
-        // error handling
         } catch (DataIntegrityViolationException e) {
             LOGGER.info(IMPL_MARKER, "Project creation failed:", e);
             e.printStackTrace();
@@ -152,9 +148,6 @@ public class ProjectDAOImpl implements ProjectDAO {
             LOGGER.traceExit(e);
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Project was not created:", cve);
-        } catch (NotFoundException e) {
-            // TODO
-            e.printStackTrace();
         }
 
         LOGGER.traceExit(project);

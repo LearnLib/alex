@@ -109,7 +109,6 @@ export const actionType = {
     // general actions
     GENERAL_ASSERT_COUNTER: 'assertCounter',
     GENERAL_ASSERT_VARIABLE: 'assertVariable',
-    GENERAL_EXECUTE_SYMBOL: 'executeSymbol',
     GENERAL_INCREMENT_COUNTER: 'incrementCounter',
     GENERAL_SET_COUNTER: 'setCounter',
     GENERAL_SET_VARIABLE_BY_COOKIE: 'setVariableByCookie',

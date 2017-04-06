@@ -242,32 +242,9 @@ class SymbolsView {
      */
     exportSelectedSymbols() {
         if (this.selectedSymbols.length > 0) {
-
-            // create a copy of the symbol list and sort them by id
-            // so that ids can be referenced correctly by executeSymbol actions
-            const symbols = this.selectedSymbols
-                .map(s => new AlphabetSymbol(s))
-                .sort((s1, s2) => s1.id - s2.id);
-
-            // adjust referenced symbol ids from executeSymbol actions
-            symbols.forEach(symbol => {
-                symbol.actions.forEach(action => {
-                    if (action.type === 'executeSymbol') {
-                        symbols.forEach((s, i) => {
-                            if (s.id === action.symbolToExecute.id) {
-                                action.symbolToExecute.id = i + 1;
-                            }
-                        });
-                    }
-                });
-            });
-
-            // get a list of exportable symbols
-            // and download them
-            const symbolsToExport = symbols.map(s => s.getExportableSymbol());
-
             this.PromptService.prompt("Enter a name for the json file")
                 .then(filename => {
+                    const symbolsToExport = this.selectedSymbols.map(s => s.getExportableSymbol());
                     this.DownloadService.downloadObject(symbolsToExport, filename);
                     this.ToastService.success('Symbols exported');
                 });

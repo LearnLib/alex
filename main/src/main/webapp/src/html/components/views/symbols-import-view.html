@@ -9,19 +9,6 @@
                 <button class="btn btn-primary" ng-click="vm.uploadSelectedSymbols()">
                     <i class="fa fa-upload fa-fw"></i> Upload
                 </button>
-                <div class="btn-group btn-group-sm" uib-dropdown>
-                    <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle>
-                        <i class="fa fa-gear"></i>
-                    </button>
-                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
-                        <li>
-                            <a href="" ng-click="vm.adjustReferences = !vm.adjustReferences">
-                                <i class="fa fa-fw" ng-class="vm.adjustReferences ? 'fa-check' : 'fa-close'"></i>
-                                Adjust References
-                            </a>
-                        </li>
-                    </ul>
-                </div>
             </div>
 
             <button class="btn btn-sm btn-default" ng-click="vm.removeSelectedSymbols()">

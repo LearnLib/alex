@@ -157,7 +157,6 @@ import {
 import {
     actionFormAssertCounter,
     actionFormAssertVariable,
-    actionFormExecuteSymbol,
     actionFormIncrementCounter,
     actionFormSetCounter,
     actionFormSetVariable,
@@ -336,7 +335,6 @@ angular
     // general action forms
     .component('actionFormAssertCounter', actionFormAssertCounter)
     .component('actionFormAssertVariable', actionFormAssertVariable)
-    .component('actionFormExecuteSymbol', actionFormExecuteSymbol)
     .component('actionFormIncrementCounter', actionFormIncrementCounter)
     .component('actionFormSetCounter', actionFormSetCounter)
     .component('actionFormSetVariable', actionFormSetVariable)

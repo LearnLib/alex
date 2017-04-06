@@ -19,7 +19,6 @@ package de.learnlib.alex.core.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import de.learnlib.alex.actions.ExecuteSymbolAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CallAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckAttributeExistsAction;
 import de.learnlib.alex.actions.RESTSymbolActions.CheckAttributeTypeAction;
@@ -80,7 +79,6 @@ import java.io.Serializable;
 @DiscriminatorValue("SUPER")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(name = "executeSymbol", value = ExecuteSymbolAction.class),
         @JsonSubTypes.Type(name = "wait", value = WaitAction.class),
         // Counter & Variables
         @JsonSubTypes.Type(name = "assertCounter", value = AssertCounterAction.class),

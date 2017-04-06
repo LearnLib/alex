@@ -57,12 +57,6 @@ class SymbolsImportView {
          */
         this.selectedSymbols = [];
 
-        /**
-         * If references to symbol ids from executeSymbol actions should be adjusted or not.
-         * @type {boolean}
-         */
-        this.adjustReferences = true;
-
         // listen on the symbol updated event
         EventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
             this.updateSymbol(data.newSymbol);
@@ -91,36 +85,21 @@ class SymbolsImportView {
      */
     uploadSelectedSymbols() {
         if (this.selectedSymbols.length > 0) {
-            this.SymbolResource.getAll(this.project.id)
-                .then(existingSymbols => {
-                    let maxId = max(existingSymbols, 'id');
-                    maxId = typeof maxId === "undefined" ? 0 : maxId;
-                    const symbols = this.selectedSymbols.map(s => new AlphabetSymbol(s));
-                    symbols.forEach(symbol => {
-                        delete symbol.id;
+            const symbols = this.selectedSymbols.map(s => new AlphabetSymbol(s));
+            symbols.forEach(symbol => delete symbol.id);
 
-                        // search in all actions of all symbols for an action with the type EXECUTE_SYMBOL and
-                        // adjust referenced ids according to the max. existing id
-                        if (existingSymbols.length > 0 && this.adjustReferences) {
-                            symbol.actions.forEach(action => {
-                                if (action.type === 'executeSymbol') {
-                                    action.symbolToExecute.id += maxId;
-                                }
-                            });
-                        }
+            this.SymbolResource.createMany(this.project.id, symbols)
+                .then(createdSymbols => {
+                    this.ToastService.success('Symbols uploaded');
+                    createdSymbols.forEach(symbol => {
+                        remove(this.symbols, {name: symbol.name});
                     });
-
-                    this.SymbolResource.createMany(this.project.id, symbols)
-                        .then(createdSymbols => {
-                            this.ToastService.success('Symbols uploaded');
-                            createdSymbols.forEach(symbol => {
-                                remove(this.symbols, {name: symbol.name});
-                            });
-                        })
-                        .catch(() => {
-                            this.ToastService.danger('<p><strong>Symbol upload failed</strong></p> It seems at least on symbol already exists');
-                        });
+                })
+                .catch(() => {
+                    this.ToastService.danger('<p><strong>Symbol upload failed</strong></p> It seems at least on symbol already exists');
                 });
+        } else {
+            this.ToastService.info('You have to at least select one symbol to upload.');
         }
     }
 
