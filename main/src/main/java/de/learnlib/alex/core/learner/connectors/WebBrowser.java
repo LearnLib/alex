@@ -93,8 +93,9 @@ public enum WebBrowser {
      * @throws Exception
      *          If the instantiation of the driver failed.
      */
-    public WebDriver getWebDriver(BrowserConfig config) throws Exception {
+    public synchronized WebDriver getWebDriver(BrowserConfig config) throws Exception {
         int retries = 0;
+
         while (retries < MAX_RETRIES) {
             WebDriver driver = null;
 
