@@ -74,11 +74,6 @@ export function config($stateProvider, $urlRouterProvider) {
             template: '<symbols-actions-view></symbols-actions-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Actions'}
         })
-        .state('symbolsImport', {
-            url: '/symbols/import',
-            template: '<symbols-import-view></symbols-import-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Import'}
-        })
         .state('learnerSetup', {
             url: '/learner/setup',
             template: '<learner-setup-view></learner-setup-view>',

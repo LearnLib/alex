@@ -68,6 +68,7 @@ import {
     symbolGroupCreateModalHandle,
     symbolGroupCreateModalComponent
 } from "./components/modals/symbolGroupCreateModal";
+import {symbolsImportModalHandle, symbolsImportModalComponent} from "./components/modals/symbolsImportModal";
 import {symbolGroupEditModalHandle, symbolGroupEditModalComponent} from "./components/modals/symbolGroupEditModal";
 import {symbolMoveModalHandle, symbolMoveModalComponent} from "./components/modals/symbolMoveModal";
 import {userEditModalHandle, userEditModalComponent} from "./components/modals/userEditModal";
@@ -93,12 +94,12 @@ import {statisticsCompareView} from "./components/views/statisticsCompareView";
 import {statisticsView} from "./components/views/statisticsView";
 import {symbolsActionsView} from "./components/views/symbolsActionsView";
 import {symbolsView} from "./components/views/symbolsView";
-import {symbolsImportView} from "./components/views/symbolsImportView";
 import {symbolsTestView} from "./components/views/symbolsTestView";
 import {symbolsTrashView} from "./components/views/symbolsTrashView";
 import {usersSettingsView} from "./components/views/usersSettingsView";
 import {actionForm} from "./components/forms/actions/actionForm";
 import {projectCreateForm} from "./components/forms/projectCreateForm";
+import {symbolEditFormComponent} from "./components/forms/symbolEditForm";
 import {userEditForm} from "./components/forms/userEditForm";
 import {userLoginForm} from "./components/forms/userLoginForm";
 import {userRegisterForm} from "./components/forms/userRegisterForm";
@@ -262,6 +263,8 @@ angular
     .component('userEditModal', userEditModalComponent)
     .directive('resultListModalHandle', resultListModalHandle)
     .component('resultListModal', resultListModalComponent)
+    .directive('symbolsImportModalHandle', symbolsImportModalHandle)
+    .component('symbolsImportModal', symbolsImportModalComponent)
     .component('promptModal', promptModalComponent)
     .component('confirmModal', confirmModalComponent)
 
@@ -283,7 +286,6 @@ angular
     .component('statisticsView', statisticsView)
     .component('symbolsActionsView', symbolsActionsView)
     .component('symbolsView', symbolsView)
-    .component('symbolsImportView', symbolsImportView)
     .component('symbolsTestView', symbolsTestView)
     .component('symbolsTrashView', symbolsTrashView)
     .component('usersSettingsView', usersSettingsView)
@@ -296,6 +298,7 @@ angular
     .component('userRegisterForm', userRegisterForm)
     .component('nodeFormGroup', nodeFormGroup)
     .component('browserConfigForm', browserConfigFormComponent)
+    .component('symbolEditForm', symbolEditFormComponent)
 
     // widgets components
     .component('widget', widget)

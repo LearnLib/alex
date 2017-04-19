@@ -129,6 +129,15 @@ class SymbolsView {
     }
 
     /**
+     * Adds multiple new symbols to the scope.
+     *
+     * @param {AlphabetSymbol[]} symbols
+     */
+    addSymbols(symbols) {
+        symbols.forEach(s => this.addSymbol(s));
+    }
+
+    /**
      * Removes a list of symbols from the scope by finding the group of each symbol and removing it from
      * it.
      *
