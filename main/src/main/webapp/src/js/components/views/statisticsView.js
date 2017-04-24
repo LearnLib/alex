@@ -55,9 +55,7 @@ class StatisticsView {
 
         // get all final learn results of the project
         this.LearnResultResource.getAll(this.project.id)
-            .then(results => {
-                this.results = results;
-            })
+            .then(results => this.results = results)
             .catch(err => console.log(err));
     }
 
@@ -77,8 +75,8 @@ class StatisticsView {
      * @param {LearnResult} result - The learn result to download as csv.
      */
     exportAsCSV(result) {
-        this.LearnerResultDownloadService.download([result]);
-        this.ToastService.success('The result has been exported.');
+        this.LearnerResultDownloadService.download([result])
+            .then(() => this.ToastService.success('The result has been exported.'));
     }
 
     /**
@@ -86,8 +84,8 @@ class StatisticsView {
      */
     exportSelectedAsCSV() {
         if (this.selectedResults.length > 0) {
-            this.LearnerResultDownloadService.download(this.selectedResults);
-            this.ToastService.success('The results have been exported.');
+            this.LearnerResultDownloadService.download(this.selectedResults)
+                .then(() => this.ToastService.success('The results have been exported.'));
         }
     }
 }

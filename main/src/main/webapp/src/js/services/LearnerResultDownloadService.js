@@ -37,28 +37,36 @@ export class LearnerResultDownloadService {
      * @param {LearnResult[]} results - The learn results to download as csv.
      */
     download(results) {
-        let csv = 'Project;Test No;Start Time;Step No;Algorithm;Eq Oracle;|Sigma|;#MQs;#EQs;#Symbol Calls;Duration (ms)\n';
+        let csv = 'Project;Test no;Start time;Step no;Algorithm;EQ oracle;|Sigma|;#EQs;'
+            + '#MQs (total);#MQs (learner);#MQs (EQ oracle);'
+            + '#Symbol calls (total);#Symbol calls (learner);#Symbol calls (EQ oracle);'
+            + 'Duration (total); Duration (learner); Duration (EQ oracle)\n';
 
         results.forEach(result => {
             result.steps.forEach(step => {
-                this.csv += result.project + ';';
-                this.csv += result.testNo + ';';
-                this.csv += '"' + step.statistics.startDate + '";';
-                this.csv += step.stepNo + ';';
-                this.csv += result.algorithm + ';';
-                this.csv += step.eqOracle.type + ';';
-                this.csv += result.symbols.length + ';';
-                this.csv += step.statistics.mqsUsed + ';';
-                this.csv += step.statistics.eqsUsed + ';';
-                this.csv += step.statistics.symbolsUsed + ';';
-                this.csv += step.statistics.duration + '\n';
+                csv += result.project.toString() + ';';
+                csv += result.testNo.toString() + ';';
+                csv += '"' + step.statistics.startDate + '";';
+                csv += step.stepNo.toString() + ';';
+                csv += result.algorithm + ';';
+                csv += step.eqOracle.type + ';';
+                csv += result.symbols.length.toString() + ';';
+                csv += step.statistics.eqsUsed.toString() + ';';
+                csv += step.statistics.mqsUsed.total.toString() + ';';
+                csv += step.statistics.mqsUsed.learner.toString() + ';';
+                csv += step.statistics.mqsUsed.eqOracle.toString() + ';';
+                csv += step.statistics.symbolsUsed.total.toString() + ';';
+                csv += step.statistics.symbolsUsed.learner.toString() + ';';
+                csv += step.statistics.symbolsUsed.eqOracle.toString() + ';';
+                csv += step.statistics.duration.total.toString() + ';';
+                csv += step.statistics.duration.learner.toString() + ';';
+                csv += step.statistics.duration.eqOracle.toString();
+                csv += '\n';
             });
-            csv += '\n'; // separate multiple results by a new line
+            csv += '\n';
         });
 
-        this.PromptService.prompt('Enter a name for the csv file')
-            .then(filename => {
-                this.DownloadService.downloadCsv(csv, filename);
-            });
+        return this.PromptService.prompt('Enter a name for the csv file')
+            .then(filename => this.DownloadService.downloadCsv(csv, filename));
     }
 }
