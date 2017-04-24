@@ -1,5 +1,5 @@
 <div class="view">
-    <view-header title="Learn Process Setup"></view-header>
+    <view-header title="Learner Process Setup"></view-header>
 
     <action-bar>
         <div ng-if="vm.allSymbols.length > 0">
@@ -37,6 +37,9 @@
                     min-depth: <span ng-bind="vm.learnConfiguration.eqOracle.minDepth"></span>,
                     max-depth: <span ng-bind="vm.learnConfiguration.eqOracle.maxDepth"></span>
                     )
+                </span>
+                <span ng-if="vm.learnConfiguration.eqOracle.type === 'wmethod'">
+                    ( max-depth: <span ng-bind="vm.learnConfiguration.eqOracle.maxDepth"></span> )
                 </span>
                 <span ng-if="vm.learnConfiguration.eqOracle.type === 'random_word'">
                     (

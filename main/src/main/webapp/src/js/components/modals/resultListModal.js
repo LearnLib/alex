@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {events} from "../../constants";
-
 /**
  * The controller for the modal that displays a selectable list of results.
  */
@@ -24,14 +22,12 @@ export class ResultListModalComponent {
     /**
      * Constructor.
      *
-     * @param {EventBus} EventBus
      * @param {ProjectResource} ProjectResource
      * @param {LearnResultResource} LearnResultResource
      * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor(EventBus, ProjectResource, LearnResultResource, ToastService) {
-        this.EventBus = EventBus;
+    constructor(ProjectResource, LearnResultResource, ToastService) {
         this.LearnResultResource = LearnResultResource;
         this.ToastService = ToastService;
 
@@ -76,7 +72,7 @@ export class ResultListModalComponent {
      * @param {LearnResult} result
      */
     selectResult(result) {
-        this.EventBus.emit(events.RESULT_SELECTED, {result: result});
+        this.close({$value: result});
         this.dismiss();
     }
 
@@ -86,9 +82,11 @@ export class ResultListModalComponent {
      */
     loadResultFromFile(hypothesis) {
         try {
-            this.EventBus.emit(events.RESULT_SELECTED, {
-                result: {
-                    steps: [{hypothesis: JSON.parse(hypothesis)}]
+            this.close({
+                $value: {
+                    result: {
+                        steps: [{hypothesis: JSON.parse(hypothesis)}]
+                    }
                 }
             });
             this.dismiss();
@@ -103,6 +101,7 @@ export const resultListModalComponent = {
     templateUrl: 'html/components/modals/result-list-modal.html',
     bindings: {
         dismiss: '&',
+        close: '&',
         resolve: '='
     },
     controller: ResultListModalComponent,
@@ -114,7 +113,8 @@ export const resultListModalComponent = {
 export function resultListModalHandle($uibModal) {
     return {
         scope: {
-            results: '='
+            results: '=',
+            onSelected: '&'
         },
         restrict: 'A',
         link(scope, el) {
@@ -126,6 +126,8 @@ export function resultListModalHandle($uibModal) {
                             return {results: scope.results};
                         }
                     }
+                }).result.then(result => {
+                    scope.onSelected({result});
                 });
             });
         }

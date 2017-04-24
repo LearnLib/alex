@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {events} from "../../constants";
-
 /**
  * The controller that handles the page for displaying multiple complete learn results in a slide show.
  */
@@ -25,24 +23,21 @@ class ResultsCompareView {
      * Constructor.
      *
      * @param $timeout
-     * @param $scope
      * @param $uibModal
      * @param $stateParams
      * @param {SessionService} SessionService
      * @param {LearnResultResource} LearnResultResource
      * @param {ErrorService} ErrorService
-     * @param {EventBus} EventBus
      * @param {LearnerResource} LearnerResource
      * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor($timeout, $scope, $uibModal, $stateParams, SessionService, LearnResultResource, ErrorService, EventBus,
-                LearnerResource, ToastService) {
+    constructor($timeout, $uibModal, $stateParams, SessionService, LearnResultResource, ErrorService, LearnerResource,
+                ToastService) {
         this.$timeout = $timeout;
         this.$uibModal = $uibModal;
         this.LearnResultResource = LearnResultResource;
         this.ErrorService = ErrorService;
-        this.EventBus = EventBus;
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
 
@@ -90,10 +85,6 @@ class ResultsCompareView {
                 })
                 .catch(err => console.log(err));
         }
-
-        EventBus.on(events.RESULT_SELECTED, (evt, data) => {
-            this.panels.push(data.result);
-        }, $scope);
     }
 
     /**

@@ -25,7 +25,8 @@
             </div>
             <div class="add-panel-button text-center" uib-tooltip="Add result" tooltip-placement="left"
                  ng-if="vm.panels.length < 3"
-                 result-list-modal-handle results="vm.results">
+                 result-list-modal-handle results="vm.results"
+                 on-selected="vm.panels.push(result)">
                 <i class="fa fa-2x fa-plus"></i>
             </div>
         </div>

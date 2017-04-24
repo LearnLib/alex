@@ -72,9 +72,6 @@ export const events = {
     SYMBOL_CREATED: 'symbol:created',
     SYMBOL_UPDATED: 'symbol:updated',
     SYMBOLS_MOVED: 'symbols:moved',
-
-    // results related events
-    RESULT_SELECTED: 'result:selected'
 };
 
 export const actionType = {
