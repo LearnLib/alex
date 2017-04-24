@@ -134,6 +134,10 @@ public class LearnerResource {
                         + "they must match the parameters in the path!");
             }
 
+            if (configuration.getSymbolsAsIds().contains(configuration.getResetSymbolAsId())) {
+                throw new IllegalArgumentException("The reset may not be a part of the input alphabet");
+            }
+
             Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
 
             learner.start(user, project, configuration);

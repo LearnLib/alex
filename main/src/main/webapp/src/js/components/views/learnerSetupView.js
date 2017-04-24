@@ -144,6 +144,9 @@ class LearnerSetupView {
         } else {
             if (this.selectedSymbols.length > 0) {
 
+                const i = this.selectedSymbols.findIndex(s => s.id === this.resetSymbol.id);
+                if (i > -1) this.selectedSymbols.splice(i, 1);
+
                 // add selected symbols and the reset symbol to the learn config
                 this.selectedSymbols.forEach(symbol => {
                     this.learnConfiguration.addSymbol(symbol);
