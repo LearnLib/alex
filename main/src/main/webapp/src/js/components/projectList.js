@@ -77,58 +77,9 @@ class ProjectList {
                     });
             });
     }
-
-    /**
-     * Downloads the project in an importable format.
-     *
-     * @param {Project} project.
-     */
-    exportProject(project) {
-        this.ProjectResource.getForExport(project.id)
-            .then(p => {
-                delete p.id;
-                delete p.user;
-
-                delete p.counters;
-                delete p.testResults;
-                delete p.symbolAmount;
-
-                this.prepareGroupForExport(p.defaultGroup);
-
-                p.groups.forEach(group => {
-                    this.prepareGroupForExport(group);
-                });
-
-                this.PromptService.prompt("Enter a filename for the project").then(filename => {
-                    this.DownloadService.downloadObject(p, filename);
-                    this.ToastService.success('The project has been exported.');
-                });
-            });
-    }
-
-    prepareGroupForExport(group) {
-        delete group.id;
-        delete group.project;
-        delete group.user;
-        delete group.symbolAmount;
-
-        group.symbols.forEach(symbol => {
-            delete symbol.user;
-            delete symbol.project;
-            delete symbol.group;
-            delete symbol.id;
-            delete symbol.hidden;
-
-            symbol.actions.forEach(action => {
-                delete action.symbolToExecuteName;
-            });
-        });
-    }
-
 }
 
 export const projectList = {
-    templateUrl: 'html/components/project-list.html',
     templateUrl: 'html/components/project-list.html',
     bindings: {
         projects: '='

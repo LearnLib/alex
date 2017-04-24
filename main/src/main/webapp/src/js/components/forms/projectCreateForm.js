@@ -42,12 +42,6 @@ class ProjectCreateForm {
         this.project = new Project();
 
         /**
-         * The project that should be imported.
-         * @type {Project}
-         */
-        this.projectToImport = null;
-
-        /**
          * The mirror urls separated by \n.
          * @type {string}
          */
@@ -86,23 +80,6 @@ class ProjectCreateForm {
             .catch(response => {
                 this.ToastService.danger('<p><strong>Creation of project failed</strong></p>' + response.data.message);
             });
-    }
-
-    /**
-     * Imports a project.
-     */
-    importProject() {
-        if (this.projectToImport !== null) {
-            this.ProjectResource.create(this.projectToImport)
-                .then(importedProject => {
-                    this.EventBus.emit(events.PROJECT_CREATED, {project: importedProject});
-                    this.projectToImport = null;
-                    this.ToastService.success(`The project '${importedProject.name}' has been imported.`);
-                })
-                .catch(response => {
-                    this.ToastService.danger(`<p><strong>The import failed!</strong></p> ${response.data.message}`);
-                });
-        }
     }
 }
 

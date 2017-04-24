@@ -1,109 +1,79 @@
-<uib-tabset>
-    <uib-tab heading="Create">
-        <br>
+<form name="vm.form" ng-submit="vm.createProject()" id="project-create-form">
 
-        <form name="vm.form" ng-submit="vm.createProject()" id="project-create-form">
+    <div class="form-group">
+        <label class="control-label">Name*</label>
 
-            <div class="form-group">
-                <label class="control-label">Name*</label>
+        <input type="text"
+               class="form-control"
+               name="name"
+               placeholder="Enter a name for the project"
+               ng-model="vm.project.name"
+               required>
 
-                <input type="text"
-                       class="form-control"
-                       name="name"
-                       placeholder="Enter a name for the project"
-                       ng-model="vm.project.name"
-                       required>
-
-                <div class="help-block" ng-messages="vm.form.name.$error" ng-if="vm.form.name.$touched">
-                    <div class="alert alert-danger alert-condensed" ng-message="required">
-                        The name is required
-                    </div>
-                </div>
+        <div class="help-block" ng-messages="vm.form.name.$error" ng-if="vm.form.name.$touched">
+            <div class="alert alert-danger alert-condensed" ng-message="required">
+                The name is required
             </div>
-
-            <div class="form-group">
-                <label class="control-label">Url*</label>
-
-                <input class="form-control"
-                       type="text"
-                       name="url"
-                       placeholder="Enter the url of the project"
-                       ng-model="vm.project.baseUrl"
-                       required
-                       ng-pattern="/^(http://|https://).{1,}/">
-
-                <div class="help-block" ng-messages="vm.form.url.$error" ng-if="vm.form.url.$touched">
-                    <div class="alert alert-danger alert-condensed" ng-message="required">
-                        The url is required
-                    </div>
-                    <div class="alert alert-danger alert-condensed" ng-message="pattern">
-                        The url has to start with <em>http[s]://</em>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label">Description</label>
-                <textarea ng-model="vm.project.description"
-                          name="description"
-                          placeholder="Enter the description for the project"
-                          class="form-control"
-                          ng-maxlength="250"
-                          rows="3">
-                </textarea>
-
-                <div class="help-block" ng-messages="vm.form.description.$error" ng-if="vm.form.description.$touched">
-                    <div class="alert alert-danger alert-condensed" ng-message="maxlength">
-                        The description may not contain more than 250 characters
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label">Mirror URLs</label>
-                <textarea ng-model="vm.mirrorUrls"
-                          name="mirrorUrls"
-                          placeholder="Enter alternative URLs the project can be accessed. One per line."
-                          class="form-control"
-                          rows="3">
-                </textarea>
-            </div>
-
-            <div class="form-group">
-                <button type="submit"
-                        class="btn btn-sm btn-primary">
-                    Create Project
-                </button>
-            </div>
-        </form>
-
-        <hr>
-        <div class="text-muted">
-            <em>* These fields are required</em>
         </div>
+    </div>
 
-    </uib-tab>
-    <uib-tab heading="Import">
-        <br>
+    <div class="form-group">
+        <label class="control-label">Url*</label>
 
-        <file-dropzone on-loaded="vm.loadProjectFromFile.bind(vm)">
-            Drag and drop a json file with the project here or click on it.
-        </file-dropzone>
+        <input class="form-control"
+               type="text"
+               name="url"
+               placeholder="Enter the url of the project"
+               ng-model="vm.project.baseUrl"
+               required
+               ng-pattern="/^(http://|https://).{1,}/">
 
-        <form ng-submit="vm.importProject()" ng-if="vm.projectToImport.name" id="project-import-form">
-            <div class="form-group">
-                <label class="control-label">Name*</label>
-                <input type="text" minlength="1" required class="form-control" ng-model="vm.projectToImport.name">
-                <p class="help-block">Make sure the name of the project is not yet present.</p>
+        <div class="help-block" ng-messages="vm.form.url.$error" ng-if="vm.form.url.$touched">
+            <div class="alert alert-danger alert-condensed" ng-message="required">
+                The url is required
             </div>
-            <div class="form-group">
-                <button class="btn btn-sm btn-primary">Import Project</button>
+            <div class="alert alert-danger alert-condensed" ng-message="pattern">
+                The url has to start with <em>http[s]://</em>
             </div>
-            <hr>
-            <div class="text-muted">
-                <em>* These fields are required</em>
-            </div>
-        </form>
+        </div>
+    </div>
 
-    </uib-tab>
-</uib-tabset>
+    <div class="form-group">
+        <label class="control-label">Description</label>
+        <textarea ng-model="vm.project.description"
+                  name="description"
+                  placeholder="Enter the description for the project"
+                  class="form-control"
+                  ng-maxlength="250"
+                  rows="3">
+        </textarea>
+
+        <div class="help-block" ng-messages="vm.form.description.$error" ng-if="vm.form.description.$touched">
+            <div class="alert alert-danger alert-condensed" ng-message="maxlength">
+                The description may not contain more than 250 characters
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label">Mirror URLs</label>
+        <textarea ng-model="vm.mirrorUrls"
+                  name="mirrorUrls"
+                  placeholder="Enter alternative URLs the project can be accessed. One per line."
+                  class="form-control"
+                  rows="3">
+        </textarea>
+    </div>
+
+    <div class="form-group">
+        <button type="submit"
+                class="btn btn-sm btn-primary">
+            Create Project
+        </button>
+    </div>
+</form>
+
+<hr>
+<div class="text-muted">
+    <em>* These fields are required</em>
+</div>

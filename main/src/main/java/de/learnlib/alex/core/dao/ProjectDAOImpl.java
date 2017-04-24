@@ -95,46 +95,15 @@ public class ProjectDAOImpl implements ProjectDAO {
     public void create(final Project project) throws ValidationException {
         LOGGER.traceEntry("create({})", project);
         try {
-            if (project.getGroups().size() == 0) { // create new project without existing groups
-                LOGGER.info(IMPL_MARKER, "No groups, symbols, ... found for the project.");
-                SymbolGroup defaultGroup = new SymbolGroup();
-                defaultGroup.setId(0L);
-                defaultGroup.setName("Default Group");
-                defaultGroup.setProject(project);
-                defaultGroup.setUser(project.getUser());
+            SymbolGroup defaultGroup = new SymbolGroup();
+            defaultGroup.setId(0L);
+            defaultGroup.setName("Default Group");
+            defaultGroup.setProject(project);
+            defaultGroup.setUser(project.getUser());
 
-                project.addGroup(defaultGroup);
-                project.setDefaultGroup(defaultGroup);
-                project.setNextGroupId(1L);
-            } else {
-                LOGGER.info(IMPL_MARKER, "The Project contains the following groups: {}", project.getGroups());
-                project.getGroups().forEach(group -> {
-                    group.setUser(project.getUser());
-
-                    group.setProject(project);
-                    Long groupId = project.getNextGroupId();
-                    group.setId(groupId);
-                    project.setNextGroupId(groupId + 1);
-
-                    SymbolGroupDAOImpl.beforePersistGroup(group);
-                });
-
-                // set a default group if none is provided
-                if (project.getDefaultGroup() == null) {
-                    Iterator<SymbolGroup> groups = project.getGroups().iterator();
-
-                    SymbolGroup newDefaultGroup = groups.next(); // just assume that the first group is the default one
-                    project.setDefaultGroup(newDefaultGroup);
-                } else {
-                    String defaultGroupName = project.getDefaultGroup().getName();
-                    for (SymbolGroup group : project.getGroups()) {
-                        if (defaultGroupName.equals(group.getName())) {
-                            project.setDefaultGroup(group);
-                            break;
-                        }
-                    }
-                }
-            }
+            project.addGroup(defaultGroup);
+            project.setDefaultGroup(defaultGroup);
+            project.setNextGroupId(1L);
 
             Project createdProject = projectRepository.save(project);
             project.setId(createdProject.getId());
@@ -156,16 +125,9 @@ public class ProjectDAOImpl implements ProjectDAO {
     @Override
     @Transactional(readOnly = true)
     public List<Project> getAll(User user, EmbeddableFields... embedFields) {
-        // get the Projects
-        List<Project> result = projectRepository.findAllByUser_Id(user.getId());
-
-        // load lazy relations
-        for (Project p : result) {
-            initLazyRelations(p, embedFields);
-        }
-
-        // done
-        return result;
+        List<Project> projects = projectRepository.findAllByUser_Id(user.getId());
+        projects.forEach(p -> initLazyRelations(p, embedFields));
+        return projects;
     }
 
     @Override
