@@ -1,12 +1,8 @@
 <div class="modal-header">
-
     <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
         <i class="fa fa-close fa-fw"></i>
     </a>
-
-    <h3 class="modal-title">Settings for project <strong ng-bind="::vm.project.name"></strong></h3>
-    <span class="text-muted">Update an existing project</span>
-
+    <h3 class="modal-title">Edit project <strong ng-bind="::vm.project.name"></strong></h3>
 </div>
 
 <form name="vm.form" ng-submit="vm.updateProject()">
