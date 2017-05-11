@@ -131,6 +131,42 @@ class LearnResultPanel {
     }
 
     /**
+     * Downloads the visible hypothesis as dot file.
+     */
+    exportHypothesisAsDot() {
+        const hypothesis = this.result.steps[this.pointer].hypothesis;
+
+        const edges = {};
+        hypothesis.edges.forEach(edge => {
+            if (!edges[edge.from]) {
+                edges[edge.from] = {};
+            }
+            if (!edges[edge.from][edge.to]) {
+                edges[edge.from][edge.to] = '';
+            }
+            edges[edge.from][edge.to] += `${edge.input} / ${edge.output}\\n`;
+        });
+
+        let dot = 'digraph g {\n';
+        dot += '  __start0 [label="" shape="none"];\n\n';
+        hypothesis.nodes.forEach(node => {
+            dot += `  ${node} [shape="circle" label="${node}"];\n`;
+        });
+        dot += "\n";
+        for (let from in edges) {
+            for (let to in edges[from]) {
+                dot += `  ${from} -> ${to} [label="${edges[from][to]}"];\n`;
+            }
+        }
+        dot += "\n";
+        dot += '  __start0 -> 0;\n';
+        dot += '}';
+
+        this.PromptService.prompt("Enter a name for the dot file")
+            .then(filename => this.DownloadService.downloadText(filename, 'dot', dot));
+    }
+
+    /**
      * Switches the mode to the one to display the hypothesis.
      */
     showHypothesis() {

@@ -33,6 +33,9 @@
                             <a href="" ng-click="vm.exportHypothesisAsJson()">
                                 <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.json
                             </a>
+                            <a href="" ng-click="vm.exportHypothesisAsDot()">
+                                <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.dot
+                            </a>
                         </li>
                     </ul>
                     <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu" ng-if="!vm.result.steps[vm.pointer].hypothesis">
