@@ -91,12 +91,11 @@ export class LearnerResource {
      * Verifies a possible counterexample.
      *
      * @param {number} projectId - The project id.
-     * @param {number} resetSymbol - The id of the reset symbol.
-     * @param {number} symbols - The list of ids of symbols.
+     * @param {object} outputConfig - The id of the reset symbol.
      * @returns {*}
      */
-    readOutputs(projectId, resetSymbol, symbols) {
-        return this.$http.post(`rest/learner/outputs/${projectId}`, {resetSymbol, symbols})
+    readOutputs(projectId, outputConfig) {
+        return this.$http.post(`rest/learner/outputs/${projectId}`, outputConfig)
             .then(response => response.data);
     }
 

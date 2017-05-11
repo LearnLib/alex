@@ -18,6 +18,7 @@ package de.learnlib.alex.core.learner;
 
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
+import de.learnlib.alex.core.entities.BrowserConfig;
 import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
@@ -246,9 +247,11 @@ public class Learner {
     public void resume(User user, Project project, LearnerResult result, LearnerResumeConfiguration config)
             throws IllegalArgumentException, IllegalStateException, NotFoundException {
         preStartCheck(user);
+        config.checkConfiguration();
 
-        config.checkConfiguration(); // throws IllegalArgumentException if something is wrong
-        validateCounterExample(user, config);
+        if (config.getEqOracle() instanceof SampleEQOracleProxy) {
+            validateCounterexample(user, config);
+        }
 
         result.setAlgorithmFactory(algorithmService.getLearnAlgorithm(result.getAlgorithm()));
         Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbolAsId());
@@ -304,47 +307,47 @@ public class Learner {
      *
      * @param user
      *         The user to validate the counterexample for.
-     * @param newConfiguration
+     * @param configuration
      *         The new configuration.
      * @throws IllegalArgumentException
      *         If the new configuration is based on manual counterexamples and at least one of them is wrong.
      */
-    private void validateCounterExample(User user, LearnerResumeConfiguration newConfiguration)
+    private void validateCounterexample(User user, LearnerResumeConfiguration configuration)
             throws IllegalArgumentException {
-        if (newConfiguration.getEqOracle() instanceof SampleEQOracleProxy) {
-            SampleEQOracleProxy oracle = (SampleEQOracleProxy) newConfiguration.getEqOracle();
-            LearnerResult lastResult = getResult(user);
 
-            for (List<SampleEQOracleProxy.InputOutputPair> counterexample : oracle.getCounterExamples()) {
-                List<Symbol> symbolsFromCounterexample = new ArrayList<>();
-                List<String> outputs = new ArrayList<>();
+        SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
+        LearnerResult lastResult = getResult(user);
 
-                // search symbols in configuration where symbol.abbreviation == counterexample.input
-                for (SampleEQOracleProxy.InputOutputPair io : counterexample) {
+        for (List<SampleEQOracleProxy.InputOutputPair> counterexample : oracle.getCounterExamples()) {
+            List<Symbol> symbolsFromCounterexample = new ArrayList<>();
+            List<String> outputs = new ArrayList<>();
 
-                    Optional<Symbol> symbol = lastResult.getSymbols().stream()
-                                                        .filter(s -> s.getAbbreviation().equals(io.getInput()))
-                                                        .findFirst();
+            // search symbols in configuration where symbol.abbreviation == counterexample.input
+            for (SampleEQOracleProxy.InputOutputPair io : counterexample) {
+                Optional<Symbol> symbol = lastResult.getSymbols().stream()
+                                                    .filter(s -> s.getAbbreviation().equals(io.getInput()))
+                                                    .findFirst();
 
-                    // collect all outputs in order to compare it with the result of learner.readOutputs()
-                    if (symbol.isPresent()) {
-                        symbolsFromCounterexample.add(symbol.get());
-                        outputs.add(io.getOutput());
-                    } else {
-                        throw new IllegalArgumentException("The symbol with the abbreviation '" + io.getInput() + "'"
-                                + " is not used in this test setup.");
-                    }
+                // collect all outputs in order to compare it with the result of learner.readOutputs()
+                if (symbol.isPresent()) {
+                    symbolsFromCounterexample.add(symbol.get());
+                    outputs.add(io.getOutput());
+                } else {
+                    throw new IllegalArgumentException("The symbol with the abbreviation '" + io.getInput() + "'"
+                            + " is not used in this test setup.");
                 }
+            }
 
-                // finally check if the given sample matches the behavior of the SUL
-                List<String> results = readOutputs(lastResult.getUser(),
-                                                   lastResult.getProject(),
-                                                   lastResult.getResetSymbol(),
-                                                   symbolsFromCounterexample);
-                if (!results.equals(outputs)) {
-                    throw new IllegalArgumentException("At least one of the given samples for counterexamples"
-                            + " is not matching the behavior of the SUL.");
-                }
+            // finally check if the given sample matches the behavior of the SUL
+            List<String> results = readOutputs(lastResult.getUser(),
+                                               lastResult.getProject(),
+                                               lastResult.getResetSymbol(),
+                                               symbolsFromCounterexample,
+                                               lastResult.getBrowser());
+
+            if (!results.equals(outputs)) {
+                throw new IllegalArgumentException("At least one of the given samples for counterexamples"
+                        + " is not matching the behavior of the SUL.");
             }
         }
     }
@@ -372,13 +375,7 @@ public class Learner {
      */
     public boolean isActive(User user) {
         LearnerThread learnerThread = userThreads.get(user);
-
-        // if no thread for the user exists -> return false
-        if (learnerThread == null) {
-            return false;
-        }
-
-        return !learnerThread.isFinished();
+        return learnerThread != null && !learnerThread.isFinished();
     }
 
     /**
@@ -438,7 +435,8 @@ public class Learner {
      * @throws LearnerException
      *         If something went wrong while testing the symbols.
      */
-    public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols)
+    public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols,
+                                    BrowserConfig browserConfig)
             throws LearnerException {
         ThreadContext.put("userId", String.valueOf(user.getId()));
         ThreadContext.put("testNo", "readOutputs");
@@ -446,8 +444,10 @@ public class Learner {
         LOGGER.traceEntry();
         LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
 
-        contextHandler.setResetSymbol(resetSymbol);
-        ConnectorManager connectors = contextHandler.createContext();
+        ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(
+                user, project, browserConfig);
+        ctxHandler.setResetSymbol(resetSymbol);
+        ConnectorManager connectors = ctxHandler.createContext();
 
         return readOutputs(symbols, connectors);
     }
@@ -489,8 +489,9 @@ public class Learner {
     private List<String> readOutputs(List<Symbol> symbols, ConnectorManager connectors) {
         LOGGER.traceEntry();
         try {
-            List<String> output = symbols.stream().map(s ->
-                    s.execute(connectors).toString()).collect(Collectors.toList());
+            List<String> output = symbols.stream()
+                    .map(s -> s.execute(connectors).toString())
+                    .collect(Collectors.toList());
             connectors.dispose();
 
             LOGGER.traceExit(output);
@@ -513,19 +514,18 @@ public class Learner {
      * @return If the machines are different: The corresponding separating word; otherwise: ""
      */
     public String compare(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {
-        Alphabet alphabetProxy1 = mealy1.createAlphabet();
-        Alphabet alphabetProxy2 = mealy1.createAlphabet();
+        Alphabet<String> alphabetProxy1 = mealy1.createAlphabet();
+        Alphabet<String> alphabetProxy2 = mealy1.createAlphabet();
 
-        CompactMealy mealyMachine1 = mealy1.createMealyMachine(alphabetProxy1);
-        CompactMealy mealyMachine2 = mealy2.createMealyMachine(alphabetProxy2);
+        CompactMealy<String, String> mealyMachine1 = mealy1.createMealyMachine(alphabetProxy1);
+        CompactMealy<String, String> mealyMachine2 = mealy2.createMealyMachine(alphabetProxy2);
 
         Word separatingWord = Automata.findSeparatingWord(mealyMachine1, mealyMachine2, alphabetProxy1);
 
-        String result = "";
         if (separatingWord != null) {
-            result = separatingWord.toString();
+            return separatingWord.toString();
+        } else {
+            return "";
         }
-
-        return result;
     }
 }

@@ -141,22 +141,27 @@ class CounterexamplesWidget {
             const resetSymbol = this.result.resetSymbol;
 
             // actually test the counterexample
-            this.LearnerResource.readOutputs(this.result.project, resetSymbol, testSymbols)
-                .then(ce => {
-                    let ceFound = false;
-                    for (let i = 0; i < ce.length; i++) {
-                        if (ce[i] !== this.counterExample[i].output) {
-                            ceFound = true;
-                            break;
-                        }
+            this.LearnerResource.readOutputs(this.result.project, {
+                symbols: {
+                    resetSymbol: resetSymbol,
+                    symbols: testSymbols,
+                },
+                browser: this.result.browser
+            }).then(ce => {
+                let ceFound = false;
+                for (let i = 0; i < ce.length; i++) {
+                    if (ce[i] !== this.counterExample[i].output) {
+                        ceFound = true;
+                        break;
                     }
-                    if (ceFound) {
-                        deferred.resolve(ce);
-                    } else {
-                        deferred.reject();
-                    }
-                })
-                .catch(err => console.log(err));
+                }
+                if (ceFound) {
+                    deferred.resolve(ce);
+                } else {
+                    deferred.reject();
+                }
+            })
+            .catch(err => console.log(err));
         };
 
         // fetch symbols only once and cache them
