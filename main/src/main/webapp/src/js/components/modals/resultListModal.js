@@ -73,7 +73,6 @@ export class ResultListModalComponent {
      */
     selectResult(result) {
         this.close({$value: result});
-        this.dismiss();
     }
 
     /**
@@ -84,12 +83,9 @@ export class ResultListModalComponent {
         try {
             this.close({
                 $value: {
-                    result: {
-                        steps: [{hypothesis: JSON.parse(hypothesis)}]
-                    }
+                    steps: [{hypothesis: JSON.parse(hypothesis)}]
                 }
             });
-            this.dismiss();
         } catch (e) {
             this.ToastService.danger('Could not parse the file.')
         }
