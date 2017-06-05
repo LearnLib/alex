@@ -20,14 +20,7 @@ import de.learnlib.alex.ALEXTestApplication;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.entities.LearnerConfiguration;
-import de.learnlib.alex.core.entities.LearnerResult;
-import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
-import de.learnlib.alex.core.entities.LearnerStatus;
-import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.Statistics;
-import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.core.entities.*;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -82,6 +75,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     private User admin;
     private String adminToken;
+    private BrowserConfig browserConfig = new BrowserConfig();
 
     @Override
     protected Application configure() {
@@ -396,7 +390,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn400IfCreatingAnOutputFailed() throws NotFoundException {
-        given(learner.readOutputs(any(), any(), any(), anyList()))
+        given(learner.readOutputs(any(), any(), any(), anyList(), browserConfig))
                 .willThrow(LearnerException.class);
 
         String json = "{\"resetSymbol\":"  + RESET_SYMBOL_TEST_ID + ","
@@ -417,7 +411,8 @@ public class LearnerResourceTest extends JerseyTest {
                                 .post(Entity.json(json));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), anyList());
+        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), anyList(),
+                browserConfig);
     }
 
     @Test
@@ -431,7 +426,8 @@ public class LearnerResourceTest extends JerseyTest {
                                 .post(Entity.json(json));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), any());
+        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), any(),
+                browserConfig);
     }
 
     @Test
@@ -441,7 +437,8 @@ public class LearnerResourceTest extends JerseyTest {
                                 .post(Entity.json(json));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), anyList());
+        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), anyList(),
+                browserConfig);
     }
 
     @Test
@@ -454,7 +451,8 @@ public class LearnerResourceTest extends JerseyTest {
                                 .post(Entity.json(json));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), anyList());
+        verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(Symbol.class), anyList(),
+                browserConfig);
     }
 
 }
