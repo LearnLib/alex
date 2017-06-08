@@ -1,0 +1,23 @@
+<div class="view">
+    <view-header title="Dashboard of {{vm.project.name}}"></view-header>
+
+    <div class="view-body">
+        <div class="alx-container">
+            <div class="row">
+
+                <div class="col-lg-4 col-md-4 col-sm-6">
+                    <project-details-widget project="vm.project"></project-details-widget>
+                </div>
+
+                <div class="col-lg-4 col-md-4 col-sm-6">
+                    <learner-status-widget></learner-status-widget>
+                </div>
+
+                <div class="col-lg-4 col-md-4 col-sm-6">
+                    <latest-learn-result-widget></latest-learn-result-widget>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

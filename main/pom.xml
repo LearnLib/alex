@@ -7,7 +7,7 @@
     <parent>
         <groupId>de.learnlib.alex</groupId>
         <artifactId>alex-parent</artifactId>
-        <version>1.2.1</version>
+        <version>1.3.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -139,6 +139,13 @@
             <version>1.9.2</version>
         </dependency>
 
+        <!-- guava for selenium wait conditions -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
+        </dependency>
+
         <!-- JsonPath -->
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
@@ -169,6 +176,11 @@
         </dependency>
         <dependency>
             <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-kearns-vazirani</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
             <artifactId>learnlib-lstar-generic</artifactId>
             <version>${learnlib.version}</version>
         </dependency>
@@ -187,8 +199,13 @@
             <artifactId>learnlib-basic-eqtests</artifactId>
             <version>${learnlib.version}</version>
         </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-simulator</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
 
-        <!-- we need the uum webdriver for selenium testing/learning -->
+        <!-- selenium testing -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
@@ -220,6 +237,12 @@
             <version>${selenium.version}</version>
         </dependency>
 
+        <!-- Cloning Java objects -->
+        <dependency>
+            <groupId>uk.com.robust-it</groupId>
+            <artifactId>cloning</artifactId>
+            <version>1.9.2</version>
+        </dependency>
 
         <dependency>
             <groupId>xml-apis</groupId>
@@ -327,20 +350,6 @@
                             <goal>repackage</goal>
                         </goals>
                     </execution>
-                    <!--<execution>
-                        <id>server-start</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>server-stop</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>-->
                 </executions>
             </plugin>
 

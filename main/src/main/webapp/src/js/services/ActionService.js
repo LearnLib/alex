@@ -38,7 +38,6 @@ import {CheckAttributeValueRestAction} from "../entities/actions/restActions/Che
 import {CheckHeaderFieldRestAction} from "../entities/actions/restActions/CheckHeaderFieldRestAction";
 import {CheckHTTPBodyTextRestAction} from "../entities/actions/restActions/CheckHTTPBodyTextRestAction";
 import {CheckStatusRestAction} from "../entities/actions/restActions/CheckStatusRestAction";
-import {ExecuteSymbolGeneralAction} from "../entities/actions/generalActions/ExecuteSymbolGeneralAction";
 import {AssertCounterAction} from "../entities/actions/generalActions/AssertCounterAction";
 import {AssertVariableAction} from "../entities/actions/generalActions/AssertVariableAction";
 import {IncrementCounterGeneralAction} from "../entities/actions/generalActions/IncrementCounterGeneralAction";
@@ -113,8 +112,6 @@ export class ActionService {
                 return new CheckStatusRestAction(data);
 
             // general actions
-            case actionType.GENERAL_EXECUTE_SYMBOL:
-                return new ExecuteSymbolGeneralAction(data);
             case actionType.GENERAL_ASSERT_COUNTER:
                 return new AssertCounterAction(data);
             case actionType.GENERAL_ASSERT_VARIABLE:

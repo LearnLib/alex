@@ -62,11 +62,14 @@ public class ProjectDAOImplTest {
     @Mock
     private SymbolDAOImpl symbolDAO;
 
+    @Mock
+    private FileDAOImpl fileDAO;
+
     private ProjectDAO projectDAO;
 
     @Before
     public void setUp() {
-        projectDAO = new ProjectDAOImpl(projectRepository, symbolRepository, symbolDAO);
+        projectDAO = new ProjectDAOImpl(projectRepository, symbolRepository, symbolDAO, fileDAO);
     }
 
     @Test

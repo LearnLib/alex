@@ -1,0 +1,63 @@
+<div class="view">
+    <view-header title="Test Symbols"></view-header>
+
+    <div class="view-body">
+        <div class="alx-container">
+
+            <div class="row">
+                <div class="col-md-4 col-sm-5">
+
+                    <div class="panel panel-default" ng-repeat="group in vm.groups" ng-if="group.symbols.length">
+                        <div class="panel-heading">
+                            <strong>{{group.name}}</strong>
+                        </div>
+                        <div class="list-group">
+                            <a href class="list-group-item" ng-repeat="symbol in group.symbols | orderBy:'name'"
+                               ng-click="vm.word.push(symbol); vm.outputs = []">
+                                {{symbol.name}}
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-8 col-sm-7">
+
+                    <div ng-if="vm.word.length">
+                        <div class="list-group" dragula='"word"' dragula-model="vm.word">
+                            <div class="list-group-item" ng-class="{'list-group-item-info': $index === 0}" ng-repeat="symbol in vm.word track by $index">
+                                <div>
+                                    <span class="pull-left text-muted" style="margin-right: 15px; cursor: move">
+                                        <i class="fa fa-ellipsis-v" style="margin-right: -2px"></i>
+                                        <i class="fa fa-ellipsis-v"></i>
+                                    </span>
+                                    <i class="fa fa-fw fa-close text-muted pull-right" ng-click="vm.word.splice($index, 1); vm.outputs = []"></i>
+                                    <span class="label label-primary pull-right" style="margin-right: 10px" ng-if="$index === 0">Reset</span>
+
+                                    {{symbol.name}}
+                                </div>
+                                <div ng-if="vm.outputs[$index]" style="padding-left: 20px">
+                                    <label class="label" ng-bind="vm.outputs[$index]"
+                                           ng-class="vm.outputs[$index][0] === 'O' ? 'label-success' : 'label-danger'">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <browser-config-form config="vm.browserConfig"></browser-config-form>
+
+                        <button class="btn btn-sm btn-primary" ng-click="vm.executeWord()" ng-if="!vm.isExecuting">Execute word</button>
+                        <button class="btn btn-sm btn-primary" disabled ng-if="vm.isExecuting">
+                            <i class="fa fa-fw fa-circle-o-notch fa-spin"></i>&nbsp; Executing...
+                        </button>
+                    </div>
+
+                    <div class="alert alert-info" ng-if="!vm.word.length">
+                        Create a word by clicking on the symbols.
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

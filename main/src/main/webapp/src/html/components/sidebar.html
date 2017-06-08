@@ -4,12 +4,10 @@
         <a href="#home" class="sidebar-header-button logo-button">
             <img src="assets/images/favicon.png" height="18" width="18"> <strong>LEX</strong>
         </a>
-        <a href="" class="sidebar-header-button toggle-button" ng-click="vm.toggleCollapse()"
-           uib-tooltip="{{vm.collapsed ? 'Show Sidebar' : 'Hide Sidebar'}}" tooltip-placement="right">
+        <a href="" class="sidebar-header-button toggle-button" ng-click="vm.toggleCollapse()">
             <i class="fa" ng-class="vm.collapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
         </a>
-        <a ui-sref="about" class="sidebar-header-button about-button"
-           uib-tooltip="About ALEX" tooltip-placement="left">
+        <a ui-sref="about" class="sidebar-header-button about-button">
             <i class="fa fa-question-circle"></i>
         </a>
     </header>
@@ -44,14 +42,14 @@
                 <div class="sidebar-group-item-icon">
                     <i class="fa fa-fw fa-gears"></i>
                 </div>
-                <div class="sidebar-group-item-label">App Settings</div>
+                <div class="sidebar-group-item-label">App settings</div>
             </a>
             <a ui-sref="adminUsers" class="sidebar-group-item" uib-tooltip="User Management" tooltip-placement="right"
                ng-class="{'active':vm.isState('adminUsers')}">
                 <div class="sidebar-group-item-icon">
                     <i class="fa fa-fw fa-users"></i>
                 </div>
-                <div class="sidebar-group-item-label">Manage Users</div>
+                <div class="sidebar-group-item-label">Manage users</div>
             </a>
         </div>
 
@@ -120,14 +118,6 @@
                         <i class="fa fa-fw fa-trash"></i>
                     </div>
                     <div class="sidebar-group-item-label">Trash</div>
-                </a>
-                <a ui-sref="symbolsImport" class="sidebar-group-item"
-                   ng-class="{'active':vm.isState('symbolsImport')}"
-                   uib-tooltip="Symbols Import" tooltip-placement="right">
-                    <div class="sidebar-group-item-icon">
-                        <i class="fa fa-fw fa-upload"></i>
-                    </div>
-                    <div class="sidebar-group-item-label">Import</div>
                 </a>
             </div>
 

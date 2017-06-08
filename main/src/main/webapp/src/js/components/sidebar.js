@@ -25,16 +25,14 @@ class Sidebar {
      * Constructor.
      *
      * @param $scope
-     * @param $document
      * @param $state
      * @param {SessionService} SessionService
      * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor($scope, $document, $state, SessionService, EventBus) {
+    constructor($scope, $state, SessionService, EventBus) {
         this.$state = $state;
         this.SessionService = SessionService;
-        this.$document = $document;
 
         /**
          * The project that is stored in the session.
@@ -52,7 +50,7 @@ class Sidebar {
          * Indicator for the collapsed state.
          * @type {boolean}
          */
-        this.collapsed = false;
+        this.collapsed = sessionStorage.getItem('sidebarCollapsed') === "true";
 
         // listen on project open event
         EventBus.on(events.PROJECT_OPENED, (evt, data) => {
@@ -63,20 +61,18 @@ class Sidebar {
         EventBus.on(events.USER_LOGGED_IN, (evt, data) => {
             this.user = data.user;
         }, $scope);
+
+        this.updateLayout();
     }
 
-    /**
-     * Removes the project object from the session and redirect to the start page.
-     */
+    /** Removes the project object from the session and redirect to the start page. */
     closeProject() {
         this.SessionService.removeProject();
         this.project = null;
         this.$state.go('projects');
     }
 
-    /**
-     * Remove project & user from the session.
-     */
+    /** Remove project & user from the session. */
     logout() {
         this.SessionService.removeProject();
         this.SessionService.removeUser();
@@ -85,16 +81,19 @@ class Sidebar {
         this.$state.go('home');
     }
 
-    /**
-     * Toggles the collapsed state.
-     */
+    /** Toggles the collapsed state. */
     toggleCollapse() {
         this.collapsed = !this.collapsed;
-        const body = this.$document[0].body;
+        sessionStorage.setItem('sidebarCollapsed', this.collapsed);
+        this.updateLayout();
+    }
+
+    /** Update the class on the body depending on the toggle state. */
+    updateLayout() {
         if (this.collapsed) {
-            body.classList.add('layout-collapsed');
+            document.body.classList.add('layout-collapsed');
         } else {
-            body.classList.remove('layout-collapsed');
+            document.body.classList.remove('layout-collapsed');
         }
     }
 

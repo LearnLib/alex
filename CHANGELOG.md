@@ -1,3 +1,13 @@
+# ALEX 1.3.0
+
+## Breaking Changes
+
+* The execute symbol action is no longer supported
+
+## Features
+
+* Possibility to resume old learning experiments
+
 # ALEX v1.2.1
 
 ## Breaking Changes

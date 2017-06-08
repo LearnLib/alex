@@ -23,6 +23,7 @@ class ActionBar {
 
 export const actionBar = {
     controller: ActionBar,
+    controllerAs: 'vm',
     transclude: true,
     template: `
         <div class="action-bar">

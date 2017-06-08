@@ -63,6 +63,18 @@ export class DownloadService {
     }
 
     /**
+     * Downloads plain text as a file.
+     *
+     * @param {string} filename - The name of the file.
+     * @param {string} extension - The file extension.
+     * @param {string} text - The text to download.
+     */
+    downloadText(filename, extension, text) {
+        const href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
+        this.download(filename, extension, href);
+    }
+
+    /**
      * Downloads the table given by the selector. The selector can also be a parent element of the table.
      * It is then searched for child elements that are table elements.
      *

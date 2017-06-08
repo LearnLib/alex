@@ -30,18 +30,6 @@ export const actionFormAssertVariable = {
     controllerAs: 'vm'
 };
 
-export const actionFormExecuteSymbol = {
-    templateUrl: 'html/components/forms/actions/general/execute-symbol.html',
-    bindings: {
-        action: '=',
-        symbols: '='
-    },
-    controllerAs: 'vm',
-    controller: function () {
-        this.name = null;
-    }
-};
-
 export const actionFormIncrementCounter = {
     templateUrl: 'html/components/forms/actions/general/increment-counter.html',
     bindings: {

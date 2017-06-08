@@ -77,106 +77,13 @@ class ProjectList {
                     });
             });
     }
-
-    /**
-     * Downloads the project in an importable format.
-     *
-     * @param {Project} project.
-     */
-    exportProject(project) {
-        this.ProjectResource.getForExport(project.id)
-            .then(p => {
-                delete p.id;
-                delete p.user;
-
-                delete p.counters;
-                delete p.testResults;
-                delete p.symbolAmount;
-
-                this.prepareGroupForExport(p.defaultGroup);
-
-                p.groups.forEach(group => {
-                    this.prepareGroupForExport(group);
-                });
-
-
-                this.PromptService.prompt("Enter a filename for the project").then(filename => {
-                    this.DownloadService.downloadObject(p, filename);
-                    this.ToastService.success('The project has been exported.');
-                });
-            });
-    }
-
-    prepareGroupForExport(group) {
-        delete group.id;
-        delete group.project;
-        delete group.user;
-        delete group.symbolAmount;
-
-        group.symbols.forEach(symbol => {
-            delete symbol.user;
-            delete symbol.project;
-            delete symbol.group;
-            delete symbol.id;
-            delete symbol.hidden;
-
-            symbol.actions.forEach(action => {
-                delete action.symbolToExecuteName;
-            });
-        });
-    }
-
 }
 
 export const projectList = {
+    templateUrl: 'html/components/project-list.html',
     bindings: {
         projects: '='
     },
     controller: ProjectList,
-    controllerAs: 'vm',
-    template: `
-        <div class="project-list">
-            <div class="project-list-item" ng-if="vm.projects.length > 0" ng-repeat="project in vm.projects">
-                <div class="btn-group btn-group-xs pull-right" uib-dropdown>
-                    <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle dropdown-hover>
-                        <i class="fa fa-bars"></i>
-                    </button>
-                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
-                        <li>
-                            <a href="" ng-click="vm.openProject(project)">
-                                <i class="fa fa-fw fa-external-link"></i> Open
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-                            <a href="" project-settings-modal-handle project="project">
-                                <i class="fa fa-edit fa-fw"></i> Edit
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" ng-click="vm.deleteProject(project)">
-                                <i class="fa fa-trash fa-fw"></i> Delete
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" ng-click="vm.exportProject(project)">
-                                <i class="fa fa-download fa-fw"></i> Export
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <h3 class="list-group-item-heading">
-                    <a href="" ng-bind="project.name" ng-click="vm.openProject(project)"></a>
-                </h3>
-                <p class="list-group-item-text">
-                    <span ng-bind="project.baseUrl"></span> <br>
-                    <span class="text-muted" ng-if="!project.description">There is no description for this project</span>
-                    <span class="text-muted" ng-if="project.description" ng-bind="project.description"></span>
-                </p>
-            </div>
-            <div class="alert alert-info" ng-if="vm.projects.length == 0">
-                You haven't created a project yet.
-            </div>
-        </div>
-    `
+    controllerAs: 'vm'
 };

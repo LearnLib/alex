@@ -16,12 +16,13 @@
 
 package de.learnlib.alex.core.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.core.entities.learnlibproxies.DefaultQueryProxy;
+import de.learnlib.alex.core.learner.Learner;
 
-import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * Class to provide information about the current learn process.
@@ -43,52 +44,13 @@ public class LearnerStatus {
     private final Long stepNo;
 
     /** The statistics of the learner. */
-    private final LearnerStatusStatistics statistics;
+    private final Statistics statistics;
 
-    /**
-     * Statistics Class for the learner status.
-     */
-    @JsonPropertyOrder(alphabetic = true)
-    public static class LearnerStatusStatistics {
+    /** The phase the learner is in. */
+    private final Learner.LearnerPhase learnerPhase;
 
-        /** When the learning started. */
-        private final ZonedDateTime startDate;
-
-        /** How many MQ where issued. */
-        private final Long mqsUsed;
-
-        /**
-         * @param startDate When the learning was started.
-         * @param mqsUsed How many MQ where issued during the learning.
-         */
-        public LearnerStatusStatistics(ZonedDateTime startDate, Long mqsUsed) {
-            this.startDate = startDate;
-            this.mqsUsed = mqsUsed;
-        }
-
-        /**
-         * @return When the learning was started.
-         */
-        @JsonIgnore
-        public ZonedDateTime getStartDate() {
-            return startDate;
-        }
-
-        /**
-         * @return When the learning was started as nice ISO 8160 string, including milliseconds and zone.
-         */
-        @JsonProperty("startDate")
-        public String getStartDateAsString() {
-            return startDate.format(Statistics.DATE_TIME_FORMATTER);
-        }
-
-        /**
-         * @return How many MQ where issued during the learning.
-         */
-        public Long getMqsUsed() {
-            return mqsUsed;
-        }
-    }
+    /** The list of queries that are processed atm. */
+    private final List<DefaultQueryProxy> currentQueries;
 
     /**
      * Constructor for a status of an inactive thread.
@@ -99,6 +61,8 @@ public class LearnerStatus {
         this.testNo = null;
         this.stepNo = null;
         this.statistics = null;
+        this.learnerPhase = null;
+        this.currentQueries = null;
     }
 
     /**
@@ -107,13 +71,15 @@ public class LearnerStatus {
      * @param learnerResult
      *         The result that contain the interesting statistics and information for the status..
      */
-    public LearnerStatus(LearnerResult learnerResult) {
+    public LearnerStatus(LearnerResult learnerResult, Learner.LearnerPhase learnerPhase,
+                         List<DefaultQueryProxy> currentQueries) {
         this.active = true;
         this.projectId = learnerResult.getProjectId();
         this.testNo = learnerResult.getTestNo();
         this.stepNo = (long) learnerResult.getSteps().size();
-        this.statistics = new LearnerStatusStatistics(learnerResult.getStatistics().getStartDate(),
-                                                      learnerResult.getStatistics().getMqsUsed().getTotal());
+        this.statistics = learnerResult.getStatistics();
+        this.learnerPhase = learnerPhase;
+        this.currentQueries = currentQueries;
     }
 
     /**
@@ -152,13 +118,23 @@ public class LearnerStatus {
      *
      * @return Additional statistics, e.g. the start date.
      */
-    public LearnerStatusStatistics getStatistics() {
+    public Statistics getStatistics() {
         return statistics;
     }
 
     /** @return {@link #stepNo}. */
     public Long getStepNo() {
         return stepNo;
+    }
+
+    /** @return {@link #learnerPhase}. */
+    public Learner.LearnerPhase getLearnerPhase() {
+        return learnerPhase;
+    }
+
+    /** @return {@link #currentQueries}. */
+    public List<DefaultQueryProxy> getCurrentQueries() {
+        return currentQueries;
     }
 
     @Override

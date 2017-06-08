@@ -230,7 +230,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         result.setErrorText(step.getErrorText());
 
         Statistics summaryStatistics = result.getStatistics();
-        Statistics newStatistics     = step.getStatistics();
+        Statistics newStatistics = step.getStatistics();
 
         summaryStatistics.setEqsUsed(summaryStatistics.getEqsUsed() + newStatistics.getEqsUsed());
         summaryStatistics.getDuration().increment(newStatistics.getDuration());

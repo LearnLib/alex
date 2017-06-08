@@ -67,10 +67,11 @@ class LearnResumeSettingsWidget {
 }
 
 export const learnResumeSettingsWidget = {
+    templateUrl: 'html/components/widgets/learn-resume-settings-widget.html',
     bindings: {
-        configuration: '='
+        configuration: '=',
+        result: '<'
     },
     controller: LearnResumeSettingsWidget,
-    controllerAs: 'vm',
-    templateUrl: 'html/components/learn-resume-settings-widget.html'
+    controllerAs: 'vm'
 };

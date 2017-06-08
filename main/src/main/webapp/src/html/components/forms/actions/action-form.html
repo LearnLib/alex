@@ -31,7 +31,6 @@
         <!-- general actions -->
         <action-form-assert-counter action="vm.action" ng-switch-when="assertCounter"></action-form-assert-counter>
         <action-form-assert-variable action="vm.action" ng-switch-when="assertVariable"></action-form-assert-variable>
-        <action-form-execute-symbol action="vm.action" symbols="vm.symbols" ng-switch-when="executeSymbol"></action-form-execute-symbol>
         <action-form-increment-counter action="vm.action" ng-switch-when="incrementCounter"></action-form-increment-counter>
         <action-form-set-counter action="vm.action" ng-switch-when="setCounter"></action-form-set-counter>
         <action-form-set-variable action="vm.action" ng-switch-when="setVariable"></action-form-set-variable>
@@ -46,7 +45,7 @@
     <hr>
     <p>
         <a href="" ng-click="vm.showOptions = !vm.showOptions">
-            <i class="fa fa-gear fa-fw"></i> Advanced Options
+            <i class="fa fa-gear fa-fw"></i> Advanced options
         </a>
     </p>
     <div uib-collapse="!vm.showOptions">
@@ -57,7 +56,7 @@
         </div>
         <div class="checkbox">
             <label>
-                <input type="checkbox" ng-model="vm.action.ignoreFailure"> Ignore Failure
+                <input type="checkbox" ng-model="vm.action.ignoreFailure"> Ignore failure
             </label>
         </div>
     </div>

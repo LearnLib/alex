@@ -41,28 +41,7 @@ class SymbolGroupListItem {
 }
 
 export const symbolGroupListItem = {
-    template: `
-        <div class="symbol-group-list-item">
-            <div class="symbol-group-list-item-header">
-                <div class="flex-item">
-                    <checkbox-multiple model="vm.group.symbols"></checkbox-multiple>
-                </div>
-                <div class="flex-item">
-                    <h3 class="symbol-group-title" ng-bind="vm.group.name"></h3><br>
-                    <span class="text-muted">
-                        <span ng-bind="vm.group.symbols.length"></span> Symbols
-                    </span>
-                </div>
-                <div class="flex-item" ng-if="vm.editable">
-                    <a href="" symbol-group-edit-modal-handle group="vm.group"
-                       uib-tooltip="Edit this group" tooltip-placement="left">
-                         <i class="fa fa-fw fa-gear"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="symbol-group-list-item-body" ng-transclude></div>
-        </div>
-    `,
+    templateUrl: 'html/components/symbol-group-list-item.html',
     transclude: true,
     controller: SymbolGroupListItem,
     controllerAs: 'vm',

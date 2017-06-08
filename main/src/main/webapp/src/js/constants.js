@@ -18,7 +18,8 @@ export const learnAlgorithm = {
     LSTAR: 'LSTAR',
     DHC: 'DHC',
     DISCRIMINATION_TREE: 'DISCRIMINATION_TREE',
-    TTT: 'TTT'
+    TTT: 'TTT',
+    KEARNS_VAZIRANI: 'KEARNS_VAZIRANI'
 };
 
 export const webBrowser = {
@@ -71,9 +72,6 @@ export const events = {
     SYMBOL_CREATED: 'symbol:created',
     SYMBOL_UPDATED: 'symbol:updated',
     SYMBOLS_MOVED: 'symbols:moved',
-
-    // results related events
-    RESULT_SELECTED: 'result:selected'
 };
 
 export const actionType = {
@@ -108,7 +106,6 @@ export const actionType = {
     // general actions
     GENERAL_ASSERT_COUNTER: 'assertCounter',
     GENERAL_ASSERT_VARIABLE: 'assertVariable',
-    GENERAL_EXECUTE_SYMBOL: 'executeSymbol',
     GENERAL_INCREMENT_COUNTER: 'incrementCounter',
     GENERAL_SET_COUNTER: 'setCounter',
     GENERAL_SET_VARIABLE_BY_COOKIE: 'setVariableByCookie',

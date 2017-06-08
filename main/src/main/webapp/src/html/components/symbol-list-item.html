@@ -1,6 +1,6 @@
-<div class="symbol-list-item" ng-class="{'selectable': vm.isSelectable}">
+<div class="symbol-list-item" ng-class="{'selectable': vm.selectable}">
 
-    <checkbox selection-model-ignore model="vm.symbol" class="pull-left" ng-if="vm.isSelectable"></checkbox>
+    <checkbox selection-model-ignore model="vm.symbol" class="pull-left" ng-if="vm.selectable"></checkbox>
 
     <div class="symbol-list-item-content">
         <div class="pull-right" ng-transclude></div>

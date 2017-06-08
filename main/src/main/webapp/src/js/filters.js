@@ -99,6 +99,8 @@ export function formatAlgorithm() {
                 return 'TTT';
             case learnAlgorithm.DISCRIMINATION_TREE:
                 return 'Discrimination Tree';
+            case learnAlgorithm.KEARNS_VAZIRANI:
+                return 'Kearns Vazirani';
             default:
                 return name;
         }

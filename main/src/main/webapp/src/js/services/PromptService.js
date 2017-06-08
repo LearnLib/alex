@@ -15,91 +15,6 @@
  */
 
 /**
- * The controller of the prompt dialog.
- */
-export class PromptDialogController {
-
-    /**
-     * Constructor.
-     *
-     * @param $uibModalInstance
-     * @param modalData
-     */
-    // @ngInject
-    constructor($uibModalInstance, modalData) {
-        this.$uibModalInstance = $uibModalInstance;
-
-        /**
-         * The model for the input field for the user input.
-         */
-        this.userInput = null;
-
-        /**
-         * The text to display.
-         */
-        this.text = modalData.text;
-
-        /**
-         * The regex the user input has to match.
-         */
-        this.inputPattern = /^[a-zA-Z0-9\.\-,_]+$/;
-    }
-
-    /**
-     * Close the modal dialog and pass the user input.
-     */
-    ok() {
-        this.$uibModalInstance.close(this.userInput);
-    }
-
-    /**
-     * Close the modal dialog.
-     */
-    close() {
-        this.$uibModalInstance.dismiss();
-    }
-}
-
-
-/**
- * The controller that handles the confirm modal dialog.
- */
-export class ConfirmDialogController {
-
-    /**
-     * Constructor.
-     *
-     * @param $uibModalInstance
-     * @param modalData
-     */
-    // @ngInject
-    constructor($uibModalInstance, modalData) {
-        this.$uibModalInstance = $uibModalInstance;
-
-        /**
-         * The text to display.
-         * @type {string}
-         */
-        this.text = modalData.text || null;
-    }
-
-    /**
-     * Close the modal dialog.
-     */
-    ok() {
-        this.$uibModalInstance.close();
-    }
-
-    /**
-     * Close the modal dialog.
-     */
-    close() {
-        this.$uibModalInstance.dismiss();
-    }
-}
-
-
-/**
  * The service for handling prompt and confirm dialogs.
  */
 export class PromptService {
@@ -122,14 +37,10 @@ export class PromptService {
      */
     prompt(text) {
         return this.$uibModal.open({
-            templateUrl: 'html/directives/modals/prompt-dialog.html',
-            controller: PromptDialogController,
-            controllerAs: 'vm',
+            component: 'promptModal',
             resolve: {
                 modalData: function () {
-                    return {
-                        text: text
-                    };
+                    return {text: text};
                 }
             }
         }).result;
@@ -143,9 +54,7 @@ export class PromptService {
      */
     confirm(text) {
         return this.$uibModal.open({
-            templateUrl: 'html/directives/modals/confirm-dialog.html',
-            controller: ConfirmDialogController,
-            controllerAs: 'vm',
+            component: 'confirmModal',
             resolve: {
                 modalData: function () {
                     return {text: text};

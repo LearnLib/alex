@@ -1,8 +1,8 @@
 import {SymbolGroup} from '../../../../src/js/entities/SymbolGroup';
 import {events} from '../../../../src/js/constants';
-import {SymbolGroupEditModalController} from '../../../../src/js/directives/modals/symbolGroupEditModalHandle';
+import {SymbolGroupEditModalController} from '../../.././symbolGroupEditModalHandle';
 
-describe('SymbolGroupEditModalController', () => {
+describe('SymbolGroupEditModalComponent', () => {
     let SymbolGroupResource;
     let $controller;
     let $compile;

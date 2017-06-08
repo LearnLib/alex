@@ -242,7 +242,7 @@ public class LearnerResult implements Serializable {
      */
     @OneToMany(
             mappedBy = "result",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+            orphanRemoval = true
     )
     @OrderBy("stepNo ASC")
     public List<LearnerResultStep> getSteps() {
@@ -310,7 +310,7 @@ public class LearnerResult implements Serializable {
      */
     @Transient
     @JsonProperty("symbols")
-    public List<Long> getSymbolAsIds() {
+    public List<Long> getSymbolsAsIds() {
         List<Long> ids = new LinkedList<>();
         symbols.stream().map(Symbol::getId).forEach(ids::add);
         return ids;

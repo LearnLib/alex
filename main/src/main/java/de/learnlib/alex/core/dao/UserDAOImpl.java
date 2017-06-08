@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -45,14 +46,19 @@ public class UserDAOImpl implements UserDAO {
     /** The UserRepository to use. Will be injected. */
     private UserRepository userRepository;
 
+    /** The FileDao to use. Will be injected. */
+    private FileDAO fileDAO;
+
     /**
      * Creates a new UserDAO.
      *
      * @param userRepository The UserRepository to use.
+     * @param fileDAO The FileDAO to use.
      */
     @Inject
-    public UserDAOImpl(UserRepository userRepository) {
+    public UserDAOImpl(UserRepository userRepository, FileDAO fileDAO) {
         this.userRepository = userRepository;
+        this.fileDAO = fileDAO;
     }
 
     @Override
@@ -116,6 +122,11 @@ public class UserDAOImpl implements UserDAO {
         }
 
         userRepository.delete(user);
+        try {
+            fileDAO.deleteUserDirectory(user.getId());
+        } catch (IOException e) {
+            LOGGER.info("The user has been deleted, the directory, however, not.");
+        }
     }
 
     @Override

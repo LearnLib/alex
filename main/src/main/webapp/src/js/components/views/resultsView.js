@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import _ from "lodash";
+import remove from "lodash/remove";
 
 /**
  * The controller for listing all final test results.
@@ -74,7 +74,7 @@ class ResultsView {
                 this.LearnResultResource.remove(result)
                     .then(() => {
                         this.ToastService.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
-                        _.remove(this.results, {testNo: result.testNo});
+                        remove(this.results, {testNo: result.testNo});
                     })
                     .catch(response => {
                         this.ToastService.danger('<p><strong>Result deletion failed</strong></p>' + response.data.message);
@@ -93,7 +93,7 @@ class ResultsView {
                         .then(() => {
                             this.ToastService.success('Learn results deleted');
                             this.selectedResults.forEach(result => {
-                                _.remove(this.results, {testNo: result.testNo});
+                                remove(this.results, {testNo: result.testNo});
                             });
                         })
                         .catch(response => {
@@ -119,5 +119,5 @@ class ResultsView {
 export const resultsView = {
     controller: ResultsView,
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/results.html'
+    templateUrl: 'html/components/views/results-view.html'
 };

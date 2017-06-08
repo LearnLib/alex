@@ -1,0 +1,21 @@
+<widget title="Latest learner result">
+    <div class="text-muted" ng-if="!vm.result">
+        <em>There are no learner results in the database</em>
+    </div>
+    <div ng-if="vm.result">
+        <p>
+            The latest experiment started at
+            <strong ng-bind="::(vm.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></strong> with the
+            <strong ng-bind="::(vm.result.algorithm | formatAlgorithm)"></strong> algorithm.
+        </p>
+        <button class="btn btn-xs btn-default" ui-sref="learnerStart({result: result})">
+            <i class="fa fa-fw fa-play"></i> Continue learning
+        </button>
+        <button class="btn btn-xs btn-default" ui-sref="resultsCompare({testNos: [vm.result.testNo]})">
+            <i class="fa fa-fw fa-eye"></i> View hypothesis
+        </button>
+        <button class="btn btn-xs btn-default" ui-sref="statisticsCompare({testNos: [vm.result.testNo]})">
+            <i class="fa fa-fw fa-bar-chart-o"></i> View statistics
+        </button>
+    </div>
+</widget>

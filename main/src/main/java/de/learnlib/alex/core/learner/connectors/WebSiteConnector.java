@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 public class WebSiteConnector implements Connector {
 
     /** How often it should be tried to navigate to a given URL. */
-    private static final int MAX_RETRIES = 5;
+    private static final int MAX_RETRIES = 10;
 
     /** The browser to use. */
     private BrowserConfig browser;

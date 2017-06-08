@@ -99,7 +99,8 @@ class FilesView {
         let error = false;
         const countFiles = this.files.length;
 
-        const next = () => {
+        let next;
+        next = () => {
             this.progress = 0;
             if (this.filesToUpload.length > 0) {
                 const file = this.filesToUpload[0];
@@ -146,5 +147,5 @@ class FilesView {
 export const filesView = {
     controller: FilesView,
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/files.html'
+    templateUrl: 'html/components/views/files-view.html'
 };

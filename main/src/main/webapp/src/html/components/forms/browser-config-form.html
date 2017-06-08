@@ -1,0 +1,35 @@
+<div class="form-group">
+    <label class="control-label">Web Driver</label>
+    <select class="form-control" ng-options="(v|formatWebBrowser) for (k,v) in vm.webBrowsers"
+            ng-model="vm.config.driver">
+        <option value="" disabled>Select a Webdriver</option>
+    </select>
+</div>
+
+<div class="row">
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label class="control-label">Width</label>
+            <input class="form-control" type="number" required placeholder="Browser width in px"
+                   ng-model="vm.config.width">
+        </div>
+    </div>
+    <div class="col-xs-6">
+        <div class="form-group">
+            <label class="control-label">Height</label>
+            <input class="form-control" type="number" required placeholder="Browser height in px"
+                   ng-model="vm.config.height">
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label>Xvfb display port</label>
+    <input class="form-control" type="number" min="0" ng-model="vm.config.xvfbDisplayPort">
+    <p class="help-block">
+        For running headless Chrome and Firefox.
+        Make sure a virtual display is running with Xvfb under this port.
+        E.g. <kbd>Xvfb :51 -screen 0 1280x720x16 & export DISPLAY=:51</kbd>.
+        Only works with Linux.
+    </p>
+</div>

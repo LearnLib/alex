@@ -52,5 +52,5 @@ class UsersSettingsView {
 export const usersSettingsView = {
     controller: UsersSettingsView,
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/users-settings.html'
+    templateUrl: 'html/components/views/users-settings-view.html'
 };

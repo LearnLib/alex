@@ -1,4 +1,4 @@
-import {ResultListModalController} from '../../../../src/js/directives/modals/resultListModalHandle';
+import {ResultListModalController} from '../../.././resultListModalHandle';
 import {LearnResult} from '../../../../src/js/entities/LearnResult';
 import {events} from '../../../../src/js/constants';
 

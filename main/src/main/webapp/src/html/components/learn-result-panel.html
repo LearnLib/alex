@@ -14,7 +14,7 @@
                     <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle dropdown-hover>
                         <i class="fa fa-bars"></i>
                     </button>
-                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
+                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu" ng-if="vm.result.steps[vm.pointer].hypothesis">
                         <li>
                             <a href="" learn-result-details-modal-handle result="vm.result" current="vm.pointer">
                                 <i class="fa fa-info fa-fw"></i> Details
@@ -32,6 +32,16 @@
                             </a>
                             <a href="" ng-click="vm.exportHypothesisAsJson()">
                                 <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.json
+                            </a>
+                            <a href="" ng-click="vm.exportHypothesisAsDot()">
+                                <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.dot
+                            </a>
+                        </li>
+                    </ul>
+                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu" ng-if="!vm.result.steps[vm.pointer].hypothesis">
+                        <li>
+                            <a href="" learn-result-details-modal-handle result="vm.result" current="vm.pointer">
+                                <i class="fa fa-info fa-fw"></i> Details
                             </a>
                         </li>
                     </ul>
@@ -53,7 +63,7 @@
                         <i class="fa fa-angle-left fa-fw"></i>
                     </button>
                     <button class="btn btn-default disabled">
-                        <span ng-bind="vm.pointer + 1"></span>/<span ng-bind="vm.result.steps.length"></span>
+                        Step <span ng-bind="vm.pointer + 1"></span>/<span ng-bind="vm.result.steps.length"></span>
                     </button>
                     <button class="btn btn-default" ng-click="vm.nextStep()">
                         <i class="fa fa-angle-right fa-fw"></i>
@@ -86,7 +96,7 @@
         </div>
     </div>
     <div class="learn-result-panel-body">
-        <div ng-if="!vm.result.steps[vm.pointer].error">
+        <div ng-if="!vm.result.steps[vm.pointer].error && vm.result.steps[vm.pointer].hypothesis">
             <hypothesis id="hypothesis-{{vm.index}}" data="vm.result.steps[vm.pointer].hypothesis" layout-settings="vm.layoutSettings"
                         is-selectable="true" ng-if="vm.mode === vm.modes.HYPOTHESIS">
             </hypothesis>
@@ -100,6 +110,12 @@
                                  data="vm.result.steps[vm.pointer].algorithmInformation"
                                  ng-if="vm.mode === vm.modes.DISCRIMINATION_TREE">
             </discrimination-tree>
+        </div>
+
+        <div class="alx-container" ng-if="!vm.result.steps[vm.pointer].hypothesis">
+            <div class="alert alert-info">
+                <strong>No hypothesis has been saved in this step</strong>
+            </div>
         </div>
 
         <div class="alx-container" ng-if="vm.result.steps[vm.pointer].error">

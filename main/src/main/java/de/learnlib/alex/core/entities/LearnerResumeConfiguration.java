@@ -33,6 +33,9 @@ public class LearnerResumeConfiguration {
     /** The ID of the project related to the configuration. */
     private Long projectId;
 
+    /** The step number from where to continue. */
+    private int stepNo;
+
     /**
      * The type of EQ oracle to find a counter example.
      * @requiredField
@@ -67,6 +70,17 @@ public class LearnerResumeConfiguration {
      */
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
+    }
+
+    /** @return {@link #stepNo}. */
+    @JsonProperty("stepNo")
+    public int getStepNo() {
+        return stepNo;
+    }
+
+    /** @param stepNo {@link #stepNo}. */
+    public void setStepNo(int stepNo) {
+        this.stepNo = stepNo;
     }
 
     /** How many steps should the learner take before stopping the process.
@@ -130,9 +144,7 @@ public class LearnerResumeConfiguration {
             throw new IllegalArgumentException("The MaxAmountOfStep property must not be less than -1.");
         } else if (maxAmountOfStepsToLearn == 0) {
             throw new IllegalArgumentException("The MaxAmountOfStep property must not be equal to 0.");
-        }
-
-        if (eqOracle == null) {
+        } else if (eqOracle == null) {
             throw new IllegalArgumentException("Could not find an EQ oracle.");
         }
         eqOracle.checkParameters();

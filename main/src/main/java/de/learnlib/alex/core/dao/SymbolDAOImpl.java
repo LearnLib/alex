@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.core.dao;
 
-import de.learnlib.alex.actions.ExecuteSymbolAction;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.entities.SymbolAction;
@@ -40,7 +39,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -94,7 +92,6 @@ public class SymbolDAOImpl implements SymbolDAO {
         LOGGER.traceEntry("create({})", symbol);
         try {
             createOne(symbol);
-            setExecuteToSymbols(symbol);
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Symbol creation failed:", e);
             throw new ValidationException("Symbol could not be created.", e);
@@ -111,10 +108,6 @@ public class SymbolDAOImpl implements SymbolDAO {
         } catch (IllegalStateException e) {
             symbol.setId(null);
             throw new ValidationException("Could not create symbol because it was invalid.", e);
-        } catch (NotFoundException e) {
-            symbol.setId(null);
-            throw new ValidationException("Could not create a symbol because it has a reference to another"
-                                                  + " unknown symbol.", e);
         }
         LOGGER.traceExit(symbol);
     }
@@ -124,20 +117,9 @@ public class SymbolDAOImpl implements SymbolDAO {
     public void create(List<Symbol> symbols) throws ValidationException {
         try {
             symbols.forEach(this::createOne);
-
-            // set execute symbols
-            Map<Long, Symbol> symbolMap = new HashMap<>();
-            symbols.forEach(s -> symbolMap.put(s.getId(), s));
-            for (Symbol symbol : symbols) {
-                setExecuteToSymbols(symbolRepository, symbol, symbolMap);
-            }
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Symbol creation failed:", e);
             throw new ValidationException("Symbol could not be created.", e);
-        } catch (NotFoundException e) {
-            symbols.forEach(s -> s.setId(null));
-            throw new ValidationException("Could not create a symbol because it has a reference to another"
-                                                  + " unknown symbol.", e);
         } catch (javax.validation.ConstraintViolationException e) {
             symbols.forEach(s -> s.setId(null));
             throw ValidationExceptionHelper.createValidationException("Symbols were not created:", e);
@@ -285,16 +267,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Transactional
     public void update(Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException {
         try {
-            Symbol updatedSymbol = doUpdate(symbol);
-            List<SymbolAction> actions = updatedSymbol.getActions();
-            for (int i = 0; i < actions.size(); i++) {
-                SymbolAction action = actions.get(i);
-                if (action instanceof ExecuteSymbolAction) {
-                    Long id = ((ExecuteSymbolAction) symbol.getActions().get(i)).getSymbolToExecuteAsId();
-                    ((ExecuteSymbolAction) action).setSymbolToExecuteAsId(id);
-                }
-            }
-            setExecuteToSymbols(updatedSymbol);
+            doUpdate(symbol);
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Symbol update failed:", e);
             throw new ValidationException("Symbol could not be updated.", e);
@@ -315,16 +288,8 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Transactional
     public void update(List<Symbol> symbols) throws IllegalArgumentException, NotFoundException, ValidationException {
         try {
-            List<Symbol> updatedSymbols = new LinkedList<>();
             for (Symbol symbol : symbols) {
-                Symbol updatedSymbol = doUpdate(symbol);
-                updatedSymbols.add(updatedSymbol);
-            }
-
-            Map<Long, Symbol> symbolMap = new HashMap<>();
-            updatedSymbols.forEach(s -> symbolMap.put(s.getId(), s));
-            for (Symbol symbol : updatedSymbols) {
-                setExecuteToSymbols(symbolRepository, symbol, symbolMap);
+                doUpdate(symbol);
             }
         } catch (javax.validation.ConstraintViolationException e) {
             symbols.forEach(s -> s.setId(null));
@@ -460,69 +425,6 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
-    private void setExecuteToSymbols(Symbol symbol) throws NotFoundException {
-        Map<Long, Symbol> symbolMap = new HashMap<>();
-        symbolMap.put(symbol.getId(), symbol);
-        setExecuteToSymbols(symbolRepository, symbol, symbolMap);
-    }
-
-    /**
-     * Update references to executed symbols from {@link ExecuteSymbolAction}.
-     *
-     * @param symbolRepository
-     *          An instance of the repository.
-     * @param symbols
-     *          The symbols that should be updated.
-     * @throws NotFoundException
-     *          If a symbol could not be found.
-     */
-    public static void setExecuteToSymbols(SymbolRepository symbolRepository, Collection<Symbol> symbols)
-            throws NotFoundException {
-        Map<Long, Symbol> symbolMap = new HashMap<>();
-        symbols.forEach(s -> symbolMap.put(s.getId(), s));
-
-        for (Symbol symbol : symbols) {
-            setExecuteToSymbols(symbolRepository, symbol, symbolMap);
-        }
-    }
-
-    private static void setExecuteToSymbols(SymbolRepository symbolRepository, Symbol symbol,
-                                            Map<Long, Symbol> cachedSymbols)
-            throws NotFoundException {
-        System.out.println("User: " + symbol.getUser());
-        System.out.println("Project: " + symbol.getProject());
-        System.out.println("ID: " + symbol.getId());
-        System.out.println("Symbol ID: " + symbol.getSymbolId());
-        System.out.println("Action: " + symbol.getActions());
-
-        for (SymbolAction action : symbol.getActions()) {
-            System.out.println("\tAction: " + action);
-            if (action instanceof ExecuteSymbolAction) {
-                ExecuteSymbolAction executeSymbolAction = (ExecuteSymbolAction) action;
-                Long id = executeSymbolAction.getSymbolToExecuteAsId();
-
-                System.out.println("\t\tSymbol To Execute ID & Revision: " + id);
-
-                Symbol symbolToExecute = cachedSymbols.get(id);
-                if (symbolToExecute == null) { // it was not in the set of cached symbols
-                    symbolToExecute = symbolRepository.findOne(action.getUser().getId(), action.getProject().getId(),
-                                                               id);
-                }
-
-                if (symbolToExecute == null) {
-                    throw new NotFoundException("Could not find the symbol with the id "
-                                                    + id + ", but it was referenced");
-                }
-
-                cachedSymbols.put(symbolToExecute.getId(), symbolToExecute);
-                System.out.println("\tSymbol to Execute: " + symbolToExecute);
-
-                executeSymbolAction.setSymbolToExecute(symbolToExecute);
-            }
-            System.out.println();
-        }
-    }
-
     /**
      * Use Hibernate to populate all fields of a Symbol, including all references to other entities.
      *
@@ -535,21 +437,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         Hibernate.initialize(symbol.getUser());
         Hibernate.initialize(symbol.getProject());
         Hibernate.initialize(symbol.getGroup());
-
         Hibernate.initialize(symbol.getActions());
-        symbol.getActions().stream().filter(a -> a instanceof ExecuteSymbolAction).forEach(a -> {
-            ExecuteSymbolAction action = (ExecuteSymbolAction) a;
-
-            Symbol symbolToExecute = action.getSymbolToExecute();
-
-            if (symbolToExecute != null
-                    && (!Hibernate.isInitialized(symbolToExecute)
-                            || !Hibernate.isInitialized(symbolToExecute.getActions()))) {
-                Hibernate.initialize(symbolToExecute);
-                Hibernate.initialize(symbolToExecute.getActions());
-                loadLazyRelations(symbolDAO, symbolToExecute);
-            }
-        });
     }
 
 }

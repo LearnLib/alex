@@ -89,23 +89,7 @@ class ObservationTable {
 }
 
 export const observationTable = {
-    template: `
-        <table class="table table-condensed observation-table">
-            <thead>
-            <tr>
-                <th ng-repeat="th in vm.table.header" ng-bind="th"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="tr in vm.table.body.s1 track by $index">
-                <td ng-repeat="td in tr track by $index" ng-bind="td"></td>
-            </tr>
-            <tr ng-repeat="tr in vm.table.body.s2 track by $index" ng-class="{'line': $index === 0}">
-                <td ng-repeat="td in tr track by $index" ng-bind="td"></td>
-            </tr>
-            </tbody>
-        </table>
-    `,
+    templateUrl: 'html/components/observation-table.html',
     controller: ObservationTable,
     controllerAs: 'vm',
     bindings: {

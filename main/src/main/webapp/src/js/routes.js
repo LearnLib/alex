@@ -74,11 +74,6 @@ export function config($stateProvider, $urlRouterProvider) {
             template: '<symbols-actions-view></symbols-actions-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Actions'}
         })
-        .state('symbolsImport', {
-            url: '/symbols/import',
-            template: '<symbols-import-view></symbols-import-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Import'}
-        })
         .state('learnerSetup', {
             url: '/learner/setup',
             template: '<learner-setup-view></learner-setup-view>',
@@ -87,7 +82,8 @@ export function config($stateProvider, $urlRouterProvider) {
         .state('learnerStart', {
             url: '/learner/start',
             template: '<learner-start-view></learner-start-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Learning'}
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Learning'},
+            params: {result: null}
         })
         .state('results', {
             url: '/results',

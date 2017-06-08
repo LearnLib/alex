@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import _ from "lodash";
+import remove from "lodash/remove";
+import uniqueId from "lodash/uniqueId";
 import {events} from "../../constants";
 import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
 
@@ -79,7 +80,7 @@ class SymbolsActionsView {
 
                 // create unique ids for actions so that they can be found
                 symbol.actions.forEach(action => {
-                    action._id = _.uniqueId();
+                    action._id = uniqueId();
                 });
 
                 // add symbol to scope and create a copy in order to revert changes
@@ -152,7 +153,7 @@ class SymbolsActionsView {
     deleteActions(actions) {
         if (actions.length > 0) {
             actions.forEach(action => {
-                _.remove(this.symbol.actions, {_id: action._id});
+                remove(this.symbol.actions, {_id: action._id});
             });
             this.ToastService.success('Action' + (actions.length > 1 ? 's' : '') + ' deleted');
             this.hasChanged = true;
@@ -165,7 +166,7 @@ class SymbolsActionsView {
      * @param {Object} action - The action to add.
      */
     addAction(action) {
-        action._id = _.uniqueId();
+        action._id = uniqueId();
         this.symbol.actions.push(action);
         this.ToastService.success('Action created');
         this.hasChanged = true;
@@ -259,5 +260,5 @@ class SymbolsActionsView {
 export const symbolsActionsView = {
     controller: SymbolsActionsView,
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/symbols-actions.html'
+    templateUrl: 'html/components/views/symbols-actions-view.html'
 };

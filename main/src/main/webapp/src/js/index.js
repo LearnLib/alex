@@ -47,19 +47,34 @@ import {ToastService} from "./services/ToastService";
 import {LearnerResultDownloadService} from "./services/LearnerResultDownloadService";
 import {HtmlElementPickerService} from "./services/HtmlElementPickerService";
 import {formatAlgorithm, formatEqOracle, formatMilliseconds, formatUserRole, formatWebBrowser} from "./filters";
-import {actionCreateModalHandle} from "./directives/modals/actionCreateModalHandle";
-import {actionEditModalHandle} from "./directives/modals/actionEditModalHandle";
-import {hypothesisLayoutSettingsModalHandle} from "./directives/modals/hypothesisLayoutSettingsModalHandle";
-import {learnResultDetailsModalHandle} from "./directives/modals/learnResultDetailsModalHandle";
-import {learnSetupSettingsModalHandle} from "./directives/modals/learnSetupSettingsModalHandle";
-import {projectSettingsModalHandle} from "./directives/modals/projectSettingsModalHandle";
-import {symbolCreateModalHandle} from "./directives/modals/symbolCreateModalHandle";
-import {symbolEditModalHandle} from "./directives/modals/symbolEditModalHandle";
-import {symbolGroupCreateModalHandle} from "./directives/modals/symbolGroupCreateModalHandle";
-import {symbolGroupEditModalHandle} from "./directives/modals/symbolGroupEditModalHandle";
-import {symbolMoveModalHandle} from "./directives/modals/symbolMoveModalHandle";
-import {userEditModalHandle} from "./directives/modals/userEditModalHandle";
-import {resultListModalHandle} from "./directives/modals/resultListModalHandle";
+import {actionCreateModalHandle, actionCreateModalComponent} from "./components/modals/actionCreateModal";
+import {actionEditModalHandle, actionEditModalComponent} from "./components/modals/actionEditModal";
+import {
+    hypothesisLayoutSettingsModalHandle,
+    hypothesisLayoutSettingsModalComponent
+} from "./components/modals/hypothesisLayoutSettingsModal";
+import {
+    learnResultDetailsModalHandle,
+    learnResultDetailsModalComponent
+} from "./components/modals/learnResultDetailsModal";
+import {
+    learnSetupSettingsModalHandle,
+    learnSetupSettingsModalComponent
+} from "./components/modals/learnSetupSettingsModal";
+import {projectSettingsModalHandle, projectSettingsModalComponent} from "./components/modals/projectSettingsModal";
+import {symbolCreateModalHandle, symbolCreateModalComponent} from "./components/modals/symbolCreateModal";
+import {symbolEditModalHandle, symbolEditModalComponent} from "./components/modals/symbolEditModal";
+import {
+    symbolGroupCreateModalHandle,
+    symbolGroupCreateModalComponent
+} from "./components/modals/symbolGroupCreateModal";
+import {symbolsImportModalHandle, symbolsImportModalComponent} from "./components/modals/symbolsImportModal";
+import {symbolGroupEditModalHandle, symbolGroupEditModalComponent} from "./components/modals/symbolGroupEditModal";
+import {symbolMoveModalHandle, symbolMoveModalComponent} from "./components/modals/symbolMoveModal";
+import {userEditModalHandle, userEditModalComponent} from "./components/modals/userEditModal";
+import {resultListModalHandle, resultListModalComponent} from "./components/modals/resultListModal";
+import {promptModalComponent} from "./components/modals/promptModal";
+import {confirmModalComponent} from "./components/modals/confirmModal";
 import {dropdownHover} from "./directives/dropdownHover";
 import {htmlElementPickerHandle} from "./directives/htmlElementPickerHandle";
 import {aboutView} from "./components/views/aboutView";
@@ -79,15 +94,16 @@ import {statisticsCompareView} from "./components/views/statisticsCompareView";
 import {statisticsView} from "./components/views/statisticsView";
 import {symbolsActionsView} from "./components/views/symbolsActionsView";
 import {symbolsView} from "./components/views/symbolsView";
-import {symbolsImportView} from "./components/views/symbolsImportView";
 import {symbolsTestView} from "./components/views/symbolsTestView";
 import {symbolsTrashView} from "./components/views/symbolsTrashView";
 import {usersSettingsView} from "./components/views/usersSettingsView";
 import {actionForm} from "./components/forms/actions/actionForm";
 import {projectCreateForm} from "./components/forms/projectCreateForm";
+import {symbolEditFormComponent} from "./components/forms/symbolEditForm";
 import {userEditForm} from "./components/forms/userEditForm";
 import {userLoginForm} from "./components/forms/userLoginForm";
 import {userRegisterForm} from "./components/forms/userRegisterForm";
+import {browserConfigFormComponent} from "./components/forms/browserConfigForm";
 import {widget} from "./components/widgets/widget";
 import {projectDetailsWidget} from "./components/widgets/projectDetailsWidget";
 import {learnResumeSettingsWidget} from "./components/widgets/learnResumeSettingsWidget";
@@ -142,7 +158,6 @@ import {
 import {
     actionFormAssertCounter,
     actionFormAssertVariable,
-    actionFormExecuteSymbol,
     actionFormIncrementCounter,
     actionFormSetCounter,
     actionFormSetVariable,
@@ -220,19 +235,38 @@ angular
     // directives
     .directive('dropdownHover', dropdownHover)
     .directive('htmlElementPickerHandle', htmlElementPickerHandle)
+
+    // modals
     .directive('actionCreateModalHandle', actionCreateModalHandle)
+    .component('actionCreateModal', actionCreateModalComponent)
     .directive('actionEditModalHandle', actionEditModalHandle)
+    .component('actionEditModal', actionEditModalComponent)
     .directive('hypothesisLayoutSettingsModalHandle', hypothesisLayoutSettingsModalHandle)
+    .component('hypothesisLayoutSettingsModal', hypothesisLayoutSettingsModalComponent)
     .directive('learnResultDetailsModalHandle', learnResultDetailsModalHandle)
+    .component('learnResultDetailsModal', learnResultDetailsModalComponent)
     .directive('learnSetupSettingsModalHandle', learnSetupSettingsModalHandle)
+    .component('learnSetupSettingsModal', learnSetupSettingsModalComponent)
     .directive('projectSettingsModalHandle', projectSettingsModalHandle)
+    .component('projectSettingsModal', projectSettingsModalComponent)
     .directive('symbolCreateModalHandle', symbolCreateModalHandle)
+    .component('symbolCreateModal', symbolCreateModalComponent)
     .directive('symbolEditModalHandle', symbolEditModalHandle)
+    .component('symbolEditModal', symbolEditModalComponent)
     .directive('symbolGroupCreateModalHandle', symbolGroupCreateModalHandle)
+    .component('symbolGroupCreateModal', symbolGroupCreateModalComponent)
     .directive('symbolGroupEditModalHandle', symbolGroupEditModalHandle)
+    .component('symbolGroupEditModal', symbolGroupEditModalComponent)
     .directive('symbolMoveModalHandle', symbolMoveModalHandle)
+    .component('symbolMoveModal', symbolMoveModalComponent)
     .directive('userEditModalHandle', userEditModalHandle)
+    .component('userEditModal', userEditModalComponent)
     .directive('resultListModalHandle', resultListModalHandle)
+    .component('resultListModal', resultListModalComponent)
+    .directive('symbolsImportModalHandle', symbolsImportModalHandle)
+    .component('symbolsImportModal', symbolsImportModalComponent)
+    .component('promptModal', promptModalComponent)
+    .component('confirmModal', confirmModalComponent)
 
     // view components
     .component('aboutView', aboutView)
@@ -252,7 +286,6 @@ angular
     .component('statisticsView', statisticsView)
     .component('symbolsActionsView', symbolsActionsView)
     .component('symbolsView', symbolsView)
-    .component('symbolsImportView', symbolsImportView)
     .component('symbolsTestView', symbolsTestView)
     .component('symbolsTrashView', symbolsTrashView)
     .component('usersSettingsView', usersSettingsView)
@@ -264,6 +297,8 @@ angular
     .component('userLoginForm', userLoginForm)
     .component('userRegisterForm', userRegisterForm)
     .component('nodeFormGroup', nodeFormGroup)
+    .component('browserConfigForm', browserConfigFormComponent)
+    .component('symbolEditForm', symbolEditFormComponent)
 
     // widgets components
     .component('widget', widget)
@@ -303,7 +338,6 @@ angular
     // general action forms
     .component('actionFormAssertCounter', actionFormAssertCounter)
     .component('actionFormAssertVariable', actionFormAssertVariable)
-    .component('actionFormExecuteSymbol', actionFormExecuteSymbol)
     .component('actionFormIncrementCounter', actionFormIncrementCounter)
     .component('actionFormSetCounter', actionFormSetCounter)
     .component('actionFormSetVariable', actionFormSetVariable)

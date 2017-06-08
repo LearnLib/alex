@@ -141,22 +141,27 @@ class CounterexamplesWidget {
             const resetSymbol = this.result.resetSymbol;
 
             // actually test the counterexample
-            this.LearnerResource.readOutputs(this.result.project, resetSymbol, testSymbols)
-                .then(ce => {
-                    let ceFound = false;
-                    for (let i = 0; i < ce.length; i++) {
-                        if (ce[i] !== this.counterExample[i].output) {
-                            ceFound = true;
-                            break;
-                        }
+            this.LearnerResource.readOutputs(this.result.project, {
+                symbols: {
+                    resetSymbol: resetSymbol,
+                    symbols: testSymbols,
+                },
+                browser: this.result.browser
+            }).then(ce => {
+                let ceFound = false;
+                for (let i = 0; i < ce.length; i++) {
+                    if (ce[i] !== this.counterExample[i].output) {
+                        ceFound = true;
+                        break;
                     }
-                    if (ceFound) {
-                        deferred.resolve(ce);
-                    } else {
-                        deferred.reject();
-                    }
-                })
-                .catch(err => console.log(err));
+                }
+                if (ceFound) {
+                    deferred.resolve(ce);
+                } else {
+                    deferred.reject();
+                }
+            })
+            .catch(err => console.log(err));
         };
 
         // fetch symbols only once and cache them
@@ -176,44 +181,11 @@ class CounterexamplesWidget {
 }
 
 export const counterexamplesWidget = {
+    templateUrl: 'html/components/widgets/counterexamples-widget.html',
     bindings: {
         counterexamples: '=',
         result: '='
     },
     controller: CounterexamplesWidget,
-    controllerAs: 'vm',
-    template: `
-        <widget title="Counterexamples">
-            <form class="form form-condensed" ng-submit="vm.testAndAddCounterExample()">
-                <p class="text-muted">
-                    <em>Click on the labels of the hypothesis to create a counterexample.</em>
-                </p>
-                <div class="list-group list-group-condensed" dragula='"ceList"' dragula-model="vm.counterExample">
-                    <div class="list-group-item counterexample-list-item" ng-repeat="io in vm.counterExample">
-                        <i class="fa fa-fw fa-close pull-right" ng-click="vm.removeInputOutputAt($index)"></i>
-                        <span class="label label-primary">{{io.input}}</span>
-                        <span class="label" ng-class="io.output === 'OK' ? 'label-success' : 'label-danger'">
-                            {{io.output}}
-                        </span>
-                    </div>
-                </div>
-                <div ng-show="vm.counterExample.length > 0">
-                    <button class="btn btn-default btn-sm btn-block">Add counterexample</button>
-                    <hr>
-                </div>
-            </form>
-            <ul class="list-group">
-                <li class="list-group-item" ng-repeat="ce in vm.tmpCounterExamples track by $index">
-                    <span class="pull-right" ng-click="vm.removeCounterExampleAt($index)">
-                        <i class="fa fa-trash"></i>
-                    </span>
-                    <div class="clearfix" style="margin-right: 32px;">
-                        <span class="label label-primary pull-left" style="margin: 0 3px 3px 0"
-                              ng-repeat="c in ce" ng-bind="c.input">
-                        </span>
-                    </div>
-                </li>
-            </ul>
-        </widget>
-    `
+    controllerAs: 'vm'
 };

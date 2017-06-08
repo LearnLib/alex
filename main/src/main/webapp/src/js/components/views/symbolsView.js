@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import _ from "lodash";
+import flatten from "lodash/flatten";
+import remove from "lodash/remove";
 import {events} from "../../constants";
 import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
 
@@ -115,7 +116,7 @@ class SymbolsView {
      * @returns {AlphabetSymbol[]}
      */
     getAllSymbols() {
-        return _.flatten(this.groups.map(g => g.symbols));
+        return flatten(this.groups.map(g => g.symbols));
     }
 
     /**
@@ -128,6 +129,15 @@ class SymbolsView {
     }
 
     /**
+     * Adds multiple new symbols to the scope.
+     *
+     * @param {AlphabetSymbol[]} symbols
+     */
+    addSymbols(symbols) {
+        symbols.forEach(s => this.addSymbol(s));
+    }
+
+    /**
      * Removes a list of symbols from the scope by finding the group of each symbol and removing it from
      * it.
      *
@@ -136,7 +146,7 @@ class SymbolsView {
     removeSymbols(symbols) {
         symbols.forEach(symbol => {
             const group = this.findGroupFromSymbol(symbol);
-            _.remove(group.symbols, {id: symbol.id});
+            remove(group.symbols, {id: symbol.id});
         });
     }
 
@@ -232,7 +242,7 @@ class SymbolsView {
      */
     deleteGroup(group) {
         this.removeSymbols(group.symbols);
-        _.remove(this.groups, {id: group.id});
+        remove(this.groups, {id: group.id});
     }
 
     /**
@@ -241,32 +251,9 @@ class SymbolsView {
      */
     exportSelectedSymbols() {
         if (this.selectedSymbols.length > 0) {
-
-            // create a copy of the symbol list and sort them by id
-            // so that ids can be referenced correctly by executeSymbol actions
-            const symbols = this.selectedSymbols
-                .map(s => new AlphabetSymbol(s))
-                .sort((s1, s2) => s1.id - s2.id);
-
-            // adjust referenced symbol ids from executeSymbol actions
-            symbols.forEach(symbol => {
-                symbol.actions.forEach(action => {
-                    if (action.type === 'executeSymbol') {
-                        symbols.forEach((s, i) => {
-                            if (s.id === action.symbolToExecute.id) {
-                                action.symbolToExecute.id = i + 1;
-                            }
-                        });
-                    }
-                });
-            });
-
-            // get a list of exportable symbols
-            // and download them
-            const symbolsToExport = symbols.map(s => s.getExportableSymbol());
-
             this.PromptService.prompt("Enter a name for the json file")
                 .then(filename => {
+                    const symbolsToExport = this.selectedSymbols.map(s => s.getExportableSymbol());
                     this.DownloadService.downloadObject(symbolsToExport, filename);
                     this.ToastService.success('Symbols exported');
                 });
@@ -279,5 +266,5 @@ class SymbolsView {
 export const symbolsView = {
     controller: SymbolsView,
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/symbols.html'
+    templateUrl: 'html/components/views/symbols-view.html'
 };

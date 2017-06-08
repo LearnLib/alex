@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import _ from "lodash";
-import {events} from "../../constants";
+import flatten from "lodash/flatten";
 import {LearnConfiguration} from "../../entities/LearnConfiguration";
 
 /**
@@ -105,7 +104,7 @@ class LearnerSetupView {
                     SymbolGroupResource.getAll(this.project.id, true)
                         .then(groups => {
                             this.groups = groups;
-                            this.allSymbols = _.flatten(this.groups.map(g => g.symbols));
+                            this.allSymbols = flatten(this.groups.map(g => g.symbols));
                         })
                         .catch(err => console.log(err));
 
@@ -144,6 +143,9 @@ class LearnerSetupView {
             this.ToastService.danger('You <strong>must</strong> selected a reset symbol in order to start learning!');
         } else {
             if (this.selectedSymbols.length > 0) {
+
+                const i = this.selectedSymbols.findIndex(s => s.id === this.resetSymbol.id);
+                if (i > -1) this.selectedSymbols.splice(i, 1);
 
                 // add selected symbols and the reset symbol to the learn config
                 this.selectedSymbols.forEach(symbol => {
@@ -191,5 +193,5 @@ class LearnerSetupView {
 export const learnerSetupView = {
     controller: LearnerSetupView,
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/learner-setup.html'
+    templateUrl: 'html/components/views/learner-setup-view.html'
 };

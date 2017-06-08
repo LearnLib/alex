@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import _ from "lodash";
+import zip from "lodash/zip";
 
 const MARGIN_OPTIONS = {
     top: 20,
@@ -332,7 +332,7 @@ export class LearnerResultChartService {
             data[prop].dataset.push(set);
 
             // combine collected values and create chart data from it
-            const combinedValues = _.zip(...values[prop].dataset);
+            const combinedValues = zip(...values[prop].dataset);
             combinedValues.forEach((value, i) => {
                 const r = {x: i + 1};
                 value.forEach((val, j) => {

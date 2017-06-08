@@ -77,23 +77,7 @@ class LearnerStatusWidget {
 }
 
 export const learnerStatusWidget = {
+    templateUrl: 'html/components/widgets/learner-status-widget.html',
     controller: LearnerStatusWidget,
-    controllerAs: 'vm',
-    template: `
-        <widget title="Learner status">
-            <div class="alert alert-info no-margin-bottom" ng-if="!vm.isActive && !vm.hasFinished">
-                The Learner is not active. <a ui-sref="learnerSetup">Start learning</a> your application!
-            </div>
-            <div class="alert alert-info no-margin-bottom" ng-if="!vm.isActive && vm.hasFinished">
-                The Learner is not active and created a model.
-                <a ui-sref="learnerStart">Refine it</a>,
-                <a ui-sref="resultsCompare({testNos: [vm.result.testNo]})">have a look at it</a> or
-                <a ui-sref="learnerSetup">Start a new test!</a>
-            </div>
-            <div class="alert alert-warning no-margin-bottom clearfix" ng-if="vm.isActive">
-                The Learner is currently learning an application. <hr>
-                <button class="btn btn-xs btn-warning pull-right" ng-click="vm.abort()">Abort</button>
-            </div>
-        </widget>
-    `
+    controllerAs: 'vm'
 };

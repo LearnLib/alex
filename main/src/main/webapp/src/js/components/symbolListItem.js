@@ -17,43 +17,37 @@
 /**
  * Use: <symbol-list-item symbol="..."></symbol-list-item>.
  */
-class SymbolListItem {
-
-    /**
-     * Constructor.
-     *
-     * @param $attrs
-     */
-    // @ngInject
-    constructor($attrs) {
-
-        /**
-         * Flag that indicates if the actions should be displayed.
-         * @type {boolean}
-         */
-        this.collapsed = false;
-
-        /**
-         * Flag that indicates if the checkbox should be displayed.
-         * @type {boolean}
-         */
-        this.isSelectable = typeof $attrs.selectionModel !== "undefined";
-    }
-
-    /**
-     * Toggles the status of the collapsed action list between visible and not visible.
-     */
-    toggleCollapsed() {
-        this.collapsed = !this.collapsed;
-    }
-}
-
 export const symbolListItem = {
     templateUrl: 'html/components/symbol-list-item.html',
-    controller: SymbolListItem,
-    controllerAs: 'vm',
-    transclude: true,
     bindings: {
+        selectable: '=',
         symbol: '='
-    }
+    },
+    controller: class {
+
+        /** Constructor. */
+        constructor() {
+
+            /**
+             * Flag that indicates if the actions should be displayed.
+             * @type {boolean}
+             */
+            this.collapsed = false;
+
+            /**
+             * If the symbol is selectable.
+             * @type {boolean}
+             */
+            this.selectable = true;
+        }
+
+        /**
+         * Toggles the status of the collapsed action list between visible and not visible.
+         */
+        toggleCollapsed() {
+            this.collapsed = !this.collapsed;
+        }
+    },
+    controllerAs: 'vm',
+    transclude: true
 };

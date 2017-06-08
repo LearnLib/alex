@@ -18,10 +18,13 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.UploadableFile;
 import de.learnlib.alex.exceptions.NotFoundException;
+import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -90,4 +93,25 @@ public interface FileDAO {
      */
     void delete(Long userId, Long projectId, String fileName) throws NotFoundException;
 
+    /**
+     * Deletes the project directory.
+     *
+     * @param userId
+     *         The id of the user.
+     * @param projectId
+     *         The id of the project.
+     * @throws IOException
+     *         If the directory could not be deleted.
+     */
+    void deleteProjectDirectory(Long userId, Long projectId) throws IOException;
+
+    /**
+     * Deletes the user directory.
+     *
+     * @param userId
+     *         The id of the user.
+     * @throws IOException
+     *         If the directory could not be deleted.
+     */
+    void deleteUserDirectory(Long userId) throws IOException;
 }

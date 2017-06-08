@@ -37,6 +37,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -366,7 +367,7 @@ public class LearnerResultDAOImplTest {
         result.setTestNo(0L);
         Long[] testNos = new Long[] {0L, 1L};
         //
-        LearnerStatus status = new LearnerStatus(result);
+        LearnerStatus status = new LearnerStatus(result, Learner.LearnerPhase.LEARNING, new ArrayList<>());
         given(learner.getStatus(user)).willReturn(status);
 
         learnerResultDAO.delete(learner, user, PROJECT_ID, testNos); // should fail
