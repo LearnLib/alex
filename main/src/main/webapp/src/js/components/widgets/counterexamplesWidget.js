@@ -129,10 +129,10 @@ class CounterexamplesWidget {
         const test = () => {
             const testSymbols = [];
 
-            // find ids of symbols from abbreviation in learnResult
+            // find ids of symbols from their name in the learnResult
             for (let i = 0; i < this.counterExample.length; i++) {
                 for (let j = 0; j < this.symbols.length; j++) {
-                    if (this.counterExample[i].input === this.symbols[j].abbreviation) {
+                    if (this.counterExample[i].input === this.symbols[j].name) {
                         testSymbols.push(this.symbols[j].id);
                     }
                 }

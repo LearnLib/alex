@@ -64,7 +64,7 @@ export class SymbolsImportModalComponent {
     }
 
     /**
-     * Updates the name and the abbreviation of the symbol to edit.
+     * Updates the name of the symbol to edit.
      *
      * @param {AlphabetSymbol} updatedSymbol - The updated symbol.
      */
@@ -77,17 +77,9 @@ export class SymbolsImportModalComponent {
             return;
         }
 
-        // check if the abbreviation already exists
-        symbol = this.symbols.find(s => s.abbreviation === updatedSymbol.abbreviation);
-        if (symbol && symbol.id !== updatedSymbol.id) {
-            this.ToastService.danger(`The symbol with the abbreviation "${updatedSymbol.abbreviation}" already exists.`);
-            return;
-        }
-
-        // update name and abbreviation
+        // update name
         symbol = this.symbols.find(s => s.id === updatedSymbol.id);
         symbol.name = updatedSymbol.name;
-        symbol.abbreviation = updatedSymbol.abbreviation;
         this.symbolToEdit = null;
     }
 }

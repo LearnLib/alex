@@ -5,9 +5,9 @@
     <div class="symbol-list-item-content">
         <div class="pull-right" ng-transclude></div>
 
-        <h4 class="symbol-title" ng-bind="vm.symbol.name"></h4>
-
-        <span class="text-muted"> &nbsp;[<span ng-bind="vm.symbol.abbreviation"></span>]</span><br>
+        <div>
+            <h4 class="symbol-title" ng-bind="vm.symbol.name"></h4>
+        </div>
 
         <a ui-sref="symbolsActions({symbolId:vm.symbol.id})" ng-if="vm.symbol.id && !vm.symbol.hidden">
             <span ng-bind="vm.symbol.countEnabledActions()"></span> Actions &nbsp;<i class="fa fa-edit"></i>

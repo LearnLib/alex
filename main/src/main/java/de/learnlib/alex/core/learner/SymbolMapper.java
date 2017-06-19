@@ -51,7 +51,7 @@ public class SymbolMapper
 
     /**
      * Constructor.
-     * Initialize the map abbreviation -> symbol.
+     * Initialize the map name -> symbol.
      *
      * @param symbols - The symbols for the learning process.
      */
@@ -60,7 +60,7 @@ public class SymbolMapper
         this.cloner = new Cloner();
 
         for (Symbol s : symbols) {
-            this.symbols.put(s.getAbbreviation(), s);
+            this.symbols.put(s.getName(), s);
         }
     }
 
@@ -88,12 +88,10 @@ public class SymbolMapper
 
     @Override
     public void post() {
-        // nothing to do
     }
 
     @Override
     public void pre() {
-        // nothing to do
     }
 
     /**

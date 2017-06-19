@@ -58,16 +58,13 @@ import java.util.Objects;
         uniqueConstraints = {
                 @UniqueConstraint(
                         columnNames = {"userId", "projectId", "id"},
-                        name = "Unique ID & Revision per User & project")
+                        name = "Unique ID per user & project")
         }
 )
 @JsonPropertyOrder(alphabetic = true)
 public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorManager>, Serializable {
 
     private static final long serialVersionUID = 7987585761829495962L;
-
-    /** The maximum length of the abbreviation. */
-    private static final int MAX_ABBREVIATION_LENGTH = 15;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -76,38 +73,29 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** The ID of the Symbol in the DB. */
     private Long symbolId;
 
-    /** THe id of the symbol in the project. */
+    /** The id of the symbol in the project. */
     private Long id;
 
     /** The User that owns the Symbol. */
     private User user;
 
-    /** The plain ID of the User to be used in the JSON. */
+    /** The ID of the User to be used in the JSON. */
     private Long userId;
 
     /** The Project the Symbol belongs to. */
     private Project project;
 
-    /** The plain ID of the Project to be used in the JSON. */
+    /** The ID of the Project to be used in the JSON. */
     private Long projectId;
 
     /** The group the symbol belongs to. */
     private SymbolGroup group;
 
-    /** The plain ID of the Group to be used in the JSON. */
+    /** The ID of the Group to be used in the JSON. */
     private Long groupId;
 
-    /**
-     * The name of the symbol.
-     * @requiredField
-     */
+    /** The name of the symbol. */
     private String name;
-
-    /**
-     * An abbreviation for the symbol.
-     * @requiredField
-     */
-    private String abbreviation;
 
     /**
      * flag to mark a symbol as hidden.
@@ -118,9 +106,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** The actions to perform. */
     private List<SymbolAction> actions;
 
-    /**
-     * Default constructor.
-     */
+    /** Constructor. */
     public Symbol() {
         this.actions = new LinkedList<>();
     }
@@ -203,8 +189,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /**
      * Set the project the symbol belongs to.
      *
-     * @param project
-     *            The new project.
+     * @param project The new project.
      */
     @JsonIgnore
     public void setProject(Project project) {
@@ -231,8 +216,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /**
      * Set the {@link Project} the Symbol belongs to.
      *
-     * @param projectId
-     *            The new parent Project.
+     * @param projectId The new parent Project.
      */
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
@@ -255,8 +239,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /**
      * Set the group of the symbol.
      *
-     * @param group
-     *         The new group the symbols should be part of.
+     * @param group The new group the symbols should be part of.
      */
     @JsonIgnore
     public void setGroup(SymbolGroup group) {
@@ -282,8 +265,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /**
      * Set the ID of the related group.
      *
-     * @param groupId
-     *         The new group ID.
+     * @param groupId The new group ID.
      */
     @JsonProperty("group")
     public void setGroupId(Long groupId) {
@@ -305,8 +287,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /**
      * Set the ID of this symbol.
      *
-     * @param id
-     *            The new ID.
+     * @param id The new ID.
      */
     @JsonProperty
     public void setId(Long id) {
@@ -327,8 +308,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /**
      * Set the name of the Symbol.
      *
-     * @param name
-     *            The new name.
+     * @param name The new name.
      */
     @JsonProperty
     public void setName(String name) {
@@ -336,27 +316,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     /**
-     * @return the abbreviation
-     */
-    @NotBlank
-    @Size(min = 1, max = MAX_ABBREVIATION_LENGTH)
-    @JsonProperty
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    /**
-     * @param abbreviation
-     *            the abbreviation to set
-     */
-    @JsonProperty
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
-
-    /**
      * Determine if the symbol is flagged as hidden.
-     * 
+     *
      * @return true if the symbol should be considered hidden; false otherwise.
      */
     @JsonProperty
@@ -367,8 +328,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /**
      * Mark the symbol as hidden or remove the hidden flag.
      *
-     * @param hidden
-     *            true if the symbol should be considered hidden; false otherwise.
+     * @param hidden true if the symbol should be considered hidden; false otherwise.
      */
     @JsonProperty
     public void setHidden(boolean hidden) {
@@ -393,8 +353,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /**
      * Set a new List of Actions related to the Symbol.
      *
-     * @param actions
-     *         The new list of SymbolActions
+     * @param actions The new list of SymbolActions
      */
     @JsonProperty
     public void setActions(List<SymbolAction> actions) {
@@ -408,8 +367,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /**
      * Add one action to the end of the Action List.
      *
-     * @param action
-     *         The SymbolAction to add.
+     * @param action The SymbolAction to add.
      */
     public void addAction(SymbolAction action) {
         if (action == null) {
@@ -480,15 +438,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @Override
     public String toString() {
-        int amountOfActions;
-        if (actions == null) {
-            amountOfActions = 0;
-        } else {
-            amountOfActions = actions.size();
-        }
-
         return "Symbol[" + symbolId + "] " + this.user + this.project + "/" + this.getId() + ", "
-                + name + "(" + abbreviation + ") #actions: " + amountOfActions;
+                + name + " #actions: " + actions.size();
     }
 
 }

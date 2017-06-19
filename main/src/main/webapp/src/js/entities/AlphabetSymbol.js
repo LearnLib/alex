@@ -37,12 +37,6 @@ export class AlphabetSymbol {
         this.name = obj.name || null;
 
         /**
-         * The unique abbreviation of the symbol.
-         * @type {string}
-         */
-        this.abbreviation = obj.abbreviation || null;
-
-        /**
          * The id of the group the symbol should be created in.
          * @type {number}
          */
@@ -91,12 +85,11 @@ export class AlphabetSymbol {
     /**
      * Gets a reduced version of the symbol that can be used to export it.
      *
-     * @returns {{name: *, abbreviation: *, actions: Action[]}}
+     * @returns {{name: *, actions: Action[]}}
      */
     getExportableSymbol() {
         return {
             name: this.name,
-            abbreviation: this.abbreviation,
             actions: this.actions
         };
     }

@@ -72,7 +72,6 @@ public class ProjectResourceTest extends JerseyTest {
 
         Symbol symbol = new Symbol();
         symbol.setName("Project Resource Test Symbol");
-        symbol.setAbbreviation("prts");
 
         project = new Project();
         project.setUser(admin);

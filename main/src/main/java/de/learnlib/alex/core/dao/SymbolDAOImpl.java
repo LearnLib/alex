@@ -142,9 +142,9 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new ValidationException("To create a symbol it must not haven an ID");
         }
 
-        // make sure the abbreviation and the name of the symbol is unique
-        if (nameAndAbbreviationAreNotUnique(symbol)) {
-            throw new ValidationException("To create a symbol its name and abbreviation must be unique.");
+        // make sure the name of the symbol is unique
+        if (symbolRepository.getSymbolByName(symbol.getUserId(), symbol.getProjectId(), symbol.getName()) != null) {
+            throw new ValidationException("To create a symbol its name must be unique.");
         }
 
         Long userId = symbol.getUserId();
@@ -276,11 +276,11 @@ public class SymbolDAOImpl implements SymbolDAO {
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Symbol could not be updated:", cve);
         } catch (IllegalStateException e) {
-            throw new ValidationException("Could not update the Symbol because it is not valid.", e);
+            throw new ValidationException("Could not update the symbol because it is not valid.", e);
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (NotFoundException e) {
-            throw new NotFoundException("Could not update the Symbol because it was nowhere to be found.", e);
+            throw new NotFoundException("Could not update the symbol because it has not been found.", e);
         }
     }
 
@@ -316,9 +316,10 @@ public class SymbolDAOImpl implements SymbolDAO {
                                                 + symbol.getProjectId() + ".");
         }
 
-        // make sure the abbreviation and the name of the symbol is unique
-        if (nameAndAbbreviationAreNotUnique(symbol)) {
-            throw new ValidationException("To update a symbol its name and abbreviation must be unique.");
+        // make sure the name of the symbol is unique
+        Symbol symbol2 = symbolRepository.getSymbolByName(symbol.getUserId(), symbol.getProjectId(), symbol.getName());
+        if (symbol2 != null && !symbol2.getId().equals(symbol.getId())) {
+            throw new ValidationException("To update a symbol its name must be unique.");
         }
 
         try {
@@ -394,18 +395,6 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
 
         return symbol;
-    }
-
-    private boolean nameAndAbbreviationAreNotUnique(Symbol symbol) {
-        Long count = symbolRepository.countSymbolsWithSameNameOrAbbreviation(
-                symbol.getId(),
-                symbol.getUserId(),
-                symbol.getProjectId(),
-                symbol.getName(),
-                symbol.getAbbreviation()
-        );
-
-        return count != 0;
     }
 
     /**

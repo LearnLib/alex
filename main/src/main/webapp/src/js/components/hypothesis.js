@@ -148,12 +148,12 @@ class HypothesisComponent {
         this.data.edges.forEach(edge => {
             if (!graph[edge.from]) {
                 graph[edge.from] = {};
-                graph[edge.from][edge.to] = [edge.input + "/" + edge.output];
+                graph[edge.from][edge.to] = [edge.input + " / " + edge.output];
             } else {
                 if (!graph[edge.from][edge.to]) {
-                    graph[edge.from][edge.to] = [edge.input + "/" + edge.output];
+                    graph[edge.from][edge.to] = [edge.input + " / " + edge.output];
                 } else {
-                    graph[edge.from][edge.to].push(edge.input + "/" + edge.output);
+                    graph[edge.from][edge.to].push(edge.input + " / " + edge.output);
                 }
             }
         });
@@ -208,11 +208,11 @@ class HypothesisComponent {
         // only if counterExamples is defined
         if (this.isSelectable) {
             d3.select(this.svg).selectAll('.edgeLabel tspan').on('click', function () {
-                const label = this.innerHTML.split('/'); // separate abbreviation from output
+                const label = this.innerHTML.split('/'); // separate name from output
                 $scope.$apply(() => {
                     EventBus.emit(events.HYPOTHESIS_LABEL_SELECTED, {
-                        input: label[0],
-                        output: label[1]
+                        input: label[0].trim(),
+                        output: label[1].trim()
                     });
                 });
             });

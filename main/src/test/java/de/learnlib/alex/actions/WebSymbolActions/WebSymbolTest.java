@@ -73,7 +73,6 @@ public class WebSymbolTest {
         symbol.setProject(project);
         symbol.setGroup(group);
         symbol.setName("WebSymbol");
-        symbol.setAbbreviation("symb");
 
         WebSymbolAction a1 = new ClickAction();
         symbol.addAction(a1);
@@ -105,14 +104,13 @@ public class WebSymbolTest {
         Symbol symbolFromMapper = mapper.readValue(json, Symbol.class);
         assertEquals(symbol.getProjectId(), symbolFromMapper.getProjectId());
         assertEquals(symbol.getId(), symbolFromMapper.getId());
-        assertEquals(symbol.getAbbreviation(), symbolFromMapper.getAbbreviation());
         assertEquals(symbol.getName(), symbolFromMapper.getName());
         assertEquals(symbol.getGroupId(), symbolFromMapper.getGroupId());
     }
 
     @Test
     public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException {
-        String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
+        String expectedJson = "{\"actions\":["
                     + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
                             + "\"node\":null,\"doubleClick\":false},"
                     + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
@@ -136,7 +134,7 @@ public class WebSymbolTest {
 
     @Test
     public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException {
-        String expectedJson = "{\"abbreviation\":\"symb\",\"actions\":["
+        String expectedJson = "{\"actions\":["
                                     + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,"
                                         + "\"ignoreFailure\":false,\"node\":null,\"doubleClick\":false},"
                                     + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,"
@@ -158,7 +156,6 @@ public class WebSymbolTest {
         symbol = mapper.readValue(file, Symbol.class);
 
         assertEquals("Test Symbol", symbol.getName());
-        assertEquals("test_symb", symbol.getAbbreviation());
 
         Class<?>[] expectedActions = {
                 CheckNodeAction.class,

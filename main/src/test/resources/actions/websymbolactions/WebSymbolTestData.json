@@ -1,7 +1,6 @@
 {
     "id": 1,
     "name" : "Test Symbol",
-    "abbreviation" : "test_symb",
     "actions" : [
         {
             "type": "web_checkForNode",

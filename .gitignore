@@ -19,3 +19,5 @@ main/src/main/webapp/assets/swagger-ui
 main/src/main/webapp/restdocs
 
 main/uploads
+
+main/src/main/webapp/npm-debug\.log

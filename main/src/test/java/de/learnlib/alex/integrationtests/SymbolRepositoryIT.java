@@ -72,7 +72,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol = createSymbol(user, project, group, 0L, "Test Symbol", "test");
+        Symbol symbol = createSymbol(user, project, group, 0L, "Test Symbol");
 
         symbol = symbolRepository.save(symbol);
 
@@ -90,7 +90,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol = createSymbol(null, project, group, 0L, "Test Symbol", "test");
+        Symbol symbol = createSymbol(null, project, group, 0L, "Test Symbol");
 
         symbolRepository.save(symbol); // should fail
     }
@@ -106,7 +106,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol = createSymbol(user, null, group, 0L, "Test Symbol", "test");
+        Symbol symbol = createSymbol(user, null, group, 0L, "Test Symbol");
 
         symbolRepository.save(symbol); // should fail
     }
@@ -119,7 +119,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
         //
-        Symbol symbol = createSymbol(user, project, null, 0L, "Test Symbol", "test");
+        Symbol symbol = createSymbol(user, project, null, 0L, "Test Symbol");
 
         symbolRepository.save(symbol); // should fail
     }
@@ -135,55 +135,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol = createSymbol(user, project, group, 0L, null, "test");
-
-        symbolRepository.save(symbol); // should fail
-    }
-
-    @Test(expected = TransactionSystemException.class)
-    public void shouldFailToSaveASymbolWithoutAnAbbreviation() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        SymbolGroup group = createGroup(user, project, 1L, "Test Group");
-        group = symbolGroupRepository.save(group);
-        //
-        Symbol symbol = createSymbol(user, project, group, 0L, "Test Symbol", null);
-
-        symbolRepository.save(symbol); // should fail
-    }
-
-    @Test(expected = TransactionSystemException.class)
-    public void shouldFailToSaveASymbolWithATooShortAbbreviation() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        SymbolGroup group = createGroup(user, project, 1L, "Test Group");
-        group = symbolGroupRepository.save(group);
-        //
-        Symbol symbol = createSymbol(user, project, group, 0L, "Test Symbol", "");
-
-        symbolRepository.save(symbol); // should fail
-    }
-
-    @Test(expected = TransactionSystemException.class)
-    public void shouldFailToSaveASymbolWithATooLongAbbreviation() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        SymbolGroup group = createGroup(user, project, 1L, "Test Group");
-        group = symbolGroupRepository.save(group);
-        //
-        Symbol symbol = createSymbol(user, project, group, 0L, "Test Symbol", "thisAbbreviationIsWayTooLong");
+        Symbol symbol = createSymbol(user, project, group, 0L, null);
 
         symbolRepository.save(symbol); // should fail
     }
@@ -199,10 +151,10 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol1 = createSymbol(user, project, group, 0L, "Test Symbol 1", "test1");
+        Symbol symbol1 = createSymbol(user, project, group, 0L, "Test Symbol 1");
         symbolRepository.save(symbol1);
         //
-        Symbol symbol2 = createSymbol(user, project, group, 0L, "Test Symbol 2", "test2");
+        Symbol symbol2 = createSymbol(user, project, group, 0L, "Test Symbol 2");
 
         symbolRepository.save(symbol2); // should fail
     }
@@ -221,9 +173,9 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group2 = createGroup(user, project, 2L, "Test Group 2");
         group2 = symbolGroupRepository.save(group2);
         //
-        Symbol symbol1 = createSymbol(user, project, group1, 0L, "Test Symbol", "test");
+        Symbol symbol1 = createSymbol(user, project, group1, 0L, "Test Symbol");
         symbolRepository.save(symbol1);
-        Symbol symbol2 = createSymbol(user, project, group2, 0L, "Test Symbol", "test");
+        Symbol symbol2 = createSymbol(user, project, group2, 0L, "Test Symbol");
 
         symbolRepository.save(symbol2);
 
@@ -241,13 +193,13 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, "Test Symbol 1", "test1");
+        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, "Test Symbol 1");
         symbolRepository.save(symbol1rev0);
-        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, "Test Symbol 1", "test1");
+        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, "Test Symbol 1");
         symbolRepository.save(symbol1rev1);
-        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, "Test Symbol 2", "test2");
+        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, "Test Symbol 2");
         symbolRepository.save(symbol2rev0);
-        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, "Test Symbol 2", "test2");
+        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, "Test Symbol 2");
         symbolRepository.save(symbol2rev1);
 
         Symbol symbolFromDB = symbolRepository.findOne(user.getId(), project.getId(), 0L);
@@ -266,13 +218,13 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, "Test Symbol 1", "test1");
+        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, "Test Symbol 1");
         symbolRepository.save(symbol1rev0);
-        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, "Test Symbol 1", "test1");
+        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, "Test Symbol 1");
         symbolRepository.save(symbol1rev1);
-        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, "Test Symbol 2", "test2");
+        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, "Test Symbol 2");
         symbolRepository.save(symbol2rev0);
-        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, "Test Symbol 2", "test2");
+        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, "Test Symbol 2");
         symbolRepository.save(symbol2rev1);
         //
         List<Long> ids = Arrays.asList(symbol1rev0.getId(), symbol2rev1.getId());
@@ -296,13 +248,13 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, "Test Symbol 1", "test1");
+        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, "Test Symbol 1");
         symbolRepository.save(symbol1rev0);
-        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, "Test Symbol 1", "test1");
+        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, "Test Symbol 1");
         symbolRepository.save(symbol1rev1);
-        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, "Test Symbol 2", "test2");
+        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, "Test Symbol 2");
         symbolRepository.save(symbol2rev0);
-        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, "Test Symbol 2", "test2");
+        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, "Test Symbol 2");
         symbolRepository.save(symbol2rev1);
 
         List<Symbol> symbolsFromDB = symbolRepository.findAll(user.getId(), project.getId(),
@@ -326,13 +278,13 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
         //
-        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, "Test Symbol 1", "test1");
+        Symbol symbol1rev0 = createSymbol(user, project, group, 0L, "Test Symbol 1");
         symbolRepository.save(symbol1rev0);
-        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, "Test Symbol 1", "test1");
+        Symbol symbol1rev1 = createSymbol(user, project, group, 0L, "Test Symbol 1");
         symbolRepository.save(symbol1rev1);
-        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, "Test Symbol 2", "test2");
+        Symbol symbol2rev0 = createSymbol(user, project, group, 1L, "Test Symbol 2");
         symbolRepository.save(symbol2rev0);
-        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, "Test Symbol 2", "test2");
+        Symbol symbol2rev1 = createSymbol(user, project, group, 1L, "Test Symbol 2");
         symbolRepository.save(symbol2rev1);
 
         List<Symbol> symbolsFromDB = symbolRepository.findAll(user.getId(), project.getId(), group.getId(),
@@ -345,15 +297,13 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         assertThat(symbolsFromDB, hasItem(equalTo(symbol2rev1)));
     }
 
-    private Symbol createSymbol(User user, Project project, SymbolGroup group, Long id, String name,
-                                String abbreviation) {
+    private Symbol createSymbol(User user, Project project, SymbolGroup group, Long id, String name) {
         Symbol symbol = new Symbol();
         symbol.setUser(user);
         symbol.setProject(project);
         symbol.setId(id);
         symbol.setGroup(group);
         symbol.setName(name);
-        symbol.setAbbreviation(abbreviation);
         return symbol;
     }
 }

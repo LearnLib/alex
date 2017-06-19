@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.TransactionSystemException;
 
@@ -106,25 +106,30 @@ public class SymbolDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldFailToCreateASymbolsWithADuplicateNameOrAbbreviationWithinOneProject() {
+    public void shouldFailToCreateASymbolsWithADuplicateNameWithinOneProject() {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
+
         Symbol symbol = new Symbol();
         symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
         symbol.setName("Test");
-        symbol.setAbbreviation("test");
-        //
-        given(symbolRepository.countSymbolsWithSameNameOrAbbreviation(null, USER_ID, PROJECT_ID, "Test", "test"))
-                .willReturn(1L);
+
+        Symbol symbol2 = new Symbol();
+        symbol2.setUser(user);
+        symbol2.setProject(project);
+        symbol2.setGroup(group);
+        symbol2.setName("Test");
+
+        given(symbolRepository.getSymbolByName(USER_ID, PROJECT_ID, "Test"))
+                .willReturn(symbol2);
 
         symbolDAO.create(symbol); // should fail
     }
@@ -348,9 +353,6 @@ public class SymbolDAOImplTest {
         symbol.setProject(project);
         symbol.setGroup(group);
 
-//      given(symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(USER_ID, PROJECT_ID, GROUP_ID))
-//          .willReturn(group);
-
         given(symbolRepository.findOne(USER_ID, PROJECT_ID, symbol.getId())).willReturn(symbol);
         given(symbolRepository.save(symbol)).willReturn(symbol);
 
@@ -360,7 +362,7 @@ public class SymbolDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldFailToUpdateASymbolsWithADuplicateNameOrAbbreviationWithinOneProject() throws NotFoundException {
+    public void shouldFailToUpdateASymbolsWithADuplicateNameWithinOneProject() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
 
@@ -371,15 +373,21 @@ public class SymbolDAOImplTest {
         group.setId(GROUP_ID);
 
         Symbol symbol = new Symbol();
+        symbol.setId(0L);
         symbol.setUser(user);
         symbol.setProject(project);
         symbol.setGroup(group);
         symbol.setName("Test");
-        symbol.setAbbreviation("test");
 
-        given(symbolRepository.countSymbolsWithSameNameOrAbbreviation(symbol.getId(), USER_ID,
-                                                                      PROJECT_ID, "Test", "test"))
-                .willReturn(1L);
+        Symbol symbol2 = new Symbol();
+        symbol2.setId(1L);
+        symbol2.setUser(user);
+        symbol2.setProject(project);
+        symbol2.setGroup(group);
+        symbol2.setName("Test");
+
+        given(symbolRepository.getSymbolByName(USER_ID, PROJECT_ID, "Test"))
+                .willReturn(symbol2);
 
         symbolDAO.update(symbol); // should fail
     }
@@ -630,7 +638,6 @@ public class SymbolDAOImplTest {
             s.setId((long) i);
             s.setGroup(group);
             s.setName("Test Symbol - Get All Web No. " + i);
-            s.setAbbreviation("web_all_" + i);
             s.addAction(new WaitAction());
             if (i == SYMBOL_LIST_SIZE - 1) {
                 s.setHidden(true);
@@ -664,7 +671,6 @@ public class SymbolDAOImplTest {
             project.getSymbols().add(s);
             s.setGroup(group);
             s.setName("Test Symbol - Get All REST No. " + i);
-            s.setAbbreviation("rest_all_" + i);
 
             if (i > SYMBOL_LIST_SIZE / 2) {
                 s.setName(s.getName() + " 2");

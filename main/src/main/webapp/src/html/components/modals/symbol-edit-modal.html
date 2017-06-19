@@ -29,26 +29,6 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label>Symbol Abbreviation</label>
-            <input class="form-control"
-                   name="abbreviation"
-                   type="text"
-                   placeholder="The abbreviation of the symbol"
-                   required
-                   ng-maxlength="15"
-                   ng-model="vm.symbol.abbreviation">
-
-            <div class="help-block" ng-messages="vm.form.abbreviation.$error" ng-if="vm.form.abbreviation.$touched">
-                <div class="alert alert-danger alert-condensed" ng-message="required">
-                    The abbreviation is required
-                </div>
-                <div class="alert alert-danger alert-condensed" ng-message="maxlength">
-                    The abbreviation can not be more than 15 characters long
-                </div>
-            </div>
-        </div>
-
         <div class="alert alert-danger alert-condensed" ng-if="vm.errorMsg" ng-bind="vm.errorMsg"></div>
 
     </div>

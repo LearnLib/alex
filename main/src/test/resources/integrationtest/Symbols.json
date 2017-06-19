@@ -1,7 +1,6 @@
 [
   {
     "name": "Reset",
-    "abbreviation": "reset",
     "actions": [
       { "type": "incrementCounter", "name": "user" },
       { "type": "setVariable", "name": "token",   "value": "" },
@@ -12,7 +11,6 @@
   },
   {
     "name": "User - Create",
-    "abbreviation": "user_c",
     "actions": [
       {
         "type": "rest_call",
@@ -25,7 +23,6 @@
   },
   {
     "name": "User - Login",
-    "abbreviation": "login",
     "actions": [
       { "type": "assertVariable", "name": "token", "value": ""},
       {
@@ -40,7 +37,6 @@
   },
   {
     "name": "User - Logout",
-    "abbreviation": "logout",
     "actions": [
       { "type": "assertVariable", "name": "token", "value": "", "negated": true},
       { "type": "setVariable", "name": "token", "value": "" }
@@ -48,7 +44,6 @@
   },
   {
     "name": "Project - Create",
-    "abbreviation": "project_c",
     "actions": [
       { "type": "assertVariable", "name": "project", "value": ""},
       {
@@ -66,7 +61,6 @@
   },
   {
     "name": "Project - Read",
-    "abbreviation": "project_r",
     "actions": [
       { "type": "assertVariable", "name": "project", "value": "", "negated": true},
       {
@@ -82,7 +76,6 @@
   },
   {
     "name": "Project - Update",
-    "abbreviation": "project_u",
     "actions": [
       { "type": "assertVariable", "name": "project", "value": "", "negated": true},
       {
@@ -99,7 +92,6 @@
   },
   {
     "name": "Project - Delete",
-    "abbreviation": "project_d",
     "actions": [
       { "type": "assertVariable", "name": "project", "value": "", "negated": true},
       {
@@ -116,7 +108,6 @@
   },
   {
     "name": "Symbols - Create",
-    "abbreviation": "symbols_c",
     "actions": [
       { "type": "assertVariable", "name": "project", "value": "", "negated": true},
       { "type": "assertVariable", "name": "symbols", "value": ""},
@@ -124,7 +115,7 @@
         "type": "rest_call",
         "method": "POST",
         "url": "/projects/{{$project}}/symbols",
-        "data": "{\"name\": \"Reset\", \"abbreviation\": \"reset\", \"actions\": [{ \"type\": \"web_goto\", \"url\": \"/test_app.html\" }]}",
+        "data": "{\"name\": \"Reset\", \"actions\": [{ \"type\": \"web_goto\", \"url\": \"/test_app.html\" }]}",
         "headers": {
           "Authorization": "Bearer {{$token}}"
         }
@@ -134,7 +125,7 @@
         "type": "rest_call",
         "method": "POST",
         "url": "/projects/{{$project}}/symbols",
-        "data": "{\"name\": \"Web Symbol 1\", \"abbreviation\": \"web1\", \"actions\": [{ \"type\": \"web_checkForText\", \"value\": \"Lorem Ipsum\" }]}",
+        "data": "{\"name\": \"Web Symbol 1\", \"actions\": [{ \"type\": \"web_checkForText\", \"value\": \"Lorem Ipsum\" }]}",
         "headers": {
           "Authorization": "Bearer {{$token}}"
         }
@@ -144,7 +135,7 @@
         "type": "rest_call",
         "method": "POST",
         "url": "/projects/{{$project}}/symbols",
-        "data": "{\"name\": \"Web Symbol 2\", \"abbreviation\": \"web2\", \"actions\": [{ \"type\": \"web_click\", \"node\" : \"#link\" }]}",
+        "data": "{\"name\": \"Web Symbol 2\", \"actions\": [{ \"type\": \"web_click\", \"node\" : \"#link\" }]}",
         "headers": {
           "Authorization": "Bearer {{$token}}"
         }
@@ -154,7 +145,7 @@
         "type": "rest_call",
         "method": "POST",
         "url": "/projects/{{$project}}/symbols",
-        "data": "{\"name\": \"Web Symbol 3\", \"abbreviation\": \"web3\", \"actions\": [{ \"type\": \"web_clickLinkByText\", \"value\" : \"The next awesome link\" }]}",
+        "data": "{\"name\": \"Web Symbol 3\", \"actions\": [{ \"type\": \"web_clickLinkByText\", \"value\" : \"The next awesome link\" }]}",
         "headers": {
           "Authorization": "Bearer {{$token}}"
         }
@@ -164,7 +155,7 @@
         "type": "rest_call",
         "method": "POST",
         "url": "/projects/{{$project}}/symbols",
-        "data": "{\"name\": \"Included Web Symbol\", \"abbreviation\": \"web4_inc\", \"actions\": [{ \"type\": \"web_checkForText\", \"value\": \".*Test App - Page [0-9].*\", \"regexp\": true }]}",
+        "data": "{\"name\": \"Included Web Symbol\", \"actions\": [{ \"type\": \"web_checkForText\", \"value\": \".*Test App - Page [0-9].*\", \"regexp\": true }]}",
         "headers": {
           "Authorization": "Bearer {{$token}}"
         }
@@ -174,7 +165,7 @@
         "type": "rest_call",
         "method": "POST",
         "url": "/projects/{{$project}}/symbols",
-        "data": "{\"name\": \"Web Symbol 4\", \"abbreviation\": \"web4\", \"actions\": [{ \"type\": \"executeSymbol\", \"symbolToExecute\": 5 }]}",
+        "data": "{\"name\": \"Web Symbol 4\", \"actions\": [{ \"type\": \"executeSymbol\", \"symbolToExecute\": 5 }]}",
         "headers": {
           "Authorization": "Bearer {{$token}}"
         }
@@ -185,7 +176,6 @@
   },
   {
     "name": "Learn",
-    "abbreviation": "learn",
     "actions": [
       { "type": "assertVariable", "name": "project", "value": "", "negated": true},
       { "type": "assertVariable", "name": "symbols", "value": "", "negated": true},

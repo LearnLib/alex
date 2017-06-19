@@ -112,7 +112,6 @@ public class SymbolResourceTest extends JerseyTest {
         symbol = new Symbol();
         symbol.setId(SYMBOL_TEST_ID);
         symbol.setName("Symbol Resource Test Symbol");
-        symbol.setAbbreviation("srts");
         symbol.setUser(admin);
         symbol.setProject(project);
         symbol.setGroup(group);
@@ -120,7 +119,6 @@ public class SymbolResourceTest extends JerseyTest {
         symbol2 = new Symbol();
         symbol2.setId(SYMBOL_TEST_ID + 1);
         symbol2.setName("Symbol Resource Test Symbol 2");
-        symbol2.setAbbreviation("srts 2");
         symbol2.setUser(admin);
         symbol2.setProject(project);
         symbol2.setGroup(group);
@@ -151,7 +149,7 @@ public class SymbolResourceTest extends JerseyTest {
 
     @Test
     public void shouldCreateValidSymbolWithoutProject() throws IOException, NotFoundException {
-        String json = "{\"abbreviation\":\"srts\",\"actions\":[],\"id\":1,"
+        String json = "{\"actions\":[],\"id\":1,"
                 + "\"name\":\"Symbol Resource Test Symbol\"}";
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols").request()
@@ -291,7 +289,7 @@ public class SymbolResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],\"group\":0,"
+        String expectedJSON = "[{\"actions\":[],\"group\":0,"
                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
                 + "\"project\":10,\"user\":" + USER_TEST_ID + "}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
@@ -311,7 +309,7 @@ public class SymbolResourceTest extends JerseyTest {
                             .request().header("Authorization", adminToken).get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "[{\"abbreviation\":\"srts\",\"actions\":[],\"group\":0,"
+        String expectedJSON = "[{\"actions\":[],\"group\":0,"
                                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
                                 + "\"project\":10,\"user\":" + USER_TEST_ID + "}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
