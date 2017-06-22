@@ -67,6 +67,12 @@ export class AlphabetSymbol {
         this.hidden = obj.hidden;
 
         /**
+         * The custom output of the symbol on success.
+         * @type {String}
+         */
+        this.successOutput = obj.successOutput;
+
+        /**
          * The actions of the symbol.
          * @type {Action[]}
          */

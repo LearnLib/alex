@@ -36,6 +36,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -55,7 +56,10 @@ public class LearnerResourceTest extends JerseyTest {
     private static final long RESET_SYMBOL_TEST_ID = 3;
     private static final String START_JSON = "{\"symbols\": [1,2]"
                                            + ",\"resetSymbol\":" + RESET_SYMBOL_TEST_ID
-                                           + ",\"algorithm\":\"DHC\", \"eqOracle\": {\"type\": \"complete\"}}";
+                                           + ",\"algorithm\":\"DHC\""
+                                           + ",\"eqOracle\": {\"type\": \"complete\"}"
+                                           + ",\"browser\": {\"driver\":\"htmlunitdriver\",\"height\":0,\"width\":0,\"xvfbDisplayPort\":null}}";
+
     private static final String RESUME_JSON = "{\"eqOracle\": {\"type\": \"complete\"}}";
 
     @Mock
@@ -66,6 +70,9 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Mock
     private LearnerResultDAO learnerResultDAO;
+
+    @Mock
+    private LearnerResource learnerResource;
 
     @Mock
     private Learner learner;
@@ -91,6 +98,7 @@ public class LearnerResourceTest extends JerseyTest {
                 bind(symbolDAO).to(SymbolDAO.class);
                 bind(learnerResultDAO).to(LearnerResultDAO.class);
                 bind(learner).to(Learner.class);
+                bind(learnerResource).to(LearnerResource.class);
             }
         });
         return testApplication;
@@ -369,9 +377,15 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReadTheCorrectOutput() {
-        String json = "{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ","
-                    + "\"symbols\": [1,2]}";
-        Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
+        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":0,\"width\":0,\"xvfbDisplayPort\":null}}";
+
+
+//        String json = "{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ","
+//                    + "\"symbols\": [1,2], \"browser\": {\"driver\": \"HTML_UNIT_DRIVER\", \"width\":0, \"height\":0}}";
+
+        Response response = target("/learner/outputs/" + PROJECT_TEST_ID)
+                                .request()
+                                .header("Authorization", adminToken)
                                 .post(Entity.json(json));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -379,8 +393,8 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldCreateEmptyOutputForNoSymbols() throws NotFoundException {
-        String json = "{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ","
-                + "\"symbols\": []}";
+        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[]},\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":0,\"width\":0,\"xvfbDisplayPort\":null}}";
+
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
 
@@ -390,11 +404,11 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn400IfCreatingAnOutputFailed() throws NotFoundException {
-        given(learner.readOutputs(any(), any(), any(), anyList(), browserConfig))
+        given(learner.readOutputs(any(), any(), any(), any(), any(BrowserConfig.class)))
                 .willThrow(LearnerException.class);
 
-        String json = "{\"resetSymbol\":"  + RESET_SYMBOL_TEST_ID + ","
-                + "\"symbols\": [1,2]}";
+        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":0,\"width\":0,\"xvfbDisplayPort\":null}}";
+
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
 

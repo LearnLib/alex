@@ -20,7 +20,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
+import de.learnlib.alex.core.learner.connectors.VariableStoreConnector;
 import de.learnlib.alex.utils.LoggerUtil;
+import de.learnlib.alex.utils.SearchHelper;
 import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import org.apache.logging.log4j.Level;
@@ -105,6 +107,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     /** The actions to perform. */
     private List<SymbolAction> actions;
+
+    /** The custom output if the symbol is executed successfully. */
+    private String successOutput;
 
     /** Constructor. */
     public Symbol() {
@@ -335,6 +340,16 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         this.hidden = hidden;
     }
 
+    @JsonProperty
+    public String getSuccessOutput() {
+        return successOutput;
+    }
+
+    @JsonProperty
+    public void setSuccessOutput(String successOutput) {
+        this.successOutput = successOutput;
+    }
+
     /**
      * Get the Actions related to the Symbol.
      *
@@ -385,16 +400,35 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             LoggerUtil.increaseIndent();
         }
 
+        // assume the output is ok until proven otherwise
         ExecuteResult result = ExecuteResult.OK;
-        for (int i = 0; i < actions.size() && result == ExecuteResult.OK; i++) {
-            SymbolAction action = actions.get(i);
-            if (!action.isDisabled()) {
-                ExecuteResult actionResult = executeAction(action, connector);
 
-                if (!action.isIgnoreFailure() && actionResult != ExecuteResult.OK) {
+        for (int i = 0; i < actions.size(); i++) {
+            final SymbolAction action = actions.get(i);
+
+            if (!action.isDisabled()) {
+                final ExecuteResult actionResult = executeAction(action, connector);
+
+                // if the execution of one symbol fails do not continue executing the following actions
+                if (actionResult == ExecuteResult.FAILED && !action.isIgnoreFailure()) {
+                    if (action.getErrorOutput() != null && !action.getErrorOutput().trim().equals("")) {
+                        actionResult.setOutput(action.insertVariableValues(action.getErrorOutput()));
+                    } else {
+                        actionResult.setOutput(ExecuteResult.DEFAULT_ERROR_OUTPUT + " (" + (i + 1) + ")");
+                    }
                     result = actionResult;
-                    result.setFailedActionNumber(i);
+                    break;
                 }
+            }
+        }
+
+        // set the output of the symbol *after* all actions are executed so that variables and counters have their
+        // proper values.
+        if (result == ExecuteResult.OK) {
+            if (successOutput != null && !successOutput.trim().equals("")) {
+                result.setOutput(SearchHelper.insertVariableValues(connector, userId, projectId, successOutput));
+            } else {
+                result.setOutput(ExecuteResult.DEFAULT_SUCCESS_OUTPUT);
             }
         }
 

@@ -7,9 +7,7 @@
             <div class="list-group-item counterexample-list-item" ng-repeat="io in vm.counterExample">
                 <i class="fa fa-fw fa-close pull-right" ng-click="vm.removeInputOutputAt($index)"></i>
                 <span class="label label-primary">{{io.input}}</span>
-                <span class="label" ng-class="io.output === 'OK' ? 'label-success' : 'label-danger'">
-                    {{io.output}}
-                </span>
+                <span class="label label-default">{{io.output}}</span>
             </div>
         </div>
         <div ng-show="vm.counterExample.length > 0">

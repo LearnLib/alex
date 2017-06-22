@@ -92,8 +92,8 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
         }
 
         if (resetResult.equals(ExecuteResult.FAILED)) {
-            throw new LearnerException("The execution of the reset symbol failed on step "
-                                               + resetResult.getFailedActionNumber() + ".");
+            throw new LearnerException("The execution of the reset symbol failed: "
+                                               + resetResult.toString() + ".");
         }
 
         return connectorManager;

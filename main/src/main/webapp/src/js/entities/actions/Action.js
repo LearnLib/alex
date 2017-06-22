@@ -50,6 +50,12 @@ export class Action {
          * @type {boolean}
          */
         this.disabled = obj.disabled || false;
+
+        /**
+         * The custom output of the action on failure.
+         * @type {null}
+         */
+        this.errorOutput = obj.errorOutput || null;
     }
 
     /**

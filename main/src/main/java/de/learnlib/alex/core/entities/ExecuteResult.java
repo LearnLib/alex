@@ -16,49 +16,36 @@
 
 package de.learnlib.alex.core.entities;
 
-/**
- * An Enumeration to determine if the Symbol was executed correctly or not.
- */
+/** Enum to determine if a symbol has been executed successfully. */
 public enum ExecuteResult {
 
-    /** The Symbol was executed correctly. */
+    /** The symbol has been executed successfully. */
     OK,
 
-    /** While executing the Symbol something went wrong. */
+    /** The execution of an action of the symbol failed during its execution. */
     FAILED;
 
-    /**
-     * Number to indicate the action of a Symbol that failed.
-     * OK -> null value.
-     * If an Action returns the ExecuteResult -> null.
-     */
-    private Integer failedActionNumber;
+    /** The default output on success. */
+    public static final String DEFAULT_SUCCESS_OUTPUT = "Ok";
 
-    /**
-     * Get the number to indicate which action of a symbol failed.
-     *
-     * @return The number that indicates teh failed action. null if OK.
-     */
-    public Integer getFailedActionNumber() {
-        return failedActionNumber;
+    /** The default output on error. */
+    public static final String DEFAULT_ERROR_OUTPUT = "Failed";
+
+    /** The output. */
+    private String output;
+
+    /** @return {@link #output}. */
+    public String getOutput() {
+        return output;
     }
 
-    /**
-     * Set the number of the failed action of a Symbol.
-     *
-     * @param failedActionNumber
-     *         Number to indicate the failed action . Must be null when OK.
-     */
-    void setFailedActionNumber(Integer failedActionNumber) {
-        this.failedActionNumber = failedActionNumber;
+    /** @param output {@link #output}. */
+    public void setOutput(String output) {
+        this.output = output;
     }
 
     @Override
     public String toString() {
-        if (failedActionNumber == null) {
-            return this.name(); // most likely OK
-        } else {
-            return this.name() + "(" + (failedActionNumber + 1) + ")";
-        }
+        return output;
     }
 }

@@ -36,9 +36,7 @@
                                     {{symbol.name}}
                                 </div>
                                 <div ng-if="vm.outputs[$index]" style="padding-left: 20px">
-                                    <label class="label" ng-bind="vm.outputs[$index]"
-                                           ng-class="vm.outputs[$index][0] === 'O' ? 'label-success' : 'label-danger'">
-                                    </label>
+                                    <label class="label label-default" ng-bind="vm.outputs[$index]"></label>
                                 </div>
                             </div>
                         </div>

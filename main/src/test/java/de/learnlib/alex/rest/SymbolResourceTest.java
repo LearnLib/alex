@@ -291,7 +291,7 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "[{\"actions\":[],\"group\":0,"
                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
-                + "\"project\":10,\"user\":" + USER_TEST_ID + "}]";
+                + "\"project\":10,\"successOutput\":null,\"user\":" + USER_TEST_ID + "}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
         verify(symbolDAO).getAll(admin, project.getId(), SymbolVisibilityLevel.VISIBLE);
@@ -311,7 +311,7 @@ public class SymbolResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "[{\"actions\":[],\"group\":0,"
                                 + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
-                                + "\"project\":10,\"user\":" + USER_TEST_ID + "}]";
+                                + "\"project\":10,\"successOutput\":null,\"user\":" + USER_TEST_ID + "}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
         verify(symbolDAO).getAll(admin, project.getId(), SymbolVisibilityLevel.ALL);

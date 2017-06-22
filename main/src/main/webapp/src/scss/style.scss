@@ -299,6 +299,7 @@ body {
 .action-list {
   user-select: none;
   -webkit-user-select: none;
+
   .action-list-item {
     @include selection-list-item();
     user-select: none;
@@ -307,6 +308,10 @@ body {
     flex-direction: row;
     align-items: baseline;
     padding: 6px 10px;
+
+    &:last-of-type {
+      border-bottom: 0;
+    }
 
     &.gu-transit {
       opacity: .5;
@@ -317,6 +322,16 @@ body {
       &:nth-child(2) {
         flex: 1 0 0;
         padding: 0 10px;
+      }
+    }
+
+    .action-output {
+      border-top: 1px dashed #ddd;
+      padding-top: 7px;
+      margin-top: 7px;
+
+      strong {
+        color: $brand-danger;
       }
     }
 

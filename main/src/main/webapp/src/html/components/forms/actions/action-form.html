@@ -43,6 +43,11 @@
         <action-form-wait action="vm.action" ng-switch-when="wait"></action-form-wait>
     </div>
     <hr>
+    <div class="form-group">
+        <label>Output on failure <span class="text-muted">(optional)</span></label>
+        <input class="form-control" type="text" ng-model="vm.action.errorOutput" placeholder="Failed">
+    </div>
+    <hr>
     <p>
         <a href="" ng-click="vm.showOptions = !vm.showOptions">
             <i class="fa fa-gear fa-fw"></i> Advanced options
