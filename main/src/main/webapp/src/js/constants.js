@@ -17,7 +17,7 @@
 export const learnAlgorithm = {
     LSTAR: 'LSTAR',
     DHC: 'DHC',
-    DISCRIMINATION_TREE: 'DISCRIMINATION_TREE',
+    DISCRIMINATION_TREE: 'DT',
     TTT: 'TTT',
     KEARNS_VAZIRANI: 'KEARNS_VAZIRANI'
 };

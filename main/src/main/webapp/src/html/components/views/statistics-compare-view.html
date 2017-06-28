@@ -43,7 +43,7 @@
                     <td>
                         {{vm.chartData.context.browser.driver | formatWebBrowser}} ({{vm.chartData.context.browser.width}}px x {{vm.chartData.context.browser.height}}px)
                     </td>
-                    <td ng-bind="vm.chartData.context.algorithm | formatAlgorithm"></td>
+                    <td ng-bind="vm.chartData.context.algorithm.name | formatAlgorithm"></td>
                     <td ng-bind="vm.chartData.context.sigma.length"></td>
                     <td ng-bind="vm.chartData.context.statistics.eqsUsed"></td>
                 </tr>
@@ -54,7 +54,7 @@
                     <td>
                         {{result.browser.driver | formatWebBrowser}} ({{result.browser.width}}px x {{result.browser.height}}px)
                     </td>
-                    <td ng-bind="result.algorithm | formatAlgorithm"></td>
+                    <td ng-bind="result.algorithm.name | formatAlgorithm"></td>
                     <td ng-bind="result.sigma.length"></td>
                     <td ng-bind="result.statistics.eqsUsed"></td>
                 </tr>

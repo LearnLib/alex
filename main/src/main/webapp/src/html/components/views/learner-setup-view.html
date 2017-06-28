@@ -30,7 +30,7 @@
             <div class="alert alert-info alert-condensed clearfix">
                 <i class="fa fa-fw fa-info-circle"></i>
 
-                    Using algorithm <strong ng-bind="(vm.learnConfiguration.algorithm | formatAlgorithm)"></strong>
+                    Using algorithm <strong ng-bind="(vm.learnConfiguration.algorithm.name | formatAlgorithm)"></strong>
                     with equivalence oracle <strong ng-bind="(vm.learnConfiguration.eqOracle.type | formatEqOracle)"></strong>
                 <span ng-if="vm.learnConfiguration.eqOracle.type === 'complete'">
                     (

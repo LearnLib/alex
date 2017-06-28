@@ -15,6 +15,6 @@
  */
 
 /**
- * Package that holds the API around algorithms.
+ * This package contains the algorithms that ALEX will be able to use.
  */
-package de.learnlib.alex.algorithms;
+package de.learnlib.alex.core.entities.algorithms;

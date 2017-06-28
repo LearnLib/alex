@@ -29,12 +29,14 @@ export class LearnSetupSettingsModalComponent {
      * @param {ToastService} ToastService
      * @param {EventBus} EventBus
      * @param {EqOracleService} EqOracleService
+     * @param {LearningAlgorithmService} LearningAlgorithmService
      */
     // @ngInject
-    constructor(ToastService, EventBus, EqOracleService) {
+    constructor(ToastService, EventBus, EqOracleService, LearningAlgorithmService) {
         this.ToastService = ToastService;
         this.EventBus = EventBus;
         this.EqOracleService = EqOracleService;
+        this.LearningAlgorithmService = LearningAlgorithmService;
 
         /**
          * The constants for eqOracles types.
@@ -57,11 +59,17 @@ export class LearnSetupSettingsModalComponent {
          * The constants for learnAlgorithm names.
          */
         this.learnAlgorithms = learnAlgorithm;
+
+        /**
+         * The constants for learnAlgorithm names.
+         */
+        this.selectedLearningAlgorithm = null;
     }
 
     $onInit() {
         this.learnConfiguration = this.resolve.modalData.learnConfiguration;
         this.selectedEqOracle = this.learnConfiguration.eqOracle.type;
+        this.selectedLearningAlgorithm = this.learnConfiguration.algorithm.name;
     }
 
     /**
@@ -87,6 +95,14 @@ export class LearnSetupSettingsModalComponent {
      */
     setEqOracle() {
         this.learnConfiguration.eqOracle = this.EqOracleService.createFromType(this.selectedEqOracle);
+    }
+
+    /**
+     * Sets the algorithm of the learn configuration depending on the selected value.
+     */
+    setLearningAlgorithm() {
+        this.learnConfiguration.algorithm = this.LearningAlgorithmService.createFromType(this.selectedLearningAlgorithm);
+        console.log(this.learnConfiguration);
     }
 
     /**

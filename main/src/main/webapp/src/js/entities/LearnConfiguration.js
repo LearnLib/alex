@@ -51,7 +51,7 @@ export class LearnConfiguration {
          * The algorithm to use for learning.
          * @type {string}
          */
-        this.algorithm = obj.learnAlgorithm || learnAlgorithm.TTT;
+        this.algorithm = obj.algorithm || {name: "TTT"};
 
         /**
          * The id of the reset symbol.

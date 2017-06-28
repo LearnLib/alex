@@ -29,7 +29,6 @@ import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
-import de.learnlib.alex.core.services.LearnAlgorithmService;
 import de.learnlib.alex.exceptions.NotFoundException;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -54,9 +53,6 @@ public class LearnerTest {
 
     private static final String FAKE_URL = "http://example.com";
     private static final int SYMBOL_AMOUNT = 5;
-
-    @Mock
-    private LearnAlgorithmService algorithmService;
 
     @Mock
     private ConnectorContextHandlerFactory contextHandlerFactory;

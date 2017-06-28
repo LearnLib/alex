@@ -39,6 +39,7 @@ import {ClipboardService} from "./services/ClipboardService";
 import {ErrorService} from "./services/ErrorService";
 import {EventBus} from "./services/EventBus";
 import {EqOracleService} from "./services/EqOracleService";
+import {LearningAlgorithmService} from "./services/LearningAlgorithmService";
 import {DownloadService} from "./services/DownloadService";
 import {LearnerResultChartService} from "./services/LearnerResultChartService";
 import {PromptService} from "./services/PromptService";
@@ -224,6 +225,7 @@ angular
     .service('ErrorService', ErrorService)
     .service('EventBus', EventBus)
     .service('EqOracleService', EqOracleService)
+    .service('LearningAlgorithmService', LearningAlgorithmService)
     .service('DownloadService', DownloadService)
     .service('LearnerResultChartService', LearnerResultChartService)
     .service('PromptService', PromptService)

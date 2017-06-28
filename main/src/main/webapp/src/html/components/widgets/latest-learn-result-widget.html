@@ -6,7 +6,7 @@
         <p>
             The latest experiment started at
             <strong ng-bind="::(vm.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></strong> with the
-            <strong ng-bind="::(vm.result.algorithm | formatAlgorithm)"></strong> algorithm.
+            <strong ng-bind="::(vm.result.algorithm.name | formatAlgorithm)"></strong> algorithm.
         </p>
         <button class="btn btn-xs btn-default" ui-sref="learnerStart({result: result})">
             <i class="fa fa-fw fa-play"></i> Continue learning

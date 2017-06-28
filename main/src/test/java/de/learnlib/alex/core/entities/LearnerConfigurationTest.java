@@ -18,6 +18,9 @@ package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.core.entities.algorithms.DHC;
+import de.learnlib.alex.core.entities.algorithms.AbstractLearningAlgorithm;
+import de.learnlib.alex.core.entities.algorithms.TTT;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.CompleteExplorationEQOracleProxy;
 import de.learnlib.alex.core.learner.connectors.WebBrowser;
 import org.junit.Test;
@@ -34,17 +37,17 @@ public class LearnerConfigurationTest {
     private static final int EQ_MIN_VALUE = 1;
     private static final int EQ_MAX_VALUE = 1;
 
-    private static final Algorithm ALGORITHM = new Algorithm("DHC", "");
+    private static final AbstractLearningAlgorithm<String, String> ALGORITHM = new TTT();
 
     @Test
     public void shouldCreateTheCorrectDefaultJSON() throws JsonProcessingException {
-        String expectedJSON = "{\"algorithm\":\"TTT\","
-                                + "\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":null,\"width\":null},"
+        String expectedJSON = "{\"algorithm\":{\"name\":\"TTT\"},"
+                                + "\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":null,\"width\":null,\"xvfbDisplayPort\":null},"
                                 + "\"comment\":\"\","
                                 + "\"eqOracle\":"
                                 + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
                                 + "\"maxLength\":" + EQ_MAX_VALUE + ",\"seed\":42,\"maxNoOfTests\":1},"
-                                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
+                                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"stepNo\":0,\"symbols\":[],"
                                 + "\"useMQCache\":true,\"user\":null}";
 
         LearnerConfiguration configuration = new LearnerConfiguration();
@@ -57,12 +60,12 @@ public class LearnerConfigurationTest {
 
     @Test
     public void shouldCreateTheCorrectJSON() throws JsonProcessingException {
-        String expectedJSON = "{\"algorithm\":\"DHC\","
-                                +  "\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":null,\"width\":null},"
+        String expectedJSON = "{\"algorithm\":{\"name\":\"TTT\"},"
+                                +  "\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":null,\"width\":null,\"xvfbDisplayPort\":null},"
                                 + "\"comment\":\"test\",\"eqOracle\":"
                                 + "{\"type\":\"complete\",\"minDepth\":" + EQ_MIN_VALUE + ","
                                     + "\"maxDepth\":" + EQ_MAX_VALUE + "},"
-                                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
+                                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"stepNo\":0,\"symbols\":[],"
                                 + "\"useMQCache\":true,\"user\":null}";
 
         LearnerConfiguration configuration = new LearnerConfiguration();
@@ -79,15 +82,15 @@ public class LearnerConfigurationTest {
 
     @Test
     public void shouldReadJSONCorrectly() throws IOException, URISyntaxException {
-        String json = "{\"symbols\": [1,2],\"algorithm\":\"DHC\", \"browser\": {\"driver\": \"firefox\", \"width\": 1, "
-                + "\"height\": 1}, \"eqOracle\": "
+        String json = "{\"symbols\": [1,2],\"algorithm\":{\"name\":\"DHC\"}, \"browser\": {\"driver\": \"firefox\", \"width\": 1, "
+                + "\"height\": 1,\"xvfbDisplayPort\":null}, \"eqOracle\": "
                 + "{\"type\": \"complete\"}}";
 
         ObjectMapper mapper = new ObjectMapper();
 
         LearnerConfiguration configuration = mapper.readValue(json, LearnerConfiguration.class);
 
-        assertEquals(ALGORITHM, configuration.getAlgorithm());
+        assertEquals(DHC.class, configuration.getAlgorithm().getClass());
         assertEquals(WebBrowser.FIREFOX, configuration.getBrowser().getDriver());
         assertTrue(configuration.getEqOracle() instanceof CompleteExplorationEQOracleProxy);
         assertEquals(2, configuration.getSymbolsAsIds().size());

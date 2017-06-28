@@ -20,7 +20,7 @@
                     <a class="list-group-item" ng-repeat="result in vm.results | orderBy:'-testNo':false" ng-click="vm.selectResult(result)">
                         <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
                         <strong>Test No <span ng-bind="result.testNo"></span></strong>,
-                        [<span ng-bind="(result.algorithm|formatAlgorithm)"></span>]
+                        [<span ng-bind="(result.algorithm.name|formatAlgorithm)"></span>]
                         <br>
                         <p class="text-muted" style="margin-bottom: 0">
                             Started: <span ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>

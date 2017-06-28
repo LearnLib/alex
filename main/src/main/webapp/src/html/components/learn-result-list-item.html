@@ -11,7 +11,7 @@
                 Test No <span ng-bind="vm.result.testNo"></span>
             </a>
         </strong>,
-        [<span ng-bind="(vm.result.algorithm|formatAlgorithm)"></span>]
+        [<span ng-bind="(vm.result.algorithm.name|formatAlgorithm)"></span>]
         <div class="text-muted">
             <em>
                 Started: <span ng-bind="(vm.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>

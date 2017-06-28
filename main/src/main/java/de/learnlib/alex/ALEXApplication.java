@@ -16,13 +16,11 @@
 
 package de.learnlib.alex;
 
-import de.learnlib.alex.annotations.LearnAlgorithm;
 import de.learnlib.alex.core.dao.SettingsDAO;
 import de.learnlib.alex.core.dao.UserDAO;
 import de.learnlib.alex.core.entities.Settings;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.UserRole;
-import de.learnlib.alex.core.services.LearnAlgorithmService;
 import de.learnlib.alex.rest.CounterResource;
 import de.learnlib.alex.rest.FileResource;
 import de.learnlib.alex.rest.IFrameProxyResource;
@@ -40,10 +38,7 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
@@ -88,12 +83,6 @@ public class ALEXApplication extends ResourceConfig {
      */
     @Inject
     private SettingsDAO settingsDAO;
-
-    /**
-     * The {@link LearnAlgorithmService} to use.
-     */
-    @Inject
-    private LearnAlgorithmService algorithms;
 
     /**
      * Constructor where the magic happens.
@@ -166,31 +155,6 @@ public class ALEXApplication extends ResourceConfig {
             System.setProperty("webdriver.gecko.driver", driverSettings.getFirefox());
             System.setProperty("webdriver.edge.driver", driverSettings.getEdge());
         }
-    }
-
-    /**
-     * Search fo LearnAlgorithms in the class path and add them to our {@link LearnAlgorithmService}.
-     */
-    @PostConstruct
-    public void findAlgorithms() {
-        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
-        scanner.addIncludeFilter(new AnnotationTypeFilter(LearnAlgorithm.class));
-
-        LOGGER.info("Searching for LearnAlgorithms...");
-        for (BeanDefinition bd : scanner.findCandidateComponents("")) {
-            String beanClassName = bd.getBeanClassName();
-            LOGGER.info("Found LearnAlgorithm '{}'.", beanClassName);
-
-            try {
-                Class<?> clazz = Class.forName(beanClassName);
-                algorithms.addAlgorithm(clazz);
-            } catch (IllegalArgumentException e) {
-                LOGGER.warn("Can not use the LearnAlgorithm '{}'!", beanClassName, e);
-            } catch (ClassNotFoundException e) {
-                LOGGER.error("Could not find an already found class!", e);
-            }
-        }
-        LOGGER.info("{} LearnAlgorithms found.", algorithms.size());
     }
 
     /**

@@ -28,7 +28,7 @@ export class LearnResult {
 
         /**
          * The algorithm that is used.
-         * @type {string}
+         * @type {object}
          */
         this.algorithm = obj.algorithm;
 
@@ -125,8 +125,8 @@ export class LearnResult {
     }
 
     static convertNsToMs(input) {
-        input.total    = Math.ceil(input.total    / 1000000);
-        input.learner  = Math.ceil(input.learner  / 1000000);
+        input.total = Math.ceil(input.total / 1000000);
+        input.learner = Math.ceil(input.learner / 1000000);
         input.eqOracle = Math.ceil(input.eqOracle / 1000000);
     }
 

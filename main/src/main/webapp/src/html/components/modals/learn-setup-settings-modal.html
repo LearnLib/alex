@@ -16,7 +16,7 @@
                 <div class="form-group">
                     <label class="control-label">Algorithm</label> <br>
                     <span class="text-muted">Select an algorithm that will be used for the learn process</span>
-                    <select class="form-control" ng-model="vm.learnConfiguration.algorithm"
+                    <select class="form-control" ng-model="vm.selectedLearningAlgorithm" ng-change="vm.setLearningAlgorithm()"
                             ng-options="(k|formatAlgorithm) for (k,v) in vm.learnAlgorithms">
                         <option value="" disabled>select an algorithm</option>
                     </select>

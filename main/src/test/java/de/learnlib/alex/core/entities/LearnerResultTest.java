@@ -18,6 +18,8 @@ package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.learnlib.alex.core.entities.algorithms.AbstractLearningAlgorithm;
+import de.learnlib.alex.core.entities.algorithms.TTT;
 import de.learnlib.alex.core.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
@@ -46,7 +48,7 @@ public class LearnerResultTest {
     private static final ZonedDateTime TEST_DATE = ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00");
     private static final Statistics.DetailedStatistics TEST_DURATION = new Statistics.DetailedStatistics();
 
-    private static final Algorithm TTT = new Algorithm("TTT", "");
+    private static final AbstractLearningAlgorithm<String, String> algorithm = new TTT();
 
     private static final MealyRandomWordsEQOracleProxy EXAMPLE_EQ_ORACLE =
             new MealyRandomWordsEQOracleProxy(1, 5, 10, 42);
@@ -80,7 +82,7 @@ public class LearnerResultTest {
         result.setUser(user);
         result.setProject(project);
         result.setTestNo(ID);
-        result.setAlgorithm(TTT);
+        result.setAlgorithm(algorithm);
         result.setSigma(AlphabetProxy.createFrom(sigma));
         result.createHypothesisFrom(hypothesis);
         result.setStatistics(statistics);

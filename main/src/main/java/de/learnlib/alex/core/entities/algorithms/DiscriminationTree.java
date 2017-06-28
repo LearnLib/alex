@@ -14,64 +14,69 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.algorithms;
+package de.learnlib.alex.core.entities.algorithms;
 
-import de.learnlib.alex.annotations.LearnAlgorithm;
-import de.learnlib.algorithms.ttt.base.DTNode;
-import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
-import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.algorithms.discriminationtree.hypothesis.HState;
+import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
+import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealyBuilder;
 import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.api.MembershipOracle;
+import de.learnlib.discriminationtree.DTNode;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
+import java.io.Serializable;
+
 /**
- * Class that provides the LearnLib implementation of the TTT algorithm for ALEX.
+ * Class that provides the LearnLib implementation of the Discrimination Tree algorithm for ALEX.
  */
-@LearnAlgorithm(name = "TTT")
-public class TTT implements LearnAlgorithmFactory {
+@JsonTypeName("DT")
+public class DiscriminationTree extends AbstractLearningAlgorithm<String, String> implements Serializable {
+
+    private static final long serialVersionUID = 2655022507456200915L;
 
     @Override
     public LearningAlgorithm.MealyLearner<String, String> createLearner(
             Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle) {
-        return new TTTLearnerMealyBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
+        return new DTLearnerMealyBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
     }
 
     @Override
     public String getInternalData(LearningAlgorithm.MealyLearner<String, String> learner) {
-        if (!(learner instanceof TTTLearnerMealy)) {
+        if (!(learner instanceof DTLearnerMealy)) {
             throw new IllegalArgumentException("Can not read the internal data because the algorithm types"
                                                        + "were different");
         }
-
-        TTTLearnerMealy tttLearner = (TTTLearnerMealy) learner;
-        return toJSON(tttLearner.getDiscriminationTree());
+        de.learnlib.discriminationtree.DiscriminationTree discriminationTree;
+        discriminationTree = ((DTLearnerMealy) learner).getDiscriminationTree();
+        return toJSON(discriminationTree);
     }
 
     /**
-     * Serializes the discrimination tree of the TTT algorithm into JSON.
+     * Serializes the discrimination tree of the discrimination tree algorithm into JSON.
      *
      * @param tree
      *         The tree to convert into nice JSON.
      * @return The JSON string of the given tree.
      */
-    private String toJSON(de.learnlib.algorithms.ttt.base.DiscriminationTree<String, Word> tree) {
+    private String toJSON(de.learnlib.discriminationtree.DiscriminationTree<String, Word, HState> tree) {
         return toJSON(tree.getRoot());
     }
 
-    private String toJSON(DTNode<String, Word> node) {
+    private String toJSON(DTNode<String, Word, HState> node) {
         StringBuilder result = new StringBuilder();
         result.append('{');
 
-        if (node.getParentEdgeLabel() != null) {
+        if (node.getParentOutcome() != null) {
             result.append("\"edgeLabel\": \"");
-            result.append(node.getParentEdgeLabel());
+            result.append(node.getParentOutcome());
             result.append("\",");
         }
 
         if (node.isLeaf()) {
             result.append("\"data\": \"");
-            result.append(node.getState());
+            result.append(node.getData());
             result.append('"');
         } else {
             result.append("\"discriminator\": \"");

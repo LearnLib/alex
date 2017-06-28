@@ -18,12 +18,9 @@ package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import de.learnlib.alex.utils.AlgorithmDeserializer;
-import de.learnlib.alex.utils.AlgorithmSerializer;
+import de.learnlib.alex.core.entities.algorithms.AbstractLearningAlgorithm;
+import de.learnlib.alex.core.entities.algorithms.TTT;
 
-import javax.persistence.Embedded;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -56,7 +53,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      * The algorithm to be used during the learning.
      * @requiredField
      */
-    private Algorithm algorithm;
+    private AbstractLearningAlgorithm<String, String> algorithm;
 
     /** The browser to use during the learn process. */
     private BrowserConfig browser;
@@ -72,7 +69,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      */
     public LearnerConfiguration() {
         this.symbolsAsIds = new HashSet<>();
-        this.algorithm = new Algorithm("TTT", "");
+        this.algorithm = new TTT();
         this.comment = "";
         this.browser = new BrowserConfig();
         this.useMQCache = true;
@@ -127,10 +124,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      *
      * @return The selected LearnerAlgorithm.
      */
-    @Embedded
-    @JsonSerialize(using = AlgorithmSerializer.class)
-    @JsonDeserialize(using = AlgorithmDeserializer.class)
-    public Algorithm getAlgorithm() {
+    public AbstractLearningAlgorithm<String, String> getAlgorithm() {
         return algorithm;
     }
 
@@ -140,7 +134,7 @@ public class LearnerConfiguration extends LearnerResumeConfiguration implements 
      * @param algorithm
      *         The new algorithm to be used.
      */
-    public void setAlgorithm(Algorithm algorithm) {
+    public void setAlgorithm(AbstractLearningAlgorithm<String, String> algorithm) {
         this.algorithm = algorithm;
     }
 

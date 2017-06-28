@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.algorithms;
+package de.learnlib.alex.core.entities.algorithms;
 
-import de.learnlib.alex.annotations.LearnAlgorithm;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.algorithms.features.observationtable.ObservationTable;
 import de.learnlib.algorithms.features.observationtable.writer.ObservationTableASCIIWriter;
 import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealy;
@@ -26,11 +26,15 @@ import de.learnlib.api.MembershipOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
+import java.io.Serializable;
+
 /**
  * Class that provides the LearnLib implementation of the extended L* algorithm for ALEX.
  */
-@LearnAlgorithm(name = "LSTAR", prettyName = "L*")
-public class LStar implements LearnAlgorithmFactory {
+@JsonTypeName("LSTAR")
+public class LStar extends AbstractLearningAlgorithm<String, String> implements Serializable {
+
+    private static final long serialVersionUID = -4916532996322906039L;
 
     @Override
     public LearningAlgorithm.MealyLearner<String, String> createLearner(

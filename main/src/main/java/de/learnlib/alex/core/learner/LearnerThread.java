@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.core.learner;
 
-import de.learnlib.alex.algorithms.LearnAlgorithmFactory;
+import de.learnlib.alex.core.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.LearnerResult;
@@ -42,9 +42,7 @@ import de.learnlib.oracles.DefaultQuery;
 import de.learnlib.oracles.SimulatorOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
-import net.automatalib.graphs.dot.GraphDOTHelper;
 import net.automatalib.util.automata.Automata;
-import net.automatalib.util.graphs.dot.GraphDOT;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.apache.logging.log4j.LogManager;
@@ -72,9 +70,6 @@ public class LearnerThread extends Thread {
     /** Is the thread still running? */
     private boolean finished;
 
-    /** Mapper to match the alphabet to the right symbols. */
-    private final SymbolMapper symbolMapper;
-
     /** The system under learning. */
     private final AlexSUL<String, String> sul;
 
@@ -95,9 +90,6 @@ public class LearnerThread extends Thread {
 
     /** The membership oracle. */
     private final DelegateOracle<String, String> mqOracle;
-
-    /** The mapped SUL. */
-    private final SUL<String, String> mappedSUL;
 
     /** The number of mqs executed in parallel. */
     private int maxConcurrentQueries;
@@ -130,13 +122,13 @@ public class LearnerThread extends Thread {
         this.currentQueries = new ArrayList<>();
 
         Symbol[] symbolsArray = readSymbolArray(); // use the symbols in the result to create the symbol array.
-        this.symbolMapper = new SymbolMapper(symbolsArray);
-        this.sigma = symbolMapper.getAlphabet();
+        SymbolMapper mapper = new SymbolMapper(symbolsArray);
+        this.sigma = mapper.getAlphabet();
         this.result.setSigma(AlphabetProxy.createFrom(sigma));
 
         ContextExecutableInputSUL<ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult, ConnectorManager>
                 ceiSUL = new ContextExecutableInputSUL<>(context);
-        this.mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
+        SUL<String, String> mappedSUL = Mappers.apply(mapper, ceiSUL);
         this.sul = new AlexSUL<>(mappedSUL);
 
         // monitor which queries are being processed.
@@ -153,8 +145,7 @@ public class LearnerThread extends Thread {
             this.mqOracle = new DelegateOracle<>(monitorOracle);
         }
 
-        LearnAlgorithmFactory algorithm = result.getAlgorithmFactory();
-        this.learner = algorithm.createLearner(sigma, mqOracle);
+        this.learner = result.getAlgorithm().createLearner(sigma, mqOracle);
     }
 
     /**
@@ -293,6 +284,8 @@ public class LearnerThread extends Thread {
         learner.startLearning();
         storeLearnerMetaData();
 
+//        ((SupportsGrowingAlphabet<String>) learner).addAlphabetSymbol();
+
         // search counter example
         findCounterExample();
         storeCounterExampleSearchMetaData();
@@ -391,7 +384,7 @@ public class LearnerThread extends Thread {
         // algorithm information
         currentStep.createHypothesisFrom(learner.getHypothesisModel());
 
-        LearnAlgorithmFactory algorithm = result.getAlgorithmFactory();
+        AbstractLearningAlgorithm<String, String> algorithm = result.getAlgorithm();
         String algorithmInformation;
         try {
             algorithmInformation = algorithm.getInternalData(learner);

@@ -33,7 +33,6 @@ import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.SampleEQOraclePr
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
-import de.learnlib.alex.core.services.LearnAlgorithmService;
 import de.learnlib.alex.exceptions.LearnerException;
 import de.learnlib.alex.exceptions.NotFoundException;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
@@ -91,10 +90,6 @@ public class Learner {
     @Inject
     private LearnerResultDAO learnerResultDAO;
 
-    /** The {@link LearnAlgorithmService} to use. */
-    @Inject
-    private LearnAlgorithmService algorithmService;
-
     /** Factory to create a new ContextHandler. */
     @Inject
     private ConnectorContextHandlerFactory contextHandlerFactory;
@@ -122,15 +117,13 @@ public class Learner {
      *
      * @param symbolDAO             The SymbolDAO to use.
      * @param learnerResultDAO      The LearnerResultDAO to use.
-     * @param algorithmService      The AlgorithmService to use.
      * @param contextHandlerFactory The factory that will be used to create new context handler.
      */
-    Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO, LearnAlgorithmService algorithmService,
+    Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO,
             ConnectorContextHandlerFactory contextHandlerFactory) {
         this();
         this.symbolDAO = symbolDAO;
         this.learnerResultDAO = learnerResultDAO;
-        this.algorithmService = algorithmService;
         this.contextHandlerFactory = contextHandlerFactory;
     }
 
@@ -204,7 +197,6 @@ public class Learner {
 
         learnerResult.setBrowser(configuration.getBrowser());
         learnerResult.setAlgorithm(configuration.getAlgorithm());
-        learnerResult.setAlgorithmFactory(algorithmService.getLearnAlgorithm(configuration.getAlgorithm()));
         learnerResult.setComment(configuration.getComment());
         learnerResult.setUseMQCache(configuration.isUseMQCache());
         learnerResultDAO.create(learnerResult);
@@ -233,7 +225,6 @@ public class Learner {
             validateCounterexample(user, config);
         }
 
-        result.setAlgorithmFactory(algorithmService.getLearnAlgorithm(result.getAlgorithm()));
         Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbolAsId());
         result.setResetSymbol(resetSymbol);
 

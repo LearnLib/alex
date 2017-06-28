@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.algorithms;
+package de.learnlib.alex.core.entities.algorithms;
 
-import de.learnlib.algorithms.ttt.base.DTNode;
-import de.learnlib.algorithms.ttt.base.DiscriminationTree;
-import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
+import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
 import de.learnlib.api.LearningAlgorithm;
+import de.learnlib.discriminationtree.DTNode;
 import de.learnlib.oracles.SULOracle;
 import net.automatalib.words.Alphabet;
 import org.junit.Before;
@@ -29,13 +28,13 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-public class TTTTest {
+public class DiscriminationTreeTest {
 
-    private TTT algorithm;
+    private DiscriminationTree algorithm;
 
     @Before
     public void setUp() {
-        algorithm = new TTT();
+        algorithm = new DiscriminationTree();
     }
 
     @Test
@@ -48,16 +47,17 @@ public class TTTTest {
 
     @Test
     public void shouldReturnCorrectInternalData() {
-        TTTLearnerMealy learner = createLearnerMock();
+        DTLearnerMealy learner = createDTLearnerMock();
 
         String json = algorithm.getInternalData(learner);
         assertEquals("{\"discriminator\": \"null\", \"children\": []}", json);
     }
 
-    private TTTLearnerMealy createLearnerMock() {
-        DiscriminationTree tree = mock(DiscriminationTree.class);
+    private DTLearnerMealy createDTLearnerMock() {
+        de.learnlib.discriminationtree.DiscriminationTree tree;
+        tree = mock(de.learnlib.discriminationtree.DiscriminationTree.class);
         given(tree.getRoot()).willReturn(mock(DTNode.class));
-        TTTLearnerMealy learner = mock(TTTLearnerMealy.class);
+        DTLearnerMealy learner = mock(DTLearnerMealy.class);
         given(learner.getDiscriminationTree()).willReturn(tree);
         return learner;
     }

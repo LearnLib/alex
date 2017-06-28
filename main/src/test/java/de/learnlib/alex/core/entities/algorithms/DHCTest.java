@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.algorithms;
+package de.learnlib.alex.core.entities.algorithms;
 
 import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.oracles.SULOracle;
