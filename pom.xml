@@ -207,7 +207,7 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
-                            <failOnViolation>true</failOnViolation>
+                            <failOnViolation>false</failOnViolation>
                             <maxAllowedViolations>50</maxAllowedViolations>
                         </configuration>
                     </execution>

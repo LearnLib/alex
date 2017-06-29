@@ -57,6 +57,8 @@
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
         <module name="JavadocMethod">
             <property name="scope" value="package"/>
+            <!-- Allow getter & setter without javadoc -->
+            <property name="allowMissingPropertyJavadoc" value="true" />
         </module>
         <module name="JavadocType">
             <property name="allowUnknownTags" value="true"/>
@@ -128,7 +130,6 @@
 
         <!-- Checks for common coding problems -->
         <!-- See http://checkstyle.sf.net/config_coding.html -->
-        <module name="AvoidInlineConditionals" />
         <module name="EmptyStatement" />
         <module name="EqualsHashCode" />
         <module name="HiddenField">

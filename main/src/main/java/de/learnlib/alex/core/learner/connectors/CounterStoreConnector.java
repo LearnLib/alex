@@ -52,12 +52,11 @@ public class CounterStoreConnector implements Connector {
 
     /**
      * Constructor.
-     * @param counterDAO
-     *          An instance of the counterDAO.
-     * @param project
-     *          The current project.
-     * @param counterList
-     *          The list of counters in the database to initialize the map with.
+     *
+     * @param counterDAO  An instance of the counterDAO.
+     * @param user        The current user.
+     * @param project     The current project.
+     * @param counterList The list of counters in the database to initialize the map with.
      */
     public CounterStoreConnector(CounterDAO counterDAO, User user, Project project, List<Counter> counterList) {
         this.counterDAO = counterDAO;
@@ -84,7 +83,7 @@ public class CounterStoreConnector implements Connector {
 
         // create counters that have not yet been created
         // update counters that have been created
-        for (String name: countersMap.keySet()) {
+        for (String name : countersMap.keySet()) {
             try {
                 boolean counterExists = counters.containsKey(name);
                 if (counterExists) {
@@ -113,14 +112,10 @@ public class CounterStoreConnector implements Connector {
      * Set the value of an existing counter.
      * Creates a new counter implicitly with the specified name and value if it does not exist yet.
      *
-     * @param userId
-     *         The id of the user.
-     * @param projectId
-     *         The id of the project.
-     * @param name
-     *         The name of the counter.
-     * @param value
-     *         The value of the counter.
+     * @param userId    The id of the user.
+     * @param projectId The id of the project.
+     * @param name      The name of the counter.
+     * @param value     The value of the counter.
      */
     public void set(Long userId, Long projectId, String name, Integer value) {
         countersMap.put(name, value);
@@ -133,17 +128,22 @@ public class CounterStoreConnector implements Connector {
      * Creates a new counter implicitly with the specified name if it does not exist yet.
      * The value of the new counter will be 1.
      *
-     * @param userId
-     *         The id of the user.
-     * @param projectId
-     *         The id of the project.
-     * @param name
-     *         The name of the counter to increment.
+     * @param userId    The id of the user.
+     * @param projectId The id of the project.
+     * @param name      The name of the counter to increment.
      */
     public void increment(Long userId, Long projectId, String name) {
         incrementBy(userId, projectId, name, 1);
     }
 
+    /**
+     * Increment a counter by a positive or negative value.
+     *
+     * @param userId      The id of the user.
+     * @param projectId   The id of the project.
+     * @param name        The name of the counter.
+     * @param incrementBy The value to increment or decrement the counter by.
+     */
     public void incrementBy(Long userId, Long projectId, String name, int incrementBy) {
         if (countersMap.containsKey(name)) {
             countersMap.put(name, countersMap.get(name) + incrementBy);
@@ -152,21 +152,16 @@ public class CounterStoreConnector implements Connector {
         }
 
         LOGGER.debug("Incremented the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId, userId,
-                countersMap.get(name));
+                     countersMap.get(name));
     }
 
     /**
      * Get the value of an existing counter.
      *
-     * @param name
-     *         The name of the counter.
-     *
+     * @param name The name of the counter.
      * @return The positive value of the counter.
-     *
-     * @throws IllegalStateException
-     *         If the counter 'name' has not been set yet.
-     * @throws IllegalStateException
-     *         If the counter 'name' has not been set yet.
+     * @throws IllegalStateException If the counter 'name' has not been set yet.
+     * @throws IllegalStateException If the counter 'name' has not been set yet.
      */
     public Integer get(String name) throws IllegalStateException {
         return this.countersMap.get(name);

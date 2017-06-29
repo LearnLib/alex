@@ -78,7 +78,11 @@ public class Learner {
 
     /** Indicator for in which phase the learner currently is. */
     public enum LearnerPhase {
+
+        /** If the learner is active. */
         LEARNING,
+
+        /** If the equivalence oracle is active. */
         EQUIVALENCE_TESTING
     }
 
@@ -151,7 +155,8 @@ public class Learner {
      * @param user          The user that wants to start the learning process.
      * @param project       The project the learning process runs in.
      * @param configuration The configuration to use for the learning process.
-     * @throws IllegalArgumentException If the configuration was invalid or the user tried to start a second active learning thread.
+     * @throws IllegalArgumentException If the configuration was invalid or the user tried to start a second active
+     *                                  learning thread.
      * @throws IllegalStateException    If a learning process is already active.
      * @throws NotFoundException        If the symbols specified in the configuration could not be found.
      */
@@ -191,7 +196,7 @@ public class Learner {
         }
 
         List<Symbol> symbolsAsList = symbolDAO.getByIds(user, project.getId(),
-                new LinkedList<>(configuration.getSymbolsAsIds()));
+                                                        new LinkedList<>(configuration.getSymbolsAsIds()));
         Set<Symbol> symbols = new HashSet<>(symbolsAsList);
         learnerResult.setSymbols(symbols);
 
@@ -229,7 +234,7 @@ public class Learner {
         result.setResetSymbol(resetSymbol);
 
         List<Symbol> symbolsAsList = symbolDAO.getByIds(user, project.getId(),
-                new LinkedList<>(result.getSymbolsAsIds()));
+                                                        new LinkedList<>(result.getSymbolsAsIds()));
         Set<Symbol> symbols = new HashSet<>(symbolsAsList);
         result.setSymbols(symbols);
 
@@ -254,7 +259,7 @@ public class Learner {
     private void preStartCheck(User user) {
         if (isActive(user)) {
             throw new IllegalStateException("Only one active learning is allowed per user, "
-                    + "even for user" + user + "!");
+                                                    + "even for user" + user + "!");
         }
     }
 
@@ -274,7 +279,8 @@ public class Learner {
      *
      * @param user          The user to validate the counterexample for.
      * @param configuration The new configuration.
-     * @throws IllegalArgumentException If the new configuration is based on manual counterexamples and at least one of them is wrong.
+     * @throws IllegalArgumentException If the new configuration is based on manual counterexamples and at least one
+     *                                  of them is wrong.
      */
     private void validateCounterexample(User user, LearnerResumeConfiguration configuration)
             throws IllegalArgumentException {
@@ -298,20 +304,20 @@ public class Learner {
                     outputs.add(io.getOutput());
                 } else {
                     throw new IllegalArgumentException("The symbol with the name '" + io.getInput() + "'"
-                            + " is not used in this test setup.");
+                                                               + " is not used in this test setup.");
                 }
             }
 
             // finally check if the given sample matches the behavior of the SUL
             List<String> results = readOutputs(lastResult.getUser(),
-                    lastResult.getProject(),
-                    lastResult.getResetSymbol(),
-                    symbolsFromCounterexample,
-                    lastResult.getBrowser());
+                                               lastResult.getProject(),
+                                               lastResult.getResetSymbol(),
+                                               symbolsFromCounterexample,
+                                               lastResult.getBrowser());
 
             if (!results.equals(outputs)) {
                 throw new IllegalArgumentException("At least one of the given samples for counterexamples"
-                        + " is not matching the behavior of the SUL.");
+                                                           + " is not matching the behavior of the SUL.");
             }
         }
     }
@@ -383,10 +389,11 @@ public class Learner {
     /**
      * Determine the output of the SUL by testing a sequence of input symbols.
      *
-     * @param user        The user in which context the test should happen.
-     * @param project     The project in which context the test should happen.
-     * @param resetSymbol The reset symbol to use.
-     * @param symbols     The symbol sequence to process in order to generate the output sequence.
+     * @param user          The user in which context the test should happen.
+     * @param project       The project in which context the test should happen.
+     * @param resetSymbol   The reset symbol to use.
+     * @param symbols       The symbol sequence to process in order to generate the output sequence.
+     * @param browserConfig The configuration to use for the web browser.
      * @return The following output sequence.
      * @throws LearnerException If something went wrong while testing the symbols.
      */

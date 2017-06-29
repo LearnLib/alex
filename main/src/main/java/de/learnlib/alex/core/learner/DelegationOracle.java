@@ -30,7 +30,7 @@ import java.util.Collection;
  * @param <O> Output symbol type.
  */
 @ParametersAreNonnullByDefault
-public class DelegateOracle<I, O> implements MembershipOracle<I, Word<O>> {
+public class DelegationOracle<I, O> implements MembershipOracle<I, Word<O>> {
 
     /** The sul the membership queries should be posed to. */
     private MembershipOracle<I, Word<O>> delegate;
@@ -38,10 +38,9 @@ public class DelegateOracle<I, O> implements MembershipOracle<I, Word<O>> {
     /**
      * Constructor.
      *
-     * @param delegate
-     *          The membership oracle the queries are delegated to.
+     * @param delegate The membership oracle the queries are delegated to.
      */
-    public DelegateOracle(MembershipOracle<I, Word<O>> delegate) {
+    public DelegationOracle(MembershipOracle<I, Word<O>> delegate) {
         this.delegate = delegate;
     }
 
@@ -50,12 +49,10 @@ public class DelegateOracle<I, O> implements MembershipOracle<I, Word<O>> {
         delegate.processQueries(queries);
     }
 
-    /** @param delegate {@link #delegate}. */
     public void setDelegate(MembershipOracle<I, Word<O>> delegate) {
         this.delegate = delegate;
     }
 
-    /** @return {@link #delegate}. */
     public MembershipOracle<I, Word<O>> getDelegate() {
         return delegate;
     }

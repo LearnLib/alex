@@ -89,7 +89,7 @@ public class LearnerThread extends Thread {
     private final Alphabet<String> sigma;
 
     /** The membership oracle. */
-    private final DelegateOracle<String, String> mqOracle;
+    private final DelegationOracle<String, String> mqOracle;
 
     /** The number of mqs executed in parallel. */
     private int maxConcurrentQueries;
@@ -140,9 +140,9 @@ public class LearnerThread extends Thread {
         });
 
         if (result.isUseMQCache()) {
-            this.mqOracle = new DelegateOracle<>(MealyCacheOracle.createDAGCacheOracle(this.sigma, monitorOracle));
+            this.mqOracle = new DelegationOracle<>(MealyCacheOracle.createDAGCacheOracle(this.sigma, monitorOracle));
         } else {
-            this.mqOracle = new DelegateOracle<>(monitorOracle);
+            this.mqOracle = new DelegationOracle<>(monitorOracle);
         }
 
         this.learner = result.getAlgorithm().createLearner(sigma, mqOracle);
@@ -177,7 +177,9 @@ public class LearnerThread extends Thread {
      * The learner is then internally where it stopped the last time.
      */
     private void learnFromHypothesis(int step) {
-        final CompactMealy<String, String> hypothesis = result.getSteps().get(step - 1).getHypothesis().createMealyMachine(sigma);
+        final CompactMealy<String, String> hypothesis = result.getSteps().get(step - 1).getHypothesis()
+                .createMealyMachine(sigma);
+
         final MembershipOracle<String, Word<String>> oracle = mqOracle.getDelegate();
         mqOracle.setDelegate(new SimulatorOracle<>(hypothesis));
 

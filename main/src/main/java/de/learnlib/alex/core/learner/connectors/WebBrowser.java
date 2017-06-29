@@ -16,7 +16,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -118,7 +117,8 @@ public enum WebBrowser {
                         } else {
                             ChromeDriverService service = new ChromeDriverService.Builder()
                                     .usingAnyFreePort()
-                                    .withEnvironment(ImmutableMap.of("DISPLAY", ":" + String.valueOf(config.getXvfbDisplayPort())))
+                                    .withEnvironment(ImmutableMap.of("DISPLAY", ":"
+                                            + String.valueOf(config.getXvfbDisplayPort())))
                                     .build();
                             driver = new ChromeDriver(service, chromeCapabilities);
                         }
@@ -131,7 +131,8 @@ public enum WebBrowser {
                             driver = new FirefoxDriver(firefoxCapabilities);
                         } else {
                             FirefoxBinary binary = new FirefoxBinary();
-                            binary.setEnvironmentProperty("DISPLAY", ":" + String.valueOf(config.getXvfbDisplayPort()));
+                            binary.setEnvironmentProperty("DISPLAY", ":"
+                                    + String.valueOf(config.getXvfbDisplayPort()));
                             driver = new FirefoxDriver(binary, null, firefoxCapabilities);
                         }
 

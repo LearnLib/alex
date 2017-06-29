@@ -40,7 +40,7 @@ public class QueryMonitorOracle<I, O> implements MembershipOracle<I, Word<O>> {
      * @param <I> Input symbol type.
      * @param <O> Output symbol type.
      */
-    public interface QueryProcessingListener<I,O> {
+    public interface QueryProcessingListener<I, O> {
 
         /** @param queries The queries that are or have been processed. */
         void process(Collection<? extends Query<I, Word<O>>> queries);
@@ -50,16 +50,15 @@ public class QueryMonitorOracle<I, O> implements MembershipOracle<I, Word<O>> {
     private final MembershipOracle<I, Word<O>> delegate;
 
     /** The pre process listeners. */
-    private List<QueryProcessingListener<I,O>> preProcessListeners;
+    private List<QueryProcessingListener<I, O>> preProcessListeners;
 
     /** The pre process listeners. */
-    private List<QueryProcessingListener<I,O>> postProcessListeners;
+    private List<QueryProcessingListener<I, O>> postProcessListeners;
 
     /**
      * Constructor.
      *
-     * @param delegate
-     *          The membership oracle the queries are delegated to.
+     * @param delegate The membership oracle the queries are delegated to.
      */
     public QueryMonitorOracle(MembershipOracle<I, Word<O>> delegate) {
         this.delegate = delegate;
@@ -72,7 +71,7 @@ public class QueryMonitorOracle<I, O> implements MembershipOracle<I, Word<O>> {
      *
      * @param listener The listener.
      */
-    public void addPreProcessingListener(QueryProcessingListener<I,O> listener) {
+    public void addPreProcessingListener(QueryProcessingListener<I, O> listener) {
         this.preProcessListeners.add(listener);
     }
 
@@ -81,7 +80,7 @@ public class QueryMonitorOracle<I, O> implements MembershipOracle<I, Word<O>> {
      *
      * @param listener The listener.
      */
-    public void addPostProcessingListener(QueryProcessingListener<I,O> listener) {
+    public void addPostProcessingListener(QueryProcessingListener<I, O> listener) {
         this.preProcessListeners.add(listener);
     }
 

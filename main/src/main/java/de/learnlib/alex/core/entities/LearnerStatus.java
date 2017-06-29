@@ -68,8 +68,9 @@ public class LearnerStatus {
     /**
      * Constructor for a status of an active thread.
      *
-     * @param learnerResult
-     *         The result that contain the interesting statistics and information for the status..
+     * @param learnerResult  The result that contain the interesting statistics and information for the status.
+     * @param learnerPhase   The current phase of the experiment.
+     * @param currentQueries The queries that are executed at the moment.
      */
     public LearnerStatus(LearnerResult learnerResult, Learner.LearnerPhase learnerPhase,
                          List<DefaultQueryProxy> currentQueries) {

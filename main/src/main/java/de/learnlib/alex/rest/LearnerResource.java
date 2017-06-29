@@ -26,7 +26,6 @@ import de.learnlib.alex.core.entities.LearnerStatus;
 import de.learnlib.alex.core.entities.Project;
 import de.learnlib.alex.core.entities.ReadOutputConfig;
 import de.learnlib.alex.core.entities.Symbol;
-import de.learnlib.alex.core.entities.SymbolSet;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.core.learner.Learner;
@@ -321,7 +320,9 @@ public class LearnerResource {
     @Path("/outputs/{project_id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response readOutput(@PathParam("project_id") Long projectId, ReadOutputConfig outputConfig) throws NotFoundException {
+    public Response readOutput(@PathParam("project_id") Long projectId, ReadOutputConfig outputConfig)
+            throws NotFoundException {
+
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("readOutput({}, {}) for user {}.", projectId, outputConfig, user);
 
@@ -429,7 +430,8 @@ public class LearnerResource {
         Alphabet<String> sigmaB = mealyMachineProxies.get(1).createAlphabet();
 
         if (sigmaA.size() != sigmaB.size() || !sigmaA.containsAll(sigmaB)) {
-            IllegalArgumentException e = new IllegalArgumentException("The alphabets of the hypotheses are not identical!");
+            IllegalArgumentException e = new IllegalArgumentException("The alphabets of the hypotheses are not "
+                                                                              + "identical!");
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
         }
 

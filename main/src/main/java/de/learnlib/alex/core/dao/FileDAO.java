@@ -18,13 +18,10 @@ package de.learnlib.alex.core.dao;
 
 import de.learnlib.alex.core.entities.UploadableFile;
 import de.learnlib.alex.exceptions.NotFoundException;
-import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**

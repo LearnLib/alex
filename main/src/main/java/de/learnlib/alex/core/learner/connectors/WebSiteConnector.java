@@ -41,6 +41,9 @@ public class WebSiteConnector implements Connector {
     /** How often it should be tried to navigate to a given URL. */
     private static final int MAX_RETRIES = 10;
 
+    /** How long it should be waited for the browser to finish building the site in seconds. */
+    private static final int READY_STATE_TIMEOUT = 10;
+
     /** The browser to use. */
     private BrowserConfig browser;
 
@@ -96,7 +99,7 @@ public class WebSiteConnector implements Connector {
 
                 // wait until the browser is loaded
                 if (driver instanceof JavascriptExecutor) {
-                    new WebDriverWait(driver, 10).until((ExpectedCondition<Boolean>) wd ->
+                    new WebDriverWait(driver, READY_STATE_TIMEOUT).until((ExpectedCondition<Boolean>) wd ->
                             ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
                 }
 

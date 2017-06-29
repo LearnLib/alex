@@ -28,20 +28,31 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Extension of {@link de.learnlib.eqtests.basic.CompleteExplorationEQOracle} that poses batches of membership queries.
+ *
+ * @param <I> The input type.
+ * @param <D> The domain output type.
+ */
 public class CompleteExplorationEQOracle<I, D> implements EquivalenceOracle<DetOutputAutomaton<?, I, ?, D>, I, D> {
 
+    /** The minimum length of the words to test. */
     private int minDepth;
+
+    /** The maximum length of the words to test. */
     private int maxDepth;
+
+    /** The allowed size of the membership query batches. */
     private int batchSize;
+
+    /** The oracle where the membership queries are posed to. */
     private final MembershipOracle<I, D> sulOracle;
 
     /**
      * Constructor.
      *
-     * @param sulOracle
-     *         interface to the system under learning.
-     * @param maxDepth
-     *         maximum exploration depth.
+     * @param sulOracle interface to the system under learning.
+     * @param maxDepth  maximum exploration depth.
      */
     public CompleteExplorationEQOracle(MembershipOracle<I, D> sulOracle, int maxDepth) {
         this(sulOracle, 1, maxDepth);
@@ -50,14 +61,10 @@ public class CompleteExplorationEQOracle<I, D> implements EquivalenceOracle<DetO
     /**
      * Constructor.
      *
-     * @param sulOracle
-     *         interface to the system under learning.
-     * @param minDepth
-     *         minimum exploration depth.
-     * @param maxDepth
-     *         maximum exploration depth.
-     * @param batchSize
-     *         size of the batch.
+     * @param sulOracle interface to the system under learning.
+     * @param minDepth  minimum exploration depth.
+     * @param maxDepth  maximum exploration depth.
+     * @param batchSize size of the batch.
      */
     public CompleteExplorationEQOracle(MembershipOracle<I, D> sulOracle, int minDepth, int maxDepth, int batchSize) {
         if (maxDepth < minDepth) maxDepth = minDepth;
@@ -73,12 +80,9 @@ public class CompleteExplorationEQOracle<I, D> implements EquivalenceOracle<DetO
     /**
      * Constructor.
      *
-     * @param sulOracle
-     *         interface to the system under learning.
-     * @param minDepth
-     *         minimum exploration depth.
-     * @param maxDepth
-     *         maximum exploration depth.
+     * @param sulOracle interface to the system under learning.
+     * @param minDepth  minimum exploration depth.
+     * @param maxDepth  maximum exploration depth.
      */
     public CompleteExplorationEQOracle(MembershipOracle<I, D> sulOracle, int minDepth, int maxDepth) {
         this(sulOracle, minDepth, maxDepth, 1);

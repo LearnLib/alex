@@ -21,7 +21,6 @@ import de.learnlib.api.MembershipOracle;
 import de.learnlib.oracles.DefaultQuery;
 import net.automatalib.automata.UniversalDeterministicAutomaton;
 import net.automatalib.automata.concepts.Output;
-import net.automatalib.automata.fsa.DFA;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.commons.util.collections.CollectionsUtil;
 import net.automatalib.util.automata.Automata;
@@ -34,32 +33,31 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class WMethodEQOracle<A extends UniversalDeterministicAutomaton<?, I, ?, ?, ?> & Output<I, D>, I, D> implements EquivalenceOracle<A, I, D> {
+/**
+ * An extension of the {@link de.learnlib.eqtests.basic.WMethodEQOracle} that uses membership query batching.
+ *
+ * @param <A> The automaton type.
+ * @param <I> The input type.
+ * @param <D> The output domain type.
+ */
+public class WMethodEQOracle<A extends UniversalDeterministicAutomaton<?, I, ?, ?, ?> & Output<I, D>, I, D>
+        implements EquivalenceOracle<A, I, D> {
 
-    public static class DFAWMethodEQOracle<I> extends WMethodEQOracle<DFA<?, I>, I, Boolean> implements DFAEquivalenceOracle<I> {
-
-        public DFAWMethodEQOracle(int maxDepth, MembershipOracle<I, Boolean> sulOracle) {
-            super(maxDepth, sulOracle);
-        }
-
-        public DFAWMethodEQOracle(int maxDepth, MembershipOracle<I, Boolean> sulOracle, int batchSize) {
-            super(maxDepth, sulOracle, batchSize);
-        }
-    }
-
-    public static class MealyWMethodEQOracle<I, O> extends WMethodEQOracle<MealyMachine<?, I, ?, O>, I, Word<O>> implements MealyEquivalenceOracle<I, O> {
-
-        public MealyWMethodEQOracle(int maxDepth, MembershipOracle<I, Word<O>> sulOracle) {
-            super(maxDepth, sulOracle);
-        }
+    public static class MealyWMethodEQOracle<I, O> extends WMethodEQOracle<MealyMachine<?, I, ?, O>, I, Word<O>>
+            implements MealyEquivalenceOracle<I, O> {
 
         public MealyWMethodEQOracle(int maxDepth, MembershipOracle<I, Word<O>> sulOracle, int batchSize) {
             super(maxDepth, sulOracle, batchSize);
         }
     }
 
+    /** {@link de.learnlib.eqtests.basic.WMethodEQOracle#maxDepth}. */
     private int maxDepth;
+
+    /** The allowed size of the query batch. */
     private int batchSize;
+
+    /** {@link de.learnlib.eqtests.basic.WMethodEQOracle#sulOracle}. */
     private final MembershipOracle<I, D> sulOracle;
 
     /**
