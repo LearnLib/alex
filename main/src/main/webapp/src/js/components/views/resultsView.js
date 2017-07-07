@@ -29,13 +29,16 @@ class ResultsView {
      * @param {LearnResultResource} LearnResultResource
      * @param {PromptService} PromptService
      * @param {ToastService} ToastService
+     * @param {LearnerResultDownloadService} LearnerResultDownloadService
      */
     // @ngInject
-    constructor($state, SessionService, LearnResultResource, PromptService, ToastService) {
+    constructor($state, SessionService, LearnResultResource, PromptService, ToastService,
+                LearnerResultDownloadService) {
         this.$state = $state;
         this.PromptService = PromptService;
         this.ToastService = ToastService;
         this.LearnResultResource = LearnResultResource;
+        this.LearnerResultDownloadService = LearnerResultDownloadService;
 
         /**
          * The project that is in the session.
@@ -112,6 +115,36 @@ class ResultsView {
         if (this.selectedResults.length > 0) {
             const testNos = this.selectedResults.map(r => r.testNo);
             this.$state.go('resultsCompare', {testNos: testNos.join(',')});
+        }
+    }
+
+    /**
+     * Redirect to the statistics page for the selected results.
+     *
+     * @param {LearnResult|LearnResult[]} results - The result[s] to shows statistics of.
+     */
+    showStatistics(results) {
+        const testNos = results.length ? this.selectedResults.map(r => r.testNo).join(',') : results.testNo;
+        this.$state.go('statisticsCompare', {testNos});
+    }
+
+    /**
+     * Exports the statistics and some other attributes from a given learn result into csv.
+     *
+     * @param {LearnResult} result - The learn result to download as csv.
+     */
+    exportAsCSV(result) {
+        this.LearnerResultDownloadService.download([result])
+            .then(() => this.ToastService.success('The result has been exported.'));
+    }
+
+    /**
+     * Exports selected learn results into a csv file.
+     */
+    exportSelectedAsCSV() {
+        if (this.selectedResults.length > 0) {
+            this.LearnerResultDownloadService.download(this.selectedResults)
+                .then(() => this.ToastService.success('The results have been exported.'));
         }
     }
 }

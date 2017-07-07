@@ -95,11 +95,6 @@ export function config($stateProvider, $urlRouterProvider) {
             template: '<results-compare-view></results-compare-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Results > Compare'}
         })
-        .state('statistics', {
-            url: '/statistics',
-            template: '<statistics-view></statistics-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Statistics'}
-        })
         .state('statisticsCompare', {
             url: '/statistics/{testNos:string}',
             template: '<statistics-compare-view></statistics-compare-view>',

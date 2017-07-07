@@ -26,6 +26,10 @@ export function dropdownHover() {
         require: '^uibDropdown',
         link(scope, el, attrs, ctrl) {
             el.on('mouseenter', () => {
+                if (el[0].classList.contains("disabled")) {
+                    return;
+                }
+
                 scope.$apply(() => {
                     ctrl.toggle(true);
                 });

@@ -1,6 +1,6 @@
 <div class="view">
     <view-header title="Statistics Compare">
-        <a ui-sref="statistics" class="btn btn-sm btn-default btn-icon"
+        <a ui-sref="results" class="btn btn-sm btn-default btn-icon"
            uib-tooltip="Back to the list" tooltip-placement="right">
             <i class="fa fa-reply"></i>
         </a>
@@ -34,7 +34,7 @@
                     <th>Browser</th>
                     <th>Algorithm</th>
                     <th>Sigma</th>
-                    <th>Equivalence Queries</th>
+                    <th>Equivalence queries</th>
                 </tr>
                 </thead>
                 <tbody ng-if="!vm.chartData.context.length">
@@ -66,7 +66,7 @@
             <div class="row" ng-if="vm.chartData.options">
                 <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
 
-                    <widget title="#Membership Queries" id="chart-eqs">
+                    <widget title="Membership queries" id="chart-eqs">
                         <div style="width: 100%; height: 450px">
                             <linechart data="vm.chartData.data.mqs" options="vm.chartData.options"></linechart>
                         </div>
@@ -75,6 +75,7 @@
                             <i class="fa fa-fw fa-download"></i> Download SVG
                         </button>
                     </widget>
+
                     <widget title="Duration (in ms)" id="chart-duration">
                         <div style="width: 100%; height: 450px">
                             <linechart data="vm.chartData.data.duration" options="vm.chartData.options"></linechart>
@@ -85,9 +86,11 @@
                             <i class="fa fa-fw fa-download"></i> Download SVG
                         </button>
                     </widget>
+
                 </div>
                 <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
-                    <widget title="#Symbol Calls" id="chart-symbols">
+
+                    <widget title="Symbol calls" id="chart-symbols">
                         <div style="width: 100%; height: 450px">
                             <linechart data="vm.chartData.data.symbols" options="vm.chartData.options"></linechart>
                         </div>
@@ -97,6 +100,7 @@
                             <i class="fa fa-fw fa-download"></i> Download SVG
                         </button>
                     </widget>
+
                 </div>
             </div>
         </div>

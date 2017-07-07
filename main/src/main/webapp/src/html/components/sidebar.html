@@ -132,20 +132,12 @@
                     <div class="sidebar-group-item-label">Setup</div>
                 </a>
                 <a ui-sref="results" class="sidebar-group-item"
-                   ng-class="{'active':vm.isState('results', 'resultsCompare')}"
+                   ng-class="{'active':vm.isState('results', 'resultsCompare', 'statisticsCompare')}"
                    uib-tooltip="Learn Results" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw fa-sitemap"></i>
                     </div>
                     <div class="sidebar-group-item-label">Results</div>
-                </a>
-                <a ui-sref="statistics" class="sidebar-group-item"
-                   ng-class="{'active':vm.isState('statistics', 'statisticsCompare')}"
-                   uib-tooltip="Statistics" tooltip-placement="right">
-                    <div class="sidebar-group-item-icon">
-                        <i class="fa fa-fw fa-bar-chart"></i>
-                    </div>
-                    <div class="sidebar-group-item-label">Statistics</div>
                 </a>
                 <a ui-sref="counters" class="sidebar-group-item" ng-class="{'active':vm.isState('counters')}"
                    uib-tooltip="Manage Counters" tooltip-placement="right">

@@ -5,15 +5,32 @@
         <div ng-show="vm.results.length > 0">
             <checkbox-multiple model="vm.results" class="pull-left"></checkbox-multiple>
 
-            <div class="btn-group btn-group-sm">
-                <button class="btn btn-primary" ng-click="vm.openSelectedResults()"
+            <button class="btn btn-sm btn-primary" ng-click="vm.openSelectedResults()"
+                    ng-class="{'disabled': vm.selectedResults.length === 0}">
+                Compare
+            </button>
+            <button class="btn btn-sm btn-default" ng-click="vm.deleteResults()"
+                    ng-class="{'disabled': vm.selectedResults.length === 0}">
+                Delete
+            </button>
+
+            <div class="btn-group btn-group-sm" uib-dropdown style="margin-left: 3px;">
+                <button class="btn btn-default btn-dropdown" uib-dropdown-toggle dropdown-hover
                         ng-class="{'disabled': vm.selectedResults.length === 0}">
-                    Compare
+                    Statistics <i class="fa fa-fw fa-caret-down"></i>
                 </button>
-                <button class="btn btn-default" ng-click="vm.deleteResults()"
-                        ng-class="{'disabled': vm.selectedResults.length === 0}">
-                    Delete
-                </button>
+                <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
+                    <li>
+                        <a href="" ng-click="vm.showStatistics(vm.selectedResults)">
+                            <i class="fa fa-fw fa-bar-chart"></i> Show statistics
+                        </a>
+                    </li>
+                    <li>
+                        <a href="" ng-click="vm.exportSelectedAsCSV()">
+                            <i class="fa fa-fw fa-download"></i> Export statistics
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </action-bar>
@@ -27,7 +44,8 @@
                                         link-to="hypothesis">
 
                     <div class="btn-group btn-group-xs" uib-dropdown>
-                        <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle dropdown-hover>
+                        <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle
+                                dropdown-hover>
                             <i class="fa fa-bars"></i>
                         </button>
                         <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
@@ -50,6 +68,17 @@
                             <li>
                                 <a href="" ng-click="vm.deleteResult(result)">
                                     <i class="fa fa-trash fa-fw"></i> Delete
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="" ng-click="vm.showStatistics(result)">
+                                    <i class="fa fa-fw fa-bar-chart"></i> Show statistics
+                                </a>
+                            </li>
+                            <li>
+                                <a href="" ng-click="vm.exportAsCSV(result)">
+                                    <i class="fa fa-fw fa-download"></i> Export statistics
                                 </a>
                             </li>
                         </ul>

@@ -92,7 +92,6 @@ import {resultsCompareView} from "./components/views/resultsCompareView";
 import {resultsView} from "./components/views/resultsView";
 import {settingsView} from "./components/views/settingsView";
 import {statisticsCompareView} from "./components/views/statisticsCompareView";
-import {statisticsView} from "./components/views/statisticsView";
 import {symbolsActionsView} from "./components/views/symbolsActionsView";
 import {symbolsView} from "./components/views/symbolsView";
 import {symbolsTestView} from "./components/views/symbolsTestView";
@@ -285,7 +284,6 @@ angular
     .component('resultsView', resultsView)
     .component('settingsView', settingsView)
     .component('statisticsCompareView', statisticsCompareView)
-    .component('statisticsView', statisticsView)
     .component('symbolsActionsView', symbolsActionsView)
     .component('symbolsView', symbolsView)
     .component('symbolsTestView', symbolsTestView)

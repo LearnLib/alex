@@ -48,7 +48,7 @@ export class LearnerResultDownloadService {
                 csv += result.testNo.toString() + ';';
                 csv += '"' + step.statistics.startDate + '";';
                 csv += step.stepNo.toString() + ';';
-                csv += result.algorithm + ';';
+                csv += result.algorithm.name + ';';
                 csv += step.eqOracle.type + ';';
                 csv += result.symbols.length.toString() + ';';
                 csv += step.statistics.eqsUsed.toString() + ';';
