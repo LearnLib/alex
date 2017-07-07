@@ -18,7 +18,7 @@ import angularDragula from "angular-dragula";
 import ngFileUpload from "ng-file-upload";
 import angularJwt from "angular-jwt";
 import uiBootstrap from "angular-ui-bootstrap";
-import uiRouter from "angular-ui-router";
+import uiRouter from "@uirouter/angularjs";
 import toastr from "angular-toastr";
 import ngAnimate from "angular-animate";
 import ngMessages from "angular-messages";
