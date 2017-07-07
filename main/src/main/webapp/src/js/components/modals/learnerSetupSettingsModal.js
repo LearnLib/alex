@@ -21,7 +21,7 @@ import {learnAlgorithm, eqOracleType} from "../../constants";
  * The controller for the modal dialog where you can set the settings for an upcoming test run.
  * Passes the edited instance of a LearnConfiguration on success.
  */
-export class LearnSetupSettingsModalComponent {
+export class LearnerSetupSettingsModalComponent {
 
     /**
      * Constructor.
@@ -115,14 +115,14 @@ export class LearnSetupSettingsModalComponent {
 }
 
 
-export const learnSetupSettingsModalComponent = {
-    templateUrl: 'html/components/modals/learn-setup-settings-modal.html',
+export const learnerSetupSettingsModalComponent = {
+    templateUrl: 'html/components/modals/learner-setup-settings-modal.html',
     bindings: {
         close: '&',
         dismiss: '&',
         resolve: '='
     },
-    controller: LearnSetupSettingsModalComponent,
+    controller: LearnerSetupSettingsModalComponent,
     controllerAs: 'vm',
 };
 
@@ -137,7 +137,7 @@ export const learnSetupSettingsModalComponent = {
  * @returns {{restrict: string, scope: {learnConfiguration: string}, link: Function}}
  */
 // @ngInject
-export function learnSetupSettingsModalHandle($uibModal) {
+export function learnerSetupSettingsModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -147,7 +147,7 @@ export function learnSetupSettingsModalHandle($uibModal) {
         link(scope, el) {
             el.on('click', () => {
                 $uibModal.open({
-                    component: 'learnSetupSettingsModal',
+                    component: 'learnerSetupSettingsModal',
                     resolve: {
                         modalData: function () {
                             return {

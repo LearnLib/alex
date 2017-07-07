@@ -16,6 +16,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -70,8 +72,7 @@ public enum WebBrowser {
      *
      * @param name The name of the web browser.
      * @return The corresponding WebBrowser enum type.
-     * @throws IllegalArgumentException
-     *          If an unsupported WebDriver string has been used.
+     * @throws IllegalArgumentException If an unsupported WebDriver string has been used.
      */
     @JsonCreator
     public static WebBrowser fromString(String name) throws IllegalArgumentException {
@@ -89,8 +90,7 @@ public enum WebBrowser {
      *
      * @param config The browser config.
      * @return An instance of a web driver.
-     * @throws Exception
-     *          If the instantiation of the driver failed.
+     * @throws Exception If the instantiation of the driver failed.
      */
     public synchronized WebDriver getWebDriver(BrowserConfig config) throws Exception {
         int retries = 0;
@@ -112,29 +112,33 @@ public enum WebBrowser {
                         chromeCapabilities.setCapability("recreateChromeDriverSessions", true);
                         chromeCapabilities.setCapability("chromeOptions", chromeOptions);
 
+                        ChromeDriverService service;
                         if (config.getXvfbDisplayPort() == null) {
-                            driver = new ChromeDriver(chromeCapabilities);
+                            service = new ChromeDriverService.Builder()
+                                    .usingAnyFreePort()
+                                    .build();
                         } else {
-                            ChromeDriverService service = new ChromeDriverService.Builder()
+                            service = new ChromeDriverService.Builder()
                                     .usingAnyFreePort()
                                     .withEnvironment(ImmutableMap.of("DISPLAY", ":"
                                             + String.valueOf(config.getXvfbDisplayPort())))
                                     .build();
-                            driver = new ChromeDriver(service, chromeCapabilities);
                         }
+
+                        driver = new ChromeDriver(service, chromeCapabilities);
 
                         break;
                     case FIREFOX:
-                        DesiredCapabilities firefoxCapabilities = DesiredCapabilities.firefox();
+                        FirefoxBinary binary = new FirefoxBinary();
 
-                        if (config.getXvfbDisplayPort() == null) {
-                            driver = new FirefoxDriver(firefoxCapabilities);
-                        } else {
-                            FirefoxBinary binary = new FirefoxBinary();
+                        if (config.getXvfbDisplayPort() != null) {
                             binary.setEnvironmentProperty("DISPLAY", ":"
                                     + String.valueOf(config.getXvfbDisplayPort()));
-                            driver = new FirefoxDriver(binary, null, firefoxCapabilities);
                         }
+
+                        FirefoxOptions options = new FirefoxOptions();
+                        options.setBinary(binary);
+                        driver = new FirefoxDriver(options);
 
                         break;
                     case EDGE:
@@ -142,7 +146,7 @@ public enum WebBrowser {
                         driver = new EdgeDriver(edgeCapabilities);
                         break;
                     default:
-                        throw new Exception("Unsupported Webdriver");
+                        throw new Exception("Unsupported web driver");
                 }
 
                 if (retries > 0) {

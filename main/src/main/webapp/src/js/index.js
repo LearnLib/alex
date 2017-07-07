@@ -55,13 +55,13 @@ import {
     hypothesisLayoutSettingsModalComponent
 } from "./components/modals/hypothesisLayoutSettingsModal";
 import {
-    learnResultDetailsModalHandle,
-    learnResultDetailsModalComponent
-} from "./components/modals/learnResultDetailsModal";
+    learnerResultDetailsModalHandle,
+    learnerResultDetailsModalComponent
+} from "./components/modals/learnerResultDetailsModal";
 import {
-    learnSetupSettingsModalHandle,
-    learnSetupSettingsModalComponent
-} from "./components/modals/learnSetupSettingsModal";
+    learnerSetupSettingsModalHandle,
+    learnerSetupSettingsModalComponent
+} from "./components/modals/learnerSetupSettingsModal";
 import {projectSettingsModalHandle, projectSettingsModalComponent} from "./components/modals/projectSettingsModal";
 import {symbolCreateModalHandle, symbolCreateModalComponent} from "./components/modals/symbolCreateModal";
 import {symbolEditModalHandle, symbolEditModalComponent} from "./components/modals/symbolEditModal";
@@ -85,7 +85,7 @@ import {errorView} from "./components/views/errorView";
 import {filesView} from "./components/views/filesView";
 import {homeView} from "./components/views/homeView";
 import {learnerSetupView} from "./components/views/learnerSetupView";
-import {learnerStartView} from "./components/views/learnerStartView";
+import {learnerView} from "./components/views/learnerView";
 import {projectsView} from "./components/views/projectsView";
 import {projectsDashboardView} from "./components/views/projectsDashboardView";
 import {resultsCompareView} from "./components/views/resultsCompareView";
@@ -245,10 +245,10 @@ angular
     .component('actionEditModal', actionEditModalComponent)
     .directive('hypothesisLayoutSettingsModalHandle', hypothesisLayoutSettingsModalHandle)
     .component('hypothesisLayoutSettingsModal', hypothesisLayoutSettingsModalComponent)
-    .directive('learnResultDetailsModalHandle', learnResultDetailsModalHandle)
-    .component('learnResultDetailsModal', learnResultDetailsModalComponent)
-    .directive('learnSetupSettingsModalHandle', learnSetupSettingsModalHandle)
-    .component('learnSetupSettingsModal', learnSetupSettingsModalComponent)
+    .directive('learnerResultDetailsModalHandle', learnerResultDetailsModalHandle)
+    .component('learnerResultDetailsModal', learnerResultDetailsModalComponent)
+    .directive('learnerSetupSettingsModalHandle', learnerSetupSettingsModalHandle)
+    .component('learnerSetupSettingsModal', learnerSetupSettingsModalComponent)
     .directive('projectSettingsModalHandle', projectSettingsModalHandle)
     .component('projectSettingsModal', projectSettingsModalComponent)
     .directive('symbolCreateModalHandle', symbolCreateModalHandle)
@@ -278,7 +278,7 @@ angular
     .component('filesView', filesView)
     .component('homeView', homeView)
     .component('learnerSetupView', learnerSetupView)
-    .component('learnerStartView', learnerStartView)
+    .component('learnerView', learnerView)
     .component('projectsView', projectsView)
     .component('projectsDashboardView', projectsDashboardView)
     .component('resultsCompareView', resultsCompareView)

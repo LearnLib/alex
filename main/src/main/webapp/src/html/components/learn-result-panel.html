@@ -16,7 +16,7 @@
                     </button>
                     <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu" ng-if="vm.result.steps[vm.pointer].hypothesis">
                         <li>
-                            <a href="" learn-result-details-modal-handle result="vm.result" current="vm.pointer">
+                            <a href="" learner-result-details-modal-handle result="vm.result" current="vm.pointer">
                                 <i class="fa fa-info fa-fw"></i> Details
                             </a>
                         </li>
@@ -40,7 +40,7 @@
                     </ul>
                     <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu" ng-if="!vm.result.steps[vm.pointer].hypothesis">
                         <li>
-                            <a href="" learn-result-details-modal-handle result="vm.result" current="vm.pointer">
+                            <a href="" learner-result-details-modal-handle result="vm.result" current="vm.pointer">
                                 <i class="fa fa-info fa-fw"></i> Details
                             </a>
                         </li>
@@ -51,7 +51,7 @@
                         style="margin-left: 6px"
                         ng-click="vm.showInternalDataStructure()"
                         ng-if="vm.hasInternalDataStructure()">
-                    Data Structure
+                    Data structure
                 </button>
 
                 <!-- browser -->

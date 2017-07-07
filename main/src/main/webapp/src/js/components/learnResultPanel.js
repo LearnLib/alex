@@ -101,14 +101,14 @@ class LearnResultPanel {
      * @returns {boolean|*}
      */
     hasInternalDataStructure() {
-        return this.result.algorithm !== learnAlgorithm.TTT;
+        return [learnAlgorithm.DISCRIMINATION_TREE, learnAlgorithm.LSTAR].indexOf(this.result.algorithm.name) > -1;
     }
 
     /**
      * Switches the mode to the one to display the internal data structure.
      */
     showInternalDataStructure() {
-        switch (this.result.algorithm) {
+        switch (this.result.algorithm.name) {
             case learnAlgorithm.LSTAR:
                 this.mode = this.modes.OBSERVATION_TABLE;
                 break;

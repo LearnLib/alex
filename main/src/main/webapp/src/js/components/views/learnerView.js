@@ -20,7 +20,7 @@ import {LearnResult} from '../../entities/LearnResult';
  * The controller for showing a load screen during the learning and shows all learn results from the current test
  * in the intermediate steps.
  */
-class LearnerStartView {
+class LearnerViewComponent {
 
     /**
      * Constructor.
@@ -238,8 +238,8 @@ class LearnerStartView {
     }
 }
 
-export const learnerStartView = {
-    controller: LearnerStartView,
+export const learnerView = {
+    controller: LearnerViewComponent,
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/learner-start-view.html'
+    templateUrl: 'html/components/views/learner-view.html'
 };

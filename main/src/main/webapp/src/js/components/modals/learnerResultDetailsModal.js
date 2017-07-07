@@ -19,7 +19,7 @@
  * to this controller should be an object with a property 'result' which contains a learn result object. If none is
  * given, nothing will be displayed.
  */
-export class LearnResultDetailsModalComponent {
+export class LearnerResultDetailsModalComponent {
 
     /** Constructor. */
     constructor() {
@@ -57,13 +57,13 @@ export class LearnResultDetailsModalComponent {
 }
 
 
-export const learnResultDetailsModalComponent = {
-    templateUrl: 'html/components/modals/learn-result-details-modal.html',
+export const learnerResultDetailsModalComponent = {
+    templateUrl: 'html/components/modals/learner-result-details-modal.html',
     bindings: {
         dismiss: '&',
         resolve: '='
     },
-    controller: LearnResultDetailsModalComponent,
+    controller: LearnerResultDetailsModalComponent,
     controllerAs: 'vm',
 };
 
@@ -73,13 +73,13 @@ export const learnResultDetailsModalComponent = {
  * an attribute and expects a second attribute 'result' which should be the LearnResult whose details should be
  * shown. Attaches a click event on the element that opens the modal.
  *
- * Use it like this: '<button learn-result-details-modal-handle result="...">Click me!</button>'.
+ * Use it like this: '<button learner-result-details-modal-handle result="...">Click me!</button>'.
  *
  * @param $uibModal - The modal service.
  * @returns {{restrict: string, scope: {result: string}, link: Function}}
  */
 // @ngInject
-export function learnResultDetailsModalHandle($uibModal) {
+export function learnerResultDetailsModalHandle($uibModal) {
     return {
         restrict: 'A',
         scope: {
@@ -89,7 +89,7 @@ export function learnResultDetailsModalHandle($uibModal) {
         link(scope, el) {
             el.on('click', () => {
                 $uibModal.open({
-                    component: 'learnResultDetailsModal',
+                    component: 'learnerResultDetailsModal',
                     resolve: {
                         modalData: function () {
                             return {

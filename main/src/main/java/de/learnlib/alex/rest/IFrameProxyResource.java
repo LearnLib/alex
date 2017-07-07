@@ -162,8 +162,6 @@ public class IFrameProxyResource {
         for (Map.Entry<String, List<String>> entry : body.entrySet()) {
             String key = entry.getKey();
             for (String value : entry.getValue()) {
-                System.out.println(key);
-                System.out.println(value);
                 formData.put(key, value);
             }
         }

@@ -15,7 +15,6 @@
 
                 <div class="form-group">
                     <label class="control-label">Algorithm</label> <br>
-                    <span class="text-muted">Select an algorithm that will be used for the learn process</span>
                     <select class="form-control" ng-model="vm.selectedLearningAlgorithm" ng-change="vm.setLearningAlgorithm()"
                             ng-options="(k|formatAlgorithm) for (k,v) in vm.learnAlgorithms">
                         <option value="" disabled>select an algorithm</option>
@@ -24,7 +23,6 @@
 
                 <div class="form-group">
                     <label class="control-label">EQ Oracle</label><br>
-                    <span class="text-muted">Select how counter examples should be found</span>
                     <select class="form-control" ng-model="vm.selectedEqOracle" ng-change="vm.setEqOracle()"
                             ng-options="(v|formatEqOracle) for (k,v) in vm.eqOracles">
                         <option value="" disabled>select an EQ-Oracle</option>
@@ -169,12 +167,12 @@
                      ng-if="vm.learnConfiguration.eqOracle.type === vm.eqOracles.HYPOTHESIS">
 
                     <file-dropzone on-loaded="vm.fileLoaded.bind(vm)">
-                <span ng-hide="vm.learnConfiguration.eqOracle.hypothesis.nodes">
-                    Drag and drop *.json file here or click to upload
-                </span>
+                        <span ng-hide="vm.learnConfiguration.eqOracle.hypothesis.nodes">
+                            Drag and drop *.json file here or click to upload
+                        </span>
                         <span ng-show="vm.learnConfiguration.eqOracle.hypothesis.nodes">
-                    Use a Hypothesis with {{ vm.learnConfiguration.eqOracle.hypothesis.nodes.length }} states
-                </span>
+                            Use a Hypothesis with {{ vm.learnConfiguration.eqOracle.hypothesis.nodes.length }} states
+                        </span>
                     </file-dropzone>
 
                 </div>
