@@ -96,8 +96,8 @@ public class CallAction extends RESTSymbolAction {
     private String url;
 
     /**
-     * Map to store headers, that will be send with the requests.
-     * Every header name has a list of values, to be standard conform (e.g. Accept: text/html,application/xml).
+     * Map to store headers, that will be send with the requests. Every header name has a list of values, to be standard
+     * conform (e.g. Accept: text/html,application/xml).
      */
     @Lob
     private HashMap<String, String> headers;
@@ -109,8 +109,8 @@ public class CallAction extends RESTSymbolAction {
     private Credentials credentials;
 
     /**
-     * Map to store cookies, that will be send with the request.
-     * Cookies are a normal header field, but this should make things easier.
+     * Map to store cookies, that will be send with the request. Cookies are a normal header field, but this should make
+     * things easier.
      */
     @Lob
     private HashMap<String, String> cookies; // OM NOM NOM NOM!!!
@@ -157,8 +157,7 @@ public class CallAction extends RESTSymbolAction {
     }
 
     /**
-     * Get the URL the request will go to.
-     * In the URL all the variables and counters will be replace with their values.
+     * Get the URL the request will go to. In the URL all the variables and counters will be replace with their values.
      *
      * @return The URL which will be called.
      */
@@ -176,8 +175,8 @@ public class CallAction extends RESTSymbolAction {
     }
 
     /**
-     * Get the map of the request header fields.
-     * Every header has a list of values to follow the HTTP standard (e.g. Accept: text/html,application/xml).
+     * Get the map of the request header fields. Every header has a list of values to follow the HTTP standard (e.g.
+     * Accept: text/html,application/xml).
      *
      * @return The map of request headers.
      */
@@ -197,8 +196,8 @@ public class CallAction extends RESTSymbolAction {
     }
 
     /**
-     * Set the map of request headers.
-     * Every header can have multiple values, see {@link #getHeaders()} for more information.
+     * Set the map of request headers. Every header can have multiple values, see {@link #getHeaders()} for more
+     * information.
      *
      * @param headers The new request headers.
      */
@@ -250,8 +249,8 @@ public class CallAction extends RESTSymbolAction {
     }
 
     /**
-     * Creates a new Set of Cookies out of the map of cookies.
-     * In every cookie value the counter and variables are replaced with their actual value.
+     * Creates a new Set of Cookies out of the map of cookies. In every cookie value the counter and variables are
+     * replaced with their actual value.
      *
      * @return A new Set of Cookies, with the actual variable and counter values.
      */
@@ -280,8 +279,8 @@ public class CallAction extends RESTSymbolAction {
     }
 
     /**
-     * Get the optional data which will be send together with a POST or PUT request.
-     * All variables and counters will be replaced with their values.
+     * Get the optional data which will be send together with a POST or PUT request. All variables and counters will be
+     * replaced with their values.
      *
      * @return The data to include in the next POST/ PUT request.
      */
@@ -302,7 +301,7 @@ public class CallAction extends RESTSymbolAction {
     public ExecuteResult execute(WebServiceConnector target) {
         try {
             LOGGER.info(LEARNER_MARKER, "Doing REST request '{} {}' (ignoreFailure: {}, negated: {}).",
-                    method, url, ignoreFailure, negated);
+                        method, url, ignoreFailure, negated);
 
             doRequest(target);
             return getSuccessOutput();
@@ -313,7 +312,7 @@ public class CallAction extends RESTSymbolAction {
     }
 
     private void doRequest(WebServiceConnector target) {
-        Map<String, String> requestHeaders = getHeadersWithVariableValues();
+        final Map<String, String> requestHeaders = getHeadersWithVariableValues();
         if (credentials != null && credentials.areValid()) {
             LOGGER.info(LEARNER_MARKER, "Using credentials '{}'.", credentials);
             requestHeaders.put("Authorization", "Basic " + getCredentialsWithVariableValues().toBase64());
@@ -321,24 +320,22 @@ public class CallAction extends RESTSymbolAction {
 
         switch (method) {
             case GET:
-                target.get(getUrlWithVariableValues(), requestHeaders,
-                        getCookiesWithVariableValues());
+                target.get(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues());
                 break;
             case POST:
-                target.post(getUrlWithVariableValues(), requestHeaders,
-                        getCookiesWithVariableValues(), getDataWithVariableValues());
+                target.post(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(),
+                            getDataWithVariableValues());
                 break;
             case PUT:
-                target.put(getUrlWithVariableValues(), requestHeaders,
-                        getCookiesWithVariableValues(), getDataWithVariableValues());
+                target.put(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(),
+                           getDataWithVariableValues());
                 break;
             case DELETE:
-                target.delete(getUrlWithVariableValues(), requestHeaders,
-                        getCookiesWithVariableValues());
+                target.delete(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues());
                 break;
             default:
                 LOGGER.error(LEARNER_MARKER, "Tried to make a call to a REST API with an unknown method '{}'.",
-                        method.name());
+                             method.name());
         }
     }
 
@@ -346,6 +343,7 @@ public class CallAction extends RESTSymbolAction {
      * Execute an HTTP request without counters and variables.
      *
      * @param baseUrl The base url of the project.
+     *
      * @return The response of the request.
      */
     public TestResult testRequest(String baseUrl) {
@@ -358,16 +356,25 @@ public class CallAction extends RESTSymbolAction {
         headers.forEach(builder::header);
         cookies.forEach(builder::cookie);
 
-        Response response;
+        javax.ws.rs.client.Entity body = null;
+        if (method.equals(Method.POST) || method.equals(Method.PUT)) {
+            if (headers.containsKey("Content-Type")) {
+                body = javax.ws.rs.client.Entity.entity(data, headers.get("Content-Type"));
+            } else {
+                body = javax.ws.rs.client.Entity.json(data);
+            }
+        }
+
+        final Response response;
         switch (method) {
             case GET:
                 response = builder.get();
                 break;
             case POST:
-                response = builder.post(javax.ws.rs.client.Entity.json(data));
+                response = builder.post(body);
                 break;
             case PUT:
-                response = builder.put(javax.ws.rs.client.Entity.json(data));
+                response = builder.put(body);
                 break;
             case DELETE:
                 response = builder.delete();
