@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {webBrowser} from "../../constants";
+
 /**
  * The component for the about page.
  */
@@ -31,6 +33,7 @@ class SettingsView {
         this.ToastService = ToastService;
 
         this.settings = null;
+        this.webBrowsers = webBrowser;
 
         this.SettingsResource.get()
             .then(settings => this.settings = settings)

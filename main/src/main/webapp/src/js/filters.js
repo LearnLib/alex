@@ -69,7 +69,7 @@ export function formatWebBrowser() {
     return browser => {
         switch (browser) {
             case webBrowser.HTMLUNITDRIVER:
-                return 'HTML Unit Driver';
+                return 'HTML Unit';
             case webBrowser.CHROME:
                 return 'Chrome';
             case webBrowser.FIREFOX:

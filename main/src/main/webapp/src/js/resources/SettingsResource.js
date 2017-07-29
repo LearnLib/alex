@@ -70,7 +70,10 @@ export class SettingsResource {
                 }
             }
 
-            return supportedBrowsers;
+            return {
+                supportedBrowsers: supportedBrowsers,
+                defaultDriver: settings.driver.defaultDriver
+            };
         });
     }
 }

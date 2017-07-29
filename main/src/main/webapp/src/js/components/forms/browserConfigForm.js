@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {webBrowser} from "../../constants";
+
 export const browserConfigFormComponent = {
     templateUrl: 'html/components/forms/browser-config-form.html',
     bindings: {
@@ -34,9 +36,18 @@ export const browserConfigFormComponent = {
              * @type {any}
              */
             this.webBrowsers = null;
+        }
 
+        $onInit() {
             this.SettingsResource.getSupportedBrowserEnum()
-                .then(data => this.webBrowsers = data)
+                .then(data => {
+                    this.webBrowsers = data.supportedBrowsers;
+                    if (Object.values(this.webBrowsers).indexOf(data.defaultDriver) > -1) {
+                        this.config.driver = data.defaultDriver;
+                    } else {
+                        this.config.driver = webBrowser.HTMLUNITDRIVER;
+                    }
+                })
                 .catch(err => console.log(err));
         }
     },

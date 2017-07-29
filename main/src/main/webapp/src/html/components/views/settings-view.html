@@ -16,7 +16,7 @@
 
                 <div class="form-group">
                     <label>ChromeDriver path</label>
-                    <input class="form-control" type="text" ng-model="vm.settings.driver.chrome"
+                    <input class="form-control" ng-model="vm.settings.driver.chrome"
                            placeholder="Enter the absolute path to the chromedriver executable">
 
                     <p class="help-block">
@@ -28,7 +28,7 @@
 
                 <div class="form-group">
                     <label>Geckodriver path</label>
-                    <input class="form-control" type="text" ng-model="vm.settings.driver.firefox"
+                    <input class="form-control" ng-model="vm.settings.driver.firefox"
                            placeholder="Enter the absolute path to the geckodriver executable">
 
                     <p class="help-block">
@@ -40,7 +40,7 @@
 
                 <div class="form-group">
                     <label>Edgedriver path</label>
-                    <input class="form-control" type="text" ng-model="vm.settings.driver.edge"
+                    <input class="form-control" ng-model="vm.settings.driver.edge"
                            placeholder="Enter the absolute path to the edgedriver executable">
 
                     <p class="help-block">
@@ -51,7 +51,16 @@
                     </p>
                 </div>
 
-                <button class="btn btn-sm btn-primary">Save Settings</button>
+                <hr>
+
+                <div class="form-group">
+                    <label>Per default, use</label>
+                    <select class="form-control" ng-options="(v|formatWebBrowser) for (k,v) in vm.webBrowsers"
+                            ng-model="vm.settings.driver.defaultDriver">
+                    </select>
+                </div>
+
+                <button class="btn btn-sm btn-primary">Save settings</button>
             </form>
 
         </div>

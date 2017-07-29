@@ -18,6 +18,7 @@ package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.core.learner.connectors.WebBrowser;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
@@ -66,8 +67,12 @@ public class Settings implements Serializable {
         /** The path to the edge driver executable. */
         private String edge;
 
+        /** The default driver to use. */
+        private WebBrowser defaultDriver;
+
         /** Constructor. */
         public DriverSettings() {
+            this.defaultDriver = WebBrowser.HTMLUNITDRIVER;
         }
 
         /**
@@ -78,6 +83,7 @@ public class Settings implements Serializable {
          * @param edge {@link DriverSettings#edge}
          */
         public DriverSettings(String chrome, String firefox, String edge) {
+            this();
             this.chrome = chrome;
             this.firefox = firefox;
             this.edge = edge;
@@ -137,6 +143,14 @@ public class Settings implements Serializable {
             this.edge = edge;
         }
 
+        public WebBrowser getDefaultDriver() {
+            return defaultDriver;
+        }
+
+        public void setDefaultDriver(WebBrowser defaultDriver) {
+            this.defaultDriver = defaultDriver;
+        }
+
         /**
          * Checks the validity of the settings object.
          *
@@ -144,12 +158,12 @@ public class Settings implements Serializable {
          *          If the executable cannot be found or is not executable.
          */
         public void checkValidity() throws ValidationException {
-            checkDriver(firefox, "geckodriver");
-            checkDriver(chrome, "chromedriver");
-            checkDriver(edge, "edgedriver");
+            checkDriver(firefox, "geckodriver", WebBrowser.FIREFOX);
+            checkDriver(chrome, "chromedriver", WebBrowser.CHROME);
+            checkDriver(edge, "edgedriver", WebBrowser.EDGE);
         }
 
-        private void checkDriver(String executable, String name) throws ValidationException {
+        private void checkDriver(String executable, String name, WebBrowser webBrowser) throws ValidationException {
             if (!executable.trim().equals("")) {
                 File driverExecutable = new File(executable);
                 if (!driverExecutable.exists()) {
@@ -157,6 +171,9 @@ public class Settings implements Serializable {
                 } else if (!driverExecutable.canExecute()) {
                     throw new ValidationException("The " + name + " is not executable.");
                 }
+            } else if (webBrowser.equals(defaultDriver)) {
+                throw new ValidationException("The default web browser cannot be " + webBrowser + " because the driver "
+                                                      + "is not specified.");
             }
         }
 
