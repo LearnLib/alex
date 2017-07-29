@@ -23,6 +23,7 @@ import net.automatalib.words.impl.SimpleAlphabet;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class DHCTest {
@@ -38,14 +39,13 @@ public class DHCTest {
     public void shouldCreateCorrectLearner() {
         Alphabet<String> sigma = new SimpleAlphabet<>();
         SULOracle<String, String> oracle = mock(SULOracle.class);
-
         algorithm.createLearner(sigma, oracle);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void shouldNeverReturnInternalData() {
         LearningAlgorithm.MealyLearner<String, String> learner = mock(LearningAlgorithm.MealyLearner.class);
-        algorithm.getInternalData(learner);
+        assertEquals(algorithm.getInternalData(learner), "");
     }
 
 }

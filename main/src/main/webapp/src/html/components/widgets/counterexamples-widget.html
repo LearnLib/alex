@@ -1,30 +1,35 @@
-<widget title="Counterexamples">
-    <form class="form form-condensed" ng-submit="vm.testAndAddCounterExample()">
-        <p class="text-muted">
-            <em>Click on the labels of the hypothesis to create a counterexample.</em>
-        </p>
-        <div class="list-group list-group-condensed" dragula='"ceList"' dragula-model="vm.counterExample">
-            <div class="list-group-item counterexample-list-item" ng-repeat="io in vm.counterExample">
-                <i class="fa fa-fw fa-close pull-right" ng-click="vm.removeInputOutputAt($index)"></i>
-                <span class="label label-primary">{{io.input}}</span>
-                <span class="label label-default">{{io.output}}</span>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form class="form form-condensed" ng-submit="vm.testAndAddCounterExample()">
+            <div class="text-muted">
+                <em>Click on the labels of the hypothesis to create a counterexample.</em>
             </div>
-        </div>
-        <div ng-show="vm.counterExample.length > 0">
-            <button class="btn btn-default btn-sm btn-block">Add counterexample</button>
+            <div ng-if="vm.counterExample.length > 0">
+                <br>
+                <div class="list-group list-group-condensed" dragula='"ceList"' dragula-model="vm.counterExample">
+                    <div class="list-group-item counterexample-list-item" ng-repeat="io in vm.counterExample">
+                        <i class="fa fa-fw fa-close pull-right" ng-click="vm.removeInputOutputAt($index)"></i>
+                        <span class="label label-primary">{{io.input}}</span>
+                        <span class="label label-default">{{io.output}}</span>
+                    </div>
+                </div>
+                <button class="btn btn-default btn-sm btn-block">Add counterexample</button>
+            </div>
+        </form>
+        <div ng-if="vm.tmpCounterExamples.length > 0">
             <hr>
-        </div>
-    </form>
-    <ul class="list-group">
-        <li class="list-group-item" ng-repeat="ce in vm.tmpCounterExamples track by $index">
-            <span class="pull-right" ng-click="vm.removeCounterExampleAt($index)">
-                <i class="fa fa-trash"></i>
-            </span>
-            <div class="clearfix" style="margin-right: 32px;">
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="ce in vm.tmpCounterExamples track by $index">
+                <span class="pull-right" ng-click="vm.removeCounterExampleAt($index)">
+                    <i class="fa fa-trash"></i>
+                </span>
+                    <div class="clearfix" style="margin-right: 32px;">
                 <span class="label label-primary pull-left" style="margin: 0 3px 3px 0" ng-repeat="c in ce"
                       ng-bind="c.input">
                 </span>
-            </div>
-        </li>
-    </ul>
-</widget>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

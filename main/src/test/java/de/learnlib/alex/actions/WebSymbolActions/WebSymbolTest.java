@@ -49,12 +49,6 @@ public class WebSymbolTest {
 
     private Symbol symbol;
 
-    public static Symbol readSymbol(String json) throws IOException {
-        json = json.replaceFirst(",\"symbolToExecuteName\":[ ]?\"[a-zA-Z0-9 ]*\"", "");
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, Symbol.class);
-    }
-
     @Before
     public void setUp() {
         User user = new User();
@@ -112,12 +106,12 @@ public class WebSymbolTest {
     public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException {
         String expectedJson = "{\"actions\":["
                     + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
-                            + "\"node\":null,\"doubleClick\":false},"
+                            + "\"errorOutput\":null,\"node\":null,\"doubleClick\":false},"
                     + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
-                        + "\"value\":\"F[oO0]+\",\"regexp\":true},"
+                        + "\"errorOutput\":null,\"value\":\"F[oO0]+\",\"regexp\":true},"
                     + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
-                        + "\"duration\":" + ONE_SECOND + "}"
-                + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":null,\"user\":null}";
+                        + "\"errorOutput\":null,\"duration\":" + ONE_SECOND + "}"
+                + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":null,\"successOutput\":null,\"user\":null}";
         symbol.setUser(null);
         symbol.setProject(null);
 
@@ -136,13 +130,13 @@ public class WebSymbolTest {
     public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException {
         String expectedJson = "{\"actions\":["
                                     + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,"
-                                        + "\"ignoreFailure\":false,\"node\":null,\"doubleClick\":false},"
+                                        + "\"ignoreFailure\":false,\"errorOutput\":null,\"node\":null,\"doubleClick\":false},"
                                     + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,"
-                                        + "\"ignoreFailure\":false,\"value\":\"F[oO0]+\",\"regexp\":true},"
+                                        + "\"ignoreFailure\":false,\"errorOutput\":null,\"value\":\"F[oO0]+\",\"regexp\":true},"
                                     + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
-                                        + "\"duration\":" + ONE_SECOND + "}"
+                                        + "\"errorOutput\":null,\"duration\":" + ONE_SECOND + "}"
                                 + "],\"group\":2,\"hidden\":false,\"id\":null,\"name\":\"WebSymbol\",\"project\":1,"
-                                + "\"user\":42}";
+                                + "\"successOutput\":null,\"user\":42}";
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(symbol);
 

@@ -5,5 +5,5 @@
         "type": "CSS"
     },
     "waitCriterion" : "added",
-    "maxWaitTime" : 60
+    "maxWaitTime" : 5
 }

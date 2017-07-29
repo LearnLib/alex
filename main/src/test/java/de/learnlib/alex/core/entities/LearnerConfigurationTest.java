@@ -47,10 +47,10 @@ public class LearnerConfigurationTest {
                                 + "\"eqOracle\":"
                                 + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
                                 + "\"maxLength\":" + EQ_MAX_VALUE + ",\"seed\":42,\"maxNoOfTests\":1},"
-                                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"stepNo\":0,\"symbols\":[],"
+                                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
                                 + "\"useMQCache\":true,\"user\":null}";
 
-        LearnerConfiguration configuration = new LearnerConfiguration();
+        LearnerStartConfiguration configuration = new LearnerStartConfiguration();
 
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(configuration);
@@ -65,10 +65,10 @@ public class LearnerConfigurationTest {
                                 + "\"comment\":\"test\",\"eqOracle\":"
                                 + "{\"type\":\"complete\",\"minDepth\":" + EQ_MIN_VALUE + ","
                                     + "\"maxDepth\":" + EQ_MAX_VALUE + "},"
-                                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"stepNo\":0,\"symbols\":[],"
+                                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
                                 + "\"useMQCache\":true,\"user\":null}";
 
-        LearnerConfiguration configuration = new LearnerConfiguration();
+        LearnerStartConfiguration configuration = new LearnerStartConfiguration();
 
         configuration.setAlgorithm(ALGORITHM);
         configuration.setEqOracle(new CompleteExplorationEQOracleProxy(EQ_MIN_VALUE, EQ_MAX_VALUE));
@@ -88,7 +88,7 @@ public class LearnerConfigurationTest {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        LearnerConfiguration configuration = mapper.readValue(json, LearnerConfiguration.class);
+        LearnerStartConfiguration configuration = mapper.readValue(json, LearnerStartConfiguration.class);
 
         assertEquals(DHC.class, configuration.getAlgorithm().getClass());
         assertEquals(WebBrowser.FIREFOX, configuration.getBrowser().getDriver());

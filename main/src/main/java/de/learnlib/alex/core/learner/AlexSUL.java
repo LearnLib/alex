@@ -70,7 +70,7 @@ public class AlexSUL<I, O> implements SUL<I, O> {
      * Reset the counter of this SUL.
      */
     public void resetCounter() {
-        this.resetCounterSUL  = new ResetCounterSUL<>("resets", inputSUL);
+        this.resetCounterSUL = new ResetCounterSUL<>("resets", inputSUL);
         this.symbolCounterSUL = new SymbolCounterSUL<>("symbols used", resetCounterSUL);
     }
 

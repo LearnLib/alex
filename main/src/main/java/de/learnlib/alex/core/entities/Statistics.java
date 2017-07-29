@@ -15,9 +15,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-/**
- * Embeddable statistics object to hold all the statistics together.
- */
+/** Embeddable statistics object that contains statistics related to a learning experiment. */
 @Embeddable
 @JsonPropertyOrder(alphabetic = true)
 public class Statistics implements Serializable {
@@ -25,15 +23,12 @@ public class Statistics implements Serializable {
     private static final long serialVersionUID = -5221139436025380739L;
 
     /** Standard DateTimeFormatter that will create a nice ISO 8160 string with milliseconds and a time zone. */
-    public static final DateTimeFormatter DATE_TIME_FORMATTER
-                                                        = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
 
     /** A ZonedDateTime object based at the unix time 0. */
     private static final ZonedDateTime UNIX_TIME_START = ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00");
 
-    /**
-     * Sub Statistics class to store information by Learner and EqOracle.
-     */
+    /** Sub Statistics class to store information by Learner and EqOracle. */
     @Embeddable
     public static class DetailedStatistics implements Serializable {
 
@@ -45,18 +40,14 @@ public class Statistics implements Serializable {
         /** Data of the EqOracle. */
         private long eqOracle;
 
-        /**
-         * Default constructor.
-         */
+        /** Constructor. */
         public DetailedStatistics() {
             this(0L, 0L);
         }
 
         /**
-         * @param learner
-         *         Data of the Learner.
-         * @param eqOracle
-         *         Data of the EqOracle.
+         * @param learner  Data of the Learner.
+         * @param eqOracle Data of the EqOracle.
          */
         public DetailedStatistics(long learner, long eqOracle) {
             this.learner = learner;
@@ -72,34 +63,20 @@ public class Statistics implements Serializable {
             return learner + eqOracle;
         }
 
-        /**
-         * @return Current data of the Learner.
-         */
         @JsonProperty("learner")
         public long getLearner() {
             return learner;
         }
 
-        /**
-         * @param learner
-         *         New data of the Learner.
-         */
         public void setLearner(long learner) {
             this.learner = learner;
         }
 
-        /**
-         * @return Current data of the EqOracle.
-         */
         @JsonProperty("eqOracle")
         public long getEqOracle() {
             return eqOracle;
         }
 
-        /**
-         * @param eqOracle
-         *         New data of the EqOracle.
-         */
         public void setEqOracle(long eqOracle) {
             this.eqOracle = eqOracle;
         }
@@ -107,11 +84,10 @@ public class Statistics implements Serializable {
         /**
          * Increment the values of the Learner and EqOracle data by another DetailedStatistics.
          *
-         * @param offset
-         *         A DetailedStatistics with the values to add.
+         * @param offset A DetailedStatistics with the values to add.
          */
-        public void increment(DetailedStatistics offset) {
-            this.learner  += offset.learner;
+        public void updateBy(DetailedStatistics offset) {
+            this.learner += offset.learner;
             this.eqOracle += offset.eqOracle;
         }
 
@@ -162,146 +138,98 @@ public class Statistics implements Serializable {
      * Default constructor.
      */
     public Statistics() {
-        this.startDate   = UNIX_TIME_START;
-        this.startTime   = 0L;
-        this.eqsUsed     = 0L;
-        this.duration    = new DetailedStatistics();
-        this.mqsUsed     = new DetailedStatistics();
+        this.startDate = ZonedDateTime.now();
+        this.startTime = System.nanoTime();
+        this.eqsUsed = 0L;
+        this.duration = new DetailedStatistics();
+        this.mqsUsed = new DetailedStatistics();
         this.symbolsUsed = new DetailedStatistics();
     }
 
     /**
-     * Get the start time of the learn step.
+     * Update the statistics by given values.
      *
-     * @return The start time.
+     * @param statistics The statistics whose values should be used to update the statistics.
      */
+    public void updateBy(Statistics statistics) {
+        eqsUsed += statistics.eqsUsed;
+        duration.updateBy(statistics.duration);
+        mqsUsed.updateBy(statistics.mqsUsed);
+        symbolsUsed.updateBy(statistics.symbolsUsed);
+    }
+
     public long getStartTime() {
         return startTime;
     }
 
-    /**
-     * Set the start time.
-     *
-     * @param startTime
-     *          The time in ns
-     */
     public void setStartTime(long startTime) {
         this.startTime = startTime;
     }
 
-    /**
-     * Get the date of when the test run started.
-     *
-     * @return The date
-     */
     @JsonIgnore
     public ZonedDateTime getStartDate() {
         return startDate;
     }
 
-    /**
-     * Set the date when the test started.
-     *
-     * @param startDate
-     *          The date object
-     */
     @JsonIgnore
     public void setStartDate(ZonedDateTime startDate) {
         this.startDate = startDate;
     }
 
-    /**
-     * @return When the learning was started as nice ISO 8160 string, including milliseconds and zone.
-     */
     @Transient
     @JsonProperty("startDate")
     public String getStartDateAsString() {
         return startDate.format(DATE_TIME_FORMATTER);
     }
 
-    /**
-     * @param dateAsString The point in time when the learning was started.
-     */
     @JsonProperty("startDate")
     public void setStartDateByString(String dateAsString) {
         this.startDate = ZonedDateTime.parse(dateAsString);
     }
 
-    /**
-     * Get the amount of equivalence oracles used during the learning.
-     *
-     * @return The amount of eq oracles.
-     */
     public long getEqsUsed() {
         return eqsUsed;
     }
 
-    /**
-     * Set the amount of equivalence oracles used during the learning.
-     *
-     * @param eqsUsed
-     *         The new amount of eq oracles.
-     */
     public void setEqsUsed(long eqsUsed) {
         this.eqsUsed = eqsUsed;
     }
 
-    /**
-     * @return The duration.
-     */
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "learner",  column = @Column(name = "duration_learner")),
-        @AttributeOverride(name = "eqOracle", column = @Column(name = "duration_eqOracle"))
+            @AttributeOverride(name = "learner", column = @Column(name = "duration_learner")),
+            @AttributeOverride(name = "eqOracle", column = @Column(name = "duration_eqOracle"))
     })
     public DetailedStatistics getDuration() {
         return duration;
     }
 
-    /**
-     * @param duration
-     *         The new duration
-     */
     public void setDuration(DetailedStatistics duration) {
         this.duration = duration;
     }
 
-    /**
-     * @return The amount of MQs.
-     */
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "learner",  column = @Column(name = "mqs_learner")),
+            @AttributeOverride(name = "learner", column = @Column(name = "mqs_learner")),
             @AttributeOverride(name = "eqOracle", column = @Column(name = "mqs_eqOracle"))
     })
     public DetailedStatistics getMqsUsed() {
         return mqsUsed;
     }
 
-    /**
-     * @param mqsUsed
-     *         The new amount of MQs.
-     */
     public void setMqsUsed(DetailedStatistics mqsUsed) {
         this.mqsUsed = mqsUsed;
     }
 
-    /**
-     * @return The amount of symbols used.
-     */
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "learner",  column = @Column(name = "symbolUsed_learner")),
-            @AttributeOverride(name = "eqOracle", column = @Column(name = "symbolUsed_eqOracle"))
+            @AttributeOverride(name = "learner", column = @Column(name = "symbolsUsed_learner")),
+            @AttributeOverride(name = "eqOracle", column = @Column(name = "symbolsUsed_eqOracle"))
     })
     public DetailedStatistics getSymbolsUsed() {
         return symbolsUsed;
     }
 
-    /**
-     * @param symbolsUsed
-     *         The new amount of symbols used during the learning.
-     */
     public void setSymbolsUsed(DetailedStatistics symbolsUsed) {
         this.symbolsUsed = symbolsUsed;
     }

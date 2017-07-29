@@ -16,11 +16,10 @@
 
 package de.learnlib.alex.core.dao;
 
+import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResultStep;
-import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.LearnerStatus;
-import de.learnlib.alex.core.entities.Statistics;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.core.repositories.LearnerResultRepository;
@@ -70,6 +69,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Override
     @Transactional
     public void create(LearnerResult learnerResult) throws ValidationException {
+
         // pre validation
         if (learnerResult.getUser() == null || learnerResult.getProject() == null) {
             throw new ValidationException("To create a LearnResult it must have a User and Project.");
@@ -112,7 +112,6 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         initializeLazyRelations(results, includeSteps);
 
-        // done
         return results;
     }
 
@@ -131,7 +130,6 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         initializeLazyRelations(results, includeSteps);
 
-        // done
         return results;
     }
 
@@ -150,7 +148,6 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         initializeLazyRelations(results, includeSteps);
 
-        // done
         return results.get(0);
     }
 
@@ -158,55 +155,50 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Transactional
     public LearnerResultStep createStep(LearnerResult result)
             throws ValidationException {
-        LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
+        final LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
 
-        LearnerResultStep newStep = new LearnerResultStep();
-        newStep.setUser(result.getUser());
-        newStep.setProject(result.getProject());
-        newStep.setResult(result);
-        result.getSteps().add(newStep);
-        newStep.setStepNo(latestStep.getStepNo() + 1);
+        final LearnerResultStep step = new LearnerResultStep();
+        step.setUser(result.getUser());
+        step.setProject(result.getProject());
+        step.setResult(result);
+        result.getSteps().add(step);
+        step.setStepNo(latestStep.getStepNo() + 1);
 
-        newStep.setEqOracle(latestStep.getEqOracle());
+        step.setEqOracle(latestStep.getEqOracle());
         if (latestStep.getStepsToLearn() > 0) {
-            newStep.setStepsToLearn(latestStep.getStepsToLearn() - 1);
+            step.setStepsToLearn(latestStep.getStepsToLearn() - 1);
         } else if (latestStep.getStepsToLearn() == -1) {
-            newStep.setStepsToLearn(-1);
+            step.setStepsToLearn(-1);
         } else {
             throw new IllegalStateException("The previous step has a step to learn of 0 -> no new step can be crated!");
         }
 
+        learnerResultStepRepository.save(step);
 
-        learnerResultStepRepository.save(newStep);
-
-        return newStep;
+        return step;
     }
 
     @Override
     @Transactional
-    public LearnerResultStep createStep(LearnerResult result, LearnerResumeConfiguration configuration)
+    public LearnerResultStep createStep(LearnerResult result, LearnerConfiguration configuration)
             throws ValidationException {
-        // create the new step
-        LearnerResultStep newStep = new LearnerResultStep();
-        newStep.setUser(result.getUser());
-        newStep.setProject(result.getProject());
-        newStep.setResult(result);
-        result.getSteps().add(newStep);
-        newStep.setStepNo((long) result.getSteps().size());
 
-        newStep.setEqOracle(configuration.getEqOracle());
-        newStep.setStepsToLearn(configuration.getMaxAmountOfStepsToLearn());
+        final LearnerResultStep step = new LearnerResultStep();
+        step.setUser(result.getUser());
+        step.setProject(result.getProject());
+        step.setResult(result);
+        step.setStepNo((long) result.getSteps().size() + 1);
 
-        learnerResultStepRepository.save(newStep);
+        step.setEqOracle(configuration.getEqOracle());
+        step.setStepsToLearn(configuration.getMaxAmountOfStepsToLearn());
 
-        return newStep;
+        return step;
     }
 
     @Override
     @Transactional
     public void saveStep(LearnerResult result, LearnerResultStep step) throws ValidationException {
         learnerResultStepRepository.save(step);
-
         updateSummary(result, step);
         learnerResultRepository.save(result);
     }
@@ -228,14 +220,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     private void updateSummary(LearnerResult result, LearnerResultStep step) {
         result.setHypothesis(step.getHypothesis());
         result.setErrorText(step.getErrorText());
-
-        Statistics summaryStatistics = result.getStatistics();
-        Statistics newStatistics = step.getStatistics();
-
-        summaryStatistics.setEqsUsed(summaryStatistics.getEqsUsed() + newStatistics.getEqsUsed());
-        summaryStatistics.getDuration().increment(newStatistics.getDuration());
-        summaryStatistics.getMqsUsed().increment(newStatistics.getMqsUsed());
-        summaryStatistics.getSymbolsUsed().increment(newStatistics.getSymbolsUsed());
+        result.getStatistics().updateBy(step.getStatistics());
     }
 
     private void initializeLazyRelations(List<LearnerResult> results, boolean includeSteps) {
@@ -244,10 +229,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         if (includeSteps) {
             results.forEach(r -> Hibernate.initialize(r.getSteps()));
         } else {
-            results.forEach(r -> {
-//                session.evict(r);
-                r.setSteps(null);
-            });
+            results.forEach(r -> r.setSteps(null));
         }
     }
 
@@ -269,7 +251,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
                 throw new ValidationException("Can't delete LearnResult with testNo " + activeTestNo + " because the "
                                                       + "learner is active on this one");
             } else if (testNo.length > 1) {
-                for (Long t:testNo) {
+                for (Long t : testNo) {
                     if (activeTestNo.equals(t)) {
                         throw new ValidationException("Can't delete all LearnResults because the learner is active "
                                                               + "with testNo " + activeTestNo);

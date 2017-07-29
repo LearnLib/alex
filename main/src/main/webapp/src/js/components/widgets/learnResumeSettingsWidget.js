@@ -39,6 +39,12 @@ class LearnResumeSettingsWidget {
          * @type {Object}
          */
         this.eqOracles = eqOracleType;
+
+        /**
+         * The symbols that can be added to the learner.
+         * @type {AlphabetSymbol[]}
+         */
+        this.symbolsToAdd = [];
     }
 
     $onInit() {
@@ -48,11 +54,19 @@ class LearnResumeSettingsWidget {
          * @type {string}
          */
         this.selectedEqOracle = this.configuration.eqOracle.type;
+
+        // Make sure only the symbols can be added that are not yet part of the input alphabet.
+        // Make sure the reset symbol can not be added as well.
+        this.symbols.forEach(s => {
+            if (this.result.symbols.indexOf(s.id) === -1 && !(s.id === this.result.resetSymbol)) {
+                this.symbolsToAdd.push(s);
+            }
+        })
     }
 
     /**
      * Load hypothesis.
-     * @param hypothesis
+     * @param {string} hypothesis
      */
     loadHypothesis(hypothesis) {
         this.configuration.eqOracle.hypothesis = JSON.parse(hypothesis);
@@ -69,6 +83,7 @@ class LearnResumeSettingsWidget {
 export const learnResumeSettingsWidget = {
     templateUrl: 'html/components/widgets/learn-resume-settings-widget.html',
     bindings: {
+        symbols: '=',
         configuration: '=',
         result: '<'
     },

@@ -51,21 +51,21 @@ public class ConnectorContextHandlerFactory {
      * @return A ContextHandler for the project with all the connectors.
      */
     public ConnectorContextHandler createContext(User user, Project project, BrowserConfig browser) {
-        ConnectorContextHandler context = new ConnectorContextHandler();
+        final ConnectorContextHandler context = new ConnectorContextHandler();
 
-        List<String> urls = new ArrayList<>();
+        final List<String> urls = new ArrayList<>();
         urls.add(project.getBaseUrl());
         urls.addAll(project.getMirrorUrls());
 
-        List<Counter> counters;
+        final List<Counter> counters = new ArrayList<>();
         try {
-            counters = counterDAO.getAll(user.getId(), project.getId());
+            counters.addAll(counterDAO.getAll(user.getId(), project.getId()));
         } catch (NotFoundException e) {
-            counters = new ArrayList<>();
+            e.printStackTrace();
         }
 
-        for (String url: urls) {
-            ConnectorManager connectorManager = new ConnectorManager();
+        for (final String url: urls) {
+            final ConnectorManager connectorManager = new ConnectorManager();
             connectorManager.addConnector(new WebSiteConnector(url, browser));
             connectorManager.addConnector(new WebServiceConnector(url));
             connectorManager.addConnector(new CounterStoreConnector(counterDAO, user, project, counters));

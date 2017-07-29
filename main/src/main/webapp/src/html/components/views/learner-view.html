@@ -83,14 +83,8 @@
         </learn-result-panel>
 
         <div class="panel-sidebar" ng-class="{'show': vm.showSidebar}" ng-if="vm.resumeConfig !== null">
-            <learn-resume-settings-widget configuration="vm.resumeConfig" result="vm.result">
+            <learn-resume-settings-widget configuration="vm.resumeConfig" result="vm.result" symbols="vm.symbols">
             </learn-resume-settings-widget>
-
-            <counterexamples-widget
-                    ng-if="vm.resumeConfig.eqOracle.type === 'sample'"
-                    counterexamples="vm.resumeConfig.eqOracle.counterExamples"
-                    result="vm.result">
-            </counterexamples-widget>
         </div>
     </div>
 </div>

@@ -41,7 +41,7 @@ public class DHC extends AbstractLearningAlgorithm<String, String> implements Se
 
     @Override
     public String getInternalData(LearningAlgorithm.MealyLearner<String, String> learner) {
-        throw new IllegalStateException("DHC has no internal data structures");
+        return "";
     }
 
 }

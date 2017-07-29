@@ -40,6 +40,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -81,7 +82,7 @@ public class LearnerResult implements Serializable {
     private Symbol resetSymbol;
 
     /** The symbols to use during the learning. */
-    private Set<Symbol> symbols;
+    private List<Symbol> symbols;
 
     /** The Alphabet used while learning. */
     private AlphabetProxy sigma;
@@ -113,12 +114,10 @@ public class LearnerResult implements Serializable {
     /** If membership queries should be cached. */
     private boolean useMQCache;
 
-    /**
-     * Default constructor.
-     */
+    /** Constructor. */
     public LearnerResult() {
-        this.symbols = new HashSet<>();
-        this.steps = new LinkedList<>();
+        this.symbols = new ArrayList<>();
+        this.steps = new ArrayList<>();
         this.browser = new BrowserConfig();
         this.comment = "";
         this.statistics = new Statistics();
@@ -172,7 +171,6 @@ public class LearnerResult implements Serializable {
         if (user == null) {
             return 0L;
         }
-
         return user.getId();
     }
 
@@ -287,14 +285,14 @@ public class LearnerResult implements Serializable {
      */
     @ManyToMany
     @JsonIgnore
-    public Set<Symbol> getSymbols() {
+    public List<Symbol> getSymbols() {
         return symbols;
     }
 
     /**
      * @param symbols The new set of symbols used during the learning.
      */
-    public void setSymbols(Set<Symbol> symbols) {
+    public void setSymbols(List<Symbol> symbols) {
         this.symbols = symbols;
     }
 

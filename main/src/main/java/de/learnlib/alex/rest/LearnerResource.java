@@ -19,7 +19,8 @@ package de.learnlib.alex.rest;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.ProjectDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
-import de.learnlib.alex.core.entities.LearnerConfiguration;
+import de.learnlib.alex.core.entities.LearnerResultStep;
+import de.learnlib.alex.core.entities.LearnerStartConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.LearnerStatus;
@@ -121,7 +122,7 @@ public class LearnerResource {
     @Path("/start/{project_id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response start(@PathParam("project_id") long projectId, LearnerConfiguration configuration)
+    public Response start(@PathParam("project_id") long projectId, LearnerStartConfiguration configuration)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("start({}, {}) for user {}.", projectId, configuration, user);
@@ -199,15 +200,31 @@ public class LearnerResource {
                 throw new IllegalArgumentException("The step number is not valid.");
             }
 
-            // remove all steps after the one where learning should be continued from
-            if (result.getSteps().size() > 1) {
+            // remove all steps after the one where the learning process should be continued from
+            if (result.getSteps().size() > 0) {
                 result.getSteps().stream()
-                        .filter(step -> step.getStepNo() > configuration.getStepNo())
+                        .filter(s -> s.getStepNo() > configuration.getStepNo())
                         .forEach(learnerResultStepRepository::delete);
                 learnerResultStepRepository.flush();
                 result = learnerResultDAO.get(user.getId(), projectId, testNo, true);
-                result.setHypothesis(result.getSteps().get(result.getSteps().size() - 1).getHypothesis());
+                result.setHypothesis(result.getSteps().get(configuration.getStepNo() - 1).getHypothesis());
                 result.getStatistics().setEqsUsed(result.getSteps().size());
+
+                // since we allow alphabets to grow, set the alphabet to the one of the latest hypothesis
+                LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
+                Alphabet<String> alphabet = latestStep.getHypothesis().createAlphabet();
+                result.getSymbols().removeIf(s -> !alphabet.contains(s.getName()));
+
+                // add the new alphabet symbols to the config.
+                if (configuration.getSymbolsToAddAsIds().size() > 0) {
+                    List<Symbol> symbolsToAdd = symbolDAO.getByIds(user, projectId, configuration.getSymbolsToAddAsIds());
+                    for (Symbol symbolToAdd: symbolsToAdd) {
+                        if (!result.getSymbols().contains(symbolToAdd)) {
+                            configuration.getSymbolsToAdd().add(symbolToAdd);
+                        }
+                    }
+                }
+
                 learnerResultRepository.saveAndFlush(result);
             }
 

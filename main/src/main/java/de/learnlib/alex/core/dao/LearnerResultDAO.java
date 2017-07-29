@@ -16,9 +16,9 @@
 
 package de.learnlib.alex.core.dao;
 
+import de.learnlib.alex.core.entities.LearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResultStep;
-import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.User;
 import de.learnlib.alex.core.learner.Learner;
 import de.learnlib.alex.exceptions.NotFoundException;
@@ -114,7 +114,7 @@ public interface LearnerResultDAO {
      * @throws ValidationException
      *         If the given LearnerResult was invalid.
      */
-    LearnerResultStep createStep(LearnerResult result, LearnerResumeConfiguration configuration)
+    LearnerResultStep createStep(LearnerResult result, LearnerConfiguration configuration)
             throws ValidationException;
 
     /**

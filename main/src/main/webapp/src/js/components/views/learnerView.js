@@ -33,15 +33,18 @@ class LearnerViewComponent {
      * @param {LearnResultResource} LearnResultResource
      * @param {ToastService} ToastService
      * @param {ErrorService} ErrorService
+     * @param {SymbolResource} SymbolResource
      */
     // @ngInject
-    constructor($scope, $state, $interval, SessionService, LearnerResource, LearnResultResource, ToastService, ErrorService) {
+    constructor($scope, $state, $interval, SessionService, LearnerResource, LearnResultResource, ToastService,
+                ErrorService, SymbolResource) {
         this.$interval = $interval;
         this.$state = $state;
         this.LearnerResource = LearnerResource;
         this.LearnResultResource = LearnResultResource;
         this.ToastService = ToastService;
         this.ErrorService = ErrorService;
+        this.SymbolResource = SymbolResource;
 
         /**
          * The project that is in the session.
@@ -115,10 +118,17 @@ class LearnerViewComponent {
          */
         this.currentQueries = null;
 
+        /** The symbols. */
+        this.symbols = [];
+
         // stop polling when you leave the page
         $scope.$on("$destroy", () => {
             this.$interval.cancel(this.interval);
         });
+
+        this.SymbolResource.getAll(this.project.id)
+            .then(symbols => this.symbols = symbols)
+            .catch(console.error);
 
         if (this.$state.params.result !== null) {
             this.result = this.$state.params.result;
@@ -126,7 +136,8 @@ class LearnerViewComponent {
             this.resumeConfig = {
                 eqOracle: this.result.steps[this.stepNo - 1].eqOracle,
                 maxAmountOfStepsToLearn: this.result.steps[this.stepNo - 1].stepsToLearn,
-                stepNo: this.stepNo
+                stepNo: this.stepNo,
+                symbolsToAdd: []
             };
         } else {
             this.poll();
@@ -144,13 +155,10 @@ class LearnerViewComponent {
                     this.learnerPhase = data.learnerPhase;
                     this.currentQueries = data.currentQueries;
 
-                    if (data.active && data.stepNo > this.stepNo) {
+                    if (data.active) {
                         this.stepNo = data.stepNo;
                         this.LearnResultResource.get(this.project.id, data.testNo)
-                            .then(result => {
-                                result.steps.pop();
-                                this.result = result;
-                            })
+                            .then(result => this.result = result)
                             .catch(err => console.log(err));
                     }
 
@@ -171,7 +179,7 @@ class LearnerViewComponent {
 
                             // notify the user that the learning process has finished
                             if (("Notification" in window) && Notification.permission === 'granted') {
-                                const notification = new Notification("ALEX has finished learning your application!");
+                                const notification = new Notification('ALEX has finished learning your application!');
                                 setTimeout(notification.close.bind(notification), 5000);
                             }
                         });

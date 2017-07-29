@@ -16,138 +16,72 @@
 
 package de.learnlib.alex.core.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
-import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
+import org.springframework.data.annotation.Transient;
 
-import javax.persistence.Transient;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entity to hold the information needed to resume a learning process.
  */
-public class LearnerResumeConfiguration {
+public class LearnerResumeConfiguration extends LearnerConfiguration implements Serializable {
 
-    /** The ID of the user related to the configuration. */
-    private Long userId;
-
-    /** The ID of the project related to the configuration. */
-    private Long projectId;
+    private static final long serialVersionUID = 2713088191086667675L;
 
     /** The step number from where to continue. */
+    @JsonProperty("stepNo")
     private int stepNo;
 
-    /**
-     * The type of EQ oracle to find a counter example.
-     * @requiredField
-     */
-    protected AbstractEquivalenceOracleProxy eqOracle;
+    /** The ids of the symbols to add. */
+    @JsonProperty("symbolsToAdd")
+    private List<Long> symbolsToAddAsIds;
+
+    /** The ids of the symbols to add. */
+    @JsonIgnore
+    @Transient
+    private List<Symbol> symbolsToAdd;
 
     /**
-     * @return The ID of the user related to the configuration.
+     * Constructor.
      */
-    @JsonProperty("user")
-    public Long getUserId() {
-        return userId;
+    public LearnerResumeConfiguration() {
+        super();
+        this.symbolsToAddAsIds = new ArrayList<>();
+        this.symbolsToAdd = new ArrayList<>();
     }
 
-    /**
-     * @param userId The new ID of the user related to the configuration.
-     */
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    @Override
+    public void checkConfiguration() throws IllegalArgumentException {
+        super.check();
+        if (stepNo <= 0) {
+            throw new IllegalArgumentException("The step number may not be less than 1");
+        }
     }
 
-    /**
-     * @return The ID of the project related to the configuration.
-     */
-    @JsonProperty("project")
-    public Long getProjectId() {
-        return projectId;
-    }
-
-    /**
-     * @param projectId The new ID of the project related to the configuration.
-     */
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
-    }
-
-    /** @return {@link #stepNo}. */
-    @JsonProperty("stepNo")
     public int getStepNo() {
         return stepNo;
     }
 
-    /** @param stepNo {@link #stepNo}. */
     public void setStepNo(int stepNo) {
         this.stepNo = stepNo;
     }
 
-    /** How many steps should the learner take before stopping the process.
-     * Must be greater or equal to -1, but not 0.
-     * -1 := Do not stop until no counter example is found. */
-    protected int maxAmountOfStepsToLearn;
-
-    /**
-     * Default constructor.
-     */
-    public LearnerResumeConfiguration() {
-        this.eqOracle = new MealyRandomWordsEQOracleProxy();
-        this.maxAmountOfStepsToLearn = -1; // infinity
+    public List<Long> getSymbolsToAddAsIds() {
+        return symbolsToAddAsIds;
     }
 
-    /**
-     * Get the EQ oracle (as proxy) to be used during the learning process.
-     * @return The selected EQ oracle (as proxy).
-     */
-    @Transient
-    public AbstractEquivalenceOracleProxy getEqOracle() {
-        return eqOracle;
+    public void setSymbolsToAddAsIds(List<Long> symbolsToAddAsIds) {
+        this.symbolsToAddAsIds = symbolsToAddAsIds;
     }
 
-    /**
-     * Set a new EQ oracle (as proxy) to be used during the learning.
-     * @param eqOracle The new EQ oracle (as proxy).
-     */
-    public void setEqOracle(AbstractEquivalenceOracleProxy eqOracle) {
-        this.eqOracle = eqOracle;
+    public List<Symbol> getSymbolsToAdd() {
+        return symbolsToAdd;
     }
 
-    /**
-     * Get the amount of steps the learner should do before it stops learning.
-     * The value 0 indicates no upper boundary.
-     *
-     * @return The max amount of steps to learn.
-     */
-    public int getMaxAmountOfStepsToLearn() {
-        return maxAmountOfStepsToLearn;
+    public void setSymbolsToAdd(List<Symbol> symbolsToAdd) {
+        this.symbolsToAdd = symbolsToAdd;
     }
-
-    /**
-     * Set a new max amount of steps to learn.
-     *
-     * @param maxAmountOfStepsToLearn
-     *         The new amount of steps to learn. It must be greater or equals to 0, where 0 indicates no boundary.
-     */
-    public void setMaxAmountOfStepsToLearn(int maxAmountOfStepsToLearn) {
-        this.maxAmountOfStepsToLearn = maxAmountOfStepsToLearn;
-    }
-
-    /**
-     * Check if the configuration is valid, i.e. it is possible to create a test based on the given data.
-     *
-     * @throws IllegalArgumentException
-     *         If the configuration is invalid.
-     */
-    public void checkConfiguration() throws IllegalArgumentException {
-        if (maxAmountOfStepsToLearn < -1) {
-            throw new IllegalArgumentException("The MaxAmountOfStep property must not be less than -1.");
-        } else if (maxAmountOfStepsToLearn == 0) {
-            throw new IllegalArgumentException("The MaxAmountOfStep property must not be equal to 0.");
-        } else if (eqOracle == null) {
-            throw new IllegalArgumentException("Could not find an EQ oracle.");
-        }
-        eqOracle.checkParameters();
-    }
-
 }

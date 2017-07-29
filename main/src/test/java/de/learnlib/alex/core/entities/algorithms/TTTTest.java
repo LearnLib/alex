@@ -22,6 +22,7 @@ import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.oracles.SULOracle;
 import net.automatalib.words.Alphabet;
+import net.automatalib.words.impl.SimpleAlphabet;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +41,9 @@ public class TTTTest {
 
     @Test
     public void shouldCreateCorrectLearner() {
-        Alphabet<String> sigma = mock(Alphabet.class);
+        Alphabet<String> sigma = new SimpleAlphabet<>();
+        sigma.add("a");
+        sigma.add("b");
         SULOracle<String, String> oracle = mock(SULOracle.class);
 
         algorithm.createLearner(sigma, oracle);

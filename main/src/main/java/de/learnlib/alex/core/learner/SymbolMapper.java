@@ -64,6 +64,10 @@ public class SymbolMapper
         }
     }
 
+    public void addSymbol(Symbol symbol) {
+        this.symbols.putIfAbsent(symbol.getName(), symbol);
+    }
+
     @Override
     public ContextExecutableInput<ExecuteResult, ConnectorManager> mapInput(String abstractInput) {
         return symbols.get(abstractInput);
@@ -92,23 +96,6 @@ public class SymbolMapper
 
     @Override
     public void pre() {
-    }
-
-    /**
-     * Get the alphabet for the learning process as required by the LearnLib.
-     * Sorted by key ascending.
-     *
-     * @return The alphabet.
-     */
-    public Alphabet<String> getAlphabet() {
-        Alphabet<String> sigma = new SimpleAlphabet<>();
-
-        // sort the alphabet for a more consistent learning behavior
-        List<String> sortedSymbolList = new ArrayList<>(symbols.keySet());
-        sortedSymbolList.sort(String::compareTo);
-        sigma.addAll(sortedSymbolList);
-
-        return sigma;
     }
 
     /**

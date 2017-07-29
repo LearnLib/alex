@@ -26,12 +26,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -43,10 +48,11 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ExpectedConditions.class})
 public class WaitForNodeActionTest {
 
-    private static final int ONE_MINUTE = 60;
+    private static final int MAX_WAIT_TIME = 5;
 
     @Mock
     private User user;
@@ -69,7 +75,7 @@ public class WaitForNodeActionTest {
         action.setProject(project);
         action.setNode(node);
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.VISIBLE);
-        action.setMaxWaitTime(ONE_MINUTE);
+        action.setMaxWaitTime(MAX_WAIT_TIME);
     }
 
     @Test
@@ -94,7 +100,7 @@ public class WaitForNodeActionTest {
         WaitForNodeAction objAsAction = (WaitForNodeAction) obj;
         assertEquals(node, objAsAction.getNode());
         assertEquals(WaitForNodeAction.WaitCriterion.ADDED, objAsAction.getWaitCriterion());
-        assertEquals(ONE_MINUTE, objAsAction.getMaxWaitTime());
+        assertEquals(MAX_WAIT_TIME, objAsAction.getMaxWaitTime());
     }
 
     @Test
@@ -106,7 +112,7 @@ public class WaitForNodeActionTest {
         given(webSiteConnector.getElement(node)).willReturn(element);
         given(element.isDisplayed()).willReturn(true);
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.VISIBLE);
-        action.setMaxWaitTime(ONE_MINUTE);
+        action.setMaxWaitTime(MAX_WAIT_TIME);
 
         ExecuteResult result = action.execute(webSiteConnector);
 
@@ -122,7 +128,7 @@ public class WaitForNodeActionTest {
         given(driver.findElement(By.cssSelector("#node"))).willReturn(element);
         given(element.isDisplayed()).willReturn(false);
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.INVISIBLE);
-        action.setMaxWaitTime(ONE_MINUTE);
+        action.setMaxWaitTime(MAX_WAIT_TIME);
 
         ExecuteResult result = action.execute(webSiteConnector);
 
@@ -136,8 +142,20 @@ public class WaitForNodeActionTest {
         given(webSiteConnector.getDriver()).willReturn(driver);
         WebElement element = mock(WebElement.class);
         given(driver.findElement(By.cssSelector("#node"))).willReturn(element);
+        given(element.isEnabled()).willReturn(true);
+
+        PowerMockito.mockStatic(ExpectedConditions.class);
+        PowerMockito.when(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#node")))
+                .thenReturn(new ExpectedCondition<WebElement>() {
+                    @Nullable
+                    @Override
+                    public WebElement apply(@Nullable WebDriver webDriver) {
+                        return element;
+                    }
+                });
+
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.ADDED);
-        action.setMaxWaitTime(ONE_MINUTE);
+        action.setMaxWaitTime(MAX_WAIT_TIME);
 
         ExecuteResult result = action.execute(webSiteConnector);
 
@@ -153,7 +171,7 @@ public class WaitForNodeActionTest {
         given(webSiteConnector.getElement(node)).willReturn(element);
         given(element.isEnabled()).willThrow(StaleElementReferenceException.class);
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.REMOVED);
-        action.setMaxWaitTime(ONE_MINUTE);
+        action.setMaxWaitTime(MAX_WAIT_TIME);
 
         ExecuteResult result = action.execute(webSiteConnector);
 

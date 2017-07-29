@@ -33,7 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import javax.validation.ValidationException;
@@ -54,7 +54,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class LearnerResultDAOImplTest {
 
-    private static final long USER_ID    = 21L;
+    private static final long USER_ID = 21L;
     private static final long PROJECT_ID = 42L;
     private static final int RESULTS_AMOUNT = 3;
     private static final MealyRandomWordsEQOracleProxy EXAMPLE_EQ_ORACLE =
@@ -175,9 +175,9 @@ public class LearnerResultDAOImplTest {
         List<LearnerResult> results = createLearnerResultsList();
         //
         given(learnerResultRepository.findByUser_IdAndProject_IdOrderByTestNoAsc(USER_ID, PROJECT_ID))
-                                                                                                   .willReturn(results);
+                .willReturn(results);
 
-        List<LearnerResult> resultsFromDAO   = learnerResultDAO.getAll(USER_ID, PROJECT_ID, true);
+        List<LearnerResult> resultsFromDAO = learnerResultDAO.getAll(USER_ID, PROJECT_ID, true);
 
         assertThat(results.size(), is(equalTo(resultsFromDAO.size())));
         for (LearnerResult r : resultsFromDAO) {
@@ -188,7 +188,7 @@ public class LearnerResultDAOImplTest {
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingAllResultsThrowsAnExceptionIfNoLearnerResultCouldBeFound() throws NotFoundException {
         given(learnerResultRepository.findByUser_IdAndProject_IdOrderByTestNoAsc(USER_ID, PROJECT_ID))
-                                                                                   .willReturn(Collections.emptyList());
+                .willReturn(Collections.emptyList());
 
         learnerResultDAO.getAll(USER_ID, PROJECT_ID, true); // should fail
     }
@@ -197,12 +197,12 @@ public class LearnerResultDAOImplTest {
     @Test
     public void shouldGetMultipleResults() throws NotFoundException {
         List<LearnerResult> results = createLearnerResultsList();
-        Long[] testNos = new Long[] {0L, 1L, 2L};
+        Long[] testNos = new Long[]{0L, 1L, 2L};
         //
         given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos))
-                                                                                                   .willReturn(results);
+                .willReturn(results);
 
-        List<LearnerResult> resultsFromDAO   = learnerResultDAO.getAll(USER_ID, PROJECT_ID, testNos, true);
+        List<LearnerResult> resultsFromDAO = learnerResultDAO.getAll(USER_ID, PROJECT_ID, testNos, true);
 
         assertThat(results.size(), is(equalTo(resultsFromDAO.size())));
         for (LearnerResult r : resultsFromDAO) {
@@ -212,10 +212,10 @@ public class LearnerResultDAOImplTest {
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingMultipleResultThrowsAnExceptionIfOneResultIdIsInvalid() throws NotFoundException {
-        Long[] testNos = new Long[] {0L, 1L, 2L};
+        Long[] testNos = new Long[]{0L, 1L, 2L};
         //
         given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos))
-                                                                                   .willReturn(Collections.emptyList());
+                .willReturn(Collections.emptyList());
 
         learnerResultDAO.getAll(USER_ID, PROJECT_ID, testNos, true); // should fail
     }
@@ -223,10 +223,10 @@ public class LearnerResultDAOImplTest {
     @Test
     public void shouldGetOneResult() throws NotFoundException {
         LearnerResult result = new LearnerResult();
-        Long[] testNos = new Long[] {0L};
+        Long[] testNos = new Long[]{0L};
         //
         given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos[0]))
-                                                                         .willReturn(Collections.singletonList(result));
+                .willReturn(Collections.singletonList(result));
 
         LearnerResult resultFromDAO = learnerResultDAO.get(USER_ID, PROJECT_ID, 0L, true);
 
@@ -235,10 +235,10 @@ public class LearnerResultDAOImplTest {
 
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingANonExistingResultThrowsAnException() throws NotFoundException {
-        Long[] testNos = new Long[] {0L};
+        Long[] testNos = new Long[]{0L};
         //
         given(learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(USER_ID, PROJECT_ID, testNos[0]))
-                                                                                   .willReturn(Collections.emptyList());
+                .willReturn(Collections.emptyList());
 
         learnerResultDAO.get(USER_ID, PROJECT_ID, 0L, true); // should fail
     }
@@ -268,17 +268,18 @@ public class LearnerResultDAOImplTest {
     @Test
     public void shouldCreateAStepFromAPreviousStep() throws NotFoundException {
         User user = new User();
-        //
+
         Project project = new Project();
-        //
+
         LearnerResult result = new LearnerResult();
         result.setUser(user);
         result.setProject(project);
-        //
+
         LearnerResumeConfiguration configuration = new LearnerResumeConfiguration();
         configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
         configuration.setMaxAmountOfStepsToLearn(-1);
-        learnerResultDAO.createStep(result, configuration);
+        LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
+        result.getSteps().add(step);
 
         LearnerResultStep newStep = learnerResultDAO.createStep(result);
 
@@ -317,7 +318,7 @@ public class LearnerResultDAOImplTest {
 
         learnerResultDAO.saveStep(result, step);
 
-        verify(learnerResultStepRepository, times(2)).save(step);
+        verify(learnerResultStepRepository, times(1)).save(step);
         assertThat(result.getHypothesis(), is(equalTo(hypothesis)));
         assertThat(result.getStatistics().getEqsUsed(), is(equalTo(1L)));
         assertThat(result.getStatistics().getDuration(), is(equalTo(detailedStatistics)));
@@ -329,7 +330,7 @@ public class LearnerResultDAOImplTest {
     public void shouldDeleteMultipleResults() throws NotFoundException {
         User user = new User();
         //
-        Long[] testNos = new Long[] {0L, 1L};
+        Long[] testNos = new Long[]{0L, 1L};
         //
         LearnerStatus status = new LearnerStatus();
         given(learner.getStatus(user)).willReturn(status);
@@ -345,7 +346,7 @@ public class LearnerResultDAOImplTest {
     public void shouldThrowAnExceptionIfTheTestResultToDeleteWasNotFound() throws NotFoundException {
         User user = new User();
         //
-        Long[] testNos = new Long[] {0L, 1L};
+        Long[] testNos = new Long[]{0L, 1L};
         //
         LearnerStatus status = new LearnerStatus();
         given(learner.getStatus(user)).willReturn(status);
@@ -365,7 +366,7 @@ public class LearnerResultDAOImplTest {
         LearnerResult result = new LearnerResult();
         result.setProject(project);
         result.setTestNo(0L);
-        Long[] testNos = new Long[] {0L, 1L};
+        Long[] testNos = new Long[]{0L, 1L};
         //
         LearnerStatus status = new LearnerStatus(result, Learner.LearnerPhase.LEARNING, new ArrayList<>());
         given(learner.getStatus(user)).willReturn(status);

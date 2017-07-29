@@ -33,7 +33,7 @@
                     <th>&nbsp;</th>
                     <th>Browser</th>
                     <th>Algorithm</th>
-                    <th>Sigma</th>
+                    <th>|&#931;|</th>
                     <th>Equivalence queries</th>
                 </tr>
                 </thead>
@@ -44,7 +44,7 @@
                         {{vm.chartData.context.browser.driver | formatWebBrowser}} ({{vm.chartData.context.browser.width}}px x {{vm.chartData.context.browser.height}}px)
                     </td>
                     <td ng-bind="vm.chartData.context.algorithm.name | formatAlgorithm"></td>
-                    <td ng-bind="vm.chartData.context.sigma.length"></td>
+                    <td ng-bind="vm.chartData.context.symbols.length"></td>
                     <td ng-bind="vm.chartData.context.statistics.eqsUsed"></td>
                 </tr>
                 </tbody>
@@ -55,7 +55,7 @@
                         {{result.browser.driver | formatWebBrowser}} ({{result.browser.width}}px x {{result.browser.height}}px)
                     </td>
                     <td ng-bind="result.algorithm.name | formatAlgorithm"></td>
-                    <td ng-bind="result.sigma.length"></td>
+                    <td ng-bind="result.symbols.length"></td>
                     <td ng-bind="result.statistics.eqsUsed"></td>
                 </tr>
                 </tbody>

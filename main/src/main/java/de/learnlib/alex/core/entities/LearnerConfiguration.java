@@ -17,169 +17,86 @@
 package de.learnlib.alex.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.learnlib.alex.core.entities.algorithms.AbstractLearningAlgorithm;
-import de.learnlib.alex.core.entities.algorithms.TTT;
+import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
+import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 
-import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
-/**
- * Entity to hold the information and parameters to configure a learn process.
- */
-@JsonPropertyOrder(alphabetic = true)
-public class LearnerConfiguration extends LearnerResumeConfiguration implements Serializable {
+public abstract class LearnerConfiguration implements Serializable {
 
-    private static final long serialVersionUID = -5130245647384793948L;
+    private static final long serialVersionUID = 5863521579527593558L;
 
-    /** The maximum length of a comment. */
-    private static final int MAX_COMMENT_LENGTH = 255;
+    /** The ID of the user related to the configuration. */
+    @JsonProperty("user")
+    protected Long userId;
+
+    /** The ID of the project related to the configuration. */
+    @JsonProperty("project")
+    protected Long projectId;
+
+    /** The type of EQ oracle to find a counter example. */
+    protected AbstractEquivalenceOracleProxy eqOracle;
 
     /**
-     * Link to the Symbols that are used during the learning.
-     * @requiredField
+     * How many steps should the learner take before stopping the process.
+     * Must be greater or equal to -1, but not 0.
+     * -1 := Do not stop until no counterexample is found.
      */
-    private Set<Long> symbolsAsIds;
+    protected int maxAmountOfStepsToLearn;
+
+    public abstract void checkConfiguration() throws IllegalArgumentException;
 
     /**
-     * Link to the Symbols that should be used as a reset Symbol.
-     * @requiredField
-     */
-    private Long resetSymbolAsId;
-
-    /**
-     * The algorithm to be used during the learning.
-     * @requiredField
-     */
-    private AbstractLearningAlgorithm<String, String> algorithm;
-
-    /** The browser to use during the learn process. */
-    private BrowserConfig browser;
-
-    /** A shot comment to describe the learn set up. */
-    private String comment;
-
-    /** If membership queries should be cached. */
-    private boolean useMQCache;
-
-    /**
-     * Default constructor.
-     */
-    public LearnerConfiguration() {
-        this.symbolsAsIds = new HashSet<>();
-        this.algorithm = new TTT();
-        this.comment = "";
-        this.browser = new BrowserConfig();
-        this.useMQCache = true;
-    }
-
-    /**
-     * Get a List of ids that describes the symbols to be used during the learning process.
+     * Check if the configuration is valid, i.e. it is possible to create a test based on the given data.
      *
-     * @return A List of ids referring to symbols that must be used during the learning.
+     * @throws IllegalArgumentException If the configuration is invalid.
      */
-    @JsonProperty("symbols")
-    public Set<Long> getSymbolsAsIds() {
-        if (symbolsAsIds == null || symbolsAsIds.isEmpty()) {
-            symbolsAsIds = new HashSet<>();
+    protected void check() throws IllegalArgumentException {
+        if (maxAmountOfStepsToLearn < -1) {
+            throw new IllegalArgumentException("The MaxAmountOfStep property must not be less than -1.");
+        } else if (maxAmountOfStepsToLearn == 0) {
+            throw new IllegalArgumentException("The MaxAmountOfStep property must not be equal to 0.");
+        } else if (eqOracle == null) {
+            throw new IllegalArgumentException("Could not find an EQ oracle.");
         }
-        return symbolsAsIds;
+        eqOracle.checkParameters();
     }
 
-    /**
-     * Set a List of ids to find all the symbols that must be used during a learning process.
-     *
-     * @param symbolsAsIds
-     *         The List of ids to refer to symbols that must be used during the learning.
-     */
-    @JsonProperty("symbols")
-    public void setSymbolsAsIds(Set<Long> symbolsAsIds) {
-        this.symbolsAsIds = symbolsAsIds;
+    /** Constructor. */
+    public LearnerConfiguration() {
+        this.eqOracle = new MealyRandomWordsEQOracleProxy();
+        this.maxAmountOfStepsToLearn = -1;
     }
 
-    /**
-     * Get the id of the reset symbol.
-     *
-     * @return The link to the reset symbol.
-     */
-    @JsonProperty("resetSymbol")
-    public Long getResetSymbolAsId() {
-        return resetSymbolAsId;
+    public Long getUserId() {
+        return userId;
     }
 
-    /**
-     * Set the id of the reset symbol. This updates not the reset symbol itself.
-     *
-     * @param resetSymbolAsId
-     *         The new id of the reset symbol.
-     */
-    public void setResetSymbolAsId(Long resetSymbolAsId) {
-        this.resetSymbolAsId = resetSymbolAsId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    /**
-     * Get the LearnerAlgorithm that should be used for the learning process.
-     *
-     * @return The selected LearnerAlgorithm.
-     */
-    public AbstractLearningAlgorithm<String, String> getAlgorithm() {
-        return algorithm;
+    public Long getProjectId() {
+        return projectId;
     }
 
-    /**
-     * Set a new LearnerAlgorithm to use for the learning.
-     *
-     * @param algorithm
-     *         The new algorithm to be used.
-     */
-    public void setAlgorithm(AbstractLearningAlgorithm<String, String> algorithm) {
-        this.algorithm = algorithm;
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 
-    /**
-     * @return The browser to use for the learning.
-     */
-    public BrowserConfig getBrowser() {
-        return browser;
+    public AbstractEquivalenceOracleProxy getEqOracle() {
+        return eqOracle;
     }
 
-    /**
-     * @param browser The new browser to use for the learning process.
-     */
-    public void setBrowser(BrowserConfig browser) {
-        this.browser = browser;
+    public void setEqOracle(AbstractEquivalenceOracleProxy eqOracle) {
+        this.eqOracle = eqOracle;
     }
 
-    /**
-     * Get the current comment for the learn setup.
-     *
-     * @return The current comment.
-     */
-    @Size(max = MAX_COMMENT_LENGTH)
-    public String getComment() {
-        return comment;
+    public int getMaxAmountOfStepsToLearn() {
+        return maxAmountOfStepsToLearn;
     }
 
-    /**
-     * Set a new short comment.
-     * Must be between max. 25 characters long.
-     *
-     * @param comment
-     *         The new comment.
-     */
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    /** @return {@link LearnerConfiguration#useMQCache}. */
-    public boolean isUseMQCache() {
-        return useMQCache;
-    }
-
-    /** @param useMQCache {@link LearnerConfiguration#useMQCache}. */
-    public void setUseMQCache(boolean useMQCache) {
-        this.useMQCache = useMQCache;
+    public void setMaxAmountOfStepsToLearn(int maxAmountOfStepsToLearn) {
+        this.maxAmountOfStepsToLearn = maxAmountOfStepsToLearn;
     }
 }

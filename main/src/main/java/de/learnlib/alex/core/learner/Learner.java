@@ -19,7 +19,7 @@ package de.learnlib.alex.core.learner;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.entities.BrowserConfig;
-import de.learnlib.alex.core.entities.LearnerConfiguration;
+import de.learnlib.alex.core.entities.LearnerStartConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.core.entities.LearnerStatus;
@@ -51,12 +51,10 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -98,9 +96,6 @@ public class Learner {
     @Inject
     private ConnectorContextHandlerFactory contextHandlerFactory;
 
-    /** The current ContextHandler. */
-    private ConnectorContextHandler contextHandler;
-
     /** The last thread of an user, if one exists. */
     private final Map<User, LearnerThread> userThreads;
 
@@ -123,21 +118,12 @@ public class Learner {
      * @param learnerResultDAO      The LearnerResultDAO to use.
      * @param contextHandlerFactory The factory that will be used to create new context handler.
      */
-    Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO,
-            ConnectorContextHandlerFactory contextHandlerFactory) {
+    public Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO,
+                   ConnectorContextHandlerFactory contextHandlerFactory) {
         this();
         this.symbolDAO = symbolDAO;
         this.learnerResultDAO = learnerResultDAO;
         this.contextHandlerFactory = contextHandlerFactory;
-    }
-
-    /**
-     * Used only for testing.
-     *
-     * @param contextHandler The new context handler to use.
-     */
-    void setContextHandler(ConnectorContextHandler contextHandler) {
-        this.contextHandler = contextHandler;
     }
 
     /**
@@ -155,112 +141,97 @@ public class Learner {
      * @param user          The user that wants to start the learning process.
      * @param project       The project the learning process runs in.
      * @param configuration The configuration to use for the learning process.
+     *
      * @throws IllegalArgumentException If the configuration was invalid or the user tried to start a second active
      *                                  learning thread.
      * @throws IllegalStateException    If a learning process is already active.
      * @throws NotFoundException        If the symbols specified in the configuration could not be found.
      */
-    public void start(User user, Project project, LearnerConfiguration configuration)
+    public void start(User user, Project project, LearnerStartConfiguration configuration)
             throws IllegalArgumentException, IllegalStateException, NotFoundException {
-        preStartCheck(user);
+        if (isActive(user)) {
+            throw new IllegalStateException("You can not start more than one experiment at the same time.");
+        }
 
-        LearnerResult learnerResult = createLearnerResult(user, project, configuration);
+        final LearnerResult result = createLearnerResult(user, project, configuration);
 
-        contextHandler = contextHandlerFactory.createContext(user, project, configuration.getBrowser());
-        contextHandler.setResetSymbol(learnerResult.getResetSymbol());
-        LearnerThread learnThread = new LearnerThread(learnerResultDAO, learnerResult, contextHandler);
+        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project,
+                configuration.getBrowser());
+        contextHandler.setResetSymbol(result.getResetSymbol());
+
+        final LearnerThread learnThread = new StartingLearnerThread(learnerResultDAO, contextHandler, result, configuration);
         startThread(user, learnThread);
     }
 
-    private LearnerResult createLearnerResult(User user, Project project, LearnerConfiguration configuration)
-            throws NotFoundException {
-        // learner started and not resumed
+    /**
+     * Resuming a learning process by activating a LearningThread.
+     *
+     * @param user          The user that wants to restart his latest thread.
+     * @param project       The project that is learned.
+     * @param result        The result of a previous process.
+     * @param configuration The configuration to use for the next learning steps.
+     *
+     * @throws IllegalArgumentException If the new configuration has errors.
+     * @throws IllegalStateException    If a learning process is already active or if now process to resume was found.
+     * @throws NotFoundException        If the symbols specified in the configuration could not be found.
+     */
+    public void resume(User user, Project project, LearnerResult result, LearnerResumeConfiguration configuration)
+            throws IllegalArgumentException, IllegalStateException, NotFoundException {
+        if (isActive(user)) {
+            throw new IllegalStateException("You have to wait until the running experiment is finished.");
+        }
+
+        configuration.checkConfiguration();
+        if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
+            validateCounterexample(user, configuration);
+        }
+
+        final Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbolAsId());
+        result.setResetSymbol(resetSymbol);
+
+        List<Symbol> symbols = symbolDAO.getByIds(user, project.getId(),
+                new LinkedList<>(result.getSymbolsAsIds()));
+        result.setSymbols(symbols);
+
+        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, result.getBrowser());
+        contextHandler.setResetSymbol(result.getResetSymbol());
+
+        final LearnerThread learnThread = new ResumingLearnerThread(learnerResultDAO, contextHandler, result, configuration);
+        startThread(user, learnThread);
+    }
+
+    private LearnerResult createLearnerResult(User user, Project project, LearnerStartConfiguration configuration)
+            throws NotFoundException, IllegalArgumentException {
+
+        // It is not allowed to start a learning process with predefined counterexamples.
         if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
             SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
             if (!oracle.getCounterExamples().isEmpty()) {
                 throw new IllegalArgumentException("You cannot start with predefined counterexamples");
             }
         } else {
-            configuration.checkConfiguration(); // throws IllegalArgumentException if something is wrong
+            configuration.checkConfiguration();
         }
 
-        LearnerResult learnerResult = new LearnerResult();
+        final LearnerResult learnerResult = new LearnerResult();
         learnerResult.setUser(user);
         learnerResult.setProject(project);
 
         try {
-            Symbol resetSymbol = symbolDAO.get(user, project.getId(), configuration.getResetSymbolAsId());
-            learnerResult.setResetSymbol(resetSymbol);
-        } catch (NotFoundException e) { // Extra exception to emphasize that this is the reset symbol.
-            throw new NotFoundException("Could not find the reset symbol!", e);
+            final Symbol reset = symbolDAO.get(user, project.getId(), configuration.getResetSymbolAsId());
+            learnerResult.setResetSymbol(reset);
+        } catch (NotFoundException e) {
+            throw new NotFoundException("Could not find the reset symbol", e);
         }
 
-        List<Symbol> symbolsAsList = symbolDAO.getByIds(user, project.getId(),
-                                                        new LinkedList<>(configuration.getSymbolsAsIds()));
-        Set<Symbol> symbols = new HashSet<>(symbolsAsList);
-        learnerResult.setSymbols(symbols);
-
+        final List<Symbol> alphabet = symbolDAO.getByIds(user, project.getId(), configuration.getSymbolsAsIds());
+        learnerResult.setSymbols(alphabet);
         learnerResult.setBrowser(configuration.getBrowser());
         learnerResult.setAlgorithm(configuration.getAlgorithm());
         learnerResult.setComment(configuration.getComment());
         learnerResult.setUseMQCache(configuration.isUseMQCache());
-        learnerResultDAO.create(learnerResult);
-        learnerResultDAO.createStep(learnerResult, configuration);
 
         return learnerResult;
-    }
-
-    /**
-     * Resuming a learning process by activating a LearningThread.
-     *
-     * @param user    The user that wants to restart his latest thread.
-     * @param project The project that is learned.
-     * @param result  The result of a previous process.
-     * @param config  The configuration to use for the next learning steps.
-     * @throws IllegalArgumentException If the new configuration has errors.
-     * @throws IllegalStateException    If a learning process is already active or if now process to resume was found.
-     * @throws NotFoundException        If the symbols specified in the configuration could not be found.
-     */
-    public void resume(User user, Project project, LearnerResult result, LearnerResumeConfiguration config)
-            throws IllegalArgumentException, IllegalStateException, NotFoundException {
-        preStartCheck(user);
-        config.checkConfiguration();
-
-        if (config.getEqOracle() instanceof SampleEQOracleProxy) {
-            validateCounterexample(user, config);
-        }
-
-        Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbolAsId());
-        result.setResetSymbol(resetSymbol);
-
-        List<Symbol> symbolsAsList = symbolDAO.getByIds(user, project.getId(),
-                                                        new LinkedList<>(result.getSymbolsAsIds()));
-        Set<Symbol> symbols = new HashSet<>(symbolsAsList);
-        result.setSymbols(symbols);
-
-        // create the new step
-        learnerResultDAO.createStep(result, config);
-
-        contextHandler = contextHandlerFactory.createContext(user, project, result.getBrowser());
-        contextHandler.setResetSymbol(result.getResetSymbol());
-
-        LearnerThread learnThread = new LearnerThread(learnerResultDAO, result, contextHandler, config.getStepNo());
-        startThread(user, learnThread);
-    }
-
-    /**
-     * Check if a thread for the user can possibly started.
-     * This means that the user has no other active learning thread
-     * and the overall learning thread capacity is not reached.
-     *
-     * @param user The user to check for.
-     * @throws IllegalStateException If a new thread could not start.
-     */
-    private void preStartCheck(User user) {
-        if (isActive(user)) {
-            throw new IllegalStateException("Only one active learning is allowed per user, "
-                                                    + "even for user" + user + "!");
-        }
     }
 
     /**
@@ -279,8 +250,9 @@ public class Learner {
      *
      * @param user          The user to validate the counterexample for.
      * @param configuration The new configuration.
-     * @throws IllegalArgumentException If the new configuration is based on manual counterexamples and at least one
-     *                                  of them is wrong.
+     *
+     * @throws IllegalArgumentException If the new configuration is based on manual counterexamples and at least one of
+     *                                  them is wrong.
      */
     private void validateCounterexample(User user, LearnerResumeConfiguration configuration)
             throws IllegalArgumentException {
@@ -304,20 +276,20 @@ public class Learner {
                     outputs.add(io.getOutput());
                 } else {
                     throw new IllegalArgumentException("The symbol with the name '" + io.getInput() + "'"
-                                                               + " is not used in this test setup.");
+                            + " is not used in this test setup.");
                 }
             }
 
             // finally check if the given sample matches the behavior of the SUL
             List<String> results = readOutputs(lastResult.getUser(),
-                                               lastResult.getProject(),
-                                               lastResult.getResetSymbol(),
-                                               symbolsFromCounterexample,
-                                               lastResult.getBrowser());
+                    lastResult.getProject(),
+                    lastResult.getResetSymbol(),
+                    symbolsFromCounterexample,
+                    lastResult.getBrowser());
 
             if (!results.equals(outputs)) {
                 throw new IllegalArgumentException("At least one of the given samples for counterexamples"
-                                                           + " is not matching the behavior of the SUL.");
+                        + " is not matching the behavior of the SUL.");
             }
         }
     }
@@ -328,8 +300,7 @@ public class Learner {
      * @param user The user that wants to stop his active thread.
      */
     public void stop(User user) {
-        LearnerThread learnerThread = userThreads.get(user);
-
+        final LearnerThread learnerThread = userThreads.get(user);
         if (learnerThread != null) {
             learnerThread.interrupt();
         }
@@ -339,6 +310,7 @@ public class Learner {
      * Method to check if a learning process is still active or if it has finished.
      *
      * @param user The user to check for active threads.
+     *
      * @return true if the learning process is active, false otherwise.
      */
     public boolean isActive(User user) {
@@ -350,6 +322,7 @@ public class Learner {
      * Get the status of the Learner as immutable object.
      *
      * @param user The user that wants a LearnerStatus object for his (active) thread.
+     *
      * @return A snapshot of the Learner status.
      */
     public LearnerStatus getStatus(User user) {
@@ -360,7 +333,7 @@ public class Learner {
             status = new LearnerStatus(); // not active
         } else {
             LearnerThread thread = userThreads.get(user);
-            LearnerPhase phase = thread != null ? thread.getPhase() : null;
+            LearnerPhase phase = thread != null ? thread.getLearnerPhase() : null;
             List<DefaultQueryProxy> queries = thread != null ? thread.getCurrentQueries() : null;
 
             status = new LearnerStatus(getResult(user), phase, queries); // active
@@ -374,16 +347,12 @@ public class Learner {
      * This must not be a valid step of a test run!
      *
      * @param user The user that wants to see his result.
+     *
      * @return The current result of the LearnerThread.
      */
     public LearnerResult getResult(User user) {
-        LearnerThread learnerThread = userThreads.get(user);
-
-        if (learnerThread != null) {
-            return learnerThread.getResult();
-        } else {
-            return null;
-        }
+        final LearnerThread learnerThread = userThreads.get(user);
+        return learnerThread != null ? learnerThread.getResult() : null;
     }
 
     /**
@@ -394,7 +363,9 @@ public class Learner {
      * @param resetSymbol   The reset symbol to use.
      * @param symbols       The symbol sequence to process in order to generate the output sequence.
      * @param browserConfig The configuration to use for the web browser.
+     *
      * @return The following output sequence.
+     *
      * @throws LearnerException If something went wrong while testing the symbols.
      */
     public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols,
@@ -422,7 +393,9 @@ public class Learner {
      * @param resetSymbol      The reset symbol to use.
      * @param symbols          The symbol sequence to process in order to generate the output sequence.
      * @param readOutputConfig The config for reading the outputs.
+     *
      * @return The following output sequence.
+     *
      * @throws LearnerException If something went wrong while testing the symbols.
      */
     public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols,
@@ -465,6 +438,7 @@ public class Learner {
      *
      * @param mealy1 The first Mealy to compare.
      * @param mealy2 The second Mealy to compare.
+     *
      * @return If the machines are different: The corresponding separating word; otherwise: ""
      */
     public String compare(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {

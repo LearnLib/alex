@@ -30,6 +30,7 @@ public class LearnerResumeConfigurationTest {
     @Before
     public void setUp() {
         configuration = new LearnerResumeConfiguration();
+        configuration.setStepNo(1);
     }
 
     @Test

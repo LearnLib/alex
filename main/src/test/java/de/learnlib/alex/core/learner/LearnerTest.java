@@ -20,7 +20,7 @@ import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.dao.SymbolDAO;
 import de.learnlib.alex.core.entities.BrowserConfig;
 import de.learnlib.alex.core.entities.ExecuteResult;
-import de.learnlib.alex.core.entities.LearnerConfiguration;
+import de.learnlib.alex.core.entities.LearnerStartConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResultStep;
 import de.learnlib.alex.core.entities.Project;
@@ -67,7 +67,7 @@ public class LearnerTest {
     private Project project;
 
     @Mock
-    private LearnerConfiguration learnerConfiguration;
+    private LearnerStartConfiguration learnerConfiguration;
 
     @Mock
     private SymbolDAO symbolDAO;
@@ -128,7 +128,7 @@ public class LearnerTest {
     @Test(expected = IllegalStateException.class)
     public void shouldOnlyStartTheThreadOnce() throws NotFoundException {
         given(symbolDAO.getByIds(any(User.class), any(Long.class), any(List.class))).willReturn(new LinkedList<>());
-        given(learnerResultDAO.createStep(any(LearnerResult.class), any(LearnerConfiguration.class)))
+        given(learnerResultDAO.createStep(any(LearnerResult.class), any(LearnerStartConfiguration.class)))
                 .willReturn(new LearnerResultStep());
         given(learnerThread.isFinished()).willReturn(false);
 
@@ -149,7 +149,8 @@ public class LearnerTest {
         }
         //
         ConnectorContextHandler ctxHandler = mock(ConnectorContextHandler.class);
-        learner.setContextHandler(ctxHandler);
+        // TODO
+        //        learner.setContextHandler(ctxHandler);
         //
         ConnectorManager connectorManager = mock(ConnectorManager.class);
         given(ctxHandler.createContext()).willReturn(connectorManager);

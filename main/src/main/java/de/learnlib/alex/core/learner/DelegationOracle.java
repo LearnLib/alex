@@ -35,6 +35,10 @@ public class DelegationOracle<I, O> implements MembershipOracle<I, Word<O>> {
     /** The sul the membership queries should be posed to. */
     private MembershipOracle<I, Word<O>> delegate;
 
+    /** Constructor. */
+    public DelegationOracle() {
+    }
+
     /**
      * Constructor.
      *
