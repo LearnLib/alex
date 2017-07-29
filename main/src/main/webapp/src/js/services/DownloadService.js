@@ -58,7 +58,7 @@ export class DownloadService {
      * @param {string} filename - The name of the file to download.
      */
     downloadObject(obj, filename) {
-        const href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj));
+        const href = 'data:text/json;charset=utf-8,' + encodeURIComponent(angular.toJson(obj));
         this.download(filename, 'json', href);
     }
 
