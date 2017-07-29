@@ -200,8 +200,9 @@ public abstract class LearnerThread<T extends LearnerConfiguration> extends Thre
                 configuration.getEqOracle().createEqOracle(mqOracle, maxConcurrentQueries);
 
         long start, end;
+        long rounds = 0;
 
-        while (true) {
+        while (continueLearning(currentStep, rounds)) {
 
             // search for counterexamples
             learnerPhase = Learner.LearnerPhase.EQUIVALENCE_TESTING;
@@ -230,7 +231,13 @@ public abstract class LearnerThread<T extends LearnerConfiguration> extends Thre
             } else {
                 break;
             }
+
+            rounds++;
         }
+    }
+
+    private boolean continueLearning(final LearnerResultStep step, final long rounds) {
+        return step.getStepsToLearn() == -1 || step.getStepsToLearn() == rounds || isInterrupted();
     }
 
     /**
