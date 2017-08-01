@@ -16,11 +16,14 @@
 
 package de.learnlib.alex.core.entities.algorithms;
 
+import de.learnlib.algorithms.discriminationtree.hypothesis.HState;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
 import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.discriminationtree.DTNode;
+import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDiscriminationTree;
+import de.learnlib.datastructure.discriminationtree.model.DTNode;
 import de.learnlib.oracles.SULOracle;
 import net.automatalib.words.Alphabet;
+import net.automatalib.words.Word;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,8 +60,8 @@ public class DiscriminationTreeTest {
     }
 
     private DTLearnerMealy createDTLearnerMock() {
-        de.learnlib.discriminationtree.DiscriminationTree tree;
-        tree = mock(de.learnlib.discriminationtree.DiscriminationTree.class);
+        AbstractWordBasedDiscriminationTree<String, Word<String>, HState<String, Word<String>, Void, String>> tree;
+        tree = mock(AbstractWordBasedDiscriminationTree.class);
         given(tree.getRoot()).willReturn(mock(DTNode.class));
         DTLearnerMealy learner = mock(DTLearnerMealy.class);
         given(learner.getDiscriminationTree()).willReturn(tree);

@@ -22,7 +22,8 @@ import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealyBuilder;
 import de.learnlib.api.LearningAlgorithm;
 import de.learnlib.api.MembershipOracle;
-import de.learnlib.discriminationtree.DTNode;
+import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDiscriminationTree;
+import de.learnlib.datastructure.discriminationtree.model.DTNode;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
@@ -48,23 +49,22 @@ public class DiscriminationTree extends AbstractLearningAlgorithm<String, String
             throw new IllegalArgumentException("Can not read the internal data because the algorithm types"
                                                        + "were different");
         }
-        de.learnlib.discriminationtree.DiscriminationTree discriminationTree;
-        discriminationTree = ((DTLearnerMealy) learner).getDiscriminationTree();
-        return toJSON(discriminationTree);
+
+        return toJSON(((DTLearnerMealy<String, String>) learner).getDiscriminationTree());
     }
 
     /**
      * Serializes the discrimination tree of the discrimination tree algorithm into JSON.
      *
-     * @param tree
-     *         The tree to convert into nice JSON.
+     * @param dtree The tree to convert into nice JSON.
+     *
      * @return The JSON string of the given tree.
      */
-    private String toJSON(de.learnlib.discriminationtree.DiscriminationTree<String, Word, HState> tree) {
-        return toJSON(tree.getRoot());
+    private String toJSON(AbstractWordBasedDiscriminationTree<String, Word<String>, HState<String, Word<String>, Void, String>> dtree) {
+        return toJSON(dtree.getRoot());
     }
 
-    private String toJSON(DTNode<String, Word, HState> node) {
+    private String toJSON(DTNode<String, Word<String>, HState<String, Word<String>, Void, String>> node) {
         StringBuilder result = new StringBuilder();
         result.append('{');
 

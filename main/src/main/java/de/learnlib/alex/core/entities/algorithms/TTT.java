@@ -17,7 +17,8 @@
 package de.learnlib.alex.core.entities.algorithms;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import de.learnlib.algorithms.ttt.base.DTNode;
+import de.learnlib.algorithms.ttt.base.BaseDTNode;
+import de.learnlib.algorithms.ttt.base.BaseTTTDiscriminationTree;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
 import de.learnlib.api.LearningAlgorithm;
@@ -48,33 +49,33 @@ public class TTT extends AbstractLearningAlgorithm<String, String> implements Se
                                                        + "were different");
         }
 
-        TTTLearnerMealy tttLearner = (TTTLearnerMealy) learner;
+        TTTLearnerMealy<String, String> tttLearner = (TTTLearnerMealy<String, String>) learner;
         return toJSON(tttLearner.getDiscriminationTree());
     }
 
     /**
      * Serializes the discrimination tree of the TTT algorithm into JSON.
      *
-     * @param tree The tree to convert into nice JSON.
+     * @param dtree The tree to convert into nice JSON.
      * @return The JSON string of the given tree.
      */
-    private String toJSON(de.learnlib.algorithms.ttt.base.DiscriminationTree<String, Word> tree) {
-        return toJSON(tree.getRoot());
+    private String toJSON(BaseTTTDiscriminationTree<String, Word<String>> dtree) {
+        return toJSON(dtree.getRoot());
     }
 
-    private String toJSON(DTNode<String, Word> node) {
+    private String toJSON(BaseDTNode<String, Word<String>> node) {
         StringBuilder result = new StringBuilder();
         result.append('{');
 
-        if (node.getParentEdgeLabel() != null) {
+        if (node.getParentOutcome() != null) {
             result.append("\"edgeLabel\": \"");
-            result.append(node.getParentEdgeLabel());
+            result.append(node.getParentOutcome());
             result.append("\",");
         }
 
         if (node.isLeaf()) {
             result.append("\"data\": \"");
-            result.append(node.getState());
+            result.append(node.getData());
             result.append('"');
         } else {
             result.append("\"discriminator\": \"");
@@ -83,7 +84,7 @@ public class TTT extends AbstractLearningAlgorithm<String, String> implements Se
 
             result.append("\"children\": [");
             node.getChildEntries().forEach(entry -> {
-                DTNode child = entry.getValue();
+                BaseDTNode<String, Word<String>> child = entry.getValue();
                 result.append(toJSON(child));
                 result.append(",");
             });

@@ -101,7 +101,8 @@ class LearnResultPanel {
      * @returns {boolean|*}
      */
     hasInternalDataStructure() {
-        return [learnAlgorithm.DISCRIMINATION_TREE, learnAlgorithm.LSTAR].indexOf(this.result.algorithm.name) > -1;
+        return [learnAlgorithm.DISCRIMINATION_TREE, learnAlgorithm.LSTAR, learnAlgorithm.TTT]
+            .indexOf(this.result.algorithm.name) > -1;
     }
 
     /**
@@ -113,6 +114,9 @@ class LearnResultPanel {
                 this.mode = this.modes.OBSERVATION_TABLE;
                 break;
             case learnAlgorithm.DISCRIMINATION_TREE:
+                this.mode = this.modes.DISCRIMINATION_TREE;
+                break;
+            case learnAlgorithm.TTT:
                 this.mode = this.modes.DISCRIMINATION_TREE;
                 break;
             default:
