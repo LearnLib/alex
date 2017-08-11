@@ -233,7 +233,7 @@ class LearnerViewComponent {
      */
     abort() {
         if (this.active) {
-            this.ToastService.info('The learner will stop with the next hypothesis');
+            this.ToastService.info('The learner will stop after executing the current query batch');
             this.LearnerResource.stop();
         }
     }

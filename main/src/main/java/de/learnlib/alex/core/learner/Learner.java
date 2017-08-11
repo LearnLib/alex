@@ -99,7 +99,7 @@ public class Learner {
     /** The last thread of an user, if one exists. */
     private final Map<User, AbstractLearnerThread> userThreads;
 
-    /** The executer service will take care of creating and scheduling the actual OS threads. */
+    /** The executor service will take care of creating and scheduling the actual OS threads. */
     private ExecutorService executorService;
 
     /**
@@ -302,7 +302,7 @@ public class Learner {
     public void stop(User user) {
         final AbstractLearnerThread learnerThread = userThreads.get(user);
         if (learnerThread != null) {
-            learnerThread.interrupt();
+            learnerThread.stopLearning();
         }
     }
 

@@ -99,6 +99,8 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /** The queries that are executed at the moment. */
     private List<DefaultQueryProxy> currentQueries;
 
+    private MultiSULOracle<String, String> multiSULOracle;
+
     /**
      * Constructor.
      *
@@ -130,8 +132,10 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         final SUL<String, String> mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
         this.sul = new AlexSUL<>(mappedSUL);
 
+        this.multiSULOracle = new MultiSULOracle<>(sul);
+
         // monitor which queries are being processed.
-        monitorOracle = new QueryMonitorOracle<>(new MultiSULOracle<>(sul));
+        monitorOracle = new QueryMonitorOracle<>(multiSULOracle);
         monitorOracle.addPostProcessingListener(queries -> {
             List<DefaultQueryProxy> currentQueries = new ArrayList<>();
             queries.forEach(query -> currentQueries.add(DefaultQueryProxy.createFrom(new DefaultQuery<>(query))));
@@ -265,6 +269,10 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         prefix.answer(output.subWord(0, i));
 
         return prefix;
+    }
+
+    public void stopLearning() {
+        this.multiSULOracle.interrupt();
     }
 
     public Learner.LearnerPhase getLearnerPhase() {

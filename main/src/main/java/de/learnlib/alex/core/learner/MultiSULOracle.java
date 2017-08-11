@@ -39,11 +39,13 @@ public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
     /** The sul the membership queries should be posed to. */
     private final SUL<I, O> sul;
 
+    /** If the learning experiment has been interrupted by the user. */
+    private boolean isInterrupted = false;
+
     /**
      * Constructor.
      *
-     * @param sul
-     *          The sul the membership queries should be posed to.
+     * @param sul The sul the membership queries should be posed to.
      */
     public MultiSULOracle(SUL<I, O> sul) {
         this.sul = sul;
@@ -52,7 +54,12 @@ public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
     @Override
     public void processQueries(Collection<? extends Query<I, Word<O>>> queries) {
         if (queries.size() > 0) {
-            processQueries(sul, queries);
+            if (isInterrupted) {
+                // force a null pointer exception so the learner stops
+                queries.forEach(q -> q.answer(null));
+            } else {
+                processQueries(sul, queries);
+            }
         }
     }
 
@@ -94,4 +101,7 @@ public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
         }
     }
 
+    public void interrupt() {
+        this.isInterrupted = true;
+    }
 }
