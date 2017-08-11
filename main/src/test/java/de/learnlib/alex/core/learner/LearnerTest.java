@@ -76,7 +76,7 @@ public class LearnerTest {
     private LearnerResultDAO learnerResultDAO;
 
     @Mock
-    private LearnerThread learnerThread;
+    private AbstractLearnerThread learnerThread;
 
     private Learner learner;
 

@@ -16,61 +16,52 @@
 
 package de.learnlib.alex.core.learner;
 
-import com.rits.cloning.Cloner;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.api.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.mapper.api.Mapper;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Class to map the Symbols and their result to the values used in the learning process.
  */
-public class SymbolMapper
-        implements Mapper<String, String, ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult> {
+public class SymbolMapper implements Mapper<
+        String,
+        String,
+        ContextExecutableInput<ExecuteResult, ConnectorManager>,
+        ExecuteResult> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** Map to manage the symbols according to their name in the Alphabet. */
-    private Map<String, Symbol> symbols;
-
-    /** Java object cloner. */
-    private Cloner cloner;
+    private final Map<String, Symbol> symbolMap;
 
     /**
-     * Constructor.
-     * Initialize the map name -> symbol.
+     * Constructor. Initialize the map name -> symbol.
      *
      * @param symbols - The symbols for the learning process.
      */
-    public SymbolMapper(Symbol... symbols) {
-        this.symbols = new HashMap<>();
-        this.cloner = new Cloner();
-
-        for (Symbol s : symbols) {
-            this.symbols.put(s.getName(), s);
-        }
+    public SymbolMapper(List<Symbol> symbols) {
+        this.symbolMap = new HashMap<>();
+        symbols.forEach(s -> this.symbolMap.put(s.getName(), s));
     }
 
     public void addSymbol(Symbol symbol) {
-        this.symbols.putIfAbsent(symbol.getName(), symbol);
+        this.symbolMap.putIfAbsent(symbol.getName(), symbol);
     }
 
     @Override
     public ContextExecutableInput<ExecuteResult, ConnectorManager> mapInput(String abstractInput) {
-        return symbols.get(abstractInput);
+        return symbolMap.get(abstractInput);
     }
 
     @Override
@@ -104,9 +95,7 @@ public class SymbolMapper
      * @return The list of symbols.
      */
     public List<Symbol> getSymbols() {
-        List<Symbol> list = new LinkedList<>();
-        list.addAll(symbols.values());
-        return list;
+        return new ArrayList<>(symbolMap.values());
     }
 
     @Override
@@ -118,7 +107,6 @@ public class SymbolMapper
     @Override
     public Mapper<String, String, ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult> fork()
             throws UnsupportedOperationException {
-        Symbol[] symbolsArray = symbols.values().toArray(new Symbol[symbols.values().size()]);
-        return new SymbolMapper(cloner.deepClone(symbolsArray));
+        return new SymbolMapper(new ArrayList<>(symbolMap.values()));
     }
 }

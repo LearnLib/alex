@@ -22,7 +22,8 @@ import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.MealyRandomWords
 
 import java.io.Serializable;
 
-public abstract class LearnerConfiguration implements Serializable {
+/** The abstract learner configuration. */
+public abstract class AbstractLearnerConfiguration implements Serializable {
 
     private static final long serialVersionUID = 5863521579527593558L;
 
@@ -63,7 +64,7 @@ public abstract class LearnerConfiguration implements Serializable {
     }
 
     /** Constructor. */
-    public LearnerConfiguration() {
+    public AbstractLearnerConfiguration() {
         this.eqOracle = new MealyRandomWordsEQOracleProxy();
         this.maxAmountOfStepsToLearn = -1;
     }

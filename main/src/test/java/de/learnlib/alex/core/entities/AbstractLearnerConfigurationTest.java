@@ -32,7 +32,7 @@ import java.util.LinkedList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class LearnerConfigurationTest {
+public class AbstractLearnerConfigurationTest {
 
     private static final int EQ_MIN_VALUE = 1;
     private static final int EQ_MAX_VALUE = 1;

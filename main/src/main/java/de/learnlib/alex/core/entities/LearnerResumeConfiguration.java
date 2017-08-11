@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * Entity to hold the information needed to resume a learning process.
  */
-public class LearnerResumeConfiguration extends LearnerConfiguration implements Serializable {
+public class LearnerResumeConfiguration extends AbstractLearnerConfiguration implements Serializable {
 
     private static final long serialVersionUID = 2713088191086667675L;
 

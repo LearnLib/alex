@@ -240,13 +240,6 @@
             <version>${selenium.version}</version>
         </dependency>
 
-        <!-- Cloning Java objects -->
-        <dependency>
-            <groupId>uk.com.robust-it</groupId>
-            <artifactId>cloning</artifactId>
-            <version>1.9.2</version>
-        </dependency>
-
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>

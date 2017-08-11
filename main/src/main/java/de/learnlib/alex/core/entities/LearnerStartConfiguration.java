@@ -30,7 +30,7 @@ import java.util.List;
  * Entity to hold the information and parameters to configure a learn process.
  */
 @JsonPropertyOrder(alphabetic = true)
-public class LearnerStartConfiguration extends LearnerConfiguration implements Serializable {
+public class LearnerStartConfiguration extends AbstractLearnerConfiguration implements Serializable {
 
     private static final long serialVersionUID = -5130245647384793948L;
 

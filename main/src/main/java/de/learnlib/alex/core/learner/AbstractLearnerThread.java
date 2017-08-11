@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.core.learner;
 
-import de.learnlib.alex.core.entities.LearnerConfiguration;
+import de.learnlib.alex.core.entities.AbstractLearnerConfiguration;
 import de.learnlib.alex.core.dao.LearnerResultDAO;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.LearnerResult;
@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
  * Thread to run a learning process. It needs to be a Thread so that the server can still deal with other requests. This
  * class contains the actual learning loop.
  */
-public abstract class LearnerThread<T extends LearnerConfiguration> extends Thread {
+public abstract class AbstractLearnerThread<T extends AbstractLearnerConfiguration> extends Thread {
 
     protected static final Logger LOGGER = LogManager.getLogger();
 
@@ -107,8 +107,8 @@ public abstract class LearnerThread<T extends LearnerConfiguration> extends Thre
      * @param result           {@link #result}.
      * @param configuration    {@link #configuration}.
      */
-    public LearnerThread(LearnerResultDAO learnerResultDAO, ConnectorContextHandler context, LearnerResult result,
-                         T configuration) {
+    public AbstractLearnerThread(LearnerResultDAO learnerResultDAO, ConnectorContextHandler context, LearnerResult result,
+                                 T configuration) {
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
         this.configuration = configuration;
@@ -124,7 +124,7 @@ public abstract class LearnerThread<T extends LearnerConfiguration> extends Thre
         this.currentQueries = new ArrayList<>();
 
         // prepare the mapped sul.
-        symbolMapper = new SymbolMapper(result.getSymbols().toArray(new Symbol[]{}));
+        symbolMapper = new SymbolMapper(result.getSymbols());
         final ContextExecutableInputSUL<ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult, ConnectorManager>
                 ceiSUL = new ContextExecutableInputSUL<>(context);
         final SUL<String, String> mappedSUL = Mappers.apply(symbolMapper, ceiSUL);

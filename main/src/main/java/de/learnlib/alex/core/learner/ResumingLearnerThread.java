@@ -31,18 +31,17 @@ import de.learnlib.oracles.DefaultQuery;
 import de.learnlib.oracles.SimulatorOracle;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.util.automata.Automata;
-import net.automatalib.util.graphs.dot.GraphDOT;
 import net.automatalib.words.Word;
 
 /** The learner thread that is used for resuming an old experiment from a given step. */
-public class ResumingLearnerThread extends LearnerThread<LearnerResumeConfiguration> {
+public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeConfiguration> {
 
     /**
      * Constructor.
      *
-     * @param learnerResultDAO {@link LearnerThread#learnerResultDAO}.
+     * @param learnerResultDAO {@link AbstractLearnerThread#learnerResultDAO}.
      * @param context          The context to use.
-     * @param result           {@link LearnerThread#result}.
+     * @param result           {@link AbstractLearnerThread#result}.
      * @param configuration    The configuration to use.
      */
     public ResumingLearnerThread(LearnerResultDAO learnerResultDAO, ConnectorContextHandler context,

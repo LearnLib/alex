@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.core.dao;
 
-import de.learnlib.alex.core.entities.LearnerConfiguration;
+import de.learnlib.alex.core.entities.AbstractLearnerConfiguration;
 import de.learnlib.alex.core.entities.LearnerResult;
 import de.learnlib.alex.core.entities.LearnerResultStep;
 import de.learnlib.alex.core.entities.LearnerStatus;
@@ -180,7 +180,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     @Override
     @Transactional
-    public LearnerResultStep createStep(LearnerResult result, LearnerConfiguration configuration)
+    public LearnerResultStep createStep(LearnerResult result, AbstractLearnerConfiguration configuration)
             throws ValidationException {
 
         final LearnerResultStep step = new LearnerResultStep();

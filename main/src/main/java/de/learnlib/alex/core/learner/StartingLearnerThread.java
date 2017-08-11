@@ -23,14 +23,14 @@ import de.learnlib.alex.core.entities.LearnerResultStep;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 
 /** The learner thread that is used for starting a new experiment. */
-public class StartingLearnerThread extends LearnerThread<LearnerStartConfiguration> {
+public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartConfiguration> {
 
     /**
      * Constructor.
      *
-     * @param learnerResultDAO {@link LearnerThread#learnerResultDAO}.
+     * @param learnerResultDAO {@link AbstractLearnerThread#learnerResultDAO}.
      * @param context          The context to use.
-     * @param result           {@link LearnerThread#result}.
+     * @param result           {@link AbstractLearnerThread#result}.
      * @param configuration    The configuration to use.
      */
     public StartingLearnerThread(LearnerResultDAO learnerResultDAO, ConnectorContextHandler context,
@@ -51,7 +51,7 @@ public class StartingLearnerThread extends LearnerThread<LearnerStartConfigurati
             updateOnError(e);
         } finally {
             finished = true;
-            LOGGER.info(LEARNER_MARKER, "The learn thread has finished.");
+            LOGGER.info(LEARNER_MARKER, "The learner thread has finished.");
             LOGGER.traceExit();
         }
     }

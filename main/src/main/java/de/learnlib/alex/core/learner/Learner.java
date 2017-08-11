@@ -97,7 +97,7 @@ public class Learner {
     private ConnectorContextHandlerFactory contextHandlerFactory;
 
     /** The last thread of an user, if one exists. */
-    private final Map<User, LearnerThread> userThreads;
+    private final Map<User, AbstractLearnerThread> userThreads;
 
     /** The executer service will take care of creating and scheduling the actual OS threads. */
     private ExecutorService executorService;
@@ -159,7 +159,7 @@ public class Learner {
                 configuration.getBrowser());
         contextHandler.setResetSymbol(result.getResetSymbol());
 
-        final LearnerThread learnThread = new StartingLearnerThread(learnerResultDAO, contextHandler, result, configuration);
+        final AbstractLearnerThread learnThread = new StartingLearnerThread(learnerResultDAO, contextHandler, result, configuration);
         startThread(user, learnThread);
     }
 
@@ -196,7 +196,7 @@ public class Learner {
         final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, result.getBrowser());
         contextHandler.setResetSymbol(result.getResetSymbol());
 
-        final LearnerThread learnThread = new ResumingLearnerThread(learnerResultDAO, contextHandler, result, configuration);
+        final AbstractLearnerThread learnThread = new ResumingLearnerThread(learnerResultDAO, contextHandler, result, configuration);
         startThread(user, learnThread);
     }
 
@@ -240,7 +240,7 @@ public class Learner {
      * @param user        The user that starts the thread.
      * @param learnThread The thread to start.
      */
-    private void startThread(User user, LearnerThread learnThread) {
+    private void startThread(User user, AbstractLearnerThread learnThread) {
         executorService.submit(learnThread);
         userThreads.put(user, learnThread);
     }
@@ -300,7 +300,7 @@ public class Learner {
      * @param user The user that wants to stop his active thread.
      */
     public void stop(User user) {
-        final LearnerThread learnerThread = userThreads.get(user);
+        final AbstractLearnerThread learnerThread = userThreads.get(user);
         if (learnerThread != null) {
             learnerThread.interrupt();
         }
@@ -314,7 +314,7 @@ public class Learner {
      * @return true if the learning process is active, false otherwise.
      */
     public boolean isActive(User user) {
-        LearnerThread learnerThread = userThreads.get(user);
+        AbstractLearnerThread learnerThread = userThreads.get(user);
         return learnerThread != null && !learnerThread.isFinished();
     }
 
@@ -332,7 +332,7 @@ public class Learner {
         if (!active) {
             status = new LearnerStatus(); // not active
         } else {
-            LearnerThread thread = userThreads.get(user);
+            AbstractLearnerThread thread = userThreads.get(user);
             LearnerPhase phase = thread != null ? thread.getLearnerPhase() : null;
             List<DefaultQueryProxy> queries = thread != null ? thread.getCurrentQueries() : null;
 
@@ -348,10 +348,10 @@ public class Learner {
      *
      * @param user The user that wants to see his result.
      *
-     * @return The current result of the LearnerThread.
+     * @return The current result of the AbstractLearnerThread.
      */
     public LearnerResult getResult(User user) {
-        final LearnerThread learnerThread = userThreads.get(user);
+        final AbstractLearnerThread learnerThread = userThreads.get(user);
         return learnerThread != null ? learnerThread.getResult() : null;
     }
 
