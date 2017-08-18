@@ -186,6 +186,11 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
             final LearnerResultStep lastStep = result.getSteps().get(result.getSteps().size() - 1);
             lastStep.setErrorText(errorMessage);
             learnerResultDAO.saveStep(result, lastStep);
+        } else {
+            if (result.getId() == null) {
+                learnerResultDAO.create(result);
+            }
+            createStep(0, 0, 0, null);
         }
 
         sul.post();
