@@ -30,10 +30,7 @@ export const actionFormCall = {
         this.error = null;
         this.aceOptions = {
             useWrapMode: true,
-            showGutter: true,
-            theme: 'eclipse',
-            mode: 'json',
-            workerPath: '/node_modules/ace-builds/src-min/'
+            showGutter: true
         };
 
         this.addHeader = function () {
@@ -55,9 +52,7 @@ export const actionFormCall = {
             delete action._id;
 
             $http.post(`rest/projects/${this.project.id}/symbols/actions/test`, action)
-                .then(res => {
-                    this.testResult = res.data;
-                })
+                .then(res => this.testResult = res.data)
                 .catch(res => this.error = res.data.message);
         };
     }
