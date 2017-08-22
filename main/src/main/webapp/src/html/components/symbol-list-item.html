@@ -3,7 +3,7 @@
     <checkbox selection-model-ignore model="vm.symbol" class="pull-left" ng-if="vm.selectable"></checkbox>
 
     <div class="symbol-list-item-content">
-        <div class="pull-right" ng-transclude></div>
+        <div class="pull-right" ng-transclude selection-model-ignore></div>
 
         <div>
             <h4 class="symbol-title" ng-bind="vm.symbol.name"></h4>
@@ -29,7 +29,7 @@
                     </button>
                     <a class="btn btn-xs btn-default" ui-sref="symbolsActions({symbolId:vm.symbol.id})"
                        ng-if="vm.symbol.id">
-                        Edit Actions
+                        Edit actions
                     </a>
                 </div>
                 <ul class="list-group list-group-condensed">
@@ -40,7 +40,7 @@
                         </span>
 
                         <span class="label label-danger pull-right" ng-if="action.ignoreFailure">
-                            Ignore Failure
+                            Ignore failure
                         </span>
 
                         <span ng-bind="action.toString()"></span>

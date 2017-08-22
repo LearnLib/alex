@@ -20,13 +20,13 @@
             <hr>
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="ce in vm.tmpCounterExamples track by $index">
-                <span class="pull-right" ng-click="vm.removeCounterExampleAt($index)">
-                    <i class="fa fa-trash"></i>
-                </span>
+                    <span class="pull-right" ng-click="vm.removeCounterExampleAt($index)">
+                        <i class="fa fa-trash"></i>
+                    </span>
                     <div class="clearfix" style="margin-right: 32px;">
-                <span class="label label-primary pull-left" style="margin: 0 3px 3px 0" ng-repeat="c in ce"
-                      ng-bind="c.input">
-                </span>
+                        <span class="label label-primary pull-left" style="margin: 0 3px 3px 0" ng-repeat="c in ce"
+                              ng-bind="c.input">
+                        </span>
                     </div>
                 </li>
             </ul>

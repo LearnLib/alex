@@ -76,7 +76,6 @@ import {userEditModalHandle, userEditModalComponent} from "./components/modals/u
 import {resultListModalHandle, resultListModalComponent} from "./components/modals/resultListModal";
 import {promptModalComponent} from "./components/modals/promptModal";
 import {confirmModalComponent} from "./components/modals/confirmModal";
-import {dropdownHover} from "./directives/dropdownHover";
 import {htmlElementPickerHandle} from "./directives/htmlElementPickerHandle";
 import {aboutView} from "./components/views/aboutView";
 import {adminUsersView} from "./components/views/adminUsersView";
@@ -234,7 +233,6 @@ angular
     .service('HtmlElementPickerService', HtmlElementPickerService)
 
     // directives
-    .directive('dropdownHover', dropdownHover)
     .directive('htmlElementPickerHandle', htmlElementPickerHandle)
 
     // modals
