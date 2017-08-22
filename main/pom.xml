@@ -134,13 +134,6 @@
             <version>${jsoup.version}</version>
         </dependency>
 
-        <!-- guava for selenium wait conditions -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
-
         <!-- JsonPath -->
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
