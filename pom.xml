@@ -107,6 +107,10 @@
         <surefire-plugin.version>2.19.1</surefire-plugin.version>
         <surefire-report.version>2.19.1</surefire-report.version>
         <war-plugin.version>2.6</war-plugin.version>
+        <clean-plugin.version>3.0.0</clean-plugin.version>
+        <exec-plugin.version>1.4.0</exec-plugin.version>
+        <failsafe-plugin.version>2.19.1</failsafe-plugin.version>
+        <docker-maven-plugin.version>0.4.13</docker-maven-plugin.version>
 
         <checkstyle.version>2.17</checkstyle.version>
         <cobertura.version>2.7</cobertura.version>
@@ -121,9 +125,17 @@
         <automatalib.version>0.6.1-SNAPSHOT</automatalib.version>
         <selenium.version>3.3.1</selenium.version>
         <htmlunitdriver.version>2.25</htmlunitdriver.version>
-        <jetty.version>9.3.5.v20151012</jetty.version>
         <jose4j.version>0.5.2</jose4j.version>
         <shiro.version>1.3.2</shiro.version>
+        <xml-apis.version>1.4.01</xml-apis.version>
+        <jsoup.version>1.9.2</jsoup.version>
+        <guava.version>21.0</guava.version>
+        <json-path.version>2.2.0</json-path.version>
+        <hsqldb.version>2.3.4</hsqldb.version>
+        <jackson-datatype.version>2.8.3</jackson-datatype.version>
+        <junit.version>4.12</junit.version>
+        <mockito.version>2.7.5</mockito.version>
+        <powermock.version>1.7.0</powermock.version>
     </properties>
 
     <build>

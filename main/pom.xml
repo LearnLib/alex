@@ -50,7 +50,8 @@
             <artifactId>spring-boot-starter-log4j2</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
-        <!-- needed to forece JBoss Logging 3.3.0.Final in all dependencies. This can eventually be removed. -->
+
+        <!-- needed to force JBoss Logging 3.3.0.Final in all dependencies. This can eventually be removed. -->
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
@@ -80,7 +81,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-hibernate5</artifactId>
-            <version>2.8.3</version>
+            <version>${jackson-datatype.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -104,10 +105,11 @@
             <artifactId>spring-boot-starter-validation</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>2.3.4</version>
+            <version>${hsqldb.version}</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -129,21 +131,21 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.9.2</version>
+            <version>${jsoup.version}</version>
         </dependency>
 
         <!-- guava for selenium wait conditions -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>21.0</version>
+            <version>${guava.version}</version>
         </dependency>
 
         <!-- JsonPath -->
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
-            <version>2.2.0</version>
+            <version>${json-path.version}</version>
         </dependency>
 
         <!-- LearnLib -->
@@ -243,10 +245,10 @@
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
-            <version>1.4.01</version>
+            <version>${xml-apis.version}</version>
         </dependency>
 
-        <!--== Testing ==-->
+        <!-- == Testing == -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -257,7 +259,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -271,20 +273,21 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>2.7.5</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
 
+        <!-- Powermock -->
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito2</artifactId>
-            <version>1.7.0</version>
+            <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
-            <version>1.7.0</version>
+            <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -316,7 +319,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>${clean-plugin.version}</version>
                 <configuration>
                     <filesets>
                         <fileset>
@@ -383,7 +386,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>${failsafe-plugin.version}</version>
                 <configuration>
                     <systemProperties>
                         <property>
@@ -415,7 +418,7 @@
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>0.4.13</version>
+                <version>${docker-maven-plugin.version}</version>
                 <configuration>
                     <imageName>alex:${project.version}</imageName>
                     <imageTags>
@@ -483,7 +486,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.4.0</version>
+                        <version>${exec-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>npm-build</id>
@@ -518,7 +521,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.4.0</version>
+                        <version>${exec-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>npm-install</id>
