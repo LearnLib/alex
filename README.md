@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="assets/images/logo.png" style="max-width:100%;">
+    <img src="src/main/resources/images/logo.png" style="max-width:100%;">
 </p>
 
 # ALEX
@@ -33,7 +33,7 @@ Therefore, words are executed on the real system under learning and its reaction
 Finally, the learner creates a **hypothesis** as an output that is modeled as a [Mealy machine](https://en.wikipedia.org/wiki/Mealy_machine).
 In this example, it would hopefully look like this:
 
-![Hypothesis](assets/images/hypothesis.jpg)
+![Hypothesis](src/main/resources/images/hypothesis.jpg)
 
 As it can be seen, the learner has learned the application and all features work as intended.
 From here on, more symbols can be added and learned.
