@@ -30,16 +30,16 @@ import java.util.concurrent.TimeUnit;
 public enum WebBrowser {
 
     /** Use Google Chrome. */
-    CHROME(ChromeDriver.class),
+    CHROME,
 
     /** Use Mozilla Firefox. */
-    FIREFOX(FirefoxDriver.class),
+    FIREFOX,
 
     /** Simple & headless browser. This is the default driver. */
-    HTMLUNITDRIVER(HtmlUnitDriver.class),
+    HTMLUNITDRIVER,
 
     /** Use Microsoft Edge. */
-    EDGE(EdgeDriver.class);
+    EDGE;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -54,18 +54,6 @@ public enum WebBrowser {
 
     /** How long the current Thread should sleep if the browser has to be restarted. */
     private static final int SLEEP_TIME = 5;
-
-    /** The connected WebDriver class. */
-    private Class webDriverClass;
-
-    /**
-     * Constructor.
-     *
-     * @param webDriverClass The class of the webDriver to instantiate.
-     */
-    WebBrowser(Class webDriverClass) {
-        this.webDriverClass = webDriverClass;
-    }
 
     /**
      * Get the enum type of a web browser from a string.
@@ -107,6 +95,9 @@ public enum WebBrowser {
                     case CHROME:
                         ChromeOptions chromeOptions = new ChromeOptions();
                         chromeOptions.addArguments("--no-sandbox");
+                        if (config.isHeadless()) {
+                            chromeOptions.addArguments("--headless", "--disable-gpu");
+                        }
 
                         DesiredCapabilities chromeCapabilities = DesiredCapabilities.chrome();
                         chromeCapabilities.setCapability("recreateChromeDriverSessions", true);
@@ -130,6 +121,9 @@ public enum WebBrowser {
                         break;
                     case FIREFOX:
                         FirefoxBinary binary = new FirefoxBinary();
+                        if (config.isHeadless()) {
+                            binary.addCommandLineOptions("-headless");
+                        }
 
                         if (config.getXvfbDisplayPort() != null) {
                             binary.setEnvironmentProperty("DISPLAY", ":"
@@ -175,9 +169,8 @@ public enum WebBrowser {
     }
 
     /**
-     * Solves issues with "wrong" or non strict JavaScript that is executed on the page (e.g. jQuery).
-     * Uses reflections to get the private 'webClient' property from the UnitDriver and set the flag
-     * to ignore js errors.
+     * Solves issues with "wrong" or non strict JavaScript that is executed on the page (e.g. jQuery). Uses reflections
+     * to get the private 'webClient' property from the UnitDriver and set the flag to ignore js errors.
      */
     private void enableJavaScript(HtmlUnitDriver htmlUnitDriver) {
         try {

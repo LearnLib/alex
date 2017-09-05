@@ -38,57 +38,54 @@ public class BrowserConfig {
     /** The port for the virtual xvfb display. Only works with linux. */
     private Integer xvfbDisplayPort;
 
+    /** Run the web driver in headless mode, if supported. */
+    private boolean headless;
+
     /** Constructor. */
     public BrowserConfig() {
         this.driver = WebBrowser.HTMLUNITDRIVER;
+        this.headless = false;
+        this.width = 0;
+        this.height = 0;
     }
 
-    /** @return {@link BrowserConfig#driver}. */
     public WebBrowser getDriver() {
         return driver;
     }
 
-    /**
-     * @param driver
-     *         {@link BrowserConfig#driver}.
-     */
     public void setDriver(WebBrowser driver) {
         this.driver = driver;
     }
 
-    /** @return {@link BrowserConfig#width}. */
     public Integer getWidth() {
         return width;
     }
 
-    /**
-     * @param width
-     *         {@link BrowserConfig#width}.
-     */
     public void setWidth(Integer width) {
         this.width = width < 0 ? 0 : width;
     }
 
-    /** @return {@link BrowserConfig#height}. */
     public Integer getHeight() {
         return height;
     }
 
-    /**
-     * @param height
-     *         {@link BrowserConfig#height}.
-     */
     public void setHeight(Integer height) {
         this.height = height < 0 ? 0 : height;
     }
 
-    /** @return {@link #xvfbDisplayPort} */
     public Integer getXvfbDisplayPort() {
         return xvfbDisplayPort;
     }
 
-    /** @param xvfbDisplayPort {@link #xvfbDisplayPort} */
     public void setXvfbDisplayPort(Integer xvfbDisplayPort) {
         this.xvfbDisplayPort = xvfbDisplayPort;
+    }
+
+    public boolean isHeadless() {
+        return headless;
+    }
+
+    public void setHeadless(boolean headless) {
+        this.headless = headless;
     }
 }

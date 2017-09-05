@@ -33,7 +33,6 @@ public class SettingsResourceTest extends JerseyTest {
     @Mock
     private UserDAO userDAO;
 
-    private User admin;
     private String adminToken;
     private User user;
     private String userToken;
@@ -44,7 +43,6 @@ public class SettingsResourceTest extends JerseyTest {
         MockitoAnnotations.initMocks(this);
 
         ALEXTestApplication testApplication = new ALEXTestApplication(userDAO, SettingsResource.class);
-        admin = testApplication.getAdmin();
         adminToken = testApplication.getAdminToken();
         testApplication.register(new AbstractBinder() {
             @Override
@@ -83,7 +81,7 @@ public class SettingsResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String json = response.readEntity(String.class);
-        String expectedJSON = "{\"driver\":{\"chrome\":\"\",\"edge\":\"\",\"firefox\":\"\"},\"id\":1}";
+        String expectedJSON = "{\"driver\":{\"chrome\":\"\",\"defaultDriver\":\"htmlunitdriver\",\"edge\":\"\",\"firefox\":\"\"},\"id\":1}";
         assertEquals(expectedJSON, json);
     }
 

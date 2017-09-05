@@ -72,7 +72,8 @@ export class LearnConfiguration {
         this.browser = obj.browser || {
                 driver: webBrowser.HTMLUNITDRIVER,
                 width: screen.width,
-                height: screen.height
+                height: screen.height,
+                headless: false
             };
 
         /**

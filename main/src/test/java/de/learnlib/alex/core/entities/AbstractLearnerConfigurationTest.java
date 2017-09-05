@@ -42,7 +42,7 @@ public class AbstractLearnerConfigurationTest {
     @Test
     public void shouldCreateTheCorrectDefaultJSON() throws JsonProcessingException {
         String expectedJSON = "{\"algorithm\":{\"name\":\"TTT\"},"
-                                + "\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":null,\"width\":null,\"xvfbDisplayPort\":null},"
+                                + "\"browser\":{\"driver\":\"htmlunitdriver\",\"headless\":false,\"height\":0,\"width\":0,\"xvfbDisplayPort\":null},"
                                 + "\"comment\":\"\","
                                 + "\"eqOracle\":"
                                 + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
@@ -61,7 +61,7 @@ public class AbstractLearnerConfigurationTest {
     @Test
     public void shouldCreateTheCorrectJSON() throws JsonProcessingException {
         String expectedJSON = "{\"algorithm\":{\"name\":\"TTT\"},"
-                                +  "\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":null,\"width\":null,\"xvfbDisplayPort\":null},"
+                                +  "\"browser\":{\"driver\":\"htmlunitdriver\",\"headless\":false,\"height\":0,\"width\":0,\"xvfbDisplayPort\":null},"
                                 + "\"comment\":\"test\",\"eqOracle\":"
                                 + "{\"type\":\"complete\",\"minDepth\":" + EQ_MIN_VALUE + ","
                                     + "\"maxDepth\":" + EQ_MAX_VALUE + "},"
