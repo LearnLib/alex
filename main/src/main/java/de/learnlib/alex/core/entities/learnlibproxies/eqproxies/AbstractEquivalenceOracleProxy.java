@@ -19,8 +19,8 @@ package de.learnlib.alex.core.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import de.learnlib.api.EquivalenceOracle;
-import de.learnlib.api.MembershipOracle;
+import de.learnlib.api.oracle.EquivalenceOracle;
+import de.learnlib.api.oracle.MembershipOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
@@ -29,8 +29,6 @@ import java.io.Serializable;
 /**
  * Base class for Proxies around a the different EquivalenceOracles from the LearnLib.
  * The Proxy is needed to make it easier to (de-)serialize the EQ oracles into/ from JSON.
- *
- * @see de.learnlib.api.EquivalenceOracle
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({

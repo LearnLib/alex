@@ -18,8 +18,8 @@ package de.learnlib.alex.core.entities.algorithms;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.algorithms.dhc.mealy.MealyDHCBuilder;
-import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.api.MembershipOracle;
+import de.learnlib.api.algorithm.LearningAlgorithm;
+import de.learnlib.api.oracle.MembershipOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
@@ -34,8 +34,8 @@ public class DHC extends AbstractLearningAlgorithm<String, String> implements Se
     private static final long serialVersionUID = -1703212406344298512L;
 
     @Override
-    public LearningAlgorithm.MealyLearner<String, String> createLearner(
-            Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle) {
+    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
+                                                                        MembershipOracle<String, Word<String>> oracle) {
         return new MealyDHCBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
     }
 

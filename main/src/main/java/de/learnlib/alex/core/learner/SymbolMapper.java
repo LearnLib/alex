@@ -19,7 +19,7 @@ package de.learnlib.alex.core.learner;
 import de.learnlib.alex.core.entities.ExecuteResult;
 import de.learnlib.alex.core.entities.Symbol;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
-import de.learnlib.api.SULException;
+import de.learnlib.api.exception.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.mapper.api.Mapper;
 import org.apache.logging.log4j.LogManager;

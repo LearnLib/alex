@@ -144,7 +144,12 @@
         <!-- LearnLib -->
         <dependency>
             <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-core</artifactId>
+            <artifactId>learnlib-membership-oracles</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-equivalence-oracles</artifactId>
             <version>${learnlib.version}</version>
         </dependency>
         <dependency>
@@ -159,7 +164,7 @@
         </dependency>
         <dependency>
             <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-dhc </artifactId>
+            <artifactId>learnlib-dhc</artifactId>
             <version>${learnlib.version}</version>
         </dependency>
         <dependency>
@@ -189,17 +194,12 @@
         </dependency>
         <dependency>
             <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-basic-eqtests</artifactId>
+            <artifactId>learnlib-datastructure-dt</artifactId>
             <version>${learnlib.version}</version>
         </dependency>
         <dependency>
             <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-simulator</artifactId>
-            <version>${learnlib.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-datastructures</artifactId>
+            <artifactId>learnlib-datastructure-ot</artifactId>
             <version>${learnlib.version}</version>
         </dependency>
 

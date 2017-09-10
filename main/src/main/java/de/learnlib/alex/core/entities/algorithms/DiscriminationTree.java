@@ -20,10 +20,10 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.algorithms.discriminationtree.hypothesis.HState;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealyBuilder;
-import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.api.MembershipOracle;
+import de.learnlib.api.algorithm.LearningAlgorithm;
+import de.learnlib.api.oracle.MembershipOracle;
+import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDTNode;
 import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDiscriminationTree;
-import de.learnlib.datastructure.discriminationtree.model.DTNode;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
@@ -64,7 +64,7 @@ public class DiscriminationTree extends AbstractLearningAlgorithm<String, String
         return toJSON(dtree.getRoot());
     }
 
-    private String toJSON(DTNode<String, Word<String>, HState<String, Word<String>, Void, String>> node) {
+    private String toJSON(AbstractWordBasedDTNode<String, Word<String>, HState<String, Word<String>, Void, String>> node) {
         StringBuilder result = new StringBuilder();
         result.append('{');
 
@@ -85,7 +85,7 @@ public class DiscriminationTree extends AbstractLearningAlgorithm<String, String
 
             result.append("\"children\": [");
             node.getChildEntries().forEach(entry -> {
-                DTNode child = entry.getValue();
+                AbstractWordBasedDTNode child = entry.getValue();
                 result.append(toJSON(child));
                 result.append(",");
             });

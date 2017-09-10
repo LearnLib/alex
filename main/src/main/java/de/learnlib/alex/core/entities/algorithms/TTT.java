@@ -17,12 +17,12 @@
 package de.learnlib.alex.core.entities.algorithms;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import de.learnlib.algorithms.ttt.base.BaseDTNode;
+import de.learnlib.algorithms.ttt.base.AbstractBaseDTNode;
 import de.learnlib.algorithms.ttt.base.BaseTTTDiscriminationTree;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
-import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.api.MembershipOracle;
+import de.learnlib.api.algorithm.LearningAlgorithm;
+import de.learnlib.api.oracle.MembershipOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
@@ -63,7 +63,7 @@ public class TTT extends AbstractLearningAlgorithm<String, String> implements Se
         return toJSON(dtree.getRoot());
     }
 
-    private String toJSON(BaseDTNode<String, Word<String>> node) {
+    private String toJSON(AbstractBaseDTNode<String, Word<String>> node) {
         StringBuilder result = new StringBuilder();
         result.append('{');
 
@@ -84,7 +84,7 @@ public class TTT extends AbstractLearningAlgorithm<String, String> implements Se
 
             result.append("\"children\": [");
             node.getChildEntries().forEach(entry -> {
-                BaseDTNode<String, Word<String>> child = entry.getValue();
+                AbstractBaseDTNode<String, Word<String>> child = entry.getValue();
                 result.append(toJSON(child));
                 result.append(",");
             });

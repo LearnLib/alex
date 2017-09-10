@@ -17,9 +17,9 @@
 package de.learnlib.alex.core.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import de.learnlib.api.EquivalenceOracle;
-import de.learnlib.api.MembershipOracle;
-import de.learnlib.eqtests.basic.RandomWordsEQOracle;
+import de.learnlib.api.oracle.EquivalenceOracle;
+import de.learnlib.api.oracle.MembershipOracle;
+import de.learnlib.oracle.equivalence.RandomWordsEQOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
@@ -30,7 +30,7 @@ import java.util.Random;
  * Proxy around a MealyRandomWordsEQOracle.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
  *
- * @see de.learnlib.eqtests.basic.RandomWordsEQOracle.MealyRandomWordsEQOracle
+ * @see de.learnlib.oracle.equivalence.RandomWordsEQOracle.MealyRandomWordsEQOracle
  */
 @JsonTypeName("random_word")
 public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {

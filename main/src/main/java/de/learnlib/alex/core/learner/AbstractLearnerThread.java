@@ -28,14 +28,14 @@ import de.learnlib.alex.core.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.core.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import de.learnlib.alex.core.learner.connectors.ConnectorContextHandler;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
-import de.learnlib.api.EquivalenceOracle;
-import de.learnlib.api.LearningAlgorithm.MealyLearner;
 import de.learnlib.api.SUL;
-import de.learnlib.cache.mealy.MealyCacheOracle;
+import de.learnlib.api.algorithm.LearningAlgorithm;
+import de.learnlib.api.oracle.EquivalenceOracle;
+import de.learnlib.api.query.DefaultQuery;
+import de.learnlib.filter.cache.mealy.MealyCacheOracle;
 import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.mapper.Mappers;
 import de.learnlib.mapper.api.ContextExecutableInput;
-import de.learnlib.oracles.DefaultQuery;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -70,7 +70,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     protected final LearnerResultDAO learnerResultDAO;
 
     /** The learner to use during the learning. */
-    protected final MealyLearner<String, String> learner;
+    protected final LearningAlgorithm.MealyLearner<String, String> learner;
 
     /** The phase of the learner. */
     protected Learner.LearnerPhase learnerPhase;

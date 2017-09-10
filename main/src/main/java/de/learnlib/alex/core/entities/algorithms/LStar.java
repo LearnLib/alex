@@ -17,12 +17,12 @@
 package de.learnlib.alex.core.entities.algorithms;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import de.learnlib.algorithms.features.observationtable.ObservationTable;
-import de.learnlib.algorithms.features.observationtable.writer.ObservationTableASCIIWriter;
 import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealy;
 import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealyBuilder;
-import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.api.MembershipOracle;
+import de.learnlib.api.algorithm.LearningAlgorithm;
+import de.learnlib.api.oracle.MembershipOracle;
+import de.learnlib.datastructure.observationtable.ObservationTable;
+import de.learnlib.datastructure.observationtable.writer.ObservationTableASCIIWriter;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 

@@ -18,9 +18,9 @@ package de.learnlib.alex.core.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.entities.learnlibproxies.CompactMealyMachineProxy;
-import de.learnlib.api.EquivalenceOracle;
-import de.learnlib.api.MembershipOracle;
-import de.learnlib.eqtests.basic.SimulatorEQOracle;
+import de.learnlib.api.oracle.EquivalenceOracle;
+import de.learnlib.api.oracle.MembershipOracle;
+import de.learnlib.oracle.equivalence.SimulatorEQOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
@@ -32,7 +32,7 @@ import java.io.Serializable;
  * Proxy around a MealySimulatorEQOracle.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
  *
- * @see SimulatorEQOracle.MealySimulatorEQOracle
+ * @see de.learnlib.oracle.equivalence.SimulatorEQOracle
  */
 @JsonTypeName("hypothesis")
 public class HypothesisEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {

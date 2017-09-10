@@ -16,8 +16,8 @@
 
 package de.learnlib.alex.core.learner;
 
-import de.learnlib.api.MembershipOracle;
-import de.learnlib.api.Query;
+import de.learnlib.api.oracle.MembershipOracle;
+import de.learnlib.api.query.Query;
 import net.automatalib.words.Word;
 
 import javax.annotation.ParametersAreNonnullByDefault;

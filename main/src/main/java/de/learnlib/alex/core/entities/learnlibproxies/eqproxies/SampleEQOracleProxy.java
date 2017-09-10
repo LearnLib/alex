@@ -17,9 +17,9 @@
 package de.learnlib.alex.core.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import de.learnlib.api.EquivalenceOracle;
-import de.learnlib.api.MembershipOracle;
-import de.learnlib.eqtests.basic.SampleSetEQOracle;
+import de.learnlib.api.oracle.EquivalenceOracle;
+import de.learnlib.api.oracle.MembershipOracle;
+import de.learnlib.oracle.equivalence.SampleSetEQOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 import org.hibernate.validator.constraints.NotBlank;
@@ -33,7 +33,7 @@ import java.util.stream.Stream;
  * Proxy around a SampleSetEQOracle.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
  *
- * @see de.learnlib.eqtests.basic.SampleSetEQOracle
+ * @see de.learnlib.oracle.equivalence.SampleSetEQOracle
  */
 @JsonTypeName("sample")
 public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {

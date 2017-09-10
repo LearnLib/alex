@@ -18,8 +18,8 @@ package de.learnlib.alex.core.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.core.learner.eqOracles.WMethodEQOracle;
-import de.learnlib.api.EquivalenceOracle;
-import de.learnlib.api.MembershipOracle;
+import de.learnlib.api.oracle.EquivalenceOracle;
+import de.learnlib.api.oracle.MembershipOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
@@ -29,7 +29,7 @@ import java.io.Serializable;
  * Proxy around a WMethodEQOracle.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
  *
- * @see de.learnlib.eqtests.basic.WMethodEQOracle
+ * @see de.learnlib.oracle.equivalence.WMethodEQOracle
  */
 @JsonTypeName("wmethod")
 public class WMethodEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {

@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.core.learner.connectors.ConnectorManager;
 import de.learnlib.alex.utils.LoggerUtil;
 import de.learnlib.alex.utils.SearchHelper;
-import de.learnlib.api.SULException;
+import de.learnlib.api.exception.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;

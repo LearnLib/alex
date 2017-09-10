@@ -16,8 +16,8 @@
 
 package de.learnlib.alex.core.entities.algorithms;
 
-import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.oracles.SULOracle;
+import de.learnlib.api.algorithm.LearningAlgorithm;
+import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.junit.Before;

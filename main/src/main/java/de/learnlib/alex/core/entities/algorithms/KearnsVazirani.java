@@ -18,8 +18,8 @@ package de.learnlib.alex.core.entities.algorithms;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.algorithms.kv.mealy.KearnsVaziraniMealyBuilder;
-import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.api.MembershipOracle;
+import de.learnlib.api.algorithm.LearningAlgorithm;
+import de.learnlib.api.oracle.MembershipOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 

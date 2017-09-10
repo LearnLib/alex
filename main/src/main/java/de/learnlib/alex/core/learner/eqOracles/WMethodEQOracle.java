@@ -16,9 +16,9 @@
 
 package de.learnlib.alex.core.learner.eqOracles;
 
-import de.learnlib.api.EquivalenceOracle;
-import de.learnlib.api.MembershipOracle;
-import de.learnlib.oracles.DefaultQuery;
+import de.learnlib.api.oracle.EquivalenceOracle;
+import de.learnlib.api.oracle.MembershipOracle;
+import de.learnlib.api.query.DefaultQuery;
 import net.automatalib.automata.UniversalDeterministicAutomaton;
 import net.automatalib.automata.concepts.Output;
 import net.automatalib.automata.transout.MealyMachine;
@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * An extension of the {@link de.learnlib.eqtests.basic.WMethodEQOracle} that uses membership query batching.
+ * An extension of the {@link de.learnlib.oracle.equivalence.WMethodEQOracle} that uses membership query batching.
  *
  * @param <A> The automaton type.
  * @param <I> The input type.
@@ -51,13 +51,13 @@ public class WMethodEQOracle<A extends UniversalDeterministicAutomaton<?, I, ?, 
         }
     }
 
-    /** {@link de.learnlib.eqtests.basic.WMethodEQOracle#maxDepth}. */
+    /** {@link de.learnlib.oracle.equivalence.WMethodEQOracle#maxDepth}. */
     private int maxDepth;
 
     /** The allowed size of the query batch. */
     private int batchSize;
 
-    /** {@link de.learnlib.eqtests.basic.WMethodEQOracle#sulOracle}. */
+    /** {@link de.learnlib.oracle.equivalence.WMethodEQOracle#membershipOracle}. */
     private final MembershipOracle<I, D> sulOracle;
 
     /**

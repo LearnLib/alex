@@ -16,11 +16,12 @@
 
 package de.learnlib.alex.core.entities.algorithms;
 
-import de.learnlib.algorithms.ttt.base.BaseDTNode;
+import de.learnlib.algorithms.ttt.base.AbstractBaseDTNode;
 import de.learnlib.algorithms.ttt.base.BaseTTTDiscriminationTree;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
-import de.learnlib.api.LearningAlgorithm;
-import de.learnlib.oracles.SULOracle;
+import de.learnlib.api.algorithm.LearningAlgorithm;
+import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDTNode;
+import de.learnlib.oracle.membership.SULOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import net.automatalib.words.impl.SimpleAlphabet;
@@ -60,7 +61,7 @@ public class TTTTest {
 
     private TTTLearnerMealy createLearnerMock() {
         BaseTTTDiscriminationTree<String, Word<String>> tree = mock(BaseTTTDiscriminationTree.class);
-        given(tree.getRoot()).willReturn(mock(BaseDTNode.class));
+        given(tree.getRoot()).willReturn(mock(AbstractBaseDTNode.class));
         TTTLearnerMealy learner = mock(TTTLearnerMealy.class);
         given(learner.getDiscriminationTree()).willReturn(tree);
         return learner;

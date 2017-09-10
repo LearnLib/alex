@@ -17,9 +17,9 @@
 package de.learnlib.alex.core.learner;
 
 import de.learnlib.api.SUL;
-import de.learnlib.api.SULException;
-import de.learnlib.oracles.ResetCounterSUL;
-import de.learnlib.oracles.SymbolCounterSUL;
+import de.learnlib.api.exception.SULException;
+import de.learnlib.filter.statistic.sul.ResetCounterSUL;
+import de.learnlib.filter.statistic.sul.SymbolCounterSUL;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

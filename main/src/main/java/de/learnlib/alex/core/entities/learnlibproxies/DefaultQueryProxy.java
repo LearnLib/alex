@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.oracles.DefaultQuery;
+import de.learnlib.api.query.DefaultQuery;
 import net.automatalib.words.Word;
 
 import javax.persistence.Column;
@@ -36,7 +36,7 @@ import java.util.Objects;
  * Proxy around a DefaultQuery.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
  *
- * @see de.learnlib.oracles.DefaultQuery
+ * @see de.learnlib.api.query.DefaultQuery
  */
 @Embeddable
 public class DefaultQueryProxy implements Serializable {
