@@ -16,9 +16,9 @@
 
 package de.learnlib.alex.integrationtests;
 
-import de.learnlib.alex.core.repositories.UserRepository;
-import de.learnlib.alex.core.entities.User;
-import de.learnlib.alex.core.entities.UserRole;
+import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.auth.entities.UserRole;
+import de.learnlib.alex.auth.repositories.UserRepository;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;

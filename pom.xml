@@ -84,6 +84,7 @@
 
     <modules>
         <module>main</module>
+        <module>frontend</module>
     </modules>
 
     <!--===== properties ======-->

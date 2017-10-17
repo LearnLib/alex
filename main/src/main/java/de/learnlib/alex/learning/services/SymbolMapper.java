@@ -1,0 +1,112 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package de.learnlib.alex.learning.services;
+
+import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.learning.entities.ExecuteResult;
+import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.api.exception.SULException;
+import de.learnlib.mapper.api.ContextExecutableInput;
+import de.learnlib.mapper.api.Mapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Class to map the Symbols and their result to the values used in the learning process.
+ */
+public class SymbolMapper implements Mapper<
+        String,
+        String,
+        ContextExecutableInput<ExecuteResult, ConnectorManager>,
+        ExecuteResult> {
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    /** Map to manage the symbols according to their name in the Alphabet. */
+    private final Map<String, Symbol> symbolMap;
+
+    /**
+     * Constructor. Initialize the map name -> symbol.
+     *
+     * @param symbols - The symbols for the learning process.
+     */
+    public SymbolMapper(List<Symbol> symbols) {
+        this.symbolMap = new HashMap<>();
+        symbols.forEach(s -> this.symbolMap.put(s.getName(), s));
+    }
+
+    public void addSymbol(Symbol symbol) {
+        this.symbolMap.putIfAbsent(symbol.getName(), symbol);
+    }
+
+    @Override
+    public ContextExecutableInput<ExecuteResult, ConnectorManager> mapInput(String abstractInput) {
+        return symbolMap.get(abstractInput);
+    }
+
+    @Override
+    public String mapOutput(ExecuteResult concreteOutput) {
+        return concreteOutput.toString();
+    }
+
+    @Override
+    public MappedException<? extends String> mapUnwrappedException(RuntimeException e) throws RuntimeException {
+        LOGGER.info("mapper mapped unwrapped exception", e);
+        return null;
+    }
+
+    @Override
+    public MappedException<? extends String> mapWrappedException(SULException e) throws SULException {
+        LOGGER.info("mapper mapped wrapped exception", e);
+        return null;
+    }
+
+    @Override
+    public void post() {
+    }
+
+    @Override
+    public void pre() {
+    }
+
+    /**
+     * Get the list of symbols.
+     *
+     * @return The list of symbols.
+     */
+    public List<Symbol> getSymbols() {
+        return new ArrayList<>(symbolMap.values());
+    }
+
+    @Override
+    public boolean canFork() {
+        return true;
+    }
+
+    @Nonnull
+    @Override
+    public Mapper<String, String, ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult> fork()
+            throws UnsupportedOperationException {
+        return new SymbolMapper(new ArrayList<>(symbolMap.values()));
+    }
+}

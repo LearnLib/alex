@@ -16,12 +16,12 @@
 
 package de.learnlib.alex;
 
-import de.learnlib.alex.core.dao.UserDAO;
-import de.learnlib.alex.core.entities.User;
-import de.learnlib.alex.core.entities.UserRole;
-import de.learnlib.alex.exceptions.NotFoundException;
-import de.learnlib.alex.security.AuthenticationFilter;
-import de.learnlib.alex.security.JWTHelper;
+import de.learnlib.alex.auth.dao.UserDAO;
+import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.auth.entities.UserRole;
+import de.learnlib.alex.auth.security.AuthenticationFilter;
+import de.learnlib.alex.auth.security.JWTHelper;
+import de.learnlib.alex.common.exceptions.NotFoundException;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;

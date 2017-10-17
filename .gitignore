@@ -9,15 +9,14 @@ target
 hs_err_pid*
 
 # JavaScript
-main/src/main/webapp/node_modules
-main/src/main/webapp/dist
-main/src/main/webapp/tests/coverage
-main/src/main/webapp/assets/fonts
-main/src/main/webapp/assets/swagger-ui
+frontend/src/main/javascript/node_modules
+frontend/src/main/javascript/dist
+frontend/src/main/javascript/tests/coverage
+frontend/src/main/javascript/assets/fonts
 
 # Auto Generated Swagger Doc
 main/src/main/webapp/restdocs
 
 main/uploads
 
-main/src/main/webapp/npm-debug\.log
+frontend/src/main/javascript/npm-debug\.log

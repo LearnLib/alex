@@ -16,14 +16,14 @@
 
 package de.learnlib.alex.integrationtests;
 
-import de.learnlib.alex.core.repositories.LearnerResultRepository;
-import de.learnlib.alex.core.repositories.LearnerResultStepRepository;
-import de.learnlib.alex.core.repositories.ProjectRepository;
-import de.learnlib.alex.core.repositories.UserRepository;
-import de.learnlib.alex.core.entities.LearnerResult;
-import de.learnlib.alex.core.entities.LearnerResultStep;
-import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.auth.repositories.UserRepository;
+import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.learning.entities.LearnerResultStep;
+import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;

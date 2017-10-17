@@ -1,7 +1,7 @@
 package de.learnlib.alex.integrationtests;
 
-import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.ProjectTest;
+import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectTest;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

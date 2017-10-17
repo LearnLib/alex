@@ -17,9 +17,9 @@
 package de.learnlib.alex.integrationtests;
 
 import de.learnlib.alex.App;
-import de.learnlib.alex.core.entities.Project;
-import de.learnlib.alex.core.entities.SymbolGroup;
-import de.learnlib.alex.core.entities.User;
+import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.SymbolGroup;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
