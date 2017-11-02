@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2017 TU Dortmund
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
 
     <parent>
         <artifactId>alex-parent</artifactId>
@@ -17,6 +34,10 @@
     <description>
         The JavaScript based frontend for ALEX.
     </description>
+
+    <properties>
+        <javascript.rootDirectory>src/main/javascript</javascript.rootDirectory>
+    </properties>
 
     <build>
         <plugins>
@@ -37,7 +58,7 @@
                                 <argument>run</argument>
                                 <argument>build</argument>
                             </arguments>
-                            <workingDirectory>src/main/javascript</workingDirectory>
+                            <workingDirectory>${javascript.rootDirectory}</workingDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -50,7 +71,7 @@
             <id>bootstrap</id>
             <activation>
                 <file>
-                    <missing>src/main/javascript/node_modules</missing>
+                    <missing>${javascript.rootDirectory}/node_modules</missing>
                 </file>
             </activation>
             <build>
@@ -71,7 +92,7 @@
                                     <arguments>
                                         <argument>install</argument>
                                     </arguments>
-                                    <workingDirectory>src/main/javascript</workingDirectory>
+                                    <workingDirectory>${javascript.rootDirectory}</workingDirectory>
                                 </configuration>
                             </execution>
                             <execution>
@@ -86,7 +107,7 @@
                                         <argument>run</argument>
                                         <argument>build</argument>
                                     </arguments>
-                                    <workingDirectory>src/main/javascript</workingDirectory>
+                                    <workingDirectory>${javascript.rootDirectory}</workingDirectory>
                                 </configuration>
                             </execution>
                         </executions>

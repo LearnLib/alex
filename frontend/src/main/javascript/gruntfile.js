@@ -1,5 +1,6 @@
 module.exports = function (grunt) {
 
+
     var libraries = [
         'node_modules/ace-builds/src/ace.js',
         'node_modules/angular/angular.js',
@@ -11,17 +12,19 @@ module.exports = function (grunt) {
 
     grunt
         .initConfig({
+            buildLocation: '../../../target/classes',
+
             pkg: grunt.file.readJSON('package.json'),
 
             uglify: {
                 app: {
                     files: {
-                        './dist/alex.min.js': ['./dist/alex.js']
+                         '<%= buildLocation %>/js/alex.min.js': ['<%= buildLocation %>/js/alex.js']
                     }
                 },
                 libs: {
                     files: {
-                        './dist/libs.min.js': ['./dist/libs.js']
+                        '<%= buildLocation %>/js/libs.min.js': ['<%= buildLocation %>/js/libs.js']
                     }
                 }
             },
@@ -32,14 +35,14 @@ module.exports = function (grunt) {
                 },
                 libs: {
                     src: libraries,
-                    dest: 'dist/libs.js'
+                    dest: '<%= buildLocation %>/js/libs.js'
                 }
             },
 
             html2js: {
                 options: {
                     useStrict: true,
-                    base: '../webapp/src',
+                    base: './src',
                     module: 'ALEX.templates',
                     singleModule: true,
                     htmlmin: {
@@ -55,7 +58,7 @@ module.exports = function (grunt) {
                 },
                 all: {
                     src: ['src/html/**/*.html'],
-                    dest: 'dist/alex.templates.js'
+                    dest: '<%= buildLocation %>/js/alex.templates.js'
                 }
             },
 
@@ -89,7 +92,7 @@ module.exports = function (grunt) {
                 },
                 dist: {
                     files: {
-                        'dist/style.css': 'src/scss/style.scss'
+                        '<%= buildLocation %>/css/style.css': 'src/scss/style.scss'
                     }
                 }
             },
@@ -97,11 +100,11 @@ module.exports = function (grunt) {
             cssmin: {
                 target: {
                     files: {
-                        'dist/style.min.css': [
+                        '<%= buildLocation %>/css/style.min.css': [
                             'node_modules/n3-charts/build/LineChart.css',
                             'node_modules/angular-dragula/dist/dragula.min.css',
                             'node_modules/angular-toastr/dist/angular-toastr.min.css',
-                            'dist/style.css'
+                            '<%= buildLocation %>/css/style.css'
                         ]
                     }
                 }
@@ -117,7 +120,7 @@ module.exports = function (grunt) {
                     ]
                 },
                 dist: {
-                    src: 'dist/style.css'
+                    src: '<%= buildLocation %>/css/style.css'
                 }
             },
 
@@ -127,7 +130,7 @@ module.exports = function (grunt) {
                 },
                 dist: {
                     files: {
-                        'dist/alex.js': ['dist/alex.js']
+                        '<%= buildLocation %>/js/alex.js': ['<%= buildLocation %>/js/alex.js']
                     }
                 }
             },
@@ -135,7 +138,7 @@ module.exports = function (grunt) {
             browserify: {
                 dist: {
                     files: {
-                        'dist/alex.js': ['src/js/index.js']
+                        '<%= buildLocation %>/js/alex.js': ['src/js/index.js']
                     },
                     options: {
                         transform: [['babelify', {
@@ -169,16 +172,21 @@ module.exports = function (grunt) {
                     expand: true,
                     cwd: 'node_modules/font-awesome/fonts',
                     src: '*',
-                    dest: 'assets/fonts',
+                    dest: '<%= buildLocation %>/fonts',
                     filter: 'isFile'
                 },
-                swagger: {
+                images: {
                     expand: true,
-                    cwd: 'node_modules/swagger-ui/dist',
-                    src: ['**/*.js', '**/*.css', '**/*.gif', '**/*.png', '**/*.ttf'],
-                    dest: 'assets/swagger-ui',
+                    cwd: 'assets/images',
+                    src: '*',
+                    dest: '<%= buildLocation %>/images',
                     filter: 'isFile'
+                },
+                index: {
+                    src: 'index.html',
+                    dest: '<%= buildLocation %>/index.html'
                 }
+
             }
         });
 
@@ -198,6 +206,6 @@ module.exports = function (grunt) {
     grunt.registerTask('build-js', ['browserify', 'ngAnnotate', 'uglify:app']);
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin']);
     grunt.registerTask('build-html', ['html2js']);
-    grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'copy:fonts', 'build-css', 'copy:swagger']);
+    grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'copy:fonts', 'build-css', 'copy:images', 'copy:index']);
     grunt.registerTask('test', ['karma:unit']);
 };
