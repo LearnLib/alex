@@ -21,7 +21,7 @@ import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.api.exception.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
-import de.learnlib.mapper.api.Mapper;
+import de.learnlib.mapper.api.SULMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,7 +34,7 @@ import java.util.Map;
 /**
  * Class to map the Symbols and their result to the values used in the learning process.
  */
-public class SymbolMapper implements Mapper<
+public class SymbolMapper implements SULMapper<
         String,
         String,
         ContextExecutableInput<ExecuteResult, ConnectorManager>,
@@ -105,7 +105,7 @@ public class SymbolMapper implements Mapper<
 
     @Nonnull
     @Override
-    public Mapper<String, String, ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult> fork()
+    public SULMapper<String, String, ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult> fork()
             throws UnsupportedOperationException {
         return new SymbolMapper(new ArrayList<>(symbolMap.values()));
     }

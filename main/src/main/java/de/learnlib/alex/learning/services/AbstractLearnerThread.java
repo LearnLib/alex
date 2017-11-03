@@ -34,7 +34,7 @@ import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.query.DefaultQuery;
 import de.learnlib.filter.cache.mealy.MealyCacheOracle;
 import de.learnlib.mapper.ContextExecutableInputSUL;
-import de.learnlib.mapper.Mappers;
+import de.learnlib.mapper.SULMappers;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
@@ -129,7 +129,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         symbolMapper = new SymbolMapper(result.getSymbols());
         final ContextExecutableInputSUL<ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult, ConnectorManager>
                 ceiSUL = new ContextExecutableInputSUL<>(context);
-        final SUL<String, String> mappedSUL = Mappers.apply(symbolMapper, ceiSUL);
+        final SUL<String, String> mappedSUL = SULMappers.apply(symbolMapper, ceiSUL);
         this.sul = new AlexSUL<>(mappedSUL);
 
         this.multiSULOracle = new MultiSULOracle<>(sul);
