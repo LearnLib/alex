@@ -169,6 +169,12 @@ import {
     actionFormWait
 } from "./components/forms/actions/generalActionForms";
 
+
+const env = {};
+if(window){
+    Object.assign(env, window.__env);
+}
+
 angular
     .module('ALEX', [
 
@@ -187,6 +193,8 @@ angular
 
         'ALEX.templates'
     ])
+    .constant('__env', env)
+
     .config(config.config)
     .config(routes.config)
     .run(routes.run)

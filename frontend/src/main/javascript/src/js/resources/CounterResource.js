@@ -25,10 +25,12 @@ export class CounterResource {
      * Constructor.
      *
      * @param $http
+     * @param __env
      */
     // @ngInject
-    constructor($http) {
+    constructor($http, __env) {
         this.$http = $http;
+        this.__env = __env
     }
 
     /**
@@ -38,7 +40,7 @@ export class CounterResource {
      * @returns angular promise object of the request.
      */
     getAll(projectId) {
-        return this.$http.get(`rest/projects/${projectId}/counters`)
+        return this.$http.get(this.__env.apiUrl + `/projects/${projectId}/counters`)
             .then(response => response.data.map(c => new Counter(c)));
     }
 
@@ -50,7 +52,7 @@ export class CounterResource {
      * @returns angular promise object of the request.
      */
     remove(projectId, counter) {
-        return this.$http.delete(`rest/projects/${projectId}/counters/${counter.name}`);
+        return this.$http.delete(this.__env.apiUrl + `/projects/${projectId}/counters/${counter.name}`);
     }
 
     /**
@@ -62,6 +64,6 @@ export class CounterResource {
      */
     removeMany(projectId, counters) {
         const names = counters.map(c => c.name).join(',');
-        return this.$http.delete(`rest/projects/${projectId}/counters/batch/${names}`);
+        return this.$http.delete(this.__env.apiUrl + `/projects/${projectId}/counters/batch/${names}`);
     }
 }

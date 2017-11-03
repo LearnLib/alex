@@ -25,10 +25,12 @@ export class ProjectResource {
      * Constructor.
      *
      * @param $http
+     * @param __env
      */
     // @ngInject
-    constructor($http) {
+    constructor($http, __env) {
         this.$http = $http;
+        this.__env = __env;
     }
 
     /**
@@ -38,13 +40,8 @@ export class ProjectResource {
      * @returns {*}
      */
     get(projectId) {
-        return this.$http.get(`rest/projects/${projectId}`)
+        return this.$http.get(this.__env.apiUrl + `/projects/${projectId}`)
             .then(response => new Project(response.data));
-    }
-
-    getForExport(projectId) {
-        return this.$http.get(`rest/projects/${projectId}?embed=all`)
-                .then(response => response.data);
     }
 
     /**
@@ -53,7 +50,7 @@ export class ProjectResource {
      * @returns {*}
      */
     getAll() {
-        return this.$http.get('rest/projects')
+        return this.$http.get(this.__env.apiUrl + '/projects')
             .then(response => response.data.map(p => new Project(p)));
     }
 
@@ -64,7 +61,7 @@ export class ProjectResource {
      * @returns {*}
      */
     create(project) {
-        return this.$http.post('rest/projects', project)
+        return this.$http.post(this.__env.apiUrl + '/projects', project)
             .then(response => new Project(response.data));
     }
 
@@ -75,7 +72,7 @@ export class ProjectResource {
      * @returns {*}
      */
     update(project) {
-        return this.$http.put(`rest/projects/${project.id}`, project)
+        return this.$http.put(this.__env.apiUrl + `/projects/${project.id}`, project)
             .then(response => new Project(response.data));
     }
 
@@ -86,6 +83,6 @@ export class ProjectResource {
      * @returns {*}
      */
     remove(project) {
-        return this.$http.delete(`rest/projects/${project.id}`);
+        return this.$http.delete(this.__env.apiUrl + `/projects/${project.id}`);
     }
 }

@@ -25,10 +25,12 @@ export class SymbolResource {
      * Constructor.
      *
      * @param $http
+     * @param __env
      */
     // @ngInject
-    constructor($http) {
+    constructor($http, __env) {
         this.$http = $http;
+        this.__env = __env;
     }
 
     /**
@@ -38,7 +40,7 @@ export class SymbolResource {
      * @param {number} symbolId - The id of the symbol that should be fetched.
      */
     get(projectId, symbolId) {
-        return this.$http.get(`rest/projects/${projectId}/symbols/${symbolId}`)
+        return this.$http.get(this.__env.apiUrl + `/projects/${projectId}/symbols/${symbolId}`)
             .then(response => new AlphabetSymbol(response.data));
     }
 
@@ -51,7 +53,7 @@ export class SymbolResource {
      */
     getAll(projectId, includeHiddenSymbols = false) {
         const params = includeHiddenSymbols ? '?visibility=hidden' : '';
-        return this.$http.get(`rest/projects/${projectId}/symbols${params}`)
+        return this.$http.get(this.__env.apiUrl + `/projects/${projectId}/symbols${params}`)
             .then(response => response.data.map(s => new AlphabetSymbol(s)));
     }
 
@@ -63,7 +65,7 @@ export class SymbolResource {
      * @returns {*}
      */
     getManyByIds(projectId, ids) {
-        return this.$http.get(`rest/projects/${projectId}/symbols/batch/${ids.join(',')}`)
+        return this.$http.get(this.__env.apiUrl + `/projects/${projectId}/symbols/batch/${ids.join(',')}`)
             .then(response => response.data.map(s => new AlphabetSymbol(s)));
     }
 
@@ -74,7 +76,7 @@ export class SymbolResource {
      * @param {AlphabetSymbol} symbol - The symbol that should be created.
      */
     create(projectId, symbol) {
-        return this.$http.post(`rest/projects/${projectId}/symbols`, symbol)
+        return this.$http.post(this.__env.apiUrl + `/projects/${projectId}/symbols`, symbol)
             .then(response => new AlphabetSymbol(response.data));
     }
 
@@ -86,7 +88,7 @@ export class SymbolResource {
      * @returns {*}
      */
     createMany(projectId, symbols) {
-        return this.$http.post(`rest/projects/${projectId}/symbols/batch`, symbols)
+        return this.$http.post(this.__env.apiUrl + `/projects/${projectId}/symbols/batch`, symbols)
             .then(response => response.data.map(s => new AlphabetSymbol(s)));
     }
 
@@ -100,7 +102,7 @@ export class SymbolResource {
     moveMany(symbols, group) {
         const ids = symbols.map(s => s.id).join(',');
         const project = symbols[0].project;
-        return this.$http.put(`rest/projects/${project}/symbols/batch/${ids}/moveTo/${group.id}`, {});
+        return this.$http.put(this.__env.apiUrl + `/projects/${project}/symbols/batch/${ids}/moveTo/${group.id}`, {});
     }
 
     /**
@@ -110,7 +112,7 @@ export class SymbolResource {
      * @returns {*}
      */
     update(symbol) {
-        return this.$http.put(`rest/projects/${symbol.project}/symbols/${symbol.id}`, symbol)
+        return this.$http.put(this.__env.apiUrl + `/projects/${symbol.project}/symbols/${symbol.id}`, symbol)
             .then(response => new AlphabetSymbol(response.data));
     }
 
@@ -121,7 +123,7 @@ export class SymbolResource {
      * @returns {*}
      */
     remove(symbol) {
-        return this.$http.post(`rest/projects/${symbol.project}/symbols/${symbol.id}/hide`, {});
+        return this.$http.post(this.__env.apiUrl + `/projects/${symbol.project}/symbols/${symbol.id}/hide`, {});
     }
 
     /**

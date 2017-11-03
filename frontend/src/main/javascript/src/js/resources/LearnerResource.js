@@ -25,10 +25,12 @@ export class LearnerResource {
      * Constructor.
      *
      * @param $http
+     * @param __env
      */
     // @ngInject
-    constructor($http) {
+    constructor($http, __env) {
         this.$http = $http;
+        this.__env = __env;
     }
 
     /**
@@ -39,7 +41,7 @@ export class LearnerResource {
      * @return {*}
      */
     start(projectId, learnConfiguration) {
-        return this.$http.post(`rest/learner/start/${projectId}`, learnConfiguration);
+        return this.$http.post(this.__env.apiUrl + `/learner/start/${projectId}`, learnConfiguration);
     }
 
     /**
@@ -49,7 +51,7 @@ export class LearnerResource {
      * @return {*}
      */
     stop() {
-        return this.$http.get('rest/learner/stop');
+        return this.$http.get(this.__env.apiUrl + '/learner/stop');
     }
 
     /**
@@ -62,7 +64,7 @@ export class LearnerResource {
      * @return {*}
      */
     resume(projectId, testNo, learnConfiguration) {
-        return this.$http.post(`rest/learner/resume/${projectId}/${testNo}`, learnConfiguration);
+        return this.$http.post(this.__env.apiUrl + `/learner/resume/${projectId}/${testNo}`, learnConfiguration);
     }
 
     /**
@@ -72,7 +74,7 @@ export class LearnerResource {
      * @return {*}
      */
     getStatus() {
-        return this.$http.get('rest/learner/status')
+        return this.$http.get(this.__env.apiUrl + '/learner/status')
             .then(response => new LearnResult(response.data))
             .catch(() => null);
     }
@@ -83,7 +85,7 @@ export class LearnerResource {
      * @return {*}
      */
     isActive() {
-        return this.$http.get('rest/learner/active')
+        return this.$http.get(this.__env.apiUrl + '/learner/active')
             .then(response => response.data);
     }
 
@@ -95,7 +97,7 @@ export class LearnerResource {
      * @returns {*}
      */
     readOutputs(projectId, outputConfig) {
-        return this.$http.post(`rest/learner/outputs/${projectId}`, outputConfig)
+        return this.$http.post(this.__env.apiUrl + `/learner/outputs/${projectId}`, outputConfig)
             .then(response => response.data);
     }
 
@@ -107,7 +109,7 @@ export class LearnerResource {
      * @returns {*|Request}
      */
     testWord(projectId, readOutputConfig) {
-        return this.$http.post(`rest/learner/words/${projectId}/outputs`, readOutputConfig)
+        return this.$http.post(this.__env.apiUrl + `/learner/words/${projectId}/outputs`, readOutputConfig)
             .then(response => response.data);
     }
 
@@ -118,7 +120,7 @@ export class LearnerResource {
      * @param {any} hypB - The second hypothesis.
      */
     compare(hypA, hypB) {
-        return this.$http.post(`rest/learner/compare`, [hypA, hypB])
+        return this.$http.post(this.__env.apiUrl + `/learner/compare`, [hypA, hypB])
             .then(response => response.data);
     }
 }

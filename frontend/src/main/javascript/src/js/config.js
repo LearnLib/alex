@@ -20,10 +20,12 @@
  * @param toastrConfig
  * @param selectionModelOptionsProvider
  * @param jwtInterceptorProvider
+ * @param jwtOptionsProvider
  * @param $httpProvider
  */
 // @ngInject
-export function config(selectionModelOptionsProvider, jwtInterceptorProvider, $httpProvider, toastrConfig) {
+export function config(selectionModelOptionsProvider, jwtInterceptorProvider, jwtOptionsProvider, $httpProvider,
+                       toastrConfig) {
 
     // default options for selection model
     selectionModelOptionsProvider.set({
@@ -52,6 +54,8 @@ export function config(selectionModelOptionsProvider, jwtInterceptorProvider, $h
         return $window.sessionStorage.getItem('jwt');
     }];
     $httpProvider.interceptors.push('jwtInterceptor');
+
+    jwtOptionsProvider.config({whiteListedDomains: ["localhost"]});
 
     // request the permission to send notifications only once
     if (("Notification" in window) && Notification.permission !== 'denied') {

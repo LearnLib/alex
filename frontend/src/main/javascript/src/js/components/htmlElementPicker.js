@@ -30,13 +30,15 @@ class HtmlElementPickerComponent {
      * @param {HtmlElementPickerService} HtmlElementPickerService
      * @param $element
      * @param $scope
+     * @param __env
      */
     // @ngInject
-    constructor(SessionService, HtmlElementPickerService, $element, $scope) {
+    constructor(SessionService, HtmlElementPickerService, $element, $scope, __env) {
         this.SessionService = SessionService;
         this.HtmlElementPickerService = HtmlElementPickerService;
         this.iframe = $element.find('iframe');
         this.$scope = $scope;
+        this.__env = __env;
 
         this.proxyUrl = null;
 
@@ -86,7 +88,7 @@ class HtmlElementPickerComponent {
      */
     init() {
         this.project = this.SessionService.getProject();
-        this.proxyUrl = 'rest/proxy?url=';
+        this.proxyUrl = this.__env.apiUrl + '/rest/proxy?url=';
         this.url = this.HtmlElementPickerService.lastUrl;
         this.loadUrl();
     }

@@ -185,8 +185,11 @@ module.exports = function (grunt) {
                 index: {
                     src: 'index.html',
                     dest: '<%= buildLocation %>/index.html'
+                },
+                env: {
+                    src: 'env.js',
+                    dest: '<%= buildLocation %>/env.js'
                 }
-
             }
         });
 
@@ -206,6 +209,6 @@ module.exports = function (grunt) {
     grunt.registerTask('build-js', ['browserify', 'ngAnnotate', 'uglify:app']);
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin']);
     grunt.registerTask('build-html', ['html2js']);
-    grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'copy:fonts', 'build-css', 'copy:images', 'copy:index']);
+    grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'copy:fonts', 'build-css', 'copy:images', 'copy:index', 'copy:env']);
     grunt.registerTask('test', ['karma:unit']);
 };

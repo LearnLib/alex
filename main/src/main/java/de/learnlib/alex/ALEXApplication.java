@@ -33,14 +33,19 @@ import de.learnlib.alex.data.rest.SymbolResource;
 import de.learnlib.alex.iframeproxy.rest.IFrameProxyResource;
 import de.learnlib.alex.learning.rest.LearnerResource;
 import de.learnlib.alex.learning.rest.LearnerResultResource;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 import javax.annotation.PostConstruct;
@@ -70,7 +75,11 @@ public class ALEXApplication extends ResourceConfig {
      */
     public static final String DEFAULT_ADMIN_PASSWORD = "admin";
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    /**
+     * The spring boot environment.
+     */
+    @Inject
+    private Environment env;
 
     /**
      * The UserDOA to create an admin if needed.
@@ -176,5 +185,30 @@ public class ALEXApplication extends ResourceConfig {
                 }
             }
         };
+    }
+
+    /**
+     * Allow requests from a specific port on localhost.
+     *
+     * @return The bean.
+     */
+    @Bean
+    @Conditional(CorsCondition.class)
+    public FilterRegistrationBean corsFilter() {
+        final int port = Integer.valueOf(env.getProperty("alex.frontendPort"));
+
+        final CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:" + port);
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        final FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+        bean.setOrder(0);
+
+        return bean;
     }
 }

@@ -25,10 +25,12 @@ export class UserResource {
      * Constructor.
      *
      * @param $http
+     * @param __env
      */
     // @ngInject
-    constructor($http) {
+    constructor($http, __env) {
         this.$http = $http;
+        this.__env = __env;
     }
 
     /**
@@ -40,7 +42,7 @@ export class UserResource {
      * @returns {*} - A promise.
      */
     changePassword(user, oldPassword, newPassword) {
-        return this.$http.put(`rest/users/${user.id}/password`, {
+        return this.$http.put(this.__env.apiUrl + `/users/${user.id}/password`, {
             oldPassword: oldPassword,
             newPassword: newPassword
         });
@@ -54,7 +56,7 @@ export class UserResource {
      * @returns {*} - A promise.
      */
     changeEmail(user, email) {
-        return this.$http.put(`rest/users/${user.id}/email`, {
+        return this.$http.put(this.__env.apiUrl + `/users/${user.id}/email`, {
             email: email
         })
             .then(response => new User(response.data));
@@ -67,7 +69,7 @@ export class UserResource {
      * @returns {*} - A promise.
      */
     get(userId) {
-        return this.$http.get(`rest/users/${userId}`)
+        return this.$http.get(this.__env.apiUrl + `/users/${userId}`)
             .then(response => new User(response.data));
     }
 
@@ -77,7 +79,7 @@ export class UserResource {
      * @returns {*} - A promise.
      */
     getAll() {
-        return this.$http.get('rest/users')
+        return this.$http.get(this.__env.apiUrl + '/users')
             .then(response => response.data.map(u => new User(u)));
     }
 
@@ -89,7 +91,7 @@ export class UserResource {
      * @returns {*} - A promise.
      */
     create(email, password) {
-        return this.$http.post('rest/users', {
+        return this.$http.post(this.__env.apiUrl + '/users', {
             email: email,
             password: password
         });
@@ -103,7 +105,9 @@ export class UserResource {
      * @returns {*} - A promise.
      */
     login(email, password) {
-        return this.$http.post('rest/users/login', {
+        console.log(this.__env.apiUrl + '/users/login');
+
+        return this.$http.post(this.__env.apiUrl + '/users/login', {
             email: email,
             password: password
         });
@@ -116,7 +120,7 @@ export class UserResource {
      * @returns {*} - A promise.
      */
     remove(user) {
-        return this.$http.delete(`rest/users/${user.id}`, {});
+        return this.$http.delete(this.__env.apiUrl + `/users/${user.id}`, {});
     }
 
     /**
@@ -125,7 +129,7 @@ export class UserResource {
      * @param {number[]} userIds - The ids of the users to delete.
      */
     removeManyUsers(userIds) {
-        return this.$http.delete(`rest/users/batch/${userIds.join(',')}`);
+        return this.$http.delete(this.__env.apiUrl + `/users/batch/${userIds.join(',')}`);
     }
 
     /**
@@ -135,7 +139,7 @@ export class UserResource {
      * @returns {*}
      */
     promote(user) {
-        return this.$http.put(`rest/users/${user.id}/promote`, {})
+        return this.$http.put(this.__env.apiUrl + `/users/${user.id}/promote`, {})
             .then(response => new User(response.data));
     }
 
@@ -146,7 +150,7 @@ export class UserResource {
      * @returns {*}
      */
     demote(user) {
-        return this.$http.put(`rest/users/${user.id}/demote`, {})
+        return this.$http.put(this.__env.apiUrl + `/users/${user.id}/demote`, {})
             .then(response => new User(response.data));
     }
 }

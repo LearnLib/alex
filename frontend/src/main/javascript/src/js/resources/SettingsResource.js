@@ -25,10 +25,12 @@ export class SettingsResource {
      * Constructor.
      *
      * @param $http
+     * @param __env
      */
     // @ngInject
-    constructor($http) {
+    constructor($http, __env) {
         this.$http = $http;
+        this.__env = __env;
     }
 
     /**
@@ -37,7 +39,7 @@ export class SettingsResource {
      * @returns {Promise}
      */
     get() {
-        return this.$http.get(`rest/settings`)
+        return this.$http.get(this.__env.apiUrl + `/settings`)
             .then(response => response.data);
     }
 
@@ -48,7 +50,7 @@ export class SettingsResource {
      * @returns {Promise}
      */
     update(settings) {
-        return this.$http.put(`rest/settings`, settings)
+        return this.$http.put(this.__env.apiUrl + `/settings`, settings)
             .then(response => response.data);
     }
 

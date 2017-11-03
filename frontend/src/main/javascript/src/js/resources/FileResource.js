@@ -23,10 +23,12 @@ export class FileResource {
      * Constructor.
      *
      * @param $http
+     * @param __env
      */
     // @ngInject
-    constructor($http) {
+    constructor($http, __env) {
         this.$http = $http;
+        this.__env = __env;
     }
 
     /**
@@ -35,7 +37,7 @@ export class FileResource {
      * @param {number} projectId - The id of the project.
      */
     getAll(projectId) {
-        return this.$http.get(`rest/projects/${projectId}/files`)
+        return this.$http.get(this.__env.apiUrl + `/projects/${projectId}/files`)
             .then(response => response.data);
     }
 
@@ -47,6 +49,6 @@ export class FileResource {
      */
     remove(projectId, file) {
         const encodedFileName = encodeURI(file.name);
-        return this.$http.delete(`rest/projects/${projectId}/files/${encodedFileName}`);
+        return this.$http.delete(this.__env.apiUrl + `/projects/${projectId}/files/${encodedFileName}`);
     }
 }

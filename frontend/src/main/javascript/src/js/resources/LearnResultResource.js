@@ -25,10 +25,12 @@ export class LearnResultResource {
      * Constructor.
      *
      * @param $http
+     * @param __env
      */
     // @ngInject
-    constructor($http) {
+    constructor($http, __env) {
         this.$http = $http;
+        this.__env = __env;
     }
 
     /**
@@ -38,7 +40,7 @@ export class LearnResultResource {
      * @returns {*}
      */
     getAll(projectId) {
-        return this.$http.get(`rest/projects/${projectId}/results?embed=steps`)
+        return this.$http.get(this.__env.apiUrl + `/projects/${projectId}/results?embed=steps`)
             .then(response => response.data.map(r => new LearnResult(r)));
     }
 
@@ -50,7 +52,7 @@ export class LearnResultResource {
      * @returns {*}
      */
     get(projectId, testNo) {
-        return this.$http.get(`rest/projects/${projectId}/results/${testNo}?embed=steps`)
+        return this.$http.get(this.__env.apiUrl + `/projects/${projectId}/results/${testNo}?embed=steps`)
             .then(response => new LearnResult(response.data));
     }
 
@@ -60,7 +62,7 @@ export class LearnResultResource {
      * @param {LearnResult} result - The learn result to delete.
      */
     remove(result) {
-        return this.$http.delete(`rest/projects/${result.project}/results/${result.testNo}`, {});
+        return this.$http.delete(this.__env.apiUrl + `/projects/${result.project}/results/${result.testNo}`, {});
     }
 
     /**
@@ -71,6 +73,6 @@ export class LearnResultResource {
     removeMany(results) {
         const testNos = results.map(r => r.testNo).join(',');
         const projectId = results[0].project;
-        return this.$http.delete(`rest/projects/${projectId}/results/${testNos}`, {});
+        return this.$http.delete(this.__env.apiUrl + `/projects/${projectId}/results/${testNos}`, {});
     }
 }
