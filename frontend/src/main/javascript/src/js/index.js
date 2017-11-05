@@ -128,6 +128,9 @@ import {discriminationTree} from "./components/discriminationTree";
 import {htmlElementPicker} from "./components/htmlElementPicker";
 import {nodeFormGroup} from "./components/forms/nodeFormGroup";
 import {
+    actionFormAlertAcceptDismiss,
+    actionFormAlertGetText,
+    actionFormAlertSendKeys,
     actionFormCheckForNode,
     actionFormCheckForText,
     actionFormCheckPageTitle,
@@ -315,6 +318,9 @@ angular
     .component('projectDetailsWidget', projectDetailsWidget)
 
     // web action forms
+    .component('actionFormAlertAcceptDismiss', actionFormAlertAcceptDismiss)
+    .component('actionFormAlertGetText', actionFormAlertGetText)
+    .component('actionFormAlertSendKeys', actionFormAlertSendKeys)
     .component('actionFormCheckNodeAttributeValue', actionFormCheckNodeAttributeValue)
     .component('actionFormCheckForNode', actionFormCheckForNode)
     .component('actionFormCheckForText', actionFormCheckForText)

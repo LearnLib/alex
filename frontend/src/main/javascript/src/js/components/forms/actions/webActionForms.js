@@ -16,6 +16,30 @@
 
 import {supportedKeys} from '../../../constants';
 
+export const actionFormAlertAcceptDismiss = {
+    templateUrl: 'html/components/forms/actions/web/alert-accept-dismiss.html',
+    bindings: {
+        action: '='
+    },
+    controllerAs: 'vm'
+};
+
+export const actionFormAlertGetText = {
+    templateUrl: 'html/components/forms/actions/web/alert-get-text.html',
+    bindings: {
+        action: '='
+    },
+    controllerAs: 'vm'
+};
+
+export const actionFormAlertSendKeys = {
+    templateUrl: 'html/components/forms/actions/web/alert-send-keys.html',
+    bindings: {
+        action: '='
+    },
+    controllerAs: 'vm'
+};
+
 export const actionFormCheckForNode = {
     templateUrl: 'html/components/forms/actions/web/check-for-node.html',
     bindings: {

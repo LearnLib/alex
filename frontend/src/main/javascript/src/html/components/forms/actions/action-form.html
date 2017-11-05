@@ -2,6 +2,9 @@
     <div ng-switch on="vm.action.type">
 
         <!-- web actions -->
+        <action-form-alert-accept-dismiss  action="vm.action" ng-switch-when="web_alertAcceptDismiss"></action-form-alert-accept-dismiss>
+        <action-form-alert-get-text  action="vm.action" ng-switch-when="web_alertGetText"></action-form-alert-get-text>
+        <action-form-alert-send-keys  action="vm.action" ng-switch-when="web_alertSendKeys"></action-form-alert-send-keys>
         <action-form-check-for-node action="vm.action" ng-switch-when="web_checkForNode"></action-form-check-for-node>
         <action-form-check-for-text action="vm.action" ng-switch-when="web_checkForText"></action-form-check-for-text>
         <action-form-check-page-title action="vm.action" ng-switch-when="web_checkPageTitle"></action-form-check-page-title>

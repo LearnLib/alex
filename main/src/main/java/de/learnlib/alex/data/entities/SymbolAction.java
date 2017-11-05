@@ -41,6 +41,9 @@ import de.learnlib.alex.data.entities.actions.StoreSymbolActions.SetVariableByNo
 import de.learnlib.alex.data.entities.actions.StoreSymbolActions.SetVariableByNodeCountAction;
 import de.learnlib.alex.data.entities.actions.StoreSymbolActions.SetVariableByRegexGroup;
 import de.learnlib.alex.data.entities.actions.WaitAction;
+import de.learnlib.alex.data.entities.actions.WebSymbolActions.AlertAcceptDismissAction;
+import de.learnlib.alex.data.entities.actions.WebSymbolActions.AlertGetTextAction;
+import de.learnlib.alex.data.entities.actions.WebSymbolActions.AlertSendKeysAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckNodeAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckNodeAttributeValueAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckPageTitleAction;
@@ -106,6 +109,9 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "setVariableByRegexGroup", value = SetVariableByRegexGroup.class),
         // Web Actions
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
+        @JsonSubTypes.Type(name = "web_alertAcceptDismiss", value = AlertAcceptDismissAction.class),
+        @JsonSubTypes.Type(name = "web_alertGetText", value = AlertGetTextAction.class),
+        @JsonSubTypes.Type(name = "web_alertSendKeys", value = AlertSendKeysAction.class),
         @JsonSubTypes.Type(name = "web_checkNodeAttributeValue", value = CheckNodeAttributeValueAction.class),
         @JsonSubTypes.Type(name = "web_checkForNode", value = CheckNodeAction.class),
         @JsonSubTypes.Type(name = "web_checkForText", value = CheckTextWebAction.class),

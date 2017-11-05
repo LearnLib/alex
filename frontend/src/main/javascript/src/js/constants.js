@@ -77,6 +77,9 @@ export const events = {
 export const actionType = {
 
     // web actions
+    WEB_ALERT_ACCEPT_DISMISS: 'web_alertAcceptDismiss',
+    WEB_ALERT_GET_TEXT: 'web_alertGetText',
+    WEB_ALERT_SEND_KEYS: 'web_alertSendKeys',
     WEB_CHECK_NODE: 'web_checkForNode',
     WEB_CHECK_TEXT: 'web_checkForText',
     WEB_CHECK_PAGE_TITLE: 'web_checkPageTitle',

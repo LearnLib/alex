@@ -50,6 +50,9 @@ import {SetVariableGeneralAction} from "../entities/actions/generalActions/SetVa
 import {SetVariableByNodeCountAction} from "../entities/actions/generalActions/SetVariableByNodeCountAction";
 import {SetVariableByRegexGroup} from "../entities/actions/generalActions/SetVariableByRegexGroup";
 import {WaitGeneralAction} from "../entities/actions/generalActions/WaitGeneralAction";
+import {AlertAcceptDismissAction} from "../entities/actions/webActions/AlertAcceptDismissAction";
+import {AlertGetTextAction} from "../entities/actions/webActions/AlertGetTextAction";
+import {AlertSendKeysAction} from "../entities/actions/webActions/AlertSendKeysAction";
 
 /**
  * The service that is used to create new actions.
@@ -66,6 +69,12 @@ export class ActionService {
         switch (data.type) {
 
             // web actions
+            case actionType.WEB_ALERT_ACCEPT_DISMISS:
+                return new AlertAcceptDismissAction(data);
+            case actionType.WEB_ALERT_GET_TEXT:
+                return new AlertGetTextAction(data);
+            case actionType.WEB_ALERT_SEND_KEYS:
+                return new AlertSendKeysAction(data);
             case actionType.WEB_SELECT:
                 return new SelectWebAction(data);
             case actionType.WEB_SUBMIT:
