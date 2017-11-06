@@ -36,6 +36,7 @@ import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
+import net.automatalib.automata.transout.impl.compact.CompactMealyTransition;
 import net.automatalib.util.automata.Automata;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -441,19 +442,101 @@ public class Learner {
      *
      * @return If the machines are different: The corresponding separating word; otherwise: ""
      */
-    public String compare(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {
+    public String separatingWord(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {
         Alphabet<String> alphabetProxy1 = mealy1.createAlphabet();
         Alphabet<String> alphabetProxy2 = mealy1.createAlphabet();
 
         CompactMealy<String, String> mealyMachine1 = mealy1.createMealyMachine(alphabetProxy1);
         CompactMealy<String, String> mealyMachine2 = mealy2.createMealyMachine(alphabetProxy2);
 
-        Word separatingWord = Automata.findSeparatingWord(mealyMachine1, mealyMachine2, alphabetProxy1);
+        Word<String> separatingWord = Automata.findSeparatingWord(mealyMachine1, mealyMachine2, alphabetProxy1);
 
         if (separatingWord != null) {
             return separatingWord.toString();
         } else {
             return "";
         }
+    }
+
+    /**
+     * Tests all words from the transition cover from <code>mealyProxy1</code> on <code>mealyProxy2</code>.
+     * Words with a different output are added to the difference.
+     *
+     * @param mealyProxy1 The hypothesis that is tested on the other.
+     * @param mealyProxy2 The hypothesis that is used for testing.
+     *
+     * @return The difference tree.
+     */
+    public CompactMealy<String, String> differenceTree(final CompactMealyMachineProxy mealyProxy1,
+                                                       final CompactMealyMachineProxy mealyProxy2) {
+        final Alphabet<String> alphabet = mealyProxy1.createAlphabet();
+
+        final CompactMealy<String, String> hyp1 = mealyProxy2.createMealyMachine(alphabet);
+        final CompactMealy<String, String> hyp2 = mealyProxy1.createMealyMachine(alphabet);
+
+        // the words where the output differs
+        final List<Word<String>> diff = new ArrayList<>();
+
+        final List<Word<String>> transCover = Automata.transitionCover(hyp2, alphabet);
+        final List<Word<String>> charSet = Automata.characterizingSet(hyp2, alphabet);
+
+        // use the same coverage as for the w method
+        for (final Word<String> prefix : transCover) {
+            if (!hyp1.computeOutput(prefix).equals(hyp2.computeOutput(prefix))) {
+                diff.add(prefix);
+            }
+
+            for (final Word<String> suffix : charSet) {
+                final Word<String> word = prefix.concat(suffix);
+                if (!hyp1.computeOutput(word).equals(hyp2.computeOutput(word))) {
+                    diff.add(word);
+                }
+            }
+        }
+
+        // build tree
+        // the tree is organized as an incomplete mealy machine
+        final CompactMealy<String, String> diffTree = new CompactMealy<>(alphabet);
+        diffTree.addInitialState();
+
+        // variables to remember the current state
+        int i = hyp2.getInitialState();
+        int j = diffTree.getInitialState();
+
+        for (final Word<String> word : diff) {
+
+            // walk along the hypothesis from its initial state
+            for (final String sym : word) {
+                final CompactMealyTransition<String> transition = hyp2.getTransition(i, sym);
+                final String out = transition.getOutput();
+
+                if (diffTree.getTransition(j, sym) == null) {
+                    // if the transition does not yet exist in the tree
+                    // create a new state in the tree and add the same transition
+                    final int newState = diffTree.addState();
+                    final CompactMealyTransition<String> t = new CompactMealyTransition<>(newState, out);
+                    diffTree.addTransition(j, sym, t);
+
+                    // update the current state of the tree to the newly created one
+                    j = newState;
+                } else {
+                    // update the current state of the tree accordingly
+                    j = diffTree.getTransition(j, sym).getSuccId();
+                }
+
+                // update the current state in the hypothesis
+                i = transition.getSuccId();
+            }
+
+            // reset hypothesis and tree to the initial state
+            i = hyp2.getInitialState();
+            j = diffTree.getInitialState();
+        }
+
+        // minimize the tree
+        final CompactMealy<String, String> target = new CompactMealy<>(alphabet);
+        Automata.minimize(diffTree, alphabet, target);
+
+        return target;
     }
 }

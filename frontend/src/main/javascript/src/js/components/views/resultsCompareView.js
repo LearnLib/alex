@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {LearnResult} from "../../entities/LearnResult";
+
 /**
  * The controller that handles the page for displaying multiple complete learn results in a slide show.
  */
@@ -55,7 +57,7 @@ class ResultsCompareView {
 
         /**
          * The list of active panels where each panel contains a complete learn result set.
-         * @type {LearnResult[][]}
+         * @type {LearnResult[]}
          */
         this.panels = [];
 
@@ -127,7 +129,7 @@ class ResultsCompareView {
         const hypA = this.panels[0].steps[this.panelPointers[0]].hypothesis;
         const hypB = this.panels[1].steps[this.panelPointers[1]].hypothesis;
 
-        this.LearnerResource.compare(hypA, hypB)
+        this.LearnerResource.getSeparatingWord(hypA, hypB)
             .then(data => {
                 if (data.separatingWord === "") {
                     this.ToastService.info("The two hypotheses are identical");
@@ -152,6 +154,31 @@ class ResultsCompareView {
                         },
                         controllerAs: 'vm',
                     })
+                }
+            })
+            .catch(err => this.ToastService.danger(err.data.message));
+    }
+
+    /**
+     * Gets the difference tree of the two displayed hypotheses
+     *
+     * @param {number} invert
+     */
+    showDifferenceTree(invert) {
+        let hypLeft = this.panels[0].steps[this.panelPointers[0]].hypothesis;
+        let hypRight = this.panels[1].steps[this.panelPointers[1]].hypothesis;
+
+        if (invert) {
+            hypLeft = this.panels[1].steps[this.panelPointers[1]].hypothesis;
+            hypRight = this.panels[0].steps[this.panelPointers[0]].hypothesis;
+        }
+
+        this.LearnerResource.getDifferenceTree(hypLeft, hypRight)
+            .then(data => {
+                if (data.edges.length === 0) {
+                    this.ToastService.info("Cannot find a difference.");
+                } else {
+                    this.panels.push({hypothesis: data, steps: [{hypothesis: data}]})
                 }
             })
             .catch(err => this.ToastService.danger(err.data.message));

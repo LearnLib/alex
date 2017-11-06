@@ -116,11 +116,23 @@ export class LearnerResource {
     /**
      * Compare two hypotheses and return the separating word.
      *
-     * @param {any} hypA - The first hypothesis.
-     * @param {any} hypB - The second hypothesis.
+     * @param {object} hypA - The first hypothesis.
+     * @param {object} hypB - The second hypothesis.
      */
-    compare(hypA, hypB) {
-        return this.$http.post(this.__env.apiUrl + `/learner/compare`, [hypA, hypB])
+    getSeparatingWord(hypA, hypB) {
+        return this.$http.post(this.__env.apiUrl + `/learner/compare/separatingWord`, [hypA, hypB])
+            .then(response => response.data);
+    }
+
+    /**
+     * Compare two hypotheses and return the difference tree.
+     * Test a on b.
+     *
+     * @param {object} hypA - The first hypothesis.
+     * @param {object} hypB - The second hypothesis.
+     */
+    getDifferenceTree(hypA, hypB) {
+        return this.$http.post(this.__env.apiUrl + `/learner/compare/differenceTree`, [hypA, hypB])
             .then(response => response.data);
     }
 }

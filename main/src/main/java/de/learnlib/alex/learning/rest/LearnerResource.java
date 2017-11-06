@@ -37,6 +37,7 @@ import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.learning.services.Learner;
+import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -430,16 +431,16 @@ public class LearnerResource {
      * @return '{"separatingWord": "separating word, if any"}'
      */
     @POST
-    @Path("/compare")
+    @Path("/compare/separatingWord")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response compareTwoUploaded(List<CompactMealyMachineProxy> mealyMachineProxies) {
+    public Response separatingWord(List<CompactMealyMachineProxy> mealyMachineProxies) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("compareTwoUploaded({}) for user {}.", mealyMachineProxies, user);
+        LOGGER.traceEntry("calculate separating word for models ({}) and user {}.", mealyMachineProxies, user);
 
         if (mealyMachineProxies.size() != 2) {
             IllegalArgumentException e = new IllegalArgumentException("You need to specify exactly two hypotheses!");
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.separatingWord", Status.BAD_REQUEST, e);
         }
 
         // make sure both hypotheses consist of the same alphabet
@@ -449,12 +450,47 @@ public class LearnerResource {
         if (sigmaA.size() != sigmaB.size() || !sigmaA.containsAll(sigmaB)) {
             IllegalArgumentException e = new IllegalArgumentException("The alphabets of the hypotheses are not "
                                                                               + "identical!");
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.separatingWord", Status.BAD_REQUEST, e);
         }
 
-        String separatingWord = learner.compare(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
+        String separatingWord = learner.separatingWord(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
 
         LOGGER.traceExit(separatingWord);
         return Response.ok("{\"separatingWord\": \"" + separatingWord + "\"}").build();
+    }
+
+    /**
+     * Calculates the difference tree of two hypotheses.
+     *
+     * @param mealyMachineProxies A List of two (!) hypotheses, which will be compared.
+     * @return The difference tree
+     */
+    @POST
+    @Path("/compare/differenceTree")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response differenceTree(List<CompactMealyMachineProxy> mealyMachineProxies) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("calculate the difference tree for models ({}) and user {}.", mealyMachineProxies, user);
+
+        if (mealyMachineProxies.size() != 2) {
+            IllegalArgumentException e = new IllegalArgumentException("You need to specify exactly two hypotheses!");
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.differenceTree", Status.BAD_REQUEST, e);
+        }
+
+        // make sure both hypotheses consist of the same alphabet
+        final Alphabet<String> sigmaA = mealyMachineProxies.get(0).createAlphabet();
+        final Alphabet<String> sigmaB = mealyMachineProxies.get(1).createAlphabet();
+
+        if (sigmaA.size() != sigmaB.size() || !sigmaA.containsAll(sigmaB)) {
+            IllegalArgumentException e = new IllegalArgumentException("The alphabets of the hypotheses are not "
+                                                                              + "identical!");
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.differenceTree", Status.BAD_REQUEST, e);
+        }
+
+        final CompactMealy<String, String> diffTree = learner.differenceTree(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
+
+        LOGGER.traceExit(diffTree);
+        return Response.ok(CompactMealyMachineProxy.createFrom(diffTree, sigmaA)).build();
     }
 }
