@@ -20,22 +20,13 @@
  * Use: <widget title="..."></widget> where
  * 'title' is the text to display in the header of the panel.
  */
-class Widget {
-}
-
 export const widget = {
-    controller: Widget,
+    templateUrl: 'html/components/widgets/widget.html',
+    controller: class Widget {
+    },
     controllerAs: 'vm',
     bindings: {
         title: '@'
     },
-    transclude: true,
-    template: `
-      <div class="panel panel-default">
-          <div class="panel-heading" ng-if="vm.title">
-            <strong class="text-muted" ng-bind="vm.title"></strong>
-          </div>
-          <div class="panel-body" ng-transclude></div>
-      </div>
-   `
+    transclude: true
 };

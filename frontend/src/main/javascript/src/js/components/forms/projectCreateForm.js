@@ -49,15 +49,6 @@ class ProjectCreateForm {
     }
 
     /**
-     * Loads a project from a json file.
-     *
-     * @param {string} projectAsJson - The project to import.
-     */
-    loadProjectFromFile(projectAsJson) {
-        this.projectToImport = JSON.parse(projectAsJson);
-    }
-
-    /**
      * Creates a new project.
      */
     createProject() {
