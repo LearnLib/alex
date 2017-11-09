@@ -53,6 +53,7 @@ import {WaitGeneralAction} from "../entities/actions/generalActions/WaitGeneralA
 import {AlertAcceptDismissAction} from "../entities/actions/webActions/AlertAcceptDismissAction";
 import {AlertGetTextAction} from "../entities/actions/webActions/AlertGetTextAction";
 import {AlertSendKeysAction} from "../entities/actions/webActions/AlertSendKeysAction";
+import {WaitForTextAction} from "../entities/actions/webActions/WaitForTextAction";
 
 /**
  * The service that is used to create new actions.
@@ -149,6 +150,8 @@ export class ActionService {
                 return new WaitForTitleAction(data);
             case actionType.WAIT_FOR_NODE:
                 return new WaitForNodeAction(data);
+            case actionType.WAIT_FOR_TEXT:
+                return new WaitForTextAction(data);
         }
     }
 

@@ -95,6 +95,7 @@ export const actionType = {
     WEB_PRESS_KEY: 'web_pressKey',
     WAIT_FOR_NODE: 'web_waitForNode',
     WAIT_FOR_TITLE: 'web_waitForTitle',
+    WAIT_FOR_TEXT: 'web_waitForText',
     WEB_CHECK_ATTRIBUTE_VALUE: 'web_checkNodeAttributeValue',
 
     // rest actions

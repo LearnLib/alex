@@ -173,3 +173,11 @@ export const actionFormWaitForTitle = {
     },
     controllerAs: 'vm'
 };
+
+export const actionFormWaitForText = {
+    templateUrl: 'html/components/forms/actions/web/wait-for-text.html',
+    bindings: {
+        action: '='
+    },
+    controllerAs: 'vm'
+};
