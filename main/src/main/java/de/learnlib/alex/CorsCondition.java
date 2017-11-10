@@ -28,6 +28,6 @@ public class CorsCondition implements Condition {
     @Override
     public boolean matches(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
         final Environment env = conditionContext.getEnvironment();
-        return env.getProperty("alex.frontendPort") != null;
+        return !env.getProperty("alex.frontendPort").equals("");
     }
 }
