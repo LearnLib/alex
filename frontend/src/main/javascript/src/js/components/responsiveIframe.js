@@ -67,7 +67,7 @@ class ResponsiveIframe {
 }
 
 export const responsiveIframe = {
-    template: '<iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>',
+    template: '<iframe></iframe>',
     controller: ResponsiveIframe,
     controllerAs: 'vm'
 };

@@ -40,8 +40,6 @@ class HtmlElementPickerComponent {
         this.$scope = $scope;
         this.__env = __env;
 
-        this.proxyUrl = null;
-
         // when moving with the mouse over an element, this elements gets saved in this variable in order to
         // prevent multiple calls of getCssPath for the same element
         this.lastTarget = null;
@@ -76,6 +74,8 @@ class HtmlElementPickerComponent {
          */
         this.project = null;
 
+        this.corsDisabled = null;
+
         this.mouseMoveHandler = null;
         this.keyUpHandler = null;
         this.clickHandler = null;
@@ -88,7 +88,6 @@ class HtmlElementPickerComponent {
      */
     init() {
         this.project = this.SessionService.getProject();
-        this.proxyUrl = this.__env.apiUrl + '/rest/proxy?url=';
         this.url = this.HtmlElementPickerService.lastUrl;
         this.loadUrl();
     }
@@ -99,8 +98,17 @@ class HtmlElementPickerComponent {
     loadUrl() {
         const self = this;
 
-        this.iframe.attr('src', this.proxyUrl + this.project.baseUrl + (this.url === null ? '/' : this.url));
+        this.iframe.attr('src', this.project.baseUrl + (this.url === null ? '/' : this.url));
         this.iframe.on('load', () => {
+
+            try {
+                this.iframe.contents();
+                self.$scope.$apply(() => this.corsDisabled = false);
+            } catch (err) {
+                self.$scope.$apply(() => this.corsDisabled = true);
+                return;
+            }
+
             angular.element(this.iframe.contents()[0].body.getElementsByTagName('a'))
                 .on('click', function () {
                     if (!self.isSelectable) {
@@ -108,7 +116,7 @@ class HtmlElementPickerComponent {
                         if (this.getAttribute('href') !== '' && this.getAttribute('href')[0] !== '#') {
                             self.$scope.$apply(() => {
                                 self.url = decodeURIComponent(_this.getAttribute('href'))
-                                    .replace(window.location.origin + '/' + self.proxyUrl + self.project.baseUrl, '', '');
+                                    .replace(window.location.origin + '/' + self.project.baseUrl, '');
                             });
                         }
                     }
@@ -132,7 +140,7 @@ class HtmlElementPickerComponent {
             } else {
                 if (el == el.ownerDocument.documentElement) names.unshift(el.tagName);
                 else {
-                    for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++);
+                    for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++) ;
                     names.unshift(el.tagName + ":nth-child(" + c + ")");
                 }
                 el = el.parentNode;

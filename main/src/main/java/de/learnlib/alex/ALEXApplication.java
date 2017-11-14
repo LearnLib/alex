@@ -30,13 +30,11 @@ import de.learnlib.alex.data.rest.FileResource;
 import de.learnlib.alex.data.rest.ProjectResource;
 import de.learnlib.alex.data.rest.SymbolGroupResource;
 import de.learnlib.alex.data.rest.SymbolResource;
-import de.learnlib.alex.iframeproxy.rest.IFrameProxyResource;
 import de.learnlib.alex.learning.rest.LearnerResource;
 import de.learnlib.alex.learning.rest.LearnerResultResource;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -100,7 +98,6 @@ public class ALEXApplication extends ResourceConfig {
         // REST Resources
         register(CounterResource.class);
         register(FileResource.class);
-        register(IFrameProxyResource.class);
         register(LearnerResource.class);
         register(LearnerResultResource.class);
         register(ProjectResource.class);
@@ -164,27 +161,6 @@ public class ALEXApplication extends ResourceConfig {
             System.setProperty("webdriver.gecko.driver", driverSettings.getFirefox());
             System.setProperty("webdriver.edge.driver", driverSettings.getEdge());
         }
-    }
-
-    /**
-     * HTTP request filter that is required for the {@link IFrameProxyResource} to work properly.
-     *
-     * @return The filter.
-     */
-    @Bean
-    public HiddenHttpMethodFilter hiddenHttpMethodFilter() {
-        return new HiddenHttpMethodFilter() {
-            @Override
-            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                            FilterChain filterChain) throws ServletException, IOException {
-                if (request.getMethod().equals("POST")
-                        && request.getContentType().equals(MediaType.APPLICATION_FORM_URLENCODED_VALUE)) {
-                    filterChain.doFilter(request, response);
-                } else {
-                    super.doFilterInternal(request, response, filterChain);
-                }
-            }
-        };
     }
 
     /**
