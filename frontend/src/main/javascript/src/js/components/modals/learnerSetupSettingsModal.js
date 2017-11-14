@@ -102,7 +102,6 @@ export class LearnerSetupSettingsModalComponent {
      */
     setLearningAlgorithm() {
         this.learnConfiguration.algorithm = this.LearningAlgorithmService.createFromType(this.selectedLearningAlgorithm);
-        console.log(this.learnConfiguration);
     }
 
     /**

@@ -105,8 +105,6 @@ export class UserResource {
      * @returns {*} - A promise.
      */
     login(email, password) {
-        console.log(this.__env.apiUrl + '/users/login');
-
         return this.$http.post(this.__env.apiUrl + '/users/login', {
             email: email,
             password: password

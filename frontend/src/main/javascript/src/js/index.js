@@ -50,6 +50,10 @@ import {HtmlElementPickerService} from "./services/HtmlElementPickerService";
 import {formatAlgorithm, formatEqOracle, formatMilliseconds, formatUserRole, formatWebBrowser} from "./filters";
 import {actionCreateModalHandle, actionCreateModalComponent} from "./components/modals/actionCreateModal";
 import {actionEditModalHandle, actionEditModalComponent} from "./components/modals/actionEditModal";
+import {actionRecorderActionsModal} from "./components/modals/actionRecorderActionsModal";
+import {actionRecorderComponent} from "./components/actionRecorder";
+import {ActionRecorderService} from "./services/ActionRecorderService";
+import {actionRecorderHandle} from "./directives/actionRecorderHandle";
 import {
     hypothesisLayoutSettingsModalHandle,
     hypothesisLayoutSettingsModalComponent
@@ -175,7 +179,7 @@ import {
 
 
 const env = {};
-if(window){
+if (window) {
     Object.assign(env, window.__env);
 }
 
@@ -243,13 +247,16 @@ angular
     .service('ToastService', ToastService)
     .service('LearnerResultDownloadService', LearnerResultDownloadService)
     .service('HtmlElementPickerService', HtmlElementPickerService)
+    .service('ActionRecorderService', ActionRecorderService)
 
     // directives
     .directive('htmlElementPickerHandle', htmlElementPickerHandle)
+    .directive('actionRecorderHandle', actionRecorderHandle)
 
     // modals
     .directive('actionCreateModalHandle', actionCreateModalHandle)
     .component('actionCreateModal', actionCreateModalComponent)
+    .component('actionRecorderActionsModal', actionRecorderActionsModal)
     .directive('actionEditModalHandle', actionEditModalHandle)
     .component('actionEditModal', actionEditModalComponent)
     .directive('hypothesisLayoutSettingsModalHandle', hypothesisLayoutSettingsModalHandle)
@@ -377,6 +384,7 @@ angular
     .component('responsiveIframe', responsiveIframe)
     .component('viewHeader', viewHeader)
     .component('htmlElementPicker', htmlElementPicker)
+    .component('actionRecorder', actionRecorderComponent)
     .component('learnResultPanel', learnResultPanel)
     .component('observationTable', observationTable)
     .component('symbolListItem', symbolListItem)

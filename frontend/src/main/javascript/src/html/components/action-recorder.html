@@ -1,0 +1,94 @@
+<div id="action-recorder-wrapper">
+    <div id="action-recorder">
+        <div class="header">
+
+            <div ng-if="vm.corsDisabled !== null && !vm.corsDisabled" style="flex: 1 0; display: flex">
+                <div class="header-element" style="flex: 0 0 320px">
+                    <form ng-submit="vm.loadUrl()">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-addon" tooltip-placement="right"
+                                     uib-tooltip="{{vm.project.baseUrl}}">
+                                    ...
+                                </div>
+                                <input type="text" class="form-control" ng-model="vm.url" placeholder="URL"/>
+                                <span class="input-group-btn">
+                                <button type="submit" class="btn btn-default">Go!</button>
+                            </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="header-element" style="flex: 0 0">
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-click="vm.toggleRecording()">
+                            <i class="fa fa-fw" ng-class="vm.isRecording ? 'fa-square' : 'fa-circle'"></i>&nbsp;
+                            <span ng-bind="vm.isRecording ? 'Stop recording':'Start recording'"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="header-element" style="flex: 1 0; overflow: hidden">
+                    <div class="btn btn-block btn-default disabled"
+                         style="overflow: hidden; text-overflow: ellipsis; word-wrap: break-word; text-align: left">
+                        <span ng-if="vm.selector" ng-bind="vm.selector"></span>
+                        <span ng-if="!vm.selector">Enable recording first</span>
+                    </div>
+                </div>
+
+                <div class="header-element" style="flex: 0 0" ng-if="!vm.isRecording && vm.actions.length > 0">
+                    <button class="btn btn-success" ng-click="vm.ok()">
+                        <i class="fa fa-check"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div ng-if="vm.corsDisabled !== null && vm.corsDisabled" style="flex: 1 0; display: flex">
+                <div class="header-element" style="flex: 1 0">
+                    <div class="alert alert-warning alert-condensed">
+                        Your browser has an active <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
+                                                      target="_blank" rel="nofollow">CORS</a> rule for iframes.
+                        Please disable this feature to use the Element Picker.
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="vm.corsDisabled === null" style="flex: 1 0; display: flex">
+                <div class="header-element" style="flex: 1 0">
+                    <div class="alert alert-info alert-condensed">
+                        <i class="fa fa-spin fa-circle-o-notch"></i> Loading...
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-element" style="flex: 0 0">
+                <button class="btn btn-default" ng-click="vm.close()">
+                    <i class="fa fa-close"></i>
+                </button>
+            </div>
+
+        </div>
+        <div class="body">
+            <div class="sidebar" style="overflow: auto" dragula='"actionList2"' dragula-model="vm.actions">
+                <div class="alert alert-info no-border-radius" ng-if="vm.actions.length === 0">
+                    You haven't recorded any actions yet.
+                </div>
+                <div ng-repeat="action in vm.actions" style="padding: 15px; border-bottom: 1px solid #ddd; background: #fff">
+                    <p style="word-break: break-all;">{{action.toString()}}</p>
+                    <div class="btn-group btn-group-xs">
+                        <button class="btn btn-default" action-edit-modal-handle action="action" on-updated="vm.updateAction(action, $index)" window-class="modal-zindex">
+                            <i class="fa fa-fw fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-default" ng-click="vm.actions.splice($index, 1)">
+                            <i class="fa fa-fw fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="iframe-wrapper">
+                <responsive-iframe></responsive-iframe>
+            </div>
+        </div>
+    </div>
+</div>
