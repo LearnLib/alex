@@ -189,7 +189,7 @@
         </dependency>
         <dependency>
             <groupId>de.learnlib</groupId>
-            <artifactId>learnlib-lstar-generic</artifactId>
+            <artifactId>learnlib-lstar</artifactId>
             <version>${learnlib.version}</version>
         </dependency>
         <dependency>

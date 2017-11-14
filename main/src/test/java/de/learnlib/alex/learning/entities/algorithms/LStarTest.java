@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.learning.entities.algorithms;
 
-import de.learnlib.algorithms.lstargeneric.mealy.ExtensibleLStarMealy;
+import de.learnlib.algorithms.lstar.mealy.ExtensibleLStarMealy;
 import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.datastructure.observationtable.ObservationTable;
 import de.learnlib.oracle.membership.SULOracle;
