@@ -36,6 +36,7 @@ import {SymbolResource} from "./resources/SymbolResource";
 import {UserResource} from "./resources/UserResource";
 import {ActionService} from "./services/ActionService";
 import {ClipboardService} from "./services/ClipboardService";
+import {TestCaseResource} from "./resources/TestCaseResource";
 import {ErrorService} from "./services/ErrorService";
 import {EventBus} from "./services/EventBus";
 import {EqOracleService} from "./services/EqOracleService";
@@ -107,6 +108,8 @@ import {userEditForm} from "./components/forms/userEditForm";
 import {userLoginForm} from "./components/forms/userLoginForm";
 import {userRegisterForm} from "./components/forms/userRegisterForm";
 import {browserConfigFormComponent} from "./components/forms/browserConfigForm";
+import {testCaseCreateForm} from "./components/forms/testCaseCreateForm";
+import {testCaseEditForm} from "./components/forms/testCaseEditForm";
 import {widget} from "./components/widgets/widget";
 import {projectDetailsWidget} from "./components/widgets/projectDetailsWidget";
 import {learnResumeSettingsWidget} from "./components/widgets/learnResumeSettingsWidget";
@@ -232,6 +235,7 @@ angular
     .service('SymbolGroupResource', SymbolGroupResource)
     .service('SymbolResource', SymbolResource)
     .service('UserResource', UserResource)
+    .service('TestCaseResource', TestCaseResource)
 
     // services
     .service('ActionService', ActionService)
@@ -316,6 +320,8 @@ angular
     .component('nodeFormGroup', nodeFormGroup)
     .component('browserConfigForm', browserConfigFormComponent)
     .component('symbolEditForm', symbolEditFormComponent)
+    .component('testCaseCreateForm', testCaseCreateForm)
+    .component('testCaseEditForm', testCaseEditForm)
 
     // widgets components
     .component('widget', widget)
