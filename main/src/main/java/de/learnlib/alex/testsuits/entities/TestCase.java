@@ -41,6 +41,32 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TestCase implements Serializable {
 
+    public class TestCaseSymbolRepresentation {
+        private Long id;
+        private String name;
+
+        public TestCaseSymbolRepresentation(Long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
     /** The ID of the Test Case in the DB. */
     private Long testCaseId;
 
@@ -250,7 +276,7 @@ public class TestCase implements Serializable {
      * @return A list of Symbol ID to execute during the Test Case (in order).
      */
     @Transient
-    @JsonProperty("symbols")
+    @JsonIgnore
     public List<Long> getSymbolsAsIds() {
         if (symbolsAsIds == null || symbolsAsIds.isEmpty()) {
             symbolsAsIds = new ArrayList<>();
@@ -259,12 +285,12 @@ public class TestCase implements Serializable {
     }
 
     @Transient
-    @JsonProperty("symbolNames")
-    public List<String> getSymbolsAsNames() {
+    @JsonProperty("symbols")
+    public List<TestCaseSymbolRepresentation> getSymbolRepresentation() {
         if (symbols == null || symbols.isEmpty()) {
             return null;
         }
-        return symbols.stream().map(Symbol::getName).collect(Collectors.toList());
+        return symbols.stream().map(s -> new TestCaseSymbolRepresentation(s.getId(), s.getName())).collect(Collectors.toList());
     }
 
 

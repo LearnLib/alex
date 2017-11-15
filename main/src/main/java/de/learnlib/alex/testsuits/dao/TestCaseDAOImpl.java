@@ -124,6 +124,11 @@ public class TestCaseDAOImpl implements TestCaseDAO {
                                                 + " in the project " + projectId + ".");
         }
 
+        Hibernate.initialize(result.getUser());
+        Hibernate.initialize(result.getProject());
+        Hibernate.initialize(result.getSymbols());
+        result.getSymbols().forEach(s -> SymbolDAOImpl.loadLazyRelations(symbolDAO, s));
+
         return result;
     }
 
@@ -146,6 +151,13 @@ public class TestCaseDAOImpl implements TestCaseDAO {
             TestCase testCaseDB = get(testCase.getUserId(), testCase.getProjectId(), testCase.getId());
             testCase.setTestCaseId(testCaseDB.getTestCaseId());
             testCase.setProject(testCaseDB.getProject());
+
+            List<Symbol> symbols = new LinkedList<>();
+            for (Long symbolId : testCase.getSymbolsAsIds()) {
+                Symbol symbol = symbolDAO.get(testCase.getUser(), testCase2.getProjectId(), symbolId);
+                symbols.add(symbol);
+            }
+            testCase.setSymbols(symbols);
 
             testCaseRepository.save(testCase);
         } catch (Exception e) {
