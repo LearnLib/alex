@@ -64,7 +64,7 @@ export class ActionEditModalComponent {
      */
     updateAction() {
         this.EventBus.emit(events.ACTION_UPDATED, {action: this.action});
-        this.dismiss();
+        this.close({$value: this.action});
     }
 }
 
@@ -73,6 +73,7 @@ export const actionEditModalComponent = {
     templateUrl: 'html/components/modals/action-edit-modal.html',
     bindings: {
         dismiss: '&',
+        close: '&',
         resolve: '='
     },
     controller: ActionEditModalComponent,
@@ -99,12 +100,15 @@ export function actionEditModalHandle($uibModal, ActionService) {
     return {
         restrict: 'A',
         scope: {
-            action: '='
+            action: '=',
+            onUpdated: '&',
+            windowClass: '@'
         },
         link(scope, el) {
             el.on('click', () => {
                 $uibModal.open({
                     component: 'actionEditModal',
+                    windowClass: scope.windowClass || '',
                     resolve: {
                         modalData: function () {
 
@@ -117,6 +121,10 @@ export function actionEditModalHandle($uibModal, ActionService) {
                                 action: action
                             };
                         }
+                    }
+                }).result.then(data => {
+                    if (scope.onUpdated) {
+                        scope.onUpdated({action: data});
                     }
                 });
             });

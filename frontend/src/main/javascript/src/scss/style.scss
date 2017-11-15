@@ -4,6 +4,7 @@
 @import "font-awesome";
 @import "hypothesis";
 @import "html-element-picker";
+@import "action-recorder";
 @import "sidebar";
 @import "animations";
 
@@ -27,6 +28,15 @@ body {
       }
     }
   }
+}
+
+.modal-zindex {
+  z-index: 2000 !important;
+  background: rgba(0,0,0,0.5);
+}
+
+.no-border-radius {
+  border-radius: 0 !important;
 }
 
 .alx-checkbox {

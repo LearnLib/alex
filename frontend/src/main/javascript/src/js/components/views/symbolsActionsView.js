@@ -163,12 +163,25 @@ class SymbolsActionsView {
     /**
      * Adds a new action to the list of actions of the symbol and gives it a temporary unique id.
      *
-     * @param {Object} action - The action to add.
+     * @param {Action} action - The action to add.
      */
     addAction(action) {
         action._id = uniqueId();
         this.symbol.actions.push(action);
         this.ToastService.success('Action created');
+        this.hasChanged = true;
+    }
+
+    /**
+     * Adds new actions to the symbol.
+     *
+     * @param {Action[]} actions
+     */
+    addActions(actions) {
+        actions.forEach(action => {
+            this.symbol.actions.push(action);
+        });
+        this.ToastService.success('Actions added');
         this.hasChanged = true;
     }
 

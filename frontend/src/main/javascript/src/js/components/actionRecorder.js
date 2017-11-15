@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import uniqueId from "lodash/uniqueId";
 import {DomUtils} from "../utils/dom-utils";
 
 /**
@@ -24,43 +25,27 @@ import {DomUtils} from "../utils/dom-utils";
  *
  * @param SessionService - The SessionService
  */
-class HtmlElementPickerComponent {
+class ActionRecorder {
 
     /**
      * Constructor.
      * @param {SessionService} SessionService
-     * @param {HtmlElementPickerService} HtmlElementPickerService
+     * @param {ActionRecorderService} ActionRecorderService
      * @param $element
      * @param $scope
+     * @param $uibModal
      */
     // @ngInject
-    constructor(SessionService, HtmlElementPickerService, $element, $scope) {
+    constructor(SessionService, ActionRecorderService, $element, $scope, $uibModal) {
         this.SessionService = SessionService;
-        this.HtmlElementPickerService = HtmlElementPickerService;
+        this.ActionRecorderService = ActionRecorderService;
         this.iframe = $element.find('iframe');
         this.$scope = $scope;
+        this.$uibModal = $uibModal;
 
         // when moving with the mouse over an element, this elements gets saved in this variable in order to
         // prevent multiple calls of getCssPath for the same element
         this.lastTarget = null;
-
-        /**
-         * flag for selection mode
-         * @type {boolean}
-         */
-        this.isSelectable = false;
-
-        /**
-         * The XPath of the selected element
-         * @type {null|string}
-         */
-        this.selector = null;
-
-        /**
-         * The element.textContent value
-         * @type {null|string}
-         */
-        this.textContent = null;
 
         /**
          * The url that is loaded in the iframe
@@ -74,7 +59,25 @@ class HtmlElementPickerComponent {
          */
         this.project = null;
 
+        /**
+         * The XPath of the selected element
+         * @type {null|string}
+         */
+        this.selector = null;
+
+        /**
+         * If CORS is disabled.
+         * @type {null|boolean}
+         */
         this.corsDisabled = null;
+
+        /**
+         * If the recorder is running.
+         * @type {boolean}
+         */
+        this.isRecording = false;
+
+        this.actions = [];
 
         this.mouseMoveHandler = null;
         this.keyUpHandler = null;
@@ -88,7 +91,6 @@ class HtmlElementPickerComponent {
      */
     init() {
         this.project = this.SessionService.getProject();
-        this.url = this.HtmlElementPickerService.lastUrl;
         this.loadUrl();
     }
 
@@ -100,27 +102,12 @@ class HtmlElementPickerComponent {
 
         this.iframe.attr('src', this.project.baseUrl + (this.url === null ? '/' : this.url));
         this.iframe.on('load', () => {
-
             try {
                 this.iframe.contents();
                 self.$scope.$apply(() => this.corsDisabled = false);
             } catch (err) {
                 self.$scope.$apply(() => this.corsDisabled = true);
-                return;
             }
-
-            angular.element(this.iframe.contents()[0].body.getElementsByTagName('a'))
-                .on('click', function () {
-                    if (!self.isSelectable) {
-                        const _this = this;
-                        if (this.getAttribute('href') !== '' && this.getAttribute('href')[0] !== '#') {
-                            self.$scope.$apply(() => {
-                                self.url = decodeURIComponent(_this.getAttribute('href'))
-                                    .replace(window.location.origin + '/' + self.project.baseUrl, '');
-                            });
-                        }
-                    }
-                });
         });
     }
 
@@ -128,8 +115,7 @@ class HtmlElementPickerComponent {
      * Makes the web element picker invisible and fires the close event
      */
     close() {
-        this.HtmlElementPickerService.lastUrl = this.url;
-        this.HtmlElementPickerService.deferred.reject();
+        this.ActionRecorderService.deferred.reject();
     }
 
     /**
@@ -137,11 +123,38 @@ class HtmlElementPickerComponent {
      * selected. If no selector is defined, then it just closes the picker
      */
     ok() {
-        this.HtmlElementPickerService.lastUrl = this.url;
-        this.HtmlElementPickerService.deferred.resolve({
-            selector: this.selector,
-            textContent: this.textContent
-        });
+        this.ActionRecorderService.deferred.resolve(this.actions);
+    }
+
+    toggleRecording() {
+        if (this.isRecording) {
+            this.selector = null;
+
+            angular.element(this.iframe.contents()[0].body).off('mousemove', this.mouseMoveHandler);
+            angular.element(this.iframe.contents()[0].body).off('click', this.clickHandler);
+            document.body.removeEventListener('keyup', this.keyUpHandler);
+
+            if (this.lastTarget !== null) {
+                this.lastTarget.style.outline = 'none';
+                this.lastTarget = null;
+            }
+        } else {
+            const iframeBody = angular.element(this.iframe.contents()[0].body);
+            this.mouseMoveHandler = this.handleMouseMove.bind(this);
+            this.keyUpHandler = this.handleKeyUp.bind(this);
+
+            this.clickHandler = (e) => {
+                this.handleClick(e);
+                this.$scope.$apply(() => {
+                    this.isSelectable = false;
+                });
+            };
+
+            iframeBody.on('mousemove', this.mouseMoveHandler);
+            iframeBody.on('click', this.clickHandler);
+            document.body.addEventListener('keyup', this.keyUpHandler, false);
+        }
+        this.isRecording = !this.isRecording;
     }
 
     /**
@@ -157,14 +170,26 @@ class HtmlElementPickerComponent {
             e.stopPropagation();
         }
 
-        if (this.lastTarget !== null) {
-            this.lastTarget.style.outline = '0px';
-        }
-        this.lastTarget = null;
+        this.$uibModal.open({
+            component: 'actionRecorderActionsModal',
+            size: 'lg',
+            windowClass: 'modal-zindex',
+            resolve: {
+                modalData: () => {
+                    return {
+                        element: this.lastTarget,
+                        selector: this.selector
+                    };
+                }
+            }
+        }).result.then(data => {
+            data.action._id = uniqueId();
+            this.actions.push(data.action);
+        });
+    }
 
-        angular.element(this.iframe.contents()[0].body).off('mousemove', this.mouseMoveHandler);
-        angular.element(this.iframe.contents()[0].body).off('click', this.clickHandler);
-        document.body.removeEventListener('keyup', this.keyUpHandler);
+    updateAction(action, $index) {
+        this.actions[$index] = action;
     }
 
     /**
@@ -204,39 +229,13 @@ class HtmlElementPickerComponent {
     handleKeyUp(e) {
         if (e.keyCode == 17) { // strg
             this.handleClick();
-            this.isSelectable = false;
+            this.isRecording = false;
         }
-    }
-
-    /**
-     * Enables the selection mode and therefore adds events to the iframe
-     */
-    toggleSelection() {
-        if (!this.isSelectable) {
-            const iframeBody = angular.element(this.iframe.contents()[0].body);
-            this.mouseMoveHandler = this.handleMouseMove.bind(this);
-            this.keyUpHandler = this.handleKeyUp.bind(this);
-
-            this.clickHandler = (e) => {
-                this.handleClick(e);
-                this.$scope.$apply(() => {
-                    this.isSelectable = false;
-                });
-            };
-
-            iframeBody.on('mousemove', this.mouseMoveHandler);
-            iframeBody.one('click', this.clickHandler);
-            document.body.addEventListener('keyup', this.keyUpHandler, false);
-        } else {
-            this.handleClick();
-            this.selector = null;
-        }
-        this.isSelectable = !this.isSelectable;
     }
 }
 
-export const htmlElementPicker = {
-    templateUrl: 'html/components/html-element-picker.html',
-    controller: HtmlElementPickerComponent,
+export const actionRecorderComponent = {
+    templateUrl: 'html/components/action-recorder.html',
+    controller: ActionRecorder,
     controllerAs: 'vm'
 };
