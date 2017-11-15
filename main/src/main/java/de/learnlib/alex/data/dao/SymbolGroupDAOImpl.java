@@ -132,9 +132,9 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
 
-        // load lazy relations
         List<SymbolGroup> resultList = symbolGroupRepository.findAllByUser_IdAndProject_Id(user.getId(), projectId);
 
+        // load lazy relations
         for (SymbolGroup group : resultList) {
             initLazyRelations(user, group, embedFields);
         }

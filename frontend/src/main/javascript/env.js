@@ -9,6 +9,6 @@
      *
      * @type {string}
      */
-    window.__env.apiUrl = '/rest';
-    // window.__env.apiUrl = 'http://localhost:8000/rest';
+    //window.__env.apiUrl = '/rest';
+    window.__env.apiUrl = 'http://localhost:8000/rest';
 }(this));

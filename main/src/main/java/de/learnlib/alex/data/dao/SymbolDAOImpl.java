@@ -310,7 +310,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     private Symbol doUpdate(Symbol symbol) throws IllegalArgumentException, NotFoundException {
         // checks for valid symbol
         if (symbol.getProjectId() == null) {
-            throw new NotFoundException("Update failed: Could not find the project with the id + "
+            throw new NotFoundException("Update failed: Could not find the project with the id "
                                                 + symbol.getProjectId() + ".");
         }
 

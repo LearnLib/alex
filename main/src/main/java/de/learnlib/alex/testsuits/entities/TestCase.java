@@ -4,23 +4,25 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.config.entities.BrowserConfig;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.learning.entities.algorithms.TTT;
+import de.learnlib.alex.data.entities.Symbol;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -28,7 +30,12 @@ import java.util.List;
  */
 @Entity
 @Table(
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "name"})
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {"userId", "projectId", "name"},
+                        name = "Unique Test Case Name per User and Project"
+                )
+        }
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TestCase implements Serializable {
@@ -55,8 +62,8 @@ public class TestCase implements Serializable {
     private String name;
 
     /** Link to the Symbols that are used during the Test Case. */
-    private List<Long> symbolsAsIds;
-
+    private List<Symbol> symbols;
+    private List<Long>   symbolsAsIds;
 
     /**
      * Default Constructor.
@@ -67,7 +74,7 @@ public class TestCase implements Serializable {
         this.userId    = 0L;
         this.projectId = 0L;
 
-        this.symbolsAsIds = new ArrayList<>();
+        this.symbols = new LinkedList<>();
     }
 
     /**
@@ -228,8 +235,22 @@ public class TestCase implements Serializable {
     /**
      * Get the Symbols of the Test Case.
      *
+     * @return The Symbols of this Test Case
+     */
+    @ManyToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL})
+    @JsonIgnore
+    public List<Symbol> getSymbols() {
+        return symbols;
+    }
+
+    /**
+     * Get the Symbol IDs of the Test Case.
+     *
      * @return A list of Symbol ID to execute during the Test Case (in order).
      */
+    @Transient
     @JsonProperty("symbols")
     public List<Long> getSymbolsAsIds() {
         if (symbolsAsIds == null || symbolsAsIds.isEmpty()) {
@@ -239,13 +260,42 @@ public class TestCase implements Serializable {
     }
 
     /**
+     * Set a new List of Symbols of the Test Case.
+     *
+     * @param symbols The new list of Symbols.
+     */
+    @JsonIgnore
+    public void setSymbols(List<Symbol> symbols) {
+        if (symbols == null) {
+            this.symbols = new LinkedList<>();
+        } else {
+            this.symbols = symbols;
+        }
+    }
+
+    /**
      * Set the Symbols of the Test Case.
      *
      * @param symbolsAsIds A list of Symbol ID to execute during the Test Case (in order).
      */
+    @Transient
     @JsonProperty("symbols")
     public void setSymbolsAsIds(List<Long> symbolsAsIds) {
         this.symbolsAsIds = symbolsAsIds;
+    }
+
+
+    /**
+     * Add one action to the end of the Action List.
+     *
+     * @param action The SymbolAction to add.
+     */
+    public void addSymbol(Symbol action) {
+        if (action == null) {
+            throw new IllegalArgumentException("Can not add Symbol 'null'");
+        }
+
+        symbols.add(action);
     }
 
 }

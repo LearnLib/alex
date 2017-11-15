@@ -33,10 +33,10 @@ import de.learnlib.alex.data.rest.SymbolResource;
 import de.learnlib.alex.iframeproxy.rest.IFrameProxyResource;
 import de.learnlib.alex.learning.rest.LearnerResource;
 import de.learnlib.alex.learning.rest.LearnerResultResource;
+import de.learnlib.alex.testsuits.rest.TestCaseResource;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -108,6 +108,7 @@ public class ALEXApplication extends ResourceConfig {
         register(SymbolGroupResource.class);
         register(SymbolResource.class);
         register(UserResource.class);
+        register(TestCaseResource.class);
 
         // Exceptions
         register(NotFoundExceptionMapper.class);
