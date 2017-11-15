@@ -3,12 +3,14 @@ package de.learnlib.alex.testsuits.rest;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.testsuits.dao.TestCaseDAO;
 import de.learnlib.alex.testsuits.entities.TestCase;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -49,9 +51,13 @@ public class TestCaseResource {
         testCase.setUser(user);
         testCase.setProjectId(projectId);
 
-        testCaseDAO.create(testCase);
+        try {
+            testCaseDAO.create(testCase);
 
-        return Response.ok(testCase).status(Response.Status.CREATED).build();
+            return Response.ok(testCase).status(Response.Status.CREATED).build();
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("TestCase.create", Response.Status.BAD_REQUEST, e);
+        }
     }
 
     @GET
@@ -93,9 +99,13 @@ public class TestCaseResource {
         testCase.setUser(user);
         testCase.setProjectId(projectId);
 
-        testCaseDAO.update(testCase);
+        try {
+            testCaseDAO.update(testCase);
 
-        return Response.ok(testCase).build();
+            return Response.ok(testCase).build();
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("TestCase.update", Response.Status.BAD_REQUEST, e);
+        }
     }
 
     @DELETE

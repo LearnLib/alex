@@ -57,7 +57,11 @@ public class TestCaseDAOImpl implements TestCaseDAO {
                 throw new ValidationException("To create a test case it must not haven an ID");
             }
 
-            // TODO: Make sure the name is unique
+            // make sure the name of the Test Case is unique
+            TestCase testCase2 = testCaseRepository.getTestCaseByName(testCase.getUserId(), testCase.getProjectId(), testCase.getName());
+            if (testCase2 != null && !testCase2.getId().equals(testCase.getId())) {
+                throw new ValidationException("To create a Test Case its name must be unique.");
+            }
 
             Long userId    = testCase.getUserId();
             Long projectId = testCase.getProjectId();
@@ -66,8 +70,6 @@ public class TestCaseDAOImpl implements TestCaseDAO {
             if (project == null) {
                 throw new ValidationException("The Project was not found and thus the Test Case was not created.");
             }
-
-            // TODO: Connect with project
 
             testCase.setTestCaseId(0L);
             testCase.setProject(project);
@@ -154,7 +156,7 @@ public class TestCaseDAOImpl implements TestCaseDAO {
 
             List<Symbol> symbols = new LinkedList<>();
             for (Long symbolId : testCase.getSymbolsAsIds()) {
-                Symbol symbol = symbolDAO.get(testCase.getUser(), testCase2.getProjectId(), symbolId);
+                Symbol symbol = symbolDAO.get(testCase.getUser(), testCase.getProjectId(), symbolId);
                 symbols.add(symbol);
             }
             testCase.setSymbols(symbols);
