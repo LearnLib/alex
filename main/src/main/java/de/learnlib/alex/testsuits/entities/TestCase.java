@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Representation of a Test Case.
@@ -270,6 +271,7 @@ public class TestCase implements Serializable {
             this.symbols = new LinkedList<>();
         } else {
             this.symbols = symbols;
+            this.symbolsAsIds = symbols.stream().map(Symbol::getId).collect(Collectors.toList());
         }
     }
 

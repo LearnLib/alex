@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -71,7 +72,11 @@ public class TestCaseDAOImpl implements TestCaseDAO {
             testCase.setTestCaseId(0L);
             testCase.setProject(project);
 
-            List<Symbol> symbols = symbolDAO.getByIds(testCase.getUser(), testCase.getProjectId(), testCase.getSymbolsAsIds());
+            List<Symbol> symbols = new LinkedList<>();
+            for (Long symbolId : testCase.getSymbolsAsIds()) {
+                Symbol symbol = symbolDAO.get(testCase.getUser(), projectId, symbolId);
+                symbols.add(symbol);
+            }
             testCase.setSymbols(symbols);
 
             Long maxTestNo = testCaseRepository.findHighestTestNo(userId, projectId);
