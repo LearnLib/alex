@@ -238,9 +238,7 @@ public class TestCase implements Serializable {
      *
      * @return The Symbols of this Test Case
      */
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnore
     public List<Symbol> getSymbols() {
         return symbols;
@@ -259,6 +257,16 @@ public class TestCase implements Serializable {
         }
         return symbolsAsIds;
     }
+
+    @Transient
+    @JsonProperty("symbolNames")
+    public List<String> getSymbolsAsNames() {
+        if (symbols == null || symbols.isEmpty()) {
+            return null;
+        }
+        return symbols.stream().map(Symbol::getName).collect(Collectors.toList());
+    }
+
 
     /**
      * Set a new List of Symbols of the Test Case.

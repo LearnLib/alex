@@ -82,6 +82,14 @@ public class TestCaseResource {
     public Response update(@PathParam("project_id") Long projectId, @PathParam("id") Long id, TestCase testCase) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
+        if (testCase.getId() == null) {
+            testCase.setId(id);
+        }
+
+        if (!testCase.getId().equals(id)) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
         testCase.setUser(user);
         testCase.setProjectId(projectId);
 
