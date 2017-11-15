@@ -40,16 +40,18 @@ public class TestCaseResource {
     @Inject
     private TestCaseDAO testCaseDAO;
 
-
-
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createTestCase(@PathParam("project_id") Long projectId, TestCase testCase) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
+        testCase.setUser(user);
+        testCase.setProjectId(projectId);
 
-        return null;
+        testCaseDAO.create(testCase);
+
+        return Response.ok(testCase).status(Response.Status.CREATED).build();
     }
 
     @GET

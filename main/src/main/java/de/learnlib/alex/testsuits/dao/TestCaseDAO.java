@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface TestCaseDAO {
 
-    void create(TestCase testCase) throws ValidationException;
+    void create(TestCase testCase) throws ValidationException, NotFoundException;
 
     List<TestCase> getAll(Long userId, Long projectId) throws NotFoundException;
 

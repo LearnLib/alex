@@ -28,4 +28,9 @@ public interface TestCaseRepository extends JpaRepository<TestCase, Long> {
             + "      AND t.name = ?3")
     TestCase getTestCaseByName(Long userId, Long projectId, String name);
 
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    @Query("SELECT MAX(t.id) FROM TestCase t WHERE t.user.id = ?1 AND t.project.id = ?2")
+    Long findHighestTestNo(Long userId, Long projectId);
+
 }

@@ -92,10 +92,10 @@ public class TestCase implements Serializable {
     /**
      * Set the ID the Test Case has in the DB new.
      *
-     * @param symbolId The new internal ID.
+     * @param testCaseId The new internal ID.
      */
     @JsonIgnore
-    public void setTestCaseId(Long symbolId) {
+    public void setTestCaseId(Long testCaseId) {
         this.testCaseId = testCaseId;
     }
 
@@ -186,7 +186,7 @@ public class TestCase implements Serializable {
      */
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
-        this.project = null;
+        this.project   = null;
         this.projectId = projectId;
     }
 

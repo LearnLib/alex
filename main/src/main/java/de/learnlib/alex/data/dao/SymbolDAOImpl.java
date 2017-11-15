@@ -188,7 +188,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         List<Symbol> result = symbolRepository.findByIds(user.getId(), projectId, ids);
         if (result.isEmpty()) {
             throw new NotFoundException("Could not find symbols in the project " + projectId
-                                                + " with the group ids.");
+                                                + " with the ids.");
         }
 
         // load the lazy relations
