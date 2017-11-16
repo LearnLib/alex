@@ -188,7 +188,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         List<Symbol> result = symbolRepository.findByIds(user.getId(), projectId, ids);
         if (result.isEmpty()) {
             throw new NotFoundException("Could not find symbols in the project " + projectId
-                                                + " with the group ids.");
+                                                + " with the ids.");
         }
 
         // load the lazy relations
@@ -310,7 +310,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     private Symbol doUpdate(Symbol symbol) throws IllegalArgumentException, NotFoundException {
         // checks for valid symbol
         if (symbol.getProjectId() == null) {
-            throw new NotFoundException("Update failed: Could not find the project with the id + "
+            throw new NotFoundException("Update failed: Could not find the project with the id "
                                                 + symbol.getProjectId() + ".");
         }
 

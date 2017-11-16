@@ -5,54 +5,81 @@
         <div class="alx-container">
 
             <div class="row">
-                <div class="col-md-4 col-sm-5">
+                <div class="col-sm-9">
 
-                    <div class="panel panel-default" ng-repeat="group in vm.groups" ng-if="group.symbols.length">
-                        <div class="panel-heading">
-                            <strong>{{group.name}}</strong>
-                        </div>
-                        <div class="list-group">
-                            <a href class="list-group-item" ng-repeat="symbol in group.symbols | orderBy:'name'"
-                               ng-click="vm.word.push(symbol); vm.outputs = []">
-                                {{symbol.name}}
-                            </a>
-                        </div>
-                    </div>
+                    <uib-tabset>
+                        <uib-tab heading="Create">
+                            <br>
 
-                </div>
-                <div class="col-md-8 col-sm-7">
+                            <test-case-create-form groups="vm.groups"
+                                                   on-created="vm.testCases.push(testCase)"
+                                                   browser-config="vm.browserConfig">
+                            </test-case-create-form>
+                        </uib-tab>
+                        <uib-tab heading="Manage">
+                            <br>
 
-                    <div ng-if="vm.word.length">
-                        <div class="list-group" dragula='"word"' dragula-model="vm.word">
-                            <div class="list-group-item" ng-class="{'list-group-item-info': $index === 0}" ng-repeat="symbol in vm.word track by $index">
-                                <div>
-                                    <span class="pull-left text-muted" style="margin-right: 15px; cursor: move">
-                                        <i class="fa fa-ellipsis-v" style="margin-right: -2px"></i>
-                                        <i class="fa fa-ellipsis-v"></i>
-                                    </span>
-                                    <i class="fa fa-fw fa-close text-muted pull-right" ng-click="vm.word.splice($index, 1); vm.outputs = []"></i>
-                                    <span class="label label-primary pull-right" style="margin-right: 10px" ng-if="$index === 0">Reset</span>
+                            <div style="padding: 10px 16px 10px 16px; margin-bottom: 10px; border-bottom: 1px solid #ddd">
+                                <checkbox-multiple model="vm.testCases"></checkbox-multiple>
+                                <button style="margin-left: 6px" class="btn btn-sm btn-primary" ng-click="vm.executeTestCases()">Execute</button>
+                            </div>
 
-                                    {{symbol.name}}
-                                </div>
-                                <div ng-if="vm.outputs[$index]" style="padding-left: 20px">
-                                    <label class="label label-default" ng-bind="vm.outputs[$index]"></label>
+                            <div class="list-group" ng-if="vm.testCases.length">
+                                <div class="list-group-item" ng-repeat="testCase in vm.testCases">
+                                    <div class="d-flex">
+                                        <checkbox model="testCase"></checkbox>
+                                        <div class="flex-grow-1" style="padding: 0 10px;">
+                                            <strong>{{testCase.name}}</strong>
+                                        </div>
+                                        <div>
+                                            <div class="btn-group btn-group-xs" uib-dropdown>
+                                                <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
+                                                    <i class="fa fa-bars"></i>
+                                                </button>
+                                                <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
+                                                    <li>
+                                                        <a href="" ng-click="vm.testCaseUnderEdit = testCase">
+                                                            <i class="fa fa-edit fa-fw"></i> Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="vm.deleteTestCase(testCase)">
+                                                            <i class="fa fa-trash fa-fw"></i> Delete
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div ng-if="testCase === vm.testCaseUnderEdit">
+                                        <hr>
+                                        <test-case-edit-form groups="vm.groups"
+                                                             test-case="testCase"
+                                                             browser-config="vm.browserConfig"
+                                                             on-updated="vm.updateTestCase(testCase)"
+                                                             on-dismiss="vm.testCaseUnderEdit = null">
+                                        </test-case-edit-form>
+                                    </div>
                                 </div>
                             </div>
+
+                            <div class="alert alert-info" ng-if="!vm.testCases.length">
+                                There are no saved test cases yet.
+                            </div>
+
+                        </uib-tab>
+                    </uib-tabset>
+
+                </div>
+                <div class="col-sm-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Config
                         </div>
-
-                        <browser-config-form config="vm.browserConfig"></browser-config-form>
-
-                        <button class="btn btn-sm btn-primary" ng-click="vm.executeWord()" ng-if="!vm.isExecuting">Execute word</button>
-                        <button class="btn btn-sm btn-primary" disabled ng-if="vm.isExecuting">
-                            <i class="fa fa-fw fa-circle-o-notch fa-spin"></i>&nbsp; Executing...
-                        </button>
+                        <div class="panel-body">
+                            <browser-config-form config="vm.browserConfig"></browser-config-form>
+                        </div>
                     </div>
-
-                    <div class="alert alert-info" ng-if="!vm.word.length">
-                        Create a word by clicking on the symbols.
-                    </div>
-
                 </div>
             </div>
 

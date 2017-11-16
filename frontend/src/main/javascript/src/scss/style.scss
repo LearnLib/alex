@@ -30,6 +30,14 @@ body {
   }
 }
 
+.d-flex {
+  display: flex;
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
 .modal-zindex {
   z-index: 2000 !important;
   background: rgba(0,0,0,0.5);

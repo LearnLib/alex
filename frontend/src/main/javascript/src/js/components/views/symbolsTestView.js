@@ -24,17 +24,20 @@ export const symbolsTestView = {
         /**
          * Constructor.
          *
-         * @param $scope
-         * @param dragulaService
          * @param {SymbolGroupResource} SymbolGroupResource
          * @param {SessionService} SessionService
          * @param {LearnerResource} LearnerResource
          * @param {ToastService} ToastService
+         * @param {TestCaseResource} TestCaseResource
+         * @param {PromptService} PromptService
          */
         // @ngInject
-        constructor($scope, SymbolGroupResource, SessionService, LearnerResource, dragulaService, ToastService) {
+        constructor(SymbolGroupResource, SessionService, LearnerResource, ToastService,
+                    TestCaseResource, PromptService) {
             this.LearnerResource = LearnerResource;
             this.ToastService = ToastService;
+            this.TestCaseResource = TestCaseResource;
+            this.PromptService = PromptService;
 
             /**
              * The current project.
@@ -49,18 +52,6 @@ export const symbolsTestView = {
             this.groups = [];
 
             /**
-             * The word to test.
-             * @type {AlphabetSymbol[]}
-             */
-            this.word = [];
-
-            /**
-             * If the word is being executed.
-             * @type {boolean}
-             */
-            this.isExecuting = false;
-
-            /**
              * The browser to execute the word in.
              * @type {any}
              */
@@ -70,55 +61,85 @@ export const symbolsTestView = {
                 height: screen.height
             };
 
-            /**
-             * The outputs of the executed word.
-             * @type {string[]}
-             */
-            this.outputs = [];
+            this.testCases = [];
+
+            this.testCaseUnderEdit = null;
 
             SymbolGroupResource.getAll(this.project.id, true)
                 .then(groups => this.groups = groups)
                 .catch(err => console.log(err));
 
-            dragulaService.options($scope, 'word', {
-                removeOnSpill: false,
-                mirrorContainer: document.createElement('div'),
-                moves: function () {
-                    return !this.isExecuting;
-                }.bind(this),
-            });
-
-            $scope.$on('word.drop', () => this.outputs = []);
-            $scope.$on('$destroy', () => dragulaService.destroy($scope, 'word'));
+            TestCaseResource.getAll(this.project.id)
+                .then(data => {
+                    this.testCases = data;
+                    console.log(this.testCases);
+                })
+                .catch(console.log);
         }
 
         /**
-         * Executes the word that has been build.
+         * Deletes a test case.
+         *
+         * @param testCase - The test case to delete.
          */
-        executeWord() {
+        deleteTestCase(testCase) {
+            delete testCase._selected;
+            this.TestCaseResource.remove(testCase)
+                .then(() => {
+                    const i = this.testCases.findIndex(tc => tc.id === testCase.id);
+                    if (i > -1) this.testCases.splice(i, 1);
+                    this.ToastService.success(`Test case "${testCase.name}" deleted.`);
+                })
+                .catch(err => this.ToastService.danger("Deleting the test case failed."));
+            // const i = this.testCases.findIndex(tc => tc.id === testCase.id);
+            // if (i > -1) this.testCases.splice(i, 1);
+        }
+
+        updateTestCase(testCase) {
+            const i = this.testCases.findIndex(tc => tc.id === testCase.id);
+            if (i > -1) {
+                this.testCases[i] = testCase;
+                this.testCaseUnderEdit = testCase;
+            }
+        }
+
+        executeTestCases() {
             if (this.browserConfig.driver === null) {
                 this.ToastService.info("Select a web driver.");
                 return;
             }
 
-            this.outputs = [];
-            this.isExecuting = true;
-            const symbols = this.word.map(s => s.id);
-            const resetSymbol = symbols.shift();
+            const testCases = this.testCases.filter(tc => tc._selected);
+            if (testCases.length === 0) {
+                this.ToastService.info("Select at least one test case.");
+                return;
+            }
 
-            const readOutputConfig = {
-                symbols: {resetSymbol, symbols},
-                browser: this.browserConfig
+            let next = (testCase) => {
+                let outputs = [];
+                const symbols = testCase.symbols.map(s => s.id);
+                const resetSymbol = symbols.shift();
+
+                const readOutputConfig = {
+                    symbols: {resetSymbol, symbols},
+                    browser: this.browserConfig
+                };
+
+                this.LearnerResource.testWord(this.project.id, readOutputConfig)
+                    .then(out => {
+                        outputs = out;
+                    })
+                    .catch(res => {
+                        this.ToastService.danger("The word could not be executed. " + res.data.message);
+                    })
+                    .finally(() => {
+                        if (testCases.length) {
+                            next(testCases.pop());
+                        }
+                    });
             };
 
-            this.LearnerResource.testWord(this.project.id, readOutputConfig)
-                .then(outputs => {
-                    this.outputs = outputs;
-                })
-                .catch(res => {
-                    this.ToastService.danger("The word could not be executed. " + res.data.message);
-                })
-                .finally(() => this.isExecuting = false);
+            next(testCases.pop());
         }
     },
     controllerAs: 'vm',

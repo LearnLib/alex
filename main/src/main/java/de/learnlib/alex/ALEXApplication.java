@@ -32,6 +32,7 @@ import de.learnlib.alex.data.rest.SymbolGroupResource;
 import de.learnlib.alex.data.rest.SymbolResource;
 import de.learnlib.alex.learning.rest.LearnerResource;
 import de.learnlib.alex.learning.rest.LearnerResultResource;
+import de.learnlib.alex.testsuits.rest.TestCaseResource;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
@@ -39,22 +40,15 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.core.env.Environment;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.filter.HiddenHttpMethodFilter;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.ValidationException;
 import javax.ws.rs.ApplicationPath;
-import java.io.IOException;
 
 /**
  * Main class of the REST API. Implements the Jersey {@link ResourceConfig} and does some configuration and stuff.
@@ -105,6 +99,7 @@ public class ALEXApplication extends ResourceConfig {
         register(SymbolGroupResource.class);
         register(SymbolResource.class);
         register(UserResource.class);
+        register(TestCaseResource.class);
 
         // Exceptions
         register(NotFoundExceptionMapper.class);
