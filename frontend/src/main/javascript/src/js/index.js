@@ -180,7 +180,6 @@ import {
     actionFormWait
 } from "./components/forms/actions/generalActionForms";
 
-
 const env = {};
 if (window) {
     Object.assign(env, window.__env);
@@ -216,7 +215,6 @@ angular
     .constant('eqOracleType', constant.eqOracleType)
     .constant('events', constant.events)
     .constant('actionType', constant.actionType)
-    .constant('chartMode', constant.chartMode)
 
     // filters
     .filter('formatEqOracle', formatEqOracle)

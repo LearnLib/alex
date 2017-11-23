@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {events} from "../../constants";
+
 /**
  * The controller of the component for the project dashboard.
  */
@@ -22,16 +24,23 @@ class ProjectsDashboardView {
     /**
      * Constructor.
      *
+     * @param {object} $scope
      * @param {SessionService} SessionService
+     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor(SessionService) {
+    constructor($scope, SessionService, EventBus) {
 
         /**
          * The project that is opened.
          * @type {Project}
          */
         this.project = SessionService.getProject();
+
+        // listen on project update event
+        EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
+            this.project = data.project;
+        }, $scope);
     }
 }
 

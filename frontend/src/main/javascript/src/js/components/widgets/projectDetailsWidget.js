@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {events} from "../../constants";
-
 /**
  * The directive for the dashboard widget that displays information about the current project.
  */
@@ -24,14 +22,11 @@ class ProjectDetailsWidget {
     /**
      * Constructor.
      *
-     * @param $scope
-     * @param {SessionService} SessionService
      * @param {SymbolGroupResource} SymbolGroupResource
      * @param {LearnResultResource} LearnResultResource
-     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor($scope, SessionService, SymbolGroupResource, LearnResultResource, EventBus) {
+    constructor(SymbolGroupResource, LearnResultResource) {
         this.SymbolGroupResource = SymbolGroupResource;
         this.LearnResultResource = LearnResultResource;
 
@@ -52,12 +47,6 @@ class ProjectDetailsWidget {
          * @type {null|number}
          */
         this.numberOfTests = null;
-
-        // listen on project update event
-        EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
-            this.project = data.project;
-            SessionService.saveProject(data.project);
-        }, $scope);
     }
 
     $onInit() {

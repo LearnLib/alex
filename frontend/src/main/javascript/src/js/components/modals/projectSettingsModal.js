@@ -28,12 +28,14 @@ export class ProjectSettingsModalComponent {
      * @param {ProjectResource} ProjectResource
      * @param {ToastService} ToastService
      * @param {EventBus} EventBus
+     * @param {SessionService} SessionService
      */
     // @ngInject
-    constructor(ProjectResource, ToastService, EventBus) {
+    constructor(ProjectResource, ToastService, EventBus, SessionService) {
         this.ProjectResource = ProjectResource;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
+        this.SessionService = SessionService;
 
         /**
          * The form object.
@@ -79,6 +81,8 @@ export class ProjectSettingsModalComponent {
         this.ProjectResource.update(this.project)
             .then(updatedProject => {
                 this.ToastService.success('Project updated');
+                this.SessionService.saveProject(updatedProject);
+
                 this.EventBus.emit(events.PROJECT_UPDATED, {project: updatedProject});
                 this.dismiss();
 

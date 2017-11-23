@@ -22,26 +22,22 @@ class LatestLearnResultWidget {
     /**
      * Constructor.
      *
-     * @param {SessionService} SessionService
      * @param {LearnResultResource} LearnResultResource
      */
     // @ngInject
-    constructor(SessionService, LearnResultResource) {
+    constructor(LearnResultResource) {
+        this.LearnResultResource = LearnResultResource;
 
         /**
          * The latest learning result.
          * @type {null|LearnResult}
          */
         this.result = null;
+    }
 
-        /**
-         * The project that is in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
-
+    $onInit() {
         // get the latest learn result
-        LearnResultResource.getAll(this.project.id)
+        this.LearnResultResource.getAll(this.project.id)
             .then(results => {
                 if (results.length > 0) {
                     this.result = results[results.length - 1];
@@ -53,6 +49,9 @@ class LatestLearnResultWidget {
 
 export const latestLearnResultWidget = {
     templateUrl: 'html/components/widgets/latest-learn-result-widget.html',
+    bindings: {
+        project: '='
+    },
     controller: LatestLearnResultWidget,
     controllerAs: 'vm'
 };

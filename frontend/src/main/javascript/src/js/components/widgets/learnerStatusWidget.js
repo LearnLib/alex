@@ -24,10 +24,9 @@ class LearnerStatusWidget {
      *
      * @param {LearnerResource} LearnerResource
      * @param {ToastService} ToastService
-     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor($scope, LearnerResource, ToastService, EventBus) {
+    constructor(LearnerResource, ToastService) {
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
 
@@ -45,16 +44,18 @@ class LearnerStatusWidget {
 
         /**
          * The intermediate or final learning result.
-         * @type {null|LearnResult}
+         * @type {LearnResult}
          */
         this.result = null;
 
-        // listen on project update event
-        EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
-            this.project = data.project;
-            SessionService.saveProject(data.project);
-        }, $scope);
+        /**
+         * The current project.
+         * @type {Project}
+         */
+        this.project = null;
+    }
 
+    $onInit() {
         this.LearnerResource.isActive(this.project.id)
             .then(data => {
                 this.isActive = data.active;
