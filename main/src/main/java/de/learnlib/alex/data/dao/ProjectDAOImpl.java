@@ -22,7 +22,6 @@ import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.data.repositories.SymbolRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -59,34 +58,15 @@ public class ProjectDAOImpl implements ProjectDAO {
     /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
 
-    /** The SymbolRepository to use. Will be injected. */
-    private SymbolRepository symbolRepository;
-
-    /** The SymbolDAO to use. Will be injected. */
-    private SymbolDAO symbolDAO;
-
-    /** The FileDAO to use. Will be injected. */
-    private FileDAO fileDAO;
-
     /**
      * Creates a new ProjectDAO.
      *
      * @param projectRepository
      *         The ProjectRepository to use.
-     * @param symbolRepository
-     *         The SymbolRepository to use.
-     * @param symbolDAO
-     *         The SymbolDAO to use.
-     * @param fileDAO
-     *         The FileDAO to use.
      */
     @Inject
-    public ProjectDAOImpl(ProjectRepository projectRepository,  SymbolRepository symbolRepository,
-                          SymbolDAO symbolDAO, FileDAO fileDAO) {
+    public ProjectDAOImpl(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
-        this.symbolRepository = symbolRepository;
-        this.symbolDAO = symbolDAO;
-        this.fileDAO = fileDAO;
     }
 
     @Override
@@ -98,7 +78,6 @@ public class ProjectDAOImpl implements ProjectDAO {
             defaultGroup.setId(0L);
             defaultGroup.setName("Default Group");
             defaultGroup.setProject(project);
-            defaultGroup.setUser(project.getUser());
 
             project.addGroup(defaultGroup);
             project.setDefaultGroup(defaultGroup);
@@ -186,15 +165,15 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     @Override
     @Transactional
-    public void delete(Long userId, Long projectId) throws NotFoundException {
-        Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
+    public void delete(User user, Long projectId) throws NotFoundException {
+        Project project = projectRepository.findOneByUser_IdAndId(user.getId(), projectId);
         if (project == null) {
             throw new NotFoundException("Could not delete the project with the id " + projectId + ".");
         }
 
         projectRepository.delete(project);
         try {
-            fileDAO.deleteProjectDirectory(userId, projectId);
+            FileDAOImpl.deleteProjectDirectory(projectId);
         } catch (IOException e) {
             LOGGER.info("The project has been deleted, the directory, however, not.");
         }
@@ -210,20 +189,22 @@ public class ProjectDAOImpl implements ProjectDAO {
             Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
             if (fieldsToLoad.contains(EmbeddableFields.GROUPS)) {
-                project.getGroups().forEach(group -> group.getSymbols()
-                                                          .forEach(s -> SymbolDAOImpl.loadLazyRelations(symbolDAO, s)));
+                project.getGroups().forEach(group -> group.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations));
             } else {
                 project.setGroups(null);
             }
 
             if (fieldsToLoad.contains(EmbeddableFields.DEFAULT_GROUP)) {
-                project.getDefaultGroup().getSymbols().forEach(s -> SymbolDAOImpl.loadLazyRelations(symbolDAO, s));
+                Hibernate.initialize(project.getDefaultGroup());
+                if (project.getDefaultGroup() != null) {
+                    project.getDefaultGroup().getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
+                }
             } else {
                 project.setDefaultGroup(null);
             }
 
             if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
-                project.getSymbols().forEach(s -> SymbolDAOImpl.loadLazyRelations(symbolDAO, s));
+                project.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
             } else {
                 project.setSymbols(null);
             }

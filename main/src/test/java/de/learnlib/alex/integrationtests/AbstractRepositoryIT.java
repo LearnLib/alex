@@ -42,7 +42,6 @@ public abstract class AbstractRepositoryIT {
         project.setBaseUrl("http://localhost");
 
         SymbolGroup defaultGroup = new SymbolGroup();
-        defaultGroup.setUser(user);
         defaultGroup.setProject(project);
         defaultGroup.setId(0L);
         defaultGroup.setName("Default Group");

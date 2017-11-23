@@ -19,7 +19,6 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CallAction;
 import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CheckAttributeExistsAction;
@@ -71,7 +70,6 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Inheritance;
@@ -81,6 +79,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * Abstract super type of how a Action for Symbols should look & work like.
@@ -88,7 +87,7 @@ import java.io.Serializable;
 @Entity
 @Table(
         name = "ACTIONS",
-        indexes = @Index(columnList = "userId, projectId, symbolId, number")
+        indexes = @Index(columnList = "symbolId, number")
 )
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
@@ -144,21 +143,10 @@ public abstract class SymbolAction implements Serializable {
 
     /** The ID of the Action in the DB. */
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @JsonIgnore
-    protected Long id;
-
-    /** The user the actions belongs to. */
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    @JsonIgnore
-    protected User user;
-
-    /** The project the actions belongs to. */
-    @ManyToOne
-    @JoinColumn(name = "projectId")
-    @JsonIgnore
-    protected Project project;
+    protected UUID uuid;
 
     /** The symbol the action belongs to. */
     @ManyToOne
@@ -196,56 +184,18 @@ public abstract class SymbolAction implements Serializable {
      *
      * @return The DB ID of the Action.
      */
-    public Long getId() {
-        return id;
+    public UUID getUUID() {
+        return uuid;
     }
 
     /**
      * Set the ID of the Action in the DB.
      *
-     * @param id
+     * @param uuid
      *            The DB ID of the Action.
      */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * The user of the action.
-     *
-     * @return The related user.
-     */
-    public User getUser() {
-        return user;
-    }
-
-    /**
-     * Set a new user as 'parent' of teh action.
-     *
-     * @param user
-     *         The new related user.
-     */
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    /**
-     * Get the project of the action.
-     *
-     * @return The related project.
-     */
-    public Project getProject() {
-        return project;
-    }
-
-    /**
-     * Set a new project as 'parent' of the action.
-     *
-     * @param project
-     *         The new related project.
-     */
-    public void setProject(Project project) {
-        this.project = project;
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
     }
 
     /**
@@ -382,7 +332,7 @@ public abstract class SymbolAction implements Serializable {
      * @return The input string with all variables inserted.
      */
     protected final String insertVariableValues(String text) {
-        return SearchHelper.insertVariableValues(connectorManager, user.getId(), project.getId(), text);
+        return SearchHelper.insertVariableValues(connectorManager, symbol.getProjectId(), text);
     }
 
     /**
@@ -414,7 +364,6 @@ public abstract class SymbolAction implements Serializable {
         SymbolAction that = (SymbolAction) o;
 
         if (number != that.number) return false;
-        if (project != null ? !project.equals(that.project) : that.project != null) return false;
         if (symbol != null ? !symbol.equals(that.symbol) : that.symbol != null) return false;
 
         return true;
@@ -422,8 +371,7 @@ public abstract class SymbolAction implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = project != null ? project.hashCode() : 0;
-        result = 31 * result + (symbol != null ? symbol.hashCode() : 0);
+        int result = symbol != null ? symbol.hashCode() : 0;
         result = 31 * result + number;
         return result;
     }

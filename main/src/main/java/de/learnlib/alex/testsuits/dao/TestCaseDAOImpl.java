@@ -1,11 +1,12 @@
 package de.learnlib.alex.testsuits.dao;
 
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.dao.SymbolDAOImpl;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.testsuits.entities.TestCase;
 import de.learnlib.alex.testsuits.repositories.TestCaseRepository;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,6 +30,9 @@ public class TestCaseDAOImpl implements TestCaseDAO {
     /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
 
+    /** The ProjectDAO to use. Will be injected. */
+    private ProjectDAO projectDAO;
+
     /** The TestCaseRepository to use. Will be injected. */
     private TestCaseRepository testCaseRepository;
 
@@ -37,15 +40,17 @@ public class TestCaseDAOImpl implements TestCaseDAO {
     private SymbolDAO symbolDAO;
 
     @Inject
-    public TestCaseDAOImpl(ProjectRepository projectRepository, TestCaseRepository testCaseRepository, SymbolDAO symbolDAO) {
+    public TestCaseDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
+                           TestCaseRepository testCaseRepository, SymbolDAO symbolDAO) {
         this.projectRepository = projectRepository;
+        this.projectDAO = projectDAO;
         this.testCaseRepository = testCaseRepository;
         this.symbolDAO = symbolDAO;
     }
 
     @Override
     @Transactional
-    public void create(TestCase testCase) throws NotFoundException, ValidationException {
+    public void create(User user, TestCase testCase) throws NotFoundException, ValidationException {
         LOGGER.traceEntry("create({})", testCase);
         try {
             // new Test Cases should have a project and no id
@@ -58,30 +63,26 @@ public class TestCaseDAOImpl implements TestCaseDAO {
             }
 
             // make sure the name of the Test Case is unique
-            TestCase testCase2 = testCaseRepository.getTestCaseByName(testCase.getUserId(), testCase.getProjectId(), testCase.getName());
+            TestCase testCase2 = testCaseRepository.getTestCaseByName(testCase.getProjectId(), testCase.getName());
             if (testCase2 != null && !testCase2.getId().equals(testCase.getId())) {
                 throw new ValidationException("To create a Test Case its name must be unique.");
             }
 
-            Long userId    = testCase.getUserId();
             Long projectId = testCase.getProjectId();
 
-            Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
-            if (project == null) {
-                throw new ValidationException("The Project was not found and thus the Test Case was not created.");
-            }
+            Project project = projectDAO.getByID(user.getId(), projectId);
 
-            testCase.setTestCaseId(0L);
+            testCase.setUuid(null);
             testCase.setProject(project);
 
             List<Symbol> symbols = new LinkedList<>();
             for (Long symbolId : testCase.getSymbolsAsIds()) {
-                Symbol symbol = symbolDAO.get(testCase.getUser(), projectId, symbolId);
+                Symbol symbol = symbolDAO.get(user, projectId, symbolId);
                 symbols.add(symbol);
             }
             testCase.setSymbols(symbols);
 
-            Long maxTestNo = testCaseRepository.findHighestTestNo(userId, projectId);
+            Long maxTestNo = testCaseRepository.findHighestTestNo(projectId);
             if (maxTestNo == null) {
                 maxTestNo = -1L;
             }
@@ -98,19 +99,15 @@ public class TestCaseDAOImpl implements TestCaseDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TestCase> getAll(Long userId, Long projectId) throws NotFoundException {
-        Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
-        if (project == null) {
-            throw new NotFoundException("The project with the id " + projectId + " was not found.");
-        }
+    public List<TestCase> getAll(User user, Long projectId) throws NotFoundException {
+        projectDAO.getByID(user.getId(), projectId); // access check
 
-        List<TestCase> resultList = testCaseRepository.findAllByUser_IdAndProject_Id(userId, projectId);
+        List<TestCase> resultList = testCaseRepository.findAllByProject_Id(projectId);
 
         resultList.forEach(testCase -> {
-            Hibernate.initialize(testCase.getUser());
             Hibernate.initialize(testCase.getProject());
             Hibernate.initialize(testCase.getSymbols());
-            testCase.getSymbols().forEach(s -> SymbolDAOImpl.loadLazyRelations(symbolDAO, s));
+            testCase.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
         });
 
         return resultList;
@@ -118,45 +115,42 @@ public class TestCaseDAOImpl implements TestCaseDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public TestCase get(Long userId, Long projectId, Long id) throws NotFoundException {
-        TestCase result = testCaseRepository.findOneByUser_IdAndProject_IdAndId(userId, projectId, id);
+    public TestCase get(User user, Long projectId, Long id) throws NotFoundException {
+        projectDAO.getByID(user.getId(), projectId); // access check
+
+        TestCase result = testCaseRepository.findOneByProject_IdAndId(projectId, id);
 
         if (result == null) {
             throw new NotFoundException("Could not find a Test Case with the id " + id
                                                 + " in the project " + projectId + ".");
         }
 
-        Hibernate.initialize(result.getUser());
         Hibernate.initialize(result.getProject());
         Hibernate.initialize(result.getSymbols());
-        result.getSymbols().forEach(s -> SymbolDAOImpl.loadLazyRelations(symbolDAO, s));
+        result.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
 
         return result;
     }
 
     @Override
     @Transactional
-    public void update(TestCase testCase) throws NotFoundException {
-        // checks for valid Test Case
-        if (testCase.getProjectId() == null) {
-            throw new NotFoundException("Update failed: Could not find the project with the id "
-                                                + testCase.getProjectId() + ".");
-        }
+    public void update(User user, TestCase testCase) throws NotFoundException {
+        projectDAO.getByID(user.getId(), testCase.getProjectId()); // access check
 
         // make sure the name of the Test Case is unique
-        TestCase testCase2 = testCaseRepository.getTestCaseByName(testCase.getUserId(), testCase.getProjectId(), testCase.getName());
+        TestCase testCase2 = testCaseRepository.getTestCaseByName(testCase.getProjectId(), testCase.getName());
         if (testCase2 != null && !testCase2.getId().equals(testCase.getId())) {
             throw new ValidationException("To update a Test Case its name must be unique.");
         }
 
         try {
-            TestCase testCaseDB = get(testCase.getUserId(), testCase.getProjectId(), testCase.getId());
-            testCase.setTestCaseId(testCaseDB.getTestCaseId());
+            TestCase testCaseDB = get(user, testCase.getProjectId(), testCase.getId());
+            testCase.setUuid(testCaseDB.getUuid());
             testCase.setProject(testCaseDB.getProject());
 
             List<Symbol> symbols = new LinkedList<>();
             for (Long symbolId : testCase.getSymbolsAsIds()) {
-                Symbol symbol = symbolDAO.get(testCase.getUser(), testCase.getProjectId(), symbolId);
+                Symbol symbol = symbolDAO.get(user, testCase.getProjectId(), symbolId);
                 symbols.add(symbol);
             }
             testCase.setSymbols(symbols);
@@ -170,8 +164,8 @@ public class TestCaseDAOImpl implements TestCaseDAO {
 
     @Override
     @Transactional
-    public void delete(Long userId, Long projectId, Long id) throws NotFoundException {
-        TestCase testCase = get(userId, projectId, id);
+    public void delete(User user, Long projectId, Long id) throws NotFoundException {
+        TestCase testCase = get(user, projectId, id);
 
         testCaseRepository.delete(testCase);
     }

@@ -19,7 +19,6 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.LoggerUtil;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.learning.entities.ExecuteResult;
@@ -31,13 +30,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -50,6 +49,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Representation of a symbol for the learning process.
@@ -59,8 +59,8 @@ import java.util.Objects;
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
-                        columnNames = {"userId", "projectId", "id"},
-                        name = "Unique ID per user & project")
+                        columnNames = {"projectId", "id"},
+                        name = "Unique ID project")
         }
 )
 @JsonPropertyOrder(alphabetic = true)
@@ -73,16 +73,10 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The ID of the Symbol in the DB. */
-    private Long symbolId;
+    private UUID uuid;
 
     /** The id of the symbol in the project. */
     private Long id;
-
-    /** The User that owns the Symbol. */
-    private User user;
-
-    /** The ID of the User to be used in the JSON. */
-    private Long userId;
 
     /** The Project the Symbol belongs to. */
     private Project project;
@@ -122,61 +116,21 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @return The internal ID.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @JsonIgnore
-    public Long getSymbolId() {
-        return symbolId;
+    public UUID getUUID() {
+        return uuid;
     }
 
     /**
      * Set the ID the Symbol has in the DB new.
      *
-     * @param symbolId The new internal ID.
+     * @param uuid The new internal ID.
      */
     @JsonIgnore
-    public void setSymbolId(Long symbolId) {
-        this.symbolId = symbolId;
-    }
-
-    /**
-     * @return The user that owns the project.
-     */
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "userId")
-    @JsonIgnore
-    public User getUser() {
-        return user;
-    }
-
-    /**
-     * @param user The new user that owns the project.
-     */
-    @JsonIgnore
-    public void setUser(User user) {
-        this.user = user;
-        if (user == null) {
-            this.userId = null;
-        } else {
-            this.userId = user.getId();
-        }
-    }
-
-    /**
-     * @return The ID of the user, which is needed for the JSON.
-     */
-    @Transient
-    @JsonProperty("user")
-    public Long getUserId() {
-        return userId;
-    }
-
-    /**
-     * @param userId The new ID of the user, which is needed for the JSON.
-     */
-    @JsonProperty("user")
-    public void setUserId(Long userId) {
-        this.user = null;
-        this.userId = userId;
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
     }
 
     /**
@@ -225,7 +179,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
-        this.project = null;
+        this.project   = null;
         this.projectId = projectId;
     }
 
@@ -426,7 +380,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         // proper values.
         if (result == ExecuteResult.OK) {
             if (successOutput != null && !successOutput.trim().equals("")) {
-                result.setOutput(SearchHelper.insertVariableValues(connector, userId, projectId, successOutput));
+                result.setOutput(SearchHelper.insertVariableValues(connector, projectId, successOutput));
             } else {
                 result.setOutput(ExecuteResult.DEFAULT_SUCCESS_OUTPUT);
             }
@@ -455,24 +409,23 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         if (o == null || getClass() != o.getClass()) return false;
         Symbol symbol = (Symbol) o;
 
-        if (getUserId() == null || getProjectId() == null || getId() == null) {
+        if (getProjectId() == null || getId() == null) {
             return Objects.equals(getName(), symbol.getName());
         }
 
-        return Objects.equals(getUserId(), symbol.getUserId()) &&
-                Objects.equals(getProjectId(), symbol.getProjectId()) &&
+        return Objects.equals(getProjectId(), symbol.getProjectId()) &&
                 Objects.equals(getGroupId(), symbol.getGroupId()) &&
                 Objects.equals(getId(), symbol.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUserId(), getProjectId(), getGroupId(), getId());
+        return Objects.hash(getProjectId(), getGroupId(), getId());
     }
 
     @Override
     public String toString() {
-        return "Symbol[" + symbolId + "] " + this.user + this.project + "/" + this.getId() + ", "
+        return "Symbol[" + uuid + "] " + this.project + "/" + this.getId() + ", "
                 + name + " #actions: " + actions.size();
     }
 

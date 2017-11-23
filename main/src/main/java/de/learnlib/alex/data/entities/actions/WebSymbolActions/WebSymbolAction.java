@@ -51,7 +51,7 @@ public abstract class WebSymbolAction extends SymbolAction {
 
     @Override
     public String toString() {
-        return "WebSymbolsAction[" + id + "] " + getClass().getName();
+        return "WebSymbolsAction[" + uuid + "] " + getClass().getName();
     }
 
 }

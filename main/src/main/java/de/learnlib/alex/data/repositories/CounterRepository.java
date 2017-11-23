@@ -23,31 +23,28 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Repository to persist Counters.
  */
 @Repository
-public interface CounterRepository extends JpaRepository<Counter, Long> {
+public interface CounterRepository extends JpaRepository<Counter, UUID> {
 
     /**
      * Find all counters in a Project of an User.
      *
-     * @param userId
-     *         The ID the User the Counter belongs to.
      * @param project
      *         The ID the Project the Counter belongs to.
      * @return The Counters in the Project.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    List<Counter> findByUser_IdAndProject(Long userId, Project project);
+    List<Counter> findAllByProject(Project project);
 
     /**
      * Find all counters by their names in a Project of an User.
      *
-     * @param userId
-     *         The ID the User the Counters belong to.
      * @param project
      *         The ID the Project the Counters belongs to.
      * @param name
@@ -56,13 +53,11 @@ public interface CounterRepository extends JpaRepository<Counter, Long> {
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    List<Counter> findAllByUser_IdAndProjectAndNameIn(Long userId, Project project, String... name);
+    List<Counter> findAllByProjectAndNameIn(Project project, String... name);
 
     /**
      * Find a Counter by its name.
      *
-     * @param userId
-     *         The ID the User the Counters belong to.
      * @param project
      *         The ID the Project the Counters belongs to.
      * @param name
@@ -71,6 +66,6 @@ public interface CounterRepository extends JpaRepository<Counter, Long> {
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    Counter findByUser_IdAndProjectAndName(Long userId, Project project, String name);
+    Counter findByProjectAndName(Project project, String name);
 
 }

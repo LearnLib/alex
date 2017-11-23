@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.config.entities.BrowserConfig;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
@@ -30,6 +29,7 @@ import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachinePro
 import net.automatalib.automata.transout.MealyMachine;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Entity class to store the result of a test run, i.e. the outcome of a learn iteration and must not be the final
@@ -57,7 +58,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(
-    uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "project_id", "testNo"})
+    uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "testNo"})
 )
 @JsonPropertyOrder(alphabetic = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -66,10 +67,7 @@ public class LearnerResult implements Serializable {
     private static final long serialVersionUID = 4619722174562257862L;
 
     /** The id of the LearnerResult in the DB. */
-    private Long id;
-
-    /** The user of the LearnerResult. */
-    private User user;
+    private UUID uuid;
 
     /** The reference to the Project the test run belongs to. */
     private Project project;
@@ -132,48 +130,21 @@ public class LearnerResult implements Serializable {
      * @return The ID of teh result.
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @JsonIgnore
-    public Long getId() {
-        return id;
+    public UUID getUUID() {
+        return uuid;
     }
 
     /**
      * Set a new ID for the result in the DB.
      *
-     * @param id
+     * @param uuid
      *         The new ID for the result.
      */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * @return Get the user of the result.
-     */
-    @ManyToOne(optional = false)
-    @JsonIgnore
-    public User getUser() {
-        return user;
-    }
-
-    /**
-     * @param user Set a new user for the result.
-     */
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    /**
-     * @return Get the ID of the user related to the result.
-     */
-    @Transient
-    @JsonProperty("user")
-    public Long getUserId() {
-        if (user == null) {
-            return 0L;
-        }
-        return user.getId();
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
     }
 
     /**
@@ -484,17 +455,17 @@ public class LearnerResult implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LearnerResult result = (LearnerResult) o;
-        return Objects.equals(id, result.id);
+        return Objects.equals(uuid, result.uuid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(uuid);
     }
 
     @Override
     public String toString() {
-        return "[LearnerResult " + id + "] " + getUserId() + " / " +  getProjectId() + " / " + testNo + " / "
+        return "[LearnerResult " + uuid + "] " + project + " / " + testNo + " / "
                 + ": " + sigma + ", " + hypothesis;
     }
 

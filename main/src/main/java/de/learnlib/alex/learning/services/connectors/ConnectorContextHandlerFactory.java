@@ -20,11 +20,12 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.config.entities.BrowserConfig;
 import de.learnlib.alex.data.dao.CounterDAO;
+import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,8 +36,12 @@ import java.util.List;
 public class ConnectorContextHandlerFactory {
 
     /** The {@link CounterDAO}. */
-    @Autowired
+    @Inject
     private CounterDAO counterDAO;
+
+    /** The {@link CounterDAO}. */
+    @Inject
+    private FileDAO fileDAO;
 
     /**
      * Factor to create a ContextHandler which knows all available connectors.
@@ -59,7 +64,7 @@ public class ConnectorContextHandlerFactory {
 
         final List<Counter> counters = new ArrayList<>();
         try {
-            counters.addAll(counterDAO.getAll(user.getId(), project.getId()));
+            counters.addAll(counterDAO.getAll(user, project.getId()));
         } catch (NotFoundException e) {
             e.printStackTrace();
         }
@@ -70,7 +75,7 @@ public class ConnectorContextHandlerFactory {
             connectorManager.addConnector(new WebServiceConnector(url));
             connectorManager.addConnector(new CounterStoreConnector(counterDAO, user, project, counters));
             connectorManager.addConnector(new VariableStoreConnector());
-            connectorManager.addConnector(new FileStoreConnector());
+            connectorManager.addConnector(new FileStoreConnector(fileDAO, user));
             context.addConnectorManager(connectorManager);
         }
 

@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.learning.services;
 
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
@@ -39,14 +40,15 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
     /**
      * Constructor.
      *
+     * @param user
      * @param learnerResultDAO {@link AbstractLearnerThread#learnerResultDAO}.
      * @param context          The context to use.
      * @param result           {@link AbstractLearnerThread#result}.
      * @param configuration    The configuration to use.
      */
-    public ResumingLearnerThread(LearnerResultDAO learnerResultDAO, ConnectorContextHandler context,
+    public ResumingLearnerThread(User user, LearnerResultDAO learnerResultDAO, ConnectorContextHandler context,
                                  LearnerResult result, LearnerResumeConfiguration configuration) {
-        super(learnerResultDAO, context, result, configuration);
+        super(user, learnerResultDAO, context, result, configuration);
     }
 
     @Override

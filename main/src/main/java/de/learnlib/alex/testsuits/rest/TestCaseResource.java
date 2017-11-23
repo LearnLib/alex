@@ -48,11 +48,10 @@ public class TestCaseResource {
     public Response createTestCase(@PathParam("project_id") Long projectId, TestCase testCase) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-        testCase.setUser(user);
         testCase.setProjectId(projectId);
 
         try {
-            testCaseDAO.create(testCase);
+            testCaseDAO.create(user, testCase);
 
             return Response.ok(testCase).status(Response.Status.CREATED).build();
         } catch (ValidationException e) {
@@ -65,7 +64,7 @@ public class TestCaseResource {
     public Response getAll(@PathParam("project_id") Long projectId) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-        List<TestCase> resultList = testCaseDAO.getAll(user.getId(), projectId);
+        List<TestCase> resultList = testCaseDAO.getAll(user, projectId);
 
         return ResponseHelper.renderList(resultList, Response.Status.OK);
     }
@@ -76,7 +75,7 @@ public class TestCaseResource {
     public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-        TestCase result = testCaseDAO.get(user.getId(), projectId, id);
+        TestCase result = testCaseDAO.get(user, projectId, id);
 
         return Response.ok(result).build();
     }
@@ -96,11 +95,10 @@ public class TestCaseResource {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        testCase.setUser(user);
         testCase.setProjectId(projectId);
 
         try {
-            testCaseDAO.update(testCase);
+            testCaseDAO.update(user, testCase);
 
             return Response.ok(testCase).build();
         } catch (ValidationException e) {
@@ -114,7 +112,7 @@ public class TestCaseResource {
     public Response delete(@PathParam("project_id") Long projectId, @PathParam("id") Long id) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-        testCaseDAO.delete(user.getId(), projectId, id);
+        testCaseDAO.delete(user, projectId, id);
 
         return Response.status(Response.Status.NO_CONTENT).build();
     }

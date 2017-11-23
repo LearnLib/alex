@@ -29,7 +29,7 @@ import java.util.List;
 public interface SymbolGroupDAO {
 
     /**
-     * Enum to selecct which fields should be not only referenced but directly be included, i.e. loaded from the DB.
+     * Enum to select which fields should be not only referenced but directly be included, i.e. loaded from the DB.
      */
     enum EmbeddableFields {
         /** Fetch all fields. */
@@ -64,18 +64,20 @@ public interface SymbolGroupDAO {
     /**
      * Save a group.
      *
+     * @param user
+     *          The user who wants to perform this method.
      * @param group
      *         The group to persist. Things like the internal id will be added directly tot this object.
      * @throws ValidationException
      *         IF the Group is not valid and could not be created.
      */
-    void create(SymbolGroup group) throws ValidationException;
+    void create(User user, SymbolGroup group) throws NotFoundException, ValidationException;
 
     /**
      * Get a list of all groups withing one project.
      *
      * @param user
-     *         The owner of the group.
+     *          The user who wants to perform this method.
      * @param projectId
      *         The project the groups should belong to.
      * @param embedFields
@@ -89,7 +91,8 @@ public interface SymbolGroupDAO {
     /**
      * Get one group.
      *
-     * @param user The owner of the group
+     * @param user
+     *          The user who wants to perform this method.
      * @param projectId
      *         The project the group belongs to.
      * @param groupId
@@ -105,6 +108,8 @@ public interface SymbolGroupDAO {
     /**
      * Update a group.
      *
+     * @param user
+     *          The user who wants to perform this method.
      * @param group
      *         The group to update.
      * @throws NotFoundException
@@ -112,12 +117,13 @@ public interface SymbolGroupDAO {
      * @throws ValidationException
      *         If the group was invalid.
      */
-    void update(SymbolGroup group) throws NotFoundException, ValidationException;
+    void update(User user, SymbolGroup group) throws NotFoundException, ValidationException;
 
     /**
      * Delete a group.
      *
-     * @param user The owner of the group
+     * @param user
+     *          The user who wants to perform this method.
      * @param projectId
      *         The project the group belongs to.
      * @param groupId

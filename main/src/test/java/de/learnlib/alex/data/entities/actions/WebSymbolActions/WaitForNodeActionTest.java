@@ -17,15 +17,13 @@
 package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -54,25 +52,20 @@ public class WaitForNodeActionTest {
 
     private static final int MAX_WAIT_TIME = 5;
 
-    @Mock
-    private User user;
-
-    @Mock
-    private Project project;
-
     private WaitForNodeAction action;
 
     private WebElementLocator node;
 
     @Before
     public void setUp() {
+        Symbol symbol = new Symbol();
+
         node = new WebElementLocator();
         node.setSelector("#node");
         node.setType(WebElementLocator.Type.CSS);
 
         action = new WaitForNodeAction();
-        action.setUser(user);
-        action.setProject(project);
+        action.setSymbol(symbol);
         action.setNode(node);
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.VISIBLE);
         action.setMaxWaitTime(MAX_WAIT_TIME);

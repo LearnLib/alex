@@ -18,12 +18,7 @@ package de.learnlib.alex.auth.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.data.entities.SymbolAction;
-import de.learnlib.alex.data.entities.SymbolGroup;
-import de.learnlib.alex.learning.entities.LearnerResult;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.hibernate.annotations.Cascade;
@@ -74,40 +69,10 @@ public class User implements Serializable {
     private UserRole role;
 
     /** The projects of the user. */
-    @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    @JsonIgnore
     private Set<Project> projects;
-
-    /** The SymbolGroups in all Projects of the user. */
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
-    private Set<SymbolGroup> symbolGroups;
-
-    /** All Symbols in all Projects / Groups of the user. */
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
-    private Set<Symbol> symbols;
-
-    /** All Actions in all Symbol of the user. */
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
-    private Set<SymbolAction> actions;
-
-    /** All Counters in all Projects of the user. */
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
-    private Set<Counter> counters;
-
-    /** All LearnResults in all Projects of the user. */
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
-    private Set<LearnerResult> learnerResults;
 
     /**
      * Default constructor that gives the user the role of "registered".
@@ -134,9 +99,6 @@ public class User implements Serializable {
         return id;
     }
 
-    /**
-     * @param id The new ID of the User in the DB.
-     */
     public void setId(Long id) {
         this.id = id;
     }
@@ -235,76 +197,6 @@ public class User implements Serializable {
      */
     public void setProjects(Set<Project> projects) {
         this.projects = projects;
-    }
-
-    /**
-     * @return All Groups owned by the User.
-     */
-    public Set<SymbolGroup> getSymbolGroups() {
-        return symbolGroups;
-    }
-
-    /**
-     * @param symbolGroups The new set of the Groups owned by the User.
-     */
-    public void setSymbolGroups(Set<SymbolGroup> symbolGroups) {
-        this.symbolGroups = symbolGroups;
-    }
-
-    /**
-     * @return All Symbols owned by the User.
-     */
-    public Set<Symbol> getSymbols() {
-        return symbols;
-    }
-
-    /**
-     * @param symbols The new set of the Symbols owned by the User.
-     */
-    public void setSymbols(Set<Symbol> symbols) {
-        this.symbols = symbols;
-    }
-
-    /**
-     * @return All Actions owned by the User.
-     */
-    public Set<SymbolAction> getActions() {
-        return actions;
-    }
-
-    /**
-     * @param actions The new set of Actions owned by the User.
-     */
-    public void setActions(Set<SymbolAction> actions) {
-        this.actions = actions;
-    }
-
-    /**
-     * @return All Counters owned by the User.
-     */
-    public Set<Counter> getCounters() {
-        return counters;
-    }
-
-    /**
-     * @param counters The new set of Counters owned by the user.
-     */
-    public void setCounters(Set<Counter> counters) {
-        this.counters = counters;
-    }
-
-    /**
-     * @return All LearnerResults owned by the user.
-     */
-    public Set<LearnerResult> getLearnerResults() {
-        return learnerResults;
-    }
-
-    /**
-     * @param learnerResults The new set of LearnerResults owned by the User.
-     */
-    public void setLearnerResults(Set<LearnerResult> learnerResults) {
-        this.learnerResults = learnerResults;
     }
 
     @Override

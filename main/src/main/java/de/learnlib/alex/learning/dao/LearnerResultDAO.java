@@ -34,19 +34,22 @@ public interface LearnerResultDAO {
     /**
      * Persists a LearnerResult. This method must also verify that the given result is valid.
      *
+     *
+     * @param user
+     *         The user performing the action.
      * @param learnerResult
      *         The LearnerResult to save.
      * @throws ValidationException
      *         If the given LearnerResult was invalid.
      */
-    void create(LearnerResult learnerResult) throws ValidationException;
+    void create(User user, LearnerResult learnerResult) throws NotFoundException, ValidationException;
 
     /**
      * Get a list of all the LearnerResults for a given
      * Project.
      *
-     * @param userId
-     *         The user of the LearnerResult
+     * @param user
+     *         The user performing the action.
      * @param projectId
      *         The project id of the test run.
      * @param includeSteps
@@ -55,13 +58,13 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id was invalid.
      */
-    List<LearnerResult> getAll(Long userId, Long projectId, boolean includeSteps) throws NotFoundException;
+    List<LearnerResult> getAll(User user, Long projectId, boolean includeSteps) throws NotFoundException;
 
     /**
      * Get a list of LearnResults with given testNos for a given Project.
      *
-     * @param userId
-     *         The user of the LearnerResult
+     * @param user
+     *         The user performing the action.
      * @param projectId
      *         The project id if the test run.
      * @param testNos
@@ -72,14 +75,14 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    List<LearnerResult> getAll(Long userId, Long projectId, Long[] testNos, boolean includeSteps)
+    List<LearnerResult> getAll(User user, Long projectId, Long[] testNos, boolean includeSteps)
             throws NotFoundException;
 
     /**
      * Get a single LearnResult.
      *
-     * @param userId
-     *         The user of the LearnerResult
+     * @param user
+     *         The user performing the action.
      * @param projectId
      *         The project id if the test run.
      * @param testNos
@@ -90,7 +93,7 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the given LearnerResult was invalid.
      */
-    LearnerResult get(Long userId, Long projectId, Long testNos, boolean includeSteps) throws NotFoundException;
+    LearnerResult get(User user, Long projectId, Long testNos, boolean includeSteps) throws NotFoundException;
 
     /**
      * Create a new step for a LearnResult based on the latest step within the result.
@@ -127,15 +130,13 @@ public interface LearnerResultDAO {
      * @throws ValidationException
      *         If the given LearnerResult was invalid.
      */
-    void saveStep(LearnerResult result, LearnerResultStep step) throws ValidationException;
+    void saveStep(LearnerResult result, LearnerResultStep step) throws NotFoundException, ValidationException;
 
     /**
      * Remove a complete test run of a project.
      *
      * @param learner
      *         The learner.
-     * @param user
-     *         The user of the LearnerResult.
      * @param projectId
      *         The project id.
      * @param testNo
@@ -143,5 +144,5 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    void delete(Learner learner, User user, Long projectId, Long... testNo) throws  NotFoundException;
+    void delete(Learner learner, Long projectId, Long... testNo) throws  NotFoundException;
 }

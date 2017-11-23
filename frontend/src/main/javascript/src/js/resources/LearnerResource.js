@@ -41,17 +41,18 @@ export class LearnerResource {
      * @return {*}
      */
     start(projectId, learnConfiguration) {
-        return this.$http.post(this.__env.apiUrl + `/learner/start/${projectId}`, learnConfiguration);
+        return this.$http.post(this.__env.apiUrl + `/learner/${projectId}/start`, learnConfiguration);
     }
 
     /**
      * Try to force stop a running learning process of a project. May not necessarily work due to difficulties
      * with the thread handling.
      *
+     * @param {number} projectId - The id of the test to resume with.
      * @return {*}
      */
-    stop() {
-        return this.$http.get(this.__env.apiUrl + '/learner/stop');
+    stop(projectId) {
+        return this.$http.get(this.__env.apiUrl + `/learner/${projectId}/stop`);
     }
 
     /**
@@ -64,17 +65,18 @@ export class LearnerResource {
      * @return {*}
      */
     resume(projectId, testNo, learnConfiguration) {
-        return this.$http.post(this.__env.apiUrl + `/learner/resume/${projectId}/${testNo}`, learnConfiguration);
+        return this.$http.post(this.__env.apiUrl + `/learner/${projectId}/resume/${testNo}`, learnConfiguration);
     }
 
     /**
      * Gets the learner result that includes the hypothesis. make sure isActive() returns true before calling this
      * function.
      *
+     * @param {number} projectId - The id of the test to resume with.
      * @return {*}
      */
-    getStatus() {
-        return this.$http.get(this.__env.apiUrl + '/learner/status')
+    getStatus(projectId) {
+        return this.$http.get(this.__env.apiUrl + `/learner/${projectId}/status`)
             .then(response => new LearnResult(response.data))
             .catch(() => null);
     }
@@ -82,10 +84,11 @@ export class LearnerResource {
     /**
      * Check if the server is finished learning a project.
      *
+     * @param {number} projectId - The id of the test to resume with.
      * @return {*}
      */
-    isActive() {
-        return this.$http.get(this.__env.apiUrl + '/learner/active')
+    isActive(projectId) {
+        return this.$http.get(this.__env.apiUrl + `/learner/${projectId}/active`)
             .then(response => response.data);
     }
 
@@ -97,7 +100,7 @@ export class LearnerResource {
      * @returns {*}
      */
     readOutputs(projectId, outputConfig) {
-        return this.$http.post(this.__env.apiUrl + `/learner/outputs/${projectId}`, outputConfig)
+        return this.$http.post(this.__env.apiUrl + `/learner/${projectId}/outputs`, outputConfig)
             .then(response => response.data);
     }
 
@@ -109,7 +112,7 @@ export class LearnerResource {
      * @returns {*|Request}
      */
     testWord(projectId, readOutputConfig) {
-        return this.$http.post(this.__env.apiUrl + `/learner/words/${projectId}/outputs`, readOutputConfig)
+        return this.$http.post(this.__env.apiUrl + `/learner/${projectId}/words/outputs`, readOutputConfig)
             .then(response => response.data);
     }
 

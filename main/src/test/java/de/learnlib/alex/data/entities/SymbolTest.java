@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.data.entities;
 
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -42,12 +41,7 @@ public class SymbolTest {
 
     @Before
     public void setUp() {
-        User user = new User(1L);
-        Project project = new Project(1L);
-
         a1 = new CheckTextWebAction();
-        a1.setUser(user);
-        a1.setProject(project);
         a1.setDisabled(false);
         a1.setIgnoreFailure(false);
         a1.setRegexp(false);

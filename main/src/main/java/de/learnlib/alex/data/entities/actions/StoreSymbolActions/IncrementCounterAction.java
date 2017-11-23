@@ -54,7 +54,7 @@ public class IncrementCounterAction extends SymbolAction {
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         CounterStoreConnector counterConnector = connector.getConnector(CounterStoreConnector.class);
-        counterConnector.incrementBy(getUser().getId(), project.getId(), name, incrementBy);
+        counterConnector.incrementBy(symbol.getProjectId(), name, incrementBy);
 
         LOGGER.info(LEARNER_MARKER, "Incremented counter '{}' by '{}' (ignoreFailure: {}, negated: {}).",
                     name, incrementBy, ignoreFailure, negated);

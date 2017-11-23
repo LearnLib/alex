@@ -52,8 +52,9 @@ import static org.mockito.Mockito.verify;
 @Ignore
 public class LearnerTest {
 
-    private static final String FAKE_URL = "http://example.com";
-    private static final int SYMBOL_AMOUNT = 5;
+    private static final long   PROJECT_ID    = 42L;
+    private static final String FAKE_URL      = "http://example.com";
+    private static final int    SYMBOL_AMOUNT = 5;
 
     @Mock
     private ConnectorContextHandlerFactory contextHandlerFactory;
@@ -122,11 +123,11 @@ public class LearnerTest {
     @Test
     public void shouldCorrectlyTestIfTheUserHasAnActiveThread() throws NotFoundException {
         given(learnerThread.isFinished()).willReturn(false);
-        assertFalse(learner.isActive(user));
+        assertFalse(learner.isActive(PROJECT_ID));
 
         learner.start(user, project, learnerConfiguration);
 
-        boolean active = learner.isActive(user);
+        boolean active = learner.isActive(PROJECT_ID);
         assertTrue(active);
     }
 

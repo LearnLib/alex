@@ -89,7 +89,7 @@ public class LearnerResultResource {
         try {
             boolean includeSteps = parseEmbeddableFields(embed);
 
-            List<LearnerResult> results = learnerResultDAO.getAll(user.getId(), projectId, includeSteps);
+            List<LearnerResult> results = learnerResultDAO.getAll(user, projectId, includeSteps);
             return ResponseHelper.renderList(results, Response.Status.OK);
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
@@ -129,13 +129,13 @@ public class LearnerResultResource {
             boolean includeSteps = parseEmbeddableFields(embed);
 
             if (testNos.size() == 1) {
-                LearnerResult result = learnerResultDAO.get(user.getId(), projectId, testNos.get(0), includeSteps);
+                LearnerResult result = learnerResultDAO.get(user, projectId, testNos.get(0), includeSteps);
                 return Response.ok(result).build();
             } else {
-                List<LearnerResult> result = learnerResultDAO.getAll(user.getId(),
-                                                                     projectId,
-                                                                     testNos.toArray(new Long[testNos.size()]),
-                                                                     includeSteps);
+                List<LearnerResult> result = learnerResultDAO.getAll(
+                        user, projectId,
+                        testNos.toArray(new Long[testNos.size()]),
+                        includeSteps);
                 return ResponseHelper.renderList(result, Response.Status.OK);
             }
         } catch (IllegalArgumentException e) {
@@ -170,7 +170,7 @@ public class LearnerResultResource {
 
         try {
             Long[] numbersLongArray = testNumbers.toArray(new Long[testNumbers.size()]);
-            learnerResultDAO.delete(learner, user, projectId, numbersLongArray);
+            learnerResultDAO.delete(learner, projectId, numbersLongArray);
             return Response.status(Response.Status.NO_CONTENT).build();
 
         } catch (ValidationException e) {

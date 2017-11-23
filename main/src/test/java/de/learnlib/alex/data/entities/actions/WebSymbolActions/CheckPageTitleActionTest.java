@@ -17,15 +17,14 @@
 package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openqa.selenium.WebDriver;
 
@@ -43,29 +42,22 @@ import static org.mockito.Mockito.mock;
 @RunWith(MockitoJUnitRunner.class)
 public class CheckPageTitleActionTest {
 
-    private static final long USER_ID = 1;
-    private static final long PROJECT_ID = 1;
-    private static final String PROJECT_URL = "http://localhost:8000";
+    private static final long   PROJECT_ID = 1;
 
     private static final String TEST_TITLE = "Awesome Title No. {{#title}}";
 
-    @Mock
-    private User user;
-
-    @Mock
-    private Project project;
-
     private CheckPageTitleAction checkNode;
-
 
     @Before
     public void setUp() {
-        given(user.getId()).willReturn(USER_ID);
-        given(project.getId()).willReturn(PROJECT_ID);
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+
+        Symbol symbol = new Symbol();
+        symbol.setProject(project);
 
         checkNode = new CheckPageTitleAction();
-        checkNode.setUser(user);
-        checkNode.setProject(project);
+        checkNode.setSymbol(symbol);
         checkNode.setTitle(TEST_TITLE);
         checkNode.setRegexp(false);
 }

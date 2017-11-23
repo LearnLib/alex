@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.learning.services;
 
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.AbstractLearnerConfiguration;
@@ -59,6 +60,9 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     protected static final Logger LOGGER = LogManager.getLogger();
 
     protected static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
+
+    /** The user who is stating the Learning Thread. */
+    protected User user;
 
     /** Is the thread still running? */
     protected boolean finished;
@@ -104,13 +108,17 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /**
      * Constructor.
      *
+     * @param user
      * @param learnerResultDAO {@link #learnerResultDAO}.
      * @param context          The context to use.
      * @param result           {@link #result}.
      * @param configuration    {@link #configuration}.
      */
-    public AbstractLearnerThread(LearnerResultDAO learnerResultDAO, ConnectorContextHandler context, LearnerResult result,
+    public AbstractLearnerThread(User user, LearnerResultDAO learnerResultDAO,
+                                 ConnectorContextHandler context,
+                                 LearnerResult result,
                                  T configuration) {
+        this.user = user;
         this.learnerResultDAO = learnerResultDAO;
         this.result = result;
         this.configuration = configuration;
@@ -172,7 +180,11 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         step.setHypothesis(CompactMealyMachineProxy.createFrom(learner.getHypothesisModel(), abstractAlphabet));
         step.setCounterExample(DefaultQueryProxy.createFrom(counterexample));
         result.getSteps().add(step);
-        learnerResultDAO.saveStep(result, step);
+        try {
+            learnerResultDAO.saveStep(result, step);
+        } catch (de.learnlib.alex.common.exceptions.NotFoundException e) {
+            e.printStackTrace();
+        }
 
         sul.resetCounter();
 
@@ -185,10 +197,18 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         if (!result.getSteps().isEmpty()) {
             final LearnerResultStep lastStep = result.getSteps().get(result.getSteps().size() - 1);
             lastStep.setErrorText(errorMessage);
-            learnerResultDAO.saveStep(result, lastStep);
+            try {
+                learnerResultDAO.saveStep(result, lastStep);
+            } catch (de.learnlib.alex.common.exceptions.NotFoundException e1) {
+                e1.printStackTrace();
+            }
         } else {
-            if (result.getId() == null) {
-                learnerResultDAO.create(result);
+            if (result.getUUID() == null) {
+                try {
+                    learnerResultDAO.create(user, result);
+                } catch (de.learnlib.alex.common.exceptions.NotFoundException e1) {
+                    e1.printStackTrace();
+                }
             }
             createStep(0, 0, 0, null);
         }
@@ -200,7 +220,11 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         step.getStatistics().getDuration().setEqOracle(end - start);
         step.getStatistics().getMqsUsed().setEqOracle(sul.getResetCount());
         step.getStatistics().getSymbolsUsed().setEqOracle(sul.getSymbolUsedCount());
-        learnerResultDAO.saveStep(result, step);
+        try {
+            learnerResultDAO.saveStep(result, step);
+        } catch (de.learnlib.alex.common.exceptions.NotFoundException e) {
+            e.printStackTrace();
+        }
         sul.resetCounter();
     }
 

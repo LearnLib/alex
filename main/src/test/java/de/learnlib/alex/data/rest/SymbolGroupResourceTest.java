@@ -50,6 +50,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
@@ -121,20 +122,17 @@ public class SymbolGroupResourceTest extends JerseyTest {
         group1 = new SymbolGroup();
         group1.setId(0L);
         group1.setName("SymbolGroupResource - Test Group 1");
-        group1.setUser(admin);
         group1.setProject(project);
 
         group2 = new SymbolGroup();
         group2.setId(1L);
         group2.setName("SymbolGroupResource - Test Group 2");
-        group2.setUser(admin);
         group2.setProject(project);
     }
 
     @Test
-    public void shouldCreateValidGroup() throws JsonProcessingException {
+    public void shouldCreateValidGroup() throws JsonProcessingException, NotFoundException {
         group1.setProject(null);
-        group1.setUser(null);
         String json = writeGroup(group1);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups").request()
@@ -142,12 +140,12 @@ public class SymbolGroupResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 //        assertEquals("http://localhost:9998/projects/10/groups/1", response.getHeaderString("Location"));
-        verify(symbolGroupDAO).create(any(SymbolGroup.class));
+        verify(symbolGroupDAO).create(eq(admin), any(SymbolGroup.class));
     }
 
     @Test
-    public void shouldReturn400IfProjectCouldNotBeCreated() {
-        willThrow(ValidationException.class).given(symbolGroupDAO).create(group1);
+    public void shouldReturn400IfProjectCouldNotBeCreated() throws NotFoundException {
+        willThrow(ValidationException.class).given(symbolGroupDAO).create(admin, group1);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/groups").request()
                                 .header("Authorization", adminToken).post(Entity.json(group1));
@@ -166,7 +164,6 @@ public class SymbolGroupResourceTest extends JerseyTest {
                             .request().header("Authorization", adminToken).get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        System.out.println(response.readEntity(String.class));
 //        List<Object> groupsInResponse = response.readEntity(new GenericType<List<Object>>() { });
 //        assertEquals(2, groupsInResponse.size());
 //        verify(symbolGroupDAO).getAll(PROJECT_TEST_ID);
@@ -223,30 +220,30 @@ public class SymbolGroupResourceTest extends JerseyTest {
         Response response = target(path).request().header("Authorization", adminToken).put(Entity.json(json));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        verify(symbolGroupDAO).update(group1);
+        verify(symbolGroupDAO).update(admin, group1);
     }
 
     @Test
     public void shouldReturn400IfUpdatingAGroupWasNotPossible() throws NotFoundException, JsonProcessingException {
-        willThrow(ValidationException.class).given(symbolGroupDAO).update(group1);
+        willThrow(ValidationException.class).given(symbolGroupDAO).update(admin, group1);
         String json = writeGroup(group1);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/groups/" + group1.getId();
         Response response = target(path).request().header("Authorization", adminToken).put(Entity.json(json));
 
-        verify(symbolGroupDAO).update(group1);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+        verify(symbolGroupDAO).update(admin, group1);
     }
 
     @Test
     public void shouldReturn404IfGroupToUpdateWasNotFound() throws JsonProcessingException, NotFoundException {
-        willThrow(NotFoundException.class).given(symbolGroupDAO).update(group1);
+        willThrow(NotFoundException.class).given(symbolGroupDAO).update(admin, group1);
         String json = writeGroup(group1);
 
         String path = "/projects/" + PROJECT_TEST_ID + "/groups/" + group1.getId();
         Response response = target(path).request().header("Authorization", adminToken).put(Entity.json(json));
 
-        verify(symbolGroupDAO).update(group1);
+        verify(symbolGroupDAO).update(admin, group1);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
 

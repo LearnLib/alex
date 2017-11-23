@@ -17,14 +17,11 @@
 package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openqa.selenium.WebDriver;
 
@@ -44,19 +41,11 @@ public class WaitForTitleActionTest {
 
     private static final int ONE_MINUTE = 60;
 
-    @Mock
-    private User user;
-
-    @Mock
-    private Project project;
-
     private WaitForTitleAction action;
 
     @Before
     public void setUp() {
         action = new WaitForTitleAction();
-        action.setUser(user);
-        action.setProject(project);
         action.setValue("Title");
         action.setWaitCriterion(WaitForTitleAction.WaitCriterion.CONTAINS);
         action.setMaxWaitTime(ONE_MINUTE);

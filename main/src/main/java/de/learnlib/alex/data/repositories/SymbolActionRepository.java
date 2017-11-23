@@ -20,9 +20,11 @@ import de.learnlib.alex.data.entities.SymbolAction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 /**
  * The repository for symbol actions.
  */
 @Repository
-public interface SymbolActionRepository extends JpaRepository<SymbolAction, Long> {
+public interface SymbolActionRepository extends JpaRepository<SymbolAction, UUID> {
 }

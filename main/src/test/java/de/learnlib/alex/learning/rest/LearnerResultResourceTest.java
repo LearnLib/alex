@@ -51,7 +51,6 @@ import static org.mockito.Mockito.verify;
 
 public class LearnerResultResourceTest extends JerseyTest {
 
-    private static final Long USER_TEST_ID = 1L;
     private static final long PROJECT_ID = 1L;
     private static final long RESULT_ID = 10L;
     private static final int TEST_RESULT_AMOUNT = 10;
@@ -99,7 +98,7 @@ public class LearnerResultResourceTest extends JerseyTest {
     @Test
     public void shouldReturnAllResultsOfOneProject() throws NotFoundException, JsonProcessingException {
         List<LearnerResult> results = createTestLearnResults();
-        given(learnerResultDAO.getAll(eq(admin.getId()), eq(PROJECT_ID), anyBoolean())).willReturn(results);
+        given(learnerResultDAO.getAll(eq(admin), eq(PROJECT_ID), anyBoolean())).willReturn(results);
 
         Response response = target("/projects/" + PROJECT_ID + "/results").request()
                                 .header("Authorization", adminToken).get();
@@ -114,7 +113,7 @@ public class LearnerResultResourceTest extends JerseyTest {
     @Test
     public void ensureThatGettingAllResultsOfOneProjectHandlesAValidEmbedParameter() throws NotFoundException {
         List<LearnerResult> results = createTestLearnResults();
-        given(learnerResultDAO.getAll(USER_TEST_ID, PROJECT_ID, true)).willReturn(results);
+        given(learnerResultDAO.getAll(admin, PROJECT_ID, true)).willReturn(results);
 
         Response response = target("/projects/" + PROJECT_ID + "/results").queryParam("embed", "STEPS").request()
                                 .header("Authorization", adminToken).get();
@@ -126,7 +125,7 @@ public class LearnerResultResourceTest extends JerseyTest {
     @Test
     public void ensureThatGettingAllResultsOfOneProjectHandlesAnInvalidEmbedParameter() throws NotFoundException {
         List<LearnerResult> results = createTestLearnResults();
-        given(learnerResultDAO.getAll(eq(admin.getId()), eq(PROJECT_ID), anyBoolean())).willReturn(results);
+        given(learnerResultDAO.getAll(eq(admin), eq(PROJECT_ID), anyBoolean())).willReturn(results);
 
         Response response = target("/projects/" + PROJECT_ID + "/results").queryParam("embed", "INVALID").request()
                                 .header("Authorization", adminToken).get();
@@ -136,7 +135,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatGettingAllResultsReturns404IfTheProjectIdIsInvalid() throws NotFoundException {
-        given(learnerResultDAO.getAll(eq(admin.getId()), eq(PROJECT_ID), anyBoolean()))
+        given(learnerResultDAO.getAll(eq(admin), eq(PROJECT_ID), anyBoolean()))
                 .willThrow(NotFoundException.class);
 
         Response response = target("/projects/" + PROJECT_ID + "/results").request()
@@ -154,12 +153,11 @@ public class LearnerResultResourceTest extends JerseyTest {
         sigma.add("1");
 
         LearnerResult learnerResult = new LearnerResult();
-        learnerResult.setUser(admin);
         learnerResult.setProject(project);
         learnerResult.setTestNo(RESULT_ID);
         learnerResult.setSigma(AlphabetProxy.createFrom(sigma));
 
-        given(learnerResultDAO.get(USER_TEST_ID, PROJECT_ID, RESULT_ID, false)).willReturn(learnerResult);
+        given(learnerResultDAO.get(admin, PROJECT_ID, RESULT_ID, false)).willReturn(learnerResult);
 
         // when
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID).request()
@@ -172,7 +170,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfOneTestNoDoesNotExists() throws NotFoundException, JsonProcessingException {
-        given(learnerResultDAO.getAll(eq(USER_TEST_ID), eq(PROJECT_ID), eq(TEST_NOS), anyBoolean()))
+        given(learnerResultDAO.getAll(eq(admin), eq(PROJECT_ID), eq(TEST_NOS), anyBoolean()))
                 .willThrow(NotFoundException.class);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/1,2,42").request()
@@ -186,7 +184,7 @@ public class LearnerResultResourceTest extends JerseyTest {
         // given
         ObjectMapper objectMapper = new ObjectMapper();
         List<LearnerResult> results = createTestLearnResults();
-        given(learnerResultDAO.getAll(eq(USER_TEST_ID), eq(PROJECT_ID), eq(TEST_NOS), anyBoolean()))
+        given(learnerResultDAO.getAll(eq(admin), eq(PROJECT_ID), eq(TEST_NOS), anyBoolean()))
                 .willReturn(results);
 
         // when
@@ -203,7 +201,7 @@ public class LearnerResultResourceTest extends JerseyTest {
     @Test
     public void ensureThatGettingSpecificResultsOfOneProjectHandlesAValidEmbedParameter() throws NotFoundException {
         List<LearnerResult> results = createTestLearnResults();
-        given(learnerResultDAO.getAll(USER_TEST_ID, PROJECT_ID, TEST_NOS, true)).willReturn(results);
+        given(learnerResultDAO.getAll(admin, PROJECT_ID, TEST_NOS, true)).willReturn(results);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/1,2,42").queryParam("embed", "STEPS").request()
                                 .header("Authorization", adminToken).get();
@@ -215,7 +213,7 @@ public class LearnerResultResourceTest extends JerseyTest {
     @Test
     public void ensureThatGettingSpecificResultsOfOneProjectHandlesAnInvalidEmbedParameter() throws NotFoundException {
         List<LearnerResult> results = createTestLearnResults();
-        given(learnerResultDAO.getAll(eq(USER_TEST_ID), eq(PROJECT_ID), eq(TEST_NOS), anyBoolean()))
+        given(learnerResultDAO.getAll(eq(admin), eq(PROJECT_ID), eq(TEST_NOS), anyBoolean()))
                 .willReturn(results);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/1,2,42").queryParam("embed", "INVALID")
@@ -230,7 +228,7 @@ public class LearnerResultResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).delete();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(learnerResultDAO).delete(learner, admin, PROJECT_ID, RESULT_ID);
+        verify(learnerResultDAO).delete(learner, PROJECT_ID, RESULT_ID);
     }
 
     @Test
@@ -239,7 +237,7 @@ public class LearnerResultResourceTest extends JerseyTest {
                                 .request().header("Authorization", adminToken).delete();
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(learnerResultDAO).delete(learner, admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+        verify(learnerResultDAO).delete(learner, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
     }
 
     @Test
@@ -251,7 +249,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturnAnErrorIfYouTryToDeleteAnInvalidTestNo() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, admin, PROJECT_ID,
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, PROJECT_ID,
                                                                           RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
@@ -263,7 +261,7 @@ public class LearnerResultResourceTest extends JerseyTest {
     @Test
     public void shouldReturnAnErrorIfYouTryToDeleteAnActiveTestNo() throws NotFoundException {
         willThrow(ValidationException.class).given(learnerResultDAO)
-                                                .delete(learner, admin, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
+                                                .delete(learner, PROJECT_ID, RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/" + RESULT_ID + "," +  (RESULT_ID + 1))
                             .request().header("Authorization", adminToken).delete();
@@ -273,7 +271,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatNoTestNumberToDeleteIsHandledProperly() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, admin, PROJECT_ID,
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, PROJECT_ID,
                                                                           RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/,,,,")
@@ -284,7 +282,7 @@ public class LearnerResultResourceTest extends JerseyTest {
 
     @Test
     public void ensureThatANotValidTestNumberStringOnDeletionIsHandledProperly() throws NotFoundException {
-        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, admin, PROJECT_ID,
+        willThrow(NotFoundException.class).given(learnerResultDAO).delete(learner, PROJECT_ID,
                                                                           RESULT_ID, RESULT_ID + 1);
 
         Response response = target("/projects/" + PROJECT_ID + "/results/foobar")
@@ -301,7 +299,6 @@ public class LearnerResultResourceTest extends JerseyTest {
             sigma.add("1");
 
             LearnerResult learnerResult = new LearnerResult();
-            learnerResult.setUser(admin);
             learnerResult.setProject(project);
             learnerResult.setTestNo(i);
             learnerResult.setSigma(AlphabetProxy.createFrom(sigma));

@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.learning.repositories;
 
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,31 +23,28 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Repository to persist LearnerResults.
  */
 @Repository
-public interface LearnerResultRepository extends JpaRepository<LearnerResult, Long> {
+public interface LearnerResultRepository extends JpaRepository<LearnerResult, UUID> {
 
     /**
      * Find all LearnerResults in a Project.
      *
-     * @param userId
-     *         The ID the User the LearnerResults belong to.
      * @param projectId
      *         The ID the Project the LearnerResults belong to.
      * @return The LearnerResults.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    List<LearnerResult> findByUser_IdAndProject_IdOrderByTestNoAsc(Long userId, Long projectId);
+    List<LearnerResult> findByProject_IdOrderByTestNoAsc(Long projectId);
 
     /**
      * Find all LearnerResults by their test no in a Project.
      *
-     * @param userId
-     *         The ID the User the LearnerResults belong to.
      * @param projectId
      *         The ID the Project the LearnerResults belong to.
      * @param testNos
@@ -57,27 +53,23 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    List<LearnerResult> findByUser_IdAndProject_IdAndTestNoIn(Long userId, Long projectId, Long... testNos);
+    List<LearnerResult> findByProject_IdAndTestNoIn(Long projectId, Long... testNos);
 
     /**
      * Get the highest / latest test no used in a Project.
      *
-     * @param userId
-     *         The ID the User the Project belong to.
      * @param projectId
      *         The ID of the Project to check.
      * @return The highest test no within that project.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    @Query("SELECT MAX(l.testNo) FROM LearnerResult l WHERE l.user.id = ?1 AND l.project.id = ?2")
-    Long findHighestTestNo(Long userId, Long projectId);
+    @Query("SELECT MAX(l.testNo) FROM LearnerResult l WHERE l.project.id = ?1")
+    Long findHighestTestNo(Long projectId);
 
     /**
      * Delete LearnResults by their test no in a Project.
      *
-     * @param user
-     *         The ID the User the LearnResults belong to.
      * @param projectId
      *         The ID the Project the LearnerResults belong to.
      * @param testNos
@@ -86,6 +78,6 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
      */
     @Transactional
     @SuppressWarnings("checkstyle:methodname")
-    Long deleteByUserAndProject_IdAndTestNoIn(User user, Long projectId, Long... testNos);
+    Long deleteByProject_IdAndTestNoIn(Long projectId, Long... testNos);
 
 }

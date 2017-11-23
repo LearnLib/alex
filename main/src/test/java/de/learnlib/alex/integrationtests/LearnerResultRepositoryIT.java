@@ -33,9 +33,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
 
@@ -66,7 +66,7 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
 
         learnerResultRepository.save(result);
 
-        assertTrue(result.getId() > 0L);
+        assertNotNull(result.getUUID());
     }
 
     @Test(expected = DataIntegrityViolationException.class)
@@ -139,7 +139,7 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
 
         result2 = learnerResultRepository.save(result2);
 
-        assertTrue(result2.getId() > 0L);
+        assertNotNull(result2.getUUID());
     }
 
     @Test
@@ -156,7 +156,7 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
         learnerResultRepository.save(result2);
 
         List<LearnerResult> results = learnerResultRepository
-                                             .findByUser_IdAndProject_IdOrderByTestNoAsc(user.getId(), project.getId());
+                                             .findByProject_IdOrderByTestNoAsc(project.getId());
 
         assertThat(results.size(), is(equalTo(2)));
         assertThat(results, hasItem(equalTo(result1)));
@@ -178,8 +178,8 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
         LearnerResult result3 = createLearnerResult(user, project, 2L);
         learnerResultRepository.save(result3);
 
-        List<LearnerResult> results = learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(user.getId(),
-                                                                                                    project.getId(),
+        List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(
+                project.getId(),
                                                                                                     0L, 2L);
 
         assertThat(results.size(), is(equalTo(2)));
@@ -201,14 +201,14 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
         LearnerResult result2 = createLearnerResult(user, project, 1L);
         learnerResultRepository.save(result2);
 
-        Long highestTestNo = learnerResultRepository.findHighestTestNo(user.getId(), project.getId());
+        Long highestTestNo = learnerResultRepository.findHighestTestNo(project.getId());
 
         assertThat(highestTestNo, is(equalTo(1L)));
     }
 
     @Test
     public void shouldFetchNullAsHighestTestNoIfNoLearnerResultsExists() {
-        Long highestTestNo = learnerResultRepository.findHighestTestNo(-1L, -1L);
+        Long highestTestNo = learnerResultRepository.findHighestTestNo(-1L);
 
         assertNull(highestTestNo);
     }
@@ -224,8 +224,8 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
         LearnerResult result = createLearnerResult(user, project, 0L);
         learnerResultRepository.save(result);
 
-        Long deleteReturnValue = learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user,
-                                                                                              project.getId(),
+        Long deleteReturnValue = learnerResultRepository.deleteByProject_IdAndTestNoIn(
+                project.getId(),
                                                                                               0L);
 
         assertThat(deleteReturnValue, is(equalTo(1L)));
@@ -240,8 +240,8 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
 
-        Long deleteReturnValue = learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user,
-                                                                                              project.getId(),
+        Long deleteReturnValue = learnerResultRepository.deleteByProject_IdAndTestNoIn(
+                project.getId(),
                                                                                               -1L);
 
         assertThat(deleteReturnValue, is(equalTo(0L)));
@@ -250,7 +250,6 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
 
     static LearnerResult createLearnerResult(User user, Project project, Long testNo) {
         LearnerResult result = new LearnerResult();
-        result.setUser(user);
         result.setProject(project);
         result.setTestNo(testNo);
         return result;

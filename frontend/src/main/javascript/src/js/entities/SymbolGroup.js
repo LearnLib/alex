@@ -41,12 +41,6 @@ export class SymbolGroup {
         this.id = obj.id;
 
         /**
-         * The id of the user the group belongs to.
-         * @type {number}
-         */
-        this.user = obj.user;
-
-        /**
          * The id of the project the group belongs to.
          * @type {number}
          */

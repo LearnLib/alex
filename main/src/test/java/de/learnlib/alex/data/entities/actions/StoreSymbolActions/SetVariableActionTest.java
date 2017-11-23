@@ -17,8 +17,7 @@
 package de.learnlib.alex.data.entities.actions.StoreSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -40,8 +39,6 @@ import static org.mockito.Mockito.verify;
 
 public class SetVariableActionTest {
 
-    private static long USER_ID    = 21;
-    private static long PROJECT_ID = 42;
     private static final String PROJECT_URL = "http://localhost:8000";
 
     private static final String TEST_VALUE = "foobar";
@@ -51,15 +48,10 @@ public class SetVariableActionTest {
 
     @Before
     public void setUp() {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setId(PROJECT_ID);
+        Symbol symbol = new Symbol();
 
         setAction = new SetVariableAction();
-        setAction.setUser(user);
-        setAction.setProject(project);
+        setAction.setSymbol(symbol);
         setAction.setName(TEST_NAME);
         setAction.setValue(TEST_VALUE);
     }

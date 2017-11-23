@@ -76,7 +76,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
 
         symbol = symbolRepository.save(symbol);
 
-        assertNotNull(symbol.getSymbolId());
+        assertNotNull(symbol.getUUID());
     }
 
     @Test(expected = DataIntegrityViolationException.class)
@@ -179,7 +179,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
 
         symbolRepository.save(symbol2);
 
-        assertNotNull(symbol2.getSymbolId());
+        assertNotNull(symbol2.getUUID());
     }
 
     @Test
@@ -202,7 +202,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         Symbol symbol2rev1 = createSymbol(user, project, group, 1L, "Test Symbol 2");
         symbolRepository.save(symbol2rev1);
 
-        Symbol symbolFromDB = symbolRepository.findOne(user.getId(), project.getId(), 0L);
+        Symbol symbolFromDB = symbolRepository.findOne(project.getId(), 0L);
 
         assertThat(symbolFromDB, is(equalTo(symbol1rev0)));
     }
@@ -228,7 +228,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         symbolRepository.save(symbol2rev1);
         //
         List<Long> ids = Arrays.asList(symbol1rev0.getId(), symbol2rev1.getId());
-        List<Symbol> symbolsFromDB = symbolRepository.findByIds(user.getId(), project.getId(), ids);
+        List<Symbol> symbolsFromDB = symbolRepository.findByIds(project.getId(), ids);
 
         assertThat(symbolsFromDB.size(), is(equalTo(2)));
         assertThat(symbolsFromDB, hasItem(equalTo(symbol1rev0)));
@@ -258,7 +258,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         symbolRepository.save(symbol2rev1);
 
         List<Symbol> symbolsFromDB = symbolRepository.findAll(user.getId(), project.getId(),
-                new Boolean[] {false, true});
+                                                              new Boolean[] {false, true});
 
         assertThat(symbolsFromDB.size(), is(equalTo(2)));
         assertThat(symbolsFromDB, not(hasItem(equalTo(symbol1rev0))));
@@ -287,8 +287,8 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         Symbol symbol2rev1 = createSymbol(user, project, group, 1L, "Test Symbol 2");
         symbolRepository.save(symbol2rev1);
 
-        List<Symbol> symbolsFromDB = symbolRepository.findAll(user.getId(), project.getId(), group.getId(),
-                new Boolean[] {false, true});
+        List<Symbol> symbolsFromDB = symbolRepository.findAll(project.getId(), group.getId(),
+                                                              new Boolean[] {false, true});
 
         assertThat(symbolsFromDB.size(), is(equalTo(2)));
         assertThat(symbolsFromDB, not(hasItem(equalTo(symbol1rev0))));
@@ -299,7 +299,6 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
 
     private Symbol createSymbol(User user, Project project, SymbolGroup group, Long id, String name) {
         Symbol symbol = new Symbol();
-        symbol.setUser(user);
         symbol.setProject(project);
         symbol.setId(id);
         symbol.setGroup(group);

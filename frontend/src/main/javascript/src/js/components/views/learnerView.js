@@ -150,7 +150,7 @@ class LearnerViewComponent {
     poll() {
         this.active = true;
         this.interval = this.$interval(() => {
-            this.LearnerResource.isActive()
+            this.LearnerResource.isActive(this.project.id)
                 .then(data => {
                     this.learnerPhase = data.learnerPhase;
                     this.currentQueries = data.currentQueries;
@@ -163,7 +163,7 @@ class LearnerViewComponent {
                     }
 
                     if (!data.active) {
-                        this.LearnerResource.getStatus().then(result => {
+                        this.LearnerResource.getStatus(this.project.id).then(result => {
                             if (result.error) {
                                 this.ErrorService.setErrorMessage(result.errorText);
                             } else {
@@ -234,7 +234,7 @@ class LearnerViewComponent {
     abort() {
         if (this.active) {
             this.ToastService.info('The learner will stop after executing the current query batch');
-            this.LearnerResource.stop();
+            this.LearnerResource.stop(this.project.id);
         }
     }
 

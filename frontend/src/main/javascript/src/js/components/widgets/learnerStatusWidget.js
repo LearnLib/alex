@@ -24,9 +24,10 @@ class LearnerStatusWidget {
      *
      * @param {LearnerResource} LearnerResource
      * @param {ToastService} ToastService
+     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor(LearnerResource, ToastService) {
+    constructor($scope, LearnerResource, ToastService, EventBus) {
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
 
@@ -48,11 +49,17 @@ class LearnerStatusWidget {
          */
         this.result = null;
 
-        this.LearnerResource.isActive()
+        // listen on project update event
+        EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
+            this.project = data.project;
+            SessionService.saveProject(data.project);
+        }, $scope);
+
+        this.LearnerResource.isActive(this.project.id)
             .then(data => {
                 this.isActive = data.active;
                 if (!data.active) {
-                    this.LearnerResource.getStatus()
+                    this.LearnerResource.getStatus(this.result.project.id)
                         .then(data => {
                             if (data !== null) {
                                 this.hasFinished = true;
@@ -68,7 +75,7 @@ class LearnerStatusWidget {
      * Induces the Learner to stop learning after the current hypothesis model.
      */
     abort() {
-        this.LearnerResource.stop()
+        this.LearnerResource.stop(this.project.id)
             .then(() => {
                 this.ToastService.info('The Learner stops with the next hypothesis');
             })
@@ -78,6 +85,9 @@ class LearnerStatusWidget {
 
 export const learnerStatusWidget = {
     templateUrl: 'html/components/widgets/learner-status-widget.html',
+    bindings: {
+        project: '='
+    },
     controller: LearnerStatusWidget,
     controllerAs: 'vm'
 };

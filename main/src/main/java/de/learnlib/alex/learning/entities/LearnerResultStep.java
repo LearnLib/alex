@@ -20,8 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
@@ -41,6 +39,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Entity class to store the result of a test run, i.e. the outcome of a learn iteration and must not be the final
@@ -50,7 +49,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(
-    uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "project_id", "result_id", "stepNo"})
+    uniqueConstraints = @UniqueConstraint(columnNames = {"result_id", "stepNo"})
 )
 @JsonPropertyOrder(alphabetic = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -59,13 +58,7 @@ public class LearnerResultStep implements Serializable {
     private static final long serialVersionUID = -6932946318109366918L;
 
     /** The id of the LearnerResult in the DB. */
-    private Long id;
-
-    /** The user of the LearnerResult. */
-    private User user;
-
-    /** The reference to the Project the test run belongs to. */
-    private Project project;
+    private UUID uuid;
 
     /** The result the step is part of. */
     private LearnerResult result;
@@ -113,63 +106,18 @@ public class LearnerResultStep implements Serializable {
     @Id
     @GeneratedValue
     @JsonIgnore
-    public Long getId() {
-        return id;
+    public UUID getUUID() {
+        return uuid;
     }
 
     /**
      * Set a new ID for the result in the DB.
      *
-     * @param id
+     * @param uuid
      *         The new ID for the result.
      */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * @return The current user of the step.
-     */
-    @ManyToOne(optional = false)
-    @JsonIgnore
-    public User getUser() {
-        return user;
-    }
-
-    /**
-     * @param user The new user for the step.
-     */
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    /**
-     * @param userId The ID of the user related to the step.
-     */
-    @JsonProperty("user")
-    public void setUserId(Long userId) {
-        user = new User(userId);
-    }
-
-    /**
-     * Get the project the result belongs to.
-     *
-     * @return The connected Project.
-     */
-    @ManyToOne(optional = false)
-    @JsonIgnore
-    public Project getProject() {
-        return project;
-    }
-
-    /**
-     * Set a new reference to a Project the result belongs to.
-     *
-     * @param project
-     *         The new Project the result is connected with.
-     */
-    public void setProject(Project project) {
-        this.project = project;
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
     }
 
     /**
@@ -393,33 +341,22 @@ public class LearnerResultStep implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LearnerResultStep step = (LearnerResultStep) o;
-        return Objects.equals(id, step.id);
+        return Objects.equals(uuid, step.uuid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(uuid);
     }
 
     @Override
     public String toString() {
-        Long userId = 0L;
-        if (user != null) {
-            userId = user.getId();
-        }
-
-        Long projectId = 0L;
-        if (project != null) {
-            projectId = project.getId();
-        }
-
         Long testNo = 0L;
         if (result != null) {
             testNo = result.getTestNo();
         }
 
-        return "[LearnerResultStep " + this.id + "] " + userId + " / " + projectId  + " / " + testNo + " / "
-                + stepNo + ": " + hypothesis;
+        return "[LearnerResultStep " + this.uuid + "] " + result + " / " + testNo + " / " + stepNo + ": " + hypothesis;
     }
 
 }

@@ -88,7 +88,7 @@ class LearnerSetupView {
 
         // make sure that there isn't any other learn process active
         // redirect to the load screen in case there is an active one
-        this.LearnerResource.isActive()
+        this.LearnerResource.isActive(this.project.id)
             .then(data => {
                 if (data.active) {
                     if (data.project == this.project.id) {
@@ -119,7 +119,7 @@ class LearnerSetupView {
             .catch(err => console.log(err));
 
         // get the status to check if there is a learn process that can be continued
-        this.LearnerResource.getStatus().then(data => {
+        this.LearnerResource.getStatus(this.project.id).then(data => {
             this.canContinueLearnProcess = data !== null;
         });
     }

@@ -17,13 +17,10 @@
 package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolAction;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
@@ -36,19 +33,11 @@ import static org.junit.Assert.assertTrue;
 @RunWith(MockitoJUnitRunner.class)
 public class ExecuteScriptActionTest {
 
-    @Mock
-    private User user;
-
-    @Mock
-    private Project project;
-
     private ExecuteScriptAction action;
 
     @Before
     public void setUp() {
         action = new ExecuteScriptAction();
-        action.setUser(user);
-        action.setProject(project);
         action.setScript("document.write('hello')");
     }
 

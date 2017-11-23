@@ -21,10 +21,8 @@ import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.ResponseHelper;
-import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.dao.SymbolGroupDAO;
-import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import org.apache.logging.log4j.LogManager;
@@ -74,10 +72,6 @@ public class SymbolGroupResource {
     @Inject
     private SymbolDAO symbolDAO;
 
-    /** The ProjectDAO to use. */
-    @Inject
-    private ProjectDAO projectDAO;
-
     /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
@@ -103,14 +97,8 @@ public class SymbolGroupResource {
         LOGGER.traceEntry("createGroup({}, {}) for user {}.", projectId, group, user);
 
         try {
-            Project project = projectDAO.getByID(user.getId(), projectId);
-            if (!project.getUser().equals(user)) {
-                throw new ValidationException("You are not the owner of the project");
-            }
-
             group.setProjectId(projectId);
-            group.setUser(user);
-            symbolGroupDAO.create(group);
+            symbolGroupDAO.create(user, group);
 
             LOGGER.traceExit(group);
             String groupURL = uri.getBaseUri() + "projects/" + group.getProjectId() + "/groups/" + group.getId();
@@ -249,14 +237,10 @@ public class SymbolGroupResource {
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, group, user);
 
         try {
-            if (group.getUserId().equals(user.getId())) {
-                symbolGroupDAO.update(group);
+            symbolGroupDAO.update(user, group);
 
-                LOGGER.traceExit(group);
-                return Response.ok(group).build();
-            } else {
-                throw new UnauthorizedException("You are not allowed to edit this group");
-            }
+            LOGGER.traceExit(group);
+            return Response.ok(group).build();
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
@@ -289,16 +273,10 @@ public class SymbolGroupResource {
         LOGGER.traceEntry("deleteAResultSet({}, {}) for user {}.", projectId, id, user);
 
         try {
-            SymbolGroup group = symbolGroupDAO.get(user, projectId, id);
+            symbolGroupDAO.delete(user, projectId, id);
 
-            if (group.getUserId().equals(user.getId())) {
-                symbolGroupDAO.delete(user, projectId, id);
-
-                LOGGER.traceExit("Group {} deleted.", id);
-                return Response.noContent().build();
-            } else {
-                throw new UnauthorizedException("You are not allowed to delete the group");
-            }
+            LOGGER.traceExit("Group {} deleted.", id);
+            return Response.noContent().build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",

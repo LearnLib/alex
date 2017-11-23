@@ -136,13 +136,13 @@ public interface ProjectDAO {
     /**
      * Delete a project.
      *
-     * @param userId
-     *         The id of the user.
+     *
+     * @param user
      * @param projectId
      *         The id of the project to delete.
      * @throws NotFoundException
      *         When the Project id was not found.
      */
-    void delete(Long userId, Long projectId) throws NotFoundException;
+    void delete(User user, Long projectId) throws NotFoundException;
 
 }

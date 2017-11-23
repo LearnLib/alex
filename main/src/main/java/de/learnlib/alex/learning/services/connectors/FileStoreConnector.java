@@ -16,28 +16,35 @@
 
 package de.learnlib.alex.learning.services.connectors;
 
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.dao.FileDAOImpl;
+import de.learnlib.alex.data.dao.ProjectDAO;
 
 /**
  * Connector to store and manage files.
  */
 public class FileStoreConnector implements Connector {
 
+    private User user;
+
     /** The FileDAO to use. */
     private FileDAO fileDAO;
 
-    /** Constructor. */
-    public FileStoreConnector() {
-        this.fileDAO = new FileDAOImpl();
+    /** Constructor.
+     * @param user*/
+    public FileStoreConnector(User user, ProjectDAO projectDAO) {
+        this.user = user;
+        this.fileDAO = new FileDAOImpl(projectDAO);
     }
 
     /**
      * Constructor.
      * @param fileDAO An instance of the file dao.
      */
-    public FileStoreConnector(FileDAO fileDAO) {
+    public FileStoreConnector(FileDAO fileDAO, User user) {
+        this.user = user;
         this.fileDAO = fileDAO;
     }
 
@@ -54,16 +61,15 @@ public class FileStoreConnector implements Connector {
     /**
      * Get the absolute path of a file in the uploads directory.
      *
-     * @param userId The id of the user.
      * @param projectId The id of the project.
      * @param fileName The name of the file.
      * @return The absolute path to the file.
      * @throws IllegalStateException
      *          If no file with 'fileName' has been uploaded.
      */
-    public String getAbsoluteFileLocation(Long userId, Long projectId, String fileName) throws IllegalStateException {
+    public String getAbsoluteFileLocation(Long projectId, String fileName) throws IllegalStateException {
         try {
-            return fileDAO.getAbsoluteFilePath(userId, projectId, fileName);
+            return fileDAO.getAbsoluteFilePath(user, projectId, fileName);
         } catch (NotFoundException e) {
             throw new IllegalStateException("No file with the name '" + fileName + "' was uploaded into the project "
                                                     + projectId + ".");

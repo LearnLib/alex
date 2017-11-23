@@ -31,7 +31,6 @@ import static org.mockito.Mockito.verify;
 
 public class SearchHelperTest {
 
-    private static final Long USER_ID = 10L;
     private static final Long PROJECT_ID = 10L;
     private static final int COUNTER_VALUE = 42;
     private static final String PROJECT_URL = "http://localhost:8000";
@@ -49,7 +48,7 @@ public class SearchHelperTest {
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counter);
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
 
-        String result = SearchHelper.insertVariableValues(connector, USER_ID, PROJECT_ID,
+        String result = SearchHelper.insertVariableValues(connector, PROJECT_ID,
                                                           "Hello {{$name}}, you are {{user}} no. {{#counter}}!");
 
         assertEquals("Hello Jon Doe, you are {{user}} no. " + COUNTER_VALUE + "!", result);
@@ -59,7 +58,7 @@ public class SearchHelperTest {
     public void shouldNotReplaceAnythingIfTextContainsNoVariables() {
         ConnectorManager connector = mock(ConnectorManager.class);
 
-        String result = SearchHelper.insertVariableValues(connector, USER_ID, PROJECT_ID,
+        String result = SearchHelper.insertVariableValues(connector, PROJECT_ID,
                                                           "Hello Jon Doe, you are user no. 42!");
 
         assertEquals("Hello Jon Doe, you are user no. " + COUNTER_VALUE + "!", result);

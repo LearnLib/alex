@@ -19,7 +19,7 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.learnlib.alex.auth.entities.User;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
@@ -27,7 +27,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -39,6 +38,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Entity to organize symbols.
@@ -46,8 +46,8 @@ import java.util.Set;
 @Entity
 @Table(
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"userId", "projectId", "id"}),
-                @UniqueConstraint(columnNames = {"userId", "projectId", "name"})
+                @UniqueConstraint(columnNames = {"projectId", "id"}),
+                @UniqueConstraint(columnNames = {"projectId", "name"})
         }
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -56,10 +56,7 @@ public class SymbolGroup implements Serializable {
     private static final long serialVersionUID = 4986838799404559274L;
 
     /** The ID of the SymbolGroup in the DB. */
-    private Long groupId;
-
-    /** The User that owns this SymbolGroup. */
-    private User user;
+    private UUID uuid;
 
     /** The plain ID of the User to be used in the JSON. */
     private Long userId;
@@ -96,63 +93,19 @@ public class SymbolGroup implements Serializable {
      * @return The internal ID of the SymbolGroup used by the database.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @JsonIgnore
-    public Long getGroupId() {
-        return groupId;
+    public UUID getUUID() {
+        return uuid;
     }
 
     /**
-     * @param groupId The new internal ID of the SymbolGroup used by the database.
-     */
-    @JsonIgnore
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
-    }
-
-    /**
-     * Get the user.
-     * @return The user.
-     */
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "userId")
-    @JsonIgnore
-    public User getUser() {
-        return user;
-    }
-
-    /**
-     * Set the user.
-     * @param user The user.
+     * @param uuid The new internal ID of the SymbolGroup used by the database.
      */
     @JsonIgnore
-    public void setUser(User user) {
-        this.user = user;
-        if (user == null) {
-            this.userId = 0L;
-        } else {
-            this.userId = user.getId();
-        }
-    }
-
-    /**
-     * Get the id of the user.
-     * @return The id of the user.
-     */
-    @Transient
-    @JsonProperty("user")
-    public Long getUserId() {
-        return userId;
-    }
-
-    /**
-     * Set the id of the user.
-     * @param userId The id of the user.
-     */
-    @JsonProperty("user")
-    public void setUserId(Long userId) {
-        this.user = null;
-        this.userId = userId;
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
     }
 
     /**
@@ -308,16 +261,16 @@ public class SymbolGroup implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SymbolGroup group = (SymbolGroup) o;
-        return Objects.equals(groupId, group.groupId);
+        return Objects.equals(uuid, group.uuid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(groupId);
+        return Objects.hash(uuid);
     }
 
     @Override
     public String toString() {
-        return "SymbolGroup[" + groupId + "]: " + user + ", " + project + ", " + id + ", " + name;
+        return "SymbolGroup[" + uuid + "]: " + project + ", " + id + ", " + name;
     }
 }

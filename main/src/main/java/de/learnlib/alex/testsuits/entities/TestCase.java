@@ -3,16 +3,14 @@ package de.learnlib.alex.testsuits.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -24,6 +22,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -33,8 +32,8 @@ import java.util.stream.Collectors;
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
-                        columnNames = {"userId", "projectId", "name"},
-                        name = "Unique Test Case Name per User and Project"
+                        columnNames = {"projectId", "name"},
+                        name = "Unique Test Case Name per Project"
                 )
         }
 )
@@ -68,16 +67,10 @@ public class TestCase implements Serializable {
     }
 
     /** The ID of the Test Case in the DB. */
-    private Long testCaseId;
+    private UUID uuid;
 
     /** The id of the Test Case in the Project. */
     private Long id;
-
-    /** The User that owns the Test Case. */
-    private User user;
-
-    /** The ID of the User to be used in the JSON. */
-    private Long userId;
 
     /** The Project the Test Case belongs to. */
     private Project project;
@@ -98,9 +91,6 @@ public class TestCase implements Serializable {
     public TestCase() {
         super();
 
-        this.userId    = 0L;
-        this.projectId = 0L;
-
         this.symbols = new LinkedList<>();
     }
 
@@ -110,61 +100,21 @@ public class TestCase implements Serializable {
      * @return The internal ID.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @JsonIgnore
-    public Long getTestCaseId() {
-        return testCaseId;
+    public UUID getUuid() {
+        return uuid;
     }
 
     /**
      * Set the ID the Test Case has in the DB new.
      *
-     * @param testCaseId The new internal ID.
+     * @param uuid The new internal ID.
      */
     @JsonIgnore
-    public void setTestCaseId(Long testCaseId) {
-        this.testCaseId = testCaseId;
-    }
-
-    /**
-     * @return The user that owns the project.
-     */
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "userId")
-    @JsonIgnore
-    public User getUser() {
-        return user;
-    }
-
-    /**
-     * @param user The new user that owns the project.
-     */
-    @JsonIgnore
-    public void setUser(User user) {
-        this.user = user;
-        if (user == null) {
-            this.userId = null;
-        } else {
-            this.userId = user.getId();
-        }
-    }
-
-    /**
-     * @return The ID of the user, which is needed for the JSON.
-     */
-    @Transient
-    @JsonProperty("user")
-    public Long getUserId() {
-        return userId;
-    }
-
-    /**
-     * @param userId The new ID of the user, which is needed for the JSON.
-     */
-    @JsonProperty("user")
-    public void setUserId(Long userId) {
-        this.user = null;
-        this.userId = userId;
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     /**

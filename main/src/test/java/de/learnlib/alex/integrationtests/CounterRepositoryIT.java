@@ -30,13 +30,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class CounterRepositoryIT extends AbstractRepositoryIT {
 
@@ -63,11 +64,11 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
         //
-        Counter counter = createCounter(user, project, "TestCounter");
+        Counter counter = createCounter(project, "TestCounter");
 
         counter = counterRepository.save(counter);
 
-        assertTrue(counter.getCounterId() > 0L);
+        assertNotNull(counter.getUUID());
         assertThat(counterRepository.count(), is(equalTo(1L)));
     }
 
@@ -79,7 +80,7 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
         //
-        Counter counter = createCounter(null, project, "TestCounter");
+        Counter counter = createCounter(project, "TestCounter");
 
         counterRepository.save(counter); // should fail
     }
@@ -91,7 +92,7 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         //
         createProject(user, "Test Project");
         //
-        Counter counter = createCounter(user, null, "TestCounter");
+        Counter counter = createCounter(null, "TestCounter");
 
         counterRepository.save(counter); // should fail
     }
@@ -104,7 +105,7 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
         //
-        Counter counter = createCounter(user, project, "");
+        Counter counter = createCounter(project, "");
 
         counterRepository.save(counter); // should fail
     }
@@ -117,9 +118,9 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
         //
-        Counter counter1 = createCounter(user, project, "TestCounter");
+        Counter counter1 = createCounter(project, "TestCounter");
         counterRepository.save(counter1);
-        Counter counter2 = createCounter(user, project, "TestCounter");
+        Counter counter2 = createCounter(project, "TestCounter");
 
         counterRepository.save(counter2); // should fail
     }
@@ -134,13 +135,13 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         Project project2 = createProject(user, "Test Project 2");
         project2 = projectRepository.save(project2);
         //
-        Counter counter1 = createCounter(user, project1, "TestCounter");
+        Counter counter1 = createCounter(project1, "TestCounter");
         counterRepository.save(counter1);
-        Counter counter2 = createCounter(user, project2, "TestCounter");
+        Counter counter2 = createCounter(project2, "TestCounter");
 
         counter2 = counterRepository.save(counter2);
 
-        assertTrue(counter2.getCounterId() > 0L);
+        assertNotNull(counter2.getUUID());
     }
 
     @Test
@@ -151,12 +152,12 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project 1");
         project = projectRepository.save(project);
         //
-        Counter counter1 = createCounter(user, project, "TestCounter1");
+        Counter counter1 = createCounter(project, "TestCounter1");
         counter1 = counterRepository.save(counter1);
-        Counter counter2 = createCounter(user, project, "TestCounter2");
+        Counter counter2 = createCounter(project, "TestCounter2");
         counter2 = counterRepository.save(counter2);
 
-        List<Counter> counters = counterRepository.findByUser_IdAndProject(user.getId(), project);
+        List<Counter> counters = counterRepository.findAllByProject(project);
 
         assertThat(counters.size(), is(equalTo(2)));
         assertThat(counters, hasItem(equalTo(counter1)));
@@ -171,15 +172,15 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project 1");
         project = projectRepository.save(project);
         //
-        Counter counter1 = createCounter(user, project, "TestCounter1");
+        Counter counter1 = createCounter(project, "TestCounter1");
         counter1 = counterRepository.save(counter1);
-        Counter counter2 = createCounter(user, project, "TestCounter2");
+        Counter counter2 = createCounter(project, "TestCounter2");
         counter2 = counterRepository.save(counter2);
-        Counter counter3 = createCounter(user, project, "TestCounter3");
+        Counter counter3 = createCounter(project, "TestCounter3");
         counter3 = counterRepository.save(counter3);
 
-        List<Counter> counters = counterRepository.findAllByUser_IdAndProjectAndNameIn(user.getId(), project,
-                                                                                       "TestCounter1", "TestCounter3");
+        List<Counter> counters = counterRepository.findAllByProjectAndNameIn(project,
+                                                                             "TestCounter1", "TestCounter3");
 
         assertThat(counters.size(), is(equalTo(2)));
         assertThat(counters, hasItem(equalTo(counter1)));
@@ -194,10 +195,10 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project 1");
         project = projectRepository.save(project);
         //
-        Counter counter = createCounter(user, project, "TestCounter1");
+        Counter counter = createCounter(project, "TestCounter1");
         counter = counterRepository.save(counter);
 
-        Counter counterFromDB = counterRepository.findByUser_IdAndProjectAndName(user.getId(), project, "TestCounter1");
+        Counter counterFromDB = counterRepository.findByProjectAndName(project, "TestCounter1");
 
         assertThat(counterFromDB, is(equalTo(counter)));
     }
@@ -210,23 +211,22 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project 1");
         project = projectRepository.save(project);
         //
-        Counter counter = createCounter(user, project, "TestCounter");
+        Counter counter = createCounter(project, "TestCounter");
         counter = counterRepository.save(counter);
 
-        counterRepository.delete(counter.getCounterId());
+        counterRepository.delete(counter.getUUID());
 
         assertThat(counterRepository.count(), is(equalTo(0L)));
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingCounter() {
-        counterRepository.delete(-1L);
+        counterRepository.delete(UUID.randomUUID());
     }
 
 
-    private Counter createCounter(User user, Project project, String name) {
+    private Counter createCounter(Project project, String name) {
         Counter counter = new Counter();
-        counter.setUser(user);
         counter.setProject(project);
         counter.setName(name);
         return counter;

@@ -76,12 +76,13 @@ public class FileResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response uploadFile(@PathParam("project_id") Long projectId,
                                @FormDataParam("file") InputStream uploadedInputStream,
-                               @FormDataParam("file") FormDataContentDisposition fileDetail) {
+                               @FormDataParam("file") FormDataContentDisposition fileDetail)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("uploadFile({}, {}, {}) for user {}.", projectId, uploadedInputStream, fileDetail, user);
 
         try {
-            fileDAO.create(user.getId(), projectId, uploadedInputStream, fileDetail);
+            fileDAO.create(user, projectId, uploadedInputStream, fileDetail);
 
             UploadableFile result = new UploadableFile();
             result.setName(fileDetail.getFileName());
@@ -116,7 +117,7 @@ public class FileResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAllFiles({}) for user {}.", projectId, user);
 
-        List<UploadableFile> allFiles = fileDAO.getAll(user.getId(), projectId);
+        List<UploadableFile> allFiles = fileDAO.getAll(user, projectId);
 
         LOGGER.traceExit(allFiles);
         return Response.ok(allFiles).build();
@@ -138,7 +139,7 @@ public class FileResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteOneFile({}, {}) for user {}.", projectId, fileName, user);
 
-        fileDAO.delete(user.getId(), projectId, fileName);
+        fileDAO.delete(user, projectId, fileName);
 
         LOGGER.traceExit("File deleted.");
         return Response.status(Response.Status.NO_CONTENT).build();

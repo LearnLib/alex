@@ -17,14 +17,12 @@
 package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -44,19 +42,14 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ClickLinkActionTest {
 
-    @Mock
-    private User user;
-
-    @Mock
-    private Project project;
-
     private ClickLinkAction c;
 
     @Before
     public void setUp() {
+        Symbol symbol = new Symbol();
+
         c = new ClickLinkAction();
-        c.setUser(user);
-        c.setProject(project);
+        c.setSymbol(symbol);
         c.setValue("Click Me");
     }
 

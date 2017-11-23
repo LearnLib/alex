@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.data.dao;
 
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.UploadableFile;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -32,8 +33,7 @@ public interface FileDAO {
     /**
      * Put a new file into the file system.
      *
-     * @param userId
-     *         The user the file belongs to.
+     * @param user
      * @param projectId
      *         The id of the project that the file belongs to.
      * @param uploadedInputStream
@@ -45,27 +45,27 @@ public interface FileDAO {
      * @throws IllegalStateException
      *         If the file already exists or the destination directory is not a directory or otherwise blocked.
      */
-    void create(Long userId, Long projectId, InputStream uploadedInputStream, FormDataContentDisposition fileDetail)
-            throws IOException, IllegalStateException;
+    void create(User user, Long projectId, InputStream uploadedInputStream, FormDataContentDisposition fileDetail)
+            throws IllegalStateException, IOException, NotFoundException;
 
     /**
      * Get a list of all fiels of a user within a project.
      *
-     * @param userId
-     *         The user to show the files of.
+     *
+     * @param user
      * @param projectId
      *         The project the files belong to.
      * @return A List of Files. Can be empty.
      * @throws NotFoundException
      *         If no files can be found.
      */
-    List<UploadableFile> getAll(Long userId, Long projectId) throws NotFoundException;
+    List<UploadableFile> getAll(User user, Long projectId) throws NotFoundException;
 
     /**
      * Get the absolute path to a file on the machine.
      *
-     * @param userId
-     *         The user the file belongs to.
+     *
+     * @param user
      * @param projectId
      *         The id of the project that the file belongs to.
      * @param fileName
@@ -74,13 +74,12 @@ public interface FileDAO {
      * @throws NotFoundException
      *         If the file could not be found.
      */
-    String getAbsoluteFilePath(Long userId, Long projectId, String fileName) throws NotFoundException;
+    String getAbsoluteFilePath(User user, Long projectId, String fileName) throws NotFoundException;
 
     /**
      * Deletes a file.
      *
-     * @param userId
-     *         The user the file belongs to.
+     * @param user
      * @param projectId
      *         The id of the project that the file belongs to.
      * @param fileName
@@ -88,27 +87,6 @@ public interface FileDAO {
      * @throws NotFoundException
      *         If the file could not be found.
      */
-    void delete(Long userId, Long projectId, String fileName) throws NotFoundException;
+    void delete(User user, Long projectId, String fileName) throws NotFoundException;
 
-    /**
-     * Deletes the project directory.
-     *
-     * @param userId
-     *         The id of the user.
-     * @param projectId
-     *         The id of the project.
-     * @throws IOException
-     *         If the directory could not be deleted.
-     */
-    void deleteProjectDirectory(Long userId, Long projectId) throws IOException;
-
-    /**
-     * Deletes the user directory.
-     *
-     * @param userId
-     *         The id of the user.
-     * @throws IOException
-     *         If the directory could not be deleted.
-     */
-    void deleteUserDirectory(Long userId) throws IOException;
 }

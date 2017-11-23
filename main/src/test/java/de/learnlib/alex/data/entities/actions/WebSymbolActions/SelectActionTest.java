@@ -17,15 +17,14 @@
 package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -46,14 +45,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class SelectActionTest {
 
-    private static final long USER_ID = 1;
     private static final long PROJECT_ID = 1;
-
-    @Mock
-    private User user;
-
-    @Mock
-    private Project project;
 
     private SelectAction s;
 
@@ -61,16 +53,18 @@ public class SelectActionTest {
 
     @Before
     public void setUp() {
-        given(user.getId()).willReturn(USER_ID);
-        given(project.getId()).willReturn(PROJECT_ID);
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+
+        Symbol symbol = new Symbol();
+        symbol.setProject(project);
 
         node = new WebElementLocator();
         node.setSelector("#node");
         node.setType(WebElementLocator.Type.CSS);
 
         s = new SelectAction();
-        s.setUser(user);
-        s.setProject(project);
+        s.setSymbol(symbol);
         s.setNode(node);
         s.setValue("Lorem Ipsum");
         s.setSelectBy(SelectAction.SelectByType.TEXT);

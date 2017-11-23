@@ -32,29 +32,33 @@ public interface SymbolDAO {
     /**
      * Save the given symbol.
      *
+     * @param user
+     *         The user performing the action.
      * @param symbol
      *         The symbol to save.
      * @throws ValidationException
      *         When the symbol was not valid.
      */
-    void create(Symbol symbol) throws ValidationException;
+    void create(User user, Symbol symbol) throws ValidationException, NotFoundException;
 
     /**
      * Save the given symbols.
      *
+     * @param user
+     *         The user performing the action.
      * @param symbols
      *         The symbols to save.
      * @throws ValidationException
      *         When one the symbols was not valid.
      *         In this case all symbols are reverted and not saved.
      */
-    void create(List<Symbol> symbols) throws ValidationException;
+    void create(User user, List<Symbol> symbols) throws ValidationException, NotFoundException;
 
     /**
      * Get a list of specific symbols of a project.
      *
      * @param user
-     *         The owner of the symbols
+     *         The user performing the action.
      * @param projectId
      *         The project the symbols should belong to.
      * @param ids
@@ -69,7 +73,7 @@ public interface SymbolDAO {
      * Get a list of symbols by their ids.
      *
      * @param user
-     *         The owner of the symbol
+     *         The user performing the action.
      * @param projectId
      *         The project the symbols should belong to.
      * @param visibilityLevel
@@ -88,7 +92,7 @@ public interface SymbolDAO {
      * Get all symbols of a Project.
      *
      * @param user
-     *         The user of the Symbols.
+     *         The user performing the action.
      * @param projectID
      *         The project the Symbols should belong to.
      * @param visibilityLevel
@@ -104,7 +108,7 @@ public interface SymbolDAO {
      * Get a List of Symbols that are within a specific Group within a Project.
      *
      * @param user
-     *         The user of the Symbols.
+     *         The user performing the action.
      * @param projectId
      *         The Project of the Symbols.
      * @param groupId
@@ -120,7 +124,7 @@ public interface SymbolDAO {
      * Get a List of Symbols that are withing a specific Group within a Project and have a specific visibility level.
      *
      * @param user
-     *         The user of the Symbols.
+     *         The user performing the action.
      * @param projectId
      *         The Project the Symbols.
      * @param groupId
@@ -138,7 +142,7 @@ public interface SymbolDAO {
      * Get a Symbol by the user, project and a Pair of an ID.
      *
      * @param user
-     *         The owner of the Symbol.
+     *         The user performing the action.
      * @param projectId
      *         The ID of the project the symbol belongs to.
      * @param id
@@ -152,6 +156,8 @@ public interface SymbolDAO {
     /**
      * Update a symbol.
      *
+     * @param user
+     *         The user performing the action.
      * @param symbol
      *         The symbol to update.
      * @throws IllegalArgumentException
@@ -161,11 +167,13 @@ public interface SymbolDAO {
      * @throws ValidationException
      *         When the Symbol was not valid.
      */
-    void update(Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException;
+    void update(User user, Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException;
 
     /**
      * Update a list of Symbols.
      *
+     * @param user
+     *         The user performing the action.
      * @param symbols
      *         The symbol sto update.
      * @throws IllegalArgumentException
@@ -175,11 +183,14 @@ public interface SymbolDAO {
      * @throws ValidationException
      *         When one of the Symbol was not valid.
      */
-    void update(List<Symbol> symbols) throws IllegalArgumentException, NotFoundException, ValidationException;
+    void update(User user, List<Symbol> symbols)
+            throws IllegalArgumentException, NotFoundException, ValidationException;
 
     /**
      * Move a Symbol to a new Group.
      *
+     * @param user
+     *         The user performing the action.
      * @param symbol
      *         The Symbol to move.
      * @param newGroupId
@@ -187,12 +198,14 @@ public interface SymbolDAO {
      * @throws NotFoundException
      *         If the Symbol or the Group could not be found.
      */
-    void move(Symbol symbol, Long newGroupId) throws NotFoundException;
+    void move(User user, Symbol symbol, Long newGroupId) throws NotFoundException;
 
     /**
      * Moves a List of Symbols ot a new Group.
      * If one Symbol failed to be move, no Symbol will be moved.
      *
+     * @param user
+     *         The user performing the action.
      * @param symbols
      *         The Symbol to move.
      * @param newGroupId
@@ -200,13 +213,13 @@ public interface SymbolDAO {
      * @throws NotFoundException
      *         If at least one of the Symbols or if the Group could not be found.
      */
-    void move(List<Symbol> symbols, Long newGroupId) throws NotFoundException;
+    void move(User user, List<Symbol> symbols, Long newGroupId) throws NotFoundException;
 
     /**
      * Mark a symbol as hidden.
      *
-     * @param userId
-     *         The ID of the user the symbols belongs to.
+     * @param user
+     *         The user performing the action.
      * @param projectId
      *         The ID of the project the symbol belongs to.
      * @param ids
@@ -214,13 +227,13 @@ public interface SymbolDAO {
      * @throws NotFoundException
      *         When the Symbol was not found.
      */
-    void hide(Long userId, Long projectId, List<Long> ids) throws NotFoundException;
+    void hide(User user, Long projectId, List<Long> ids) throws NotFoundException;
 
     /**
      * Revive a symbol from the hidden state.
      *
-     * @param userId
-     *         The ID of the user the symbols belongs to.
+     * @param user
+     *         The user performing the action.
      * @param projectId
      *         The ID of the project the symbol belongs to.
      * @param ids
@@ -228,6 +241,6 @@ public interface SymbolDAO {
      * @throws NotFoundException
      *         When the Symbol was not found.
      */
-    void show(Long userId, Long projectId, List<Long> ids) throws NotFoundException;
+    void show(User user, Long projectId, List<Long> ids) throws NotFoundException;
 
 }

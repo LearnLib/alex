@@ -72,7 +72,7 @@ public class CounterResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAllCounters({}) for user {}.", projectId, user);
 
-        List<Counter> counters = counterDAO.getAll(user.getId(), projectId);
+        List<Counter> counters = counterDAO.getAll(user, projectId);
 
         LOGGER.traceExit(counters);
         return ResponseHelper.renderList(counters, Response.Status.OK);
@@ -97,7 +97,7 @@ public class CounterResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, name, user);
 
-        counterDAO.delete(user.getId(), projectId, name);
+        counterDAO.delete(user, projectId, name);
 
         LOGGER.traceExit("Counter {} deleted.", name);
         return Response.status(Response.Status.NO_CONTENT).build();
@@ -123,7 +123,7 @@ public class CounterResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, names, user);
 
-        counterDAO.delete(user.getId(), projectId, names.toArray(new String[names.size()]));
+        counterDAO.delete(user, projectId, names.toArray(new String[names.size()]));
 
         LOGGER.traceExit("Counter(s) {} deleted.", names);
         return Response.status(Response.Status.NO_CONTENT).build();

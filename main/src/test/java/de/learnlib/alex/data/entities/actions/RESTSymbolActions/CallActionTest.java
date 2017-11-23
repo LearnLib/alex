@@ -17,8 +17,7 @@
 package de.learnlib.alex.data.entities.actions.RESTSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
@@ -47,21 +46,17 @@ public class CallActionTest {
     public static final String TEST_API_PATH = "/test";
 
     @Mock
+    private Symbol symbol;
+
+    @Mock
     private WebServiceConnector connector;
-
-    @Mock
-    private User user;
-
-    @Mock
-    private Project project;
 
     private CallAction c;
 
     @Before
     public void setUp() {
         c = new CallAction();
-        c.setUser(user);
-        c.setProject(project);
+        c.setSymbol(symbol);
         c.setMethod(CallAction.Method.GET);
         c.setUrl(TEST_API_PATH);
         HashMap<String, String> cookies = new HashMap<>();

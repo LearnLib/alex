@@ -17,8 +17,7 @@
 package de.learnlib.alex.data.entities.actions.RESTSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import org.junit.Before;
@@ -42,18 +41,14 @@ public class CheckAttributeExistsActionTest {
     private WebServiceConnector connector;
 
     @Mock
-    private User user;
-
-    @Mock
-    private Project project;
+    private Symbol symbol;
 
     private CheckAttributeExistsAction c;
 
     @Before
     public void setUp() {
         c = new CheckAttributeExistsAction();
-        c.setUser(user);
-        c.setProject(project);
+        c.setSymbol(symbol);
         c.setAttribute("awesome_field");
     }
 

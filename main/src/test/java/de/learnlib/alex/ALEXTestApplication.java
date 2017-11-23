@@ -58,7 +58,7 @@ public class ALEXTestApplication extends ResourceConfig {
     }
 
     private void registerFeatures() {
-        packages("de.learnlib.alex.rest.exceptions");
+        packages("de.learnlib.alex.common.exceptions");
 
         register(MultiPartFeature.class);
         register(RolesAllowedDynamicFeature.class); // allow protecting routes with user roles
@@ -76,13 +76,6 @@ public class ALEXTestApplication extends ResourceConfig {
     }
 
     private void initAdmin(UserDAO userDAO) throws NotFoundException {
-/*
-        admin = mock(User.class);
-        given(admin.getId()).willReturn(1L);
-        given(admin.getEmail()).willReturn("admin@alex.example");
-        given(admin.getRole()).willReturn(UserRole.ADMIN);
-        given(admin.isValidPassword(anyString())).willReturn(true);
-*/
         admin = new User();
         admin.setId(1L);
         admin.setEmail("admin@alex.example");

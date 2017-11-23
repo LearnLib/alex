@@ -17,8 +17,8 @@
 package de.learnlib.alex.config.rest;
 
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
+import de.learnlib.alex.config.dao.SettingsDAO;
 import de.learnlib.alex.config.entities.Settings;
-import de.learnlib.alex.data.dao.SettingsDAO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -35,6 +35,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -214,7 +215,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         project = projectRepository.save(project);
 
         assertThat(symbolGroupRepository.count(), is(equalTo(1L)));
-        assertTrue(project.getDefaultGroup().getGroupId() > 0);
+        assertNotNull(project.getDefaultGroup().getUUID());
 
         projectRepository.delete(project);
 

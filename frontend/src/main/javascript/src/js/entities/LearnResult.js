@@ -87,12 +87,6 @@ export class LearnResult {
         this.testNo = obj.testNo;
 
         /**
-         * The id of the user.
-         * @type {number}
-         */
-        this.user = obj.user;
-
-        /**
          * If the learner encountered an error.
          * @type {boolean}
          */

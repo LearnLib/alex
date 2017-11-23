@@ -82,20 +82,18 @@ public class CounterResourceTest extends JerseyTest {
 
         counters = new Counter[2];
         counters[0] = new Counter();
-        counters[0].setUser(admin);
         counters[0].setProject(project);
         counters[0].setName(COUNTER_NAME + " 1");
         counters[0].setValue(COUNTER_VALUE);
         counters[1] = new Counter();
         counters[1].setProject(project);
-        counters[1].setUser(admin);
         counters[1].setName(COUNTER_NAME + " 2");
         counters[1].setValue(COUNTER_VALUE);
     }
 
     @Test
     public void shouldGetAllCounters() throws NotFoundException {
-        given(counterDAO.getAll(USER_TEST_ID, PROJECT_TEST_ID)).willReturn(Arrays.asList(counters));
+        given(counterDAO.getAll(admin, PROJECT_TEST_ID)).willReturn(Arrays.asList(counters));
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/counters").request()
                                 .header("Authorization", adminToken).get();
@@ -103,9 +101,9 @@ public class CounterResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectJSON = "[{\"name\":\"" + COUNTER_NAME + " 1\",\"project\":" + PROJECT_TEST_ID + ","
-                                    + "\"user\":" + USER_TEST_ID + ",\"value\":" + COUNTER_VALUE + "},"
+                                    + "\"value\":" + COUNTER_VALUE + "},"
                           +  "{\"name\":\"" + COUNTER_NAME + " 2\",\"project\":" + PROJECT_TEST_ID + ","
-                                    + "\"user\":" + USER_TEST_ID + ",\"value\":" + COUNTER_VALUE + "}"
+                                    + "\"value\":" + COUNTER_VALUE + "}"
                           + "]";
         assertEquals(expectJSON, json);
         assertEquals(String.valueOf(counters.length), response.getHeaderString("X-Total-Count"));
@@ -113,7 +111,7 @@ public class CounterResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404WhenAskingForAllCounterOfANotExistingProject() throws NotFoundException {
-        given(counterDAO.getAll(USER_TEST_ID, PROJECT_TEST_ID)).willThrow(NotFoundException.class);
+        given(counterDAO.getAll(admin, PROJECT_TEST_ID)).willThrow(NotFoundException.class);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/counters").request()
                                 .header("Authorization", adminToken).get();
@@ -127,18 +125,18 @@ public class CounterResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).delete();
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        verify(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID, COUNTER_NAME);
+        verify(counterDAO).delete(admin, PROJECT_TEST_ID, COUNTER_NAME);
     }
 
     @Test
     public void shouldReturn404WhenDeleteAnInvalidCounter() throws NotFoundException {
-        willThrow(NotFoundException.class).given(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID, COUNTER_NAME);
+        willThrow(NotFoundException.class).given(counterDAO).delete(admin, PROJECT_TEST_ID, COUNTER_NAME);
 
         Response response = target("/projects/" + PROJECT_TEST_ID + "/counters/" + COUNTER_NAME).request()
                                 .header("Authorization", adminToken).delete();
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID, COUNTER_NAME);
+        verify(counterDAO).delete(admin, PROJECT_TEST_ID, COUNTER_NAME);
     }
 
     @Test
@@ -147,19 +145,19 @@ public class CounterResourceTest extends JerseyTest {
         Response response = target(path).request().header("Authorization", adminToken).delete();
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        verify(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
+        verify(counterDAO).delete(admin, PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
     }
 
     @Test
     public void shouldReturn404WhenDeleteInvalidCounters() throws NotFoundException {
         String path = "/projects/" + PROJECT_TEST_ID + "/counters/batch/" + COUNTER_NAME + "," + COUNTER_NAME + "2";
-        willThrow(NotFoundException.class).given(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID,
+        willThrow(NotFoundException.class).given(counterDAO).delete(admin, PROJECT_TEST_ID,
                                                                     COUNTER_NAME, COUNTER_NAME + "2");
 
         Response response = target(path).request().header("Authorization", adminToken).delete();
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(counterDAO).delete(USER_TEST_ID, PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
+        verify(counterDAO).delete(admin, PROJECT_TEST_ID, COUNTER_NAME, COUNTER_NAME + "2");
     }
 
 }

@@ -17,8 +17,7 @@
 package de.learnlib.alex.data.entities.actions.RESTSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import org.junit.Before;
@@ -42,18 +41,14 @@ public class CheckAttributeValueActionTest {
     private WebServiceConnector connector;
 
     @Mock
-    private User user;
-
-    @Mock
-    private Project project;
+    private Symbol symbol;
 
     private CheckAttributeValueAction c;
 
     @Before
     public void setUp() {
         c = new CheckAttributeValueAction();
-        c.setUser(user);
-        c.setProject(project);
+        c.setSymbol(symbol);
         c.setAttribute("awesome_field");
         c.setValue("Hello World!");
         c.setRegexp(false);
@@ -88,8 +83,7 @@ public class CheckAttributeValueActionTest {
     @Test
     public void shouldReturnOkIfPathExistsOnJsonArray() throws Exception {
         CheckAttributeValueAction action = new CheckAttributeValueAction();
-        action.setUser(user);
-        action.setProject(project);
+        action.setSymbol(symbol);
         action.setAttribute("[0].id");
         action.setValue("0");
         action.setRegexp(false);
@@ -103,8 +97,7 @@ public class CheckAttributeValueActionTest {
     @Test
     public void shouldReturnNullIfThePathIsInvalidOnJsonArray() throws Exception {
         CheckAttributeValueAction action = new CheckAttributeValueAction();
-        action.setUser(user);
-        action.setProject(project);
+        action.setSymbol(symbol);
         action.setAttribute("[0].id");
         action.setValue("0");
         action.setRegexp(false);

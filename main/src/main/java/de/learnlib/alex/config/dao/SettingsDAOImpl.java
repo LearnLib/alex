@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.data.dao;
+package de.learnlib.alex.config.dao;
 
 import de.learnlib.alex.config.entities.Settings;
 import de.learnlib.alex.config.repositories.SettingsRepository;

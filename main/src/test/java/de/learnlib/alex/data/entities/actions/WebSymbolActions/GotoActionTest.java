@@ -17,15 +17,13 @@
 package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.actions.Credentials;
 import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
@@ -43,21 +41,16 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class GotoActionTest {
 
-    @Mock
-    private User user;
-
-    @Mock
-    private Project project;
-
     private static final String FAKE_URL = "http://example.com";
 
     private GotoAction g;
 
     @Before
     public void setUp() {
+        Symbol symbol = new Symbol();
+
         g = new GotoAction();
-        g.setUser(user);
-        g.setProject(project);
+        g.setSymbol(symbol);
         g.setUrl(FAKE_URL);
     }
 

@@ -120,7 +120,7 @@ public class LearnerResource {
      * @errorResponse 404 not found    `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
-    @Path("/start/{project_id}")
+    @Path("/{project_id}/start")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response start(@PathParam("project_id") long projectId, LearnerStartConfiguration configuration)
@@ -142,7 +142,7 @@ public class LearnerResource {
             Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
 
             learner.start(user, project, configuration);
-            LearnerStatus status = learner.getStatus(user);
+            LearnerStatus status = learner.getStatus(projectId);
 
             LOGGER.traceExit(status);
             return Response.ok(status).build();
@@ -172,7 +172,7 @@ public class LearnerResource {
      * @errorResponse 404 not found    `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
-    @Path("/resume/{project_id}/{test_no}")
+    @Path("/{project_id}/resume/{test_no}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response resume(@PathParam("project_id") long projectId,
@@ -184,7 +184,7 @@ public class LearnerResource {
 
         try {
             Project project = projectDAO.getByID(user.getId(), projectId); // check if project exists
-            LearnerResult result = learnerResultDAO.get(user.getId(), projectId, testNo, true);
+            LearnerResult result = learnerResultDAO.get(user, projectId, testNo, true);
 
             if (result == null) {
                 throw new NotFoundException("No last result to resume found!");
@@ -207,7 +207,7 @@ public class LearnerResource {
                         .filter(s -> s.getStepNo() > configuration.getStepNo())
                         .forEach(learnerResultStepRepository::delete);
                 learnerResultStepRepository.flush();
-                result = learnerResultDAO.get(user.getId(), projectId, testNo, true);
+                result = learnerResultDAO.get(user, projectId, testNo, true);
                 result.setHypothesis(result.getSteps().get(configuration.getStepNo() - 1).getHypothesis());
                 result.getStatistics().setEqsUsed(result.getSteps().size());
 
@@ -230,14 +230,14 @@ public class LearnerResource {
             }
 
             learner.resume(user, project, result, configuration);
-            LearnerStatus status = learner.getStatus(user);
+            LearnerStatus status = learner.getStatus(projectId);
 
             LOGGER.traceExit(status);
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
             LOGGER.info(RESOURCE_MARKER, "tried to restart the learning while the learner is running.");
             LOGGER.traceExit(e);
-            LearnerStatus status = learner.getStatus(user);
+            LearnerStatus status = learner.getStatus(projectId);
             return Response.status(Status.NOT_MODIFIED).entity(status).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
@@ -251,23 +251,24 @@ public class LearnerResource {
      * This will always return OK, even if there is nothing to stop.
      * To see if there is currently a learning process, the status like '/active' will be returned.
      *
+     * @param projectId     The project to stop.
      * @return The status of the current learn process.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.learning.entities.LearnerStatus
      */
     @GET
-    @Path("/stop")
+    @Path("/{project_id}/stop")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response stop() {
+    public Response stop(@PathParam("project_id") long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("stop() for user {}.", user);
 
-        if (learner.isActive(user)) {
+        if (learner.isActive(projectId)) {
             learner.stop(user); // Hammer Time
         } else {
             LOGGER.info(RESOURCE_MARKER, "tried to stop the learning again.");
         }
-        LearnerStatus status = learner.getStatus(user);
+        LearnerStatus status = learner.getStatus(projectId);
 
         LOGGER.traceExit(status);
         return Response.ok(status).build();
@@ -276,18 +277,19 @@ public class LearnerResource {
     /**
      * Is the learner active?
      *
+     * @param projectId The project to check.
      * @return The status of the current learn process.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.learning.entities.LearnerStatus
      */
     @GET
-    @Path("/active")
+    @Path("/{project_id}/active")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response isActive() {
+    public Response isActive(@PathParam("project_id") long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("isActive() for user {}.", user);
 
-        LearnerStatus status = learner.getStatus(user);
+        LearnerStatus status = learner.getStatus(projectId);
 
         LOGGER.traceExit(status);
         return Response.ok(status).build();
@@ -296,6 +298,7 @@ public class LearnerResource {
     /**
      * Get the parameters & (temporary) results of the learning.
      *
+     * @param projectId The project to get the Status of.
      * @return The information of the learning
      * @throws NotFoundException If the previous learn job or the related Project could not be found.
      * @successResponse 200 OK
@@ -303,19 +306,19 @@ public class LearnerResource {
      * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
-    @Path("/status")
+    @Path("/{project_id}/status")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getResult() throws NotFoundException {
+    public Response getResult(@PathParam("project_id") long projectId) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getResult() for user {}.", user);
 
-        LearnerResult resultInThread = learner.getResult(user);
+        LearnerResult resultInThread = learner.getResult(projectId);
         if (resultInThread == null) {
             throw new NotFoundException("No result was learned in this instance of ALEX.");
         }
 
-        learnerResultDAO.get(resultInThread.getUserId(), resultInThread.getProjectId(),
-                resultInThread.getTestNo(), false);
+        learnerResultDAO.get(user, resultInThread.getProjectId(),
+                             resultInThread.getTestNo(), false);
 
         LOGGER.traceExit(resultInThread);
         return Response.ok(resultInThread).build();
@@ -335,7 +338,7 @@ public class LearnerResource {
      * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
-    @Path("/outputs/{project_id}")
+    @Path("/{project_id}/outputs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response readOutput(@PathParam("project_id") Long projectId, ReadOutputConfig outputConfig)
@@ -378,7 +381,7 @@ public class LearnerResource {
      *          If a symbol could not be found.
      */
     @POST
-    @Path("/words/{project_id}/outputs")
+    @Path("/{project_id}/words/outputs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response readWordOutput(@PathParam("project_id") Long projectId, ReadOutputConfig readOutputConfig)

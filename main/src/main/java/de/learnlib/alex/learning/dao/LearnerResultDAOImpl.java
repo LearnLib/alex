@@ -18,6 +18,7 @@ package de.learnlib.alex.learning.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.learning.entities.AbstractLearnerConfiguration;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
@@ -45,6 +46,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    /** The ProjectDAO to use. Will be injected. */
+    private ProjectDAO projectDAO;
+
     /** The LearnerResultRepository to use. Will be injected. */
     private LearnerResultRepository learnerResultRepository;
 
@@ -54,46 +58,47 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     /**
      * Creates a new LearnerResultDAO.
      *
+     * @param projectDAO
+     *         The ProjectDAO to use.
      * @param learnerResultRepository
      *         The LearnerResultRepository to use.
      * @param learnerResultStepRepository
-     *         The LearnerResultStepRepository to use.
      */
     @Inject
-    public LearnerResultDAOImpl(LearnerResultRepository learnerResultRepository,
+    public LearnerResultDAOImpl(ProjectDAO projectDAO, LearnerResultRepository learnerResultRepository,
                                 LearnerResultStepRepository learnerResultStepRepository) {
+        this.projectDAO = projectDAO;
         this.learnerResultRepository = learnerResultRepository;
         this.learnerResultStepRepository = learnerResultStepRepository;
     }
 
     @Override
     @Transactional
-    public void create(LearnerResult learnerResult) throws ValidationException {
-
+    public void create(User user, LearnerResult learnerResult) throws NotFoundException, ValidationException {
         // pre validation
-        if (learnerResult.getUser() == null || learnerResult.getProject() == null) {
+        if (user == null || learnerResult.getProject() == null) {
             throw new ValidationException("To create a LearnResult it must have a User and Project.");
         }
+        projectDAO.getByID(user.getId(), learnerResult.getProjectId()); // access check
 
         if (learnerResult.getTestNo() != null) {
             throw new ValidationException("To create a LearnResult it must not have a test no.");
         }
 
         // get the current highest test no in the project and add 1 for the next id
-        Long maxTestNo = learnerResultRepository.findHighestTestNo(learnerResult.getUserId(),
-                                                                   learnerResult.getProjectId());
+        Long maxTestNo = learnerResultRepository.findHighestTestNo(learnerResult.getProjectId());
         if (maxTestNo == null) {
             maxTestNo = -1L;
         }
 
         long nextTestNo = maxTestNo + 1;
 
-        learnerResult.setId(0L);
+        learnerResult.setUUID(null);
         learnerResult.setTestNo(nextTestNo);
 
         try {
             LearnerResult learnerResultSaved = learnerResultRepository.save(learnerResult);
-            learnerResult.setId(learnerResultSaved.getId());
+            learnerResult.setUUID(learnerResultSaved.getUUID());
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("LearnerResult creation failed:", e);
             throw new ValidationException("LearnerResult could not be created.", e);
@@ -103,9 +108,10 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public List<LearnerResult> getAll(Long userId, Long projectId, boolean includeSteps) throws NotFoundException {
-        List<LearnerResult> results = learnerResultRepository.findByUser_IdAndProject_IdOrderByTestNoAsc(userId,
-                                                                                                         projectId);
+    public List<LearnerResult> getAll(User user, Long projectId, boolean includeSteps) throws NotFoundException {
+        projectDAO.getByID(user.getId(), projectId); // access check
+
+        List<LearnerResult> results = learnerResultRepository.findByProject_IdOrderByTestNoAsc(projectId);
         if (results.isEmpty()) {
             throw new NotFoundException("The project with the id " + projectId + " was not found.");
         }
@@ -117,14 +123,14 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public List<LearnerResult> getAll(Long userId, Long projectId, Long[] testNos, boolean includeSteps)
+    public List<LearnerResult> getAll(User user, Long projectId, Long[] testNos, boolean includeSteps)
             throws NotFoundException {
-        List<LearnerResult> results = learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(userId,
-                                                                                                    projectId,
-                                                                                                    testNos);
+        projectDAO.getByID(user.getId(), projectId); // access check
+
+        List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
         if (results.size() != testNos.length) {
             throw new NotFoundException("Not all Results with the test nos. " + Arrays.toString(testNos)
-                                                + " in the Project " + projectId + " for the user " + userId
+                                                + " in the Project " + projectId + " for the user " + user
                                                 + " were found.");
         }
 
@@ -135,14 +141,14 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public LearnerResult get(Long userId, Long projectId, Long testNo, boolean includeSteps) throws NotFoundException {
+    public LearnerResult get(User user, Long projectId, Long testNo, boolean includeSteps) throws NotFoundException {
+        projectDAO.getByID(user.getId(), projectId); // access check
+
         Long[] testNos = new Long[] {testNo};
-        List<LearnerResult> results = learnerResultRepository.findByUser_IdAndProject_IdAndTestNoIn(userId,
-                                                                                                    projectId,
-                                                                                                    testNos);
+        List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
         if (results.size() != 1) {
             throw new NotFoundException("Could not find the Result with the test nos. " + testNo
-                                                + " in the Project " + projectId + " for the User " + userId
+                                                + " in the Project " + projectId + " for the User " + user
                                                 + " were found.");
         }
 
@@ -153,13 +159,10 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     @Override
     @Transactional
-    public LearnerResultStep createStep(LearnerResult result)
-            throws ValidationException {
+    public LearnerResultStep createStep(LearnerResult result) throws ValidationException {
         final LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
 
         final LearnerResultStep step = new LearnerResultStep();
-        step.setUser(result.getUser());
-        step.setProject(result.getProject());
         step.setResult(result);
         result.getSteps().add(step);
         step.setStepNo(latestStep.getStepNo() + 1);
@@ -182,10 +185,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Transactional
     public LearnerResultStep createStep(LearnerResult result, AbstractLearnerConfiguration configuration)
             throws ValidationException {
-
         final LearnerResultStep step = new LearnerResultStep();
-        step.setUser(result.getUser());
-        step.setProject(result.getProject());
         step.setResult(result);
         step.setStepNo((long) result.getSteps().size() + 1);
 
@@ -197,7 +197,8 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     @Override
     @Transactional
-    public void saveStep(LearnerResult result, LearnerResultStep step) throws ValidationException {
+    public void saveStep(LearnerResult result, LearnerResultStep step)
+            throws NotFoundException, ValidationException {
         learnerResultStepRepository.save(step);
         updateSummary(result, step);
         learnerResultRepository.save(result);
@@ -205,12 +206,12 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
     @Override
     @Transactional(rollbackFor = NotFoundException.class)
-    public void delete(Learner learner, User user, Long projectId, Long... testNo)
+    public void delete(Learner learner, Long projectId, Long... testNo)
             throws NotFoundException, ValidationException {
-        checkIfResultsCanBeDeleted(learner, user, projectId, testNo); // check before the session is opened
+        checkIfResultsCanBeDeleted(learner, projectId, testNo);
 
-        Long amountOfDeletedResults = learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user,
-                                                                                                   projectId,
+        Long amountOfDeletedResults = learnerResultRepository.deleteByProject_IdAndTestNoIn(
+                projectId,
                                                                                                    testNo);
         if (amountOfDeletedResults != testNo.length) {
             throw new NotFoundException("Could not delete all results!");
@@ -233,10 +234,10 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         }
     }
 
-    private void checkIfResultsCanBeDeleted(Learner learner, User user, Long projectId, Long... testNo)
+    private void checkIfResultsCanBeDeleted(Learner learner, Long projectId, Long... testNo)
             throws ValidationException {
         // don't delete the learnResult of the active learning process
-        LearnerStatus status = learner.getStatus(user);
+        LearnerStatus status = learner.getStatus(projectId);
 
         // user has no active thread -> no conflict possible
         if (!status.isActive()) {

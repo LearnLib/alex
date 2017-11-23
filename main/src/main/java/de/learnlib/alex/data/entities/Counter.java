@@ -19,7 +19,7 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.learnlib.alex.auth.entities.User;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Entity;
@@ -32,13 +32,14 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * A simple counter class.
  */
 @Entity
 @Table(
-    uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "project_id", "name"})
+    uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "name"})
 )
 @JsonPropertyOrder(alphabetic = true)
 public class Counter implements Serializable {
@@ -47,14 +48,10 @@ public class Counter implements Serializable {
 
     /** The ID of the counter in the DB. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @JsonIgnore
-    private Long counterId;
-
-    /** The user the counter belongs to. */
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JsonIgnore
-    private User user;
+    private UUID uuid;
 
     /** The project the counter belongs to. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -80,41 +77,13 @@ public class Counter implements Serializable {
     /**
      * @return The internal ID used by the database.
      */
-    public Long getCounterId() {
-        return counterId;
+    public UUID getUUID() {
+        return uuid;
     }
 
-    /** @param counterId The counter id. */
-    public void setCounterId(Long counterId) {
-        this.counterId = counterId;
-    }
-
-    /**
-     * @return The current user that owns the counter.
-     */
-    @JsonIgnore
-    public User getUser() {
-        return user;
-    }
-
-    /**
-     * @param user The new user to own the counter.
-     */
-    @JsonIgnore
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    /**
-     * @return The ID of the user the counter belongs to.
-     */
-    @JsonProperty("user")
-    public Long getUserId() {
-        if (user == null) {
-            return 0L;
-        }
-
-        return user.getId();
+    /** @param uuid The counter id. */
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
     }
 
     /**
@@ -202,9 +171,8 @@ public class Counter implements Serializable {
     @Override
     public Counter clone() {
         Counter counter = new Counter();
-        counter.setCounterId(counterId);
+        counter.setUUID(uuid);
         counter.setName(name);
-        counter.setUser(user);
         counter.setProject(project);
         counter.setValue(value);
         return counter;

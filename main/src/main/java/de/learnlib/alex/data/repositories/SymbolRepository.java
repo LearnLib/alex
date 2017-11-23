@@ -22,18 +22,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Repository to persist Symbols.
  */
 @Repository
-public interface SymbolRepository extends JpaRepository<Symbol, Long> {
+public interface SymbolRepository extends JpaRepository<Symbol, UUID> {
 
     /**
      * Find a symbol with a given id.
      *
-     * @param userId
-     *         The ID the User the Symbol belong to.
      * @param projectId
      *         The ID the Project the Symbol belong to.
      * @param id
@@ -42,16 +41,13 @@ public interface SymbolRepository extends JpaRepository<Symbol, Long> {
      */
     @Query("SELECT s "
             + "FROM  Symbol s "
-            + "WHERE s.user.id = ?1"
-            + "      AND s.project.id = ?2"
-            + "      AND s.id = ?3")
-    Symbol findOne(Long userId, Long projectId, Long id);
+            + "WHERE s.project.id = ?1"
+            + "      AND s.id = ?2")
+    Symbol findOne(Long projectId, Long id);
 
     /**
      * Find all Symbol with given IDs.
      *
-     * @param userId
-     *         The ID the User the Symbols belong to.
      * @param projectId
      *         The ID the Project the Symbol belong to.
      * @param ids
@@ -60,17 +56,14 @@ public interface SymbolRepository extends JpaRepository<Symbol, Long> {
      */
     @Query("SELECT s "
             + "FROM  Symbol s "
-            + "WHERE s.user.id = ?1"
-            + "      AND s.project.id = ?2"
-            + "      AND s.id IN ?3 "
+            + "WHERE s.project.id = ?1"
+            + "      AND s.id IN ?2 "
             + "ORDER BY s.id ASC")
-    List<Symbol> findByIds(Long userId, Long projectId, List<Long> ids);
+    List<Symbol> findByIds(Long projectId, List<Long> ids);
 
     /**
      * Get symbols of a user and project with a specific name.
      *
-     * @param userId
-     *      The ID of the user the symbol belong to.
      * @param projectId
      *      The ID of the project the symbol belongs to.
      * @param name
@@ -78,16 +71,13 @@ public interface SymbolRepository extends JpaRepository<Symbol, Long> {
      * @return The symbols.
      */
     @Query("SELECT s FROM Symbol s "
-            + "WHERE s.user.id = ?1"
-            + "      AND s.project.id = ?2"
-            + "      AND s.name = ?3")
-    Symbol getSymbolByName(Long userId, Long projectId, String name);
+            + "WHERE s.project.id = ?1"
+            + "      AND s.name = ?2")
+    Symbol getSymbolByName(Long projectId, String name);
 
     /**
      * Find all symbols.
      *
-     * @param userId
-     *         The ID the User the Symbols belong to.
      * @param projectId
      *         The ID the Project the Symbols belong to.
      * @param hidden
@@ -96,16 +86,13 @@ public interface SymbolRepository extends JpaRepository<Symbol, Long> {
      */
     @Query("SELECT s "
             + "FROM  Symbol s "
-            + "WHERE s.user.id = ?1"
-            + "      AND s.project.id = ?2"
-            + "      AND s.hidden IN ?3")
-    List<Symbol> findAll(Long userId, Long projectId, Boolean[] hidden);
+            + "WHERE s.project.id = ?1"
+            + "      AND s.hidden IN ?2")
+    List<Symbol> findAll(Long projectId, Boolean[] hidden);
 
     /**
      * Find all symbols in a symbol group.
      *
-     * @param userId
-     *         The ID the User the Symbols belong to.
      * @param projectId
      *         The ID the Project the Symbols belong to.
      * @param groupId
@@ -116,9 +103,9 @@ public interface SymbolRepository extends JpaRepository<Symbol, Long> {
      */
     @Query("SELECT s "
             + "FROM  Symbol s "
-            + "WHERE s.user.id = ?1"
-            + "      AND s.project.id = ?2"
-            + "      AND s.group.id = ?3"
-            + "      AND s.hidden IN ?4")
-    List<Symbol> findAll(Long userId, Long projectId, Long groupId, Boolean[] hidden);
+            + "WHERE s.project.id = ?1"
+            + "      AND s.group.id = ?2"
+            + "      AND s.hidden IN ?3")
+    List<Symbol> findAll(Long projectId, Long groupId, Boolean[] hidden);
+
 }

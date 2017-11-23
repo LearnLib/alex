@@ -17,8 +17,6 @@
 package de.learnlib.alex.data.entities.actions.StoreSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -26,7 +24,6 @@ import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
@@ -41,22 +38,14 @@ import static org.mockito.Mockito.mock;
 @RunWith(MockitoJUnitRunner.class)
 public class AssertCounterActionTest {
 
-    private static final String TEST_NAME = "counter";
+    private static final String  TEST_NAME = "counter";
     private static final Integer TEST_VALUE = 42;
-
-    @Mock
-    private User user;
-
-    @Mock
-    private Project project;
 
     private AssertCounterAction assertAction;
 
     @Before
     public void setUp() {
         assertAction = new AssertCounterAction();
-        assertAction.setUser(user);
-        assertAction.setProject(project);
         assertAction.setName(TEST_NAME);
         assertAction.setValue(TEST_VALUE);
         assertAction.setOperator(AssertCounterAction.Operator.EQUAL);

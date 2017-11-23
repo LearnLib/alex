@@ -55,12 +55,6 @@ export class AlphabetSymbol {
         this.project = obj.project;
 
         /**
-         * The id of the user the symbol belongs to.
-         * @type {number}
-         */
-        this.user = obj.user;
-
-        /**
          * The flag if the symbol has been deleted.
          * @type {boolean}
          */

@@ -16,12 +16,12 @@
 
 package de.learnlib.alex.data.dao;
 
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.CounterRepository;
-import de.learnlib.alex.data.repositories.ProjectRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -42,31 +42,28 @@ public class CounterDAOImpl implements CounterDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The ProjectRepository to use. Will be injected. */
-    private ProjectRepository projectRepository;
+    /** The ProjectDAO to use. Will be injected. */
+    private ProjectDAO projectDAO;
 
     /** The CounterRepository to use. Will be injected. */
     private CounterRepository counterRepository;
 
     /**
      * Creates a new CounterDAO.
-     *
-     * @param projectRepository
-     *         The ProjectRepository to use.
+     * @param projectDAO
      * @param counterRepository
-     *         The CounterRepository to use.
      */
     @Inject
-    public CounterDAOImpl(ProjectRepository projectRepository, CounterRepository counterRepository) {
-        this.projectRepository = projectRepository;
+    public CounterDAOImpl(ProjectDAO projectDAO, CounterRepository counterRepository) {
+        this.projectDAO = projectDAO;
         this.counterRepository = counterRepository;
     }
 
     @Override
     @Transactional
-    public void create(Counter counter) throws ValidationException {
+    public void create(User user, Counter counter) throws NotFoundException, ValidationException {
         try {
-            Project project = projectRepository.findOne(counter.getProjectId());
+            Project project = projectDAO.getByID(user.getId(), counter.getProjectId());
             counter.setProject(project);
             counterRepository.save(counter);
         } catch (DataIntegrityViolationException e) {
@@ -81,28 +78,22 @@ public class CounterDAOImpl implements CounterDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Counter> getAll(Long userId, Long projectId) throws NotFoundException {
-        Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
-        if (project == null) {
-            throw new NotFoundException("The project with the id " + projectId + " was not found.");
-        }
+    public List<Counter> getAll(User user, Long projectId) throws NotFoundException {
+        Project project = projectDAO.getByID(user.getId(), projectId);
 
-        return counterRepository.findByUser_IdAndProject(userId, project);
+        return counterRepository.findAllByProject(project);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Counter get(Long userId, Long projectId, String name) throws NotFoundException {
-        return doGet(userId, projectId, name);
+    public Counter get(User user, Long projectId, String name) throws NotFoundException {
+        return doGet(user, projectId, name);
     }
 
-    private Counter doGet(Long userId, Long projectId, String name) throws NotFoundException {
-        Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
-        if (project == null) {
-            throw new NotFoundException("The project with the id " + projectId + " was not found.");
-        }
+    private Counter doGet(User user, Long projectId, String name) throws NotFoundException {
+        Project project = projectDAO.getByID(user.getId(), projectId);
 
-        Counter result = counterRepository.findByUser_IdAndProjectAndName(userId, project, name);
+        Counter result = counterRepository.findByProjectAndName(project, name);
         if (result == null) {
             throw new NotFoundException("Could not find the counter with the name '" + name
                     + "' in the project " + projectId + "!");
@@ -113,9 +104,9 @@ public class CounterDAOImpl implements CounterDAO {
 
     @Override
     @Transactional
-    public void update(Counter counter) throws NotFoundException, ValidationException {
+    public void update(User user, Counter counter) throws NotFoundException, ValidationException {
         try {
-            doGet(counter.getUserId(), counter.getProjectId(), counter.getName()); // check if the counter exists
+            doGet(user, counter.getProjectId(), counter.getName()); // check if the counter exists
             counterRepository.save(counter);
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Counter update failed:", e);
@@ -130,16 +121,17 @@ public class CounterDAOImpl implements CounterDAO {
     }
 
     @Override
-    public void update(List<Counter> counters) {
+    public void update(User user, List<Counter> counters) {
+        // TODO: Do some checks before updating a list of counters.
         counterRepository.save(counters);
     }
 
     @Override
     @Transactional
-    public void delete(Long userId, Long projectId, String... names) throws NotFoundException {
-        Project project = projectRepository.findOneByUser_IdAndId(userId, projectId);
+    public void delete(User user, Long projectId, String... names) throws NotFoundException {
+        Project project = projectDAO.getByID(user.getId(), projectId);
 
-        List<Counter> counters = counterRepository.findAllByUser_IdAndProjectAndNameIn(userId, project, names);
+        List<Counter> counters = counterRepository.findAllByProjectAndNameIn(project, names);
 
         if (names.length == counters.size()) { // all counters found -> delete them & success
             counterRepository.delete(counters);

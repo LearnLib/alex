@@ -77,7 +77,7 @@ public class CounterStoreConnector implements Connector {
         // get all counters from the db
         Map<String, Counter> counters = new HashMap<>();
         try {
-            counterDAO.getAll(user.getId(), project.getId()).forEach(c -> counters.put(c.getName(), c));
+            counterDAO.getAll(user, project.getId()).forEach(c -> counters.put(c.getName(), c));
         } catch (NotFoundException e) {
         }
 
@@ -88,10 +88,10 @@ public class CounterStoreConnector implements Connector {
                 boolean counterExists = counters.containsKey(name);
                 if (counterExists) {
                     counters.get(name).setValue(Math.max(counters.get(name).getValue(), countersMap.get(name)));
-                    counterDAO.update(counters.get(name));
+                    counterDAO.update(user, counters.get(name));
                 } else {
-                    Counter counter = createCounter(user.getId(), project.getId(), name, countersMap.get(name));
-                    counterDAO.create(counter);
+                    Counter counter = createCounter(project.getId(), name, countersMap.get(name));
+                    counterDAO.create(user, counter);
                 }
             } catch (NotFoundException e) {
                 e.printStackTrace();
@@ -99,9 +99,8 @@ public class CounterStoreConnector implements Connector {
         }
     }
 
-    private Counter createCounter(Long userId, Long projectId, String name, Integer value) {
+    private Counter createCounter(Long projectId, String name, Integer value) {
         Counter counter = new Counter();
-        counter.setUser(new User(userId));
         counter.setProject(new Project(projectId));
         counter.setName(name);
         counter.setValue(value);
@@ -112,15 +111,14 @@ public class CounterStoreConnector implements Connector {
      * Set the value of an existing counter.
      * Creates a new counter implicitly with the specified name and value if it does not exist yet.
      *
-     * @param userId    The id of the user.
      * @param projectId The id of the project.
      * @param name      The name of the counter.
      * @param value     The value of the counter.
      */
-    public void set(Long userId, Long projectId, String name, Integer value) {
+    public void set(Long projectId, String name, Integer value) {
         countersMap.put(name, value);
 
-        LOGGER.debug("Set the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId, userId, value);
+        LOGGER.debug("Set the counter '{}' in the project <{}> to '{}'.", name, projectId, value);
     }
 
     /**
@@ -128,30 +126,28 @@ public class CounterStoreConnector implements Connector {
      * Creates a new counter implicitly with the specified name if it does not exist yet.
      * The value of the new counter will be 1.
      *
-     * @param userId    The id of the user.
      * @param projectId The id of the project.
      * @param name      The name of the counter to increment.
      */
-    public void increment(Long userId, Long projectId, String name) {
-        incrementBy(userId, projectId, name, 1);
+    public void increment(Long projectId, String name) {
+        incrementBy(projectId, name, 1);
     }
 
     /**
      * Increment a counter by a positive or negative value.
      *
-     * @param userId      The id of the user.
      * @param projectId   The id of the project.
      * @param name        The name of the counter.
      * @param incrementBy The value to increment or decrement the counter by.
      */
-    public void incrementBy(Long userId, Long projectId, String name, int incrementBy) {
+    public void incrementBy(Long projectId, String name, int incrementBy) {
         if (countersMap.containsKey(name)) {
             countersMap.put(name, countersMap.get(name) + incrementBy);
         } else {
             countersMap.put(name, 1);
         }
 
-        LOGGER.debug("Incremented the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId, userId,
+        LOGGER.debug("Incremented the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId,
                      countersMap.get(name));
     }
 

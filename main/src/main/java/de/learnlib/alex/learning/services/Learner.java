@@ -98,7 +98,7 @@ public class Learner {
     private ConnectorContextHandlerFactory contextHandlerFactory;
 
     /** The last thread of an user, if one exists. */
-    private final Map<User, AbstractLearnerThread> userThreads;
+    private final Map<Long, AbstractLearnerThread> userThreads;
 
     /** The executor service will take care of creating and scheduling the actual OS threads. */
     private ExecutorService executorService;
@@ -150,7 +150,7 @@ public class Learner {
      */
     public void start(User user, Project project, LearnerStartConfiguration configuration)
             throws IllegalArgumentException, IllegalStateException, NotFoundException {
-        if (isActive(user)) {
+        if (isActive(project.getId())) {
             throw new IllegalStateException("You can not start more than one experiment at the same time.");
         }
 
@@ -160,8 +160,8 @@ public class Learner {
                 configuration.getBrowser());
         contextHandler.setResetSymbol(result.getResetSymbol());
 
-        final AbstractLearnerThread learnThread = new StartingLearnerThread(learnerResultDAO, contextHandler, result, configuration);
-        startThread(user, learnThread);
+        final AbstractLearnerThread learnThread = new StartingLearnerThread(user, learnerResultDAO, contextHandler, result, configuration);
+        startThread(project.getId(), learnThread);
     }
 
     /**
@@ -178,7 +178,7 @@ public class Learner {
      */
     public void resume(User user, Project project, LearnerResult result, LearnerResumeConfiguration configuration)
             throws IllegalArgumentException, IllegalStateException, NotFoundException {
-        if (isActive(user)) {
+        if (isActive(project.getId())) {
             throw new IllegalStateException("You have to wait until the running experiment is finished.");
         }
 
@@ -197,8 +197,8 @@ public class Learner {
         final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, result.getBrowser());
         contextHandler.setResetSymbol(result.getResetSymbol());
 
-        final AbstractLearnerThread learnThread = new ResumingLearnerThread(learnerResultDAO, contextHandler, result, configuration);
-        startThread(user, learnThread);
+        final AbstractLearnerThread learnThread = new ResumingLearnerThread(user, learnerResultDAO, contextHandler, result, configuration);
+        startThread(project.getId(), learnThread);
     }
 
     private LearnerResult createLearnerResult(User user, Project project, LearnerStartConfiguration configuration)
@@ -215,7 +215,6 @@ public class Learner {
         }
 
         final LearnerResult learnerResult = new LearnerResult();
-        learnerResult.setUser(user);
         learnerResult.setProject(project);
 
         try {
@@ -241,9 +240,9 @@ public class Learner {
      * @param user        The user that starts the thread.
      * @param learnThread The thread to start.
      */
-    private void startThread(User user, AbstractLearnerThread learnThread) {
+    private void startThread(Long projectId, AbstractLearnerThread learnThread) {
         executorService.submit(learnThread);
-        userThreads.put(user, learnThread);
+        userThreads.put(projectId, learnThread);
     }
 
     /**
@@ -259,7 +258,7 @@ public class Learner {
             throws IllegalArgumentException {
 
         SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
-        LearnerResult lastResult = getResult(user);
+        LearnerResult lastResult = getResult(configuration.getProjectId());
 
         for (List<SampleEQOracleProxy.InputOutputPair> counterexample : oracle.getCounterExamples()) {
             List<Symbol> symbolsFromCounterexample = new ArrayList<>();
@@ -282,11 +281,11 @@ public class Learner {
             }
 
             // finally check if the given sample matches the behavior of the SUL
-            List<String> results = readOutputs(lastResult.getUser(),
-                    lastResult.getProject(),
-                    lastResult.getResetSymbol(),
-                    symbolsFromCounterexample,
-                    lastResult.getBrowser());
+            List<String> results = readOutputs(user,
+                                        lastResult.getProject(),
+                                        lastResult.getResetSymbol(),
+                                        symbolsFromCounterexample,
+                                        lastResult.getBrowser());
 
             if (!results.equals(outputs)) {
                 throw new IllegalArgumentException("At least one of the given samples for counterexamples"
@@ -314,8 +313,8 @@ public class Learner {
      *
      * @return true if the learning process is active, false otherwise.
      */
-    public boolean isActive(User user) {
-        AbstractLearnerThread learnerThread = userThreads.get(user);
+    public boolean isActive(Long projectId) {
+        AbstractLearnerThread learnerThread = userThreads.get(projectId);
         return learnerThread != null && !learnerThread.isFinished();
     }
 
@@ -326,18 +325,18 @@ public class Learner {
      *
      * @return A snapshot of the Learner status.
      */
-    public LearnerStatus getStatus(User user) {
+    public LearnerStatus getStatus(Long projectId) {
         LearnerStatus status;
 
-        boolean active = isActive(user);
+        boolean active = isActive(projectId);
         if (!active) {
             status = new LearnerStatus(); // not active
         } else {
-            AbstractLearnerThread thread = userThreads.get(user);
+            AbstractLearnerThread thread = userThreads.get(projectId);
             LearnerPhase phase = thread != null ? thread.getLearnerPhase() : null;
             List<DefaultQueryProxy> queries = thread != null ? thread.getCurrentQueries() : null;
 
-            status = new LearnerStatus(getResult(user), phase, queries); // active
+            status = new LearnerStatus(getResult(projectId), phase, queries); // active
         }
 
         return status;
@@ -351,8 +350,8 @@ public class Learner {
      *
      * @return The current result of the AbstractLearnerThread.
      */
-    public LearnerResult getResult(User user) {
-        final AbstractLearnerThread learnerThread = userThreads.get(user);
+    public LearnerResult getResult(Long projectId) {
+        final AbstractLearnerThread learnerThread = userThreads.get(projectId);
         return learnerThread != null ? learnerThread.getResult() : null;
     }
 

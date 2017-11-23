@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.learning.services;
 
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
@@ -28,14 +29,15 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
     /**
      * Constructor.
      *
+     * @param user
      * @param learnerResultDAO {@link AbstractLearnerThread#learnerResultDAO}.
      * @param context          The context to use.
      * @param result           {@link AbstractLearnerThread#result}.
      * @param configuration    The configuration to use.
      */
-    public StartingLearnerThread(LearnerResultDAO learnerResultDAO, ConnectorContextHandler context,
+    public StartingLearnerThread(User user, LearnerResultDAO learnerResultDAO, ConnectorContextHandler context,
                                  LearnerResult result, LearnerStartConfiguration configuration) {
-        super(learnerResultDAO, context, result, configuration);
+        super(user, learnerResultDAO, context, result, configuration);
     }
 
     @Override
@@ -70,7 +72,7 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
 
         // persist the learner result for the first time.
         // also persist the first step.
-        learnerResultDAO.create(result);
+        learnerResultDAO.create(user, result);
         LearnerResultStep currentStep = createStep(start, end, 0, null);
 
         doLearn(currentStep);

@@ -38,6 +38,8 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.never;
@@ -180,7 +182,7 @@ public class ProjectResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404WhenProjectNotFound() throws NotFoundException {
-        given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID)).willThrow(NotFoundException.class);
+        given(projectDAO.getByID(eq(USER_TEST_ID), eq(PROJECT_TEST_ID), any())).willThrow(NotFoundException.class);
 
         Response response = target("/projects/" + PROJECT_TEST_ID).request().header("Authorization", adminToken).get();
 
@@ -246,12 +248,12 @@ public class ProjectResourceTest extends JerseyTest {
                                 .delete();
         assertEquals(Status.NO_CONTENT.getStatusCode(), response.getStatus());
 
-        verify(projectDAO).delete(USER_TEST_ID, project.getId());
+        verify(projectDAO).delete(admin, project.getId());
     }
 
     @Test
     public void shouldReturn404OnDeleteWhenProjectNotFound() throws NotFoundException {
-        willThrow(NotFoundException.class).given(projectDAO).delete(USER_TEST_ID, PROJECT_TEST_ID);
+        willThrow(NotFoundException.class).given(projectDAO).delete(admin, PROJECT_TEST_ID);
         Response response = target("/projects/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
                                 .delete();
 

@@ -31,7 +31,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import javax.inject.Inject;
 
 import static de.learnlib.alex.integrationtests.LearnerResultRepositoryIT.createLearnerResult;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 public class LearnerResultStepRepositoryIT extends AbstractRepositoryIT {
 
@@ -68,7 +68,7 @@ public class LearnerResultStepRepositoryIT extends AbstractRepositoryIT {
 
         learnerResultStepRepository.save(step);
 
-        assertTrue(result.getId() > 0L);
+        assertNotNull(result.getUUID());
     }
 
     @Test(expected = DataIntegrityViolationException.class)
@@ -172,7 +172,7 @@ public class LearnerResultStepRepositoryIT extends AbstractRepositoryIT {
 
         learnerResultStepRepository.save(step2);
 
-        assertTrue(result2.getId() > 0L);
+        assertNotNull(result2.getUUID());
     }
 
     /*
@@ -189,7 +189,7 @@ public class LearnerResultStepRepositoryIT extends AbstractRepositoryIT {
         LearnerResult result2 = createLearnerResult(user, project, 1L);
         learnerResultRepository.save(result2);
 
-        List<LearnerResult> results = learnerResultRepository.findByUser_IdAndProject_IdOrderByTestNoAsc(user, project);
+        List<LearnerResult> results = learnerResultRepository.findByProject_IdOrderByTestNoAsc(user, project);
 
         assertThat(results.size(), is(equalTo(2)));
         assertThat(results, hasItem(equalTo(result1)));
@@ -212,7 +212,7 @@ public class LearnerResultStepRepositoryIT extends AbstractRepositoryIT {
         learnerResultRepository.save(result3);
 
         List<LearnerResult> results = learnerResultRepository
-                .findByUser_IdAndProject_IdAndTestNoIn(user, project, 0L, 2L);
+                .findByProject_IdAndTestNoIn(user, project, 0L, 2L);
 
         assertThat(results.size(), is(equalTo(2)));
         assertThat(results, hasItem(equalTo(result1)));
@@ -249,7 +249,7 @@ public class LearnerResultStepRepositoryIT extends AbstractRepositoryIT {
         LearnerResult result = createLearnerResult(user, project, 0L);
         learnerResultRepository.save(result);
 
-        Long deleteReturnValue = learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user, project, 0L);
+        Long deleteReturnValue = learnerResultRepository.deleteByProject_IdAndTestNoIn(user, project, 0L);
 
         assertThat(deleteReturnValue, is(equalTo(1L)));
         assertThat(learnerResultRepository.count(), is(equalTo(0L)));
@@ -263,7 +263,7 @@ public class LearnerResultStepRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
 
-        Long deleteReturnValue = learnerResultRepository.deleteByUserAndProject_IdAndTestNoIn(user, project, -1L);
+        Long deleteReturnValue = learnerResultRepository.deleteByProject_IdAndTestNoIn(user, project, -1L);
 
         assertThat(deleteReturnValue, is(equalTo(0L)));
     }
@@ -272,8 +272,6 @@ public class LearnerResultStepRepositoryIT extends AbstractRepositoryIT {
 
     private LearnerResultStep createLearnerResultStep(User user, Project project, LearnerResult result, Long stepNo) {
         LearnerResultStep step = new LearnerResultStep();
-        step.setUser(user);
-        step.setProject(project);
         step.setResult(result);
         step.setStepNo(stepNo);
         return step;

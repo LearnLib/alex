@@ -102,7 +102,7 @@ public class SetCounterAction extends SymbolAction {
             return getFailedOutput();
         }
 
-        counterStoreConnector.set(getUser().getId(), project.getId(), name, val);
+        counterStoreConnector.set(symbol.getProjectId(), name, val);
 
         LOGGER.info(LEARNER_MARKER, "Set the counter '{}' to the value '{}' (ignoreFailure: {}, negated: {}).",
                 name, value, ignoreFailure, negated);

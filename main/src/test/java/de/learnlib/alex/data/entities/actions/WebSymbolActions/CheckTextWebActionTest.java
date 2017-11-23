@@ -17,14 +17,12 @@
 package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
@@ -41,19 +39,14 @@ import static org.mockito.Mockito.mock;
 @RunWith(MockitoJUnitRunner.class)
 public class CheckTextWebActionTest {
 
-    @Mock
-    private User user;
-
-    @Mock
-    private Project project;
-
     private CheckTextWebAction checkText;
 
     @Before
     public void setUp() {
+        Symbol symbol = new Symbol();
+
         checkText = new CheckTextWebAction();
-        checkText.setUser(user);
-        checkText.setProject(project);
+        checkText.setSymbol(symbol);
         checkText.setValue("Foobar");
         checkText.setRegexp(false);
     }

@@ -21,7 +21,6 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.data.repositories.SymbolRepository;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,19 +56,13 @@ public class ProjectDAOImplTest {
     private ProjectRepository projectRepository;
 
     @Mock
-    private SymbolRepository symbolRepository;
-
-    @Mock
-    private SymbolDAOImpl symbolDAO;
-
-    @Mock
     private FileDAOImpl fileDAO;
 
     private ProjectDAO projectDAO;
 
     @Before
     public void setUp() {
-        projectDAO = new ProjectDAOImpl(projectRepository, symbolRepository, symbolDAO, fileDAO);
+        projectDAO = new ProjectDAOImpl(projectRepository);
     }
 
     @Test
@@ -261,18 +254,23 @@ public class ProjectDAOImplTest {
 
     @Test
     public void shouldDeleteAProject() throws NotFoundException {
+        User user = new User();
+        user.setId(USER_ID);
+        //
         Project project = new Project();
         //
         given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
 
-        projectDAO.delete(USER_ID, PROJECT_ID);
+        projectDAO.delete(user, PROJECT_ID);
 
         verify(projectRepository).delete(project);
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldFailToDeleteAProjectThatDoesNotExist() throws NotFoundException {
-        projectDAO.delete(USER_ID, -1L);
+        User user = new User();
+        //
+        projectDAO.delete(user, -1L);
     }
 
 

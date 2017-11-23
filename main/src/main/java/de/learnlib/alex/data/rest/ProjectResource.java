@@ -253,7 +253,7 @@ public class ProjectResource {
             }
 
             project.setUser(user);
-            projectDAO.delete(user.getId(), projectId);
+            projectDAO.delete(user, projectId);
             LOGGER.traceExit("Project {} deleted", projectId);
             return Response.status(Status.NO_CONTENT).build();
         } catch (UnauthorizedException e) {

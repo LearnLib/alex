@@ -107,19 +107,12 @@ public class SymbolResource {
         try {
             checkSymbolBeforeCreation(symbol, projectId); // can throw an IllegalArgumentException
 
-            Project project = projectDAO.getByID(user.getId(), projectId);
-            if (project.getUser().equals(user)) {
-                symbol.setUser(user);
-                symbolDAO.create(symbol);
+            symbolDAO.create(user, symbol);
 
-                String symbolURL = uri.getBaseUri() + "projects/" + symbol.getProjectId()
-                        + "/symbols/" + symbol.getId();
+            String symbolURL = uri.getBaseUri() + "projects/" + symbol.getProjectId() + "/symbols/" + symbol.getId();
 
-                LOGGER.traceExit(symbol);
-                return Response.status(Status.CREATED).header("Location", symbolURL).entity(symbol).build();
-            } else {
-                throw new UnauthorizedException("The user may not create a symbol in this project");
-            }
+            LOGGER.traceExit(symbol);
+            return Response.status(Status.CREATED).header("Location", symbolURL).entity(symbol).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.BAD_REQUEST, e);
@@ -180,19 +173,13 @@ public class SymbolResource {
         LOGGER.traceEntry("batchCreateSymbols({}, {}) for user {}.", projectId, symbols, user);
 
         try {
-            Project project = projectDAO.getByID(user.getId(), projectId);
-            if (project.getUser().equals(user)) {
-                for (Symbol symbol : symbols) {
-                    checkSymbolBeforeCreation(symbol, projectId); // can throw an IllegalArgumentException
-                    symbol.setUser(user);
-                }
-                symbolDAO.create(symbols);
-
-                LOGGER.traceExit(symbols);
-                return ResponseHelper.renderList(symbols, Status.CREATED);
-            } else {
-                throw new UnauthorizedException("The user may not create the symbols in this project");
+            for (Symbol symbol : symbols) {
+                checkSymbolBeforeCreation(symbol, projectId); // can throw an IllegalArgumentException
             }
+            symbolDAO.create(user, symbols);
+
+            LOGGER.traceExit(symbols);
+            return ResponseHelper.renderList(symbols, Status.CREATED);
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchCreateSymbols",
@@ -317,15 +304,13 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, symbol, user);
 
-        if (symbolDoesntMatchURLParameter(symbol, projectId, id, user)) {
+        if (symbolDoesntMatchURLParameter(symbol, projectId, id)) {
             LOGGER.traceExit();
             return Response.status(Status.BAD_REQUEST).build();
         }
-        symbol.setUser(user);
-        symbol.setProjectId(projectId);
 
         try {
-            symbolDAO.update(symbol);
+            symbolDAO.update(user, symbol);
 
             LOGGER.traceExit(symbol);
             return Response.ok(symbol).build();
@@ -333,28 +318,6 @@ public class SymbolResource {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.BAD_REQUEST, e);
         }
-    }
-
-    private boolean symbolDoesntMatchURLParameter(Symbol symbol, Long projectId, Long id, User user) {
-        if (symbol.getId() != null
-                && symbol.getId() != 0
-                && !Objects.equals(id, symbol.getId())) {
-            return true;
-        }
-
-        if (symbol.getProjectId() != null
-                && symbol.getProjectId() != 0L
-                && !Objects.equals(projectId, symbol.getProjectId())) {
-            return true;
-        }
-
-        if (symbol.getUserId() != null
-                && symbol.getUserId() != 0L
-                && !Objects.equals(user.getId(), symbol.getUserId())) {
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -383,14 +346,13 @@ public class SymbolResource {
         Set idsSet = new HashSet<>(ids);
         for (Symbol symbol : symbols) {
             if (!idsSet.contains(symbol.getId())
-                    || !Objects.equals(projectId, symbol.getProjectId())
-                    || !symbol.getUserId().equals(user.getId())) {
+                    || !Objects.equals(projectId, symbol.getProjectId())) {
                 LOGGER.traceExit();
                 return Response.status(Status.BAD_REQUEST).build();
             }
         }
         try {
-            symbolDAO.update(symbols);
+            symbolDAO.update(user, symbols);
 
             LOGGER.traceExit(symbols);
             return ResponseHelper.renderList(symbols, Status.OK);
@@ -420,10 +382,26 @@ public class SymbolResource {
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolId, groupId, user);
 
         Symbol symbol = symbolDAO.get(user, projectId, symbolId);
-        symbolDAO.move(symbol, groupId);
+        symbolDAO.move(user, symbol, groupId);
 
         LOGGER.traceExit(symbol);
         return Response.ok(symbol).build();
+    }
+
+    private boolean symbolDoesntMatchURLParameter(Symbol symbol, Long projectId, Long id) {
+        if (symbol.getId() != null
+                && symbol.getId() != 0
+                && !Objects.equals(id, symbol.getId())) {
+            return true;
+        }
+
+        if (symbol.getProjectId() != null
+                && symbol.getProjectId() != 0L
+                && !Objects.equals(projectId, symbol.getProjectId())) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -446,7 +424,7 @@ public class SymbolResource {
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolIds, groupId, user);
 
         List<Symbol> symbols = symbolDAO.getByIds(user, projectId, SymbolVisibilityLevel.ALL, symbolIds);
-        symbolDAO.move(symbols, groupId);
+        symbolDAO.move(user, symbols, groupId);
 
         LOGGER.traceExit(symbols);
         return Response.ok(symbols).build();
@@ -470,16 +448,11 @@ public class SymbolResource {
         LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, id, user);
 
         try {
-            Symbol s = symbolDAO.get(user, projectId, id);
-            if (s.getUser().equals(user)) {
-                symbolDAO.hide(user.getId(), projectId, Collections.singletonList(id));
-                Symbol symbol = symbolDAO.get(user, projectId, id);
+            symbolDAO.hide(user, projectId, Collections.singletonList(id));
+            Symbol symbol = symbolDAO.get(user, projectId, id);
 
-                LOGGER.traceExit(symbol);
-                return Response.ok(symbol).build();
-            } else {
-                throw new UnauthorizedException("The symbol does not belong to the user");
-            }
+            LOGGER.traceExit(symbol);
+            return Response.ok(symbol).build();
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.UNAUTHORIZED, e);
@@ -505,7 +478,7 @@ public class SymbolResource {
         LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, ids, user);
 
         List<Symbol> symbols = symbolDAO.getByIds(user, projectId, SymbolVisibilityLevel.ALL, ids);
-        symbolDAO.hide(user.getId(), projectId, ids);
+        symbolDAO.hide(user, projectId, ids);
 
         LOGGER.traceExit(symbols);
         return ResponseHelper.renderList(symbols, Status.OK);
@@ -528,7 +501,7 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("show({}, {}) for user {}.", projectId, id, user);
 
-        symbolDAO.show(user.getId(), projectId, Collections.singletonList(id));
+        symbolDAO.show(user, projectId, Collections.singletonList(id));
         Symbol symbol = symbolDAO.get(user, projectId, id);
 
         LOGGER.traceExit(symbol);
@@ -553,7 +526,7 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("show({}, {}) for user {}.", projectId, ids, user);
 
-        symbolDAO.show(user.getId(), projectId, ids);
+        symbolDAO.show(user, projectId, ids);
         List<Symbol> symbols = symbolDAO.getByIds(user, projectId, SymbolVisibilityLevel.ALL, ids);
 
         LOGGER.traceExit(symbols);

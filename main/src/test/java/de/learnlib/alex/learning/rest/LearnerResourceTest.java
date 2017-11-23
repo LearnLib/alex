@@ -122,18 +122,17 @@ public class LearnerResourceTest extends JerseyTest {
                 .willReturn(resetSymbol);
 
         LearnerResult result = new LearnerResult();
-        result.setUser(new User(USER_TEST_ID));
         result.setProject(new Project(PROJECT_TEST_ID));
         result.setTestNo(TEST_NO);
         Statistics learnerStatistics = new Statistics();
         learnerStatistics.setStartDate(ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00"));
         result.setStatistics(learnerStatistics);
 
-        given(learner.isActive(admin)).willReturn(true);
-        given(learner.getResult(admin)).willReturn(result);
+        given(learner.isActive(PROJECT_TEST_ID)).willReturn(true);
+        given(learner.getResult(PROJECT_TEST_ID)).willReturn(result);
 
         LearnerStatus learnerStatus = new LearnerStatus(result, Learner.LearnerPhase.LEARNING, new ArrayList<>());
-        given(learner.getStatus(admin)).willReturn(learnerStatus);
+        given(learner.getStatus(PROJECT_TEST_ID)).willReturn(learnerStatus);
     }
 
     @Test
@@ -245,7 +244,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfTheUserHasNoPreviousLearnResult() throws NotFoundException {
-        given(learner.getResult(admin)).willReturn(null);
+        given(learner.getResult(PROJECT_TEST_ID)).willReturn(null);
 
         Response response = target("/learner/resume/" + PROJECT_TEST_ID + "/"  + TEST_NO).request()
                                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));
@@ -319,10 +318,10 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldNotStopIfTheLearningIsNotActive() {
-        given(learner.isActive(admin)).willReturn(false);
-        given(learner.getResult(admin)).willReturn(null);
+        given(learner.isActive(PROJECT_TEST_ID)).willReturn(false);
+        given(learner.getResult(PROJECT_TEST_ID)).willReturn(null);
         LearnerStatus learnerStatus = new LearnerStatus();
-        given(learner.getStatus(admin)).willReturn(learnerStatus);
+        given(learner.getStatus(PROJECT_TEST_ID)).willReturn(learnerStatus);
 
         Response response = target("/learner/stop").request().header("Authorization", adminToken).get();
 
@@ -348,7 +347,7 @@ public class LearnerResourceTest extends JerseyTest {
     @Test
     public void shouldReturnTheRightActiveInformationIfNoLearningProcessIsActive() {
         LearnerStatus learnerStatus = new LearnerStatus();
-        given(learner.getStatus(admin)).willReturn(learnerStatus);
+        given(learner.getStatus(PROJECT_TEST_ID)).willReturn(learnerStatus);
 
         Response response = target("/learner/active").request().header("Authorization", adminToken).get();
 
@@ -360,7 +359,7 @@ public class LearnerResourceTest extends JerseyTest {
     @Test
     public void shouldReturnAnActiveStatus() {
         LearnerResult realResult = new LearnerResult();
-        given(learner.getResult(admin)).willReturn(realResult);
+        given(learner.getResult(PROJECT_TEST_ID)).willReturn(realResult);
 
         Response response = target("/learner/status").request().header("Authorization", adminToken).get();
 
@@ -369,7 +368,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfNoStatusIsAvailable() {
-        given(learner.getResult(admin)).willReturn(null);
+        given(learner.getResult(PROJECT_TEST_ID)).willReturn(null);
 
         Response response = target("/learner/status").request().header("Authorization", adminToken).get();
 
@@ -378,7 +377,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfStatusWasDeletedInTheDB() throws NotFoundException {
-        given(learnerResultDAO.get(USER_TEST_ID, PROJECT_TEST_ID, TEST_NO, false)).willThrow(NotFoundException.class);
+        given(learnerResultDAO.get(admin, PROJECT_TEST_ID, TEST_NO, false)).willThrow(NotFoundException.class);
 
         Response response = target("/learner/status").request().header("Authorization", adminToken).get();
 

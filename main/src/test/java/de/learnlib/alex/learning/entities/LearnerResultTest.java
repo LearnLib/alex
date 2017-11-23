@@ -81,7 +81,6 @@ public class LearnerResultTest {
         User user = new User(USER_ID);
 
         LearnerResult result = new LearnerResult();
-        result.setUser(user);
         result.setProject(project);
         result.setTestNo(ID);
         result.setAlgorithm(algorithm);
@@ -90,8 +89,6 @@ public class LearnerResultTest {
         result.setStatistics(statistics);
 
         LearnerResultStep firstStep = new LearnerResultStep();
-        firstStep.setUser(user);
-        firstStep.setProject(project);
         firstStep.setResult(result);
         firstStep.setStepNo(0L);
         firstStep.setEqOracle(EXAMPLE_EQ_ORACLE);

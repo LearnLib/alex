@@ -30,6 +30,7 @@ import org.springframework.transaction.TransactionSystemException;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -96,7 +97,6 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         project = projectRepository.save(project);
         //
         SymbolGroup group = new SymbolGroup();
-        group.setUser(user);
         project.getGroups().add(group);
         group.setId(1L);
         group.setName("Test Group");
@@ -113,7 +113,6 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         project = projectRepository.save(project);
         //
         SymbolGroup group = new SymbolGroup();
-        group.setUser(user);
         group.setProject(project);
         project.getGroups().add(group);
         group.setName("Test Group");
@@ -130,7 +129,6 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         project = projectRepository.save(project);
         //
         SymbolGroup group = new SymbolGroup();
-        group.setUser(user);
         group.setProject(project);
         project.getGroups().add(group);
         group.setId(1L);
@@ -221,7 +219,7 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group2 = createGroup(user, project, 2L, "Test Group 2");
         symbolGroupRepository.save(group2);
 
-        List<SymbolGroup> groups = symbolGroupRepository.findAllByUser_IdAndProject_Id(user.getId(), project.getId());
+        List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_Id(project.getId());
 
         assertThat(groups.size(), is(equalTo(3))); // our 2 + 1 default group
         assertThat(groups, hasItem(equalTo(group1)));
@@ -239,11 +237,10 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group 1");
         symbolGroupRepository.save(group);
 
-        SymbolGroup groupFromDB = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(user.getId(),
-                                                                                           project.getId(),
+        SymbolGroup groupFromDB = symbolGroupRepository.findOneByProject_IdAndId(
+                project.getId(),
                                                                                            group.getId());
 
-        assertThat(groupFromDB.getUser(), is(equalTo(user)));
         assertThat(groupFromDB.getProject(), is(equalTo(project)));
         assertThat(groupFromDB.getId(), is(equalTo(1L)));
     }
@@ -256,8 +253,8 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
 
-        SymbolGroup groupFromDB = symbolGroupRepository.findOneByUser_IdAndProject_IdAndId(user.getId(),
-                                                                                           project.getId(),
+        SymbolGroup groupFromDB = symbolGroupRepository.findOneByProject_IdAndId(
+                project.getId(),
                                                                                            -1L);
 
         assertNull(groupFromDB);
@@ -281,13 +278,12 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
     @Test(expected = EmptyResultDataAccessException.class)
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingGroup() {
-        symbolGroupRepository.delete(-1L);
+        symbolGroupRepository.delete(UUID.fromString("fd53b43d-69ba-4c07-955c-f45915d69f7e")); // random uuid
     }
 
 
     static SymbolGroup createGroup(User user, Project project, Long id, String name) {
         SymbolGroup group = new SymbolGroup();
-        group.setUser(user);
         group.setProject(project);
         project.getGroups().add(group);
         group.setId(id);

@@ -17,15 +17,13 @@
 package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -45,25 +43,20 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class SubmitActionTest {
 
-    @Mock
-    private User user;
-
-    @Mock
-    private Project project;
-
     private SubmitAction s;
 
     private WebElementLocator node;
 
     @Before
     public void setUp() {
+        Symbol symbol = new Symbol();
+
         node = new WebElementLocator();
         node.setSelector("#node");
         node.setType(WebElementLocator.Type.CSS);
 
         s = new SubmitAction();
-        s.setUser(user);
-        s.setProject(project);
+        s.setSymbol(symbol);
         s.setNode(node);
     }
 

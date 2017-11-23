@@ -22,31 +22,28 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Repository to persist SymbolGroups.
  */
 @Repository
-public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, Long> {
+public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, UUID> {
 
     /**
      * Find all SymbolGroups in a Project.
      *
-     * @param userId
-     *         The ID the User the SymbolGroup belongs to.
      * @param projectId
      *         The ID the User the SymbolGroup belongs to.
      * @return The SymbolGroups.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    List<SymbolGroup> findAllByUser_IdAndProject_Id(Long userId, Long projectId);
+    List<SymbolGroup> findAllByProject_Id(Long projectId);
 
     /**
      * Find a SymbolGroup.
      *
-     * @param userId
-     *         The ID the User the SymbolGroup belongs to.
      * @param projectId
      *         The ID the User the SymbolGroup belongs to.
      * @param id
@@ -55,6 +52,6 @@ public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, Long> 
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    SymbolGroup findOneByUser_IdAndProject_IdAndId(Long userId, Long projectId, Long id);
+    SymbolGroup findOneByProject_IdAndId(Long projectId, Long id);
 
 }

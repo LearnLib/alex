@@ -19,6 +19,7 @@ package de.learnlib.alex.data.entities.actions.StoreSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -26,7 +27,6 @@ import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.File;
@@ -43,26 +43,26 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class IncrementCounterActionTest {
 
-    private static final Long USER_ID = 3L;
-    private static final Long PROJECT_ID = 10L;
+    private static final Long   USER_ID = 3L;
+    private static final Long   PROJECT_ID = 10L;
     private static final String TEST_NAME = "counter";
-
-    @Mock
-    private User user;
-
-    @Mock
-    private Project project;
 
     private IncrementCounterAction incrementAction;
 
     @Before
     public void setUp() {
-        given(user.getId()).willReturn(USER_ID);
-        given(project.getId()).willReturn(PROJECT_ID);
+        User user = new User();
+        user.setId(USER_ID);
+
+        Project project = new Project();
+        project.setUser(user);
+        project.setId(PROJECT_ID);
+
+        Symbol symbol = new Symbol();
+        symbol.setProject(project);
 
         incrementAction = new IncrementCounterAction();
-        incrementAction.setUser(user);
-        incrementAction.setProject(project);
+        incrementAction.setSymbol(symbol);
         incrementAction.setName(TEST_NAME);
         incrementAction.setIncrementBy(1);
     }
@@ -99,6 +99,6 @@ public class IncrementCounterActionTest {
         ExecuteResult result = incrementAction.execute(connector);
 
         assertEquals(ExecuteResult.OK, result);
-        verify(counters).incrementBy(USER_ID, PROJECT_ID, TEST_NAME, 1);
+        verify(counters).incrementBy(PROJECT_ID, TEST_NAME, 1);
     }
 }

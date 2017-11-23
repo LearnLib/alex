@@ -60,7 +60,7 @@ public class UserDAOImplTest {
 
     @Before
     public void setUp() throws NotFoundException {
-        userDAO = new UserDAOImpl(userRepository, fileDAO);
+        userDAO = new UserDAOImpl(userRepository);
     }
 
     @Test

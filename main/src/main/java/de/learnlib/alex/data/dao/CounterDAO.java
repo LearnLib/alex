@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.data.dao;
 
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Counter;
 import org.jvnet.hk2.annotations.Service;
@@ -32,32 +33,34 @@ public interface CounterDAO {
     /**
      * Create a counter.
      *
+     * @param user
+     *          The user who wants to perform this method.
      * @param counter
      *         The counter to create.
      * @throws ValidationException
      *         When the counter could not be created,
      *         e.g. if already a counter with the same name exists in the project.
      */
-    void create(Counter counter) throws ValidationException;
+    void create(User user, Counter counter) throws NotFoundException, ValidationException;
 
     /**
      * Get all counter of a project.
      *
-     * @param userId
-     *          The user that owns the counters
+     * @param user
+     *          The user who wants to perform this method.
      * @param projectId
      *         The project of the counters.
      * @return A list of counters within the given project.
      * @throws NotFoundException
      *         If no project with the given ID exists.
      */
-    List<Counter> getAll(Long userId, Long projectId) throws NotFoundException;
+    List<Counter> getAll(User user, Long projectId) throws NotFoundException;
 
     /**
      * Get a specific counter.
      *
-     * @param userId
-     *         The user that owns the counter.
+     * @param user
+     *          The user who wants to perform this method.
      * @param projectId
      *         The project of the counter.
      * @param name
@@ -66,11 +69,13 @@ public interface CounterDAO {
      * @throws NotFoundException
      *         If the counter was not found.
      */
-    Counter get(Long userId, Long projectId, String name) throws NotFoundException;
+    Counter get(User user, Long projectId, String name) throws NotFoundException;
 
     /**
      * Update a counter.
      *
+     * @param user
+     *          The user who wants to perform this method.
      * @param counter
      *         The counter to update.
      * @throws NotFoundException
@@ -78,11 +83,13 @@ public interface CounterDAO {
      * @throws ValidationException
      *         If the counter could not be updated because of not met validation constrains.
      */
-    void update(Counter counter) throws NotFoundException, ValidationException;
+    void update(User user, Counter counter) throws NotFoundException, ValidationException;
 
     /**
      * Update many counters at once.
      *
+     * @param user
+     *          The user who wants to perform this method.
      * @param counters
      *         The counters to update.
      * @throws NotFoundException
@@ -90,14 +97,14 @@ public interface CounterDAO {
      * @throws ValidationException
      *         If a counter could not be updated because of not met validation constrains.
      */
-    void update(List<Counter> counters);
+    void update(User user, List<Counter> counters);
 
 
     /**
      * Deletes counters.
      *
-     * @param userId
-     *          The user that owns the counters
+     * @param user
+     *          The user who wants to perform this method.
      * @param projectId
      *         The project of the counter.
      * @param names
@@ -105,6 +112,6 @@ public interface CounterDAO {
      * @throws NotFoundException
      *         If the project or counter was not found.
      */
-    void delete(Long userId, Long projectId, String... names) throws NotFoundException;
+    void delete(User user, Long projectId, String... names) throws NotFoundException;
 
 }
