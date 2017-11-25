@@ -39,3 +39,13 @@
     animation: fadeOut 0.2s both ease-in;
   }
 }
+
+/*
+ * Mixin for ... text overflow.
+ * Element should have display: block|inline-block.
+ */
+@mixin text-overflow-ellipsis() {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

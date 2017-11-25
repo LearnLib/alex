@@ -100,12 +100,18 @@ body {
   flex-direction: column;
 
   .sidebar-group {
-
     .sidebar-group-title {
       color: #fff;
       padding: 7px 20px;
       font-size: 1.25em;
       margin-top: 14px;
+
+      strong {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
 
     .sidebar-group-item {
@@ -129,6 +135,12 @@ body {
         width: $sidebar-width-collapsed;
         text-align: center;
         float: left;
+      }
+
+      .sidebar-group-item-label {
+        @include text-overflow-ellipsis();
+        display: block;
+        padding-right: 20px;
       }
     }
   }

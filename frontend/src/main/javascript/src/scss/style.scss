@@ -123,7 +123,12 @@ body {
     padding-top: 9px;
     font-size: 14px;
     font-weight: 700;
-    color: rgba(0, 0, 0, 0.5)
+    color: rgba(0, 0, 0, 0.5);
+
+    @media all and (max-width: $screen-sm) {
+      @include text-overflow-ellipsis();
+      max-width: 240px;
+    }
   }
 }
 
@@ -604,5 +609,12 @@ learn-result-panel {
 project-details-widget {
   a {
     word-break: break-all;
+  }
+}
+
+project-details-widget {
+  table tr > td:nth-of-type(2) {
+    max-width: 200px;
+    @include text-overflow-ellipsis();
   }
 }
