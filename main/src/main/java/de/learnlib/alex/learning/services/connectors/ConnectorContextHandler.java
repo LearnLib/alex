@@ -16,8 +16,8 @@
 
 package de.learnlib.alex.learning.services.connectors;
 
+import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.mapper.ContextExecutableInputSUL;
 

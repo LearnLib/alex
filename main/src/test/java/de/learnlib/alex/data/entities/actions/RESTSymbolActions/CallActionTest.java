@@ -17,9 +17,9 @@
 package de.learnlib.alex.data.entities.actions.RESTSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
-import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import org.junit.Before;
 import org.junit.Test;

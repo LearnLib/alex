@@ -39,6 +39,11 @@ public class ReadOutputConfig {
     public ReadOutputConfig() {
     }
 
+    public ReadOutputConfig(SymbolSet symbols, BrowserConfig browser) {
+        this.symbols = symbols;
+        this.browser = browser;
+    }
+
     /**
      * @return The symbols.
      */

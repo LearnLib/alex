@@ -32,8 +32,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static de.learnlib.alex.learning.entities.ExecuteResult.FAILED;
-import static de.learnlib.alex.learning.entities.ExecuteResult.OK;
+import static de.learnlib.alex.data.entities.ExecuteResult.FAILED;
+import static de.learnlib.alex.data.entities.ExecuteResult.OK;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;

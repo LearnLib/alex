@@ -253,7 +253,7 @@ public class SymbolDAOImplTest {
         List<Symbol> symbols = createTestSymbolLists(user, project, group);
         //
         given(projectDAO.getByID(USER_ID, PROJECT_ID, ProjectDAO.EmbeddableFields.ALL)).willReturn(project);
-        given(symbolRepository.findAll(USER_ID, PROJECT_ID, new Boolean[] {false})).willReturn(symbols);
+        given(symbolRepository.findAll(PROJECT_ID, new Boolean[] {false})).willReturn(symbols);
 
         List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId(),
                                                       SymbolVisibilityLevel.VISIBLE);
@@ -278,7 +278,7 @@ public class SymbolDAOImplTest {
         List<Symbol> symbols = createTestSymbolLists(user, project, group);
         //
         given(projectDAO.getByID(USER_ID, PROJECT_ID, ProjectDAO.EmbeddableFields.ALL)).willReturn(project);
-        given(symbolRepository.findAll(USER_ID, PROJECT_ID, new Boolean[] {true, false})).willReturn(symbols);
+        given(symbolRepository.findAll(PROJECT_ID, new Boolean[] {true, false})).willReturn(symbols);
 
         List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId(),
                                                                         SymbolVisibilityLevel.ALL);

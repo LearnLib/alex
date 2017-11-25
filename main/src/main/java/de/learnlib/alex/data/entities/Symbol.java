@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.common.utils.LoggerUtil;
 import de.learnlib.alex.common.utils.SearchHelper;
-import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.api.exception.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;

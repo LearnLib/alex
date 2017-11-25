@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.testsuits.entities.TestCase;
+import de.learnlib.alex.testsuites.entities.Test;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
@@ -141,7 +141,7 @@ public class Project implements Serializable {
             fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
-    private Set<TestCase> testCases;
+    private Set<Test> tests;
 
     /**
      * The results of the test for the project.
@@ -433,18 +433,17 @@ public class Project implements Serializable {
     }
 
     @JsonIgnore
-    public Collection<TestCase> getTestCases() {
-        return testCases;
+    public Collection<Test> getTests() {
+        return tests;
     }
 
     @JsonIgnore
-    public void setTestCases(Set<TestCase> testCases) {
-        this.testCases = testCases;
+    public void setTests(Set<Test> tests) {
+        this.tests = tests;
     }
 
-    public void addTestCase(TestCase testCase) {
-        this.testCases.add(testCase);
-        testCase.setProject(this);
+    public void addTest(Test test) {
+        this.tests.add(test);
     }
 
     /**

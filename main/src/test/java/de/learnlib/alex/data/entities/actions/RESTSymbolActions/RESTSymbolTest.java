@@ -16,8 +16,8 @@
 
 package de.learnlib.alex.data.entities.actions.RESTSymbolActions;
 
+import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import org.junit.Before;
 import org.junit.Test;

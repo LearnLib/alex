@@ -17,8 +17,8 @@
 package de.learnlib.alex.data.entities.actions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.WebSymbolAction;
-import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;

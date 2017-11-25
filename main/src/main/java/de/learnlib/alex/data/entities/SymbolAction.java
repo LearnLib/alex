@@ -61,7 +61,6 @@ import de.learnlib.alex.data.entities.actions.WebSymbolActions.WaitForNodeAction
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.WaitForTextAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.WaitForTitleAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.WebSymbolAction;
-import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import org.hibernate.annotations.GenericGenerator;
 

@@ -1,6 +1,6 @@
-package de.learnlib.alex.testsuits.repositories;
+package de.learnlib.alex.testsuites.repositories;
 
-import de.learnlib.alex.testsuits.entities.TestCase;
+import de.learnlib.alex.testsuites.entities.Test;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,24 +13,23 @@ import java.util.UUID;
  * Repository to persist Test Cases.
  */
 @Repository
-public interface TestCaseRepository extends JpaRepository<TestCase, UUID> {
+public interface TestRepository extends JpaRepository<Test, UUID> {
 
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    List<TestCase> findAllByProject_Id(Long projectId);
+    @Query("SELECT t FROM Test t WHERE t.project.id = ?1 AND t.parent = NULL")
+    List<Test> findAllByProject_Id(Long projectId);
 
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    TestCase findOneByProject_IdAndId(Long projectId, Long id);
+    Test findOneByProject_IdAndId(Long projectId, Long id);
 
-    @Query("SELECT t FROM TestCase t "
-            + "WHERE t.project.id = ?1"
-            + "      AND t.name = ?2")
-    TestCase getTestCaseByName(Long projectId, String name);
+    @SuppressWarnings("checkstyle:methodname")
+    Test findOneByProject_IdAndName(Long projectId, String name);
 
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    @Query("SELECT MAX(t.id) FROM TestCase t WHERE t.project.id = ?1")
+    @Query("SELECT MAX(t.id) FROM Test t WHERE t.project.id = ?1")
     Long findHighestTestNo(Long projectId);
 
 }

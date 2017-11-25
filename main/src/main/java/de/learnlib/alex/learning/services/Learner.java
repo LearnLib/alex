@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.config.entities.BrowserConfig;
 import de.learnlib.alex.data.dao.SymbolDAO;
+import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
@@ -28,6 +29,7 @@ import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
+import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
@@ -375,14 +377,12 @@ public class Learner {
         ThreadContext.put("testNo", "readOutputs");
         ThreadContext.put("indent", "");
         LOGGER.traceEntry();
-        LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
+        LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, browserConfig);
 
-        ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(
-                user, project, browserConfig);
-        ctxHandler.setResetSymbol(resetSymbol);
-        ConnectorManager connectors = ctxHandler.createContext();
+        SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols);
+        ReadOutputConfig config = new ReadOutputConfig(symbolSet, browserConfig);
 
-        return readOutputs(symbols, connectors);
+        return readOutputsAsString(user, project, config);
     }
 
     /**
@@ -390,37 +390,39 @@ public class Learner {
      *
      * @param user             The user in which context the test should happen.
      * @param project          The project in which context the test should happen.
-     * @param resetSymbol      The reset symbol to use.
-     * @param symbols          The symbol sequence to process in order to generate the output sequence.
      * @param readOutputConfig The config for reading the outputs.
      *
      * @return The following output sequence.
      *
      * @throws LearnerException If something went wrong while testing the symbols.
      */
-    public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols,
-                                    ReadOutputConfig readOutputConfig)
+    public List<String> readOutputsAsString(User user, Project project, ReadOutputConfig readOutputConfig)
             throws LearnerException {
         ThreadContext.put("userId", String.valueOf(user.getId()));
         ThreadContext.put("testNo", "readOutputs");
         ThreadContext.put("indent", "");
         LOGGER.traceEntry();
-        LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {})", user, project, resetSymbol, symbols);
+        LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {})", user, project, readOutputConfig);
 
-        ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(
-                user, project, readOutputConfig.getBrowser());
-        ctxHandler.setResetSymbol(resetSymbol);
-        ConnectorManager connectors = ctxHandler.createContext();
-
-        return readOutputs(symbols, connectors);
+        return readOutputs(user, project, readOutputConfig).stream()
+                                                           .map(ExecuteResult::getOutput)
+                                                           .collect(Collectors.toList());
     }
 
-    private List<String> readOutputs(List<Symbol> symbols, ConnectorManager connectors) {
+    public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {
+        ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, project, readOutputConfig.getBrowser());
+        ctxHandler.setResetSymbol(readOutputConfig.getSymbols().getResetSymbol());
+        ConnectorManager connectors = ctxHandler.createContext();
+
+        return readOutputs(readOutputConfig.getSymbols().getSymbols(), connectors);
+    }
+
+    private List<ExecuteResult> readOutputs(List<Symbol> symbols, ConnectorManager connectors) {
         LOGGER.traceEntry();
         try {
-            List<String> output = symbols.stream()
-                    .map(s -> s.execute(connectors).toString())
-                    .collect(Collectors.toList());
+            List<ExecuteResult> output = symbols.stream()
+                                                .map(s -> s.execute(connectors))
+                                                .collect(Collectors.toList());
             connectors.dispose();
 
             LOGGER.traceExit(output);

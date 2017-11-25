@@ -17,7 +17,6 @@
 package de.learnlib.alex.data.entities;
 
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckTextWebAction;
-import de.learnlib.alex.learning.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;

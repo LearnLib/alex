@@ -209,7 +209,7 @@ public class SymbolDAOImpl implements SymbolDAO {
             throws NotFoundException {
         projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
 
-        List<Symbol> result = symbolRepository.findAll(user.getId(), projectId, visibilityLevel.getCriterion());
+        List<Symbol> result = symbolRepository.findAll(projectId, visibilityLevel.getCriterion());
 
         result.forEach(SymbolDAOImpl::loadLazyRelations);
 

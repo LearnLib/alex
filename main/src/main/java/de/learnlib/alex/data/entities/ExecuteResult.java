@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.learning.entities;
+package de.learnlib.alex.data.entities;
 
 /** Enum to determine if a symbol has been executed successfully. */
 public enum ExecuteResult {
 
     /** The symbol has been executed successfully. */
-    OK,
+    OK(true),
 
     /** The execution of an action of the symbol failed during its execution. */
-    FAILED;
+    FAILED(false);
 
     /** The default output on success. */
     public static final String DEFAULT_SUCCESS_OUTPUT = "Ok";
@@ -31,8 +31,18 @@ public enum ExecuteResult {
     /** The default output on error. */
     public static final String DEFAULT_ERROR_OUTPUT = "Failed";
 
+    private boolean successful;
+
     /** The output. */
     private String output;
+
+    ExecuteResult(boolean successful) {
+        this.successful = successful;
+    }
+
+    public boolean isSuccessful() {
+        return successful;
+    }
 
     /** @return {@link #output}. */
     public String getOutput() {

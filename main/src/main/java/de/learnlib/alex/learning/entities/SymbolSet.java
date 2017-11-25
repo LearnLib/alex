@@ -60,6 +60,14 @@ public class SymbolSet {
     @JsonIgnore
     private List<Symbol> symbols;
 
+    public SymbolSet() {
+    }
+
+    public SymbolSet(Symbol resetSymbol, List<Symbol> symbols) {
+        this.resetSymbol = resetSymbol;
+        this.symbols = symbols;
+    }
+
     /**
      * Get the IdRevisionPair of the reset symbol.
      *

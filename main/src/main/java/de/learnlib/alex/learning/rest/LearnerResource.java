@@ -32,6 +32,7 @@ import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
+import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
@@ -57,7 +58,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -401,11 +401,10 @@ public class LearnerResource {
             Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsId);
             List<Symbol> symbols = loadSymbols(user, projectId, readOutputConfig.getSymbols().getSymbolsAsIds());
 
-            Symbol dummyResetSymbol = new Symbol();
-            ArrayList<Symbol> s = new ArrayList<>();
-            s.add(resetSymbol);
-            s.addAll(symbols);
-            List<String> results = learner.readOutputs(user, project, dummyResetSymbol, s, readOutputConfig);
+            SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols);
+            readOutputConfig.setSymbols(symbolSet);
+
+            List<String> results = learner.readOutputsAsString(user, project, readOutputConfig);
 
             LOGGER.traceExit(results);
             return ResponseHelper.renderList(results, Status.OK);
