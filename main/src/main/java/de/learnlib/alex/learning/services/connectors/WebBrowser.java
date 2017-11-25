@@ -35,6 +35,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.safari.SafariDriver;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
@@ -54,7 +55,10 @@ public enum WebBrowser {
     HTMLUNITDRIVER,
 
     /** Use Microsoft Edge. */
-    EDGE;
+    EDGE,
+
+    /** Use the Safari browser. */
+    SAFARI;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -154,6 +158,9 @@ public enum WebBrowser {
                         DesiredCapabilities edgeCapabilities = DesiredCapabilities.edge();
                         driver = new EdgeDriver(edgeCapabilities);
                         break;
+                    case SAFARI:
+                        DesiredCapabilities safariCapabilities = DesiredCapabilities.safari();
+                        driver = new SafariDriver(safariCapabilities);
                     default:
                         throw new Exception("Unsupported web driver");
                 }

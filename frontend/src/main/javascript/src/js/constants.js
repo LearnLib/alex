@@ -26,7 +26,8 @@ export const webBrowser = {
     CHROME: 'chrome',
     FIREFOX: 'firefox',
     EDGE: 'edge',
-    HTMLUNITDRIVER: 'htmlunitdriver'
+    HTMLUNITDRIVER: 'htmlunitdriver',
+    SAFARI: 'safari'
 };
 
 export const eqOracleType = {

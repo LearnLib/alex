@@ -17,6 +17,7 @@ detailed instructions.
 * Action recorder - Record a sequence of actions for a symbol in the Element Picker
 * Extended testing capability - Save and execute test cases without starting a learning process
 * Calculate the difference between two models
+* Added Safari driver
 * New actions:
     * Wait for a text to appear
     * Interact with alert, prompt and confirm dialogs

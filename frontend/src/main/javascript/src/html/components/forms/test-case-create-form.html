@@ -12,6 +12,10 @@
 <div class="row">
     <div class="col-md-4">
 
+        <div class="alert alert-info" ng-if="vm.groups.length === 1 && vm.groups[0].symbols.length === 0">
+            You haven't created a symbol yet.
+        </div>
+
         <div class="panel panel-default" ng-repeat="group in vm.groups" ng-if="group.symbols.length">
             <div class="panel-heading">
                 <strong>{{group.name}}</strong>

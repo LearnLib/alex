@@ -72,7 +72,6 @@ export const symbolsTestView = {
             TestCaseResource.getAll(this.project.id)
                 .then(data => {
                     this.testCases = data;
-                    console.log(this.testCases);
                 })
                 .catch(console.log);
         }
@@ -91,8 +90,6 @@ export const symbolsTestView = {
                     this.ToastService.success(`Test case "${testCase.name}" deleted.`);
                 })
                 .catch(err => this.ToastService.danger("Deleting the test case failed."));
-            // const i = this.testCases.findIndex(tc => tc.id === testCase.id);
-            // if (i > -1) this.testCases.splice(i, 1);
         }
 
         updateTestCase(testCase) {
