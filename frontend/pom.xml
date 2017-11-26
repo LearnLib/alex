@@ -36,9 +36,14 @@
     </description>
 
     <properties>
+        <!-- general -->
         <javascript.rootDirectory>src/main/javascript</javascript.rootDirectory>
+
+        <!-- plugin versions -->
+        <exec-plugin.version>1.4.0</exec-plugin.version>
     </properties>
 
+    <!--===== build ======-->
     <build>
         <plugins>
             <plugin>
