@@ -32,7 +32,7 @@
         </dependencySet>
         <dependencySet>
             <includes>
-                <include>de.learnlib.alex:alex-main</include>
+                <include>de.learnlib.alex:alex-backend</include>
             </includes>
             <unpack>true</unpack>
             <outputDirectory>WEB-INF/classes</outputDirectory>
