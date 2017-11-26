@@ -67,6 +67,9 @@ public class Settings implements Serializable {
         /** The path to the edge driver executable. */
         private String edge;
 
+        /** The URL path to the Remote Selenium Server. */
+        private String remote;
+
         /** The default driver to use. */
         private WebBrowser defaultDriver;
 
@@ -82,11 +85,12 @@ public class Settings implements Serializable {
          * @param firefox {@link DriverSettings#firefox}
          * @param edge {@link DriverSettings#edge}
          */
-        public DriverSettings(String chrome, String firefox, String edge) {
+        public DriverSettings(String chrome, String firefox, String edge, String remote) {
             this();
             this.chrome = chrome;
             this.firefox = firefox;
             this.edge = edge;
+            this.remote = remote;
         }
 
         /**
@@ -95,7 +99,11 @@ public class Settings implements Serializable {
          * @return The executable path.
          */
         public String getChrome() {
-            return chrome;
+            if (chrome == null) {
+                return "";
+            } else {
+                return chrome;
+            }
         }
 
         /**
@@ -113,7 +121,11 @@ public class Settings implements Serializable {
          * @return The executable path.
          */
         public String getFirefox() {
-            return firefox;
+            if (firefox == null) {
+                return "";
+            } else {
+                return firefox;
+            }
         }
 
         /**
@@ -131,7 +143,11 @@ public class Settings implements Serializable {
          * @return The executable path.
          */
         public String getEdge() {
-            return edge;
+            if (edge == null) {
+                return "";
+            } else {
+                return edge;
+            }
         }
 
         /**
@@ -141,6 +157,18 @@ public class Settings implements Serializable {
          */
         public void setEdge(String edge) {
             this.edge = edge;
+        }
+
+        public String getRemote() {
+            if (remote == null) {
+                return "";
+            } else {
+                return remote;
+            }
+        }
+
+        public void setRemote(String remote) {
+            this.remote = remote;
         }
 
         public WebBrowser getDefaultDriver() {
@@ -161,10 +189,15 @@ public class Settings implements Serializable {
             checkDriver(firefox, "geckodriver", WebBrowser.FIREFOX);
             checkDriver(chrome, "chromedriver", WebBrowser.CHROME);
             checkDriver(edge, "edgedriver", WebBrowser.EDGE);
+
+            if (WebBrowser.REMOTE.equals(defaultDriver) && (remote == null || remote.trim().isEmpty())) {
+                throw new ValidationException("The default Selenium Web Driver cannot be " + WebBrowser.REMOTE
+                                                      + " because the Selenium Server URL is not specified.");
+            }
         }
 
         private void checkDriver(String executable, String name, WebBrowser webBrowser) throws ValidationException {
-            if (!executable.trim().equals("")) {
+            if (executable != null && !executable.trim().isEmpty()) {
                 File driverExecutable = new File(executable);
                 if (!driverExecutable.exists()) {
                     throw new ValidationException("The " + name  + " cannot be found.");
@@ -172,8 +205,8 @@ public class Settings implements Serializable {
                     throw new ValidationException("The " + name + " is not executable.");
                 }
             } else if (webBrowser.equals(defaultDriver)) {
-                throw new ValidationException("The default web browser cannot be " + webBrowser + " because the driver "
-                                                      + "is not specified.");
+                throw new ValidationException("The default Selenium Web Driver cannot be " + webBrowser
+                                                      + " because the driver executable is not specified.");
             }
         }
 
@@ -201,7 +234,7 @@ public class Settings implements Serializable {
 
     /** Constructor. */
     public Settings() {
-        this.driverSettings = new DriverSettings("", "", "");
+        this.driverSettings = new DriverSettings("", "", "", "");
     }
 
     /**

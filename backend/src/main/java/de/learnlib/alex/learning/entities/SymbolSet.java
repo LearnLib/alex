@@ -21,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Symbol;
 
 import javax.persistence.Transient;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -130,6 +132,13 @@ public class SymbolSet {
      */
     public List<Symbol> getSymbols() {
         return symbols;
+    }
+
+    public List<Symbol> getAllSymbols() {
+        List<Symbol> resultList = new LinkedList<>();
+        resultList.add(resetSymbol);
+        resultList.addAll(symbols);
+        return resultList;
     }
 
     /**

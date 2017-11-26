@@ -138,11 +138,14 @@ public class ALEXApplication extends ResourceConfig {
                 settings = new Settings();
 
                 String chromeDriverPath = System.getProperty("webdriver.chrome.driver", "");
-                String geckoDriverPath = System.getProperty("webdriver.gecko.driver", "");
-                String edgeDriverPath = System.getProperty("webdriver.edge.driver", "");
+                String geckoDriverPath  = System.getProperty("webdriver.gecko.driver",  "");
+                String edgeDriverPath   = System.getProperty("webdriver.edge.driver",   "");
+                String remoteDriverURL  = System.getProperty("webdriver.remote.url",    "");
 
-                Settings.DriverSettings driverSettings = new Settings.DriverSettings(
-                        chromeDriverPath, geckoDriverPath, edgeDriverPath);
+                Settings.DriverSettings driverSettings = new Settings.DriverSettings(chromeDriverPath,
+                                                                                     geckoDriverPath,
+                                                                                     edgeDriverPath,
+                                                                                     remoteDriverURL);
                 settings.setDriverSettings(driverSettings);
 
                 settingsDAO.create(settings);
@@ -153,8 +156,9 @@ public class ALEXApplication extends ResourceConfig {
         } else {
             Settings.DriverSettings driverSettings = settings.getDriverSettings();
             System.setProperty("webdriver.chrome.driver", driverSettings.getChrome());
-            System.setProperty("webdriver.gecko.driver", driverSettings.getFirefox());
-            System.setProperty("webdriver.edge.driver", driverSettings.getEdge());
+            System.setProperty("webdriver.gecko.driver",  driverSettings.getFirefox());
+            System.setProperty("webdriver.edge.driver",   driverSettings.getEdge());
+            System.setProperty("webdriver.remote.url",    driverSettings.getRemote());
         }
     }
 

@@ -21,9 +21,11 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.google.common.collect.ImmutableMap;
+import de.learnlib.alex.config.dao.SettingsDAO;
 import de.learnlib.alex.config.entities.BrowserConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -35,9 +37,11 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -58,7 +62,10 @@ public enum WebBrowser {
     EDGE,
 
     /** Use the Safari browser. */
-    SAFARI;
+    SAFARI,
+
+    /** Connect to a remote driver. */
+    REMOTE;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -161,8 +168,13 @@ public enum WebBrowser {
                     case SAFARI:
                         DesiredCapabilities safariCapabilities = DesiredCapabilities.safari();
                         driver = new SafariDriver(safariCapabilities);
+                        break;
+                    case REMOTE:
+                        URL remoteURL = new URL(System.getProperty("webdriver.remote.url"));
+                        driver = new RemoteWebDriver(remoteURL, new DesiredCapabilities());
+                        break;
                     default:
-                        throw new Exception("Unsupported web driver");
+                        throw new Exception("Unsupported web driver.");
                 }
 
                 if (retries > 0) {

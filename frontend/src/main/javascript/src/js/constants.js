@@ -27,7 +27,8 @@ export const webBrowser = {
     FIREFOX: 'firefox',
     EDGE: 'edge',
     HTMLUNITDRIVER: 'htmlunitdriver',
-    SAFARI: 'safari'
+    SAFARI: 'safari',
+    REMOTE: 'remote'
 };
 
 export const eqOracleType = {

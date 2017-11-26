@@ -414,7 +414,7 @@ public class Learner {
         ctxHandler.setResetSymbol(readOutputConfig.getSymbols().getResetSymbol());
         ConnectorManager connectors = ctxHandler.createContext();
 
-        return readOutputs(readOutputConfig.getSymbols().getSymbols(), connectors);
+        return readOutputs(readOutputConfig.getSymbols().getAllSymbols(), connectors);
     }
 
     private List<ExecuteResult> readOutputs(List<Symbol> symbols, ConnectorManager connectors) {

@@ -81,7 +81,7 @@ public class SettingsResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String json = response.readEntity(String.class);
-        String expectedJSON = "{\"driver\":{\"chrome\":\"\",\"defaultDriver\":\"htmlunitdriver\",\"edge\":\"\",\"firefox\":\"\"},\"id\":1}";
+        String expectedJSON = "{\"driver\":{\"chrome\":\"\",\"defaultDriver\":\"htmlunitdriver\",\"edge\":\"\",\"firefox\":\"\",\"remote\":\"\"},\"id\":1}";
         assertEquals(expectedJSON, json);
     }
 

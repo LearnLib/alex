@@ -78,6 +78,8 @@ export function formatWebBrowser() {
                 return 'Edge';
             case webBrowser.SAFARI:
                 return 'Safari';
+            case webBrowser.REMOTE:
+                return 'Remote WebDriver';
             default:
                 return browser;
         }

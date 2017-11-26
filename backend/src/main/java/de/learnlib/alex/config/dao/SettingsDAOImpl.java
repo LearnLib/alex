@@ -73,6 +73,7 @@ public class SettingsDAOImpl implements SettingsDAO {
     private void updateDriverSystemProperties(Settings.DriverSettings driverSettings) {
         System.setProperty("webdriver.chrome.driver", driverSettings.getChrome());
         System.setProperty("webdriver.gecko.driver",  driverSettings.getFirefox());
-        System.setProperty("webdriver.edge.driver", driverSettings.getEdge());
+        System.setProperty("webdriver.edge.driver",   driverSettings.getEdge());
+        System.setProperty("webdriver.remote.url",    driverSettings.getRemote());
     }
 }
