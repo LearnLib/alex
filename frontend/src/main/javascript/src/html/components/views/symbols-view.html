@@ -38,21 +38,12 @@
             </div>
 
             <div class="btn-group btn-group-sm" uib-dropdown>
-                <button class="btn btn-default btn-sm btn-dropdown" uib-dropdown-toggle>
-                    <i class="fa fa-fw fa-ellipsis-h"></i>
+                <button class="btn btn-default" symbols-import-modal-handle on-imported="vm.addSymbols(symbols)" uib-tooltip="Import" tooltip-placement="bottom">
+                    <i class="fa fa-fw fa-upload"></i>
                 </button>
-                <ul uib-dropdown-menu class="dropdown-menu" role="menu">
-                    <li>
-                        <a href="" symbols-import-modal-handle on-imported="vm.addSymbols(symbols)">
-                            <i class="fa fa-upload"></i>&nbsp; Import
-                        </a>
-                    </li>
-                    <li>
-                        <a href="" ng-click="vm.exportSelectedSymbols()">
-                            <i class="fa fa-download"></i>&nbsp; Export
-                        </a>
-                    </li>
-                </ul>
+                <button class="btn btn-default" ng-click="vm.exportSelectedSymbols()" uib-tooltip="Export" tooltip-placement="bottom" ng-class="{'disabled': vm.selectedSymbols.length === 0}">
+                    <i class="fa fa-fw fa-download"></i>
+                </button>
             </div>
         </div>
     </action-bar>
