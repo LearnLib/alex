@@ -79,6 +79,16 @@ public class TestDAOImpl implements TestDAO {
             long nextTestNo = maxTestNo + 1;
             test.setId(nextTestNo);
 
+            if (test.getParentId() != null) {
+                Test parent = get(user, projectId, test.getParentId());
+
+                if (parent instanceof TestCase) {
+                    throw new ValidationException("The parent can only be a Test Suite.");
+                }
+
+                test.setParent(parent);
+            }
+
             beforeSaving(user, test);
             if (test instanceof TestSuite) {
                 System.out.println(((TestSuite) test).getTests());
@@ -137,6 +147,15 @@ public class TestDAOImpl implements TestDAO {
             test.setUUID(testInDB.getUUID());
             test.setProject(testInDB.getProject());
 
+            if (test.getParentId() != null) {
+                Test parent = get(user, test.getProjectId(), test.getParentId());
+
+                if (parent instanceof TestCase) {
+                    throw new ValidationException("The parent can only be a Test Suite.");
+                }
+
+                test.setParent(parent);
+            }
 
             if (test instanceof TestSuite) {
                 ((TestSuite) testInDB).getTests().forEach(t -> t.setParent(null));
