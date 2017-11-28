@@ -59,11 +59,6 @@ export function config($stateProvider, $urlRouterProvider) {
             template: '<symbols-view></symbols-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols'}
         })
-        .state('symbolsTest', {
-            url: '/symbols/test',
-            template: '<symbols-test-view></symbols-test-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Test'}
-        })
         .state('symbolsTrash', {
             url: '/symbols/trash',
             template: '<symbols-trash-view></symbols-trash-view>',
@@ -104,6 +99,14 @@ export function config($stateProvider, $urlRouterProvider) {
             url: '/admin/users',
             template: '<admin-users-view></admin-users-view>',
             data: {requiresProject: false, roles: ['ADMIN'], title: 'Admin > Users'}
+        })
+        .state('tests', {
+            url: '/tests/{testId:int}',
+            template: '<tests-view></tests-view>',
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Tests'},
+            params: {
+                testId: null
+            }
         })
         .state('about', {
             url: '/about',

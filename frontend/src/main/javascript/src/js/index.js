@@ -36,7 +36,7 @@ import {SymbolResource} from "./resources/SymbolResource";
 import {UserResource} from "./resources/UserResource";
 import {ActionService} from "./services/ActionService";
 import {ClipboardService} from "./services/ClipboardService";
-import {TestCaseResource} from "./resources/TestCaseResource";
+import {TestResource} from "./resources/TestResource";
 import {ErrorService} from "./services/ErrorService";
 import {EventBus} from "./services/EventBus";
 import {EqOracleService} from "./services/EqOracleService";
@@ -48,7 +48,7 @@ import {SessionService} from "./services/SessionService";
 import {ToastService} from "./services/ToastService";
 import {LearnerResultDownloadService} from "./services/LearnerResultDownloadService";
 import {HtmlElementPickerService} from "./services/HtmlElementPickerService";
-import {formatAlgorithm, formatEqOracle, formatMilliseconds, formatUserRole, formatWebBrowser} from "./filters";
+import {formatAlgorithm, formatEqOracle, formatMilliseconds, formatUserRole, formatWebBrowser, sortTests} from "./filters";
 import {actionCreateModalHandle, actionCreateModalComponent} from "./components/modals/actionCreateModal";
 import {actionEditModalHandle, actionEditModalComponent} from "./components/modals/actionEditModal";
 import {actionRecorderActionsModal} from "./components/modals/actionRecorderActionsModal";
@@ -98,7 +98,9 @@ import {settingsView} from "./components/views/settingsView";
 import {statisticsCompareView} from "./components/views/statisticsCompareView";
 import {symbolsActionsView} from "./components/views/symbolsActionsView";
 import {symbolsView} from "./components/views/symbolsView";
-import {symbolsTestView} from "./components/views/symbolsTestView";
+import {testsView} from "./components/views/testsView";
+import {testCaseView} from "./components/views/testCaseView";
+import {testSuiteView} from "./components/views/testSuiteView";
 import {symbolsTrashView} from "./components/views/symbolsTrashView";
 import {usersSettingsView} from "./components/views/usersSettingsView";
 import {actionForm} from "./components/forms/actions/actionForm";
@@ -134,6 +136,7 @@ import {hypothesis} from "./components/hypothesis";
 import {discriminationTree} from "./components/discriminationTree";
 import {htmlElementPicker} from "./components/htmlElementPicker";
 import {nodeFormGroup} from "./components/forms/nodeFormGroup";
+import {testResult} from "./components/test-result";
 import {
     actionFormAlertAcceptDismiss,
     actionFormAlertGetText,
@@ -222,6 +225,7 @@ angular
     .filter('formatMilliseconds', formatMilliseconds)
     .filter('formatUserRole', formatUserRole)
     .filter('formatWebBrowser', formatWebBrowser)
+    .filter('sortTests', sortTests)
 
     // resources
     .service('CounterResource', CounterResource)
@@ -233,7 +237,7 @@ angular
     .service('SymbolGroupResource', SymbolGroupResource)
     .service('SymbolResource', SymbolResource)
     .service('UserResource', UserResource)
-    .service('TestCaseResource', TestCaseResource)
+    .service('TestResource', TestResource)
 
     // services
     .service('ActionService', ActionService)
@@ -305,9 +309,11 @@ angular
     .component('statisticsCompareView', statisticsCompareView)
     .component('symbolsActionsView', symbolsActionsView)
     .component('symbolsView', symbolsView)
-    .component('symbolsTestView', symbolsTestView)
+    .component('testsView', testsView)
     .component('symbolsTrashView', symbolsTrashView)
     .component('usersSettingsView', usersSettingsView)
+    .component('testCaseView', testCaseView)
+    .component('testSuiteView', testSuiteView)
 
     // forms components
     .component('actionForm', actionForm)
@@ -393,6 +399,7 @@ angular
     .component('observationTable', observationTable)
     .component('symbolListItem', symbolListItem)
     .component('symbolGroupListItem', symbolGroupListItem)
-    .component('learnResultListItem', learnResultListItem);
+    .component('learnResultListItem', learnResultListItem)
+    .component('testResult', testResult);
 
 angular.bootstrap(document, ['ALEX']);

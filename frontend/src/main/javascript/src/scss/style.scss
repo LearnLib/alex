@@ -618,3 +618,17 @@ project-details-widget {
     @include text-overflow-ellipsis();
   }
 }
+
+.test-list {
+  .test-list-item {
+    .test-list-item-content {
+      &:hover {
+        cursor: pointer;
+
+        .test-name {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}

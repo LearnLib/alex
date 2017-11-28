@@ -33,14 +33,15 @@ export class PromptService {
      * Opens the prompt dialog.
      *
      * @param {string} text - The text to display.
+     * @param {string} defaultValue - The default text value.
      * @return {*} - The modal result promise.
      */
-    prompt(text) {
+    prompt(text, defaultValue = "") {
         return this.$uibModal.open({
             component: 'promptModal',
             resolve: {
                 modalData: function () {
-                    return {text: text};
+                    return {text, defaultValue};
                 }
             }
         }).result;

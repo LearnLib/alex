@@ -1,0 +1,90 @@
+<div class="view">
+    <view-header title="Test Management"></view-header>
+    <action-bar>
+        <div class="alx-container">
+            <button class="btn btn-sm btn-success" ng-click="vm.save()">
+                <i class="fa fa-fw fa-save"></i> Save
+            </button>
+            <button class="btn btn-sm btn-primary pull-right" ng-click="vm.execute()">
+                Execute
+            </button>
+            <button class="btn btn-sm btn-default pull-right" ng-click="vm.getOutputs()" style="margin-right: 6px">
+                Outputs
+            </button>
+        </div>
+    </action-bar>
+    <div class="view-body">
+        <div class="alx-container">
+
+            <div ng-if="vm.result">
+                <div class="alert alert-danger" ng-if="!vm.result.success">
+                    <i class="fa fa-fw fa-close pull-right" ng-click="vm.result = null"></i>
+                    <i class="fa fa-fw fa-warning"></i> <strong>The test case failed.</strong>
+                </div>
+                <div class="alert alert-success" ng-if="vm.result.success">
+                    <i class="fa fa-fw fa-close pull-right" ng-click="vm.result = null"></i>
+                    <i class="fa fa-fw fa-check"></i> <strong>The test case passed.</strong>
+                </div>
+            </div>
+
+            <div class="d-flex" style="align-items: center">
+                <button class="btn btn-sm btn-default" ui-sref="tests({testId: vm.test.parent})" style="margin-right: 12px">
+                    <i class="fa fa-fw fa-level-up"></i>
+                </button>
+                <h4 style="display: inline; margin: 0;">
+                    <strong>
+                        <i class="fa fa-fw fa-file-o"></i> {{vm.test.name}}
+                    </strong>
+                </h4>
+            </div>
+
+            <hr>
+            <div class="row">
+                <div class="col-xs-3">
+                    <div class="panel panel-default" ng-repeat="group in vm.groups">
+                        <div class="panel-heading">
+                            <strong>{{group.name}}</strong>
+                        </div>
+                        <div class="panel-body">
+                            <div class="list-group" style="margin-bottom: 0" ng-if="group.symbols.length">
+                                <div class="list-group-item" ng-repeat="symbol in group.symbols" ng-click="vm.test.symbols.push(symbol)">
+                                    {{symbol.name}}
+                                </div>
+                            </div>
+                            <div class="alert alert-info" ng-if="!group.symbols.length" style="margin-bottom: 0">
+                                There are no symbols in this group.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-9">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="list-group" ng-if="vm.test.symbols.length" dragula='"testSymbols"' dragula-model="vm.test.symbols">
+                                <div class="list-group-item" ng-repeat="symbol in vm.test.symbols track by $index">
+                                    <i class="fa fa-close pull-right" ng-click="vm.test.symbols.splice($index, 1)"></i>
+                                    <span class="label label-info pull-right" ng-if="$index === 0" style="margin-right: 8px">Reset</span>
+                                    <strong>{{symbol.name}}</strong><br>
+                                    <span class="label label-default" ng-if="vm.outputs[$index]">{{vm.outputs[$index]}}</span>
+                                </div>
+                            </div>
+                            <div class="alert alert-info" ng-if="!vm.test.symbols.length">
+                                Select a symbol to model the test case.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <strong>Configuration</strong>
+                                </div>
+                                <div class="panel-body">
+                                    <browser-config-form config="vm.browserConfig"></browser-config-form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

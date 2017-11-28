@@ -104,20 +104,24 @@
                     </div>
                     <div class="sidebar-group-item-label">Manage</div>
                 </a>
-                <a ui-sref="symbolsTest" class="sidebar-group-item"
-                   ng-class="{'active':vm.isState('symbolsTest')}"
-                   uib-tooltip="Test Symbols" tooltip-placement="right">
-                    <div class="sidebar-group-item-icon">
-                        <i class="fa fa-fw fa-bug"></i>
-                    </div>
-                    <div class="sidebar-group-item-label">Test</div>
-                </a>
                 <a ui-sref="symbolsTrash" class="sidebar-group-item" ng-class="{'active':vm.isState('symbolsTrash')}"
                    uib-tooltip="Symbols Trash" tooltip-placement="right">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw fa-trash"></i>
                     </div>
                     <div class="sidebar-group-item-label">Trash</div>
+                </a>
+            </div>
+
+            <div class="sidebar-group">
+                <div class="sidebar-group-title">Testing</div>
+                <a ui-sref="tests" class="sidebar-group-item"
+                   ng-class="{'active':vm.isState('tests')}"
+                   uib-tooltip="Test management" tooltip-placement="right">
+                    <div class="sidebar-group-item-icon">
+                        <i class="fa fa-fw fa-wrench"></i>
+                    </div>
+                    <div class="sidebar-group-item-label">Manage</div>
                 </a>
             </div>
 

@@ -17,7 +17,7 @@
 /**
  * The resource to handle actions with test cases over the API.
  */
-export class TestCaseResource {
+export class TestResource {
 
     /**
      * Constructor.
@@ -79,6 +79,17 @@ export class TestCaseResource {
      */
     remove(testCase) {
         return this.$http.delete(`${this.__env.apiUrl}/projects/${testCase.project}/tests/${testCase.id}`)
+            .then(response => response.data);
+    }
+
+    /**
+     * Execute the test.
+     *
+     * @param {object} testCase - The test to execute.
+     * @param {object} browserConfig - The config to execute the test with.
+     */
+    execute(testCase, browserConfig) {
+        return this.$http.post(`${this.__env.apiUrl}/projects/${testCase.project}/tests/${testCase.id}/execute`, browserConfig)
             .then(response => response.data);
     }
 }

@@ -38,11 +38,12 @@ export class PromptModalComponent {
          * The regex the user input has to match.
          * @type {Pattern}
          */
-        this.inputPattern = /^[a-zA-Z0-9\.\-,_]+$/;
+        this.inputPattern = /^[a-zA-Z0-9\.\-,_][a-zA-Z0-9\.\-,_\s]+[a-zA-Z0-9\.\-,_]$/;
     }
 
     $onInit() {
         this.text = this.resolve.modalData.text;
+        this.userInput = this.resolve.modalData.defaultValue;
     }
 
     /**

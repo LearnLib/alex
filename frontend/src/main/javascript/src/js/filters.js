@@ -40,6 +40,28 @@ export function formatEqOracle() {
     };
 }
 
+/**
+ * Sort tests. First all test suites, then all test cases. Both alphabetically.
+ *
+ * @return {function(*)}
+ */
+export function sortTests() {
+    return tests => {
+        const compare = (a, b) => {
+            return a.name < b.name ? 1 : a.name > b.name ? -1 : 0
+        };
+
+        const testSuites = tests.filter(t => t.type === "suite");
+        const testCases = tests.filter(t => t.type === "case");
+
+        testSuites.sort(compare);
+        testCases.sort(compare);
+
+        testSuites.push(testCases);
+        return testSuites;
+    }
+}
+
 
 /**
  * The filter to format a user role.
