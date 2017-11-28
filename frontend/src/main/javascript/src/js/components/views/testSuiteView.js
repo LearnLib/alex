@@ -91,7 +91,7 @@ export const testSuiteView = {
 
         $onInit() {
             let tests = null;
-            if (this.test.length) {
+            if (Array.isArray(this.test)) {
                 tests = this.test;
             } else {
                 tests = this.test.tests;
@@ -120,7 +120,10 @@ export const testSuiteView = {
                         tests: []
                     };
                     this.TestResource.create(testSuite)
-                        .then(data => this.tests.push(data))
+                        .then(data => {
+                            this.ToastService.success(`The test suite "${testSuite.name}" has been created.`);
+                            this.tests.push(data)
+                        })
                         .catch(err => this.ToastService.danger("The test suite could not be created. " + err.data.message));
                 });
         }
@@ -136,7 +139,10 @@ export const testSuiteView = {
                         symbols: []
                     };
                     this.TestResource.create(testCase)
-                        .then(data => this.tests.push(data))
+                        .then(data => {
+                            this.ToastService.success(`The test case "${testCase.name}" has been created.`);
+                            this.tests.push(data)
+                        })
                         .catch(err => this.ToastService.danger("The test suite could not be created. " + err.data.message));
                 });
         }

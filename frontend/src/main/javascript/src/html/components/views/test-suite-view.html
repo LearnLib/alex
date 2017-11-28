@@ -2,9 +2,9 @@
     <view-header title="Test Management"></view-header>
     <action-bar>
         <div class="alx-container">
-            <checkbox-multiple model="vm.tests"></checkbox-multiple>
+            <checkbox-multiple model="vm.tests" class="pull-left"></checkbox-multiple>
             <div class="btn-group btn-group-sm" uib-dropdown>
-                <button class="btn btn-default btn-dropdown" uib-dropdown-toggle>
+                <button class="btn btn-default" uib-dropdown-toggle>
                     Create <i class="fa fa-fw fa-caret-down"></i>
                 </button>
                 <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
@@ -32,7 +32,8 @@
         <div class="alx-container">
 
             <div class="d-flex" style="align-items: center">
-                <button class="btn btn-sm btn-default" ui-sref="tests({testId:vm.test.parent})"  ng-if="vm.test.parent !== null && vm.test.name" style="margin-right: 12px">
+                <button class="btn btn-sm btn-default" ui-sref="tests({testId:vm.test.parent})"
+                        ng-if="vm.test.parent !== null && vm.test.name" style="margin-right: 12px">
                     <i class="fa fa-fw fa-level-up"></i>
                 </button>
                 <h4 ng-if="vm.test.name" style="margin: 0;">
@@ -58,7 +59,8 @@
                                 <div style="padding-right: 12px">
                                     <i class="fa fa-fw fa-folder-o"></i>
                                 </div>
-                                <div class="test-list-item-content" style="width: 100%" ui-sref="tests({testId:test.id})">
+                                <div class="test-list-item-content" style="width: 100%"
+                                     ui-sref="tests({testId:test.id})">
                                     <div>
                                         <strong class="test-name">{{test.name}}</strong>
                                     </div>
@@ -92,7 +94,8 @@
                                 <div style="padding-right: 12px">
                                     <i class="fa fa-fw fa-file-o"></i>
                                 </div>
-                                <div class="test-list-item-content" style="width: 100%" ui-sref="tests({testId:test.id})">
+                                <div class="test-list-item-content" style="width: 100%"
+                                     ui-sref="tests({testId:test.id})">
                                     <div>
                                         <strong class="test-name">{{test.name}}</strong>
                                     </div>
@@ -126,15 +129,18 @@
                         <h4><strong>Results</strong></h4>
                         <hr>
 
-                        <div class="alert alert-success" ng-if="vm.overallResult.testCasesRun > 0 && vm.overallResult.testCasesFailed === 0">
+                        <div class="alert alert-success"
+                             ng-if="vm.overallResult.testCasesRun > 0 && vm.overallResult.testCasesFailed === 0">
                             <i class="fa fa-fw fa-check"></i> All tests passed
                         </div>
 
-                        <div class="alert alert-warning" ng-if="vm.overallResult.testCasesFailed * vm.overallResult.testCasesPassed !== 0">
+                        <div class="alert alert-warning"
+                             ng-if="vm.overallResult.testCasesFailed * vm.overallResult.testCasesPassed !== 0">
                             <i class="fa fa-fw fa-info"></i> Some tests failed
                         </div>
 
-                        <div class="alert alert-danger" ng-if="vm.overallResult.testCasesRun > 0 && vm.overallResult.testCasesPassed === 0">
+                        <div class="alert alert-danger"
+                             ng-if="vm.overallResult.testCasesRun > 0 && vm.overallResult.testCasesPassed === 0">
                             <i class="fa fa-fw fa-warning"></i> All tests failed
                         </div>
 

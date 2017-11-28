@@ -250,7 +250,10 @@ class SymbolsView {
      */
     exportSelectedSymbols() {
         if (this.selectedSymbols.length > 0) {
-            this.PromptService.prompt("Enter a name for the json file")
+            const date = new Date();
+            const name = date.getFullYear() + '' + (date.getMonth() + 1) + "" + date.getDate();
+
+            this.PromptService.prompt("Enter a name for the json file", `symbols-${name}`)
                 .then(filename => {
                     const symbolsToExport = this.selectedSymbols.map(s => s.getExportableSymbol());
                     this.DownloadService.downloadObject(symbolsToExport, filename);

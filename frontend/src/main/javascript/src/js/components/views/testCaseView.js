@@ -110,6 +110,11 @@ export const testCaseView = {
          * Execute the test case.
          */
         execute() {
+            if (!this.test.symbols.length) {
+                this.ToastService.info("You have to create at least one symbol.");
+                return;
+            }
+
             this.result = null;
             this.TestResource.execute(this.test, this.browserConfig)
                 .then(data => this.result = data)
@@ -120,6 +125,11 @@ export const testCaseView = {
          * Test which outputs the SUL generates for this word.
          */
         getOutputs() {
+            if (!this.test.symbols.length) {
+                this.ToastService.info("You have to create at least one symbol.");
+                return;
+            }
+
             this.outputs = [];
             const test = JSON.parse(JSON.stringify(this.test));
             test.symbols = test.symbols.map(s => s.id);
