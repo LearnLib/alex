@@ -32,16 +32,31 @@ export const testsView = {
         constructor($state, SessionService, TestResource) {
             const project = SessionService.getProject();
 
+            /**
+             * The test case or test suite.
+             * @type {object|object[]}
+             */
             this.test = null;
+
+            /**
+             * If the root is requested.
+             * @type {boolean}
+             */
+            this.isRoot = false;
 
             const testId = $state.params.testId;
             if (testId === null) {
                 TestResource.getAll(project.id)
-                    .then(data => this.test = data)
+                    .then(data => {
+                        this.isRoot = true;
+                        this.test = data;
+                    })
                     .catch(console.log)
             } else {
                 TestResource.get(project.id, testId)
-                    .then(data => this.test = data)
+                    .then(data => {
+                        this.test = data
+                    })
                     .catch(console.log)
             }
         }

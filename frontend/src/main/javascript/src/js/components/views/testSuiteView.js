@@ -91,15 +91,18 @@ export const testSuiteView = {
 
         $onInit() {
             let tests = null;
+            let testSuites = [];
+            let testCases = [];
+
             if (Array.isArray(this.test)) {
                 tests = this.test;
+                testSuites = tests.filter(t => t.tests);
+                testCases = tests.filter(t => t.symbols);
             } else {
                 tests = this.test.tests;
+                testSuites = tests.filter(t => t.type === 'suite');
+                testCases = tests.filter(t => t.type === 'case');
             }
-
-            // sort by type and then alphabetically
-            const testSuites = tests.filter(t => t.tests);
-            const testCases = tests.filter(t => t.symbols);
 
             const compare = (a,b) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
 
@@ -116,7 +119,7 @@ export const testSuiteView = {
                         type: 'suite',
                         name: name,
                         project: this.project.id,
-                        parent: this.test.id ? this.test.id : null,
+                        parent: typeof this.test.id !== "undefined" ? this.test.id : null,
                         tests: []
                     };
                     this.TestResource.create(testSuite)
@@ -135,7 +138,7 @@ export const testSuiteView = {
                         type: 'case',
                         name: name,
                         project: this.project.id,
-                        parent: this.test.id ? this.test.id : null,
+                        parent: typeof this.test.id !== "undefined" ? this.test.id : null,
                         symbols: []
                     };
                     this.TestResource.create(testCase)
@@ -154,30 +157,28 @@ export const testSuiteView = {
                         return;
                     }
 
-                    const testCopy = JSON.parse(JSON.stringify(test));
-                    delete testCopy._selected;
+                    this.TestResource.get(this.project.id, test.id)
+                        .then(data => {
+                            if (data.type === 'suite') {
+                                data.tests = data.tests.map(t => t.id);
+                            } else {
+                                data.symbols = data.symbols.map(s => s.id);
+                            }
+                            data.name = name;
 
-                    // TODO: remove later when backend bug is fixed
-                    testCopy.type = testCopy.tests ? 'suite' : 'case';
-
-                    testCopy.name = name;
-                    if (testCopy.type === 'suite') {
-                        testCopy.tests = testCopy.tests.map(t => t.id);
-                    } else {
-                        testCopy.symbols = testCopy.symbols.map(s => s.id);
-                    }
-
-                    this.TestResource.update(testCopy)
-                        .then(() => {
-                            this.ToastService.success("The name has been updated.");
-                            test.name = name
+                            this.TestResource.update(data)
+                                .then(() => {
+                                    this.ToastService.success("The name has been updated.");
+                                    test.name = name
+                                })
+                                .catch(err => this.ToastService.danger(`The test ${test.type} could not be created. ${err.data.message}`));
                         })
-                        .catch(err => this.ToastService.danger(`The test ${test.type} could not be created. ${err.data.message}`));
+                        .catch(console.err);
                 });
         }
 
         reset() {
-            this.overallResult = new TestResult();
+            this.overallResult = null;
             this.results = {};
         }
 
@@ -227,6 +228,7 @@ export const testSuiteView = {
             }
 
             this.reset();
+            this.overallResult = new TestResult();
             const selected = this.tests.filter(t => t._selected);
             const next = (test) => {
                 test.project = this.project.id;
