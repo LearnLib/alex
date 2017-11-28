@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.testsuites.rest;
 
 import de.learnlib.alex.auth.entities.User;
@@ -169,16 +185,23 @@ public class TestResource {
 
     private TestExecutionResult executeTest(User user, Test test, BrowserConfig browserConfig) {
         Queue<Test> tests = new LinkedBlockingQueue<>();
-        tests.add(test);
+        tests.offer(test);
         TestExecutionResult result = new TestExecutionResult();
 
-        for (Test current : tests) {
+        while (!tests.isEmpty()) {
+            Test current = tests.poll();
             if (current instanceof TestCase) {
+                if (((TestCase) current).getSymbols().isEmpty()) {
+                    continue;
+                }
                 TestExecutionResult currentResult = executeTestCase(user, (TestCase) current, browserConfig);
                 result.add(currentResult);
             } else if (current instanceof TestSuite) {
+                if (((TestSuite) current).getTests().isEmpty()) {
+                    continue;
+                }
                 TestSuite testSuite = (TestSuite) current;
-                tests.addAll(testSuite.getTests());
+                testSuite.getTests().forEach(tests::offer);
             }
         }
 
