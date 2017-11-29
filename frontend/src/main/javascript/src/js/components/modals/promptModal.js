@@ -38,7 +38,7 @@ export class PromptModalComponent {
          * The regex the user input has to match.
          * @type {Pattern}
          */
-        this.inputPattern = /^[a-zA-Z0-9\.\-,_][a-zA-Z0-9\.\-,_\s]+[a-zA-Z0-9\.\-,_]$/;
+        this.inputPattern = /^[a-zA-Z0-9\.\-,_\s]+$/;
     }
 
     $onInit() {
@@ -50,7 +50,7 @@ export class PromptModalComponent {
      * Close the modal dialog and pass the user input.
      */
     ok() {
-        this.close({$value: this.userInput});
+        this.close({$value: this.userInput.trim()});
     }
 }
 
