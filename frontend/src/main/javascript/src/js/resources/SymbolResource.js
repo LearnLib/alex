@@ -135,7 +135,7 @@ export class SymbolResource {
     removeMany(symbols) {
         const ids = symbols.map(s => s.id).join(',');
         const project = symbols[0].project;
-        return this.$http.post(`rest/projects/${project}/symbols/batch/${ids}/hide`, {});
+        return this.$http.post(this.__env.apiUrl + `/projects/${project}/symbols/batch/${ids}/hide`, {});
     }
 
     /**
@@ -145,7 +145,7 @@ export class SymbolResource {
      * @returns {*}
      */
     recover(symbol) {
-        return this.$http.post(`rest/projects/${symbol.project}/symbols/${symbol.id}/show`, {});
+        return this.$http.post(this.__env.apiUrl + `/projects/${symbol.project}/symbols/${symbol.id}/show`, {});
     }
 
     /**
@@ -157,6 +157,6 @@ export class SymbolResource {
     recoverMany(symbols) {
         const ids = symbols.map(s => s.id).join(',');
         const project = symbols[0].project;
-        return this.$http.post(`rest/projects/${project}/symbols/batch/${ids}/show`, {});
+        return this.$http.post(this.__env.apiUrl + `/projects/${project}/symbols/batch/${ids}/show`, {});
     }
 }
