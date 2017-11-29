@@ -137,7 +137,8 @@ class LearnerViewComponent {
                 eqOracle: this.result.steps[this.stepNo - 1].eqOracle,
                 maxAmountOfStepsToLearn: this.result.steps[this.stepNo - 1].stepsToLearn,
                 stepNo: this.stepNo,
-                symbolsToAdd: []
+                symbolsToAdd: [],
+                project: this.project.id
             };
         } else {
             this.poll();
@@ -173,7 +174,8 @@ class LearnerViewComponent {
                                 this.resumeConfig = {
                                     eqOracle: lastStep.eqOracle,
                                     maxAmountOfStepsToLearn: lastStep.stepsToLearn,
-                                    stepNo: result.steps.length
+                                    stepNo: result.steps.length,
+                                    project: this.project.id
                                 };
                             }
 

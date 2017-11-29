@@ -239,7 +239,7 @@ public class Learner {
     /**
      * Starts the thread and updates the thread maps.
      *
-     * @param user        The user that starts the thread.
+     * @param projectId The id of the project.
      * @param learnThread The thread to start.
      */
     private void startThread(Long projectId, AbstractLearnerThread learnThread) {
@@ -289,6 +289,9 @@ public class Learner {
                                         symbolsFromCounterexample,
                                         lastResult.getBrowser());
 
+            // remove the reset symbol from the outputs
+            results.remove(0);
+
             if (!results.equals(outputs)) {
                 throw new IllegalArgumentException("At least one of the given samples for counterexamples"
                         + " is not matching the behavior of the SUL.");
@@ -311,7 +314,7 @@ public class Learner {
     /**
      * Method to check if a learning process is still active or if it has finished.
      *
-     * @param user The user to check for active threads.
+     * @param projectId The id of the project.
      *
      * @return true if the learning process is active, false otherwise.
      */
@@ -323,7 +326,7 @@ public class Learner {
     /**
      * Get the status of the Learner as immutable object.
      *
-     * @param user The user that wants a LearnerStatus object for his (active) thread.
+     * @param projectId The id of the project.
      *
      * @return A snapshot of the Learner status.
      */
@@ -337,7 +340,6 @@ public class Learner {
             AbstractLearnerThread thread = userThreads.get(projectId);
             LearnerPhase phase = thread != null ? thread.getLearnerPhase() : null;
             List<DefaultQueryProxy> queries = thread != null ? thread.getCurrentQueries() : null;
-
             status = new LearnerStatus(getResult(projectId), phase, queries); // active
         }
 
@@ -348,7 +350,7 @@ public class Learner {
      * Get the current result of the learning process.
      * This must not be a valid step of a test run!
      *
-     * @param user The user that wants to see his result.
+     * @param projectId The id of the project.
      *
      * @return The current result of the AbstractLearnerThread.
      */
@@ -411,7 +413,7 @@ public class Learner {
 
     public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {
         ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, project, readOutputConfig.getBrowser());
-        ctxHandler.setResetSymbol(readOutputConfig.getSymbols().getResetSymbol());
+        ctxHandler.setResetSymbol(new Symbol());
         ConnectorManager connectors = ctxHandler.createContext();
 
         return readOutputs(readOutputConfig.getSymbols().getAllSymbols(), connectors);

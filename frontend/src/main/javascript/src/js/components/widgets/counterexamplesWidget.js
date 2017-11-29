@@ -148,6 +148,7 @@ class CounterexamplesWidget {
                 },
                 browser: this.result.browser
             }).then(ce => {
+                ce.shift();
                 let ceFound = false;
                 for (let i = 0; i < ce.length; i++) {
                     if (ce[i] !== this.counterExample[i].output) {
