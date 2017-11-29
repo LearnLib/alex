@@ -58,9 +58,6 @@ public class SymbolGroup implements Serializable {
     /** The ID of the SymbolGroup in the DB. */
     private UUID uuid;
 
-    /** The plain ID of the User to be used in the JSON. */
-    private Long userId;
-
     /** The related project. */
     private Project project;
 
@@ -85,7 +82,6 @@ public class SymbolGroup implements Serializable {
     public SymbolGroup() {
         this.symbols = new HashSet<>();
 
-        this.userId    = 0L;
         this.projectId = 0L;
     }
 
@@ -130,7 +126,7 @@ public class SymbolGroup implements Serializable {
     public void setProject(Project project) {
         this.project = project;
         if (project == null) {
-            this.projectId = 0L;
+            this.projectId = null;
         } else {
             this.projectId = project.getId();
         }

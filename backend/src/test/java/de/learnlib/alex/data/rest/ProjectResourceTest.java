@@ -202,7 +202,7 @@ public class ProjectResourceTest extends JerseyTest {
                                 .put(Entity.json(json));
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        verify(projectDAO).update(project);
+        verify(projectDAO).update(admin, project);
     }
 
     /*
@@ -226,14 +226,14 @@ public class ProjectResourceTest extends JerseyTest {
                                 .put(Entity.json(project));
 
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
-        verify(projectDAO, never()).update(project);
+        verify(projectDAO, never()).update(admin, project);
     }
 
     @Test
     public void shouldReturn400OnUpdateWhenProjectIsInvalid() throws NotFoundException {
         project.setName("Test Project - Invalid Test");
 
-        willThrow(new ValidationException()).given(projectDAO).update(project);
+        willThrow(new ValidationException()).given(projectDAO).update(admin, project);
         Response response = target("/projects/" + project.getId()).request().header("Authorization", adminToken)
                                 .put(Entity.json(project));
 

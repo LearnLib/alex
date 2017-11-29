@@ -139,11 +139,12 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     @Override
     @Transactional
-    public void update(Project project) throws NotFoundException, ValidationException {
+    public void update(User user, Project project) throws NotFoundException, ValidationException {
         LOGGER.traceEntry("update({})", project);
         try {
-            Project projectInDB = getByID(project.getUserId(), project.getId(), EmbeddableFields.ALL);
+            Project projectInDB = getByID(user.getId(), project.getId(), EmbeddableFields.ALL);
 
+            project.setUser(user);
             project.setDefaultGroup(projectInDB.getDefaultGroup());
             project.setGroups(projectInDB.getGroups());
             project.setNextGroupId(projectInDB.getNextGroupId());

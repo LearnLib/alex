@@ -211,11 +211,10 @@ public class ProjectResource {
             try {
                 if (
                         (project.getUser() != null && !user.equals(project.getUser()))
-                        || (project.getUserId() != 0 && !Objects.equals(project.getUserId(), user.getId()))) {
+                        || (project.getUserId() != null && !Objects.equals(project.getUserId(), user.getId()))) {
                     throw new UnauthorizedException("You are not allowed to update this project");
                 }
-                project.setUser(user);
-                projectDAO.update(project);
+                projectDAO.update(user, project);
                 LOGGER.traceExit(project);
                 return Response.ok(project).build();
             } catch (ValidationException e) {

@@ -184,59 +184,74 @@ public class ProjectDAOImplTest {
 
     @Test
     public void shouldUpdateAProject() throws NotFoundException {
+        User user = new User();
+        user.setId(USER_ID);
+        //
         Project project = new Project();
-        project.setUserId(USER_ID);
+        project.setUser(user);
         project.setId(PROJECT_ID);
         project.setDefaultGroup(new SymbolGroup());
         //
         given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
 
-        projectDAO.update(project);
+        projectDAO.update(user, project);
 
         verify(projectRepository).save(project);
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowANotFoundExceptionWhenUpdatingAUnknownProject() throws NotFoundException {
+        User user = new User();
+        user.setId(USER_ID);
+        //
         Project project = new Project();
-        project.setUserId(USER_ID);
+        project.setUser(user);
         project.setId(PROJECT_ID);
         //
         given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(null);
 
-        projectDAO.update(project);
+        projectDAO.update(user, project);
     }
 
     @Test(expected = ValidationException.class)
     public void shouldHandleConstraintViolationExceptionOnProjectUpdateGracefully() throws NotFoundException {
+        User user = new User();
+        user.setId(USER_ID);
+        //
         Project project = new Project();
-        project.setUserId(USER_ID);
+        project.setUser(user);
         project.setId(PROJECT_ID);
         project.setDefaultGroup(new SymbolGroup());
         //
         given(projectRepository.save(project)).willThrow(ConstraintViolationException.class);
         given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
 
-        projectDAO.update(project); // should fail
+        projectDAO.update(user, project); // should fail
     }
 
     @Test(expected = ValidationException.class)
     public void shouldHandleDataIntegrityViolationExceptionOnProjectUpdateGracefully() throws NotFoundException {
+        User user = new User();
+        user.setId(USER_ID);
+        //
         Project project = new Project();
-        project.setUserId(USER_ID);
+        project.setUser(user);
         project.setId(PROJECT_ID);
         project.setDefaultGroup(new SymbolGroup());
         //
         given(projectRepository.save(project)).willThrow(DataIntegrityViolationException.class);
         given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
 
-        projectDAO.update(project); // should fail
+        projectDAO.update(user, project); // should fail
     }
 
     @Test(expected = ValidationException.class)
     public void shouldHandleTransactionSystemExceptionOnProjectUpdateGracefully() throws NotFoundException {
+        User user = new User();
+        user.setId(USER_ID);
+        //
         Project project = new Project();
-        project.setUserId(USER_ID);
+        project.setUser(user);
         project.setId(PROJECT_ID);
         project.setDefaultGroup(new SymbolGroup());
         //
@@ -249,7 +264,7 @@ public class ProjectDAOImplTest {
         given(projectRepository.save(project)).willThrow(transactionSystemException);
         given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
 
-        projectDAO.update(project); // should fail
+        projectDAO.update(user, project); // should fail
     }
 
     @Test

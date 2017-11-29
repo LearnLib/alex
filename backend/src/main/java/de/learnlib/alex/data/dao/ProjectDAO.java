@@ -124,6 +124,8 @@ public interface ProjectDAO {
     /**
      * Update a project.
      *
+     *
+     * @param user
      * @param project
      *            The project to update.
      * @throws NotFoundException
@@ -131,7 +133,7 @@ public interface ProjectDAO {
      * @throws ValidationException
      *             When the Project was not valid.
      */
-    void update(Project project) throws NotFoundException, ValidationException;
+    void update(User user, Project project) throws NotFoundException, ValidationException;
 
     /**
      * Delete a project.

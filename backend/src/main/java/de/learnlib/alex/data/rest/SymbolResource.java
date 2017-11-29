@@ -310,6 +310,9 @@ public class SymbolResource {
         }
 
         try {
+            symbol.setProjectId(projectId);
+            symbol.setId(id);
+
             symbolDAO.update(user, symbol);
 
             LOGGER.traceExit(symbol);

@@ -152,7 +152,6 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         projectDAO.getByID(user.getId(), projectId); // access check
 
         SymbolGroup result = symbolGroupRepository.findOneByProject_IdAndId(projectId, groupId);
-
         if (result == null) {
             throw new NotFoundException("Could not find a group with the id " + groupId
                                              + " in the project " + projectId + ".");
@@ -166,7 +165,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Override
     @Transactional
     public void update(User user, SymbolGroup group) throws NotFoundException, ValidationException {
-        projectDAO.getByID(user.getId(), group.getProjectId()); // access check
+        // incl. access check
+        Project project = projectDAO.getByID(user.getId(), group.getProjectId(), ProjectDAO.EmbeddableFields.ALL);
 
         SymbolGroup groupInDB = symbolGroupRepository.findOneByProject_IdAndId(group.getProjectId(), group.getId());
 
@@ -176,6 +176,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         try {
             // apply changes
+            groupInDB.setProject(project);
             groupInDB.setName(group.getName());
             symbolGroupRepository.save(groupInDB);
         // error handling

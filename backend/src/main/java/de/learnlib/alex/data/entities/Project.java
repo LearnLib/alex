@@ -188,7 +188,6 @@ public class Project implements Serializable {
         this.symbols = new HashSet<>();
         this.nextSymbolId = 1L;
 
-        this.userId = 0L;
         this.mirrorUrls = "";
     }
 
