@@ -54,6 +54,8 @@ import {AlertAcceptDismissAction} from "../entities/actions/webActions/AlertAcce
 import {AlertGetTextAction} from "../entities/actions/webActions/AlertGetTextAction";
 import {AlertSendKeysAction} from "../entities/actions/webActions/AlertSendKeysAction";
 import {WaitForTextAction} from "../entities/actions/webActions/WaitForTextAction";
+import {SwitchToAction} from "../entities/actions/webActions/SwitchToAction";
+import {SwitchToFrameAction} from "../entities/actions/webActions/SwitchToFrameAction";
 
 /**
  * The service that is used to create new actions.
@@ -104,6 +106,10 @@ export class ActionService {
                 return new PressKeyAction(data);
             case actionType.WEB_CHECK_ATTRIBUTE_VALUE:
                 return new CheckNodeAttributeValueAction(data);
+            case actionType.WEB_SWITCH_TO:
+                return new SwitchToAction(data);
+            case actionType.WEB_SWITCH_TO_FRAME:
+                return new SwitchToFrameAction(data);
 
             // rest actions
             case actionType.REST_CALL:

@@ -94,6 +94,8 @@ export const actionType = {
     WEB_MOUSE_MOVE: 'web_moveMouse',
     WEB_SELECT: 'web_select',
     WEB_SUBMIT: 'web_submit',
+    WEB_SWITCH_TO: 'web_switchTo',
+    WEB_SWITCH_TO_FRAME: 'web_switchToFrame',
     WEB_PRESS_KEY: 'web_pressKey',
     WAIT_FOR_NODE: 'web_waitForNode',
     WAIT_FOR_TITLE: 'web_waitForTitle',

@@ -181,3 +181,19 @@ export const actionFormWaitForText = {
     },
     controllerAs: 'vm'
 };
+
+export const actionFormSwitchTo = {
+    templateUrl: 'html/components/forms/actions/web/switch-to.html',
+    bindings: {
+        action: '='
+    },
+    controllerAs: 'vm'
+};
+
+export const actionFormSwitchToFrame = {
+    templateUrl: 'html/components/forms/actions/web/switch-to-frame.html',
+    bindings: {
+        action: '='
+    },
+    controllerAs: 'vm'
+};
