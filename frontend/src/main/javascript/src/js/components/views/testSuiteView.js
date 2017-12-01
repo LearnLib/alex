@@ -132,7 +132,7 @@ export const testSuiteView = {
                     this.TestResource.create(testSuite)
                         .then(data => {
                             this.ToastService.success(`The test suite "${testSuite.name}" has been created.`);
-                            this.tests.push(data)
+                            this.tests.push(data);
                         })
                         .catch(err => this.ToastService.danger("The test suite could not be created. " + err.data.message));
                 });
@@ -146,12 +146,13 @@ export const testSuiteView = {
                         name: name,
                         project: this.project.id,
                         parent: typeof this.test.id !== "undefined" ? this.test.id : null,
-                        symbols: []
+                        symbols: [],
+                        variables: {}
                     };
                     this.TestResource.create(testCase)
                         .then(data => {
                             this.ToastService.success(`The test case "${testCase.name}" has been created.`);
-                            this.tests.push(data)
+                            this.tests.push(data);
                         })
                         .catch(err => this.ToastService.danger("The test suite could not be created. " + err.data.message));
                 });

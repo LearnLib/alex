@@ -37,6 +37,7 @@ import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.automata.transout.impl.compact.CompactMealyTransition;
 import net.automatalib.util.automata.Automata;
@@ -415,6 +416,17 @@ public class Learner {
         ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, project, readOutputConfig.getBrowser());
         ctxHandler.setResetSymbol(new Symbol());
         ConnectorManager connectors = ctxHandler.createContext();
+
+        return readOutputs(readOutputConfig.getSymbols().getAllSymbols(), connectors);
+    }
+
+    public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig, Map<String, String> variables) {
+        ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, project, readOutputConfig.getBrowser());
+        ctxHandler.setResetSymbol(new Symbol());
+        ConnectorManager connectors = ctxHandler.createContext();
+
+        VariableStoreConnector variableStore = connectors.getConnector(VariableStoreConnector.class);
+        variables.forEach(variableStore::set);
 
         return readOutputs(readOutputConfig.getSymbols().getAllSymbols(), connectors);
     }

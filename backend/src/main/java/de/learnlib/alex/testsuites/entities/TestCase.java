@@ -7,12 +7,15 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.data.entities.Symbol;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,6 +59,9 @@ public class TestCase extends Test implements Serializable {
     private List<Symbol> symbols;
     private List<Long>   symbolsAsIds;
 
+    /** The map with the variables for the test case. */
+    private HashMap<String, String> variables;
+
     /**
      * Default Constructor.
      */
@@ -63,6 +69,7 @@ public class TestCase extends Test implements Serializable {
         super();
 
         this.symbols = new LinkedList<>();
+        this.variables = new HashMap<>();
     }
 
     /**
@@ -140,4 +147,14 @@ public class TestCase extends Test implements Serializable {
         symbols.add(action);
     }
 
+    @Lob
+    @JsonProperty
+    public HashMap<String, String> getVariables() {
+        return variables;
+    }
+
+    @JsonProperty
+    public void setVariables(HashMap<String, String> variables) {
+        this.variables = variables;
+    }
 }

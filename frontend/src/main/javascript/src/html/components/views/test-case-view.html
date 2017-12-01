@@ -16,9 +16,6 @@
                     <i class="fa fa-fm fa-gear"></i>
                 </button>
             </div>
-            <button class="btn btn-sm btn-default pull-right" ng-click="vm.getOutputs()" style="margin-right: 6px">
-                Outputs
-            </button>
         </div>
     </action-bar>
     <div class="view-body">
@@ -69,17 +66,49 @@
                     </div>
                 </div>
                 <div class="col-md-8 col-sm-7">
-                    <div class="list-group" ng-if="vm.test.symbols.length" dragula='"testSymbols"' dragula-model="vm.test.symbols">
-                        <div class="list-group-item" ng-repeat="symbol in vm.test.symbols track by $index">
-                            <i class="fa fa-close pull-right" ng-click="vm.test.symbols.splice($index, 1)"></i>
-                            <span class="label label-info pull-right" ng-if="$index === 0" style="margin-right: 12px">Reset</span>
-                            <strong>{{symbol.name}}</strong><br>
-                            <span class="label label-default" ng-if="vm.outputs[$index]">{{vm.outputs[$index]}}</span>
-                        </div>
-                    </div>
-                    <div class="alert alert-info" ng-if="!vm.test.symbols.length">
-                        Select a symbol to model the test case.
-                    </div>
+
+                    <uib-tabset>
+                        <uib-tab heading="Test case">
+                            <br>
+
+                            <div class="list-group" ng-if="vm.test.symbols.length" dragula='"testSymbols"' dragula-model="vm.test.symbols">
+                                <div class="list-group-item" ng-repeat="symbol in vm.test.symbols track by $index">
+                                    <i class="fa fa-close pull-right" ng-click="vm.test.symbols.splice($index, 1)"></i>
+                                    <span class="label label-info pull-right" ng-if="$index === 0" style="margin-right: 12px">Reset</span>
+                                    <strong>{{symbol.name}}</strong><br>
+                                    <span class="label label-default" ng-if="vm.result.outputs[$index]">{{vm.result.outputs[$index]}}</span>
+                                </div>
+                            </div>
+                            <div class="alert alert-info" ng-if="!vm.test.symbols.length">
+                                Select a symbol to model the test case.
+                            </div>
+
+                        </uib-tab>
+                        <uib-tab heading="Variables">
+                            <br>
+
+                            <form class="d-flex flex-row" ng-submit="vm.createVariable()">
+                                <div class="form-group flex-grow-1" style="width: 100%; margin-right: 12px">
+                                    <input type="text" class="form-control" placeholder="Name" ng-model="vm.variable.name" required>
+                                </div>
+                                <div class="form-group flex-grow-1" style="width: 100%; margin-right: 12px">
+                                    <input type="text" class="form-control" placeholder="Value" ng-model="vm.variable.value" required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-primary" value="Create">
+                                </div>
+                            </form>
+
+                            <ul class="list-group" ng-repeat="(name, value) in vm.test.variables" ng-click="vm.variable = {'name': name, 'value': value}">
+                                <li class="list-group-item" ng-click="vm.variable.name = name; vm.variable.value = value">
+                                    <i class="fa fa-fw fa-close pull-right" ng-click="vm.test.variables.splice($index, 1)"></i>
+                                    <em>{{name}}</em> <i class="fa fa-fw fa-arrow-left"></i> "{{value}}"
+                                </li>
+                            </ul>
+
+                        </uib-tab>
+                    </uib-tabset>
+
                 </div>
             </div>
         </div>

@@ -64,16 +64,12 @@ export const testCaseView = {
             this.test = null;
 
             /**
-             * The outputs of the word.
-             * @type {string[]}
-             */
-            this.outputs = [];
-
-            /**
              * The test result.
              * @type {object}
              */
             this.result = null;
+
+            this.variable = {name: '', value: ''};
 
             /**
              * The browser configuration.
@@ -114,7 +110,14 @@ export const testCaseView = {
                 window.removeEventListener('keydown', keyDownHandler);
             });
 
-            $scope.$on('testSymbols.drag', () => this.outputs = []);
+            $scope.$on('testSymbols.drag', () => this.result.outputs = []);
+        }
+
+        createVariable() {
+            if (this.variable.name.trim() !== '') {
+                this.test.variables[this.variable.name] = this.variable.value;
+                this.variable = {name: '', value: ''};
+            }
         }
 
         /**
@@ -141,33 +144,6 @@ export const testCaseView = {
             this.TestResource.execute(this.test, this.browserConfig)
                 .then(data => this.result = data)
                 .catch(err => this.ToastService.info("The test case could not be executed. " + err.data.message));
-        }
-
-        /**
-         * Test which outputs the SUL generates for this word.
-         */
-        getOutputs() {
-            if (!this.test.symbols.length) {
-                this.ToastService.info("You have to create at least one symbol.");
-                return;
-            }
-
-            this.outputs = [];
-            const test = JSON.parse(JSON.stringify(this.test));
-            test.symbols = test.symbols.map(s => s.id);
-
-            const resetSymbol = test.symbols[0];
-            test.symbols.splice(0, 1);
-
-            this.LearnerResource.readOutputs(this.project.id, {
-                symbols: {
-                    resetSymbol: resetSymbol,
-                    symbols: test.symbols
-                },
-                browser: this.browserConfig
-            })
-                .then(data => this.outputs = data)
-                .catch(console.log)
         }
 
         openBrowserConfigModal() {

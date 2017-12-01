@@ -48,25 +48,27 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 
 @Path("/projects/{project_id}/tests")
 @RolesAllowed({"REGISTERED"})
 public class TestResource {
 
-    private class TestExecutionResult {
+    private class TestSuiteExecutionResult {
 
         private long testCasesPassed;
         private long testCasesFailed;
 
-        public TestExecutionResult() {
+        public TestSuiteExecutionResult() {
             this.testCasesPassed = 0L;
             this.testCasesFailed = 0L;
         }
 
-        public TestExecutionResult(long testCasesPassed, long testCasesFailed) {
+        public TestSuiteExecutionResult(long testCasesPassed, long testCasesFailed) {
             this.testCasesPassed = testCasesPassed;
             this.testCasesFailed = testCasesFailed;
         }
@@ -103,11 +105,28 @@ public class TestResource {
             return testCasesFailed == 0;
         }
 
-        public void add(TestExecutionResult result) {
+        public void add(TestSuiteExecutionResult result) {
             this.testCasesPassed += result.testCasesPassed;
             this.testCasesFailed += result.testCasesFailed;
         }
 
+    }
+
+    private class TestCaseExecutionResult extends TestSuiteExecutionResult {
+        private List<String> outputs;
+
+        public TestCaseExecutionResult(long testCasesPassed, long testCasesFailed, List<String> outputs) {
+            super(testCasesPassed, testCasesFailed);
+            this.outputs = outputs;
+        }
+
+        public List<String> getOutputs() {
+            return outputs;
+        }
+
+        public void setOutputs(List<String> outputs) {
+            this.outputs = outputs;
+        }
     }
 
     /** Context information about the URI. */
@@ -178,15 +197,19 @@ public class TestResource {
 
         Test test = testDAO.get(user, projectId, id);
 
-        TestExecutionResult result = executeTest(user, test, browserConfig);
-
-        return Response.ok(result).build();
+        if (test instanceof TestSuite) {
+            TestSuiteExecutionResult result = executeTestSuite(user, (TestSuite) test, browserConfig);
+            return Response.ok(result).build();
+        } else {
+            TestCaseExecutionResult result = executeTestCase(user, (TestCase) test, browserConfig);
+            return Response.ok(result).build();
+        }
     }
 
-    private TestExecutionResult executeTest(User user, Test test, BrowserConfig browserConfig) {
+    private TestSuiteExecutionResult executeTestSuite(User user, TestSuite test, BrowserConfig browserConfig) {
         Queue<Test> tests = new LinkedBlockingQueue<>();
         tests.offer(test);
-        TestExecutionResult result = new TestExecutionResult();
+        TestSuiteExecutionResult result = new TestSuiteExecutionResult();
 
         while (!tests.isEmpty()) {
             Test current = tests.poll();
@@ -194,7 +217,7 @@ public class TestResource {
                 if (((TestCase) current).getSymbols().isEmpty()) {
                     continue;
                 }
-                TestExecutionResult currentResult = executeTestCase(user, (TestCase) current, browserConfig);
+                TestCaseExecutionResult currentResult = executeTestCase(user, (TestCase) current, browserConfig);
                 result.add(currentResult);
             } else if (current instanceof TestSuite) {
                 if (((TestSuite) current).getTests().isEmpty()) {
@@ -208,7 +231,7 @@ public class TestResource {
         return result;
     }
 
-    private TestExecutionResult executeTestCase(User user, TestCase testCase, BrowserConfig browserConfig) {
+    private TestCaseExecutionResult executeTestCase(User user, TestCase testCase, BrowserConfig browserConfig) {
         List<Symbol> symbols = testCase.getSymbols();
 
         Symbol resetSymbol = symbols.get(0);
@@ -216,13 +239,14 @@ public class TestResource {
         SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols);
         ReadOutputConfig config = new ReadOutputConfig(symbolSet, browserConfig);
 
-        List<ExecuteResult> outputs = learner.readOutputs(user, testCase.getProject(), config);
+        List<ExecuteResult> outputs = learner.readOutputs(user, testCase.getProject(), config, testCase.getVariables());
 
         long symbolsFailed = outputs.stream().filter(o -> !o.isSuccessful()).count();
+        List<String> sulOutputs = outputs.stream().map(ExecuteResult::getOutput).collect(Collectors.toList());
         if (symbolsFailed == 0) {
-            return new TestExecutionResult(1L, 0L);
+            return new TestCaseExecutionResult(1L, 0L, sulOutputs);
         } else {
-            return new TestExecutionResult(0L, 1L);
+            return new TestCaseExecutionResult(0L, 1L, sulOutputs);
         }
     }
 
