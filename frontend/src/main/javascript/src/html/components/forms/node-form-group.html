@@ -2,7 +2,7 @@
     <div class="col-xs-9">
         <div class="form-group">
             <label class="control-label">Selector</label>
-            <input class="form-control" type="text" placeholder="CSS selector" ng-model="vm.node.selector">
+            <input class="form-control" type="text" placeholder="{{vm.node.type === 'CSS' ? 'CSS selector' : 'XPath expression'}}" ng-model="vm.node.selector">
         </div>
     </div>
     <div class="col-xs-3 no-padding-left">

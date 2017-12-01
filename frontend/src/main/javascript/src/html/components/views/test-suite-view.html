@@ -23,9 +23,14 @@
             <button class="btn btn-default btn-sm" ng-click="vm.deleteSelected()">
                 Delete
             </button>
-            <button class="btn btn-primary btn-sm pull-right" ng-click="vm.executeSelected()">
-                Execute
-            </button>
+            <div class="btn-group btn-group-sm pull-right">
+                <button class="btn btn-primary" ng-click="vm.executeSelected()">
+                    Execute
+                </button>
+                <button class="btn btn-primary" ng-click="vm.openBrowserConfigModal()">
+                    <i class="fa fa-fm fa-gear"></i>
+                </button>
+            </div>
         </div>
     </action-bar>
     <div class="view-body">
@@ -47,7 +52,7 @@
             <hr>
 
             <div class="row">
-                <div class="col-xs-9">
+                <div class="col-md-12">
 
                     <div class="list-group test-list" ng-if="vm.tests.length">
                         <div class="list-group-item test-list-item" ng-repeat="test in vm.tests">
@@ -152,18 +157,18 @@
                     </div>
 
                 </div>
-                <div class="col-xs-3">
+                <!--<div class="col-md-3">-->
 
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            Configuration
-                        </div>
-                        <div class="panel-body">
-                            <browser-config-form config="vm.browserConfig"></browser-config-form>
-                        </div>
-                    </div>
+                    <!--<div class="panel panel-default">-->
+                        <!--<div class="panel-heading">-->
+                            <!--Configuration-->
+                        <!--</div>-->
+                        <!--<div class="panel-body">-->
+                            <!--<browser-config-form config="vm.browserConfig"></browser-config-form>-->
+                        <!--</div>-->
+                    <!--</div>-->
 
-                </div>
+                <!--</div>-->
             </div>
         </div>
     </div>

@@ -39,15 +39,18 @@ export const testSuiteView = {
          * @param {ToastService} ToastService
          * @param {TestResource} TestResource
          * @param {PromptService} PromptService
+         * @param $uibModal
+         * @param {SettingsResource} SettingsResource
          */
         // @ngInject
         constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService,
-                    TestResource, PromptService) {
+                    TestResource, PromptService, $uibModal, SettingsResource) {
             this.$state = $state;
             this.LearnerResource = LearnerResource;
             this.ToastService = ToastService;
             this.TestResource = TestResource;
             this.PromptService = PromptService;
+            this.$uibModal = $uibModal;
 
             /**
              * The current project.
@@ -83,6 +86,10 @@ export const testSuiteView = {
                 height: screen.height,
                 headless: false
             };
+
+            SettingsResource.getSupportedWebDrivers()
+                .then(data => {this.browserConfig.driver = data.defaultWebDriver})
+                .catch(console.log);
 
             SymbolGroupResource.getAll(this.project.id, true)
                 .then(groups => this.groups = groups)
@@ -246,6 +253,22 @@ export const testSuiteView = {
                     .catch(console.log);
             };
             next(selected.shift());
+        }
+
+        openBrowserConfigModal() {
+            this.$uibModal.open({
+                component: 'browserConfigModal',
+                resolve: {
+                    modalData: () => {
+                        return {
+                            configuration: JSON.parse(JSON.stringify(this.browserConfig))
+                        };
+                    }
+                }
+            }).result.then(data => {
+                this.ToastService.success("The settings have been updated.");
+                this.browserConfig = data;
+            })
         }
     }
 };

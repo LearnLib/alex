@@ -93,7 +93,15 @@ export const actionFormExecuteScript = {
     bindings: {
         action: '='
     },
-    controllerAs: 'vm'
+    controllerAs: 'vm',
+    controller: class {
+        constructor() {
+            this.aceOptions = {
+                useWrapMode: true,
+                showGutter: true
+            };
+        }
+    }
 };
 
 export const actionFormPressKey = {

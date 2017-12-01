@@ -145,7 +145,8 @@ public class ProjectDAOImpl implements ProjectDAO {
             Project projectInDB = getByID(user.getId(), project.getId(), EmbeddableFields.ALL);
 
             project.setUser(user);
-            project.setDefaultGroup(projectInDB.getDefaultGroup());
+            // TODO: FIX!!!!!! projectInDB.getDefaultGroup() is null in some cases
+            // project.setDefaultGroup(projectInDB.getDefaultGroup());
             project.setGroups(projectInDB.getGroups());
             project.setNextGroupId(projectInDB.getNextGroupId());
             project.setNextSymbolId(projectInDB.getNextSymbolId());

@@ -59,6 +59,7 @@ import {
     hypothesisLayoutSettingsModalHandle,
     hypothesisLayoutSettingsModalComponent
 } from "./components/modals/hypothesisLayoutSettingsModal";
+import {browserConfigModal} from "./components/modals/browserConfigModal";
 import {
     learnerResultDetailsModalHandle,
     learnerResultDetailsModalComponent
@@ -109,7 +110,7 @@ import {symbolEditFormComponent} from "./components/forms/symbolEditForm";
 import {userEditForm} from "./components/forms/userEditForm";
 import {userLoginForm} from "./components/forms/userLoginForm";
 import {userRegisterForm} from "./components/forms/userRegisterForm";
-import {browserConfigFormComponent} from "./components/forms/browserConfigForm";
+import {browserConfigForm} from "./components/forms/browserConfigForm";
 import {testCaseCreateForm} from "./components/forms/testCaseCreateForm";
 import {testCaseEditForm} from "./components/forms/testCaseEditForm";
 import {widget} from "./components/widgets/widget";
@@ -293,6 +294,7 @@ angular
     .component('symbolsImportModal', symbolsImportModalComponent)
     .component('promptModal', promptModalComponent)
     .component('confirmModal', confirmModalComponent)
+    .component('browserConfigModal', browserConfigModal)
 
     // view components
     .component('aboutView', aboutView)
@@ -324,7 +326,7 @@ angular
     .component('userLoginForm', userLoginForm)
     .component('userRegisterForm', userRegisterForm)
     .component('nodeFormGroup', nodeFormGroup)
-    .component('browserConfigForm', browserConfigFormComponent)
+    .component('browserConfigForm', browserConfigForm)
     .component('symbolEditForm', symbolEditFormComponent)
     .component('testCaseCreateForm', testCaseCreateForm)
     .component('testCaseEditForm', testCaseEditForm)

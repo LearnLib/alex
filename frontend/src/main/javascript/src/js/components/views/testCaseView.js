@@ -39,14 +39,17 @@ export const testCaseView = {
          * @param {ToastService} ToastService
          * @param {TestResource} TestResource
          * @param {LearnerResource} LearnerResource
+         * @param $uibModal
+         * @param {SettingsResource} SettingsResource
          */
         // @ngInject
         constructor($scope, $state, dragulaService, SymbolGroupResource, SessionService, ToastService, TestResource,
-                    LearnerResource) {
+                    LearnerResource, $uibModal, SettingsResource) {
             this.$state = $state;
             this.ToastService = ToastService;
             this.TestResource = TestResource;
             this.LearnerResource = LearnerResource;
+            this.$uibModal = $uibModal;
 
             /**
              * The current project.
@@ -87,9 +90,28 @@ export const testCaseView = {
                 .then(groups => this.groups = groups)
                 .catch(console.log);
 
+            SettingsResource.getSupportedWebDrivers()
+                .then(data => {this.browserConfig.driver = data.defaultWebDriver})
+                .catch(console.log);
+
             dragulaService.options($scope, 'testSymbols', {
                 removeOnSpill: false,
                 mirrorContainer: document.createElement('div')
+            });
+
+            const keyDownHandler = (e) => {
+                if (e.ctrlKey && e.which === 83) {
+                    e.preventDefault();
+                    this.save();
+                    return false;
+                }
+            };
+
+            window.addEventListener('keydown', keyDownHandler);
+
+            $scope.$on('$destroy', () => {
+                dragulaService.destroy($scope, 'testSymbols');
+                window.removeEventListener('keydown', keyDownHandler);
             });
 
             $scope.$on('testSymbols.drag', () => this.outputs = []);
@@ -141,10 +163,27 @@ export const testCaseView = {
                 symbols: {
                     resetSymbol: resetSymbol,
                     symbols: test.symbols
-                }, browser: this.browserConfig
+                },
+                browser: this.browserConfig
             })
                 .then(data => this.outputs = data)
                 .catch(console.log)
+        }
+
+        openBrowserConfigModal() {
+            this.$uibModal.open({
+                component: 'browserConfigModal',
+                resolve: {
+                    modalData: () => {
+                        return {
+                            configuration: JSON.parse(JSON.stringify(this.browserConfig))
+                        };
+                    }
+                }
+            }).result.then(data => {
+                this.ToastService.success("The settings have been updated.");
+                this.browserConfig = data;
+            })
         }
     }
 };

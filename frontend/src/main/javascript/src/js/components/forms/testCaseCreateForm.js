@@ -74,9 +74,7 @@ export const testCaseCreateForm = {
             dragulaService.options($scope, 'word', {
                 removeOnSpill: false,
                 mirrorContainer: document.createElement('div'),
-                moves: function () {
-                    return !this.isExecuting;
-                }.bind(this),
+                moves: () => !this.isExecuting
             });
 
             $scope.$on('word.drop', () => this.outputs = []);

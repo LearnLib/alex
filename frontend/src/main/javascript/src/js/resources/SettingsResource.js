@@ -55,13 +55,13 @@ export class SettingsResource {
     }
 
     /**
-     * Get the supported browser enum.
+     * Get the supported web drivers.
      *
      * @returns {Promise}
      */
-    getSupportedBrowserEnum() {
+    getSupportedWebDrivers() {
         return this.get().then(settings => {
-            let supportedBrowsers = {
+            let supportedWebDrivers = {
                 HTMLUNITDRIVER: 'htmlunitdriver',
                 SAFARI: 'safari',
             };
@@ -69,13 +69,13 @@ export class SettingsResource {
             for (let key in webBrowser) {
                 if (key === 'HTMLUNITDRIVER' || key === 'SAFARI') continue;
                 if (settings.driver[webBrowser[key]].trim() !== "") {
-                    supportedBrowsers[key] = webBrowser[key];
+                    supportedWebDrivers[key] = webBrowser[key];
                 }
             }
 
             return {
-                supportedBrowsers: supportedBrowsers,
-                defaultDriver: settings.driver.defaultDriver
+                supportedWebDrivers: supportedWebDrivers,
+                defaultWebDriver: settings.driver.defaultDriver || webBrowser.HTMLUNITDRIVER
             };
         });
     }

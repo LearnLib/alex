@@ -1,8 +1,8 @@
 <div class="form-group">
     <label class="control-label">Web Driver</label>
-    <select class="form-control" ng-options="(v|formatWebBrowser) for (k,v) in vm.webBrowsers"
+    <select class="form-control" ng-options="(v|formatWebBrowser) for (k,v) in vm.supportedWebDrivers"
             ng-model="vm.config.driver">
-        <option value="" disabled>Select a Webdriver</option>
+        <option value="" disabled>Select a WebDriver</option>
     </select>
 </div>
 

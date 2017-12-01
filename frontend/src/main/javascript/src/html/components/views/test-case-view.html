@@ -8,9 +8,14 @@
             <button class="btn btn-sm btn-default" ui-sref="tests({testId: vm.test.parent})">
                 <i class="fa fa-fw fa-close"></i> Cancel
             </button>
-            <button class="btn btn-sm btn-primary pull-right" ng-click="vm.execute()">
-                <i class="fa fa-fw fa-play"></i> Execute
-            </button>
+            <div class="btn-group btn-group-sm pull-right">
+                <button class="btn btn-primary" ng-click="vm.execute()">
+                    Execute
+                </button>
+                <button class="btn btn-primary" ng-click="vm.openBrowserConfigModal()">
+                    <i class="fa fa-fm fa-gear"></i>
+                </button>
+            </div>
             <button class="btn btn-sm btn-default pull-right" ng-click="vm.getOutputs()" style="margin-right: 6px">
                 Outputs
             </button>
@@ -43,7 +48,7 @@
 
             <hr>
             <div class="row">
-                <div class="col-xs-3">
+                <div class="col-md-4 col-sm-5">
                     <div class="panel panel-default" ng-repeat="group in vm.groups">
                         <div class="panel-heading">
                             <strong>{{group.name}}</strong>
@@ -51,6 +56,9 @@
                         <div class="panel-body">
                             <div class="list-group" style="margin-bottom: 0" ng-if="group.symbols.length">
                                 <div class="list-group-item" ng-repeat="symbol in group.symbols" ng-click="vm.test.symbols.push(symbol)">
+                                    <button class="text-muted btn btn-xs btn-icon pull-right" ui-sref="symbolsActions({symbolId:symbol.id})">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
                                     {{symbol.name}}
                                 </div>
                             </div>
@@ -60,31 +68,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-9">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="list-group" ng-if="vm.test.symbols.length" dragula='"testSymbols"' dragula-model="vm.test.symbols">
-                                <div class="list-group-item" ng-repeat="symbol in vm.test.symbols track by $index">
-                                    <i class="fa fa-close pull-right" ng-click="vm.test.symbols.splice($index, 1)"></i>
-                                    <span class="label label-info pull-right" ng-if="$index === 0" style="margin-right: 12px">Reset</span>
-                                    <strong>{{symbol.name}}</strong><br>
-                                    <span class="label label-default" ng-if="vm.outputs[$index]">{{vm.outputs[$index]}}</span>
-                                </div>
-                            </div>
-                            <div class="alert alert-info" ng-if="!vm.test.symbols.length">
-                                Select a symbol to model the test case.
-                            </div>
+                <div class="col-md-8 col-sm-7">
+                    <div class="list-group" ng-if="vm.test.symbols.length" dragula='"testSymbols"' dragula-model="vm.test.symbols">
+                        <div class="list-group-item" ng-repeat="symbol in vm.test.symbols track by $index">
+                            <i class="fa fa-close pull-right" ng-click="vm.test.symbols.splice($index, 1)"></i>
+                            <span class="label label-info pull-right" ng-if="$index === 0" style="margin-right: 12px">Reset</span>
+                            <strong>{{symbol.name}}</strong><br>
+                            <span class="label label-default" ng-if="vm.outputs[$index]">{{vm.outputs[$index]}}</span>
                         </div>
-                        <div class="col-md-4">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <strong>Configuration</strong>
-                                </div>
-                                <div class="panel-body">
-                                    <browser-config-form config="vm.browserConfig"></browser-config-form>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
+                    <div class="alert alert-info" ng-if="!vm.test.symbols.length">
+                        Select a symbol to model the test case.
                     </div>
                 </div>
             </div>

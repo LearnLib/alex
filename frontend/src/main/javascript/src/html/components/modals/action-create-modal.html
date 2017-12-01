@@ -19,28 +19,7 @@
                             <div><strong>Web</strong></div>
                         </uib-accordion-heading>
 
-                        <a href="" ng-click="vm.selectNewActionType('web_alertAcceptDismiss')">Alert - Accept/Dismiss</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_alertGetText')">Alert - Get text</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_alertSendKeys')">Alert - Send keys</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_clear')">Clear input</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_click')">Click element</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_clickLinkByText')">Click link by text</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_fill')">Fill input</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_checkForText')">Search for text</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_checkForNode')">Search element</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_checkNodeAttributeValue')">Check attribute value</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_checkPageTitle')">Check page title</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_submit')">Submit form</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_goto')">Open URL</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_select')">Select from list</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_moveMouse')">Move mouse</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_pressKey')">Press key</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_switchTo')">Switch to</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_switchToFrame')">Switch to frame</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_waitForTitle')">Wait for the title</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_waitForNode')">Wait for an element</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_waitForText')">Wait for text</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_executeScript')">Execute JavaScript</a>
+                        <a href="" ng-repeat="action in vm.actions.web" ng-click="vm.selectNewActionType(action.type)">{{action.text}}</a>
                     </div>
 
                     <div uib-accordion-group class="panel-default">
@@ -48,13 +27,7 @@
                             <div><strong>REST</strong></div>
                         </uib-accordion-heading>
 
-                        <a href="" ng-click="vm.selectNewActionType('rest_call')">Make request</a>
-                        <a href="" ng-click="vm.selectNewActionType('rest_checkStatus')">Check status</a>
-                        <a href="" ng-click="vm.selectNewActionType('rest_checkHeaderField')">Check header field</a>
-                        <a href="" ng-click="vm.selectNewActionType('rest_checkForText')">Search in body</a>
-                        <a href="" ng-click="vm.selectNewActionType('rest_checkAttributeExists')">Check attribute</a>
-                        <a href="" ng-click="vm.selectNewActionType('rest_checkAttributeValue')">Check attribute value</a>
-                        <a href="" ng-click="vm.selectNewActionType('rest_checkAttributeType')">Check attribute type</a>
+                        <a href="" ng-repeat="action in vm.actions.rest" ng-click="vm.selectNewActionType(action.type)">{{action.text}}</a>
                     </div>
 
                     <div uib-accordion-group class="panel-default">
@@ -62,18 +35,7 @@
                             <div><strong>Misc</strong></div>
                         </uib-accordion-heading>
 
-                        <a href="" ng-click="vm.selectNewActionType('assertCounter')">Assert counter</a>
-                        <a href="" ng-click="vm.selectNewActionType('assertVariable')">Assert variable</a>
-                        <a href="" ng-click="vm.selectNewActionType('incrementCounter')">Increment counter</a>
-                        <a href="" ng-click="vm.selectNewActionType('setCounter')">Set counter</a>
-                        <a href="" ng-click="vm.selectNewActionType('setVariable')">Set variable</a>
-                        <a href="" ng-click="vm.selectNewActionType('setVariableByCookie')">Set variable by cookie</a>
-                        <a href="" ng-click="vm.selectNewActionType('setVariableByJSON')">Set variable by JSON</a>
-                        <a href="" ng-click="vm.selectNewActionType('setVariableByHTML')">Set variable by HTML</a>
-                        <a href="" ng-click="vm.selectNewActionType('setVariableByNodeAttribute')">Set variable by node attribute</a>
-                        <a href="" ng-click="vm.selectNewActionType('setVariableByNodeCount')">Set variable by node count</a>
-                        <a href="" ng-click="vm.selectNewActionType('setVariableByRegexGroup')">Set variable by regex group</a>
-                        <a href="" ng-click="vm.selectNewActionType('wait')">Wait</a>
+                        <a href="" ng-repeat="action in vm.actions.misc" ng-click="vm.selectNewActionType(action.type)">{{action.text}}</a>
                     </div>
                 </uib-accordion>
 

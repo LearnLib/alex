@@ -14,42 +14,34 @@
  * limitations under the License.
  */
 
-import {webBrowser} from "../../constants";
-
-export const browserConfigFormComponent = {
+/**
+ * The component to configure the web driver.
+ *
+ * @type {{templateUrl: string, bindings: {config: string}, controllerAs: string, controller: browserConfigForm.controller}}
+ */
+export const browserConfigForm = {
     templateUrl: 'html/components/forms/browser-config-form.html',
     bindings: {
         config: '='
     },
+    controllerAs: 'vm',
     controller: class {
 
         /**
-         * Constructor
+         * Constructor.
+         *
          * @param {SettingsResource} SettingsResource
          */
         // @ngInject
         constructor(SettingsResource) {
             this.SettingsResource = SettingsResource;
-
-            /**
-             * The web driver enum.
-             * @type {any}
-             */
-            this.webBrowsers = null;
+            this.supportedWebDrivers = [];
         }
 
         $onInit() {
-            this.SettingsResource.getSupportedBrowserEnum()
-                .then(data => {
-                    this.webBrowsers = data.supportedBrowsers;
-                    if (Object.values(this.webBrowsers).indexOf(data.defaultDriver) > -1) {
-                        this.config.driver = data.defaultDriver;
-                    } else {
-                        this.config.driver = webBrowser.HTMLUNITDRIVER;
-                    }
-                })
-                .catch(err => console.log(err));
+            this.SettingsResource.getSupportedWebDrivers()
+                .then(data => this.supportedWebDrivers = data.supportedWebDrivers)
+                .catch(console.log);
         }
-    },
-    controllerAs: 'vm'
+    }
 };

@@ -31,9 +31,11 @@ class LearnerSetupView {
      * @param {LearnerResource} LearnerResource
      * @param {ToastService} ToastService
      * @param {LearnResultResource} LearnResultResource
+     * @param {SettingsResource} SettingsResource
      */
     // @ngInject
-    constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource) {
+    constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource,
+                SettingsResource) {
         this.$state = $state;
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
@@ -86,12 +88,16 @@ class LearnerSetupView {
          */
         this.canContinueLearnProcess = false;
 
+        SettingsResource.getSupportedWebDrivers()
+            .then(data => {this.learnConfiguration.browser.driver = data.defaultWebDriver})
+            .catch(console.log);
+
         // make sure that there isn't any other learn process active
         // redirect to the load screen in case there is an active one
         this.LearnerResource.isActive(this.project.id)
             .then(data => {
                 if (data.active) {
-                    if (data.project == this.project.id) {
+                    if (data.project === this.project.id) {
                         this.ToastService.info('There is currently running a learn process.');
                         this.$state.go('learnerStart');
                     } else {
