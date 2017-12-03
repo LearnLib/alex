@@ -34,6 +34,7 @@ public interface FileDAO {
      * Put a new file into the file system.
      *
      * @param user
+     *         The user that belongs to the project
      * @param projectId
      *         The id of the project that the file belongs to.
      * @param uploadedInputStream
@@ -53,6 +54,7 @@ public interface FileDAO {
      *
      *
      * @param user
+     *         The user that belongs to the project
      * @param projectId
      *         The project the files belong to.
      * @return A List of Files. Can be empty.
@@ -66,6 +68,7 @@ public interface FileDAO {
      *
      *
      * @param user
+     *         The user that belongs to the project
      * @param projectId
      *         The id of the project that the file belongs to.
      * @param fileName
@@ -80,6 +83,7 @@ public interface FileDAO {
      * Deletes a file.
      *
      * @param user
+     *         The user that belongs to the project
      * @param projectId
      *         The id of the project that the file belongs to.
      * @param fileName
@@ -89,4 +93,25 @@ public interface FileDAO {
      */
     void delete(User user, Long projectId, String fileName) throws NotFoundException;
 
+    /**
+     * Deletes the complete project directory.
+     *
+     * @param user
+     *         The user that belongs to the project.
+     * @param projectId
+     *         The id of the project that is deleted.
+     * @throws IOException
+     *         If deleting the directory failed.
+     */
+    void deleteProjectDirectory(User user, Long projectId) throws IOException;
+
+    /**
+     * Deletes the complete user directory.
+     *
+     * @param user
+     *         The user who has been deleted.
+     * @throws IOException
+     *         If deleting the directory failed.
+     */
+    void deleteUserDirectory(User user) throws IOException;
 }

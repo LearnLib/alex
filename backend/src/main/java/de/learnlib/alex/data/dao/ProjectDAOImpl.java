@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.Hibernate;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
@@ -58,6 +59,9 @@ public class ProjectDAOImpl implements ProjectDAO {
     /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
 
+    /** The FileDAO to use. Will be injected. */
+    private FileDAO fileDAO;
+
     /**
      * Creates a new ProjectDAO.
      *
@@ -65,8 +69,9 @@ public class ProjectDAOImpl implements ProjectDAO {
      *         The ProjectRepository to use.
      */
     @Inject
-    public ProjectDAOImpl(ProjectRepository projectRepository) {
+    public ProjectDAOImpl(ProjectRepository projectRepository, @Lazy FileDAO fileDAO) {
         this.projectRepository = projectRepository;
+        this.fileDAO = fileDAO;
     }
 
     @Override
@@ -174,8 +179,10 @@ public class ProjectDAOImpl implements ProjectDAO {
         }
 
         projectRepository.delete(project);
+
+        // delete the project directory
         try {
-            FileDAOImpl.deleteProjectDirectory(projectId);
+            fileDAO.deleteProjectDirectory(user, projectId);
         } catch (IOException e) {
             LOGGER.info("The project has been deleted, the directory, however, not.");
         }

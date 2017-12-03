@@ -22,6 +22,7 @@ import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ValidationExceptionHelper;
+import de.learnlib.alex.data.dao.FileDAO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -45,14 +47,19 @@ public class UserDAOImpl implements UserDAO {
     /** The UserRepository to use. Will be injected. */
     private UserRepository userRepository;
 
+    /** The FileDAO to use. Will be injected. */
+    private FileDAO fileDAO;
+
     /**
      * Creates a new UserDAO.
      *
      * @param userRepository The UserRepository to use.
+     * @param fileDAO The FileDAO to use.
      */
     @Inject
-    public UserDAOImpl(UserRepository userRepository) {
+    public UserDAOImpl(UserRepository userRepository, FileDAO fileDAO) {
         this.userRepository = userRepository;
+        this.fileDAO = fileDAO;
     }
 
     @Override
@@ -116,6 +123,13 @@ public class UserDAOImpl implements UserDAO {
         }
 
         userRepository.delete(user);
+
+        // delete the user directory
+        try {
+            fileDAO.deleteUserDirectory(user);
+        } catch (IOException e) {
+            LOGGER.info("The user has been deleted, the user directory, however, not.");
+        }
     }
 
     @Override

@@ -62,7 +62,7 @@ public class ProjectDAOImplTest {
 
     @Before
     public void setUp() {
-        projectDAO = new ProjectDAOImpl(projectRepository);
+        projectDAO = new ProjectDAOImpl(projectRepository, fileDAO);
     }
 
     @Test
