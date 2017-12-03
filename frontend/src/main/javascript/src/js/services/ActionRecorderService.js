@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// the instance of the service
-let instance = null;
-
 /**
  * The service fot the action recorder.
  */
@@ -26,14 +23,11 @@ export class ActionRecorderService {
      * Constructor.
      */
     constructor() {
-        if (instance !== null) return instance;
 
         /**
          * The promise that is used to communicate between the picker and the handle.
          * @type {Promise|null}
          */
         this.deferred = null;
-
-        instance = this;
     }
 }

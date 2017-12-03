@@ -1,5 +1,5 @@
-<div class="project-list">
-    <div class="project-list-item" ng-if="vm.projects.length > 0" ng-repeat="project in vm.projects">
+<div class="list-group">
+    <div class="list-group-item" ng-if="vm.projects.length > 0" ng-repeat="project in vm.projects">
         <div class="btn-group btn-group-xs pull-right" uib-dropdown>
             <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
                 <i class="fa fa-bars"></i>
@@ -23,9 +23,11 @@
                 </li>
             </ul>
         </div>
-        <h3 class="list-group-item-heading">
-            <a href="" ng-bind="project.name" ng-click="vm.openProject(project)"></a>
-        </h3>
+        <h4 class="list-group-item-heading">
+            <strong>
+                <a href="" ng-bind="project.name" ng-click="vm.openProject(project)"></a>
+            </strong>
+        </h4>
         <p class="list-group-item-text">
             <span ng-bind="project.baseUrl"></span> <br>
             <span class="text-muted" ng-if="project.description" ng-bind="project.description"></span>

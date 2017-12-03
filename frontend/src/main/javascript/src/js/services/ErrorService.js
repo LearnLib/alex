@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// the instance of the errorService
-let instance = null;
-
 /**
  * Used to store an error message and can redirect to the error page.
  *
@@ -32,14 +29,13 @@ export class ErrorService {
      */
     // @ngInject
     constructor($state) {
-        // return the instance if available
-        if (instance !== null) return instance;
-
         this.$state = $state;
-        this.errorMessage = null;
 
-        // create an instance of ErrorService
-        instance = this;
+        /**
+         * The message to display on error.
+         * @type {String}
+         */
+        this.errorMessage = null;
     }
 
     /**

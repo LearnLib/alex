@@ -382,12 +382,6 @@ body {
   }
 }
 
-.project-list {
-  .project-list-item {
-    @include selection-list-item();
-  }
-}
-
 .learn-result-list {
   .learn-result-list-item {
     @include selection-list-item();

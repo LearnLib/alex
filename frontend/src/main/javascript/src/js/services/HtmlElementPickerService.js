@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// the instance of the service
-let instance = null;
-
 /**
  * The service fot the html element picker.
  */
@@ -26,7 +23,6 @@ export class HtmlElementPickerService {
      * Constructor.
      */
     constructor() {
-        if (instance !== null) return instance;
 
         /**
          * The promise that is used to communicate between the picker and the handle.
@@ -39,7 +35,5 @@ export class HtmlElementPickerService {
          * @type {string|null}
          */
         this.lastUrl = null;
-
-        instance = this;
     }
 }

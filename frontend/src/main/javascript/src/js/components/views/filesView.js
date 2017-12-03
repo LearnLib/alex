@@ -26,13 +26,15 @@ class FilesView {
      * @param {ToastService} ToastService
      * @param {SessionService} SessionService
      * @param {FileResource} FileResource
+     * @param {object} __env
      */
     // @ngInject
-    constructor(Upload, ToastService, SessionService, FileResource) {
+    constructor(Upload, ToastService, SessionService, FileResource, __env) {
         this.Upload = Upload;
         this.ToastService = ToastService;
         this.SessionService = SessionService;
         this.FileResource = FileResource;
+        this.__env = __env;
 
         /**
          * The project that is in the session.
@@ -105,7 +107,7 @@ class FilesView {
             if (this.filesToUpload.length > 0) {
                 const file = this.filesToUpload[0];
                 this.Upload.upload({
-                    url: 'rest/projects/' + this.project.id + '/files',
+                    url: this.__env.apiUrl + '/projects/' + this.project.id + '/files',
                     file: file
                 }).progress(evt => {
                     this.progress = parseInt(100.0 * evt.loaded / evt.total);
