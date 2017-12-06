@@ -138,14 +138,14 @@ public class ALEXApplication extends ResourceConfig {
                 settings = new Settings();
 
                 String chromeDriverPath = System.getProperty("webdriver.chrome.driver", "");
-                String geckoDriverPath  = System.getProperty("webdriver.gecko.driver",  "");
-                String edgeDriverPath   = System.getProperty("webdriver.edge.driver",   "");
-                String remoteDriverURL  = System.getProperty("webdriver.remote.url",    "");
+                String geckoDriverPath = System.getProperty("webdriver.gecko.driver", "");
+                String edgeDriverPath = System.getProperty("webdriver.edge.driver", "");
+                String remoteDriverURL = System.getProperty("webdriver.remote.url", "");
 
-                Settings.DriverSettings driverSettings = new Settings.DriverSettings(chromeDriverPath,
-                                                                                     geckoDriverPath,
-                                                                                     edgeDriverPath,
-                                                                                     remoteDriverURL);
+                final Settings.DriverSettings driverSettings = new Settings.DriverSettings(chromeDriverPath,
+                                                                                           geckoDriverPath,
+                                                                                           edgeDriverPath,
+                                                                                           remoteDriverURL);
                 settings.setDriverSettings(driverSettings);
 
                 settingsDAO.create(settings);
@@ -153,13 +153,43 @@ public class ALEXApplication extends ResourceConfig {
                 e.printStackTrace();
                 System.exit(0);
             }
-        } else {
-            Settings.DriverSettings driverSettings = settings.getDriverSettings();
-            System.setProperty("webdriver.chrome.driver", driverSettings.getChrome());
-            System.setProperty("webdriver.gecko.driver",  driverSettings.getFirefox());
-            System.setProperty("webdriver.edge.driver",   driverSettings.getEdge());
-            System.setProperty("webdriver.remote.url",    driverSettings.getRemote());
         }
+
+        // overwrite web driver paths if specified as command line arguments
+        final String chromeDriver = env.getProperty("chromeDriver");
+        final String geckoDriver = env.getProperty("geckoDriver");
+        final String edgeDriver = env.getProperty("edgeDriver");
+        final String remoteDriver = env.getProperty("remoteDriver");
+
+        if (!env.getProperty("chromeDriver").equals("")) {
+            settings.getDriverSettings().setChrome(chromeDriver);
+        }
+
+        if (!env.getProperty("geckoDriver").equals("")) {
+            settings.getDriverSettings().setFirefox(geckoDriver);
+        }
+
+        if (!env.getProperty("edgeDriver").equals("")) {
+            settings.getDriverSettings().setEdge(edgeDriver);
+        }
+
+        if (!env.getProperty("remoteDriver").equals("")) {
+            settings.getDriverSettings().setRemote(remoteDriver);
+        }
+
+        try {
+            settings.checkValidity();
+        } catch (ValidationException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        settingsDAO.update(settings);
+
+        System.setProperty("webdriver.chrome.driver", settings.getDriverSettings().getChrome());
+        System.setProperty("webdriver.gecko.driver", settings.getDriverSettings().getFirefox());
+        System.setProperty("webdriver.edge.driver", settings.getDriverSettings().getEdge());
+        System.setProperty("webdriver.remote.url", settings.getDriverSettings().getRemote());
     }
 
     /**
