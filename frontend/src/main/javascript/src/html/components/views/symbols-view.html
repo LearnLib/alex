@@ -45,6 +45,10 @@
                     <i class="fa fa-fw fa-download"></i>
                 </button>
             </div>
+
+            <button class="btn btn-sm btn-default" ng-click="vm.copySelectedSymbol()" uib-tooltip="Copy" tooltip-placement="bottom" ng-class="{'disabled': vm.selectedSymbols.length !== 1}">
+                <i class="fa fa-fw fa-copy"></i>
+            </button>
         </div>
     </action-bar>
 
@@ -71,13 +75,18 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="" symbol-move-modal-handle symbols="[symbol]">
-                                            <i class="fa fa-exchange fa-fw"></i> Move
+                                        <a href="" ng-click="vm.copySymbol(symbol)">
+                                            <i class="fa fa-copy fa-fw"></i> Copy
                                         </a>
                                     </li>
                                     <li>
                                         <a href="" ng-click="vm.deleteSymbol(symbol)">
                                             <i class="fa fa-trash fa-fw"></i> Delete
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="" symbol-move-modal-handle symbols="[symbol]">
+                                            <i class="fa fa-exchange fa-fw"></i> Move
                                         </a>
                                     </li>
                                     <li class="divider"></li>

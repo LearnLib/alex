@@ -107,7 +107,7 @@ class SymbolsView {
      * @returns {SymbolGroup|undefined} - The found symbol group or undefined.
      */
     findGroupFromSymbol(symbol) {
-        return this.groups.find(g =>g.id === symbol.group);
+        return this.groups.find(g => g.id === symbol.group);
     }
 
     /**
@@ -262,6 +262,53 @@ class SymbolsView {
         } else {
             this.ToastService.info('Select symbols you want to export');
         }
+    }
+
+    /**
+     * Copy a selected symbol.
+     */
+    copySelectedSymbol() {
+        const symbol = this.selectedSymbols.find(s => s._selected);
+        if (symbol) {
+            this.copySymbol(symbol);
+        } else {
+            this.ToastService.info("You have to select a symbol to copy it");
+        }
+    }
+
+    /**
+     * Copy a symbol.
+     * @param {AlphabetSymbol} symbol
+     */
+    copySymbol(symbol) {
+        this.PromptService.prompt('Enter a name for the new symbol', symbol.name)
+            .then(name => {
+                // check if a symbol with the same name exists
+                const symbolWithNameExists = this.getAllSymbols().findIndex(s => s.name === name) > -1;
+                if (symbolWithNameExists) {
+                    this.ToastService.info(`The symbol with the name "${name}" already exists`);
+                    return;
+                }
+
+                const s = new AlphabetSymbol();
+                s.name = name;
+                s.actions = [];
+                s.group = symbol.group;
+                s.project = this.project.id;
+
+                // first create the symbol without actions
+                // then update the symbol with actions
+                this.SymbolResource.create(this.project.id, s)
+                    .then(data => {
+                        data.actions = symbol.actions;
+                        return this.SymbolResource.update(data)
+                            .then(data => {
+                                this.addSymbol(data);
+                                this.ToastService.success("The symbol has been copied.");
+                            });
+                    })
+                    .catch(err => this.ToastService.danger(`The symbol could not be created. ${err.data.message}`));
+            });
     }
 }
 
