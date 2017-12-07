@@ -31,9 +31,10 @@ program
     .version('1.0.0')
     .option('--uri [uri]', 'The URI where ALEX is running without trailing \'/\'')
     .option('--target [target]', 'The base URL of the target application')
-    .option('-u, --user [credentials]', '<email>:<password>', credentials)
+    .option('-u, --user [credentials]', 'Credentials with the pattern <email>:<password>', credentials)
     .option('-s, --symbols [file]', 'Add the json file that contains all necessary symbols')
     .option('-t, --tests [file]', 'Add the json file that contains all tests that should be executed')
+    .option('-c, --config [file]', 'Add the json file that contains the configuration for the web driver')
     .parse(process.argv);
 
 /**
@@ -84,6 +85,14 @@ let _symbols = null;
  * @private
  */
 let _tests = null;
+
+/**
+ * The configuration for the web driver.
+ *
+ * @type {{driver: string, width: number, height: number, headless: boolean, xvfbDisplayPort: number}|null}
+ * @private
+ */
+let _config = null;
 
 
 /**
@@ -209,12 +218,7 @@ function executeTest(test) {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + _jwt
         },
-        body: JSON.stringify({
-            driver: 'chrome',
-            width: 1280,
-            height: 720,
-            headless: true
-        })
+        body: JSON.stringify(_config)
     });
 }
 
@@ -280,6 +284,18 @@ try {
             throw "Email or password are not defined or empty.";
         } else {
             _user = program.user;
+        }
+    }
+
+    if (!program.config) {
+        throw "You haven't specified config file for the web driver.";
+    } else {
+        const file = program.config;
+        if (!fs.existsSync(file)) {
+            throw 'The file for the web driver config cannot be found.';
+        } else {
+            const contents = fs.readFileSync(file);
+            _config = JSON.parse(contents);
         }
     }
 
