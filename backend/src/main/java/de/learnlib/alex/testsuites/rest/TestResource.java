@@ -54,6 +54,12 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
+/**
+ * REST endpoints for working with tests.
+ *
+ * @resourcePath tests
+ * @resourceDescription Endpoints for working with tests.
+ */
 @Path("/projects/{project_id}/tests")
 @RolesAllowed({"REGISTERED"})
 public class TestResource {
@@ -140,18 +146,33 @@ public class TestResource {
     /** The {@link TestDAO} to use. */
     private TestDAO testDAO;
 
+    /** The learner. */
     private Learner learner;
 
+    /**
+     * Constructor.
+     *
+     * @param testDAO The injected testDao.
+     * @param learner The injected learner.
+     */
     @Inject
     public TestResource(TestDAO testDAO, Learner learner) {
         this.testDAO = testDAO;
         this.learner = learner;
     }
 
+    /**
+     * Create a test.
+     *
+     * @param projectId The id of the project to create the test in.
+     * @param test      The test to create.
+     * @return The created test.
+     * @throws NotFoundException If the project with the given id could not be found.
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createTestCase(@PathParam("project_id") Long projectId, Test test) throws NotFoundException {
+    public Response createTest(@PathParam("project_id") Long projectId, Test test) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         test.setProjectId(projectId);
@@ -165,6 +186,39 @@ public class TestResource {
         }
     }
 
+    /**
+     * Create multiple tests at once.
+     *
+     * @param projectId The id of the project to create the tests in.
+     * @param tests     The tests to create.
+     * @return The created tests.
+     * @throws NotFoundException If the project with the given id could not be found.
+     */
+    @POST
+    @Path("/batch")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createTests(@PathParam("project_id") Long projectId, List<Test> tests) throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
+        tests.forEach(test -> test.setProjectId(projectId));
+
+        try {
+            testDAO.create(user, tests);
+
+            return Response.ok(tests).status(Response.Status.CREATED).build();
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("TestCase.create", Response.Status.BAD_REQUEST, e);
+        }
+    }
+
+    /**
+     * Get all tests on the top level, where {@link Test#parent} is null.
+     *
+     * @param projectId The if of the project to get all tests from.
+     * @return All tests on the top level of a project.
+     * @throws NotFoundException If the project with the id could not be found.
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") Long projectId) throws NotFoundException {
@@ -175,6 +229,14 @@ public class TestResource {
         return ResponseHelper.renderList(resultList, Response.Status.OK);
     }
 
+    /**
+     * Get a single test.
+     *
+     * @param projectId The id of the project.
+     * @param id        The id of the tests.
+     * @return The test.
+     * @throws NotFoundException If the project or the test could not be found.
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -186,6 +248,15 @@ public class TestResource {
         return Response.ok(result).build();
     }
 
+    /**
+     * Execute a test.
+     *
+     * @param projectId     The id of the project.
+     * @param id            The id of the test.
+     * @param browserConfig The configuration to run the test with.
+     * @return The result of the test execution.
+     * @throws NotFoundException If the project or the test could not be found.
+     */
     @POST
     @Path("/{id}/execute")
     @Produces(MediaType.APPLICATION_JSON)
@@ -250,11 +321,22 @@ public class TestResource {
         }
     }
 
+    /**
+     * Update a test.
+     *
+     * @param projectId The id of the project.
+     * @param id        The id of the test.
+     * @param test      The updated test.
+     * @return The updated test.
+     * @throws NotFoundException If the project or the test could not be found.
+     */
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("project_id") Long projectId, @PathParam("id") Long id, Test test) throws NotFoundException {
+    public Response update(@PathParam("project_id") Long projectId,
+                           @PathParam("id") Long id,
+                           Test test) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         if (test.getId() == null) {
@@ -276,6 +358,14 @@ public class TestResource {
         }
     }
 
+    /**
+     * Delete a test.
+     *
+     * @param projectId The id of the project.
+     * @param id        The id of the test.
+     * @return An empty body if the project has been deleted.
+     * @throws NotFoundException If the project or the test could not be found.
+     */
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)

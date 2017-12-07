@@ -82,6 +82,7 @@ import {userEditModalHandle, userEditModalComponent} from "./components/modals/u
 import {resultListModalHandle, resultListModalComponent} from "./components/modals/resultListModal";
 import {promptModalComponent} from "./components/modals/promptModal";
 import {confirmModalComponent} from "./components/modals/confirmModal";
+import {testsImportModal} from "./components/modals/testsImportModal";
 import {htmlElementPickerHandle} from "./directives/htmlElementPickerHandle";
 import {aboutView} from "./components/views/aboutView";
 import {adminUsersView} from "./components/views/adminUsersView";
@@ -295,6 +296,7 @@ angular
     .component('promptModal', promptModalComponent)
     .component('confirmModal', confirmModalComponent)
     .component('browserConfigModal', browserConfigModal)
+    .component('testsImportModal', testsImportModal)
 
     // view components
     .component('aboutView', aboutView)

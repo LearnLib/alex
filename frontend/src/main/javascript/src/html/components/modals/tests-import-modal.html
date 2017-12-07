@@ -1,0 +1,23 @@
+<div class="modal-header">
+    <h3 class="modal-title">Import tests</h3>
+</div>
+<div class="modal-body">
+    <div class="alert alert-danger" ng-if="vm.errorMessage !== null">
+        {{vm.errorMessage}}
+    </div>
+
+    <file-dropzone on-loaded="vm.fileLoaded.bind(vm)" ng-if="!vm.tests.length">
+        Drag and drop file here or click to select a file
+    </file-dropzone>
+
+    <div class="list-group" ng-if="vm.tests.length">
+        <div class="list-group-item" ng-repeat="test in vm.tests">
+            <i class="fa fa-fw fa-close pull-right" ng-click="vm.tests.splice($index, 1)"></i>
+            <strong>{{test.name}}</strong>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</button>
+    <button class="btn btn-primary btn-sm" ng-click="vm.importTests()">Import</button>
+</div>

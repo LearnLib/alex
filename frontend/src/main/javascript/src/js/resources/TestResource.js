@@ -42,6 +42,17 @@ export class TestResource {
     }
 
     /**
+     * Create multiple test cases at once.
+     *
+     * @param {number} projectId - The id of the project.
+     * @param {object[]} tests - The tests to create.
+     */
+    createMany(projectId, tests) {
+        return this.$http.post(`${this.__env.apiUrl}/projects/${projectId}/tests/batch`, tests)
+            .then(response => response.data);
+    }
+
+    /**
      * Gets all test cases of a project.
      *
      * @param {number} projectId - The id of the project to get all test cases from

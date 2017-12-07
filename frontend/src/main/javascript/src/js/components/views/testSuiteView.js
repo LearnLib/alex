@@ -41,16 +41,18 @@ export const testSuiteView = {
          * @param {PromptService} PromptService
          * @param $uibModal
          * @param {SettingsResource} SettingsResource
+         * @param {DownloadService} DownloadService
          */
         // @ngInject
         constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService,
-                    TestResource, PromptService, $uibModal, SettingsResource) {
+                    TestResource, PromptService, $uibModal, SettingsResource, DownloadService) {
             this.$state = $state;
             this.LearnerResource = LearnerResource;
             this.ToastService = ToastService;
             this.TestResource = TestResource;
             this.PromptService = PromptService;
             this.$uibModal = $uibModal;
+            this.DownloadService = DownloadService;
 
             /**
              * The current project.
@@ -88,7 +90,7 @@ export const testSuiteView = {
             };
 
             SettingsResource.getSupportedWebDrivers()
-                .then(data => {this.browserConfig.driver = data.defaultWebDriver})
+                .then(data => this.browserConfig.driver = data.defaultWebDriver)
                 .catch(console.log);
 
             SymbolGroupResource.getAll(this.project.id, true)
@@ -111,7 +113,7 @@ export const testSuiteView = {
                 testCases = tests.filter(t => t.type === 'case');
             }
 
-            const compare = (a,b) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
+            const compare = (a, b) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
 
             testSuites.sort(compare);
             testCases.sort(compare);
@@ -181,7 +183,7 @@ export const testSuiteView = {
                                 })
                                 .catch(err => this.ToastService.danger(`The test ${test.type} could not be created. ${err.data.message}`));
                         })
-                        .catch(console.err);
+                        .catch(console.error);
                 });
         }
 
@@ -270,6 +272,41 @@ export const testSuiteView = {
                 this.ToastService.success("The settings have been updated.");
                 this.browserConfig = data;
             })
+        }
+
+        exportSelectedTests() {
+            let testCases = this.tests.filter(t => t._selected && t.symbols);
+            if (!testCases.length) {
+                this.ToastService.info('You have to select at least one test.');
+            } else {
+                testCases = JSON.parse(JSON.stringify(testCases));
+                testCases.forEach(test => {
+                    delete test.id;
+                    delete test.project;
+                    delete test.user;
+                    delete test._selected;
+                    delete test.$$hashKey;
+
+                    test.type = 'case';
+                    test.symbols = test.symbols.map(s => s.name);
+                });
+
+                const date = new Date();
+                const name = 'tests-' + date.getFullYear() + '' + (date.getMonth() + 1) + "" + date.getDate();
+                this.PromptService.prompt('Enter a name for the file', name).then(name => {
+                    this.DownloadService.downloadObject(testCases, name);
+                    this.ToastService.success('The tests have been exported');
+                });
+            }
+        }
+
+        importTests() {
+            this.$uibModal.open({
+                component: 'testsImportModal'
+            }).result.then(tests => {
+                this.ToastService.success("Tests have been imported.");
+                tests.forEach(t => this.tests.push(t));
+            });
         }
     }
 };

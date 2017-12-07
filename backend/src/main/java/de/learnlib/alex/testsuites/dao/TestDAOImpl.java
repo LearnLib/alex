@@ -100,16 +100,20 @@ public class TestDAOImpl implements TestDAO {
             }
 
             beforeSaving(user, test);
-            if (test instanceof TestSuite) {
-                System.out.println(((TestSuite) test).getTests());
-            }
-
             testRepository.save(test);
 
         } catch (Exception e) {
             throw new ValidationException(e);
         }
         LOGGER.traceExit(test);
+    }
+
+    @Override
+    @Transactional
+    public void create(User user, List<Test> tests) throws NotFoundException, ValidationException {
+        for (Test test : tests) {
+            this.create(user, test);
+        }
     }
 
     @Override
