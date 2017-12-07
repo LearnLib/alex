@@ -10,6 +10,7 @@ hs_err_pid*
 backend/logs
 
 # JavaScript
+cli/src/main/javascript/node_modules
 frontend/src/main/javascript/node_modules
 frontend/src/main/javascript/dist
 frontend/src/main/javascript/tests/coverage

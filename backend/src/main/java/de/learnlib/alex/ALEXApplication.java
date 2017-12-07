@@ -193,18 +193,15 @@ public class ALEXApplication extends ResourceConfig {
     }
 
     /**
-     * Allow requests from a specific port on localhost.
+     * Allow requests from a all origins.
      *
      * @return The bean.
      */
     @Bean
-    @Conditional(CorsCondition.class)
     public FilterRegistrationBean corsFilter() {
-        final int port = Integer.valueOf(env.getProperty("alex.frontendPort"));
-
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:" + port);
+        config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
