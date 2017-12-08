@@ -31,9 +31,10 @@ program
     .version('1.0.0')
     .option('--uri [uri]', 'The URI where ALEX is running without trailing \'/\'')
     .option('--target [target]', 'The base URL of the target application')
+    .option('-a, --action [action]', 'What do you want to do with ALEX? [test|learn]')
     .option('-u, --user [credentials]', 'Credentials with the pattern <email>:<password>', credentials)
     .option('-s, --symbols [file]', 'Add the json file that contains all necessary symbols')
-    .option('-t, --tests [file]', 'Add the json file that contains all tests that should be executed')
+    .option('-t, --tests [file]', 'Add the json file that contains all tests that should be executed. Omit this if you want to learn.')
     .option('-c, --config [file]', 'Add the json file that contains the configuration for the web driver')
     .parse(process.argv);
 
@@ -89,10 +90,19 @@ let _tests = null;
 /**
  * The configuration for the web driver.
  *
- * @type {{driver: string, width: number, height: number, headless: boolean, xvfbDisplayPort: number}|null}
+ * @type {object|null}
  * @private
  */
 let _config = null;
+
+/**
+ * What to do.
+ * Either 'learn' or 'test'.
+ *
+ * @type {string|null}
+ * @private
+ */
+let _action = null;
 
 
 /**
@@ -261,8 +271,45 @@ function executeTests() {
     });
 }
 
+/**
+ * Start learning.
+ *
+ * @return {Promise<any>}
+ */
+function startLearning() {
+    // replace names in config with corresponding ids.
+    _config.symbols = _config.symbols.map(symbol => _symbols.find(s => s.name === symbol).id);
+    _config.resetSymbol = _symbols.find(s => s.name === _config.resetSymbol).id;
+
+    return new Promise((resolve, reject) => {
+        request({
+            method: 'POST',
+            uri: _uri + `/learner/${_project.id}/start`,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + _jwt
+            },
+            body: JSON.stringify(_config)
+        }).then(data => {
+            data = JSON.parse(data);
+            resolve(`The learning process started successfully. (projectId:${data.project})`);
+        }).catch(reject);
+    });
+}
+
 
 try {
+    // validate the action
+    if (!program.action) {
+        throw "You haven't specified what action to execute. It can either be 'test' or 'learn'";
+    } else {
+        if (['test', 'learn'].indexOf(program.action) === -1) {
+            throw "You have specified an invalid action. It can either be 'test' or 'learn'";
+        } else {
+            _action = program.action;
+        }
+    }
+
     // validate ALEX URI
     if (!program.uri) {
         throw "You haven't specified the URI where the server of ALEX is running.";
@@ -287,6 +334,7 @@ try {
         }
     }
 
+    // check if the config file exists
     if (!program.config) {
         throw "You haven't specified config file for the web driver.";
     } else {
@@ -317,21 +365,27 @@ try {
         }
     }
 
-    // validate tests
-    if (!program.tests) {
-        throw 'You have to specify a file that contains tests.';
-    } else {
-        const file = program.tests;
-        if (!fs.existsSync(file)) {
-            throw 'The file for the tests that you specified cannot be found.';
+    if (_action === 'test') {
+        // validate tests
+        if (!program.tests) {
+            throw 'You have to specify a file that contains tests.';
         } else {
-            const contents = fs.readFileSync(file);
-            const tests = JSON.parse(contents);
-            if (!tests.length) {
-                throw 'The file that you specified does not seem to contain any tests.';
+            const file = program.tests;
+            if (!fs.existsSync(file)) {
+                throw 'The file for the tests that you specified cannot be found.';
             } else {
-                _tests = tests;
+                const contents = fs.readFileSync(file);
+                const tests = JSON.parse(contents);
+                if (!tests.length) {
+                    throw 'The file that you specified does not seem to contain any tests.';
+                } else {
+                    _tests = tests;
+                }
             }
+        }
+    } else {
+        if (program.tests) {
+            throw 'You want to learn, but have specified tests.';
         }
     }
 } catch (exception) {
@@ -339,35 +393,53 @@ try {
     process.exit(0);
 }
 
+function terminate(message, fn) {
+    if (_action === 'test') {
+        deleteProject()
+            .then(() => {
+                console.log(chalk.white.dim(`Project has been deleted.`));
+                fn(message)
+            })
+            .catch(() => fn(message));
+    } else {
+        fn(message);
+    }
+}
+
 // process inputs
 login(_user).then(data => {
     _jwt = JSON.parse(data).token;
+    console.log(chalk.white.dim(`User "${_user.email}" logged in.`));
+
     return createProject().then(data => {
         _project = JSON.parse(data);
+        console.log(chalk.white.dim(`Project has been created.`));
+
         return createSymbols().then(data => {
             _symbols = JSON.parse(data);
-            return createTests().then(data => {
-                _tests = JSON.parse(data);
-                return executeTests();
-            })
+            console.log(chalk.white.dim(`Symbols have been imported.`));
+
+            if (_action === 'test') {
+                return createTests().then(data => {
+                    _tests = JSON.parse(data);
+                    console.log(chalk.white.dim(`Tests have been imported.`));
+                    console.log(chalk.white.dim(`Executing tests...`));
+                    return executeTests();
+                })
+            } else {
+                console.log(chalk.white.dim(`Start learning...`));
+                return startLearning();
+            }
         });
     });
 }).then(result => {
-    const success = msg => {
-        console.log(chalk.green(msg));
+    terminate(result, message => {
+        console.log(chalk.green(message));
         process.exit(0);
-    };
-
-    deleteProject()
-        .then(() => success(result))
-        .catch(() => success(result));
+    });
 }).catch(err => {
-    const failure = msg => {
-        console.log(chalk.red(msg));
+    terminate(err, message => {
+        console.log(chalk.red(message));
         process.exit(1);
-    };
-
-    deleteProject()
-        .then(() => failure(err))
-        .catch(() => failure(err));
+    });
 });
