@@ -31,6 +31,7 @@ import {CheckForNodeWebAction} from "../entities/actions/webActions/CheckForNode
 import {MoveMouseAction} from "../entities/actions/webActions/MoveMouseAction";
 import {WaitForTitleAction} from "../entities/actions/webActions/WaitForTitleAction";
 import {WaitForNodeAction} from "../entities/actions/webActions/WaitForNodeAction";
+import {WaitForNodeAttributeAction} from "../entities/actions/webActions/WaitForNodeAttributeAction";
 import {CallRestAction} from "../entities/actions/restActions/CallRestAction";
 import {CheckAttributeExistsRestAction} from "../entities/actions/restActions/CheckAttributeExistsRestAction";
 import {CheckAttributeTypeRestAction} from "../entities/actions/restActions/CheckAttributeTypeRestAction";
@@ -158,6 +159,8 @@ export class ActionService {
                 return new WaitForNodeAction(data);
             case actionType.WAIT_FOR_TEXT:
                 return new WaitForTextAction(data);
+            case actionType.WAIT_FOR_NODE_ATTRIBUTE:
+                return new WaitForNodeAttributeAction(data);
         }
     }
 

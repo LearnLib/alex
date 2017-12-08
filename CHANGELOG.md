@@ -20,6 +20,7 @@ detailed instructions.
 * Added Safari driver
 * New actions:
     * Wait for a text to appear
+    * Wait for the value of an elements attribute
     * Interact with alert, prompt and confirm dialogs
     
 See the [user documentation](http://learnlib.github.io/alex/book/1.4.0/) for more details.

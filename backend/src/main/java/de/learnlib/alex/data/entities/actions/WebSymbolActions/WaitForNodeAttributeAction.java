@@ -19,6 +19,7 @@ package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,47 +31,33 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
 /**
- * Action to wait for the title of a page to change.
+ * Action to wait for a node attribute value.
  */
 @Entity
-@DiscriminatorValue("web_waitForTitle")
-@JsonTypeName("web_waitForTitle")
-public class WaitForTitleAction extends WebSymbolAction {
+@DiscriminatorValue("web_waitForNodeAttribute")
+@JsonTypeName("web_waitForNodeAttribute")
+public class WaitForNodeAttributeAction extends WebSymbolAction {
 
-    private static final long serialVersionUID = -7416267361597106520L;
+    private static final long serialVersionUID = 1759832996792561200L;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
-    /**
-     * Enumeration to specify the wait criterion.
-     */
+    /** Enum to specify the wait criterion. */
     public enum WaitCriterion {
-        /**
-         * If the title should be the value.
-         */
+
+        /** If the title should be the value. */
         IS,
 
-        /**
-         * If the title should contain the value.
-         */
+        /** If the title should contain the value. */
         CONTAINS;
 
-
-        /**
-         * Parser function to handle the enum names case insensitive.
-         *
-         * @param name
-         *         The enum name.
-         * @return The corresponding WaitCriterion.
-         * @throws IllegalArgumentException
-         *         If the name could not be parsed.
-         */
         @JsonCreator
         public static WaitCriterion fromString(String name) throws IllegalArgumentException {
             return WaitCriterion.valueOf(name.toUpperCase());
@@ -82,76 +69,65 @@ public class WaitForTitleAction extends WebSymbolAction {
         }
     }
 
-    /**
-     * The value the title should match / contain.
-     */
+    /** The value the attribute should match / contain. */
     @NotBlank
     private String value;
 
-    /**
-     * Which criterion is used to wait for the title.
-     */
+    /** The attribute to wait for. */
+    @NotBlank
+    private String attribute;
+
+    /** Which criterion is used to wait for the title. */
     @NotNull
     private WaitCriterion waitCriterion;
 
-    /**
-     * How many seconds should be waited before the action fails.
-     */
+    /** How many seconds should be waited before the action fails. */
     @NotNull
     private long maxWaitTime;
 
-    /**
-     * Get the value for the title.
-     *
-     * @return The value for the title
-     */
+    /** The element. */
+    @NotNull
+    @Embedded
+    private WebElementLocator node;
+
     public String getValue() {
         return value;
     }
 
-    /**
-     * Set the expected value of the title.
-     *
-     * @param value The expected value of the title
-     */
     public void setValue(String value) {
         this.value = value;
     }
 
-    /**
-     * Get the wait criterion.
-     *
-     * @return The wait criterion
-     */
+    public String getAttribute() {
+        return attribute;
+    }
+
+    public void setAttribute(String attribute) {
+        this.attribute = attribute;
+    }
+
     public WaitCriterion getWaitCriterion() {
         return waitCriterion;
     }
 
-    /**
-     * Set the wait criterion.
-     *
-     * @param waitCriterion The wait criterion
-     */
     public void setWaitCriterion(WaitCriterion waitCriterion) {
         this.waitCriterion = waitCriterion;
     }
 
-    /**
-     * Get the max amount of time in seconds to wait before the action fails.
-     *
-     * @return The max amount of time
-     */
     public long getMaxWaitTime() {
         return maxWaitTime;
     }
 
-    /**
-     * Set the max amount of time in seconds to wait before the action fails.
-     *
-     * @param maxWaitTime The max amount of time in seconds
-     */
     public void setMaxWaitTime(long maxWaitTime) {
         this.maxWaitTime = maxWaitTime;
+    }
+
+    public WebElementLocator getNode() {
+        return node;
+    }
+
+    public void setNode(WebElementLocator node) {
+        this.node = node;
     }
 
     @Override
@@ -167,10 +143,10 @@ public class WaitForTitleAction extends WebSymbolAction {
         try {
             switch (waitCriterion) {
                 case IS:
-                    wait.until(ExpectedConditions.titleIs(value));
+                    wait.until(ExpectedConditions.attributeToBe(node.getBy(), attribute, value));
                     break;
                 case CONTAINS:
-                    wait.until(ExpectedConditions.titleContains(value));
+                    wait.until(ExpectedConditions.attributeContains(node.getBy(), attribute, value));
                     break;
                 default:
                     return getFailedOutput();
@@ -178,9 +154,8 @@ public class WaitForTitleAction extends WebSymbolAction {
 
             return getSuccessOutput();
         } catch (TimeoutException e) {
-            LOGGER.info(LEARNER_MARKER, "Waiting on the title '{}' (criterion: '{}') timed out. "
-                                            + "Last known title was '{}'.",
-                        value, waitCriterion, connector.getDriver().getTitle());
+            LOGGER.info(LEARNER_MARKER, "Waiting on the attribute '{}' (criterion: '{}') timed out. ",
+                        attribute, waitCriterion);
             return getFailedOutput();
         }
     }

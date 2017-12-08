@@ -98,6 +98,7 @@ export const actionType = {
     WEB_SWITCH_TO_FRAME: 'web_switchToFrame',
     WEB_PRESS_KEY: 'web_pressKey',
     WAIT_FOR_NODE: 'web_waitForNode',
+    WAIT_FOR_NODE_ATTRIBUTE: 'web_waitForNodeAttribute',
     WAIT_FOR_TITLE: 'web_waitForTitle',
     WAIT_FOR_TEXT: 'web_waitForText',
     WEB_CHECK_ATTRIBUTE_VALUE: 'web_checkNodeAttributeValue',

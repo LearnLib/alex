@@ -60,6 +60,7 @@ import de.learnlib.alex.data.entities.actions.WebSymbolActions.SubmitAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.SwitchTo;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.SwitchToFrame;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.WaitForNodeAction;
+import de.learnlib.alex.data.entities.actions.WebSymbolActions.WaitForNodeAttributeAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.WaitForTextAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.WaitForTitleAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.WebSymbolAction;
@@ -131,6 +132,7 @@ import java.util.UUID;
         @JsonSubTypes.Type(name = "web_switchToFrame", value = SwitchToFrame.class),
         @JsonSubTypes.Type(name = "web_waitForTitle", value = WaitForTitleAction.class),
         @JsonSubTypes.Type(name = "web_waitForNode", value = WaitForNodeAction.class),
+        @JsonSubTypes.Type(name = "web_waitForNodeAttribute", value = WaitForNodeAttributeAction.class),
         @JsonSubTypes.Type(name = "web_waitForText", value = WaitForTextAction.class),
         // REST Actions
         @JsonSubTypes.Type(name = "rest", value = RESTSymbolAction.class),

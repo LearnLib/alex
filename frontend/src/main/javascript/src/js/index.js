@@ -160,6 +160,7 @@ import {
     actionFormPressKey,
     actionFormCheckNodeAttributeValue,
     actionFormWaitForText,
+    actionFormWaitForNodeAttribute,
     actionFormSwitchTo,
     actionFormSwitchToFrame
 } from "./components/forms/actions/webActionForms";
@@ -364,6 +365,7 @@ angular
     .component('actionFormWaitForTitle', actionFormWaitForTitle)
     .component('actionFormWaitForText', actionFormWaitForText)
     .component('actionFormPressKey', actionFormPressKey)
+    .component('actionFormWaitForNodeAttribute', actionFormWaitForNodeAttribute)
 
     // rest action forms
     .component('actionFormCall', actionFormCall)

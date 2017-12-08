@@ -174,6 +174,14 @@ export const actionFormWaitForNode = {
     controllerAs: 'vm'
 };
 
+export const actionFormWaitForNodeAttribute = {
+    templateUrl: 'html/components/forms/actions/web/wait-for-node-attribute.html',
+    bindings: {
+        action: '='
+    },
+    controllerAs: 'vm'
+};
+
 export const actionFormWaitForTitle = {
     templateUrl: 'html/components/forms/actions/web/wait-for-title.html',
     bindings: {
