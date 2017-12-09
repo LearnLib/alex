@@ -54,4 +54,17 @@ public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, UUID> 
     @SuppressWarnings("checkstyle:methodname")
     SymbolGroup findOneByProject_IdAndId(Long projectId, Long id);
 
+    /**
+     * Find a symbol group by its name.
+     *
+     * @param projectId
+     *         The ID the project the symbol group belongs to.
+     * @param name
+     *         The name of the symbol group in the project.
+     * @return The SymbolGroup or null.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    SymbolGroup findOneByProject_IdAndName(Long projectId, String name);
+
 }

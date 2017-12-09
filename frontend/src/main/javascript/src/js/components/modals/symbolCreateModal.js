@@ -26,13 +26,12 @@ export class SymbolCreateModalComponent {
      * Constructor.
      *
      * @param {SymbolResource} SymbolResource
-     * @param {SymbolGroupResource} SymbolGroupResource
      * @param {ToastService} ToastService
      * @param {SessionService} SessionService
      * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor(SymbolResource, SymbolGroupResource, ToastService, SessionService, EventBus) {
+    constructor(SymbolResource, ToastService, SessionService, EventBus) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
@@ -59,21 +58,14 @@ export class SymbolCreateModalComponent {
          * An error message that can be displayed in the template.
          * @type {String|null}
          */
-        this.error = null;
-
-        // fetch all symbol groups so that they can be selected in the template
-        SymbolGroupResource.getAll(this.project.id).then(groups => {
-            this.groups = groups;
-        });
+        this.errorMessage = null;
     }
 
-    /**
-     * Creates a new symbol but does not close the modal window.
-     *
-     * @returns {*}
-     */
-    createSymbolAndContinue() {
-        this.error = null;
+    $onInit() {
+        this.groups = this.resolve.modalData.groups;
+    }
+
+    _createSymbol() {
         return this.SymbolResource.create(this.project.id, this.symbol)
             .then(symbol => {
                 this.ToastService.success(`Created symbol "${symbol.name}"`);
@@ -83,10 +75,18 @@ export class SymbolCreateModalComponent {
                 // set the form to its original state
                 this.form.$setPristine();
                 this.form.$setUntouched();
-            })
-            .catch(response => {
-                this.error = response.data.message;
             });
+    }
+
+    /**
+     * Creates a new symbol but does not close the modal window.
+     *
+     * @returns {*}
+     */
+    createSymbolAndContinue() {
+        this.errorMessage = null;
+        this._createSymbol()
+            .catch(response => this.errorMessage = response.data.message);
     }
 
     /**
@@ -94,7 +94,9 @@ export class SymbolCreateModalComponent {
      * the symbol will be put in the default group with the id 0. Closes the modal on success.
      */
     createSymbol() {
-        this.createSymbolAndContinue().then(() => this.dismiss());
+        this._createSymbol()
+            .then(this.dismiss)
+            .catch(response => this.errorMessage = response.data.message);
     }
 }
 
@@ -102,7 +104,8 @@ export class SymbolCreateModalComponent {
 export const symbolCreateModalComponent = {
     templateUrl: 'html/components/modals/symbol-create-modal.html',
     bindings: {
-        dismiss: '&'
+        dismiss: '&',
+        resolve: '='
     },
     controller: SymbolCreateModalComponent,
     controllerAs: 'vm'
@@ -124,11 +127,16 @@ export const symbolCreateModalComponent = {
 export function symbolCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
-        scope: {},
+        scope: {
+            groups: '=',
+        },
         link(scope, el) {
             el.on('click', () => {
                 $uibModal.open({
-                    component: 'symbolCreateModal'
+                    component: 'symbolCreateModal',
+                    resolve: {
+                        modalData: () => ({groups: scope.groups})
+                    }
                 });
             });
         }

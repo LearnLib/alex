@@ -36,9 +36,6 @@ public interface ProjectDAO {
         /** Flag to embed the groups of the project. */
         GROUPS,
 
-        /** Flag to embed the default group. */
-        DEFAULT_GROUP,
-
         /** Flag to embed the symbols of the project. */
         SYMBOLS,
 

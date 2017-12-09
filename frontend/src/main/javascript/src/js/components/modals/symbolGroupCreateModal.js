@@ -28,13 +28,11 @@ export class SymbolGroupCreateModalComponent {
      * @param {SessionService} SessionService
      * @param {SymbolGroupResource} SymbolGroupResource
      * @param {ToastService} ToastService
-     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor(SessionService, SymbolGroupResource, ToastService, EventBus) {
+    constructor(SessionService, SymbolGroupResource, ToastService) {
         this.SymbolGroupResource = SymbolGroupResource;
         this.ToastService = ToastService;
-        this.EventBus = EventBus;
 
         /**
          * The project that is in the session.
@@ -65,9 +63,7 @@ export class SymbolGroupCreateModalComponent {
         this.SymbolGroupResource.create(this.project.id, this.group)
             .then(createdGroup => {
                 this.ToastService.success('Symbol group <strong>' + createdGroup.name + '</strong> created');
-                this.EventBus.emit(events.GROUP_CREATED, {
-                    group: createdGroup
-                });
+                this.close({$value: createdGroup});
                 this.dismiss();
             })
             .catch(response => {
@@ -80,7 +76,8 @@ export class SymbolGroupCreateModalComponent {
 export const symbolGroupCreateModalComponent = {
     templateUrl: 'html/components/modals/symbol-group-create-modal.html',
     bindings: {
-        dismiss: '&'
+        dismiss: '&',
+        close: '&'
     },
     controller: SymbolGroupCreateModalComponent,
     controllerAs: 'vm'
@@ -100,11 +97,14 @@ export const symbolGroupCreateModalComponent = {
 export function symbolGroupCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
+        scope: {
+            onCreated: '&'
+        },
         link(scope, el) {
             el.on('click', () => {
                 $uibModal.open({
                     component: 'symbolGroupCreateModal'
-                });
+                }).result.then(group => scope.onCreated({group}));
             });
         }
     };

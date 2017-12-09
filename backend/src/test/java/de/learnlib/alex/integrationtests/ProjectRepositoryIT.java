@@ -60,7 +60,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
     public void shouldSaveAValidProject() {
         User user = createUser("alex@test.example");
         userRepository.save(user);
-        //
+
         Project project = createProject(user, "Test Project");
 
         project = projectRepository.save(project);
@@ -210,12 +210,11 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
     public void shouldDeleteAProject() {
         User user = createUser("alex@test.example");
         userRepository.save(user);
-        //
+
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
 
         assertThat(symbolGroupRepository.count(), is(equalTo(1L)));
-        assertNotNull(project.getDefaultGroup().getUUID());
 
         projectRepository.delete(project);
 

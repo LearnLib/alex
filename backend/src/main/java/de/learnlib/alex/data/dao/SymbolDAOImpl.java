@@ -162,7 +162,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         SymbolGroup group = symbolGroupRepository.findOneByProject_IdAndId(projectId, groupId);
         if (group == null) {
-            group = project.getDefaultGroup();
+            group =  symbolGroupRepository.findOneByProject_IdAndId(projectId, 0L);
         }
 
         // get the current highest symbol id in the project and add 1 for the next id

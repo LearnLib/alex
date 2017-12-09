@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.TransactionSystemException;
 
@@ -52,6 +52,7 @@ public class SymbolGroupDAOImplTest {
     private static final long USER_ID    = 21L;
     private static final long PROJECT_ID = 42L;
     private static final long GROUP_ID   = 84L;
+    private static final long DEFAULT_GROUP_ID = 0L;
     private static final int  TEST_GROUP_COUNT = 3;
 
     @Mock
@@ -200,16 +201,17 @@ public class SymbolGroupDAOImplTest {
     public void shouldUpdateAGroup() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
+        group.setName("A group");
         group.setId(GROUP_ID);
         group.setProject(project);
-        //
-        given(symbolGroupRepository.findOneByProject_IdAndId(PROJECT_ID, GROUP_ID))
-                                                                                                     .willReturn(group);
+
+        given(symbolGroupRepository.findOneByProject_IdAndId(PROJECT_ID, GROUP_ID)).willReturn(group);
+        given(symbolGroupRepository.findOneByProject_IdAndName(PROJECT_ID, "A group")).willReturn(null);
 
         symbolGroupDAO.update(user, group);
 
@@ -265,17 +267,16 @@ public class SymbolGroupDAOImplTest {
     public void shouldDeleteAGroup() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
         group.setProject(project);
-        //
-        given(projectDAO.getByID(USER_ID, PROJECT_ID, ProjectDAO.EmbeddableFields.DEFAULT_GROUP)).willReturn(project);
-        given(symbolGroupRepository.findOneByProject_IdAndId(PROJECT_ID, GROUP_ID))
-                                                                                                     .willReturn(group);
+
+        given(projectDAO.getByID(USER_ID, PROJECT_ID)).willReturn(project);
+        given(symbolGroupRepository.findOneByProject_IdAndId(PROJECT_ID, GROUP_ID)).willReturn(group);
 
         symbolGroupDAO.delete(user, PROJECT_ID, GROUP_ID);
 
@@ -286,16 +287,16 @@ public class SymbolGroupDAOImplTest {
     public void shouldNotDeleteTheDefaultGroupOfAProject() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
-        group.setId(GROUP_ID);
+        group.setId(DEFAULT_GROUP_ID);
         group.setProject(project);
-        project.setDefaultGroup(group);
-        //
-        given(projectDAO.getByID(USER_ID, PROJECT_ID, ProjectDAO.EmbeddableFields.DEFAULT_GROUP)).willReturn(project);
+        project.getGroups().add(group);
+
+        given(projectDAO.getByID(USER_ID, PROJECT_ID)).willReturn(project);
         given(symbolGroupRepository.findOneByProject_IdAndId(PROJECT_ID, GROUP_ID)).willReturn(group);
 
         symbolGroupDAO.delete(user, PROJECT_ID, GROUP_ID); // should fail

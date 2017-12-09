@@ -44,11 +44,9 @@ public abstract class AbstractRepositoryIT {
         SymbolGroup defaultGroup = new SymbolGroup();
         defaultGroup.setProject(project);
         defaultGroup.setId(0L);
-        defaultGroup.setName("Default Group");
+        defaultGroup.setName("Default group");
 
         project.getGroups().add(defaultGroup);
-        project.setDefaultGroup(defaultGroup);
-
         return project;
     }
 

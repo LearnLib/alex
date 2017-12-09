@@ -53,7 +53,6 @@ export const events = {
     PROJECT_OPENED: 'project:opened',
 
     // symbol group related events
-    GROUP_CREATED: 'group:created',
     GROUP_UPDATED: 'group:updated',
     GROUP_DELETED: 'group:deleted',
 

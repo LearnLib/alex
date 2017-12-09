@@ -106,6 +106,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             // access check
             Project project = projectDAO.getByID(user.getId(), group.getProjectId(), ProjectDAO.EmbeddableFields.ALL);
 
+            checkIfNameIsUnique(project.getId(), group.getName());
+
             // get the current highest group id in the project and add 1 for the next id
             long id = project.getNextGroupId();
             project.setNextGroupId(id + 1);
@@ -174,6 +176,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             throw new NotFoundException("You can only update existing groups!");
         }
 
+        checkIfNameIsUnique(group.getProjectId(), group.getName());
+
         try {
             // apply changes
             groupInDB.setProject(project);
@@ -193,17 +197,17 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Override
     @Transactional
     public void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException {
-        // incl. access check
-        Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.DEFAULT_GROUP);
-
+        // access check
+        Project project = projectDAO.getByID(user.getId(), projectId);
         SymbolGroup group = get(user, projectId, groupId, EmbeddableFields.ALL);
 
-        if (group.equals(project.getDefaultGroup())) {
+        if (group.isDefaultGroup()) {
             throw new IllegalArgumentException("You can not delete the default group of a project.");
         }
 
+        SymbolGroup defaultGroup = symbolGroupRepository.findOneByProject_IdAndId(project.getId(), 0L);
         for (Symbol symbol : group.getSymbols()) {
-            symbol.setGroup(project.getDefaultGroup());
+            symbol.setGroup(defaultGroup);
             symbol.setHidden(true);
             symbolRepository.save(symbol);
         }
@@ -216,7 +220,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
         if (fieldsToLoad.contains(EmbeddableFields.COMPLETE_SYMBOLS)) {
-            group.getSymbols().forEach(s -> SymbolDAOImpl.loadLazyRelations(s));
+            group.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
         } else if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
             try {
                 List<Symbol> symbols = symbolDAO.getAll(user, group.getProjectId(), group.getId());
@@ -237,6 +241,12 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             Collections.addAll(fieldsToLoad, embedFields);
         }
         return fieldsToLoad;
+    }
+
+    private void checkIfNameIsUnique(Long projectId, String name) throws ValidationException {
+        if (symbolGroupRepository.findOneByProject_IdAndName(projectId, name) != null) {
+            throw new ValidationException("The name of the group already exists.");
+        }
     }
 
     /**

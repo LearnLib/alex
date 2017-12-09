@@ -11,10 +11,10 @@
                 </button>
                 <ul uib-dropdown-menu class="dropdown-menu" role="menu">
                     <li>
-                        <a href="" symbol-create-modal-handle>Symbol</a>
+                        <a href="" symbol-create-modal-handle groups="vm.groups">Symbol</a>
                     </li>
                     <li>
-                        <a href="" symbol-group-create-modal-handle>Group</a>
+                        <a href="" symbol-group-create-modal-handle on-created="vm.groups.push(group)">Group</a>
                     </li>
                 </ul>
             </div>

@@ -69,11 +69,6 @@ class SymbolsView {
             })
             .catch(err => console.log(err));
 
-        // listen on group create event
-        EventBus.on(events.GROUP_CREATED, (evt, data) => {
-            this.groups.push(data.group);
-        }, $scope);
-
         // listen on group update event
         EventBus.on(events.GROUP_UPDATED, (evt, data) => {
             this.updateGroup(data.group);

@@ -107,14 +107,6 @@ public class Project implements Serializable {
     private Set<SymbolGroup> groups;
 
     /**
-     * The default group of the project.
-     */
-    @OneToOne(
-            fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-    private SymbolGroup defaultGroup;
-
-    /**
      * The next id for a group in the project.
      */
     @JsonIgnore
@@ -327,27 +319,6 @@ public class Project implements Serializable {
     public void addGroup(SymbolGroup group) {
         this.groups.add(group);
         group.setProject(this);
-    }
-
-    /**
-     * Get the default group of the project.
-     *
-     * @return The default group.
-     */
-    public SymbolGroup getDefaultGroup() {
-        return defaultGroup;
-    }
-
-    /**
-     * Set a new default group for the project..
-     *
-     * @param defaultGroup The new default group.
-     */
-    public void setDefaultGroup(SymbolGroup defaultGroup) {
-        if (groups != null && !groups.contains(defaultGroup)) {
-            addGroup(defaultGroup);
-        }
-        this.defaultGroup = defaultGroup;
     }
 
     /**

@@ -26,7 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.TransactionSystemException;
 
@@ -39,7 +39,6 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
@@ -70,31 +69,29 @@ public class ProjectDAOImplTest {
         Project project = new Project();
         Project createdProject = new Project();
         createdProject.setId(1L);
-        //
+
         given(projectRepository.save(project)).willReturn(createdProject);
 
         projectDAO.create(project);
 
         verify(projectRepository).save(project);
         assertThat(project.getId(), is(equalTo(1L)));
-        assertNotNull(project.getDefaultGroup());
     }
 
     @Test
     public void shouldCreateAValidPreFilledProject() {
         SymbolGroup testGroup = new SymbolGroup();
-        //
+
         Project project = new Project();
-        //
+
         testGroup.setProject(project);
         project.getGroups().add(testGroup);
-        //
+
         given(projectRepository.save(project)).willReturn(project);
 
         projectDAO.create(project);
 
         verify(projectRepository).save(project);
-        assertThat(project.getDefaultGroup(), is(equalTo(testGroup)));
     }
 
     @Test(expected = ValidationException.class)
@@ -186,12 +183,11 @@ public class ProjectDAOImplTest {
     public void shouldUpdateAProject() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setUser(user);
         project.setId(PROJECT_ID);
-        project.setDefaultGroup(new SymbolGroup());
-        //
+
         given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
 
         projectDAO.update(user, project);
@@ -217,12 +213,11 @@ public class ProjectDAOImplTest {
     public void shouldHandleConstraintViolationExceptionOnProjectUpdateGracefully() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setUser(user);
         project.setId(PROJECT_ID);
-        project.setDefaultGroup(new SymbolGroup());
-        //
+
         given(projectRepository.save(project)).willThrow(ConstraintViolationException.class);
         given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
 
@@ -233,12 +228,11 @@ public class ProjectDAOImplTest {
     public void shouldHandleDataIntegrityViolationExceptionOnProjectUpdateGracefully() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setUser(user);
         project.setId(PROJECT_ID);
-        project.setDefaultGroup(new SymbolGroup());
-        //
+
         given(projectRepository.save(project)).willThrow(DataIntegrityViolationException.class);
         given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
 
@@ -249,12 +243,11 @@ public class ProjectDAOImplTest {
     public void shouldHandleTransactionSystemExceptionOnProjectUpdateGracefully() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setUser(user);
         project.setId(PROJECT_ID);
-        project.setDefaultGroup(new SymbolGroup());
-        //
+
         ConstraintViolationException constraintViolationException;
         constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
