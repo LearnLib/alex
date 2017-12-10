@@ -40,8 +40,9 @@ public interface TestRepository extends JpaRepository<Test, UUID> {
     @SuppressWarnings("checkstyle:methodname")
     Test findOneByProject_IdAndId(Long projectId, Long id);
 
+    @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    Test findOneByProject_IdAndName(Long projectId, String name);
+    Test findOneByProject_IdAndParent_IdAndName(Long projectId, Long parentId, String name);
 
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")

@@ -40,16 +40,15 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import java.util.UUID;
 
+/**
+ * The entity for a test.
+ */
 @Entity
 @Table(
         uniqueConstraints = {
                 @UniqueConstraint(
-                        columnNames = {"projectId", "name"},
+                        columnNames = {"projectId"},
                         name = "Unique Test Case ID per Project"
-                ),
-                @UniqueConstraint(
-                        columnNames = {"projectId", "name"},
-                        name = "Unique Test Case Name per Project"
                 )
         }
 )
@@ -72,8 +71,10 @@ public class Test {
     /** The ID of the Project to be used in the JSON. */
     private Long projectId;
 
+    /**  The parent test suite. */
     private Test parent;
 
+    /** The id of the parent test suite. */
     private Long parentId;
 
     /** The id of the Test Case in the Project. */

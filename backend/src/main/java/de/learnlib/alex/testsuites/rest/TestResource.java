@@ -19,6 +19,7 @@ package de.learnlib.alex.testsuites.rest;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.config.entities.BrowserConfig;
@@ -49,6 +50,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -226,7 +228,12 @@ public class TestResource {
 
         List<Test> resultList = testDAO.getAll(user, projectId);
 
-        return ResponseHelper.renderList(resultList, Response.Status.OK);
+        // wrap the all tests with no parent in a root test suite for convenience
+        TestSuite root = new TestSuite();
+        root.setName("Root");
+        root.setTests(new HashSet<>(resultList));
+
+        return Response.ok(root).build();
     }
 
     /**
@@ -363,7 +370,7 @@ public class TestResource {
      *
      * @param projectId The id of the project.
      * @param id        The id of the test.
-     * @return An empty body if the project has been deleted.
+     * @return An empty body if the test has been deleted.
      * @throws NotFoundException If the project or the test could not be found.
      */
     @DELETE
@@ -377,4 +384,22 @@ public class TestResource {
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 
+    /**
+     * Deletes multiple tests.
+     *
+     * @param projectId The id of the project.
+     * @param ids       The ids of the tests to delete.
+     * @return An empty body if the project has been deleted.
+     * @throws NotFoundException If the project or a test could not be found.
+     */
+    @DELETE
+    @Path("/batch/{ids}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("ids") IdsList ids) throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
+        testDAO.delete(user, projectId, ids);
+
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
 }

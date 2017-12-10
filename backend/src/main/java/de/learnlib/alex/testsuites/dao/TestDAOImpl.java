@@ -18,6 +18,7 @@ package de.learnlib.alex.testsuites.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.dao.SymbolDAOImpl;
@@ -71,9 +72,9 @@ public class TestDAOImpl implements TestDAO {
             }
 
             // make sure the name of the Test Case is unique
-            Test testInDb = testRepository.findOneByProject_IdAndName(test.getProjectId(), test.getName());
+            Test testInDb = testRepository.findOneByProject_IdAndParent_IdAndName(test.getProjectId(), test.getParentId(), test.getName());
             if (testInDb != null && !testInDb.getId().equals(test.getId())) {
-                throw new ValidationException("To create a Test Case its name must be unique.");
+                throw new ValidationException("To create a test case or suite its name must be unique withing its parent.");
             }
 
             Long projectId = test.getProjectId();
@@ -151,11 +152,12 @@ public class TestDAOImpl implements TestDAO {
         projectDAO.getByID(user.getId(), test.getProjectId()); // access check
 
         // make sure the name of the Test Case is unique
-        Test testInDB = get(user, test.getProjectId(), test.getId());
+        Test testInDB = testRepository.findOneByProject_IdAndParent_IdAndName(test.getProjectId(), test.getParentId(), test.getName());
         if (testInDB != null && !testInDB.getId().equals(test.getId())) {
-            throw new ValidationException("To update a Test Case its name must be unique.");
+            throw new ValidationException("To update a test case or suite its name must be unique within its parent.");
         }
 
+        testInDB = get(user, test.getProjectId(), test.getId());
 
         try {
             test.setUUID(testInDB.getUUID());
@@ -188,8 +190,6 @@ public class TestDAOImpl implements TestDAO {
     public void delete(User user, Long projectId, Long id) throws NotFoundException {
         Test test = get(user, projectId, id);
 
-        System.out.println("Deleting: " + test);
-
         Test parent = test.getParent();
         if (parent != null) {
             ((TestSuite) parent).getTests().remove(test);
@@ -197,6 +197,14 @@ public class TestDAOImpl implements TestDAO {
         }
 
         testRepository.delete(test);
+    }
+
+    @Override
+    @Transactional
+    public void delete(User user, Long projectId, IdsList ids) throws NotFoundException {
+        for (long id: ids) {
+            delete(user, projectId, id);
+        }
     }
 
     private void loadLazyRelations(Test test) {

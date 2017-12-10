@@ -18,6 +18,7 @@ package de.learnlib.alex.testsuites.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.testsuites.entities.Test;
 
 import javax.validation.ValidationException;
@@ -37,4 +38,5 @@ public interface TestDAO {
 
     void delete(User user, Long projectId, Long id) throws NotFoundException;
 
+    void delete(User user, Long projectId, IdsList ids) throws NotFoundException;
 }

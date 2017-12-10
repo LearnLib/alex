@@ -18,7 +18,8 @@ export const testsImportModal = {
     templateUrl: 'html/components/modals/tests-import-modal.html',
     bindings: {
         close: '&',
-        dismiss: '&'
+        dismiss: '&',
+        resolve: '='
     },
     controllerAs: 'vm',
     controller: class {
@@ -73,7 +74,7 @@ export const testsImportModal = {
                                 const sym = symbols.find(s => s.name === name);
                                 if (sym) return sym.id;
                             });
-                            test.parent = null;
+                            test.parent = this.resolve.modalData.test.id;
                             test.project = this.project.id;
                         });
 

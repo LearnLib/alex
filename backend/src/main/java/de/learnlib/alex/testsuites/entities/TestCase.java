@@ -37,21 +37,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Representation of a Test.
+ * Test case.
  */
 @Entity
 @DiscriminatorValue("case")
 @JsonTypeName("case")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TestCase extends Test implements Serializable {
 
     private class SymbolRepresentation {
         private Long id;
         private String name;
 
-        SymbolRepresentation(Long id, String name) {
-            this.id = id;
-            this.name = name;
+        SymbolRepresentation(Symbol symbol) {
+            this.id = symbol.getId();
+            this.name = symbol.getName();
         }
 
         public Long getId() {
@@ -71,9 +70,11 @@ public class TestCase extends Test implements Serializable {
         }
     }
 
-    /** Link to the Symbols that are used during the Test Case. */
+    /** List of symbols that are used for the test case. */
     private List<Symbol> symbols;
-    private List<Long>   symbolsAsIds;
+
+    /** List of IDs of the symbols that are used for the test case. */
+    private List<Long> symbolsAsIds;
 
     /** The map with the variables for the test case. */
     private HashMap<String, String> variables;
@@ -83,7 +84,6 @@ public class TestCase extends Test implements Serializable {
      */
     public TestCase() {
         super();
-
         this.symbols = new LinkedList<>();
         this.variables = new HashMap<>();
     }
@@ -115,11 +115,11 @@ public class TestCase extends Test implements Serializable {
 
     @Transient
     @JsonProperty("symbols")
-    public List<SymbolRepresentation> getSymbolRepresentation() {
+    public List<SymbolRepresentation> getSymbolRepresentations() {
         if (symbols == null || symbols.isEmpty()) {
             return new LinkedList<>();
         }
-        return symbols.stream().map(s -> new SymbolRepresentation(s.getId(), s.getName())).collect(Collectors.toList());
+        return symbols.stream().map(SymbolRepresentation::new).collect(Collectors.toList());
     }
 
 

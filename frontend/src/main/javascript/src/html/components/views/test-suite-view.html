@@ -37,8 +37,11 @@
             </div>
 
             <div class="btn-group btn-group-sm pull-right">
-                <button class="btn btn-primary" ng-click="vm.executeSelected()">
+                <button class="btn btn-primary" ng-click="vm.executeSelected()" ng-if="!vm.isExecuting">
                     Execute
+                </button>
+                <button class="btn btn-primary" ng-click="vm.stopTestExecution()" ng-if="vm.isExecuting">
+                    Stop
                 </button>
                 <button class="btn btn-primary" ng-click="vm.openBrowserConfigModal()">
                     <i class="fa fa-fm fa-gear"></i>
@@ -50,15 +53,11 @@
         <div class="alx-container">
 
             <div class="d-flex" style="align-items: center">
-                <button class="btn btn-sm btn-default" ui-sref="tests({testId:vm.test.parent})"
-                        ng-if="vm.test.parent !== null && vm.test.name" style="margin-right: 12px">
+                <button class="btn btn-sm btn-default" ui-sref="tests({testId:vm.test.parent})" ng-if="vm.test.id !== null" style="margin-right: 12px">
                     <i class="fa fa-fw fa-level-up"></i>
                 </button>
                 <h4 ng-if="vm.test.name" style="margin: 0;">
                     <strong><i class="fa fa-fw fa-folder-o"></i> {{vm.test.name}}</strong>
-                </h4>
-                <h4 ng-if="!vm.test.name" style="margin: 0; margin-top: 4px">
-                    <strong><i class="fa fa-fw fa-folder-o"></i> Root</strong>
                 </h4>
             </div>
 
@@ -70,7 +69,7 @@
                     <div class="list-group test-list" ng-if="vm.tests.length">
                         <div class="list-group-item test-list-item" ng-repeat="test in vm.tests">
 
-                            <div class="d-flex flex-row" ng-if="test.tests || test.type === 'suite'">
+                            <div class="d-flex flex-row" ng-if="test.type === 'suite'">
                                 <div style="padding-right: 12px">
                                     <checkbox model="test"></checkbox>
                                 </div>
@@ -105,7 +104,7 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex flex-row" ng-if="test.symbols || test.type === 'case'">
+                            <div class="d-flex flex-row" ng-if="test.type === 'case'">
                                 <div style="padding-right: 12px">
                                     <checkbox model="test"></checkbox>
                                 </div>
@@ -170,18 +169,6 @@
                     </div>
 
                 </div>
-                <!--<div class="col-md-3">-->
-
-                    <!--<div class="panel panel-default">-->
-                        <!--<div class="panel-heading">-->
-                            <!--Configuration-->
-                        <!--</div>-->
-                        <!--<div class="panel-body">-->
-                            <!--<browser-config-form config="vm.browserConfig"></browser-config-form>-->
-                        <!--</div>-->
-                    <!--</div>-->
-
-                <!--</div>-->
             </div>
         </div>
     </div>

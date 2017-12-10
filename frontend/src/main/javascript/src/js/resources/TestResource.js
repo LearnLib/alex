@@ -94,6 +94,18 @@ export class TestResource {
     }
 
     /**
+     * Deletes a test case.
+     *
+     * @param {number} projectId - The id of the project the tests are in.
+     * @param tests - The test case to delete.
+     */
+    removeMany(projectId, tests) {
+        const ids = tests.map(t => t.id).join(',');
+        return this.$http.delete(`${this.__env.apiUrl}/projects/${projectId}/tests/batch/${ids}`)
+            .then(response => response.data);
+    }
+
+    /**
      * Execute the test.
      *
      * @param {object} testCase - The test to execute.

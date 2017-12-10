@@ -17,7 +17,6 @@
 package de.learnlib.alex.testsuites.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -32,51 +31,22 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Test suite.
+ * Can contain other test suites or test cases.
+ */
 @Entity
 @DiscriminatorValue("suite")
 @JsonTypeName("suite")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TestSuite extends Test implements Serializable {
 
-    private class TestRepresentation {
-        private Long id;
-        private String name;
-        private String type;
-
-        TestRepresentation(Long id, String name, String type) {
-            this.id = id;
-            this.name = name;
-            this.type = type;
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-    }
-
+    /** The tests that belong to the test suite. */
     private Set<Test> tests;
+
+    /** The IDs of the tests that belong the the test suite. */
     private Set<Long> testsAsIds;
 
+    /** Constructor. */
     public TestSuite() {
         this.tests = new HashSet<>();
     }
@@ -86,7 +56,7 @@ public class TestSuite extends Test implements Serializable {
             fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
-    @JsonIgnore
+    @JsonProperty("tests")
     public Set<Test> getTests() {
         return tests;
     }
@@ -101,18 +71,6 @@ public class TestSuite extends Test implements Serializable {
             testsAsIds = new HashSet<>();
         }
         return testsAsIds;
-    }
-
-    @Transient
-    @JsonProperty("tests")
-    public Set<TestRepresentation> getTestRepresnations() {
-        if (tests == null || tests.isEmpty()) {
-            return new HashSet<>();
-        } else {
-            return tests.stream()
-                    .map(t -> new TestRepresentation(t.id, t.name, t instanceof TestCase ? "case" : "suite"))
-                    .collect(Collectors.toSet());
-        }
     }
 
     @JsonIgnore

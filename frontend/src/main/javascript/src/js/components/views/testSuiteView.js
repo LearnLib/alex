@@ -79,6 +79,12 @@ export const testSuiteView = {
             this.overallResult = null;
 
             /**
+             * If tests are being executed.
+             * @type {boolean}
+             */
+            this.isExecuting = false;
+
+            /**
              * The browser configuration.
              * @type {object}
              */
@@ -99,19 +105,9 @@ export const testSuiteView = {
         }
 
         $onInit() {
-            let tests = null;
-            let testSuites = [];
-            let testCases = [];
-
-            if (Array.isArray(this.test)) {
-                tests = this.test;
-                testSuites = tests.filter(t => t.tests);
-                testCases = tests.filter(t => t.symbols);
-            } else {
-                tests = this.test.tests;
-                testSuites = tests.filter(t => t.type === 'suite');
-                testCases = tests.filter(t => t.type === 'case');
-            }
+            let tests = this.test.tests;
+            let testSuites = tests.filter(t => t.type === 'suite');
+            let testCases = tests.filter(t => t.type === 'case');
 
             const compare = (a, b) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
 
@@ -167,23 +163,20 @@ export const testSuiteView = {
                         return;
                     }
 
-                    this.TestResource.get(this.project.id, test.id)
-                        .then(data => {
-                            if (data.type === 'suite') {
-                                data.tests = data.tests.map(t => t.id);
-                            } else {
-                                data.symbols = data.symbols.map(s => s.id);
-                            }
-                            data.name = name;
+                    const testToUpdate = JSON.parse(JSON.stringify(test));
+                    delete testToUpdate._selected;
+                    if (testToUpdate.type === 'suite') {
+                        testToUpdate.tests = test.tests.map(t => t.id);
+                    } else {
+                        testToUpdate.symbols = test.symbols.map(s => s.id);
+                    }
 
-                            this.TestResource.update(data)
-                                .then(() => {
-                                    this.ToastService.success("The name has been updated.");
-                                    test.name = name
-                                })
-                                .catch(err => this.ToastService.danger(`The test ${test.type} could not be created. ${err.data.message}`));
+                    this.TestResource.update(testToUpdate)
+                        .then(() => {
+                            this.ToastService.success("The name has been updated.");
+                            test.name = name
                         })
-                        .catch(console.error);
+                        .catch(err => this.ToastService.danger(`The test ${test.type} could not be updated. ${err.data.message}`));
                 });
         }
 
@@ -213,22 +206,20 @@ export const testSuiteView = {
             this.reset();
 
             const selected = this.tests.filter(t => t._selected);
-
-            const next = (test) => {
-                test.project = this.project.id;
-                this.TestResource.remove(test)
-                    .then(() => {
+            this.TestResource.removeMany(this.project.id, selected)
+                .then(() => {
+                    this.ToastService.success("The tests have been deleted.");
+                    selected.forEach(test => {
                         const i = this.tests.findIndex(t => t.id === test.id);
                         if (i > -1) this.tests.splice(i, 1);
-                        if (selected.length) {
-                            next(selected.shift());
-                        } else {
-                            this.ToastService.success("All selected test cases and test suites have been deleted.")
-                        }
-                    })
-                    .catch(console.log);
-            };
-            next(selected.shift());
+                    });
+                })
+                .catch(err => this.ToastService.danger(`Deleting the tests failed. ${err.data.message}`));
+        }
+
+        stopTestExecution() {
+            this.ToastService.info("The execution stops after the current test.");
+            this.isExecuting = false;
         }
 
         executeSelected() {
@@ -239,9 +230,14 @@ export const testSuiteView = {
 
             this.reset();
             this.overallResult = new TestResult();
+            this.isExecuting = true;
             const selected = this.tests.filter(t => t._selected);
             const next = (test) => {
-                test.project = this.project.id;
+                if (!this.isExecuting) {
+                    this.ToastService.success("Finished executing all tests.");
+                    return;
+                }
+
                 this.TestResource.execute(test, this.browserConfig)
                     .then(data => {
                         this.results[test.id] = data;
@@ -250,7 +246,8 @@ export const testSuiteView = {
                         if (selected.length) {
                             next(selected.shift());
                         } else {
-                            this.ToastService.success("Finished executing all tests.")
+                            this.ToastService.success("Finished executing all tests.");
+                            this.isExecuting = false;
                         }
                     })
                     .catch(console.log);
@@ -275,7 +272,7 @@ export const testSuiteView = {
         }
 
         exportSelectedTests() {
-            let testCases = this.tests.filter(t => t._selected && t.symbols);
+            let testCases = this.tests.filter(t => t._selected && t.type === 'case');
             if (!testCases.length) {
                 this.ToastService.info('You have to select at least one test.');
             } else {
@@ -284,6 +281,7 @@ export const testSuiteView = {
                     delete test.id;
                     delete test.project;
                     delete test.user;
+                    delete test.parent;
                     delete test._selected;
                     delete test.$$hashKey;
 
@@ -302,11 +300,18 @@ export const testSuiteView = {
 
         importTests() {
             this.$uibModal.open({
-                component: 'testsImportModal'
+                component: 'testsImportModal',
+                resolve: {
+                    modalData: () => ({test: this.test})
+                }
             }).result.then(tests => {
                 this.ToastService.success("Tests have been imported.");
-                tests.forEach(t => this.tests.push(t));
+                tests.forEach(t => {
+                    t.type = t.tests ? 'suite' : 'case';
+                    this.tests.push(t);
+                });
             });
+            
         }
     }
 };

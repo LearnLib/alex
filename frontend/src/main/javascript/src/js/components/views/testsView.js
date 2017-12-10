@@ -38,17 +38,10 @@ export const testsView = {
              */
             this.test = null;
 
-            /**
-             * If the root is requested.
-             * @type {boolean}
-             */
-            this.isRoot = false;
-
             const testId = $state.params.testId;
             if (testId === null) {
                 TestResource.getAll(project.id)
                     .then(data => {
-                        this.isRoot = true;
                         this.test = data;
                     })
                     .catch(console.log)
