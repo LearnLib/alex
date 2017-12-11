@@ -283,6 +283,15 @@ function startLearning() {
     _config.symbols = _config.symbols.map(symbol => _symbols.find(s => s.name === symbol).id);
     _config.resetSymbol = _symbols.find(s => s.name === _config.resetSymbol).id;
 
+    const isActive = () => request({
+        method: 'GET',
+        uri: _uri + `/learner/${_project.id}/active`,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + _jwt
+        },
+    });
+
     return new Promise((resolve, reject) => {
         request({
             method: 'POST',
@@ -292,9 +301,23 @@ function startLearning() {
                 'Authorization': 'Bearer ' + _jwt
             },
             body: JSON.stringify(_config)
-        }).then(data => {
-            data = JSON.parse(data);
-            resolve(`The learning process started successfully. (projectId:${data.project})`);
+        }).then(() => {
+            const poll = timeout => {
+                setTimeout(() => {
+                    isActive()
+                        .then(data => {
+                            data = JSON.parse(data);
+                            if (data.active) {
+                                poll(timeout);
+                            } else {
+                                resolve("The learning process finished.");
+                            }
+                        })
+                        .catch(reject)
+                }, timeout);
+            };
+
+            poll(5000);
         }).catch(reject);
     });
 }
