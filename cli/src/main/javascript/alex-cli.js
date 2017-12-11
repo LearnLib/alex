@@ -305,7 +305,7 @@ try {
     if (!program.action) {
         throw "You haven't specified what action to execute. It can either be 'test' or 'learn'";
     } else {
-        if (['test', 'learn'].indexOf(program.action) === -1) {
+        if (['test', 'learn'].indexOf(program.action.trim()) === -1) {
             throw "You have specified an invalid action. It can either be 'test' or 'learn'";
         } else {
             _action = program.action;
@@ -392,7 +392,7 @@ try {
     }
 } catch (exception) {
     console.log(chalk.red(exception));
-    process.exit(0);
+    process.exit(1);
 }
 
 function terminate(message, fn) {
