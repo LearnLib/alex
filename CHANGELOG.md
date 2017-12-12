@@ -22,6 +22,7 @@ detailed instructions.
     * Wait for a text to appear
     * Wait for the value of an elements attribute
     * Interact with alert, prompt and confirm dialogs
+    * Validate JSON against a JSON schema
     
 See the [user documentation](http://learnlib.github.io/alex/book/1.4.0/) for more details.
 

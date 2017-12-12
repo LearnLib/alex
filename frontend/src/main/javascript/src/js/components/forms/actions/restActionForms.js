@@ -22,7 +22,7 @@ export const actionFormCall = {
     controllerAs: 'vm',
 
     // @ngInject
-    controller($http, SessionService) {
+    controller($http, SessionService, __env) {
         this.project = SessionService.getProject();
         this.cookie = {name: null, value: null};
         this.header = {name: null, value: null};
@@ -51,7 +51,7 @@ export const actionFormCall = {
             const action = angular.copy(this.action);
             delete action._id;
 
-            $http.post(`rest/projects/${this.project.id}/symbols/actions/test`, action)
+            $http.post(`${__env.apiUrl}/projects/${this.project.id}/symbols/actions/test`, action)
                 .then(res => this.testResult = res.data)
                 .catch(res => this.error = res.data.message);
         };
@@ -100,6 +100,14 @@ export const actionFormCheckHttpBody = {
 
 export const actionFormCheckStatus = {
     templateUrl: 'html/components/forms/actions/rest/check-status.html',
+    bindings: {
+        action: '='
+    },
+    controllerAs: 'vm'
+};
+
+export const actionFormValidateJson = {
+    templateUrl: 'html/components/forms/actions/rest/validate-json.html',
     bindings: {
         action: '='
     },

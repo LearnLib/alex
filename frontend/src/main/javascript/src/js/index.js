@@ -171,7 +171,8 @@ import {
     actionFormCheckAttributeValue,
     actionFormCheckHeaderField,
     actionFormCheckHttpBody,
-    actionFormCheckStatus
+    actionFormCheckStatus,
+    actionFormValidateJson
 } from "./components/forms/actions/restActionForms";
 import {
     actionFormAssertCounter,
@@ -375,6 +376,7 @@ angular
     .component('actionFormCheckHeaderField', actionFormCheckHeaderField)
     .component('actionFormCheckHttpBody', actionFormCheckHttpBody)
     .component('actionFormCheckStatus', actionFormCheckStatus)
+    .component('actionFormValidateJson', actionFormValidateJson)
 
     // general action forms
     .component('actionFormAssertCounter', actionFormAssertCounter)

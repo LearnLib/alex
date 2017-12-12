@@ -28,6 +28,7 @@ import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CheckHeaderField
 import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CheckStatusAction;
 import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CheckTextRestAction;
 import de.learnlib.alex.data.entities.actions.RESTSymbolActions.RESTSymbolAction;
+import de.learnlib.alex.data.entities.actions.RESTSymbolActions.ValidateJsonAction;
 import de.learnlib.alex.data.entities.actions.StoreSymbolActions.AssertCounterAction;
 import de.learnlib.alex.data.entities.actions.StoreSymbolActions.AssertVariableAction;
 import de.learnlib.alex.data.entities.actions.StoreSymbolActions.IncrementCounterAction;
@@ -143,6 +144,7 @@ import java.util.UUID;
         @JsonSubTypes.Type(name = "rest_checkForText", value = CheckTextRestAction.class),
         @JsonSubTypes.Type(name = "rest_checkHeaderField", value = CheckHeaderFieldAction.class),
         @JsonSubTypes.Type(name = "rest_checkStatus", value = CheckStatusAction.class),
+        @JsonSubTypes.Type(name = "rest_validateJson", value = ValidateJsonAction.class),
 })
 public abstract class SymbolAction implements Serializable {
 

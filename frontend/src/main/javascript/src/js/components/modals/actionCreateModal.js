@@ -84,7 +84,8 @@ export class ActionCreateModalComponent {
                 {type: actionType.REST_CHECK_HEADER_FIELD, text: 'Check header field'},
                 {type: actionType.REST_CHECK_STATUS, text: 'Check status'},
                 {type: actionType.REST_CALL, text: 'Make request'},
-                {type: actionType.WEB_CHECK_TEXT, text: 'Search in body'}
+                {type: actionType.REST_CHECK_FOR_TEXT, text: 'Search in body'},
+                {type: actionType.REST_VALIDATE_JSON, text: 'Validate JSON'}
             ],
             misc: [
                 {type: actionType.GENERAL_ASSERT_COUNTER, text: 'Assert counter'},

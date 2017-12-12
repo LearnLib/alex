@@ -110,6 +110,7 @@ export const actionType = {
     REST_CHECK_HEADER_FIELD: 'rest_checkHeaderField',
     REST_CHECK_FOR_TEXT: 'rest_checkForText',
     REST_CHECK_STATUS: 'rest_checkStatus',
+    REST_VALIDATE_JSON: 'rest_validateJson',
 
     // general actions
     GENERAL_ASSERT_COUNTER: 'assertCounter',
