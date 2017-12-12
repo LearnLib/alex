@@ -20,7 +20,7 @@
                 <uib-accordion close-others="true" class="action-types-accordion">
                     <div uib-accordion-group class="panel-default" is-open="true">
                         <uib-accordion-heading>
-                            <div><strong>Select an action</strong></div>
+                            <div><strong>Web</strong></div>
                         </uib-accordion-heading>
 
                         <a href="" ng-click="vm.selectNewActionType('web_clear')">Clear input</a>
@@ -33,10 +33,22 @@
                         <a href="" ng-click="vm.selectNewActionType('web_goto')">Open URL</a>
                         <a href="" ng-click="vm.selectNewActionType('web_submit')">Submit form</a>
                         <a href="" ng-click="vm.selectNewActionType('web_select')">Select from list</a>
+                        <a href="" ng-click="vm.selectNewActionType('web_switch_to')">Switch to</a>
+                        <a href="" ng-click="vm.selectNewActionType('web_switch_to_frame')">Switch to frame</a>
                         <a href="" ng-click="vm.selectNewActionType('web_moveMouse')">Move mouse</a>
                         <a href="" ng-click="vm.selectNewActionType('web_pressKey')">Press key</a>
                         <a href="" ng-click="vm.selectNewActionType('web_waitForNode')">Wait for an element</a>
+                        <a href="" ng-click="vm.selectNewActionType('web_waitForNodeAttribute')">Wait for an attribute</a>
                         <a href="" ng-click="vm.selectNewActionType('web_waitForText')">Wait for text</a>
+                    </div>
+                    <div uib-accordion-group class="panel-default" is-open="false">
+                        <uib-accordion-heading>
+                            <div><strong>Misc</strong></div>
+                        </uib-accordion-heading>
+
+                        <a href="" ng-click="vm.selectNewActionType('setVariableByHTML')">Set variable by HTML</a>
+                        <a href="" ng-click="vm.selectNewActionType('setVariableByNodeAttribute')">Set variable by node attribute</a>
+                        <a href="" ng-click="vm.selectNewActionType('setVariableByNodeCount')">Set variable by node count</a>
                     </div>
                 </uib-accordion>
 

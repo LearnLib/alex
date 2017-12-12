@@ -35,11 +35,15 @@ export function htmlElementPickerHandle($document, $compile, $q, HtmlElementPick
     return {
         restrict: 'A',
         scope: {
-            selectorModel: '=model',
+            node: '=model',
             textModel: '=text'
         },
         link(scope, el) {
             el.on('click', () => {
+                // make sure the element picker is not opened twice.
+                if (document.getElementById("html-element-picker") !== null) {
+                    return;
+                }
 
                 // create a new element picker under the current scope and append to the body
                 const picker = $compile('<html-element-picker></html-element-picker>')(scope);
@@ -48,10 +52,10 @@ export function htmlElementPickerHandle($document, $compile, $q, HtmlElementPick
                 HtmlElementPickerService.deferred = $q.defer();
                 HtmlElementPickerService.deferred.promise
                     .then(data => {
-
                         // copy the selected selector and .textContent value to the scopes models
-                        if (typeof scope.selectorModel !== "undefined") {
-                            scope.selectorModel = data.selector;
+                        if (typeof scope.node !== "undefined") {
+                            scope.node.selector = data.selector;
+                            scope.node.type = data.selectorType;
                         }
                         if (typeof scope.textModel !== "undefined") {
                             scope.textModel = data.textContent;

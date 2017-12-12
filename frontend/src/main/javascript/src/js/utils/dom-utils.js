@@ -23,8 +23,8 @@ export class DomUtils {
      * Get the unique CSS selector from a selected element.
      * http://stackoverflow.com/questions/4588119/get-elements-css-selector-without-element-id
      *
-     * @param el The element to get the unique css path from
-     * @returns {string} - The unique css path ot the element
+     * @param el - The element to get the unique css path from.
+     * @returns {string} - The unique css path ot the element.
      */
     static getCssPath(el) {
         const names = [];
@@ -42,5 +42,29 @@ export class DomUtils {
             }
         }
         return names.join(" > ");
+    }
+
+    /**
+     * Get the unique xpath to a selected element.
+     *
+     * @param el - The element to get the xpath from.
+     * @return {string} - The xpath ot the element.
+     */
+    static getXPath(el) {
+        const names = [];
+        while (el.parentNode) {
+            if (el.id) {
+                names.unshift('//' + el.nodeName.toLowerCase() + '[@id=\'' + el.id + '\']');
+                break;
+            } else {
+                if (el == el.ownerDocument.documentElement) names.unshift(el.tagName);
+                else {
+                    for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++) ;
+                    names.unshift(el.nodeName.toLowerCase() + '[' + c + ']');
+                }
+                el = el.parentNode;
+            }
+        }
+        return names.join("/");
     }
 }

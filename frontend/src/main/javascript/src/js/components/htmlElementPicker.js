@@ -57,6 +57,13 @@ class HtmlElementPickerComponent {
         this.selector = null;
 
         /**
+         * The type of the selector [CSS|XPATH].
+         *
+         * @type {string}
+         */
+        this.selectorType = 'CSS';
+
+        /**
          * The element.textContent value
          * @type {null|string}
          */
@@ -140,8 +147,16 @@ class HtmlElementPickerComponent {
         this.HtmlElementPickerService.lastUrl = this.url;
         this.HtmlElementPickerService.deferred.resolve({
             selector: this.selector,
+            selectorType: this.selectorType,
             textContent: this.textContent
         });
+    }
+
+    /**
+     * Toggle the type of the selector.
+     */
+    toggleSelectorType() {
+        this.selectorType = this.selectorType === 'CSS' ? 'XPATH' : 'CSS';
     }
 
     /**
@@ -184,7 +199,12 @@ class HtmlElementPickerComponent {
             this.lastTarget = e.target;
         }
         this.lastTarget.style.outline = '5px solid red';
-        this.selector = DomUtils.getCssPath(this.lastTarget);
+
+        if (this.selectorType === 'CSS') {
+            this.selector = DomUtils.getCssPath(this.lastTarget);
+        } else {
+            this.selector = DomUtils.getXPath(this.lastTarget);
+        }
 
         if (this.lastTarget.nodeName.toLowerCase() === 'input') {
             this.textContent = this.lastTarget.value;

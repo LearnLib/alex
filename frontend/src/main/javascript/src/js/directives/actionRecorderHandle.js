@@ -36,6 +36,10 @@ export function actionRecorderHandle($document, $compile, $q, ActionRecorderServ
         },
         link(scope, el) {
             el.on('click', () => {
+                // make sure the action recorder is not opened twice.
+                if (document.getElementById("action-recorder") !== null) {
+                    return;
+                }
 
                 // create a new element picker under the current scope and append to the body
                 const recorder = $compile('<action-recorder></action-recorder>')(scope);

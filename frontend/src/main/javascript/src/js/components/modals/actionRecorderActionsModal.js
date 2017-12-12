@@ -76,8 +76,11 @@ export class ActionRecorderActionsModal {
             this.action.value = el.innerText;
         } else if ([actionType.WEB_CLEAR, actionType.WEB_CLICK, actionType.WEB_FILL, actionType.WEB_CHECK_NODE,
                 actionType.WEB_SUBMIT, actionType.WEB_SELECT, actionType.WEB_MOUSE_MOVE, actionType.WEB_PRESS_KEY,
-                actionType.WAIT_FOR_NODE, actionType.WEB_CHECK_ATTRIBUTE_VALUE].indexOf(this.action.type) > -1) {
-            this.action.node = {selector: this.modalData.selector, type: 'CSS'};
+                actionType.WAIT_FOR_NODE, actionType.WEB_CHECK_ATTRIBUTE_VALUE, actionType.WAIT_FOR_NODE_ATTRIBUTE,
+                actionType.WEB_SWITCH_TO, actionType.WEB_SWITCH_TO_FRAME, actionType.GENERAL_SET_VARIABLE_BY_HTML,
+                actionType.GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE, actionType.GENERAL_SET_VARIABLE_BY_NODE_COUNT,
+                actionType.WAIT_FOR_NODE_ATTRIBUTE].indexOf(this.action.type) > -1) {
+            this.action.node = {selector: this.modalData.selector, type: this.modalData.selectorType};
         } else if ([actionType.WAIT_FOR_TEXT, actionType.WEB_CHECK_TEXT].indexOf(this.action.type) > -1) {
             this.action.value = el.innerText;
         }

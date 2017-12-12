@@ -21,10 +21,14 @@
                 </div>
 
                 <div class="header-element" style="flex: 0 0">
-                    <div class="btn-group">
-                        <button class="btn btn-default" ng-click="vm.toggleRecording()">
-                            <i class="fa fa-fw" ng-class="vm.isRecording ? 'fa-square' : 'fa-circle'"></i>&nbsp;
-                            <span ng-bind="vm.isRecording ? 'Stop recording':'Start recording'"></span>
+                    <div class="btn-group d-flex">
+                        <button class="btn btn-default" ng-click="vm.toggleRecording()"
+                                uib-tooltip="{{vm.isRecording ? 'Disable selection' : 'Enable selection'}}"
+                                tooltip-placement="right">
+                            <i class="fa fa-fw" ng-class="vm.isRecording ? 'fa-toggle-on' : 'fa-toggle-off'"></i>
+                        </button>
+                        <button class="btn btn-default" ng-click="vm.toggleSelectorType()">
+                            {{vm.selectorType === 'CSS' ? 'CSS' : 'XPath'}}
                         </button>
                     </div>
                 </div>
@@ -70,21 +74,38 @@
 
         </div>
         <div class="body">
-            <div class="sidebar" style="overflow: auto" dragula='"actionList2"' dragula-model="vm.actions">
-                <div class="alert alert-info no-border-radius" ng-if="vm.actions.length === 0">
+            <div class="sidebar" style="overflow: auto; padding: 14px;" dragula='"actionList2"' dragula-model="vm.actions">
+                <div class="alert alert-info" ng-if="vm.actions.length === 0">
                     You haven't recorded any actions yet.
                 </div>
-                <div ng-repeat="action in vm.actions" style="padding: 15px; border-bottom: 1px solid #ddd; background: #fff">
-                    <p style="word-break: break-all;">{{action.toString()}}</p>
-                    <div class="btn-group btn-group-xs">
-                        <button class="btn btn-default" action-edit-modal-handle action="action" on-updated="vm.updateAction(action, $index)" window-class="modal-zindex">
-                            <i class="fa fa-fw fa-edit"></i> Edit
-                        </button>
-                        <button class="btn btn-default" ng-click="vm.actions.splice($index, 1)">
-                            <i class="fa fa-fw fa-trash"></i> Delete
-                        </button>
+
+                <div class="list-group">
+                    <div class="list-group-item d-flex flex-row" ng-repeat="action in vm.actions">
+                        <div class="flex-grow-1" style="word-break: break-all;">
+                            {{action.toString()}}
+                        </div>
+                        <div>
+                            <div class="btn-group btn-group-sm pull-right" uib-dropdown style="margin-left: 14px">
+                                <button class="btn btn-icon btn-dropdown" uib-dropdown-toggle>
+                                    <i class="fa fa-fw fa-bars"></i>
+                                </button>
+                                <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
+                                    <li>
+                                        <a href="" action-edit-modal-handle action="action" on-updated="vm.updateAction(action, $index)" window-class="modal-zindex">
+                                            <i class="fa fa-fw fa-edit"></i> Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="" ng-click="vm.actions.splice($index, 1)">
+                                            <i class="fa fa-fw fa-trash"></i> Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
             <div class="iframe-wrapper">
                 <responsive-iframe></responsive-iframe>

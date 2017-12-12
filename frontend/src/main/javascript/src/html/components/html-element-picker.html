@@ -20,11 +20,14 @@
                 </div>
 
                 <div class="header-element" style="flex: 0 0">
-                    <div class="btn-group">
+                    <div class="btn-group d-flex">
                         <button class="btn btn-default" ng-click="vm.toggleSelection()"
                                 tooltip-placement="right"
                                 uib-tooltip="{{vm.isSelectable ? 'Disable selection' : 'Enable selection'}}">
                             <i class="fa fa-fw" ng-class="vm.isSelectable ? 'fa-toggle-on' : 'fa-toggle-off'"></i>
+                        </button>
+                        <button class="btn btn-default" ng-click="vm.toggleSelectorType()">
+                            {{vm.selectorType === 'CSS' ? 'CSS' : 'XPath'}}
                         </button>
                     </div>
                 </div>

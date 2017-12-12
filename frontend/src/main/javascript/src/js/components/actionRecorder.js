@@ -66,6 +66,13 @@ class ActionRecorder {
         this.selector = null;
 
         /**
+         * The type of the selector [CSS|XPATH].
+         *
+         * @type {string}
+         */
+        this.selectorType = 'CSS';
+
+        /**
          * If CORS is disabled.
          * @type {null|boolean}
          */
@@ -126,6 +133,13 @@ class ActionRecorder {
         this.ActionRecorderService.deferred.resolve(this.actions);
     }
 
+    /**
+     * Toggle the type of the selector.
+     */
+    toggleSelectorType() {
+        this.selectorType = this.selectorType === 'CSS' ? 'XPATH' : 'CSS';
+    }
+
     toggleRecording() {
         if (this.isRecording) {
             this.selector = null;
@@ -178,13 +192,15 @@ class ActionRecorder {
                 modalData: () => {
                     return {
                         element: this.lastTarget,
-                        selector: this.selector
+                        selector: this.selector,
+                        selectorType: this.selectorType
                     };
                 }
             }
         }).result.then(data => {
             data.action._id = uniqueId();
             this.actions.push(data.action);
+            this.toggleRecording();
         });
     }
 
@@ -209,7 +225,12 @@ class ActionRecorder {
             this.lastTarget = e.target;
         }
         this.lastTarget.style.outline = '5px solid red';
-        this.selector = DomUtils.getCssPath(this.lastTarget);
+
+        if (this.selectorType === 'CSS') {
+            this.selector = DomUtils.getCssPath(this.lastTarget);
+        } else {
+            this.selector = DomUtils.getXPath(this.lastTarget);
+        }
 
         if (this.lastTarget.nodeName.toLowerCase() === 'input') {
             this.textContent = this.lastTarget.value;
