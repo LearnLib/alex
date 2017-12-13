@@ -112,11 +112,10 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         projectDAO.getByID(user.getId(), projectId); // access check
 
         List<LearnerResult> results = learnerResultRepository.findByProject_IdOrderByTestNoAsc(projectId);
-        if (results.isEmpty()) {
-            throw new NotFoundException("The project with the id " + projectId + " was not found.");
-        }
 
-        initializeLazyRelations(results, includeSteps);
+        if (!results.isEmpty()) {
+            initializeLazyRelations(results, includeSteps);
+        }
 
         return results;
     }

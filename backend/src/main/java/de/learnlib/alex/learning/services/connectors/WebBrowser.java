@@ -19,13 +19,9 @@ package de.learnlib.alex.learning.services.connectors;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.google.common.collect.ImmutableMap;
-import de.learnlib.alex.config.dao.SettingsDAO;
 import de.learnlib.alex.config.entities.BrowserConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -34,14 +30,15 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.GeckoDriverService;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
-import java.lang.reflect.Field;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -112,37 +109,30 @@ public enum WebBrowser {
         while (retries < MAX_RETRIES) {
             WebDriver driver = null;
 
+            Map<String, String> environmentVariables = new HashMap<>();
+            if (config.getXvfbDisplayPort() != null) {
+                environmentVariables.put("DISPLAY", ":" + String.valueOf(config.getXvfbDisplayPort()));
+            }
+
             try {
                 switch (this) {
                     case HTMLUNITDRIVER:
                         driver = new HtmlUnitDriver(BrowserVersion.BEST_SUPPORTED);
-                        enableJavaScript((HtmlUnitDriver) driver);
+                        ((HtmlUnitDriver) driver).setJavascriptEnabled(true);
                         break;
                     case CHROME:
                         ChromeOptions chromeOptions = new ChromeOptions();
                         chromeOptions.addArguments("--no-sandbox");
                         if (config.isHeadless()) {
-                            chromeOptions.addArguments("--headless", "--disable-gpu");
+                            chromeOptions.setHeadless(true);
                         }
 
-                        DesiredCapabilities chromeCapabilities = DesiredCapabilities.chrome();
-                        chromeCapabilities.setCapability("recreateChromeDriverSessions", true);
-                        chromeCapabilities.setCapability("chromeOptions", chromeOptions);
+                        ChromeDriverService service = new ChromeDriverService.Builder()
+                                .usingAnyFreePort()
+                                .withEnvironment(environmentVariables)
+                                .build();
 
-                        ChromeDriverService service;
-                        if (config.getXvfbDisplayPort() == null) {
-                            service = new ChromeDriverService.Builder()
-                                    .usingAnyFreePort()
-                                    .build();
-                        } else {
-                            service = new ChromeDriverService.Builder()
-                                    .usingAnyFreePort()
-                                    .withEnvironment(ImmutableMap.of("DISPLAY", ":"
-                                            + String.valueOf(config.getXvfbDisplayPort())))
-                                    .build();
-                        }
-
-                        driver = new ChromeDriver(service, chromeCapabilities);
+                        driver = new ChromeDriver(service, chromeOptions);
 
                         break;
                     case FIREFOX:
@@ -151,23 +141,19 @@ public enum WebBrowser {
                             binary.addCommandLineOptions("-headless");
                         }
 
-                        if (config.getXvfbDisplayPort() != null) {
-                            binary.setEnvironmentProperty("DISPLAY", ":"
-                                    + String.valueOf(config.getXvfbDisplayPort()));
-                        }
-
-                        FirefoxOptions options = new FirefoxOptions();
-                        options.setBinary(binary);
-                        driver = new FirefoxDriver(options);
+                        driver = new FirefoxDriver(
+                                new GeckoDriverService.Builder()
+                                        .usingFirefoxBinary(binary)
+                                        .withEnvironment(environmentVariables)
+                                        .build()
+                        );
 
                         break;
                     case EDGE:
-                        DesiredCapabilities edgeCapabilities = DesiredCapabilities.edge();
-                        driver = new EdgeDriver(edgeCapabilities);
+                        driver = new EdgeDriver();
                         break;
                     case SAFARI:
-                        DesiredCapabilities safariCapabilities = DesiredCapabilities.safari();
-                        driver = new SafariDriver(safariCapabilities);
+                        driver = new SafariDriver();
                         break;
                     case REMOTE:
                         URL remoteURL = new URL(System.getProperty("webdriver.remote.url"));
@@ -190,7 +176,8 @@ public enum WebBrowser {
 
                 return driver;
             } catch (Exception e) {
-                LOGGER.warn("Could not create a WebDriver.", e);
+                LOGGER.warn("Could not create a WebDriver.");
+                e.printStackTrace();
                 if (driver != null) {
                     driver.quit();
                 }
@@ -200,26 +187,5 @@ public enum WebBrowser {
         }
 
         throw new Exception("Could not create a WebDriver");
-    }
-
-    /**
-     * Solves issues with "wrong" or non strict JavaScript that is executed on the page (e.g. jQuery). Uses reflections
-     * to get the private 'webClient' property from the UnitDriver and set the flag to ignore js errors.
-     */
-    private void enableJavaScript(HtmlUnitDriver htmlUnitDriver) {
-        try {
-            LOGGER.debug("Try enabling JavaScript for the HTMLUnitDriver");
-            htmlUnitDriver.setJavascriptEnabled(true);
-            Field f = htmlUnitDriver.getClass().getDeclaredField("webClient");
-            f.setAccessible(true);
-            WebClient client = (WebClient) f.get(htmlUnitDriver);
-            client.getOptions().setThrowExceptionOnScriptError(false);
-        } catch (NoSuchFieldException e) {
-            LOGGER.warn("Enabling JavaScript for the HTMLUnitDriver failed. "
-                                + "Private Property 'webClient' does not exist", e);
-        } catch (IllegalAccessException e) {
-            LOGGER.warn("Enabling JavaScript for the HTMLUnitDriver failed. "
-                                + "Problem accessing private 'webClient'", e);
-        }
     }
 }

@@ -156,7 +156,7 @@ class LearnerViewComponent {
                     this.learnerPhase = data.learnerPhase;
                     this.currentQueries = data.currentQueries;
 
-                    if (data.active) {
+                    if (data.active && typeof data.testNo !== 'undefined') {
                         this.stepNo = data.stepNo;
                         this.LearnResultResource.get(this.project.id, data.testNo)
                             .then(result => this.result = result)

@@ -113,10 +113,7 @@ public class SymbolResource {
 
             LOGGER.traceExit(symbol);
             return Response.status(Status.CREATED).header("Location", symbolURL).entity(symbol).build();
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.BAD_REQUEST, e);
-        } catch (ValidationException e) {
+        } catch (IllegalArgumentException | ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.BAD_REQUEST, e);
         } catch (UnauthorizedException e) {
