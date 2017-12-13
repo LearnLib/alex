@@ -165,7 +165,7 @@ public class Counter implements Serializable {
      *         The new value.
      */
     public void setValue(Integer value) {
-        this.value = value;
+        this.value = value < 0 ? 0 : value;
     }
 
     @Override

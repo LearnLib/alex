@@ -55,6 +55,7 @@ import {actionRecorderActionsModal} from "./components/modals/actionRecorderActi
 import {actionRecorderComponent} from "./components/actionRecorder";
 import {ActionRecorderService} from "./services/ActionRecorderService";
 import {actionRecorderHandle} from "./directives/actionRecorderHandle";
+import {counterCreateModal} from "./components/modals/counterCreateModal";
 import {
     hypothesisLayoutSettingsModalHandle,
     hypothesisLayoutSettingsModalComponent
@@ -271,6 +272,7 @@ angular
     .component('actionRecorderActionsModal', actionRecorderActionsModal)
     .directive('actionEditModalHandle', actionEditModalHandle)
     .component('actionEditModal', actionEditModalComponent)
+    .component('counterCreateModal', counterCreateModal)
     .directive('hypothesisLayoutSettingsModalHandle', hypothesisLayoutSettingsModalHandle)
     .component('hypothesisLayoutSettingsModal', hypothesisLayoutSettingsModalComponent)
     .directive('learnerResultDetailsModalHandle', learnerResultDetailsModalHandle)

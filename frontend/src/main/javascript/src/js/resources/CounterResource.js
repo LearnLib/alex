@@ -45,6 +45,28 @@ export class CounterResource {
     }
 
     /**
+     * Creates a counter.
+     *
+     * @param {number} projectId - The id of the project.
+     * @param {Counter} counter - The counter to create.
+     */
+    create(projectId, counter) {
+        return this.$http.post(this.__env.apiUrl + `/projects/${projectId}/counters`, counter)
+            .then(response => new Counter(response.data));
+    }
+
+    /**
+     * Updates a counter.
+     *
+     * @param {number} projectId - The id of the project.
+     * @param {Counter} counter - The counter to update.
+     */
+    update(projectId, counter) {
+        return this.$http.put(this.__env.apiUrl + `/projects/${projectId}/counters/${counter.name}`, counter)
+            .then(response => new Counter(response.data));
+    }
+
+    /**
      * Deletes a single file from the server.
      *
      * @param {number} projectId - The id of a project.

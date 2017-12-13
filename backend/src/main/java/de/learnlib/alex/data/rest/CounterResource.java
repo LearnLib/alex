@@ -19,6 +19,7 @@ package de.learnlib.alex.data.rest;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.common.utils.StringList;
 import de.learnlib.alex.data.dao.CounterDAO;
@@ -27,8 +28,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
+import javax.validation.ValidationException;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -76,6 +81,69 @@ public class CounterResource {
 
         LOGGER.traceExit(counters);
         return ResponseHelper.renderList(counters, Response.Status.OK);
+    }
+
+    /**
+     * Creates a new counter.
+     *
+     * @param projectId The id of the project.
+     * @param counter The counter to create.
+     * @return The created counter.
+     */
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createCounter(@PathParam("project_id") Long projectId, Counter counter) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("createCounter({}, {}) for user {}.", projectId, counter.getName(), user);
+
+        try {
+            counterDAO.create(user, counter);
+            return Response.ok(counter).build();
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.updateCounter",
+                                                               Response.Status.NOT_FOUND,
+                                                               e);
+        }
+    }
+
+    /**
+     * Update the value of a counter.
+     *
+     * @param projectId The id of the project.
+     * @param name The name of the counter.
+     * @param counter The updated counter to update.
+     * @return The updated counter.
+     */
+    @PUT
+    @Path("/{counter_name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateCounter(@PathParam("project_id") Long projectId,
+                                  @PathParam("counter_name") String name,
+                                  Counter counter) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("updateCounter({}, {}) for user {}.", projectId, name, user);
+
+        try {
+            if (!name.equals(counter.getName())) {
+                throw new ValidationException("The name of a counter cannot be updated.");
+            }
+
+            Counter counterInDB = counterDAO.get(user, projectId, name);
+            counterInDB.setValue(counter.getValue());
+
+            counterDAO.update(user, counterInDB);
+            return Response.ok(counterInDB).build();
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.updateCounter",
+                                                               Response.Status.BAD_REQUEST,
+                                                               e);
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.updateCounter",
+                                                               Response.Status.NOT_FOUND,
+                                                               e);
+        }
     }
 
     /**

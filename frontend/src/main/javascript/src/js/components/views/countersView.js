@@ -29,9 +29,10 @@ class CountersView {
      * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor(SessionService, CounterResource, ToastService) {
+    constructor(SessionService, CounterResource, ToastService, $uibModal) {
         this.CounterResource = CounterResource;
         this.ToastService = ToastService;
+        this.$uibModal = $uibModal;
 
         /**
          * The project that is in the session.
@@ -46,10 +47,10 @@ class CountersView {
         this.counters = [];
 
         /**
-         * The selected counters objects.
-         * @type {Counter[]}
+         * The counter to edit.
+         * @type {Counter}
          */
-        this.selectedCounters = [];
+        this.counterUnderEdit = null;
 
         // load all existing counters from the server
         this.CounterResource.getAll(this.project.id)
@@ -80,18 +81,57 @@ class CountersView {
      * Delete all selected counters from the server and on success from scope.
      */
     deleteSelectedCounters() {
-        if (this.selectedCounters.length > 0) {
-            this.CounterResource.removeMany(this.project.id, this.selectedCounters)
+        const selectedCounters = JSON.parse(JSON.stringify(this.counters.filter(c => c._selected)));
+
+        if (selectedCounters.length > 0) {
+            this.CounterResource.removeMany(this.project.id, selectedCounters)
                 .then(() => {
                     this.ToastService.success('Counters deleted');
-                    this.selectedCounters.forEach(counter => {
+                    selectedCounters.forEach(counter => {
                         remove(this.counters, {name: counter.name});
                     });
                 })
                 .catch(response => {
                     this.ToastService.danger('<p><strong>Deleting counters failed</strong></p>' + response.data.message);
                 });
+        } else {
+            this.ToastService.info('You have to select at least one counter.');
         }
+    }
+
+    /**
+     * Sets the counter to edit.
+     *
+     * @param {Counter} counter - The counter to edit.
+     */
+    setCounterUnderEdit(counter) {
+        this.counterUnderEdit = JSON.parse(JSON.stringify(counter));
+        delete this.counterUnderEdit._selected;
+    }
+
+    /**
+     * Create a new counter.
+     */
+    createCounter() {
+        this.$uibModal.open({
+            component: 'counterCreateModal',
+            resolve: {
+                modalData: () => ({counters: this.counters})
+            }
+        }).result.then(counter => this.counters.push(counter));
+    }
+
+    /**
+     * Update the counter.
+     */
+    updateCounter() {
+        this.CounterResource.update(this.project.id, this.counterUnderEdit)
+            .then(() => {
+                this.counters.find(c => c.name === this.counterUnderEdit.name).value = this.counterUnderEdit.value;
+                this.ToastService.success('The counter has been updated.');
+                this.counterUnderEdit = null;
+            })
+            .catch(err => this.ToastService.danger(`The counter could not be updated. ${err.data.message}`));
     }
 }
 

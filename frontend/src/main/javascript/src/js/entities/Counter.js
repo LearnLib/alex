@@ -33,12 +33,6 @@ export class Counter {
         this.name = obj.name;
 
         /**
-         * The id of the user.
-         * @type {number}
-         */
-        this.user = obj.user;
-
-        /**
          * The value of the counter.
          * @type {number}
          */
