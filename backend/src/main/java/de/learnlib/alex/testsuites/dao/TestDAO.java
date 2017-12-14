@@ -30,8 +30,6 @@ public interface TestDAO {
 
     void create(User user, List<Test> tests) throws ValidationException, NotFoundException;
 
-    List<Test> getAll(User user, Long projectId) throws NotFoundException;
-
     Test get(User user, Long projectId, Long id) throws NotFoundException;
 
     void update(User user, Test test) throws NotFoundException;

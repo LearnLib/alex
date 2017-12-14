@@ -22,6 +22,7 @@ import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.testsuites.entities.TestSuite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -86,6 +87,12 @@ public class ProjectDAOImpl implements ProjectDAO {
 
             project.addGroup(defaultGroup);
             project.setNextGroupId(1L);
+
+            TestSuite testSuite = new TestSuite();
+            testSuite.setId(0L);
+            testSuite.setName("Root");
+            testSuite.setProject(project);
+            project.addTest(testSuite);
 
             Project createdProject = projectRepository.save(project);
             project.setId(createdProject.getId());

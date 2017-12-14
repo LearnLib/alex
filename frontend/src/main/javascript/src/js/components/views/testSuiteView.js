@@ -20,7 +20,7 @@ import {TestResult} from "../../entities/TestResult";
 export const testSuiteView = {
     templateUrl: 'html/components/views/test-suite-view.html',
     bindings: {
-        test: '='
+        testSuite: '='
     },
     controllerAs: 'vm',
 
@@ -61,10 +61,10 @@ export const testSuiteView = {
             this.project = SessionService.getProject();
 
             /**
-             * The tests.
-             * @type {object[]}
+             * The test suite.
+             * @type {object}
              */
-            this.tests = [];
+            this.testSuite = null;
 
             /**
              * The results of the test execution.
@@ -105,16 +105,15 @@ export const testSuiteView = {
         }
 
         $onInit() {
-            let tests = this.test.tests;
-            let testSuites = tests.filter(t => t.type === 'suite');
-            let testCases = tests.filter(t => t.type === 'case');
+            let testSuites = this.testSuite.tests.filter(t => t.type === 'suite');
+            let testCases = this.testSuite.tests.filter(t => t.type === 'case');
 
             const compare = (a, b) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
 
             testSuites.sort(compare);
             testCases.sort(compare);
 
-            this.tests = testSuites.concat(testCases);
+            this.testSuite.tests = testSuites.concat(testCases);
         }
 
         createTestSuite() {
@@ -124,13 +123,13 @@ export const testSuiteView = {
                         type: 'suite',
                         name: name,
                         project: this.project.id,
-                        parent: typeof this.test.id !== "undefined" ? this.test.id : null,
+                        parent: this.testSuite.id,
                         tests: []
                     };
                     this.TestResource.create(testSuite)
                         .then(data => {
                             this.ToastService.success(`The test suite "${testSuite.name}" has been created.`);
-                            this.tests.push(data);
+                            this.testSuite.tests.push(data);
                         })
                         .catch(err => this.ToastService.danger("The test suite could not be created. " + err.data.message));
                 });
@@ -143,14 +142,14 @@ export const testSuiteView = {
                         type: 'case',
                         name: name,
                         project: this.project.id,
-                        parent: typeof this.test.id !== "undefined" ? this.test.id : null,
+                        parent: this.testSuite.id,
                         symbols: [],
                         variables: {}
                     };
                     this.TestResource.create(testCase)
                         .then(data => {
                             this.ToastService.success(`The test case "${testCase.name}" has been created.`);
-                            this.tests.push(data);
+                            this.testSuite.tests.push(data);
                         })
                         .catch(err => this.ToastService.danger("The test suite could not be created. " + err.data.message));
                 });
@@ -191,27 +190,27 @@ export const testSuiteView = {
             this.TestResource.remove(test)
                 .then(() => {
                     this.ToastService.success(`The test ${test.type} has been deleted.`);
-                    const i = this.tests.findIndex(t => t.id === test.id);
-                    if (i > -1) this.tests.splice(i, 1);
+                    const i = this.testSuite.tests.findIndex(t => t.id === test.id);
+                    if (i > -1) this.testSuite.tests.splice(i, 1);
                 })
                 .catch(err => this.ToastService.danger(`The test ${test.type} could not be deleted. ${err.data.message}`));
         }
 
         deleteSelected() {
-            if (this.tests.findIndex(t => t._selected) === -1) {
+            if (this.testSuite.tests.findIndex(t => t._selected) === -1) {
                 this.ToastService.info("You have to select at least one test case or test suite.");
                 return;
             }
 
             this.reset();
 
-            const selected = this.tests.filter(t => t._selected);
+            const selected = this.testSuite.tests.filter(t => t._selected);
             this.TestResource.removeMany(this.project.id, selected)
                 .then(() => {
                     this.ToastService.success("The tests have been deleted.");
                     selected.forEach(test => {
-                        const i = this.tests.findIndex(t => t.id === test.id);
-                        if (i > -1) this.tests.splice(i, 1);
+                        const i = this.testSuite.tests.findIndex(t => t.id === test.id);
+                        if (i > -1) this.testSuite.tests.splice(i, 1);
                     });
                 })
                 .catch(err => this.ToastService.danger(`Deleting the tests failed. ${err.data.message}`));
@@ -223,7 +222,7 @@ export const testSuiteView = {
         }
 
         executeSelected() {
-            if (this.tests.findIndex(t => t._selected) === -1) {
+            if (this.testSuite.tests.findIndex(t => t._selected) === -1) {
                 this.ToastService.info("You have to select at least one test case or test suite.");
                 return;
             }
@@ -231,7 +230,7 @@ export const testSuiteView = {
             this.reset();
             this.overallResult = new TestResult();
             this.isExecuting = true;
-            const selected = this.tests.filter(t => t._selected);
+            const selected = this.testSuite.tests.filter(t => t._selected);
             const next = (test) => {
                 if (!this.isExecuting) {
                     this.ToastService.success("Finished executing all tests.");
@@ -272,7 +271,7 @@ export const testSuiteView = {
         }
 
         exportSelectedTests() {
-            let testCases = this.tests.filter(t => t._selected && t.type === 'case');
+            let testCases = this.testSuite.tests.filter(t => t._selected && t.type === 'case');
             if (!testCases.length) {
                 this.ToastService.info('You have to select at least one test.');
             } else {
@@ -302,13 +301,13 @@ export const testSuiteView = {
             this.$uibModal.open({
                 component: 'testsImportModal',
                 resolve: {
-                    modalData: () => ({test: this.test})
+                    modalData: () => ({test: this.testSuite})
                 }
             }).result.then(tests => {
                 this.ToastService.success("Tests have been imported.");
                 tests.forEach(t => {
                     t.type = t.tests ? 'suite' : 'case';
-                    this.tests.push(t);
+                    this.testSuite.tests.push(t);
                 });
             });
             

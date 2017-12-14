@@ -19,7 +19,7 @@ import {webBrowser} from "../../constants";
 export const testCaseView = {
     templateUrl: 'html/components/views/test-case-view.html',
     bindings: {
-        test: '='
+        testCase: '='
     },
     controllerAs: 'vm',
 
@@ -61,7 +61,7 @@ export const testCaseView = {
              * The current test
              * @type {object}
              */
-            this.test = null;
+            this.testCase = null;
 
             /**
              * The test result.
@@ -115,7 +115,7 @@ export const testCaseView = {
 
         createVariable() {
             if (this.variable.name.trim() !== '') {
-                this.test.variables[this.variable.name] = this.variable.value;
+                this.testCase.variables[this.variable.name] = this.variable.value;
                 this.variable = {name: '', value: ''};
             }
         }
@@ -124,7 +124,7 @@ export const testCaseView = {
          * Save the state of the test case.
          */
         save() {
-            const test = JSON.parse(JSON.stringify(this.test));
+            const test = JSON.parse(JSON.stringify(this.testCase));
             test.symbols = test.symbols.map(s => s.id);
             this.TestResource.update(test)
                 .then(() => this.ToastService.success("The test case has been updated."))
@@ -135,13 +135,13 @@ export const testCaseView = {
          * Execute the test case.
          */
         execute() {
-            if (!this.test.symbols.length) {
+            if (!this.testCase.symbols.length) {
                 this.ToastService.info("You have to create at least one symbol.");
                 return;
             }
 
             this.result = null;
-            this.TestResource.execute(this.test, this.browserConfig)
+            this.TestResource.execute(this.testCase, this.browserConfig)
                 .then(data => this.result = data)
                 .catch(err => this.ToastService.info("The test case could not be executed. " + err.data.message));
         }

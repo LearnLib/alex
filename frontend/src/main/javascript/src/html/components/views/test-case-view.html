@@ -5,7 +5,7 @@
             <button class="btn btn-sm btn-success" ng-click="vm.save()">
                 <i class="fa fa-fw fa-save"></i> Save
             </button>
-            <button class="btn btn-sm btn-default" ui-sref="tests({testId: vm.test.parent})">
+            <button class="btn btn-sm btn-default" ui-sref="tests({testId: vm.testCase.parent})">
                 <i class="fa fa-fw fa-close"></i> Cancel
             </button>
             <div class="btn-group btn-group-sm pull-right">
@@ -33,12 +33,12 @@
             </div>
 
             <div class="d-flex" style="align-items: center">
-                <button class="btn btn-sm btn-default" ui-sref="tests({testId: vm.test.parent})" style="margin-right: 12px">
+                <button class="btn btn-sm btn-default" ui-sref="tests({testId: vm.testCase.parent})" style="margin-right: 12px">
                     <i class="fa fa-fw fa-level-up"></i>
                 </button>
                 <h4 style="display: inline; margin: 0;">
                     <strong>
-                        <i class="fa fa-fw fa-file-o"></i> {{vm.test.name}}
+                        <i class="fa fa-fw fa-file-o"></i> {{vm.testCase.name}}
                     </strong>
                 </h4>
             </div>
@@ -52,7 +52,7 @@
                         </div>
                         <div class="panel-body">
                             <div class="list-group" style="margin-bottom: 0" ng-if="group.symbols.length">
-                                <div class="list-group-item" ng-repeat="symbol in group.symbols" ng-click="vm.test.symbols.push(symbol)">
+                                <div class="list-group-item" ng-repeat="symbol in group.symbols" ng-click="vm.testCase.symbols.push(symbol)">
                                     <button class="text-muted btn btn-xs btn-icon pull-right" ui-sref="symbolsActions({symbolId:symbol.id})">
                                         <i class="fa fa-edit"></i>
                                     </button>
@@ -71,15 +71,15 @@
                         <uib-tab heading="Test case">
                             <br>
 
-                            <div class="list-group" ng-if="vm.test.symbols.length" dragula='"testSymbols"' dragula-model="vm.test.symbols">
-                                <div class="list-group-item" ng-repeat="symbol in vm.test.symbols track by $index">
-                                    <i class="fa fa-close pull-right" ng-click="vm.test.symbols.splice($index, 1)"></i>
+                            <div class="list-group" ng-if="vm.testCase.symbols.length" dragula='"testSymbols"' dragula-model="vm.testCase.symbols">
+                                <div class="list-group-item" ng-repeat="symbol in vm.testCase.symbols track by $index">
+                                    <i class="fa fa-close pull-right" ng-click="vm.testCase.symbols.splice($index, 1)"></i>
                                     <span class="label label-info pull-right" ng-if="$index === 0" style="margin-right: 12px">Reset</span>
                                     <strong>{{symbol.name}}</strong><br>
                                     <span class="label label-default" ng-if="vm.result.outputs[$index]">{{vm.result.outputs[$index]}}</span>
                                 </div>
                             </div>
-                            <div class="alert alert-info" ng-if="!vm.test.symbols.length">
+                            <div class="alert alert-info" ng-if="!vm.testCase.symbols.length">
                                 Select a symbol to model the test case.
                             </div>
 
@@ -99,9 +99,9 @@
                                 </div>
                             </form>
 
-                            <ul class="list-group" ng-repeat="(name, value) in vm.test.variables" ng-click="vm.variable = {'name': name, 'value': value}">
+                            <ul class="list-group" ng-repeat="(name, value) in vm.testCase.variables" ng-click="vm.variable = {'name': name, 'value': value}">
                                 <li class="list-group-item" ng-click="vm.variable.name = name; vm.variable.value = value">
-                                    <i class="fa fa-fw fa-close pull-right" ng-click="vm.test.variables.splice($index, 1)"></i>
+                                    <i class="fa fa-fw fa-close pull-right" ng-click="vm.testCase.variables.splice($index, 1)"></i>
                                     <em>{{name}}</em> <i class="fa fa-fw fa-arrow-left"></i> "{{value}}"
                                 </li>
                             </ul>

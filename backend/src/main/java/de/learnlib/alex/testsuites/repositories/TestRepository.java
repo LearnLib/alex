@@ -33,11 +33,6 @@ public interface TestRepository extends JpaRepository<Test, UUID> {
 
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    @Query("SELECT t FROM Test t WHERE t.project.id = ?1 AND t.parent = NULL")
-    List<Test> findAllByProject_Id(Long projectId);
-
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
     Test findOneByProject_IdAndId(Long projectId, Long id);
 
     @Transactional(readOnly = true)

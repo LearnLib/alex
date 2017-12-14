@@ -179,6 +179,7 @@ public class Project implements Serializable {
         this.nextGroupId = 0L;
         this.symbols = new HashSet<>();
         this.nextSymbolId = 1L;
+        this.tests = new HashSet<>();
 
         this.mirrorUrls = "";
     }

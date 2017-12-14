@@ -32,6 +32,8 @@ import de.learnlib.alex.testsuites.dao.TestDAO;
 import de.learnlib.alex.testsuites.entities.Test;
 import de.learnlib.alex.testsuites.entities.TestCase;
 import de.learnlib.alex.testsuites.entities.TestSuite;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
+import org.springframework.web.client.ResponseErrorHandler;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -215,28 +217,6 @@ public class TestResource {
     }
 
     /**
-     * Get all tests on the top level, where {@link Test#parent} is null.
-     *
-     * @param projectId The if of the project to get all tests from.
-     * @return All tests on the top level of a project.
-     * @throws NotFoundException If the project with the id could not be found.
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") Long projectId) throws NotFoundException {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-
-        List<Test> resultList = testDAO.getAll(user, projectId);
-
-        // wrap the all tests with no parent in a root test suite for convenience
-        TestSuite root = new TestSuite();
-        root.setName("Root");
-        root.setTests(new HashSet<>(resultList));
-
-        return Response.ok(root).build();
-    }
-
-    /**
      * Get a single test.
      *
      * @param projectId The id of the project.
@@ -379,7 +359,13 @@ public class TestResource {
     public Response delete(@PathParam("project_id") Long projectId, @PathParam("id") Long id) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-        testDAO.delete(user, projectId, id);
+        try {
+            testDAO.delete(user, projectId, id);
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("TestCase.delete", Response.Status.NOT_FOUND, e);
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("TestCase.delete", Response.Status.BAD_REQUEST, e);
+        }
 
         return Response.status(Response.Status.NO_CONTENT).build();
     }
@@ -395,10 +381,17 @@ public class TestResource {
     @DELETE
     @Path("/batch/{ids}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("ids") IdsList ids) throws NotFoundException {
+    public Response delete(@PathParam("project_id") Long projectId,
+                           @PathParam("ids") IdsList ids) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-        testDAO.delete(user, projectId, ids);
+        try {
+            testDAO.delete(user, projectId, ids);
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("TestCase.delete", Response.Status.NOT_FOUND, e);
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("TestCase.delete", Response.Status.BAD_REQUEST, e);
+        }
 
         return Response.status(Response.Status.NO_CONTENT).build();
     }

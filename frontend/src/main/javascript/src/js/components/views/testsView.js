@@ -38,20 +38,10 @@ export const testsView = {
              */
             this.test = null;
 
-            const testId = $state.params.testId;
-            if (testId === null) {
-                TestResource.getAll(project.id)
-                    .then(data => {
-                        this.test = data;
-                    })
-                    .catch(console.log)
-            } else {
-                TestResource.get(project.id, testId)
-                    .then(data => {
-                        this.test = data
-                    })
-                    .catch(console.log)
-            }
+            const testId = $state.params.testId === null ? 0 : $state.params.testId;
+            TestResource.get(project.id, testId)
+                .then(data => this.test = data)
+                .catch(console.log)
         }
     },
     controllerAs: 'vm',

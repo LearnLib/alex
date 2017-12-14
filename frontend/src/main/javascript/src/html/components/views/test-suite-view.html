@@ -2,7 +2,7 @@
     <view-header title="Test Management"></view-header>
     <action-bar>
         <div class="alx-container">
-            <checkbox-multiple model="vm.tests" class="pull-left"></checkbox-multiple>
+            <checkbox-multiple model="vm.testSuite.tests" class="pull-left"></checkbox-multiple>
             <div class="btn-group btn-group-sm" uib-dropdown>
                 <button class="btn btn-default" uib-dropdown-toggle>
                     Create <i class="fa fa-fw fa-caret-down"></i>
@@ -53,11 +53,11 @@
         <div class="alx-container">
 
             <div class="d-flex" style="align-items: center">
-                <button class="btn btn-sm btn-default" ui-sref="tests({testId:vm.test.parent})" ng-if="vm.test.id !== null" style="margin-right: 12px">
+                <button class="btn btn-sm btn-default" ui-sref="tests({testId:vm.testSuite.parent})" ng-if="vm.testSuite.id !== 0" style="margin-right: 12px">
                     <i class="fa fa-fw fa-level-up"></i>
                 </button>
-                <h4 ng-if="vm.test.name" style="margin: 0;">
-                    <strong><i class="fa fa-fw fa-folder-o"></i> {{vm.test.name}}</strong>
+                <h4 ng-if="vm.testSuite.name" style="margin: 0;">
+                    <strong><i class="fa fa-fw fa-folder-o"></i> {{vm.testSuite.name}}</strong>
                 </h4>
             </div>
 
@@ -66,8 +66,8 @@
             <div class="row">
                 <div class="col-md-12">
 
-                    <div class="list-group test-list" ng-if="vm.tests.length">
-                        <div class="list-group-item test-list-item" ng-repeat="test in vm.tests">
+                    <div class="list-group test-list" ng-if="vm.testSuite.tests.length">
+                        <div class="list-group-item test-list-item" ng-repeat="test in vm.testSuite.tests">
 
                             <div class="d-flex flex-row" ng-if="test.type === 'suite'">
                                 <div style="padding-right: 12px">
@@ -164,7 +164,7 @@
                         <test-result result="vm.overallResult"></test-result>
                     </div>
 
-                    <div class="alert alert-info" ng-if="!vm.tests.length">
+                    <div class="alert alert-info" ng-if="!vm.testSuite.tests.length">
                         There are no test suites or test cases in this test suite.
                     </div>
 

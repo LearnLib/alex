@@ -71,6 +71,10 @@ public class TestDAOImpl implements TestDAO {
                 throw new ValidationException("To create a test case it must not haven an ID.");
             }
 
+            if (test.getParentId() == null) {
+                test.setParentId(0L);
+            }
+
             // make sure the name of the Test Case is unique
             Test testInDb = testRepository.findOneByProject_IdAndParent_IdAndName(test.getProjectId(), test.getParentId(), test.getName());
             if (testInDb != null && !testInDb.getId().equals(test.getId())) {
@@ -119,19 +123,6 @@ public class TestDAOImpl implements TestDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Test> getAll(User user, Long projectId) throws NotFoundException {
-        projectDAO.getByID(user.getId(), projectId); // access check
-
-        List<Test> resultList = testRepository.findAllByProject_Id(projectId);
-
-        resultList.forEach(this::loadLazyRelations);
-
-        return resultList;
-    }
-
-
-    @Override
-    @Transactional(readOnly = true)
     public Test get(User user, Long projectId, Long id) throws NotFoundException {
         projectDAO.getByID(user.getId(), projectId); // access check
 
@@ -155,6 +146,10 @@ public class TestDAOImpl implements TestDAO {
         Test testInDB = testRepository.findOneByProject_IdAndParent_IdAndName(test.getProjectId(), test.getParentId(), test.getName());
         if (testInDB != null && !testInDB.getId().equals(test.getId())) {
             throw new ValidationException("To update a test case or suite its name must be unique within its parent.");
+        }
+
+        if (test.getId() == 0 && !test.getName().equals("Root")) {
+            throw new ValidationException("The name of the root test suite may not be changed.");
         }
 
         testInDB = get(user, test.getProjectId(), test.getId());
@@ -187,7 +182,11 @@ public class TestDAOImpl implements TestDAO {
 
     @Override
     @Transactional
-    public void delete(User user, Long projectId, Long id) throws NotFoundException {
+    public void delete(User user, Long projectId, Long id) throws NotFoundException, ValidationException {
+        if (id == 0) {
+            throw new ValidationException("The root test suite cannot be deleted");
+        }
+
         Test test = get(user, projectId, id);
 
         Test parent = test.getParent();
@@ -201,7 +200,7 @@ public class TestDAOImpl implements TestDAO {
 
     @Override
     @Transactional
-    public void delete(User user, Long projectId, IdsList ids) throws NotFoundException {
+    public void delete(User user, Long projectId, IdsList ids) throws NotFoundException, ValidationException {
         for (long id: ids) {
             delete(user, projectId, id);
         }
