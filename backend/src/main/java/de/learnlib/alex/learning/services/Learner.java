@@ -420,17 +420,6 @@ public class Learner {
         return readOutputs(readOutputConfig.getSymbols().getAllSymbols(), connectors);
     }
 
-    public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig, Map<String, String> variables) {
-        ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, project, readOutputConfig.getBrowser());
-        ctxHandler.setResetSymbol(new Symbol());
-        ConnectorManager connectors = ctxHandler.createContext();
-
-        VariableStoreConnector variableStore = connectors.getConnector(VariableStoreConnector.class);
-        variables.forEach(variableStore::set);
-
-        return readOutputs(readOutputConfig.getSymbols().getAllSymbols(), connectors);
-    }
-
     private List<ExecuteResult> readOutputs(List<Symbol> symbols, ConnectorManager connectors) {
         LOGGER.traceEntry();
         try {

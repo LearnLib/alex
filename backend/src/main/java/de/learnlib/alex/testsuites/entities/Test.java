@@ -62,6 +62,42 @@ import java.util.UUID;
 })
 public class Test {
 
+    public static class TestRepresentation {
+        private Long id;
+        private String name;
+        private String type;
+
+        public TestRepresentation(Test test) {
+            this.id = test.id;
+            this.name = test.getName();
+            this.type = test instanceof TestSuite ? "suite" : "case";
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+    }
+
     /** The ID of the Test Case in the DB. */
     protected UUID uuid;
 

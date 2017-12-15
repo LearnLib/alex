@@ -1,0 +1,28 @@
+<div class="test-result-report">
+    <h4>
+        <i class="fa fa-fw fa-file-text-o"></i> <strong>Report</strong>
+    </h4>
+    <hr>
+    <table class="table table-condensed" style="margin-bottom: 0; border: 1px solid #dddddd; margin-top: 8px">
+        <thead style="background: #f7f7f7">
+        <tr>
+            <th style="width: 80px">Status</th>
+            <th>Passed</th>
+            <th>Failed</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <span ng-if="vm.overallResult.passed" class="label label-success">Success</span>
+                <span ng-if="!vm.overallResult.passed && vm.overallResult.testCasesPassed > 0" class="label label-warning">Failed</span>
+                <span ng-if="!vm.overallResult.passed && vm.overallResult.testCasesPassed === 0" class="label label-danger">Failed</span>
+            </td>
+            <td><strong>{{vm.overallResult.testCasesPassed}}</strong></td>
+            <td><strong>{{vm.overallResult.testCasesFailed}}</strong></td>
+            <td><strong>{{vm.overallResult.testCasesRun}}</strong></td>
+        </tr>
+        </tbody>
+    </table>
+</div>

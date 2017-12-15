@@ -22,11 +22,11 @@
         <div class="alx-container">
 
             <div ng-if="vm.result">
-                <div class="alert alert-danger" ng-if="!vm.result.success">
+                <div class="alert alert-danger" ng-if="!vm.result.passed">
                     <i class="fa fa-fw fa-close pull-right" ng-click="vm.result = null"></i>
                     <i class="fa fa-fw fa-warning"></i> <strong>The test case failed.</strong>
                 </div>
-                <div class="alert alert-success" ng-if="vm.result.success">
+                <div class="alert alert-success" ng-if="vm.result.passed">
                     <i class="fa fa-fw fa-close pull-right" ng-click="vm.result = null"></i>
                     <i class="fa fa-fw fa-check"></i> <strong>The test case passed.</strong>
                 </div>

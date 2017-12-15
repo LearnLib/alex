@@ -139,7 +139,8 @@ import {hypothesis} from "./components/hypothesis";
 import {discriminationTree} from "./components/discriminationTree";
 import {htmlElementPicker} from "./components/htmlElementPicker";
 import {nodeFormGroup} from "./components/forms/nodeFormGroup";
-import {testResult} from "./components/test-result";
+import {testResultReport} from "./components/testResultReport";
+import {testTree, testCaseNode, testSuiteNode} from "./components/testTree";
 import {
     actionFormAlertAcceptDismiss,
     actionFormAlertGetText,
@@ -414,6 +415,9 @@ angular
     .component('symbolListItem', symbolListItem)
     .component('symbolGroupListItem', symbolGroupListItem)
     .component('learnResultListItem', learnResultListItem)
-    .component('testResult', testResult);
+    .component('testResultReport', testResultReport)
+    .component('testTree', testTree)
+    .component('testCaseNode', testCaseNode)
+    .component('testSuiteNode', testSuiteNode);
 
 angular.bootstrap(document, ['ALEX']);

@@ -21,7 +21,6 @@ import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
-import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.config.entities.BrowserConfig;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
@@ -31,9 +30,11 @@ import de.learnlib.alex.learning.services.Learner;
 import de.learnlib.alex.testsuites.dao.TestDAO;
 import de.learnlib.alex.testsuites.entities.Test;
 import de.learnlib.alex.testsuites.entities.TestCase;
+import de.learnlib.alex.testsuites.entities.TestCaseResult;
+import de.learnlib.alex.testsuites.entities.TestResult;
 import de.learnlib.alex.testsuites.entities.TestSuite;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
-import org.springframework.web.client.ResponseErrorHandler;
+import de.learnlib.alex.testsuites.entities.TestSuiteResult;
+import de.learnlib.alex.testsuites.services.TestService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -51,9 +52,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
@@ -68,81 +69,6 @@ import java.util.stream.Collectors;
 @RolesAllowed({"REGISTERED"})
 public class TestResource {
 
-    private class TestSuiteExecutionResult {
-
-        private long testCasesPassed;
-        private long testCasesFailed;
-
-        public TestSuiteExecutionResult() {
-            this.testCasesPassed = 0L;
-            this.testCasesFailed = 0L;
-        }
-
-        public TestSuiteExecutionResult(long testCasesPassed, long testCasesFailed) {
-            this.testCasesPassed = testCasesPassed;
-            this.testCasesFailed = testCasesFailed;
-        }
-
-        public long getTestCasesRun() {
-            return testCasesPassed + testCasesFailed;
-        }
-
-        public long getTestCasesPassed() {
-            return testCasesPassed;
-        }
-
-        public void setTestCasesPassed(long testCasesPassed) {
-            this.testCasesPassed = testCasesPassed;
-        }
-
-        public void addTestCasesPassed(long amount) {
-            this.testCasesPassed += amount;
-        }
-
-        public long getTestCasesFailed() {
-            return testCasesFailed;
-        }
-
-        public void setTestCasesFailed(long testCasesFailed) {
-            this.testCasesFailed = testCasesFailed;
-        }
-
-        public void addTestCasesFailed(long amount) {
-            this.testCasesFailed += amount;
-        }
-
-        public boolean isSuccess() {
-            return testCasesFailed == 0;
-        }
-
-        public void add(TestSuiteExecutionResult result) {
-            this.testCasesPassed += result.testCasesPassed;
-            this.testCasesFailed += result.testCasesFailed;
-        }
-
-    }
-
-    private class TestCaseExecutionResult extends TestSuiteExecutionResult {
-        private List<String> outputs;
-
-        public TestCaseExecutionResult(long testCasesPassed, long testCasesFailed, List<String> outputs) {
-            super(testCasesPassed, testCasesFailed);
-            this.outputs = outputs;
-        }
-
-        public List<String> getOutputs() {
-            return outputs;
-        }
-
-        public void setOutputs(List<String> outputs) {
-            this.outputs = outputs;
-        }
-    }
-
-    /** Context information about the URI. */
-    @Context
-    private UriInfo uri;
-
     /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
@@ -150,19 +76,19 @@ public class TestResource {
     /** The {@link TestDAO} to use. */
     private TestDAO testDAO;
 
-    /** The learner. */
-    private Learner learner;
+    /** The test service. */
+    private TestService testService;
 
     /**
      * Constructor.
      *
-     * @param testDAO The injected testDao.
-     * @param learner The injected learner.
+     * @param testDAO     The injected testDao.
+     * @param testService The test service to use.
      */
     @Inject
-    public TestResource(TestDAO testDAO, Learner learner) {
+    public TestResource(TestDAO testDAO, TestService testService) {
         this.testDAO = testDAO;
-        this.learner = learner;
+        this.testService = testService;
     }
 
     /**
@@ -255,57 +181,14 @@ public class TestResource {
 
         Test test = testDAO.get(user, projectId, id);
 
+        TestResult result;
         if (test instanceof TestSuite) {
-            TestSuiteExecutionResult result = executeTestSuite(user, (TestSuite) test, browserConfig);
-            return Response.ok(result).build();
+            result = testService.executeTestSuite(user, (TestSuite) test, browserConfig);
         } else {
-            TestCaseExecutionResult result = executeTestCase(user, (TestCase) test, browserConfig);
-            return Response.ok(result).build();
-        }
-    }
-
-    private TestSuiteExecutionResult executeTestSuite(User user, TestSuite test, BrowserConfig browserConfig) {
-        Queue<Test> tests = new LinkedBlockingQueue<>();
-        tests.offer(test);
-        TestSuiteExecutionResult result = new TestSuiteExecutionResult();
-
-        while (!tests.isEmpty()) {
-            Test current = tests.poll();
-            if (current instanceof TestCase) {
-                if (((TestCase) current).getSymbols().isEmpty()) {
-                    continue;
-                }
-                TestCaseExecutionResult currentResult = executeTestCase(user, (TestCase) current, browserConfig);
-                result.add(currentResult);
-            } else if (current instanceof TestSuite) {
-                if (((TestSuite) current).getTests().isEmpty()) {
-                    continue;
-                }
-                TestSuite testSuite = (TestSuite) current;
-                testSuite.getTests().forEach(tests::offer);
-            }
+            result = testService.executeTestCase(user, (TestCase) test, browserConfig);
         }
 
-        return result;
-    }
-
-    private TestCaseExecutionResult executeTestCase(User user, TestCase testCase, BrowserConfig browserConfig) {
-        List<Symbol> symbols = testCase.getSymbols();
-
-        Symbol resetSymbol = symbols.get(0);
-        symbols.remove(0);
-        SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols);
-        ReadOutputConfig config = new ReadOutputConfig(symbolSet, browserConfig);
-
-        List<ExecuteResult> outputs = learner.readOutputs(user, testCase.getProject(), config, testCase.getVariables());
-
-        long symbolsFailed = outputs.stream().filter(o -> !o.isSuccessful()).count();
-        List<String> sulOutputs = outputs.stream().map(ExecuteResult::getOutput).collect(Collectors.toList());
-        if (symbolsFailed == 0) {
-            return new TestCaseExecutionResult(1L, 0L, sulOutputs);
-        } else {
-            return new TestCaseExecutionResult(0L, 1L, sulOutputs);
-        }
+        return Response.ok(result).build();
     }
 
     /**

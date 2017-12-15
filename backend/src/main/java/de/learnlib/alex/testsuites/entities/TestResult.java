@@ -14,16 +14,30 @@
  * limitations under the License.
  */
 
+package de.learnlib.alex.testsuites.entities;
+
 /**
- * Displays a test result.
- * @type {{templateUrl: string, bindings: {result: string}, controllerAs: string, controller: testResult.controller}}
+ * The result of a test execution.
  */
-export const testResult = {
-    templateUrl: 'html/components/test-result.html',
-    bindings: {
-        result: '='
-    },
-    controllerAs: 'vm',
-    controller: class {
-    },
-};
+public abstract class TestResult {
+
+    /** The test that has been executed. */
+    private Test.TestRepresentation test;
+
+    /**
+     * Constructor.
+     *
+     * @param test The test that has been executed.
+     */
+    public TestResult(Test test) {
+        this.test = new Test.TestRepresentation(test);
+    }
+
+    public Test.TestRepresentation getTest() {
+        return test;
+    }
+
+    public void setTest(Test.TestRepresentation test) {
+        this.test = test;
+    }
+}

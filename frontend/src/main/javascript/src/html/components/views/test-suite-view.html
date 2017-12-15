@@ -63,113 +63,44 @@
 
             <hr>
 
-            <div class="row">
-                <div class="col-md-12">
+            <div class="list-group test-list" ng-if="vm.testSuite.tests.length">
+                <div class="list-group-item test-list-item" ng-repeat="test in vm.testSuite.tests">
 
-                    <div class="list-group test-list" ng-if="vm.testSuite.tests.length">
-                        <div class="list-group-item test-list-item" ng-repeat="test in vm.testSuite.tests">
-
-                            <div class="d-flex flex-row" ng-if="test.type === 'suite'">
-                                <div style="padding-right: 12px">
-                                    <checkbox model="test"></checkbox>
-                                </div>
-                                <div style="padding-right: 12px">
-                                    <i class="fa fa-fw fa-folder-o"></i>
-                                </div>
-                                <div class="test-list-item-content" style="width: 100%"
-                                     ui-sref="tests({testId:test.id})">
-                                    <div>
-                                        <strong class="test-name">{{test.name}}</strong>
-                                    </div>
-                                    <test-result result="vm.results[test.id]" ng-if="vm.results[test.id]"></test-result>
-                                </div>
-                                <div>
-                                    <div class="btn-group btn-group-sm" uib-dropdown>
-                                        <button class="btn btn-icon btn-dropdown" uib-dropdown-toggle>
-                                            <i class="fa fa-fw fa-bars"></i>
-                                        </button>
-                                        <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
-                                            <li>
-                                                <a href="" ng-click="vm.editTest(test)">
-                                                    <i class="fa fa-fw fa-edit"></i> Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="vm.deleteTest(test)">
-                                                    <i class="fa fa-fw fa-trash"></i> Delete
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                    <div class="d-flex flex-row">
+                        <div style="padding-right: 12px">
+                            <checkbox model="test"></checkbox>
+                        </div>
+                        <div class="test-list-item-content flex-grow-1">
+                            <test-tree root="test" result="vm.results[test.id]"></test-tree>
+                        </div>
+                        <div style="padding-left: 6px">
+                            <div class="btn-group btn-group-xs" uib-dropdown>
+                                <button class="btn btn-icon btn-dropdown" uib-dropdown-toggle>
+                                    <i class="fa fa-fw fa-bars"></i>
+                                </button>
+                                <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
+                                    <li>
+                                        <a href="" ng-click="vm.editTest(test)">
+                                            <i class="fa fa-fw fa-edit"></i> Edit
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="" ng-click="vm.deleteTest(test)">
+                                            <i class="fa fa-fw fa-trash"></i> Delete
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
-
-                            <div class="d-flex flex-row" ng-if="test.type === 'case'">
-                                <div style="padding-right: 12px">
-                                    <checkbox model="test"></checkbox>
-                                </div>
-                                <div style="padding-right: 12px">
-                                    <i class="fa fa-fw fa-file-o"></i>
-                                </div>
-                                <div class="test-list-item-content" style="width: 100%"
-                                     ui-sref="tests({testId:test.id})">
-                                    <div>
-                                        <strong class="test-name">{{test.name}}</strong>
-                                    </div>
-                                    <test-result result="vm.results[test.id]" ng-if="vm.results[test.id]"></test-result>
-                                </div>
-                                <div>
-                                    <div class="btn-group btn-group-sm" uib-dropdown>
-                                        <button class="btn btn-icon btn-dropdown" uib-dropdown-toggle>
-                                            <i class="fa fa-fw fa-bars"></i>
-                                        </button>
-                                        <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
-                                            <li>
-                                                <a href="" ng-click="vm.editTest(test)">
-                                                    <i class="fa fa-fw fa-edit"></i> Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="vm.deleteTest(test)">
-                                                    <i class="fa fa-fw fa-trash"></i> Delete
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
-                    </div>
-
-                    <div ng-if="vm.overallResult !== null" style="margin-top: 32px">
-                        <h4><strong>Results</strong></h4>
-                        <hr>
-
-                        <div class="alert alert-success"
-                             ng-if="vm.overallResult.testCasesRun > 0 && vm.overallResult.testCasesFailed === 0">
-                            <i class="fa fa-fw fa-check"></i> All tests passed
-                        </div>
-
-                        <div class="alert alert-warning"
-                             ng-if="vm.overallResult.testCasesFailed * vm.overallResult.testCasesPassed !== 0">
-                            <i class="fa fa-fw fa-info"></i> Some tests failed
-                        </div>
-
-                        <div class="alert alert-danger"
-                             ng-if="vm.overallResult.testCasesRun > 0 && vm.overallResult.testCasesPassed === 0">
-                            <i class="fa fa-fw fa-warning"></i> All tests failed
-                        </div>
-
-                        <test-result result="vm.overallResult"></test-result>
-                    </div>
-
-                    <div class="alert alert-info" ng-if="!vm.testSuite.tests.length">
-                        There are no test suites or test cases in this test suite.
                     </div>
 
                 </div>
             </div>
+
+            <div ng-if="vm.finished" style="margin-top: 48px">
+                <test-result-report results="vm.results"></test-result-report>
+            </div>
+
         </div>
     </div>
 </div>

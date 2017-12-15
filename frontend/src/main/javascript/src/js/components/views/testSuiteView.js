@@ -73,16 +73,16 @@ export const testSuiteView = {
             this.results = [];
 
             /**
-             * The test result over all
-             * @type {TestResult}
-             */
-            this.overallResult = null;
-
-            /**
              * If tests are being executed.
              * @type {boolean}
              */
             this.isExecuting = false;
+
+            /**
+             * If the execution finished.
+             * @type {boolean}
+             */
+            this.finished = false;
 
             /**
              * The browser configuration.
@@ -180,8 +180,8 @@ export const testSuiteView = {
         }
 
         reset() {
-            this.overallResult = null;
             this.results = {};
+            this.finished = false;
         }
 
         deleteTest(test) {
@@ -219,6 +219,7 @@ export const testSuiteView = {
         stopTestExecution() {
             this.ToastService.info("The execution stops after the current test.");
             this.isExecuting = false;
+            this.finished = true;
         }
 
         executeSelected() {
@@ -228,9 +229,9 @@ export const testSuiteView = {
             }
 
             this.reset();
-            this.overallResult = new TestResult();
             this.isExecuting = true;
             const selected = this.testSuite.tests.filter(t => t._selected);
+
             const next = (test) => {
                 if (!this.isExecuting) {
                     this.ToastService.success("Finished executing all tests.");
@@ -240,13 +241,12 @@ export const testSuiteView = {
                 this.TestResource.execute(test, this.browserConfig)
                     .then(data => {
                         this.results[test.id] = data;
-                        this.overallResult.add(data);
-
                         if (selected.length) {
                             next(selected.shift());
                         } else {
                             this.ToastService.success("Finished executing all tests.");
                             this.isExecuting = false;
+                            this.finished = true;
                         }
                     })
                     .catch(console.log);
@@ -314,3 +314,38 @@ export const testSuiteView = {
         }
     }
 };
+
+const r = {
+    "1": {
+        "test": {"id": 1, "name": "q", "type": "suite"},
+        "testCasesPassed": 2,
+        "testCasesFailed": 0,
+        "results": {
+            "4": {
+                "test": {"id": 4, "name": "sdfsdf", "type": "suite"},
+                "testCasesPassed": 1,
+                "testCasesFailed": 0,
+                "results": {
+                    "5": {
+                        "test": {"id": 5, "name": "sdfsdf", "type": "suite"},
+                        "testCasesPassed": 1,
+                        "testCasesFailed": 0,
+                        "results": {
+                            "6": {
+                                "test": {"id": 6, "name": "asd", "type": "case"},
+                                "outputs": ["Ok", "Ok", "Ok"],
+                                "passed": true
+                            }
+                        },
+                        "passed": true,
+                        "testCasesRun": 1
+                    }
+                },
+                "passed": true,
+                "testCasesRun": 1
+            }, "7": {"test": {"id": 7, "name": "cvbcvb", "type": "case"}, "outputs": ["Ok", "Ok"], "passed": true}
+        },
+        "passed": true,
+        "testCasesRun": 2
+    }
+}

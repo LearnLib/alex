@@ -5,6 +5,7 @@
 @import "hypothesis";
 @import "html-element-picker";
 @import "action-recorder";
+@import "test-tree";
 @import "sidebar";
 @import "animations";
 
@@ -610,19 +611,5 @@ project-details-widget {
   table tr > td:nth-of-type(2) {
     max-width: 200px;
     @include text-overflow-ellipsis();
-  }
-}
-
-.test-list {
-  .test-list-item {
-    .test-list-item-content {
-      &:hover {
-        cursor: pointer;
-
-        .test-name {
-          text-decoration: underline;
-        }
-      }
-    }
   }
 }
