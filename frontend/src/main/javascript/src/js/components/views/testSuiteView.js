@@ -314,38 +314,3 @@ export const testSuiteView = {
         }
     }
 };
-
-const r = {
-    "1": {
-        "test": {"id": 1, "name": "q", "type": "suite"},
-        "testCasesPassed": 2,
-        "testCasesFailed": 0,
-        "results": {
-            "4": {
-                "test": {"id": 4, "name": "sdfsdf", "type": "suite"},
-                "testCasesPassed": 1,
-                "testCasesFailed": 0,
-                "results": {
-                    "5": {
-                        "test": {"id": 5, "name": "sdfsdf", "type": "suite"},
-                        "testCasesPassed": 1,
-                        "testCasesFailed": 0,
-                        "results": {
-                            "6": {
-                                "test": {"id": 6, "name": "asd", "type": "case"},
-                                "outputs": ["Ok", "Ok", "Ok"],
-                                "passed": true
-                            }
-                        },
-                        "passed": true,
-                        "testCasesRun": 1
-                    }
-                },
-                "passed": true,
-                "testCasesRun": 1
-            }, "7": {"test": {"id": 7, "name": "cvbcvb", "type": "case"}, "outputs": ["Ok", "Ok"], "passed": true}
-        },
-        "passed": true,
-        "testCasesRun": 2
-    }
-}
