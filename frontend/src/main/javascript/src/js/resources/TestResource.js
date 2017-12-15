@@ -74,6 +74,17 @@ export class TestResource {
     }
 
     /**
+     * Get a report.
+     *
+     * @param projectId - The id of the project.
+     * @param result - The result to get the report from.
+     */
+    getReport(projectId, result) {
+        return this.$http.post(`${this.__env.apiUrl}/projects/${projectId}/tests/report`, result)
+            .then(response => response.data);
+    }
+
+    /**
      * Update a test case.
      *
      * @param testCase - The updated test case.

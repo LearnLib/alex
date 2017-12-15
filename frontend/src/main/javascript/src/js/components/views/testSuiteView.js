@@ -15,7 +15,7 @@
  */
 
 import {webBrowser} from "../../constants";
-import {TestResult} from "../../entities/TestResult";
+import {DateUtils} from "../../utils/date-utils";
 
 export const testSuiteView = {
     templateUrl: 'html/components/views/test-suite-view.html',
@@ -288,8 +288,7 @@ export const testSuiteView = {
                     test.symbols = test.symbols.map(s => s.name);
                 });
 
-                const date = new Date();
-                const name = 'tests-' + date.getFullYear() + '' + (date.getMonth() + 1) + "" + date.getDate();
+                const name = 'tests-' + DateUtils.YYYYMMDD();
                 this.PromptService.prompt('Enter a name for the file', name).then(name => {
                     this.DownloadService.downloadObject(testCases, name);
                     this.ToastService.success('The tests have been exported');
@@ -310,7 +309,7 @@ export const testSuiteView = {
                     this.testSuite.tests.push(t);
                 });
             });
-            
+
         }
     }
 };

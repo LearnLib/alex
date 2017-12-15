@@ -67,6 +67,9 @@ public class Test {
         private String name;
         private String type;
 
+        public TestRepresentation() {
+        }
+
         public TestRepresentation(Test test) {
             this.id = test.id;
             this.name = test.getName();

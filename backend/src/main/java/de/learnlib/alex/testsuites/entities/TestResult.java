@@ -16,13 +16,30 @@
 
 package de.learnlib.alex.testsuites.entities;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 /**
  * The result of a test execution.
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(name = "case", value = TestCaseResult.class),
+        @JsonSubTypes.Type(name = "suite", value = TestSuiteResult.class),
+})
 public abstract class TestResult {
 
     /** The test that has been executed. */
     private Test.TestRepresentation test;
+
+    /** The time it took to execute the test in ms. */
+    protected long time;
+
+    /**
+     * Constructor.
+     */
+    public TestResult() {
+    }
 
     /**
      * Constructor.
@@ -39,5 +56,13 @@ public abstract class TestResult {
 
     public void setTest(Test.TestRepresentation test) {
         this.test = test;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 }

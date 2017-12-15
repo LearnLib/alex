@@ -16,11 +16,16 @@
 
 package de.learnlib.alex.testsuites.entities;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
+import javax.persistence.DiscriminatorValue;
 import java.util.List;
 
 /**
  * The result of the execution of a test case.
  */
+@DiscriminatorValue("case")
+@JsonTypeName("case")
 public class TestCaseResult extends TestResult {
 
     /** The outputs of the system. */
@@ -29,17 +34,30 @@ public class TestCaseResult extends TestResult {
     /** If the test passed. */
     private boolean passed;
 
+    /** The failure message. */
+    private String failureMessage;
+
+    /**
+     * Constructor.
+     */
+    public TestCaseResult() {
+    }
+
     /**
      * Constructor.
      *
-     * @param testCase The test case that has been executed.
-     * @param outputs  The recorded outputs.
-     * @param passed   If the test passed.
+     * @param testCase       The test case that has been executed.
+     * @param outputs        The recorded outputs.
+     * @param passed         If the test passed.
+     * @param time           The time it took to execute the test in ms.
+     * @param failureMessage The message that is displayed in case the test case failed.
      */
-    public TestCaseResult(TestCase testCase, List<String> outputs, boolean passed) {
+    public TestCaseResult(TestCase testCase, List<String> outputs, boolean passed, long time, String failureMessage) {
         super(testCase);
         this.outputs = outputs;
         this.passed = passed;
+        this.time = time;
+        this.failureMessage = failureMessage;
     }
 
     public List<String> getOutputs() {
@@ -56,5 +74,13 @@ public class TestCaseResult extends TestResult {
 
     public void setPassed(boolean passed) {
         this.passed = passed;
+    }
+
+    public String getFailureMessage() {
+        return failureMessage;
+    }
+
+    public void setFailureMessage(String failureMessage) {
+        this.failureMessage = failureMessage;
     }
 }

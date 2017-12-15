@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {DateUtils} from "../utils/date-utils";
+
 /**
  * Displays a test result.
  * @type {{templateUrl: string, bindings: {result: string}, controllerAs: string, controller: testResult.controller}}
@@ -21,18 +23,46 @@
 export const testResultReport = {
     templateUrl: 'html/components/test-result-report.html',
     bindings: {
-        results: '='
+        results: '=',
+        suite: '='
     },
     controllerAs: 'vm',
     controller: class {
 
-        constructor() {
+        /**
+         * Constructor.
+         *
+         * @param {DownloadService} DownloadService
+         * @param {PromptService} PromptService
+         * @param {ToastService} ToastService
+         * @param {TestResource} TestResource
+         * @param {SessionService} SessionService
+         */
+        // @ngInject
+        constructor(DownloadService, PromptService, ToastService, TestResource, SessionService) {
+            this.DownloadService = DownloadService;
+            this.PromptService = PromptService;
+            this.ToastService = ToastService;
+            this.TestResource = TestResource;
+            this.SessionService = SessionService;
 
             /**
              * The results.
              * @type {object}
              */
             this.results = {};
+
+            /**
+             * The parent test suite.
+             * @type {object}
+             */
+            this.suite = null;
+
+            /**
+             * The project.
+             * @type {Project}
+             */
+            this.project = this.SessionService.getProject();
 
             /**
              * The cumulated result.
@@ -42,7 +72,8 @@ export const testResultReport = {
                 testCasesPassed: 0,
                 testCasesFailed: 0,
                 testCasesRun: 0,
-                passed: true
+                passed: true,
+                time: 0
             };
         }
 
@@ -60,7 +91,27 @@ export const testResultReport = {
                     this.overallResult.testCasesRun += 1;
                 }
                 this.overallResult.passed &= result.passed;
+                this.overallResult.time += result.time;
             }
+        }
+
+        /**
+         * Saves the report as JUnit XML.
+         */
+        exportReport() {
+            const parent = JSON.parse(JSON.stringify(this.suite));
+            parent.tests = [];
+
+            this.TestResource.getReport(this.project.id, {
+                results: this.results,
+                parent: parent
+            }).then(data => {
+                this.PromptService.prompt('Enter the name for the report', 'report-' + DateUtils.YYYYMMDD())
+                    .then(name => {
+                        this.DownloadService.downloadXml(data, name);
+                        this.ToastService.success('The report has been downloaded.');
+                    });
+            }).catch(console.log);
         }
     }
 };

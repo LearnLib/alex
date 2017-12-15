@@ -22,19 +22,15 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.config.entities.BrowserConfig;
-import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.learning.entities.ReadOutputConfig;
-import de.learnlib.alex.learning.entities.SymbolSet;
-import de.learnlib.alex.learning.services.Learner;
 import de.learnlib.alex.testsuites.dao.TestDAO;
 import de.learnlib.alex.testsuites.entities.Test;
 import de.learnlib.alex.testsuites.entities.TestCase;
-import de.learnlib.alex.testsuites.entities.TestCaseResult;
+import de.learnlib.alex.testsuites.entities.TestReportConfig;
 import de.learnlib.alex.testsuites.entities.TestResult;
 import de.learnlib.alex.testsuites.entities.TestSuite;
-import de.learnlib.alex.testsuites.entities.TestSuiteResult;
 import de.learnlib.alex.testsuites.services.TestService;
+import de.learnlib.alex.testsuites.services.reporters.JUnitTestResultReporter;
+import de.learnlib.alex.testsuites.services.reporters.TestResultReporter;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -51,13 +47,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.stream.Collectors;
 
 /**
  * REST endpoints for working with tests.
@@ -277,5 +267,21 @@ public class TestResource {
         }
 
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    /**
+     * Creates a report of a test result.
+     *
+     * @param reportConfig The config to create the report from.
+     * @return The report.
+     */
+    @POST
+    @Path("/report")
+    @Produces(MediaType.APPLICATION_XML)
+    public Response getReport(TestReportConfig reportConfig) {
+        final TestResultReporter<String> reporter = new JUnitTestResultReporter();
+        final String report = reporter.createReport(reportConfig);
+
+        return Response.ok(report).build();
     }
 }

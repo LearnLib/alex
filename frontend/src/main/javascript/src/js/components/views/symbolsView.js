@@ -18,6 +18,7 @@ import flatten from "lodash/flatten";
 import remove from "lodash/remove";
 import {events} from "../../constants";
 import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
+import {DateUtils} from "../../utils/date-utils";
 
 /**
  * The controller that handles CRUD operations on symbols and symbol groups.
@@ -245,10 +246,8 @@ class SymbolsView {
      */
     exportSelectedSymbols() {
         if (this.selectedSymbols.length > 0) {
-            const date = new Date();
-            const name = date.getFullYear() + '' + (date.getMonth() + 1) + "" + date.getDate();
-
-            this.PromptService.prompt("Enter a name for the json file", `symbols-${name}`)
+            const name = 'symbols-' + DateUtils.YYYYMMDD();
+            this.PromptService.prompt("Enter a name for the json file", name)
                 .then(filename => {
                     const symbolsToExport = this.selectedSymbols.map(s => s.getExportableSymbol());
                     this.DownloadService.downloadObject(symbolsToExport, filename);

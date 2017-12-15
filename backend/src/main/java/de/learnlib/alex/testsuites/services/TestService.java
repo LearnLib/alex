@@ -32,6 +32,7 @@ import de.learnlib.alex.testsuites.entities.TestSuiteResult;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,7 +66,7 @@ public class TestService {
     public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, BrowserConfig browserConfig) {
         TestSuiteResult tsResult = new TestSuiteResult(testSuite, 0L, 0L);
 
-        for (Test test: testSuite.getTests()) {
+        for (Test test : testSuite.getTests()) {
             if (test instanceof TestCase) {
                 TestCaseResult result = executeTestCase(user, (TestCase) test, browserConfig);
                 tsResult.add(result);
@@ -89,9 +90,11 @@ public class TestService {
      * @return
      */
     public TestCaseResult executeTestCase(User user, TestCase testCase, BrowserConfig browserConfig) {
-        final ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, testCase.getProject(), browserConfig);
+        final ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, testCase.getProject(),
+                                                                                       browserConfig);
         ctxHandler.setResetSymbol(new Symbol());
 
+        final long startTime = System.currentTimeMillis();
         final ConnectorManager connectors = ctxHandler.createContext();
 
         // set variables from the test case
@@ -104,10 +107,25 @@ public class TestService {
                 .collect(Collectors.toList());
 
         connectors.dispose();
+        final long time = System.currentTimeMillis() - startTime;
 
-        final long symbolsFailed = outputs.stream().filter(o -> !o.isSuccessful()).count();
         final List<String> sulOutputs = outputs.stream().map(ExecuteResult::getOutput).collect(Collectors.toList());
 
-        return new TestCaseResult(testCase, sulOutputs, symbolsFailed == 0);
+        final List<Symbol> failedSymbols = new ArrayList<>();
+        final List<String> failureMessageParts = new ArrayList<>();
+
+        for (int i = 0; i < outputs.size(); i++) {
+            final ExecuteResult output = outputs.get(i);
+            if (!output.isSuccessful()) {
+                final Symbol symbol = testCase.getSymbols().get(i);
+                failedSymbols.add(symbol);
+                failureMessageParts.add(symbol.getName() + ":" + output.getOutput());
+            }
+        }
+
+        final String failureMessage = failureMessageParts.isEmpty() ? null : String.join(", ", failureMessageParts);
+
+        return new TestCaseResult(testCase, sulOutputs, failedSymbols.size() == 0, time, String.join(", ", failureMessage));
     }
+
 }

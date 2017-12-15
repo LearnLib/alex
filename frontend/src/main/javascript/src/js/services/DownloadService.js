@@ -129,6 +129,17 @@ export class DownloadService {
     }
 
     /**
+     * Downloads xml formatted data.
+     *
+     * @param {string} data - The xml formatted data.
+     * @param {string} filename - The name of the file.
+     */
+    downloadXml(data, filename) {
+        const href = 'data:text/xml;charset=utf-8,' + encodeURIComponent(data);
+        this.download(filename, 'xml', href);
+    }
+
+    /**
      * Downloads the svg given as the selector. The selector can also be a parent element of the svg.
      * It is then searched for child elements that are svg elements.
      *

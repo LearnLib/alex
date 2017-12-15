@@ -16,12 +16,17 @@
 
 package de.learnlib.alex.testsuites.entities;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
+import javax.persistence.DiscriminatorValue;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * The result of the execution of a test suite.
  */
+@DiscriminatorValue("suite")
+@JsonTypeName("suite")
 public class TestSuiteResult extends TestResult {
 
     /** How many test cases passed. */
@@ -32,6 +37,12 @@ public class TestSuiteResult extends TestResult {
 
     /** The results of the tests of this suite. */
     private Map<Long, TestResult> results;
+
+    /**
+     * Constructor.
+     */
+    public TestSuiteResult() {
+    }
 
     /**
      * Constructor.
@@ -53,8 +64,9 @@ public class TestSuiteResult extends TestResult {
      * @param result The test case in this suite.
      */
     public void add(TestCaseResult result) {
-        this.testCasesPassed += result.isPassed() ? 1 : 0;
-        this.testCasesFailed += !result.isPassed() ? 1 : 0;
+        testCasesPassed += result.isPassed() ? 1 : 0;
+        testCasesFailed += !result.isPassed() ? 1 : 0;
+        time += result.getTime();
     }
 
     /**
@@ -63,12 +75,16 @@ public class TestSuiteResult extends TestResult {
      * @param result The test suite in this suite.
      */
     public void add(TestSuiteResult result) {
-        this.testCasesPassed += result.getTestCasesPassed();
-        this.testCasesFailed += result.getTestCasesFailed();
+        testCasesPassed += result.getTestCasesPassed();
+        testCasesFailed += result.getTestCasesFailed();
+        time += result.getTime();
     }
 
     public long getTestCasesRun() {
         return testCasesPassed + testCasesFailed;
+    }
+
+    public void setTestCasesRun(long num) {
     }
 
     public long getTestCasesPassed() {
@@ -105,5 +121,8 @@ public class TestSuiteResult extends TestResult {
 
     public boolean isPassed() {
         return testCasesFailed == 0;
+    }
+
+    public void setPassed(boolean passed) {
     }
 }
