@@ -65,6 +65,10 @@ public class UserDAOImpl implements UserDAO {
     @Override
     @Transactional
     public void create(User user) throws ValidationException {
+        if (userRepository.findOneByEmail(user.getEmail()) != null) {
+            throw new ValidationException("A user with the email already exists");
+        }
+
         saveUser(user);
     }
 
@@ -144,7 +148,6 @@ public class UserDAOImpl implements UserDAO {
     private void saveUser(User user) {
         try {
             userRepository.save(user);
-
         // error handling
         } catch (TransactionSystemException e) {
             LOGGER.info("Saving a user failed:", e);

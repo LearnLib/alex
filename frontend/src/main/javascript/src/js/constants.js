@@ -61,8 +61,6 @@ export const events = {
     HYPOTHESIS_LAYOUT_UPDATED: 'hypothesis:layoutUpdated',
 
     // user related events
-    USER_UPDATED: 'user:updated',
-    USER_DELETED: 'user:deleted',
     USER_LOGGED_IN: 'user:loggedIn',
 
     // action related events

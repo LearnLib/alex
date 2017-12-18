@@ -52,6 +52,148 @@ class Sidebar {
          */
         this.collapsed = sessionStorage.getItem('sidebarCollapsed') === "true";
 
+        /**
+         * The item groups
+         * @type {*[]}
+         */
+        this.groups = [
+            {
+                title: () => 'User',
+                display: () => this.user,
+                items: [
+                    {
+                        title: 'Settings',
+                        icon: 'fa-user',
+                        active: () => this.isState('usersSettings'),
+                        display: () => true,
+                        click: () => $state.go('usersSettings')
+                    },
+                    {
+                        title: 'Logout',
+                        icon: 'fa-sign-out',
+                        active: () => false,
+                        display: () => true,
+                        click: () => this.logout()
+                    }
+                ]
+            },
+            {
+                title: () => 'Admin',
+                display: () => this.user && this.user.role === 'ADMIN',
+                items: [
+                    {
+                        title: 'App Settings',
+                        icon: 'fa-gears',
+                        active: () => this.isState('settings'),
+                        display: () => true,
+                        click: () => $state.go('settings')
+                    },
+                    {
+                        title: 'User Management',
+                        icon: 'fa-users',
+                        active: () => this.isState('adminUsers'),
+                        display: () => true,
+                        click: () => $state.go('adminUsers')
+                    }
+                ]
+            },
+            {
+                title: () => this.project ? this.project.name : 'Projects',
+                display: () => this.user,
+                items: [
+                    {
+                        title: 'Overview',
+                        icon: 'fa-briefcase',
+                        active: () => this.isState('projects'),
+                        display: () => !this.project,
+                        click: () => $state.go('projects')
+                    },
+                    {
+                        title: 'Dashboard',
+                        icon: 'fa-dashboard',
+                        active: () => this.isState('projectsDashboard'),
+                        display: () => this.project,
+                        click: () => $state.go('projectsDashboard')
+                    },
+                    {
+                        title: 'Files',
+                        icon: 'fa-file',
+                        active: () => this.isState('files'),
+                        display: () => this.project,
+                        click: () => $state.go('files')
+                    },
+
+                    {
+                        title: 'Close',
+                        icon: 'fa-sign-out',
+                        active: () => false,
+                        display: () => this.project,
+                        click: () => this.closeProject()
+                    }
+                ]
+            },
+            {
+                title: () => 'Symbols',
+                display: () => this.user && this.project,
+                items: [
+                    {
+                        title: 'Manage',
+                        icon: 'fa-list-alt',
+                        active: () => this.isState('symbols', 'symbolsActions', 'symbolsHistory'),
+                        display: () => true,
+                        click: () => $state.go('symbols')
+                    },
+                    {
+                        title: 'Trash',
+                        icon: 'fa-trash',
+                        active: () => this.isState('symbolsTrash'),
+                        display: () => true,
+                        click: () => $state.go('symbolsTrash')
+                    }
+                ]
+            },
+            {
+                title: () => 'Testing',
+                display: () => this.user && this.project,
+                items: [
+                    {
+                        title: 'Manage',
+                        icon: 'fa-wrench',
+                        active: () => this.isState('tests'),
+                        display: () => true,
+                        click: () => $state.go('tests')
+                    }
+                ]
+            },
+            {
+                title: () => 'Learning',
+                display: () => this.user && this.project,
+                items: [
+                    {
+                        title: 'Setup',
+                        icon: 'fa-play',
+                        active: () => this.isState('learnerSetup', 'learnerStart'),
+                        display: () => true,
+                        click: () => $state.go('learnerSetup')
+                    },
+                    {
+                        title: 'Results',
+                        icon: 'fa-sitemap',
+                        active: () => this.isState('results', 'resultsCompare', 'statisticsCompare'),
+                        display: () => true,
+                        click: () => $state.go('results')
+                    },
+                    {
+                        title: 'Counters',
+                        icon: 'fa-list-ol',
+                        active: () => this.isState('counters'),
+                        display: () => true,
+                        click: () => $state.go('counters')
+                    },
+                ]
+            }
+        ];
+
         // listen on project open event
         EventBus.on(events.PROJECT_OPENED, (evt, data) => {
             this.project = data.project;
@@ -64,6 +206,7 @@ class Sidebar {
 
         this.updateLayout();
     }
+
 
     /** Removes the project object from the session and redirect to the start page. */
     closeProject() {

@@ -79,8 +79,9 @@ public final class JWTHelper {
         JwtClaims claims = new JwtClaims();
         claims.setIssuer("ALEX");
         claims.setGeneratedJwtId();
-        claims.setClaim("userId", user.getId());
-        claims.setClaim("userRole", user.getRole());
+        claims.setClaim("id", user.getId());
+        claims.setClaim("role", user.getRole());
+        claims.setClaim("email", user.getEmail());
 
         // create signature
         JsonWebSignature jws = new JsonWebSignature();

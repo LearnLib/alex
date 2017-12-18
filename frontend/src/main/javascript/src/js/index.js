@@ -111,7 +111,6 @@ import {projectCreateForm} from "./components/forms/projectCreateForm";
 import {symbolEditFormComponent} from "./components/forms/symbolEditForm";
 import {userEditForm} from "./components/forms/userEditForm";
 import {userLoginForm} from "./components/forms/userLoginForm";
-import {userRegisterForm} from "./components/forms/userRegisterForm";
 import {browserConfigForm} from "./components/forms/browserConfigForm";
 import {testCaseCreateForm} from "./components/forms/testCaseCreateForm";
 import {testCaseEditForm} from "./components/forms/testCaseEditForm";
@@ -331,7 +330,6 @@ angular
     .component('projectCreateForm', projectCreateForm)
     .component('userEditForm', userEditForm)
     .component('userLoginForm', userLoginForm)
-    .component('userRegisterForm', userRegisterForm)
     .component('nodeFormGroup', nodeFormGroup)
     .component('browserConfigForm', browserConfigForm)
     .component('symbolEditForm', symbolEditFormComponent)

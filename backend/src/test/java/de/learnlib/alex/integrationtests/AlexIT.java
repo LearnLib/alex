@@ -74,7 +74,7 @@ public class AlexIT {
         assertEquals(PROJECT_NAME, project.getName());
         assertEquals(PROJECT_URL, project.getBaseUrl());
         assertNotNull(project.getSymbols());
-        assertEquals(0, project.getSymbolsSize()); // no symbol
+        assertEquals(0, project.getSymbols().size()); // no symbol
     }
 
     private void createSymbols() throws IOException {

@@ -78,7 +78,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 // if no exception was throws up to here you can be sure that the jwt has not been modified
                 // and that the user that send the jwt is the one he seems to be
                 JwtClaims claims = jwtConsumer.processToClaims(jwt);
-                Long id = (Long) claims.getClaimsMap().get("userId");
+                Long id = (Long) claims.getClaimsMap().get("id");
 
                 // get user from the db
                 try {

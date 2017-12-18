@@ -15,7 +15,7 @@
  */
 
 import {User} from "../../entities/User";
-import {events, userRole} from "../../constants";
+import {userRole} from "../../constants";
 
 /**
  * The controller for the modal window that handles editing a user.
@@ -30,16 +30,14 @@ export class UserEditModalComponent {
      * @param {UserResource} UserResource
      * @param {ToastService} ToastService
      * @param {PromptService} PromptService
-     * @param {EventBus} EventBus
      * @param {SessionService} SessionService
      */
     // @ngInject
-    constructor($state, UserResource, ToastService, PromptService, EventBus, SessionService) {
+    constructor($state, UserResource, ToastService, PromptService, SessionService) {
         this.$state = $state;
         this.UserResource = UserResource;
         this.ToastService = ToastService;
         this.PromptService = PromptService;
-        this.EventBus = EventBus;
         this.SessionService = SessionService;
 
         /**
@@ -82,7 +80,7 @@ export class UserEditModalComponent {
                 if (this.SessionService.getUser().id === this.user.id) {
                     this.SessionService.saveUser(user);
                 }
-                this.EventBus.emit(events.USER_UPDATED, {user: user});
+                this.resolve.modalData.onUpdated({user});
                 this.dismiss();
                 this.ToastService.success('The email has been changed.');
             })
@@ -98,8 +96,8 @@ export class UserEditModalComponent {
         this.error = null;
         this.UserResource.promote(this.user)
             .then((user) => {
-                this.EventBus.emit(events.USER_UPDATED, {user: user});
                 this.ToastService.success('The user now has admin rights.');
+                this.resolve.modalData.onUpdated({user});
                 this.dismiss();
             })
             .catch(response => {
@@ -120,7 +118,7 @@ export class UserEditModalComponent {
                     this.SessionService.removeUser();
                     this.$state.go('home');
                 } else {
-                    this.EventBus.emit(events.USER_UPDATED, {user: user});
+                    this.resolve.modalData.onUpdated({user});
                 }
                 this.dismiss();
                 this.ToastService.success('The user now has default user rights.');
@@ -139,8 +137,8 @@ export class UserEditModalComponent {
             .then(() => {
                 this.UserResource.remove(this.user)
                     .then(() => {
-                        this.EventBus.emit(events.USER_DELETED, {user: this.user});
                         this.ToastService.success('The user has been deleted');
+                        this.resolve.modalData.onDeleted({user: this.user});
                         this.dismiss();
                     })
                     .catch(response => {
@@ -176,7 +174,9 @@ export const userEditModalComponent = {
 export function userEditModalHandle($uibModal) {
     return {
         scope: {
-            user: '='
+            user: '=',
+            onDeleted: '&',
+            onUpdated: '&'
         },
         restrict: 'A',
         link(scope, el) {
@@ -184,8 +184,12 @@ export function userEditModalHandle($uibModal) {
                 $uibModal.open({
                     component: 'userEditModal',
                     resolve: {
-                        modalData: function () {
-                            return {user: new User(scope.user)};
+                        modalData: () => {
+                            return {
+                                user: new User(scope.user),
+                                onUpdated: scope.onUpdated,
+                                onDeleted: scope.onDeleted
+                            };
                         }
                     }
                 });

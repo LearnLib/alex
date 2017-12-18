@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {events} from "../../constants";
-
 /**
  * The controller for the admin users page.
  */
@@ -26,15 +24,13 @@ class AdminUsersView {
      *
      * @param $scope
      * @param {UserResource} UserResource
-     * @param {EventBus} EventBus
      * @param {SessionService} SessionService
      * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor($scope, UserResource, EventBus, SessionService, ToastService) {
+    constructor($scope, UserResource, SessionService, ToastService) {
         this.UserResource = UserResource;
         this.ToastService = ToastService;
-        this.EventBus = EventBus;
 
         /**
          * The user that is logged in.
@@ -62,32 +58,42 @@ class AdminUsersView {
             .catch(response => {
                 ToastService.danger(`Loading users failed! ${response.data.message}`);
             });
+    }
 
-        // listen on user updated event
-        EventBus.on(events.USER_UPDATED, (evt, data) => {
-            const user = data.user;
-            const i = this.users.findIndex(u => u.id === user.id);
-            if (i > -1) this.users[i] = user;
-        }, $scope);
+    /**
+     * Removes a user from the list.
+     * @param {User} user
+     */
+    removeUser(user) {
+        const i = this.users.findIndex(u => u.id === user.id);
+        if (i > -1) this.users.splice(i, 1);
+    }
 
-        // listen on user deleted event
-        EventBus.on(events.USER_DELETED, (evt, data) => {
-            const i = this.users.findIndex(u => u.id === data.user.id);
-            if (i > -1) this.users.splice(i, 1);
-        }, $scope);
+    /**
+     * Updates a user in the list.
+     * @param {User} user
+     */
+    updateUser(user) {
+        const i = this.users.findIndex(u => u.id === user.id);
+        if (i > -1) this.users[i] = user;
     }
 
     /**
      * Deletes selected users which are not admins.
      */
     deleteSelectedUsers() {
-        const ids = this.selectedUsers.filter(user => user.role !== 'ADMIN')
-            .map(user => user.id);
+        const users = this.selectedUsers.filter(user => user.role !== 'ADMIN');
 
+        if (!users.length) {
+            this.ToastService.info('You have to select at least one user.');
+            return;
+        }
+
+        const ids = users.map(u => u.id);
         this.UserResource.removeManyUsers(ids)
             .then(() => {
                 this.ToastService.success('The users have been deleted');
-                ids.forEach(id => this.EventBus.emit(events.USER_DELETED, {user: {id: id}}));
+                users.forEach(user => this.removeUser(user));
             })
             .catch(response => {
                 this.ToastService.danger(`Deleting failed! ${response.data.message}`);

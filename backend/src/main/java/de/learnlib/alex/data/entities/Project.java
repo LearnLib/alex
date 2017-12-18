@@ -103,7 +103,7 @@ public class Project implements Serializable {
             fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
-    @JsonProperty("groups")
+    @JsonIgnore
     private Set<SymbolGroup> groups;
 
     /**
@@ -369,20 +369,6 @@ public class Project implements Serializable {
     public void addSymbol(Symbol symbol) {
         this.symbols.add(symbol);
         symbol.setProject(this);
-    }
-
-    /**
-     * Get the amount of Symbols related to this project.
-     *
-     * @return The current count of Symbols. If the project has no symbols (== null) 0 is returned.
-     */
-    @JsonProperty("symbolAmount")
-    public int getSymbolsSize() {
-        if (symbols == null) {
-            return 0;
-        } else {
-            return symbols.size();
-        }
     }
 
     /**

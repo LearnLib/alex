@@ -43,7 +43,7 @@
                               ng-bind="user.role | formatUserRole"></span>
                     </td>
                     <td>
-                        <button class="btn btn-icon btn-xs pull-right" user-edit-modal-handle user="user">
+                        <button class="btn btn-icon btn-xs pull-right" user-edit-modal-handle user="user" on-updated="vm.updateUser(user)" on-deleted="vm.removeUser(user)">
                             <i class="fa fa-edit fa-fw"></i> Edit
                         </button>
                     </td>

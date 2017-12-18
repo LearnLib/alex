@@ -60,7 +60,7 @@ class LearnerStatusWidget {
             .then(data => {
                 this.isActive = data.active;
                 if (!data.active) {
-                    this.LearnerResource.getStatus(this.result.project.id)
+                    this.LearnerResource.getStatus(this.project.id)
                         .then(data => {
                             if (data !== null) {
                                 this.hasFinished = true;

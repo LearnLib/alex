@@ -41,7 +41,7 @@ body {
 
 .modal-zindex {
   z-index: 2000 !important;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .no-border-radius {
@@ -129,6 +129,14 @@ body {
     @media all and (max-width: $screen-sm) {
       @include text-overflow-ellipsis();
       max-width: 240px;
+    }
+  }
+}
+
+.view {
+  &.view-about {
+    .section {
+      margin-bottom: 36px;
     }
   }
 }
@@ -463,7 +471,6 @@ body {
     border-top: 2px solid #666;
   }
 }
-
 
 .action-types-accordion {
   margin-bottom: 0;

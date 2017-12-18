@@ -67,8 +67,9 @@ class UserLoginForm {
                     const token = response.data.token;
                     const tokenPayload = this.jwtHelper.decodeToken(token);
                     const user = new User({
-                        id: tokenPayload.userId,
-                        role: tokenPayload.userRole
+                        id: tokenPayload.id,
+                        role: tokenPayload.role,
+                        email: tokenPayload.email
                     });
 
                     this.SessionService.saveUser(user, token);
@@ -78,6 +79,25 @@ class UserLoginForm {
                 .catch(() => {
                     this.ToastService.danger('Login failed');
                 });
+        } else {
+            this.ToastService.info('Make sure your inputs are valid.');
+        }
+    }
+
+    /**
+     * Creates a new user.
+     */
+    signUp() {
+        if (this.email && this.password) {
+            this.UserResource.create(this.email, this.password)
+                .then(() => {
+                    this.ToastService.success('Registration successful. You can now use the credentials to login.');
+                })
+                .catch(response => {
+                    this.ToastService.danger(`Registration failed. ${response.data.message}`);
+                });
+        } else {
+            this.ToastService.info('Make sure your inputs are valid.');
         }
     }
 }

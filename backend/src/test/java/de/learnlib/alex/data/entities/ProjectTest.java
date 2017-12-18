@@ -83,7 +83,7 @@ public class ProjectTest {
         assertEquals(LOREM_IPSUM, p.getDescription());
         assertTrue(p.getSymbols() != null);
         // symbols are not included in the Project directly, instead they're parts of groups now
-        assertEquals(0, p.getSymbolsSize());
+        assertEquals(0, p.getSymbols().size());
     }
 
     @Test
