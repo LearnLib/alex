@@ -17,9 +17,9 @@
 package de.learnlib.alex.testsuites.services;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.config.entities.BrowserConfig;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -60,19 +60,19 @@ public class TestService {
      *
      * @param user          The user that executes the test suite.
      * @param testSuite     The test suite that is being executed.
-     * @param browserConfig The config for the web driver.
+     * @param driverConfig  The config for the web driver.
      * @return
      */
-    public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, BrowserConfig browserConfig) {
+    public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, AbstractWebDriverConfig driverConfig) {
         TestSuiteResult tsResult = new TestSuiteResult(testSuite, 0L, 0L);
 
         for (Test test : testSuite.getTests()) {
             if (test instanceof TestCase) {
-                TestCaseResult result = executeTestCase(user, (TestCase) test, browserConfig);
+                TestCaseResult result = executeTestCase(user, (TestCase) test, driverConfig);
                 tsResult.add(result);
                 tsResult.getResults().put(test.getId(), result);
             } else {
-                TestSuiteResult r = executeTestSuite(user, (TestSuite) test, browserConfig);
+                TestSuiteResult r = executeTestSuite(user, (TestSuite) test, driverConfig);
                 tsResult.add(r);
                 tsResult.getResults().put(test.getId(), r);
             }
@@ -86,12 +86,12 @@ public class TestService {
      *
      * @param user          The user that executes the test suite.
      * @param testCase      The test case that is being executed.
-     * @param browserConfig The config for the web driver.
+     * @param driverConfig  The config for the web driver.
      * @return
      */
-    public TestCaseResult executeTestCase(User user, TestCase testCase, BrowserConfig browserConfig) {
+    public TestCaseResult executeTestCase(User user, TestCase testCase, AbstractWebDriverConfig driverConfig) {
         final ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, testCase.getProject(),
-                                                                                       browserConfig);
+                                                                                       driverConfig);
         ctxHandler.setResetSymbol(new Symbol());
 
         final long startTime = System.currentTimeMillis();

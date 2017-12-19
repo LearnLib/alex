@@ -19,7 +19,6 @@ package de.learnlib.alex.learning.rest;
 import de.learnlib.alex.ALEXTestApplication;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.config.entities.BrowserConfig;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Project;
@@ -30,6 +29,8 @@ import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.Statistics;
+import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
+import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.services.Learner;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -57,6 +58,8 @@ import static org.mockito.Mockito.verify;
 
 public class LearnerResourceTest extends JerseyTest {
 
+    private static final String driverConfig = "{\"name\":\"htmlUnit\",\"height\":0,\"implicitlyWait\":0,\"pageLoadTimeout\":10,\"scriptTimeout\":10,\"width\":0}";
+
     private static final long USER_TEST_ID = 1;
     private static final long PROJECT_TEST_ID = 1;
     private static final long TEST_NO = 2;
@@ -65,7 +68,7 @@ public class LearnerResourceTest extends JerseyTest {
                                            + ",\"resetSymbol\":" + RESET_SYMBOL_TEST_ID
                                            + ",\"algorithm\":{\"name\":\"TTT\"}"
                                            + ",\"eqOracle\": {\"type\": \"complete\"}"
-                                           + ",\"browser\": {\"driver\":\"htmlunitdriver\",\"height\":0,\"width\":0,\"xvfbDisplayPort\":null}}";
+                                           + ",\"driverConfig\": " + driverConfig +"}";
 
     private static final String RESUME_JSON = "{\"eqOracle\": {\"type\": \"complete\"},\"stepNo\":1,\"symbolsToAdd\":[],\"maxAmountOfStepsToLearn\":-1}";
 
@@ -89,7 +92,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     private User admin;
     private String adminToken;
-    private BrowserConfig browserConfig = new BrowserConfig();
+    private AbstractWebDriverConfig browserConfig = new HtmlUnitDriverConfig();
 
     @Override
     protected Application configure() {
@@ -386,7 +389,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReadTheCorrectOutput() {
-        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":0,\"width\":0,\"xvfbDisplayPort\":null}}";
+        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"driverConfig\":" + driverConfig + "}";
 
 
 //        String json = "{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ","
@@ -402,7 +405,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldCreateEmptyOutputForNoSymbols() throws NotFoundException {
-        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[]},\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":0,\"width\":0,\"xvfbDisplayPort\":null}}";
+        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[]},\"driverConfig\":" + driverConfig + "}";
 
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
@@ -413,10 +416,10 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn400IfCreatingAnOutputFailed() throws NotFoundException {
-        given(learner.readOutputs(any(), any(), any(), any(), any(BrowserConfig.class)))
+        given(learner.readOutputs(any(), any(), any(), any(), any(HtmlUnitDriverConfig.class)))
                 .willThrow(LearnerException.class);
 
-        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"browser\":{\"driver\":\"htmlunitdriver\",\"height\":0,\"width\":0,\"xvfbDisplayPort\":null}}";
+        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"driverConfig\":" + driverConfig +"}";
 
         Response response = target("/learner/outputs/" + PROJECT_TEST_ID).request().header("Authorization", adminToken)
                                 .post(Entity.json(json));

@@ -18,7 +18,7 @@ package de.learnlib.alex.config.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.learnlib.alex.learning.services.connectors.WebBrowser;
+import de.learnlib.alex.learning.entities.webdrivers.WebDrivers;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
@@ -48,8 +48,6 @@ public class Settings implements Serializable {
 
     /**
      * The entity for web driver settings.
-     * Each browser property should match the lowercase version
-     * of {@link de.learnlib.alex.learning.services.connectors.WebBrowser}
      */
     @Embeddable
     @JsonPropertyOrder(alphabetic = true)
@@ -71,19 +69,19 @@ public class Settings implements Serializable {
         private String remote;
 
         /** The default driver to use. */
-        private WebBrowser defaultDriver;
+        private String defaultDriver;
 
         /** Constructor. */
         public DriverSettings() {
-            this.defaultDriver = WebBrowser.HTMLUNITDRIVER;
+            this.defaultDriver = WebDrivers.HTML_UNIT;
         }
 
         /**
          * Constructor.
          *
-         * @param chrome {@link DriverSettings#chrome}
+         * @param chrome  {@link DriverSettings#chrome}
          * @param firefox {@link DriverSettings#firefox}
-         * @param edge {@link DriverSettings#edge}
+         * @param edge    {@link DriverSettings#edge}
          */
         public DriverSettings(String chrome, String firefox, String edge, String remote) {
             this();
@@ -93,11 +91,6 @@ public class Settings implements Serializable {
             this.remote = remote;
         }
 
-        /**
-         * Get the chrome driver executable path.
-         *
-         * @return The executable path.
-         */
         public String getChrome() {
             if (chrome == null) {
                 return "";
@@ -106,20 +99,10 @@ public class Settings implements Serializable {
             }
         }
 
-        /**
-         * Set the chromdriver executable path.
-         *
-         * @param chrome {@link DriverSettings#chrome}
-         */
         public void setChrome(String chrome) {
             this.chrome = chrome;
         }
 
-        /**
-         * Get geckodriver executable path.
-         *
-         * @return The executable path.
-         */
         public String getFirefox() {
             if (firefox == null) {
                 return "";
@@ -128,20 +111,10 @@ public class Settings implements Serializable {
             }
         }
 
-        /**
-         * Set the geckodriver executable path.
-         *
-         * @param firefox {@link DriverSettings#firefox}
-         */
         public void setFirefox(String firefox) {
             this.firefox = firefox;
         }
 
-        /**
-         * Get the edge driver executable path.
-         *
-         * @return The executable path.
-         */
         public String getEdge() {
             if (edge == null) {
                 return "";
@@ -150,11 +123,6 @@ public class Settings implements Serializable {
             }
         }
 
-        /**
-         * Set the edge driver executable path.
-         *
-         * @param edge {@link DriverSettings#edge}
-         */
         public void setEdge(String edge) {
             this.edge = edge;
         }
@@ -171,36 +139,39 @@ public class Settings implements Serializable {
             this.remote = remote;
         }
 
-        public WebBrowser getDefaultDriver() {
+        public String getDefaultDriver() {
             return defaultDriver;
         }
 
-        public void setDefaultDriver(WebBrowser defaultDriver) {
+        public void setDefaultDriver(String defaultDriver) {
             this.defaultDriver = defaultDriver;
         }
 
         /**
          * Checks the validity of the settings object.
          *
-         * @throws ValidationException
-         *          If the executable cannot be found or is not executable.
+         * @throws ValidationException If the executable cannot be found or is not executable.
          */
         public void checkValidity() throws ValidationException {
-            checkDriver(firefox, "geckodriver", WebBrowser.FIREFOX);
-            checkDriver(chrome, "chromedriver", WebBrowser.CHROME);
-            checkDriver(edge, "edgedriver", WebBrowser.EDGE);
+            checkDriver(firefox, "geckodriver", WebDrivers.FIREFOX);
+            checkDriver(chrome, "chromedriver", WebDrivers.CHROME);
+            checkDriver(edge, "edgedriver", WebDrivers.EDGE);
 
-            if (WebBrowser.REMOTE.equals(defaultDriver) && (remote == null || remote.trim().isEmpty())) {
-                throw new ValidationException("The default Selenium Web Driver cannot be " + WebBrowser.REMOTE
+            if (!WebDrivers.asList().contains(defaultDriver)) {
+                throw new ValidationException("You specified an invalid default driver.");
+            }
+
+            if (WebDrivers.REMOTE.equals(defaultDriver) && (remote == null || remote.trim().isEmpty())) {
+                throw new ValidationException("The default Selenium Web Driver cannot be " + WebDrivers.REMOTE
                                                       + " because the Selenium Server URL is not specified.");
             }
         }
 
-        private void checkDriver(String executable, String name, WebBrowser webBrowser) throws ValidationException {
+        private void checkDriver(String executable, String name, String webBrowser) throws ValidationException {
             if (executable != null && !executable.trim().isEmpty()) {
                 File driverExecutable = new File(executable);
                 if (!driverExecutable.exists()) {
-                    throw new ValidationException("The " + name  + " cannot be found.");
+                    throw new ValidationException("The " + name + " cannot be found.");
                 } else if (!driverExecutable.canExecute()) {
                     throw new ValidationException("The " + name + " is not executable.");
                 }
@@ -278,8 +249,7 @@ public class Settings implements Serializable {
     /**
      * Checks the validity of the setting object.
      *
-     * @throws ValidationException
-     *          If some settings are not valid.
+     * @throws ValidationException If some settings are not valid.
      */
     public void checkValidity() throws ValidationException {
         this.driverSettings.checkValidity();

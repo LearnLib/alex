@@ -18,7 +18,6 @@ package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.config.entities.BrowserConfig;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
@@ -33,11 +32,11 @@ import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
+import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.automata.transout.impl.compact.CompactMealyTransition;
 import net.automatalib.util.automata.Automata;
@@ -160,7 +159,7 @@ public class Learner {
         final LearnerResult result = createLearnerResult(user, project, configuration);
 
         final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project,
-                configuration.getBrowser());
+                configuration.getDriverConfig());
         contextHandler.setResetSymbol(result.getResetSymbol());
 
         final AbstractLearnerThread learnThread = new StartingLearnerThread(user, learnerResultDAO, contextHandler, result, configuration);
@@ -197,7 +196,7 @@ public class Learner {
                 new LinkedList<>(result.getSymbolsAsIds()));
         result.setSymbols(symbols);
 
-        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, result.getBrowser());
+        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, result.getDriverConfig());
         contextHandler.setResetSymbol(result.getResetSymbol());
 
         final AbstractLearnerThread learnThread = new ResumingLearnerThread(user, learnerResultDAO, contextHandler, result, configuration);
@@ -229,7 +228,7 @@ public class Learner {
 
         final List<Symbol> alphabet = symbolDAO.getByIds(user, project.getId(), configuration.getSymbolsAsIds());
         learnerResult.setSymbols(alphabet);
-        learnerResult.setBrowser(configuration.getBrowser());
+        learnerResult.setDriverConfig(configuration.getDriverConfig());
         learnerResult.setAlgorithm(configuration.getAlgorithm());
         learnerResult.setComment(configuration.getComment());
         learnerResult.setUseMQCache(configuration.isUseMQCache());
@@ -288,7 +287,7 @@ public class Learner {
                                         lastResult.getProject(),
                                         lastResult.getResetSymbol(),
                                         symbolsFromCounterexample,
-                                        lastResult.getBrowser());
+                                        lastResult.getDriverConfig());
 
             // remove the reset symbol from the outputs
             results.remove(0);
@@ -367,23 +366,23 @@ public class Learner {
      * @param project       The project in which context the test should happen.
      * @param resetSymbol   The reset symbol to use.
      * @param symbols       The symbol sequence to process in order to generate the output sequence.
-     * @param browserConfig The configuration to use for the web browser.
+     * @param driverConfig  The configuration to use for the web browser.
      *
      * @return The following output sequence.
      *
      * @throws LearnerException If something went wrong while testing the symbols.
      */
     public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols,
-                                    BrowserConfig browserConfig)
+                                    AbstractWebDriverConfig driverConfig)
             throws LearnerException {
         ThreadContext.put("userId", String.valueOf(user.getId()));
         ThreadContext.put("testNo", "readOutputs");
         ThreadContext.put("indent", "");
         LOGGER.traceEntry();
-        LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, browserConfig);
+        LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, driverConfig);
 
         SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols);
-        ReadOutputConfig config = new ReadOutputConfig(symbolSet, browserConfig);
+        ReadOutputConfig config = new ReadOutputConfig(symbolSet, driverConfig);
 
         return readOutputsAsString(user, project, config);
     }
@@ -413,7 +412,7 @@ public class Learner {
     }
 
     public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {
-        ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, project, readOutputConfig.getBrowser());
+        ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, project, readOutputConfig.getDriverConfig());
         ctxHandler.setResetSymbol(new Symbol());
         ConnectorManager connectors = ctxHandler.createContext();
 

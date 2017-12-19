@@ -62,12 +62,12 @@ export class SettingsResource {
     getSupportedWebDrivers() {
         return this.get().then(settings => {
             let supportedWebDrivers = {
-                HTMLUNITDRIVER: 'htmlunitdriver',
+                HTMLUNITDRIVER: 'htmlUnit',
                 SAFARI: 'safari',
             };
 
             for (let key in webBrowser) {
-                if (key === 'HTMLUNITDRIVER' || key === 'SAFARI') continue;
+                if (key === 'HTML_UNIT' || key === 'SAFARI') continue;
                 if (settings.driver[webBrowser[key]].trim() !== "") {
                     supportedWebDrivers[key] = webBrowser[key];
                 }

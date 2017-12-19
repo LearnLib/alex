@@ -18,11 +18,11 @@ package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.config.entities.BrowserConfig;
 import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -50,12 +50,12 @@ public class ConnectorContextHandlerFactory {
      *         The user that executes the learning experiment.
      * @param project
      *         The current project in which the context should be.
-     * @param browser
-     *         The browser to use for the frontend learning.
+     * @param driverConfig
+     *         The driver config to use for the frontend learning.
      *
      * @return A ContextHandler for the project with all the connectors.
      */
-    public ConnectorContextHandler createContext(User user, Project project, BrowserConfig browser) {
+    public ConnectorContextHandler createContext(User user, Project project, AbstractWebDriverConfig driverConfig) {
         final ConnectorContextHandler context = new ConnectorContextHandler();
 
         final List<String> urls = new ArrayList<>();
@@ -71,7 +71,7 @@ public class ConnectorContextHandlerFactory {
 
         for (final String url: urls) {
             final ConnectorManager connectorManager = new ConnectorManager();
-            connectorManager.addConnector(new WebSiteConnector(url, browser));
+            connectorManager.addConnector(new WebSiteConnector(url, driverConfig));
             connectorManager.addConnector(new WebServiceConnector(url));
             connectorManager.addConnector(new CounterStoreConnector(counterDAO, user, project, counters));
             connectorManager.addConnector(new VariableStoreConnector());

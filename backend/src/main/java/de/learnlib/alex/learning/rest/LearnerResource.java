@@ -358,7 +358,7 @@ public class LearnerResource {
             Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsId);
             List<Symbol> symbols = loadSymbols(user, projectId, outputConfig.getSymbols().getSymbolsAsIds());
 
-            List<String> outputs = learner.readOutputs(user, project, resetSymbol, symbols, outputConfig.getBrowser());
+            List<String> outputs = learner.readOutputs(user, project, resetSymbol, symbols, outputConfig.getDriverConfig());
 
             LOGGER.traceExit(outputs);
             return ResponseHelper.renderList(outputs, Status.OK);
@@ -388,7 +388,7 @@ public class LearnerResource {
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("readOutput({}, {}) in browser {} for user {}.", projectId, readOutputConfig.getSymbols(),
-                readOutputConfig.getBrowser(), user);
+                readOutputConfig.getDriverConfig(), user);
 
         try {
             Project project = projectDAO.getByID(user.getId(), projectId);

@@ -17,9 +17,9 @@
 package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.common.utils.CSSUtils;
-import de.learnlib.alex.config.entities.BrowserConfig;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.data.entities.actions.Credentials;
+import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.services.BaseUrlManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -45,7 +45,7 @@ public class WebSiteConnector implements Connector {
     private static final int READY_STATE_TIMEOUT = 10;
 
     /** The browser to use. */
-    private BrowserConfig browser;
+    private AbstractWebDriverConfig driverConfig;
 
     /** A managed base url to use. */
     private BaseUrlManager baseUrl;
@@ -58,12 +58,12 @@ public class WebSiteConnector implements Connector {
      *
      * @param baseUrl
      *         The new base url to use for further request. All request will be based on this!
-     * @param browser
-     *         The browser to use for further request.
+     * @param driverConfig
+     *         The driver config to use for further request.
      */
-    public WebSiteConnector(String baseUrl, BrowserConfig browser) {
+    public WebSiteConnector(String baseUrl, AbstractWebDriverConfig driverConfig) {
         this.baseUrl = new BaseUrlManager(baseUrl);
-        this.browser = browser;
+        this.driverConfig = driverConfig;
     }
 
     /**
@@ -71,7 +71,7 @@ public class WebSiteConnector implements Connector {
      */
     @Override
     public void reset() throws Exception {
-        this.driver = browser.getDriver().getWebDriver(browser);
+        this.driver = driverConfig.createDriver();
     }
 
     @Override
@@ -200,8 +200,8 @@ public class WebSiteConnector implements Connector {
     }
 
     /** @return The browser config. */
-    public BrowserConfig getBrowser() {
-        return browser;
+    public AbstractWebDriverConfig getBrowser() {
+        return driverConfig;
     }
 
     /**

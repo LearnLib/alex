@@ -15,6 +15,7 @@
  */
 
 import {webBrowser} from "../../constants";
+import {DriverConfigService} from "../../services/DriverConfigService";
 
 export const testCaseView = {
     templateUrl: 'html/components/views/test-case-view.html',
@@ -75,19 +76,16 @@ export const testCaseView = {
              * The browser configuration.
              * @type {object}
              */
-            this.browserConfig = {
-                driver: webBrowser.HTMLUNITDRIVER,
-                width: screen.width,
-                height: screen.height,
-                headless: false
-            };
+            this.browserConfig = DriverConfigService.createFromName(webBrowser.HTML_UNIT);
 
             SymbolGroupResource.getAll(this.project.id, true)
                 .then(groups => this.groups = groups)
                 .catch(console.log);
 
             SettingsResource.getSupportedWebDrivers()
-                .then(data => {this.browserConfig.driver = data.defaultWebDriver})
+                .then(data => {
+                    this.browserConfig = DriverConfigService.createFromName(data.defaultWebDriver);
+                })
                 .catch(console.log);
 
             dragulaService.options($scope, 'testSymbols', {

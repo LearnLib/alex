@@ -18,9 +18,10 @@ package de.learnlib.alex.learning.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.learnlib.alex.config.entities.BrowserConfig;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.algorithms.TTT;
+import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
+import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -48,7 +49,7 @@ public class LearnerStartConfiguration extends AbstractLearnerConfiguration impl
     private AbstractLearningAlgorithm<String, String> algorithm;
 
     /** The browser to use during the learn process. */
-    private BrowserConfig browser;
+    private AbstractWebDriverConfig driverConfig;
 
     /** A shot comment to describe the learn set up. */
     private String comment;
@@ -62,7 +63,7 @@ public class LearnerStartConfiguration extends AbstractLearnerConfiguration impl
         this.symbolsAsIds = new ArrayList<>();
         this.algorithm = new TTT();
         this.comment = "";
-        this.browser = new BrowserConfig();
+        this.driverConfig = new HtmlUnitDriverConfig();
         this.useMQCache = true;
     }
 
@@ -101,12 +102,12 @@ public class LearnerStartConfiguration extends AbstractLearnerConfiguration impl
         this.algorithm = algorithm;
     }
 
-    public BrowserConfig getBrowser() {
-        return browser;
+    public AbstractWebDriverConfig getDriverConfig() {
+        return driverConfig;
     }
 
-    public void setBrowser(BrowserConfig browser) {
-        this.browser = browser;
+    public void setDriverConfig(AbstractWebDriverConfig driverConfig) {
+        this.driverConfig = driverConfig;
     }
 
     @Size(max = MAX_COMMENT_LENGTH)

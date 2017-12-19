@@ -21,7 +21,7 @@ import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
-import de.learnlib.alex.config.entities.BrowserConfig;
+import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.testsuites.dao.TestDAO;
 import de.learnlib.alex.testsuites.entities.Test;
 import de.learnlib.alex.testsuites.entities.TestCase;
@@ -156,7 +156,7 @@ public class TestResource {
      *
      * @param projectId     The id of the project.
      * @param id            The id of the test.
-     * @param browserConfig The configuration to run the test with.
+     * @param driverConfig  The configuration to run the test with.
      * @return The result of the test execution.
      * @throws NotFoundException If the project or the test could not be found.
      */
@@ -165,7 +165,7 @@ public class TestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("project_id") Long projectId,
                             @PathParam("id") Long id,
-                            BrowserConfig browserConfig)
+                            AbstractWebDriverConfig driverConfig)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
@@ -173,9 +173,9 @@ public class TestResource {
 
         TestResult result;
         if (test instanceof TestSuite) {
-            result = testService.executeTestSuite(user, (TestSuite) test, browserConfig);
+            result = testService.executeTestSuite(user, (TestSuite) test, driverConfig);
         } else {
-            result = testService.executeTestCase(user, (TestCase) test, browserConfig);
+            result = testService.executeTestCase(user, (TestCase) test, driverConfig);
         }
 
         return Response.ok(result).build();

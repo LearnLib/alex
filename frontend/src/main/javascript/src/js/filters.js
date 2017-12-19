@@ -90,7 +90,7 @@ export function formatUserRole() {
 export function formatWebBrowser() {
     return browser => {
         switch (browser) {
-            case webBrowser.HTMLUNITDRIVER:
+            case webBrowser.HTML_UNIT:
                 return 'HTML Unit';
             case webBrowser.CHROME:
                 return 'Chrome';
@@ -101,7 +101,7 @@ export function formatWebBrowser() {
             case webBrowser.SAFARI:
                 return 'Safari';
             case webBrowser.REMOTE:
-                return 'Remote WebDriver';
+                return 'Remote driver';
             default:
                 return browser;
         }

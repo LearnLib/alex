@@ -18,7 +18,6 @@ package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.config.entities.BrowserConfig;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
@@ -27,6 +26,8 @@ import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
+import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
+import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -35,7 +36,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -85,10 +86,10 @@ public class LearnerTest {
     @Before
     public void setUp() {
 
-        BrowserConfig browserConfig = new BrowserConfig();
+        AbstractWebDriverConfig driverConfig = new HtmlUnitDriverConfig();
 
-        given(learnerConfiguration.getBrowser()).willReturn(browserConfig);
-        given(contextHandlerFactory.createContext(user, project, browserConfig))
+        given(learnerConfiguration.getDriverConfig()).willReturn(driverConfig);
+        given(contextHandlerFactory.createContext(user, project, driverConfig))
                 .willReturn(contextHandler);
 //        given(learnerThreadFactory.createThread(any(LearnerResult.class), any(ConnectorContextHandler.class)))
 //                .willReturn(learnerThread);
@@ -161,7 +162,7 @@ public class LearnerTest {
         ConnectorManager connectorManager = mock(ConnectorManager.class);
         given(ctxHandler.createContext()).willReturn(connectorManager);
 
-        List<String> outputs = learner.readOutputs(user, project, resetSymbol, symbols, new BrowserConfig());
+        List<String> outputs = learner.readOutputs(user, project, resetSymbol, symbols, new HtmlUnitDriverConfig());
 
         assertEquals(symbols.size(), outputs.size());
         assertTrue("at least one output was not OK", outputs.stream().allMatch(output -> output.equals("OK")));

@@ -26,7 +26,7 @@ export const webBrowser = {
     CHROME: 'chrome',
     FIREFOX: 'firefox',
     EDGE: 'edge',
-    HTMLUNITDRIVER: 'htmlunitdriver',
+    HTML_UNIT: 'htmlUnit',
     SAFARI: 'safari',
     REMOTE: 'remote'
 };

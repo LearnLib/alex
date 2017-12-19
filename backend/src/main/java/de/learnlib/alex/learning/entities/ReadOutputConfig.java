@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.learning.entities;
 
-import de.learnlib.alex.config.entities.BrowserConfig;
+import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 
 /**
  * Helper object that is used to test words.
@@ -31,7 +31,7 @@ public class ReadOutputConfig {
     /**
      * The web browser the word should be executed in.
      */
-    private BrowserConfig browser;
+    private AbstractWebDriverConfig driverConfig;
 
     /**
      * Constructor.
@@ -39,36 +39,29 @@ public class ReadOutputConfig {
     public ReadOutputConfig() {
     }
 
-    public ReadOutputConfig(SymbolSet symbols, BrowserConfig browser) {
+    /**
+     * Constructor.
+     * @param symbols The symbols.
+     * @param driverConfig The driver config.
+     */
+    public ReadOutputConfig(SymbolSet symbols, AbstractWebDriverConfig driverConfig) {
         this.symbols = symbols;
-        this.browser = browser;
+        this.driverConfig = driverConfig;
     }
 
-    /**
-     * @return The symbols.
-     */
     public SymbolSet getSymbols() {
         return symbols;
     }
 
-    /**
-     * @param symbols The symbols.
-     */
     public void setSymbols(SymbolSet symbols) {
         this.symbols = symbols;
     }
 
-    /**
-     * @return The browser.
-     */
-    public BrowserConfig getBrowser() {
-        return browser;
+    public AbstractWebDriverConfig getDriverConfig() {
+        return driverConfig;
     }
 
-    /**
-     * @param browser The browser.
-     */
-    public void setBrowser(BrowserConfig browser) {
-        this.browser = browser;
+    public void setDriverConfig(AbstractWebDriverConfig driverConfig) {
+        this.driverConfig = driverConfig;
     }
 }

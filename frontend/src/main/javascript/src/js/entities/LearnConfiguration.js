@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm, webBrowser} from "../constants";
+import {webBrowser} from "../constants";
 import {RandomEqOracle} from "../entities/EqOracle";
+import {DriverConfigService} from "../services/DriverConfigService";
 
 /**
  * The model for a learn configuration.
@@ -49,7 +50,7 @@ export class LearnConfiguration {
 
         /**
          * The algorithm to use for learning.
-         * @type {string}
+         * @type {object}
          */
         this.algorithm = obj.algorithm || {name: "TTT"};
 
@@ -67,14 +68,9 @@ export class LearnConfiguration {
 
         /**
          * The browser to use.
-         * @type {any}
+         * @type {object}
          */
-        this.browser = obj.browser || {
-                driver: webBrowser.HTMLUNITDRIVER,
-                width: screen.width,
-                height: screen.height,
-                headless: false
-            };
+        this.driverConfig = obj.driverConfig || DriverConfigService.createFromName(webBrowser.HTML_UNIT);
 
         /**
          * If membership queries should be cached.

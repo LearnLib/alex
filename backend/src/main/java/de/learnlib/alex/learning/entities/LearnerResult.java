@@ -20,12 +20,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.learnlib.alex.config.entities.BrowserConfig;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
+import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
+import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import net.automatalib.automata.transout.MealyMachine;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -92,7 +93,7 @@ public class LearnerResult implements Serializable {
     private AbstractLearningAlgorithm<String, String> algorithm;
 
     /** The browser to use during the learning. */
-    private BrowserConfig browser;
+    private AbstractWebDriverConfig driverConfig;
 
     /** A comment to describe the intention / setting of the learn process.
      *  This field is optional. */
@@ -118,7 +119,7 @@ public class LearnerResult implements Serializable {
     public LearnerResult() {
         this.symbols = new ArrayList<>();
         this.steps = new ArrayList<>();
-        this.browser = new BrowserConfig();
+        this.driverConfig = new HtmlUnitDriverConfig();
         this.comment = "";
         this.statistics = new Statistics();
         this.useMQCache = true;
@@ -318,19 +319,13 @@ public class LearnerResult implements Serializable {
         this.algorithm = algorithm;
     }
 
-    /**
-     * @return The browser to use during the learning.
-     */
-    @Embedded
-    public BrowserConfig getBrowser() {
-        return browser;
+    @Column(columnDefinition = "BLOB")
+    public AbstractWebDriverConfig getDriverConfig() {
+        return driverConfig;
     }
 
-    /**
-     * @param browser The new browser to use during the learning.
-     */
-    public void setBrowser(BrowserConfig browser) {
-        this.browser = browser;
+    public void setDriverConfig(AbstractWebDriverConfig driverConfig) {
+        this.driverConfig = driverConfig;
     }
 
     /**

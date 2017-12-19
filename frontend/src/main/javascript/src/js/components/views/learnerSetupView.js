@@ -89,7 +89,7 @@ class LearnerSetupView {
         this.canContinueLearnProcess = false;
 
         SettingsResource.getSupportedWebDrivers()
-            .then(data => {this.learnConfiguration.browser.driver = data.defaultWebDriver})
+            .then(data => {this.learnConfiguration.driverConfig.name = data.defaultWebDriver})
             .catch(console.log);
 
         // make sure that there isn't any other learn process active
@@ -183,7 +183,7 @@ class LearnerSetupView {
         this.learnConfiguration.algorithm = result.algorithm;
         this.learnConfiguration.eqOracle = result.steps[0].eqOracle;
         this.learnConfiguration.maxAmountOfStepsToLearn = result.maxAmountOfStepsToLearn;
-        this.learnConfiguration.browser = result.browser;
+        this.learnConfiguration.driverConfig = result.driverConfig;
 
         this.groups.forEach(group => {
             group.symbols.forEach(symbol => {

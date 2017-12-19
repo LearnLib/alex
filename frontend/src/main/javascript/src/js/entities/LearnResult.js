@@ -34,9 +34,9 @@ export class LearnResult {
 
         /**
          * The browser that is used.
-         * @type {string}
+         * @type {object}
          */
-        this.browser = obj.browser;
+        this.driverConfig = obj.driverConfig;
 
         /**
          * The hypothesis.

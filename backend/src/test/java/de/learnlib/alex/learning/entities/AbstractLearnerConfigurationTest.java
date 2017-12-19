@@ -22,7 +22,6 @@ import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.algorithms.DHC;
 import de.learnlib.alex.learning.entities.algorithms.TTT;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.CompleteExplorationEQOracleProxy;
-import de.learnlib.alex.learning.services.connectors.WebBrowser;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -39,16 +38,18 @@ public class AbstractLearnerConfigurationTest {
 
     private static final AbstractLearningAlgorithm<String, String> ALGORITHM = new TTT();
 
+    private final String driverConfig = "{\"name\":\"htmlUnit\",\"height\":0,\"implicitlyWait\":0,\"pageLoadTimeout\":10,\"scriptTimeout\":10,\"width\":0}";
+
     @Test
     public void shouldCreateTheCorrectDefaultJSON() throws JsonProcessingException {
         String expectedJSON = "{\"algorithm\":{\"name\":\"TTT\"},"
-                                + "\"browser\":{\"driver\":\"htmlunitdriver\",\"headless\":false,\"height\":0,\"width\":0,\"xvfbDisplayPort\":null},"
-                                + "\"comment\":\"\","
-                                + "\"eqOracle\":"
-                                + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
-                                + "\"maxLength\":" + EQ_MAX_VALUE + ",\"seed\":42,\"maxNoOfTests\":1},"
-                                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
-                                + "\"useMQCache\":true,\"user\":null}";
+                + "\"comment\":\"\","
+                + "\"driverConfig\":" + driverConfig + ","
+                + "\"eqOracle\":"
+                + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
+                + "\"maxLength\":" + EQ_MAX_VALUE + ",\"seed\":42,\"maxNoOfTests\":1},"
+                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
+                + "\"useMQCache\":true,\"user\":null}";
 
         LearnerStartConfiguration configuration = new LearnerStartConfiguration();
 
@@ -61,12 +62,15 @@ public class AbstractLearnerConfigurationTest {
     @Test
     public void shouldCreateTheCorrectJSON() throws JsonProcessingException {
         String expectedJSON = "{\"algorithm\":{\"name\":\"TTT\"},"
-                                +  "\"browser\":{\"driver\":\"htmlunitdriver\",\"headless\":false,\"height\":0,\"width\":0,\"xvfbDisplayPort\":null},"
-                                + "\"comment\":\"test\",\"eqOracle\":"
-                                + "{\"type\":\"complete\",\"minDepth\":" + EQ_MIN_VALUE + ","
-                                    + "\"maxDepth\":" + EQ_MAX_VALUE + "},"
-                                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
-                                + "\"useMQCache\":true,\"user\":null}";
+                + "\"comment\":\"test\","
+                + "\"driverConfig\":" + driverConfig + ","
+                + "\"eqOracle\":{\"type\":\"complete\",\"minDepth\":" + EQ_MIN_VALUE + ",\"maxDepth\":" + EQ_MAX_VALUE + "},"
+                + "\"maxAmountOfStepsToLearn\":-1,"
+                + "\"project\":null,"
+                + "\"resetSymbol\":null,"
+                + "\"symbols\":[],"
+                + "\"useMQCache\":true,"
+                + "\"user\":null}";
 
         LearnerStartConfiguration configuration = new LearnerStartConfiguration();
 
@@ -82,16 +86,15 @@ public class AbstractLearnerConfigurationTest {
 
     @Test
     public void shouldReadJSONCorrectly() throws IOException, URISyntaxException {
-        String json = "{\"symbols\": [1,2],\"algorithm\":{\"name\":\"DHC\"}, \"browser\": {\"driver\": \"firefox\", \"width\": 1, "
-                + "\"height\": 1,\"xvfbDisplayPort\":null}, \"eqOracle\": "
-                + "{\"type\": \"complete\"}}";
+        String json = "{\"symbols\": [1,2],\"algorithm\":{\"name\":\"DHC\"}, "
+                + "\"driverConfig\":" + driverConfig + ","
+                + "\"eqOracle\":{\"type\": \"complete\"}}";
 
         ObjectMapper mapper = new ObjectMapper();
 
         LearnerStartConfiguration configuration = mapper.readValue(json, LearnerStartConfiguration.class);
 
         assertEquals(DHC.class, configuration.getAlgorithm().getClass());
-        assertEquals(WebBrowser.FIREFOX, configuration.getBrowser().getDriver());
         assertTrue(configuration.getEqOracle() instanceof CompleteExplorationEQOracleProxy);
         assertEquals(2, configuration.getSymbolsAsIds().size());
         LinkedList<Long> ids = new LinkedList<>(configuration.getSymbolsAsIds());
