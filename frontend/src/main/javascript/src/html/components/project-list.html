@@ -1,5 +1,5 @@
 <div class="list-group">
-    <div class="list-group-item" ng-if="vm.projects.length > 0" ng-repeat="project in vm.projects">
+    <div class="list-group-item" ng-if="vm.projects.length > 0" ng-repeat="project in vm.projects | orderBy:'-name':true">
         <div class="btn-group btn-group-xs pull-right" uib-dropdown>
             <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
                 <i class="fa fa-bars"></i>

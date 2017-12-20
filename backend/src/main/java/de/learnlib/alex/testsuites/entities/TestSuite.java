@@ -28,6 +28,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,7 @@ public class TestSuite extends Test implements Serializable {
     /** Constructor. */
     public TestSuite() {
         this.tests = new HashSet<>();
+        this.testsAsIds = new HashSet<>();
     }
 
     @OneToMany(
@@ -87,9 +89,15 @@ public class TestSuite extends Test implements Serializable {
      * @param testsAsIds A list of Test IDs.
      */
     @Transient
-    @JsonProperty("tests")
+    @JsonProperty("testIds")
     public void setTestsAsIds(Set<Long> testsAsIds) {
         this.testsAsIds = testsAsIds;
+    }
+
+    @Transient
+    @JsonProperty("tests")
+    public void setTestsAsTests(Set<Test> tests) {
+        this.tests = tests;
     }
 
     @JsonIgnore

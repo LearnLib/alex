@@ -39,15 +39,18 @@ class SymbolsActionsView {
      * @param $state
      * @param {PromptService} PromptService
      * @param {EventBus} EventBus
+     * @param {ActionRecorderService} ActionRecorderService
      * @param dragulaService
      */
     // @ngInject
     constructor($scope, $stateParams, SymbolResource, SessionService, ToastService, ErrorService,
-                ActionService, ClipboardService, $state, PromptService, EventBus, dragulaService) {
+                ActionService, ClipboardService, $state, PromptService, EventBus, dragulaService,
+                ActionRecorderService) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
         this.ActionService = ActionService;
         this.ClipboardService = ClipboardService;
+        this.ActionRecorderService = ActionRecorderService;
 
         /**
          * The project that is stored in the session.
@@ -118,16 +121,6 @@ class SymbolsActionsView {
         };
 
         document.addEventListener('keydown', keyDownHandler);
-
-        // listen on action created event
-        EventBus.on(events.ACTION_CREATED, (evt, data) => {
-            this.addAction(data.action);
-        }, $scope);
-
-        // listen on action updated event
-        EventBus.on(events.ACTION_UPDATED, (evt, data) => {
-            this.updateAction(data.action);
-        }, $scope);
 
         // dragula
         dragulaService.options($scope, 'actionList', {
@@ -257,6 +250,11 @@ class SymbolsActionsView {
             this.ToastService.info(actions.length + 'action[s] pasted from clipboard');
             this.hasChanged = true;
         }
+    }
+
+    openRecorder() {
+        this.ActionRecorderService.open()
+            .then(actions => this.addActions(actions));
     }
 
     /**

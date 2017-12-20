@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {actionType, events} from "../../constants";
+import {actionType} from "../../constants";
 
 /**
  * The controller for the modal dialog that handles the creation of a new action.
@@ -27,12 +27,10 @@ export class ActionCreateModalComponent {
      * @param {ActionService} ActionService
      * @param {SymbolResource} SymbolResource
      * @param {SessionService} SessionService
-     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor(ActionService, SymbolResource, SessionService, EventBus) {
+    constructor(ActionService, SymbolResource, SessionService) {
         this.ActionService = ActionService;
-        this.EventBus = EventBus;
 
         const project = SessionService.getProject();
 
@@ -109,10 +107,6 @@ export class ActionCreateModalComponent {
         });
     }
 
-    change() {
-        console.log(this.dataList)
-    }
-
     /**
      * Creates a new instance of an Action by a type that was clicked in the modal dialog.
      * @param {string} type - The type of the action that should be created.
@@ -125,7 +119,7 @@ export class ActionCreateModalComponent {
      * Closes the modal dialog an passes the created action back to the handle that called the modal.
      */
     createAction() {
-        this.EventBus.emit(events.ACTION_CREATED, {action: this.action});
+        this.resolve.modalData.onCreated({action: this.action});
         this.dismiss();
     }
 
@@ -133,7 +127,7 @@ export class ActionCreateModalComponent {
      * Creates a new action in the background without closing the dialog.
      */
     createActionAndContinue() {
-        this.EventBus.emit(events.ACTION_CREATED, {action: this.action});
+        this.resolve.modalData.onCreated({action: this.action});
         this.action = null;
     }
 }
@@ -142,6 +136,7 @@ export class ActionCreateModalComponent {
 export const actionCreateModalComponent = {
     templateUrl: 'html/components/modals/action-create-modal.html',
     bindings: {
+        resolve: '=',
         dismiss: '&'
     },
     controller: ActionCreateModalComponent,
@@ -163,12 +158,19 @@ export const actionCreateModalComponent = {
 export function actionCreateModalHandle($uibModal) {
     return {
         restrict: 'A',
-        scope: {},
+        scope: {
+            onCreated: '&'
+        },
         link(scope, el) {
             el.on('click', () => {
                 $uibModal.open({
                     component: 'actionCreateModal',
                     size: 'lg',
+                    resolve: {
+                        modalData: () => ({
+                            onCreated: scope.onCreated
+                        })
+                    }
                 });
             });
         }

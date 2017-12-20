@@ -55,11 +55,6 @@ class ProjectsView {
                 ToastService.danger(`Loading project failed. ${response.data.message}`);
             });
 
-        // listen on project create event
-        EventBus.on(events.PROJECT_CREATED, (evt, data) => {
-            this.projects.push(data.project);
-        }, $scope);
-
         // listen on project update event
         EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
             const project = data.project;

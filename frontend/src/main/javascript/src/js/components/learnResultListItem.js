@@ -22,16 +22,13 @@
  *
  * Everything that is put between the tags is displayed at the most right.
  */
-class LearnResultListItem {
-}
-
 export const learnResultListItem = {
     templateUrl: 'html/components/learn-result-list-item.html',
     transclude: true,
-    controller: LearnResultListItem,
+    controller: class {
+    },
     controllerAs: 'vm',
     bindings: {
-        result: '=',
-        linkTo: '@'
+        result: '='
     }
 };

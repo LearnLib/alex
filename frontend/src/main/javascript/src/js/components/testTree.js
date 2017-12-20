@@ -62,7 +62,7 @@ export const testSuiteNode = {
                 </div>
             </div>
             <div class="children" ng-show="!vm.collapsed">
-                <div ng-repeat="test in vm.suite.tests">                
+                <div ng-repeat="test in vm.suite.tests | sortTests">                
                     <test-suite-node suite="test" ng-if="test.type === 'suite'" result="vm.result.results[test.id]"></test-suite-node>
                     <test-case-node case="test" ng-if="test.type === 'case'" result="vm.result.results[test.id]"></test-case-node>
                 </div>
@@ -80,18 +80,6 @@ export const testSuiteNode = {
             this.suite = null;
             this.collapsed = true;
             this.result = null;
-        }
-
-        $onInit() {
-            let testSuites = this.suite.tests.filter(t => t.type === 'suite');
-            let testCases = this.suite.tests.filter(t => t.type === 'case');
-
-            const compare = (a, b) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
-
-            testSuites.sort(compare);
-            testCases.sort(compare);
-
-            this.suite.tests = testSuites.concat(testCases);
         }
     }
 };

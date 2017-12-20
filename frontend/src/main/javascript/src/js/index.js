@@ -54,7 +54,6 @@ import {actionEditModalHandle, actionEditModalComponent} from "./components/moda
 import {actionRecorderActionsModal} from "./components/modals/actionRecorderActionsModal";
 import {actionRecorderComponent} from "./components/actionRecorder";
 import {ActionRecorderService} from "./services/ActionRecorderService";
-import {actionRecorderHandle} from "./directives/actionRecorderHandle";
 import {counterCreateModal} from "./components/modals/counterCreateModal";
 import {
     hypothesisLayoutSettingsModalHandle,
@@ -262,7 +261,6 @@ angular
 
     // directives
     .directive('htmlElementPickerHandle', htmlElementPickerHandle)
-    .directive('actionRecorderHandle', actionRecorderHandle)
 
     // modals
     .directive('actionCreateModalHandle', actionCreateModalHandle)

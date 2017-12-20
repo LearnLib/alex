@@ -69,14 +69,38 @@ export const testsImportModal = {
                     .then(symbols => {
                         const tests = JSON.parse(JSON.stringify(this.tests));
 
-                        tests.forEach(test => {
-                            test.symbols = test.symbols.map(name => {
+                        const mapTestCaseSymbols = (testCase) => {
+                            testCase.symbols = testCase.symbols.map(name => {
                                 const sym = symbols.find(s => s.name === name);
                                 if (sym) return sym.id;
                             });
-                            test.parent = this.resolve.modalData.test.id;
-                            test.project = this.project.id;
-                        });
+                        };
+
+                        const prepareTestCase = (testCase, parent) => {
+                            testCase.project = this.project.id;
+                            testCase.parent = parent;
+                            mapTestCaseSymbols(testCase);
+                        };
+
+                        const prepareTestSuite = (testSuite, parent) => {
+                            testSuite.project = this.project.id;
+                            testSuite.parent = parent;
+                            testSuite.tests.forEach(test => {
+                                if (test.type === 'case') {
+                                    prepareTestCase(test, null);
+                                } else {
+                                    prepareTestSuite(test, null);
+                                }
+                            })
+                        };
+
+                        for (let test of tests) {
+                            if (test.type === 'case') {
+                                prepareTestCase(test, this.resolve.modalData.test.id);
+                            } else {
+                                prepareTestSuite(test, this.resolve.modalData.test.id);
+                            }
+                        }
 
                         this.TestResource.createMany(this.project.id, tests)
                             .then(tests => this.close({$value: tests}))

@@ -37,8 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class TestDAOImpl implements TestDAO {
@@ -75,11 +77,14 @@ public class TestDAOImpl implements TestDAO {
                 test.setParentId(0L);
             }
 
-            // make sure the name of the Test Case is unique
-            Test testInDb = testRepository.findOneByProject_IdAndParent_IdAndName(test.getProjectId(), test.getParentId(), test.getName());
-            if (testInDb != null && !testInDb.getId().equals(test.getId())) {
-                throw new ValidationException("To create a test case or suite its name must be unique withing its parent.");
+            // make sure the name of the test case is unique
+            String name = test.getName();
+            int i = 1;
+            while (testRepository.findOneByProject_IdAndParent_IdAndName(test.getProjectId(), test.getParentId(), name) != null) {
+                name = test.getName() + " - " + String.valueOf(i);
+                i++;
             }
+            test.setName(name);
 
             Long projectId = test.getProjectId();
             Project project = projectDAO.getByID(user.getId(), projectId);
@@ -116,8 +121,25 @@ public class TestDAOImpl implements TestDAO {
     @Override
     @Transactional
     public void create(User user, List<Test> tests) throws NotFoundException, ValidationException {
-        for (Test test : tests) {
-            this.create(user, test);
+        create(user, new HashSet<>(tests), null);
+    }
+
+    private void create(User user, Set<Test> tests, TestSuite parent) throws NotFoundException, ValidationException {
+        for (final Test test : tests) {
+            if (parent != null) {
+                test.setParent(parent);
+            }
+
+            if (test instanceof TestCase) {
+                create(user, test);
+            } else {
+                final TestSuite testSuite = (TestSuite) test;
+                final Set<Test> testsInSuite = testSuite.getTests();
+
+                testSuite.setTests(new HashSet<>());
+                create(user, testSuite);
+                create(user, testsInSuite, testSuite);
+            }
         }
     }
 
@@ -201,7 +223,7 @@ public class TestDAOImpl implements TestDAO {
     @Override
     @Transactional
     public void delete(User user, Long projectId, IdsList ids) throws NotFoundException, ValidationException {
-        for (long id: ids) {
+        for (long id : ids) {
             delete(user, projectId, id);
         }
     }

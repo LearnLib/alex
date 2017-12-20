@@ -34,22 +34,20 @@
 
             <hr>
 
-            <div class="file-list" ng-if="vm.files.length > 0">
-                <div class="file-list-item"
+            <div class="list-group" ng-if="vm.files.length > 0">
+                <div class="list-group-item d-flex"
                      ng-repeat="file in vm.files"
                      selection-model
                      selection-model-selected-items="vm.selectedFiles">
 
                     <checkbox selection-model-ignore class="pull-left" model="file"></checkbox>
-
-                    <div class="file-list-item-content">
+                    <div class="flex-grow-1 ml-1 mr-1">
                         <span ng-bind="file.name"></span>
-                        <button class="btn btn-icon btn-xs pull-right"
-                                ng-click="vm.deleteFile(file)">
-                            <i class="fa fa-fw fa-trash"></i> Delete
-                        </button>
                     </div>
-
+                    <button class="btn btn-icon btn-xs pull-right"
+                            ng-click="vm.deleteFile(file)">
+                        <i class="fa fa-fw fa-trash"></i> Delete
+                    </button>
                 </div>
             </div>
 

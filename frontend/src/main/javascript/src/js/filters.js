@@ -47,18 +47,15 @@ export function formatEqOracle() {
  */
 export function sortTests() {
     return tests => {
-        const compare = (a, b) => {
-            return a.name < b.name ? 1 : a.name > b.name ? -1 : 0
-        };
+        let testSuites = tests.filter(t => t.type === 'suite');
+        let testCases = tests.filter(t => t.type === 'case');
 
-        const testSuites = tests.filter(t => t.type === "suite");
-        const testCases = tests.filter(t => t.type === "case");
+        const compare = (a, b) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
 
         testSuites.sort(compare);
         testCases.sort(compare);
 
-        testSuites.push(testCases);
-        return testSuites;
+        return testSuites.concat(testCases);
     }
 }
 

@@ -80,11 +80,6 @@ class SymbolsView {
             this.deleteGroup(data.group);
         }, $scope);
 
-        // listen on symbol created event
-        EventBus.on(events.SYMBOL_CREATED, (evt, data) => {
-            this.addSymbol(data.symbol);
-        }, $scope);
-
         // listen on symbol update event
         EventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
             this.updateSymbol(data.symbol);

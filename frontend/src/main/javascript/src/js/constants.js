@@ -47,7 +47,6 @@ export const userRole = {
 export const events = {
 
     // project related events
-    PROJECT_CREATED: 'project:created',
     PROJECT_UPDATED: 'project:updated',
     PROJECT_DELETED: 'project:deleted',
     PROJECT_OPENED: 'project:opened',
@@ -63,12 +62,7 @@ export const events = {
     // user related events
     USER_LOGGED_IN: 'user:loggedIn',
 
-    // action related events
-    ACTION_CREATED: 'action:created',
-    ACTION_UPDATED: 'action:updated',
-
     // symbol related events
-    SYMBOL_CREATED: 'symbol:created',
     SYMBOL_UPDATED: 'symbol:updated',
     SYMBOLS_MOVED: 'symbols:moved',
 };

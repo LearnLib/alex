@@ -1,16 +1,12 @@
-<div class="learn-result-list-item">
+<div class="d-flex learner-result-list-item">
     <checkbox model="vm.result" class="pull-left" selection-model-ignore></checkbox>
-    <div class="learn-result-list-item-content">
-        <div class="pull-right" ng-transclude></div>
-        <span class="label label-danger pull-right" ng-show="vm.result.error">Failed</span>
+    <div class="flex-grow-1 mr-1 ml-1">
+        <span class="label label-danger pull-right" ng-if="vm.result.error">Failed</span>
         <strong>
-            <a ui-sref="resultsCompare({testNos: [vm.result.testNo]})" ng-if="vm.linkTo === 'hypothesis'">
+            <a ui-sref="resultsCompare({testNos: [vm.result.testNo]})">
                 Test No <span ng-bind="vm.result.testNo"></span>
             </a>
-            <a ui-sref="statisticsCompare({testNos: [vm.result.testNo], mode: 'cumulated'})" ng-if="vm.linkTo === 'statistics'">
-                Test No <span ng-bind="vm.result.testNo"></span>
-            </a>
-        </strong>,
+        </strong>
         [<span ng-bind="(vm.result.algorithm.name|formatAlgorithm)"></span>]
         <div class="text-muted">
             <em>
@@ -19,4 +15,5 @@
         </div>
         <div class="comment text-muted" ng-if="vm.result.comment" ng-bind="vm.result.comment"></div>
     </div>
+    <div ng-transclude></div>
 </div>

@@ -27,8 +27,8 @@
                 <div class="list-group-item" ng-repeat="counter in vm.counters">
                     <div class="d-flex" ng-if="counter.name !== vm.counterUnderEdit.name">
 
-                        <checkbox selection-model-ignore model="counter" style="margin-right: 12px"></checkbox>
-                        <div class="flex-grow-1">
+                        <checkbox selection-model-ignore model="counter"></checkbox>
+                        <div class="flex-grow-1 mr-1 ml-1">
                             <strong ng-bind="counter.name"></strong><br>
                             <span class="text-muted">Value: <span ng-bind="counter.value"></span></span>
                         </div>

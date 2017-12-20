@@ -100,18 +100,6 @@ export const testSuiteView = {
                 .catch(console.log);
         }
 
-        $onInit() {
-            let testSuites = this.testSuite.tests.filter(t => t.type === 'suite');
-            let testCases = this.testSuite.tests.filter(t => t.type === 'case');
-
-            const compare = (a, b) => a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
-
-            testSuites.sort(compare);
-            testCases.sort(compare);
-
-            this.testSuite.tests = testSuites.concat(testCases);
-        }
-
         createTestSuite() {
             this.PromptService.prompt("Enter a name for the test suite.")
                 .then(name => {
@@ -159,9 +147,11 @@ export const testSuiteView = {
                     }
 
                     const testToUpdate = JSON.parse(JSON.stringify(test));
+                    testToUpdate.name = name;
                     delete testToUpdate._selected;
                     if (testToUpdate.type === 'suite') {
-                        testToUpdate.tests = test.tests.map(t => t.id);
+                        testToUpdate.testIds = test.tests.map(t => t.id);
+                        delete testToUpdate.tests;
                     } else {
                         testToUpdate.symbols = test.symbols.map(s => s.id);
                     }
@@ -266,27 +256,51 @@ export const testSuiteView = {
             })
         }
 
+        /**
+         * Downloads the tests as JSON file.
+         */
         exportSelectedTests() {
-            let testCases = this.testSuite.tests.filter(t => t._selected && t.type === 'case');
-            if (!testCases.length) {
+            let tests = this.testSuite.tests.filter(t => t._selected);
+            if (!tests.length) {
                 this.ToastService.info('You have to select at least one test.');
             } else {
-                testCases = JSON.parse(JSON.stringify(testCases));
-                testCases.forEach(test => {
+                tests = JSON.parse(JSON.stringify(tests));
+
+                function deleteProperties(test) {
                     delete test.id;
                     delete test.project;
                     delete test.user;
                     delete test.parent;
                     delete test._selected;
-                    delete test.$$hashKey;
+                }
 
-                    test.type = 'case';
-                    test.symbols = test.symbols.map(s => s.name);
-                });
+                function prepareTestCase(testCase) {
+                    deleteProperties(testCase);
+                    testCase.symbols = testCase.symbols.map(s => s.name);
+                }
 
-                const name = 'tests-' + DateUtils.YYYYMMDD();
+                function prepareTestSuite(testSuite) {
+                    deleteProperties(testSuite);
+                    testSuite.tests.forEach(test => {
+                        if (test.type === 'case') {
+                            prepareTestCase(test);
+                        } else {
+                            prepareTestSuite(test);
+                        }
+                    })
+                }
+
+                for (const test of tests) {
+                    if (test.type === 'case') {
+                        prepareTestCase(test);
+                    } else {
+                        prepareTestSuite(test);
+                    }
+                }
+
+                const name = `tests-${this.testSuite.name}-${DateUtils.YYYYMMDD()}`;
                 this.PromptService.prompt('Enter a name for the file', name).then(name => {
-                    this.DownloadService.downloadObject(testCases, name);
+                    this.DownloadService.downloadObject(tests, name);
                     this.ToastService.success('The tests have been exported');
                 });
             }
@@ -305,7 +319,6 @@ export const testSuiteView = {
                     this.testSuite.tests.push(t);
                 });
             });
-
         }
     }
 };

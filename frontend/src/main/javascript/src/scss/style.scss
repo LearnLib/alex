@@ -35,6 +35,34 @@ body {
   display: flex;
 }
 
+.d-block {
+  display: block;
+}
+
+.ml-1 {
+  margin-left: 1rem;
+}
+
+.mr-1 {
+  margin-right: 1rem;
+}
+
+.mt-1 {
+  margin-top: 1rem;
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+
+.mb-1 {
+  margin-bottom: 1rem;
+}
+
+.pb-0 {
+  padding-bottom: 0;
+}
+
 .flex-grow-1 {
   flex-grow: 1;
 }
@@ -97,6 +125,12 @@ body {
       top: 42px;
     }
   }
+
+  &.view-about {
+    .section {
+      margin-bottom: 36px;
+    }
+  }
 }
 
 .view-body {
@@ -129,14 +163,6 @@ body {
     @media all and (max-width: $screen-sm) {
       @include text-overflow-ellipsis();
       max-width: 240px;
-    }
-  }
-}
-
-.view {
-  &.view-about {
-    .section {
-      margin-bottom: 36px;
     }
   }
 }
@@ -314,26 +340,6 @@ body {
 /* Model Lists
 ============================================================================== */
 
-.symbol-list {
-  .symbol-list-item {
-    @include selection-list-item();
-    &.selectable {
-      .symbol-list-item-content {
-        margin-left: 30px;
-      }
-    }
-    .symbol-list-item-content {
-      margin-left: 0;
-    }
-    .symbol-title {
-      display: inline-block;
-      font-weight: 700;
-      font-size: 12px;
-      margin: 0;
-    }
-  }
-}
-
 .action-list {
   user-select: none;
   -webkit-user-select: none;
@@ -382,38 +388,14 @@ body {
   }
 }
 
-.file-list {
-  .file-list-item {
-    @include selection-list-item();
-    .file-list-item-content {
-      margin-left: 30px;
-    }
+.learn-result-list-item {
+  .comment {
+    padding: 4px 0 0 8px;
+    border-left: 2px solid #ddd;
   }
-}
-
-.learn-result-list {
-  .learn-result-list-item {
-    @include selection-list-item();
-    .learn-result-list-item-content {
-      margin-left: 30px;
-    }
-    .comment {
-      padding: 4px 0 0 8px;
-      border-left: 2px solid #ddd;
-    }
-    .label-danger {
-      margin-top: 3px;
-      margin-right: 8px;
-    }
-  }
-}
-
-.counter-list {
-  .counter-list-item {
-    @include selection-list-item();
-    .counter-list-item-content {
-      margin-left: 30px;
-    }
+  .label-danger {
+    margin-top: 3px;
+    margin-right: 8px;
   }
 }
 
@@ -424,7 +406,6 @@ body {
 .symbol-group-list {
   .symbol-group-list-item {
     margin-bottom: 20px;
-    transition: opacity, margin 100ms;
     border: 1px solid #dadada;
     border-radius: 4px;
     box-shadow: 0 2px 2px rgba(0, 0, 0, .075);
@@ -436,24 +417,13 @@ body {
     }
 
     .symbol-group-list-item-header {
-      display: flex;
-      flex-direction: row;
-      padding: 10px;
+      padding: 1rem;
       background: #f2f2f2;
       border-top-left-radius: 4px;
       border-top-right-radius: 4px;
 
       .symbol-group-title {
         font-size: 16px;
-        display: inline-block;
-        margin: 0;
-      }
-
-      .flex-item {
-        &:nth-child(2) {
-          padding: 0 10px;
-          flex: 1 0 0;
-        }
       }
     }
   }

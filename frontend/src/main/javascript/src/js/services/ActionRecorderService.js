@@ -22,12 +22,36 @@ export class ActionRecorderService {
     /**
      * Constructor.
      */
-    constructor() {
+    // @ngInject
+    constructor($rootScope, $document, $compile, $q) {
+        this.$rootScope = $rootScope;
+        this.$document = $document;
+        this.$compile = $compile;
+        this.$q = $q;
 
         /**
          * The promise that is used to communicate between the picker and the handle.
          * @type {Promise|null}
          */
         this.deferred = null;
+    }
+
+    /**
+     * Opens the action recorder.
+     * @return {Promise<any>}
+     */
+    open() {
+        // make sure the action recorder is not opened twice.
+        if (document.getElementById("action-recorder") !== null) {
+            return;
+        }
+
+        // create a new element picker under the current scope and append to the body
+        const recorder = this.$compile('<action-recorder></action-recorder>')(this.$rootScope.$new());
+        this.$document.find('body').prepend(recorder);
+
+        this.deferred = this.$q.defer();
+        return this.deferred.promise
+            .finally(() => recorder.remove());
     }
 }

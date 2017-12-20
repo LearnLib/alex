@@ -28,13 +28,11 @@ export class SymbolCreateModalComponent {
      * @param {SymbolResource} SymbolResource
      * @param {ToastService} ToastService
      * @param {SessionService} SessionService
-     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor(SymbolResource, ToastService, SessionService, EventBus) {
+    constructor(SymbolResource, ToastService, SessionService) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
-        this.EventBus = EventBus;
 
         /**
          * The project that is in the session.
@@ -69,7 +67,7 @@ export class SymbolCreateModalComponent {
         return this.SymbolResource.create(this.project.id, this.symbol)
             .then(symbol => {
                 this.ToastService.success(`Created symbol "${symbol.name}"`);
-                this.EventBus.emit(events.SYMBOL_CREATED, {symbol: symbol});
+                this.resolve.modalData.onCreated({symbol});
                 this.symbol = new AlphabetSymbol();
 
                 // set the form to its original state
@@ -129,13 +127,17 @@ export function symbolCreateModalHandle($uibModal) {
         restrict: 'A',
         scope: {
             groups: '=',
+            onCreated: '&'
         },
         link(scope, el) {
             el.on('click', () => {
                 $uibModal.open({
                     component: 'symbolCreateModal',
                     resolve: {
-                        modalData: () => ({groups: scope.groups})
+                        modalData: () => ({
+                            groups: scope.groups,
+                            onCreated: scope.onCreated
+                        })
                     }
                 });
             });

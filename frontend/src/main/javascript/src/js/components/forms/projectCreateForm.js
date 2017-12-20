@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {events} from "../../constants";
 import {Project} from "../../entities/Project";
 
 /**
@@ -27,13 +26,11 @@ class ProjectCreateForm {
      *
      * @param {ProjectResource} ProjectResource
      * @param {ToastService} ToastService
-     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor(ProjectResource, ToastService, EventBus) {
+    constructor(ProjectResource, ToastService) {
         this.ProjectResource = ProjectResource;
         this.ToastService = ToastService;
-        this.EventBus = EventBus;
 
         /**
          * The empty project model that is used for the form.
@@ -60,7 +57,7 @@ class ProjectCreateForm {
         this.ProjectResource.create(this.project)
             .then(createdProject => {
                 this.ToastService.success(`Project "${createdProject.name}" created`);
-                this.EventBus.emit(events.PROJECT_CREATED, {project: createdProject});
+                this.onCreated({project: createdProject});
                 this.project = new Project();
                 this.mirrorUrls = "";
 
@@ -76,6 +73,9 @@ class ProjectCreateForm {
 
 export const projectCreateForm = {
     templateUrl: 'html/components/forms/project-create-form.html',
+    bindings: {
+        onCreated: '&'
+    },
     controller: ProjectCreateForm,
     controllerAs: 'vm'
 };

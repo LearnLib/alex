@@ -47,6 +47,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -126,7 +127,12 @@ public class TestResource {
         try {
             testDAO.create(user, tests);
 
-            return Response.ok(tests).status(Response.Status.CREATED).build();
+            final List<Test> createdTests = new ArrayList<>();
+            for (final Test t: tests) {
+                createdTests.add(testDAO.get(user, projectId, t.getId()));
+            }
+
+            return Response.ok(createdTests).status(Response.Status.CREATED).build();
         } catch (ValidationException e) {
             return ResourceErrorHandler.createRESTErrorMessage("TestCase.create", Response.Status.BAD_REQUEST, e);
         }

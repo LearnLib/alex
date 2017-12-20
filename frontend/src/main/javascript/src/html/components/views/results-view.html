@@ -15,7 +15,8 @@
             </button>
 
             <div class="btn-group btn-group-sm" uib-dropdown style="margin-left: 3px;">
-                <button class="btn btn-default btn-dropdown" uib-dropdown-toggle ng-class="{'disabled': vm.selectedResults.length === 0}">
+                <button class="btn btn-default btn-dropdown" uib-dropdown-toggle
+                        ng-class="{'disabled': vm.selectedResults.length === 0}">
                     Statistics <i class="fa fa-fw fa-caret-down"></i>
                 </button>
                 <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
@@ -37,52 +38,50 @@
     <div class="view-body has-sub-nav">
         <div class="alx-container-fluid">
 
-            <div class="learn-result-list">
-                <learn-result-list-item ng-repeat="result in vm.results | orderBy:'-testNo':false" result="result"
-                                        selection-model selection-model-selected-items="vm.selectedResults"
-                                        link-to="hypothesis">
-
-                    <div class="btn-group btn-group-xs" uib-dropdown>
-                        <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
-                            <i class="fa fa-bars"></i>
-                        </button>
-                        <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
-                            <li>
-                                <a ui-sref="learnerStart({result: result})">
-                                    <i class="fa fa-play fa-fw"></i> Continue learning
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="" learner-result-details-modal-handle result="result">
-                                    <i class="fa fa-info fa-fw"></i> Details
-                                </a>
-                            </li>
-                            <li>
-                                <a ui-sref="resultsCompare({testNos: [result.testNo]})">
-                                    <i class="fa fa-code-fork fa-fw"></i> Hypotheses
-                                </a>
-                            </li>
-                            <li>
-                                <a href="" ng-click="vm.deleteResult(result)">
-                                    <i class="fa fa-trash fa-fw"></i> Delete
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="" ng-click="vm.showStatistics(result)">
-                                    <i class="fa fa-fw fa-bar-chart"></i> Show statistics
-                                </a>
-                            </li>
-                            <li>
-                                <a href="" ng-click="vm.exportAsCSV(result)">
-                                    <i class="fa fa-fw fa-download"></i> Export statistics
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                </learn-result-list-item>
+            <div class="list-group">
+                <div class="list-group-item" ng-repeat="result in vm.results | orderBy:'-testNo':false" selection-model selection-model-selected-items="vm.selectedResults">
+                    <learn-result-list-item result="result">
+                        <div class="btn-group btn-group-xs" uib-dropdown>
+                            <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
+                                <li>
+                                    <a ui-sref="learnerStart({result: result})">
+                                        <i class="fa fa-play fa-fw"></i> Continue learning
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="" learner-result-details-modal-handle result="result">
+                                        <i class="fa fa-info fa-fw"></i> Details
+                                    </a>
+                                </li>
+                                <li>
+                                    <a ui-sref="resultsCompare({testNos: [result.testNo]})">
+                                        <i class="fa fa-code-fork fa-fw"></i> Hypotheses
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="" ng-click="vm.deleteResult(result)">
+                                        <i class="fa fa-trash fa-fw"></i> Delete
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="" ng-click="vm.showStatistics(result)">
+                                        <i class="fa fa-fw fa-bar-chart"></i> Show statistics
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="" ng-click="vm.exportAsCSV(result)">
+                                        <i class="fa fa-fw fa-download"></i> Export statistics
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </learn-result-list-item>
+                </div>
             </div>
 
             <div class="alert alert-info" ng-if="vm.results.length === 0">

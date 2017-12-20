@@ -64,7 +64,7 @@
             <hr>
 
             <div class="list-group test-list" ng-if="vm.testSuite.tests.length">
-                <div class="list-group-item test-list-item" ng-repeat="test in vm.testSuite.tests">
+                <div class="list-group-item test-list-item" ng-repeat="test in vm.testSuite.tests | sortTests">
 
                     <div class="d-flex flex-row">
                         <div style="padding-right: 12px">

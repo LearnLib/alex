@@ -1,7 +1,7 @@
 <div class="modal-header">
     <h3 class="modal-title">Import tests</h3>
 </div>
-<div class="modal-body">
+<div class="modal-body pb-0">
     <div class="alert alert-danger" ng-if="vm.errorMessage !== null">
         {{vm.errorMessage}}
     </div>
@@ -11,9 +11,10 @@
     </file-dropzone>
 
     <div class="list-group" ng-if="vm.tests.length">
-        <div class="list-group-item" ng-repeat="test in vm.tests">
+        <div class="list-group-item d-flex" ng-repeat="test in vm.tests">
+            <i class="fa fa-fw" ng-class="{'fa-file-o': test.type === 'case', 'fa-folder-o': test.type === 'suite'}"></i>
+            <strong class="d-block flex-grow-1 ml-1 mr-1">{{test.name}}</strong>
             <i class="fa fa-fw fa-close pull-right" ng-click="vm.tests.splice($index, 1)"></i>
-            <strong>{{test.name}}</strong>
         </div>
     </div>
 </div>

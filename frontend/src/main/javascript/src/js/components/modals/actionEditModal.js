@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {events} from "../../constants";
-
 /**
  * The controller for the modal dialog that handles the editing of an action.
  */
@@ -27,12 +25,10 @@ export class ActionEditModalComponent {
      * @param {ActionService} ActionService
      * @param {SymbolResource} SymbolResource
      * @param {SessionService} SessionService
-     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor(ActionService, SymbolResource, SessionService, EventBus) {
+    constructor(ActionService, SymbolResource, SessionService) {
         this.ActionService = ActionService;
-        this.EventBus = EventBus;
 
         // the project in the session
         const project = SessionService.getProject();
@@ -63,7 +59,6 @@ export class ActionEditModalComponent {
      * Close the modal dialog and pass the updated action to the handle that called it.
      */
     updateAction() {
-        this.EventBus.emit(events.ACTION_UPDATED, {action: this.action});
         this.close({$value: this.action});
     }
 }
@@ -123,9 +118,7 @@ export function actionEditModalHandle($uibModal, ActionService) {
                         }
                     }
                 }).result.then(data => {
-                    if (scope.onUpdated) {
-                        scope.onUpdated({action: data});
-                    }
+                    scope.onUpdated({action: data});
                 });
             });
         }
