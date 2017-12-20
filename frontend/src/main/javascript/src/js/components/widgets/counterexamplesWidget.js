@@ -146,7 +146,7 @@ class CounterexamplesWidget {
                     resetSymbol: resetSymbol,
                     symbols: testSymbols,
                 },
-                browser: this.result.browser
+                driverConfig: this.result.driverConfig
             }).then(ce => {
                 ce.shift();
                 let ceFound = false;

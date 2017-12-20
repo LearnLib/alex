@@ -112,8 +112,6 @@ import {symbolEditFormComponent} from "./components/forms/symbolEditForm";
 import {userEditForm} from "./components/forms/userEditForm";
 import {userLoginForm} from "./components/forms/userLoginForm";
 import {browserConfigForm} from "./components/forms/browserConfigForm";
-import {testCaseCreateForm} from "./components/forms/testCaseCreateForm";
-import {testCaseEditForm} from "./components/forms/testCaseEditForm";
 import {widget} from "./components/widgets/widget";
 import {projectDetailsWidget} from "./components/widgets/projectDetailsWidget";
 import {learnResumeSettingsWidget} from "./components/widgets/learnResumeSettingsWidget";
@@ -333,8 +331,6 @@ angular
     .component('nodeFormGroup', nodeFormGroup)
     .component('browserConfigForm', browserConfigForm)
     .component('symbolEditForm', symbolEditFormComponent)
-    .component('testCaseCreateForm', testCaseCreateForm)
-    .component('testCaseEditForm', testCaseEditForm)
 
     // widgets components
     .component('widget', widget)
