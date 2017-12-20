@@ -16,6 +16,7 @@
 
 import {webBrowser} from "../../constants";
 import {DateUtils} from "../../utils/date-utils";
+import {DriverConfigService} from "../../services/DriverConfigService";
 
 export const testSuiteView = {
     templateUrl: 'html/components/views/test-suite-view.html',
@@ -85,18 +86,13 @@ export const testSuiteView = {
             this.finished = false;
 
             /**
-             * The browser configuration.
+             * The driver configuration.
              * @type {object}
              */
-            this.browserConfig = {
-                driver: webBrowser.HTMLUNITDRIVER,
-                width: screen.width,
-                height: screen.height,
-                headless: false
-            };
+            this.driverConfig = DriverConfigService.createFromName(webBrowser.HTML_UNIT);
 
             SettingsResource.getSupportedWebDrivers()
-                .then(data => this.browserConfig.driver = data.defaultWebDriver)
+                .then(data => this.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver))
                 .catch(console.log);
 
             SymbolGroupResource.getAll(this.project.id, true)
@@ -238,7 +234,7 @@ export const testSuiteView = {
                     return;
                 }
 
-                this.TestResource.execute(test, this.browserConfig)
+                this.TestResource.execute(test, this.driverConfig)
                     .then(data => {
                         this.results[test.id] = data;
                         if (selected.length) {
@@ -260,13 +256,13 @@ export const testSuiteView = {
                 resolve: {
                     modalData: () => {
                         return {
-                            configuration: JSON.parse(JSON.stringify(this.browserConfig))
+                            configuration: JSON.parse(JSON.stringify(this.driverConfig))
                         };
                     }
                 }
             }).result.then(data => {
                 this.ToastService.success("The settings have been updated.");
-                this.browserConfig = data;
+                this.driverConfig = data;
             })
         }
 
