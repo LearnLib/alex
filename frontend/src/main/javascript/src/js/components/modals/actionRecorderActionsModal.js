@@ -46,6 +46,36 @@ export class ActionRecorderActionsModal {
          */
         this.symbols = [];
 
+        /**
+         * The actions for the selection.
+         */
+        this.actions = {
+            web: [
+                {type: actionType.WEB_CHECK_ATTRIBUTE_VALUE, text: 'Check attribute value'},
+                {type: actionType.WEB_CLEAR, text: 'Clear input'},
+                {type: actionType.WEB_CLICK, text: 'Click element'},
+                {type: actionType.WEB_CLICK_LINK_BY_TEXT, text: 'Click link by text'},
+                {type: actionType.WEB_FILL, text: 'Fill input'},
+                {type: actionType.WEB_MOUSE_MOVE, text: 'Move mouse'},
+                {type: actionType.WEB_PRESS_KEY, text: 'Press key'},
+                {type: actionType.WEB_CHECK_TEXT, text: 'Search text'},
+                {type: actionType.WEB_CHECK_NODE, text: 'Search element'},
+                {type: actionType.WEB_SELECT, text: 'Select from list'},
+                {type: actionType.WEB_SUBMIT, text: 'Submit form'},
+                {type: actionType.WEB_SWITCH_TO, text: 'Switch to'},
+                {type: actionType.WEB_SWITCH_TO_FRAME, text: 'Switch to frame'},
+                {type: actionType.WAIT_FOR_NODE_ATTRIBUTE, text: 'Wait for an attribute'},
+                {type: actionType.WAIT_FOR_NODE, text: 'Wait for an element'},
+                {type: actionType.WAIT_FOR_TEXT, text: 'Wait for text'}
+            ],
+            rest: [],
+            misc: [
+                {type: actionType.GENERAL_SET_VARIABLE_BY_HTML, text: 'Set variable by HTML'},
+                {type: actionType.GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE, text: 'Set variable by node attribute'},
+                {type: actionType.GENERAL_SET_VARIABLE_BY_NODE_COUNT, text: 'Set variable by node count'}
+            ]
+        };
+
         // get all symbols
         SymbolResource.getAll(this.project.id).then(symbols => {
             this.symbols = symbols;
@@ -81,8 +111,11 @@ export class ActionRecorderActionsModal {
                 actionType.GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE, actionType.GENERAL_SET_VARIABLE_BY_NODE_COUNT,
                 actionType.WAIT_FOR_NODE_ATTRIBUTE].indexOf(this.action.type) > -1) {
             this.action.node = {selector: this.modalData.selector, type: this.modalData.selectorType};
-        } else if ([actionType.WAIT_FOR_TEXT, actionType.WEB_CHECK_TEXT].indexOf(this.action.type) > -1) {
+        } else if ([actionType.WEB_CHECK_TEXT].indexOf(this.action.type) > -1) {
             this.action.value = el.innerText;
+        } else if (actionType.WAIT_FOR_TEXT === this.action.type) {
+            this.action.value = el.innerText;
+            this.action.node = {selector: this.modalData.selector, type: this.modalData.selectorType};
         }
     }
 

@@ -137,6 +137,7 @@ import {htmlElementPicker} from "./components/htmlElementPicker";
 import {nodeFormGroup} from "./components/forms/nodeFormGroup";
 import {testResultReport} from "./components/testResultReport";
 import {testTree, testCaseNode, testSuiteNode} from "./components/testTree";
+import {actionSearchForm} from "./components/acionSearchForm";
 import {
     actionFormAlertAcceptDismiss,
     actionFormAlertGetText,
@@ -329,6 +330,7 @@ angular
     .component('nodeFormGroup', nodeFormGroup)
     .component('browserConfigForm', browserConfigForm)
     .component('symbolEditForm', symbolEditFormComponent)
+    .component('actionSearchForm', actionSearchForm)
 
     // widgets components
     .component('widget', widget)

@@ -18,11 +18,9 @@
  * The component that is used for the sticky sub navigation that mostly contains call to action buttons for the
  * current view.
  */
-class ActionBar {
-}
-
 export const actionBar = {
-    controller: ActionBar,
+    controller: class {
+    },
     controllerAs: 'vm',
     transclude: true,
     template: `

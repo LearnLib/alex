@@ -13,6 +13,11 @@
         <div class="row">
             <div class="col-xs-4">
 
+                <action-search-form actions="vm.actions" on-selected="vm.selectNewActionType(type)">
+                </action-search-form>
+
+                <div style="margin-top: 36px;"></div>
+
                 <uib-accordion close-others="true" class="action-types-accordion">
                     <div uib-accordion-group class="panel-default" is-open="true">
                         <uib-accordion-heading>
@@ -43,7 +48,7 @@
             <div class="col-xs-8">
 
                 <div class="alert alert-info alert-condensed" ng-show="vm.action === null">
-                    Please select an action type
+                    Select the action you want to create.
                 </div>
 
                 <action-form action="vm.action" symbols="vm.symbols" ng-if="vm.action !== null"></action-form>

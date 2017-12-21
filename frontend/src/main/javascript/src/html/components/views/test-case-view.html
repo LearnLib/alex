@@ -1,25 +1,23 @@
 <div class="view">
     <view-header title="Test Management"></view-header>
     <action-bar>
-        <div class="alx-container">
-            <button class="btn btn-sm btn-success" ng-click="vm.save()">
-                <i class="fa fa-fw fa-save"></i> Save
+        <button class="btn btn-sm btn-success" ng-click="vm.save()">
+            <i class="fa fa-fw fa-save"></i> Save
+        </button>
+        <button class="btn btn-sm btn-default" ui-sref="tests({testId: vm.testCase.parent})">
+            <i class="fa fa-fw fa-close"></i> Cancel
+        </button>
+        <div class="btn-group btn-group-sm pull-right">
+            <button class="btn btn-primary" ng-click="vm.execute()">
+                Execute
             </button>
-            <button class="btn btn-sm btn-default" ui-sref="tests({testId: vm.testCase.parent})">
-                <i class="fa fa-fw fa-close"></i> Cancel
+            <button class="btn btn-primary" ng-click="vm.openBrowserConfigModal()">
+                <i class="fa fa-fm fa-gear"></i>
             </button>
-            <div class="btn-group btn-group-sm pull-right">
-                <button class="btn btn-primary" ng-click="vm.execute()">
-                    Execute
-                </button>
-                <button class="btn btn-primary" ng-click="vm.openBrowserConfigModal()">
-                    <i class="fa fa-fm fa-gear"></i>
-                </button>
-            </div>
         </div>
     </action-bar>
     <div class="view-body">
-        <div class="alx-container">
+        <div class="alx-container-fluid">
 
             <div ng-if="vm.result">
                 <div class="alert alert-danger" ng-if="!vm.result.passed">

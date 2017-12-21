@@ -17,38 +17,25 @@
         <div class="row">
             <div class="col-xs-4">
 
+                <action-search-form actions="vm.actions" on-selected="vm.selectNewActionType(type)">
+                </action-search-form>
+
+                <div style="margin-top: 36px;"></div>
+
                 <uib-accordion close-others="true" class="action-types-accordion">
                     <div uib-accordion-group class="panel-default" is-open="true">
                         <uib-accordion-heading>
                             <div><strong>Web</strong></div>
                         </uib-accordion-heading>
 
-                        <a href="" ng-click="vm.selectNewActionType('web_clear')">Clear input</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_click')">Click element</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_clickLinkByText')">Click link by text</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_fill')">Fill input</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_checkForText')">Search for text</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_checkForNode')">Search element</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_checkNodeAttributeValue')">Check attribute value</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_goto')">Open URL</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_submit')">Submit form</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_select')">Select from list</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_switch_to')">Switch to</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_switch_to_frame')">Switch to frame</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_moveMouse')">Move mouse</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_pressKey')">Press key</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_waitForNode')">Wait for an element</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_waitForNodeAttribute')">Wait for an attribute</a>
-                        <a href="" ng-click="vm.selectNewActionType('web_waitForText')">Wait for text</a>
+                        <a href="" ng-repeat="action in vm.actions.web" ng-click="vm.selectNewActionType(action.type)">{{action.text}}</a>
                     </div>
                     <div uib-accordion-group class="panel-default" is-open="false">
                         <uib-accordion-heading>
                             <div><strong>Misc</strong></div>
                         </uib-accordion-heading>
 
-                        <a href="" ng-click="vm.selectNewActionType('setVariableByHTML')">Set variable by HTML</a>
-                        <a href="" ng-click="vm.selectNewActionType('setVariableByNodeAttribute')">Set variable by node attribute</a>
-                        <a href="" ng-click="vm.selectNewActionType('setVariableByNodeCount')">Set variable by node count</a>
+                        <a href="" ng-repeat="action in vm.actions.misc" ng-click="vm.selectNewActionType(action.type)">{{action.text}}</a>
                     </div>
                 </uib-accordion>
 
@@ -56,7 +43,7 @@
             <div class="col-xs-8">
 
                 <div class="alert alert-info alert-condensed" ng-show="vm.action === null">
-                    Please select an action you want to create
+                    Select the action you want to create.
                 </div>
 
                 <action-form action="vm.action" symbols="vm.symbols" ng-if="vm.action !== null"></action-form>
