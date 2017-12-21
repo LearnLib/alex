@@ -69,9 +69,9 @@ export const testSuiteView = {
 
             /**
              * The results of the test execution.
-             * @type {object[]}
+             * @type {object}
              */
-            this.results = [];
+            this.results = {};
 
             /**
              * If tests are being executed.
@@ -226,7 +226,11 @@ export const testSuiteView = {
 
                 this.TestResource.execute(test, this.driverConfig)
                     .then(data => {
-                        this.results[test.id] = data;
+                        for (const k in data) {
+                            this.results[k] = data[k];
+                        }
+
+                        // this.results[test.id] = data;
                         if (selected.length) {
                             next(selected.shift());
                         } else {

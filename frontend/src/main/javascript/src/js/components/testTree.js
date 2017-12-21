@@ -17,19 +17,23 @@
 export const testTree = {
     template: `
         <div class="test-tree">
-            <test-suite-node suite="vm.root" parent="null" result="vm.result" ng-if="vm.root !== null && vm.root.type === 'suite'"></test-suite-node>
-            <test-case-node case="vm.root" parent="null" result="vm.result" ng-if="vm.root !== null && vm.root.type === 'case'"></test-case-node>
+            <test-suite-node suite="vm.root" parent="null" results="vm.results" ng-if="vm.root !== null && vm.root.type === 'suite'"></test-suite-node>
+            <test-case-node case="vm.root" parent="null" results="vm.results" ng-if="vm.root !== null && vm.root.type === 'case'"></test-case-node>
         </div>
     `,
     bindings: {
         root: '=',
-        result: '='
+        results: '='
     },
     controllerAs: 'vm',
     controller: class {
+
+        /**
+         * Constructor.
+         */
         constructor() {
             this.root = null;
-            this.result = null;
+            this.results = null;
         }
     }
 };
@@ -63,8 +67,8 @@ export const testSuiteNode = {
             </div>
             <div class="children" ng-show="!vm.collapsed">
                 <div ng-repeat="test in vm.suite.tests | sortTests">                
-                    <test-suite-node suite="test" ng-if="test.type === 'suite'" result="vm.result.results[test.id]"></test-suite-node>
-                    <test-case-node case="test" ng-if="test.type === 'case'" result="vm.result.results[test.id]"></test-case-node>
+                    <test-suite-node suite="test" ng-if="test.type === 'suite'" results="vm.results"></test-suite-node>
+                    <test-case-node case="test" ng-if="test.type === 'case'" results="vm.results"></test-case-node>
                 </div>
             </div>
         </div>
@@ -72,14 +76,22 @@ export const testSuiteNode = {
     bindings: {
         suite: '=',
         parent: '=',
-        result: '='
+        results: '='
     },
     controllerAs: 'vm',
     controller: class {
+
+        /**
+         * Constructor.
+         */
         constructor() {
             this.suite = null;
             this.collapsed = true;
-            this.result = null;
+            this.results = null;
+        }
+
+        get result() {
+            return this.results[this.suite.id];
         }
     }
 };
@@ -106,9 +118,21 @@ export const testCaseNode = {
     bindings: {
         case: '=',
         parent: '=',
-        result: '='
+        results: '='
     },
     controllerAs: 'vm',
     controller: class {
+
+        /**
+         * Constructor.
+         */
+        constructor() {
+            this.case = null;
+            this.results = null;
+        }
+
+        get result() {
+            return this.results[this.case.id];
+        }
     }
 };

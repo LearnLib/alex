@@ -48,7 +48,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * REST endpoints for working with tests.
@@ -177,14 +179,14 @@ public class TestResource {
 
         Test test = testDAO.get(user, projectId, id);
 
-        TestResult result;
+        final Map<Long, TestResult> results = new HashMap<>();
         if (test instanceof TestSuite) {
-            result = testService.executeTestSuite(user, (TestSuite) test, driverConfig);
+            testService.executeTestSuite(user, (TestSuite) test, driverConfig, results);
         } else {
-            result = testService.executeTestCase(user, (TestCase) test, driverConfig);
+            testService.executeTestCase(user, (TestCase) test, driverConfig, results);
         }
 
-        return Response.ok(result).build();
+        return Response.ok(results).build();
     }
 
     /**

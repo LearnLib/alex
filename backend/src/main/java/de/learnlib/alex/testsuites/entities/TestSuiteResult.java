@@ -35,9 +35,6 @@ public class TestSuiteResult extends TestResult {
     /** How many test cases failed. */
     private long testCasesFailed;
 
-    /** The results of the tests of this suite. */
-    private Map<Long, TestResult> results;
-
     /**
      * Constructor.
      */
@@ -53,7 +50,6 @@ public class TestSuiteResult extends TestResult {
      */
     public TestSuiteResult(TestSuite testSuite, long testCasesPassed, long testCasesFailed) {
         super(testSuite);
-        this.results = new HashMap<>();
         this.testCasesPassed = testCasesPassed;
         this.testCasesFailed = testCasesFailed;
     }
@@ -109,14 +105,6 @@ public class TestSuiteResult extends TestResult {
 
     public void addTestCasesFailed(long amount) {
         this.testCasesFailed += amount;
-    }
-
-    public Map<Long, TestResult> getResults() {
-        return results;
-    }
-
-    public void setResults(Map<Long, TestResult> results) {
-        this.results = results;
     }
 
     public boolean isPassed() {

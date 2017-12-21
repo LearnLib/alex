@@ -64,6 +64,7 @@ public class Test {
 
     public static class TestRepresentation {
         private Long id;
+        private Long parent;
         private String name;
         private String type;
 
@@ -74,6 +75,7 @@ public class Test {
             this.id = test.id;
             this.name = test.getName();
             this.type = test instanceof TestSuite ? "suite" : "case";
+            this.parent = test.getParent().getId();
         }
 
         public Long getId() {
@@ -98,6 +100,14 @@ public class Test {
 
         public void setType(String type) {
             this.type = type;
+        }
+
+        public Long getParent() {
+            return parent;
+        }
+
+        public void setParent(Long parent) {
+            this.parent = parent;
         }
     }
 

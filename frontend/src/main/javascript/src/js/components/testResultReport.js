@@ -80,12 +80,7 @@ export const testResultReport = {
         $onInit() {
             for (const id in this.results) {
                 const result = this.results[id];
-
-                if (result.test.type === 'suite') {
-                    this.overallResult.testCasesFailed += result.testCasesFailed;
-                    this.overallResult.testCasesPassed += result.testCasesPassed;
-                    this.overallResult.testCasesRun += result.testCasesRun;
-                } else {
+                if (result.test.type === 'case') {
                     this.overallResult.testCasesFailed += result.passed ? 0 : 1;
                     this.overallResult.testCasesPassed += result.passed ? 1 : 0;
                     this.overallResult.testCasesRun += 1;
@@ -101,6 +96,10 @@ export const testResultReport = {
         exportReport() {
             const parent = JSON.parse(JSON.stringify(this.suite));
             parent.tests = [];
+
+            for (let id in this.results) {
+                this.results[id].type = this.results[id].test.type;
+            }
 
             this.TestResource.getReport(this.project.id, {
                 results: this.results,

@@ -33,6 +33,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,33 +59,62 @@ public class JUnitTestResultReporter extends TestResultReporter<String> {
             final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             final Document doc = docBuilder.newDocument();
 
+            // create the root element
             final Element rootElement = doc.createElement("testsuites");
             doc.appendChild(rootElement);
 
-            final TestSuiteResult overallResult = new TestSuiteResult(reportConfig.getParent(), 0L, 0L);
-            overallResult.setResults(reportConfig.getResults());
+            // the element for the parent test suite
+            final Element parentTestSuiteElement = doc.createElement("testSuite");
+            parentTestSuiteElement.setAttribute("id", String.valueOf(reportConfig.getParent().getId()));
+            parentTestSuiteElement.setAttribute("name", reportConfig.getParent().getName());
+            rootElement.appendChild(parentTestSuiteElement);
 
+            // test suite id -> test suite element
+            final Map<Long, Element> testSuiteElements = new HashMap<>();
+            testSuiteElements.put(reportConfig.getParent().getId(), parentTestSuiteElement);
+
+            // create elements for all test suites
             reportConfig.getResults().forEach((id, result) -> {
-                if (result instanceof TestCaseResult) {
-                    overallResult.add((TestCaseResult) result);
-                } else {
-                    overallResult.add((TestSuiteResult) result);
+                if (result instanceof TestSuiteResult) {
+                    final Element el = createTestSuiteElement(doc, (TestSuiteResult) result);
+                    rootElement.appendChild(el);
+                    testSuiteElements.put(id, el);
                 }
             });
 
-            final Queue<TestSuiteResult> queue = new ArrayDeque<>();
-            queue.offer(overallResult);
+            final TestSuiteResult parentTestSuiteResult = new TestSuiteResult();
+            final TestSuiteResult overallResult = new TestSuiteResult();
 
-            while (!queue.isEmpty()) {
-                final Optional<Element> testSuiteEl = createTestSuiteTag(doc, queue.poll(), queue);
-                testSuiteEl.ifPresent(rootElement::appendChild);
-            }
+            // create elements for test cases
+            reportConfig.getResults().forEach((id, result) -> {
+                if (result instanceof TestCaseResult) {
+                    final Element el = createTestCaseElement(doc, (TestCaseResult) result);
+                    testSuiteElements.get(result.getTest().getParent()).appendChild(el);
 
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                    if (result.getTest().getParent().equals(reportConfig.getParent().getId())) {
+                        parentTestSuiteResult.add((TestCaseResult) result);
+                    }
+
+                    overallResult.add((TestCaseResult) result);
+                }
+            });
+
+            // set attributes of the parent test suite element
+            parentTestSuiteElement.setAttribute("tests", String.valueOf(parentTestSuiteResult.getTestCasesRun()));
+            parentTestSuiteElement.setAttribute("failures", String.valueOf(parentTestSuiteResult.getTestCasesFailed()));
+            parentTestSuiteElement.setAttribute("time", String.valueOf(parentTestSuiteResult.getTime()));
+
+            // set attributes for the containing element
+            rootElement.setAttribute("tests", String.valueOf(overallResult.getTestCasesRun()));
+            rootElement.setAttribute("failures", String.valueOf(overallResult.getTestCasesFailed()));
+            rootElement.setAttribute("time", String.valueOf(overallResult.getTime()));
+
+            // write the elements as xml string
+            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            DOMSource source = new DOMSource(doc);
-            StringWriter stringWriter = new StringWriter();
-            StreamResult streamResult = new StreamResult(stringWriter);
+            final DOMSource source = new DOMSource(doc);
+            final StringWriter stringWriter = new StringWriter();
+            final StreamResult streamResult = new StreamResult(stringWriter);
             transformer.transform(source, streamResult);
 
             return stringWriter.getBuffer().toString();
@@ -94,45 +124,19 @@ public class JUnitTestResultReporter extends TestResultReporter<String> {
         }
     }
 
-    private Optional<Element> createTestSuiteTag(final Document doc,
-                                                 final TestSuiteResult suiteResult,
-                                                 final Queue<TestSuiteResult> queue) {
+    private Element createTestSuiteElement(final Document doc,
+                                           final TestSuiteResult suiteResult) {
 
-        int numTestCasesFailed = 0;
-        long time = 0L;
-
-        final List<Element> testCaseEls = new ArrayList<>();
-
-        for (Map.Entry<Long, TestResult> result : suiteResult.getResults().entrySet()) {
-            if (result.getValue() instanceof TestCaseResult) {
-                final TestCaseResult caseResult = (TestCaseResult) result.getValue();
-
-                numTestCasesFailed += caseResult.isPassed() ? 0 : 1;
-                time += caseResult.getTime();
-
-                testCaseEls.add(createTestCaseTag(doc, caseResult));
-            } else {
-                queue.offer((TestSuiteResult) result.getValue());
-            }
-        }
-
-        if (!testCaseEls.isEmpty()) {
-            final Element testSuiteEl = doc.createElement("testsuite");
-            testSuiteEl.setAttribute("id", String.valueOf(suiteResult.getTest().getId()));
-            testSuiteEl.setAttribute("name", suiteResult.getTest().getName());
-            testSuiteEl.setAttribute("tests", String.valueOf(testCaseEls.size()));
-            testSuiteEl.setAttribute("failures", String.valueOf(numTestCasesFailed));
-            testSuiteEl.setAttribute("time", String.valueOf(time));
-
-            testCaseEls.forEach(testSuiteEl::appendChild);
-
-            return Optional.of(testSuiteEl);
-        } else {
-            return Optional.empty();
-        }
+        final Element testSuiteEl = doc.createElement("testsuite");
+        testSuiteEl.setAttribute("id", String.valueOf(suiteResult.getTest().getId()));
+        testSuiteEl.setAttribute("name", suiteResult.getTest().getName());
+        testSuiteEl.setAttribute("tests", String.valueOf(suiteResult.getTestCasesRun()));
+        testSuiteEl.setAttribute("failures", String.valueOf(suiteResult.getTestCasesFailed()));
+        testSuiteEl.setAttribute("time", String.valueOf(suiteResult.getTime()));
+        return testSuiteEl;
     }
 
-    private Element createTestCaseTag(final Document doc, final TestCaseResult result) {
+    private Element createTestCaseElement(final Document doc, final TestCaseResult result) {
         final Element testCaseEl = doc.createElement("testcase");
         testCaseEl.setAttribute("name", result.getTest().getName());
         testCaseEl.setAttribute("id", String.valueOf(result.getTest().getId()));

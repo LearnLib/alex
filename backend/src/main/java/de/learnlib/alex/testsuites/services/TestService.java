@@ -27,13 +27,16 @@ import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.testsuites.entities.Test;
 import de.learnlib.alex.testsuites.entities.TestCase;
 import de.learnlib.alex.testsuites.entities.TestCaseResult;
+import de.learnlib.alex.testsuites.entities.TestResult;
 import de.learnlib.alex.testsuites.entities.TestSuite;
 import de.learnlib.alex.testsuites.entities.TestSuiteResult;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -63,21 +66,20 @@ public class TestService {
      * @param driverConfig  The config for the web driver.
      * @return
      */
-    public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, AbstractWebDriverConfig driverConfig) {
+    public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, AbstractWebDriverConfig driverConfig, Map<Long, TestResult> results) {
         TestSuiteResult tsResult = new TestSuiteResult(testSuite, 0L, 0L);
 
         for (Test test : testSuite.getTests()) {
             if (test instanceof TestCase) {
-                TestCaseResult result = executeTestCase(user, (TestCase) test, driverConfig);
+                TestCaseResult result = executeTestCase(user, (TestCase) test, driverConfig, results);
                 tsResult.add(result);
-                tsResult.getResults().put(test.getId(), result);
             } else {
-                TestSuiteResult r = executeTestSuite(user, (TestSuite) test, driverConfig);
+                TestSuiteResult r = executeTestSuite(user, (TestSuite) test, driverConfig, results);
                 tsResult.add(r);
-                tsResult.getResults().put(test.getId(), r);
             }
         }
 
+        results.put(testSuite.getId(), tsResult);
         return tsResult;
     }
 
@@ -89,7 +91,7 @@ public class TestService {
      * @param driverConfig  The config for the web driver.
      * @return
      */
-    public TestCaseResult executeTestCase(User user, TestCase testCase, AbstractWebDriverConfig driverConfig) {
+    public TestCaseResult executeTestCase(User user, TestCase testCase, AbstractWebDriverConfig driverConfig, Map<Long, TestResult> results) {
         final ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, testCase.getProject(),
                                                                                        driverConfig);
         ctxHandler.setResetSymbol(new Symbol());
@@ -125,7 +127,10 @@ public class TestService {
 
         final String failureMessage = failureMessageParts.isEmpty() ? null : String.join(", ", failureMessageParts);
 
-        return new TestCaseResult(testCase, sulOutputs, failedSymbols.size() == 0, time, String.join(", ", failureMessage));
+        final TestCaseResult result = new TestCaseResult(testCase, sulOutputs, failedSymbols.size() == 0, time, String.join(", ", failureMessage));
+        results.put(testCase.getId(), result);
+
+        return result;
     }
 
 }
