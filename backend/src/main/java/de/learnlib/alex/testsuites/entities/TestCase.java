@@ -79,6 +79,9 @@ public class TestCase extends Test implements Serializable {
     /** The map with the variables for the test case. */
     private HashMap<String, String> variables;
 
+    /** If the test case execution should pass. */
+    private boolean shouldPass;
+
     /**
      * Default Constructor.
      */
@@ -86,6 +89,7 @@ public class TestCase extends Test implements Serializable {
         super();
         this.symbols = new LinkedList<>();
         this.variables = new HashMap<>();
+        this.shouldPass = true;
     }
 
     /**
@@ -164,13 +168,19 @@ public class TestCase extends Test implements Serializable {
     }
 
     @Lob
-    @JsonProperty
     public HashMap<String, String> getVariables() {
         return variables;
     }
 
-    @JsonProperty
     public void setVariables(HashMap<String, String> variables) {
         this.variables = variables;
+    }
+
+    public boolean isShouldPass() {
+        return shouldPass;
+    }
+
+    public void setShouldPass(boolean shouldPass) {
+        this.shouldPass = shouldPass;
     }
 }

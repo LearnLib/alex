@@ -1,4 +1,4 @@
-<div class="view">
+<div class="view view-test-case">
     <view-header title="Test Management"></view-header>
     <action-bar>
         <button class="btn btn-sm btn-success" ng-click="vm.save()">
@@ -34,11 +34,21 @@
                 <button class="btn btn-sm btn-default" ui-sref="tests({testId: vm.testCase.parent})" style="margin-right: 12px">
                     <i class="fa fa-fw fa-level-up"></i>
                 </button>
-                <h4 style="display: inline; margin: 0;">
+                <h4 class="flex-grow-1" style="margin: 0;">
                     <strong>
                         <i class="fa fa-fw fa-file-o"></i> {{vm.testCase.name}}
                     </strong>
                 </h4>
+                <button class="btn btn-sm btn-default text-left toggle-button-success"
+                        ng-class="{'toggle-button-success': vm.testCase.shouldPass, 'toggle-button-danger': !vm.testCase.shouldPass}"
+                        ng-click="vm.testCase.shouldPass = !vm.testCase.shouldPass">
+                    <span ng-if="vm.testCase.shouldPass">
+                        <i class="fa fa-toggle-on mr-1"></i>Should pass
+                    </span>
+                    <span ng-if="!vm.testCase.shouldPass">
+                        <i class="fa fa-toggle-on fa-flip-horizontal mr-1"></i>Should fail
+                    </span>
+                </button>
             </div>
 
             <hr>

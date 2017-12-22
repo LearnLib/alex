@@ -56,6 +56,7 @@ public class TestCaseResult extends TestResult {
         super(testCase);
         this.outputs = outputs;
         this.passed = passed;
+        this.passed = testCase.isShouldPass() == passed;
         this.time = time;
         this.failureMessage = failureMessage;
     }

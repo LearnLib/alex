@@ -132,6 +132,18 @@ body {
       margin-bottom: 36px;
     }
   }
+
+  &.view-test-case {
+    .toggle-button-success {
+      border-color: $brand-success;
+      color: $brand-success;
+    }
+
+    .toggle-button-danger {
+      border-color: $brand-danger;
+      color: $brand-danger;
+    }
+  }
 }
 
 .view-body {

@@ -128,7 +128,8 @@ export const testSuiteView = {
                         project: this.project.id,
                         parent: this.testSuite.id,
                         symbols: [],
-                        variables: {}
+                        variables: {},
+                        shouldPass: true
                     };
                     this.TestResource.create(testCase)
                         .then(data => {
