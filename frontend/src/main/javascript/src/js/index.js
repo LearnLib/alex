@@ -96,7 +96,7 @@ import {projectsView} from "./components/views/projectsView";
 import {projectsDashboardView} from "./components/views/projectsDashboardView";
 import {resultsCompareView} from "./components/views/resultsCompareView";
 import {resultsView} from "./components/views/resultsView";
-import {settingsView} from "./components/views/settingsView";
+import {adminSettingsView} from "./components/views/adminSettingsView";
 import {statisticsCompareView} from "./components/views/statisticsCompareView";
 import {symbolsActionsView} from "./components/views/symbolsActionsView";
 import {symbolsView} from "./components/views/symbolsView";
@@ -301,6 +301,7 @@ angular
 
     // view components
     .component('aboutView', aboutView)
+    .component('adminSettingsView', adminSettingsView)
     .component('adminUsersView', adminUsersView)
     .component('countersView', countersView)
     .component('errorView', errorView)
@@ -312,7 +313,6 @@ angular
     .component('projectsDashboardView', projectsDashboardView)
     .component('resultsCompareView', resultsCompareView)
     .component('resultsView', resultsView)
-    .component('settingsView', settingsView)
     .component('statisticsCompareView', statisticsCompareView)
     .component('symbolsActionsView', symbolsActionsView)
     .component('symbolsView', symbolsView)

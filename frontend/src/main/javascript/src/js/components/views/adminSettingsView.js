@@ -19,7 +19,7 @@ import {webBrowser} from "../../constants";
 /**
  * The component for the about page.
  */
-class SettingsView {
+class AdminSettingsView {
 
     /**
      * Constructor.
@@ -54,8 +54,8 @@ class SettingsView {
     }
 }
 
-export const settingsView = {
-    controller: SettingsView,
+export const adminSettingsView = {
+    controller: AdminSettingsView,
     controllerAs: 'vm',
-    templateUrl: 'html/components/views/settings-view.html'
+    templateUrl: 'html/components/views/admin-settings-view.html'
 };

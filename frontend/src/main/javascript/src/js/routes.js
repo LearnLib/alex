@@ -34,9 +34,14 @@ export function config($stateProvider, $urlRouterProvider) {
             template: '<users-settings-view></users-settings-view>',
             data: {requiresProject: false, roles: ['REGISTERED', 'ADMIN'], title: 'Settings'}
         })
-        .state('settings', {
-            url: '/settings',
-            template: '<settings-view></settings-view>',
+        .state('adminUsers', {
+            url: '/admin/users',
+            template: '<admin-users-view></admin-users-view>',
+            data: {requiresProject: false, roles: ['ADMIN'], title: 'Admin > Users'}
+        })
+        .state('adminSettings', {
+            url: '/admin/settings',
+            template: '<admin-settings-view></admin-settings-view>',
             data: {requiresProject: false, roles: ['ADMIN'], title: 'Application Settings'}
         })
         .state('projects', {
@@ -75,7 +80,7 @@ export function config($stateProvider, $urlRouterProvider) {
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Learner > Setup'}
         })
         .state('learnerStart', {
-            url: '/learner/start',
+            url: '/learner/learn',
             template: '<learner-view></learner-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Learning'},
             params: {result: null}
@@ -86,7 +91,7 @@ export function config($stateProvider, $urlRouterProvider) {
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Results'}
         })
         .state('resultsCompare', {
-            url: '/results/:testNos/compare',
+            url: '/results/{testNos:string}',
             template: '<results-compare-view></results-compare-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Results > Compare'}
         })
@@ -94,11 +99,6 @@ export function config($stateProvider, $urlRouterProvider) {
             url: '/statistics/{testNos:string}',
             template: '<statistics-compare-view></statistics-compare-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Statistics > Compare'}
-        })
-        .state('adminUsers', {
-            url: '/admin/users',
-            template: '<admin-users-view></admin-users-view>',
-            data: {requiresProject: false, roles: ['ADMIN'], title: 'Admin > Users'}
         })
         .state('tests', {
             url: '/tests/{testId:int}',

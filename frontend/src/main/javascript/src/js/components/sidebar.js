@@ -84,9 +84,9 @@ class Sidebar {
                     {
                         title: 'App Settings',
                         icon: 'fa-gears',
-                        active: () => this.isState('settings'),
+                        active: () => this.isState('adminSettings'),
                         display: () => true,
-                        click: () => $state.go('settings')
+                        click: () => $state.go('adminSettings')
                     },
                     {
                         title: 'User Management',
