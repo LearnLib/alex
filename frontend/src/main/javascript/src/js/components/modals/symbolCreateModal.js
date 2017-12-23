@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {events} from "../../constants";
 import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
 
 /**

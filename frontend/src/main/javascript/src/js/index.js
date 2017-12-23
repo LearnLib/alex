@@ -68,7 +68,7 @@ import {
     learnerSetupSettingsModalHandle,
     learnerSetupSettingsModalComponent
 } from "./components/modals/learnerSetupSettingsModal";
-import {projectSettingsModalHandle, projectSettingsModalComponent} from "./components/modals/projectSettingsModal";
+import {projectEditModalHandle, projectEditModalComponent} from "./components/modals/projectEditModal";
 import {symbolCreateModalHandle, symbolCreateModalComponent} from "./components/modals/symbolCreateModal";
 import {symbolEditModalHandle, symbolEditModalComponent} from "./components/modals/symbolEditModal";
 import {
@@ -107,6 +107,7 @@ import {symbolsTrashView} from "./components/views/symbolsTrashView";
 import {usersSettingsView} from "./components/views/usersSettingsView";
 import {actionForm} from "./components/forms/actions/actionForm";
 import {projectCreateForm} from "./components/forms/projectCreateForm";
+import {projectFormGroups} from "./components/forms/project-form-groups";
 import {symbolEditFormComponent} from "./components/forms/symbolEditForm";
 import {userEditForm} from "./components/forms/userEditForm";
 import {userLoginForm} from "./components/forms/userLoginForm";
@@ -276,8 +277,8 @@ angular
     .component('learnerResultDetailsModal', learnerResultDetailsModalComponent)
     .directive('learnerSetupSettingsModalHandle', learnerSetupSettingsModalHandle)
     .component('learnerSetupSettingsModal', learnerSetupSettingsModalComponent)
-    .directive('projectSettingsModalHandle', projectSettingsModalHandle)
-    .component('projectSettingsModal', projectSettingsModalComponent)
+    .directive('projectEditModalHandle', projectEditModalHandle)
+    .component('projectEditModal', projectEditModalComponent)
     .directive('symbolCreateModalHandle', symbolCreateModalHandle)
     .component('symbolCreateModal', symbolCreateModalComponent)
     .directive('symbolEditModalHandle', symbolEditModalHandle)
@@ -325,6 +326,7 @@ angular
     // forms components
     .component('actionForm', actionForm)
     .component('projectCreateForm', projectCreateForm)
+    .component('projectFormGroups', projectFormGroups)
     .component('userEditForm', userEditForm)
     .component('userLoginForm', userLoginForm)
     .component('nodeFormGroup', nodeFormGroup)

@@ -20,7 +20,7 @@ import {events} from "../../constants";
 /**
  * The controller of the modal window for editing a project.
  */
-export class ProjectSettingsModalComponent {
+export class ProjectEditModalComponent {
 
     /**
      * Constructor.
@@ -97,19 +97,19 @@ export class ProjectSettingsModalComponent {
 }
 
 
-export const projectSettingsModalComponent = {
-    templateUrl: 'html/components/modals/project-settings-modal.html',
+export const projectEditModalComponent = {
+    templateUrl: 'html/components/modals/project-edit-modal.html',
     bindings: {
         dismiss: '&',
         resolve: '='
     },
-    controller: ProjectSettingsModalComponent,
+    controller: ProjectEditModalComponent,
     controllerAs: 'vm',
 };
 
 
 // @ngInject
-export function projectSettingsModalHandle($uibModal, LearnerResource, ToastService) {
+export function projectEditModalHandle($uibModal, LearnerResource, ToastService) {
     return {
         restrict: 'A',
         scope: {
@@ -126,7 +126,7 @@ export function projectSettingsModalHandle($uibModal, LearnerResource, ToastServ
                             ToastService.info('You cannot edit this project because a learning process is still active.');
                         } else {
                             $uibModal.open({
-                                component: 'projectSettingsModal',
+                                component: 'projectEditModal',
                                 resolve: {
                                     modalData: function () {
                                         return {project: new Project(scope.project)};
