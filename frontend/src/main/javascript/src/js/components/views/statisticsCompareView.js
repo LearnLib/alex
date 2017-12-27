@@ -179,7 +179,7 @@ class StatisticsCompareView {
      * @param {string} selector - The selector of the svg.
      */
     downloadChart(selector) {
-        this.PromptService.prompt("Enter a name for the svg file")
+        this.PromptService.prompt('Enter a name for the svg file')
             .then(filename => {
                 this.DownloadService.downloadSvg(selector, false, filename);
             });

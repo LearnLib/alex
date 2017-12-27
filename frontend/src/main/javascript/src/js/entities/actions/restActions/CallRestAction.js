@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Action} from "../Action";
-import {actionType} from "../../../constants";
+import {actionType} from '../../../constants';
+import {Action} from '../Action';
 
 /**
  * Checks in a HTTP response body that is formatted in JSON if a specific attribute exists.
@@ -84,7 +84,7 @@ export class CallRestAction extends Action {
      * @param {string} key - The key of the cookie.
      */
     removeCookie(key) {
-        if (typeof this.cookies[key] !== "undefined") {
+        if (typeof this.cookies[key] !== 'undefined') {
             delete this.cookies[key];
         }
     }
@@ -105,7 +105,7 @@ export class CallRestAction extends Action {
      * @param {string} key - The key of the Http header entry.
      */
     removeHeader(key) {
-        if (typeof this.headers[key] !== "undefined") {
+        if (typeof this.headers[key] !== 'undefined') {
             delete this.headers[key];
         }
     }

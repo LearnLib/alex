@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import forEach from "lodash/forEach";
-import {graphlib, dagre, render as Renderer} from "dagre-d3";
-import {events} from "../constants";
+import {dagre, graphlib, render as Renderer} from 'dagre-d3';
+import forEach from 'lodash/forEach';
+import {events} from '../constants';
 
 // various styles used to style the hypothesis
 const STYLE = {
@@ -103,8 +103,8 @@ class HypothesisComponent {
      * Adjust the size of the svg to the size of the visible container.
      */
     fitSize() {
-        this.svg.setAttribute("width", this.svgContainer.clientWidth);
-        this.svg.setAttribute("height", this.svgContainer.clientHeight);
+        this.svg.setAttribute('width', this.svgContainer.clientWidth);
+        this.svg.setAttribute('height', this.svgContainer.clientHeight);
     }
 
     /**
@@ -148,12 +148,12 @@ class HypothesisComponent {
         this.data.edges.forEach(edge => {
             if (!graph[edge.from]) {
                 graph[edge.from] = {};
-                graph[edge.from][edge.to] = [edge.input + " / " + edge.output];
+                graph[edge.from][edge.to] = [edge.input + ' / ' + edge.output];
             } else {
                 if (!graph[edge.from][edge.to]) {
-                    graph[edge.from][edge.to] = [edge.input + " / " + edge.output];
+                    graph[edge.from][edge.to] = [edge.input + ' / ' + edge.output];
                 } else {
-                    graph[edge.from][edge.to].push(edge.input + " / " + edge.output);
+                    graph[edge.from][edge.to].push(edge.input + ' / ' + edge.output);
                 }
             }
         });
@@ -188,11 +188,11 @@ class HypothesisComponent {
 
         // Center graph horizontally
         const xCenterOffset = (this.svgContainer.clientWidth - this.graph.graph().width) / 2;
-        this.svgGroup.setAttribute("transform", "translate(" + xCenterOffset + ", 100)");
+        this.svgGroup.setAttribute('transform', 'translate(' + xCenterOffset + ', 100)');
 
         // adjust marker ids so that they are still visible after the export
         forEach(this.svg.querySelectorAll('.path'), path => {
-            const markerId = "#" + path.getAttribute('marker-end').split(')')[0].split('#')[1];
+            const markerId = '#' + path.getAttribute('marker-end').split(')')[0].split('#')[1];
             path.setAttribute('marker-end', `url(${markerId})`);
         });
     }
@@ -222,7 +222,7 @@ class HypothesisComponent {
         const zoom = d3.behavior.zoom()
             .scaleExtent([0.1, 10])
             .translate([(this.svgContainer.clientWidth - this.graph.graph().width) / 2, 100])
-            .on("zoom", () => {
+            .on('zoom', () => {
                 this.svgGroup.setAttribute('transform', `translate(${zoom.translate()}) scale(${zoom.scale()})`);
             });
 

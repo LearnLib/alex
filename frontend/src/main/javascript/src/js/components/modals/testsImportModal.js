@@ -50,7 +50,7 @@ export const testsImportModal = {
         fileLoaded(data) {
             try {
                 const tests = JSON.parse(data);
-                if (!tests.length) throw "The file does not seem to contain any tests";
+                if (!tests.length) throw 'The file does not seem to contain any tests';
                 this.tests = tests;
                 this.errorMessage = null;
             } catch (exception) {
@@ -91,7 +91,7 @@ export const testsImportModal = {
                                 } else {
                                     prepareTestSuite(test, null);
                                 }
-                            })
+                            });
                         };
 
                         for (let test of tests) {
@@ -109,7 +109,7 @@ export const testsImportModal = {
                     .catch(err => this.errorMessage = err.data.message);
 
             } else {
-                this.errorMessage = "There aren't any tests to import";
+                this.errorMessage = 'There aren\'t any tests to import';
             }
         }
     }

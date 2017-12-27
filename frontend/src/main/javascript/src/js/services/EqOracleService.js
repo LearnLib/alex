@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-import {eqOracleType} from "../constants";
-import {RandomEqOracle, CompleteEqOracle, SampleEqOracle, WMethodEqOracle, HypothesisEqOracle} from "../entities/EqOracle";
+import {eqOracleType} from '../constants';
+import {
+    CompleteEqOracle, HypothesisEqOracle, RandomEqOracle, SampleEqOracle,
+    WMethodEqOracle
+} from '../entities/EqOracle';
 
 /**
  * The service to create new eq oracles.

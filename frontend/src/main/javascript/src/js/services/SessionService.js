@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {events} from "../constants";
-import {User} from "../entities/User";
-import {Project} from "../entities/Project";
+import {events} from '../constants';
+import {Project} from '../entities/Project';
+import {User} from '../entities/User';
 
 /**
  * The session that is used in this application to save data in the session storage of the browser to store data in

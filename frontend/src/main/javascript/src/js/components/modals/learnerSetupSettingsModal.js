@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {LearnConfiguration} from "../../entities/LearnConfiguration";
-import {learnAlgorithm, eqOracleType} from "../../constants";
+import {eqOracleType, learnAlgorithm} from '../../constants';
+import {LearnConfiguration} from '../../entities/LearnConfiguration';
 
 /**
  * The controller for the modal dialog where you can set the settings for an upcoming test run.
@@ -89,7 +89,6 @@ export class LearnerSetupSettingsModalComponent {
         }
     }
 
-
     /**
      * Sets the Eq Oracle of the learn configuration depending on the selected value.
      */
@@ -113,7 +112,6 @@ export class LearnerSetupSettingsModalComponent {
     }
 }
 
-
 export const learnerSetupSettingsModalComponent = {
     templateUrl: 'html/components/modals/learner-setup-settings-modal.html',
     bindings: {
@@ -124,7 +122,6 @@ export const learnerSetupSettingsModalComponent = {
     controller: LearnerSetupSettingsModalComponent,
     controllerAs: 'vm',
 };
-
 
 /**
  * The directive that handles the opening of the modal dialog for manipulating a learn configuration. Can only be

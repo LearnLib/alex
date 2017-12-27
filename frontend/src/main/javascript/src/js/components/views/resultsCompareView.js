@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {LearnResult} from "../../entities/LearnResult";
+import {LearnResult} from '../../entities/LearnResult';
 
 /**
  * The controller that handles the page for displaying multiple complete learn results in a slide show.
@@ -73,7 +73,7 @@ class ResultsCompareView {
         // load all final learn results of all test an then load the complete test results from the test numbers
         // that are passed from the url in the panels
         if (!$stateParams.testNos) {
-            this.ErrorService.setErrorMessage("There are no test numbers defined in the URL");
+            this.ErrorService.setErrorMessage('There are no test numbers defined in the URL');
         } else {
             const testNos = $stateParams.testNos.split(',');
             this.LearnResultResource.getAll(this.project.id)
@@ -131,8 +131,8 @@ class ResultsCompareView {
 
         this.LearnerResource.getSeparatingWord(hypA, hypB)
             .then(data => {
-                if (data.separatingWord === "") {
-                    this.ToastService.info("The two hypotheses are identical");
+                if (data.separatingWord === '') {
+                    this.ToastService.info('The two hypotheses are identical');
                 } else {
                     this.$uibModal.open({
                         template: `
@@ -153,7 +153,7 @@ class ResultsCompareView {
                             this.close = () => $uibModalInstance.close();
                         },
                         controllerAs: 'vm',
-                    })
+                    });
                 }
             })
             .catch(err => this.ToastService.danger(err.data.message));
@@ -176,9 +176,9 @@ class ResultsCompareView {
         this.LearnerResource.getDifferenceTree(hypLeft, hypRight)
             .then(data => {
                 if (data.edges.length === 0) {
-                    this.ToastService.info("Cannot find a difference.");
+                    this.ToastService.info('Cannot find a difference.');
                 } else {
-                    this.panels.push({hypothesis: data, steps: [{hypothesis: data}]})
+                    this.panels.push({hypothesis: data, steps: [{hypothesis: data}]});
                 }
             })
             .catch(err => this.ToastService.danger(err.data.message));

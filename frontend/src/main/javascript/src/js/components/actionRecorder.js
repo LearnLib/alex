@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import uniqueId from "lodash/uniqueId";
-import {DomUtils} from "../utils/dom-utils";
+import uniqueId from 'lodash/uniqueId';
+import {DomUtils} from '../utils/dom-utils';
 
 /**
  * The actual HTML element picker. Handles the complete window including the selection of elements and loading
@@ -179,7 +179,7 @@ class ActionRecorder {
      * @param e - js event
      */
     handleClick(e) {
-        if (typeof e !== "undefined") {
+        if (typeof e !== 'undefined') {
             e.preventDefault();
             e.stopPropagation();
         }

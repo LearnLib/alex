@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Action} from "../Action";
-import {actionType} from "../../../constants";
+import {actionType} from '../../../constants';
+import {Action} from '../Action';
 
 /**
  * Searches for a string value in the body of an HTTP response.

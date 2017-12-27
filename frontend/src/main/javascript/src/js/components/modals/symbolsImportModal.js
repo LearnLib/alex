@@ -1,5 +1,5 @@
-import uniqueId from "lodash/uniqueId";
-import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
+import uniqueId from 'lodash/uniqueId';
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 
 /**
  * The component for the symbols import modal window.
@@ -108,7 +108,7 @@ export function symbolsImportModalHandle($uibModal) {
                     size: 'lg',
                 }).result.then(symbols => {
                     scope.onImported({symbols});
-                })
+                });
             });
         }
     };

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Action} from "../Action";
-import {actionType} from "../../../constants";
+import {actionType} from '../../../constants';
+import {Action} from '../Action';
 
 /**
  * Checks if a property of a JSON object in a HTTP response body has a specific value or matches a regular

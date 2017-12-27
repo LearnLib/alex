@@ -63,7 +63,6 @@ export class ActionEditModalComponent {
     }
 }
 
-
 export const actionEditModalComponent = {
     templateUrl: 'html/components/modals/action-edit-modal.html',
     bindings: {
@@ -74,7 +73,6 @@ export const actionEditModalComponent = {
     controller: ActionEditModalComponent,
     controllerAs: 'vm',
 };
-
 
 /**
  * The directive that is used to handle the modal dialog for editing an action. Must be used as an attribute for the

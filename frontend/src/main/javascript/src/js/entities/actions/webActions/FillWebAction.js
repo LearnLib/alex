@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Action} from "../Action";
-import {actionType} from "../../../constants";
+import {actionType} from '../../../constants';
+import {Action} from '../Action';
 
 /**
  * Fills an input element with a value.

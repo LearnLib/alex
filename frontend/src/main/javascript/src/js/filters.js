@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm, eqOracleType, userRole, webBrowser} from "./constants";
+import {eqOracleType, learnAlgorithm, userRole, webBrowser} from './constants';
 
 /**
  * The filter to format a EQ type constant to something more readable.
@@ -56,9 +56,8 @@ export function sortTests() {
         testCases.sort(compare);
 
         return testSuites.concat(testCases);
-    }
+    };
 }
-
 
 /**
  * The filter to format a user role.
@@ -77,7 +76,6 @@ export function formatUserRole() {
         }
     };
 }
-
 
 /**
  * Formats the web browser dictionary.
@@ -104,7 +102,6 @@ export function formatWebBrowser() {
         }
     };
 }
-
 
 /**
  * The filter to format a learn algorithm name to something more readable.

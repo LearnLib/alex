@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {DateUtils} from "../utils/date-utils";
+import {DateUtils} from '../utils/date-utils';
 
 /**
  * Displays a test result.

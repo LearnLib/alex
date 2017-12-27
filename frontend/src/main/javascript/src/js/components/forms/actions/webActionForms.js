@@ -121,7 +121,7 @@ export const actionFormCheckNodeAttributeValue = {
         action: '='
     },
     controllerAs: 'vm',
-    controller: function() {
+    controller: function () {
         this.checkMethods = ['IS', 'CONTAINS', 'MATCHES'];
     }
 };

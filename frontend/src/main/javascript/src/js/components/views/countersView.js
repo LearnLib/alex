@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import remove from "lodash/remove";
+import remove from 'lodash/remove';
 
 /**
  * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.
@@ -59,7 +59,6 @@ class CountersView {
             })
             .catch(err => console.log(err));
     }
-
 
     /**
      * Delete a counter from the server and on success from scope.

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Action} from "../Action";
-import {actionType} from "../../../constants";
+import {actionType} from '../../../constants';
+import {Action} from '../Action';
 
 /**
  * Action that, given a regular expression, searches in the page source for matches.
@@ -47,13 +47,13 @@ export class SetVariableByRegexGroup extends Action {
          * Which match should be used.
          * @type {number}
          */
-        this.nthMatch = typeof obj.nthMatch !== "undefined" ? obj.nthMatch : 1;
+        this.nthMatch = typeof obj.nthMatch !== 'undefined' ? obj.nthMatch : 1;
 
         /**
          * Which group in the match should be used.
          * @type {number}
          */
-        this.mthGroup = typeof obj.mthGroup !== "undefined" ? obj.mthGroup : 0;
+        this.mthGroup = typeof obj.mthGroup !== 'undefined' ? obj.mthGroup : 0;
     }
 
     /**

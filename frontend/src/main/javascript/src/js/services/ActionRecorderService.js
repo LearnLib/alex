@@ -42,7 +42,7 @@ export class ActionRecorderService {
      */
     open() {
         // make sure the action recorder is not opened twice.
-        if (document.getElementById("action-recorder") !== null) {
+        if (document.getElementById('action-recorder') !== null) {
             return;
         }
 

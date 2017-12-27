@@ -87,11 +87,10 @@ export class ResultListModalComponent {
                 }
             });
         } catch (e) {
-            this.ToastService.danger('Could not parse the file.')
+            this.ToastService.danger('Could not parse the file.');
         }
     }
 }
-
 
 export const resultListModalComponent = {
     templateUrl: 'html/components/modals/result-list-modal.html',
@@ -103,7 +102,6 @@ export const resultListModalComponent = {
     controller: ResultListModalComponent,
     controllerAs: 'vm',
 };
-
 
 // @ngInject
 export function resultListModalHandle($uibModal) {

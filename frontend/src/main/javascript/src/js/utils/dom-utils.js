@@ -33,15 +33,16 @@ export class DomUtils {
                 names.unshift('#' + el.id);
                 break;
             } else {
-                if (el == el.ownerDocument.documentElement) names.unshift(el.tagName);
-                else {
+                if (el == el.ownerDocument.documentElement) {
+                    names.unshift(el.tagName);
+                } else {
                     for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++) ;
-                    names.unshift(el.tagName + ":nth-child(" + c + ")");
+                    names.unshift(el.tagName + ':nth-child(' + c + ')');
                 }
                 el = el.parentNode;
             }
         }
-        return names.join(" > ");
+        return names.join(' > ');
     }
 
     /**
@@ -57,14 +58,15 @@ export class DomUtils {
                 names.unshift('//' + el.nodeName.toLowerCase() + '[@id=\'' + el.id + '\']');
                 break;
             } else {
-                if (el == el.ownerDocument.documentElement) names.unshift(el.tagName);
-                else {
+                if (el == el.ownerDocument.documentElement) {
+                    names.unshift(el.tagName);
+                } else {
                     for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++) ;
                     names.unshift(el.nodeName.toLowerCase() + '[' + c + ']');
                 }
                 el = el.parentNode;
             }
         }
-        return names.join("/");
+        return names.join('/');
     }
 }

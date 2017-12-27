@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {events} from "../../constants";
+import {events} from '../../constants';
 
 /**
  * The controller that shows the page to manage projects.

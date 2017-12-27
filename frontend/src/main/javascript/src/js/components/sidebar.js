@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {events} from "../constants";
+import {events} from '../constants';
 
 /**
  * The controller for the sidebar.
@@ -50,7 +50,7 @@ class Sidebar {
          * Indicator for the collapsed state.
          * @type {boolean}
          */
-        this.collapsed = sessionStorage.getItem('sidebarCollapsed') === "true";
+        this.collapsed = sessionStorage.getItem('sidebarCollapsed') === 'true';
 
         /**
          * The item groups
@@ -206,7 +206,6 @@ class Sidebar {
 
         this.updateLayout();
     }
-
 
     /** Removes the project object from the session and redirect to the start page. */
     closeProject() {

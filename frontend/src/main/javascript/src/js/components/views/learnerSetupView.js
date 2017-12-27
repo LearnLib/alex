@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import flatten from "lodash/flatten";
-import {LearnConfiguration} from "../../entities/LearnConfiguration";
+import flatten from 'lodash/flatten';
+import {LearnConfiguration} from '../../entities/LearnConfiguration';
 
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
@@ -89,7 +89,9 @@ class LearnerSetupView {
         this.canContinueLearnProcess = false;
 
         SettingsResource.getSupportedWebDrivers()
-            .then(data => {this.learnConfiguration.driverConfig.name = data.defaultWebDriver})
+            .then(data => {
+                this.learnConfiguration.driverConfig.name = data.defaultWebDriver;
+            })
             .catch(console.log);
 
         // make sure that there isn't any other learn process active

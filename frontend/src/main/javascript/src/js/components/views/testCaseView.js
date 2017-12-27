@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {webBrowser} from "../../constants";
-import {DriverConfigService} from "../../services/DriverConfigService";
+import {webBrowser} from '../../constants';
+import {DriverConfigService} from '../../services/DriverConfigService';
 
 export const testCaseView = {
     templateUrl: 'html/components/views/test-case-view.html',
@@ -125,8 +125,8 @@ export const testCaseView = {
             const test = JSON.parse(JSON.stringify(this.testCase));
             test.symbols = test.symbols.map(s => s.id);
             this.TestResource.update(test)
-                .then(() => this.ToastService.success("The test case has been updated."))
-                .catch(err => this.ToastService.danger("The test case could not be updated. " + err.data.message));
+                .then(() => this.ToastService.success('The test case has been updated.'))
+                .catch(err => this.ToastService.danger('The test case could not be updated. ' + err.data.message));
         }
 
         /**
@@ -134,14 +134,14 @@ export const testCaseView = {
          */
         execute() {
             if (!this.testCase.symbols.length) {
-                this.ToastService.info("You have to create at least one symbol.");
+                this.ToastService.info('You have to create at least one symbol.');
                 return;
             }
 
             this.result = null;
             this.TestResource.execute(this.testCase, this.browserConfig)
                 .then(data => this.result = data[this.testCase.id])
-                .catch(err => this.ToastService.info("The test case could not be executed. " + err.data.message));
+                .catch(err => this.ToastService.info('The test case could not be executed. ' + err.data.message));
         }
 
         openBrowserConfigModal() {
@@ -155,9 +155,9 @@ export const testCaseView = {
                     }
                 }
             }).result.then(data => {
-                this.ToastService.success("The settings have been updated.");
+                this.ToastService.success('The settings have been updated.');
                 this.browserConfig = data;
-            })
+            });
         }
     }
 };

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from "./AlphabetSymbol";
+import {AlphabetSymbol} from './AlphabetSymbol';
 
 /**
  * The model for symbol group.

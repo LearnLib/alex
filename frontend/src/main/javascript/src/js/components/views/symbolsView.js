@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import flatten from "lodash/flatten";
-import remove from "lodash/remove";
-import {events} from "../../constants";
-import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
-import {DateUtils} from "../../utils/date-utils";
+import flatten from 'lodash/flatten';
+import remove from 'lodash/remove';
+import {events} from '../../constants';
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
+import {DateUtils} from '../../utils/date-utils';
 
 /**
  * The controller that handles CRUD operations on symbols and symbol groups.
@@ -242,7 +242,7 @@ class SymbolsView {
     exportSelectedSymbols() {
         if (this.selectedSymbols.length > 0) {
             const name = 'symbols-' + DateUtils.YYYYMMDD();
-            this.PromptService.prompt("Enter a name for the json file", name)
+            this.PromptService.prompt('Enter a name for the json file', name)
                 .then(filename => {
                     const symbolsToExport = this.selectedSymbols.map(s => s.getExportableSymbol());
                     this.DownloadService.downloadObject(symbolsToExport, filename);
@@ -261,7 +261,7 @@ class SymbolsView {
         if (symbol) {
             this.copySymbol(symbol);
         } else {
-            this.ToastService.info("You have to select a symbol to copy it");
+            this.ToastService.info('You have to select a symbol to copy it');
         }
     }
 
@@ -293,7 +293,7 @@ class SymbolsView {
                         return this.SymbolResource.update(data)
                             .then(data => {
                                 this.addSymbol(data);
-                                this.ToastService.success("The symbol has been copied.");
+                                this.ToastService.success('The symbol has been copied.');
                             });
                     })
                     .catch(err => this.ToastService.danger(`The symbol could not be created. ${err.data.message}`));

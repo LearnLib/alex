@@ -56,7 +56,6 @@ export class LearnerResultDetailsModalComponent {
     }
 }
 
-
 export const learnerResultDetailsModalComponent = {
     templateUrl: 'html/components/modals/learner-result-details-modal.html',
     bindings: {
@@ -66,7 +65,6 @@ export const learnerResultDetailsModalComponent = {
     controller: LearnerResultDetailsModalComponent,
     controllerAs: 'vm',
 };
-
 
 /**
  * The directive that handles the modal dialog for displaying details about a learn result. Can only be used as

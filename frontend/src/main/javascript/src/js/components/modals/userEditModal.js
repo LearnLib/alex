@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {User} from "../../entities/User";
-import {userRole} from "../../constants";
+import {userRole} from '../../constants';
+import {User} from '../../entities/User';
 
 /**
  * The controller for the modal window that handles editing a user.
@@ -148,7 +148,6 @@ export class UserEditModalComponent {
     }
 }
 
-
 export const userEditModalComponent = {
     templateUrl: 'html/components/modals/user-edit-modal.html',
     bindings: {
@@ -158,7 +157,6 @@ export const userEditModalComponent = {
     controller: UserEditModalComponent,
     controllerAs: 'vm',
 };
-
 
 /**
  * The directive that opens the modal window for editing a user.

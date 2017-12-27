@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {actionType} from "../../../constants";
-import {Action} from "../Action";
+import {actionType} from '../../../constants';
+import {Action} from '../Action';
 
 /**
  * The action to execute a piece of JavaScript in the web browser.
@@ -50,7 +50,7 @@ export class ExecuteScriptAction extends Action {
      */
     toString() {
         let output = 'Execute JavaScript in the browser';
-        if (this.name && this.name.trim() !== "") {
+        if (this.name && this.name.trim() !== '') {
             output += ` and store the result in variable "${this.name}"`;
         }
         return output;

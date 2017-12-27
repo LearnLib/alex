@@ -21,7 +21,7 @@
 export function config($stateProvider, $urlRouterProvider) {
 
     // redirect to the start page when no other route fits
-    $urlRouterProvider.otherwise("/home");
+    $urlRouterProvider.otherwise('/home');
 
     $stateProvider
         .state('home', {
@@ -137,7 +137,7 @@ export function config($stateProvider, $urlRouterProvider) {
 export function run($rootScope, $state, SessionService, ToastService) {
 
     // route validation
-    $rootScope.$on("$stateChangeStart", stateChangeStart);
+    $rootScope.$on('$stateChangeStart', stateChangeStart);
 
     function stateChangeStart(event, toState) {
         if (toState.data) {
@@ -147,12 +147,12 @@ export function run($rootScope, $state, SessionService, ToastService) {
             document.querySelector('title').innerHTML = 'ALEX | ' + toState.data.title;
 
             if ((toState.data.roles && (user === null
-                || toState.data.roles.indexOf(user.role) === -1))
+                    || toState.data.roles.indexOf(user.role) === -1))
                 || (toState.data.requiresProject && project === null)) {
 
                 ToastService.danger('You are not allowed to go to this page!');
 
-                $state.go("home");
+                $state.go('home');
                 event.preventDefault();
             }
         }

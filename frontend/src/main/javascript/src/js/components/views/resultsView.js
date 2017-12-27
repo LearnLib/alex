@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import remove from "lodash/remove";
+import remove from 'lodash/remove';
 
 /**
  * The controller for listing all final test results.
@@ -72,7 +72,7 @@ class ResultsView {
      * @param {LearnResult} result - The test result that should be deleted.
      */
     deleteResult(result) {
-        this.PromptService.confirm("Do you want to permanently delete this result? Changes cannot be undone.")
+        this.PromptService.confirm('Do you want to permanently delete this result? Changes cannot be undone.')
             .then(() => {
                 this.LearnResultResource.remove(result)
                     .then(() => {
@@ -90,7 +90,7 @@ class ResultsView {
      */
     deleteResults() {
         if (this.selectedResults.length > 0) {
-            this.PromptService.confirm("Do you want to permanently delete theses results? Changes cannot be undone.")
+            this.PromptService.confirm('Do you want to permanently delete theses results? Changes cannot be undone.')
                 .then(() => {
                     this.LearnResultResource.removeMany(this.selectedResults)
                         .then(() => {

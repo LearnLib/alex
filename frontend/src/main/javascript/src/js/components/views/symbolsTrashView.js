@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import remove from "lodash/remove";
+import remove from 'lodash/remove';
 
 /**
  * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover

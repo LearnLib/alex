@@ -14,180 +14,152 @@
  * limitations under the License.
  */
 
-import angularDragula from "angular-dragula";
-import ngFileUpload from "ng-file-upload";
-import angularJwt from "angular-jwt";
-import uiBootstrap from "angular-ui-bootstrap";
-import uiRouter from "@uirouter/angularjs";
-import toastr from "angular-toastr";
-import ngAnimate from "angular-animate";
-import ngMessages from "angular-messages";
-import * as config from "./config";
-import * as routes from "./routes";
-import * as constant from "./constants";
-import {CounterResource} from "./resources/CounterResource";
-import {FileResource} from "./resources/FileResource";
-import {LearnerResource} from "./resources/LearnerResource";
-import {LearnResultResource} from "./resources/LearnResultResource";
-import {ProjectResource} from "./resources/ProjectResource";
-import {SettingsResource} from "./resources/SettingsResource";
-import {SymbolGroupResource} from "./resources/SymbolGroupResource";
-import {SymbolResource} from "./resources/SymbolResource";
-import {UserResource} from "./resources/UserResource";
-import {ActionService} from "./services/ActionService";
-import {ClipboardService} from "./services/ClipboardService";
-import {TestResource} from "./resources/TestResource";
-import {ErrorService} from "./services/ErrorService";
-import {EventBus} from "./services/EventBus";
-import {EqOracleService} from "./services/EqOracleService";
-import {LearningAlgorithmService} from "./services/LearningAlgorithmService";
-import {DownloadService} from "./services/DownloadService";
-import {LearnerResultChartService} from "./services/LearnerResultChartService";
-import {PromptService} from "./services/PromptService";
-import {SessionService} from "./services/SessionService";
-import {ToastService} from "./services/ToastService";
-import {LearnerResultDownloadService} from "./services/LearnerResultDownloadService";
-import {HtmlElementPickerService} from "./services/HtmlElementPickerService";
-import {formatAlgorithm, formatEqOracle, formatMilliseconds, formatUserRole, formatWebBrowser, sortTests} from "./filters";
-import {actionCreateModalHandle, actionCreateModalComponent} from "./components/modals/actionCreateModal";
-import {actionEditModalHandle, actionEditModalComponent} from "./components/modals/actionEditModal";
-import {actionRecorderActionsModal} from "./components/modals/actionRecorderActionsModal";
-import {actionRecorderComponent} from "./components/actionRecorder";
-import {ActionRecorderService} from "./services/ActionRecorderService";
-import {counterCreateModal} from "./components/modals/counterCreateModal";
+import uiRouter from '@uirouter/angularjs';
+import ngAnimate from 'angular-animate';
+import angularDragula from 'angular-dragula';
+import angularJwt from 'angular-jwt';
+import ngMessages from 'angular-messages';
+import toastr from 'angular-toastr';
+import uiBootstrap from 'angular-ui-bootstrap';
+import ngFileUpload from 'ng-file-upload';
+import {actionSearchForm} from './components/acionSearchForm';
+import {actionBar} from './components/actionBar';
+import {actionRecorderComponent} from './components/actionRecorder';
+import {alex} from './components/alex';
+import {checkbox, checkboxMultiple} from './components/checkbox';
+import {discriminationTree} from './components/discriminationTree';
+import {fileDropzone} from './components/fileDropzone';
+import {actionForm} from './components/forms/actions/actionForm';
 import {
-    hypothesisLayoutSettingsModalHandle,
-    hypothesisLayoutSettingsModalComponent
-} from "./components/modals/hypothesisLayoutSettingsModal";
-import {browserConfigModal} from "./components/modals/browserConfigModal";
-import {
-    learnerResultDetailsModalHandle,
-    learnerResultDetailsModalComponent
-} from "./components/modals/learnerResultDetailsModal";
-import {
-    learnerSetupSettingsModalHandle,
-    learnerSetupSettingsModalComponent
-} from "./components/modals/learnerSetupSettingsModal";
-import {projectEditModalHandle, projectEditModalComponent} from "./components/modals/projectEditModal";
-import {symbolCreateModalHandle, symbolCreateModalComponent} from "./components/modals/symbolCreateModal";
-import {symbolEditModalHandle, symbolEditModalComponent} from "./components/modals/symbolEditModal";
-import {
-    symbolGroupCreateModalHandle,
-    symbolGroupCreateModalComponent
-} from "./components/modals/symbolGroupCreateModal";
-import {symbolsImportModalHandle, symbolsImportModalComponent} from "./components/modals/symbolsImportModal";
-import {symbolGroupEditModalHandle, symbolGroupEditModalComponent} from "./components/modals/symbolGroupEditModal";
-import {symbolMoveModalHandle, symbolMoveModalComponent} from "./components/modals/symbolMoveModal";
-import {userEditModalHandle, userEditModalComponent} from "./components/modals/userEditModal";
-import {resultListModalHandle, resultListModalComponent} from "./components/modals/resultListModal";
-import {promptModalComponent} from "./components/modals/promptModal";
-import {confirmModalComponent} from "./components/modals/confirmModal";
-import {testsImportModal} from "./components/modals/testsImportModal";
-import {htmlElementPickerHandle} from "./directives/htmlElementPickerHandle";
-import {aboutView} from "./components/views/aboutView";
-import {adminUsersView} from "./components/views/adminUsersView";
-import {countersView} from "./components/views/countersView";
-import {errorView} from "./components/views/errorView";
-import {filesView} from "./components/views/filesView";
-import {homeView} from "./components/views/homeView";
-import {learnerSetupView} from "./components/views/learnerSetupView";
-import {learnerView} from "./components/views/learnerView";
-import {projectsView} from "./components/views/projectsView";
-import {projectsDashboardView} from "./components/views/projectsDashboardView";
-import {resultsCompareView} from "./components/views/resultsCompareView";
-import {resultsView} from "./components/views/resultsView";
-import {adminSettingsView} from "./components/views/adminSettingsView";
-import {statisticsCompareView} from "./components/views/statisticsCompareView";
-import {symbolsActionsView} from "./components/views/symbolsActionsView";
-import {symbolsView} from "./components/views/symbolsView";
-import {testsView} from "./components/views/testsView";
-import {testCaseView} from "./components/views/testCaseView";
-import {testSuiteView} from "./components/views/testSuiteView";
-import {symbolsTrashView} from "./components/views/symbolsTrashView";
-import {usersSettingsView} from "./components/views/usersSettingsView";
-import {actionForm} from "./components/forms/actions/actionForm";
-import {projectCreateForm} from "./components/forms/projectCreateForm";
-import {projectFormGroups} from "./components/forms/project-form-groups";
-import {symbolEditFormComponent} from "./components/forms/symbolEditForm";
-import {userEditForm} from "./components/forms/userEditForm";
-import {userLoginForm} from "./components/forms/userLoginForm";
-import {browserConfigForm} from "./components/forms/browserConfigForm";
-import {widget} from "./components/widgets/widget";
-import {projectDetailsWidget} from "./components/widgets/projectDetailsWidget";
-import {learnResumeSettingsWidget} from "./components/widgets/learnResumeSettingsWidget";
-import {learnerStatusWidget} from "./components/widgets/learnerStatusWidget";
-import {latestLearnResultWidget} from "./components/widgets/latestLearnResultWidget";
-import {counterexamplesWidget} from "./components/widgets/counterexamplesWidget";
-import {alex} from "./components/alex";
-import {actionBar} from "./components/actionBar";
-import {checkbox, checkboxMultiple} from "./components/checkbox";
-import {fileDropzone} from "./components/fileDropzone";
-import {loadScreen} from "./components/loadScreen";
-import {projectList} from "./components/projectList";
-import {sidebar} from "./components/sidebar";
-import {viewHeader} from "./components/viewHeader";
-import {responsiveIframe} from "./components/responsiveIframe";
-import {learnResultPanel} from "./components/learnResultPanel";
-import {observationTable} from "./components/observationTable";
-import {symbolListItem} from "./components/symbolListItem";
-import {symbolGroupListItem} from "./components/symbolGroupListItem";
-import {learnResultListItem} from "./components/learnResultListItem";
-import {hypothesis} from "./components/hypothesis";
-import {discriminationTree} from "./components/discriminationTree";
-import {htmlElementPicker} from "./components/htmlElementPicker";
-import {nodeFormGroup} from "./components/forms/nodeFormGroup";
-import {testResultReport} from "./components/testResultReport";
-import {testTree, testCaseNode, testSuiteNode} from "./components/testTree";
-import {actionSearchForm} from "./components/acionSearchForm";
-import {
-    actionFormAlertAcceptDismiss,
-    actionFormAlertGetText,
-    actionFormAlertSendKeys,
-    actionFormCheckForNode,
-    actionFormCheckForText,
-    actionFormCheckPageTitle,
-    actionFormClearInput,
-    actionFormClick,
-    actionFormClickLinkByText,
-    actionFormExecuteScript,
-    actionFormMoveMouse,
-    actionFormOpen,
-    actionFormSelect,
-    actionFormSendKeys,
-    actionFormSubmit,
-    actionFormWaitForNode,
-    actionFormWaitForTitle,
-    actionFormPressKey,
-    actionFormCheckNodeAttributeValue,
-    actionFormWaitForText,
-    actionFormWaitForNodeAttribute,
-    actionFormSwitchTo,
-    actionFormSwitchToFrame
-} from "./components/forms/actions/webActionForms";
-import {
-    actionFormCall,
-    actionFormCheckAttributeExists,
-    actionFormCheckAttributeType,
-    actionFormCheckAttributeValue,
-    actionFormCheckHeaderField,
-    actionFormCheckHttpBody,
-    actionFormCheckStatus,
-    actionFormValidateJson
-} from "./components/forms/actions/restActionForms";
-import {
-    actionFormAssertCounter,
-    actionFormAssertVariable,
-    actionFormIncrementCounter,
-    actionFormSetCounter,
-    actionFormSetVariable,
-    actionFormSetVariableByCookie,
-    actionFormSetVariableByHtml,
-    actionFormSetVariableByJson,
-    actionFormSetVariableByNodeAttribute,
-    actionFormSetVariableByNodeCount,
-    actionFormSetVariableByRegexGroup,
+    actionFormAssertCounter, actionFormAssertVariable, actionFormIncrementCounter, actionFormSetCounter,
+    actionFormSetVariable, actionFormSetVariableByCookie, actionFormSetVariableByHtml, actionFormSetVariableByJson,
+    actionFormSetVariableByNodeAttribute, actionFormSetVariableByNodeCount, actionFormSetVariableByRegexGroup,
     actionFormWait
-} from "./components/forms/actions/generalActionForms";
+} from './components/forms/actions/generalActionForms';
+import {
+    actionFormCall, actionFormCheckAttributeExists, actionFormCheckAttributeType, actionFormCheckAttributeValue,
+    actionFormCheckHeaderField, actionFormCheckHttpBody, actionFormCheckStatus, actionFormValidateJson
+} from './components/forms/actions/restActionForms';
+import {
+    actionFormAlertAcceptDismiss, actionFormAlertGetText, actionFormAlertSendKeys, actionFormCheckForNode,
+    actionFormCheckForText, actionFormCheckNodeAttributeValue, actionFormCheckPageTitle, actionFormClearInput,
+    actionFormClick, actionFormClickLinkByText, actionFormExecuteScript, actionFormMoveMouse, actionFormOpen,
+    actionFormPressKey, actionFormSelect, actionFormSendKeys, actionFormSubmit, actionFormSwitchTo,
+    actionFormSwitchToFrame, actionFormWaitForNode, actionFormWaitForNodeAttribute, actionFormWaitForText,
+    actionFormWaitForTitle
+} from './components/forms/actions/webActionForms';
+import {browserConfigForm} from './components/forms/browserConfigForm';
+import {nodeFormGroup} from './components/forms/nodeFormGroup';
+import {projectFormGroups} from './components/forms/project-form-groups';
+import {projectCreateForm} from './components/forms/projectCreateForm';
+import {symbolEditFormComponent} from './components/forms/symbolEditForm';
+import {userEditForm} from './components/forms/userEditForm';
+import {userLoginForm} from './components/forms/userLoginForm';
+import {htmlElementPicker} from './components/htmlElementPicker';
+import {hypothesis} from './components/hypothesis';
+import {learnResultListItem} from './components/learnResultListItem';
+import {learnResultPanel} from './components/learnResultPanel';
+import {loadScreen} from './components/loadScreen';
+import {actionCreateModalComponent, actionCreateModalHandle} from './components/modals/actionCreateModal';
+import {actionEditModalComponent, actionEditModalHandle} from './components/modals/actionEditModal';
+import {actionRecorderActionsModal} from './components/modals/actionRecorderActionsModal';
+import {browserConfigModal} from './components/modals/browserConfigModal';
+import {confirmModalComponent} from './components/modals/confirmModal';
+import {counterCreateModal} from './components/modals/counterCreateModal';
+import {
+    hypothesisLayoutSettingsModalComponent,
+    hypothesisLayoutSettingsModalHandle
+} from './components/modals/hypothesisLayoutSettingsModal';
+import {
+    learnerResultDetailsModalComponent,
+    learnerResultDetailsModalHandle
+} from './components/modals/learnerResultDetailsModal';
+import {
+    learnerSetupSettingsModalComponent,
+    learnerSetupSettingsModalHandle
+} from './components/modals/learnerSetupSettingsModal';
+import {projectEditModalComponent, projectEditModalHandle} from './components/modals/projectEditModal';
+import {promptModalComponent} from './components/modals/promptModal';
+import {resultListModalComponent, resultListModalHandle} from './components/modals/resultListModal';
+import {symbolCreateModalComponent, symbolCreateModalHandle} from './components/modals/symbolCreateModal';
+import {symbolEditModalComponent, symbolEditModalHandle} from './components/modals/symbolEditModal';
+import {
+    symbolGroupCreateModalComponent,
+    symbolGroupCreateModalHandle
+} from './components/modals/symbolGroupCreateModal';
+import {symbolGroupEditModalComponent, symbolGroupEditModalHandle} from './components/modals/symbolGroupEditModal';
+import {symbolMoveModalComponent, symbolMoveModalHandle} from './components/modals/symbolMoveModal';
+import {symbolsImportModalComponent, symbolsImportModalHandle} from './components/modals/symbolsImportModal';
+import {testsImportModal} from './components/modals/testsImportModal';
+import {userEditModalComponent, userEditModalHandle} from './components/modals/userEditModal';
+import {observationTable} from './components/observationTable';
+import {projectList} from './components/projectList';
+import {responsiveIframe} from './components/responsiveIframe';
+import {sidebar} from './components/sidebar';
+import {symbolGroupListItem} from './components/symbolGroupListItem';
+import {symbolListItem} from './components/symbolListItem';
+import {testResultReport} from './components/testResultReport';
+import {testCaseNode, testSuiteNode, testTree} from './components/testTree';
+import {viewHeader} from './components/viewHeader';
+import {aboutView} from './components/views/aboutView';
+import {adminSettingsView} from './components/views/adminSettingsView';
+import {adminUsersView} from './components/views/adminUsersView';
+import {countersView} from './components/views/countersView';
+import {errorView} from './components/views/errorView';
+import {filesView} from './components/views/filesView';
+import {homeView} from './components/views/homeView';
+import {learnerSetupView} from './components/views/learnerSetupView';
+import {learnerView} from './components/views/learnerView';
+import {projectsDashboardView} from './components/views/projectsDashboardView';
+import {projectsView} from './components/views/projectsView';
+import {resultsCompareView} from './components/views/resultsCompareView';
+import {resultsView} from './components/views/resultsView';
+import {statisticsCompareView} from './components/views/statisticsCompareView';
+import {symbolsActionsView} from './components/views/symbolsActionsView';
+import {symbolsTrashView} from './components/views/symbolsTrashView';
+import {symbolsView} from './components/views/symbolsView';
+import {testCaseView} from './components/views/testCaseView';
+import {testSuiteView} from './components/views/testSuiteView';
+import {testsView} from './components/views/testsView';
+import {usersSettingsView} from './components/views/usersSettingsView';
+import {counterexamplesWidget} from './components/widgets/counterexamplesWidget';
+import {latestLearnResultWidget} from './components/widgets/latestLearnResultWidget';
+import {learnerStatusWidget} from './components/widgets/learnerStatusWidget';
+import {learnResumeSettingsWidget} from './components/widgets/learnResumeSettingsWidget';
+import {projectDetailsWidget} from './components/widgets/projectDetailsWidget';
+import {widget} from './components/widgets/widget';
+import * as config from './config';
+import * as constant from './constants';
+import {htmlElementPickerHandle} from './directives/htmlElementPickerHandle';
+import {
+    formatAlgorithm, formatEqOracle, formatMilliseconds, formatUserRole, formatWebBrowser,
+    sortTests
+} from './filters';
+import {CounterResource} from './resources/CounterResource';
+import {FileResource} from './resources/FileResource';
+import {LearnerResource} from './resources/LearnerResource';
+import {LearnResultResource} from './resources/LearnResultResource';
+import {ProjectResource} from './resources/ProjectResource';
+import {SettingsResource} from './resources/SettingsResource';
+import {SymbolGroupResource} from './resources/SymbolGroupResource';
+import {SymbolResource} from './resources/SymbolResource';
+import {TestResource} from './resources/TestResource';
+import {UserResource} from './resources/UserResource';
+import * as routes from './routes';
+import {ActionRecorderService} from './services/ActionRecorderService';
+import {ActionService} from './services/ActionService';
+import {ClipboardService} from './services/ClipboardService';
+import {DownloadService} from './services/DownloadService';
+import {EqOracleService} from './services/EqOracleService';
+import {ErrorService} from './services/ErrorService';
+import {EventBus} from './services/EventBus';
+import {HtmlElementPickerService} from './services/HtmlElementPickerService';
+import {LearnerResultChartService} from './services/LearnerResultChartService';
+import {LearnerResultDownloadService} from './services/LearnerResultDownloadService';
+import {LearningAlgorithmService} from './services/LearningAlgorithmService';
+import {PromptService} from './services/PromptService';
+import {SessionService} from './services/SessionService';
+import {ToastService} from './services/ToastService';
 
 const env = {};
 if (window) {

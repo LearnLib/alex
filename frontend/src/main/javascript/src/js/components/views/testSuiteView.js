@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {webBrowser} from "../../constants";
-import {DateUtils} from "../../utils/date-utils";
-import {DriverConfigService} from "../../services/DriverConfigService";
+import {webBrowser} from '../../constants';
+import {DriverConfigService} from '../../services/DriverConfigService';
+import {DateUtils} from '../../utils/date-utils';
 
 export const testSuiteView = {
     templateUrl: 'html/components/views/test-suite-view.html',
@@ -101,7 +101,7 @@ export const testSuiteView = {
         }
 
         createTestSuite() {
-            this.PromptService.prompt("Enter a name for the test suite.")
+            this.PromptService.prompt('Enter a name for the test suite.')
                 .then(name => {
                     const testSuite = {
                         type: 'suite',
@@ -115,12 +115,12 @@ export const testSuiteView = {
                             this.ToastService.success(`The test suite "${testSuite.name}" has been created.`);
                             this.testSuite.tests.push(data);
                         })
-                        .catch(err => this.ToastService.danger("The test suite could not be created. " + err.data.message));
+                        .catch(err => this.ToastService.danger('The test suite could not be created. ' + err.data.message));
                 });
         }
 
         createTestCase() {
-            this.PromptService.prompt("Enter a name for the test case.")
+            this.PromptService.prompt('Enter a name for the test case.')
                 .then(name => {
                     const testCase = {
                         type: 'case',
@@ -136,7 +136,7 @@ export const testSuiteView = {
                             this.ToastService.success(`The test case "${testCase.name}" has been created.`);
                             this.testSuite.tests.push(data);
                         })
-                        .catch(err => this.ToastService.danger("The test suite could not be created. " + err.data.message));
+                        .catch(err => this.ToastService.danger('The test suite could not be created. ' + err.data.message));
                 });
         }
 
@@ -159,8 +159,8 @@ export const testSuiteView = {
 
                     this.TestResource.update(testToUpdate)
                         .then(() => {
-                            this.ToastService.success("The name has been updated.");
-                            test.name = name
+                            this.ToastService.success('The name has been updated.');
+                            test.name = name;
                         })
                         .catch(err => this.ToastService.danger(`The test ${test.type} could not be updated. ${err.data.message}`));
                 });
@@ -185,7 +185,7 @@ export const testSuiteView = {
 
         deleteSelected() {
             if (this.testSuite.tests.findIndex(t => t._selected) === -1) {
-                this.ToastService.info("You have to select at least one test case or test suite.");
+                this.ToastService.info('You have to select at least one test case or test suite.');
                 return;
             }
 
@@ -194,7 +194,7 @@ export const testSuiteView = {
             const selected = this.testSuite.tests.filter(t => t._selected);
             this.TestResource.removeMany(this.project.id, selected)
                 .then(() => {
-                    this.ToastService.success("The tests have been deleted.");
+                    this.ToastService.success('The tests have been deleted.');
                     selected.forEach(test => {
                         const i = this.testSuite.tests.findIndex(t => t.id === test.id);
                         if (i > -1) this.testSuite.tests.splice(i, 1);
@@ -204,14 +204,14 @@ export const testSuiteView = {
         }
 
         stopTestExecution() {
-            this.ToastService.info("The execution stops after the current test.");
+            this.ToastService.info('The execution stops after the current test.');
             this.isExecuting = false;
             this.finished = true;
         }
 
         executeSelected() {
             if (this.testSuite.tests.findIndex(t => t._selected) === -1) {
-                this.ToastService.info("You have to select at least one test case or test suite.");
+                this.ToastService.info('You have to select at least one test case or test suite.');
                 return;
             }
 
@@ -221,7 +221,7 @@ export const testSuiteView = {
 
             const next = (test) => {
                 if (!this.isExecuting) {
-                    this.ToastService.success("Finished executing all tests.");
+                    this.ToastService.success('Finished executing all tests.');
                     return;
                 }
 
@@ -235,7 +235,7 @@ export const testSuiteView = {
                         if (selected.length) {
                             next(selected.shift());
                         } else {
-                            this.ToastService.success("Finished executing all tests.");
+                            this.ToastService.success('Finished executing all tests.');
                             this.isExecuting = false;
                             this.finished = true;
                         }
@@ -256,44 +256,44 @@ export const testSuiteView = {
                     }
                 }
             }).result.then(data => {
-                this.ToastService.success("The settings have been updated.");
+                this.ToastService.success('The settings have been updated.');
                 this.driverConfig = data;
-            })
+            });
         }
 
         /**
          * Downloads the tests as JSON file.
          */
         exportSelectedTests() {
+            function deleteProperties(test) {
+                delete test.id;
+                delete test.project;
+                delete test.user;
+                delete test.parent;
+                delete test._selected;
+            }
+
+            function prepareTestCase(testCase) {
+                deleteProperties(testCase);
+                testCase.symbols = testCase.symbols.map(s => s.name);
+            }
+
+            function prepareTestSuite(testSuite) {
+                deleteProperties(testSuite);
+                testSuite.tests.forEach(test => {
+                    if (test.type === 'case') {
+                        prepareTestCase(test);
+                    } else {
+                        prepareTestSuite(test);
+                    }
+                });
+            }
+
             let tests = this.testSuite.tests.filter(t => t._selected);
             if (!tests.length) {
                 this.ToastService.info('You have to select at least one test.');
             } else {
                 tests = JSON.parse(JSON.stringify(tests));
-
-                function deleteProperties(test) {
-                    delete test.id;
-                    delete test.project;
-                    delete test.user;
-                    delete test.parent;
-                    delete test._selected;
-                }
-
-                function prepareTestCase(testCase) {
-                    deleteProperties(testCase);
-                    testCase.symbols = testCase.symbols.map(s => s.name);
-                }
-
-                function prepareTestSuite(testSuite) {
-                    deleteProperties(testSuite);
-                    testSuite.tests.forEach(test => {
-                        if (test.type === 'case') {
-                            prepareTestCase(test);
-                        } else {
-                            prepareTestSuite(test);
-                        }
-                    })
-                }
 
                 for (const test of tests) {
                     if (test.type === 'case') {
@@ -318,7 +318,7 @@ export const testSuiteView = {
                     modalData: () => ({test: this.testSuite})
                 }
             }).result.then(tests => {
-                this.ToastService.success("Tests have been imported.");
+                this.ToastService.success('Tests have been imported.');
                 tests.forEach(t => {
                     t.type = t.tests ? 'suite' : 'case';
                     this.testSuite.tests.push(t);

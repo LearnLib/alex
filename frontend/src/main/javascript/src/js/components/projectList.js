@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {events} from "../constants";
+import {events} from '../constants';
 
 /**
  * The directive that displays a list of projects.

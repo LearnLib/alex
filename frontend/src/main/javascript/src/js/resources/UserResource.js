@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {User} from "../entities/User";
+import {User} from '../entities/User';
 
 /**
  * The resource to handle actions with users over the API.

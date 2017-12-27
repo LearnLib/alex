@@ -54,7 +54,7 @@ export const actionSearchForm = {
              * The user input.
              * @type {string}
              */
-            this.value = "";
+            this.value = '';
 
             this._handleClick = this._handleClick.bind(this);
         }
@@ -76,7 +76,7 @@ export const actionSearchForm = {
          */
         selectAction(action) {
             this._reset();
-            this.value = "";
+            this.value = '';
             this.onSelected({type: action.type});
         }
 

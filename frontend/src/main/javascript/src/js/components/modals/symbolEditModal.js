@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
-import {events} from "../../constants";
+import {events} from '../../constants';
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 
 /**
  * Handles the behaviour of the modal to edit an existing symbol and updates the edited symbol on the server.
@@ -89,7 +89,6 @@ export class SymbolEditModalComponent {
     }
 }
 
-
 export const symbolEditModalComponent = {
     templateUrl: 'html/components/modals/symbol-edit-modal.html',
     bindings: {
@@ -99,7 +98,6 @@ export const symbolEditModalComponent = {
     controller: SymbolEditModalComponent,
     controllerAs: 'vm',
 };
-
 
 /**
  * The directive that handles the modal window for the editing of a new symbol. It attaches an click event to the

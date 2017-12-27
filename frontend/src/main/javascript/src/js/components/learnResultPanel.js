@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm, events} from "../constants";
+import {events, learnAlgorithm} from '../constants';
 
 /**
  * The directive that displays a browsable list of learn results. For each result, it can display the observation
@@ -128,7 +128,7 @@ class LearnResultPanel {
      * Downloads the visible hypothesis as json.
      */
     exportHypothesisAsJson() {
-        this.PromptService.prompt("Enter a name for the json file")
+        this.PromptService.prompt('Enter a name for the json file')
             .then(filename => {
                 this.DownloadService.downloadObject(this.result.steps[this.pointer].hypothesis, filename);
             });
@@ -156,17 +156,17 @@ class LearnResultPanel {
         hypothesis.nodes.forEach(node => {
             dot += `  ${node} [shape="circle" label="${node}"];\n`;
         });
-        dot += "\n";
+        dot += '\n';
         for (let from in edges) {
             for (let to in edges[from]) {
                 dot += `  ${from} -> ${to} [label="${edges[from][to]}"];\n`;
             }
         }
-        dot += "\n";
+        dot += '\n';
         dot += '  __start0 -> 0;\n';
         dot += '}';
 
-        this.PromptService.prompt("Enter a name for the dot file")
+        this.PromptService.prompt('Enter a name for the dot file')
             .then(filename => this.DownloadService.downloadText(filename, 'dot', dot));
     }
 
@@ -183,7 +183,7 @@ class LearnResultPanel {
      * @param {string} selector - The selector of the observation table.
      */
     downloadObservationTable(selector) {
-        this.PromptService.prompt("Enter a name for the csv file")
+        this.PromptService.prompt('Enter a name for the csv file')
             .then(filename => {
                 this.DownloadService.downloadTable(selector, filename);
             });
@@ -195,7 +195,7 @@ class LearnResultPanel {
      * @param {string} selector - The selector of the dt pr hypothesis.
      */
     downloadSvg(selector) {
-        this.PromptService.prompt("Enter a name for the svg file")
+        this.PromptService.prompt('Enter a name for the svg file')
             .then(filename => {
                 this.DownloadService.downloadSvg(selector, true, filename);
             });

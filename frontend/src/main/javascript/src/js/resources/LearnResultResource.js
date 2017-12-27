@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {LearnResult} from "../entities/LearnResult";
+import {LearnResult} from '../entities/LearnResult';
 
 /**
  * The resource that handles http request to the API to do CRUD operations on learn results.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {SymbolGroup} from "../../entities/SymbolGroup";
+import {SymbolGroup} from '../../entities/SymbolGroup';
 
 /**
  * The controller for the modal dialog that handles the creation of a new symbol group.
@@ -52,7 +52,6 @@ export class SymbolGroupCreateModalComponent {
         this.errorMsg = null;
     }
 
-
     /**
      * Creates a new symbol group and closes the modal on success and passes the newly created symbol group.
      */
@@ -71,7 +70,6 @@ export class SymbolGroupCreateModalComponent {
     }
 }
 
-
 export const symbolGroupCreateModalComponent = {
     templateUrl: 'html/components/modals/symbol-group-create-modal.html',
     bindings: {
@@ -81,7 +79,6 @@ export const symbolGroupCreateModalComponent = {
     controller: SymbolGroupCreateModalComponent,
     controllerAs: 'vm'
 };
-
 
 /**
  * The directive for handling the opening of the modal for creating a new symbol group. Can only be used as

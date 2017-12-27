@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {SymbolGroup} from "../entities/SymbolGroup";
+import {SymbolGroup} from '../entities/SymbolGroup';
 
 /**
  * The resource that handles http requests to the API to do CRUD operations on symbol groups.

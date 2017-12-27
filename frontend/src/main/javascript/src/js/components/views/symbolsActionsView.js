@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import remove from "lodash/remove";
-import uniqueId from "lodash/uniqueId";
-import {events} from "../../constants";
-import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
+import remove from 'lodash/remove';
+import uniqueId from 'lodash/uniqueId';
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 
 /**
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
@@ -90,7 +89,7 @@ class SymbolsActionsView {
                 this.symbol = symbol;
             })
             .catch(() => {
-                ErrorService.setErrorMessage('The symbol with the ID "' + $stateParams.symbolId + "' could not be found");
+                ErrorService.setErrorMessage(`The symbol with the ID "${$stateParams.symbolId}" could not be found`);
             });
 
         // show a confirm dialog if the user leaves the page without having saved changes and
@@ -108,7 +107,7 @@ class SymbolsActionsView {
                     .catch(() => {
                         offHandler();
                         $state.go(toState);
-                    })
+                    });
             }
         });
 

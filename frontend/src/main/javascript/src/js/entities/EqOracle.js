@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {eqOracleType} from "../constants";
+import {eqOracleType} from '../constants';
 
 /**
  * The model for the random eq oracle.

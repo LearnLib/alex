@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {webBrowser} from "../constants";
-import {RandomEqOracle} from "../entities/EqOracle";
-import {DriverConfigService} from "../services/DriverConfigService";
+import {webBrowser} from '../constants';
+import {RandomEqOracle} from '../entities/EqOracle';
+import {DriverConfigService} from '../services/DriverConfigService';
 
 /**
  * The model for a learn configuration.
@@ -52,7 +52,7 @@ export class LearnConfiguration {
          * The algorithm to use for learning.
          * @type {object}
          */
-        this.algorithm = obj.algorithm || {name: "TTT"};
+        this.algorithm = obj.algorithm || {name: 'TTT'};
 
         /**
          * The id of the reset symbol.

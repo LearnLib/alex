@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Action} from "../Action";
-import {actionType} from "../../../constants";
+import {actionType} from '../../../constants';
+import {Action} from '../Action';
 
 /**
  * Action to wait for a text/pattern to be present in an element.
@@ -40,7 +40,7 @@ export class WaitForTextAction extends Action {
          * The piece of text to look for.
          * @type {string}
          */
-        this.value = obj.value || "";
+        this.value = obj.value || '';
 
         /**
          * Whether the value is a regular expression.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {webBrowser} from "../../constants";
+import {webBrowser} from '../../constants';
 
 /**
  * The component for the about page.
@@ -46,10 +46,10 @@ class AdminSettingsView {
     updateSettings() {
         this.SettingsResource.update(this.settings)
             .then(() => {
-                this.ToastService.success("The settings have been updated.");
+                this.ToastService.success('The settings have been updated.');
             })
             .catch(res => {
-                this.ToastService.danger("<strong>Update failed!</strong> " + res.data.message);
+                this.ToastService.danger('<strong>Update failed!</strong> ' + res.data.message);
             });
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {DomUtils} from "../utils/dom-utils";
+import {DomUtils} from '../utils/dom-utils';
 
 /**
  * The actual HTML element picker. Handles the complete window including the selection of elements and loading
@@ -167,7 +167,7 @@ class HtmlElementPickerComponent {
      * @param e - js event
      */
     handleClick(e) {
-        if (typeof e !== "undefined") {
+        if (typeof e !== 'undefined') {
             e.preventDefault();
             e.stopPropagation();
         }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm} from "../constants";
+import {learnAlgorithm} from '../constants';
 
 /**
  * The service to create new eq oracles.

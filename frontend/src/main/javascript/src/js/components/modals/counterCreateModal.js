@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Counter} from "../../entities/Counter";
+import {Counter} from '../../entities/Counter';
 
 /**
  * The component for the modal that creates new counters.
@@ -60,7 +60,6 @@ export const counterCreateModal = {
              */
             this.errorMessage = null;
         }
-
 
         /**
          * Creates a new counter and closes the modal on success and passes the newly created counter.

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {events} from "../../constants";
-import {User} from "../../entities/User";
+import {events} from '../../constants';
+import {User} from '../../entities/User';
 
 /**
  * The component controller for the user login form.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import zip from "lodash/zip";
+import zip from 'lodash/zip';
 
 const MARGIN_OPTIONS = {
     top: 20,
@@ -42,7 +42,7 @@ export class LearnerResultChartService {
                 dataset: 'dataset',
                 key: 'y',
                 label: ' ',
-                color: "#4B6396",
+                color: '#4B6396',
                 type: ['column'],
                 id: 'mySeries0'
             }],
@@ -52,7 +52,7 @@ export class LearnerResultChartService {
                     type: 'linear',
                     ticks: [0, 1, 2, 3, 4],
                     tickFormat: (value, index) => {
-                        return [" ", "Total", "Learner", "EQ Oracle", " "][index];
+                        return [' ', 'Total', 'Learner', 'EQ Oracle', ' '][index];
                     }
                 },
                 y: {
@@ -207,7 +207,7 @@ export class LearnerResultChartService {
                 dataset: 'dataset',
                 key: 'y',
                 label: ' ',
-                color: "#4B6396",
+                color: '#4B6396',
                 type: ['column'],
                 id: 'mySeries0'
             }],

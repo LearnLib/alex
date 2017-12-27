@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {webBrowser} from "../constants";
+import {webBrowser} from '../constants';
 
 /**
  * The service to create new web driver config objects.
@@ -45,7 +45,7 @@ export class DriverConfigService {
                 });
             case webBrowser.EDGE:
                 return Object.assign(config, {
-                   name: webBrowser.EDGE
+                    name: webBrowser.EDGE
                 });
             case webBrowser.FIREFOX:
                 return Object.assign(config, {
@@ -69,7 +69,7 @@ export class DriverConfigService {
                     version: ''
                 });
             default:
-                return {}
+                return {};
         }
     }
 }

@@ -55,13 +55,13 @@ export function config(selectionModelOptionsProvider, jwtInterceptorProvider, jw
     }];
     $httpProvider.interceptors.push('jwtInterceptor');
 
-    jwtOptionsProvider.config({whiteListedDomains: ["localhost"]});
+    jwtOptionsProvider.config({whiteListedDomains: ['localhost']});
 
     // request the permission to send notifications only once
-    if (("Notification" in window) && Notification.permission !== 'denied') {
+    if (('Notification' in window) && Notification.permission !== 'denied') {
         Notification.requestPermission(permission => {
-            if (permission === "default") {
-                const notification = new Notification("The cake is a lie!");
+            if (permission === 'default') {
+                const notification = new Notification('The cake is a lie!');
                 setTimeout(notification.close.bind(notification), 3000);
             }
         });

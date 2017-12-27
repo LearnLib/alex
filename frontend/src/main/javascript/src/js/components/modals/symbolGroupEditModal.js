@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {SymbolGroup} from "../../entities/SymbolGroup";
-import {events} from "../../constants";
+import {events} from '../../constants';
+import {SymbolGroup} from '../../entities/SymbolGroup';
 
 /**
  * The controller that handles the modal dialog for deleting and updating a symbol group. The modal data that is
@@ -92,7 +92,6 @@ export class SymbolGroupEditModalComponent {
     }
 }
 
-
 export const symbolGroupEditModalComponent = {
     templateUrl: 'html/components/modals/symbol-group-edit-modal.html',
     bindings: {
@@ -102,7 +101,6 @@ export const symbolGroupEditModalComponent = {
     controller: SymbolGroupEditModalComponent,
     controllerAs: 'vm'
 };
-
 
 /**
  * The directive that handles the opening of the modal for editing or deleting a symbol group. Can only be used as

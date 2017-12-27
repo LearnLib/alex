@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {DriverConfigService} from "../../services/DriverConfigService";
+import {DriverConfigService} from '../../services/DriverConfigService';
 
 /**
  * The component to configure the web driver.

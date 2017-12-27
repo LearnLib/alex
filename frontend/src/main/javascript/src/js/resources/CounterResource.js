@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Counter} from "../entities/Counter";
+import {Counter} from '../entities/Counter';
 
 /**
  * The service that communicates with the API in order to read and delete counters.
@@ -30,7 +30,7 @@ export class CounterResource {
     // @ngInject
     constructor($http, __env) {
         this.$http = $http;
-        this.__env = __env
+        this.__env = __env;
     }
 
     /**

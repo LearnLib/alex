@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Project} from "../../entities/Project";
+import {Project} from '../../entities/Project';
 
 /**
  * The class of the project create form component.
@@ -42,7 +42,7 @@ class ProjectCreateForm {
          * The mirror urls separated by \n.
          * @type {string}
          */
-        this.mirrorUrls = "";
+        this.mirrorUrls = '';
     }
 
     /**
@@ -59,7 +59,7 @@ class ProjectCreateForm {
                 this.ToastService.success(`Project "${createdProject.name}" created`);
                 this.onCreated({project: createdProject});
                 this.project = new Project();
-                this.mirrorUrls = "";
+                this.mirrorUrls = '';
 
                 // set the form to its original state
                 this.form.$setPristine();

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {webBrowser} from "../constants";
+import {webBrowser} from '../constants';
 
 /**
  * The resource that handles http calls to the API to do CRUD operations on projects.
@@ -68,7 +68,7 @@ export class SettingsResource {
 
             for (let key in webBrowser) {
                 if (key === 'HTML_UNIT' || key === 'SAFARI') continue;
-                if (settings.driver[webBrowser[key]].trim() !== "") {
+                if (settings.driver[webBrowser[key]].trim() !== '') {
                     supportedWebDrivers[key] = webBrowser[key];
                 }
             }

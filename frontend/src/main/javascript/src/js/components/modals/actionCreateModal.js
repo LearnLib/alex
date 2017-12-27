@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {actionType} from "../../constants";
+import {actionType} from '../../constants';
 
 /**
  * The controller for the modal dialog that handles the creation of a new action.
@@ -132,7 +132,6 @@ export class ActionCreateModalComponent {
     }
 }
 
-
 export const actionCreateModalComponent = {
     templateUrl: 'html/components/modals/action-create-modal.html',
     bindings: {
@@ -142,7 +141,6 @@ export const actionCreateModalComponent = {
     controller: ActionCreateModalComponent,
     controllerAs: 'vm'
 };
-
 
 /**
  * The directive that is used to handle the modal dialog for creating an action. Must be used as an attribute for

@@ -1,7 +1,6 @@
 module.exports = function (grunt) {
 
-
-    var libraries = [
+    const libraries = [
         'node_modules/ace-builds/src/ace.js',
         'node_modules/angular/angular.js',
         'node_modules/angular-ui-ace/src/ui-ace.js',
@@ -210,5 +209,6 @@ module.exports = function (grunt) {
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin']);
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'copy:fonts', 'build-css', 'copy:images', 'copy:index', 'copy:env']);
+    grunt.registerTask('lint', 'jshint');
     grunt.registerTask('test', ['karma:unit']);
 };

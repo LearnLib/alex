@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {actionType} from "../../constants";
+import {actionType} from '../../constants';
 
 /**
  * The controller for the modal dialog that handles the creation of a new action for the action recorder.
@@ -94,15 +94,15 @@ export class ActionRecorderActionsModal {
         this.action = this.ActionService.createFromType(type);
 
         const el = this.modalData.element;
-        if (this.action.type === actionType.WEB_GO_TO && el.nodeName === "A") {
-            let href = el.getAttribute("href");
-            if (href !== null && href !== "") {
+        if (this.action.type === actionType.WEB_GO_TO && el.nodeName === 'A') {
+            let href = el.getAttribute('href');
+            if (href !== null && href !== '') {
                 if (href.startsWith(this.project.baseUrl)) {
                     href = href.substr(this.project.baseUrl.length, href.length);
                 }
                 this.action.url = href;
             }
-        } else if (this.action.type === actionType.WEB_CLICK_LINK_BY_TEXT && el.nodeName === "A") {
+        } else if (this.action.type === actionType.WEB_CLICK_LINK_BY_TEXT && el.nodeName === 'A') {
             this.action.value = el.innerText;
         } else if ([actionType.WEB_CLEAR, actionType.WEB_CLICK, actionType.WEB_FILL, actionType.WEB_CHECK_NODE,
                 actionType.WEB_SUBMIT, actionType.WEB_SELECT, actionType.WEB_MOUSE_MOVE, actionType.WEB_PRESS_KEY,
@@ -133,7 +133,6 @@ export class ActionRecorderActionsModal {
         this.action = null;
     }
 }
-
 
 export const actionRecorderActionsModal = {
     templateUrl: 'html/components/modals/action-recorder-actions-modal.html',

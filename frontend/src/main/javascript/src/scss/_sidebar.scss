@@ -16,12 +16,13 @@
 
     &.logo-button {
       padding: 12px 18px;
-      color: #b1e4b1;
+      color: #fff;
       font-size: 12px;
 
       strong {
         vertical-align: middle;
-        line-height: 0
+        line-height: 0;
+        letter-spacing: 2px;
       }
     }
 

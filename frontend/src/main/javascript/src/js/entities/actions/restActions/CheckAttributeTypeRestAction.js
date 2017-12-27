@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import {Action} from "../Action";
-import {actionType} from "../../../constants";
-
+import {actionType} from '../../../constants';
+import {Action} from '../Action';
 
 /**
  * Checks if a property of the JSON of a HTTP response has a specific type.

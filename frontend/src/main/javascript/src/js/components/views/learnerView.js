@@ -122,7 +122,7 @@ class LearnerViewComponent {
         this.symbols = [];
 
         // stop polling when you leave the page
-        $scope.$on("$destroy", () => {
+        $scope.$on('$destroy', () => {
             this.$interval.cancel(this.interval);
         });
 
@@ -180,7 +180,7 @@ class LearnerViewComponent {
                             }
 
                             // notify the user that the learning process has finished
-                            if (("Notification" in window) && Notification.permission === 'granted') {
+                            if (('Notification' in window) && Notification.permission === 'granted') {
                                 const notification = new Notification('ALEX has finished learning your application!');
                                 setTimeout(notification.close.bind(notification), 5000);
                             }

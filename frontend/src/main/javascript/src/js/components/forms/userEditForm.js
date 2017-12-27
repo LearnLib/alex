@@ -108,18 +108,18 @@ class UserEditForm {
      * Deletes the user, removes the jwt on success and redirects to the index page.
      */
     deleteUser() {
-        this.PromptService.confirm("Do you really want to delete this profile? All data will be permanently deleted.")
+        this.PromptService.confirm('Do you really want to delete this profile? All data will be permanently deleted.')
             .then(() => {
                 this.UserResource.remove(this.user)
                     .then(() => {
-                        this.ToastService.success("The profile has been deleted");
+                        this.ToastService.success('The profile has been deleted');
 
                         // remove the users jwt so that he cannot do anything after being deleted
                         this.SessionService.removeUser();
                         this.$state.go('home');
                     })
                     .catch(response => {
-                        this.ToastService.danger("The profile could not be deleted. " + response.data.message);
+                        this.ToastService.danger('The profile could not be deleted. ' + response.data.message);
                     });
             });
     }

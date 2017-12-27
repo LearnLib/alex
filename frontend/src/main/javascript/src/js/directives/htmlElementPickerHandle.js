@@ -41,7 +41,7 @@ export function htmlElementPickerHandle($document, $compile, $q, HtmlElementPick
         link(scope, el) {
             el.on('click', () => {
                 // make sure the element picker is not opened twice.
-                if (document.getElementById("html-element-picker") !== null) {
+                if (document.getElementById('html-element-picker') !== null) {
                     return;
                 }
 
@@ -53,11 +53,11 @@ export function htmlElementPickerHandle($document, $compile, $q, HtmlElementPick
                 HtmlElementPickerService.deferred.promise
                     .then(data => {
                         // copy the selected selector and .textContent value to the scopes models
-                        if (typeof scope.node !== "undefined") {
+                        if (typeof scope.node !== 'undefined') {
                             scope.node.selector = data.selector;
                             scope.node.type = data.selectorType;
                         }
-                        if (typeof scope.textModel !== "undefined") {
+                        if (typeof scope.textModel !== 'undefined') {
                             scope.textModel = data.textContent;
                         }
                     })

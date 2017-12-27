@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Project} from "../../entities/Project";
-import {events} from "../../constants";
+import {events} from '../../constants';
+import {Project} from '../../entities/Project';
 
 /**
  * The controller of the modal window for editing a project.
@@ -96,7 +96,6 @@ export class ProjectEditModalComponent {
     }
 }
 
-
 export const projectEditModalComponent = {
     templateUrl: 'html/components/modals/project-edit-modal.html',
     bindings: {
@@ -106,7 +105,6 @@ export const projectEditModalComponent = {
     controller: ProjectEditModalComponent,
     controllerAs: 'vm',
 };
-
 
 // @ngInject
 export function projectEditModalHandle($uibModal, LearnerResource, ToastService) {

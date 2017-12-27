@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from "../entities/AlphabetSymbol";
+import {AlphabetSymbol} from '../entities/AlphabetSymbol';
 
 /**
  * The resource that handles http requests to the API to do CRUD operations on symbols.

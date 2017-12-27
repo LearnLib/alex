@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {eqOracleType} from "../../constants";
+import {eqOracleType} from '../../constants';
 
 /**
  * The directive for the widget of the sidebar where learn resume configurations can be edited. Should be included
@@ -58,10 +58,10 @@ class LearnResumeSettingsWidget {
         // Make sure only the symbols can be added that are not yet part of the input alphabet.
         // Make sure the reset symbol can not be added as well.
         this.symbols.forEach(s => {
-            if (this.result.symbols.indexOf(s.id) === -1 && !(s.id === this.result.resetSymbol)) {
+            if (this.result.symbols.indexOf(s.id) === -1 && s.id !== this.result.resetSymbol) {
                 this.symbolsToAdd.push(s);
             }
-        })
+        });
     }
 
     /**

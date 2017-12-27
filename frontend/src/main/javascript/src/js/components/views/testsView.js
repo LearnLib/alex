@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/**
+ * The view for the tests.
+ * @type {{controller: testsView.controller, controllerAs: string, templateUrl: string}}
+ */
 export const testsView = {
 
     /**
@@ -41,7 +45,7 @@ export const testsView = {
             const testId = $state.params.testId === null ? 0 : $state.params.testId;
             TestResource.get(project.id, testId)
                 .then(data => this.test = data)
-                .catch(console.log)
+                .catch(console.log);
         }
     },
     controllerAs: 'vm',

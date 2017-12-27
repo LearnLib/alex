@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 
 /**
  * The controller for the modal window to create a new symbol.
@@ -97,7 +97,6 @@ export class SymbolCreateModalComponent {
     }
 }
 
-
 export const symbolCreateModalComponent = {
     templateUrl: 'html/components/modals/symbol-create-modal.html',
     bindings: {
@@ -107,7 +106,6 @@ export const symbolCreateModalComponent = {
     controller: SymbolCreateModalComponent,
     controllerAs: 'vm'
 };
-
 
 /**
  * The directive that handles the modal window for the creation of a new symbol. It attaches an click event to the

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Project} from "../entities/Project";
+import {Project} from '../entities/Project';
 
 /**
  * The resource that handles http calls to the API to do CRUD operations on projects.

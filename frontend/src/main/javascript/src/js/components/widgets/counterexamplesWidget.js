@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {events} from "../../constants";
+import {events} from '../../constants';
 
 /**
  * The directive for the content of the counterexample widget that is used to create and test counterexamples.
@@ -162,7 +162,7 @@ class CounterexamplesWidget {
                     deferred.reject();
                 }
             })
-            .catch(err => console.log(err));
+                .catch(err => console.log(err));
         };
 
         // fetch symbols only once and cache them

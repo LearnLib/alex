@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from "../../entities/AlphabetSymbol";
-import {events} from "../../constants";
+import {events} from '../../constants';
+import {AlphabetSymbol} from '../../entities/AlphabetSymbol';
 
 /**
  * The controller that handles the moving of symbols into another group.
@@ -104,7 +104,6 @@ export class SymbolMoveModalComponent {
     }
 }
 
-
 export const symbolMoveModalComponent = {
     templateUrl: 'html/components/modals/symbol-move-modal.html',
     bindings: {
@@ -114,7 +113,6 @@ export const symbolMoveModalComponent = {
     controller: SymbolMoveModalComponent,
     controllerAs: 'vm'
 };
-
 
 /**
  * The directive for handling the opening of the modal for moving symbols into another group. Can only be used as

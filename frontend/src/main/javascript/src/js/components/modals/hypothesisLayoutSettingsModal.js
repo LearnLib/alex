@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {events} from "../../constants";
+import {events} from '../../constants';
 
 /**
  * The controller that handles the modal dialog for changing the layout settings of a hypothesis.
@@ -64,7 +64,6 @@ export class HypothesisLayoutSettingsModalComponent {
     }
 }
 
-
 export const hypothesisLayoutSettingsModalComponent = {
     templateUrl: 'html/components/modals/hypothesis-layout-settings-modal.html',
     bindings: {
@@ -74,7 +73,6 @@ export const hypothesisLayoutSettingsModalComponent = {
     controller: HypothesisLayoutSettingsModalComponent,
     controllerAs: 'vm',
 };
-
 
 /**
  * The directive that handles the opening of the modal dialog for layout setting of a hypothesis. Has to be used
