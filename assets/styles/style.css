@@ -1,110 +1,67 @@
-body {
-    line-height: 1.5em;
+.content-section {
+    padding: 4rem 0;
+}
+
+.section-title {
+    margin-bottom: 2rem;
+    padding-bottom: .5rem;
+    border-bottom: 3px solid rgba(0,0,0,0.1);
+}
+
+#header {
+    background-image: url("../images/background.jpg");
+    background-size: cover;
+}
+
+#how,
+#publications {
+    background: #efefef;
+}
+
+#header {
+    padding-bottom: 0;
+    padding-top: 6rem;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+.btn-dark {
+    color: #fff;
+    background-color: #262726;
+    border-color: #262726;
+}
+
+.bg-dark {
+    background-color: #262726 !important;
+}
+
+.visually-hidden {
+    font-size: 0;
+    width: 1px;
+    height: 1px;
+    display: inline-block;
+    overflow: hidden;
+    position: absolute!important;
+    border: 0!important;
+    padding: 0!important;
+    margin: 0!important;
+    clip: rect(1px,1px,1px,1px);
 }
 
 a {
-    color: #87b82b;
+    color: #86b82c;
 }
 
-a:hover,
-a:active,
-a:focus {
-    color: #7ba827;
-}
-
-ul, ol {
-    line-height: 2em;
-}
-
-kbd {
-    padding: 4px 8px;
+a:hover {
+    color: #75a520;
 }
 
 h2 {
-    border-bottom: 4px solid rgba(0, 0, 0, .05);
-    padding-bottom: 6px;
-    margin-bottom: 30px;
+    font-size: 1.5rem;
 }
 
-.navbar {
-    margin-bottom: 0
+h3 {
+    font-size: 1.25rem;
 }
-
-.navbar .nav li > a:focus,
-.navbar .nav li > a:hover {
-    background: #7ba827;
-}
-
-.btn.btn-download {
-    padding: 18px 48px;
-    font-size: 21px;
-    background-color: #212121;
-    border-color: #000;
-}
-
-.btn.btn-download:active {
-    background: #000;
-    border-color: #000;
-    outline: none;
-}
-
-.btn.btn-download small {
-    font-size: 14px;
-    display: block;
-    color: rgba(255, 255, 255, 0.75)
-}
-
-.text-slogan {
-    color: #fff;
-    font-size: 24px;
-    line-height: 1.5em;
-    padding:24px 0;
-    text-shadow: 0 1px 2px rgba(0,0,0,.4);
-}
-
-#installation,
-#requirements,
-#how,
-#header {
-    padding-top: 54px;
-    padding-bottom: 54px;
-}
-
-#header {
-    background: #729c24;
-    background-image: url(../images/background.jpg);
-    background-repeat: no-repeat;
-    background-size: cover;
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-#header .row {
-    margin-top: 120px;
-}
-
-#header h1 {
-    color: #fff;
-    font-size: 72px;
-    margin-bottom: 14px;
-    font-weight: 700;
-}
-
-#slideshow {
-    background: #729c24;
-}
-
-#installation,
-#how {
-    background: #f2f2f2;
-}
-
-#installation h3,
-#how h3 {
-    color: #ababab
-}
-
-#footer {
-    background: #87b82b;
-}
-

@@ -6,47 +6,50 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/styles/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/styles/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/styles/slideshow.css">
 </head>
 <body>
 
-<nav class="navbar navbar-inverse navbar-static-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="">
-                <strong>ALEX</strong>
-            </a>
-        </div>
+        <a class="navbar-brand d-flex align-items-center" href="">
+            <img src="assets/images/favicon.min.png"><span style="margin-left: 3px">LEX</span>
+        </a>
 
-        <div class="collapse navbar-collapse" id="navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                       aria-expanded="false">Docs <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="book/1.2.1/index.html">latest</a></li>
-                        <li><a href="book/1.2.1/index.html">v1.2.1</a></li>
-                        <li><a href="book/1.2.0/index.html">v1.2.0</a></li>
-                        <li><a href="book/1.1.2/index.html">v1.1.2</a></li>
-                        <li><a href="book/1.1/index.html">v1.1</a></li>
-                        <li><a href="book/1.0/index.html">v1.0</a></li>
-                    </ul>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                       data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-fw fa-file-text-o"></i> Docs
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="book/1.4.0/index.html">
+                            v1.4.0 <span class="badge badge-primary">latest</span>
+                        </a>
+                        <a class="dropdown-item" href="book/1.2.1/index.html">v1.2.1</a>
+                        <a class="dropdown-item" href="book/1.2.0/index.html">v1.2.0</a>
+                        <a class="dropdown-item" href="book/1.1.2/index.html">v1.1.2</a>
+                        <a class="dropdown-item" href="book/1.1/index.html">v1.1</a>
+                        <a class="dropdown-item" href="book/1.0/index.html">v1.0</a>
+                    </div>
                 </li>
             </ul>
 
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a href="https://github.com/LearnLib/alex" target="_blank">
-                        <i class="fa fa-github fa-fw"></i>
-                        <strong>GitHub</strong>
+            <ul class="navbar-nav navbar-right">
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/LearnLib/alex" target="_blank">
+                        <i class="fa fa-github fa-fw"></i> GitHub
                     </a>
                 </li>
             </ul>
@@ -54,133 +57,176 @@
     </div>
 </nav>
 
-<header id="header">
+<header id="header" class="content-section">
     <div class="container">
-        <div class="row">
-            <div class="col-sm-12 col-md-4 col-md-offset-1">
-                <img id="logo" class="img-responsive center-block" src="assets/images/logo.png" />
+        <h1 class="visually-hidden">ALEX - Automata Learning Experience</h1>
+
+        <div class="d-block d-md-flex flex-row align-items-center" style="max-width: 720px;margin: auto;">
+            <div class="mb-4 mb-md-0">
+                <img id="logo" class="d-flex img-responsive m-auto w-100" style="max-width: 380px" src="assets/images/logo.png"/>
             </div>
-            <div class="col-sm-12 col-md-6">
-                <p class="text-slogan">
-                    Active Automata Learning for web applications
-                    and JSON-based REST services
+            <div class="ml-0 ml-md-4">
+                <p class="h5 text-white text-center text-md-left">
+                    Active automata learning for web applications and JSON-based REST services
                 </p>
-                <div id="download" class="text-center">
-                    <a class="btn btn-primary btn-download" href="https://github.com/LearnLib/alex/releases/download/v1.3.0/ALEX-1.3.0.war" target="_blank">
-                        <i class="fa fa-download"></i>
-                        Download v1.3.0
-                        <small>For Windows, Linux and Mac</small>
+                <div class="text-center text-md-left mt-4 mt-md-0">
+                    <a class="btn btn-lg btn-dark mt-2 pl-4 pr-4 pt-2 pb-2 d-block d-sm-inline-block"
+                       href="https://github.com/LearnLib/alex/releases/download/v1.4.0/ALEX-1.4.0.war" target="_blank">
+                        <i class="fa fa-download"></i> <span class="h5">Download v1.4.0</span> <br>
+                        <small class="text-muted">For Windows, Linux and Mac</small>
                     </a>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <img class="col-sm-12 img-responsive" src="assets/images/slide-1.png">
+        <div style="margin-top: 6rem">
+            <div id="slides">
+                <div class="slide slideshowFade">
+                    <img src="assets/images/slide-1.png" class="img-fluid w-100">
+                    <div class="text">Model basic test inputs for your target application.</div>
+                </div>
+                <div class="slide slideshowFade">
+                    <img src="assets/images/slide-2.png" class="img-fluid w-100">
+                    <div class="text">Automatically generate a behavioral model of your target application based on modeled test inputs.
+                    </div>
+                </div>
+                <div class="slide slideshowFade">
+                    <img src="assets/images/slide-3.png" class="img-fluid w-100">
+                    <div class="text">Create and execute test suites.</div>
+                </div>
+                <a class="prev">&#10094;</a>
+                <a class="next">&#10095;</a>
+            </div>
         </div>
+
     </div>
 </header>
 
-<section id="how">
+<section class="content-section" id="how">
     <div class="container">
-        <h2>How it works</h2>
+        <h2 class="section-title">How it works</h2>
         <div class="row">
             <div class="col-md-4">
-                <div class="text-center" style="height: 192px;">
-                    <img src="assets/images/step-1.jpg" class="img-responsive">
+                <div class="d-flex flex-row">
+                    <span class="h5 mr-2">1.</span>
+                    <div>
+                        <h3>Model test inputs for the target web application</h3>
+                        <p class="text-muted">
+                            ALEX makes it easy to visually model test inputs for your web application.
+                            It uses Selenium for frontend tests and allows modeling test inputs for REST APIs.
+                        </p>
+                    </div>
                 </div>
-                <h3>1. Model actions for an application</h3>
-                <p class="text-muted">
-                    Using ALEX makes it easy to visually model actions on a web application using Selenium and allows interactions with RESTful APIs.
-                </p>
             </div>
             <div class="col-md-4">
-                <div class="text-center" style="height: 192px">
-                    <i class="fa fa-gears" style="font-size: 144px"></i>
+                <div class="d-flex flex-row">
+                    <span class="h5 mr-2">2.</span>
+                    <div>
+                        <h3>Generate a model of your web application automatically</h3>
+                        <p class="text-muted">
+                            Based on the test inputs, a learning algorithm executes these inputs on your application and observes its behavior.
+                            The result is a behavioral model of your application.
+                        </p>
+                    </div>
                 </div>
-                <h3>2. Learn the application automatically</h3>
-                <p class="text-muted">
-                    Based on the modeled actions, a learning algorithm executes these actions on the real application and observes its behaviour.
-                </p>
             </div>
             <div class="col-md-4">
-                <div class="text-center" style="height: 192px">
-                    <svg class="hypothesis" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;font-size: 14px; line-height: 1.42857; color: rgb(51, 51, 51);" width="236" height="176" version="1.1" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0,5) scale(0.9)"><g class="output"><g class="clusters"/><g class="edgePaths"><g class="edgePath" style="opacity: 1;"><defs><marker id="arrowhead1176" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" style="stroke-width: 1px; stroke-dasharray: 1px, 0px;"/></marker></defs><path class="path" d="M50.03911872269731,15.994897030057858L58.86593226891441,13.329080858381548C67.69274581513153,10.663264686705238,85.34637290756575,5.331632343352619,96.33985312044953,2.6658161716763096C107.33333333333331,0,111.66666666666666,0,116,3.75C120.33333333333333,7.5,124.66666666666666,15,124.66666666666666,22.5C124.66666666666666,30,120.33333333333333,37.5,116,41.25C111.66666666666666,45,107.33333333333331,45,96.33985312044953,42.33418382832369C85.34637290756575,39.668367656647376,67.69274581513153,34.33673531329476,58.86593226891442,31.670919141618448L50.03911872269731,29.005102969942143" marker-end="url(#arrowhead1176)" style="stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none"/></g><g class="edgePath" style="opacity: 1;"><defs><marker id="arrowhead1177" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" style="stroke-width: 1px; stroke-dasharray: 1px, 0px;"/></marker></defs><path class="path" d="M16.872844944624802,41.762898673830556L13.227370787187334,47.802415561525464C9.581896629749869,53.841932449220366,2.2909483148749343,65.92096622461018,2.2909483148749343,78C2.2909483148749343,90.0790337753898,9.581896629749869,102.15806755077962,13.227370787187334,108.19758443847452L16.872844944624802,114.23710132616944" marker-end="url(#arrowhead1177)" style="stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none"/></g><g class="edgePath" style="opacity: 1;"><defs><marker id="arrowhead1178" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" style="stroke-width: 1px; stroke-dasharray: 1px, 0px;"/></marker></defs><path class="path" d="M40.1271550553752,114.23710132616944L43.77262921281266,108.19758443847452C47.41810337025013,102.15806755077962,54.70905168512506,90.0790337753898,54.70905168512506,78C54.70905168512506,65.92096622461018,47.41810337025013,53.841932449220366,43.77262921281266,47.80241556152546L40.1271550553752,41.762898673830556" marker-end="url(#arrowhead1178)" style="stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none"/></g><g class="edgePath" style="opacity: 1;"><defs><marker id="arrowhead1179" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" style="stroke-width: 1px; stroke-dasharray: 1px, 0px;"/></marker></defs><path class="path" d="M49.98894307825283,126.83101766536981L58.49078589854402,124.19251472114149C66.99262871883522,121.5540117769132,83.9963143594176,116.2770058884566,94.58149051304213,113.63850294422829C105.16666666666666,111,109.33333333333331,111,113.49999999999999,114.75C117.66666666666666,118.5,121.83333333333333,126,121.83333333333331,133.5C121.83333333333333,141,117.66666666666666,148.5,113.49999999999999,152.25C109.33333333333331,156,105.16666666666666,156,94.58149051304214,153.3614970557717C83.9963143594176,150.7229941115434,66.99262871883522,145.44598822308677,58.49078589854402,142.80748527885848L49.98894307825283,140.1689823346302" marker-end="url(#arrowhead1179)" style="stroke: rgba(0, 0, 0, 0.3); stroke-width: 3; fill:none"/></g></g><g class="edgeLabels"><g class="edgeLabel" transform="translate(172,22.5)" style="opacity: 1;"><g transform="translate(-40.5,-5.5)" class="label"><text style="display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 12px"><tspan xml:space="preserve" dy="1em" x="1">logout/FAILED(1)</tspan></text></g></g><g class="edgeLabel" transform="translate(18.5,78)" style="opacity: 1;"><g transform="translate(-21,-5.5)" class="label"><text style="display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 12px"><tspan xml:space="preserve" dy="1em" x="1">login/OK</tspan></text></g></g><g class="edgeLabel" transform="translate(88.5,78)" style="opacity: 1;"><g transform="translate(-24,-5.5)" class="label"><text style="display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 12px"><tspan xml:space="preserve" dy="1em" x="1">logout/OK</tspan></text></g></g><g class="edgeLabel" transform="translate(166,133.5)" style="opacity: 1;"><g transform="translate(-37.5,-5.5)" class="label"><text style="display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 12px"><tspan xml:space="preserve" dy="1em" x="1">login/FAILED(1)</tspan></text></g></g></g><g class="nodes"><g class="node" transform="translate(28.5,22.5)" style="opacity: 1;"><circle x="-22.5" y="-17" r="22.5" style="fill: #B3E6B3; stroke: #5cb85c; stroke-width: 3"/><g class="label" transform="translate(0,0)"><g transform="translate(-3.5,-7)"><text style="display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 12px"><tspan xml:space="preserve" dy="1em" x="1">0</tspan></text></g></g></g><g class="node" transform="translate(28.5,133.5)" style="opacity: 1;"><circle x="-22.5" y="-17" r="22.5" style="fill: #fff; stroke: #000; stroke-width: 1"/><g class="label" transform="translate(0,0)"><g transform="translate(-3.5,-7)"><text style="display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 12px"><tspan xml:space="preserve" dy="1em" x="1">1</tspan></text></g></g></g></g></g></g></svg>
+                <div class="d-flex flex-row">
+                    <span class="h5 mr-2">3.</span>
+                    <div>
+                        <h3>Refine the model through counterexamples</h3>
+                        <p class="text-muted">
+                            Find more application states by searching for differences between the model and the application.
+                            ALEX offers automated and manual strategies for that.
+                        </p>
+                    </div>
                 </div>
-                <h3>3. Obtain a model of the application</h3>
-                <p class="text-muted">
-                    At the end, the learner gives you a learned model of your application that you can use to verify the correctness of features.
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content-section" id="requirements">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <h2 class="section-title">Usage</h2>
+                <h3>Packaged version</h3>
+                <ol>
+                    <li>Download the latest package. <a
+                            href="https://github.com/LearnLib/alex/releases/download/v1.4.0/ALEX-1.4.0.war" target="_blank">Download</a>
+                    </li>
+                    <li>Open a terminal an navigate to the folder of ALEX-1.4.0.war</li>
+                    <li><kbd>java -jar ALEX-1.4.0.war [--alex.port=XXXX]</kbd></li>
+                    <li>Open <a href="http://localhost:8000">http://localhost:8000</a> in a web browser</li>
+                </ol>
+
+                <h3> From source</h3>
+                <ol>
+                    <li>Open a terminal and navigate where ALEX should be installed</li>
+                    <li><kbd> git clone https://github.com/learnlib/alex </kbd></li>
+                    <li><kbd> cd ./alex</kbd></li>
+                    <li><kbd> mvn install package [-DskipTests]</kbd></li>
+                    <li><kbd> java -jar ./build/target/ALEX-build-1.4.0.war [--alex.port=XXXX]</kbd></li>
+                    <li>Open <a href="http://localhost:8000">http://localhost:8000</a> in a web browser</li>
+                </ol>
+            </div>
+            <div class="col-lg-4">
+                <h2 class="section-title mt-4 mt-lg-0">Requirements</h2>
+                <p>
+                    Since ALEX is written in Java, the operating system should not matter as long as you have the <strong>Java
+                    JRE 8</strong> installed.
+                    It is also required that you have a modern web browser installed on your pc, like:
+                </p>
+                <ul>
+                    <li>Google Chrome (&ge; v58)</li>
+                    <li>Mozilla Firefox (&ge; v52)</li>
+                    <li>Microsoft Edge</li>
+                </ul>
+                <p>
+                    <em> If you are a developer, head over to the <a
+                            href="http://learnlib.github.io/alex/book/1.4.0/contents/developer-documents/index.html">developer
+                        documents</a> to see a list of the requirements.</em>
                 </p>
             </div>
         </div>
     </div>
 </section>
 
-<section id="requirements">
+<section class="content-section" id="publications">
     <div class="container">
-        <h2>Requirements</h2>
-
-        <p>
-            Since the application is written in Java, the operation system should not matter as long as you have a
-            <strong>Java JRE 8</strong> installed.
-            It is required that you have a modern web browser installed on your pc.
-            If you use one of the following browsers you should do fine:
-        </p>
+        <h2 class="section-title">Publications</h2>
 
         <ul>
-            <li>Google Chrome &gt;= v58</li>
-            <li>Mozilla Firefox &gt;= v52</li>
-            <li>Microsoft Edge</li>
+            <li>
+                <a href="https://link.springer.com/chapter/10.1007/978-3-319-47169-3_51" target="_blank">ALEX: Mixed-Mode Learning of Web Applications at Ease</a>, in: ISoLA 2016, LNCS 9953, pp. 655-671. Springer, 10/2016
+            </li>
+            <li>
+                <a href="https://link.springer.com/chapter/10.1007/978-3-319-68270-9_7" target="_blank">Model-based Testing without Models: The TodoMVC Case Study</a>, in: ModelEd, TestEd, TrustEd, LNCS 10500, pp. 125-144, Springer, 09/2017
+            </li>
         </ul>
-
-        <p>
-            <em> If you are a developer, head over to the <a href="http://learnlib.github.io/alex/book/1.2.1/contents/developer-documents/index.html">dev docs</a> to see a list of the requirements.
-            </em>
-        </p>
-    </div>
-</section>
-
-<section id="installation">
-    <div class="container">
-        <h2>Installation</h2>
-        <h3>Using the packaged version</h3>
-        <ol>
-            <li>Download the latest package. <a href="https://github.com/LearnLib/alex/releases/download/v1.3.0/ALEX-1.3.0.war" target="_blank">Download</a></li>
-            <li>Open a terminal an navigate to the folder of ALEX-1.3.0.war</li>
-            <li><kbd>java -jar ALEX-1.3.0.war [--alex.port=XXXX]</kbd></li>
-            <li>Go to <a href="http://localhost:8000">http://localhost:8000</a></li>
-        </ol>
-
-        <h3> From source</h3>
-        <ol>
-            <li>Open a terminal and navigate to where ALEX should be installed</li>
-            <li><kbd> git clone https://github.com/learnlib/alex </kbd></li>
-            <li><kbd> cd ./alex</kbd></li>
-            <li><kbd> mvn install [-DskipTests]</kbd></li>
-            <li><kbd> cd ./main </kbd></li>
-            <li><kbd> mvn spring-boot:run [-Dalex.port=XXXX]</kbd></li>
-            <li>Go to <a href="http://localhost:8000">http://localhost:8000</a></li>
-        </ol>
     </div>
 </section>
 
 <footer id="footer">
-    <nav class="navbar navbar-inverse navbar-static-top">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <ul class="nav navbar-nav">
-                <li>
-                    <a href="http://ls5-www.cs.tu-dortmund.de/" target="_blank">TU Dortmund University</a>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="http://ls5-www.cs.tu-dortmund.de/" target="_blank">TU Dortmund University</a>
                 </li>
-                <li>
-                    <a href="http://learnlib.de/" target="_blank">LearnLib</a>
+                <li class="nav-item">
+                    <a class="nav-link" href="http://learnlib.de/" target="_blank">LearnLib</a>
                 </li>
             </ul>
         </div>
     </nav>
 </footer>
 
-<script type="text/javascript" src="assets/js/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="assets/js/popper.min.js"></script>
 <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/js/slides.js"></script>
 
 </body>
 </html>
