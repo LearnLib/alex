@@ -1,0 +1,21 @@
+<h4>
+    <strong>Execute JavaScript</strong>
+</h4>
+
+<p class="text-muted">Execute JavaScript in the browser <strong>if it supports it.</strong> and store the return value in a variable</p>
+<hr>
+
+<div class="form-group">
+    <label>JavaScript</label>
+
+    <div ng-model="vm.action.script" ui-ace="vm.aceOptions"></div>
+</div>
+
+<div class="form-group">
+    <label>Variable</label>
+    <input class="form-control" type="text" ng-model="vm.action.name" placeholder="The variable the return value can be saved in">
+</div>
+
+<div class="alert alert-info alert-condensed">
+    <strong>Note:</strong> This action only fails if JavaScript is not enabled in the web driver that is used.
+</div>

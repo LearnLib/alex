@@ -1,0 +1,18 @@
+<div class="symbol-group-list-item">
+    <div class="symbol-group-list-item-header d-flex">
+        <checkbox-multiple model="vm.group.symbols"></checkbox-multiple>
+        <div class="mr-1 ml-1 flex-grow-1">
+            <div class="symbol-group-title" ng-bind="vm.group.name"></div>
+            <span class="text-muted">
+                <span ng-bind="vm.group.symbols.length"></span> Symbol<span ng-if="vm.group.symbols.length !== 1">s</span>
+            </span>
+        </div>
+        <div ng-if="vm.editable">
+            <a href="" symbol-group-edit-modal-handle group="vm.group"
+               uib-tooltip="Edit this group" tooltip-placement="left">
+                <i class="fa fa-fw fa-gear"></i>
+            </a>
+        </div>
+    </div>
+    <div ng-transclude></div>
+</div>

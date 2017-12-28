@@ -1,0 +1,148 @@
+@import "variables";
+@import "mixins";
+
+#sidebar-header {
+  flex-grow: 1;
+  flex-shrink: 1;
+  max-height: 42px;
+  min-height: 42px;
+  background: $color-blue-darker;
+
+  .sidebar-header-button {
+    height: 42px;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+
+    &.logo-button {
+      padding: 12px 18px;
+      color: #fff;
+      font-size: 12px;
+
+      strong {
+        vertical-align: middle;
+        line-height: 0;
+        letter-spacing: 2px;
+      }
+    }
+
+    &.toggle-button, &.about-button {
+      width: 42px;
+      color: #fff;
+      line-height: 42px;
+      float: right;
+      font-size: 1.35em;
+
+      &:hover {
+        background: $color-blue-darkest
+      }
+    }
+
+    &.about-button {
+      color: rgba(255, 255, 255, 0.5);
+      &:hover {
+        color: #fff;
+      }
+    }
+  }
+}
+
+#sidebar-body {
+  flex-grow: 1;
+  flex-shrink: 1;
+  height: 100%;
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+body {
+  &.layout-collapsed {
+    #sidebar {
+      width: $sidebar-width-collapsed;
+
+      #sidebar-header {
+        .logo-button, .about-button {
+          display: none;
+        }
+        .toggle-button {
+          width: $sidebar-width-collapsed;
+        }
+      }
+
+      .sidebar-group {
+        .sidebar-group-title {
+          visibility: hidden;
+          padding: 0;
+          margin-top: 0;
+        }
+        .sidebar-group-item {
+          height: 42px;
+          padding: 9px 0;
+          position: relative;
+
+          .sidebar-group-item-icon {
+            font-size: 1.35em;
+          }
+          .sidebar-group-item-label {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+#sidebar {
+  @include position(absolute, 0, 0, 0, 0);
+
+  width: $sidebar-width;
+  background: $color-blue-dark;
+  display: flex;
+  flex-direction: column;
+
+  .sidebar-group {
+    .sidebar-group-title {
+      color: #fff;
+      padding: 7px 20px;
+      font-size: 1.25em;
+      margin-top: 14px;
+
+      strong {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .sidebar-group-item {
+      color: rgba(255, 255, 255, 0.75);
+      display: block;
+      padding: 7px 0;
+      text-decoration: none;
+      height: 31px;
+      cursor: pointer;
+
+      &:hover {
+        background: $color-blue-darker;
+      }
+
+      &.active {
+        background: #337ab7;
+        color: #fff;
+      }
+
+      .sidebar-group-item-icon {
+        width: $sidebar-width-collapsed;
+        text-align: center;
+        float: left;
+      }
+
+      .sidebar-group-item-label {
+        @include text-overflow-ellipsis();
+        display: block;
+        padding-right: 20px;
+      }
+    }
+  }
+}

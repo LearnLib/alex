@@ -1,3 +1,31 @@
+# ALEX 1.4.0
+
+## Breaking Changes
+
+* Symbol abbreviations have been removed. To use old exported symbol sets, remove the *abbreviation* property manually
+from the JSON file.
+
+* The HTML Element Picker does not work as before. In order to use it properly, make sure you start your browser with
+disabled CORS rules or use a plugin. See the [user documentation](http://learnlib.github.io/alex/book/1.4.0/) for 
+detailed instructions.
+
+## Features
+
+* Define a default web driver to execute tests in
+* Immediately stop learning instead of waiting for the current iteration to finish
+* Support for native headless web driver support for Chrome and Firefox
+* Action recorder - Record a sequence of actions for a symbol in the Element Picker
+* Extended testing capability - Save and execute test cases without starting a learning process
+* Calculate the difference between two models
+* Added Safari driver
+* New actions:
+    * Wait for a text to appear
+    * Wait for the value of an elements attribute
+    * Interact with alert, prompt and confirm dialogs
+    * Validate JSON against a JSON schema
+    
+See the [user documentation](http://learnlib.github.io/alex/book/1.4.0/) for more details.
+
 # ALEX 1.3.0
 
 ## Breaking Changes

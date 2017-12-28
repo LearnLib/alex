@@ -1,0 +1,50 @@
+<div class="view results-compare-view">
+    <action-bar>
+        <div class="pull-left" ng-if="vm.panels.length === 2">
+            <button class="btn btn-sm btn-default"
+                    ng-click="vm.showSeparatingWord()">
+                <i class="fa fa-fw fa-bolt"></i> Separating word
+            </button>
+
+            &nbsp;
+            <div class="btn-group btn-group-sm" uib-dropdown>
+                <button class="btn btn-default btn-dropdown" uib-dropdown-toggle>
+                    <i class="fa fa-fw fa-sitemap"></i> Difference tree <i class="fa fa-fw fa-caret-down"></i>
+                </button>
+                <ul uib-dropdown-menu class="dropdown-menu" role="menu">
+                    <li>
+                        <a href ng-click="vm.showDifferenceTree(false)">Test left on right</a>
+                    </li>
+                    <li>
+                        <a href ng-click="vm.showDifferenceTree(true)">Test right on left</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="btn btn-sm btn-success pull-right"
+                ng-if="vm.panels.length < 3"
+                result-list-modal-handle results="vm.results"
+                on-selected="vm.panels.push(result)">
+            <i class="fa fa-fw fa-plus"></i> Add hypothesis
+        </button>
+    </action-bar>
+
+    <div class="learn-results-compare-wrapper">
+
+        <div class="container" ng-if="vm.panels.length === 0">
+            <p></p>
+            <div class="alert alert-info" result-list-modal-handle results="vm.results">
+                <i class="fa fa-plus-square fa-fw"></i>
+                <strong>Click to add a hypothesis</strong> or click on the green button on the top right
+            </div>
+        </div>
+
+        <learn-result-panel ng-repeat="result in vm.panels track by $index" result="result" index="$index" on-step="vm.onStep.bind(vm)">
+            <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="vm.closePanel($index)">
+                <i class="fa fa-close"></i>
+            </button>
+        </learn-result-panel>
+
+    </div>
+</div>
