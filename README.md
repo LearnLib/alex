@@ -58,8 +58,8 @@ Or, if you just want to start the backend, you can use:
 
 ## Further reading
 
-* [User manual](http://learnlib.github.io/alex/book/1.2.1/contents/user-manual/index.html)
-* [Examples](http://learnlib.github.io/alex/book/1.2.1/contents/examples/index.html)
-* [Developer docs](http://learnlib.github.io/alex/book/1.2.1/contents/developer-documents/index.html)
+* [User manual](http://learnlib.github.io/alex/book/1.4.0/contents/user-manual/index.html)
+* [Examples](http://learnlib.github.io/alex/book/1.4.0/contents/examples/index.html)
+* [Developer docs](http://learnlib.github.io/alex/book/1.4.0/contents/developer-documents/index.html)
 * [Active automata learning](https://scholar.google.de/scholar?hl=de&q=active+automata+learning)
 * [LearnLib](http://learnlib.de/)
