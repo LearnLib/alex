@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {events} from '../../constants';
+
 /**
  * The component for the form to edit the password and the email of a user or to delete the user.
  */
@@ -27,14 +29,16 @@ class UserEditForm {
      * @param {ToastService} ToastService
      * @param {UserResource} UserResource
      * @param {PromptService} PromptService
+     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor($state, SessionService, ToastService, UserResource, PromptService) {
+    constructor($state, SessionService, ToastService, UserResource, PromptService, EventBus) {
         this.$state = $state;
         this.SessionService = SessionService;
         this.ToastService = ToastService;
         this.UserResource = UserResource;
         this.PromptService = PromptService;
+        this.EventBus = EventBus;
 
         /**
          * The model for the input of the old password.
@@ -116,6 +120,8 @@ class UserEditForm {
 
                         // remove the users jwt so that he cannot do anything after being deleted
                         this.SessionService.removeUser();
+                        this.EventBus.emit(events.USER_LOGGED_IN, {user: null});
+                        this.EventBus.emit(events.PROJECT_OPENED, {project: null});
                         this.$state.go('home');
                     })
                     .catch(response => {

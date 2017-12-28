@@ -128,33 +128,31 @@ export function config($stateProvider, $urlRouterProvider) {
 /**
  * Validate routes on state change.
  *
- * @param $rootScope
- * @param $state
+ * @param {TransitionService} $transitions
  * @param {SessionService} SessionService
  * @param {ToastService} ToastService
  */
 // @ngInject
-export function run($rootScope, $state, SessionService, ToastService) {
+export function run($transitions, SessionService, ToastService) {
 
     // route validation
-    $rootScope.$on('$stateChangeStart', stateChangeStart);
+    $transitions.onBefore({}, onBefore, {});
+    $transitions.onSuccess({}, onSuccess, {});
 
-    function stateChangeStart(event, toState) {
-        if (toState.data) {
-            const user = SessionService.getUser();
-            const project = SessionService.getProject();
+    function onBefore(transition) {
+        const user = SessionService.getUser();
+        const project = SessionService.getProject();
 
-            document.querySelector('title').innerHTML = 'ALEX | ' + toState.data.title;
+        const data = transition.to().data;
+        if ((data.roles && (user === null || data.roles.indexOf(user.role) === -1))
+            || (data.requiresProject && project === null)) {
 
-            if ((toState.data.roles && (user === null
-                    || toState.data.roles.indexOf(user.role) === -1))
-                || (toState.data.requiresProject && project === null)) {
-
-                ToastService.danger('You are not allowed to go to this page!');
-
-                $state.go('home');
-                event.preventDefault();
-            }
+            ToastService.danger('You cannot access this page!');
+            return transition.router.stateService.target('home');
         }
+    }
+
+    function onSuccess(transition) {
+        document.querySelector('title').innerHTML = 'ALEX | ' + transition.to().data.title;
     }
 }
