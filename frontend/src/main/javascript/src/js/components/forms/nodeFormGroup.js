@@ -14,10 +14,34 @@
  * limitations under the License.
  */
 
+/**
+ * The node form group component.
+ * @type {{templateUrl: string, bindings: {node: string}, controllerAs: string, controller: nodeFormGroup.controller}}
+ */
 export const nodeFormGroup = {
     templateUrl: 'html/components/forms/node-form-group.html',
     bindings: {
         node: '='
     },
     controllerAs: 'vm',
+    controller: class {
+
+        /**
+         * Constructor.
+         * @param {HtmlElementPickerService} HtmlElementPickerService
+         */
+        // @ngInject
+        constructor(HtmlElementPickerService) {
+            this.HtmlElementPickerService = HtmlElementPickerService;
+        }
+
+        /** Opens the element picker. */
+        openPicker() {
+            this.HtmlElementPickerService.open()
+                .then(data => {
+                    this.node.selector = data.node.selector;
+                    this.node.type = data.node.type;
+                });
+        }
+    }
 };

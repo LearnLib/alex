@@ -29,14 +29,12 @@ class HtmlElementPickerComponent {
     /**
      * Constructor.
      * @param {SessionService} SessionService
-     * @param {HtmlElementPickerService} HtmlElementPickerService
      * @param $element
      * @param $scope
      */
     // @ngInject
-    constructor(SessionService, HtmlElementPickerService, $element, $scope) {
+    constructor(SessionService, $element, $scope) {
         this.SessionService = SessionService;
-        this.HtmlElementPickerService = HtmlElementPickerService;
         this.iframe = $element.find('iframe');
         this.$scope = $scope;
 
@@ -51,17 +49,13 @@ class HtmlElementPickerComponent {
         this.isSelectable = false;
 
         /**
-         * The XPath of the selected element
-         * @type {null|string}
+         * The selected node.
+         * @type {{selector: string, type: string}}
          */
-        this.selector = null;
-
-        /**
-         * The type of the selector [CSS|XPATH].
-         *
-         * @type {string}
-         */
-        this.selectorType = 'CSS';
+        this.node = {
+            selector: null,
+            type: 'CSS'
+        };
 
         /**
          * The element.textContent value
@@ -81,21 +75,22 @@ class HtmlElementPickerComponent {
          */
         this.project = null;
 
+        /**
+         * If cors rules are disabled in the browser.
+         * @type {null}
+         */
         this.corsDisabled = null;
+
+        /**
+         * The current project.
+         * @type {Project}
+         */
+        this.project = this.SessionService.getProject();
 
         this.mouseMoveHandler = null;
         this.keyUpHandler = null;
         this.clickHandler = null;
 
-        this.init();
-    }
-
-    /**
-     * Load project, create proxy address and load the last url in the iframe.
-     */
-    init() {
-        this.project = this.SessionService.getProject();
-        this.url = this.HtmlElementPickerService.lastUrl;
         this.loadUrl();
     }
 
@@ -134,9 +129,10 @@ class HtmlElementPickerComponent {
     /**
      * Makes the web element picker invisible and fires the close event
      */
-    close() {
-        this.HtmlElementPickerService.lastUrl = this.url;
-        this.HtmlElementPickerService.deferred.reject();
+    closePicker() {
+        this.dismiss()({
+            url: this.url
+        });
     }
 
     /**
@@ -144,10 +140,9 @@ class HtmlElementPickerComponent {
      * selected. If no selector is defined, then it just closes the picker
      */
     ok() {
-        this.HtmlElementPickerService.lastUrl = this.url;
-        this.HtmlElementPickerService.deferred.resolve({
-            selector: this.selector,
-            selectorType: this.selectorType,
+        this.close()({
+            url: this.url,
+            node: this.node,
             textContent: this.textContent
         });
     }
@@ -156,7 +151,7 @@ class HtmlElementPickerComponent {
      * Toggle the type of the selector.
      */
     toggleSelectorType() {
-        this.selectorType = this.selectorType === 'CSS' ? 'XPATH' : 'CSS';
+        this.node.type = this.node.type === 'CSS' ? 'XPATH' : 'CSS';
     }
 
     /**
@@ -200,10 +195,10 @@ class HtmlElementPickerComponent {
         }
         this.lastTarget.style.outline = '5px solid red';
 
-        if (this.selectorType === 'CSS') {
-            this.selector = DomUtils.getCssPath(this.lastTarget);
+        if (this.node.type === 'CSS') {
+            this.node.selector = DomUtils.getCssPath(this.lastTarget);
         } else {
-            this.selector = DomUtils.getXPath(this.lastTarget);
+            this.node.selector = DomUtils.getXPath(this.lastTarget);
         }
 
         if (this.lastTarget.nodeName.toLowerCase() === 'input') {
@@ -249,7 +244,7 @@ class HtmlElementPickerComponent {
             document.body.addEventListener('keyup', this.keyUpHandler, false);
         } else {
             this.handleClick();
-            this.selector = null;
+            this.node.selector = null;
         }
         this.isSelectable = !this.isSelectable;
     }
@@ -257,6 +252,11 @@ class HtmlElementPickerComponent {
 
 export const htmlElementPicker = {
     templateUrl: 'html/components/html-element-picker.html',
+    bindings: {
+        close: '&',
+        dismiss: '&',
+        url: '<'
+    },
     controller: HtmlElementPickerComponent,
     controllerAs: 'vm'
 };

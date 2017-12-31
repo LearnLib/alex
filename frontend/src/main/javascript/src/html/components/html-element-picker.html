@@ -27,7 +27,7 @@
                             <i class="fa fa-fw" ng-class="vm.isSelectable ? 'fa-toggle-on' : 'fa-toggle-off'"></i>
                         </button>
                         <button class="btn btn-default" ng-click="vm.toggleSelectorType()">
-                            {{vm.selectorType === 'CSS' ? 'CSS' : 'XPath'}}
+                            {{vm.node.type === 'CSS' ? 'CSS' : 'XPath'}}
                         </button>
                     </div>
                 </div>
@@ -35,12 +35,12 @@
                 <div class="header-element" style="flex: 1 0; overflow: hidden">
                     <div class="btn btn-block btn-default disabled"
                          style="overflow: hidden; text-overflow: ellipsis; word-wrap: break-word; text-align: left">
-                        <span ng-if="vm.selector" ng-bind="vm.selector"></span>
-                        <span ng-if="!vm.selector">Enable the selection mode</span>
+                        <span ng-if="vm.node.selector" ng-bind="vm.node.selector"></span>
+                        <span ng-if="!vm.node.selector">Enable the selection mode</span>
                     </div>
                 </div>
 
-                <div class="header-element" style="flex: 0 0" ng-if="!vm.isSelectable && vm.selector">
+                <div class="header-element" style="flex: 0 0" ng-if="!vm.isSelectable && vm.node.selector">
                     <button class="btn btn-success" ng-click="vm.ok()">
                         <i class="fa fa-check"></i>
                     </button>
@@ -65,7 +65,7 @@
             </div>
 
             <div class="header-element" style="flex: 0 0">
-                <button class="btn btn-default" ng-click="vm.close()">
+                <button class="btn btn-default" ng-click="vm.closePicker()">
                     <i class="fa fa-close"></i>
                 </button>
             </div>

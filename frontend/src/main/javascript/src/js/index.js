@@ -130,7 +130,6 @@ import {projectDetailsWidget} from './components/widgets/projectDetailsWidget';
 import {widget} from './components/widgets/widget';
 import * as config from './config';
 import * as constant from './constants';
-import {htmlElementPickerHandle} from './directives/htmlElementPickerHandle';
 import {
     formatAlgorithm, formatEqOracle, formatMilliseconds, formatUserRole, formatWebBrowser,
     sortTests
@@ -232,9 +231,6 @@ angular
     .service('LearnerResultDownloadService', LearnerResultDownloadService)
     .service('HtmlElementPickerService', HtmlElementPickerService)
     .service('ActionRecorderService', ActionRecorderService)
-
-    // directives
-    .directive('htmlElementPickerHandle', htmlElementPickerHandle)
 
     // modals
     .directive('actionCreateModalHandle', actionCreateModalHandle)

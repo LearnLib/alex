@@ -53,7 +53,26 @@ export const actionFormCheckForText = {
     bindings: {
         action: '='
     },
-    controllerAs: 'vm'
+    controllerAs: 'vm',
+    controller: class {
+
+        /**
+         * Constructor.
+         * @param {HtmlElementPickerService} HtmlElementPickerService
+         */
+        // @ngInject
+        constructor(HtmlElementPickerService) {
+            this.HtmlElementPickerService = HtmlElementPickerService;
+        }
+
+        /** Opens the element picker. */
+        openPicker() {
+            this.HtmlElementPickerService.open()
+                .then(data => {
+                    this.action.value = data.textContent;
+                });
+        }
+    }
 };
 
 export const actionFormCheckPageTitle = {
@@ -85,7 +104,26 @@ export const actionFormClickLinkByText = {
     bindings: {
         action: '='
     },
-    controllerAs: 'vm'
+    controllerAs: 'vm',
+    controller: class {
+
+        /**
+         * Constructor.
+         * @param {HtmlElementPickerService} HtmlElementPickerService
+         */
+        // @ngInject
+        constructor(HtmlElementPickerService) {
+            this.HtmlElementPickerService = HtmlElementPickerService;
+        }
+
+        /** Opens the element picker. */
+        openPicker() {
+            this.HtmlElementPickerService.open()
+                .then(data => {
+                    this.action.value = data.textContent;
+                });
+        }
+    }
 };
 
 export const actionFormExecuteScript = {
