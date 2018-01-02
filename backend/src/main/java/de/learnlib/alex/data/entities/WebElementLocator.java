@@ -57,6 +57,23 @@ public class WebElementLocator implements Serializable {
     private Type type;
 
     /**
+     * Constructor.
+     */
+    public WebElementLocator() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param selector The selector.
+     * @param type The selector type.
+     */
+    public WebElementLocator(String selector, Type type) {
+        this.selector = selector;
+        this.type = type;
+    }
+
+    /**
      * Get the selector as selenium By object.
      * @return Selenium By object.
      */

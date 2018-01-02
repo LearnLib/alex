@@ -3,14 +3,17 @@
 </h4>
 
 <p class="text-muted">
-    Finds a link element with a given text and clicks on it
+    Click on a link with a given text in a specific element.
 </p>
 <hr>
 
+<node-form-group node="vm.action.node" label="Container element"></node-form-group>
+
 <div class="form-group">
-    <label class="control-label">Link Text</label>
+    <label class="control-label">Link text</label>
     <input class="form-control" type="text" placeholder="The text of the link" ng-model="vm.action.value">
 </div>
+
 <a class="btn btn-default btn-sm" ng-click="vm.openPicker()">
     <i class="fa fa-magic fa-fw"></i>&nbsp; Element Picker
 </a>

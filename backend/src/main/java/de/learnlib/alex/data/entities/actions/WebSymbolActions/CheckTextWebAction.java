@@ -18,17 +18,24 @@ package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.WebElementLocator;
+import de.learnlib.alex.learning.entities.webdrivers.WebDrivers;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Action to check for a specific element/ a specific text.
@@ -55,8 +62,23 @@ public class CheckTextWebAction extends WebSymbolAction {
     private boolean regexp;
 
     /**
+     * Search for text in a specific element.
+     */
+    @NotNull
+    @Embedded
+    private WebElementLocator node;
+
+    /**
+     * Constructor.
+     */
+    public CheckTextWebAction() {
+        this.regexp = false;
+        this.node = new WebElementLocator("document", WebElementLocator.Type.CSS);
+    }
+
+    /**
      * Get the value to check.
-     * 
+     *
      * @return The value to check.
      */
     public String getValue() {
@@ -76,7 +98,7 @@ public class CheckTextWebAction extends WebSymbolAction {
 
     /**
      * Set the value to check for.
-     * 
+     *
      * @param value
      *            The new value.
      */
@@ -103,17 +125,43 @@ public class CheckTextWebAction extends WebSymbolAction {
         this.regexp = regexp;
     }
 
+    public WebElementLocator getNode() {
+        return node;
+    }
+
+    public void setNode(WebElementLocator node) {
+        this.node = node;
+    }
+
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
-        String pageSource = connector.getPageSource();
-        boolean result = SearchHelper.search(getValueWithVariableValues(), pageSource, regexp);
+        final WebDriver driver = connector.getDriver();
 
-        LOGGER.info(LEARNER_MARKER, "Check if the current pages contains '{}' => {} "
-                                        + "(regExp: {}, ignoreFailure: {}, negated: {}).",
-                    value, result, regexp, ignoreFailure, negated);
-        if (result) {
-            return getSuccessOutput();
-        } else {
+        try {
+            String source;
+            if (node.getSelector().equals("document")) {
+                source = driver.getPageSource();
+            } else {
+                source = driver.findElement(node.getBy()).getAttribute("innerHTML");
+            }
+
+            node.setSelector(insertVariableValues(node.getSelector()));
+            final boolean found = SearchHelper.search(getValueWithVariableValues(), source, regexp);
+
+            LOGGER.info(LEARNER_MARKER, "Check if the current pages contains '{}' => {} "
+                            + "(regExp: {}, ignoreFailure: {}, negated: {}).",
+                    value, found, regexp, ignoreFailure, negated);
+
+            if (found) {
+                return getSuccessOutput();
+            } else {
+                return getFailedOutput();
+            }
+        } catch (ElementNotFoundException e) {
+            LOGGER.error(LEARNER_MARKER, "Could not find text \"{}\" in element \"{}\""
+                            + "(regExp: {}, ignoreFailure: {}, negated: {}).",
+                    value, node.getSelector(), regexp, ignoreFailure, negated);
+
             return getFailedOutput();
         }
     }

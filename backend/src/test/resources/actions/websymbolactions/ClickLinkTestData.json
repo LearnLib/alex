@@ -1,4 +1,8 @@
 {
     "type": "web_clickLinkByText",
-    "value": "Click Me"
+    "value": "Click Me",
+    "node": {
+        "selector": "body",
+        "type": "CSS"
+    }
 }

@@ -57,20 +57,11 @@ export const actionFormCheckForText = {
     controller: class {
 
         /**
-         * Constructor.
-         * @param {HtmlElementPickerService} HtmlElementPickerService
+         * Handle the data from the element picker.
+         * @param {object} data The data from the element picker.
          */
-        // @ngInject
-        constructor(HtmlElementPickerService) {
-            this.HtmlElementPickerService = HtmlElementPickerService;
-        }
-
-        /** Opens the element picker. */
-        openPicker() {
-            this.HtmlElementPickerService.open()
-                .then(data => {
-                    this.action.value = data.textContent;
-                });
+        onSelected(data) {
+            this.action.value = data.textContent;
         }
     }
 };

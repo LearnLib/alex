@@ -41,6 +41,12 @@ export class CheckForTextWebAction extends Action {
          * @type {*|boolean}
          */
         this.regexp = obj.regexp || false;
+
+        /**
+         * The target node to look for the text.
+         * @type {{selector: string, type: string}}
+         */
+        this.node = obj.node || {selector: 'document', type: 'CSS'};
     }
 
     /**
@@ -50,9 +56,10 @@ export class CheckForTextWebAction extends Action {
      */
     toString() {
         if (this.regexp) {
-            return 'Check if the document matches "' + this.value + '"';
+            return `Check if the source of element "${this.node.selector}" matches ${this.value}`;
         } else {
-            return 'Search for "' + this.value + '" in the document';
+            const text = this.node.selector === 'document' ? 'the document' : `the element "${this.node.selector}"`;
+            return `Search for text "${this.value}" in ${text}`;
         }
     }
 }

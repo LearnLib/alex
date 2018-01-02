@@ -19,12 +19,15 @@ package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.io.File;
@@ -44,6 +47,9 @@ public class ClickLinkActionTest {
 
     private ClickLinkAction c;
 
+    private final WebSiteConnector connector = mock(WebSiteConnector.class);
+    private final WebDriver driver = mock(WebDriver.class);
+
     @Before
     public void setUp() {
         Symbol symbol = new Symbol();
@@ -51,6 +57,9 @@ public class ClickLinkActionTest {
         c = new ClickLinkAction();
         c.setSymbol(symbol);
         c.setValue("Click Me");
+        c.setNode(new WebElementLocator("body", WebElementLocator.Type.CSS));
+
+        given(connector.getDriver()).willReturn(driver);
     }
 
     @Test
@@ -76,18 +85,23 @@ public class ClickLinkActionTest {
 
     @Test
     public void shouldReturnOKIfLinkCouldBeClicked() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-        WebElement element = mock(WebElement.class);
-        given(connector.getLinkByText("Click Me")).willReturn(element);
+        WebElement body = mock(WebElement.class);
+        WebElement fooLink = mock(WebElement.class);
+
+        given(driver.findElement(c.getNode().getBy())).willReturn(body);
+        given(body.findElement(By.linkText(c.getValue()))).willReturn(fooLink);
 
         assertEquals(OK, c.execute(connector));
-        verify(element).click();
+        verify(fooLink).click();
     }
 
     @Test
     public void shouldReturnFailedIfLinkCouldNotBeClicked() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-        when(connector.getLinkByText("Click Me")).thenThrow(new NoSuchElementException(""));
+        WebElement body = mock(WebElement.class);
+
+        given(driver.findElement(c.getNode().getBy())).willReturn(body);
+
+        when(body.findElement(By.linkText("Click Me"))).thenThrow(new NoSuchElementException(""));
 
         assertEquals(ExecuteResult.FAILED, c.execute(connector));
     }

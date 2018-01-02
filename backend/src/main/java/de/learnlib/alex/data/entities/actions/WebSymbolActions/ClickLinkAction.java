@@ -19,17 +19,22 @@ package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
+import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Action to click on a link by its visible link.
@@ -46,6 +51,20 @@ public class ClickLinkAction extends WebSymbolAction {
     /** The value the site is checked for. */
     @NotBlank
     private String value;
+
+    /**
+     * Search link in a specific element.
+     */
+    @NotNull
+    @Embedded
+    private WebElementLocator node;
+
+    /**
+     * Constructor.
+     */
+    public ClickLinkAction() {
+        this.node = new WebElementLocator("body", WebElementLocator.Type.CSS);
+    }
 
     /**
      * Get the value to check.
@@ -77,10 +96,25 @@ public class ClickLinkAction extends WebSymbolAction {
         this.value = value;
     }
 
+    public WebElementLocator getNode() {
+        return node;
+    }
+
+    public void setNode(WebElementLocator node) {
+        this.node = node;
+    }
+
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
+        final WebDriver driver = connector.getDriver();
+
         try {
-            WebElement element = connector.getLinkByText(getValueWithVariableValues());
+            final String linkText = getValueWithVariableValues();
+
+            final WebElement element = driver
+                    .findElement(node.getBy())
+                    .findElement(By.linkText(linkText));
+
             element.click();
 
             LOGGER.info(LEARNER_MARKER, "Clicked on the link '{}' (ignoreFailure: {}, negated: {}).",

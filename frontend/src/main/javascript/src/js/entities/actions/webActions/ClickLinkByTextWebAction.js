@@ -35,6 +35,12 @@ export class ClickLinkByTextWebAction extends Action {
          * @type {*|string}
          */
         this.value = obj.value || '';
+
+        /**
+         * The target node to look for the link.
+         * @type {{selector: string, type: string}}
+         */
+        this.node = obj.node || {selector: 'body', type: 'CSS'};
     }
 
     /**
@@ -43,6 +49,6 @@ export class ClickLinkByTextWebAction extends Action {
      * @returns {string}
      */
     toString() {
-        return `Click on link with text "${this.value}"`;
+        return `Click on link with text "${this.value}" in element "${this.node.selector}"`;
     }
 }

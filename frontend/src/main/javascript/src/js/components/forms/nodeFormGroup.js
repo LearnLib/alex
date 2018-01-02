@@ -21,7 +21,9 @@
 export const nodeFormGroup = {
     templateUrl: 'html/components/forms/node-form-group.html',
     bindings: {
-        node: '='
+        node: '=',
+        label: '@',
+        onSelected: '&'
     },
     controllerAs: 'vm',
     controller: class {
@@ -35,12 +37,19 @@ export const nodeFormGroup = {
             this.HtmlElementPickerService = HtmlElementPickerService;
         }
 
+        $onInit() {
+            this.label = this.label ? this.label : 'Selector';
+        }
+
         /** Opens the element picker. */
         openPicker() {
             this.HtmlElementPickerService.open()
                 .then(data => {
                     this.node.selector = data.node.selector;
                     this.node.type = data.node.type;
+                    if (this.onSelected) {
+                        this.onSelected({data});
+                    }
                 });
         }
     }

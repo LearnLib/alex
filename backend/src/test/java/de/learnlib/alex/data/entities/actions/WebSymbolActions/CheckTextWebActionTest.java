@@ -19,11 +19,15 @@ package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
+import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +45,20 @@ public class CheckTextWebActionTest {
 
     private CheckTextWebAction checkText;
 
+    private final WebSiteConnector connector = mock(WebSiteConnector.class);
+    private final WebDriver driver = mock(WebDriver.class);
+
+    private final String document = "\n" +
+            "<!DOCTYPE html>\n" +
+            "<html>\n" +
+            "<head>\n" +
+            "</head>\n" +
+            "<body>\n" +
+            "<div id=\"foo\">foo</div>\n"+
+            "<div id=\"bar\">bar</div>\n"+
+            "</body>\n" +
+            "</html>";
+
     @Before
     public void setUp() {
         Symbol symbol = new Symbol();
@@ -49,6 +67,9 @@ public class CheckTextWebActionTest {
         checkText.setSymbol(symbol);
         checkText.setValue("Foobar");
         checkText.setRegexp(false);
+        checkText.setNode(new WebElementLocator("document", WebElementLocator.Type.CSS));
+
+        given(connector.getDriver()).willReturn(driver);
     }
 
     @Test
@@ -74,16 +95,14 @@ public class CheckTextWebActionTest {
 
     @Test
     public void shouldReturnOKIfTextWasFoundWithoutRegexp() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-        given(connector.getPageSource()).willReturn(checkText.getValue());
+        given(driver.getPageSource()).willReturn(checkText.getValue());
 
         assertEquals(OK, checkText.execute(connector));
     }
 
     @Test
     public void shouldReturnFaliedIfTextWasNotFoundWithoutRegexp() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-        given(connector.getPageSource()).willReturn("");
+        given(driver.getPageSource()).willReturn("");
 
         assertEquals(FAILED, checkText.execute(connector));
     }
@@ -92,8 +111,8 @@ public class CheckTextWebActionTest {
     public void shouldReturnOKIfTextWasFoundWithRegexp() {
         checkText.setValue("F[oO]+ B[a]+r");
         checkText.setRegexp(true);
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-        given(connector.getPageSource()).willReturn("FoO Baaaaar");
+
+        given(driver.getPageSource()).willReturn("FoO Baaaaar");
 
         assertEquals(OK, checkText.execute(connector));
     }
@@ -102,10 +121,31 @@ public class CheckTextWebActionTest {
     public void shouldReturnFailedIfTextWasNotFoundWithRegexp() {
         checkText.setValue("F[oO]+ B[a]+r");
         checkText.setRegexp(true);
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-        given(connector.getPageSource()).willReturn("F BAr");
+
+        given(driver.getPageSource()).willReturn("F BAr");
 
         assertEquals(FAILED, checkText.execute(connector));
     }
 
+    @Test
+    public void shouldOnlyLookForTextInTheCorrectElement() {
+        WebElement fooElement = mock(WebElement.class);
+        given(fooElement.getAttribute("innerHTML")).willReturn("foo");
+
+        WebElement barElement = mock(WebElement.class);
+        given(barElement.getAttribute("innerHTML")).willReturn("bar");
+
+        given(driver.getPageSource()).willReturn(document);
+        given(driver.findElement(By.cssSelector("#foo"))).willReturn(fooElement);
+        given(driver.findElement(By.cssSelector("#bar"))).willReturn(barElement);
+
+        checkText.setValue("foo");
+        checkText.getNode().setSelector("#foo");
+
+        assertEquals(OK, checkText.execute(connector));
+
+        checkText.getNode().setSelector("#bar");
+
+        assertEquals(FAILED, checkText.execute(connector));
+    }
 }
