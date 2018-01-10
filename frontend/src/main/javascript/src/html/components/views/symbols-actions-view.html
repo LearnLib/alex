@@ -33,26 +33,15 @@
         </div>
 
         <div class="btn-group btn-group-sm" uib-dropdown>
-            <button class="btn btn-default btn-dropdown" uib-dropdown-toggle>
-                <i class="fa fa-ellipsis-h fa-fw"></i>
+            <button class="btn btn-default" uib-tooltip="Copy" tooltip-placement="bottom" ng-click="vm.cutActions(vm.selectedActions)">
+                <i class="fa fa-copy fa-fw"></i>
             </button>
-            <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
-                <li>
-                    <a href="" ng-click="vm.cutActions(vm.selectedActions)">
-                        <i class="fa fa-cut fa-fw"></i> Cut
-                    </a>
-                </li>
-                <li>
-                    <a href="" ng-click="vm.copyActions(vm.selectedActions)">
-                        <i class="fa fa-copy fa-fw"></i> Copy
-                    </a>
-                </li>
-                <li>
-                    <a href="" ng-click="vm.pasteActions()">
-                        <i class="fa fa-paste fa-fw"></i> Paste
-                    </a>
-                </li>
-            </ul>
+            <button class="btn btn-default" uib-tooltip="Cut" tooltip-placement="bottom" ng-click="vm.copyActions(vm.selectedActions)">
+                <i class="fa fa-cut fa-fw"></i>
+            </button>
+            <button class="btn btn-default" uib-tooltip="Paste" tooltip-placement="bottom" ng-click="vm.pasteActions()">
+                <i class="fa fa-paste fa-fw"></i>
+            </button>
         </div>
 
         <button class="btn btn-success btn-sm pull-right" ng-class="{'disabled' : !vm.hasChanged}"

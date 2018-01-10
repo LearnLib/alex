@@ -43,10 +43,12 @@ export const testSuiteView = {
          * @param $uibModal
          * @param {SettingsResource} SettingsResource
          * @param {DownloadService} DownloadService
+         * @param {TestService} TestService
+         * @param {ClipboardService} ClipboardService
          */
         // @ngInject
-        constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService,
-                    TestResource, PromptService, $uibModal, SettingsResource, DownloadService) {
+        constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService, TestResource,
+                    PromptService, $uibModal, SettingsResource, DownloadService, TestService, ClipboardService) {
             this.$state = $state;
             this.LearnerResource = LearnerResource;
             this.ToastService = ToastService;
@@ -54,6 +56,8 @@ export const testSuiteView = {
             this.PromptService = PromptService;
             this.$uibModal = $uibModal;
             this.DownloadService = DownloadService;
+            this.TestService = TestService;
+            this.ClipboardService = ClipboardService;
 
             /**
              * The current project.
@@ -265,43 +269,12 @@ export const testSuiteView = {
          * Downloads the tests as JSON file.
          */
         exportSelectedTests() {
-            function deleteProperties(test) {
-                delete test.id;
-                delete test.project;
-                delete test.user;
-                delete test.parent;
-                delete test._selected;
-            }
-
-            function prepareTestCase(testCase) {
-                deleteProperties(testCase);
-                testCase.symbols = testCase.symbols.map(s => s.name);
-            }
-
-            function prepareTestSuite(testSuite) {
-                deleteProperties(testSuite);
-                testSuite.tests.forEach(test => {
-                    if (test.type === 'case') {
-                        prepareTestCase(test);
-                    } else {
-                        prepareTestSuite(test);
-                    }
-                });
-            }
-
             let tests = this.testSuite.tests.filter(t => t._selected);
             if (!tests.length) {
                 this.ToastService.info('You have to select at least one test.');
             } else {
                 tests = JSON.parse(JSON.stringify(tests));
-
-                for (const test of tests) {
-                    if (test.type === 'case') {
-                        prepareTestCase(test);
-                    } else {
-                        prepareTestSuite(test);
-                    }
-                }
+                tests = this.TestService.exportTests(tests);
 
                 const name = `tests-${this.testSuite.name}-${DateUtils.YYYYMMDD()}`;
                 this.PromptService.prompt('Enter a name for the file', name).then(name => {
@@ -312,18 +285,46 @@ export const testSuiteView = {
         }
 
         importTests() {
-            this.$uibModal.open({
-                component: 'testsImportModal',
-                resolve: {
-                    modalData: () => ({test: this.testSuite})
-                }
-            }).result.then(tests => {
-                this.ToastService.success('Tests have been imported.');
-                tests.forEach(t => {
-                    t.type = t.tests ? 'suite' : 'case';
-                    this.testSuite.tests.push(t);
+            this.TestService.openImportModal(this.testSuite)
+                .then((tests) => {
+                    this.ToastService.success('Tests have been imported.');
+                    tests.forEach(t => {
+                        t.type = t.tests ? 'suite' : 'case';
+                        this.testSuite.tests.push(t);
+                    });
                 });
-            });
+        }
+
+        copyTests() {
+            let tests = this.testSuite.tests.filter((t) => t._selected);
+
+            if (tests.length > 0) {
+                tests = JSON.parse(JSON.stringify(tests));
+                tests = this.TestService.exportTests(tests);
+                this.ClipboardService.copy('tests', tests);
+                this.ToastService.info('Tests copied to clipboard.');
+            } else {
+                this.ToastService.info('You have to select at least one test');
+            }
+        }
+
+        pasteTests() {
+            const tests = this.ClipboardService.paste('tests');
+            if (tests !== null) {
+                this.TestService.importTests(this.project.id, tests, this.testSuite.id)
+                    .then((importedTests) => {
+                        importedTests.forEach((t) => {
+                            t.type = t.tests ? 'suite' : 'case';
+                            this.testSuite.tests.push(t)
+                        });
+                        this.ToastService.success(`Pasted tests from clipboard.`);
+                    })
+                    .catch((err) => {
+                        this.ToastService.danger(`Could not paste tests in this suite. ${err.data.message}`);
+                    });
+            } else {
+                this.ToastService.info('There are not tests in the clipboard.');
+            }
         }
     }
 };

@@ -158,6 +158,7 @@ import {LearnerResultDownloadService} from './services/LearnerResultDownloadServ
 import {LearningAlgorithmService} from './services/LearningAlgorithmService';
 import {PromptService} from './services/PromptService';
 import {SessionService} from './services/SessionService';
+import {TestService} from './services/TestService';
 import {ToastService} from './services/ToastService';
 
 const env = {};
@@ -231,6 +232,7 @@ angular
     .service('LearnerResultDownloadService', LearnerResultDownloadService)
     .service('HtmlElementPickerService', HtmlElementPickerService)
     .service('ActionRecorderService', ActionRecorderService)
+    .service('TestService', TestService)
 
     // modals
     .directive('actionCreateModalHandle', actionCreateModalHandle)

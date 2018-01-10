@@ -26,9 +26,9 @@ export class ClipboardService {
 
         /**
          * The map of clipboard entries.
-         * @type {Map}
+         * @type {object}
          */
-        this.entries = new Map();
+        this.entries = {};
     }
 
     /**
@@ -38,10 +38,10 @@ export class ClipboardService {
      * @param {any} data - the data to copy to the clipboard.
      */
     copy(key, data) {
-        this.entries.set(key, {
-            data: data,
+        this.entries[key] = {
+            data,
             mode: 'copy'
-        });
+        };
     }
 
     /**
@@ -51,10 +51,10 @@ export class ClipboardService {
      * @param {any} data - The data to store.
      */
     cut(key, data) {
-        this.entries.set(key, {
-            data: data,
+        this.entries[key] = {
+            data,
             mode: 'cut'
-        });
+        };
     }
 
     /**
@@ -64,13 +64,12 @@ export class ClipboardService {
      * @returns {any|null}
      */
     paste(key) {
-        if (this.entries.has(key)) {
-            const item = this.entries.get(key);
-            const data = item.data;
+        if (this.entries[key]) {
+            const item = this.entries[key];
             if (item.mode === 'cut') {
-                this.entries.delete(key);
+                delete this.entries[key];
             }
-            return data;
+            return item.data;
         } else {
             return null;
         }
