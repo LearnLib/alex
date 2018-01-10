@@ -69,101 +69,12 @@ export const testsImportModal = {
             if (this.tests.length) {
                 const parentId = this.resolve.modalData.test.id;
 
-                console.log(this.tests);
-
                 this.TestService.importTests(this.project.id, this.tests, parentId)
                     .then((tests) => this.close({$value: tests}))
-                    .catch((err) => {
-                        console.log(err);
-                        this.errorMessage = err.data.message;
-                    });
+                    .catch((err) => this.errorMessage = err.data.message);
             } else {
                 this.errorMessage = 'There aren\'t any tests to import';
             }
         }
     }
 };
-
-const r = [{
-    'type': 'case',
-    'name': 'should open and close a project',
-    'variables': {},
-    'shouldPass': true,
-    'symbols': ['Reset', 'Create User', 'Login User', 'Create Project', 'Open Project', 'Close Project']
-}, {
-    'type': 'case',
-    'name': 'should login after email change',
-    'variables': {},
-    'shouldPass': true,
-    'symbols': ['Reset', 'Create User', 'Login User', 'Change Email', 'Logout', 'Login User']
-}, {
-    'type': 'case',
-    'name': 'should not create the same user twice',
-    'variables': {},
-    'shouldPass': false,
-    'symbols': ['Reset', 'Create User', 'Create User']
-}, {
-    'type': 'case',
-    'name': 'should not create the same project twice',
-    'variables': {},
-    'shouldPass': false,
-    'symbols': ['Reset', 'Create User', 'Login User', 'Create Project', 'Create Project']
-}, {
-    'type': 'case',
-    'name': 'should create and delete a project',
-    'variables': {},
-    'shouldPass': true,
-    'symbols': ['Reset', 'Create User', 'Login User', 'Create Project', 'Delete Project']
-}, {
-    'type': 'case',
-    'name': 'should create, update and delete a counter',
-    'variables': {},
-    'shouldPass': true,
-    'symbols': ['Reset', 'Create User', 'Login User', 'Create Project', 'Open Project', 'Create Counter', 'Update Counter', 'Delete Counter']
-}, {
-    'type': 'case',
-    'name': 'should login and logout admin',
-    'variables': {},
-    'shouldPass': true,
-    'symbols': ['Reset', 'Login Admin', 'Logout']
-}, {
-    'type': 'suite',
-    'name': 'User Story XY',
-    'tests': [{
-        'type': 'case',
-        'name': 'User Story 2',
-        'variables': {},
-        'shouldPass': true,
-        'symbols': []
-    }, {'type': 'case', 'name': 'User Story 3', 'variables': {}, 'shouldPass': true, 'symbols': []}, {
-        'type': 'case',
-        'name': 'User Story 1',
-        'variables': {},
-        'shouldPass': true,
-        'symbols': []
-    }]
-}, {
-    'type': 'case',
-    'name': 'admin settings should be visible for admins',
-    'variables': {},
-    'shouldPass': true,
-    'symbols': ['Reset', 'Login Admin', 'Admin Settings Visible']
-}, {'type': 'case', 'name': 'should reset', 'variables': {}, 'shouldPass': true, 'symbols': ['Reset']}, {
-    'type': 'case',
-    'name': 'should login after password change',
-    'variables': {},
-    'shouldPass': true,
-    'symbols': ['Reset', 'Create User', 'Login User', 'Change Email', 'Logout', 'Login User']
-}, {
-    'type': 'case',
-    'name': 'admin settings should not be displayed for a user',
-    'variables': {},
-    'shouldPass': false,
-    'symbols': ['Reset', 'Create User', 'Login User', 'Admin Settings Visible']
-}, {
-    'type': 'case',
-    'name': 'should create, login and logout user',
-    'variables': {},
-    'shouldPass': true,
-    'symbols': ['Reset', 'Create User', 'Login User', 'Logout']
-}];
