@@ -18,7 +18,7 @@ module.exports = function (grunt) {
             uglify: {
                 app: {
                     files: {
-                         '<%= buildLocation %>/js/alex.min.js': ['<%= buildLocation %>/js/alex.js']
+                        '<%= buildLocation %>/js/alex.min.js': ['<%= buildLocation %>/js/alex.js']
                     }
                 },
                 libs: {
@@ -123,28 +123,20 @@ module.exports = function (grunt) {
                 }
             },
 
-            ngAnnotate: {
-                options: {
-                    singleQuotes: true
-                },
-                dist: {
-                    files: {
-                        '<%= buildLocation %>/js/alex.js': ['<%= buildLocation %>/js/alex.js']
-                    }
-                }
-            },
-
             browserify: {
                 dist: {
                     files: {
                         '<%= buildLocation %>/js/alex.js': ['src/js/index.js']
                     },
                     options: {
-                        transform: [['babelify', {
-                            sourceMap: false,
-                            presets: ['es2015'],
-                            compact: false
-                        }]]
+                        transform: [
+                            ['babelify', {
+                                sourceMap: false,
+                                presets: ['es2015'],
+                                compact: false
+                            }],
+                            ['browserify-ngannotate']
+                        ]
                     }
                 }
             },
@@ -201,11 +193,10 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-postcss');
-    grunt.loadNpmTasks('grunt-ng-annotate');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
 
-    grunt.registerTask('build-js', ['browserify', 'ngAnnotate', 'uglify:app']);
+    grunt.registerTask('build-js', ['browserify', 'uglify:app']);
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin']);
     grunt.registerTask('build-html', ['html2js']);
     grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'copy:fonts', 'build-css', 'copy:images', 'copy:index', 'copy:env']);
