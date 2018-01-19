@@ -15,6 +15,12 @@
  */
 
 /**
+ * The version of ALEX.
+ * @type {string}
+ */
+export const version = '1.4.1-SNAPSHOT';
+
+/**
  * API URL
  *
  * Change it to '/rest' before ALEX is packaged.
