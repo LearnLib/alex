@@ -5,8 +5,7 @@ module.exports = function (grunt) {
         'node_modules/angular/angular.js',
         'node_modules/angular-ui-ace/src/ui-ace.js',
         'node_modules/n3-charts/build/LineChart.js',
-        'node_modules/selection-model/dist/selection-model.js',
-        'node_modules/d3/d3.js'
+        'node_modules/selection-model/dist/selection-model.js'
     ];
 
     grunt
@@ -38,32 +37,9 @@ module.exports = function (grunt) {
                 }
             },
 
-            html2js: {
-                options: {
-                    useStrict: true,
-                    base: './src',
-                    module: 'ALEX.templates',
-                    singleModule: true,
-                    htmlmin: {
-                        collapseBooleanAttributes: false,
-                        collapseWhitespace: true,
-                        removeAttributeQuotes: false,
-                        removeComments: true,
-                        removeEmptyAttributes: false,
-                        removeRedundantAttributes: false,
-                        removeScriptTypeAttributes: false,
-                        removeStyleLinkTypeAttributes: false
-                    }
-                },
-                all: {
-                    src: ['src/html/**/*.html'],
-                    dest: '<%= buildLocation %>/js/alex.templates.js'
-                }
-            },
-
             watch: {
                 scripts: {
-                    files: ['src/js/**/*.js'],
+                    files: ['src/js/**/*.js', 'src/js/**/*.html'],
                     tasks: ['build-js'],
                     options: {
                         spawn: false
@@ -72,13 +48,6 @@ module.exports = function (grunt) {
                 sass: {
                     files: ['src/scss/**/*.scss'],
                     tasks: ['build-css'],
-                    options: {
-                        spawn: false
-                    }
-                },
-                html: {
-                    files: ['src/html/**/*.html'],
-                    tasks: ['build-html'],
                     options: {
                         spawn: false
                     }
@@ -135,7 +104,10 @@ module.exports = function (grunt) {
                                 presets: ['es2015'],
                                 compact: false
                             }],
-                            ['browserify-ngannotate']
+                            ['browserify-ngannotate'],
+                            ['html2js-browserify', {
+                                minify: true
+                            }]
                         ]
                     }
                 }
@@ -143,7 +115,7 @@ module.exports = function (grunt) {
 
             karma: {
                 unit: {
-                    configFile: 'tests/karma.conf.unit.js'
+                    configFile: 'test/karma.conf.unit.js'
                 }
             },
 
@@ -176,10 +148,6 @@ module.exports = function (grunt) {
                 index: {
                     src: 'index.html',
                     dest: '<%= buildLocation %>/index.html'
-                },
-                env: {
-                    src: 'env.js',
-                    dest: '<%= buildLocation %>/env.js'
                 }
             }
         });
@@ -190,7 +158,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-sass');
-    grunt.loadNpmTasks('grunt-html2js');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-postcss');
     grunt.loadNpmTasks('grunt-browserify');
@@ -198,8 +165,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build-js', ['browserify', 'uglify:app']);
     grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin']);
-    grunt.registerTask('build-html', ['html2js']);
-    grunt.registerTask('default', ['build-html', 'concat:libs', 'build-js', 'uglify:libs', 'copy:fonts', 'build-css', 'copy:images', 'copy:index', 'copy:env']);
+    grunt.registerTask('default', ['concat:libs', 'uglify:libs', 'build-js', 'copy:fonts', 'build-css', 'copy:images', 'copy:index']);
     grunt.registerTask('lint', 'jshint');
     grunt.registerTask('test', ['karma:unit']);
 };

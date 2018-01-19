@@ -33,7 +33,7 @@ export class DomUtils {
                 names.unshift('#' + el.id);
                 break;
             } else {
-                if (el == el.ownerDocument.documentElement) {
+                if (el === el.ownerDocument.documentElement) {
                     names.unshift(el.tagName);
                 } else {
                     for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++) ;
@@ -58,7 +58,7 @@ export class DomUtils {
                 names.unshift('//' + el.nodeName.toLowerCase() + '[@id=\'' + el.id + '\']');
                 break;
             } else {
-                if (el == el.ownerDocument.documentElement) {
+                if (el === el.ownerDocument.documentElement) {
                     names.unshift(el.tagName);
                 } else {
                     for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++) ;

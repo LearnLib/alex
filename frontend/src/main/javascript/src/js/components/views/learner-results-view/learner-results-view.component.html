@@ -1,0 +1,93 @@
+<div class="view">
+    <view-header title="Results"></view-header>
+
+    <action-bar>
+        <div ng-show="vm.results.length > 0">
+            <checkbox-multiple model="vm.results" class="pull-left"></checkbox-multiple>
+
+            <button class="btn btn-sm btn-primary" ng-click="vm.openSelectedResults()"
+                    ng-class="{'disabled': vm.selectedResults.length === 0}">
+                Compare
+            </button>
+            <button class="btn btn-sm btn-default" ng-click="vm.deleteResults()"
+                    ng-class="{'disabled': vm.selectedResults.length === 0}">
+                Delete
+            </button>
+
+            <div class="btn-group btn-group-sm" uib-dropdown style="margin-left: 3px;">
+                <button class="btn btn-default btn-dropdown" uib-dropdown-toggle
+                        ng-class="{'disabled': vm.selectedResults.length === 0}">
+                    Statistics <i class="fa fa-fw fa-caret-down"></i>
+                </button>
+                <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
+                    <li>
+                        <a href="" ng-click="vm.showStatistics(vm.selectedResults)">
+                            <i class="fa fa-fw fa-bar-chart"></i> Show statistics
+                        </a>
+                    </li>
+                    <li>
+                        <a href="" ng-click="vm.exportSelectedAsCSV()">
+                            <i class="fa fa-fw fa-download"></i> Export statistics
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </action-bar>
+
+    <div class="view-body has-sub-nav">
+        <div class="alx-container-fluid">
+
+            <div class="list-group">
+                <div class="list-group-item" ng-repeat="result in vm.results | orderBy:'-testNo':false" selection-model selection-model-selected-items="vm.selectedResults">
+                    <learner-result-list-item result="result">
+                        <div class="btn-group btn-group-xs" uib-dropdown>
+                            <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
+                                <li>
+                                    <a ui-sref="learnerStart({result: result})">
+                                        <i class="fa fa-play fa-fw"></i> Continue learning
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="" learner-result-details-modal-handle result="result">
+                                        <i class="fa fa-info fa-fw"></i> Details
+                                    </a>
+                                </li>
+                                <li>
+                                    <a ui-sref="resultsCompare({testNos: [result.testNo]})">
+                                        <i class="fa fa-code-fork fa-fw"></i> Hypotheses
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="" ng-click="vm.deleteResult(result)">
+                                        <i class="fa fa-trash fa-fw"></i> Delete
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="" ng-click="vm.showStatistics(result)">
+                                        <i class="fa fa-fw fa-bar-chart"></i> Show statistics
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="" ng-click="vm.exportAsCSV(result)">
+                                        <i class="fa fa-fw fa-download"></i> Export statistics
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </learner-result-list-item>
+                </div>
+            </div>
+
+            <div class="alert alert-info" ng-if="vm.results.length === 0">
+                You have not run any tests yet or the active one is not finished.
+            </div>
+
+        </div>
+    </div>
+</div>

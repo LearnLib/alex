@@ -13,7 +13,7 @@ backend/logs
 cli/src/main/javascript/node_modules
 frontend/src/main/javascript/node_modules
 frontend/src/main/javascript/dist
-frontend/src/main/javascript/tests/coverage
+frontend/src/main/javascript/test/coverage
 frontend/src/main/javascript/assets/fonts
 
 # Auto Generated Swagger Doc

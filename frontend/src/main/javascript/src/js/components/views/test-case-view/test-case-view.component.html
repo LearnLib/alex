@@ -1,0 +1,124 @@
+<div class="view view-test-case">
+    <view-header title="Test Management"></view-header>
+    <action-bar>
+        <button class="btn btn-sm btn-success" ng-click="vm.save()">
+            <i class="fa fa-fw fa-save"></i> Save
+        </button>
+        <button class="btn btn-sm btn-default" ui-sref="tests({testId: vm.testCase.parent})">
+            <i class="fa fa-fw fa-close"></i> Cancel
+        </button>
+        <div class="btn-group btn-group-sm pull-right">
+            <button class="btn btn-primary" ng-click="vm.execute()">
+                Execute
+            </button>
+            <button class="btn btn-primary" ng-click="vm.openBrowserConfigModal()">
+                <i class="fa fa-fm fa-gear"></i>
+            </button>
+        </div>
+    </action-bar>
+    <div class="view-body">
+        <div class="alx-container-fluid">
+
+            <div ng-if="vm.result">
+                <div class="alert alert-danger" ng-if="!vm.result.passed">
+                    <i class="fa fa-fw fa-close pull-right" ng-click="vm.result = null"></i>
+                    <i class="fa fa-fw fa-warning"></i> <strong>The test case failed.</strong>
+                </div>
+                <div class="alert alert-success" ng-if="vm.result.passed">
+                    <i class="fa fa-fw fa-close pull-right" ng-click="vm.result = null"></i>
+                    <i class="fa fa-fw fa-check"></i> <strong>The test case passed.</strong>
+                </div>
+            </div>
+
+            <div class="d-flex" style="align-items: center">
+                <button class="btn btn-sm btn-default" ui-sref="tests({testId: vm.testCase.parent})" style="margin-right: 12px">
+                    <i class="fa fa-fw fa-level-up"></i>
+                </button>
+                <h4 class="flex-grow-1" style="margin: 0;">
+                    <strong>
+                        <i class="fa fa-fw fa-file-o"></i> {{vm.testCase.name}}
+                    </strong>
+                </h4>
+                <button class="btn btn-sm btn-default text-left toggle-button-success"
+                        ng-class="{'toggle-button-success': vm.testCase.shouldPass, 'toggle-button-danger': !vm.testCase.shouldPass}"
+                        ng-click="vm.testCase.shouldPass = !vm.testCase.shouldPass">
+                    <span ng-if="vm.testCase.shouldPass">
+                        <i class="fa fa-toggle-on mr-1"></i>Should pass
+                    </span>
+                    <span ng-if="!vm.testCase.shouldPass">
+                        <i class="fa fa-toggle-on fa-flip-horizontal mr-1"></i>Should fail
+                    </span>
+                </button>
+            </div>
+
+            <hr>
+            <div class="row">
+                <div class="col-md-4 col-sm-5">
+                    <div class="panel panel-default" ng-repeat="group in vm.groups">
+                        <div class="panel-heading">
+                            <strong>{{group.name}}</strong>
+                        </div>
+                        <div class="panel-body panel-body-list">
+                            <div class="list-group" style="margin-bottom: 0" ng-if="group.symbols.length">
+                                <div class="list-group-item" ng-repeat="symbol in group.symbols" ng-click="vm.testCase.symbols.push(symbol)">
+                                    <button class="text-muted btn btn-xs btn-icon pull-right" ui-sref="symbolsActions({symbolId:symbol.id})">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    {{symbol.name}}
+                                </div>
+                            </div>
+                            <div class="alert alert-info" ng-if="!group.symbols.length" style="margin-bottom: 0">
+                                There are no symbols in this group.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 col-sm-7">
+
+                    <uib-tabset>
+                        <uib-tab heading="Test case">
+                            <br>
+
+                            <div class="list-group" ng-if="vm.testCase.symbols.length" dragula='"testSymbols"' dragula-model="vm.testCase.symbols">
+                                <div class="list-group-item" ng-repeat="symbol in vm.testCase.symbols track by $index">
+                                    <i class="fa fa-close pull-right" ng-click="vm.testCase.symbols.splice($index, 1)"></i>
+                                    <span class="label label-info pull-right" ng-if="$index === 0" style="margin-right: 12px">Reset</span>
+                                    <strong>{{symbol.name}}</strong><br>
+                                    <span class="label label-default" ng-if="vm.result.outputs[$index]">{{vm.result.outputs[$index]}}</span>
+                                </div>
+                            </div>
+                            <div class="alert alert-info" ng-if="!vm.testCase.symbols.length">
+                                Select a symbol to model the test case.
+                            </div>
+
+                        </uib-tab>
+                        <uib-tab heading="Variables">
+                            <br>
+
+                            <form class="d-flex flex-row" ng-submit="vm.createVariable()">
+                                <div class="form-group flex-grow-1" style="width: 100%; margin-right: 12px">
+                                    <input type="text" class="form-control" placeholder="Name" ng-model="vm.variable.name" required>
+                                </div>
+                                <div class="form-group flex-grow-1" style="width: 100%; margin-right: 12px">
+                                    <input type="text" class="form-control" placeholder="Value" ng-model="vm.variable.value" required>
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-primary" value="Create">
+                                </div>
+                            </form>
+
+                            <ul class="list-group" ng-repeat="(name, value) in vm.testCase.variables" ng-click="vm.variable = {'name': name, 'value': value}">
+                                <li class="list-group-item" ng-click="vm.variable.name = name; vm.variable.value = value">
+                                    <i class="fa fa-fw fa-close pull-right" ng-click="vm.testCase.variables.splice($index, 1)"></i>
+                                    <em>{{name}}</em> <i class="fa fa-fw fa-arrow-left"></i> "{{value}}"
+                                </li>
+                            </ul>
+
+                        </uib-tab>
+                    </uib-tabset>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

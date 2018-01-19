@@ -1,0 +1,116 @@
+<div class="view">
+    <view-header title="Learner Process Setup"></view-header>
+
+    <action-bar>
+        <div ng-if="vm.allSymbols.length > 0">
+            <checkbox-multiple model="vm.allSymbols" class="pull-left"></checkbox-multiple>
+
+            <div class="btn-group btn-group-sm pull-right">
+                <button class="btn btn-primary" ng-click="vm.startLearning()">
+                    Start learning
+                </button>
+                <button class="btn btn-primary" learner-setup-settings-modal-handle
+                        learn-configuration="vm.learnConfiguration"
+                        on-update="vm.setLearnConfiguration(config)">
+                    <i class="fa fa-gear"></i>
+                </button>
+            </div>
+
+            <div class="pull-right" style="margin-right: 6px">
+                <a ui-sref="learnerStart" class="btn btn-info btn-sm" ng-if="vm.canContinueLearnProcess">
+                    Show latest result
+                </a>
+            </div>
+        </div>
+    </action-bar>
+
+    <div class="view-body has-sub-nav">
+        <div class="alx-container-fluid">
+
+            <div class="alert alert-info alert-condensed clearfix">
+                <i class="fa fa-fw fa-info-circle"></i>
+
+                    Using algorithm <strong ng-bind="(vm.learnConfiguration.algorithm.name | formatAlgorithm)"></strong>
+                    with equivalence oracle <strong ng-bind="(vm.learnConfiguration.eqOracle.type | formatEqOracle)"></strong>
+                <span ng-if="vm.learnConfiguration.eqOracle.type === 'complete'">
+                    (
+                    min-depth: <span ng-bind="vm.learnConfiguration.eqOracle.minDepth"></span>,
+                    max-depth: <span ng-bind="vm.learnConfiguration.eqOracle.maxDepth"></span>
+                    )
+                </span>
+                <span ng-if="vm.learnConfiguration.eqOracle.type === 'wmethod'">
+                    ( max-depth: <span ng-bind="vm.learnConfiguration.eqOracle.maxDepth"></span> )
+                </span>
+                <span ng-if="vm.learnConfiguration.eqOracle.type === 'random_word'">
+                    (
+                    min-length: <span ng-bind="vm.learnConfiguration.eqOracle.minLength"></span>,
+                    max-length: <span ng-bind="vm.learnConfiguration.eqOracle.maxLength"></span>,
+                    #words: <span ng-bind="vm.learnConfiguration.eqOracle.maxNoOfTests"></span>
+                    )
+                </span>
+
+            </div>
+
+            <div class="alert alert-info alert-condensed" ng-if="vm.resetSymbol === null">
+                <i class="fa fa-fw fa-info-circle"></i> Select a reset symbol
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-sm-8 col-md-9">
+                    <div class="symbol-group-list" ng-if="vm.groups.length > 0">
+                        <symbol-group-list-item ng-repeat="group in vm.groups | orderBy:'-name':true"
+                                                group="group" editable="false">
+
+                            <div class="symbol-list">
+                                <div ng-repeat="symbol in group.symbols | orderBy:'-name':true" selection-model selection-model-selected-items="vm.selectedSymbols" ng-class="{'bg-info': symbol === vm.resetSymbol}">
+                                    <symbol-list-item symbol="symbol" selectable="symbol !== vm.resetSymbol">
+
+                                        <a class="label label-default label-reset"
+                                           ng-if="vm.resetSymbol !== symbol"
+                                           uib-tooltip="Use as reset" tooltip-placement="left"
+                                           selection-model-ignore
+                                           ng-click="vm.setResetSymbol(symbol)">
+                                            Reset
+                                        </a>
+
+                                        <span ng-if="vm.resetSymbol === symbol" class="label label-primary label-reset">
+                                            Reset
+                                        </span>
+
+                                    </symbol-list-item>
+                                </div>
+                            </div>
+
+                        </symbol-group-list-item>
+                    </div>
+                </div>
+
+                <div class="col-sm-4 col-md-3">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <strong class="text-muted">Reuse a previous configuration</strong>
+                        </div>
+                        <div class="panel-body panel-body-list">
+                            <div class="list-group">
+                                <a href="" class="list-group-item"
+                                   ng-repeat="result in vm.learnResults | orderBy:'-testNo':false | limitTo:5"
+                                   ng-click="vm.reuseConfigurationFromResult(result)">
+                                    <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
+                                    TestNo <span ng-bind="result.testNo"></span>
+
+                                    <div>
+                                        <i class="text-muted"
+                                           ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></i>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
