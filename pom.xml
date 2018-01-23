@@ -85,7 +85,6 @@
     <modules>
         <module>backend</module>
         <module>build</module>
-        <module>cli</module>
         <module>frontend</module>
     </modules>
 
