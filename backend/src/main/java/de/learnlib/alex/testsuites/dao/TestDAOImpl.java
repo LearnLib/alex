@@ -24,10 +24,9 @@ import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.dao.SymbolDAOImpl;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.testsuites.entities.Test;
-import de.learnlib.alex.testsuites.entities.TestCase;
-import de.learnlib.alex.testsuites.entities.TestSuite;
+import de.learnlib.alex.data.repositories.SymbolActionRepository;
+import de.learnlib.alex.testsuites.entities.*;
+import de.learnlib.alex.testsuites.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testsuites.repositories.TestRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,11 +55,20 @@ public class TestDAOImpl implements TestDAO {
     /** The SymbolDAO to use. Will be injected. */
     private SymbolDAO symbolDAO;
 
+    /** The repository for test case steps. */
+    private TestCaseStepRepository testCaseStepRepository;
+
+    /** The repository for symbol actions. */
+    private SymbolActionRepository symbolActionRepository;
+
     @Inject
-    public TestDAOImpl(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO) {
+    public TestDAOImpl(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
+                       TestCaseStepRepository testCaseStepRepository, SymbolActionRepository symbolActionRepository) {
         this.projectDAO = projectDAO;
         this.testRepository = testRepository;
         this.symbolDAO = symbolDAO;
+        this.testCaseStepRepository = testCaseStepRepository;
+        this.symbolActionRepository = symbolActionRepository;
     }
 
     @Override
@@ -112,6 +120,9 @@ public class TestDAOImpl implements TestDAO {
             beforeSaving(user, test);
             testRepository.save(test);
 
+            if (test instanceof TestCase) {
+                saveTestCaseSteps((TestCase) test);
+            }
         } catch (Exception e) {
             throw new ValidationException(e);
         }
@@ -151,7 +162,7 @@ public class TestDAOImpl implements TestDAO {
         Test result = testRepository.findOneByProject_IdAndId(projectId, id);
         if (result == null) {
             throw new NotFoundException("Could not find a Test Case with the id " + id
-                                                + " in the project " + projectId + ".");
+                    + " in the project " + projectId + ".");
         }
 
         loadLazyRelations(result);
@@ -192,13 +203,20 @@ public class TestDAOImpl implements TestDAO {
 
             if (test instanceof TestSuite) {
                 ((TestSuite) testInDB).getTests().forEach(t -> t.setParent(null));
+            } else if (test instanceof TestCase) {
+                TestCase testCaseIdDb = (TestCase) get(user, test.getProjectId(), test.getId());
+                testCaseStepRepository.delete(testCaseIdDb.getSteps());
             }
-            beforeSaving(user, test);
 
+            beforeSaving(user, test);
             testRepository.save(test);
+
+            if (test instanceof TestCase) {
+                saveTestCaseSteps((TestCase) test);
+            }
         } catch (Exception e) {
             throw new NotFoundException("Update failed: Could not find the Test with the id " + test.getId()
-                                                + " in the project " + test.getProjectId() + ".", e);
+                    + " in the project " + test.getProjectId() + ".", e);
         }
     }
 
@@ -228,17 +246,34 @@ public class TestDAOImpl implements TestDAO {
         }
     }
 
+    private void saveTestCaseSteps(TestCase testCase) {
+        for (int i = 0; i < testCase.getSteps().size(); i++) {
+            TestCaseStep step = testCase.getSteps().get(i);
+            if (step instanceof TestCaseActionStep) {
+                TestCaseActionStep actionStep = (TestCaseActionStep) step;
+                symbolActionRepository.save(actionStep.getAction());
+            }
+            step.setNumber(i);
+        }
+
+        testCaseStepRepository.save(testCase.getSteps());
+    }
+
     private void loadLazyRelations(Test test) {
         Hibernate.initialize(test.getProject());
 
         if (test instanceof TestSuite) {
-            TestSuite testAsSuite = (TestSuite) test;
-            Hibernate.initialize(testAsSuite.getTests());
-            testAsSuite.getTests().forEach(this::loadLazyRelations);
+            TestSuite testSuite = (TestSuite) test;
+            Hibernate.initialize(testSuite.getTests());
+            testSuite.getTests().forEach(this::loadLazyRelations);
         } else if (test instanceof TestCase) {
-            TestCase testAsCase = (TestCase) test;
-            Hibernate.initialize(testAsCase.getSymbols());
-            testAsCase.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
+            TestCase testCase = (TestCase) test;
+            Hibernate.initialize(testCase.getSteps());
+            testCase.getSteps().forEach((step) -> {
+                if (step instanceof TestCaseSymbolStep) {
+                    SymbolDAOImpl.loadLazyRelations(((TestCaseSymbolStep) step).getSymbol());
+                }
+            });
         }
     }
 
@@ -246,19 +281,23 @@ public class TestDAOImpl implements TestDAO {
         long projectId = test.getProjectId();
 
         if (test instanceof TestSuite) {
-            TestSuite testAsSuite = (TestSuite) test;
-            for (Long testId : testAsSuite.getTestsAsIds()) {
+            TestSuite testSuite = (TestSuite) test;
+            for (Long testId : testSuite.getTestsAsIds()) {
                 Test otherTest = get(user, projectId, testId);
-                testAsSuite.addTest(otherTest);
+                testSuite.addTest(otherTest);
             }
         } else if (test instanceof TestCase) {
-            TestCase testAsCase = (TestCase) test;
-            List<Symbol> symbols = new LinkedList<>();
-            for (Long symbolId : testAsCase.getSymbolsAsIds()) {
-                Symbol symbol = symbolDAO.get(user, projectId, symbolId);
-                symbols.add(symbol);
+            TestCase testCase = (TestCase) test;
+
+            for (TestCaseStep step : testCase.getSteps()) {
+                step.setTestCase(testCase);
+
+                if (step instanceof TestCaseSymbolStep) {
+                    TestCaseSymbolStep symbolStep = (TestCaseSymbolStep) step;
+                    Symbol symbol = symbolDAO.get(user, projectId, symbolStep.getSymbol().getId());
+                    symbolStep.setSymbol(symbol);
+                }
             }
-            testAsCase.setSymbols(symbols);
         }
     }
 

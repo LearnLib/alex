@@ -44,7 +44,7 @@ export const testsViewComponent = {
 
             const testId = $state.params.testId === null ? 0 : $state.params.testId;
             TestResource.get(project.id, testId)
-                .then(data => this.test = data)
+                .then((data) => this.test = data)
                 .catch(console.log);
         }
     },

@@ -15,6 +15,9 @@
  */
 
 import {apiUrl} from '../../../../environments';
+import {ActionService} from '../action.service';
+
+const actionService = new ActionService();
 
 /**
  * The resource to handle actions with test cases over the API.
@@ -59,7 +62,7 @@ export class TestResource {
      */
     getAll(projectId) {
         return this.$http.get(`${apiUrl}/projects/${projectId}/tests`)
-            .then(response => response.data);
+            .then(response => response.data.map(test => this._mapTest(test)));
     }
 
     /**
@@ -70,7 +73,7 @@ export class TestResource {
      */
     get(projectId, testCaseId) {
         return this.$http.get(`${apiUrl}/projects/${projectId}/tests/${testCaseId}`)
-            .then(response => response.data);
+            .then(response => this._mapTest(response.data));
     }
 
     /**
@@ -125,5 +128,17 @@ export class TestResource {
     execute(testCase, browserConfig) {
         return this.$http.post(`${apiUrl}/projects/${testCase.project}/tests/${testCase.id}/execute`, browserConfig)
             .then(response => response.data);
+    }
+
+    _mapTest(test) {
+        if (test.type === 'case') {
+            test.steps = test.steps.map((step) => {
+                if (step.type === 'action') {
+                    step.action = actionService.create(step.action);
+                }
+                return step;
+            });
+        }
+        return test;
     }
 }

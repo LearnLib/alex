@@ -42,15 +42,17 @@ export const testCaseViewComponent = {
          * @param {LearnerResource} LearnerResource
          * @param $uibModal
          * @param {SettingsResource} SettingsResource
+         * @param {ActionService} ActionService
          */
         // @ngInject
         constructor($scope, $state, dragulaService, SymbolGroupResource, SessionService, ToastService, TestResource,
-                    LearnerResource, $uibModal, SettingsResource) {
+                    LearnerResource, $uibModal, SettingsResource, ActionService) {
             this.$state = $state;
             this.ToastService = ToastService;
             this.TestResource = TestResource;
             this.LearnerResource = LearnerResource;
             this.$uibModal = $uibModal;
+            this.ActionService = ActionService;
 
             /**
              * The current project.
@@ -79,11 +81,11 @@ export const testCaseViewComponent = {
             this.browserConfig = DriverConfigService.createFromName(webBrowser.HTML_UNIT);
 
             SymbolGroupResource.getAll(this.project.id, true)
-                .then(groups => this.groups = groups)
+                .then((groups) => this.groups = groups)
                 .catch(console.log);
 
             SettingsResource.getSupportedWebDrivers()
-                .then(data => {
+                .then((data) => {
                     this.browserConfig = DriverConfigService.createFromName(data.defaultWebDriver);
                 })
                 .catch(console.log);
@@ -123,41 +125,75 @@ export const testCaseViewComponent = {
          */
         save() {
             const test = JSON.parse(JSON.stringify(this.testCase));
-            test.symbols = test.symbols.map(s => s.id);
+            test.steps = test.steps.map((step) => {
+                if (step.type === 'symbol') {
+                    step.symbol = step.symbol.id;
+                }
+                return step;
+            });
             this.TestResource.update(test)
                 .then(() => this.ToastService.success('The test case has been updated.'))
-                .catch(err => this.ToastService.danger('The test case could not be updated. ' + err.data.message));
+                .catch((err) => this.ToastService.danger('The test case could not be updated. ' + err.data.message));
         }
 
         /**
          * Execute the test case.
          */
         execute() {
-            if (!this.testCase.symbols.length) {
+            if (!this.testCase.steps.length) {
                 this.ToastService.info('You have to create at least one symbol.');
                 return;
             }
 
             this.result = null;
             this.TestResource.execute(this.testCase, this.browserConfig)
-                .then(data => this.result = data[this.testCase.id])
-                .catch(err => this.ToastService.info('The test case could not be executed. ' + err.data.message));
+                .then((data) => this.result = data[this.testCase.id])
+                .catch((err) => this.ToastService.info('The test case could not be executed. ' + err.data.message));
         }
 
         openBrowserConfigModal() {
             this.$uibModal.open({
                 component: 'browserConfigModal',
                 resolve: {
-                    modalData: () => {
-                        return {
-                            configuration: JSON.parse(JSON.stringify(this.browserConfig))
-                        };
-                    }
+                    modalData: () => ({
+                        configuration: JSON.parse(JSON.stringify(this.browserConfig))
+                    })
                 }
             }).result.then(data => {
                 this.ToastService.success('The settings have been updated.');
                 this.browserConfig = data;
             });
         }
+
+        addSymbolStep(symbol) {
+            this.testCase.steps.push({
+                type: 'symbol',
+                symbol: {
+                    id: symbol.id,
+                    name: symbol.name
+                }
+            });
+        }
+
+        addActionStep(action) {
+            this.testCase.steps.push({
+                type: 'action',
+                action: action
+            });
+        }
+
+        openActionEditModal(action, index) {
+            this.$uibModal.open({
+                component: 'actionEditModal',
+                resolve: {
+                    modalData: () => ({
+                        action: this.ActionService.create(JSON.parse(JSON.stringify(action)))
+                    })
+                }
+            }).result.then((updatedAction) => {
+                this.testCase.steps[index].action = updatedAction;
+            })
+        }
+
     }
 };

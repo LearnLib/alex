@@ -16,65 +16,23 @@
 
 package de.learnlib.alex.testsuites.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import de.learnlib.alex.data.entities.Symbol;
 
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.Transient;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-/**
- * Test case.
- */
+/** Test case. */
 @Entity
 @DiscriminatorValue("case")
 @JsonTypeName("case")
 public class TestCase extends Test implements Serializable {
-
-    private class SymbolRepresentation {
-        private Long id;
-        private String name;
-
-        SymbolRepresentation(Symbol symbol) {
-            this.id = symbol.getId();
-            this.name = symbol.getName();
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
-
-    /** List of symbols that are used for the test case. */
-    private List<Symbol> symbols;
-
-    /** List of IDs of the symbols that are used for the test case. */
-    private List<Long> symbolsAsIds;
 
     /** The map with the variables for the test case. */
     private HashMap<String, String> variables;
@@ -82,89 +40,28 @@ public class TestCase extends Test implements Serializable {
     /** If the test case execution should pass. */
     private boolean shouldPass;
 
-    /**
-     * Default Constructor.
-     */
+    /** The steps the test case is composed of. */
+    private List<TestCaseStep> steps;
+
+    /** Constructor. */
     public TestCase() {
         super();
-        this.symbols = new LinkedList<>();
+        this.steps = new ArrayList<>();
         this.variables = new HashMap<>();
         this.shouldPass = true;
     }
 
-    /**
-     * Get the Symbols of the Test Case.
-     *
-     * @return The Symbols of this Test Case
-     */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnore
-    public List<Symbol> getSymbols() {
-        return symbols;
+    @OneToMany(
+            mappedBy = "testCase",
+            orphanRemoval = true
+    )
+    @OrderBy("number ASC")
+    public List<TestCaseStep> getSteps() {
+        return steps;
     }
 
-    /**
-     * Get the Symbol IDs of the Test Case.
-     *
-     * @return A list of Symbol ID to execute during the Test Case (in order).
-     */
-    @Transient
-    @JsonIgnore
-    public List<Long> getSymbolsAsIds() {
-        if (symbolsAsIds == null || symbolsAsIds.isEmpty()) {
-            symbolsAsIds = new ArrayList<>();
-        }
-        return symbolsAsIds;
-    }
-
-    @Transient
-    @JsonProperty("symbols")
-    public List<SymbolRepresentation> getSymbolRepresentations() {
-        if (symbols == null || symbols.isEmpty()) {
-            return new LinkedList<>();
-        }
-        return symbols.stream().map(SymbolRepresentation::new).collect(Collectors.toList());
-    }
-
-
-    /**
-     * Set a new List of Symbols of the Test Case.
-     *
-     * @param symbols The new list of Symbols.
-     */
-    @JsonIgnore
-    public void setSymbols(List<Symbol> symbols) {
-        if (symbols == null) {
-            this.symbols = new LinkedList<>();
-        } else {
-            this.symbols = symbols;
-            this.symbolsAsIds = symbols.stream().map(Symbol::getId).collect(Collectors.toList());
-        }
-    }
-
-    /**
-     * Set the Symbols of the Test Case.
-     *
-     * @param symbolsAsIds A list of Symbol ID to execute during the Test Case (in order).
-     */
-    @Transient
-    @JsonProperty("symbols")
-    public void setSymbolsAsIds(List<Long> symbolsAsIds) {
-        this.symbolsAsIds = symbolsAsIds;
-    }
-
-
-    /**
-     * Add one action to the end of the Action List.
-     *
-     * @param action The SymbolAction to add.
-     */
-    public void addSymbol(Symbol action) {
-        if (action == null) {
-            throw new IllegalArgumentException("Can not add Symbol 'null'");
-        }
-
-        symbols.add(action);
+    public void setSteps(List<TestCaseStep> steps) {
+        this.steps = steps;
     }
 
     @Lob

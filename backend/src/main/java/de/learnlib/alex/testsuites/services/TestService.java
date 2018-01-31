@@ -26,7 +26,10 @@ import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.testsuites.entities.Test;
 import de.learnlib.alex.testsuites.entities.TestCase;
+import de.learnlib.alex.testsuites.entities.TestCaseActionStep;
 import de.learnlib.alex.testsuites.entities.TestCaseResult;
+import de.learnlib.alex.testsuites.entities.TestCaseStep;
+import de.learnlib.alex.testsuites.entities.TestCaseSymbolStep;
 import de.learnlib.alex.testsuites.entities.TestResult;
 import de.learnlib.alex.testsuites.entities.TestSuite;
 import de.learnlib.alex.testsuites.entities.TestSuiteResult;
@@ -34,7 +37,6 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,9 +63,9 @@ public class TestService {
     /**
      * Execute a test suite.
      *
-     * @param user          The user that executes the test suite.
-     * @param testSuite     The test suite that is being executed.
-     * @param driverConfig  The config for the web driver.
+     * @param user         The user that executes the test suite.
+     * @param testSuite    The test suite that is being executed.
+     * @param driverConfig The config for the web driver.
      * @return
      */
     public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, AbstractWebDriverConfig driverConfig, Map<Long, TestResult> results) {
@@ -86,14 +88,14 @@ public class TestService {
     /**
      * Executes a test case.
      *
-     * @param user          The user that executes the test suite.
-     * @param testCase      The test case that is being executed.
-     * @param driverConfig  The config for the web driver.
+     * @param user         The user that executes the test suite.
+     * @param testCase     The test case that is being executed.
+     * @param driverConfig The config for the web driver.
      * @return
      */
     public TestCaseResult executeTestCase(User user, TestCase testCase, AbstractWebDriverConfig driverConfig, Map<Long, TestResult> results) {
         final ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, testCase.getProject(),
-                                                                                       driverConfig);
+                driverConfig);
         ctxHandler.setResetSymbol(new Symbol());
 
         final long startTime = System.currentTimeMillis();
@@ -104,7 +106,7 @@ public class TestService {
         testCase.getVariables().forEach(variableStore::set);
 
         // execute the test case
-        final List<ExecuteResult> outputs = testCase.getSymbols().stream()
+        final List<ExecuteResult> outputs = testCase.getSteps().stream()
                 .map(s -> s.execute(connectors))
                 .collect(Collectors.toList());
 
@@ -113,21 +115,25 @@ public class TestService {
 
         final List<String> sulOutputs = outputs.stream().map(ExecuteResult::getOutput).collect(Collectors.toList());
 
-        final List<Symbol> failedSymbols = new ArrayList<>();
         final List<String> failureMessageParts = new ArrayList<>();
 
+        boolean passed = true;
         for (int i = 0; i < outputs.size(); i++) {
             final ExecuteResult output = outputs.get(i);
+            passed = passed & output.isSuccessful();
             if (!output.isSuccessful()) {
-                final Symbol symbol = testCase.getSymbols().get(i);
-                failedSymbols.add(symbol);
-                failureMessageParts.add(symbol.getName() + ":" + output.getOutput());
+                final TestCaseStep step = testCase.getSteps().get(i);
+                if (step instanceof TestCaseSymbolStep) {
+                    failureMessageParts.add(((TestCaseSymbolStep) step).getSymbol().getName() + ":" + output.getOutput());
+                } else if (step instanceof TestCaseActionStep) {
+                    failureMessageParts.add(output.getOutput());
+                }
             }
         }
 
         final String failureMessage = failureMessageParts.isEmpty() ? null : String.join(", ", failureMessageParts);
 
-        final TestCaseResult result = new TestCaseResult(testCase, sulOutputs, failedSymbols.size() == 0, time, String.join(", ", failureMessage));
+        final TestCaseResult result = new TestCaseResult(testCase, sulOutputs, passed, time, String.join(", ", failureMessage));
         results.put(testCase.getId(), result);
 
         return result;

@@ -100,13 +100,13 @@ export const testSuiteViewComponent = {
                 .catch(console.log);
 
             SymbolGroupResource.getAll(this.project.id, true)
-                .then(groups => this.groups = groups)
+                .then((groups) => this.groups = groups)
                 .catch(console.log);
         }
 
         createTestSuite() {
             this.PromptService.prompt('Enter a name for the test suite.')
-                .then(name => {
+                .then((name) => {
                     const testSuite = {
                         type: 'suite',
                         name: name,
@@ -125,28 +125,28 @@ export const testSuiteViewComponent = {
 
         createTestCase() {
             this.PromptService.prompt('Enter a name for the test case.')
-                .then(name => {
+                .then((name) => {
                     const testCase = {
                         type: 'case',
                         name: name,
                         project: this.project.id,
                         parent: this.testSuite.id,
-                        symbols: [],
                         variables: {},
-                        shouldPass: true
+                        shouldPass: true,
+                        steps: []
                     };
                     this.TestResource.create(testCase)
-                        .then(data => {
+                        .then((data) => {
                             this.ToastService.success(`The test case "${testCase.name}" has been created.`);
                             this.testSuite.tests.push(data);
                         })
-                        .catch(err => this.ToastService.danger('The test suite could not be created. ' + err.data.message));
+                        .catch((err) => this.ToastService.danger('The test suite could not be created. ' + err.data.message));
                 });
         }
 
         editTest(test) {
             this.PromptService.prompt(`Update the name for the test.`, test.name)
-                .then(name => {
+                .then((name) => {
                     if (name === test.name) {
                         return;
                     }
@@ -166,7 +166,7 @@ export const testSuiteViewComponent = {
                             this.ToastService.success('The name has been updated.');
                             test.name = name;
                         })
-                        .catch(err => this.ToastService.danger(`The test ${test.type} could not be updated. ${err.data.message}`));
+                        .catch((err) => this.ToastService.danger(`The test ${test.type} could not be updated. ${err.data.message}`));
                 });
         }
 
@@ -184,7 +184,7 @@ export const testSuiteViewComponent = {
                     const i = this.testSuite.tests.findIndex(t => t.id === test.id);
                     if (i > -1) this.testSuite.tests.splice(i, 1);
                 })
-                .catch(err => this.ToastService.danger(`The test ${test.type} could not be deleted. ${err.data.message}`));
+                .catch((err) => this.ToastService.danger(`The test ${test.type} could not be deleted. ${err.data.message}`));
         }
 
         deleteSelected() {
@@ -204,7 +204,7 @@ export const testSuiteViewComponent = {
                         if (i > -1) this.testSuite.tests.splice(i, 1);
                     });
                 })
-                .catch(err => this.ToastService.danger(`Deleting the tests failed. ${err.data.message}`));
+                .catch((err) => this.ToastService.danger(`Deleting the tests failed. ${err.data.message}`));
         }
 
         stopTestExecution() {
@@ -230,7 +230,7 @@ export const testSuiteViewComponent = {
                 }
 
                 this.TestResource.execute(test, this.driverConfig)
-                    .then(data => {
+                    .then((data) => {
                         for (const k in data) {
                             this.results[k] = data[k];
                         }

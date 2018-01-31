@@ -40,10 +40,15 @@ export class TestService {
      * @return {*}
      */
     exportTests(tests) {
-
         const prepareTestCase = (testCase) => {
             deleteProperties(testCase);
-            testCase.symbols = testCase.symbols.map(s => s.name);
+
+            testCase.steps = testCase.steps.map((step) => {
+                if (step.type === 'symbol') {
+                    step.symbol = step.symbol.name;
+                }
+                return step;
+            });
         };
 
         const prepareTestSuite = (testSuite) => {
@@ -89,9 +94,14 @@ export class TestService {
                 const tests = JSON.parse(JSON.stringify(testsToImport));
 
                 const mapTestCaseSymbols = (testCase) => {
-                    testCase.symbols = testCase.symbols.map(name => {
-                        const sym = symbols.find(s => s.name === name);
-                        if (sym) return sym.id;
+                    testCase.steps = testCase.steps.map((step) => {
+                        if (step.type === 'symbol') {
+                            const sym = symbols.find(s => s.name === step.symbol);
+                            if (sym) {
+                                step.symbol = sym.id;
+                            }
+                        }
+                        return step;
                     });
                 };
 
