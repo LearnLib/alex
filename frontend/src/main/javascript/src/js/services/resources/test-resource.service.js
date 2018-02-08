@@ -120,7 +120,7 @@ export class TestResource {
     }
 
     /**
-     * Execute the test.
+     * Execute a test.
      *
      * @param {object} testCase - The test to execute.
      * @param {object} browserConfig - The config to execute the test with.
@@ -128,6 +128,20 @@ export class TestResource {
     execute(testCase, browserConfig) {
         return this.$http.post(`${apiUrl}/projects/${testCase.project}/tests/${testCase.id}/execute`, browserConfig)
             .then(response => response.data);
+    }
+
+    /**
+     * Execute multiple tests at once.
+     *
+     * @param {object} tests The tests to execute.
+     * @param {object} browserConfig The configuration for the web driver.
+     */
+    executeMany(tests, browserConfig) {
+        return this.$http.post(`${apiUrl}/projects/${tests[0].project}/tests/execute`, {
+            testIds: tests.map((t) => t.id),
+            driverConfig: browserConfig
+        })
+            .then((response) => response.data);
     }
 
     _mapTest(test) {

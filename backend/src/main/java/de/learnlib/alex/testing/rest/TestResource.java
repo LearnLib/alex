@@ -24,10 +24,9 @@ import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.entities.Test;
-import de.learnlib.alex.testing.entities.TestCase;
+import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestReportConfig;
 import de.learnlib.alex.testing.entities.TestResult;
-import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.services.TestService;
 import de.learnlib.alex.testing.services.reporters.JUnitTestResultReporter;
 import de.learnlib.alex.testing.services.reporters.TestResultReporter;
@@ -48,7 +47,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -130,7 +129,7 @@ public class TestResource {
             testDAO.create(user, tests);
 
             final List<Test> createdTests = new ArrayList<>();
-            for (final Test t: tests) {
+            for (final Test t : tests) {
                 createdTests.add(testDAO.get(user, projectId, t.getId()));
             }
 
@@ -162,9 +161,9 @@ public class TestResource {
     /**
      * Execute a test.
      *
-     * @param projectId     The id of the project.
-     * @param id            The id of the test.
-     * @param driverConfig  The configuration to run the test with.
+     * @param projectId    The id of the project.
+     * @param id           The id of the test.
+     * @param driverConfig The configuration to run the test with.
      * @return The result of the test execution.
      * @throws NotFoundException If the project or the test could not be found.
      */
@@ -175,16 +174,20 @@ public class TestResource {
                             @PathParam("id") Long id,
                             AbstractWebDriverConfig driverConfig)
             throws NotFoundException {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        return execute(projectId, new TestExecutionConfig(Collections.singletonList(id), driverConfig));
+    }
 
-        Test test = testDAO.get(user, projectId, id);
+    @POST
+    @Path("/execute")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response execute(@PathParam("project_id") Long projectId,
+                            TestExecutionConfig testConfig)
+            throws NotFoundException {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-        final Map<Long, TestResult> results = new HashMap<>();
-        if (test instanceof TestSuite) {
-            testService.executeTestSuite(user, (TestSuite) test, driverConfig, results);
-        } else {
-            testService.executeTestCase(user, (TestCase) test, driverConfig, results);
-        }
+        final List<Test> tests = testDAO.get(user, projectId, testConfig.getTestIds());
+
+        final Map<Long, TestResult> results = testService.executeTests(user, tests, testConfig.getDriverConfig());
 
         return Response.ok(results).build();
     }

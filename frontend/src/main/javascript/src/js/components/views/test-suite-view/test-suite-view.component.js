@@ -220,33 +220,20 @@ export const testSuiteViewComponent = {
             }
 
             this.reset();
-            this.isExecuting = true;
             const selected = this.testSuite.tests.filter(t => t._selected);
 
-            const next = (test) => {
-                if (!this.isExecuting) {
-                    this.ToastService.success('Finished executing all tests.');
-                    return;
-                }
-
-                this.TestResource.execute(test, this.driverConfig)
-                    .then((data) => {
-                        for (const k in data) {
-                            this.results[k] = data[k];
-                        }
-
-                        // this.results[test.id] = data;
-                        if (selected.length) {
-                            next(selected.shift());
-                        } else {
-                            this.ToastService.success('Finished executing all tests.');
-                            this.isExecuting = false;
-                            this.finished = true;
-                        }
-                    })
-                    .catch(console.log);
-            };
-            next(selected.shift());
+            this.isExecuting = true;
+            this.TestResource.executeMany(selected, this.driverConfig)
+                .then((data) => {
+                    this.results = data;
+                })
+                .catch((err) => {
+                    this.ToastService.danger(`The test execution failed. ${err.data.message}`);
+                })
+                .finally(() => {
+                    this.isExecuting = false;
+                    this.finished = true;
+                });
         }
 
         openBrowserConfigModal() {

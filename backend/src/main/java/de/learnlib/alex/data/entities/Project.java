@@ -135,16 +135,6 @@ public class Project implements Serializable {
     private Set<Test> tests;
 
     /**
-     * The results of the test for the project.
-     */
-    @OneToMany(
-            mappedBy = "project",
-            fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-    @JsonIgnore
-    private Set<LearnerResult> testResults;
-
-    /**
      * The counters of the project.
      */
     @OneToMany(
@@ -400,26 +390,6 @@ public class Project implements Serializable {
 
     public void addTest(Test test) {
         this.tests.add(test);
-    }
-
-    /**
-     * Get a set of all tests results related to the project.
-     *
-     * @return The test results of the project.
-     */
-    @JsonProperty
-    public Set<LearnerResult> getTestResults() {
-        return testResults;
-    }
-
-    /**
-     * Set the related test results for this project.
-     *
-     * @param testResults The test result of the project.
-     */
-    @JsonIgnore
-    public void setTestResults(Set<LearnerResult> testResults) {
-        this.testResults = testResults;
     }
 
     /**

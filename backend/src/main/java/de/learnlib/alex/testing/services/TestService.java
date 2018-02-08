@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,6 +59,26 @@ public class TestService {
     @Inject
     public TestService(ConnectorContextHandlerFactory contextHandlerFactory) {
         this.contextHandlerFactory = contextHandlerFactory;
+    }
+
+    /**
+     * Executes multiple tests.
+     *
+     * @param user         The user that executes the test suite.
+     * @param tests        The tests that should be executed.
+     * @param driverConfig The config for the web driver.
+     * @return
+     */
+    public Map<Long, TestResult> executeTests(User user, List<Test> tests, AbstractWebDriverConfig driverConfig) {
+        final Map<Long, TestResult> results = new HashMap<>();
+        for (Test test : tests) {
+            if (test instanceof TestCase) {
+                executeTestCase(user, (TestCase) test, driverConfig, results);
+            } else if (test instanceof TestSuite) {
+                executeTestSuite(user, (TestSuite) test, driverConfig, results);
+            }
+        }
+        return results;
     }
 
     /**

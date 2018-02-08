@@ -144,7 +144,7 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldReturnAllProjectsWithEmbedded() {
         List<Project> projects = new ArrayList<>();
         projects.add(project);
-        given(projectDAO.getAll(admin, ProjectDAO.EmbeddableFields.SYMBOLS, ProjectDAO.EmbeddableFields.TEST_RESULTS))
+        given(projectDAO.getAll(admin, ProjectDAO.EmbeddableFields.SYMBOLS))
                 .willReturn(projects);
 
         Response response = target("/projects").queryParam("embed", "symbols,test_results").request()
@@ -152,7 +152,7 @@ public class ProjectResourceTest extends JerseyTest {
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(projectDAO).getAll(admin, ProjectDAO.EmbeddableFields.SYMBOLS, ProjectDAO.EmbeddableFields.TEST_RESULTS);
+        verify(projectDAO).getAll(admin, ProjectDAO.EmbeddableFields.SYMBOLS);
     }
 
     @Test
@@ -167,8 +167,7 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldGetTheRightProjectWithEmbedded() throws NotFoundException {
         given(projectDAO.getByID(USER_TEST_ID,
                                  PROJECT_TEST_ID,
-                                 ProjectDAO.EmbeddableFields.SYMBOLS,
-                                 ProjectDAO.EmbeddableFields.TEST_RESULTS))
+                                 ProjectDAO.EmbeddableFields.SYMBOLS))
                 .willReturn(project);
         Response response = target("/projects/" + PROJECT_TEST_ID).queryParam("embed", "symbols,test_results")
                                 .request().header("Authorization", adminToken).get();
@@ -176,8 +175,7 @@ public class ProjectResourceTest extends JerseyTest {
 
         verify(projectDAO).getByID(USER_TEST_ID,
                                    PROJECT_TEST_ID,
-                                   ProjectDAO.EmbeddableFields.SYMBOLS,
-                                   ProjectDAO.EmbeddableFields.TEST_RESULTS);
+                                   ProjectDAO.EmbeddableFields.SYMBOLS);
     }
 
     @Test

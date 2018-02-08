@@ -213,12 +213,6 @@ public class ProjectDAOImpl implements ProjectDAO {
                 project.setSymbols(null);
             }
 
-            if (fieldsToLoad.contains(EmbeddableFields.TEST_RESULTS)) {
-                Hibernate.initialize(project.getTestResults());
-            } else {
-                project.setTestResults(null);
-            }
-
             if (fieldsToLoad.contains(EmbeddableFields.COUNTERS)) {
                 Hibernate.initialize(project.getCounters());
             } else {
@@ -227,7 +221,6 @@ public class ProjectDAOImpl implements ProjectDAO {
         } else {
             project.setGroups(null);
             project.setSymbols(null);
-            project.setTestResults(null);
             project.setCounters(null);
         }
     }
@@ -237,7 +230,6 @@ public class ProjectDAOImpl implements ProjectDAO {
         if (Arrays.asList(embedFields).contains(EmbeddableFields.ALL)) {
             fieldsToLoad.add(EmbeddableFields.GROUPS);
             fieldsToLoad.add(EmbeddableFields.SYMBOLS);
-            fieldsToLoad.add(EmbeddableFields.TEST_RESULTS);
             fieldsToLoad.add(EmbeddableFields.COUNTERS);
         } else {
             Collections.addAll(fieldsToLoad, embedFields);

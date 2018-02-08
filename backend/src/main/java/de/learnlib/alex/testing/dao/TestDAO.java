@@ -24,17 +24,79 @@ import de.learnlib.alex.testing.entities.Test;
 import javax.validation.ValidationException;
 import java.util.List;
 
+/**
+ * The DAO for tests.
+ */
 public interface TestDAO {
 
+    /**
+     * Creates a test.
+     *
+     * @param user The user that belongs to the test.
+     * @param test The test to create.
+     * @throws ValidationException
+     * @throws NotFoundException
+     */
     void create(User user, Test test) throws ValidationException, NotFoundException;
 
+    /**
+     * Creates multiple tests at once.
+     *
+     * @param user  The user that belongs to the test.
+     * @param tests The tests to create.
+     * @throws ValidationException
+     * @throws NotFoundException
+     */
     void create(User user, List<Test> tests) throws ValidationException, NotFoundException;
 
+    /**
+     * Gets a test.
+     *
+     * @param user      The user that belongs to the test.
+     * @param projectId The id of the project the test belongs to.
+     * @param id        The id of the test to get.
+     * @return The test.
+     * @throws NotFoundException If the test could not be found.
+     */
     Test get(User user, Long projectId, Long id) throws NotFoundException;
 
+    /**
+     * Gets multiple test.
+     *
+     * @param user      The user that belongs to the tests.
+     * @param projectId The id of the project the tests belongs to.
+     * @param ids       The ids of the tests to get.
+     * @return The test.
+     * @throws NotFoundException If a test could not be found.
+     */
+    List<Test> get(User user, Long projectId, List<Long> ids) throws NotFoundException;
+
+    /**
+     * Update a test.
+     *
+     * @param user The user that belongs to the test.
+     * @param test The test to create.
+     * @throws NotFoundException If the test could not be found.
+     */
     void update(User user, Test test) throws NotFoundException;
 
+    /**
+     * Deletes a test.
+     *
+     * @param user      The user that belongs to the test.
+     * @param projectId The id of the project the test belongs to.
+     * @param id        The id of the test to get.
+     * @throws NotFoundException If the test could not be found.
+     */
     void delete(User user, Long projectId, Long id) throws NotFoundException;
 
+    /**
+     * Deletes multiple tests at once.
+     *
+     * @param user      The user that belongs to the test.
+     * @param projectId The id of the project the test belongs to.
+     * @param ids       The ids of the tests to get.
+     * @throws NotFoundException If the test could not be found.
+     */
     void delete(User user, Long projectId, IdsList ids) throws NotFoundException;
 }

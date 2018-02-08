@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -167,6 +168,17 @@ public class TestDAOImpl implements TestDAO {
         loadLazyRelations(result);
 
         return result;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Test> get(User user, Long projectId, List<Long> ids) throws NotFoundException {
+        projectDAO.getByID(user.getId(), projectId); // access check
+        final List<Test> tests = new ArrayList<>();
+        for (Long id: ids) {
+            tests.add(get(user, projectId, id));
+        }
+        return tests;
     }
 
     @Override
