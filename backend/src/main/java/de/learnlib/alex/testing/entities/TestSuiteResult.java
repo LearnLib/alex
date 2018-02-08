@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.testsuites.entities;
+package de.learnlib.alex.testing.entities;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.persistence.DiscriminatorValue;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The result of the execution of a test suite.

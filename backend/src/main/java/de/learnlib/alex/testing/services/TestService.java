@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.testsuites.services;
+package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.ExecuteResult;
@@ -24,15 +24,15 @@ import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
-import de.learnlib.alex.testsuites.entities.Test;
-import de.learnlib.alex.testsuites.entities.TestCase;
-import de.learnlib.alex.testsuites.entities.TestCaseActionStep;
-import de.learnlib.alex.testsuites.entities.TestCaseResult;
-import de.learnlib.alex.testsuites.entities.TestCaseStep;
-import de.learnlib.alex.testsuites.entities.TestCaseSymbolStep;
-import de.learnlib.alex.testsuites.entities.TestResult;
-import de.learnlib.alex.testsuites.entities.TestSuite;
-import de.learnlib.alex.testsuites.entities.TestSuiteResult;
+import de.learnlib.alex.testing.entities.Test;
+import de.learnlib.alex.testing.entities.TestCase;
+import de.learnlib.alex.testing.entities.TestCaseActionStep;
+import de.learnlib.alex.testing.entities.TestCaseResult;
+import de.learnlib.alex.testing.entities.TestCaseStep;
+import de.learnlib.alex.testing.entities.TestCaseSymbolStep;
+import de.learnlib.alex.testing.entities.TestResult;
+import de.learnlib.alex.testing.entities.TestSuite;
+import de.learnlib.alex.testing.entities.TestSuiteResult;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;

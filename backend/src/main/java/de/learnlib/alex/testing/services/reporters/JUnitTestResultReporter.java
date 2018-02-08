@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.testsuites.services.reporters;
+package de.learnlib.alex.testing.services.reporters;
 
-import de.learnlib.alex.testsuites.entities.TestCaseResult;
-import de.learnlib.alex.testsuites.entities.TestResult;
-import de.learnlib.alex.testsuites.entities.TestSuiteResult;
-import de.learnlib.alex.testsuites.entities.TestReportConfig;
+import de.learnlib.alex.testing.entities.TestCaseResult;
+import de.learnlib.alex.testing.entities.TestSuiteResult;
+import de.learnlib.alex.testing.entities.TestReportConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -31,13 +30,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Queue;
 
 /**
  * Creates a JUnit report of a test result.

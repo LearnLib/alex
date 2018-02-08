@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.testsuites.entities;
+package de.learnlib.alex.testing.entities;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.data.entities.ExecuteResult;

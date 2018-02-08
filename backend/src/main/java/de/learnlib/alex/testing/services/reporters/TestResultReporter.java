@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.testsuites.services.reporters;
+package de.learnlib.alex.testing.services.reporters;
 
-import de.learnlib.alex.testsuites.entities.TestReportConfig;
+import de.learnlib.alex.testing.entities.TestReportConfig;
 
 /**
  * Create a report of a test result.

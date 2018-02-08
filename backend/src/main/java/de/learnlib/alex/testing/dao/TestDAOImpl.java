@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.testsuites.dao;
+package de.learnlib.alex.testing.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
@@ -25,9 +25,9 @@ import de.learnlib.alex.data.dao.SymbolDAOImpl;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
-import de.learnlib.alex.testsuites.entities.*;
-import de.learnlib.alex.testsuites.repositories.TestCaseStepRepository;
-import de.learnlib.alex.testsuites.repositories.TestRepository;
+import de.learnlib.alex.testing.entities.*;
+import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
+import de.learnlib.alex.testing.repositories.TestRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
@@ -37,7 +37,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 

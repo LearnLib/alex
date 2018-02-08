@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.testsuites.dao;
+package de.learnlib.alex.testing.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
-import de.learnlib.alex.testsuites.entities.Test;
+import de.learnlib.alex.testing.entities.Test;
 
 import javax.validation.ValidationException;
 import java.util.List;

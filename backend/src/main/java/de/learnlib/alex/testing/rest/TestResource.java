@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.testsuites.rest;
+package de.learnlib.alex.testing.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
@@ -22,15 +22,15 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
-import de.learnlib.alex.testsuites.dao.TestDAO;
-import de.learnlib.alex.testsuites.entities.Test;
-import de.learnlib.alex.testsuites.entities.TestCase;
-import de.learnlib.alex.testsuites.entities.TestReportConfig;
-import de.learnlib.alex.testsuites.entities.TestResult;
-import de.learnlib.alex.testsuites.entities.TestSuite;
-import de.learnlib.alex.testsuites.services.TestService;
-import de.learnlib.alex.testsuites.services.reporters.JUnitTestResultReporter;
-import de.learnlib.alex.testsuites.services.reporters.TestResultReporter;
+import de.learnlib.alex.testing.dao.TestDAO;
+import de.learnlib.alex.testing.entities.Test;
+import de.learnlib.alex.testing.entities.TestCase;
+import de.learnlib.alex.testing.entities.TestReportConfig;
+import de.learnlib.alex.testing.entities.TestResult;
+import de.learnlib.alex.testing.entities.TestSuite;
+import de.learnlib.alex.testing.services.TestService;
+import de.learnlib.alex.testing.services.reporters.JUnitTestResultReporter;
+import de.learnlib.alex.testing.services.reporters.TestResultReporter;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;

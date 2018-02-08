@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.testsuites.entities.Test;
+import de.learnlib.alex.testing.entities.Test;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
@@ -32,7 +32,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;

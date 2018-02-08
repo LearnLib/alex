@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.testsuites.entities;
+package de.learnlib.alex.testing.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,7 +28,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 

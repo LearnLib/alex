@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.testsuites.repositories;
+package de.learnlib.alex.testing.repositories;
 
-import de.learnlib.alex.testsuites.entities.TestCaseStep;
+import de.learnlib.alex.testing.entities.TestCaseStep;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -22,7 +22,7 @@ import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.testsuites.entities.TestSuite;
+import de.learnlib.alex.testing.entities.TestSuite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;

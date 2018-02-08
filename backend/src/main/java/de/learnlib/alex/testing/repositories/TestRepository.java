@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.testsuites.repositories;
+package de.learnlib.alex.testing.repositories;
 
-import de.learnlib.alex.testsuites.entities.Test;
+import de.learnlib.alex.testing.entities.Test;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
