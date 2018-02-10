@@ -19,13 +19,17 @@ package de.learnlib.alex.testing.entities;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 /**
  * The result of the execution of a test suite.
  */
+@Entity
 @DiscriminatorValue("suite")
 @JsonTypeName("suite")
 public class TestSuiteResult extends TestResult {
+
+    private static final long serialVersionUID = 6838201007001578578L;
 
     /** How many test cases passed. */
     private long testCasesPassed;
@@ -105,10 +109,8 @@ public class TestSuiteResult extends TestResult {
         this.testCasesFailed += amount;
     }
 
+    @Override
     public boolean isPassed() {
         return testCasesFailed == 0;
-    }
-
-    public void setPassed(boolean passed) {
     }
 }

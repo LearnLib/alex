@@ -24,6 +24,7 @@ import de.learnlib.alex.data.entities.Project;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
@@ -35,9 +36,13 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -60,7 +65,9 @@ import java.util.UUID;
         @JsonSubTypes.Type(name = "case", value = TestCase.class),
         @JsonSubTypes.Type(name = "suite", value = TestSuite.class),
 })
-public class Test {
+public class Test implements Serializable {
+
+    private static final long serialVersionUID = 806158197227217171L;
 
     public static class TestRepresentation {
         private Long id;
@@ -120,7 +127,7 @@ public class Test {
     /** The ID of the Project to be used in the JSON. */
     private Long projectId;
 
-    /**  The parent test suite. */
+    /** The parent test suite. */
     private Test parent;
 
     /** The id of the parent test suite. */
@@ -131,6 +138,14 @@ public class Test {
 
     /** The name of the Test Case. */
     protected String name;
+
+    /** The results where the test appears. */
+    private List<TestResult> testResults;
+
+    /** Constructor. */
+    public Test() {
+        this.testResults = new ArrayList<>();
+    }
 
     /**
      * Get the ID of Test Case used in the DB.
@@ -180,7 +195,7 @@ public class Test {
 
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
-        this.project   = null;
+        this.project = null;
         this.projectId = projectId;
     }
 
@@ -209,7 +224,7 @@ public class Test {
 
     @JsonProperty("parent")
     public void setParentId(Long parentId) {
-        this.parent   = null;
+        this.parent = null;
         this.parentId = parentId;
     }
 
@@ -245,14 +260,23 @@ public class Test {
         return name;
     }
 
-    /**
-     * Set the name of the Test Case.
-     *
-     * @param name The new name.
-     */
     @JsonProperty
     public void setName(String name) {
         this.name = name;
     }
 
+    @OneToMany(
+            mappedBy = "test",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    )
+    @JsonIgnore
+    public List<TestResult> getTestResults() {
+        return testResults;
+    }
+
+    @JsonIgnore
+    public void setTestResults(List<TestResult> testResults) {
+        this.testResults = testResults;
+    }
 }

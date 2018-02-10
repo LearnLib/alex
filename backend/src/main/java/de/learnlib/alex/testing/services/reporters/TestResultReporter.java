@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.testing.services.reporters;
 
-import de.learnlib.alex.testing.entities.TestReportConfig;
+import de.learnlib.alex.testing.entities.TestReport;
 
 /**
  * Create a report of a test result.
@@ -28,8 +28,8 @@ public abstract class TestResultReporter<T> {
     /**
      * Create a report of a test result.
      *
-     * @param reportConfig The config to create a report from.
+     * @param testReport The rest report.
      * @return The report.
      */
-    public abstract T createReport(TestReportConfig reportConfig);
+    public abstract T createReport(TestReport testReport);
 }

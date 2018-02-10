@@ -147,7 +147,7 @@ export const testCaseViewComponent = {
 
             this.result = null;
             this.TestResource.execute(this.testCase, this.browserConfig)
-                .then((data) => this.result = data[this.testCase.id])
+                .then((data) => this.result = data.testResults[0])
                 .catch((err) => this.ToastService.info('The test case could not be executed. ' + err.data.message));
         }
 

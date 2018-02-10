@@ -145,14 +145,14 @@ public class TestService {
             if (!output.isSuccessful()) {
                 final TestCaseStep step = testCase.getSteps().get(i);
                 if (step instanceof TestCaseSymbolStep) {
-                    failureMessageParts.add(((TestCaseSymbolStep) step).getSymbol().getName() + ":" + output.getOutput());
+                    failureMessageParts.add(((TestCaseSymbolStep) step).getSymbol().getName() + ": " + output.getOutput());
                 } else if (step instanceof TestCaseActionStep) {
                     failureMessageParts.add(output.getOutput());
                 }
             }
         }
 
-        final String failureMessage = failureMessageParts.isEmpty() ? null : String.join(", ", failureMessageParts);
+        final String failureMessage = failureMessageParts.isEmpty() ? "" : String.join(", ", failureMessageParts);
 
         final TestCaseResult result = new TestCaseResult(testCase, sulOutputs, passed, time, String.join(", ", failureMessage));
         results.put(testCase.getId(), result);

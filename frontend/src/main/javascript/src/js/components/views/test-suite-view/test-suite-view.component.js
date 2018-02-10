@@ -72,10 +72,16 @@ export const testSuiteViewComponent = {
             this.testSuite = null;
 
             /**
-             * The results of the test execution.
+             * The result map (id -> result) of the test execution.
              * @type {object}
              */
             this.results = {};
+
+            /**
+             * The test report.
+             * @type {object}
+             */
+            this.report = {};
 
             /**
              * If tests are being executed.
@@ -225,7 +231,10 @@ export const testSuiteViewComponent = {
             this.isExecuting = true;
             this.TestResource.executeMany(selected, this.driverConfig)
                 .then((data) => {
-                    this.results = data;
+                    data.testResults.forEach((result) => {
+                        this.results[result.test.id] = result;
+                    });
+                    this.report = data;
                 })
                 .catch((err) => {
                     this.ToastService.danger(`The test execution failed. ${err.data.message}`);
@@ -240,11 +249,9 @@ export const testSuiteViewComponent = {
             this.$uibModal.open({
                 component: 'browserConfigModal',
                 resolve: {
-                    modalData: () => {
-                        return {
-                            configuration: JSON.parse(JSON.stringify(this.driverConfig))
-                        };
-                    }
+                    modalData: () => ({
+                        configuration: JSON.parse(JSON.stringify(this.driverConfig))
+                    })
                 }
             }).result.then(data => {
                 this.ToastService.success('The settings have been updated.');

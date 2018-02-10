@@ -20,8 +20,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.testing.entities.Test;
+import de.learnlib.alex.testing.entities.TestReport;
+import de.learnlib.alex.testing.entities.TestResult;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
@@ -106,6 +107,17 @@ public class Project implements Serializable {
     private Set<SymbolGroup> groups;
 
     /**
+     * The list of test reports in the project.
+     */
+    @OneToMany(
+            mappedBy = "project",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    )
+    @JsonIgnore
+    private Set<TestReport> testReports;
+
+    /**
      * The next id for a group in the project.
      */
     @JsonIgnore
@@ -169,6 +181,7 @@ public class Project implements Serializable {
         this.symbols = new HashSet<>();
         this.nextSymbolId = 1L;
         this.tests = new HashSet<>();
+        this.testReports = new HashSet<>();
 
         this.mirrorUrls = "";
     }
@@ -386,6 +399,16 @@ public class Project implements Serializable {
     @JsonIgnore
     public void setTests(Set<Test> tests) {
         this.tests = tests;
+    }
+
+    @JsonIgnore
+    public Set<TestReport> getTestReports() {
+        return testReports;
+    }
+
+    @JsonIgnore
+    public void setTestReports(Set<TestReport> testReports) {
+        this.testReports = testReports;
     }
 
     public void addTest(Test test) {

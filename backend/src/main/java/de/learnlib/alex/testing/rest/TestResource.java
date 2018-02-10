@@ -23,13 +23,12 @@ import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.testing.dao.TestDAO;
+import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
-import de.learnlib.alex.testing.entities.TestReportConfig;
+import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.services.TestService;
-import de.learnlib.alex.testing.services.reporters.JUnitTestResultReporter;
-import de.learnlib.alex.testing.services.reporters.TestResultReporter;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -42,6 +41,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -68,6 +68,9 @@ public class TestResource {
     /** The {@link TestDAO} to use. */
     private TestDAO testDAO;
 
+    /** The {@link TestReportDAO} to use. */
+    private TestReportDAO testReportDAO;
+
     /** The test service. */
     private TestService testService;
 
@@ -78,9 +81,10 @@ public class TestResource {
      * @param testService The test service to use.
      */
     @Inject
-    public TestResource(TestDAO testDAO, TestService testService) {
+    public TestResource(TestDAO testDAO, TestService testService, TestReportDAO testReportDAO) {
         this.testDAO = testDAO;
         this.testService = testService;
+        this.testReportDAO = testReportDAO;
     }
 
     /**
@@ -172,24 +176,41 @@ public class TestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("project_id") Long projectId,
                             @PathParam("id") Long id,
+                            @QueryParam("report") boolean createReport,
                             AbstractWebDriverConfig driverConfig)
             throws NotFoundException {
-        return execute(projectId, new TestExecutionConfig(Collections.singletonList(id), driverConfig));
+        return execute(projectId, createReport, new TestExecutionConfig(Collections.singletonList(id), driverConfig));
     }
 
+    /**
+     * Executes a test run that can contains multiple tests.
+     *
+     * @param projectId  The id of the project
+     * @param testConfig The configuration for the test
+     * @return A {@link TestReport}.
+     * @throws NotFoundException If the project or a test could not be found.
+     */
     @POST
     @Path("/execute")
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("project_id") Long projectId,
+                            @QueryParam("report") boolean createReport,
                             TestExecutionConfig testConfig)
             throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         final List<Test> tests = testDAO.get(user, projectId, testConfig.getTestIds());
 
+        final TestReport report = new TestReport();
         final Map<Long, TestResult> results = testService.executeTests(user, tests, testConfig.getDriverConfig());
 
-        return Response.ok(results).build();
+        report.setTestResults(new ArrayList<>(results.values()));
+
+        if (createReport) {
+            testReportDAO.create(user, projectId, report);
+        }
+
+        return Response.ok(report).build();
     }
 
     /**
@@ -278,21 +299,5 @@ public class TestResource {
         }
 
         return Response.status(Response.Status.NO_CONTENT).build();
-    }
-
-    /**
-     * Creates a report of a test result.
-     *
-     * @param reportConfig The config to create the report from.
-     * @return The report.
-     */
-    @POST
-    @Path("/report")
-    @Produces(MediaType.APPLICATION_XML)
-    public Response getReport(TestReportConfig reportConfig) {
-        final TestResultReporter<String> reporter = new JUnitTestResultReporter();
-        final String report = reporter.createReport(reportConfig);
-
-        return Response.ok(report).build();
     }
 }

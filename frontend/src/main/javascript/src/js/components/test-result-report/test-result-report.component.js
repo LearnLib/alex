@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {DateUtils} from '../../utils/date-utils';
-
 /**
  * Displays a test result.
  * @type {{templateUrl: string, bindings: {result: string}, controllerAs: string, controller: testResult.controller}}
@@ -23,8 +21,7 @@ import {DateUtils} from '../../utils/date-utils';
 export const testResultReportComponent = {
     template: require('./test-result-report.component.html'),
     bindings: {
-        results: '=',
-        suite: '='
+        report: '='
     },
     controllerAs: 'vm',
     controller: class {
@@ -35,28 +32,25 @@ export const testResultReportComponent = {
          * @param {DownloadService} DownloadService
          * @param {PromptService} PromptService
          * @param {ToastService} ToastService
-         * @param {TestResource} TestResource
+         * @param {TestReportResource} TestReportResource
          * @param {SessionService} SessionService
+         * @param {TestReportService} TestReportService
          */
         // @ngInject
-        constructor(DownloadService, PromptService, ToastService, TestResource, SessionService) {
+        constructor(DownloadService, PromptService, ToastService, TestReportResource, SessionService,
+                    TestReportService) {
             this.DownloadService = DownloadService;
             this.PromptService = PromptService;
             this.ToastService = ToastService;
-            this.TestResource = TestResource;
+            this.TestReportResource = TestReportResource;
             this.SessionService = SessionService;
+            this.TestReportService = TestReportService;
 
             /**
-             * The results.
+             * The report.
              * @type {object}
              */
-            this.results = {};
-
-            /**
-             * The parent test suite.
-             * @type {object}
-             */
-            this.suite = null;
+            this.report = {};
 
             /**
              * The project.
@@ -78,8 +72,7 @@ export const testResultReportComponent = {
         }
 
         $onInit() {
-            for (const id in this.results) {
-                const result = this.results[id];
+            for (const result of this.report.testResults) {
                 if (result.test.type === 'case') {
                     this.overallResult.testCasesFailed += result.passed ? 0 : 1;
                     this.overallResult.testCasesPassed += result.passed ? 1 : 0;
@@ -90,27 +83,9 @@ export const testResultReportComponent = {
             }
         }
 
-        /**
-         * Saves the report as JUnit XML.
-         */
+        /** Saves the report as JUnit XML. */
         exportReport() {
-            const parent = JSON.parse(JSON.stringify(this.suite));
-            parent.tests = [];
-
-            for (let id in this.results) {
-                this.results[id].type = this.results[id].test.type;
-            }
-
-            this.TestResource.getReport(this.project.id, {
-                results: this.results,
-                parent: parent
-            }).then(data => {
-                this.PromptService.prompt('Enter the name for the report', 'report-' + DateUtils.YYYYMMDD())
-                    .then(name => {
-                        this.DownloadService.downloadXml(data, name);
-                        this.ToastService.success('The report has been downloaded.');
-                    });
-            }).catch(console.log);
+            this.TestReportService.download(this.project.id, this.report.id);
         }
     }
 };

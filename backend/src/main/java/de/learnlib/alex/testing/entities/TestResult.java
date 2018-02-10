@@ -16,21 +16,66 @@
 
 package de.learnlib.alex.testing.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import de.learnlib.alex.data.entities.Project;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * The result of a test execution.
  */
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("SUPER")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(name = "case", value = TestCaseResult.class),
         @JsonSubTypes.Type(name = "suite", value = TestSuiteResult.class),
 })
-public abstract class TestResult {
+public abstract class TestResult implements Serializable {
+
+    private static final long serialVersionUID = -4509801862717378522L;
+
+    @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @JsonIgnore
+    protected UUID uuid;
 
     /** The test that has been executed. */
-    private Test.TestRepresentation test;
+    @ManyToOne
+    @JoinColumn(name = "testId")
+    @JsonIgnore
+    private Test test;
+
+    /** The test that has been executed. */
+    @ManyToOne
+    @JoinColumn(name = "testReportId")
+    @JsonIgnore
+    private TestReport testReport;
+
+    /** The project the counter belongs to. */
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JsonIgnore
+    private Project project;
 
     /** The time it took to execute the test in ms. */
     protected long time;
@@ -47,15 +92,42 @@ public abstract class TestResult {
      * @param test The test that has been executed.
      */
     public TestResult(Test test) {
-        this.test = new Test.TestRepresentation(test);
+        this.test = test;
     }
 
-    public Test.TestRepresentation getTest() {
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public Test getTest() {
         return test;
     }
 
-    public void setTest(Test.TestRepresentation test) {
+    public void setTest(Test test) {
         this.test = test;
+    }
+
+    @JsonProperty("test")
+    public Test.TestRepresentation getTestRepresentation() {
+        return new Test.TestRepresentation(test);
+    }
+
+    @JsonProperty("test")
+    public void setTestId(Long id) {
+        this.test = new Test();
+        this.test.setId(id);
+    }
+
+    public TestReport getTestReport() {
+        return testReport;
+    }
+
+    public void setTestReport(TestReport testReport) {
+        this.testReport = testReport;
     }
 
     public long getTime() {
@@ -65,4 +137,25 @@ public abstract class TestResult {
     public void setTime(long time) {
         this.time = time;
     }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    @JsonProperty("project")
+    public Long getProjectId() {
+        return this.project == null ? 0L : this.project.getId();
+    }
+
+    @JsonProperty("project")
+    public void setProjectId(Long projectId) {
+        this.project = new Project(projectId);
+    }
+
+    @Transient
+    public abstract boolean isPassed();
 }

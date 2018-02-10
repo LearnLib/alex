@@ -16,50 +16,28 @@
 
 package de.learnlib.alex.testing.repositories;
 
-import de.learnlib.alex.testing.entities.Test;
+import de.learnlib.alex.testing.entities.TestReport;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
-/** Repository to persist tests. */
+/** The repository for test reports. */
 @Repository
-public interface TestRepository extends JpaRepository<Test, UUID> {
+public interface TestReportRepository extends JpaRepository<TestReport, UUID> {
 
-    /**
-     * Get a test by a project id and its id.
-     *
-     * @param projectId The id of the project.
-     * @param id        The id of the test.
-     * @return The test.
-     */
+    @Transactional(readOnly = true)
+    @Query("SELECT MAX(r.id) FROM TestReport r WHERE r.project.id = ?1")
+    Long findHighestId(Long projectId);
+
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    Test findOneByProject_IdAndId(Long projectId, Long id);
+    TestReport findOneByProject_IdAndId(Long projectId, Long id);
 
-    /**
-     * Find a test by its name within its parent.
-     *
-     * @param projectId The id of the project.
-     * @param parentId  The id of the parent.
-     * @param name      The name of the test.
-     * @return The test matching the name.
-     */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    Test findOneByProject_IdAndParent_IdAndName(Long projectId, Long parentId, String name);
-
-    /**
-     * Get the highest id of all tests in a project.
-     *
-     * @param projectId The id of the project.
-     * @return The highest id.
-     */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
-    @Query("SELECT MAX(t.id) FROM Test t WHERE t.project.id = ?1")
-    Long findHighestTestNo(Long projectId);
-
+    List<TestReport> findAllByProject_Id(Long projectId);
 }

@@ -32,6 +32,7 @@ import de.learnlib.alex.data.rest.SymbolGroupResource;
 import de.learnlib.alex.data.rest.SymbolResource;
 import de.learnlib.alex.learning.rest.LearnerResource;
 import de.learnlib.alex.learning.rest.LearnerResultResource;
+import de.learnlib.alex.testing.rest.TestReportResource;
 import de.learnlib.alex.testing.rest.TestResource;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -99,6 +100,7 @@ public class ALEXApplication extends ResourceConfig {
         register(SymbolResource.class);
         register(UserResource.class);
         register(TestResource.class);
+        register(TestReportResource.class);
 
         // Exceptions
         register(NotFoundExceptionMapper.class);

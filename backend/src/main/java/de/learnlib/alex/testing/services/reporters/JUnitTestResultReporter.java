@@ -16,9 +16,10 @@
 
 package de.learnlib.alex.testing.services.reporters;
 
+import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCaseResult;
+import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestSuiteResult;
-import de.learnlib.alex.testing.entities.TestReportConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -43,11 +44,11 @@ public class JUnitTestResultReporter extends TestResultReporter<String> {
     /**
      * Creates a report
      *
-     * @param reportConfig The config to create a report from.
+     * @param report The config to create a report from.
      * @return The serialized and formatted xml report as string.
      */
     @Override
-    public String createReport(final TestReportConfig reportConfig) {
+    public String createReport(final TestReport report) {
         try {
             final DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             final DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -55,55 +56,51 @@ public class JUnitTestResultReporter extends TestResultReporter<String> {
 
             // create the root element
             final Element rootElement = doc.createElement("testsuites");
+            rootElement.setAttribute("name", "Report (" + report.getStartDateAsString() + ")");
             doc.appendChild(rootElement);
 
-            // the element for the parent test suite
-            final Element parentTestSuiteElement = doc.createElement("testSuite");
-            parentTestSuiteElement.setAttribute("id", String.valueOf(reportConfig.getParent().getId()));
-            parentTestSuiteElement.setAttribute("name", reportConfig.getParent().getName());
-            rootElement.appendChild(parentTestSuiteElement);
+            // create and collect all data from all test cases
+            // each test suite result contains the summed up statistics for all its direct child test cases
+            final Map<Long, TestSuiteResult> testSuiteResultMap = new HashMap<>();
+            report.getTestResults().stream()
+                    .filter((r) -> r instanceof TestCaseResult)
+                    .forEach((result) -> {
+                        final Test parent = result.getTest().getParent();
 
-            // test suite id -> test suite element
+                        // create a new test suite result if it has not been discovered yet
+                        if (!testSuiteResultMap.containsKey(parent.getId())) {
+                            final TestSuiteResult testSuiteResult = new TestSuiteResult();
+                            testSuiteResult.setTest(parent);
+                            testSuiteResultMap.put(parent.getId(), testSuiteResult);
+                        }
+
+                        // add the statistics of the test case to its test suite
+                        testSuiteResultMap.get(parent.getId()).add((TestCaseResult) result);
+                    });
+
+            // create xml elements for test suites and add them to the root element
             final Map<Long, Element> testSuiteElements = new HashMap<>();
-            testSuiteElements.put(reportConfig.getParent().getId(), parentTestSuiteElement);
-
-            // create elements for all test suites
-            reportConfig.getResults().forEach((id, result) -> {
-                if (result instanceof TestSuiteResult) {
-                    final Element el = createTestSuiteElement(doc, (TestSuiteResult) result);
-                    rootElement.appendChild(el);
-                    testSuiteElements.put(id, el);
-                }
+            testSuiteResultMap.forEach((id, testSuiteResult) -> {
+                final Element el = createTestSuiteElement(doc, testSuiteResult);
+                testSuiteElements.put(id, el);
+                rootElement.appendChild(el);
             });
 
-            final TestSuiteResult parentTestSuiteResult = new TestSuiteResult();
-            final TestSuiteResult overallResult = new TestSuiteResult();
+            // create xml elements for all test cases and append them to their corresponding test suite element
+            report.getTestResults().stream()
+                    .filter((r) -> r instanceof TestCaseResult)
+                    .forEach((result) -> {
+                        final Element el = createTestCaseElement(doc, (TestCaseResult) result);
+                        final Test parent = result.getTest().getParent();
+                        testSuiteElements.get(parent.getId()).appendChild(el);
+                    });
 
-            // create elements for test cases
-            reportConfig.getResults().forEach((id, result) -> {
-                if (result instanceof TestCaseResult) {
-                    final Element el = createTestCaseElement(doc, (TestCaseResult) result);
-                    testSuiteElements.get(result.getTest().getParent()).appendChild(el);
+            // add the summed up statistics of the report to the root 'testsuites' element
+            rootElement.setAttribute("tests", String.valueOf(report.getNumTests()));
+            rootElement.setAttribute("failures", String.valueOf(report.getNumTestsFailed()));
+            rootElement.setAttribute("time", String.valueOf(report.getTime()));
 
-                    if (result.getTest().getParent().equals(reportConfig.getParent().getId())) {
-                        parentTestSuiteResult.add((TestCaseResult) result);
-                    }
-
-                    overallResult.add((TestCaseResult) result);
-                }
-            });
-
-            // set attributes of the parent test suite element
-            parentTestSuiteElement.setAttribute("tests", String.valueOf(parentTestSuiteResult.getTestCasesRun()));
-            parentTestSuiteElement.setAttribute("failures", String.valueOf(parentTestSuiteResult.getTestCasesFailed()));
-            parentTestSuiteElement.setAttribute("time", String.valueOf(parentTestSuiteResult.getTime()));
-
-            // set attributes for the containing element
-            rootElement.setAttribute("tests", String.valueOf(overallResult.getTestCasesRun()));
-            rootElement.setAttribute("failures", String.valueOf(overallResult.getTestCasesFailed()));
-            rootElement.setAttribute("time", String.valueOf(overallResult.getTime()));
-
-            // write the elements as xml string
+            // create the xml
             final Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             final DOMSource source = new DOMSource(doc);
@@ -118,9 +115,7 @@ public class JUnitTestResultReporter extends TestResultReporter<String> {
         }
     }
 
-    private Element createTestSuiteElement(final Document doc,
-                                           final TestSuiteResult suiteResult) {
-
+    private Element createTestSuiteElement(final Document doc, final TestSuiteResult suiteResult) {
         final Element testSuiteEl = doc.createElement("testsuite");
         testSuiteEl.setAttribute("id", String.valueOf(suiteResult.getTest().getId()));
         testSuiteEl.setAttribute("name", suiteResult.getTest().getName());

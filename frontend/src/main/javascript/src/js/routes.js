@@ -108,6 +108,16 @@ export function config($stateProvider, $urlRouterProvider) {
                 testId: null
             }
         })
+        .state('testReports', {
+            url: '/tests/reports',
+            template: '<test-reports-view></test-reports-view>',
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Tests > Reports'}
+        })
+        .state('testReport', {
+            url: '/tests/reports/{id:int}',
+            template: '<test-report-view></test-report-view>',
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Tests > Reports'}
+        })
         .state('about', {
             url: '/about',
             template: '<about-view></about-view>',

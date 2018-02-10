@@ -37,7 +37,7 @@ export class TestResource {
     /**
      * Create a test case.
      *
-     * @param {object} testCase - The test case to create.
+     * @param {object} testCase The test case to create.
      */
     create(testCase) {
         return this.$http.post(`${apiUrl}/projects/${testCase.project}/tests`, testCase)
@@ -47,8 +47,8 @@ export class TestResource {
     /**
      * Create multiple test cases at once.
      *
-     * @param {number} projectId - The id of the project.
-     * @param {object[]} tests - The tests to create.
+     * @param {number} projectId The id of the project.
+     * @param {object[]} tests The tests to create.
      */
     createMany(projectId, tests) {
         return this.$http.post(`${apiUrl}/projects/${projectId}/tests/batch`, tests)
@@ -58,7 +58,7 @@ export class TestResource {
     /**
      * Gets all test cases of a project.
      *
-     * @param {number} projectId - The id of the project to get all test cases from
+     * @param {number} projectId The id of the project to get all test cases from
      */
     getAll(projectId) {
         return this.$http.get(`${apiUrl}/projects/${projectId}/tests`)
@@ -68,8 +68,8 @@ export class TestResource {
     /**
      * Get a single test case by its id.
      *
-     * @param projectId - The id of the project.
-     * @param testCaseId - The id of the test case.
+     * @param projectId The id of the project.
+     * @param testCaseId The id of the test case.
      */
     get(projectId, testCaseId) {
         return this.$http.get(`${apiUrl}/projects/${projectId}/tests/${testCaseId}`)
@@ -77,20 +77,9 @@ export class TestResource {
     }
 
     /**
-     * Get a report.
-     *
-     * @param projectId - The id of the project.
-     * @param result - The result to get the report from.
-     */
-    getReport(projectId, result) {
-        return this.$http.post(`${apiUrl}/projects/${projectId}/tests/report`, result)
-            .then(response => response.data);
-    }
-
-    /**
      * Update a test case.
      *
-     * @param testCase - The updated test case.
+     * @param testCase The updated test case.
      */
     update(testCase) {
         return this.$http.put(`${apiUrl}/projects/${testCase.project}/tests/${testCase.id}`, testCase)
@@ -100,7 +89,7 @@ export class TestResource {
     /**
      * Deletes a test case.
      *
-     * @param testCase - The test case to delete.
+     * @param testCase The test case to delete.
      */
     remove(testCase) {
         return this.$http.delete(`${apiUrl}/projects/${testCase.project}/tests/${testCase.id}`)
@@ -110,8 +99,8 @@ export class TestResource {
     /**
      * Deletes a test case.
      *
-     * @param {number} projectId - The id of the project the tests are in.
-     * @param tests - The test case to delete.
+     * @param {number} projectId The id of the project the tests are in.
+     * @param tests The test case to delete.
      */
     removeMany(projectId, tests) {
         const ids = tests.map(t => t.id).join(',');
@@ -122,11 +111,12 @@ export class TestResource {
     /**
      * Execute a test.
      *
-     * @param {object} testCase - The test to execute.
-     * @param {object} browserConfig - The config to execute the test with.
+     * @param {object} testCase The test to execute.
+     * @param {object} browserConfig The config to execute the test with.
+     * @param {boolean} createReport If the report should be saved.
      */
-    execute(testCase, browserConfig) {
-        return this.$http.post(`${apiUrl}/projects/${testCase.project}/tests/${testCase.id}/execute`, browserConfig)
+    execute(testCase, browserConfig, createReport = false) {
+        return this.$http.post(`${apiUrl}/projects/${testCase.project}/tests/${testCase.id}/execute`, browserConfig, {params: {report: createReport}})
             .then(response => response.data);
     }
 
@@ -140,7 +130,7 @@ export class TestResource {
         return this.$http.post(`${apiUrl}/projects/${tests[0].project}/tests/execute`, {
             testIds: tests.map((t) => t.id),
             driverConfig: browserConfig
-        })
+        }, {params: {report: true}})
             .then((response) => response.data);
     }
 

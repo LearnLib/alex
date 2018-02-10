@@ -162,6 +162,13 @@ class SidebarComponent {
                         active: () => this.isState('tests'),
                         display: () => true,
                         click: () => $state.go('tests')
+                    },
+                    {
+                        title: 'Reports',
+                        icon: 'fa-list',
+                        active: () => this.isState('testReports', 'testReport'),
+                        display: () => true,
+                        click: () => $state.go('testReports')
                     }
                 ]
             },

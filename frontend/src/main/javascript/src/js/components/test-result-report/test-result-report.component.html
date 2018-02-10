@@ -1,20 +1,20 @@
 <div class="test-result-report">
     <h4>
-        <i class="fa fa-fw fa-file-text-o"></i> <strong>Report</strong>
+        <i class="fa fa-fw fa-file-text-o"></i> <strong>Report</strong> (<a ui-sref="testReport({id: vm.report.id})">Details</a>)
     </h4>
     <hr>
     <p>
         <button class="btn btn-default btn-sm" ng-click="vm.exportReport()">
-            <i class="fa fa-fw fa-download"></i> Export
+            <i class="fa fa-fw fa-download"></i> Download
         </button>
     </p>
     <table class="table table-condensed" style="margin-bottom: 0; border: 1px solid #dddddd; margin-top: 8px">
         <thead style="background: #f7f7f7">
         <tr>
             <th style="width: 80px">Status</th>
+            <th>Total</th>
             <th>Passed</th>
             <th>Failed</th>
-            <th>Total</th>
         </tr>
         </thead>
         <tbody>
@@ -24,9 +24,9 @@
                 <span ng-if="!vm.overallResult.passed && vm.overallResult.testCasesPassed > 0" class="label label-warning">Failed</span>
                 <span ng-if="!vm.overallResult.passed && vm.overallResult.testCasesPassed === 0" class="label label-danger">Failed</span>
             </td>
+            <td><strong>{{vm.overallResult.testCasesRun}}</strong></td>
             <td><strong>{{vm.overallResult.testCasesPassed}}</strong></td>
             <td><strong>{{vm.overallResult.testCasesFailed}}</strong></td>
-            <td><strong>{{vm.overallResult.testCasesRun}}</strong></td>
         </tr>
         </tbody>
     </table>

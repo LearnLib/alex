@@ -23,6 +23,7 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +33,9 @@ import java.util.List;
 @Entity
 @DiscriminatorValue("case")
 @JsonTypeName("case")
-public class TestCase extends Test implements Serializable {
+public class TestCase extends Test {
+
+    private static final long serialVersionUID = 5961810799472877062L;
 
     /** The map with the variables for the test case. */
     private HashMap<String, String> variables;

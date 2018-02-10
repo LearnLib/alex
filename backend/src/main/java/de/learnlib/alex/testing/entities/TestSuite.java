@@ -38,7 +38,9 @@ import java.util.stream.Collectors;
 @Entity
 @DiscriminatorValue("suite")
 @JsonTypeName("suite")
-public class TestSuite extends Test implements Serializable {
+public class TestSuite extends Test {
+
+    private static final long serialVersionUID = 3997432889140612741L;
 
     /** The tests that belong to the test suite. */
     private Set<Test> tests;

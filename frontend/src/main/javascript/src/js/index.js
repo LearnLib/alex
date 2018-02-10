@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import angular from 'angular';
 import uiRouter from '@uirouter/angularjs';
+import angular from 'angular';
 import ngAnimate from 'angular-animate';
 import angularDragula from 'angular-dragula';
 import angularJwt from 'angular-jwt';
@@ -150,6 +150,8 @@ import {symbolsActionsViewComponent} from './components/views/symbol-actions-vie
 import {symbolsTrashViewComponent} from './components/views/symbols-trash-view/symbols-trash-view.component';
 import {symbolsViewComponent} from './components/views/symbols-view/symbols-view.component';
 import {testCaseViewComponent} from './components/views/test-case-view/test-case-view.component';
+import {testReportViewComponent} from './components/views/test-report-view/test-report-view.component';
+import {testReportsViewComponent} from './components/views/test-reports-view/test-reports-view.component';
 import {testSuiteViewComponent} from './components/views/test-suite-view/test-suite-view.component';
 import {testsViewComponent} from './components/views/tests-view/tests-view.component';
 import {usersSettingsViewComponent} from './components/views/user-settings-view/user-settings-view.component';
@@ -190,9 +192,11 @@ import {ProjectResource} from './services/resources/project-resource.service';
 import {SettingsResource} from './services/resources/settings-resource.service';
 import {SymbolGroupResource} from './services/resources/symbol-group-resource.service';
 import {SymbolResource} from './services/resources/symbol-resource.service';
+import {TestReportResource} from './services/resources/test-report-resource.service';
 import {TestResource} from './services/resources/test-resource.service';
 import {UserResource} from './services/resources/user-resource.service';
 import {SessionService} from './services/session.service';
+import {TestReportService} from './services/test-report.service';
 import {TestService} from './services/test.service';
 import {ToastService} from './services/toast.service';
 
@@ -243,6 +247,7 @@ angular
     .service('SymbolResource', SymbolResource)
     .service('UserResource', UserResource)
     .service('TestResource', TestResource)
+    .service('TestReportResource', TestReportResource)
 
     // services
     .service('ActionService', ActionService)
@@ -260,6 +265,7 @@ angular
     .service('HtmlElementPickerService', HtmlElementPickerService)
     .service('ActionRecorderService', ActionRecorderService)
     .service('TestService', TestService)
+    .service('TestReportService', TestReportService)
 
     // modal handles
     .directive('actionCreateModalHandle', actionCreateModalHandleDirective)
@@ -320,6 +326,8 @@ angular
     .component('symbolsTrashView', symbolsTrashViewComponent)
     .component('usersSettingsView', usersSettingsViewComponent)
     .component('testCaseView', testCaseViewComponent)
+    .component('testReportsView', testReportsViewComponent)
+    .component('testReportView', testReportViewComponent)
     .component('testSuiteView', testSuiteViewComponent)
 
     // forms components
