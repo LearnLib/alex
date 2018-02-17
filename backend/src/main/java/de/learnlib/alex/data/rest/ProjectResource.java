@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.events.ProjectEvent;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -70,6 +72,10 @@ public class ProjectResource {
     @Context
     private SecurityContext securityContext;
 
+    /** The {@link WebhookService} to use. */
+    @Inject
+    private WebhookService webhookService;
+
     /**
      * Create a new Project.
      *
@@ -100,8 +106,8 @@ public class ProjectResource {
 
         try {
             projectDAO.create(project);
-            String projectURL = uri.getBaseUri() + "projects/" + project.getId();
-            response = Response.status(Status.CREATED).header("Location", projectURL).entity(project).build();
+            webhookService.fireEvent(user, new ProjectEvent.Created(project));
+            response = Response.status(Status.CREATED).entity(project).build();
         } catch (ValidationException e) {
             LOGGER.catching(e);
             response = ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.BAD_REQUEST, e);
@@ -214,6 +220,7 @@ public class ProjectResource {
                     throw new UnauthorizedException("You are not allowed to update this project");
                 }
                 projectDAO.update(user, project);
+                webhookService.fireEvent(user, new ProjectEvent.Updated(project));
                 LOGGER.traceExit(project);
                 return Response.ok(project).build();
             } catch (ValidationException e) {
@@ -253,6 +260,7 @@ public class ProjectResource {
 
             project.setUser(user);
             projectDAO.delete(user, projectId);
+            webhookService.fireEvent(user, new ProjectEvent.Deleted(project.getId()));
             LOGGER.traceExit("Project {} deleted", projectId);
             return Response.status(Status.NO_CONTENT).build();
         } catch (UnauthorizedException e) {

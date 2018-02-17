@@ -1,0 +1,23 @@
+<div class="modal-header">
+    <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+    <h3 class="modal-title">Register a webhook</h3>
+</div>
+
+<div class="modal-body">
+    <webhook-form webhook="vm.webhook" events="vm.events"></webhook-form>
+
+    <div ng-if="vm.errorMessage != null">
+        <hr/>
+        <div class="alert alert-condensed alert-danger mb-0">
+            <strong class="d-block">The webhook could not be created.</strong>
+            <span ng-bind="vm.errorMessage"></span>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-click="vm.createWebhook()">Register</button>
+    <button class="btn btn-default btn-sm" ng-click="vm.dismiss()">Dismiss</button>
+</div>

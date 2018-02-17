@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.dao.SymbolGroupDAO;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.events.SymbolGroupEvent;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -76,6 +78,10 @@ public class SymbolGroupResource {
     @Context
     private SecurityContext securityContext;
 
+    /** The {@link WebhookService} to use. */
+    @Inject
+    private WebhookService webhookService;
+
     /**
      * Create a new group.
      *
@@ -101,8 +107,9 @@ public class SymbolGroupResource {
             symbolGroupDAO.create(user, group);
 
             LOGGER.traceExit(group);
-            String groupURL = uri.getBaseUri() + "projects/" + group.getProjectId() + "/groups/" + group.getId();
-            return Response.status(Response.Status.CREATED).header("Location", groupURL).entity(group).build();
+
+            webhookService.fireEvent(user, new SymbolGroupEvent.Created(group));
+            return Response.status(Response.Status.CREATED).entity(group).build();
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.create",
@@ -240,6 +247,7 @@ public class SymbolGroupResource {
             symbolGroupDAO.update(user, group);
 
             LOGGER.traceExit(group);
+            webhookService.fireEvent(user, new SymbolGroupEvent.Updated(group));
             return Response.ok(group).build();
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
@@ -267,15 +275,15 @@ public class SymbolGroupResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteAResultSet(@PathParam("project_id") long projectId,  @PathParam("id") Long id)
+    public Response delete(@PathParam("project_id") long projectId, @PathParam("id") Long id)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("deleteAResultSet({}, {}) for user {}.", projectId, id, user);
+        LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, id, user);
 
         try {
             symbolGroupDAO.delete(user, projectId, id);
-
             LOGGER.traceExit("Group {} deleted.", id);
+            webhookService.fireEvent(user, new SymbolGroupEvent.Deleted(id));
             return Response.noContent().build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);

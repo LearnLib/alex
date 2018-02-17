@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import de.learnlib.alex.learning.rest.LearnerResource;
 import de.learnlib.alex.learning.rest.LearnerResultResource;
 import de.learnlib.alex.testing.rest.TestReportResource;
 import de.learnlib.alex.testing.rest.TestResource;
+import de.learnlib.alex.webhooks.rest.WebhookResource;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
@@ -101,6 +102,7 @@ public class ALEXApplication extends ResourceConfig {
         register(UserResource.class);
         register(TestResource.class);
         register(TestReportResource.class);
+        register(WebhookResource.class);
 
         // Exceptions
         register(NotFoundExceptionMapper.class);

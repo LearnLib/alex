@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,13 @@ class SidebarComponent {
                         active: () => this.isState('usersSettings'),
                         display: () => true,
                         click: () => $state.go('usersSettings')
+                    },
+                    {
+                        title: 'Webhooks',
+                        icon: 'fa-share-alt',
+                        active: () => this.isState('webhooks'),
+                        display: () => true,
+                        click: () => $state.go('webhooks')
                     },
                     {
                         title: 'Logout',

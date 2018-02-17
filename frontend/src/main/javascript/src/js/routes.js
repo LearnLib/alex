@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,6 +132,11 @@ export function config($stateProvider, $urlRouterProvider) {
             url: '/files',
             template: '<files-view></files-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Files'}
+        })
+        .state('webhooks', {
+            url: '/webhooks',
+            template: '<webhooks-view></webhooks-view>',
+            data: {requiresProject: false, roles: ['REGISTERED', 'ADMIN'], title: 'Webhooks'}
         });
 }
 

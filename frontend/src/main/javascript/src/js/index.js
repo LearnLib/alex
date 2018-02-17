@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,6 +82,7 @@ import {projectFormGroupsComponent} from './components/forms/project-form-groups
 import {symbolEditFormComponent} from './components/forms/symbol-edit-form/symbol-edit-form.component';
 import {userEditFormComponent} from './components/forms/user-edit-form/user-edit-form.component';
 import {userLoginFormComponent} from './components/forms/user-login-form/user-login-form.component';
+import {webhookFormComponent} from './components/forms/webhook-form/webhook-form.component';
 import {htmlElementPickerComponent} from './components/html-element-picker/html-element-picker.component';
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
 import {learnerResultListItemComponent} from './components/learner-result-list-item/learner-result-list-item.component';
@@ -121,6 +122,8 @@ import {symbolMoveModalComponent} from './components/modals/symbols-move-modal/s
 import {testsImportModalComponent} from './components/modals/tests-import-modal/tests-import-modal.component';
 import {userEditModalHandleDirective} from './components/modals/user-edit-modal/user-edit-modal-handle.directive';
 import {userEditModalComponent} from './components/modals/user-edit-modal/user-edit-modal.component';
+import {webhookCreateModalComponent} from './components/modals/webhook-create-modal/webhook-create-modal.component';
+import {webhookEditModalComponent} from './components/modals/webhook-edit-modal/webhook-edit-modal.component';
 import {observationTableComponent} from './components/observation-table/observation-table.component';
 import {projectListComponent} from './components/project-list/project-list.component';
 import {responsiveIframeComponent} from './components/responsive-iframe/responsive-iframe.component';
@@ -155,6 +158,7 @@ import {testReportsViewComponent} from './components/views/test-reports-view/tes
 import {testSuiteViewComponent} from './components/views/test-suite-view/test-suite-view.component';
 import {testsViewComponent} from './components/views/tests-view/tests-view.component';
 import {usersSettingsViewComponent} from './components/views/user-settings-view/user-settings-view.component';
+import {webhooksViewComponent} from './components/views/webhooks-view/webhooks-view.component';
 import {counterexamplesWidgetComponent} from './components/widgets/counterexamples-widget/counterexamples-widget.component';
 import {latestLearnerResultWidgetComponent} from './components/widgets/latest-learner-result-widget/latest-learner-result-widget.component';
 import {learnerResumeSettingsWidgetComponent} from './components/widgets/learner-resume-widget/learner-resume-settings-widget.component';
@@ -195,6 +199,7 @@ import {SymbolResource} from './services/resources/symbol-resource.service';
 import {TestReportResource} from './services/resources/test-report-resource.service';
 import {TestResource} from './services/resources/test-resource.service';
 import {UserResource} from './services/resources/user-resource.service';
+import {WebhookResource} from './services/resources/webhook-resource.service';
 import {SessionService} from './services/session.service';
 import {TestReportService} from './services/test-report.service';
 import {TestService} from './services/test.service';
@@ -248,6 +253,7 @@ angular
     .service('UserResource', UserResource)
     .service('TestResource', TestResource)
     .service('TestReportResource', TestReportResource)
+    .service('WebhookResource', WebhookResource)
 
     // services
     .service('ActionService', ActionService)
@@ -283,7 +289,7 @@ angular
     .directive('resultListModalHandle', resultListModalHandleDirective)
     .directive('symbolsImportModalHandle', symbolsImportModalHandleDirective)
 
-    // modal handles
+    // modals
     .component('actionCreateModal', actionCreateModalComponent)
     .component('actionRecorderActionsModal', actionRecorderActionsModal)
     .component('actionEditModal', actionEditModalComponent)
@@ -304,6 +310,8 @@ angular
     .component('confirmModal', confirmModalComponent)
     .component('browserConfigModal', browserConfigModalComponent)
     .component('testsImportModal', testsImportModalComponent)
+    .component('webhookCreateModal', webhookCreateModalComponent)
+    .component('webhookEditModal', webhookEditModalComponent)
 
     // view components
     .component('aboutView', aboutViewComponent)
@@ -329,6 +337,7 @@ angular
     .component('testReportsView', testReportsViewComponent)
     .component('testReportView', testReportViewComponent)
     .component('testSuiteView', testSuiteViewComponent)
+    .component('webhooksView', webhooksViewComponent)
 
     // forms components
     .component('actionForm', actionFormComponent)
@@ -340,6 +349,7 @@ angular
     .component('browserConfigForm', browserConfigFormComponent)
     .component('symbolEditForm', symbolEditFormComponent)
     .component('actionSearchForm', actionSearchFormComponent)
+    .component('webhookForm', webhookFormComponent)
 
     // widgets components
     .component('widget', widgetComponent)

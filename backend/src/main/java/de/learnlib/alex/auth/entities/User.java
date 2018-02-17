@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package de.learnlib.alex.auth.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.webhooks.entities.Webhook;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.hibernate.annotations.Cascade;
@@ -32,6 +33,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -58,7 +62,7 @@ public class User implements Serializable {
     @Column(unique = true)
     private String email;
 
-    /** * The hash of the users password. */
+    /** The hash of the users password. */
     @NotNull
     private String password;
 
@@ -74,18 +78,25 @@ public class User implements Serializable {
     @JsonIgnore
     private Set<Project> projects;
 
+    /** The list of webhooks. */
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
+    @JsonIgnore
+    private List<Webhook> webhooks;
+
     /**
      * Default constructor that gives the user the role of "registered".
      */
     public User() {
+        this.projects = new HashSet<>();
+        this.webhooks = new ArrayList<>();
         role = UserRole.REGISTERED;
     }
 
     /**
      * Constructor that sets a specific ID and gives the user the role of "registered".
      *
-     * @param id
-     *         The ID of the User.
+     * @param id The ID of the User.
      */
     public User(Long id) {
         role = UserRole.REGISTERED;
@@ -159,8 +170,7 @@ public class User implements Serializable {
     /**
      * Checks if the given password equals the password of the user.
      *
-     * @param plainPasswordToCheck
-     *         The password to check.
+     * @param plainPasswordToCheck The password to check.
      * @return True, if both passwords matched, false otherwise.
      */
     @JsonIgnore
@@ -197,6 +207,14 @@ public class User implements Serializable {
      */
     public void setProjects(Set<Project> projects) {
         this.projects = projects;
+    }
+
+    public List<Webhook> getWebhooks() {
+        return webhooks;
+    }
+
+    public void setWebhooks(List<Webhook> webhooks) {
+        this.webhooks = webhooks;
     }
 
     @Override
