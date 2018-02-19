@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CallAction;
+import de.learnlib.alex.data.events.SymbolEvent;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -86,6 +88,10 @@ public class SymbolResource {
     @Inject
     private ProjectDAO projectDAO;
 
+    /** The {@link WebhookService} to use. */
+    @Inject
+    private WebhookService webhookService;
+
     /**
      * Create a new Symbol.
      *
@@ -112,6 +118,7 @@ public class SymbolResource {
             String symbolURL = uri.getBaseUri() + "projects/" + symbol.getProjectId() + "/symbols/" + symbol.getId();
 
             LOGGER.traceExit(symbol);
+            webhookService.fireEvent(user, new SymbolEvent.Created(symbol));
             return Response.status(Status.CREATED).header("Location", symbolURL).entity(symbol).build();
         } catch (IllegalArgumentException | ValidationException e) {
             LOGGER.traceExit(e);
@@ -176,18 +183,17 @@ public class SymbolResource {
             symbolDAO.create(user, symbols);
 
             LOGGER.traceExit(symbols);
+
+            webhookService.fireEvent(user, new SymbolEvent.CreatedMany(symbols));
             return ResponseHelper.renderList(symbols, Status.CREATED);
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchCreateSymbols",
-                                                               Status.BAD_REQUEST, e);
-        } catch (ValidationException e) {
+        } catch (IllegalArgumentException | ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchCreateSymbols",
                                                                Status.BAD_REQUEST, e);
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.UNAUTHORIZED, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchCreateSymbols",
+                                                               Status.UNAUTHORIZED, e);
         }
     }
 
@@ -313,6 +319,8 @@ public class SymbolResource {
             symbolDAO.update(user, symbol);
 
             LOGGER.traceExit(symbol);
+
+            webhookService.fireEvent(user, new SymbolEvent.Updated(symbol));
             return Response.ok(symbol).build();
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
@@ -355,6 +363,8 @@ public class SymbolResource {
             symbolDAO.update(user, symbols);
 
             LOGGER.traceExit(symbols);
+
+            webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(symbols));
             return ResponseHelper.renderList(symbols, Status.OK);
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
@@ -385,6 +395,8 @@ public class SymbolResource {
         symbolDAO.move(user, symbol, groupId);
 
         LOGGER.traceExit(symbol);
+
+        webhookService.fireEvent(user, new SymbolEvent.Updated(symbol));
         return Response.ok(symbol).build();
     }
 
@@ -427,6 +439,8 @@ public class SymbolResource {
         symbolDAO.move(user, symbols, groupId);
 
         LOGGER.traceExit(symbols);
+
+        webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(symbols));
         return Response.ok(symbols).build();
     }
 
@@ -452,6 +466,8 @@ public class SymbolResource {
             Symbol symbol = symbolDAO.get(user, projectId, id);
 
             LOGGER.traceExit(symbol);
+
+            webhookService.fireEvent(user, new SymbolEvent.Updated(symbol));
             return Response.ok(symbol).build();
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
@@ -481,6 +497,8 @@ public class SymbolResource {
         symbolDAO.hide(user, projectId, ids);
 
         LOGGER.traceExit(symbols);
+
+        webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(symbols));
         return ResponseHelper.renderList(symbols, Status.OK);
     }
 
@@ -505,6 +523,8 @@ public class SymbolResource {
         Symbol symbol = symbolDAO.get(user, projectId, id);
 
         LOGGER.traceExit(symbol);
+
+        webhookService.fireEvent(user, new SymbolEvent.Updated(symbol));
         return Response.ok(symbol).build();
     }
 
@@ -530,6 +550,8 @@ public class SymbolResource {
         List<Symbol> symbols = symbolDAO.getByIds(user, projectId, SymbolVisibilityLevel.ALL, ids);
 
         LOGGER.traceExit(symbols);
+
+        webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(symbols));
         return ResponseHelper.renderList(symbols, Status.OK);
     }
 

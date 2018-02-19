@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,10 @@ import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
+import de.learnlib.alex.testing.events.TestEvent;
+import de.learnlib.alex.testing.events.TestExecutionStartedEventData;
 import de.learnlib.alex.testing.services.TestService;
+import de.learnlib.alex.webhooks.services.WebhookService;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -74,17 +77,24 @@ public class TestResource {
     /** The test service. */
     private TestService testService;
 
+    /** The {@link WebhookService} to use. */
+    private WebhookService webhookService;
+
     /**
      * Constructor.
      *
-     * @param testDAO     The injected testDao.
-     * @param testService The test service to use.
+     * @param testDAO        The injected test Dao.
+     * @param testService    The test service to use.
+     * @param testReportDAO  The test report Dao to use.
+     * @param webhookService The injected webhook service.
      */
     @Inject
-    public TestResource(TestDAO testDAO, TestService testService, TestReportDAO testReportDAO) {
+    public TestResource(TestDAO testDAO, TestService testService, TestReportDAO testReportDAO,
+                        WebhookService webhookService) {
         this.testDAO = testDAO;
         this.testService = testService;
         this.testReportDAO = testReportDAO;
+        this.webhookService = webhookService;
     }
 
     /**
@@ -106,6 +116,7 @@ public class TestResource {
         try {
             testDAO.create(user, test);
 
+            webhookService.fireEvent(user, new TestEvent.Created(test));
             return Response.ok(test).status(Response.Status.CREATED).build();
         } catch (ValidationException e) {
             return ResourceErrorHandler.createRESTErrorMessage("TestCase.create", Response.Status.BAD_REQUEST, e);
@@ -137,6 +148,7 @@ public class TestResource {
                 createdTests.add(testDAO.get(user, projectId, t.getId()));
             }
 
+            webhookService.fireEvent(user, new TestEvent.CreatedMany(createdTests));
             return Response.ok(createdTests).status(Response.Status.CREATED).build();
         } catch (ValidationException e) {
             return ResourceErrorHandler.createRESTErrorMessage("TestCase.create", Response.Status.BAD_REQUEST, e);
@@ -201,13 +213,18 @@ public class TestResource {
 
         final List<Test> tests = testDAO.get(user, projectId, testConfig.getTestIds());
 
+        // do not fire the event if the test is only called for testing purposes.
+        if (createReport) {
+            webhookService.fireEvent(user, new TestEvent.ExecutionStarted(new TestExecutionStartedEventData(projectId, testConfig)));
+        }
+
         final TestReport report = new TestReport();
         final Map<Long, TestResult> results = testService.executeTests(user, tests, testConfig.getDriverConfig());
-
         report.setTestResults(new ArrayList<>(results.values()));
 
         if (createReport) {
             testReportDAO.create(user, projectId, report);
+            webhookService.fireEvent(user, new TestEvent.ExecutionFinished(report));
         }
 
         return Response.ok(report).build();
@@ -244,6 +261,7 @@ public class TestResource {
         try {
             testDAO.update(user, test);
 
+            webhookService.fireEvent(user, new TestEvent.Updated(test));
             return Response.ok(test).build();
         } catch (ValidationException e) {
             return ResourceErrorHandler.createRESTErrorMessage("TestCase.update", Response.Status.BAD_REQUEST, e);
@@ -272,6 +290,7 @@ public class TestResource {
             return ResourceErrorHandler.createRESTErrorMessage("TestCase.delete", Response.Status.BAD_REQUEST, e);
         }
 
+        webhookService.fireEvent(user, new TestEvent.Deleted(id));
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 
@@ -298,6 +317,7 @@ public class TestResource {
             return ResourceErrorHandler.createRESTErrorMessage("TestCase.delete", Response.Status.BAD_REQUEST, e);
         }
 
+        webhookService.fireEvent(user, new TestEvent.DeletedMany(ids));
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import de.learnlib.api.algorithm.feature.SupportsGrowingAlphabet;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.DefaultQuery;
@@ -42,13 +43,15 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
      *
      * @param user
      * @param learnerResultDAO {@link AbstractLearnerThread#learnerResultDAO}.
+     * @param webhookService   {@link AbstractLearnerThread#webhookService}.
      * @param context          The context to use.
      * @param result           {@link AbstractLearnerThread#result}.
      * @param configuration    The configuration to use.
      */
-    public ResumingLearnerThread(User user, LearnerResultDAO learnerResultDAO, ConnectorContextHandler context,
-                                 LearnerResult result, LearnerResumeConfiguration configuration) {
-        super(user, learnerResultDAO, context, result, configuration);
+    public ResumingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
+                                 ConnectorContextHandler context, LearnerResult result,
+                                 LearnerResumeConfiguration configuration) {
+        super(user, learnerResultDAO, webhookService, context, result, configuration);
     }
 
     @Override

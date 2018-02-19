@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,14 @@ package de.learnlib.alex.auth.rest;
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
+import de.learnlib.alex.auth.events.UserEvent;
 import de.learnlib.alex.auth.security.JWTHelper;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.ResponseHelper;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -75,6 +77,10 @@ public class UserResource {
     /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
+
+    /** The webhook service to use. */
+    @Inject
+    private WebhookService webhookService;
 
     /**
      * Creates a new user.
@@ -206,6 +212,8 @@ public class UserResource {
             userDAO.update(realUser);
 
             LOGGER.traceExit(realUser);
+
+            webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
             return Response.ok(user).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
@@ -264,6 +272,8 @@ public class UserResource {
             userDAO.update(realUser);
 
             LOGGER.traceExit(realUser);
+
+            webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
             return Response.ok(realUser).build();
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
@@ -308,6 +318,7 @@ public class UserResource {
         LOGGER.info(RESOURCE_MARKER, "User {} promoted.", user);
 
         LOGGER.traceExit(userToPromote);
+        webhookService.fireEvent(user, new UserEvent.RoleUpdated(userToPromote));
         return Response.ok(userToPromote).build();
     }
 
@@ -350,6 +361,7 @@ public class UserResource {
             userDAO.update(userToDemote);
 
             LOGGER.traceExit(userToDemote);
+            webhookService.fireEvent(user, new UserEvent.RoleUpdated(userToDemote));
             return Response.ok(userToDemote).build();
         } catch (BadRequestException e) {
             LOGGER.traceExit(e);
@@ -384,9 +396,13 @@ public class UserResource {
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.FORBIDDEN, e);
         }
 
+        // the event is not fired if we do it after the user is deleted in the next line
+        // since all webhooks registered to the user are deleted as well.
+        webhookService.fireEvent(new User(userId), new UserEvent.Deleted(userId));
         userDAO.delete(userId);
 
         LOGGER.traceExit("User {} deleted.", userId);
+
         return Response.status(Status.NO_CONTENT).build();
     }
 
@@ -420,6 +436,8 @@ public class UserResource {
         userDAO.delete(ids);
 
         LOGGER.traceExit("User(s) {} deleted.", ids);
+
+        ids.forEach(id -> webhookService.fireEvent(new User(id), new UserEvent.Deleted(id)));
         return Response.status(Status.NO_CONTENT).build();
     }
 

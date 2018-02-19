@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,10 @@ import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
+import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import de.learnlib.api.SUL;
 import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.api.oracle.EquivalenceOracle;
@@ -73,6 +75,9 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /** The DAO to remember the learn results. */
     protected final LearnerResultDAO learnerResultDAO;
 
+    /** The webhook service to user. */
+    private final WebhookService webhookService;
+
     /** The learner to use during the learning. */
     protected final LearningAlgorithm.MealyLearner<String, String> learner;
 
@@ -110,16 +115,16 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
      *
      * @param user
      * @param learnerResultDAO {@link #learnerResultDAO}.
+     * @param webhookService   {@link #webhookService}.
      * @param context          The context to use.
      * @param result           {@link #result}.
      * @param configuration    {@link #configuration}.
      */
-    public AbstractLearnerThread(User user, LearnerResultDAO learnerResultDAO,
-                                 ConnectorContextHandler context,
-                                 LearnerResult result,
-                                 T configuration) {
+    public AbstractLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
+                                 ConnectorContextHandler context, LearnerResult result, T configuration) {
         this.user = user;
         this.learnerResultDAO = learnerResultDAO;
+        this.webhookService = webhookService;
         this.result = result;
         this.configuration = configuration;
         this.abstractAlphabet = new SimpleAlphabet<>(
@@ -267,6 +272,8 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
 
             rounds++;
         }
+
+        webhookService.fireEvent(user, new LearnerEvent.Finished(result));
     }
 
     private boolean continueLearning(final LearnerResultStep step, final long rounds) {
@@ -277,7 +284,6 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
      * Given a counterexample, test if there is a shorter prefix that is also a counterexample.
      *
      * @param ce The counterexample.
-     *
      * @return The prefix.
      */
     private DefaultQuery<String, Word<String>> findShortestPrefix(DefaultQuery<String, Word<String>> ce) {

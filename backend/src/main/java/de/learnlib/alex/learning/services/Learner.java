@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.automata.transout.impl.compact.CompactMealyTransition;
 import net.automatalib.util.automata.Automata;
@@ -94,6 +95,10 @@ public class Learner {
     /** The LearnerResultDAO to use. */
     @Inject
     private LearnerResultDAO learnerResultDAO;
+
+    /** The {@link WebhookService} to use. */
+    @Inject
+    private WebhookService webhookService;
 
     /** Factory to create a new ContextHandler. */
     @Inject
@@ -162,7 +167,8 @@ public class Learner {
                 configuration.getDriverConfig());
         contextHandler.setResetSymbol(result.getResetSymbol());
 
-        final AbstractLearnerThread learnThread = new StartingLearnerThread(user, learnerResultDAO, contextHandler, result, configuration);
+        final AbstractLearnerThread learnThread = new StartingLearnerThread(user, learnerResultDAO, webhookService,
+                                                                            contextHandler, result, configuration);
         startThread(project.getId(), learnThread);
     }
 
@@ -192,14 +198,15 @@ public class Learner {
         final Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbolAsId());
         result.setResetSymbol(resetSymbol);
 
-        List<Symbol> symbols = symbolDAO.getByIds(user, project.getId(),
+        final List<Symbol> symbols = symbolDAO.getByIds(user, project.getId(),
                 new LinkedList<>(result.getSymbolsAsIds()));
         result.setSymbols(symbols);
 
         final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, result.getDriverConfig());
         contextHandler.setResetSymbol(result.getResetSymbol());
 
-        final AbstractLearnerThread learnThread = new ResumingLearnerThread(user, learnerResultDAO, contextHandler, result, configuration);
+        final AbstractLearnerThread learnThread = new ResumingLearnerThread(user, learnerResultDAO, webhookService,
+                                                                            contextHandler, result, configuration);
         startThread(project.getId(), learnThread);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
+import de.learnlib.alex.webhooks.services.WebhookService;
 
 /** The learner thread that is used for starting a new experiment. */
 public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartConfiguration> {
@@ -31,13 +32,15 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
      *
      * @param user
      * @param learnerResultDAO {@link AbstractLearnerThread#learnerResultDAO}.
+     * @param webhookService   {@link AbstractLearnerThread#webhookService}.
      * @param context          The context to use.
      * @param result           {@link AbstractLearnerThread#result}.
      * @param configuration    The configuration to use.
      */
-    public StartingLearnerThread(User user, LearnerResultDAO learnerResultDAO, ConnectorContextHandler context,
-                                 LearnerResult result, LearnerStartConfiguration configuration) {
-        super(user, learnerResultDAO, context, result, configuration);
+    public StartingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
+                                 ConnectorContextHandler context, LearnerResult result,
+                                 LearnerStartConfiguration configuration) {
+        super(user, learnerResultDAO, webhookService, context, result, configuration);
     }
 
     @Override

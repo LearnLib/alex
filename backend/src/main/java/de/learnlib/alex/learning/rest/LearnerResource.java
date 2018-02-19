@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,10 +34,12 @@ import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
+import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.learning.services.Learner;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import org.apache.logging.log4j.LogManager;
@@ -106,6 +108,10 @@ public class LearnerResource {
     @Context
     private SecurityContext securityContext;
 
+    /** The {@link WebhookService} to use. */
+    @Inject
+    private WebhookService webhookService;
+
     /**
      * Start the learning.
      *
@@ -135,6 +141,8 @@ public class LearnerResource {
                         + "they must match the parameters in the path!");
             }
 
+            configuration.setProjectId(projectId);
+
             if (configuration.getSymbolsAsIds().contains(configuration.getResetSymbolAsId())) {
                 throw new IllegalArgumentException("The reset may not be a part of the input alphabet");
             }
@@ -145,6 +153,8 @@ public class LearnerResource {
             LearnerStatus status = learner.getStatus(projectId);
 
             LOGGER.traceExit(status);
+
+            webhookService.fireEvent(user, new LearnerEvent.Started(configuration));
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
             LOGGER.traceExit(e);
@@ -229,10 +239,14 @@ public class LearnerResource {
                 learnerResultRepository.saveAndFlush(result);
             }
 
+            configuration.setUserId(user.getId());
+
             learner.resume(user, project, result, configuration);
             LearnerStatus status = learner.getStatus(projectId);
 
             LOGGER.traceExit(status);
+
+            webhookService.fireEvent(user, new LearnerEvent.Resumed(configuration));
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
             LOGGER.info(RESOURCE_MARKER, "tried to restart the learning while the learner is running.");
