@@ -168,7 +168,7 @@ class HypothesisComponent {
                     labeloffset: 5,
                     style: STYLE.edge,
                     labelStyle: STYLE.edgeLabel,
-                    lineCurve: d3.curveBasis
+                    curve: d3.curveBasis
                 }, (from + '' + to));
             });
         });

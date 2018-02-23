@@ -169,7 +169,7 @@ class DiscriminationTreeComponent {
                 style: STYLE.edge,
                 label: edge.label,
                 labelStyle: STYLE.edgeLabel,
-                lineCurve: d3.curveBasis
+                curve: d3.curveBasis
             });
         });
 
