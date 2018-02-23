@@ -21,7 +21,7 @@
     <input class="form-control"
            type="text"
            name="url"
-           placeholder="Enter the url of the project"
+           placeholder="Enter the URL of the project"
            ng-model="vm.project.baseUrl"
            required
            ng-pattern="/^(http://|https://).{1,}/">
@@ -55,10 +55,22 @@
 
 <div class="form-group">
     <label class="control-label">Mirror URLs</label>
-    <textarea ng-model="vm.mirrorUrls"
-              name="mirrorUrls"
-              placeholder="Enter alternative URLs the project can be accessed. One per line."
-              class="form-control"
-              rows="3">
-    </textarea>
+
+    <div class="d-flex flex-row">
+        <div class="w-100 mr-1">
+            <input class="form-control"
+                   type="url"
+                   placeholder="Enter another URL of the project"
+                   ng-model="vm.mirrorUrl"
+                   ng-pattern="/^(http://|https://).{1,}/">
+        </div>
+        <a href class="btn btn-default" ng-click="vm.addMirrorUrl()">Add</a>
+    </div>
+
+    <div class="list-group mt-1 mb-0" ng-if="vm.project.mirrorUrls.length > 0">
+        <div class="list-group-item" ng-repeat="url in vm.project.mirrorUrls track by $index">
+            <i class="fa fa-fw fa-close pull-right" ng-click="vm.removeMirrorUrl($index)"></i>
+            {{url}}
+        </div>
+    </div>
 </div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,5 +26,31 @@ export const projectFormGroupsComponent = {
     },
     controllerAs: 'vm',
     controller: class {
+
+        /** Constructor. */
+        constructor() {
+            this.mirrorUrl = 'http://';
+        }
+
+        /** Add a mirror URL. */
+        addMirrorUrl() {
+            if (this.mirrorUrl == null
+                || this.mirrorUrl.trim() === ''
+                || this.mirrorUrl === 'http://'
+                || this.mirrorUrl === 'https://') {
+                return;
+            }
+
+            this.project.mirrorUrls.push(this.mirrorUrl);
+            this.mirrorUrl = 'http://';
+        }
+
+        /**
+         * Removes a mirror URL.
+         * @param {number} index The index of the url to remove.
+         */
+        removeMirrorUrl(index) {
+            this.project.mirrorUrls.splice(index, 1);
+        }
     }
 };

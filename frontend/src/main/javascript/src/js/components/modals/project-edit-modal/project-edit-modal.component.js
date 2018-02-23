@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,12 +49,6 @@ export class ProjectEditModalComponent {
         this.project = null;
 
         /**
-         * The mirror URLs of the project.
-         * @type {string[]}
-         */
-        this.mirrorUrls = null;
-
-        /**
          * An error message that is displayed on a failed updated.
          * @type {null|string}
          */
@@ -63,7 +57,6 @@ export class ProjectEditModalComponent {
 
     $onInit() {
         this.project = this.resolve.modalData.project;
-        this.mirrorUrls = this.project.mirrorUrls.join('\n');
     }
 
     /**
@@ -71,12 +64,6 @@ export class ProjectEditModalComponent {
      */
     updateProject() {
         this.error = null;
-
-        this.project.mirrorUrls = [];
-        this.mirrorUrls.split('\n').forEach(url => {
-            const trimmedUrl = url.trim();
-            if (trimmedUrl !== '') this.project.mirrorUrls.push(trimmedUrl);
-        });
 
         this.ProjectResource.update(this.project)
             .then(updatedProject => {

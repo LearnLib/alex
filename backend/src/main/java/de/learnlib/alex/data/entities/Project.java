@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -159,8 +160,8 @@ public class Project implements Serializable {
     /**
      * The URLs of the mirrors of the application.
      */
-    @Column(columnDefinition = "CLOB")
-    private String mirrorUrls;
+    @ElementCollection
+    private List<String> mirrorUrls;
 
     /**
      * Default constructor.
@@ -182,8 +183,7 @@ public class Project implements Serializable {
         this.nextSymbolId = 1L;
         this.tests = new HashSet<>();
         this.testReports = new HashSet<>();
-
-        this.mirrorUrls = "";
+        this.mirrorUrls = new ArrayList<>();
     }
 
     /**
@@ -431,18 +431,12 @@ public class Project implements Serializable {
         this.counters = counters;
     }
 
-    /**
-     * @return The mirror URLs for the project.
-     */
     public List<String> getMirrorUrls() {
-        return mirrorUrls.equals("") ? new ArrayList<>() : Arrays.asList(mirrorUrls.split(","));
+        return mirrorUrls;
     }
 
-    /**
-     * @param mirrorUrls The mirror URLs for the project.
-     */
     public void setMirrorUrls(List<String> mirrorUrls) {
-        this.mirrorUrls = String.join(",", mirrorUrls);
+        this.mirrorUrls = mirrorUrls;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,29 +37,19 @@ class ProjectCreateFormComponent {
          * @type {Project}
          */
         this.project = new Project();
-
-        /**
-         * The mirror urls separated by \n.
-         * @type {string}
-         */
-        this.mirrorUrls = '';
+        this.project.baseUrl = 'http://';
     }
 
     /**
      * Creates a new project.
      */
     createProject() {
-        this.mirrorUrls.split('\n').forEach(url => {
-            const trimmedUrl = url.trim();
-            if (trimmedUrl !== '') this.project.mirrorUrls.push(trimmedUrl);
-        });
-
         this.ProjectResource.create(this.project)
             .then(createdProject => {
                 this.ToastService.success(`Project "${createdProject.name}" created`);
                 this.onCreated({project: createdProject});
                 this.project = new Project();
-                this.mirrorUrls = '';
+                this.project.baseUrl = 'http://';
 
                 // set the form to its original state
                 this.form.$setPristine();

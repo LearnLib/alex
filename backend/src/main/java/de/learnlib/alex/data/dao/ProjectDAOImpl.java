@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -198,6 +198,7 @@ public class ProjectDAOImpl implements ProjectDAO {
      *         The project which needs the 'lazy' objects.
      */
     private void initLazyRelations(Project project, EmbeddableFields... embedFields) {
+        Hibernate.initialize(project.getMirrorUrls());
         if (embedFields != null && embedFields.length > 0) {
             Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
