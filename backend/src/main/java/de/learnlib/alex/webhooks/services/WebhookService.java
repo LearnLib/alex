@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import de.learnlib.alex.webhooks.entities.Event;
 import de.learnlib.alex.webhooks.entities.Webhook;
+import org.glassfish.jersey.client.ClientProperties;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -35,6 +36,9 @@ import java.util.List;
 @Service
 public class WebhookService {
 
+    /** The client timeout. */
+    private static final int READ_CONNECT_TIMEOUT = 3000;
+
     /** HTTP client. */
     private final Client client;
 
@@ -49,7 +53,9 @@ public class WebhookService {
     @Inject
     public WebhookService(WebhookDAO webhookDAO) {
         this.webhookDAO = webhookDAO;
-        this.client = ClientBuilder.newClient();
+        this.client = ClientBuilder.newClient()
+                .property(ClientProperties.READ_TIMEOUT, READ_CONNECT_TIMEOUT)
+                .property(ClientProperties.CONNECT_TIMEOUT, READ_CONNECT_TIMEOUT);
     }
 
     /**
@@ -62,14 +68,11 @@ public class WebhookService {
     public <T> void fireEvent(User user, Event<T> event) {
         final List<Webhook> webhooks = webhookDAO.getByUserAndEvent(user, event.getEventType());
         for (final Webhook webhook : webhooks) {
-            try {
-                client.target(webhook.getUrl())
-                        .request(MediaType.APPLICATION_JSON)
-                        .async()
-                        .post(Entity.json(event))
-                        .get();
-            } catch (Exception e) {
-            }
+            new Thread(() ->
+                    client.target(webhook.getUrl())
+                            .request(MediaType.APPLICATION_JSON)
+                            .post(Entity.json(event))
+            );
         }
     }
 }
