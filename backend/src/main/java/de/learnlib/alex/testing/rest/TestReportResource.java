@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,6 +110,26 @@ public class TestReportResource {
                     final Exception e = new ValidationException("format " + format + " does not exist");
                     return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.get", Response.Status.BAD_REQUEST, e);
             }
+        }
+    }
+
+    /**
+     * Get the latest test report.
+     *
+     * @param projectId The id of the project.
+     * @return 200 if a report is available, 204 otherwise.
+     */
+    @GET
+    @Path("/latest")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getLatest(@PathParam("project_id") Long projectId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
+        try {
+            final TestReport latestReport = testReportDAO.getLatest(user, projectId);
+            return latestReport == null ? Response.noContent().build() : Response.ok(latestReport).build();
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.getLatest", Response.Status.NOT_FOUND, e);
         }
     }
 

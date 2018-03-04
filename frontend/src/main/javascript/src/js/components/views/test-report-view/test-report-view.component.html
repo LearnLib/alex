@@ -20,8 +20,8 @@
         <div class="alx-container-fluid">
 
             <h4>
-                <span class="label pull-right label-success" ng-if="report.passed">Passed</span>
-                <span class="label pull-right label-danger" ng-if="!report.passed">Failed</span>
+                <span class="label pull-right label-success" ng-if="vm.report.passed">Passed</span>
+                <span class="label pull-right label-danger" ng-if="!vm.report.passed">Failed</span>
                 <strong>{{vm.report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</strong>
             </h4>
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,10 @@ public interface TestReportRepository extends JpaRepository<TestReport, UUID> {
     @Transactional(readOnly = true)
     @Query("SELECT MAX(r.id) FROM TestReport r WHERE r.project.id = ?1")
     Long findHighestId(Long projectId);
+
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    TestReport findFirstByProject_IdOrderByIdDesc(Long projectId);
 
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")

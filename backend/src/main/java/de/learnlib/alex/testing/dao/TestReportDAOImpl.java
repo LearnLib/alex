@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,20 @@ public class TestReportDAOImpl implements TestReportDAO {
         }
         loadLazyRelations(testReport);
         return testReport;
+    }
+
+    @Override
+    @Transactional
+    public TestReport getLatest(User user, Long projectId) throws NotFoundException {
+        projectDAO.getByID(user.getId(), projectId);
+
+        final TestReport latestReport = testReportRepository.findFirstByProject_IdOrderByIdDesc(projectId);
+        if (latestReport != null) {
+            loadLazyRelations(latestReport);
+            return latestReport;
+        } else {
+            return null;
+        }
     }
 
     @Override

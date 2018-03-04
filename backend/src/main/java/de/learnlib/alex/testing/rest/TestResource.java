@@ -25,11 +25,13 @@ import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
+import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.events.TestEvent;
 import de.learnlib.alex.testing.events.TestExecutionStartedEventData;
+import de.learnlib.alex.testing.repositories.TestReportRepository;
 import de.learnlib.alex.testing.services.TestService;
 import de.learnlib.alex.webhooks.services.WebhookService;
 
@@ -50,7 +52,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,10 +85,10 @@ public class TestResource {
     /**
      * Constructor.
      *
-     * @param testDAO        The injected test Dao.
-     * @param testService    The test service to use.
-     * @param testReportDAO  The test report Dao to use.
-     * @param webhookService The injected webhook service.
+     * @param testDAO              The injected test Dao.
+     * @param testService          The test service to use.
+     * @param testReportDAO        The test report Dao to use.
+     * @param webhookService       The injected webhook service.
      */
     @Inject
     public TestResource(TestDAO testDAO, TestService testService, TestReportDAO testReportDAO,
@@ -188,10 +190,23 @@ public class TestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("project_id") Long projectId,
                             @PathParam("id") Long id,
-                            @QueryParam("report") boolean createReport,
                             AbstractWebDriverConfig driverConfig)
             throws NotFoundException {
-        return execute(projectId, createReport, new TestExecutionConfig(Collections.singletonList(id), driverConfig));
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final Test test = testDAO.get(user, projectId, id);
+
+        if (!(test instanceof TestCase)) {
+            final Exception e = new Exception("The test is not a test case.");
+            return ResourceErrorHandler.createRESTErrorMessage("TestResource.execute", Response.Status.BAD_REQUEST, e);
+        }
+
+        final Map<Long, TestResult> results = new HashMap<>();
+        testService.executeTestCase(user, (TestCase) test, driverConfig, results);
+
+        final TestReport report = new TestReport();
+        report.setTestResults(new ArrayList<>(results.values()));
+
+        return Response.ok(report).build();
     }
 
     /**

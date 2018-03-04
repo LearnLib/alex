@@ -161,6 +161,7 @@ import {usersSettingsViewComponent} from './components/views/user-settings-view/
 import {webhooksViewComponent} from './components/views/webhooks-view/webhooks-view.component';
 import {counterexamplesWidgetComponent} from './components/widgets/counterexamples-widget/counterexamples-widget.component';
 import {latestLearnerResultWidgetComponent} from './components/widgets/latest-learner-result-widget/latest-learner-result-widget.component';
+import {latestTestReportWidgetComponent} from './components/widgets/latest-test-report-widget/latest-test-report-widget.component';
 import {learnerResumeSettingsWidgetComponent} from './components/widgets/learner-resume-widget/learner-resume-settings-widget.component';
 import {learnerStatusWidgetComponent} from './components/widgets/learner-status-widget/learner-status-widget.component';
 import {projectDetailsWidgetComponent} from './components/widgets/project-details-widget/project-details-widget.component';
@@ -358,6 +359,7 @@ angular
     .component('learnerStatusWidget', learnerStatusWidgetComponent)
     .component('latestLearnResultWidget', latestLearnerResultWidgetComponent)
     .component('projectDetailsWidget', projectDetailsWidgetComponent)
+    .component('latestTestReportWidget', latestTestReportWidgetComponent)
 
     // web action forms
     .component('alertAcceptDismissActionForm', alertAcceptDismissActionFormComponent)

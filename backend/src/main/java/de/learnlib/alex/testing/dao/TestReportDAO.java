@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,16 @@ public interface TestReportDAO {
      * @throws NotFoundException If the project or the report could not be found.
      */
     TestReport get(User user, Long projectId, Long testReportId) throws NotFoundException;
+
+    /**
+     * Get the latest test report.
+     *
+     * @param user      The user.
+     * @param projectId The id of the project.
+     * @return The latest test report or null.
+     * @throws NotFoundException If the project could not be found.
+     */
+    TestReport getLatest(User user, Long projectId) throws NotFoundException;
 
     /**
      * Deletes a single test report.

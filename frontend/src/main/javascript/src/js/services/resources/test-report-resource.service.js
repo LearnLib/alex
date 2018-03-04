@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,15 @@ export class TestReportResource {
      */
     get(projectId, testReportId, format = null) {
         return this.$http.get(`${apiUrl}/projects/${projectId}/tests/reports/${testReportId}`, {params: format})
+            .then(response => response.data);
+    }
+
+    /**
+     * Get the latest report.
+     * @param {number} projectId The id of the project.
+     */
+    getLatest(projectId) {
+        return this.$http.get(`${apiUrl}/projects/${projectId}/tests/reports/latest`)
             .then(response => response.data);
     }
 
