@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
             throw new LearnerException("An error occurred while executing the reset symbol.", e);
         }
 
-        if (resetResult.equals(ExecuteResult.FAILED)) {
+        if (!resetResult.isSuccess()) {
             throw new LearnerException("The execution of the reset symbol failed: "
                                                + resetResult.toString() + ".");
         }

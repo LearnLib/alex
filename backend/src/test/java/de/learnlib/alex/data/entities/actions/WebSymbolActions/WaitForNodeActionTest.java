@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,9 +39,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static de.learnlib.alex.data.entities.ExecuteResult.FAILED;
-import static de.learnlib.alex.data.entities.ExecuteResult.OK;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -108,8 +107,7 @@ public class WaitForNodeActionTest {
         action.setMaxWaitTime(MAX_WAIT_TIME);
 
         ExecuteResult result = action.execute(webSiteConnector);
-
-        assertEquals(OK, result);
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -124,8 +122,7 @@ public class WaitForNodeActionTest {
         action.setMaxWaitTime(MAX_WAIT_TIME);
 
         ExecuteResult result = action.execute(webSiteConnector);
-
-        assertEquals(OK, result);
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -151,8 +148,7 @@ public class WaitForNodeActionTest {
         action.setMaxWaitTime(MAX_WAIT_TIME);
 
         ExecuteResult result = action.execute(webSiteConnector);
-
-        assertEquals(OK, result);
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -167,8 +163,7 @@ public class WaitForNodeActionTest {
         action.setMaxWaitTime(MAX_WAIT_TIME);
 
         ExecuteResult result = action.execute(webSiteConnector);
-
-        assertEquals(OK, result);
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -182,8 +177,7 @@ public class WaitForNodeActionTest {
         action.setMaxWaitTime(0); // don't really wait to keep the test speed high
 
         ExecuteResult result = action.execute(webSiteConnector);
-
-        assertEquals(FAILED, result);
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -192,8 +186,7 @@ public class WaitForNodeActionTest {
         action.setMaxWaitTime(-1);
 
         ExecuteResult result = action.execute(webSiteConnector);
-
-        assertEquals(FAILED, result);
+        assertFalse(result.isSuccess());
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,20 @@
 package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.actions.Credentials;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -79,7 +79,7 @@ public class GotoActionTest {
     public void shouldReturnOKIfTheUrlCouldBeFound() throws Exception {
         WebSiteConnector connector = mock(WebSiteConnector.class);
 
-        assertEquals(ExecuteResult.OK, g.execute(connector));
+        assertTrue(g.execute(connector).isSuccess());
         verify(connector).get(eq(FAKE_URL), any(Credentials.class));
     }
 
@@ -88,7 +88,7 @@ public class GotoActionTest {
         WebSiteConnector connector = mock(WebSiteConnector.class);
         willThrow(Exception.class).given(connector).get(eq(FAKE_URL), any(Credentials.class));
 
-        assertEquals(ExecuteResult.FAILED, g.execute(connector));
+        assertFalse(g.execute(connector).isSuccess());
     }
 
 }

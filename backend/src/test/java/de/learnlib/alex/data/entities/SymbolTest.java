@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -61,7 +63,7 @@ public class SymbolTest {
 
         ExecuteResult result = symbol.execute(connectorManager);
 
-        assertEquals(result, ExecuteResult.OK);
+        assertTrue(result.isSuccess());
         assertEquals(result.getOutput(), ExecuteResult.DEFAULT_SUCCESS_OUTPUT);
     }
 
@@ -74,7 +76,7 @@ public class SymbolTest {
         symbol.setSuccessOutput(output);
         ExecuteResult result = symbol.execute(connectorManager);
 
-        assertEquals(result, ExecuteResult.OK);
+        assertTrue(result.isSuccess());
         assertEquals(result.getOutput(), output);
     }
 
@@ -85,7 +87,7 @@ public class SymbolTest {
 
         ExecuteResult result = symbol.execute(connectorManager);
 
-        assertEquals(result, ExecuteResult.FAILED);
+        assertFalse(result.isSuccess());
         assertEquals(result.getOutput(), ExecuteResult.DEFAULT_ERROR_OUTPUT + " (1)");
     }
 
@@ -99,7 +101,7 @@ public class SymbolTest {
 
         ExecuteResult result = symbol.execute(connectorManager);
 
-        assertEquals(result, ExecuteResult.FAILED);
+        assertFalse(result.isSuccess());
         assertEquals(result.getOutput(), output);
     }
 }

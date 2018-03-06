@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -354,7 +354,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         }
 
         // assume the output is ok until proven otherwise
-        ExecuteResult result = ExecuteResult.OK;
+        ExecuteResult result = new ExecuteResult(true);
 
         for (int i = 0; i < actions.size(); i++) {
             final SymbolAction action = actions.get(i);
@@ -363,7 +363,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
                 final ExecuteResult actionResult = executeAction(action, connector);
 
                 // if the execution of one symbol fails do not continue executing the following actions
-                if (actionResult == ExecuteResult.FAILED && !action.isIgnoreFailure()) {
+                if (!actionResult.isSuccess() && !action.isIgnoreFailure()) {
                     if (action.getErrorOutput() != null && !action.getErrorOutput().trim().equals("")) {
                         actionResult.setOutput(action.insertVariableValues(action.getErrorOutput()));
                     } else {
@@ -377,7 +377,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
         // set the output of the symbol *after* all actions are executed so that variables and counters have their
         // proper values.
-        if (result == ExecuteResult.OK) {
+        if (result.isSuccess()) {
             if (successOutput != null && !successOutput.trim().equals("")) {
                 result.setOutput(SearchHelper.insertVariableValues(connector, projectId, successOutput));
             } else {
@@ -397,7 +397,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             return action.executeAction(connector);
         } catch (Exception e) {
             LOGGER.info(LEARNER_MARKER, "Error while executing the action '{}' in the symbol '{}':", action, this, e);
-            return ExecuteResult.FAILED;
+            return new ExecuteResult(false);
         }
     }
 

@@ -72,7 +72,7 @@ public class WebhookService {
                     client.target(webhook.getUrl())
                             .request(MediaType.APPLICATION_JSON)
                             .post(Entity.json(event))
-            );
+            ).start();
         }
     }
 }

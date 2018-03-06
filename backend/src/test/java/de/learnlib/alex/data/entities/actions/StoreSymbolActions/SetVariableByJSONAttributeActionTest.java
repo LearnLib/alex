@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -85,7 +86,7 @@ public class SetVariableByJSONAttributeActionTest {
 
         ExecuteResult result = setAction.execute(connectors);
 
-        assertEquals(ExecuteResult.OK, result);
+        assertTrue(result.isSuccess());
         verify(storeConnector).set("variable", "bar");
     }
 
@@ -100,7 +101,7 @@ public class SetVariableByJSONAttributeActionTest {
 
         ExecuteResult result = setAction.execute(connectors);
 
-        assertEquals(ExecuteResult.FAILED, result);
+        assertFalse(result.isSuccess());
         verify(storeConnector, never()).set(eq("variable"), anyString());
     }
 

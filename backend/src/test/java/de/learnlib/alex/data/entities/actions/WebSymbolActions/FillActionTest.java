@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,13 @@
 package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
@@ -32,8 +31,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static de.learnlib.alex.data.entities.ExecuteResult.OK;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -89,7 +88,7 @@ public class FillActionTest {
         WebElement element = mock(WebElement.class);
         given(connector.getElement(node)).willReturn(element);
 
-        assertEquals(OK, f.execute(connector));
+        assertTrue(f.execute(connector).isSuccess());
         verify(element).sendKeys(f.getValue());
     }
 
@@ -98,7 +97,7 @@ public class FillActionTest {
         WebSiteConnector connector = mock(WebSiteConnector.class);
         when(connector.getElement(node)).thenThrow(new NoSuchElementException(""));
 
-        assertEquals(ExecuteResult.FAILED, f.execute(connector));
+        assertFalse(f.execute(connector).isSuccess());
     }
 
 }

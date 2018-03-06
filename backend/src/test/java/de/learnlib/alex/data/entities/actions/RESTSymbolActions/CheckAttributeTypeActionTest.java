@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 
@@ -82,8 +83,7 @@ public class CheckAttributeTypeActionTest {
         given(connector.getBody()).willReturn("{\"awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
 
         ExecuteResult result = c.execute(connector);
-
-        assertEquals(ExecuteResult.OK, result);
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -93,8 +93,7 @@ public class CheckAttributeTypeActionTest {
         c.setAttribute("awesome_field.foo");
 
         ExecuteResult result = c.execute(connector);
-
-        assertEquals(ExecuteResult.OK, result);
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -102,8 +101,7 @@ public class CheckAttributeTypeActionTest {
         given(connector.getBody()).willReturn("{\"awesome_field\": true}");
 
         ExecuteResult result = c.execute(connector);
-
-        assertEquals(ExecuteResult.FAILED, result);
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -111,8 +109,7 @@ public class CheckAttributeTypeActionTest {
         given(connector.getBody()).willReturn("{\"not_so_awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
 
         ExecuteResult result = c.execute(connector);
-
-        assertEquals(ExecuteResult.FAILED, result);
+        assertFalse(result.isSuccess());
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,8 +141,8 @@ public class TestService {
         boolean passed = true;
         for (int i = 0; i < outputs.size(); i++) {
             final ExecuteResult output = outputs.get(i);
-            passed = passed & output.isSuccessful();
-            if (!output.isSuccessful()) {
+            passed = passed & output.isSuccess();
+            if (!output.isSuccess()) {
                 final TestCaseStep step = testCase.getSteps().get(i);
                 if (step instanceof TestCaseSymbolStep) {
                     failureMessageParts.add(((TestCaseSymbolStep) step).getSymbol().getName() + ": " + output.getOutput());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 import java.io.File;
@@ -34,6 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -91,7 +92,7 @@ public class CheckHeaderFieldActionTest {
 
         ExecuteResult result = c.execute(connector);
 
-        assertEquals(ExecuteResult.OK, result);
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -101,7 +102,7 @@ public class CheckHeaderFieldActionTest {
 
         ExecuteResult result = c.execute(connector);
 
-        assertEquals(ExecuteResult.FAILED, result);
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -110,7 +111,7 @@ public class CheckHeaderFieldActionTest {
         given(connector.getHeaders()).willReturn(headers);
         ExecuteResult result = c.execute(connector);
 
-        assertEquals(ExecuteResult.FAILED, result);
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -120,7 +121,7 @@ public class CheckHeaderFieldActionTest {
         MultivaluedHashMap<String, Object> headers = createHeaders("text/html", "FoO Baaaaar", "application/xhtml+xml");
         given(connector.getHeaders()).willReturn(headers);
 
-        assertEquals(ExecuteResult.OK, c.execute(connector));
+        assertTrue(c.execute(connector).isSuccess());
     }
 
     @Test
@@ -130,7 +131,7 @@ public class CheckHeaderFieldActionTest {
         MultivaluedHashMap<String, Object> headers = createHeaders("text/html", "F BAr", "application/xhtml+xml");
         given(connector.getHeaders()).willReturn(headers);
 
-        assertEquals(ExecuteResult.FAILED, c.execute(connector));
+        assertFalse(c.execute(connector).isSuccess());
     }
 
     private MultivaluedHashMap<String, Object> createHeaders(String... data) {

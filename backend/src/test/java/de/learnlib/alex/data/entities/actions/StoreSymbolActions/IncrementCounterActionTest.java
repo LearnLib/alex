@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,7 +98,7 @@ public class IncrementCounterActionTest {
 
         ExecuteResult result = incrementAction.execute(connector);
 
-        assertEquals(ExecuteResult.OK, result);
+        assertTrue(result.isSuccess());
         verify(counters).incrementBy(PROJECT_ID, TEST_NAME, 1);
     }
 }

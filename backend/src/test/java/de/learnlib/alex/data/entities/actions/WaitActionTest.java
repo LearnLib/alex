@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package de.learnlib.alex.data.entities.actions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.WebSymbolAction;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
@@ -67,8 +66,7 @@ public class WaitActionTest {
     @Test
     public void shouldReturnOKIfTimeIsUp() {
         WebSiteConnector connector = mock(WebSiteConnector.class);
-
-        assertEquals(ExecuteResult.OK, w.execute(connector));
+        assertTrue(w.execute(connector).isSuccess());
     }
 
 }

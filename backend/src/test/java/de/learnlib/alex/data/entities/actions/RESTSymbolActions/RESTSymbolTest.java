@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -47,23 +49,22 @@ public class RESTSymbolTest {
     @Test
     public void shouldReturnOkIfAllActionsRunSuccessfully() throws Exception {
         ConnectorManager connector = mock(ConnectorManager.class);
-        given(action1.executeAction(connector)).willReturn(ExecuteResult.OK);
-        given(action2.executeAction(connector)).willReturn(ExecuteResult.OK);
+        given(action1.executeAction(connector)).willReturn(new ExecuteResult(true));
+        given(action2.executeAction(connector)).willReturn(new ExecuteResult(true));
 
         ExecuteResult result = symbol.execute(connector);
-
-        assertEquals(ExecuteResult.OK, result);
+        assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldReturnFailedIfOneActionsRunFailed() throws Exception {
         ConnectorManager connector = mock(ConnectorManager.class);
-        given(action1.executeAction(connector)).willReturn(ExecuteResult.FAILED);
-        given(action2.executeAction(connector)).willReturn(ExecuteResult.OK);
+        given(action1.executeAction(connector)).willReturn(new ExecuteResult(false));
+        given(action2.executeAction(connector)).willReturn(new ExecuteResult(true));
 
         ExecuteResult result = symbol.execute(connector);
 
-        assertEquals(ExecuteResult.FAILED, result);
+        assertFalse(result.isSuccess());
         verify(action2, never()).executeAction(connector);
     }
 
@@ -71,11 +72,11 @@ public class RESTSymbolTest {
     public void shouldReturnFailedIfOneActionsThrowsAnException() throws Exception {
         ConnectorManager connector = mock(ConnectorManager.class);
         given(action1.executeAction(connector)).willThrow(IllegalStateException.class);
-        given(action2.executeAction(connector)).willReturn(ExecuteResult.OK);
+        given(action2.executeAction(connector)).willReturn(new ExecuteResult(true));
 
         ExecuteResult result = symbol.execute(connector);
 
-        assertEquals(ExecuteResult.FAILED, result);
+        assertFalse(result.isSuccess());
         verify(action2, never()).executeAction(connector);
     }
 

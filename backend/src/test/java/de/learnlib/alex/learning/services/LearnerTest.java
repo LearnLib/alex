@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -151,7 +151,7 @@ public class LearnerTest {
         List<Symbol> symbols = new LinkedList<>();
         for (int i = 0; i < SYMBOL_AMOUNT; i++) {
             Symbol symbol = mock(Symbol.class);
-            given(symbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.OK);
+            given(symbol.execute(any(ConnectorManager.class))).willReturn(new ExecuteResult(true));
             symbols.add(symbol);
         }
         //

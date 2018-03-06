@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static de.learnlib.alex.data.entities.ExecuteResult.FAILED;
-import static de.learnlib.alex.data.entities.ExecuteResult.OK;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 
@@ -84,7 +83,7 @@ public class CheckForTextActionTest {
 
         ExecuteResult result = c.execute(connector);
 
-        assertEquals(ExecuteResult.OK, result);
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -92,8 +91,7 @@ public class CheckForTextActionTest {
         given(connector.getBody()).willReturn("{\"awesome_field\": \"Lorem Ipsum. Fooooobar\"}");
 
         ExecuteResult result = c.execute(connector);
-
-        assertEquals(ExecuteResult.FAILED, result);
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -102,7 +100,7 @@ public class CheckForTextActionTest {
         c.setRegexp(true);
         given(connector.getBody()).willReturn("FoO Baaaaar");
 
-        assertEquals(OK, c.execute(connector));
+        assertTrue(c.execute(connector).isSuccess());
     }
 
     @Test
@@ -111,7 +109,7 @@ public class CheckForTextActionTest {
         c.setRegexp(true);
         given(connector.getBody()).willReturn("F BAr");
 
-        assertEquals(FAILED, c.execute(connector));
+        assertFalse(c.execute(connector).isSuccess());
     }
 
 }

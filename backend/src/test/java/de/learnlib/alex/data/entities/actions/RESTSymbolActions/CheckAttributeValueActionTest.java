@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 
@@ -91,7 +92,7 @@ public class CheckAttributeValueActionTest {
         given(connector.getBody()).willReturn("[{\"id\": 0}]");
 
         ExecuteResult result = action.execute(connector);
-        assertEquals(ExecuteResult.OK, result);
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -105,7 +106,7 @@ public class CheckAttributeValueActionTest {
         given(connector.getBody()).willReturn("[{\"id\": 6}]");
 
         ExecuteResult result = action.execute(connector);
-        assertEquals(ExecuteResult.FAILED, result);
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -113,8 +114,7 @@ public class CheckAttributeValueActionTest {
         given(connector.getBody()).willReturn("{\"awesome_field\": \"Hello World!\"}");
 
         ExecuteResult result = c.execute(connector);
-
-        assertEquals(ExecuteResult.OK, result);
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -124,8 +124,7 @@ public class CheckAttributeValueActionTest {
         c.setAttribute("awesome_field.foo");
 
         ExecuteResult result = c.execute(connector);
-
-        assertEquals(ExecuteResult.OK, result);
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -133,8 +132,7 @@ public class CheckAttributeValueActionTest {
         given(connector.getBody()).willReturn("{\"awesome_field\": \"Lorem Ipsum!\"}");
 
         ExecuteResult result = c.execute(connector);
-
-        assertEquals(ExecuteResult.FAILED, result);
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -142,8 +140,7 @@ public class CheckAttributeValueActionTest {
         given(connector.getBody()).willReturn("{\"not_so_awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
 
         ExecuteResult result = c.execute(connector);
-
-        assertEquals(ExecuteResult.FAILED, result);
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -151,8 +148,7 @@ public class CheckAttributeValueActionTest {
         given(connector.getBody()).willReturn("");
 
         ExecuteResult result = c.execute(connector);
-
-        assertEquals(ExecuteResult.FAILED, result);
+        assertFalse(result.isSuccess());
     }
 
     @Test
@@ -161,7 +157,7 @@ public class CheckAttributeValueActionTest {
         c.setRegexp(true);
         given(connector.getBody()).willReturn("{\"awesome_field\": \"FoO Baaaaar\"}");
 
-        assertEquals(ExecuteResult.OK, c.execute(connector));
+        assertTrue(c.execute(connector).isSuccess());
     }
 
     @Test
@@ -170,7 +166,7 @@ public class CheckAttributeValueActionTest {
         c.setRegexp(true);
         given(connector.getBody()).willReturn("{\"awesome_field\": \"F Bar\"}");
 
-        assertEquals(ExecuteResult.FAILED, c.execute(connector));
+        assertFalse(c.execute(connector).isSuccess());
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ public class SetVariableActionTest {
 
         ExecuteResult result = setAction.execute(connector);
 
-        assertEquals(ExecuteResult.OK, result);
+        assertTrue(result.isSuccess());
         verify(variables).set(TEST_NAME, TEST_VALUE);
     }
 
@@ -110,7 +110,7 @@ public class SetVariableActionTest {
 
         ExecuteResult result = setAction.executeAction(connector);
 
-        assertEquals(ExecuteResult.OK, result);
+        assertTrue(result.isSuccess());
         verify(variables).set(TEST_NAME, TEST_VALUE + "2");
     }
 

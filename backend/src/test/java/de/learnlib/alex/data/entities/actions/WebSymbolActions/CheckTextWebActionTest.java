@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static de.learnlib.alex.data.entities.ExecuteResult.FAILED;
-import static de.learnlib.alex.data.entities.ExecuteResult.OK;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -97,14 +96,14 @@ public class CheckTextWebActionTest {
     public void shouldReturnOKIfTextWasFoundWithoutRegexp() {
         given(driver.getPageSource()).willReturn(checkText.getValue());
 
-        assertEquals(OK, checkText.execute(connector));
+        assertTrue(checkText.execute(connector).isSuccess());
     }
 
     @Test
     public void shouldReturnFaliedIfTextWasNotFoundWithoutRegexp() {
         given(driver.getPageSource()).willReturn("");
 
-        assertEquals(FAILED, checkText.execute(connector));
+        assertFalse(checkText.execute(connector).isSuccess());
     }
 
     @Test
@@ -114,7 +113,7 @@ public class CheckTextWebActionTest {
 
         given(driver.getPageSource()).willReturn("FoO Baaaaar");
 
-        assertEquals(OK, checkText.execute(connector));
+        assertTrue(checkText.execute(connector).isSuccess());
     }
 
     @Test
@@ -124,7 +123,7 @@ public class CheckTextWebActionTest {
 
         given(driver.getPageSource()).willReturn("F BAr");
 
-        assertEquals(FAILED, checkText.execute(connector));
+        assertFalse(checkText.execute(connector).isSuccess());
     }
 
     @Test
@@ -142,10 +141,10 @@ public class CheckTextWebActionTest {
         checkText.setValue("foo");
         checkText.getNode().setSelector("#foo");
 
-        assertEquals(OK, checkText.execute(connector));
+        assertTrue(checkText.execute(connector).isSuccess());
 
         checkText.getNode().setSelector("#bar");
 
-        assertEquals(FAILED, checkText.execute(connector));
+        assertFalse(checkText.execute(connector).isSuccess());
     }
 }

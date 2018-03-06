@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -169,30 +170,30 @@ public class WebSymbolTest {
     public void shouldReturnOkIfAllActionsRunSuccessfully() throws Exception {
         ConnectorManager connector = mock(ConnectorManager.class);
         WebSymbolAction action1 = mock(WebSymbolAction.class);
-        given(action1.executeAction(connector)).willReturn(ExecuteResult.OK);
+        given(action1.executeAction(connector)).willReturn(new ExecuteResult(true));
         WebSymbolAction action2 = mock(WebSymbolAction.class);
-        given(action2.executeAction(connector)).willReturn(ExecuteResult.OK);
+        given(action2.executeAction(connector)).willReturn(new ExecuteResult(true));
 
         symbol = new Symbol();
         symbol.addAction(action1);
         symbol.addAction(action2);
 
-        assertEquals(ExecuteResult.OK, symbol.execute(connector));
+        assertTrue(symbol.execute(connector).isSuccess());
     }
 
     @Test
     public void shouldReturnFailedIfOneActionsRunFailed() throws Exception {
         ConnectorManager connector = mock(ConnectorManager.class);
         WebSymbolAction action1 = mock(WebSymbolAction.class);
-        given(action1.executeAction(connector)).willReturn(ExecuteResult.FAILED);
+        given(action1.executeAction(connector)).willReturn(new ExecuteResult(false));
         WebSymbolAction action2 = mock(WebSymbolAction.class);
-        given(action2.executeAction(connector)).willReturn(ExecuteResult.OK);
+        given(action2.executeAction(connector)).willReturn(new ExecuteResult(true));
 
         symbol = new Symbol();
         symbol.addAction(action1);
         symbol.addAction(action2);
 
-        assertEquals(ExecuteResult.FAILED, symbol.execute(connector));
+        assertFalse(symbol.execute(connector).isSuccess());
         verify(action2, never()).execute(connector);
     }
 

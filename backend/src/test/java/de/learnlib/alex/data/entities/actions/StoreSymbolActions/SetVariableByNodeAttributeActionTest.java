@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -106,7 +107,7 @@ public class SetVariableByNodeAttributeActionTest {
 
         ExecuteResult result = setAction.execute(connector);
 
-        assertEquals(ExecuteResult.OK, result);
+        assertTrue(result.isSuccess());
         verify(variables).set(VARIABLE, ATTRIBUTE_VALUE);
     }
 
@@ -122,7 +123,7 @@ public class SetVariableByNodeAttributeActionTest {
 
         ExecuteResult result = setAction.execute(connector);
 
-        assertEquals(ExecuteResult.FAILED, result);
+        assertFalse(result.isSuccess());
         verify(variables, never()).set(eq(VARIABLE), anyString());
     }
 
