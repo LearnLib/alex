@@ -33,7 +33,7 @@
                     <th width="1%">
                         <checkbox model="report"></checkbox>
                     </th>
-                    <td width="1%" style="min-width: 136px;">{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
+                    <td width="1%" style="min-width: 140px;">{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
                     <td width="1%">
                         <span class="label label-success" ng-if="report.passed">Passed</span>
                         <span class="label label-danger" ng-if="!report.passed">Failed</span>

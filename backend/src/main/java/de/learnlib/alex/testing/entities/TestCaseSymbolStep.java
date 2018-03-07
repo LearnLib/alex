@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolRepresentation;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 
 import javax.persistence.Entity;
@@ -33,42 +34,6 @@ import javax.persistence.OneToOne;
 public class TestCaseSymbolStep extends TestCaseStep {
 
     private static final long serialVersionUID = -2192813855439134078L;
-
-    /** Compact representation of a symbol */
-    private class SymbolRepresentation {
-
-        /** The id of the symbol. */
-        private Long id;
-
-        /** The name of the symbol. */
-        private String name;
-
-        /**
-         * Constructor.
-         *
-         * @param symbol The symbol.
-         */
-        SymbolRepresentation(Symbol symbol) {
-            this.id = symbol.getId();
-            this.name = symbol.getName();
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
 
     /** The symbol to execute. */
     @OneToOne(

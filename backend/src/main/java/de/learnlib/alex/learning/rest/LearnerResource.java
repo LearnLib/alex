@@ -23,6 +23,7 @@ import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
+import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
@@ -372,7 +373,7 @@ public class LearnerResource {
             Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsId);
             List<Symbol> symbols = loadSymbols(user, projectId, outputConfig.getSymbols().getSymbolsAsIds());
 
-            List<String> outputs = learner.readOutputs(user, project, resetSymbol, symbols, outputConfig.getDriverConfig());
+            List<ExecuteResult> outputs = learner.readOutputs(user, project, resetSymbol, symbols, outputConfig.getDriverConfig());
 
             LOGGER.traceExit(outputs);
             return ResponseHelper.renderList(outputs, Status.OK);
@@ -418,7 +419,7 @@ public class LearnerResource {
             SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols);
             readOutputConfig.setSymbols(symbolSet);
 
-            List<String> results = learner.readOutputsAsString(user, project, readOutputConfig);
+            List<ExecuteResult> results = learner.readOutputs(user, project, readOutputConfig);
 
             LOGGER.traceExit(results);
             return ResponseHelper.renderList(results, Status.OK);

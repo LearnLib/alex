@@ -47,9 +47,11 @@
                         <a ui-sref="tests({testId: result.test.id})">{{result.test.name}}</a>
                     </td>
                     <td>
-                        <span class="label label-outline-default" style="margin-right: 3px;"
+                        <span class="label"
+                              ng-class="{'label-success': output.success,'label-danger':!output.success}"
+                              style="margin-right: 3px;"
                               ng-repeat="output in result.outputs track by $index">
-                            {{output}}
+                            {{output.output}}
                         </span>
                     </td>
                     <td>

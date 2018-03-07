@@ -30,6 +30,7 @@ import de.learnlib.alex.testing.entities.TestCaseActionStep;
 import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.entities.TestCaseSymbolStep;
+import de.learnlib.alex.testing.entities.TestExecuteResult;
 import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.entities.TestSuiteResult;
@@ -134,8 +135,6 @@ public class TestService {
         connectors.dispose();
         final long time = System.currentTimeMillis() - startTime;
 
-        final List<String> sulOutputs = outputs.stream().map(ExecuteResult::getOutput).collect(Collectors.toList());
-
         final List<String> failureMessageParts = new ArrayList<>();
 
         boolean passed = true;
@@ -153,6 +152,10 @@ public class TestService {
         }
 
         final String failureMessage = failureMessageParts.isEmpty() ? "" : String.join(", ", failureMessageParts);
+
+        final List<TestExecuteResult> sulOutputs = outputs.stream()
+                .map(TestExecuteResult::new)
+                .collect(Collectors.toList());
 
         final TestCaseResult result = new TestCaseResult(testCase, sulOutputs, passed, time, String.join(", ", failureMessage));
         results.put(testCase.getId(), result);

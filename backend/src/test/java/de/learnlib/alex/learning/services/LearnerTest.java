@@ -162,10 +162,10 @@ public class LearnerTest {
         ConnectorManager connectorManager = mock(ConnectorManager.class);
         given(ctxHandler.createContext()).willReturn(connectorManager);
 
-        List<String> outputs = learner.readOutputs(user, project, resetSymbol, symbols, new HtmlUnitDriverConfig());
+        List<ExecuteResult> outputs = learner.readOutputs(user, project, resetSymbol, symbols, new HtmlUnitDriverConfig());
 
         assertEquals(symbols.size(), outputs.size());
-        assertTrue("at least one output was not OK", outputs.stream().allMatch(output -> output.equals("OK")));
+        assertTrue("at least one output was not OK", outputs.stream().allMatch(r -> r.getOutput().equals("OK")));
         verify(connectorManager).dispose();
     }
 

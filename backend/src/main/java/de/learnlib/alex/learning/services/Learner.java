@@ -294,7 +294,10 @@ public class Learner {
                                         lastResult.getProject(),
                                         lastResult.getResetSymbol(),
                                         symbolsFromCounterexample,
-                                        lastResult.getDriverConfig());
+                                        lastResult.getDriverConfig())
+                    .stream()
+                    .map(ExecuteResult::getOutput)
+                    .collect(Collectors.toList());
 
             // remove the reset symbol from the outputs
             results.remove(0);
@@ -379,7 +382,7 @@ public class Learner {
      *
      * @throws LearnerException If something went wrong while testing the symbols.
      */
-    public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols,
+    public List<ExecuteResult> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols,
                                     AbstractWebDriverConfig driverConfig)
             throws LearnerException {
         ThreadContext.put("userId", String.valueOf(user.getId()));
@@ -391,31 +394,7 @@ public class Learner {
         SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols);
         ReadOutputConfig config = new ReadOutputConfig(symbolSet, driverConfig);
 
-        return readOutputsAsString(user, project, config);
-    }
-
-    /**
-     * Determine the output of the SUL by testing a sequence of input symbols.
-     *
-     * @param user             The user in which context the test should happen.
-     * @param project          The project in which context the test should happen.
-     * @param readOutputConfig The config for reading the outputs.
-     *
-     * @return The following output sequence.
-     *
-     * @throws LearnerException If something went wrong while testing the symbols.
-     */
-    public List<String> readOutputsAsString(User user, Project project, ReadOutputConfig readOutputConfig)
-            throws LearnerException {
-        ThreadContext.put("userId", String.valueOf(user.getId()));
-        ThreadContext.put("testNo", "readOutputs");
-        ThreadContext.put("indent", "");
-        LOGGER.traceEntry();
-        LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {})", user, project, readOutputConfig);
-
-        return readOutputs(user, project, readOutputConfig).stream()
-                                                           .map(ExecuteResult::getOutput)
-                                                           .collect(Collectors.toList());
+        return readOutputs(user, project, config);
     }
 
     public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {

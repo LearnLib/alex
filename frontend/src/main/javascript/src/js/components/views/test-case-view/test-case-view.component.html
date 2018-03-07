@@ -69,7 +69,7 @@
                                     {{symbol.name}}
                                 </div>
                             </div>
-                            <div class="alert alert-info" ng-if="!group.symbols.length" style="margin-bottom: 0">
+                            <div class="alert alert-info rounded-0" ng-if="!group.symbols.length" style="margin-bottom: 0">
                                 There are no symbols in this group.
                             </div>
                         </div>
@@ -95,7 +95,9 @@
                                             </div>
                                         </div>
                                         <div ng-if="vm.result.outputs[$index]" style="margin-top: .75rem; padding-top: .75rem; border-top: 1px dashed #dddddd;">
-                                            <span class="label label-default">{{vm.result.outputs[$index]}}</span>
+                                            <span class="label" ng-class="{'label-success': vm.result.outputs[$index].success,'label-danger': !vm.result.outputs[$index].success}">
+                                                {{vm.result.outputs[$index].output}}
+                                            </span>
                                         </div>
                                     </div>
                                     <div>

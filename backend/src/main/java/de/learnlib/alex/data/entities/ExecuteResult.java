@@ -16,14 +16,33 @@
 
 package de.learnlib.alex.data.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.UUID;
+
 /** Class to determine if a symbol has been executed successfully. */
-public class ExecuteResult {
+@Entity
+public class ExecuteResult implements Serializable {
+
+    private static final long serialVersionUID = -4296479981133118914L;
 
     /** The default output on success. */
     public static final String DEFAULT_SUCCESS_OUTPUT = "Ok";
 
     /** The default output on error. */
     public static final String DEFAULT_ERROR_OUTPUT = "Failed";
+
+    /** The id of the execute result in the db. */
+    @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @JsonIgnore
+    private UUID uuid;
 
     /** If the symbol has been execute successfully. */
     private boolean success;
@@ -70,6 +89,14 @@ public class ExecuteResult {
 
     public void setOutput(String output) {
         this.output = output;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
 }

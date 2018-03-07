@@ -231,6 +231,7 @@ export const testSuiteViewComponent = {
             this.isExecuting = true;
             this.TestResource.executeMany(selected, this.driverConfig)
                 .then((data) => {
+                    this.ToastService.success(`The tests have been executed.`);
                     data.testResults.forEach((result) => {
                         this.results[result.test.id] = result;
                     });

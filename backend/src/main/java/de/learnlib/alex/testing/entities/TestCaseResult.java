@@ -18,9 +18,11 @@ package de.learnlib.alex.testing.entities;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,8 +37,12 @@ public class TestCaseResult extends TestResult {
     private static final long serialVersionUID = -5995216881702329004L;
 
     /** The outputs of the system. */
-    @ElementCollection
-    private List<String> outputs;
+    @OneToMany(
+            mappedBy = "result",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL}
+    )
+    private List<TestExecuteResult> outputs;
 
     /** If the test passed. */
     private boolean passed;
@@ -60,20 +66,22 @@ public class TestCaseResult extends TestResult {
      * @param time           The time it took to execute the test in ms.
      * @param failureMessage The message that is displayed in case the test case failed.
      */
-    public TestCaseResult(TestCase testCase, List<String> outputs, boolean passed, long time, String failureMessage) {
+    public TestCaseResult(TestCase testCase, List<TestExecuteResult> outputs, boolean passed, long time, String failureMessage) {
         super(testCase);
         this.outputs = outputs;
         this.passed = passed;
         this.passed = testCase.isShouldPass() == passed;
         this.time = time;
         this.failureMessage = failureMessage;
+
+        this.outputs.forEach(out -> out.setResult(this));
     }
 
-    public List<String> getOutputs() {
+    public List<TestExecuteResult> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<String> outputs) {
+    public void setOutputs(List<TestExecuteResult> outputs) {
         this.outputs = outputs;
     }
 
