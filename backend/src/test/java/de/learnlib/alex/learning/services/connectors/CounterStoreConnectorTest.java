@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,74 +16,86 @@
 
 package de.learnlib.alex.learning.services.connectors;
 
-import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.data.dao.CounterDAOImpl;
+import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.entities.Counter;
+import de.learnlib.alex.data.entities.Project;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CounterStoreConnectorTest {
 
-    private static final Long USER_ID = 3L;
     private static final Long PROJECT_ID = 10L;
-    private static final String PROJECT_URL = "http://localhost:8000";
     private static final String COUNTER_NAME = "counter";
     private static final Integer COUNTER_VALUE = 42;
-
-    @Mock
-    private CounterDAOImpl counterDAO;
-
-    @Mock
-    private Counter counter;
 
     private CounterStoreConnector connector;
 
     @Before
     public void setUp() {
-        // connector = new CounterStoreConnector(counterDAO);
+        connector = new CounterStoreConnector(mock(CounterDAO.class), mock(User.class), mock(Project.class), new ArrayList<>());
     }
 
     @Test
-    public void shouldCorrectlyCreateACounter() throws NotFoundException {
-//         given(counterDAO.get(USER_ID, PROJECT_ID, PROJECT_URL, COUNTER_NAME)).willThrow(NotFoundException.class);
-//
-//         connector.set(USER_ID, PROJECT_ID, PROJECT_URL, COUNTER_NAME, COUNTER_VALUE);
-//
-//         verify(counterDAO).create(any(Counter.class));
+    public void shouldInitializeTheInternalStoreCorrectly() {
+        Counter c1 = new Counter();
+        c1.setName("c1");
+        c1.setValue(3);
+
+        Counter c2 = new Counter();
+        c2.setName("c2");
+        c1.setValue(4);
+
+        List<Counter> counters = new ArrayList<>(Arrays.asList(c1, c2));
+
+        CounterStoreConnector connector = new CounterStoreConnector(mock(CounterDAO.class), mock(User.class), mock(Project.class), counters);
+
+        assertEquals(connector.get(c1.getName()), c1.getValue());
+        assertEquals(connector.get(c2.getName()), c2.getValue());
     }
 
     @Test
-    public void shouldCorrectlyUpdateACounter() throws NotFoundException {
-//        given(counter.getName()).willReturn(COUNTER_NAME);
-//        given(counterDAO.getAll(USER_ID, PROJECT_ID)).willReturn(Collections.singletonList(counter));
-//
-//        Project project = new Project();
-//        project.setId(PROJECT_ID);
-//        project.setUser(new User(USER_ID));
-//        connector.registerUrl(PROJECT_URL, project);
-//        connector.set(USER_ID, PROJECT_ID, PROJECT_URL, COUNTER_NAME, COUNTER_VALUE);
-//
-//        verify(counter).setValue(COUNTER_VALUE);
+    public void shouldSetTheCounterValue() {
+        connector.set(PROJECT_ID, COUNTER_NAME, COUNTER_VALUE);
+        assertNotNull(connector.get(COUNTER_NAME));
+        assertEquals(connector.get(COUNTER_NAME), COUNTER_VALUE);
     }
 
     @Test
-    public void shouldIncrementACounter() throws NotFoundException {
-//        given(counter.getName()).willReturn(COUNTER_NAME);
-//        given(counter.getValue()).willReturn(COUNTER_VALUE);
-//        given(counterDAO.getAll(USER_ID, PROJECT_ID)).willReturn(Collections.singletonList(counter));
-//
-//        Project project = new Project();
-//        project.setId(PROJECT_ID);
-//        project.setUser(new User(USER_ID));
-//        connector.registerUrl(PROJECT_URL, project);
-//
-//        connector.increment(USER_ID, PROJECT_ID, PROJECT_URL, COUNTER_NAME);
-//
-//        verify(counter).setValue(COUNTER_VALUE + 1);
+    public void shouldIncrementTheCounterValue() {
+        connector.set(PROJECT_ID, COUNTER_NAME, COUNTER_VALUE);
+        connector.incrementBy(PROJECT_ID, COUNTER_NAME, 5);
+        assertEquals(connector.get(COUNTER_NAME), new Integer(COUNTER_VALUE + 5));
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void shouldFailToIncrementTheCounterIfNotDefined() {
+        connector.incrementBy(PROJECT_ID, COUNTER_NAME, 5);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldFailToGetTheCounterIfNotDefined() {
+        connector.get(COUNTER_NAME);
+    }
+
+    @Test
+    public void shouldPersistNewlyCreatedCounters() {
+        // TODO
+    }
+
+    @Test
+    public void shouldUpdateExistingCounters() {
+        // TODO
+    }
 }

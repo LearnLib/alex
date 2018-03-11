@@ -7,43 +7,6 @@
     </view-header>
 
     <action-bar>
-        <checkbox-multiple model="vm.symbol.actions" class="pull-left"></checkbox-multiple>
-
-        <div class="btn-group btn-group-sm">
-            <button class="btn btn-primary" action-create-modal-handle on-created="vm.addAction(action)">
-                Create
-            </button>
-        </div>
-
-        <div class="btn-group btn-group-sm">
-            <button class="btn btn-default" ng-click="vm.openRecorder()">
-                Record
-            </button>
-        </div>
-
-        <div class="btn-group btn-group-sm">
-            <button class="btn btn-default" action-edit-modal-handle action="vm.selectedActions[0]"
-                    ng-class="{'disabled': vm.selectedActions.length !== 1}" on-updated="vm.updateAction(action)">
-                Edit
-            </button>
-            <button class="btn btn-default" ng-click="vm.deleteActions(vm.selectedActions)"
-                    ng-class="{'disabled': vm.selectedActions.length === 0}">
-                Delete
-            </button>
-        </div>
-
-        <div class="btn-group btn-group-sm" uib-dropdown>
-            <button class="btn btn-default" uib-tooltip="Copy" tooltip-placement="bottom" ng-click="vm.copyActions(vm.selectedActions)">
-                <i class="fa fa-copy fa-fw"></i>
-            </button>
-            <button class="btn btn-default" uib-tooltip="Cut" tooltip-placement="bottom" ng-click="vm.cutActions(vm.selectedActions)">
-                <i class="fa fa-cut fa-fw"></i>
-            </button>
-            <button class="btn btn-default" uib-tooltip="Paste" tooltip-placement="bottom" ng-click="vm.pasteActions()">
-                <i class="fa fa-paste fa-fw"></i>
-            </button>
-        </div>
-
         <button class="btn btn-success btn-sm pull-right" ng-class="{'disabled' : !vm.hasChanged}"
                 ng-click="vm.saveChanges()">
             Save
@@ -60,6 +23,47 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <strong>Actions</strong>
+                </div>
+                <div class="p-1 border-bottom d-flex flex-row">
+                    <div>
+                        <checkbox-multiple model="vm.symbol.actions" class="pull-left" style="margin-top: 7px"></checkbox-multiple>
+                    </div>
+                    <div class="w-100 ml-1">
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-primary" action-create-modal-handle on-created="vm.addAction(action)">
+                                Create
+                            </button>
+                        </div>
+
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-default" ng-click="vm.openRecorder()">
+                                Record
+                            </button>
+                        </div>
+
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-default" action-edit-modal-handle action="vm.selectedActions[0]"
+                                    ng-class="{'disabled': vm.selectedActions.length !== 1}" on-updated="vm.updateAction(action)">
+                                Edit
+                            </button>
+                            <button class="btn btn-default" ng-click="vm.deleteActions(vm.selectedActions)"
+                                    ng-class="{'disabled': vm.selectedActions.length === 0}">
+                                Delete
+                            </button>
+                        </div>
+
+                        <div class="btn-group btn-group-sm" uib-dropdown>
+                            <button class="btn btn-default" uib-tooltip="Copy" tooltip-placement="bottom" ng-click="vm.copyActions(vm.selectedActions)">
+                                <i class="fa fa-copy fa-fw"></i>
+                            </button>
+                            <button class="btn btn-default" uib-tooltip="Cut" tooltip-placement="bottom" ng-click="vm.cutActions(vm.selectedActions)">
+                                <i class="fa fa-cut fa-fw"></i>
+                            </button>
+                            <button class="btn btn-default" uib-tooltip="Paste" tooltip-placement="bottom" ng-click="vm.pasteActions()">
+                                <i class="fa fa-paste fa-fw"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div class="panel-body" style="padding: 0">
                     <div class="action-list" dragula='"actionList"' dragula-model="vm.symbol.actions"
@@ -135,9 +139,11 @@
                 </div>
             </div>
 
+            <symbol-parameters-panel symbol="vm.symbol" on-change="vm.setChanged(true)"></symbol-parameters-panel>
+
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <strong>Output on success <span class="text-muted">(optional)</span></strong>
+                    <strong>Output on success</strong>
                 </div>
                 <div class="panel-body" style="padding-bottom: 0">
                     <div class="form-group">

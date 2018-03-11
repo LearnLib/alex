@@ -63,7 +63,7 @@
                         <div class="panel-body panel-body-list">
                             <div class="list-group" style="margin-bottom: 0" ng-if="group.symbols.length">
                                 <div class="list-group-item" ng-repeat="symbol in group.symbols" ng-click="vm.addSymbolStep(symbol)">
-                                    <button class="text-muted btn btn-xs btn-icon pull-right" ui-sref="symbolsActions({symbolId:symbol.id})">
+                                    <button class="text-muted btn btn-xs btn-icon pull-right" ui-sref="symbol({symbolId:symbol.id})">
                                         <i class="fa fa-edit"></i>
                                     </button>
                                     {{symbol.name}}

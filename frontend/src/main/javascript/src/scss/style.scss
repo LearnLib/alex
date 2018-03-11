@@ -9,6 +9,7 @@
 @import "test-tree";
 @import "sidebar";
 @import "animations";
+@import "symbol-parameters-panel.component";
 
 *, *:after, *:before {
   box-sizing: border-box;
@@ -29,6 +30,12 @@ body {
         max-width: $sidebar-width-collapsed;
       }
     }
+  }
+}
+
+.cursor-pointer {
+  &:hover {
+    cursor: pointer;
   }
 }
 
@@ -64,8 +71,25 @@ body {
   margin-bottom: 1rem;
 }
 
+.p-1 {
+  padding: 1rem;
+}
+
+.py-1 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
 .pb-0 {
   padding-bottom: 0;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #ddd;
+}
+
+.border-top {
+  border-top: 1px solid #ddd;
 }
 
 .rounded-0 {
@@ -74,6 +98,18 @@ body {
 
 .flex-grow-1 {
   flex-grow: 1;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.align-items-end {
+  align-items: flex-end;
+}
+
+.align-items-start {
+  align-items: flex-start;
 }
 
 .label-outline-default {

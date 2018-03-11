@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
  * manages has to be defined in the url by its id.
  */
-class SymbolsActionsViewComponent {
+class SymbolViewComponent {
 
     /**
      * Constructor.
@@ -224,6 +224,10 @@ class SymbolsActionsViewComponent {
         this.ToastService.info(actions.length + ' action[s] copied to clipboard');
     }
 
+    setChanged(changed) {
+        this.hasChanged = changed;
+    }
+
     /**
      * Copies actions to the clipboard and removes them from the scope.
      *
@@ -267,8 +271,8 @@ class SymbolsActionsViewComponent {
     }
 }
 
-export const symbolsActionsViewComponent = {
-    controller: SymbolsActionsViewComponent,
+export const symbolViewComponent = {
+    controller: SymbolViewComponent,
     controllerAs: 'vm',
-    template: require('./symbol-actions-view.component.html')
+    template: require('./symbol-view.component.html')
 };

@@ -1,23 +1,22 @@
 <div class="symbol-list-item d-flex" ng-class="{'selectable': vm.selectable}">
 
     <div class="mr-1" ng-if="vm.selectable">
-        <checkbox selection-model-ignore model="vm.symbol" class="pull-left" ></checkbox>
+        <checkbox selection-model-ignore model="vm.symbol" class="pull-left"></checkbox>
     </div>
 
     <div class="flex-grow-1 mr-1">
-        <strong class="d-block" ng-bind="vm.symbol.name"></strong>
+        <div>
+            <a ui-sref="symbol({symbolId:vm.symbol.id})" ng-if="vm.symbol.id && !vm.symbol.hidden" style="color: #333">
+                <strong>{{vm.symbol.name}}</strong>
+            </a>
+            <strong ng-if="vm.symbol.id == null || vm.symbol.hidden">{{vm.symbol.name}}</strong>
+        </div>
 
-        <a ui-sref="symbolsActions({symbolId:vm.symbol.id})" ng-if="vm.symbol.id && !vm.symbol.hidden">
-            <span ng-bind="vm.symbol.countEnabledActions()"></span> Actions &nbsp;<i class="fa fa-edit"></i>
-        </a>
-
-        <span class="text-muted" ng-if="!vm.symbol.id || vm.symbol.hidden">
-            <span ng-bind="vm.symbol.countEnabledActions()"></span> Actions
+        <span class="text-muted cursor-pointer" ng-click="vm.toggleCollapsed()" selection-model-ignore>
+            <span ng-bind="vm.symbol.countEnabledActions()"></span>
+            Actions
+            <i class="fa fa-chevron-right"></i>
         </span>
-
-        <a href="" ng-click="vm.toggleCollapsed()" selection-model-ignore>
-            <i class="fa fa-fw" ng-class="vm.collapsed ? 'fa-chevron-down': 'fa-chevron-right'"></i>
-        </a>
 
         <div uib-collapse="!vm.collapsed">
             <div class="panel panel-default" style="margin-top: 5px;">
@@ -25,7 +24,7 @@
                     <button class="btn btn-xs btn-icon pull-right" ng-click="vm.toggleCollapsed()">
                         <i class="fa fa-close"></i>
                     </button>
-                    <a class="btn btn-xs btn-default" ui-sref="symbolsActions({symbolId:vm.symbol.id})"
+                    <a class="btn btn-xs btn-default" ui-sref="symbol({symbolId:vm.symbol.id})"
                        ng-if="vm.symbol.id && !vm.symbol.hidden">
                         Edit actions
                     </a>

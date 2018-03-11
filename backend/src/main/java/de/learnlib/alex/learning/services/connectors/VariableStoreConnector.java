@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,13 +83,13 @@ public class VariableStoreConnector implements Connector {
      *         If the variable was not set before.
      */
     public String get(String name) throws IllegalStateException {
-        String result = store.get(name);
-        if (result == null) {
-            throw new IllegalStateException("The variable '" + name + "' was not set and has no value!");
+        final String variable = store.get(name);
+        if (variable == null) {
+            throw new IllegalStateException("Undefined variable: " + name);
         }
 
-        LOGGER.debug("Got the variable '{}' with the value '{}'.", name, result);
+        LOGGER.debug("Got the variable '{}' with the value '{}'.", name, variable);
 
-        return result;
+        return variable;
     }
 }

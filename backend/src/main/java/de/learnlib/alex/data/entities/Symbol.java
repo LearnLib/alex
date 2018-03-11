@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.common.utils.LoggerUtil;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
+import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.api.exception.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import org.apache.logging.log4j.Level;
@@ -45,6 +47,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -104,9 +107,17 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** The custom output if the symbol is executed successfully. */
     private String successOutput;
 
+    /** The list of input variables. */
+    private List<SymbolInputParameter> inputs;
+
+    /** The list of output variables. */
+    private List<SymbolOutputParameter> outputs;
+
     /** Constructor. */
     public Symbol() {
         this.actions = new LinkedList<>();
+        this.inputs = new ArrayList<>();
+        this.outputs = new ArrayList<>();
     }
 
     /**
@@ -178,7 +189,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
-        this.project   = null;
+        this.project = null;
         this.projectId = projectId;
     }
 
@@ -332,6 +343,34 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         }
     }
 
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL})
+    @OrderBy("name ASC")
+    @JsonProperty
+    public List<SymbolInputParameter> getInputs() {
+        return inputs;
+    }
+
+    @JsonProperty
+    public void setInputs(List<SymbolInputParameter> inputs) {
+        this.inputs = inputs;
+    }
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.ALL})
+    @OrderBy("name ASC")
+    @JsonProperty
+    public List<SymbolOutputParameter> getOutputs() {
+        return outputs;
+    }
+
+    @JsonProperty
+    public void setOutputs(List<SymbolOutputParameter> outputs) {
+        this.outputs = outputs;
+    }
+
     /**
      * Add one action to the end of the Action List.
      *
@@ -351,6 +390,32 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         LOGGER.info(LEARNER_MARKER, "Executing Symbol {} ({})...", String.valueOf(id), name);
         if (LOGGER.isEnabled(Level.INFO, LEARNER_MARKER)) {
             LoggerUtil.increaseIndent();
+        }
+
+        final VariableStoreConnector globalVariableStore = connector.getConnector(VariableStoreConnector.class);
+        final VariableStoreConnector localVariableStore = new VariableStoreConnector();
+
+        try {
+            // get the input variables from the global context
+            inputs.stream()
+                    .filter(in -> in.getParameterType().equals(SymbolParameter.ParameterType.STRING))
+                    .forEach(in -> localVariableStore.set(in.getName(), globalVariableStore.get(in.getName())));
+            connector.addConnector(localVariableStore);
+        } catch (IllegalStateException e) {
+            return new ExecuteResult(false, e.getMessage());
+        }
+
+        final CounterStoreConnector globalCounterStore = connector.getConnector(CounterStoreConnector.class);
+        final CounterStoreConnector localCounterStore = globalCounterStore.copy();
+
+        try {
+            // get the input counters from the global context
+            inputs.stream()
+                    .filter(in -> in.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
+                    .forEach(in -> localCounterStore.set(projectId, in.getName(), globalCounterStore.get(in.getName())));
+            connector.addConnector(localCounterStore);
+        } catch (IllegalStateException e) {
+            return new ExecuteResult(false, e.getMessage());
         }
 
         // assume the output is ok until proven otherwise
@@ -389,6 +454,24 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             LoggerUtil.decreaseIndent();
         }
         LOGGER.info(LEARNER_MARKER, "Executed the Symbol {} ({}) => {}.", String.valueOf(id), name, result);
+
+        // set the values of the outputs to the global context
+        if (result.isSuccess()) {
+            try {
+                outputs.stream()
+                        .filter(out -> out.getParameterType().equals(SymbolParameter.ParameterType.STRING))
+                        .forEach(out -> globalVariableStore.set(out.getName(), localVariableStore.get(out.getName())));
+
+                outputs.stream()
+                        .filter(out -> out.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
+                        .forEach(out -> globalCounterStore.set(project.getId(), out.getName(), localCounterStore.get(out.getName())));
+            } catch (IllegalStateException e) {
+                return new ExecuteResult(false, e.getMessage());
+            }
+        }
+        connector.addConnector(globalVariableStore);
+        connector.addConnector(globalCounterStore);
+
         return result;
     }
 

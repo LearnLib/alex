@@ -40,6 +40,19 @@ export function formatEqOracle() {
     };
 }
 
+export function formatParameterType() {
+    return type => {
+        switch (type) {
+            case 'STRING':
+                return 'String';
+            case 'COUNTER':
+                return 'Counter';
+            default:
+                return type;
+        }
+    }
+}
+
 /**
  * Sort tests. First all test suites, then all test cases. Both alphabetically.
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ export function symbolEditModalHandleDirective($uibModal) {
                     component: 'symbolEditModal',
                     resolve: {
                         modalData: () => ({
-                            symbol: new AlphabetSymbol(scope.symbol),
+                            symbol: new AlphabetSymbol(JSON.parse(JSON.stringify(scope.symbol))),
                             updateOnServer: scope.updateOnServer
                         })
                     }

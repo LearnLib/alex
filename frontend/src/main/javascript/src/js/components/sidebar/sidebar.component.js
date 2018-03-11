@@ -146,7 +146,7 @@ class SidebarComponent {
                     {
                         title: 'Manage',
                         icon: 'fa-list-alt',
-                        active: () => this.isState('symbols', 'symbolsActions', 'symbolsHistory'),
+                        active: () => this.isState('symbols', 'symbol'),
                         display: () => true,
                         click: () => $state.go('symbols')
                     },

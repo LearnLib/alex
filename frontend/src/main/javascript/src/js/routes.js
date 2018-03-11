@@ -69,10 +69,10 @@ export function config($stateProvider, $urlRouterProvider) {
             template: '<symbols-trash-view></symbols-trash-view>',
             data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Trash'}
         })
-        .state('symbolsActions', {
-            url: '/symbols/{symbolId:int}/actions',
-            template: '<symbols-actions-view></symbols-actions-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Actions'}
+        .state('symbol', {
+            url: '/symbols/{symbolId:int}',
+            template: '<symbol-view></symbol-view>',
+            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Symbol'}
         })
         .state('learnerSetup', {
             url: '/learner/setup',

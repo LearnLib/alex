@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import de.learnlib.alex.data.entities.actions.WebSymbolActions.ClearAction;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
+import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,12 +84,15 @@ public class SymbolDAOImplTest {
     @Mock
     private SymbolActionRepository symbolActionRepository;
 
+    @Mock
+    private SymbolParameterRepository symbolParameterRepository;
+
     private SymbolDAO symbolDAO;
 
     @Before
     public void setUp() {
         symbolDAO = new SymbolDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
-                                      symbolActionRepository);
+                                      symbolActionRepository, symbolParameterRepository);
     }
 
     @Test

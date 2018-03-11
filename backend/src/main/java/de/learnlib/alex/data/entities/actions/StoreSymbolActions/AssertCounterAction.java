@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -96,6 +97,7 @@ public class AssertCounterAction extends SymbolAction {
      * The value to assert the counter content with.
      */
     @NotNull
+    @Column(name = "assert_counter_value")
     private Integer value;
 
     /**

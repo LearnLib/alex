@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,7 +99,7 @@ class CounterexamplesWidgetComponent {
             .then(counterexample => {
                 this.ToastService.success('The selected word is a counterexample');
                 for (let i = 0; i < counterexample.length; i++) {
-                    this.counterExample[i].output = counterexample[i];
+                    this.counterExample[i].output = counterexample[i].output;
                 }
                 this.tmpCounterExamples.push(angular.copy(this.counterExample));
                 this.renewCounterexamples();

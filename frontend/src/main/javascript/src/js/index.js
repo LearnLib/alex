@@ -80,11 +80,13 @@ import {nodeFormGroupComponent} from './components/forms/node-form-group/node-fo
 import {projectCreateFormComponent} from './components/forms/project-create-form/project-create-form.component';
 import {projectFormGroupsComponent} from './components/forms/project-form-groups/project-form-groups.component';
 import {symbolEditFormComponent} from './components/forms/symbol-edit-form/symbol-edit-form.component';
+import {symbolFormGroupsComponent} from './components/forms/symbol-form-groups/symbol-form-groups.component';
 import {userEditFormComponent} from './components/forms/user-edit-form/user-edit-form.component';
 import {userLoginFormComponent} from './components/forms/user-login-form/user-login-form.component';
 import {webhookFormComponent} from './components/forms/webhook-form/webhook-form.component';
 import {htmlElementPickerComponent} from './components/html-element-picker/html-element-picker.component';
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
+import {symbolParametersPanelComponent} from './components/symbol-parameters-panel/symbol-parameters-panel.component';
 import {learnerResultListItemComponent} from './components/learner-result-list-item/learner-result-list-item.component';
 import {learnerResultPanelComponent} from './components/learner-result-panel/learner-result-panel.component';
 import {loadScreenComponent} from './components/load-screen/load-screen.component';
@@ -115,6 +117,7 @@ import {symbolGroupCreateModalHandleDirective} from './components/modals/symbol-
 import {symbolGroupCreateModalComponent} from './components/modals/symbol-group-create-modal/symbol-group-create-modal.component';
 import {symbolGroupEditModalHandleDirective} from './components/modals/symbol-group-edit-modal/symbol-group-edit-modal-handle.directive';
 import {symbolGroupEditModalComponent} from './components/modals/symbol-group-edit-modal/symbol-group-edit-modal.component';
+import {symbolParameterCreateModalComponent} from './components/modals/symbol-parameter-create-modal/symbol-parameter-create-modal.component';
 import {symbolsImportModalHandleDirective} from './components/modals/symbols-import-modal/symbols-import-modal-handle.directive';
 import {symbolsImportModalComponent} from './components/modals/symbols-import-modal/symbols-import-modal.component';
 import {symbolMoveModalHandleDirective} from './components/modals/symbols-move-modal/symbols-move-modal-handle.directive';
@@ -149,7 +152,7 @@ import {learnerViewComponent} from './components/views/learner-view/learner-view
 import {projectsDashboardViewComponent} from './components/views/project-dashboard-view/project-dashboard-view.component';
 import {projectsViewComponent} from './components/views/projects-view/projects-view.component';
 import {statisticsCompareViewComponent} from './components/views/statistics-compare-view/statistics-compare-view.component';
-import {symbolsActionsViewComponent} from './components/views/symbol-actions-view/symbol-actions-view.component';
+import {symbolViewComponent} from './components/views/symbol-view/symbol-view.component';
 import {symbolsTrashViewComponent} from './components/views/symbols-trash-view/symbols-trash-view.component';
 import {symbolsViewComponent} from './components/views/symbols-view/symbols-view.component';
 import {testCaseViewComponent} from './components/views/test-case-view/test-case-view.component';
@@ -171,7 +174,7 @@ import * as constant from './constants';
 import {
     formatAlgorithm,
     formatEqOracle,
-    formatMilliseconds,
+    formatMilliseconds, formatParameterType,
     formatUserRole,
     formatWebBrowser,
     sortTests
@@ -241,6 +244,7 @@ angular
     .filter('formatUserRole', formatUserRole)
     .filter('formatWebBrowser', formatWebBrowser)
     .filter('sortTests', sortTests)
+    .filter('formatParameterType', formatParameterType)
 
     // resources
     .service('CounterResource', CounterResource)
@@ -313,6 +317,7 @@ angular
     .component('testsImportModal', testsImportModalComponent)
     .component('webhookCreateModal', webhookCreateModalComponent)
     .component('webhookEditModal', webhookEditModalComponent)
+    .component('symbolParameterCreateModal', symbolParameterCreateModalComponent)
 
     // view components
     .component('aboutView', aboutViewComponent)
@@ -329,7 +334,7 @@ angular
     .component('resultsCompareView', resultsCompareViewComponent)
     .component('resultsView', resultsViewComponent)
     .component('statisticsCompareView', statisticsCompareViewComponent)
-    .component('symbolsActionsView', symbolsActionsViewComponent)
+    .component('symbolView', symbolViewComponent)
     .component('symbolsView', symbolsViewComponent)
     .component('testsView', testsViewComponent)
     .component('symbolsTrashView', symbolsTrashViewComponent)
@@ -349,6 +354,7 @@ angular
     .component('nodeFormGroup', nodeFormGroupComponent)
     .component('browserConfigForm', browserConfigFormComponent)
     .component('symbolEditForm', symbolEditFormComponent)
+    .component('symbolFormGroups', symbolFormGroupsComponent)
     .component('actionSearchForm', actionSearchFormComponent)
     .component('webhookForm', webhookFormComponent)
 
@@ -433,6 +439,7 @@ angular
     .component('testResultReport', testResultReportComponent)
     .component('testTree', testTreeComponent)
     .component('testCaseNode', testCaseNodeComponent)
+    .component('symbolParametersPanel', symbolParametersPanelComponent)
     .component('testSuiteNode', testSuiteNodeComponent);
 
 angular.bootstrap(document, ['ALEX']);

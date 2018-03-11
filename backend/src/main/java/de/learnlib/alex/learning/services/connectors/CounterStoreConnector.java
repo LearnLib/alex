@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import de.learnlib.alex.data.entities.Project;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,30 +123,19 @@ public class CounterStoreConnector implements Connector {
     }
 
     /**
-     * Increment the value of an existing counter.
-     * Creates a new counter implicitly with the specified name if it does not exist yet.
-     * The value of the new counter will be 1.
-     *
-     * @param projectId The id of the project.
-     * @param name      The name of the counter to increment.
-     */
-    public void increment(Long projectId, String name) {
-        incrementBy(projectId, name, 1);
-    }
-
-    /**
      * Increment a counter by a positive or negative value.
      *
      * @param projectId   The id of the project.
      * @param name        The name of the counter.
      * @param incrementBy The value to increment or decrement the counter by.
+     * @throws IllegalStateException If the counter 'name' has not been set yet.
      */
     public void incrementBy(Long projectId, String name, int incrementBy) {
-        if (countersMap.containsKey(name)) {
-            countersMap.put(name, countersMap.get(name) + incrementBy);
-        } else {
-            countersMap.put(name, 1);
+        if (!countersMap.containsKey(name)) {
+            throw new IllegalStateException("Undefined counter: " + name);
         }
+
+        countersMap.put(name, countersMap.get(name) + incrementBy);
 
         LOGGER.debug("Incremented the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId,
                      countersMap.get(name));
@@ -157,9 +147,15 @@ public class CounterStoreConnector implements Connector {
      * @param name The name of the counter.
      * @return The positive value of the counter.
      * @throws IllegalStateException If the counter 'name' has not been set yet.
-     * @throws IllegalStateException If the counter 'name' has not been set yet.
      */
     public Integer get(String name) throws IllegalStateException {
-        return this.countersMap.get(name);
+        if (!countersMap.containsKey(name)) {
+            throw new IllegalStateException("Undefined counter: " + name);
+        }
+        return countersMap.get(name);
+    }
+
+    public CounterStoreConnector copy() {
+        return new CounterStoreConnector(counterDAO, user, project, new ArrayList<>());
     }
 }

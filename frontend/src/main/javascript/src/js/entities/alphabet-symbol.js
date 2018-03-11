@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,18 @@ export class AlphabetSymbol {
         this.successOutput = obj.successOutput;
 
         /**
+         * The list of input variables.
+         * @type {Object[]}
+         */
+        this.inputs = obj.inputs || [];
+
+        /**
+         * The list of output variables.
+         * @type {Object[]}
+         */
+        this.outputs = obj.outputs || [];
+
+        /**
          * The actions of the symbol.
          * @type {Action[]}
          */
@@ -90,7 +102,10 @@ export class AlphabetSymbol {
     getExportableSymbol() {
         return {
             name: this.name,
-            actions: this.actions
+            actions: this.actions,
+            successOutput: this.successOutput,
+            inputs: this.inputs,
+            outputs: this.outputs
         };
     }
 }

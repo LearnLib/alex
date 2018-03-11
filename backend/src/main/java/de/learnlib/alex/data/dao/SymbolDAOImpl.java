@@ -27,6 +27,7 @@ import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
+import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -66,6 +67,8 @@ public class SymbolDAOImpl implements SymbolDAO {
     /** The SymbolActionRepository to use. Will be injected. */
     private SymbolActionRepository symbolActionRepository;
 
+    private SymbolParameterRepository symbolParameterRepository;
+
     /**
      * Creates a new SymbolDAO.
      *
@@ -83,12 +86,13 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Inject
     public SymbolDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
                          SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
-                         SymbolActionRepository symbolActionRepository) {
+                         SymbolActionRepository symbolActionRepository, SymbolParameterRepository symbolParameterRepository) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
         this.symbolRepository = symbolRepository;
         this.symbolActionRepository = symbolActionRepository;
+        this.symbolParameterRepository = symbolParameterRepository;
     }
 
     @Override
@@ -340,6 +344,8 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbol.setProject(project);
         symbol.setGroup(symbolInDB.getGroup());
         symbolActionRepository.delete(symbolInDB.getActions());
+        symbolParameterRepository.delete(symbolInDB.getOutputs());
+        symbolParameterRepository.delete(symbolInDB.getInputs());
 
         beforeSymbolSave(symbol);
         return symbolRepository.save(symbol);
@@ -415,6 +421,9 @@ public class SymbolDAOImpl implements SymbolDAO {
             action.setSymbol(symbol);
             action.setNumber(i);
         }
+
+        symbol.getInputs().forEach(i -> i.setSymbol(symbol));
+        symbol.getOutputs().forEach(o -> o.setSymbol(symbol));
     }
 
     /**
@@ -427,6 +436,8 @@ public class SymbolDAOImpl implements SymbolDAO {
         Hibernate.initialize(symbol.getProject());
         Hibernate.initialize(symbol.getGroup());
         Hibernate.initialize(symbol.getActions());
+        Hibernate.initialize(symbol.getInputs());
+        Hibernate.initialize(symbol.getOutputs());
     }
 
 }
