@@ -4,6 +4,8 @@
 
 # ALEX
 
+[![Travis CI](https://travis-ci.org/LearnLib/alex.svg?branch=develop)](https://travis-ci.org/LearnLib/alex)
+
 Automata Learning Experience (ALEX) is an extension of the [LearnLib](https://github.com/LearnLib/learnlib) that allows 
 you run automated tests on web applications and JSON-based REST APIs using active automata learning.
 
