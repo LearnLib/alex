@@ -23,7 +23,7 @@
 		<Logger name="learner" level="trace" />
 		<Logger name="server" level="trace" />
 
-		<Root level="debug">
+		<Root level="info">
 			<AppenderRef ref="Console" />
 		</Root>
 	</Loggers>
