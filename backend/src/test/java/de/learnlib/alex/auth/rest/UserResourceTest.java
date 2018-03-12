@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.UserHelper;
+import de.learnlib.alex.webhooks.services.WebhookService;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -40,6 +42,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -64,6 +67,13 @@ public class UserResourceTest extends JerseyTest {
         MockitoAnnotations.initMocks(this);
 
         ALEXTestApplication testApplication = new ALEXTestApplication(userDAO, UserResource.class);
+        testApplication.register(new AbstractBinder() {
+            @Override
+            protected void configure() {
+                bind(mock(WebhookService.class)).to(WebhookService.class);
+            }
+        });
+
         admin = testApplication.getAdmin();
         adminToken = testApplication.getAdminToken();
         return testApplication;
@@ -287,12 +297,9 @@ public class UserResourceTest extends JerseyTest {
     }
 
     @Test
-    @Ignore // sometimes this test works, sometimes it wont work... Seems to be a timing issue.
     public void shouldDemoteAnAdmin() {
-        List<User> adminList = Arrays.asList(new User[] {admin, user}); // user is here a fake admin
+        List<User> adminList = Arrays.asList(admin, user); // user is here a fake admin
         given(userDAO.getAllByRole(UserRole.ADMIN)).willReturn(adminList);
-
-        // Timing issue right around here :(
 
         Response response = target("/users/" + admin.getId() + "/demote").request().header("Authorization", adminToken)
                                 .put(Entity.json(""));
@@ -300,7 +307,6 @@ public class UserResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         verify(userDAO).update(admin);
     }
-
 
     @Test
     public void shouldReturn404IfUserToDemoteDoesNotExits() throws NotFoundException {
@@ -314,7 +320,7 @@ public class UserResourceTest extends JerseyTest {
 
     @Test
     public void shouldNotDemoteTheLastAdmin() throws NotFoundException {
-        List<User> adminList = Arrays.asList(new User[] {admin});
+        List<User> adminList = Arrays.asList(admin);
         given(userDAO.getAllByRole(UserRole.ADMIN)).willReturn(adminList);
 
         Response response = target("/users/" + admin.getId() + "/demote").request().header("Authorization", adminToken)

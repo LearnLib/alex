@@ -19,6 +19,7 @@ package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
+import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +40,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CheckNodeActionTest {
+public class CheckNodeActionTest extends WebActionTest {
 
     private CheckNodeAction checkNode;
 
@@ -47,6 +48,8 @@ public class CheckNodeActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         Symbol symbol = new Symbol();
 
         node = new WebElementLocator();
@@ -82,19 +85,17 @@ public class CheckNodeActionTest {
 
     @Test
     public void shouldReturnOKIfNodeWasFound() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
         WebElement element = mock(WebElement.class);
-        given(connector.getElement(node)).willReturn(element);
+        given(webSiteConnector.getElement(node)).willReturn(element);
 
-        assertTrue(checkNode.execute(connector).isSuccess());
+        assertTrue(checkNode.executeAction(connectors).isSuccess());
     }
 
     @Test
     public void shouldReturnFaliedIfNodeWasNotFound() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-        when(connector.getElement(node)).thenThrow(new NoSuchElementException(""));
+        when(webSiteConnector.getElement(node)).thenThrow(new NoSuchElementException(""));
 
-        assertFalse(checkNode.execute(connector).isSuccess());
+        assertFalse(checkNode.executeAction(connectors).isSuccess());
     }
 
 }

@@ -40,7 +40,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MoveMouseActionTest {
+public class MoveMouseActionTest extends WebActionTest {
 
     private MoveMouseAction c;
 
@@ -48,6 +48,8 @@ public class MoveMouseActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         Symbol symbol = new Symbol();
 
         node = new WebElementLocator();
@@ -79,8 +81,6 @@ public class MoveMouseActionTest {
         File file = new File(getClass().getResource("/actions/websymbolactions/MoveMouseTestData.json").toURI());
         WebSymbolAction obj = mapper.readValue(file, WebSymbolAction.class);
 
-
-
         assertTrue(obj instanceof MoveMouseAction);
         MoveMouseAction objAsAction = (MoveMouseAction) obj;
         assertEquals(node, objAsAction.getNode());
@@ -90,11 +90,9 @@ public class MoveMouseActionTest {
 
     @Test
     public void shouldReturnFAILEDIfNodeCouldNotBeClicked() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-        WebDriver driver = mock(HtmlUnitDriver.class);
-        when(connector.getElement(node)).thenThrow(new NoSuchElementException(""));
-        given(connector.getDriver()).willReturn(driver);
+        when(webSiteConnector.getDriver()).thenReturn(mock(WebDriver.class));
+        when(webSiteConnector.getElement(node)).thenThrow(new NoSuchElementException(""));
 
-        assertFalse(c.execute(connector).isSuccess());
+        assertFalse(c.executeAction(connectors).isSuccess());
     }
 }

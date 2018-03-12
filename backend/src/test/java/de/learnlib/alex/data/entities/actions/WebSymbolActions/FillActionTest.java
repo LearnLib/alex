@@ -40,7 +40,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FillActionTest {
+public class FillActionTest extends WebActionTest {
 
     private FillAction f;
 
@@ -48,6 +48,8 @@ public class FillActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         Symbol symbol = new Symbol();
 
         node = new WebElementLocator();
@@ -84,20 +86,18 @@ public class FillActionTest {
 
     @Test
     public void shouldReturnOKIfNodeCouldBeFilled() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
         WebElement element = mock(WebElement.class);
-        given(connector.getElement(node)).willReturn(element);
+        given(webSiteConnector.getElement(node)).willReturn(element);
 
-        assertTrue(f.execute(connector).isSuccess());
+        assertTrue(f.executeAction(connectors).isSuccess());
         verify(element).sendKeys(f.getValue());
     }
 
     @Test
     public void shouldReturnFaliedIfNodeCouldNotBeFilled() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-        when(connector.getElement(node)).thenThrow(new NoSuchElementException(""));
+        when(webSiteConnector.getElement(node)).thenThrow(new NoSuchElementException(""));
 
-        assertFalse(f.execute(connector).isSuccess());
+        assertFalse(f.executeAction(connectors).isSuccess());
     }
 
 }

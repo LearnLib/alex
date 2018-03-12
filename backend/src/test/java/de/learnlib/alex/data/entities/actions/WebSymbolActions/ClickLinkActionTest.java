@@ -42,15 +42,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ClickLinkActionTest {
+public class ClickLinkActionTest extends WebActionTest {
 
     private ClickLinkAction c;
 
-    private final WebSiteConnector connector = mock(WebSiteConnector.class);
     private final WebDriver driver = mock(WebDriver.class);
 
     @Before
     public void setUp() {
+        super.setUp();
+
         Symbol symbol = new Symbol();
 
         c = new ClickLinkAction();
@@ -58,7 +59,7 @@ public class ClickLinkActionTest {
         c.setValue("Click Me");
         c.setNode(new WebElementLocator("body", WebElementLocator.Type.CSS));
 
-        given(connector.getDriver()).willReturn(driver);
+        given(webSiteConnector.getDriver()).willReturn(driver);
     }
 
     @Test
@@ -90,7 +91,7 @@ public class ClickLinkActionTest {
         given(driver.findElement(c.getNode().getBy())).willReturn(body);
         given(body.findElement(By.linkText(c.getValue()))).willReturn(fooLink);
 
-        assertTrue(c.execute(connector).isSuccess());
+        assertTrue(c.executeAction(connectors).isSuccess());
         verify(fooLink).click();
     }
 
@@ -102,7 +103,7 @@ public class ClickLinkActionTest {
 
         when(body.findElement(By.linkText("Click Me"))).thenThrow(new NoSuchElementException(""));
 
-        assertFalse(c.execute(connector).isSuccess());
+        assertFalse(c.executeAction(connectors).isSuccess());
     }
 
 }

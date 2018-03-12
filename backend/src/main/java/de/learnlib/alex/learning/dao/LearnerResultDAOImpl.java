@@ -63,6 +63,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
      * @param learnerResultRepository
      *         The LearnerResultRepository to use.
      * @param learnerResultStepRepository
+     *         The {@link LearnerResultStepRepository} to use.
      */
     @Inject
     public LearnerResultDAOImpl(ProjectDAO projectDAO, LearnerResultRepository learnerResultRepository,

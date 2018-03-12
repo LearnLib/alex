@@ -190,7 +190,6 @@ public class Learner {
             throw new IllegalStateException("You have to wait until the running experiment is finished.");
         }
 
-        configuration.checkConfiguration();
         if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
             validateCounterexample(user, configuration);
         }

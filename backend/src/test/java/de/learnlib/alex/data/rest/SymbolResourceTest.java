@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
@@ -53,6 +54,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -93,6 +95,7 @@ public class SymbolResourceTest extends JerseyTest {
             protected void configure() {
                 bind(projectDAO).to(ProjectDAO.class);
                 bind(symbolDAO).to(SymbolDAO.class);
+                bind(mock(WebhookService.class)).to(WebhookService.class);
             }
         });
         return testApplication;
@@ -291,8 +294,8 @@ public class SymbolResourceTest extends JerseyTest {
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "[{\"actions\":[],\"group\":0,"
-                + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
-                + "\"project\":10,\"successOutput\":null}]";
+                + "\"hidden\":false,\"id\":1,\"inputs\":[],\"name\":\"Symbol Resource Test Symbol\","
+                + "\"outputs\":[],\"project\":10,\"successOutput\":null}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
         verify(symbolDAO).getAll(admin, project.getId(), SymbolVisibilityLevel.VISIBLE);
@@ -311,8 +314,8 @@ public class SymbolResourceTest extends JerseyTest {
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "[{\"actions\":[],\"group\":0,"
-                                + "\"hidden\":false,\"id\":1,\"name\":\"Symbol Resource Test Symbol\","
-                                + "\"project\":10,\"successOutput\":null}]";
+                                + "\"hidden\":false,\"id\":1,\"inputs\":[],\"name\":\"Symbol Resource Test Symbol\","
+                                + "\"outputs\":[],\"project\":10,\"successOutput\":null}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
         assertEquals("1", response.getHeaderString("X-Total-Count"));
         verify(symbolDAO).getAll(admin, project.getId(), SymbolVisibilityLevel.ALL);

@@ -36,10 +36,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CheckAttributeTypeActionTest {
-
-    @Mock
-    private WebServiceConnector connector;
+public class CheckAttributeTypeActionTest extends RestActionTest {
 
     @Mock
     private Symbol symbol;
@@ -48,6 +45,8 @@ public class CheckAttributeTypeActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         c = new CheckAttributeTypeAction();
         c.setSymbol(symbol);
         c.setAttribute("awesome_field");
@@ -80,35 +79,35 @@ public class CheckAttributeTypeActionTest {
 
     @Test
     public void shouldReturnOkIfAttributeWithRightTypeExists() {
-        given(connector.getBody()).willReturn("{\"awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
+        given(webServiceConnector.getBody()).willReturn("{\"awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
         assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldReturnOkIfAttributeWithRightTypeExistsWithComplexStructure() {
-        given(connector.getBody()).willReturn("{\"awesome_field\": {\"foo\": \"Fooooobar.\","
+        given(webServiceConnector.getBody()).willReturn("{\"awesome_field\": {\"foo\": \"Fooooobar.\","
                 + "\"other\": [\"Lorem Ipsum.\", \"Hello World!\"]}}");
         c.setAttribute("awesome_field.foo");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
         assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldReturnFailedIfAttributeWithWrongTypeExists() {
-        given(connector.getBody()).willReturn("{\"awesome_field\": true}");
+        given(webServiceConnector.getBody()).willReturn("{\"awesome_field\": true}");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 
     @Test
     public void shouldReturnFailedIfAttributeDoesNotExist() {
-        given(connector.getBody()).willReturn("{\"not_so_awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
+        given(webServiceConnector.getBody()).willReturn("{\"not_so_awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 

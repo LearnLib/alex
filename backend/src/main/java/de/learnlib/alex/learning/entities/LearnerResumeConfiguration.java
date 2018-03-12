@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Symbol;
 import org.springframework.data.annotation.Transient;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +35,12 @@ public class LearnerResumeConfiguration extends AbstractLearnerConfiguration imp
 
     /** The step number from where to continue. */
     @JsonProperty("stepNo")
+    @NotNull
     private int stepNo;
 
     /** The ids of the symbols to add. */
     @JsonProperty("symbolsToAdd")
+    @NotNull
     private List<Long> symbolsToAddAsIds;
 
     /** The ids of the symbols to add. */

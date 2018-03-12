@@ -17,10 +17,9 @@
 package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
-import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,10 +37,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ClickActionTest {
+public class ClickActionTest extends WebActionTest {
 
     private ClickAction c;
 
@@ -49,7 +47,10 @@ public class ClickActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         Symbol symbol = new Symbol();
+        symbol.setProject(new Project(1L));
 
         node = new WebElementLocator();
         node.setSelector("#node");
@@ -74,9 +75,9 @@ public class ClickActionTest {
     @Test
     public void testJSONWithLongNode() throws IOException {
         c.getNode().setSelector("#superlong > css trace .with-absolute ~no_meaning .at-all > .1234567890 > .1234567890 "
-                          + "> .1234567890"
-                          + " > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890"
-                          + " > .1234567890 > .1234567890 > .1234567890");
+                + "> .1234567890"
+                + " > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890 > .1234567890"
+                + " > .1234567890 > .1234567890 > .1234567890");
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(c);
         ClickAction c2 = mapper.readValue(json, ClickAction.class);
@@ -99,19 +100,17 @@ public class ClickActionTest {
 
     @Test
     public void shouldReturnOKIfNodeCouldBeClicked() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
         WebElement element = mock(WebElement.class);
-        given(connector.getElement(node)).willReturn(element);
+        given(webSiteConnector.getElement(node)).willReturn(element);
 
-        assertTrue(c.execute(connector).isSuccess());
+        assertTrue(c.executeAction(connectors).isSuccess());
         verify(element).click();
     }
 
     @Test
-    public void shouldReturnFaliedIfNodeCouldNotBeClicked() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-        when(connector.getElement(node)).thenThrow(new NoSuchElementException(""));
+    public void shouldReturnFailedIfNodeCouldNotBeClicked() {
+        given(webSiteConnector.getElement(node)).willThrow(new NoSuchElementException(""));
 
-        assertFalse(c.execute(connector).isSuccess());
+        assertFalse(c.executeAction(connectors).isSuccess());
     }
 }

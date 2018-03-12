@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
@@ -42,6 +43,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -63,12 +65,15 @@ public class ProjectResourceTest extends JerseyTest {
         MockitoAnnotations.initMocks(this);
 
         ALEXTestApplication testApplication = new ALEXTestApplication(ProjectResource.class);
+
         admin = testApplication.getAdmin();
         adminToken = testApplication.getAdminToken();
+
         testApplication.register(new AbstractBinder() {
             @Override
             protected void configure() {
                 bind(projectDAO).to(ProjectDAO.class);
+                bind(mock(WebhookService.class)).to(WebhookService.class);
             }
         });
 
@@ -99,7 +104,6 @@ public class ProjectResourceTest extends JerseyTest {
         Response response = target("/projects").request().header("Authorization", adminToken).post(Entity.json(json));
 
         assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-        assertEquals("http://localhost:9998/projects/1", response.getHeaderString("Location"));
         verify(projectDAO).create(project);
     }
 
@@ -147,7 +151,7 @@ public class ProjectResourceTest extends JerseyTest {
         given(projectDAO.getAll(admin, ProjectDAO.EmbeddableFields.SYMBOLS))
                 .willReturn(projects);
 
-        Response response = target("/projects").queryParam("embed", "symbols,test_results").request()
+        Response response = target("/projects").queryParam("embed", "symbols").request()
                                 .header("Authorization", adminToken).get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
@@ -169,7 +173,7 @@ public class ProjectResourceTest extends JerseyTest {
                                  PROJECT_TEST_ID,
                                  ProjectDAO.EmbeddableFields.SYMBOLS))
                 .willReturn(project);
-        Response response = target("/projects/" + PROJECT_TEST_ID).queryParam("embed", "symbols,test_results")
+        Response response = target("/projects/" + PROJECT_TEST_ID).queryParam("embed", "symbols")
                                 .request().header("Authorization", adminToken).get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 

@@ -85,7 +85,7 @@ public class SetVariableActionTest {
         ConnectorManager connector = mock(ConnectorManager.class);
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
 
-        ExecuteResult result = setAction.execute(connector);
+        ExecuteResult result = setAction.executeAction(connector);
 
         assertTrue(result.isSuccess());
         verify(variables).set(TEST_NAME, TEST_VALUE);

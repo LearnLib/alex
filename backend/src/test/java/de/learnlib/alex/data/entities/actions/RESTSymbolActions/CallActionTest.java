@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
-import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,21 +39,20 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CallActionTest {
+public class CallActionTest extends RestActionTest {
 
-    public static final String TEST_BASE_URL = "http://example.com/api";
-    public static final String TEST_API_PATH = "/test";
+    private static final String TEST_BASE_URL = "http://example.com/api";
+    private static final String TEST_API_PATH = "/test";
 
     @Mock
     private Symbol symbol;
-
-    @Mock
-    private WebServiceConnector connector;
 
     private CallAction c;
 
     @Before
     public void setUp() {
+        super.setUp();
+
         c = new CallAction();
         c.setSymbol(symbol);
         c.setMethod(CallAction.Method.GET);
@@ -96,40 +94,40 @@ public class CallActionTest {
 
     @Test
     public void shouldDoAValidGetCall() {
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
-        verify(connector).get(eq(TEST_API_PATH), any(), anySet());
+        verify(webServiceConnector).get(eq(TEST_API_PATH), any(), anySet());
     }
 
     @Test
     public void shouldDoAValidPostCall() {
         c.setMethod(CallAction.Method.POST);
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
-        verify(connector).post(eq(TEST_API_PATH), any(), anySet(), eq("{}"));
+        verify(webServiceConnector).post(eq(TEST_API_PATH), any(), anySet(), eq("{}"));
     }
 
     @Test
     public void shouldDoAValidPutCall() {
         c.setMethod(CallAction.Method.PUT);
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
-        verify(connector).put(eq(TEST_API_PATH), any(), anySet(), eq("{}"));
+        verify(webServiceConnector).put(eq(TEST_API_PATH), any(), anySet(), eq("{}"));
     }
 
     @Test
     public void shouldDoAValidDeleteCall() {
         c.setMethod(CallAction.Method.DELETE);
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
-        verify(connector).delete(eq(TEST_API_PATH), any(), anySet());
+        verify(webServiceConnector).delete(eq(TEST_API_PATH), any(), anySet());
     }
 
 }

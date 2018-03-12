@@ -18,36 +18,35 @@ package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
-import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ExpectedConditions.class})
-public class WaitForNodeActionTest {
+@RunWith(MockitoJUnitRunner.class)
+public class WaitForNodeActionTest extends WebActionTest {
 
     private static final int MAX_WAIT_TIME = 5;
 
@@ -57,7 +56,10 @@ public class WaitForNodeActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         Symbol symbol = new Symbol();
+        symbol.setProject(new Project(1L));
 
         node = new WebElementLocator();
         node.setSelector("#node");
@@ -97,7 +99,6 @@ public class WaitForNodeActionTest {
 
     @Test
     public void shouldWaitUntilTheElementIsVisible() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
         WebElement element = mock(WebElement.class);
@@ -106,54 +107,42 @@ public class WaitForNodeActionTest {
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.VISIBLE);
         action.setMaxWaitTime(MAX_WAIT_TIME);
 
-        ExecuteResult result = action.execute(webSiteConnector);
+        ExecuteResult result = action.executeAction(connectors);
         assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldWaitUntilTheElementIsInvisible() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
-        WebElement element = mock(WebElement.class);
-        given(driver.findElement(By.cssSelector("#node"))).willReturn(element);
-        given(element.isDisplayed()).willReturn(false);
+//        WebElement element = mock(WebElement.class);
+//        given(driver.findElement(By.cssSelector("#node"))).willReturn(element);
+//        given(element.isDisplayed()).willReturn(false);
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.INVISIBLE);
         action.setMaxWaitTime(MAX_WAIT_TIME);
 
-        ExecuteResult result = action.execute(webSiteConnector);
+        ExecuteResult result = action.executeAction(connectors);
         assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldWaitUntilTheElementIsAdded() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
         WebElement element = mock(WebElement.class);
-        given(driver.findElement(By.cssSelector("#node"))).willReturn(element);
-        given(element.isEnabled()).willReturn(true);
-
-        PowerMockito.mockStatic(ExpectedConditions.class);
-        PowerMockito.when(ExpectedConditions.presenceOfElementLocated(By.cssSelector("#node")))
-                .thenReturn(new ExpectedCondition<WebElement>() {
-                    @Nullable
-                    @Override
-                    public WebElement apply(@Nullable WebDriver webDriver) {
-                        return element;
-                    }
-                });
+        given(driver.findElements(By.cssSelector("#node"))).willReturn(Collections.singletonList(element));
+//        given(element.isEnabled()).willReturn(true);
+//        given(element.isDisplayed()).willReturn(true);
 
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.ADDED);
         action.setMaxWaitTime(MAX_WAIT_TIME);
 
-        ExecuteResult result = action.execute(webSiteConnector);
+        ExecuteResult result = action.executeAction(connectors);
         assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldWaitUntilTheElementIsRemoved() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
         WebElement element = mock(WebElement.class);
@@ -162,13 +151,12 @@ public class WaitForNodeActionTest {
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.REMOVED);
         action.setMaxWaitTime(MAX_WAIT_TIME);
 
-        ExecuteResult result = action.execute(webSiteConnector);
+        ExecuteResult result = action.executeAction(connectors);
         assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldFailOnTimeout() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
         WebElement element = mock(WebElement.class);
@@ -176,16 +164,15 @@ public class WaitForNodeActionTest {
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.VISIBLE);
         action.setMaxWaitTime(0); // don't really wait to keep the test speed high
 
-        ExecuteResult result = action.execute(webSiteConnector);
+        ExecuteResult result = action.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 
     @Test
     public void shouldFailIfMaxTimeToWaitIsNegative() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         action.setMaxWaitTime(-1);
 
-        ExecuteResult result = action.execute(webSiteConnector);
+        ExecuteResult result = action.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 

@@ -18,6 +18,8 @@ package de.learnlib.alex.data.entities;
 
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckTextWebAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
+import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +57,8 @@ public class SymbolTest {
         webSiteConnector = mock(WebSiteConnector.class);
 
         given(connectorManager.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
+        given(connectorManager.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
+        given(connectorManager.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
     }
 
     @Test

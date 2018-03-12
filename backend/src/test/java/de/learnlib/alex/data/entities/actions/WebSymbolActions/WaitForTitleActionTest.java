@@ -18,7 +18,8 @@ package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
+import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +37,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WaitForTitleActionTest {
+public class WaitForTitleActionTest extends WebActionTest {
 
     private static final int ONE_MINUTE = 60;
 
@@ -44,7 +45,13 @@ public class WaitForTitleActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
+        Symbol symbol = new Symbol();
+        symbol.setProject(new Project(1L));
+
         action = new WaitForTitleAction();
+        action.setSymbol(symbol);
         action.setValue("Title");
         action.setWaitCriterion(WaitForTitleAction.WaitCriterion.CONTAINS);
         action.setMaxWaitTime(ONE_MINUTE);
@@ -77,48 +84,44 @@ public class WaitForTitleActionTest {
 
     @Test
     public void shouldWaitUntilTheTitleIsTheExpectedValue() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
         given(driver.getTitle()).willReturn(action.getValue());
         action.setWaitCriterion(WaitForTitleAction.WaitCriterion.IS);
         action.setMaxWaitTime(ONE_MINUTE);
 
-        ExecuteResult result = action.execute(webSiteConnector);
+        ExecuteResult result = action.executeAction(connectors);
         assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldWaitUntilTheTitleContainsTheExpectedValue() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
         given(driver.getTitle()).willReturn(action.getValue() + " - extra stuff that should not matter!");
         action.setWaitCriterion(WaitForTitleAction.WaitCriterion.CONTAINS);
         action.setMaxWaitTime(ONE_MINUTE);
 
-        ExecuteResult result = action.execute(webSiteConnector);
+        ExecuteResult result = action.executeAction(connectors);
         assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldFailOnTimeout() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
         action.setWaitCriterion(WaitForTitleAction.WaitCriterion.IS);
         action.setMaxWaitTime(0); // don't really wait to keep the test speed high
 
-        ExecuteResult result = action.execute(webSiteConnector);
+        ExecuteResult result = action.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 
     @Test
     public void shouldFailIfMaxTimeToWaitIsNegative() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         action.setMaxWaitTime(-1);
 
-        ExecuteResult result = action.execute(webSiteConnector);
+        ExecuteResult result = action.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 

@@ -36,10 +36,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CheckAttributeValueActionTest {
-
-    @Mock
-    private WebServiceConnector connector;
+public class CheckAttributeValueActionTest extends RestActionTest {
 
     @Mock
     private Symbol symbol;
@@ -48,6 +45,8 @@ public class CheckAttributeValueActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         c = new CheckAttributeValueAction();
         c.setSymbol(symbol);
         c.setAttribute("awesome_field");
@@ -89,9 +88,9 @@ public class CheckAttributeValueActionTest {
         action.setValue("0");
         action.setRegexp(false);
 
-        given(connector.getBody()).willReturn("[{\"id\": 0}]");
+        given(webServiceConnector.getBody()).willReturn("[{\"id\": 0}]");
 
-        ExecuteResult result = action.execute(connector);
+        ExecuteResult result = action.executeAction(connectors);
         assertTrue(result.isSuccess());
     }
 
@@ -103,51 +102,51 @@ public class CheckAttributeValueActionTest {
         action.setValue("0");
         action.setRegexp(false);
 
-        given(connector.getBody()).willReturn("[{\"id\": 6}]");
+        given(webServiceConnector.getBody()).willReturn("[{\"id\": 6}]");
 
-        ExecuteResult result = action.execute(connector);
+        ExecuteResult result = action.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 
     @Test
     public void shouldReturnOkIfAttributeWithRightValueExists() {
-        given(connector.getBody()).willReturn("{\"awesome_field\": \"Hello World!\"}");
+        given(webServiceConnector.getBody()).willReturn("{\"awesome_field\": \"Hello World!\"}");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
         assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldReturnOkIfAttributeWithRightValueExistsWithComplexStructure() {
-        given(connector.getBody()).willReturn("{\"awesome_field\": {\"foo\": \"Hello World!\","
+        given(webServiceConnector.getBody()).willReturn("{\"awesome_field\": {\"foo\": \"Hello World!\","
                 + "\"other\": [\"Lorem Ipsum.\", \"Fooooobar.\"]}}");
         c.setAttribute("awesome_field.foo");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
         assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldReturnFailedIfAttributeWithWrongValueExists() {
-        given(connector.getBody()).willReturn("{\"awesome_field\": \"Lorem Ipsum!\"}");
+        given(webServiceConnector.getBody()).willReturn("{\"awesome_field\": \"Lorem Ipsum!\"}");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 
     @Test
     public void shouldReturnFailedIfAttributeDoesNotExist() {
-        given(connector.getBody()).willReturn("{\"not_so_awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
+        given(webServiceConnector.getBody()).willReturn("{\"not_so_awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 
     @Test
     public void shouldReturnFailedIfJSONIsEmpty() {
-        given(connector.getBody()).willReturn("");
+        given(webServiceConnector.getBody()).willReturn("");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 
@@ -155,18 +154,18 @@ public class CheckAttributeValueActionTest {
     public void shouldReturnOKIfTextWasFoundWithRegexp() {
         c.setValue("F[oO]+ B[a]+r");
         c.setRegexp(true);
-        given(connector.getBody()).willReturn("{\"awesome_field\": \"FoO Baaaaar\"}");
+        given(webServiceConnector.getBody()).willReturn("{\"awesome_field\": \"FoO Baaaaar\"}");
 
-        assertTrue(c.execute(connector).isSuccess());
+        assertTrue(c.executeAction(connectors).isSuccess());
     }
 
     @Test
     public void shouldReturnFailedIfTextWasNotFoundWithRegexp() {
         c.setValue("F[oO]+ B[a]+r");
         c.setRegexp(true);
-        given(connector.getBody()).willReturn("{\"awesome_field\": \"F Bar\"}");
+        given(webServiceConnector.getBody()).willReturn("{\"awesome_field\": \"F Bar\"}");
 
-        assertFalse(c.execute(connector).isSuccess());
+        assertFalse(c.executeAction(connectors).isSuccess());
     }
 
 }

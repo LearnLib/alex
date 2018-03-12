@@ -36,10 +36,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CheckAttributeExistsActionTest {
-
-    @Mock
-    private WebServiceConnector connector;
+public class CheckAttributeExistsActionTest extends RestActionTest {
 
     @Mock
     private Symbol symbol;
@@ -48,6 +45,8 @@ public class CheckAttributeExistsActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         c = new CheckAttributeExistsAction();
         c.setSymbol(symbol);
         c.setAttribute("awesome_field");
@@ -77,29 +76,29 @@ public class CheckAttributeExistsActionTest {
 
     @Test
     public void shouldReturnOkIfAttributeExists() {
-        given(connector.getBody()).willReturn("{\"awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
+        given(webServiceConnector.getBody()).willReturn("{\"awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldReturnOkIfAttributeExistsWithComplexStructure() {
-        given(connector.getBody()).willReturn("{\"awesome_field\": {\"foo\": \"Fooooobar.\","
+        given(webServiceConnector.getBody()).willReturn("{\"awesome_field\": {\"foo\": \"Fooooobar.\","
                                                                  + "\"other\": [\"Lorem Ipsum.\", \"Hello World!\"]}}");
         c.setAttribute("awesome_field.foo");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldReturnFailedIfAttributeDoesNotExists() {
-        given(connector.getBody()).willReturn("{\"not_so_awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
+        given(webServiceConnector.getBody()).willReturn("{\"not_so_awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
 
         assertFalse(result.isSuccess());
     }

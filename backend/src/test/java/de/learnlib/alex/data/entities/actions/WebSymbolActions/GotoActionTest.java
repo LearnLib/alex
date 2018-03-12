@@ -39,7 +39,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GotoActionTest {
+public class GotoActionTest extends WebActionTest {
 
     private static final String FAKE_URL = "http://example.com";
 
@@ -47,6 +47,8 @@ public class GotoActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         Symbol symbol = new Symbol();
 
         g = new GotoAction();
@@ -77,18 +79,15 @@ public class GotoActionTest {
 
     @Test
     public void shouldReturnOKIfTheUrlCouldBeFound() throws Exception {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-
-        assertTrue(g.execute(connector).isSuccess());
-        verify(connector).get(eq(FAKE_URL), any(Credentials.class));
+        assertTrue(g.executeAction(connectors).isSuccess());
+        verify(webSiteConnector).get(eq(FAKE_URL), any(Credentials.class));
     }
 
     @Test
     public void shouldReturnFailedIfTheUrlCouldNotBeFound() throws Exception {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-        willThrow(Exception.class).given(connector).get(eq(FAKE_URL), any(Credentials.class));
+        willThrow(Exception.class).given(webSiteConnector).get(eq(FAKE_URL), any(Credentials.class));
 
-        assertFalse(g.execute(connector).isSuccess());
+        assertFalse(g.executeAction(connectors).isSuccess());
     }
 
 }

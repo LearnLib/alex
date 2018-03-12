@@ -29,8 +29,12 @@ import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.entities.actions.WaitAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
+import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +48,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class WebSymbolTest {
 
     private static final Long ONE_SECOND = 1000L;
@@ -104,18 +109,15 @@ public class WebSymbolTest {
 
     @Test
     public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException {
-        String expectedJson = "{\"actions\":["
-                    + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
-                            + "\"errorOutput\":null,\"node\":null,\"doubleClick\":false},"
-                    + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
-                        + "\"errorOutput\":null,\"value\":\"F[oO0]+\",\"regexp\":true},"
-                    + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
-                        + "\"errorOutput\":null,\"duration\":" + ONE_SECOND + "}"
-                + "],\"group\":2,\"id\":null,\"name\":\"WebSymbol\",\"project\":null,\"successOutput\":null}";
+        String expectedJson = "{\"actions\":[" +
+                "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"node\":null,\"doubleClick\":false}," +
+                "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"value\":\"F[oO0]+\",\"regexp\":true,\"node\":{\"selector\":\"document\",\"type\":\"CSS\"}}," +
+                "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"duration\":1000}" +
+                "],\"group\":2,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":null,\"successOutput\":null}";
         symbol.setProject(null);
 
         ObjectMapper mapper = new ObjectMapper();
-        mapper.addMixInAnnotations(Object.class, PropertyFilterMixIn.class);
+        mapper.addMixIn(Object.class, PropertyFilterMixIn.class);
 
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("hidden");
         FilterProvider filters = new SimpleFilterProvider().addFilter("filter properties by name", filter);
@@ -127,15 +129,11 @@ public class WebSymbolTest {
 
     @Test
     public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException {
-        String expectedJson = "{\"actions\":["
-                                    + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,"
-                                        + "\"ignoreFailure\":false,\"errorOutput\":null,\"node\":null,\"doubleClick\":false},"
-                                    + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,"
-                                        + "\"ignoreFailure\":false,\"errorOutput\":null,\"value\":\"F[oO0]+\",\"regexp\":true},"
-                                    + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,"
-                                        + "\"errorOutput\":null,\"duration\":" + ONE_SECOND + "}"
-                                + "],\"group\":2,\"hidden\":false,\"id\":null,\"name\":\"WebSymbol\",\"project\":1,"
-                                + "\"successOutput\":null}";
+        String expectedJson = "{\"actions\":[" +
+                "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"node\":null,\"doubleClick\":false}," +
+                "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"value\":\"F[oO0]+\",\"regexp\":true,\"node\":{\"selector\":\"document\",\"type\":\"CSS\"}}," +
+                "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"duration\":" + ONE_SECOND + "}]," +
+                "\"group\":2,\"hidden\":false,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":1,\"successOutput\":null}";
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(symbol);
 
@@ -174,6 +172,9 @@ public class WebSymbolTest {
         WebSymbolAction action2 = mock(WebSymbolAction.class);
         given(action2.executeAction(connector)).willReturn(new ExecuteResult(true));
 
+        given(connector.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
+        given(connector.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
+
         symbol = new Symbol();
         symbol.addAction(action1);
         symbol.addAction(action2);
@@ -182,12 +183,14 @@ public class WebSymbolTest {
     }
 
     @Test
-    public void shouldReturnFailedIfOneActionsRunFailed() throws Exception {
+    public void shouldReturnFailedIfOneActionFails() throws Exception {
         ConnectorManager connector = mock(ConnectorManager.class);
         WebSymbolAction action1 = mock(WebSymbolAction.class);
         given(action1.executeAction(connector)).willReturn(new ExecuteResult(false));
         WebSymbolAction action2 = mock(WebSymbolAction.class);
-        given(action2.executeAction(connector)).willReturn(new ExecuteResult(true));
+
+        given(connector.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
+        given(connector.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
 
         symbol = new Symbol();
         symbol.addAction(action1);

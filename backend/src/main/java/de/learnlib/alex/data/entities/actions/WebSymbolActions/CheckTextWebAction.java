@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -140,7 +140,7 @@ public class CheckTextWebAction extends WebSymbolAction {
         try {
             String source;
             if (node.getSelector().equals("document")) {
-                source = driver.getPageSource();
+                source = connector.getPageSource();
             } else {
                 source = driver.findElement(node.getBy()).getAttribute("innerHTML");
             }

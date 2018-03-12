@@ -19,7 +19,6 @@ package de.learnlib.alex.data.entities.actions.RESTSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,10 +39,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CheckHeaderFieldActionTest {
-
-    @Mock
-    private WebServiceConnector connector;
+public class CheckHeaderFieldActionTest extends RestActionTest {
 
     @Mock
     private Symbol symbol;
@@ -52,6 +48,8 @@ public class CheckHeaderFieldActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         c = new CheckHeaderFieldAction();
         c.setSymbol(symbol);
         c.setKey("Accept");
@@ -88,9 +86,9 @@ public class CheckHeaderFieldActionTest {
     @Test
     public void shouldReturnOkIfHeaderFieldWithTheValueExists() {
         MultivaluedHashMap<String, Object> headers = createHeaders("text/html", "application/xhtml+xml");
-        given(connector.getHeaders()).willReturn(headers);
+        given(webServiceConnector.getHeaders()).willReturn(headers);
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
     }
@@ -98,9 +96,9 @@ public class CheckHeaderFieldActionTest {
     @Test
     public void shouldReturnFailedIfHeaderFieldWithoutValue() {
         MultivaluedHashMap<String, Object> headers = createHeaders("application/xhtml+xml");
-        given(connector.getHeaders()).willReturn(headers);
+        given(webServiceConnector.getHeaders()).willReturn(headers);
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
 
         assertFalse(result.isSuccess());
     }
@@ -108,9 +106,9 @@ public class CheckHeaderFieldActionTest {
     @Test
     public void shouldReturnFailedIfHeaderFieldDoesNotExists() {
         MultivaluedHashMap<String, Object> headers = mock(MultivaluedHashMap.class);
-        given(connector.getHeaders()).willReturn(headers);
-        ExecuteResult result = c.execute(connector);
+        given(webServiceConnector.getHeaders()).willReturn(headers);
 
+        ExecuteResult result = c.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 
@@ -119,9 +117,9 @@ public class CheckHeaderFieldActionTest {
         c.setValue("F[oO]+ B[a]+r");
         c.setRegexp(true);
         MultivaluedHashMap<String, Object> headers = createHeaders("text/html", "FoO Baaaaar", "application/xhtml+xml");
-        given(connector.getHeaders()).willReturn(headers);
+        given(webServiceConnector.getHeaders()).willReturn(headers);
 
-        assertTrue(c.execute(connector).isSuccess());
+        assertTrue(c.executeAction(connectors).isSuccess());
     }
 
     @Test
@@ -129,9 +127,9 @@ public class CheckHeaderFieldActionTest {
         c.setValue("F[oO]+ B[a]+r");
         c.setRegexp(true);
         MultivaluedHashMap<String, Object> headers = createHeaders("text/html", "F BAr", "application/xhtml+xml");
-        given(connector.getHeaders()).willReturn(headers);
+        given(webServiceConnector.getHeaders()).willReturn(headers);
 
-        assertFalse(c.execute(connector).isSuccess());
+        assertFalse(c.executeAction(connectors).isSuccess());
     }
 
     private MultivaluedHashMap<String, Object> createHeaders(String... data) {

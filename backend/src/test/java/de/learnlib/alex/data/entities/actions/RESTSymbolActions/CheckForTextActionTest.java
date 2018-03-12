@@ -36,10 +36,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CheckForTextActionTest {
-
-    @Mock
-    private WebServiceConnector connector;
+public class CheckForTextActionTest extends RestActionTest {
 
     @Mock
     private Symbol symbol;
@@ -48,6 +45,8 @@ public class CheckForTextActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         c = new CheckTextRestAction();
         c.setSymbol(symbol);
         c.setValue("Hello World");
@@ -79,18 +78,18 @@ public class CheckForTextActionTest {
 
     @Test
     public void shouldReturnOkIfBodyContainsTheText() {
-        given(connector.getBody()).willReturn("{\"awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
+        given(webServiceConnector.getBody()).willReturn("{\"awesome_field\": \"Lorem Ipsum. Hello World! Fooooobar\"}");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
     }
 
     @Test
     public void shouldReturnFailedIfBodyContainsNotTheText() {
-        given(connector.getBody()).willReturn("{\"awesome_field\": \"Lorem Ipsum. Fooooobar\"}");
+        given(webServiceConnector.getBody()).willReturn("{\"awesome_field\": \"Lorem Ipsum. Fooooobar\"}");
 
-        ExecuteResult result = c.execute(connector);
+        ExecuteResult result = c.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 
@@ -98,18 +97,18 @@ public class CheckForTextActionTest {
     public void shouldReturnOKIfTextWasFoundWithRegexp() {
         c.setValue("F[oO]+ B[a]+r");
         c.setRegexp(true);
-        given(connector.getBody()).willReturn("FoO Baaaaar");
+        given(webServiceConnector.getBody()).willReturn("FoO Baaaaar");
 
-        assertTrue(c.execute(connector).isSuccess());
+        assertTrue(c.executeAction(connectors).isSuccess());
     }
 
     @Test
     public void shouldReturnFailedIfTextWasNotFoundWithRegexp() {
         c.setValue("F[oO]+ B[a]+r");
         c.setRegexp(true);
-        given(connector.getBody()).willReturn("F BAr");
+        given(webServiceConnector.getBody()).willReturn("F BAr");
 
-        assertFalse(c.execute(connector).isSuccess());
+        assertFalse(c.executeAction(connectors).isSuccess());
     }
 
 }

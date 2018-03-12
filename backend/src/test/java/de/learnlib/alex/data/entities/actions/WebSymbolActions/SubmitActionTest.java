@@ -40,7 +40,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SubmitActionTest {
+public class SubmitActionTest extends WebActionTest {
 
     private SubmitAction s;
 
@@ -48,6 +48,8 @@ public class SubmitActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         Symbol symbol = new Symbol();
 
         node = new WebElementLocator();
@@ -82,19 +84,17 @@ public class SubmitActionTest {
 
     @Test
     public void shouldReturnOKIfNodeCouldBeSubmited() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
         WebElement element = mock(WebElement.class);
-        given(connector.getElement(node)).willReturn(element);
+        given(webSiteConnector.getElement(node)).willReturn(element);
 
-        assertTrue(s.execute(connector).isSuccess());
+        assertTrue(s.executeAction(connectors).isSuccess());
         verify(element).submit();
     }
 
     @Test
     public void shouldReturnFaliedIfNodeCouldNotBeSubmited() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-        when(connector.getElement(node)).thenThrow(new NoSuchElementException(""));
+        when(webSiteConnector.getElement(node)).thenThrow(new NoSuchElementException(""));
 
-        assertFalse(s.execute(connector).isSuccess());
+        assertFalse(s.executeAction(connectors).isSuccess());
     }
 }

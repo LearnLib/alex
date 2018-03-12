@@ -19,7 +19,6 @@ package de.learnlib.alex.data.entities.actions.WebSymbolActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
-import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +39,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ClearActionTest {
+public class ClearActionTest extends WebActionTest {
 
     private ClearAction c;
 
@@ -48,6 +47,8 @@ public class ClearActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         Symbol symbol = new Symbol();
 
         node = new WebElementLocator();
@@ -82,20 +83,18 @@ public class ClearActionTest {
 
     @Test
     public void shouldReturnOKIfNodeCouldBeCleared() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
         WebElement element = mock(WebElement.class);
-        given(connector.getElement(node)).willReturn(element);
+        given(webSiteConnector.getElement(node)).willReturn(element);
 
-        assertTrue(c.execute(connector).isSuccess());
+        assertTrue(c.executeAction(connectors).isSuccess());
         verify(element).clear();
     }
 
     @Test
     public void shouldReturnFailedIfNodeCouldNotBeCleared() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
-        when(connector.getElement(node)).thenThrow(new NoSuchElementException(""));
+        when(webSiteConnector.getElement(node)).thenThrow(new NoSuchElementException(""));
 
-        assertFalse(c.execute(connector).isSuccess());
+        assertFalse(c.executeAction(connectors).isSuccess());
     }
 
 }

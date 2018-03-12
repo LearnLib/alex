@@ -70,7 +70,7 @@ import java.util.List;
  * @resourcePath learner
  * @resourceDescription Operations about the learning
  */
-@Path("/learner/")
+@Path("/learner")
 @RolesAllowed({"REGISTERED"})
 public class LearnerResource {
 
@@ -194,6 +194,7 @@ public class LearnerResource {
         LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
 
         try {
+            configuration.checkConfiguration();
             Project project = projectDAO.getByID(user.getId(), projectId); // check if project exists
             LearnerResult result = learnerResultDAO.get(user, projectId, testNo, true);
 
@@ -208,7 +209,7 @@ public class LearnerResource {
                         + "with the latest learn result!");
             }
 
-            if (configuration.getStepNo() < 0 || configuration.getStepNo() > result.getSteps().size()) {
+            if (configuration.getStepNo() > result.getSteps().size()) {
                 throw new IllegalArgumentException("The step number is not valid.");
             }
 
@@ -218,9 +219,11 @@ public class LearnerResource {
                         .filter(s -> s.getStepNo() > configuration.getStepNo())
                         .forEach(learnerResultStepRepository::delete);
                 learnerResultStepRepository.flush();
+
                 result = learnerResultDAO.get(user, projectId, testNo, true);
                 result.setHypothesis(result.getSteps().get(configuration.getStepNo() - 1).getHypothesis());
                 result.getStatistics().setEqsUsed(result.getSteps().size());
+
 
                 // since we allow alphabets to grow, set the alphabet to the one of the latest hypothesis
                 LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
@@ -242,8 +245,13 @@ public class LearnerResource {
 
             configuration.setUserId(user.getId());
 
+            System.out.println(project);
+
             learner.resume(user, project, result, configuration);
+
             LearnerStatus status = learner.getStatus(projectId);
+
+            System.out.println(status);
 
             LOGGER.traceExit(status);
 

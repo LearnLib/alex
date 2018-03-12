@@ -44,7 +44,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SelectActionTest {
+public class SelectActionTest extends WebActionTest {
 
     private static final long PROJECT_ID = 1;
 
@@ -54,6 +54,8 @@ public class SelectActionTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+
         Project project = new Project();
         project.setId(PROJECT_ID);
 
@@ -98,7 +100,6 @@ public class SelectActionTest {
 
     @Test
     public void shouldReturnOkIfValueWasSelectedByValue() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebElement selectElement = mock(WebElement.class);
         given(webSiteConnector.getElement(node)).willReturn(selectElement);
         given(selectElement.getTagName()).willReturn("select");
@@ -109,7 +110,7 @@ public class SelectActionTest {
                 .willReturn(itemElements);
         s.setSelectBy(SelectAction.SelectByType.VALUE);
 
-        ExecuteResult result = s.execute(webSiteConnector);
+        ExecuteResult result = s.executeAction(connectors);
 
         assertTrue(result.isSuccess());
         verify(itemElement).click();
@@ -117,7 +118,6 @@ public class SelectActionTest {
 
     @Test
     public void shouldReturnOkIfValueWasSelectedByText() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebElement selectElement = mock(WebElement.class);
         given(webSiteConnector.getElement(node)).willReturn(selectElement);
         given(selectElement.getTagName()).willReturn("select");
@@ -128,7 +128,7 @@ public class SelectActionTest {
                 .willReturn(itemElements);
         s.setSelectBy(SelectAction.SelectByType.TEXT);
 
-        ExecuteResult result = s.execute(webSiteConnector);
+        ExecuteResult result = s.executeAction(connectors);
 
         assertTrue(result.isSuccess());
         verify(itemElement).click();
@@ -136,7 +136,6 @@ public class SelectActionTest {
 
     @Test
     public void shouldReturnOkIfValueWasSelectedByIndex() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebElement selectElement = mock(WebElement.class);
         given(webSiteConnector.getElement(node)).willReturn(selectElement);
         given(selectElement.getTagName()).willReturn("select");
@@ -148,7 +147,7 @@ public class SelectActionTest {
         s.setValue("0");
         s.setSelectBy(SelectAction.SelectByType.INDEX);
 
-        ExecuteResult result = s.execute(webSiteConnector);
+        ExecuteResult result = s.executeAction(connectors);
 
         assertTrue(result.isSuccess());
         verify(itemElement).click();
@@ -156,24 +155,22 @@ public class SelectActionTest {
 
     @Test
     public void shouldReturnFailedIfValueIsNotAnIndexNumber() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         WebElement selectElement = mock(WebElement.class);
         given(webSiteConnector.getElement(node)).willReturn(selectElement);
         given(selectElement.getTagName()).willReturn("select");
         s.setValue("definite not a number");
         s.setSelectBy(SelectAction.SelectByType.INDEX);
 
-        ExecuteResult result = s.execute(webSiteConnector);
+        ExecuteResult result = s.executeAction(connectors);
 
         assertFalse(result.isSuccess());
     }
 
     @Test
     public void shouldReturnFailedIfTheNodeCouldNotBeFound() {
-        WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         given(webSiteConnector.getElement(node)).willThrow(NoSuchElementException.class);
 
-        ExecuteResult result = s.execute(webSiteConnector);
+        ExecuteResult result = s.executeAction(connectors);
 
         assertFalse(result.isSuccess());
     }
