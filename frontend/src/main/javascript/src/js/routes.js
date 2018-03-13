@@ -21,122 +21,240 @@
 export function config($stateProvider, $urlRouterProvider) {
 
     // redirect to the start page when no other route fits
-    $urlRouterProvider.otherwise('/home');
+    $urlRouterProvider.otherwise('');
 
     $stateProvider
-        .state('home', {
-            url: '/home',
-            template: '<home-view></home-view>',
+        .state('root', {
+            url: '',
+            template: '<root-view></root-view>',
             data: {title: 'Automata Learning EXperience'}
         })
-        .state('usersSettings', {
-            url: '/users/settings',
-            template: '<users-settings-view></users-settings-view>',
-            data: {requiresProject: false, roles: ['REGISTERED', 'ADMIN'], title: 'Settings'}
+
+        // user profile
+        .state('profile', {
+            parent: 'root',
+            url: '/profile',
+            views: {
+                '@': {template: '<profile-view></profile-view>'}
+            },
+            data: {requiresProject: false, roles: ['REGISTERED', 'ADMIN'], title: 'Profile'}
         })
-        .state('adminUsers', {
-            url: '/admin/users',
-            template: '<admin-users-view></admin-users-view>',
-            data: {requiresProject: false, roles: ['ADMIN'], title: 'Admin > Users'}
+
+        // admin related routes
+        .state('admin', {
+            parent: 'root',
+            url: '/admin',
+            abstract: true,
+            redirectTo: 'adminSettings',
+            data: {requiresProject: false, roles: ['ADMIN']}
         })
         .state('adminSettings', {
-            url: '/admin/settings',
-            template: '<admin-settings-view></admin-settings-view>',
-            data: {requiresProject: false, roles: ['ADMIN'], title: 'Application Settings'}
+            parent: 'admin',
+            url: '/settings',
+            views: {
+                '@': {template: '<admin-settings-view></admin-settings-view>'}
+            },
+            data: {title: 'Application Settings'}
         })
+        .state('adminUsers', {
+            parent: 'admin',
+            url: '/users',
+            views: {
+                '@': {template: '<admin-users-view></admin-users-view>'}
+            },
+            data: {title: 'User Management'}
+        })
+
+        // project related routes
         .state('projects', {
+            parent: 'root',
             url: '/projects',
-            template: '<projects-view></projects-view>',
-            data: {roles: ['REGISTERED', 'ADMIN'], title: 'Projects'}
+            views: {
+                '@': {template: '<projects-view></projects-view>'}
+            },
+            data: {requiresProject: false, roles: ['REGISTERED', 'ADMIN'], title: 'Projects'},
         })
-        .state('projectsDashboard', {
-            url: '/projects/dashboard',
-            template: '<projects-dashboard-view></projects-dashboard-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Dashboard'}
+        .state('project', {
+            parent: 'projects',
+            url: '/{projectId:int}',
+            views: {
+                '@': {template: '<project-view></project-view>'}
+            },
+            data: {requiresProject: true, title: 'Project'},
+
+            // @ngInject
+            onEnter: function ($state, SessionService, $stateParams) {
+                const project = SessionService.getProject();
+                const projectId = $stateParams.projectId;
+
+                // check if the current project equals the one specified in the URL
+                if (project.id !== projectId) {
+                    $state.go('projects');
+                }
+            }
         })
-        .state('counters', {
-            url: '/counters',
-            template: '<counters-view></counters-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Counters'}
-        })
+
+        // symbol related routes
         .state('symbols', {
+            parent: 'project',
             url: '/symbols',
-            template: '<symbols-view></symbols-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols'}
-        })
-        .state('symbolsTrash', {
-            url: '/symbols/trash',
-            template: '<symbols-trash-view></symbols-trash-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Trash'}
+            views: {
+                '@': {template: '<symbols-view></symbols-view>'}
+            },
+            data: {title: 'Symbols'}
         })
         .state('symbol', {
-            url: '/symbols/{symbolId:int}',
-            template: '<symbol-view></symbol-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Symbols > Symbol'}
+            parent: 'symbols',
+            url: '/{symbolId:int}',
+            views: {
+                '@': {template: '<symbol-view></symbol-view>'}
+            },
+            data: {title: 'Symbols > Symbol'}
         })
-        .state('learnerSetup', {
-            url: '/learner/setup',
-            template: '<learner-setup-view></learner-setup-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Learner > Setup'}
+        .state('symbolsArchive', {
+            parent: 'symbols',
+            url: '/archive',
+            views: {
+                '@': {template: '<symbols-archive-view></symbols-archive-view>'}
+            },
+            data: {title: 'Symbols > Archive'}
         })
-        .state('learnerStart', {
-            url: '/learner/learn',
-            template: '<learner-view></learner-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Learning'},
-            params: {result: null}
+
+        // files
+        .state('files', {
+            parent: 'project',
+            url: '/files',
+            views: {
+                '@': {template: '<files-view></files-view>'}
+            },
+            data: {title: 'Files'}
         })
-        .state('results', {
-            url: '/results',
-            template: '<results-view></results-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Results'}
+
+        // counters
+        .state('counters', {
+            parent: 'project',
+            url: '/counters',
+            views: {
+                '@': {template: '<counters-view></counters-view>'}
+            },
+            data: {title: 'Counters'}
         })
-        .state('resultsCompare', {
-            url: '/results/{testNos:string}',
-            template: '<results-compare-view></results-compare-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Results > Compare'}
-        })
-        .state('statisticsCompare', {
-            url: '/statistics/{testNos:string}',
-            template: '<statistics-compare-view></statistics-compare-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Statistics > Compare'}
-        })
+
+        // testing related routes
         .state('tests', {
-            url: '/tests/{testId:int}',
-            template: '<tests-view></tests-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Tests'},
+            parent: 'project',
+            url: '/tests',
+            abstract: true,
+            redirectTo: 'test'
+        })
+        .state('test', {
+            parent: 'tests',
+            url: '/{testId:int}',
+            views: {
+                '@': {template: '<tests-view></tests-view>'}
+            },
+            data: {title: 'Tests'},
             params: {
-                testId: null
+                testId: 0
             }
         })
         .state('testReports', {
-            url: '/tests/reports',
-            template: '<test-reports-view></test-reports-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Tests > Reports'}
+            parent: 'tests',
+            url: '/reports',
+            views: {
+                '@': {template: '<test-reports-view></test-reports-view>'}
+            },
+            data: {title: 'Tests > Reports'}
         })
         .state('testReport', {
-            url: '/tests/reports/{id:int}',
-            template: '<test-report-view></test-report-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Tests > Reports'}
+            parent: 'testReports',
+            url: '/{reportId:int}',
+            views: {
+                '@': {template: '<test-report-view></test-report-view>'}
+            },
+            data: {title: 'Tests > Reports'}
         })
+
+        // learning related routes
+        .state('learner', {
+            parent: 'project',
+            url: '/learner',
+            abstract: true,
+            redirectTo: 'learnerSetup'
+        })
+        .state('learnerSetup', {
+            parent: 'learner',
+            url: '/setup',
+            views: {
+                '@': {template: '<learner-setup-view></learner-setup-view>'}
+            },
+            data: {title: 'Learner > Setup'}
+        })
+        .state('learnerStart', {
+            parent: 'learner',
+            url: '/learn',
+            views: {
+                '@': {template: '<learner-view></learner-view>'}
+            },
+            data: {title: 'Learning'},
+            params: {result: null}
+        })
+        .state('learnerResults', {
+            parent: 'learner',
+            url: '/results',
+            views: {
+                '@': {template: '<results-view></results-view>'}
+            },
+            data: {title: 'Results'}
+        })
+        .state('learnerResultsCompare', {
+            parent: 'learnerResults',
+            url: '/{testNos:string}',
+            views: {
+                '@': {template: '<results-compare-view></results-compare-view>'}
+            },
+            data: {title: 'Results'}
+        })
+        .state('learnerResultsStatistics', {
+            parent: 'learnerResults',
+            url: '/statistics/{testNos:string}',
+            views: {
+                '@': {template: '<statistics-compare-view></statistics-compare-view>'}
+            },
+            data: {title: 'Statistics > Compare'}
+        })
+
+        // integrations related routes
+        .state('integrations', {
+            parent: 'root',
+            url: '/integrations',
+            abstract: true,
+            data: {requiresProject: false, roles: ['REGISTERED', 'ADMIN'], title: 'Integrations'},
+        })
+        .state('webhooks', {
+            parent: 'integrations',
+            url: '/webhooks',
+            views: {
+                '@': {template: '<webhooks-view></webhooks-view>'}
+            },
+        })
+
+        // misc routes
         .state('about', {
+            parent: 'root',
             url: '/about',
-            template: '<about-view></about-view>',
+            views: {
+                '@': {template: '<about-view></about-view>'}
+            },
             data: {title: 'About'}
         })
         .state('error', {
+            parent: 'root',
             url: '/error',
-            template: '<error-view></error-view>',
+            views: {
+                '@': {template: '<error-view></error-view>'}
+            },
             data: {title: 'Error'}
-        })
-        .state('files', {
-            url: '/files',
-            template: '<files-view></files-view>',
-            data: {requiresProject: true, roles: ['REGISTERED', 'ADMIN'], title: 'Files'}
-        })
-        .state('webhooks', {
-            url: '/webhooks',
-            template: '<webhooks-view></webhooks-view>',
-            data: {requiresProject: false, roles: ['REGISTERED', 'ADMIN'], title: 'Webhooks'}
         });
 }
 
@@ -163,7 +281,7 @@ export function run($transitions, SessionService, ToastService) {
             || (data.requiresProject && project === null)) {
 
             ToastService.danger('You cannot access this page!');
-            return transition.router.stateService.target('home');
+            return transition.router.stateService.target('root');
         }
     }
 

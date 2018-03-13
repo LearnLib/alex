@@ -60,7 +60,10 @@
         <div class="alx-container-fluid">
 
             <div class="d-flex" style="align-items: center">
-                <button class="btn btn-sm btn-default" ui-sref="tests({testId:vm.testSuite.parent})" ng-if="vm.testSuite.id !== 0" style="margin-right: 12px">
+                <button class="btn btn-sm btn-default"
+                        ui-sref="test({projectId: vm.testSuite.project, testId:vm.testSuite.parent})"
+                        ng-if="vm.testSuite.id !== 0"
+                        style="margin-right: 12px">
                     <i class="fa fa-fw fa-level-up"></i>
                 </button>
                 <h4 ng-if="vm.testSuite.name" style="margin: 0;">

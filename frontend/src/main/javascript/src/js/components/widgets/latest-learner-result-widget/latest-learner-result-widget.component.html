@@ -8,13 +8,13 @@
             <strong ng-bind="::(vm.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></strong> with the
             <strong ng-bind="::(vm.result.algorithm.name | formatAlgorithm)"></strong> algorithm.
         </p>
-        <button class="btn btn-xs btn-default" ui-sref="learnerStart({result: result})">
+        <button class="btn btn-xs btn-default" ui-sref="learnerStart({projectId: vm.project.id, result: result})">
             <i class="fa fa-fw fa-play"></i> Continue learning
         </button>
-        <button class="btn btn-xs btn-default" ui-sref="resultsCompare({testNos: [vm.result.testNo]})">
+        <button class="btn btn-xs btn-default" ui-sref="learnerResultsCompare({testNos: [vm.result.testNo], projectId: vm.project.id})">
             <i class="fa fa-fw fa-eye"></i> View hypothesis
         </button>
-        <button class="btn btn-xs btn-default" ui-sref="statisticsCompare({testNos: [vm.result.testNo]})">
+        <button class="btn btn-xs btn-default" ui-sref="learnerResultsStatistics({testNos: [vm.result.testNo], projectId: vm.project.id})">
             <i class="fa fa-fw fa-bar-chart-o"></i> View statistics
         </button>
     </div>

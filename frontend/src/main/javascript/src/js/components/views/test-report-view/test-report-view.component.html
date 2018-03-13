@@ -1,6 +1,6 @@
 <div class="view view-test-reports">
     <view-header title="Test Report">
-        <a ui-sref="testReports" class="btn btn-sm btn-default btn-icon"
+        <a ui-sref="testReports({projectId: vm.report.project})" class="btn btn-sm btn-default btn-icon"
            uib-tooltip="Back to reports" tooltip-placement="right">
             <i class="fa fa-reply"></i>
         </a>
@@ -44,7 +44,7 @@
                         <span class="label label-danger" ng-if="!result.passed">Failed</span>
                     </td>
                     <td>
-                        <a ui-sref="tests({testId: result.test.id})">{{result.test.name}}</a>
+                        <a ui-sref="test({projectId: result.project, testId: result.test.id})">{{result.test.name}}</a>
                     </td>
                     <td>
                         <span class="label"

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ class ErrorViewComponent {
         if (message !== null) {
             this.errorMessage = message;
         } else {
-            $state.go('home');
+            $state.go('root');
         }
     }
 }

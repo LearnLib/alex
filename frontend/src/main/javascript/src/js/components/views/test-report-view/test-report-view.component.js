@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ export const testReportViewComponent = {
              */
             this.report = null;
 
-            this.testReportResource.get(this.project.id, this.$stateParams.id)
+            this.testReportResource.get(this.project.id, this.$stateParams.reportId)
                 .then((data) => this.report = data)
                 .catch((err) => this.toastService.danger(`Failed to load the report. ${err.data.message}`));
         }
@@ -69,7 +69,7 @@ export const testReportViewComponent = {
             this.testReportResource.remove(this.project.id, this.report.id)
                 .then(() => {
                     this.toastService.success('The report has been deleted.');
-                    this.$state.go('testReports');
+                    this.$state.go('testReports', {projectId: this.project.id});
                 })
                 .catch((err) => this.toastService.danger(`The report could not be deleted. ${err.data.message}`));
         }

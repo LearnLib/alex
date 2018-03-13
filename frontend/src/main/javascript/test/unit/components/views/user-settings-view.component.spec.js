@@ -1,6 +1,6 @@
 import {User} from '../../../../src/js/entities/user';
 
-describe('UsersSettingsViewComponent', () => {
+describe('ProfileViewComponent', () => {
     let scope;
     let $q;
     let $rootScope;

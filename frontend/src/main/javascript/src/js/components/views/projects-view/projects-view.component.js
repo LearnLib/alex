@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,8 +41,9 @@ class ProjectsViewComponent {
         this.projects = [];
 
         // go to the dashboard if there is a project in the session
-        if (SessionService.getProject() !== null) {
-            $state.go('projectsDashboard');
+        const project = SessionService.getProject();
+        if (project !== null) {
+            $state.go('project', {projectId: project.id});
             return;
         }
 

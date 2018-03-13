@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,8 +53,8 @@ class ProjectListComponent {
      */
     openProject(project) {
         this.SessionService.saveProject(project);
-        this.EventBus.emit(events.PROJECT_OPENED, {project: project});
-        this.$state.go('projectsDashboard');
+        this.EventBus.emit(events.PROJECT_OPENED, {project});
+        this.$state.go('project', {projectId: project.id});
     }
 
     /**

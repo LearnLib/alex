@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,44 +14,38 @@
  * limitations under the License.
  */
 
+import {events} from '../../../constants';
+
 /**
- * The controller of the index page.
+ * The controller of the component for the project dashboard.
  */
-class HomeViewComponent {
+class ProjectViewComponent {
 
     /**
      * Constructor.
      *
-     * @param $state
+     * @param {object} $scope
      * @param {SessionService} SessionService
+     * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor($state, SessionService) {
+    constructor($scope, SessionService, EventBus) {
 
         /**
-         * The current user.
-         * @type {User}
-         */
-        this.user = SessionService.getUser();
-
-        /**
-         * The current project.
+         * The project that is opened.
          * @type {Project}
          */
         this.project = SessionService.getProject();
 
-        if (this.user !== null) {
-            if (this.project !== null) {
-                $state.go('projectsDashboard');
-            } else {
-                $state.go('projects');
-            }
-        }
+        // listen on project update event
+        EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
+            this.project = data.project;
+        }, $scope);
     }
 }
 
-export const homeViewComponent = {
-    controller: HomeViewComponent,
+export const projectViewComponent = {
+    controller: ProjectViewComponent,
     controllerAs: 'vm',
-    template: require('./home-view.component.html')
+    template: require('./project-view.component.html')
 };

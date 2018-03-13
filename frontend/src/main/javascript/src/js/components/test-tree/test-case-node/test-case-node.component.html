@@ -3,7 +3,7 @@
         <div class="test-icon">
             <i class="fa fa-fw fa-file"></i>
         </div>
-        <div class="name flex-grow-1" ui-sref="tests({testId: vm.case.id})">
+        <div class="name flex-grow-1" ui-sref="test({projectId: vm.case.project, testId: vm.case.id})">
             <span class="pull-right" ng-if="vm.result">
                 <span class="label label-success" ng-if="vm.result.passed">Passed</span>
                 <span class="label label-danger" ng-if="!vm.result.passed">Failed</span>

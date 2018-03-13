@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 /**
  * The controller of the user settings page.
  */
-class UsersSettingsViewComponent {
+class ProfileViewComponent {
 
     /**
      * Constructor.
@@ -49,8 +49,8 @@ class UsersSettingsViewComponent {
     }
 }
 
-export const usersSettingsViewComponent = {
-    controller: UsersSettingsViewComponent,
+export const profileViewComponent = {
+    controller: ProfileViewComponent,
     controllerAs: 'vm',
-    template: require('./users-settings-view.component.html')
+    template: require('./profile-view.component.html')
 };

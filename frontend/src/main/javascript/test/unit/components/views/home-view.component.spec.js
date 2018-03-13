@@ -1,7 +1,7 @@
 import {Project} from '../../../../src/js/entities/project';
 import {User} from '../../../../src/js/entities/user';
 
-describe('HomeViewComponent', () => {
+describe('RootViewComponent', () => {
     let controller;
     let $state;
     let SessionService;

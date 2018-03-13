@@ -144,23 +144,23 @@ import {adminUsersViewComponent} from './components/views/admin-users-view/admin
 import {countersViewComponent} from './components/views/counters-view/counters-view.component';
 import {errorViewComponent} from './components/views/error-view/error-view.component';
 import {filesViewComponent} from './components/views/files-view/files-view.component';
-import {homeViewComponent} from './components/views/home-view/home-view.component';
+import {rootViewComponent} from './components/views/root-view/root-view.component';
 import {resultsCompareViewComponent} from './components/views/learner-results-compare-view/learner-results-compare-view.component';
 import {resultsViewComponent} from './components/views/learner-results-view/learner-results-view.component';
 import {learnerSetupViewComponent} from './components/views/learner-setup-view/learner-setup-view.component';
 import {learnerViewComponent} from './components/views/learner-view/learner-view.component';
-import {projectsDashboardViewComponent} from './components/views/project-dashboard-view/project-dashboard-view.component';
+import {projectViewComponent} from './components/views/project-view/project-view.component';
 import {projectsViewComponent} from './components/views/projects-view/projects-view.component';
 import {statisticsCompareViewComponent} from './components/views/statistics-compare-view/statistics-compare-view.component';
 import {symbolViewComponent} from './components/views/symbol-view/symbol-view.component';
-import {symbolsTrashViewComponent} from './components/views/symbols-trash-view/symbols-trash-view.component';
+import {symbolsArchiveViewComponent} from './components/views/symbols-archive-view/symbols-archive-view.component';
 import {symbolsViewComponent} from './components/views/symbols-view/symbols-view.component';
 import {testCaseViewComponent} from './components/views/test-case-view/test-case-view.component';
 import {testReportViewComponent} from './components/views/test-report-view/test-report-view.component';
 import {testReportsViewComponent} from './components/views/test-reports-view/test-reports-view.component';
 import {testSuiteViewComponent} from './components/views/test-suite-view/test-suite-view.component';
 import {testsViewComponent} from './components/views/tests-view/tests-view.component';
-import {usersSettingsViewComponent} from './components/views/user-settings-view/user-settings-view.component';
+import {profileViewComponent} from './components/views/profile-view/profile-view.component';
 import {webhooksViewComponent} from './components/views/webhooks-view/webhooks-view.component';
 import {counterexamplesWidgetComponent} from './components/widgets/counterexamples-widget/counterexamples-widget.component';
 import {latestLearnerResultWidgetComponent} from './components/widgets/latest-learner-result-widget/latest-learner-result-widget.component';
@@ -326,19 +326,19 @@ angular
     .component('countersView', countersViewComponent)
     .component('errorView', errorViewComponent)
     .component('filesView', filesViewComponent)
-    .component('homeView', homeViewComponent)
+    .component('rootView', rootViewComponent)
     .component('learnerSetupView', learnerSetupViewComponent)
     .component('learnerView', learnerViewComponent)
     .component('projectsView', projectsViewComponent)
-    .component('projectsDashboardView', projectsDashboardViewComponent)
+    .component('projectView', projectViewComponent)
     .component('resultsCompareView', resultsCompareViewComponent)
     .component('resultsView', resultsViewComponent)
     .component('statisticsCompareView', statisticsCompareViewComponent)
     .component('symbolView', symbolViewComponent)
     .component('symbolsView', symbolsViewComponent)
     .component('testsView', testsViewComponent)
-    .component('symbolsTrashView', symbolsTrashViewComponent)
-    .component('usersSettingsView', usersSettingsViewComponent)
+    .component('symbolsArchiveView', symbolsArchiveViewComponent)
+    .component('profileView', profileViewComponent)
     .component('testCaseView', testCaseViewComponent)
     .component('testReportsView', testReportsViewComponent)
     .component('testReportView', testReportViewComponent)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ class ResultsViewComponent {
     openSelectedResults() {
         if (this.selectedResults.length > 0) {
             const testNos = this.selectedResults.map(r => r.testNo).join(',');
-            this.$state.go('resultsCompare', {testNos});
+            this.$state.go('learnerResultsCompare', {testNos, projectId: this.project.id});
         }
     }
 
@@ -125,7 +125,7 @@ class ResultsViewComponent {
      */
     showStatistics(results) {
         const testNos = results.length ? this.selectedResults.map(r => r.testNo).join(',') : results.testNo;
-        this.$state.go('statisticsCompare', {testNos});
+        this.$state.go('learnerResultsStatistics', {testNos, projectId: this.project.id});
     }
 
     /**

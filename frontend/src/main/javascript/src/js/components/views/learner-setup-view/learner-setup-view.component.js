@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,10 +101,10 @@ class LearnerSetupViewComponent {
                 if (data.active) {
                     if (data.project === this.project.id) {
                         this.ToastService.info('There is currently running a learn process.');
-                        this.$state.go('learnerStart');
+                        this.$state.go('learnerStart', {projectId: this.project.id});
                     } else {
                         this.ToastService.danger('There is already running a test from another project.');
-                        this.$state.go('project');
+                        this.$state.go('project', {projectId: this.project.id});
                     }
                 } else {
 
@@ -165,7 +165,7 @@ class LearnerSetupViewComponent {
                 this.LearnerResource.start(this.project.id, this.learnConfiguration)
                     .then(() => {
                         this.ToastService.success('Learn process started successfully.');
-                        this.$state.go('learnerStart');
+                        this.$state.go('learnerStart', {projectId: this.project.id});
                     })
                     .catch(response => {
                         this.ToastService.danger('<p><strong>Start learning failed</strong></p>' + response.data.message);

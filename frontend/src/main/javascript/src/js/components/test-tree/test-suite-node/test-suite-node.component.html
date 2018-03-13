@@ -3,7 +3,7 @@
         <div class="test-icon">
             <i class="fa fa-fw fa-folder"></i>
         </div>
-        <div class="name flex-grow-1" ui-sref="tests({testId: vm.suite.id})">
+        <div class="name flex-grow-1" ui-sref="test({projectId: vm.suite.project, testId: vm.suite.id})">
             <strong ng-if="vm.parent === null">{{vm.suite.name}}</strong>
             <span ng-if="vm.parent !== null">{{vm.suite.name}}</span>
 

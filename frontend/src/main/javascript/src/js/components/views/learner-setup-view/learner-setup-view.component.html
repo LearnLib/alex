@@ -17,7 +17,7 @@
             </div>
 
             <div class="pull-right" style="margin-right: 6px">
-                <a ui-sref="learnerStart" class="btn btn-info btn-sm" ng-if="vm.canContinueLearnProcess">
+                <a ui-sref="learnerStart({projectId: vm.project.id})" class="btn btn-info btn-sm" ng-if="vm.canContinueLearnProcess">
                     Show latest result
                 </a>
             </div>

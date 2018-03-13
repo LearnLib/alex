@@ -3,7 +3,7 @@
     <div class="flex-grow-1 mr-1 ml-1">
         <span class="label label-danger pull-right" ng-if="vm.result.error">Failed</span>
         <strong>
-            <a ui-sref="resultsCompare({testNos: [vm.result.testNo]})">
+            <a ui-sref="learnerResultsCompare({testNos: [vm.result.testNo], projectId: vm.result.project})">
                 Test No <span ng-bind="vm.result.testNo"></span>
             </a>
         </strong>

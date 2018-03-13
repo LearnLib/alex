@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ export class UserEditModalComponent {
                 if (this.SessionService.getUser().id === this.user.id) {
                     this.SessionService.removeProject();
                     this.SessionService.removeUser();
-                    this.$state.go('home');
+                    this.$state.go('root');
                 } else {
                     this.resolve.modalData.onUpdated({user});
                 }

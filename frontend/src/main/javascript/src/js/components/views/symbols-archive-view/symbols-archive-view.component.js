@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import remove from 'lodash/remove';
  * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover
  * of these symbols. By default, recovered symbols will be moved in the default group with the id 0.
  */
-class SymbolsTrashViewComponent {
+class SymbolsArchiveViewComponent {
 
     /**
      * Constructor.
@@ -96,8 +96,8 @@ class SymbolsTrashViewComponent {
     }
 }
 
-export const symbolsTrashViewComponent = {
-    controller: SymbolsTrashViewComponent,
+export const symbolsArchiveViewComponent = {
+    controller: SymbolsArchiveViewComponent,
     controllerAs: 'vm',
-    template: require('./symbols-trash-view.component.html')
+    template: require('./symbols-archive-view.component.html')
 };
