@@ -19,6 +19,7 @@ package de.learnlib.alex.learning.entities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
+import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 
 import java.io.Serializable;
 

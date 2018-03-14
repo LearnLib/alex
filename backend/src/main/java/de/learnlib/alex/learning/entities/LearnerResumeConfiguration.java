@@ -19,6 +19,7 @@ package de.learnlib.alex.learning.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import org.springframework.data.annotation.Transient;
 
 import javax.validation.constraints.NotNull;
@@ -59,7 +60,21 @@ public class LearnerResumeConfiguration extends AbstractLearnerConfiguration imp
 
     @Override
     public void checkConfiguration() throws IllegalArgumentException {
-        super.check();
+
+        // one should be able to continue learning if the sample eq oracle is used without
+        // having specified a counterexample if a new symbol is added.
+        if (eqOracle instanceof SampleEQOracleProxy) {
+            try {
+                eqOracle.checkParameters();
+            } catch (IllegalArgumentException e) { // counterexamples are empty
+                if (symbolsToAddAsIds.isEmpty()) {
+                    throw new IllegalArgumentException("You haven't specified neither a counterexample nor a symbol to add.");
+                }
+            }
+        } else {
+            super.check();
+        }
+
         if (stepNo <= 0) {
             throw new IllegalArgumentException("The step number may not be less than 1");
         }
