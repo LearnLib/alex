@@ -50,37 +50,13 @@ export const testResultReportComponent = {
              * The report.
              * @type {object}
              */
-            this.report = {};
+            this.report = null;
 
             /**
              * The project.
              * @type {Project}
              */
             this.project = this.SessionService.getProject();
-
-            /**
-             * The cumulated result.
-             * @type {{testCasesPassed: number, testCasesFailed: number, testCasesRun: number, passed: boolean}}
-             */
-            this.overallResult = {
-                testCasesPassed: 0,
-                testCasesFailed: 0,
-                testCasesRun: 0,
-                passed: true,
-                time: 0
-            };
-        }
-
-        $onInit() {
-            for (const result of this.report.testResults) {
-                if (result.test.type === 'case') {
-                    this.overallResult.testCasesFailed += result.passed ? 0 : 1;
-                    this.overallResult.testCasesPassed += result.passed ? 1 : 0;
-                    this.overallResult.testCasesRun += 1;
-                }
-                this.overallResult.passed &= result.passed;
-                this.overallResult.time += result.time;
-            }
         }
 
         /** Saves the report as JUnit XML. */

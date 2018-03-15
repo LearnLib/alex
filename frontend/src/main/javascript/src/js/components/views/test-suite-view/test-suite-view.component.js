@@ -45,10 +45,13 @@ export const testSuiteViewComponent = {
          * @param {DownloadService} DownloadService
          * @param {TestService} TestService
          * @param {ClipboardService} ClipboardService
+         * @param {TestReportResource} TestReportResource
+         * @param {NotificationService} NotificationService
          */
         // @ngInject
         constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService, TestResource,
-                    PromptService, $uibModal, SettingsResource, DownloadService, TestService, ClipboardService) {
+                    PromptService, $uibModal, SettingsResource, DownloadService, TestService, ClipboardService,
+                    TestReportResource, NotificationService) {
             this.$state = $state;
             this.LearnerResource = LearnerResource;
             this.ToastService = ToastService;
@@ -58,6 +61,8 @@ export const testSuiteViewComponent = {
             this.DownloadService = DownloadService;
             this.TestService = TestService;
             this.ClipboardService = ClipboardService;
+            this.TestReportResource = TestReportResource;
+            this.NotificationService = NotificationService;
 
             /**
              * The current project.
@@ -81,19 +86,13 @@ export const testSuiteViewComponent = {
              * The test report.
              * @type {object}
              */
-            this.report = {};
+            this.report = null;
 
             /**
              * If tests are being executed.
              * @type {boolean}
              */
-            this.isExecuting = false;
-
-            /**
-             * If the execution finished.
-             * @type {boolean}
-             */
-            this.finished = false;
+            this.active = false;
 
             /**
              * The driver configuration.
@@ -108,6 +107,14 @@ export const testSuiteViewComponent = {
             SymbolGroupResource.getAll(this.project.id, true)
                 .then((groups) => this.groups = groups)
                 .catch(console.log);
+
+            // check if a test process is active
+            this.TestResource.getStatus(this.project.id)
+                .then(data => {
+                    if (data.active) {
+                        this._pollStatus();
+                    }
+                })
         }
 
         createTestSuite() {
@@ -178,7 +185,6 @@ export const testSuiteViewComponent = {
 
         reset() {
             this.results = {};
-            this.finished = false;
         }
 
         deleteTest(test) {
@@ -213,12 +219,6 @@ export const testSuiteViewComponent = {
                 .catch((err) => this.ToastService.danger(`Deleting the tests failed. ${err.data.message}`));
         }
 
-        stopTestExecution() {
-            this.ToastService.info('The execution stops after the current test.');
-            this.isExecuting = false;
-            this.finished = true;
-        }
-
         executeSelected() {
             if (this.testSuite.tests.findIndex(t => t._selected) === -1) {
                 this.ToastService.info('You have to select at least one test case or test suite.');
@@ -228,22 +228,52 @@ export const testSuiteViewComponent = {
             this.reset();
             const selected = this.testSuite.tests.filter(t => t._selected);
 
-            this.isExecuting = true;
             this.TestResource.executeMany(selected, this.driverConfig)
-                .then((data) => {
-                    this.ToastService.success(`The tests have been executed.`);
-                    data.testResults.forEach((result) => {
-                        this.results[result.test.id] = result;
-                    });
-                    this.report = data;
+                .then(() => {
+                    this.ToastService.success(`The test execution has been started.`);
+                    this._pollStatus();
                 })
                 .catch((err) => {
                     this.ToastService.danger(`The test execution failed. ${err.data.message}`);
-                })
-                .finally(() => {
-                    this.isExecuting = false;
-                    this.finished = true;
                 });
+        }
+
+        _pollStatus() {
+            this.active = true;
+            this.report = null;
+
+            const poll = (wait) => {
+                window.setTimeout(() => {
+                    this.TestResource.getStatus(this.project.id)
+                        .then(data => {
+                            if (data.report != null) {
+                                data.report.testResults.forEach((result) => {
+                                    this.results[result.test.id] = result;
+                                });
+                                this.report = data.report;
+                            }
+                            this.active = data.active;
+                            if (!data.active) {
+
+                                this.ToastService.success('The test process finished');
+                                this.NotificationService.notify('ALEX has finished executing the tests.');
+
+                                this.TestReportResource.getLatest(this.project.id)
+                                    .then(data => {
+                                        data.testResults.forEach((result) => {
+                                            this.results[result.test.id] = result;
+                                        });
+                                        this.report = data;
+                                    })
+                                    .catch(console.error);
+                            } else {
+                                poll(3000);
+                            }
+                        });
+                }, wait);
+            };
+
+            poll(100);
         }
 
         openBrowserConfigModal() {

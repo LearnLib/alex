@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public final class ResourceErrorHandler {
 
         /**
          * Constructor.
-         * 
+         *
          * @param status
          *            The status of the error.
          * @param exception
@@ -61,7 +61,7 @@ public final class ResourceErrorHandler {
 
         /**
          * Returns the proper status code for this error.
-         * 
+         *
          * @return The HTTP status code.
          */
         @JsonGetter
@@ -71,7 +71,7 @@ public final class ResourceErrorHandler {
 
         /**
          * Returns a short description of the status (like the short HTTP error messages).
-         * 
+         *
          * @return A short string to describe the status.
          */
         @JsonGetter
@@ -81,7 +81,7 @@ public final class ResourceErrorHandler {
 
         /**
          * Get the message of the exception that cause this error.
-         * 
+         *
          * @return The message of the error.
          */
         @JsonGetter
@@ -107,7 +107,7 @@ public final class ResourceErrorHandler {
     /**
      * Create a Response with the right status code and a nice JSON error message.
      * This method also logs the error in the 'info' space.
-     * 
+     *
      * @param context
      *            The context this method was called in. Recommended: 'Class.method'.
      * @param status
@@ -122,4 +122,18 @@ public final class ResourceErrorHandler {
         return Response.status(status).entity(error).build();
     }
 
+    /**
+     * {@link #createRESTErrorMessage}.
+     *
+     * @param context
+     *          The context this method was called in. Recommended: 'Class.method'.
+     * @param status
+     *          The HTTP status this error belong to.
+     * @param message
+     *          The error message to send.
+     * @return A Response object containing a JSON error message and the proper status code.
+     */
+    public static Response createRESTErrorMessage(String context, Status status, String message) {
+        return createRESTErrorMessage(context, status, new Exception(message));
+    }
 }

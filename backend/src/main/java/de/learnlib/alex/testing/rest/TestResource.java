@@ -21,17 +21,17 @@ import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
+import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.testing.dao.TestDAO;
-import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
+import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.testing.events.TestEvent;
-import de.learnlib.alex.testing.events.TestExecutionStartedEventData;
-import de.learnlib.alex.testing.repositories.TestReportRepository;
 import de.learnlib.alex.testing.services.TestService;
 import de.learnlib.alex.webhooks.services.WebhookService;
 
@@ -46,7 +46,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -73,30 +72,30 @@ public class TestResource {
     /** The {@link TestDAO} to use. */
     private TestDAO testDAO;
 
-    /** The {@link TestReportDAO} to use. */
-    private TestReportDAO testReportDAO;
-
     /** The test service. */
     private TestService testService;
 
     /** The {@link WebhookService} to use. */
     private WebhookService webhookService;
 
+    /** The {@link ProjectDAO} to use. */
+    private ProjectDAO projectDAO;
+
     /**
      * Constructor.
      *
-     * @param testDAO              The injected test Dao.
-     * @param testService          The test service to use.
-     * @param testReportDAO        The test report Dao to use.
-     * @param webhookService       The injected webhook service.
+     * @param testDAO        The injected test Dao.
+     * @param testService    The test service to use.
+     * @param webhookService The injected webhook service.
+     * @param projectDAO     The injected project DAO.
      */
     @Inject
-    public TestResource(TestDAO testDAO, TestService testService, TestReportDAO testReportDAO,
-                        WebhookService webhookService) {
+    public TestResource(TestDAO testDAO, TestService testService, WebhookService webhookService,
+                        ProjectDAO projectDAO) {
         this.testDAO = testDAO;
         this.testService = testService;
-        this.testReportDAO = testReportDAO;
         this.webhookService = webhookService;
+        this.projectDAO = projectDAO;
     }
 
     /**
@@ -112,12 +111,12 @@ public class TestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createTest(@PathParam("project_id") Long projectId, Test test) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        projectDAO.getByID(user.getId(), projectId);
 
         test.setProjectId(projectId);
 
         try {
             testDAO.create(user, test);
-
             webhookService.fireEvent(user, new TestEvent.Created(test));
             return Response.ok(test).status(Response.Status.CREATED).build();
         } catch (ValidationException e) {
@@ -139,6 +138,7 @@ public class TestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createTests(@PathParam("project_id") Long projectId, List<Test> tests) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        projectDAO.getByID(user.getId(), projectId);
 
         tests.forEach(test -> test.setProjectId(projectId));
 
@@ -221,28 +221,34 @@ public class TestResource {
     @Path("/execute")
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("project_id") Long projectId,
-                            @QueryParam("report") boolean createReport,
                             TestExecutionConfig testConfig)
             throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final Project project = projectDAO.getByID(user.getId(), projectId);
 
-        final List<Test> tests = testDAO.get(user, projectId, testConfig.getTestIds());
-
-        // do not fire the event if the test is only called for testing purposes.
-        if (createReport) {
-            webhookService.fireEvent(user, new TestEvent.ExecutionStarted(new TestExecutionStartedEventData(projectId, testConfig)));
+        if (testService.isActive(user, projectId)) {
+            return ResourceErrorHandler.createRESTErrorMessage("TestResource.execute", Response.Status.BAD_REQUEST, "There is already a testing process running for this project.");
+        } else {
+            final TestStatus status = testService.start(user, project, testConfig);
+            return Response.ok(status).build();
         }
+    }
 
-        final TestReport report = new TestReport();
-        final Map<Long, TestResult> results = testService.executeTests(user, tests, testConfig.getDriverConfig());
-        report.setTestResults(new ArrayList<>(results.values()));
-
-        if (createReport) {
-            testReportDAO.create(user, projectId, report);
-            webhookService.fireEvent(user, new TestEvent.ExecutionFinished(report));
-        }
-
-        return Response.ok(report).build();
+    /**
+     * Get the status of the current test process.
+     *
+     * @param projectId The id of the project.
+     * @return Status 200 with a {@link TestStatus}.
+     * @throws NotFoundException If the project could not be found.
+     */
+    @GET
+    @Path("/status")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response status(@PathParam("project_id") Long projectId) throws NotFoundException {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final Project project = projectDAO.getByID(user.getId(), projectId);
+        final TestStatus status = testService.getStatus(user, project);
+        return Response.ok(status).build();
     }
 
     /**

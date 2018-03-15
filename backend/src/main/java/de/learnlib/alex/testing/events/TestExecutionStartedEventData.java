@@ -34,6 +34,7 @@ public class TestExecutionStartedEventData extends TestExecutionConfig {
         this.projectId = projectId;
         this.setTestIds(config.getTestIds());
         this.setDriverConfig(config.getDriverConfig());
+        this.setCreateReport(config.isCreateReport());
     }
 
     public Long getProjectId() {

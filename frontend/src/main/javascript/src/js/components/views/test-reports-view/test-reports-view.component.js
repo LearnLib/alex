@@ -90,7 +90,7 @@ export const testReportsViewComponent = {
          * @param {Object} report The report.
          */
         openReport(report) {
-            this.$state.go('testReport', {id: report.id});
+            this.$state.go('testReport', {projectId: this.project.id, reportId: report.id});
         }
 
         /**

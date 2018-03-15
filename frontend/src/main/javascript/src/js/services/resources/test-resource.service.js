@@ -77,6 +77,16 @@ export class TestResource {
     }
 
     /**
+     * Get the status of the current test process.
+     *
+     * @param {number} projectId The id of the project.
+     */
+    getStatus(projectId) {
+        return this.$http.get(`${apiUrl}/projects/${projectId}/tests/status`)
+            .then(response => response.data);
+    }
+
+    /**
      * Update a test case.
      *
      * @param testCase The updated test case.
@@ -113,10 +123,9 @@ export class TestResource {
      *
      * @param {object} testCase The test to execute.
      * @param {object} browserConfig The config to execute the test with.
-     * @param {boolean} createReport If the report should be saved.
      */
-    execute(testCase, browserConfig, createReport = false) {
-        return this.$http.post(`${apiUrl}/projects/${testCase.project}/tests/${testCase.id}/execute`, browserConfig, {params: {report: createReport}})
+    execute(testCase, browserConfig) {
+        return this.$http.post(`${apiUrl}/projects/${testCase.project}/tests/${testCase.id}/execute`, browserConfig)
             .then(response => response.data);
     }
 
@@ -129,8 +138,9 @@ export class TestResource {
     executeMany(tests, browserConfig) {
         return this.$http.post(`${apiUrl}/projects/${tests[0].project}/tests/execute`, {
             testIds: tests.map((t) => t.id),
-            driverConfig: browserConfig
-        }, {params: {report: true}})
+            driverConfig: browserConfig,
+            createReport: true
+        })
             .then((response) => response.data);
     }
 

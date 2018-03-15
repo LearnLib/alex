@@ -34,10 +34,11 @@ class LearnerViewComponentComponent {
      * @param {ToastService} ToastService
      * @param {ErrorService} ErrorService
      * @param {SymbolResource} SymbolResource
+     * @param {NotificationService} NotificationService
      */
     // @ngInject
     constructor($scope, $state, $interval, SessionService, LearnerResource, LearnResultResource, ToastService,
-                ErrorService, SymbolResource) {
+                ErrorService, SymbolResource, NotificationService) {
         this.$interval = $interval;
         this.$state = $state;
         this.LearnerResource = LearnerResource;
@@ -45,6 +46,7 @@ class LearnerViewComponentComponent {
         this.ToastService = ToastService;
         this.ErrorService = ErrorService;
         this.SymbolResource = SymbolResource;
+        this.NotificationService = NotificationService;
 
         /**
          * The project that is in the session.
@@ -179,11 +181,8 @@ class LearnerViewComponentComponent {
                                 };
                             }
 
-                            // notify the user that the learning process has finished
-                            if (('Notification' in window) && Notification.permission === 'granted') {
-                                const notification = new Notification('ALEX has finished learning your application!');
-                                setTimeout(notification.close.bind(notification), 5000);
-                            }
+                            this.ToastService.success('The learning process finished');
+                            this.NotificationService.notify('ALEX has finished learning the application.');
                         });
                         this.$interval.cancel(this.interval);
                         this.active = false;

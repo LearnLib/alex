@@ -18,12 +18,15 @@ package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
+import de.learnlib.alex.testing.dao.TestDAO;
+import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseActionStep;
@@ -31,9 +34,13 @@ import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.entities.TestCaseSymbolStep;
 import de.learnlib.alex.testing.entities.TestExecuteResult;
+import de.learnlib.alex.testing.entities.TestExecutionConfig;
+import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
+import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.entities.TestSuiteResult;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -50,7 +57,22 @@ import java.util.stream.Collectors;
 public class TestService {
 
     /** Factory to create a new ContextHandler. */
-    private ConnectorContextHandlerFactory contextHandlerFactory;
+    private final ConnectorContextHandlerFactory contextHandlerFactory;
+
+    /**
+     * The running testing threads.
+     * userId -> (projectId -> TestThread).
+     */
+    private final Map<Long, Map<Long, TestThread>> testingThreads;
+
+    /** The {@link WebhookService} to use. */
+    private final WebhookService webhookService;
+
+    /** The {@link TestDAO} to use. */
+    private final TestDAO testDAO;
+
+    /** The {@link TestReportDAO} to use. */
+    private final TestReportDAO testReportDAO;
 
     /**
      * Constructor.
@@ -58,8 +80,76 @@ public class TestService {
      * @param contextHandlerFactory The injected {@link ConnectorContextHandlerFactory}
      */
     @Inject
-    public TestService(ConnectorContextHandlerFactory contextHandlerFactory) {
+    public TestService(ConnectorContextHandlerFactory contextHandlerFactory, WebhookService webhookService,
+                       TestDAO testDAO, TestReportDAO testReportDAO) {
         this.contextHandlerFactory = contextHandlerFactory;
+        this.webhookService = webhookService;
+        this.testDAO = testDAO;
+        this.testReportDAO = testReportDAO;
+        this.testingThreads = new HashMap<>();
+    }
+
+    /**
+     * Check if a test process in active for a project.
+     *
+     * @param user      The current user.
+     * @param projectId The id of the the project.
+     * @return If a test process is active.
+     */
+    public boolean isActive(User user, Long projectId) {
+        return testingThreads.containsKey(user.getId()) && testingThreads.get(user.getId()).containsKey(projectId);
+    }
+
+    /**
+     * Starts a new test thread.
+     *
+     * @param user    The user.
+     * @param project The project.
+     * @param config  The config for the tests.
+     * @return A test status.
+     */
+    public TestStatus start(User user, Project project, TestExecutionConfig config) {
+        final TestThread thread = new TestThread(user, project, config, webhookService, testDAO,
+                testReportDAO, this, () -> {
+            this.testingThreads.get(user.getId()).remove(project.getId());
+            if (this.testingThreads.get(user.getId()).values().size() == 0) {
+                this.testingThreads.remove(user.getId());
+            }
+        });
+
+        this.testingThreads.putIfAbsent(user.getId(), new HashMap<>());
+        this.testingThreads.get(user.getId()).put(project.getId(), thread);
+
+        thread.start();
+
+        final TestStatus status = new TestStatus();
+        status.setActive(true);
+        return status;
+    }
+
+    /**
+     * Gets the status of the active test process of a project.
+     *
+     * @param user    The user.
+     * @param project The project.
+     * @return The status.
+     */
+    public TestStatus getStatus(User user, Project project) {
+        final TestStatus status = new TestStatus();
+
+        if (!testingThreads.containsKey(user.getId())) {
+            status.setActive(false);
+        } else {
+            if (!testingThreads.get(user.getId()).containsKey(project.getId())) {
+                status.setActive(false);
+            } else {
+                final TestReport report = testingThreads.get(user.getId()).get(project.getId()).getReport();
+                status.setReport(report);
+                status.setActive(true);
+            }
+        }
+
+        return status;
     }
 
     /**
@@ -70,8 +160,7 @@ public class TestService {
      * @param driverConfig The config for the web driver.
      * @return
      */
-    public Map<Long, TestResult> executeTests(User user, List<Test> tests, AbstractWebDriverConfig driverConfig) {
-        final Map<Long, TestResult> results = new HashMap<>();
+    public Map<Long, TestResult> executeTests(User user, List<Test> tests, AbstractWebDriverConfig driverConfig, Map<Long, TestResult> results) {
         for (Test test : tests) {
             if (test instanceof TestCase) {
                 executeTestCase(user, (TestCase) test, driverConfig, results);

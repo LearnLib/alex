@@ -32,6 +32,9 @@ public class TestExecutionConfig {
     /** The configuration for the web driver. */
     private AbstractWebDriverConfig driverConfig;
 
+    /** If a report should be created. */
+    private boolean createReport;
+
     /** Constructor. */
     public TestExecutionConfig() {
         this.testIds = new ArrayList<>();
@@ -62,5 +65,13 @@ public class TestExecutionConfig {
 
     public void setDriverConfig(AbstractWebDriverConfig driverConfig) {
         this.driverConfig = driverConfig;
+    }
+
+    public boolean isCreateReport() {
+        return createReport;
+    }
+
+    public void setCreateReport(boolean createReport) {
+        this.createReport = createReport;
     }
 }

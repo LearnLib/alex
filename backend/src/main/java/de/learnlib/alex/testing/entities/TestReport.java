@@ -186,4 +186,17 @@ public class TestReport implements Serializable {
                 .filter(r -> !r.isPassed())
                 .count();
     }
+
+    /**
+     * Count the number of test cases that passed.
+     *
+     * @return The number of tests that passed.
+     */
+    @Transient
+    public Long getNumTestsPassed() {
+        return this.testResults.stream()
+                .filter(r -> r instanceof TestCaseResult)
+                .filter(TestResult::isPassed)
+                .count();
+    }
 }

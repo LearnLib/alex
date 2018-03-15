@@ -191,6 +191,7 @@ import {HtmlElementPickerService} from './services/html-element-picker.service';
 import {LearnerResultChartService} from './services/learner-result-chart.service';
 import {LearnerResultDownloadService} from './services/learner-result-download.service';
 import {LearningAlgorithmService} from './services/learning-algorithm.service';
+import {NotificationService} from './services/notification.service';
 import {PromptService} from './services/prompt.service';
 import {CounterResource} from './services/resources/counter-resource.service';
 import {FileResource} from './services/resources/file-resource.service';
@@ -277,6 +278,7 @@ angular
     .service('ActionRecorderService', ActionRecorderService)
     .service('TestService', TestService)
     .service('TestReportService', TestReportService)
+    .service('NotificationService', NotificationService)
 
     // modal handles
     .directive('actionCreateModalHandle', actionCreateModalHandleDirective)
