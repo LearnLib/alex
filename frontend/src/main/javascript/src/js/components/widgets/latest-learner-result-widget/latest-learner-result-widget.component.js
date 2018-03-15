@@ -26,7 +26,7 @@ class LatestLearnerResultWidgetComponent {
      */
     // @ngInject
     constructor(LearnResultResource) {
-        this.LearnResultResource = LearnResultResource;
+        this.learnResultResource = LearnResultResource;
 
         /**
          * The latest learning result.
@@ -37,11 +37,9 @@ class LatestLearnerResultWidgetComponent {
 
     $onInit() {
         // get the latest learn result
-        this.LearnResultResource.getAll(this.project.id)
-            .then(results => {
-                if (results.length > 0) {
-                    this.result = results[results.length - 1];
-                }
+        this.learnResultResource.getLatest(this.project.id)
+            .then(result => {
+                this.result = result === "" ? null : result;
             })
             .catch(err => console.log(err));
     }

@@ -68,6 +68,16 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, UU
     Long findHighestTestNo(Long projectId);
 
     /**
+     * Get the latest learner result.
+     *
+     * @param projectId The id of the project.
+     * @return The latest learner result.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    LearnerResult findFirstByProject_IdOrderByTestNoDesc(Long projectId);
+
+    /**
      * Delete LearnResults by their test no in a Project.
      *
      * @param projectId

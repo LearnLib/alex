@@ -56,6 +56,16 @@ export class LearnResultResource {
     }
 
     /**
+     * Get the latest learner result.
+     *
+     * @param {number} projectId The id of the project.
+     */
+    getLatest(projectId) {
+        return this.$http.get(`${apiUrl}/projects/${projectId}/results/latest`)
+            .then(response => new LearnResult(response.data));
+    }
+
+    /**
      * Deletes a learn result.
      *
      * @param {LearnResult} result - The learn result to delete.

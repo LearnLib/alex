@@ -79,6 +79,19 @@ public interface LearnerResultDAO {
             throws NotFoundException;
 
     /**
+     * Get the latest learner result.
+     *
+     * @param user
+     *          The user.
+     * @param projectId
+     *          The id of the project.
+     * @return The latest learner result.
+     * @throws NotFoundException
+     *          If the project could not be found.
+     */
+    LearnerResult getLatest(User user, Long projectId) throws NotFoundException;
+
+    /**
      * Get a single LearnResult.
      *
      * @param user

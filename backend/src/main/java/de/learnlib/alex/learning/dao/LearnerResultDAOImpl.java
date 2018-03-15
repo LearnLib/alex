@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -137,6 +138,20 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         initializeLazyRelations(results, includeSteps);
 
         return results;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public LearnerResult getLatest(User user, Long projectId) throws NotFoundException {
+        projectDAO.getByID(user.getId(), projectId);
+
+        final LearnerResult result = learnerResultRepository.findFirstByProject_IdOrderByTestNoDesc(projectId);
+        if (result != null) {
+            initializeLazyRelations(Collections.singletonList(result), true);
+            return result;
+        } else {
+            return null;
+        }
     }
 
     @Override

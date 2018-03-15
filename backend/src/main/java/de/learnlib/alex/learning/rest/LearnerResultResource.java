@@ -99,6 +99,32 @@ public class LearnerResultResource {
     }
 
     /**
+     * Get the latest learner result.
+     *
+     * @param projectId
+     *          The id of the project.
+     * @return 200 with The latest learner result. 204 If there is not result.
+     * @throws NotFoundException If the project could not be found.
+     */
+    @GET
+    @Path("/latest")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getLatest(@PathParam("project_id") long projectId)
+            throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("LearnerResultResource.getLatest(" + projectId + ") for user " + user + ".");
+
+        try {
+            final LearnerResult result = learnerResultDAO.getLatest(user, projectId);
+            return result == null ? Response.noContent().build() : Response.ok(result).build();
+        } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getLatest",
+                                                               Response.Status.NOT_FOUND, e);
+        }
+    }
+
+    /**
      * Get one / a list of learn result(s).
      *
      * @param projectId
