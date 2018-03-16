@@ -40,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -280,10 +281,10 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     @Transactional
-    public void update(User user, Symbol symbol)
+    public Symbol update(User user, Symbol symbol)
             throws IllegalArgumentException, NotFoundException, ValidationException {
         try {
-            doUpdate(user, symbol);
+            return doUpdate(user, symbol);
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Symbol update failed:", e);
             throw new ValidationException("Symbol could not be updated.", e);
@@ -302,12 +303,14 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     @Transactional
-    public void update(User user, List<Symbol> symbols)
+    public List<Symbol> update(User user, List<Symbol> symbols)
             throws IllegalArgumentException, NotFoundException, ValidationException {
         try {
+            final List<Symbol> updatedSymbols = new ArrayList<>();
             for (Symbol symbol : symbols) {
-                doUpdate(user, symbol);
+                updatedSymbols.add(doUpdate(user, symbol));
             }
+            return updatedSymbols;
         } catch (javax.validation.ConstraintViolationException e) {
             symbols.forEach(s -> s.setId(null));
             throw ValidationExceptionHelper.createValidationException("Symbols were not updated:", e);
@@ -344,8 +347,6 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbol.setProject(project);
         symbol.setGroup(symbolInDB.getGroup());
         symbolActionRepository.delete(symbolInDB.getActions());
-        symbolParameterRepository.delete(symbolInDB.getOutputs());
-        symbolParameterRepository.delete(symbolInDB.getInputs());
 
         beforeSymbolSave(symbol);
         return symbolRepository.save(symbol);

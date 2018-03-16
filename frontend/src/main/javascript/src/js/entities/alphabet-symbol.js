@@ -100,12 +100,16 @@ export class AlphabetSymbol {
      * @returns {{name: *, actions: Action[]}}
      */
     getExportableSymbol() {
+        const symbol = JSON.parse(JSON.stringify(this));
+        symbol.inputs.forEach(input => delete input.id);
+        symbol.outputs.forEach(output => delete output.id);
+
         return {
-            name: this.name,
-            actions: this.actions,
-            successOutput: this.successOutput,
-            inputs: this.inputs,
-            outputs: this.outputs
+            name: symbol.name,
+            actions: symbol.actions,
+            successOutput: symbol.successOutput,
+            inputs: symbol.inputs,
+            outputs: symbol.outputs
         };
     }
 }

@@ -50,10 +50,8 @@ public abstract class SymbolParameter implements Serializable {
 
     /** The ID of the Action in the DB. */
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @JsonIgnore
-    protected UUID uuid;
+    @GeneratedValue
+    protected Long id;
 
     /** The symbol the action belongs to. */
     @ManyToOne
@@ -67,12 +65,12 @@ public abstract class SymbolParameter implements Serializable {
 
     protected ParameterType parameterType;
 
-    public UUID getUuid() {
-        return uuid;
+    public Long getId() {
+        return id;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Symbol getSymbol() {

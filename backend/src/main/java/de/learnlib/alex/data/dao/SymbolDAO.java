@@ -160,6 +160,7 @@ public interface SymbolDAO {
      *         The user performing the action.
      * @param symbol
      *         The symbol to update.
+     * @return The updated symbol.
      * @throws IllegalArgumentException
      *         If an old revision is used.
      * @throws NotFoundException
@@ -167,7 +168,7 @@ public interface SymbolDAO {
      * @throws ValidationException
      *         When the Symbol was not valid.
      */
-    void update(User user, Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException;
+    Symbol update(User user, Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException;
 
     /**
      * Update a list of Symbols.
@@ -176,6 +177,7 @@ public interface SymbolDAO {
      *         The user performing the action.
      * @param symbols
      *         The symbol sto update.
+     * @return The list of updated symbols.
      * @throws IllegalArgumentException
      *         If an old revision is used.
      * @throws NotFoundException
@@ -183,7 +185,7 @@ public interface SymbolDAO {
      * @throws ValidationException
      *         When one of the Symbol was not valid.
      */
-    void update(User user, List<Symbol> symbols)
+    List<Symbol> update(User user, List<Symbol> symbols)
             throws IllegalArgumentException, NotFoundException, ValidationException;
 
     /**

@@ -60,6 +60,32 @@ export const symbolParametersPanelComponent = {
             });
         }
 
+        editInput(input, index) {
+            this.$uibModal.open({
+                component: 'symbolParameterEditModal',
+                resolve: {
+                    symbol: () => this.symbol,
+                    parameter: () => Object.assign({}, input)
+                }
+            }).result.then((param) => {
+                this.symbol.inputs[index] = param;
+                this.onChange();
+            });
+        }
+
+        editOutput(output, index) {
+            this.$uibModal.open({
+                component: 'symbolParameterEditModal',
+                resolve: {
+                    symbol: () => this.symbol,
+                    parameter: () => Object.assign({}, output)
+                }
+            }).result.then((param) => {
+                this.symbol.outputs[index] = param;
+                this.onChange();
+            });
+        }
+
         removeInput(index) {
             this.symbol.inputs.splice(index, 1);
             this.onChange();

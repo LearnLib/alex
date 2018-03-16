@@ -345,7 +345,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @OneToMany(
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.ALL})
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
     @OrderBy("name ASC")
     @JsonProperty
     public List<SymbolInputParameter> getInputs() {
@@ -359,7 +361,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @OneToMany(
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.ALL})
+            cascade = {CascadeType.ALL},
+            orphanRemoval = true
+    )
     @OrderBy("name ASC")
     @JsonProperty
     public List<SymbolOutputParameter> getOutputs() {

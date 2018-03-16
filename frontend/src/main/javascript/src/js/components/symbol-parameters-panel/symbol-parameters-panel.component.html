@@ -23,7 +23,7 @@
                                     <i class="fa fa-close"></i>
                                 </span>
 
-                                <strong>{{input.name}}</strong>: <em>{{input.parameterType | formatParameterType}}</em>
+                                <strong class="cursor-pointer" ng-click="vm.editInput(input, $index)">{{input.name}}</strong>: <em>{{input.parameterType | formatParameterType}}</em>
                             </div>
                             <div class="d-flex align-items-center">
                                 <svg width="68px" height="14px" xmlns="http://www.w3.org/2000/svg">
@@ -60,7 +60,7 @@
                                     <i class="fa fa-close"></i>
                                 </span>
 
-                                <strong>{{output.name}}</strong>: <em>{{output.parameterType | formatParameterType}}</em>
+                                <strong class="cursor-pointer" ng-click="vm.editOutput(output, $index)">{{output.name}}</strong>: <em>{{output.parameterType | formatParameterType}}</em>
                             </div>
                         </div>
                     </div>

@@ -394,7 +394,6 @@ public class SymbolResourceTest extends JerseyTest {
         Response response = target(path).request().header("Authorization", adminToken).put(Entity.json(symbols));
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("2", response.getHeaderString("X-Total-Count"));
         verify(symbolDAO).update(admin, symbols);
     }
 

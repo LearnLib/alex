@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import {symbolParameterType} from '../../../constants';
-
-export const symbolParameterCreateModalComponent = {
-    template: require('./symbol-parameter-create-modal.component.html'),
+export const symbolParameterEditModalComponent = {
+    template: require('./symbol-parameter-edit-modal.component.html'),
     bindings: {
         dismiss: '&',
         close: '&',
@@ -44,18 +42,14 @@ export const symbolParameterCreateModalComponent = {
              * The model for the new parameter.
              * @type {{type: string, name: string, parameterType: string}}
              */
-            this.parameter = {
-                type: null,
-                name: null,
-                parameterType: symbolParameterType.STRING
-            };
+            this.parameter = null;
         }
 
         $onInit() {
-            this.parameter.type = this.resolve.type;
+            this.parameter = this.resolve.parameter;
         }
 
-        addParameter() {
+        update() {
             this.errorMessage = null;
 
             const symbol = this.resolve.symbol;

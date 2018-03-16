@@ -22,6 +22,11 @@ export const learnAlgorithm = {
     KEARNS_VAZIRANI: 'KEARNS_VAZIRANI'
 };
 
+export const symbolParameterType = {
+    STRING: 'STRING',
+    COUNTER: 'COUNTER'
+};
+
 export const webBrowser = {
     CHROME: 'chrome',
     FIREFOX: 'firefox',

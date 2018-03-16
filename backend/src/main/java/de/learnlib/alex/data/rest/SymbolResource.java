@@ -316,12 +316,12 @@ public class SymbolResource {
             symbol.setProjectId(projectId);
             symbol.setId(id);
 
-            symbolDAO.update(user, symbol);
+            final Symbol updatedSymbol = symbolDAO.update(user, symbol);
 
-            LOGGER.traceExit(symbol);
+            LOGGER.traceExit(updatedSymbol);
 
-            webhookService.fireEvent(user, new SymbolEvent.Updated(symbol));
-            return Response.ok(symbol).build();
+            webhookService.fireEvent(user, new SymbolEvent.Updated(updatedSymbol));
+            return Response.ok(updatedSymbol).build();
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.update", Status.BAD_REQUEST, e);
@@ -360,12 +360,12 @@ public class SymbolResource {
             }
         }
         try {
-            symbolDAO.update(user, symbols);
+            final List<Symbol> updatedSymbols = symbolDAO.update(user, symbols);
 
-            LOGGER.traceExit(symbols);
+            LOGGER.traceExit(updatedSymbols);
 
-            webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(symbols));
-            return ResponseHelper.renderList(symbols, Status.OK);
+            webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(updatedSymbols));
+            return ResponseHelper.renderList(updatedSymbols, Status.OK);
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.batchUpdate", Status.BAD_REQUEST, e);

@@ -81,11 +81,13 @@ import {projectCreateFormComponent} from './components/forms/project-create-form
 import {projectFormGroupsComponent} from './components/forms/project-form-groups/project-form-groups.component';
 import {symbolEditFormComponent} from './components/forms/symbol-edit-form/symbol-edit-form.component';
 import {symbolFormGroupsComponent} from './components/forms/symbol-form-groups/symbol-form-groups.component';
+import {symbolParameterFormGroupsComponent} from './components/forms/symbol-parameter-form-groups/symbol-parameter-form-groups.components';
 import {userEditFormComponent} from './components/forms/user-edit-form/user-edit-form.component';
 import {userLoginFormComponent} from './components/forms/user-login-form/user-login-form.component';
 import {webhookFormComponent} from './components/forms/webhook-form/webhook-form.component';
 import {htmlElementPickerComponent} from './components/html-element-picker/html-element-picker.component';
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
+import {symbolParameterEditModalComponent} from './components/modals/symbol-parameter-edit-modal/symbol-parameter-edit-modal.component';
 import {symbolParametersPanelComponent} from './components/symbol-parameters-panel/symbol-parameters-panel.component';
 import {learnerResultListItemComponent} from './components/learner-result-list-item/learner-result-list-item.component';
 import {learnerResultPanelComponent} from './components/learner-result-panel/learner-result-panel.component';
@@ -320,6 +322,7 @@ angular
     .component('webhookCreateModal', webhookCreateModalComponent)
     .component('webhookEditModal', webhookEditModalComponent)
     .component('symbolParameterCreateModal', symbolParameterCreateModalComponent)
+    .component('symbolParameterEditModal', symbolParameterEditModalComponent)
 
     // view components
     .component('aboutView', aboutViewComponent)
@@ -359,6 +362,7 @@ angular
     .component('symbolFormGroups', symbolFormGroupsComponent)
     .component('actionSearchForm', actionSearchFormComponent)
     .component('webhookForm', webhookFormComponent)
+    .component('symbolParameterFormGroups', symbolParameterFormGroupsComponent)
 
     // widgets components
     .component('widget', widgetComponent)
