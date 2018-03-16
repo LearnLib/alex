@@ -37,9 +37,6 @@ public class TestCase extends Test {
 
     private static final long serialVersionUID = 5961810799472877062L;
 
-    /** The map with the variables for the test case. */
-    private HashMap<String, String> variables;
-
     /** If the test case execution should pass. */
     private boolean shouldPass;
 
@@ -50,7 +47,6 @@ public class TestCase extends Test {
     public TestCase() {
         super();
         this.steps = new ArrayList<>();
-        this.variables = new HashMap<>();
         this.shouldPass = true;
     }
 
@@ -65,15 +61,6 @@ public class TestCase extends Test {
 
     public void setSteps(List<TestCaseStep> steps) {
         this.steps = steps;
-    }
-
-    @Lob
-    public HashMap<String, String> getVariables() {
-        return variables;
-    }
-
-    public void setVariables(HashMap<String, String> variables) {
-        this.variables = variables;
     }
 
     public boolean isShouldPass() {

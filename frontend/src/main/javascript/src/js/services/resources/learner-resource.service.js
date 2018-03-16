@@ -104,18 +104,6 @@ export class LearnerResource {
     }
 
     /**
-     * Tests the outputs of a word.
-     *
-     * @param {number} projectId - The project id.
-     * @param {*} readOutputConfig - The config to read the outputs.
-     * @returns {*|Request}
-     */
-    testWord(projectId, readOutputConfig) {
-        return this.$http.post(`${apiUrl}/learner/${projectId}/words/outputs`, readOutputConfig)
-            .then(response => response.data);
-    }
-
-    /**
      * Compare two hypotheses and return the separating word.
      *
      * @param {object} hypA - The first hypothesis.

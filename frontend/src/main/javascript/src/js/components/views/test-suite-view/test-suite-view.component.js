@@ -144,7 +144,6 @@ export const testSuiteViewComponent = {
                         name: name,
                         project: this.project.id,
                         parent: this.testSuite.id,
-                        variables: {},
                         shouldPass: true,
                         steps: []
                     };

@@ -212,10 +212,6 @@ public class TestService {
         final long startTime = System.currentTimeMillis();
         final ConnectorManager connectors = ctxHandler.createContext();
 
-        // set variables from the test case
-        final VariableStoreConnector variableStore = connectors.getConnector(VariableStoreConnector.class);
-        testCase.getVariables().forEach(variableStore::set);
-
         // execute the test case
         final List<ExecuteResult> outputs = testCase.getSteps().stream()
                 .map(s -> s.execute(connectors))

@@ -72,8 +72,6 @@ export const testCaseViewComponent = {
              */
             this.result = null;
 
-            this.variable = {name: '', value: ''};
-
             /**
              * The browser configuration.
              * @type {object}
@@ -111,13 +109,6 @@ export const testCaseViewComponent = {
             });
 
             $scope.$on('testSymbols.drag', () => this.result.outputs = []);
-        }
-
-        createVariable() {
-            if (this.variable.name.trim() !== '') {
-                this.testCase.variables[this.variable.name] = this.variable.value;
-                this.variable = {name: '', value: ''};
-            }
         }
 
         /**

@@ -81,73 +81,36 @@
                 </div>
                 <div class="col-md-9 col-sm-7">
 
-                    <uib-tabset>
-                        <uib-tab heading="Test case">
-                            <br>
-
-                            <div class="list-group" ng-if="vm.testCase.steps.length" dragula='"testSymbols"' dragula-model="vm.testCase.steps">
-                                <div class="list-group-item d-flex flex-row" ng-repeat="step in vm.testCase.steps track by $index">
-                                    <div class="w-100">
-                                        <div ng-if="step.type === 'symbol'">
-                                            <strong>{{step.symbol.name}}</strong>
-                                        </div>
-                                        <div ng-if="step.type === 'action'">
-                                            <i class="fa fa-fw fa-edit mr-1 pull-right" ng-click="vm.openActionEditModal(step.action, $index)"></i>
-                                            <em>{{step.action}}</em>
-                                            <div ng-if="step.action.negated">
-                                                <span class="label label-info">Negate</span>
-                                            </div>
-                                        </div>
-                                        <div ng-if="vm.result.outputs[$index]" style="margin-top: .75rem; padding-top: .75rem; border-top: 1px dashed #dddddd;">
-                                            <span class="label" ng-class="{'label-success': vm.result.outputs[$index].success,'label-danger': !vm.result.outputs[$index].success}">
-                                                {{vm.result.outputs[$index].output}}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <span class="label label-info pull-right" ng-if="$index === 0" style="margin-right: 12px">Reset</span>
-                                    </div>
-                                    <div>
-                                        <i class="fa fa-close pull-right" ng-click="vm.testCase.steps.splice($index, 1)"></i>
+                    <div class="list-group" ng-if="vm.testCase.steps.length" dragula='"testSymbols"' dragula-model="vm.testCase.steps">
+                        <div class="list-group-item d-flex flex-row" ng-repeat="step in vm.testCase.steps track by $index">
+                            <div class="w-100">
+                                <div ng-if="step.type === 'symbol'">
+                                    <strong>{{step.symbol.name}}</strong>
+                                </div>
+                                <div ng-if="step.type === 'action'">
+                                    <i class="fa fa-fw fa-edit mr-1 pull-right" ng-click="vm.openActionEditModal(step.action, $index)"></i>
+                                    <em>{{step.action}}</em>
+                                    <div ng-if="step.action.negated">
+                                        <span class="label label-info">Negate</span>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="alert alert-info" ng-if="!vm.testCase.steps.length">
-                                Select a symbol to model the test case.
-                            </div>
-
-                        </uib-tab>
-                        <uib-tab heading="Variables">
-                            <br>
-
-                            <div class="alert alert-info">
-                                <em class="text-muted">
-                                    <i class="fa fa-fw fa-info"></i> Variables that are declared here are used during the execution of the test.
-                                    Note that their value may be overwritten by symbols or actions that are used in the test case.
-                                </em>
-                            </div>
-
-                            <form class="d-flex flex-row" ng-submit="vm.createVariable()">
-                                <div class="form-group flex-grow-1" style="width: 100%; margin-right: 12px">
-                                    <input type="text" class="form-control" placeholder="Name" ng-model="vm.variable.name" required>
+                                <div ng-if="vm.result.outputs[$index]" style="margin-top: .75rem; padding-top: .75rem; border-top: 1px dashed #dddddd;">
+                                    <span class="label" ng-class="{'label-success': vm.result.outputs[$index].success,'label-danger': !vm.result.outputs[$index].success}">
+                                        {{vm.result.outputs[$index].output}}
+                                    </span>
                                 </div>
-                                <div class="form-group flex-grow-1" style="width: 100%; margin-right: 12px">
-                                    <input type="text" class="form-control" placeholder="Value" ng-model="vm.variable.value" required>
-                                </div>
-                                <div class="form-group">
-                                    <input type="submit" class="btn btn-primary" value="Create">
-                                </div>
-                            </form>
-
-                            <ul class="list-group" ng-repeat="(name, value) in vm.testCase.variables" ng-click="vm.variable = {'name': name, 'value': value}">
-                                <li class="list-group-item" ng-click="vm.variable.name = name; vm.variable.value = value">
-                                    <i class="fa fa-fw fa-close pull-right" ng-click="vm.testCase.variables.splice($index, 1)"></i>
-                                    <em>{{name}}</em> <i class="fa fa-fw fa-arrow-left"></i> "{{value}}"
-                                </li>
-                            </ul>
-
-                        </uib-tab>
-                    </uib-tabset>
+                            </div>
+                            <div>
+                                <span class="label label-info pull-right" ng-if="$index === 0" style="margin-right: 12px">Reset</span>
+                            </div>
+                            <div>
+                                <i class="fa fa-close pull-right" ng-click="vm.testCase.steps.splice($index, 1)"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info" ng-if="!vm.testCase.steps.length">
+                        Select a symbol to model the test case.
+                    </div>
 
                 </div>
             </div>
