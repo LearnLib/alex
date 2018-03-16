@@ -42,16 +42,6 @@
                         <i class="fa fa-fw fa-file-o"></i> {{vm.testCase.name}}
                     </strong>
                 </h4>
-                <button class="btn btn-sm btn-default text-left toggle-button-success"
-                        ng-class="{'toggle-button-success': vm.testCase.shouldPass, 'toggle-button-danger': !vm.testCase.shouldPass}"
-                        ng-click="vm.testCase.shouldPass = !vm.testCase.shouldPass">
-                    <span ng-if="vm.testCase.shouldPass">
-                        <i class="fa fa-toggle-on mr-1"></i>Should pass
-                    </span>
-                    <span ng-if="!vm.testCase.shouldPass">
-                        <i class="fa fa-toggle-on fa-flip-horizontal mr-1"></i>Should fail
-                    </span>
-                </button>
             </div>
 
             <hr>

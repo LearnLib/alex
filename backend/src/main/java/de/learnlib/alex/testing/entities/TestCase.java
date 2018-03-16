@@ -37,9 +37,6 @@ public class TestCase extends Test {
 
     private static final long serialVersionUID = 5961810799472877062L;
 
-    /** If the test case execution should pass. */
-    private boolean shouldPass;
-
     /** The steps the test case is composed of. */
     private List<TestCaseStep> steps;
 
@@ -47,7 +44,6 @@ public class TestCase extends Test {
     public TestCase() {
         super();
         this.steps = new ArrayList<>();
-        this.shouldPass = true;
     }
 
     @OneToMany(
@@ -61,13 +57,5 @@ public class TestCase extends Test {
 
     public void setSteps(List<TestCaseStep> steps) {
         this.steps = steps;
-    }
-
-    public boolean isShouldPass() {
-        return shouldPass;
-    }
-
-    public void setShouldPass(boolean shouldPass) {
-        this.shouldPass = shouldPass;
     }
 }
