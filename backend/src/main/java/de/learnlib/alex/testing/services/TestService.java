@@ -24,7 +24,6 @@ import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
@@ -212,10 +211,25 @@ public class TestService {
         final long startTime = System.currentTimeMillis();
         final ConnectorManager connectors = ctxHandler.createContext();
 
-        // execute the test case
-        final List<ExecuteResult> outputs = testCase.getSteps().stream()
-                .map(s -> s.execute(connectors))
-                .collect(Collectors.toList());
+        final List<ExecuteResult> outputs = new ArrayList<>();
+
+        // execute the steps as long as they do not fail
+        int failedStepIndex = 0;
+        for (int i = 0; i < testCase.getSteps().size(); i++) {
+            final TestCaseStep step = testCase.getSteps().get(i);
+            final ExecuteResult result = step.execute(connectors);
+            outputs.add(result);
+            failedStepIndex = i;
+            if (!result.isSuccess()) {
+                break;
+            }
+        }
+
+        // the remaining steps after the failing step are not executed
+        while (failedStepIndex + 1 < testCase.getSteps().size()) {
+            outputs.add(new ExecuteResult(false, "Not executed"));
+            failedStepIndex++;
+        }
 
         connectors.dispose();
         final long time = System.currentTimeMillis() - startTime;
