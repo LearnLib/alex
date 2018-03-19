@@ -27,6 +27,7 @@ class RootViewComponent {
      */
     // @ngInject
     constructor($state, SessionService) {
+        this.$state = $state;
 
         /**
          * The current user.
@@ -47,6 +48,10 @@ class RootViewComponent {
                 $state.go('projects');
             }
         }
+    }
+
+    handleLoggedIn() {
+        this.$state.go('projects');
     }
 }
 

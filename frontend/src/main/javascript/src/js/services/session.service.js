@@ -52,7 +52,7 @@ export class SessionService {
      */
     saveProject(project) {
         sessionStorage.setItem('project', JSON.stringify(project));
-        this.EventBus.emit(events.PROJECT_OPENED, {project: project});
+        this.EventBus.emit(events.PROJECT_OPENED, {project});
     }
 
     /**
@@ -60,6 +60,7 @@ export class SessionService {
      */
     removeProject() {
         sessionStorage.removeItem('project');
+        this.EventBus.emit(events.PROJECT_CLOSED, null);
     }
 
     /**

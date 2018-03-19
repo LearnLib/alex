@@ -32,7 +32,6 @@ class SymbolViewComponent {
      * @param {SymbolResource} SymbolResource
      * @param {SessionService} SessionService
      * @param {ToastService} ToastService
-     * @param {ErrorService} ErrorService
      * @param {ActionService} ActionService
      * @param {ClipboardService} ClipboardService
      * @param $state
@@ -42,9 +41,8 @@ class SymbolViewComponent {
      * @param dragulaService
      */
     // @ngInject
-    constructor($scope, $stateParams, SymbolResource, SessionService, ToastService, ErrorService,
-                ActionService, ClipboardService, $state, PromptService, EventBus, dragulaService,
-                ActionRecorderService) {
+    constructor($scope, $stateParams, SymbolResource, SessionService, ToastService, ActionService, ClipboardService,
+                $state, PromptService, EventBus, dragulaService, ActionRecorderService) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
         this.ActionService = ActionService;
@@ -89,7 +87,7 @@ class SymbolViewComponent {
                 this.symbol = symbol;
             })
             .catch(() => {
-                ErrorService.setErrorMessage(`The symbol with the ID "${$stateParams.symbolId}" could not be found`);
+                $state.go('error', {message: `The symbol with the ID "${$stateParams.symbolId}" could not be found`});
             });
 
         // show a confirm dialog if the user leaves the page without having saved changes and

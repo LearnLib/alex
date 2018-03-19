@@ -30,6 +30,18 @@ export function config($stateProvider, $urlRouterProvider) {
             data: {title: 'Automata Learning EXperience'}
         })
 
+        .state('redirect', {
+            parent: 'root',
+            url: '/redirect?to',
+            views: {
+                '@': {template: '<redirect-view></redirect-view>'}
+            },
+            params: {
+                to: null
+            },
+            data: {title: 'Redirect'}
+        })
+
         // user profile
         .state('profile', {
             parent: 'root',
@@ -80,17 +92,20 @@ export function config($stateProvider, $urlRouterProvider) {
             views: {
                 '@': {template: '<project-view></project-view>'}
             },
-            data: {requiresProject: true, title: 'Project'},
+            data: {title: 'Project'},
 
             // @ngInject
-            onEnter: function ($state, SessionService, $stateParams) {
-                const project = SessionService.getProject();
+            onEnter: function ($state, SessionService, ProjectResource, $stateParams) {
                 const projectId = $stateParams.projectId;
 
-                // check if the current project equals the one specified in the URL
-                if (project.id !== projectId) {
-                    $state.go('projects');
-                }
+                SessionService.removeProject();
+                return ProjectResource.get(projectId)
+                    .then(project => {
+                        SessionService.saveProject(project);
+                    })
+                    .catch(() => {
+                        $state.go('error', {message: `The project with the id ${projectId} could not be found`});
+                    });
             }
         })
 
@@ -253,6 +268,9 @@ export function config($stateProvider, $urlRouterProvider) {
             url: '/error',
             views: {
                 '@': {template: '<error-view></error-view>'}
+            },
+            params: {
+                message: null,
             },
             data: {title: 'Error'}
         });

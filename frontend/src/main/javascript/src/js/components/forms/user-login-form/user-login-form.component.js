@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,9 @@ class UserLoginFormComponent {
 
                     this.SessionService.saveUser(user, token);
                     this.EventBus.emit(events.USER_LOGGED_IN, {user: user});
-                    this.$state.go('projects');
+                    if (this.onLoggedIn != null) {
+                        this.onLoggedIn();
+                    }
                 })
                 .catch(() => {
                     this.ToastService.danger('Login failed');
@@ -104,6 +106,9 @@ class UserLoginFormComponent {
 
 export const userLoginFormComponent = {
     template: require('./user-login-form.component.html'),
+    bindings: {
+        onLoggedIn: '&'
+    },
     controller: UserLoginFormComponent,
     controllerAs: 'vm'
 };

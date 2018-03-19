@@ -213,6 +213,10 @@ class SidebarComponent {
             this.project = data.project;
         }, $scope);
 
+        EventBus.on(events.PROJECT_CLOSED, () => {
+            this.project = null;
+        }, $scope);
+
         // listen on user login event
         EventBus.on(events.USER_LOGGED_IN, (evt, data) => {
             this.user = data.user;

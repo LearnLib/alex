@@ -23,22 +23,20 @@ class ErrorViewComponent {
      * Constructor.
      *
      * @param $state
-     * @param {ErrorService} ErrorService
+     * @param $stateParams
      */
     // @ngInject
-    constructor($state, ErrorService) {
+    constructor($state, $stateParams) {
 
         /**
          * The error message.
          * @type{string|null}
          */
-        this.errorMessage = null;
+        this.message = null;
 
-        const message = ErrorService.getErrorMessage();
+        const message = $stateParams.message;
         if (message !== null) {
-            this.errorMessage = message;
-        } else {
-            $state.go('root');
+            this.message = message;
         }
     }
 }

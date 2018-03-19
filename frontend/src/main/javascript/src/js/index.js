@@ -146,6 +146,7 @@ import {adminUsersViewComponent} from './components/views/admin-users-view/admin
 import {countersViewComponent} from './components/views/counters-view/counters-view.component';
 import {errorViewComponent} from './components/views/error-view/error-view.component';
 import {filesViewComponent} from './components/views/files-view/files-view.component';
+import {redirectViewComponent} from './components/views/redirect-view/redirect-view.component';
 import {rootViewComponent} from './components/views/root-view/root-view.component';
 import {resultsCompareViewComponent} from './components/views/learner-results-compare-view/learner-results-compare-view.component';
 import {resultsViewComponent} from './components/views/learner-results-view/learner-results-view.component';
@@ -187,7 +188,6 @@ import {ActionService} from './services/action.service';
 import {ClipboardService} from './services/clipboard.service';
 import {DownloadService} from './services/download.service';
 import {EqOracleService} from './services/eq-oracle.service';
-import {ErrorService} from './services/error.service';
 import {EventBus} from './services/eventbus.service';
 import {HtmlElementPickerService} from './services/html-element-picker.service';
 import {LearnerResultChartService} from './services/learner-result-chart.service';
@@ -266,7 +266,6 @@ angular
     // services
     .service('ActionService', ActionService)
     .service('ClipboardService', ClipboardService)
-    .service('ErrorService', ErrorService)
     .service('EventBus', EventBus)
     .service('EqOracleService', EqOracleService)
     .service('LearningAlgorithmService', LearningAlgorithmService)
@@ -349,6 +348,7 @@ angular
     .component('testReportView', testReportViewComponent)
     .component('testSuiteView', testSuiteViewComponent)
     .component('webhooksView', webhooksViewComponent)
+    .component('redirectView', redirectViewComponent)
 
     // forms components
     .component('actionForm', actionFormComponent)

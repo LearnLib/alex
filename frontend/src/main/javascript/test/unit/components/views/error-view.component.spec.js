@@ -4,15 +4,13 @@ describe('ErrorViewComponent', () => {
     let $rootScope;
     let scope;
     let $state;
-    let ErrorService;
     let controller;
 
     beforeEach(angular.mock.module('ALEX'));
-    beforeEach(angular.mock.inject((_$controller_, _$compile_ ,_$rootScope_, _$state_, _ErrorService_) => {
+    beforeEach(angular.mock.inject((_$controller_, _$compile_ ,_$rootScope_, _$state_) => {
         $state = _$state_;
         scope = _$rootScope_.$new();
         $controller = _$controller_;
-        ErrorService = _ErrorService_;
         $compile = _$compile_;
         $rootScope = _$rootScope_;
 
@@ -28,8 +26,6 @@ describe('ErrorViewComponent', () => {
 
     it('should display an error if there is a message', () => {
         const message = 'something failed';
-        ErrorService.setErrorMessage(message);
-
         createController();
         $state.go('error');
         scope.$digest();

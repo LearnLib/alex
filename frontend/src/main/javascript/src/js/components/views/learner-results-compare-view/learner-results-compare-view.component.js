@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,22 +24,19 @@ class ResultsCompareViewComponent {
     /**
      * Constructor.
      *
-     * @param $timeout
      * @param $uibModal
+     * @param $state
      * @param $stateParams
      * @param {SessionService} SessionService
      * @param {LearnResultResource} LearnResultResource
-     * @param {ErrorService} ErrorService
      * @param {LearnerResource} LearnerResource
      * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor($timeout, $uibModal, $stateParams, SessionService, LearnResultResource, ErrorService, LearnerResource,
+    constructor($uibModal, $state, $stateParams, SessionService, LearnResultResource, LearnerResource,
                 ToastService) {
-        this.$timeout = $timeout;
         this.$uibModal = $uibModal;
         this.LearnResultResource = LearnResultResource;
-        this.ErrorService = ErrorService;
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
 
@@ -73,7 +70,7 @@ class ResultsCompareViewComponent {
         // load all final learn results of all test an then load the complete test results from the test numbers
         // that are passed from the url in the panels
         if (!$stateParams.testNos) {
-            this.ErrorService.setErrorMessage('There are no test numbers defined in the URL');
+            $state.go('error', {message: 'There are no test numbers defined in the URL'});
         } else {
             const testNos = $stateParams.testNos.split(',');
             this.LearnResultResource.getAll(this.project.id)

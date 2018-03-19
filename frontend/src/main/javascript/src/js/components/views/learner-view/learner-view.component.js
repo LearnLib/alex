@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,19 +32,17 @@ class LearnerViewComponentComponent {
      * @param {LearnerResource} LearnerResource
      * @param {LearnResultResource} LearnResultResource
      * @param {ToastService} ToastService
-     * @param {ErrorService} ErrorService
      * @param {SymbolResource} SymbolResource
      * @param {NotificationService} NotificationService
      */
     // @ngInject
     constructor($scope, $state, $interval, SessionService, LearnerResource, LearnResultResource, ToastService,
-                ErrorService, SymbolResource, NotificationService) {
+                SymbolResource, NotificationService) {
         this.$interval = $interval;
         this.$state = $state;
         this.LearnerResource = LearnerResource;
         this.LearnResultResource = LearnResultResource;
         this.ToastService = ToastService;
-        this.ErrorService = ErrorService;
         this.SymbolResource = SymbolResource;
         this.NotificationService = NotificationService;
 
@@ -168,7 +166,7 @@ class LearnerViewComponentComponent {
                     if (!data.active) {
                         this.LearnerResource.getStatus(this.project.id).then(result => {
                             if (result.error) {
-                                this.ErrorService.setErrorMessage(result.errorText);
+                                this.$state.go('error', {message: result.errorText});
                             } else {
                                 this.result = result;
 
