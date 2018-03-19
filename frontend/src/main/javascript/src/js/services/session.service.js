@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ export class SessionService {
      * Gets the instance of the user that is logged in.
      */
     getUser() {
-        const user = sessionStorage.getItem('user');
+        const user = localStorage.getItem('user');
         return user === null ? null : new User(JSON.parse(user));
     }
 
@@ -78,8 +78,8 @@ export class SessionService {
      * @param {object|null} jwt - The jwt to save in the sessionStorage.
      */
     saveUser(user, jwt = null) {
-        sessionStorage.setItem('user', JSON.stringify(user));
-        if (jwt) sessionStorage.setItem('jwt', jwt);
+        localStorage.setItem('user', JSON.stringify(user));
+        if (jwt) localStorage.setItem('jwt', jwt);
         this.EventBus.emit(events.USER_LOGGED_IN, {user: user});
     }
 
@@ -87,7 +87,7 @@ export class SessionService {
      * Removes the user and its jwt from the session storage.
      */
     removeUser() {
-        sessionStorage.removeItem('user');
-        sessionStorage.removeItem('jwt');
+        localStorage.removeItem('user');
+        localStorage.removeItem('jwt');
     }
 }
