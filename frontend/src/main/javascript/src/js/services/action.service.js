@@ -38,6 +38,7 @@ import {ValidateJsonAction} from '../entities/actions/rest/validate-json-action'
 import {AlertAcceptDismissAction} from '../entities/actions/web/alert-accept-dismiss-action';
 import {AlertGetTextAction} from '../entities/actions/web/alert-get-text-action';
 import {AlertSendKeysAction} from '../entities/actions/web/alert-send-keys-action';
+import {BrowserAction} from '../entities/actions/web/browser-action';
 import {CheckNodeAttributeValueAction} from '../entities/actions/web/check-attribute-value-action';
 import {CheckForNodeWebAction} from '../entities/actions/web/check-for-node-action';
 import {CheckForTextWebAction} from '../entities/actions/web/check-for-text-action';
@@ -80,6 +81,8 @@ export class ActionService {
                 return new AlertGetTextAction(data);
             case actionType.WEB_ALERT_SEND_KEYS:
                 return new AlertSendKeysAction(data);
+            case actionType.WEB_BROWSER:
+                return new BrowserAction(data);
             case actionType.WEB_SELECT:
                 return new SelectWebAction(data);
             case actionType.WEB_SUBMIT:

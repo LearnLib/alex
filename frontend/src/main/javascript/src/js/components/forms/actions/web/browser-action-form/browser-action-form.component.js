@@ -15,7 +15,18 @@
  */
 
 /**
- * This package contains all connectors, which are used by the actions to execute their tasks,
- * as well as the related meta/ manager classes.
+ * Component that displays a form for the browser action.
+ * @type {{template: *, bindings: {action: string}, controllerAs: string, controller: browserActionFormComponent.controller}}
  */
-package de.learnlib.alex.learning.services.connectors;
+export const browserActionFormComponent = {
+    template: require('./browser-action-form.component.html'),
+    bindings: {
+        action: '=',
+    },
+    controllerAs: 'vm',
+    controller: class {
+        constructor() {
+            this.actions = ['REFRESH', 'RESTART'];
+        }
+    }
+};

@@ -55,6 +55,7 @@ import {validateJsonActionFormComponent} from './components/forms/actions/rest/v
 import {alertAcceptDismissActionFormComponent} from './components/forms/actions/web/alert-accept-dismiss-action-form/alert-accept-dismiss-action-form.component';
 import {alertGetTextActionFormComponent} from './components/forms/actions/web/alert-get-text-action-form/alert-get-text-action-form.component';
 import {alertSendKeysActionFormComponent} from './components/forms/actions/web/alert-send-keys-action-form/alert-send-keys-action-form.component';
+import {browserActionFormComponent} from './components/forms/actions/web/browser-action-form/browser-action-form.component';
 import {checkForNodeActionFormComponent} from './components/forms/actions/web/check-for-node-action-form/check-for-node-action-form.component';
 import {checkForTextActionFormComponent} from './components/forms/actions/web/check-for-text-action-form/check-for-text-action-form.component';
 import {checkNodeAttributeValueActionFormComponent} from './components/forms/actions/web/check-node-attribute-value-action-form/check-node-attribute-value-action-form.component';
@@ -377,6 +378,7 @@ angular
     .component('alertAcceptDismissActionForm', alertAcceptDismissActionFormComponent)
     .component('alertGetTextActionForm', alertGetTextActionFormComponent)
     .component('alertSendKeysActionForm', alertSendKeysActionFormComponent)
+    .component('browserActionForm', browserActionFormComponent)
     .component('checkNodeAttributeValueActionForm', checkNodeAttributeValueActionFormComponent)
     .component('checkForNodeActionForm', checkForNodeActionFormComponent)
     .component('checkForTextActionForm', checkForTextActionFormComponent)

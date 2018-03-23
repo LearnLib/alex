@@ -411,11 +411,13 @@ public class Learner {
                                                 .map(s -> s.execute(connectors))
                                                 .collect(Collectors.toList());
             connectors.dispose();
+            connectors.post();
 
             LOGGER.traceExit(output);
             return output;
         } catch (Exception e) {
             connectors.dispose();
+            connectors.post();
 
             LOGGER.traceExit(e);
             throw new LearnerException("Could not read the outputs", e);

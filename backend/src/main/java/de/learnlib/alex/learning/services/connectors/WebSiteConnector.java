@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,17 +66,43 @@ public class WebSiteConnector implements Connector {
         this.driverConfig = driverConfig;
     }
 
-    /**
-     * Try to clear all data from the browser, including Cookies, local storage & session storage.
-     */
     @Override
     public void reset() throws Exception {
-        this.driver = driverConfig.createDriver();
+        if (this.driver == null) {
+            this.driver = driverConfig.createDriver();
+        }
     }
 
     @Override
     public void dispose() {
-        this.driver.quit();
+        driver.manage().deleteAllCookies();
+        if (driver instanceof JavascriptExecutor) {
+            final JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("window.localStorage.clear();");
+            js.executeScript("window.sessionStorage.clear();");
+        }
+    }
+
+    @Override
+    public void post() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
+    /** Refreshes the browser window. */
+    public void refresh() {
+        if (this.driver != null) {
+            this.driver.navigate().refresh();
+        }
+    }
+
+    /** Restarts the browser. */
+    public void restart() throws Exception {
+        if (this.driver != null) {
+            this.driver.quit();
+            this.driver = driverConfig.createDriver();
+        }
     }
 
     /**

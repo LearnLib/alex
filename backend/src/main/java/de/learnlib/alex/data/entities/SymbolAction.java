@@ -44,6 +44,7 @@ import de.learnlib.alex.data.entities.actions.WaitAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.AlertAcceptDismissAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.AlertGetTextAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.AlertSendKeysAction;
+import de.learnlib.alex.data.entities.actions.WebSymbolActions.BrowserAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckNodeAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckNodeAttributeValueAction;
 import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckPageTitleAction;
@@ -115,6 +116,7 @@ import java.util.UUID;
         @JsonSubTypes.Type(name = "web_alertAcceptDismiss", value = AlertAcceptDismissAction.class),
         @JsonSubTypes.Type(name = "web_alertGetText", value = AlertGetTextAction.class),
         @JsonSubTypes.Type(name = "web_alertSendKeys", value = AlertSendKeysAction.class),
+        @JsonSubTypes.Type(name = "web_browser", value = BrowserAction.class),
         @JsonSubTypes.Type(name = "web_checkNodeAttributeValue", value = CheckNodeAttributeValueAction.class),
         @JsonSubTypes.Type(name = "web_checkForNode", value = CheckNodeAction.class),
         @JsonSubTypes.Type(name = "web_checkForText", value = CheckTextWebAction.class),
@@ -383,6 +385,5 @@ public abstract class SymbolAction implements Serializable {
         return result;
     }
     //CHECKSTYLE.ON: AvoidInlineConditionals|MagicNumber|NeedBraces
-
 
 }

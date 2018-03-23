@@ -46,7 +46,10 @@ public class VariableStoreConnector implements Connector {
 
     @Override
     public void dispose() {
-        // nothing to do here
+    }
+
+    @Override
+    public void post() {
     }
 
     /**

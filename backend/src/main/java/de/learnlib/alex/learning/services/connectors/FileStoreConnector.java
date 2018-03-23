@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,13 +32,6 @@ public class FileStoreConnector implements Connector {
     /** The FileDAO to use. */
     private FileDAO fileDAO;
 
-    /** Constructor.
-     * @param user*/
-    public FileStoreConnector(User user, ProjectDAO projectDAO) {
-        this.user = user;
-        this.fileDAO = new FileDAOImpl(projectDAO);
-    }
-
     /**
      * Constructor.
      * @param fileDAO An instance of the file dao.
@@ -50,12 +43,14 @@ public class FileStoreConnector implements Connector {
 
     @Override
     public void reset() {
-        // nothing to do here
     }
 
     @Override
     public void dispose() {
-        // nothing to do here
+    }
+
+    @Override
+    public void post() {
     }
 
     /**

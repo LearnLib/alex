@@ -54,6 +54,7 @@ export class ActionCreateModalComponent {
                 {type: actionType.WEB_ALERT_ACCEPT_DISMISS, text: 'Alert - Accept/Dismiss'},
                 {type: actionType.WEB_ALERT_GET_TEXT, text: 'Alert - Get text'},
                 {type: actionType.WEB_ALERT_SEND_KEYS, text: 'Alert - Send keys'},
+                {type: actionType.WEB_BROWSER, text: 'Browser window'},
                 {type: actionType.WEB_CHECK_ATTRIBUTE_VALUE, text: 'Check attribute value'},
                 {type: actionType.WEB_CHECK_PAGE_TITLE, text: 'Check page title'},
                 {type: actionType.WEB_CLEAR, text: 'Clear input'},

@@ -66,6 +66,7 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
             e.printStackTrace();
             updateOnError(e);
         } finally {
+            context.post();
             finished = true;
             LOGGER.info(LEARNER_MARKER, "The learner finished resuming the experiment.");
             LOGGER.traceExit();

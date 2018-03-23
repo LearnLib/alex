@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,11 +63,16 @@ public class ConnectorManager implements Iterable<Connector> {
     }
 
     /**
-     * Disposes all connectors and clear the list of managed connectors.
-     * This method is idempotent.
+     * Disposes all connectors.
      */
     public void dispose() {
-        connectors.forEach((t, u) -> u.dispose());
+        connectors.values().forEach(Connector::dispose);
     }
 
+    /**
+     * Clean up all connectors after the learner finished.
+     */
+    public void post() {
+        connectors.values().forEach(Connector::post);
+    }
 }

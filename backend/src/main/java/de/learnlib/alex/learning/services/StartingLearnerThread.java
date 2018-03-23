@@ -55,6 +55,7 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
             e.printStackTrace();
             updateOnError(e);
         } finally {
+            context.post();
             finished = true;
             LOGGER.info(LEARNER_MARKER, "The learner thread has finished.");
             LOGGER.traceExit();

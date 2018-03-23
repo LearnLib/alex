@@ -108,7 +108,11 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /** The queries that are executed at the moment. */
     private List<DefaultQueryProxy> currentQueries;
 
+    /** The oracle where all queries are posed to. */
     private MultiSULOracle<String, String> multiSULOracle;
+
+    /** The current connector context. */
+    protected ConnectorContextHandler context;
 
     /**
      * Constructor.
@@ -134,6 +138,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
                         .collect(Collectors.toList())
         );
 
+        this.context = context;
         this.finished = false;
         this.maxConcurrentQueries = context.getMaxConcurrentQueries();
         this.currentQueries = new ArrayList<>();

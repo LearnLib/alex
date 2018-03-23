@@ -45,8 +45,7 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
     /**
      * Add a connector to the set of connectors.
      *
-     * @param connectorManager
-     *         The new connector manager.
+     * @param connectorManager The new connector manager.
      */
     public void addConnectorManager(ConnectorManager connectorManager) {
         try {
@@ -60,8 +59,7 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
     /**
      * Set the reset symbol that should be used to reset the SUL.
      *
-     * @param resetSymbol
-     *         The new reset symbol.
+     * @param resetSymbol The new reset symbol.
      */
     public void setResetSymbol(Symbol resetSymbol) {
         this.resetSymbol = resetSymbol;
@@ -93,7 +91,7 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
 
         if (!resetResult.isSuccess()) {
             throw new LearnerException("The execution of the reset symbol failed: "
-                                               + resetResult.toString() + ".");
+                    + resetResult.toString() + ".");
         }
 
         return connectorManager;
@@ -107,6 +105,11 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
         } catch (InterruptedException e) {
             throw new LearnerException(e.getMessage(), e);
         }
+    }
+
+    /** Execute the {@link ConnectorManager#post} method after the learner has finished. */
+    public void post() {
+        pool.forEach(ConnectorManager::post);
     }
 
     /** @return The number of mqs executed in parallel. */

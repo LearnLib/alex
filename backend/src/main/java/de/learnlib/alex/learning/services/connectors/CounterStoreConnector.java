@@ -69,7 +69,6 @@ public class CounterStoreConnector implements Connector {
 
     @Override
     public void reset() {
-        // nothing to do here
     }
 
     @Override
@@ -98,6 +97,10 @@ public class CounterStoreConnector implements Connector {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void post() {
     }
 
     private Counter createCounter(Long projectId, String name, Integer value) {

@@ -232,6 +232,7 @@ public class TestService {
         }
 
         connectors.dispose();
+        connectors.post();
         final long time = System.currentTimeMillis() - startTime;
 
         final List<String> failureMessageParts = new ArrayList<>();
