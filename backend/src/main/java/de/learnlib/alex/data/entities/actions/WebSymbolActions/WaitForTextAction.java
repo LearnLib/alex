@@ -96,11 +96,11 @@ public class WaitForTextAction extends WebSymbolAction {
             if (regexp) {
                 LOGGER.info(LEARNER_MARKER, "Waiting for pattern '{}' to be present in node '{}' for a maximum of " +
                         "{}ms.", value, node, maxWaitTime);
-                wait.until(ExpectedConditions.textMatches(node.getBy(), Pattern.compile(value)));
+                wait.until(wd -> connector.getElement(node).getText().matches(value));
             } else {
                 LOGGER.info(LEARNER_MARKER, "Waiting for text '{}' to be present in node '{}' for a maximum of {}ms.",
                             value, node, maxWaitTime);
-                wait.until(ExpectedConditions.textToBePresentInElementLocated(node.getBy(), value));
+                wait.until(wd -> connector.getElement(node).getText().contains(value));
             }
 
             return getSuccessOutput();

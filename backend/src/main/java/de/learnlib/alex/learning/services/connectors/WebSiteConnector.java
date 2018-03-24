@@ -125,7 +125,7 @@ public class WebSiteConnector implements Connector {
 
                 // wait until the browser is loaded
                 if (driver instanceof JavascriptExecutor) {
-                    new WebDriverWait(driver, READY_STATE_TIMEOUT).until((ExpectedCondition<Boolean>) wd ->
+                    new WebDriverWait(driver, READY_STATE_TIMEOUT).until(wd ->
                             ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
                 }
 

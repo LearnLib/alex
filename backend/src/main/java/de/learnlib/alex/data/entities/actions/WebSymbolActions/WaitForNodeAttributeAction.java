@@ -143,10 +143,10 @@ public class WaitForNodeAttributeAction extends WebSymbolAction {
         try {
             switch (waitCriterion) {
                 case IS:
-                    wait.until(ExpectedConditions.attributeToBe(node.getBy(), attribute, value));
+                    wait.until(wd -> connector.getElement(node).getAttribute(attribute).equals(value));
                     break;
                 case CONTAINS:
-                    wait.until(ExpectedConditions.attributeContains(node.getBy(), attribute, value));
+                    wait.until(wd -> connector.getElement(node).getAttribute(attribute).contains(value));
                     break;
                 default:
                     return getFailedOutput();

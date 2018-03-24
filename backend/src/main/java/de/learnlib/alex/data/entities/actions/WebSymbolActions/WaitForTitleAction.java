@@ -167,10 +167,10 @@ public class WaitForTitleAction extends WebSymbolAction {
         try {
             switch (waitCriterion) {
                 case IS:
-                    wait.until(ExpectedConditions.titleIs(value));
+                    wait.until(wd -> wd.getTitle().equals(value));
                     break;
                 case CONTAINS:
-                    wait.until(ExpectedConditions.titleContains(value));
+                    wait.until(wd -> wd.getTitle().contains(value));
                     break;
                 default:
                     return getFailedOutput();

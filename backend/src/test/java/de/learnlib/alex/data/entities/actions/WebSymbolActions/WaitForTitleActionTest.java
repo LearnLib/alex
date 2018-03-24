@@ -109,6 +109,7 @@ public class WaitForTitleActionTest extends WebActionTest {
     @Test
     public void shouldFailOnTimeout() {
         WebDriver driver = mock(WebDriver.class);
+        given(driver.getTitle()).willReturn("test title");
         given(webSiteConnector.getDriver()).willReturn(driver);
         action.setWaitCriterion(WaitForTitleAction.WaitCriterion.IS);
         action.setMaxWaitTime(0); // don't really wait to keep the test speed high

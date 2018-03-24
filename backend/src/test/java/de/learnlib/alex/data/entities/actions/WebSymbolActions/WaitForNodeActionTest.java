@@ -21,6 +21,7 @@ import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
+import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -115,9 +116,11 @@ public class WaitForNodeActionTest extends WebActionTest {
     public void shouldWaitUntilTheElementIsInvisible() {
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
-//        WebElement element = mock(WebElement.class);
-//        given(driver.findElement(By.cssSelector("#node"))).willReturn(element);
-//        given(element.isDisplayed()).willReturn(false);
+        WebElement element = mock(WebElement.class);
+
+        given(element.isDisplayed()).willReturn(false);
+        given(connectors.getConnector(WebSiteConnector.class).getElement(node)).willReturn(element);
+
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.INVISIBLE);
         action.setMaxWaitTime(MAX_WAIT_TIME);
 
@@ -145,9 +148,7 @@ public class WaitForNodeActionTest extends WebActionTest {
     public void shouldWaitUntilTheElementIsRemoved() {
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
-        WebElement element = mock(WebElement.class);
-        given(webSiteConnector.getElement(node)).willReturn(element);
-        given(element.isEnabled()).willThrow(StaleElementReferenceException.class);
+        given(webSiteConnector.getElement(node)).willThrow(StaleElementReferenceException.class);
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.REMOVED);
         action.setMaxWaitTime(MAX_WAIT_TIME);
 

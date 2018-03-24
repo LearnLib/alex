@@ -26,7 +26,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -184,19 +186,37 @@ public class WaitForNodeAction extends WebSymbolAction {
         try {
             switch (waitCriterion) {
                 case VISIBLE:
-                    wait.until(ExpectedConditions.visibilityOf(connector.getElement(node)));
+                    wait.until(wd -> connector.getElement(node).isDisplayed());
                     break;
                 case INVISIBLE:
-                    wait.until(ExpectedConditions.invisibilityOfElementLocated(node.getBy()));
+                    wait.until(wd -> !connector.getElement(node).isDisplayed());
                     break;
                 case ADDED:
                     wait.until(ExpectedConditions.presenceOfElementLocated(node.getBy()));
+                    wait.until(wd -> {
+                       try {
+                           connector.getElement(node);
+                           return true;
+                       } catch (Exception e) {
+                           return false;
+                       }
+                    });
                     break;
                 case REMOVED:
-                    wait.until(ExpectedConditions.stalenessOf(connector.getElement(node)));
+                    wait.until(wd -> {
+                        try {
+                            connector.getElement(node);
+                            return false;
+                        } catch (Exception e) {
+                            return true;
+                        }
+                    });
                     break;
                 case CLICKABLE:
-                    wait.until(ExpectedConditions.elementToBeClickable(node.getBy()));
+                    wait.until(wd -> {
+                        final WebElement element = connector.getElement(node);
+                        return element.isDisplayed() && element.isEnabled();
+                    });
                     break;
                 default:
                     return getFailedOutput();
