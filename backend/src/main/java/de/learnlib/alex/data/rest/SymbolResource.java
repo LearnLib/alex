@@ -28,7 +28,7 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
-import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CallAction;
+import de.learnlib.alex.data.entities.actions.rest.CallAction;
 import de.learnlib.alex.data.events.SymbolEvent;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;

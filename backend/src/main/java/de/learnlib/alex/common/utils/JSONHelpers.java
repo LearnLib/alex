@@ -19,7 +19,7 @@ package de.learnlib.alex.common.utils;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
-import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CheckAttributeTypeAction.JsonType;
+import de.learnlib.alex.data.entities.actions.rest.CheckAttributeTypeAction.JsonType;
 import net.minidev.json.JSONArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

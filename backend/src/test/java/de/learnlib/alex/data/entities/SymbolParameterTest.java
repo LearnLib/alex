@@ -18,9 +18,9 @@ package de.learnlib.alex.data.entities;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.dao.CounterDAO;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.IncrementCounterAction;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.SetCounterAction;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.SetVariableAction;
+import de.learnlib.alex.data.entities.actions.misc.IncrementCounterAction;
+import de.learnlib.alex.data.entities.actions.misc.SetCounterAction;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;

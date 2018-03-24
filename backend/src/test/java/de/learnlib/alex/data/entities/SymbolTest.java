@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.data.entities;
 
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckTextWebAction;
+import de.learnlib.alex.data.entities.actions.web.CheckTextWebAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
