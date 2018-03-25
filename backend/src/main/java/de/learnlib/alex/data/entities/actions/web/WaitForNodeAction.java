@@ -191,7 +191,6 @@ public class WaitForNodeAction extends WebSymbolAction {
                     wait.until(wd -> !connector.getElement(node).isDisplayed());
                     break;
                 case ADDED:
-                    wait.until(ExpectedConditions.presenceOfElementLocated(node.getBy()));
                     wait.until(wd -> {
                        try {
                            connector.getElement(node);
