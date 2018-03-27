@@ -130,9 +130,7 @@ public class WaitForNodeActionTest extends WebActionTest {
         WebDriver driver = mock(WebDriver.class);
         given(webSiteConnector.getDriver()).willReturn(driver);
         WebElement element = mock(WebElement.class);
-        given(driver.findElements(By.cssSelector("#node"))).willReturn(Collections.singletonList(element));
-//        given(element.isEnabled()).willReturn(true);
-//        given(element.isDisplayed()).willReturn(true);
+        given(webSiteConnector.getElement(node)).willReturn(element);
 
         action.setWaitCriterion(WaitForNodeAction.WaitCriterion.ADDED);
         action.setMaxWaitTime(MAX_WAIT_TIME);

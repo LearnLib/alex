@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,17 @@
 package de.learnlib.alex.learning.entities.algorithms;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.algorithms.dhc.mealy.MealyDHC;
 import de.learnlib.algorithms.dhc.mealy.MealyDHCBuilder;
+import de.learnlib.algorithms.dhc.mealy.MealyDHCState;
 import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.api.oracle.MembershipOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
@@ -34,9 +39,11 @@ public class DHC extends AbstractLearningAlgorithm<String, String> implements Se
     private static final long serialVersionUID = -1703212406344298512L;
 
     @Override
-    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
-                                                                        MembershipOracle<String, Word<String>> oracle) {
-        return new MealyDHCBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
+    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle) {
+        return new MealyDHCBuilder<String, String>()
+                .withAlphabet(sigma)
+                .withOracle(oracle)
+                .create();
     }
 
     @Override
@@ -44,4 +51,12 @@ public class DHC extends AbstractLearningAlgorithm<String, String> implements Se
         return "";
     }
 
+    @Override
+    public void resume(LearningAlgorithm.MealyLearner<String, String> learner, byte[] data)
+            throws IOException, ClassNotFoundException {
+        try (final ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(data))) {
+            final MealyDHCState<String, String> state = (MealyDHCState<String, String>) objectIn.readObject();
+            ((MealyDHC<String, String>) learner).resume(state);
+        }
+    }
 }

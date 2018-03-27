@@ -40,6 +40,9 @@ For the installation from the source files make sure your system matches the fol
 * Maven 3
 * Node.js v7.9.* and the NPM
 
+ALEX currently relies on snapshot versions of [AutomataLib](https://github.com/LearnLib/automatalib) and [LearnLib](https://github.com/LearnLib/leanrlib).
+Follow the build instructions for local development of both libraries and then proceed with the following steps.
+
 To obtain ALEX execute the following commands in a directory of your choice:
 
 1. `git clone https://github.com/LearnLib/alex.git`

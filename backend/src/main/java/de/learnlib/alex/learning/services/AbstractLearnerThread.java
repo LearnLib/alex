@@ -48,6 +48,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -186,6 +187,11 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
 
         final LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
         step.setStatistics(statistics);
+        try {
+            step.setState(result.getAlgorithm().suspend(learner));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         step.setAlgorithmInformation(result.getAlgorithm().getInternalData(learner));
         step.setHypothesis(CompactMealyMachineProxy.createFrom(learner.getHypothesisModel(), abstractAlphabet));
         step.setCounterExample(DefaultQueryProxy.createFrom(counterexample));

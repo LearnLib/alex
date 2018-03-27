@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,13 +43,12 @@ import java.util.UUID;
 
 /**
  * Entity class to store the result of a test run, i.e. the outcome of a learn iteration and must not be the final
- * result.
- * The result contains the configuration of the learning process, the resulting hypothesis and some meta data
+ * result. The result contains the configuration of the learning process, the resulting hypothesis and some meta data
  * (duration, #EQ, ...).
  */
 @Entity
 @Table(
-    uniqueConstraints = @UniqueConstraint(columnNames = {"result_id", "stepNo"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"result_id", "stepNo"})
 )
 @JsonPropertyOrder(alphabetic = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -84,10 +83,13 @@ public class LearnerResultStep implements Serializable {
     /** This is an optional property and can contain things like the internal data structure. */
     private String algorithmInformation;
 
+    /** The internal state of the learner. */
+    private byte[] state;
+
     /**
-     * If this field is set some sort of error occurred during the learning.
-     * In this case this field stores more information about the error.
-     * All other field can still have data, that are valid to some extend and should only be used carefully.
+     * If this field is set some sort of error occurred during the learning. In this case this field stores more
+     * information about the error. All other field can still have data, that are valid to some extend and should only
+     * be used carefully.
      */
     private String errorText;
 
@@ -131,7 +133,8 @@ public class LearnerResultStep implements Serializable {
     }
 
     /**
-     * @param result The new LearnResult for the step.
+     * @param result
+     *         The new LearnResult for the step.
      */
     public void setResult(LearnerResult result) {
         this.result = result;
@@ -166,7 +169,8 @@ public class LearnerResultStep implements Serializable {
     }
 
     /**
-     * @param eqOracle The new eq oracle strategy for the step.
+     * @param eqOracle
+     *         The new eq oracle strategy for the step.
      */
     public void setEqOracle(AbstractEquivalenceOracleProxy eqOracle) {
         this.eqOracle = eqOracle;
@@ -181,7 +185,8 @@ public class LearnerResultStep implements Serializable {
     }
 
     /**
-     * @param stepsToLearn The new max amount of steps to learn without user interaction.
+     * @param stepsToLearn
+     *         The new max amount of steps to learn without user interaction.
      */
     public void setStepsToLearn(int stepsToLearn) {
         this.stepsToLearn = stepsToLearn;
@@ -323,10 +328,18 @@ public class LearnerResultStep implements Serializable {
         }
     }
 
+    @Column(columnDefinition = "BLOB")
+    public byte[] getState() {
+        return state;
+    }
+
+    public void setState(byte[] state) {
+        this.state = state;
+    }
+
     /**
-     * Set an error text as part of the learning result.
-     * If a error text is set, it also implies that something during the learning went wrong and
-     * {@link #isError()} will return True.
+     * Set an error text as part of the learning result. If a error text is set, it also implies that something during
+     * the learning went wrong and {@link #isError()} will return True.
      *
      * @param errorText
      *         The new error text.
