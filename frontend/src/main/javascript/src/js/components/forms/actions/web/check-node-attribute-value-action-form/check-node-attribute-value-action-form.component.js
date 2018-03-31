@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 /**
- * 
+ *
  * @type {{templateUrl: string, bindings: {action: string}, controllerAs: string, controller: checkNodeAttributeValueActionFormComponent.controller}}
  */
 export const checkNodeAttributeValueActionFormComponent = {
@@ -26,7 +26,7 @@ export const checkNodeAttributeValueActionFormComponent = {
     controllerAs: 'vm',
     controller: class {
         constructor() {
-            this.checkMethods = ['IS', 'CONTAINS', 'MATCHES'];    
+            this.checkMethods = ['IS', 'CONTAINS', 'MATCHES'];
         }
     }
 };
