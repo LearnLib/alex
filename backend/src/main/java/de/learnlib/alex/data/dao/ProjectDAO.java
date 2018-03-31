@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package de.learnlib.alex.data.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
+import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -46,8 +47,8 @@ public interface ProjectDAO {
         ALL;
 
         /**
-         * Parse a string into an entry of this enum.
-         * It is forbidden to override toValue(), so we use this method to allow the lowercase variants, too.
+         * Parse a string into an entry of this enum. It is forbidden to override toValue(), so we use this method to
+         * allow the lowercase variants, too.
          *
          * @param name
          *         THe name to parse into an entry.
@@ -69,14 +70,15 @@ public interface ProjectDAO {
      * Save the given project.
      *
      * @param project
-     *            The project to be saved.
+     *         The project to be saved.
      * @throws ValidationException
-     *             If the Project was not valid.
+     *         If the Project was not valid.
      */
     void create(Project project) throws ValidationException;
 
     /**
      * Get a list of all the projects.
+     *
      * @param user
      *         The user of the project.
      * @param embedFields
@@ -89,7 +91,7 @@ public interface ProjectDAO {
      * Get a specific project by its ID.
      *
      * @param userId
-     *          The ID of the user.
+     *         The ID of the user.
      * @param projectId
      *         The ID of the project to find.
      * @param embedFields
@@ -118,22 +120,22 @@ public interface ProjectDAO {
     /**
      * Update a project.
      *
-     *
      * @param user
+     *         The user.
      * @param project
-     *            The project to update.
+     *         The project to update.
      * @throws NotFoundException
-     *             When the Project was not found.
+     *         When the Project was not found.
      * @throws ValidationException
-     *             When the Project was not valid.
+     *         When the Project was not valid.
      */
     void update(User user, Project project) throws NotFoundException, ValidationException;
 
     /**
      * Delete a project.
      *
-     *
      * @param user
+     *         The user.
      * @param projectId
      *         The id of the project to delete.
      * @throws NotFoundException
@@ -141,4 +143,17 @@ public interface ProjectDAO {
      */
     void delete(User user, Long projectId) throws NotFoundException;
 
+    /**
+     * Check if the user is allowed to access or modify the project.
+     *
+     * @param user
+     *         The user.
+     * @param project
+     *         The project.
+     * @throws NotFoundException
+     *         If the project could not be found.
+     * @throws UnauthorizedException
+     *         If the project does not belong to the project.
+     */
+    void checkAccess(User user, Project project) throws NotFoundException, UnauthorizedException;
 }

@@ -203,6 +203,7 @@ import {LearnResultResource} from './services/resources/learner-result-resource.
 import {ProjectResource} from './services/resources/project-resource.service';
 import {SettingsResource} from './services/resources/settings-resource.service';
 import {SymbolGroupResource} from './services/resources/symbol-group-resource.service';
+import {SymbolParameterResource} from './services/resources/symbol-parameter-resource.service';
 import {SymbolResource} from './services/resources/symbol-resource.service';
 import {TestReportResource} from './services/resources/test-report-resource.service';
 import {TestResource} from './services/resources/test-resource.service';
@@ -258,6 +259,7 @@ angular
     .service('ProjectResource', ProjectResource)
     .service('SettingsResource', SettingsResource)
     .service('SymbolGroupResource', SymbolGroupResource)
+    .service('SymbolParameterResource', SymbolParameterResource)
     .service('SymbolResource', SymbolResource)
     .service('UserResource', UserResource)
     .service('TestResource', TestResource)

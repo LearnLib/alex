@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2016 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,28 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.data.repositories;
+package de.learnlib.alex.testing.repositories;
 
-import de.learnlib.alex.data.entities.SymbolParameter;
+import de.learnlib.alex.testing.entities.TestCaseSymbolStep;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
-/** Repository for symbol parameters. */
+/** Repository for symbol steps of a test case. */
 @Repository
-public interface SymbolParameterRepository extends JpaRepository<SymbolParameter, Long> {
+public interface TestCaseSymbolStepRepository extends JpaRepository<TestCaseSymbolStep, UUID> {
+
+    /**
+     * Get all test case steps that use a certain symbol.
+     *
+     * @param symbolId
+     *         The id of the symbol.
+     * @return The list of steps that use the symbol.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<TestCaseSymbolStep> findAllBySymbol_Id(Long symbolId);
 }

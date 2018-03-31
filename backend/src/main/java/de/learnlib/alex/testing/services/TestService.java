@@ -24,6 +24,7 @@ import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
@@ -59,8 +60,7 @@ public class TestService {
     private final ConnectorContextHandlerFactory contextHandlerFactory;
 
     /**
-     * The running testing threads.
-     * userId -> (projectId -> TestThread).
+     * The running testing threads. userId -> (projectId -> TestThread).
      */
     private final Map<Long, Map<Long, TestThread>> testingThreads;
 
@@ -76,7 +76,8 @@ public class TestService {
     /**
      * Constructor.
      *
-     * @param contextHandlerFactory The injected {@link ConnectorContextHandlerFactory}
+     * @param contextHandlerFactory
+     *         The injected {@link ConnectorContextHandlerFactory}
      */
     @Inject
     public TestService(ConnectorContextHandlerFactory contextHandlerFactory, WebhookService webhookService,
@@ -91,8 +92,10 @@ public class TestService {
     /**
      * Check if a test process in active for a project.
      *
-     * @param user      The current user.
-     * @param projectId The id of the the project.
+     * @param user
+     *         The current user.
+     * @param projectId
+     *         The id of the the project.
      * @return If a test process is active.
      */
     public boolean isActive(User user, Long projectId) {
@@ -102,9 +105,12 @@ public class TestService {
     /**
      * Starts a new test thread.
      *
-     * @param user    The user.
-     * @param project The project.
-     * @param config  The config for the tests.
+     * @param user
+     *         The user.
+     * @param project
+     *         The project.
+     * @param config
+     *         The config for the tests.
      * @return A test status.
      */
     public TestStatus start(User user, Project project, TestExecutionConfig config) {
@@ -129,8 +135,10 @@ public class TestService {
     /**
      * Gets the status of the active test process of a project.
      *
-     * @param user    The user.
-     * @param project The project.
+     * @param user
+     *         The user.
+     * @param project
+     *         The project.
      * @return The status.
      */
     public TestStatus getStatus(User user, Project project) {
@@ -154,9 +162,12 @@ public class TestService {
     /**
      * Executes multiple tests.
      *
-     * @param user         The user that executes the test suite.
-     * @param tests        The tests that should be executed.
-     * @param driverConfig The config for the web driver.
+     * @param user
+     *         The user that executes the test suite.
+     * @param tests
+     *         The tests that should be executed.
+     * @param driverConfig
+     *         The config for the web driver.
      * @return
      */
     public Map<Long, TestResult> executeTests(User user, List<Test> tests, AbstractWebDriverConfig driverConfig, Map<Long, TestResult> results) {
@@ -173,9 +184,12 @@ public class TestService {
     /**
      * Execute a test suite.
      *
-     * @param user         The user that executes the test suite.
-     * @param testSuite    The test suite that is being executed.
-     * @param driverConfig The config for the web driver.
+     * @param user
+     *         The user that executes the test suite.
+     * @param testSuite
+     *         The test suite that is being executed.
+     * @param driverConfig
+     *         The config for the web driver.
      * @return
      */
     public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, AbstractWebDriverConfig driverConfig, Map<Long, TestResult> results) {
@@ -198,9 +212,12 @@ public class TestService {
     /**
      * Executes a test case.
      *
-     * @param user         The user that executes the test suite.
-     * @param testCase     The test case that is being executed.
-     * @param driverConfig The config for the web driver.
+     * @param user
+     *         The user that executes the test suite.
+     * @param testCase
+     *         The test case that is being executed.
+     * @param driverConfig
+     *         The config for the web driver.
      * @return
      */
     public TestCaseResult executeTestCase(User user, TestCase testCase, AbstractWebDriverConfig driverConfig, Map<Long, TestResult> results) {
@@ -210,6 +227,7 @@ public class TestService {
 
         final long startTime = System.currentTimeMillis();
         final ConnectorManager connectors = ctxHandler.createContext();
+        final VariableStoreConnector variableStore = connectors.getConnector(VariableStoreConnector.class);
 
         final List<ExecuteResult> outputs = new ArrayList<>();
 
@@ -217,6 +235,15 @@ public class TestService {
         int failedStepIndex = 0;
         for (int i = 0; i < testCase.getSteps().size(); i++) {
             final TestCaseStep step = testCase.getSteps().get(i);
+
+            // here, the values for the parameters of the symbols are set
+            if (step instanceof TestCaseSymbolStep) {
+                final TestCaseSymbolStep symbolStep = (TestCaseSymbolStep) step;
+                symbolStep.getParameterValues().stream()
+                        .filter(value -> value.getValue() != null)
+                        .forEach(value -> variableStore.set(value.getParameter().getName(), value.getValue()));
+            }
+
             final ExecuteResult result = step.execute(connectors);
             outputs.add(result);
             failedStepIndex = i;

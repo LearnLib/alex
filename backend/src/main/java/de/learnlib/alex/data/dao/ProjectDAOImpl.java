@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -238,4 +239,14 @@ public class ProjectDAOImpl implements ProjectDAO {
         return fieldsToLoad;
     }
 
+    @Override
+    public void checkAccess(User user, Project project) throws NotFoundException, UnauthorizedException {
+        if (project == null) {
+            throw new NotFoundException("The project does not exist.");
+        }
+
+        if (!project.getUser().equals(user)) {
+            throw new UnauthorizedException("You are not allowed to access the project.");
+        }
+    }
 }

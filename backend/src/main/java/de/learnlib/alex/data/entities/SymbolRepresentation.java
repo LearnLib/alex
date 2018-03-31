@@ -16,6 +16,8 @@
 
 package de.learnlib.alex.data.entities;
 
+import java.util.List;
+
 /** Compact representation of a symbol */
 public class SymbolRepresentation {
 
@@ -25,6 +27,12 @@ public class SymbolRepresentation {
     /** The name of the symbol. */
     private String name;
 
+    /** The inputs of the symbol. */
+    private List<SymbolInputParameter> inputs;
+
+    /** The outputs of the symbol. */
+    private List<SymbolOutputParameter> outputs;
+
     /**
      * Constructor.
      *
@@ -33,6 +41,8 @@ public class SymbolRepresentation {
     public SymbolRepresentation(Symbol symbol) {
         this.id = symbol.getId();
         this.name = symbol.getName();
+        this.inputs = symbol.getInputs();
+        this.outputs = symbol.getOutputs();
     }
 
     public Long getId() {
@@ -49,5 +59,21 @@ public class SymbolRepresentation {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<SymbolInputParameter> getInputs() {
+        return inputs;
+    }
+
+    public void setInputs(List<SymbolInputParameter> inputs) {
+        this.inputs = inputs;
+    }
+
+    public List<SymbolOutputParameter> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(List<SymbolOutputParameter> outputs) {
+        this.outputs = outputs;
     }
 }

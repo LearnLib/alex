@@ -25,8 +25,13 @@ export const symbolParameterCreateModalComponent = {
     },
     controller: class {
 
-        /** Constructor. */
-        constructor() {
+        /**
+         * Constructor.
+         * @param {SymbolParameterResource} SymbolParameterResource
+         */
+        // @ngInject
+        constructor(SymbolParameterResource) {
+            this.symbolParameterResource = SymbolParameterResource;
 
             /**
              * The error message to display.
@@ -57,29 +62,10 @@ export const symbolParameterCreateModalComponent = {
 
         addParameter() {
             this.errorMessage = null;
-
             const symbol = this.resolve.symbol;
-            if (this.parameter.type === 'input') {
-                const input = symbol.inputs.find(input =>
-                    input.name === this.parameter.name &&
-                    input.parameterType === this.parameter.parameterType);
-
-                if (input != null) {
-                    this.errorMessage = 'There is already an input with that type and name.';
-                    return;
-                }
-            } else {
-                const output = symbol.outputs.find(out =>
-                    out.name === this.parameter.name &&
-                    out.parameterType === this.parameter.parameterType);
-
-                if (output != null) {
-                    this.errorMessage = 'There is already an output with that type and name.';
-                    return;
-                }
-            }
-
-            this.close({$value: this.parameter});
+            this.symbolParameterResource.create(symbol.project, symbol.id, this.parameter)
+                .then(param => this.close({$value: param}))
+                .catch(err => this.errorMessage = err.data.message);
         }
     },
     controllerAs: 'vm'

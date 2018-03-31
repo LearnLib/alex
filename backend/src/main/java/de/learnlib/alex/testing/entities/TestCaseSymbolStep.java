@@ -21,12 +21,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolParameterValue;
 import de.learnlib.alex.data.entities.SymbolRepresentation;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import java.util.ArrayList;
+import java.util.List;
 
 /** The test case step that executes a symbol. */
 @Entity
@@ -41,6 +46,20 @@ public class TestCaseSymbolStep extends TestCaseStep {
     )
     @JsonIgnore
     private Symbol symbol;
+
+    /** The values for the parameters defined in {@link #symbol}. */
+    @OneToMany(
+            mappedBy = "step",
+            cascade = CascadeType.MERGE,
+            fetch = FetchType.EAGER,
+            orphanRemoval = true
+    )
+    private List<SymbolParameterValue> parameterValues;
+
+    /** Constructor. */
+    public TestCaseSymbolStep() {
+        this.parameterValues = new ArrayList<>();
+    }
 
     @Override
     public ExecuteResult execute(ConnectorManager connectors) {
@@ -64,5 +83,13 @@ public class TestCaseSymbolStep extends TestCaseStep {
     public void setSymbolId(Long symbolId) {
         symbol = new Symbol();
         symbol.setId(symbolId);
+    }
+
+    public List<SymbolParameterValue> getParameterValues() {
+        return parameterValues;
+    }
+
+    public void setParameterValues(List<SymbolParameterValue> parameterValues) {
+        this.parameterValues = parameterValues;
     }
 }

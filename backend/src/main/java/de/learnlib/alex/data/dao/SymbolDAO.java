@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
+import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -49,8 +51,7 @@ public interface SymbolDAO {
      * @param symbols
      *         The symbols to save.
      * @throws ValidationException
-     *         When one the symbols was not valid.
-     *         In this case all symbols are reverted and not saved.
+     *         When one the symbols was not valid. In this case all symbols are reverted and not saved.
      */
     void create(User user, List<Symbol> symbols) throws ValidationException, NotFoundException;
 
@@ -203,8 +204,7 @@ public interface SymbolDAO {
     void move(User user, Symbol symbol, Long newGroupId) throws NotFoundException;
 
     /**
-     * Moves a List of Symbols ot a new Group.
-     * If one Symbol failed to be move, no Symbol will be moved.
+     * Moves a List of Symbols ot a new Group. If one Symbol failed to be move, no Symbol will be moved.
      *
      * @param user
      *         The user performing the action.
@@ -245,4 +245,19 @@ public interface SymbolDAO {
      */
     void show(User user, Long projectId, List<Long> ids) throws NotFoundException;
 
+    /**
+     * Check if the user can access or modify a symbol.
+     *
+     * @param user
+     *         The user.
+     * @param project
+     *         the project.
+     * @param symbol
+     *         The symbol.
+     * @throws NotFoundException
+     *         If one of the resources could not be found.
+     * @throws UnauthorizedException
+     *         If the user has no access to one of the resources.
+     */
+    void checkAccess(User user, Project project, Symbol symbol) throws NotFoundException, UnauthorizedException;
 }

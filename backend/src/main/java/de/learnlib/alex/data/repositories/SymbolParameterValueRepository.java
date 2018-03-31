@@ -16,13 +16,23 @@
 
 package de.learnlib.alex.data.repositories;
 
-import de.learnlib.alex.data.entities.SymbolParameter;
+import de.learnlib.alex.data.entities.SymbolParameterValue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
+import javax.transaction.Transactional;
 
-/** Repository for symbol parameters. */
+/** The repository for the symbol parameter values. */
 @Repository
-public interface SymbolParameterRepository extends JpaRepository<SymbolParameter, Long> {
+public interface SymbolParameterValueRepository extends JpaRepository<SymbolParameterValue, Long> {
+
+    /**
+     * Delete all values of a symbol parameter by the parameter id.
+     *
+     * @param parameterId
+     *         The id of the parameter.
+     */
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
+    void removeAllByParameter_Id(Long parameterId);
 }

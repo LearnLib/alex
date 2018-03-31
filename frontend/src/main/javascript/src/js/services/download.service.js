@@ -38,17 +38,12 @@ export class DownloadService {
      */
     download(filename, fileExtension, href) {
 
-        // create new link element with downloadable
+        // create new link element with downloadable content
         const a = this.document.createElement('a');
         a.style.display = 'none';
         a.setAttribute('href', href);
-        a.setAttribute('target', '_blank');
         a.setAttribute('download', filename + '.' + fileExtension);
-
-        // append link to the dom, fire click event and remove it
-        this.document.body.appendChild(a);
         a.click();
-        this.document.body.removeChild(a);
     }
 
     /**

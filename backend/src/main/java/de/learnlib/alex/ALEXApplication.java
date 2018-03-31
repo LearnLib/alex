@@ -29,6 +29,7 @@ import de.learnlib.alex.data.rest.CounterResource;
 import de.learnlib.alex.data.rest.FileResource;
 import de.learnlib.alex.data.rest.ProjectResource;
 import de.learnlib.alex.data.rest.SymbolGroupResource;
+import de.learnlib.alex.data.rest.SymbolParameterResource;
 import de.learnlib.alex.data.rest.SymbolResource;
 import de.learnlib.alex.learning.rest.LearnerResource;
 import de.learnlib.alex.learning.rest.LearnerResultResource;
@@ -97,8 +98,9 @@ public class ALEXApplication extends ResourceConfig {
         register(LearnerResultResource.class);
         register(ProjectResource.class);
         register(SettingsResource.class);
-        register(SymbolGroupResource.class);
         register(SymbolResource.class);
+        register(SymbolGroupResource.class);
+        register(SymbolParameterResource.class);
         register(UserResource.class);
         register(TestResource.class);
         register(TestReportResource.class);

@@ -76,6 +76,16 @@
                             <div class="w-100">
                                 <div ng-if="step.type === 'symbol'">
                                     <strong>{{step.symbol.name}}</strong>
+                                    <div ng-if="step.parameterValues.length > 0" style="margin-top: .5rem">
+                                        <div class="d-flex flex-row text-muted" ng-repeat="parameterValue in step.parameterValues">
+                                            <div style="flex-shrink: 0">
+                                                <em>{{parameterValue.parameter.name}}</em> =&nbsp;
+                                            </div>
+                                            <div class="w-100">
+                                                <input class="input-parameter-value w-100 d-block" ng-model="parameterValue.value" type="text" placeholder="null">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div ng-if="step.type === 'action'">
                                     <i class="fa fa-fw fa-edit mr-1 pull-right" ng-click="vm.openActionEditModal(step.action, $index)"></i>

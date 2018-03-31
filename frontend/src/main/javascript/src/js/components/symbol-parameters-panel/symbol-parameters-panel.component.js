@@ -26,11 +26,15 @@ export const symbolParametersPanelComponent = {
         /**
          * Constructor.
          * @param {PromptService} PromptService
+         * @param {SymbolParameterResource} SymbolParameterResource
+         * @param {ToastService} ToastService
          * @param {$uibModal} $uibModal
          */
         // @ngInject
-        constructor(PromptService, $uibModal) {
+        constructor(PromptService, SymbolParameterResource, ToastService, $uibModal) {
             this.promptService = PromptService;
+            this.symbolParameterResource = SymbolParameterResource;
+            this.toastService = ToastService;
             this.$uibModal = $uibModal;
         }
 
@@ -69,7 +73,6 @@ export const symbolParametersPanelComponent = {
                 }
             }).result.then((param) => {
                 this.symbol.inputs[index] = param;
-                this.onChange();
             });
         }
 
@@ -82,18 +85,21 @@ export const symbolParametersPanelComponent = {
                 }
             }).result.then((param) => {
                 this.symbol.outputs[index] = param;
-                this.onChange();
             });
         }
 
         removeInput(index) {
-            this.symbol.inputs.splice(index, 1);
-            this.onChange();
+            const param = this.symbol.inputs[index];
+            this.symbolParameterResource.remove(this.symbol.project, this.symbol.id, param.id)
+                .then(() => this.symbol.inputs.splice(index, 1))
+                .catch(err => this.toastService.danger(`The input parameter could not be deleted. ${err.data.message}`));
         }
 
         removeOutput(index) {
-            this.symbol.outputs.splice(index, 1);
-            this.onChange();
+            const param = this.symbol.outputs[index];
+            this.symbolParameterResource.remove(this.symbol.project, this.symbol.id, param.id)
+                .then(() => this.symbol.outputs.splice(index, 1))
+                .catch(err => this.toastService.danger(`The output parameter could not be deleted. ${err.data.message}`));
         }
     }
 };

@@ -16,13 +16,42 @@
 
 package de.learnlib.alex.data.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 
 /** The input parameter. */
 @Entity
 @JsonTypeName("input")
 public class SymbolInputParameter extends SymbolParameter {
+
     private static final long serialVersionUID = 6221255069083369750L;
+
+    /** The values for the parameter. */
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            mappedBy = "parameter"
+    )
+    @JsonIgnore
+    private List<SymbolParameterValue> parameterValues;
+
+    /** Constructor. */
+    public SymbolInputParameter() {
+        this.parameterValues = new ArrayList<>();
+    }
+
+    public List<SymbolParameterValue> getParameterValues() {
+        return parameterValues;
+    }
+
+    public void setParameterValues(List<SymbolParameterValue> parameterValues) {
+        this.parameterValues = parameterValues;
+    }
 }

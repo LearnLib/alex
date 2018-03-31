@@ -345,7 +345,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @OneToMany(
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.ALL},
+            cascade = {CascadeType.REMOVE},
             orphanRemoval = true
     )
     @OrderBy("name ASC")
@@ -361,7 +361,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @OneToMany(
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.ALL},
+            cascade = {CascadeType.REMOVE},
             orphanRemoval = true
     )
     @OrderBy("name ASC")
@@ -485,6 +485,28 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         } catch (Exception e) {
             LOGGER.info(LEARNER_MARKER, "Error while executing the action '{}' in the symbol '{}':", action, this, e);
             return new ExecuteResult(false);
+        }
+    }
+
+    public boolean containsParameter(SymbolParameter parameter) {
+        final List<SymbolParameter> parameters = new ArrayList<>(inputs);
+        parameters.addAll(outputs);
+        return parameters.contains(parameter);
+    }
+
+    public void addParameter(SymbolParameter parameter) {
+        if (parameter instanceof SymbolInputParameter) {
+            this.inputs.add((SymbolInputParameter) parameter);
+        } else if (parameter instanceof SymbolOutputParameter) {
+            this.outputs.add((SymbolOutputParameter) parameter);
+        }
+    }
+
+    public void removeParameter(SymbolParameter parameter) {
+        if (parameter instanceof SymbolInputParameter) {
+            this.inputs.remove((SymbolInputParameter) parameter);
+        } else if (parameter instanceof SymbolOutputParameter) {
+            this.outputs.remove((SymbolOutputParameter) parameter);
         }
     }
 

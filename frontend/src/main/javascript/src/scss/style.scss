@@ -203,6 +203,21 @@ body {
   }
 }
 
+.input-parameter-value {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0);
+
+  &:active, &:focus, &:hover {
+    box-shadow: none;
+  }
+
+  &:active {
+    border-bottom: 1px solid #ddd;
+  }
+}
+
 .view-body {
   position: relative;
   padding: 15px 0;

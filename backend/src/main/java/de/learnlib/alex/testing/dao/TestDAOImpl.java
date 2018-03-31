@@ -24,7 +24,11 @@ import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.dao.SymbolDAOImpl;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolInputParameter;
+import de.learnlib.alex.data.entities.SymbolParameter;
+import de.learnlib.alex.data.entities.SymbolParameterValue;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
+import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.testing.entities.*;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
@@ -37,10 +41,14 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+/** The implementation of the test dao. */
 @Service
 public class TestDAOImpl implements TestDAO {
 
@@ -61,14 +69,19 @@ public class TestDAOImpl implements TestDAO {
     /** The repository for symbol actions. */
     private SymbolActionRepository symbolActionRepository;
 
+    /** The repository for symbol parameter values. */
+    private SymbolParameterValueRepository symbolParameterValueRepository;
+
     @Inject
     public TestDAOImpl(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
-                       TestCaseStepRepository testCaseStepRepository, SymbolActionRepository symbolActionRepository) {
+                       TestCaseStepRepository testCaseStepRepository, SymbolActionRepository symbolActionRepository,
+                       SymbolParameterValueRepository symbolParameterValueRepository) {
         this.projectDAO = projectDAO;
         this.testRepository = testRepository;
         this.symbolDAO = symbolDAO;
         this.testCaseStepRepository = testCaseStepRepository;
         this.symbolActionRepository = symbolActionRepository;
+        this.symbolParameterValueRepository = symbolParameterValueRepository;
     }
 
     @Override
@@ -259,7 +272,7 @@ public class TestDAOImpl implements TestDAO {
 
     private void saveTestCaseSteps(TestCase testCase) {
         for (int i = 0; i < testCase.getSteps().size(); i++) {
-            TestCaseStep step = testCase.getSteps().get(i);
+            final TestCaseStep step = testCase.getSteps().get(i);
             if (step instanceof TestCaseActionStep) {
                 TestCaseActionStep actionStep = (TestCaseActionStep) step;
                 symbolActionRepository.save(actionStep.getAction());
@@ -268,6 +281,27 @@ public class TestDAOImpl implements TestDAO {
         }
 
         testCaseStepRepository.save(testCase.getSteps());
+
+        // save the parameter values after the test case step is saved so that
+        // we won't get an entity detached exception.
+        testCase.getSteps().stream().filter(TestCaseSymbolStep.class::isInstance).forEach(step -> {
+            final TestCaseSymbolStep symbolStep = (TestCaseSymbolStep) step;
+
+            // if a parameter value has no id yet, because it is imported, we have to set the reference
+            // to the parameter manually.
+            // name -> parameter
+            final Map<String, SymbolInputParameter> parameterMap = new HashMap<>();
+            symbolStep.getSymbol().getInputs().stream()
+                    .filter(input -> input.getParameterType().equals(SymbolParameter.ParameterType.STRING))
+                    .forEach(input -> parameterMap.put(input.getName(), input));
+
+            symbolStep.getParameterValues().forEach(value -> {
+                value.setStep(symbolStep);
+                value.setParameter(parameterMap.get(value.getParameter().getName()));
+            });
+
+            symbolParameterValueRepository.save(symbolStep.getParameterValues());
+        });
     }
 
     private void loadLazyRelations(Test test) {

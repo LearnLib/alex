@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,9 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.entities.SymbolInputParameter;
+import de.learnlib.alex.data.entities.SymbolOutputParameter;
+import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
@@ -31,6 +34,7 @@ import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -68,6 +72,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     /** The SymbolActionRepository to use. Will be injected. */
     private SymbolActionRepository symbolActionRepository;
 
+    /** The injected SymbolParameterRepository to use. */
     private SymbolParameterRepository symbolParameterRepository;
 
     /**
@@ -184,7 +189,23 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         beforeSymbolSave(symbol);
 
+        // save inputs and outputs
+        List<SymbolInputParameter> inputs = symbol.getInputs();
+        List<SymbolOutputParameter> outputs = symbol.getOutputs();
+
+        symbol.setInputs(new ArrayList<>());
+        symbol.setOutputs(new ArrayList<>());
+
         symbolRepository.save(symbol);
+
+        inputs.forEach(in -> in.setSymbol(symbol));
+        outputs.forEach(in -> in.setSymbol(symbol));
+
+        symbolParameterRepository.save(inputs);
+        symbolParameterRepository.save(outputs);
+
+        symbol.setInputs(inputs);
+        symbol.setOutputs(outputs);
     }
 
     @Override
@@ -441,4 +462,16 @@ public class SymbolDAOImpl implements SymbolDAO {
         Hibernate.initialize(symbol.getOutputs());
     }
 
+    @Override
+    public void checkAccess(User user, Project project, Symbol symbol) throws NotFoundException, UnauthorizedException {
+        projectDAO.checkAccess(user, project);
+
+        if (symbol == null) {
+            throw new NotFoundException("The symbol does not exist.");
+        }
+
+        if (!symbol.getProject().equals(project)) {
+            throw new UnauthorizedException("You are not allowed to access the symbol.");
+        }
+    }
 }

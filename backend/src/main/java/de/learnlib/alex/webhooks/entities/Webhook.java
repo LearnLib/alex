@@ -52,6 +52,7 @@ public class Webhook implements Serializable {
     @JsonIgnore
     private UUID uuid;
 
+    /** The id of the webhook. */
     private Long id;
 
     /** The url to send data to. */
