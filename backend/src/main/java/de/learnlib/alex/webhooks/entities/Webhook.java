@@ -45,14 +45,9 @@ public class Webhook implements Serializable {
 
     private static final long serialVersionUID = 2533300421211466078L;
 
-    /** The id of the webhook in the database. */
-    @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @JsonIgnore
-    private UUID uuid;
-
     /** The id of the webhook. */
+    @Id
+    @GeneratedValue
     private Long id;
 
     /** The url to send data to. */
@@ -76,14 +71,6 @@ public class Webhook implements Serializable {
     /** Constructor. */
     public Webhook() {
         this.events = new ArrayList<>();
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
     }
 
     public Long getId() {

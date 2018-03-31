@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.webhooks.entities.EventType;
 import de.learnlib.alex.webhooks.entities.Webhook;
+import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.xml.bind.ValidationException;
 import java.util.List;
@@ -32,16 +33,20 @@ public interface WebhookDAO {
     /**
      * Create a new webhook.
      *
-     * @param user    The user that registers the webhook.
-     * @param webhook The webhook to register.
-     * @throws ValidationException If a webhook with the same URL is already registerd.
+     * @param user
+     *         The user that registers the webhook.
+     * @param webhook
+     *         The webhook to register.
+     * @throws ValidationException
+     *         If a webhook with the same URL is already registerd.
      */
     void create(User user, Webhook webhook) throws ValidationException;
 
     /**
      * Get all webhooks of a user.
      *
-     * @param user The user.
+     * @param user
+     *         The user.
      * @return The list of registered webhooks.
      */
     List<Webhook> getAll(User user);
@@ -49,8 +54,10 @@ public interface WebhookDAO {
     /**
      * Get all webhooks of a user that contains a specific event.
      *
-     * @param user  The user.
-     * @param event The event.
+     * @param user
+     *         The user.
+     * @param event
+     *         The event.
      * @return The webhooks of the user that contain the event.
      */
     List<Webhook> getByUserAndEvent(User user, EventType event);
@@ -58,28 +65,52 @@ public interface WebhookDAO {
     /**
      * Delete a webhook.
      *
-     * @param user The user.
-     * @param id   The id of the webhook.
-     * @throws NotFoundException If the webhook with the given id cannot be found.
+     * @param user
+     *         The user.
+     * @param id
+     *         The id of the webhook.
+     * @throws NotFoundException
+     *         If the webhook with the given id cannot be found.
      */
     void delete(User user, Long id) throws NotFoundException;
 
     /**
      * Delete multiple webhooks at once.
      *
-     * @param user The user.
-     * @param ids  The ids of the webhooks to delete.
-     * @throws NotFoundException If a webhook could not be found.
+     * @param user
+     *         The user.
+     * @param ids
+     *         The ids of the webhooks to delete.
+     * @throws NotFoundException
+     *         If a webhook could not be found.
      */
     void delete(User user, List<Long> ids) throws NotFoundException;
 
     /**
      * Update an existing webhook.
      *
-     * @param user    The user.
-     * @param webhook The updated webhook.
-     * @throws NotFoundException   If the webhook with the given id could not be found.
-     * @throws ValidationException If another webhook with the URL is already registered.
+     * @param user
+     *         The user.
+     * @param webhook
+     *         The updated webhook.
+     * @throws NotFoundException
+     *         If the webhook with the given id could not be found.
+     * @throws ValidationException
+     *         If another webhook with the URL is already registered.
      */
     void update(User user, Webhook webhook) throws NotFoundException, ValidationException;
+
+    /**
+     * Checks if the user is allowed to access or modify a webhook.
+     *
+     * @param user
+     *         The user.
+     * @param webhook
+     *         The webhook.
+     * @throws NotFoundException
+     *         If the webhook could not be found.
+     * @throws UnauthorizedException
+     *         If the user is not allowed to access the webhook.
+     */
+    void checkAccess(User user, Webhook webhook) throws NotFoundException, UnauthorizedException;
 }

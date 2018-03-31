@@ -33,7 +33,7 @@
         <span class="label label-success"
               style="padding: .75rem 1rem; margin-right: .75rem; margin-bottom: .75rem; display: inline-block"
               ng-repeat="event in vm.webhook.events">
-            {{event}} <i class="fa fa-close" style="margin-left: .75rem" ng-click="vm.removeEvent($index)"></i>
+            {{event}} <i class="fa fa-close cursor-pointer" style="margin-left: .75rem" ng-click="vm.removeEvent($index)"></i>
         </span>
     </div>
 </div>

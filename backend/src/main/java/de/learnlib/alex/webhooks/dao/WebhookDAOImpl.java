@@ -21,6 +21,7 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.webhooks.entities.EventType;
 import de.learnlib.alex.webhooks.entities.Webhook;
 import de.learnlib.alex.webhooks.repositories.WebhookRepository;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
@@ -58,9 +59,6 @@ public class WebhookDAOImpl implements WebhookDAO {
             throw new ValidationException("A webhook under the given URL is already registered. Update the existing one instead.");
         }
 
-        final Long highestId = webhookRepository.findHighestId(user.getId());
-        webhook.setId(highestId == null ? 0 : highestId + 1);
-
         webhook.setUser(user);
         webhookRepository.save(webhook);
     }
@@ -86,10 +84,8 @@ public class WebhookDAOImpl implements WebhookDAO {
     @Override
     @Transactional
     public void delete(User user, Long id) throws NotFoundException {
-        final Webhook webhook = webhookRepository.findByUser_IdAndId(user.getId(), id);
-        if (webhook == null) {
-            throw new NotFoundException("The webhook with the id " + id + " could not be found.");
-        }
+        final Webhook webhook = webhookRepository.findOne(id);
+        checkAccess(user, webhook);
         webhookRepository.delete(webhook);
     }
 
@@ -104,14 +100,8 @@ public class WebhookDAOImpl implements WebhookDAO {
     @Override
     @Transactional
     public void update(User user, Webhook webhook) throws NotFoundException, ValidationException {
-        if (!user.getId().equals(webhook.getUser().getId())) {
-            throw new ValidationException("You are not the owner of the webhook.");
-        }
-
-        final Webhook webhookInDB = webhookRepository.findByUser_IdAndId(user.getId(), webhook.getId());
-        if (webhookInDB == null) {
-            throw new NotFoundException("The webhook with the id " + webhook.getId() + " could not be found.");
-        }
+        final Webhook webhookInDb = webhookRepository.findOne(webhook.getId());
+        checkAccess(user, webhookInDb);
 
         // check if there is another webhook registered to the new URL.
         final Webhook webhookWithSameUrl = webhookRepository.findByUser_IdAndUrl(user.getId(), webhook.getUrl());
@@ -119,11 +109,22 @@ public class WebhookDAOImpl implements WebhookDAO {
             throw new ValidationException("Another webhook is already registered to the URL.");
         }
 
-        webhookInDB.setEvents(webhook.getEvents());
-        webhookInDB.setUrl(webhook.getUrl());
-        webhookInDB.setName(webhook.getName());
+        webhookInDb.setEvents(webhook.getEvents());
+        webhookInDb.setUrl(webhook.getUrl());
+        webhookInDb.setName(webhook.getName());
 
-        webhookRepository.save(webhookInDB);
+        webhookRepository.save(webhookInDb);
+    }
+
+    @Override
+    public void checkAccess(User user, Webhook webhook) throws NotFoundException, UnauthorizedException {
+        if (webhook == null) {
+            throw new NotFoundException("The webhook does not exist.");
+        }
+
+        if (!webhook.getUser().equals(user)) {
+            throw new UnauthorizedException("You are not allowed to access the webhook.");
+        }
     }
 
     private void loadLazyRelations(Webhook webhook) {

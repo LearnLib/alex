@@ -26,7 +26,7 @@ import java.util.UUID;
 
 /** The repository for webhooks. */
 @Repository
-public interface WebhookRepository extends JpaRepository<Webhook, UUID> {
+public interface WebhookRepository extends JpaRepository<Webhook, Long> {
 
     /**
      * Get a webhook by user id and webhook url.
@@ -38,28 +38,10 @@ public interface WebhookRepository extends JpaRepository<Webhook, UUID> {
     Webhook findByUser_IdAndUrl(Long userId, String url);
 
     /**
-     * Get a webhook by user id and webhook id.
-     *
-     * @param userId The id of the user.
-     * @param id     The id of the webhook.
-     * @return The webhook.
-     */
-    Webhook findByUser_IdAndId(Long userId, Long id);
-
-    /**
      * Get all webhooks of a user.
      *
      * @param userId The id of the user.
      * @return The list of webhooks.
      */
     List<Webhook> findByUser_id(Long userId);
-
-    /**
-     * Get the highest id of all webhooks of a user.
-     *
-     * @param userId The id of the user.
-     * @return The highest known id.
-     */
-    @Query("SELECT MAX(w.id) FROM Webhook w WHERE w.user.id = ?1")
-    Long findHighestId(Long userId);
 }
