@@ -72,7 +72,7 @@ class SidebarComponent {
                         title: 'Webhooks',
                         icon: 'fa-share-alt',
                         active: () => this.isState('webhooks'),
-                        display: () => this.project,
+                        display: () => this.user,
                         click: () => $state.go('webhooks')
                     },
                     {
