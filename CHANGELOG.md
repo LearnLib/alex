@@ -1,3 +1,28 @@
+# ALEX 1.5.0
+
+## Breaking Changes
+
+* Symbols and tests that have been exported with v.1.4.0 and lower can probably not be imported directly.
+
+## Bug Fixes
+
+* Resuming a learning process should now work as expected.
+
+## Features
+
+* The results of test executions are saved in reports.
+* Added webhooks to notify external applications about changes.
+* Reuse the browser instance for membership queries. 
+  A hard reset with a new browser instance can be achieved with a new action.
+* New actions: refresh and restart the browser window.
+* Parameterized symbols: symbols now have dynamic inputs and outputs.
+  Values for inputs can be set by a user for modelling tests.
+
+## Further Comments
+
+* The CLI for ALEX is now a standalone NPM package and can be installed via `npm install alex-cli`
+
+
 # ALEX 1.4.0
 
 ## Breaking Changes

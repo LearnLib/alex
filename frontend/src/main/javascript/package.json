@@ -1,6 +1,6 @@
 {
   "name": "ALEX",
-  "version": "1.4.1-SNAPSHOT",
+  "version": "1.5.0-SNAPSHOT",
   "description": "An interface for Active Automata Learning",
   "repository": {
     "type": "git",

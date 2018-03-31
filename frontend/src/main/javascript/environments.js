@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
  * The version of ALEX.
  * @type {string}
  */
-export const version = '1.4.1-SNAPSHOT';
+export const version = '1.5.0-SNAPSHOT';
 
 /**
  * API URL
