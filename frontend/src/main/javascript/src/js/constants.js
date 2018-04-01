@@ -84,6 +84,7 @@ export const actionType = {
     WEB_CHECK_TEXT: 'web_checkForText',
     WEB_CHECK_PAGE_TITLE: 'web_checkPageTitle',
     WEB_CLEAR: 'web_clear',
+    WEB_CLICK_ELEMENT_BY_TEXT: 'web_clickElementByText',
     WEB_CLICK_LINK_BY_TEXT: 'web_clickLinkByText',
     WEB_CLICK: 'web_click',
     WEB_EXECUTE_SCRIPT: 'web_executeScript',

@@ -14,7 +14,9 @@
 * Added webhooks to notify external applications about changes.
 * Reuse the browser instance for membership queries. 
   A hard reset with a new browser instance can be achieved with a new action.
-* New actions: refresh and restart the browser window.
+* New actions: 
+    * Refresh and restart the browser window.
+    * Click on a arbitrary element with a given visible text.
 * Parameterized symbols: symbols now have dynamic inputs and outputs.
   Values for inputs can be set by a user for modelling tests.
 

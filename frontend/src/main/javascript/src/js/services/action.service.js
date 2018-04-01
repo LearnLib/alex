@@ -44,6 +44,7 @@ import {CheckForNodeWebAction} from '../entities/actions/web/check-for-node-acti
 import {CheckForTextWebAction} from '../entities/actions/web/check-for-text-action';
 import {CheckPageTitleAction} from '../entities/actions/web/check-page-title-action';
 import {ClearWebAction} from '../entities/actions/web/clear-action';
+import {ClickElementByTextAction} from '../entities/actions/web/click-element-by-text';
 import {ClickLinkByTextWebAction} from '../entities/actions/web/click-link-by-text-action';
 import {ClickWebAction} from '../entities/actions/web/click-action';
 import {ExecuteScriptAction} from '../entities/actions/web/execute-script-action';
@@ -97,6 +98,8 @@ export class ActionService {
                 return new ClickWebAction(data);
             case actionType.WEB_MOUSE_MOVE:
                 return new MoveMouseAction(data);
+            case actionType.WEB_CLICK_ELEMENT_BY_TEXT:
+                return new ClickElementByTextAction(data);
             case actionType.WEB_CLICK_LINK_BY_TEXT:
                 return new ClickLinkByTextWebAction(data);
             case actionType.WEB_CLEAR:

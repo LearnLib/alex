@@ -62,6 +62,7 @@ import {checkNodeAttributeValueActionFormComponent} from './components/forms/act
 import {checkPageTitleActionFormComponent} from './components/forms/actions/web/check-page-title-action-form/check-page-title-action-form.component';
 import {clearInputActionFormComponent} from './components/forms/actions/web/clear-action-form/clear-action-form.component';
 import {clickActionFormComponent} from './components/forms/actions/web/click-action-form/click-action-form.component';
+import {clickElementByTextActionFormComponent} from './components/forms/actions/web/click-element-by-text-action-form/click-element-by-text-action-form.component';
 import {clickLinkByTextActionFormComponent} from './components/forms/actions/web/click-link-by-text-action-form/click-link-by-text-action-form.component';
 import {executeScriptActionFormComponent} from './components/forms/actions/web/execute-script-action-form/execute-script-action-form.component';
 import {moveMouseActionFormComponent} from './components/forms/actions/web/move-mouse-action-form/move-mouse-action-form.component';
@@ -387,6 +388,7 @@ angular
     .component('checkPageTitleActionForm', checkPageTitleActionFormComponent)
     .component('clearInputActionForm', clearInputActionFormComponent)
     .component('clickActionForm', clickActionFormComponent)
+    .component('clickElementByTextActionForm', clickElementByTextActionFormComponent)
     .component('clickLinkByTextActionForm', clickLinkByTextActionFormComponent)
     .component('executeScriptActionForm', executeScriptActionFormComponent)
     .component('moveMouseActionForm', moveMouseActionFormComponent)

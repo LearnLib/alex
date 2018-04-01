@@ -51,6 +51,7 @@ import de.learnlib.alex.data.entities.actions.web.CheckPageTitleAction;
 import de.learnlib.alex.data.entities.actions.web.CheckTextWebAction;
 import de.learnlib.alex.data.entities.actions.web.ClearAction;
 import de.learnlib.alex.data.entities.actions.web.ClickAction;
+import de.learnlib.alex.data.entities.actions.web.ClickElementByTextAction;
 import de.learnlib.alex.data.entities.actions.web.ClickLinkAction;
 import de.learnlib.alex.data.entities.actions.web.ExecuteScriptAction;
 import de.learnlib.alex.data.entities.actions.web.FillAction;
@@ -123,6 +124,7 @@ import java.util.UUID;
         @JsonSubTypes.Type(name = "web_checkPageTitle", value = CheckPageTitleAction.class),
         @JsonSubTypes.Type(name = "web_clear", value = ClearAction.class),
         @JsonSubTypes.Type(name = "web_click", value = ClickAction.class),
+        @JsonSubTypes.Type(name = "web_clickElementByText", value = ClickElementByTextAction.class),
         @JsonSubTypes.Type(name = "web_clickLinkByText", value = ClickLinkAction.class),
         @JsonSubTypes.Type(name = "web_executeScript", value = ExecuteScriptAction.class),
         @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
