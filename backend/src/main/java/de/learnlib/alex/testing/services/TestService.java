@@ -17,6 +17,7 @@
 package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
@@ -241,10 +242,17 @@ public class TestService {
                 final TestCaseSymbolStep symbolStep = (TestCaseSymbolStep) step;
                 symbolStep.getParameterValues().stream()
                         .filter(value -> value.getValue() != null)
-                        .forEach(value -> variableStore.set(value.getParameter().getName(), value.getValue()));
+                        .forEach(value -> {
+                            final String valueWithVariables = SearchHelper.insertVariableValues(connectors, testCase.getProjectId(), value.getValue());
+                            variableStore.set(value.getParameter().getName(), valueWithVariables);
+                        });
             }
 
-            final ExecuteResult result = step.execute(connectors);
+            ExecuteResult result = step.execute(connectors);
+            if (!result.isSuccess() && step.isShouldFail()) {
+                result = new ExecuteResult(true, result.getOutput());
+            }
+
             outputs.add(result);
             failedStepIndex = i;
             if (!result.isSuccess()) {

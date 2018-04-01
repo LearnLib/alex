@@ -26,7 +26,7 @@ export const checkNodeAttributeValueActionFormComponent = {
     controllerAs: 'vm',
     controller: class {
         constructor() {
-            this.checkMethods = ['IS', 'CONTAINS', 'MATCHES'];
+            this.checkMethods = ['CONTAINS', 'EXISTS', 'IS', 'MATCHES'];
         }
     }
 };

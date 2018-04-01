@@ -159,6 +159,7 @@ export const testCaseViewComponent = {
         addSymbolStep(symbol) {
             this.testCase.steps.push({
                 type: 'symbol',
+                shouldFail: false,
                 symbol: {
                     id: symbol.id,
                     name: symbol.name
@@ -172,6 +173,7 @@ export const testCaseViewComponent = {
         addActionStep(action) {
             this.testCase.steps.push({
                 type: 'action',
+                shouldFail: false,
                 action: action
             });
         }

@@ -23,12 +23,14 @@ import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -56,11 +58,20 @@ public abstract class TestCaseStep implements Serializable {
     @JsonIgnore
     private TestCase testCase;
 
+    /** The order number in the test. */
     @JsonIgnore
     private int number;
 
+    /**
+     * If the step should fail.
+     * This eliminates the need to create a separate symbol.
+     */
+    @NotNull
+    private boolean shouldFail;
+
     /** Constructor. */
     public TestCaseStep() {
+        this.shouldFail = false;
     }
 
     /**
@@ -93,5 +104,13 @@ public abstract class TestCaseStep implements Serializable {
 
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    public boolean isShouldFail() {
+        return shouldFail;
+    }
+
+    public void setShouldFail(boolean shouldFail) {
+        this.shouldFail = shouldFail;
     }
 }

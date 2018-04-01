@@ -72,39 +72,44 @@
                 <div class="col-md-9 col-sm-7">
 
                     <div class="list-group" ng-if="vm.testCase.steps.length" dragula='"testSymbols"' dragula-model="vm.testCase.steps">
-                        <div class="list-group-item d-flex flex-row" ng-repeat="step in vm.testCase.steps track by $index">
-                            <div class="w-100">
-                                <div ng-if="step.type === 'symbol'">
-                                    <strong>{{step.symbol.name}}</strong>
-                                    <div ng-if="step.parameterValues.length > 0" style="margin-top: .5rem">
-                                        <div class="d-flex flex-row text-muted" ng-repeat="parameterValue in step.parameterValues">
-                                            <div style="flex-shrink: 0">
-                                                <em>{{parameterValue.parameter.name}}</em> =&nbsp;
-                                            </div>
-                                            <div class="w-100">
-                                                <input class="input-parameter-value w-100 d-block" ng-model="parameterValue.value" type="text" placeholder="null">
+                        <div class="list-group-item" ng-repeat="step in vm.testCase.steps track by $index">
+                            <div class="d-flex flex-row">
+                                <div class="w-100">
+                                    <div ng-if="step.type === 'symbol'">
+                                        <strong>{{step.symbol.name}}</strong>
+                                        <div ng-if="step.parameterValues.length > 0" style="margin-top: .5rem">
+                                            <div class="d-flex flex-row text-muted" ng-repeat="parameterValue in step.parameterValues">
+                                                <div style="flex-shrink: 0">
+                                                    <em>{{parameterValue.parameter.name}}</em> =&nbsp;
+                                                </div>
+                                                <div class="w-100">
+                                                    <input class="input-parameter-value w-100 d-block" ng-model="parameterValue.value" type="text" placeholder="null">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div ng-if="step.type === 'action'">
-                                    <i class="fa fa-fw fa-edit mr-1 pull-right" ng-click="vm.openActionEditModal(step.action, $index)"></i>
-                                    <em>{{step.action}}</em>
-                                    <div ng-if="step.action.negated">
-                                        <span class="label label-info">Negate</span>
+                                    <div ng-if="step.type === 'action'">
+                                        <i class="fa fa-fw fa-edit mr-1 pull-right" ng-click="vm.openActionEditModal(step.action, $index)"></i>
+                                        <em>{{step.action}}</em>
+                                        <div ng-if="step.action.negated">
+                                            <span class="label label-info">Negate</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div ng-if="vm.result.outputs[$index]" style="margin-top: .75rem; padding-top: .75rem; border-top: 1px dashed #dddddd;">
-                                    <span class="label" ng-class="{'label-success': vm.result.outputs[$index].success,'label-danger': !vm.result.outputs[$index].success}">
-                                        {{vm.result.outputs[$index].output}}
-                                    </span>
+                                <div class="mr-1">
+                                <span class="cursor-pointer" ng-click="step.shouldFail = !step.shouldFail">
+                                    <span class="label label-outline-danger" ng-if="step.shouldFail">Should fail</span>
+                                    <span class="label label-outline-success" ng-if="!step.shouldFail">Should pass</span>
+                                </span>
+                                </div>
+                                <div>
+                                    <i class="fa fa-close cursor-pointer" ng-click="vm.testCase.steps.splice($index, 1)"></i>
                                 </div>
                             </div>
-                            <div>
-                                <span class="label label-info pull-right" ng-if="$index === 0" style="margin-right: 12px">Reset</span>
-                            </div>
-                            <div>
-                                <i class="fa fa-close pull-right" ng-click="vm.testCase.steps.splice($index, 1)"></i>
+                            <div ng-if="vm.result.outputs[$index]" style="margin-top: .75rem; padding-top: .75rem; border-top: 1px dashed #dddddd;">
+                                <span class="label" ng-class="{'label-success': vm.result.outputs[$index].success,'label-danger': !vm.result.outputs[$index].success}">
+                                    {{vm.result.outputs[$index].output}}
+                                </span>
                             </div>
                         </div>
                     </div>

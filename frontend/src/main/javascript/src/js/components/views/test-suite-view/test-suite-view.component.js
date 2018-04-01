@@ -169,7 +169,12 @@ export const testSuiteViewComponent = {
                         testToUpdate.testIds = test.tests.map(t => t.id);
                         delete testToUpdate.tests;
                     } else {
-                        testToUpdate.symbols = test.symbols.map(s => s.id);
+                        testToUpdate.steps = test.steps.map((step) => {
+                            if (step.type === 'symbol') {
+                                step.symbol = step.symbol.id;
+                            }
+                            return step;
+                        });
                     }
 
                     this.TestResource.update(testToUpdate)

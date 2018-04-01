@@ -54,14 +54,19 @@ public class CheckNodeAttributeValueAction extends WebSymbolAction {
     public enum CheckMethod {
 
         /**
-         * If the attribute equals the value.
-         */
-        IS,
-
-        /**
          * If the attribute contains the value.
          */
         CONTAINS,
+
+        /**
+         * If the attribute exists.
+         */
+        EXISTS,
+
+        /**
+         * If the attribute equals the value.
+         */
+        IS,
 
         /**
          * If the attribute matches the value.
@@ -102,7 +107,7 @@ public class CheckNodeAttributeValueAction extends WebSymbolAction {
     /**
      * The attribute value to check for.
      */
-    @NotBlank
+    @NotNull
     private String value;
 
     /**
@@ -127,6 +132,10 @@ public class CheckNodeAttributeValueAction extends WebSymbolAction {
             switch (checkMethod) {
                 case IS:
                     isValid = attributeValue.equals(value);
+                    break;
+                case EXISTS:
+                    // since the case that the attribute does not exist is checked above, we can set this to true.
+                    isValid = true;
                     break;
                 case CONTAINS:
                     isValid = attributeValue.contains(value);

@@ -113,8 +113,21 @@ body {
 }
 
 .label-outline-default {
+  box-sizing: border-box;
   border: 1px solid #777;
   color: #777;
+}
+
+.label-outline-success {
+  box-sizing: border-box;
+  border: 1px solid $brand-success;
+  color: $brand-success;
+}
+
+.label-outline-danger {
+  box-sizing: border-box;
+  border: 1px solid $brand-danger;
+  color: $brand-danger;
 }
 
 .h-100 {

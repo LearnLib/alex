@@ -61,8 +61,12 @@ export class CheckNodeAttributeValueAction extends Action {
      * @returns {string}
      */
     toString() {
-        return `
-            Check if the attribute "${this.attribute}" of the element "${this.node.selector}" 
-            ${this.checkMethod.toLowerCase()} "${this.value}"`;
+        if (this.checkMethod === 'EXISTS') {
+            return `Check if the attribute "${this.attribute}" of the element "${this.node.selector}" exists`
+        } else {
+            return `
+                Check if the attribute "${this.attribute}" of the element "${this.node.selector}" 
+                ${this.checkMethod.toLowerCase()} "${this.value}"`;
+        }
     }
 }
