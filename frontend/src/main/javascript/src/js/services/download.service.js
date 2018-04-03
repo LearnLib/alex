@@ -40,7 +40,6 @@ export class DownloadService {
 
         // create new link element with downloadable content
         const a = this.document.createElement('a');
-        a.style.display = 'none';
         a.setAttribute('href', href);
         a.setAttribute('download', filename + '.' + fileExtension);
         a.click();

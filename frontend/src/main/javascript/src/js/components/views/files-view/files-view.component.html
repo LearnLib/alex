@@ -35,19 +35,38 @@
             <hr>
 
             <div class="list-group" ng-if="vm.files.length > 0">
-                <div class="list-group-item d-flex"
+                <div class="list-group-item d-flex flew-row"
                      ng-repeat="file in vm.files"
                      selection-model
                      selection-model-selected-items="vm.selectedFiles">
 
-                    <checkbox selection-model-ignore class="pull-left" model="file"></checkbox>
-                    <div class="flex-grow-1 ml-1 mr-1">
+                    <div>
+                        <checkbox selection-model-ignore class="pull-left" model="file"></checkbox>
+                    </div>
+                    <div class="w-100 ml-1 mr-1">
                         <span ng-bind="file.name"></span>
                     </div>
-                    <button class="btn btn-icon btn-xs pull-right"
-                            ng-click="vm.deleteFile(file)">
-                        <i class="fa fa-fw fa-trash"></i> Delete
-                    </button>
+                    <div>
+                        <div class="btn-group btn-group-xs" uib-dropdown>
+                            <button type="button" class="btn btn-default btn-icon" uib-dropdown-toggle>
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
+                                <li>
+                                    <a href="" ng-click="vm.deleteFile(file)">
+                                        <i class="fa fa-fw fa-trash"></i> Delete
+                                    </a>
+                                </li>
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="" ng-click="vm.downloadFile(file)">
+                                        <i class="fa fa-download fa-fw"></i> Download
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 

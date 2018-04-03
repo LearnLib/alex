@@ -40,12 +40,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 /**
  * REST API to manage files.
+ *
  * @resourcePath files
  * @resourceDescription Operations about files
  */
@@ -66,9 +68,12 @@ public class FileResource {
     /**
      * Uploads a new file to the corresponding upload directory uploads/{userId}/{projectId}/{filename}.
      *
-     * @param projectId The id of the project the file belongs to.
-     * @param uploadedInputStream The input stream for the file.
-     * @param fileDetail The form data of the file.
+     * @param projectId
+     *         The id of the project the file belongs to.
+     * @param uploadedInputStream
+     *         The input stream for the file.
+     * @param fileDetail
+     *         The form data of the file.
      * @return The HTTP response with the file object on success.
      */
     @POST
@@ -96,20 +101,49 @@ public class FileResource {
         } catch (IOException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile",
-                                                               Response.Status.INTERNAL_SERVER_ERROR, e);
+                    Response.Status.INTERNAL_SERVER_ERROR, e);
         } catch (IllegalStateException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile",
-                                                               Response.Status.BAD_REQUEST, e);
+                    Response.Status.BAD_REQUEST, e);
         }
+    }
+
+    /**
+     * Downloads a file.
+     *
+     * @param projectId
+     *         The id of the project.
+     * @param filename
+     *         The name of the file.
+     * @return The file as blob.
+     * @throws NotFoundException
+     *         If the file could not be found.
+     */
+    @GET
+    @Path("/{file_name}/download")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response downloadFile(@PathParam("project_id") Long projectId, @PathParam("file_name") String filename)
+            throws NotFoundException {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("downloadFile({}, {}) for user {}.", projectId, filename, user);
+
+        final String filePath = fileDAO.getAbsoluteFilePath(user, projectId, filename);
+        final File file = new File(filePath);
+
+        return Response.ok(file)
+                .header("content-disposition", "attachment; filename = " + filename)
+                .build();
     }
 
     /**
      * Get all available files of a project.
      *
-     * @param projectId The id of the project.
+     * @param projectId
+     *         The id of the project.
      * @return The list of all files of the project.
-     * @throws NotFoundException If the related Project could not be found.
+     * @throws NotFoundException
+     *         If the related Project could not be found.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -126,10 +160,13 @@ public class FileResource {
     /**
      * Delete a single file from the project directory.
      *
-     * @param projectId The id of the project.
-     * @param fileName The name of the file.
+     * @param projectId
+     *         The id of the project.
+     * @param fileName
+     *         The name of the file.
      * @return Status 204 No Content on success.
-     * @throws NotFoundException If the related Project could not be found.
+     * @throws NotFoundException
+     *         If the related Project could not be found.
      */
     @DELETE
     @Path("/{file_name}")

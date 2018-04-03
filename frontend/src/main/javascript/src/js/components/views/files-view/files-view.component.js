@@ -144,6 +144,25 @@ class FilesViewComponent {
             this.deleteFile(file);
         });
     }
+
+    /**
+     * Downloads a file.
+     * @param {object} file The file to download.
+     */
+    downloadFile(file) {
+        this.FileResource.download(this.project.id, file.name)
+            .then(response => {
+                const blob = response.data;
+                const objectUrl = URL.createObjectURL(blob);
+
+                const a = document.createElement("a");
+                a.href = objectUrl;
+                a.download = file.name;
+                a.click();
+
+                window.URL.revokeObjectURL(objectUrl);
+            })
+    }
 }
 
 export const filesViewComponent = {
