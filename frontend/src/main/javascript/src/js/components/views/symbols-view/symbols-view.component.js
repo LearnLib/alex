@@ -36,14 +36,16 @@ class SymbolsViewComponent {
      * @param {DownloadService} DownloadService
      * @param {EventBus} EventBus
      * @param {PromptService} PromptService
+     * @param $state
      */
     // @ngInject
     constructor($scope, SessionService, SymbolResource, SymbolGroupResource, ToastService, DownloadService,
-                EventBus, PromptService) {
+                EventBus, PromptService, $state) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
         this.DownloadService = DownloadService;
         this.PromptService = PromptService;
+        this.$state = $state;
 
         /**
          * The project that is saved in the session.
@@ -182,6 +184,14 @@ class SymbolsViewComponent {
             symbol.group = group.id;
             toGroup.symbols.push(symbol);
         });
+    }
+
+    /**
+     * Navigate to the symbol from the search form.
+     * @param {AlphabetSymbol} symbol - The symbol.
+     */
+    selectSymbol(symbol) {
+        this.$state.go('symbol', {projectId: symbol.project, symbolId: symbol.id});
     }
 
     /**

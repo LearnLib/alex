@@ -18,11 +18,14 @@
  * The form that searches for an action based on user input.
  * @type {{templateUrl: string, bindings: {actions: string, onSelected: string}, controllerAs: string, controller: actionSearchForm.controller}}
  */
-export const actionSearchFormComponent = {
-    template: require('./action-search-form.component.html'),
+export const searchFormComponent = {
+    template: require('./search-form.component.html'),
     bindings: {
-        actions: '<',
-        onSelected: '&'
+        placeholder: '@',
+        itemsFn: '&',
+        displayFn: '&',
+        searchFn: '&',
+        onSelected: '&',
     },
     controllerAs: 'vm',
     controller: class {
@@ -48,7 +51,7 @@ export const actionSearchFormComponent = {
              * The list of actions that are displayed based on the user input.
              * @type {Array}
              */
-            this.actionList = [];
+            this.itemList = [];
 
             /**
              * The user input.
@@ -64,7 +67,7 @@ export const actionSearchFormComponent = {
          */
         handleFocus() {
             this.focused = true;
-            this.updateActionList();
+            this.updateItemList();
 
             document.addEventListener('click', this._handleClick);
         }
@@ -72,24 +75,21 @@ export const actionSearchFormComponent = {
         /**
          * Selects an action and hides the action list.
          *
-         * @param {object} action
+         * @param {object} item
          */
-        selectAction(action) {
+        selectItem(item) {
             this._reset();
             this.value = '';
-            this.onSelected({type: action.type});
+            this.onSelected({item});
         }
 
         /**
          * Filter the list of actions that is displayed based on the user input.
          * Fires every 500ms.
          */
-        updateActionList() {
-            const actions = this.actions.web.concat(this.actions.rest).concat(this.actions.misc);
-            this.actionList = actions.filter(action => {
-                return action.text.toLowerCase().indexOf(this.value.toLowerCase()) !== -1
-                    || action.type.toLowerCase().indexOf(this.value.toLowerCase()) !== -1;
-            });
+        updateItemList() {
+            const items = this.itemsFn();
+            this.itemList = items.filter(item => this.searchFn()(item, this.value));
         }
 
         _handleClick(e) {
@@ -107,7 +107,7 @@ export const actionSearchFormComponent = {
 
         _reset() {
             this.focused = false;
-            this.actionList = [];
+            this.itemList = [];
         }
     }
 };

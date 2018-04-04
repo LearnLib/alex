@@ -6,15 +6,15 @@
                    type="text"
                    ng-focus="vm.handleFocus()"
                    ng-model="vm.value"
-                   ng-model-options='{debounce: 500}'
-                   ng-change='vm.updateActionList()' placeholder="Search an action">
+                   ng-model-options='{debounce: 300}'
+                   ng-change='vm.updateItemList()' placeholder="{{vm.placeholder}}">
         </div>
 
         <div class="list-group list-group-condensed mb-0" ng-if="vm.focused">
             <div class="list-group-item"
-                 ng-repeat="action in vm.actionList"
-                 ng-click="vm.selectAction(action)">
-                {{action.text}}
+                 ng-repeat="item in vm.itemList"
+                 ng-click="vm.selectItem(item)">
+                {{vm.displayFn()(item)}}
             </div>
         </div>
     </div>

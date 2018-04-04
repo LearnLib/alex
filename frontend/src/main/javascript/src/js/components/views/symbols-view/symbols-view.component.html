@@ -55,6 +55,12 @@
     <div class="view-body">
         <div class="alx-container-fluid">
 
+            <div style="height: 31px; margin-bottom: 1.5rem">
+                <symbol-search-form groups="vm.groups"
+                                    on-selected="vm.selectSymbol(symbol)">
+                </symbol-search-form>
+            </div>
+
             <div class="symbol-group-list">
                 <symbol-group-list-item ng-repeat="group in vm.groups | orderBy:'-name':true"
                                         group="group" editable="true">

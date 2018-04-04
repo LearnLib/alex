@@ -49,6 +49,10 @@
                 <div class="col-md-3 col-sm-5">
                     <button class="btn btn-default btn-block mb-1" action-create-modal-handle on-created="vm.addActionStep(action)">Add action</button>
 
+                    <div style="height: 31px; position: relative; z-index: 10" class="mb-1">
+                        <symbol-search-form groups="vm.groups" on-selected="vm.addSymbolStep(symbol)"></symbol-search-form>
+                    </div>
+
                     <div class="panel panel-default" ng-repeat="group in vm.groups">
                         <div class="panel-heading">
                             <strong>{{group.name}}</strong>

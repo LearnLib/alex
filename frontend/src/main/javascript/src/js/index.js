@@ -25,7 +25,8 @@ import uiBootstrap from 'angular-ui-bootstrap';
 import ngFileUpload from 'ng-file-upload';
 import {actionBarComponent} from './components/action-bar/action-bar.component';
 import {actionRecorderComponent} from './components/action-recorder/action-recorder.component';
-import {actionSearchFormComponent} from './components/action-search-form/action-search-form.component';
+import {actionSearchFormComponent} from './components/modals/action-create-modal/action-search-form/action-search-form.component';
+import {searchFormComponent} from './components/search-form/search-form.component';
 import {alexComponent} from './components/alex/alex.component';
 import {checkboxMultipleComponent} from './components/checkbox-multiple/checkbox-multiple.component';
 import {checkboxComponent} from './components/checkbox/checkbox.component';
@@ -159,6 +160,7 @@ import {projectsViewComponent} from './components/views/projects-view/projects-v
 import {statisticsCompareViewComponent} from './components/views/statistics-compare-view/statistics-compare-view.component';
 import {symbolViewComponent} from './components/views/symbol-view/symbol-view.component';
 import {symbolsArchiveViewComponent} from './components/views/symbols-archive-view/symbols-archive-view.component';
+import {symbolSearchFormComponent} from './components/views/symbols-view/symbol-search-form/symbol-search-form.component';
 import {symbolsViewComponent} from './components/views/symbols-view/symbols-view.component';
 import {testCaseViewComponent} from './components/views/test-case-view/test-case-view.component';
 import {testReportViewComponent} from './components/views/test-report-view/test-report-view.component';
@@ -364,7 +366,9 @@ angular
     .component('browserConfigForm', browserConfigFormComponent)
     .component('symbolEditForm', symbolEditFormComponent)
     .component('symbolFormGroups', symbolFormGroupsComponent)
+    .component('searchForm', searchFormComponent)
     .component('actionSearchForm', actionSearchFormComponent)
+    .component('symbolSearchForm', symbolSearchFormComponent)
     .component('webhookForm', webhookFormComponent)
     .component('symbolParameterFormGroups', symbolParameterFormGroupsComponent)
 

@@ -111,7 +111,7 @@ export class ActionCreateModalComponent {
 
     /**
      * Creates a new instance of an Action by a type that was clicked in the modal dialog.
-     * @param {string} type - The type of the action that should be created.
+     * @param {string} type The action that should be created.
      */
     selectNewActionType(type) {
         this.action = this.ActionService.createFromType(type);
