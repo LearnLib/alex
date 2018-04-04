@@ -105,9 +105,9 @@ public class ProjectResource {
         project.setUser(user);
 
         try {
-            projectDAO.create(project);
-            webhookService.fireEvent(user, new ProjectEvent.Created(project));
-            response = Response.status(Status.CREATED).entity(project).build();
+            final Project createdProject = projectDAO.create(project);
+            webhookService.fireEvent(user, new ProjectEvent.Created(createdProject));
+            response = Response.status(Status.CREATED).entity(createdProject).build();
         } catch (ValidationException e) {
             LOGGER.catching(e);
             response = ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.BAD_REQUEST, e);
@@ -215,14 +215,10 @@ public class ProjectResource {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             try {
-                if ((project.getUser() != null && !user.equals(project.getUser()))
-                        || (project.getUserId() != null && !Objects.equals(project.getUserId(), user.getId()))) {
-                    throw new UnauthorizedException("You are not allowed to update this project");
-                }
-                projectDAO.update(user, project);
-                webhookService.fireEvent(user, new ProjectEvent.Updated(project));
-                LOGGER.traceExit(project);
-                return Response.ok(project).build();
+                final Project updatedProject = projectDAO.update(user, project);
+                webhookService.fireEvent(user, new ProjectEvent.Updated(updatedProject));
+                LOGGER.traceExit(updatedProject);
+                return Response.ok(updatedProject).build();
             } catch (ValidationException e) {
                 LOGGER.traceExit(e);
                 return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.BAD_REQUEST, e);

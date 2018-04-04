@@ -40,30 +40,4 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @SuppressWarnings("checkstyle:methodname")
     List<Project> findAllByUser_Id(Long userId);
 
-    /**
-     * Get a Project by the User and its ID.
-     *
-     * @param userId
-     *         The ID the User the Projects belongs to.
-     * @param id
-     *         The ID of the Project within the User space.
-     * @return The Project or null.
-     */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
-    Project findOneByUser_IdAndId(Long userId, Long id);
-
-    /**
-     * Get a Project by the User and its name.
-     *
-     * @param userId
-     *         The ID the User the Projects belongs to.
-     * @param name
-     *         The name of the Project.
-     * @return The Project or null.
-     */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
-    Project findOneByUser_IdAndName(Long userId, String name);
-
 }

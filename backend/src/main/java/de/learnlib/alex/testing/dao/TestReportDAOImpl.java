@@ -20,9 +20,11 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
@@ -37,33 +39,42 @@ public class TestReportDAOImpl implements TestReportDAO {
     /** The test report repository. */
     private TestReportRepository testReportRepository;
 
+    /** The project repository. */
+    private ProjectRepository projectRepository;
+
     /** The project DAO. */
     private ProjectDAO projectDAO;
 
     /**
      * Constructor.
      *
-     * @param testReportRepository {@link #testReportRepository}
-     * @param projectDAO           {@link #projectDAO}
+     * @param testReportRepository
+     *         {@link #testReportRepository}
+     * @param projectRepository
+     *         {@link #projectRepository}
+     * @param projectDAO
+     *         {@link #projectDAO}
      */
     @Inject
-    public TestReportDAOImpl(TestReportRepository testReportRepository, ProjectDAO projectDAO) {
+    public TestReportDAOImpl(TestReportRepository testReportRepository, ProjectRepository projectRepository,
+                             ProjectDAO projectDAO) {
         this.testReportRepository = testReportRepository;
+        this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
     }
 
     @Override
     @Transactional
     public void create(User user, Long projectId, TestReport testReport) throws NotFoundException {
-        final Project project = projectDAO.getByID(user.getId(), projectId);
+        final Project project = projectRepository.findOne(projectId);
+        projectDAO.checkAccess(user, project);
+
+        testReport.setId(null);
         testReport.setProject(project);
         testReport.getTestResults().forEach((testResult) -> {
             testResult.setTestReport(testReport);
             testResult.setProject(project);
         });
-
-        final Long highestId = testReportRepository.findHighestId(projectId);
-        testReport.setId(highestId == null ? 1 : highestId + 1);
 
         testReportRepository.save(testReport);
     }
@@ -71,6 +82,9 @@ public class TestReportDAOImpl implements TestReportDAO {
     @Override
     @Transactional
     public List<TestReport> get(User user, Long projectId) throws NotFoundException {
+        final Project project = projectRepository.findOne(projectId);
+        projectDAO.checkAccess(user, project);
+
         final List<TestReport> testReports = testReportRepository.findAllByProject_Id(projectId);
         testReports.forEach(this::loadLazyRelations);
         return testReports;
@@ -79,10 +93,10 @@ public class TestReportDAOImpl implements TestReportDAO {
     @Override
     @Transactional
     public TestReport get(User user, Long projectId, Long testReportId) throws NotFoundException {
-        final TestReport testReport = testReportRepository.findOneByProject_IdAndId(projectId, testReportId);
-        if (testReport == null) {
-            throw new NotFoundException("The test report with the id " + testReportId + " could not be found");
-        }
+        final Project project = projectRepository.findOne(projectId);
+        final TestReport testReport = testReportRepository.findOne(testReportId);
+        checkAccess(user, project, testReport);
+
         loadLazyRelations(testReport);
         return testReport;
     }
@@ -90,7 +104,8 @@ public class TestReportDAOImpl implements TestReportDAO {
     @Override
     @Transactional
     public TestReport getLatest(User user, Long projectId) throws NotFoundException {
-        projectDAO.getByID(user.getId(), projectId);
+        final Project project = projectRepository.findOne(projectId);
+        projectDAO.checkAccess(user, project);
 
         final TestReport latestReport = testReportRepository.findFirstByProject_IdOrderByIdDesc(projectId);
         if (latestReport != null) {
@@ -104,10 +119,10 @@ public class TestReportDAOImpl implements TestReportDAO {
     @Override
     @Transactional
     public void delete(User user, Long projectId, Long testReportId) throws NotFoundException {
-        final TestReport testReport = get(user, projectId, testReportId);
-        if (testReport == null) {
-            throw new NotFoundException("The test report with the id " + testReportId + " could not be found");
-        }
+        final Project project = projectRepository.findOne(projectId);
+        final TestReport testReport = testReportRepository.findOne(testReportId);
+        checkAccess(user, project, testReport);
+
         testReportRepository.delete(testReport);
     }
 
@@ -116,6 +131,19 @@ public class TestReportDAOImpl implements TestReportDAO {
     public void delete(User user, Long projectId, List<Long> testReportIds) throws NotFoundException {
         for (Long id : testReportIds) {
             delete(user, projectId, id);
+        }
+    }
+
+    @Override
+    public void checkAccess(User user, Project project, TestReport report) throws NotFoundException, UnauthorizedException {
+        projectDAO.checkAccess(user, project);
+
+        if (report == null) {
+            throw new NotFoundException("The test report could not be found.");
+        }
+
+        if (!report.getProject().equals(project)) {
+            throw new UnauthorizedException("You are not allowed to access the test report.");
         }
     }
 

@@ -27,19 +27,11 @@ import java.util.UUID;
 
 /** The repository for test reports. */
 @Repository
-public interface TestReportRepository extends JpaRepository<TestReport, UUID> {
-
-    @Transactional(readOnly = true)
-    @Query("SELECT MAX(r.id) FROM TestReport r WHERE r.project.id = ?1")
-    Long findHighestId(Long projectId);
+public interface TestReportRepository extends JpaRepository<TestReport, Long> {
 
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     TestReport findFirstByProject_IdOrderByIdDesc(Long projectId);
-
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
-    TestReport findOneByProject_IdAndId(Long projectId, Long id);
 
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")

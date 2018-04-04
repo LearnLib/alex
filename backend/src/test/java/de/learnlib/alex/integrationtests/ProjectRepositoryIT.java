@@ -168,7 +168,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
 
-        Project projectFromDB = projectRepository.findOneByUser_IdAndId(user.getId(), project.getId());
+        Project projectFromDB = projectRepository.findOne(project.getId());
 
         assertThat(projectFromDB, is(equalTo(project)));
     }
@@ -178,22 +178,9 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         User user = createUser("alex@test.example");
         userRepository.save(user);
 
-        Project projectFromDB = projectRepository.findOneByUser_IdAndId(user.getId(), -1L);
+        Project projectFromDB = projectRepository.findOne(-1L);
 
         assertNull(projectFromDB);
-    }
-
-    @Test
-    public void shouldFetchAProjectsOfAUserByItsName() {
-        User user = createUser("alex@test.example");
-        userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-
-        Project projectFromDB = projectRepository.findOneByUser_IdAndName(user.getId(), project.getName());
-
-        assertThat(projectFromDB, is(equalTo(project)));
     }
 
     @Test
@@ -201,7 +188,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         User user = createUser("alex@test.example");
         userRepository.save(user);
 
-        Project projectFromDB = projectRepository.findOneByUser_IdAndId(user.getId(), null);
+        Project projectFromDB = projectRepository.findOne(-1L);
 
         assertNull(projectFromDB);
     }

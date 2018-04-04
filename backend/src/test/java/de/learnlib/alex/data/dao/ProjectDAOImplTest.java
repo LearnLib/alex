@@ -72,10 +72,10 @@ public class ProjectDAOImplTest {
 
         given(projectRepository.save(project)).willReturn(createdProject);
 
-        projectDAO.create(project);
+        final Project p = projectDAO.create(project);
 
         verify(projectRepository).save(project);
-        assertThat(project.getId(), is(equalTo(1L)));
+        assertThat(p.getId(), is(equalTo(1L)));
     }
 
     @Test
@@ -145,9 +145,11 @@ public class ProjectDAOImplTest {
 
     @Test
     public void shouldGetAProjectByItsID() throws NotFoundException {
+        User user = new User(USER_ID);
         Project project = new Project();
-        //
-        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+        project.setUser(user);
+
+        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
 
         Project p = projectDAO.getByID(USER_ID, PROJECT_ID);
 
@@ -156,27 +158,9 @@ public class ProjectDAOImplTest {
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionIfTheProjectCanNotFoundByID() throws NotFoundException {
-        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(null);
+        given(projectRepository.findOne(PROJECT_ID)).willReturn(null);
 
         projectDAO.getByID(USER_ID, PROJECT_ID); // should fail
-    }
-
-    @Test
-    public void shouldGetAProjectByItsName() throws NotFoundException {
-        Project project = new Project();
-        //
-        given(projectRepository.findOneByUser_IdAndName(USER_ID, "Test Project")).willReturn(project);
-
-        Project p = projectDAO.getByName(USER_ID, "Test Project");
-
-        assertThat(p, is(equalTo(project)));
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionIfTheProjectCanNotFoundByName() throws NotFoundException {
-        given(projectRepository.findOneByUser_IdAndName(USER_ID, "Test Project")).willReturn(null);
-
-        projectDAO.getByName(USER_ID, "Test Project"); // should fail
     }
 
     @Test
@@ -188,7 +172,7 @@ public class ProjectDAOImplTest {
         project.setUser(user);
         project.setId(PROJECT_ID);
 
-        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
 
         projectDAO.update(user, project);
 
@@ -199,12 +183,10 @@ public class ProjectDAOImplTest {
     public void shouldThrowANotFoundExceptionWhenUpdatingAUnknownProject() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setUser(user);
         project.setId(PROJECT_ID);
-        //
-        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(null);
 
         projectDAO.update(user, project);
     }
@@ -219,7 +201,7 @@ public class ProjectDAOImplTest {
         project.setId(PROJECT_ID);
 
         given(projectRepository.save(project)).willThrow(ConstraintViolationException.class);
-        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
 
         projectDAO.update(user, project); // should fail
     }
@@ -234,7 +216,7 @@ public class ProjectDAOImplTest {
         project.setId(PROJECT_ID);
 
         given(projectRepository.save(project)).willThrow(DataIntegrityViolationException.class);
-        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
 
         projectDAO.update(user, project); // should fail
     }
@@ -255,7 +237,7 @@ public class ProjectDAOImplTest {
         transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
                                                                     rollbackException);
         given(projectRepository.save(project)).willThrow(transactionSystemException);
-        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
 
         projectDAO.update(user, project); // should fail
     }
@@ -264,10 +246,11 @@ public class ProjectDAOImplTest {
     public void shouldDeleteAProject() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
-        //
-        given(projectRepository.findOneByUser_IdAndId(USER_ID, PROJECT_ID)).willReturn(project);
+        project.setUser(user);
+
+        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
 
         projectDAO.delete(user, PROJECT_ID);
 
@@ -277,7 +260,7 @@ public class ProjectDAOImplTest {
     @Test(expected = NotFoundException.class)
     public void shouldFailToDeleteAProjectThatDoesNotExist() throws NotFoundException {
         User user = new User();
-        //
+
         projectDAO.delete(user, -1L);
     }
 

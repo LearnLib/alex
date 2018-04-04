@@ -1,12 +1,13 @@
 <div class="view view-test-reports">
     <view-header title="Test Reports"></view-header>
     <action-bar>
-        <checkbox-multiple model="vm.reports" class="pull-left"></checkbox-multiple>
+        <div ng-if="vm.reports.length > 0">
+            <checkbox-multiple model="vm.reports" class="pull-left"></checkbox-multiple>
 
-        <div class="btn-group btn-group-sm">
-            <button class="btn btn-default" ng-click="vm.deleteSelectedReports()">Delete</button>
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-default" ng-click="vm.deleteSelectedReports()">Delete</button>
+            </div>
         </div>
-
     </action-bar>
     <div class="view-body">
         <div class="alx-container-fluid">

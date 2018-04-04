@@ -71,10 +71,11 @@ public interface ProjectDAO {
      *
      * @param project
      *         The project to be saved.
+     * @return The created project.
      * @throws ValidationException
      *         If the Project was not valid.
      */
-    void create(Project project) throws ValidationException;
+    Project create(Project project) throws ValidationException;
 
     /**
      * Get a list of all the projects.
@@ -103,33 +104,19 @@ public interface ProjectDAO {
     Project getByID(Long userId, Long projectId, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**
-     * Get a specific project by its ID.
-     *
-     * @param userId
-     *         The ID of the user.
-     * @param projectName
-     *         The name of the project.
-     * @param embedFields
-     *         The fields to include in returned project. By default no additional data will be fetched from the DB.
-     * @return The project with the name.
-     * @throws NotFoundException
-     *         If the project could not be found.
-     */
-    Project getByName(Long userId, String projectName, EmbeddableFields... embedFields) throws NotFoundException;
-
-    /**
      * Update a project.
      *
      * @param user
      *         The user.
      * @param project
      *         The project to update.
+     * @return The updated project.
      * @throws NotFoundException
      *         When the Project was not found.
      * @throws ValidationException
      *         When the Project was not valid.
      */
-    void update(User user, Project project) throws NotFoundException, ValidationException;
+    Project update(User user, Project project) throws NotFoundException, ValidationException;
 
     /**
      * Delete a project.

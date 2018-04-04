@@ -38,7 +38,7 @@
     <div class="view-body has-sub-nav">
         <div class="alx-container-fluid">
 
-            <div class="list-group">
+            <div class="list-group" ng-if="vm.results.length > 0">
                 <div class="list-group-item" ng-repeat="result in vm.results | orderBy:'-testNo':false" selection-model selection-model-selected-items="vm.selectedResults">
                     <learner-result-list-item result="result">
                         <div class="btn-group btn-group-xs" uib-dropdown>

@@ -69,13 +69,6 @@ class SidebarComponent {
                         click: () => $state.go('profile')
                     },
                     {
-                        title: 'Webhooks',
-                        icon: 'fa-share-alt',
-                        active: () => this.isState('webhooks'),
-                        display: () => this.user,
-                        click: () => $state.go('webhooks')
-                    },
-                    {
                         title: 'Logout',
                         icon: 'fa-sign-out',
                         active: () => false,
@@ -204,6 +197,19 @@ class SidebarComponent {
                         display: () => true,
                         click: () => $state.go('counters', {projectId: this.project.id})
                     },
+                ]
+            },
+            {
+                title: () => 'Integrations',
+                display: () => this.user,
+                items: [
+                    {
+                        title: 'Webhooks',
+                        icon: 'fa-share-alt',
+                        active: () => this.isState('webhooks'),
+                        display: () => this.user,
+                        click: () => $state.go('webhooks')
+                    }
                 ]
             }
         ];

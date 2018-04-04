@@ -46,12 +46,7 @@ public class TestReport implements Serializable {
 
     /** The id in the database. */
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @JsonIgnore
-    private UUID uuid;
-
-    /** The id of the report in the project. */
+    @GeneratedValue
     private Long id;
 
     /** The project the report belongs to. */
@@ -75,14 +70,6 @@ public class TestReport implements Serializable {
     public TestReport() {
         this.testResults = new ArrayList<>();
         this.startDate = ZonedDateTime.now();
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
     }
 
     public ZonedDateTime getStartDate() {

@@ -54,9 +54,9 @@ public class ProjectDAOImpl implements ProjectDAO {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final Marker PROJECT_MARKER = MarkerManager.getMarker("PROJECT");
-    private static final Marker DAO_MARKER     = MarkerManager.getMarker("DAO");
-    private static final Marker IMPL_MARKER    = MarkerManager.getMarker("PROJECT_DAO")
-                                                                .setParents(DAO_MARKER, PROJECT_MARKER);
+    private static final Marker DAO_MARKER = MarkerManager.getMarker("DAO");
+    private static final Marker IMPL_MARKER = MarkerManager.getMarker("PROJECT_DAO")
+            .setParents(DAO_MARKER, PROJECT_MARKER);
 
     /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
@@ -78,7 +78,7 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     @Override
     @Transactional
-    public void create(final Project project) throws ValidationException {
+    public Project create(final Project project) throws ValidationException {
         LOGGER.traceEntry("create({})", project);
         try {
             SymbolGroup defaultGroup = new SymbolGroup();
@@ -95,10 +95,11 @@ public class ProjectDAOImpl implements ProjectDAO {
             testSuite.setProject(project);
             project.addTest(testSuite);
 
-            Project createdProject = projectRepository.save(project);
-            project.setId(createdProject.getId());
+            final Project createdProject = projectRepository.save(project);
+            LOGGER.traceExit(createdProject);
+            return createdProject;
         } catch (DataIntegrityViolationException e) {
-            LOGGER.info(IMPL_MARKER, "Project creation failed:", e);
+            LOGGER.info(IMPL_MARKER, "Project creation failed: ", e);
             e.printStackTrace();
             LOGGER.traceExit(e);
             throw new javax.validation.ValidationException("Project could not be created.", e);
@@ -108,8 +109,6 @@ public class ProjectDAOImpl implements ProjectDAO {
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Project was not created:", cve);
         }
-
-        LOGGER.traceExit(project);
     }
 
     @Override
@@ -123,47 +122,31 @@ public class ProjectDAOImpl implements ProjectDAO {
     @Override
     @Transactional(readOnly = true)
     public Project getByID(Long userId, Long projectId, EmbeddableFields... embedFields) throws NotFoundException {
-        Project result = projectRepository.findOneByUser_IdAndId(userId, projectId);
+        final Project project = projectRepository.findOne(projectId);
+        checkAccess(new User(userId), project);
 
-        if (result == null) {
-            throw new NotFoundException("Could not find the project with the id " + projectId + ".");
-        }
+        initLazyRelations(project, embedFields);
 
-        initLazyRelations(result, embedFields);
-
-        return result;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Project getByName(Long userId, String projectName, EmbeddableFields... embedFields)
-            throws NotFoundException {
-        Project result = projectRepository.findOneByUser_IdAndName(userId, projectName);
-
-        if (result == null) {
-            throw new NotFoundException("Could not find the project with the name " + projectName + ".");
-        }
-
-        initLazyRelations(result, embedFields);
-
-        return result;
+        return project;
     }
 
     @Override
     @Transactional
-    public void update(User user, Project project) throws NotFoundException, ValidationException {
+    public Project update(User user, Project project) throws NotFoundException, ValidationException {
         LOGGER.traceEntry("update({})", project);
+
+        final Project projectInDb = projectRepository.findOne(project.getId());
+        checkAccess(user, projectInDb);
+
         try {
-            Project projectInDB = getByID(user.getId(), project.getId(), EmbeddableFields.ALL);
-
             project.setUser(user);
-            project.setGroups(projectInDB.getGroups());
-            project.setNextGroupId(projectInDB.getNextGroupId());
-            project.setNextSymbolId(projectInDB.getNextSymbolId());
+            project.setGroups(projectInDb.getGroups());
+            project.setNextGroupId(projectInDb.getNextGroupId());
+            project.setNextSymbolId(projectInDb.getNextSymbolId());
 
-            projectRepository.save(project);
-
-        // error handling
+            final Project updatedProject = projectRepository.save(project);
+            LOGGER.traceExit(project);
+            return updatedProject;
         } catch (DataIntegrityViolationException e) {
             LOGGER.info(IMPL_MARKER, "Project update failed:", e);
             throw new javax.validation.ValidationException("Project could not be updated.", e);
@@ -172,16 +155,13 @@ public class ProjectDAOImpl implements ProjectDAO {
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Project was not updated.", cve);
         }
-        LOGGER.traceExit(project);
     }
 
     @Override
     @Transactional
     public void delete(User user, Long projectId) throws NotFoundException {
-        Project project = projectRepository.findOneByUser_IdAndId(user.getId(), projectId);
-        if (project == null) {
-            throw new NotFoundException("Could not delete the project with the id " + projectId + ".");
-        }
+        final Project project = projectRepository.findOne(projectId);
+        checkAccess(user, project);
 
         projectRepository.delete(project);
 
@@ -195,6 +175,7 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     /**
      * Load objects that are connected with a project over a 'lazy' relation ship.
+     *
      * @param project
      *         The project which needs the 'lazy' objects.
      */
