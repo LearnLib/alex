@@ -31,11 +31,13 @@ public interface TestCaseSymbolStepRepository extends JpaRepository<TestCaseSymb
     /**
      * Get all test case steps that use a certain symbol.
      *
+     * @param projectId
+     *         The id of the project.
      * @param symbolId
      *         The id of the symbol.
      * @return The list of steps that use the symbol.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    List<TestCaseSymbolStep> findAllBySymbol_Id(Long symbolId);
+    List<TestCaseSymbolStep> findAllByTestCase_Project_IdAndSymbol_Id(Long projectId, Long symbolId);
 }
