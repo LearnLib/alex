@@ -24,6 +24,8 @@ import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import de.learnlib.alex.webhooks.entities.EventType;
 import de.learnlib.alex.webhooks.entities.Webhook;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -44,9 +46,14 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+/**
+ * The resource for webhooks.
+ */
 @Path("/webhooks")
 @RolesAllowed({"REGISTERED"})
 public class WebhookResource {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The security context containing the user of the request. */
     @Context
@@ -58,7 +65,8 @@ public class WebhookResource {
     /**
      * Constructor.
      *
-     * @param webhookDAO The {@link WebhookDAO} to use.
+     * @param webhookDAO
+     *         The {@link WebhookDAO} to use.
      */
     @Inject
     public WebhookResource(WebhookDAO webhookDAO) {
@@ -68,22 +76,25 @@ public class WebhookResource {
     /**
      * Create a new webhook.
      *
-     * @param webhook The webhook to create.
+     * @param webhook
+     *         The webhook to create.
      * @return The created webhook.
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(Webhook webhook) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("create '{}' for user '{}'", webhook, user);
 
         try {
-            webhookDAO.create(user, webhook);
+            final Webhook createdWebhook = webhookDAO.create(user, webhook);
+            LOGGER.traceExit(createdWebhook);
+            return Response.ok(createdWebhook).build();
         } catch (ValidationException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("Webhook.create", Response.Status.BAD_REQUEST, e);
         }
-
-        return Response.ok(webhook).build();
     }
 
     /**
@@ -94,72 +105,83 @@ public class WebhookResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response get() {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("get webhooks for user '{}'", user);
         final List<Webhook> webhooks = webhookDAO.getAll(user);
+        LOGGER.traceExit(webhooks);
         return Response.ok(webhooks).build();
     }
 
     /**
      * Update a webhook.
      *
-     * @param webhook The updated webhook.
+     * @param webhook
+     *         The updated webhook.
      * @return The updated webhook on success.
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(Webhook webhook) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("update webhook '{}' for user '{}'", webhook, user);
 
         try {
-            webhookDAO.update(user, webhook);
+            final Webhook updatedWebhook = webhookDAO.update(user, webhook);
+            LOGGER.traceExit("Webhook '{}' updated", updatedWebhook);
+            return Response.ok(updatedWebhook).build();
         } catch (NotFoundException | ValidationException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("Webhook.update", Response.Status.BAD_REQUEST, e);
         }
-
-        return Response.ok(webhook).build();
     }
 
     /**
      * Delete a webhook.
      *
-     * @param webhookId The id of the webhook.
+     * @param webhookId
+     *         The id of the webhook.
      * @return No no content on success.
      */
     @DELETE
     @Path("/{webhookId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("webhookId") Long webhookId) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("delete webhook '{}' for user '{}'", webhookId, user);
 
         try {
             webhookDAO.delete(user, webhookId);
+            LOGGER.traceExit("Webhook {} deleted", webhookId);
+            return Response.noContent().build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("Webhook.delete", Response.Status.BAD_REQUEST, e);
         }
-
-        return Response.noContent().build();
     }
 
     /**
      * Deletes multiple webhooks at once.
      *
-     * @param webhookIds The list of ids of the webhooks to delete.
+     * @param webhookIds
+     *         The list of ids of the webhooks to delete.
      * @return Not content on success.
      */
     @DELETE
     @Path("/batch/{webhookIds}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("webhookIds") IdsList webhookIds) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("delete webhooks '{}' for user '{}'", webhookIds, user);
 
         try {
             webhookDAO.delete(user, webhookIds);
+            LOGGER.traceExit("Webhooks {} deleted", webhookIds);
+            return Response.noContent().build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("Webhook.delete", Response.Status.BAD_REQUEST, e);
         }
-
-        return Response.noContent().build();
     }
 
     /**
@@ -171,7 +193,9 @@ public class WebhookResource {
     @Path("/events")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEvents() {
+        LOGGER.traceEntry("getEvents");
         final List<EventType> eventTypes = new ArrayList<>(EnumSet.allOf(EventType.class));
+        LOGGER.traceExit(eventTypes);
         return Response.ok(eventTypes).build();
     }
 }

@@ -54,13 +54,13 @@ public class WebhookDAOImpl implements WebhookDAO {
 
     @Override
     @Transactional
-    public void create(User user, Webhook webhook) throws ValidationException {
+    public Webhook create(User user, Webhook webhook) throws ValidationException {
         if (webhookRepository.findByUser_IdAndUrl(user.getId(), webhook.getUrl()) != null) {
             throw new ValidationException("A webhook under the given URL is already registered. Update the existing one instead.");
         }
 
         webhook.setUser(user);
-        webhookRepository.save(webhook);
+        return webhookRepository.save(webhook);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class WebhookDAOImpl implements WebhookDAO {
 
     @Override
     @Transactional
-    public void update(User user, Webhook webhook) throws NotFoundException, ValidationException {
+    public Webhook update(User user, Webhook webhook) throws NotFoundException, ValidationException {
         final Webhook webhookInDb = webhookRepository.findOne(webhook.getId());
         checkAccess(user, webhookInDb);
 
@@ -113,7 +113,7 @@ public class WebhookDAOImpl implements WebhookDAO {
         webhookInDb.setUrl(webhook.getUrl());
         webhookInDb.setName(webhook.getName());
 
-        webhookRepository.save(webhookInDb);
+        return webhookRepository.save(webhookInDb);
     }
 
     @Override

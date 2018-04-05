@@ -122,4 +122,14 @@ public class Webhook implements Serializable {
     public void setEvents(List<EventType> events) {
         this.events = events;
     }
+
+    @Override
+    public String toString() {
+        return "Webhook{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", name='" + name + '\'' +
+                ", user=" + user +
+                '}';
+    }
 }

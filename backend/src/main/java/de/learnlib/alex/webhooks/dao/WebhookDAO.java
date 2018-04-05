@@ -37,10 +37,11 @@ public interface WebhookDAO {
      *         The user that registers the webhook.
      * @param webhook
      *         The webhook to register.
+     * @return The created webhook.
      * @throws ValidationException
      *         If a webhook with the same URL is already registerd.
      */
-    void create(User user, Webhook webhook) throws ValidationException;
+    Webhook create(User user, Webhook webhook) throws ValidationException;
 
     /**
      * Get all webhooks of a user.
@@ -93,12 +94,13 @@ public interface WebhookDAO {
      *         The user.
      * @param webhook
      *         The updated webhook.
+     * @return The updated webhook.
      * @throws NotFoundException
      *         If the webhook with the given id could not be found.
      * @throws ValidationException
      *         If another webhook with the URL is already registered.
      */
-    void update(User user, Webhook webhook) throws NotFoundException, ValidationException;
+    Webhook update(User user, Webhook webhook) throws NotFoundException, ValidationException;
 
     /**
      * Checks if the user is allowed to access or modify a webhook.
