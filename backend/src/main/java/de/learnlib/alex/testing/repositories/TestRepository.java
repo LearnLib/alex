@@ -18,48 +18,47 @@ package de.learnlib.alex.testing.repositories;
 
 import de.learnlib.alex.testing.entities.Test;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
+import java.util.List;
 
 /** Repository to persist tests. */
 @Repository
-public interface TestRepository extends JpaRepository<Test, UUID> {
-
-    /**
-     * Get a test by a project id and its id.
-     *
-     * @param projectId The id of the project.
-     * @param id        The id of the test.
-     * @return The test.
-     */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
-    Test findOneByProject_IdAndId(Long projectId, Long id);
+public interface TestRepository extends JpaRepository<Test, Long> {
 
     /**
      * Find a test by its name within its parent.
      *
-     * @param projectId The id of the project.
-     * @param parentId  The id of the parent.
-     * @param name      The name of the test.
+     * @param parentId
+     *         The id of the parent.
+     * @param name
+     *         The name of the test.
      * @return The test matching the name.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    Test findOneByProject_IdAndParent_IdAndName(Long projectId, Long parentId, String name);
+    Test findOneByParent_IdAndName(Long parentId, String name);
 
     /**
-     * Get the highest id of all tests in a project.
+     * Get the default test suite.
      *
-     * @param projectId The id of the project.
-     * @return The highest id.
+     * @param projectId
+     *         The id of the project.
+     * @return The default test suite.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    @Query("SELECT MAX(t.id) FROM Test t WHERE t.project.id = ?1")
-    Long findHighestTestNo(Long projectId);
+    Test findFirstByProject_IdOrderByIdAsc(Long projectId);
 
+    /**
+     * Get all tests of a project.
+     *
+     * @param projectId
+     *         The id of the project.
+     * @return The tests in the project.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<Test> findAllByProject_Id(Long projectId);
 }

@@ -22,11 +22,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 /** Repository for symbol steps of a test case. */
 @Repository
-public interface TestCaseSymbolStepRepository extends JpaRepository<TestCaseSymbolStep, UUID> {
+public interface TestCaseSymbolStepRepository extends JpaRepository<TestCaseSymbolStep, Long> {
 
     /**
      * Get all test case steps that use a certain symbol.

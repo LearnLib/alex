@@ -63,7 +63,7 @@
             <div class="d-flex" style="align-items: center">
                 <button class="btn btn-sm btn-default"
                         ui-sref="test({projectId: vm.testSuite.project, testId:vm.testSuite.parent})"
-                        ng-if="vm.testSuite.id !== 0"
+                        ng-if="vm.testSuite.parent !== null"
                         style="margin-right: 12px">
                     <i class="fa fa-fw fa-level-up"></i>
                 </button>

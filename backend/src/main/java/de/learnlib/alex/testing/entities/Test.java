@@ -118,23 +118,14 @@ public class Test implements Serializable {
         }
     }
 
-    /** The ID of the Test Case in the DB. */
-    protected UUID uuid;
+    /** The id of the Test Case in the Project. */
+    protected Long id;
 
     /** The Project the Test Case belongs to. */
     private Project project;
 
-    /** The ID of the Project to be used in the JSON. */
-    private Long projectId;
-
     /** The parent test suite. */
     private Test parent;
-
-    /** The id of the parent test suite. */
-    private Long parentId;
-
-    /** The id of the Test Case in the Project. */
-    protected Long id;
 
     /** The name of the Test Case. */
     protected String name;
@@ -147,29 +138,6 @@ public class Test implements Serializable {
         this.testResults = new ArrayList<>();
     }
 
-    /**
-     * Get the ID of Test Case used in the DB.
-     *
-     * @return The internal ID.
-     */
-    @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @JsonIgnore
-    public UUID getUUID() {
-        return uuid;
-    }
-
-    /**
-     * Set the ID the Test Case has in the DB new.
-     *
-     * @param uuid The new internal ID.
-     */
-    @JsonIgnore
-    public void setUUID(UUID uuid) {
-        this.uuid = uuid;
-    }
-
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
     @JsonIgnore
@@ -180,23 +148,17 @@ public class Test implements Serializable {
     @JsonIgnore
     public void setProject(Project project) {
         this.project = project;
-        if (project == null) {
-            this.projectId = null;
-        } else {
-            this.projectId = project.getId();
-        }
     }
 
     @Transient
     @JsonProperty("project")
     public Long getProjectId() {
-        return projectId;
+        return project.getId();
     }
 
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
-        this.project = null;
-        this.projectId = projectId;
+        this.project = new Project(projectId);
     }
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -209,23 +171,20 @@ public class Test implements Serializable {
     @JsonIgnore
     public void setParent(Test parent) {
         this.parent = parent;
-        if (parent == null) {
-            this.parentId = null;
-        } else {
-            this.parentId = parent.getId();
-        }
     }
 
     @Transient
     @JsonProperty("parent")
     public Long getParentId() {
-        return parentId;
+        return parent == null ? null : parent.getId();
     }
 
     @JsonProperty("parent")
     public void setParentId(Long parentId) {
-        this.parent = null;
-        this.parentId = parentId;
+        if (parentId != null) {
+            this.parent = new Test();
+            this.parent.setId(parentId);
+        }
     }
 
     /**
@@ -234,6 +193,8 @@ public class Test implements Serializable {
      * @return The ID.
      * @requiredField
      */
+    @Id
+    @GeneratedValue
     @JsonProperty
     public Long getId() {
         return this.id;

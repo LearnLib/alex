@@ -42,10 +42,16 @@ export const testsViewComponent = {
              */
             this.test = null;
 
-            const testId = $state.params.testId === null ? 0 : $state.params.testId;
-            TestResource.get(project.id, testId)
-                .then((data) => this.test = data)
-                .catch(console.log);
+            const testId = $state.params.testId;
+            if (testId === 0) {
+                TestResource.getRoot(project.id)
+                    .then(data => this.test = data)
+                    .catch(err => $state.go('error', {message: err.data.message}));
+            } else {
+                TestResource.get(project.id, testId)
+                    .then(data => this.test = data)
+                    .catch(err => $state.go('error', {message: err.data.message}));
+            }
         }
     },
     controllerAs: 'vm',

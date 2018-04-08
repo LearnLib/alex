@@ -26,14 +26,20 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolInputParameter;
 import de.learnlib.alex.data.entities.SymbolParameter;
-import de.learnlib.alex.data.entities.SymbolParameterValue;
+import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
-import de.learnlib.alex.testing.entities.*;
+import de.learnlib.alex.testing.entities.Test;
+import de.learnlib.alex.testing.entities.TestCase;
+import de.learnlib.alex.testing.entities.TestCaseActionStep;
+import de.learnlib.alex.testing.entities.TestCaseStep;
+import de.learnlib.alex.testing.entities.TestCaseSymbolStep;
+import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,11 +63,14 @@ public class TestDAOImpl implements TestDAO {
     /** The ProjectDAO to use. Will be injected. */
     private ProjectDAO projectDAO;
 
+    /** The SymbolDAO to use. Will be injected. */
+    private SymbolDAO symbolDAO;
+
     /** The TestCaseRepository to use. Will be injected. */
     private TestRepository testRepository;
 
-    /** The SymbolDAO to use. Will be injected. */
-    private SymbolDAO symbolDAO;
+    /** The repository for projects. */
+    private ProjectRepository projectRepository;
 
     /** The repository for test case steps. */
     private TestCaseStepRepository testCaseStepRepository;
@@ -75,13 +84,15 @@ public class TestDAOImpl implements TestDAO {
     @Inject
     public TestDAOImpl(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
                        TestCaseStepRepository testCaseStepRepository, SymbolActionRepository symbolActionRepository,
-                       SymbolParameterValueRepository symbolParameterValueRepository) {
+                       SymbolParameterValueRepository symbolParameterValueRepository,
+                       ProjectRepository projectRepository) {
         this.projectDAO = projectDAO;
         this.testRepository = testRepository;
         this.symbolDAO = symbolDAO;
         this.testCaseStepRepository = testCaseStepRepository;
         this.symbolActionRepository = symbolActionRepository;
         this.symbolParameterValueRepository = symbolParameterValueRepository;
+        this.projectRepository = projectRepository;
     }
 
     @Override
@@ -94,14 +105,15 @@ public class TestDAOImpl implements TestDAO {
                 throw new ValidationException("To create a test case it must not haven an ID.");
             }
 
-            if (test.getParentId() == null) {
-                test.setParentId(0L);
+            final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(test.getProjectId());
+            if (test.getParent() == null) {
+                test.setParent(root);
             }
 
             // make sure the name of the test case is unique
             String name = test.getName();
             int i = 1;
-            while (testRepository.findOneByProject_IdAndParent_IdAndName(test.getProjectId(), test.getParentId(), name) != null) {
+            while (testRepository.findOneByParent_IdAndName(test.getParentId(), name) != null) {
                 name = test.getName() + " - " + String.valueOf(i);
                 i++;
             }
@@ -110,15 +122,8 @@ public class TestDAOImpl implements TestDAO {
             Long projectId = test.getProjectId();
             Project project = projectDAO.getByID(user.getId(), projectId);
 
-            test.setUUID(null);
+            test.setId(null);
             test.setProject(project);
-
-            Long maxTestNo = testRepository.findHighestTestNo(projectId);
-            if (maxTestNo == null) {
-                maxTestNo = -1L;
-            }
-            long nextTestNo = maxTestNo + 1;
-            test.setId(nextTestNo);
 
             if (test.getParentId() != null) {
                 Test parent = get(user, projectId, test.getParentId());
@@ -169,50 +174,93 @@ public class TestDAOImpl implements TestDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public Test get(User user, Long projectId, Long id) throws NotFoundException {
-        projectDAO.getByID(user.getId(), projectId); // access check
+    public Test get(User user, Long projectId, Long testId) throws NotFoundException, UnauthorizedException {
+        final Project project = projectRepository.findOne(projectId);
+        final Test test = testRepository.findOne(testId);
+        checkAccess(user, project, test);
 
-        Test result = testRepository.findOneByProject_IdAndId(projectId, id);
-        if (result == null) {
-            throw new NotFoundException("Could not find a Test Case with the id " + id
+        if (test == null) {
+            throw new NotFoundException("Could not find a Test Case with the id " + testId
                     + " in the project " + projectId + ".");
         }
 
-        loadLazyRelations(result);
+        loadLazyRelations(test);
 
-        return result;
+        return test;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Test> get(User user, Long projectId, List<Long> ids) throws NotFoundException {
-        projectDAO.getByID(user.getId(), projectId); // access check
+    public List<Test> get(User user, Long projectId, List<Long> ids) throws NotFoundException, UnauthorizedException {
         final List<Test> tests = new ArrayList<>();
-        for (Long id: ids) {
+        for (Long id : ids) {
             tests.add(get(user, projectId, id));
         }
         return tests;
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Test> getByType(User user, Long projectId, String type)
+            throws NotFoundException, UnauthorizedException, IllegalArgumentException {
+
+        final Project project = projectRepository.findOne(projectId);
+        projectDAO.checkAccess(user, project);
+
+        final List<Test> tests = testRepository.findAllByProject_Id(projectId);
+        tests.forEach(this::loadLazyRelations);
+
+        if (type == null) {
+            return tests;
+        }
+
+        switch (type) {
+            case "case":
+                return tests.stream()
+                        .filter(TestCase.class::isInstance)
+                        .collect(Collectors.toList());
+            case "suite":
+                return tests.stream()
+                        .filter(TestSuite.class::isInstance)
+                        .collect(Collectors.toList());
+            default:
+                throw new IllegalArgumentException("Invalid type parameter. Allowed values: ['case', 'suite']");
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Test getRoot(User user, Long projectId) throws NotFoundException {
+        final Project project = projectRepository.findOne(projectId);
+        projectDAO.checkAccess(user, project);
+
+        final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
+        loadLazyRelations(root);
+
+        return root;
+    }
+
+    @Override
     @Transactional
     public void update(User user, Test test) throws NotFoundException {
-        projectDAO.getByID(user.getId(), test.getProjectId()); // access check
+        final Project project = projectRepository.findOne(test.getProjectId());
+        checkAccess(user, project, test);
 
         // make sure the name of the Test Case is unique
-        Test testInDB = testRepository.findOneByProject_IdAndParent_IdAndName(test.getProjectId(), test.getParentId(), test.getName());
+        Test testInDB = testRepository.findOneByParent_IdAndName(test.getParentId(), test.getName());
         if (testInDB != null && !testInDB.getId().equals(test.getId())) {
             throw new ValidationException("To update a test case or suite its name must be unique within its parent.");
         }
 
-        if (test.getId() == 0 && !test.getName().equals("Root")) {
+        final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(test.getProjectId());
+        if (test.getId().equals(root.getId()) && !test.getName().equals("Root")) {
             throw new ValidationException("The name of the root test suite may not be changed.");
         }
 
         testInDB = get(user, test.getProjectId(), test.getId());
 
         try {
-            test.setUUID(testInDB.getUUID());
+            test.setId(testInDB.getId());
             test.setProject(testInDB.getProject());
 
             if (test.getParentId() != null) {
@@ -226,17 +274,9 @@ public class TestDAOImpl implements TestDAO {
             }
 
             if (test instanceof TestSuite) {
-                ((TestSuite) testInDB).getTests().forEach(t -> t.setParent(null));
+                updateTestSuite(user, (TestSuite) test);
             } else if (test instanceof TestCase) {
-                TestCase testCaseIdDb = (TestCase) get(user, test.getProjectId(), test.getId());
-                testCaseStepRepository.delete(testCaseIdDb.getSteps());
-            }
-
-            beforeSaving(user, test);
-            testRepository.save(test);
-
-            if (test instanceof TestCase) {
-                saveTestCaseSteps((TestCase) test);
+                updateTestCase(user, (TestCase) test);
             }
         } catch (Exception e) {
             throw new NotFoundException("Update failed: Could not find the Test with the id " + test.getId()
@@ -244,16 +284,44 @@ public class TestDAOImpl implements TestDAO {
         }
     }
 
+    private void updateTestCase(User user, TestCase testCase) throws NotFoundException {
+        beforeSaving(user, testCase);
+        testRepository.save(testCase);
+
+        // delete all test case steps that have been removed in the update.
+        final List<Long> stepIds = testCase.getSteps().stream()
+                .filter(s -> s.getId() != null)
+                .map(TestCaseStep::getId)
+                .collect(Collectors.toList());
+
+        if (stepIds.isEmpty()) {
+            testCaseStepRepository.deleteAllByTestCase_Id(testCase.getId());
+        } else {
+            testCaseStepRepository.deleteAllByTestCase_IdAndIdNotIn(testCase.getId(), stepIds);
+        }
+
+        saveTestCaseSteps(testCase);
+    }
+
+    private void updateTestSuite(User user, TestSuite testSuite) throws NotFoundException {
+        testSuite.getTests().forEach(t -> t.setParent(null));
+        beforeSaving(user, testSuite);
+        testRepository.save(testSuite);
+    }
+
     @Override
     @Transactional
-    public void delete(User user, Long projectId, Long id) throws NotFoundException, ValidationException {
-        if (id == 0) {
+    public void delete(User user, Long projectId, Long testId) throws NotFoundException, ValidationException {
+        final Project project = projectRepository.findOne(projectId);
+        final Test test = testRepository.findOne(testId);
+        checkAccess(user, project, test);
+
+        final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
+        if (root.getId().equals(testId)) {
             throw new ValidationException("The root test suite cannot be deleted");
         }
 
-        Test test = get(user, projectId, id);
-
-        Test parent = test.getParent();
+        final Test parent = test.getParent();
         if (parent != null) {
             ((TestSuite) parent).getTests().remove(test);
             test.setParent(null);
@@ -267,6 +335,19 @@ public class TestDAOImpl implements TestDAO {
     public void delete(User user, Long projectId, IdsList ids) throws NotFoundException, ValidationException {
         for (long id : ids) {
             delete(user, projectId, id);
+        }
+    }
+
+    @Override
+    public void checkAccess(User user, Project project, Test test) throws NotFoundException, UnauthorizedException {
+        projectDAO.checkAccess(user, project);
+
+        if (test == null) {
+            throw new NotFoundException("The test could not be found.");
+        }
+
+        if (!test.getProject().equals(project)) {
+            throw new UnauthorizedException("You are not allowed to access the test.");
         }
     }
 
@@ -306,6 +387,7 @@ public class TestDAOImpl implements TestDAO {
 
     private void loadLazyRelations(Test test) {
         Hibernate.initialize(test.getProject());
+        Hibernate.initialize(test.getProject().getMirrorUrls());
 
         if (test instanceof TestSuite) {
             TestSuite testSuite = (TestSuite) test;
@@ -345,5 +427,4 @@ public class TestDAOImpl implements TestDAO {
             }
         }
     }
-
 }

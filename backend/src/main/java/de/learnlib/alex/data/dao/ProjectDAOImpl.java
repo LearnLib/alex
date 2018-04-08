@@ -90,7 +90,6 @@ public class ProjectDAOImpl implements ProjectDAO {
             project.setNextGroupId(1L);
 
             TestSuite testSuite = new TestSuite();
-            testSuite.setId(0L);
             testSuite.setName("Root");
             testSuite.setProject(project);
             project.addTest(testSuite);

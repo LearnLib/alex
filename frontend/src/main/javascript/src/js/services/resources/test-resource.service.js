@@ -56,13 +56,13 @@ export class TestResource {
     }
 
     /**
-     * Gets all test cases of a project.
+     * Gets the root test suite.
      *
      * @param {number} projectId The id of the project to get all test cases from
      */
-    getAll(projectId) {
-        return this.$http.get(`${apiUrl}/projects/${projectId}/tests`)
-            .then(response => response.data.map(test => this._mapTest(test)));
+    getRoot(projectId) {
+        return this.$http.get(`${apiUrl}/projects/${projectId}/tests/root`)
+            .then(response => this._mapTest(response.data));
     }
 
     /**

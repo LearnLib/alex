@@ -44,6 +44,7 @@ export class TestService {
             deleteProperties(testCase);
 
             testCase.steps = testCase.steps.map((step) => {
+                delete step.id;
                 if (step.type === 'symbol') {
                     step.symbol = step.symbol.name;
                     step.parameterValues.forEach(value => {

@@ -20,13 +20,9 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.Transient;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /** Test case. */

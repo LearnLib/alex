@@ -21,9 +21,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -32,7 +30,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.UUID;
 
 /** The step of a test case. */
 @Entity
@@ -47,10 +44,8 @@ public abstract class TestCaseStep implements Serializable {
 
     /** The database id. */
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @JsonIgnore
-    private UUID uuid;
+    @GeneratedValue
+    private Long id;
 
     /** The text case. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -63,8 +58,7 @@ public abstract class TestCaseStep implements Serializable {
     private int number;
 
     /**
-     * If the step should fail.
-     * This eliminates the need to create a separate symbol.
+     * If the step should fail. This eliminates the need to create a separate symbol.
      */
     @NotNull
     private boolean shouldFail;
@@ -77,17 +71,18 @@ public abstract class TestCaseStep implements Serializable {
     /**
      * Executes the step.
      *
-     * @param connectors The connector manager.
+     * @param connectors
+     *         The connector manager.
      * @return The result of the step.
      */
     public abstract ExecuteResult execute(ConnectorManager connectors);
 
-    public UUID getUuid() {
-        return uuid;
+    public Long getId() {
+        return id;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public TestCase getTestCase() {

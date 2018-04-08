@@ -19,10 +19,34 @@ package de.learnlib.alex.testing.repositories;
 import de.learnlib.alex.testing.entities.TestCaseStep;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
+import java.util.List;
 
 /** The repository for test case steps. */
 @Repository
-public interface TestCaseStepRepository extends JpaRepository<TestCaseStep, UUID> {
+public interface TestCaseStepRepository extends JpaRepository<TestCaseStep, Long> {
+
+    /**
+     * Deletes all test steps of a test.
+     *
+     * @param testId
+     *         The id of test in the db.
+     */
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
+    void deleteAllByTestCase_Id(Long testId);
+
+    /**
+     * Delete all those test steps of a test whose ids are not specified to stay. This should be used when updating a
+     * test case.
+     *
+     * @param testId
+     *         The id of the test in the db.
+     * @param testCaseIds
+     *         The ids of the test case steps in the db.
+     */
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
+    void deleteAllByTestCase_IdAndIdNotIn(Long testId, List<Long> testCaseIds);
 }
