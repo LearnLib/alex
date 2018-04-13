@@ -84,6 +84,8 @@ public class ClickElementByTextActionTest extends WebActionTest {
     @Test
     public void itShouldFailIfElementIsNotEnabled() {
         final WebElement button = mock(WebElement.class);
+        given(button.getText()).willReturn(TEXT);
+
         final List<WebElement> elements = new ArrayList<>();
         elements.add(button);
 
@@ -96,6 +98,8 @@ public class ClickElementByTextActionTest extends WebActionTest {
     @Test
     public void itShouldFailIfElementIsNotVisible() {
         final WebElement button = mock(WebElement.class);
+        given(button.getText()).willReturn(TEXT);
+
         final List<WebElement> elements = new ArrayList<>();
         elements.add(button);
 
@@ -109,7 +113,11 @@ public class ClickElementByTextActionTest extends WebActionTest {
     @Test
     public void itShouldClickOnTheFirstClickableElement() {
         final WebElement button1 = mock(WebElement.class);
+        given(button1.getText()).willReturn(TEXT);
+
         final WebElement button2 = mock(WebElement.class);
+        given(button1.getText()).willReturn(TEXT);
+
         final List<WebElement> elements = new ArrayList<>();
         elements.add(button1);
         elements.add(button2);
