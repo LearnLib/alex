@@ -50,7 +50,7 @@ public class LearnerResultTest {
     private static final ZonedDateTime TEST_DATE = ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00");
     private static final Statistics.DetailedStatistics TEST_DURATION = new Statistics.DetailedStatistics();
 
-    private static final AbstractLearningAlgorithm<String, String> algorithm = new TTT();
+    private static final AbstractLearningAlgorithm<String, String> ALGORITHM = new TTT();
 
     private static final MealyRandomWordsEQOracleProxy EXAMPLE_EQ_ORACLE =
             new MealyRandomWordsEQOracleProxy(1, 5, 10, 42);
@@ -83,7 +83,7 @@ public class LearnerResultTest {
         LearnerResult result = new LearnerResult();
         result.setProject(project);
         result.setTestNo(ID);
-        result.setAlgorithm(algorithm);
+        result.setAlgorithm(ALGORITHM);
         result.setSigma(AlphabetProxy.createFrom(sigma));
         result.createHypothesisFrom(hypothesis);
         result.setStatistics(statistics);

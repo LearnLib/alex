@@ -29,6 +29,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -54,6 +55,7 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
     private String value;
 
     /** Field to determine if the search string is a regular expression. */
+    @NotNull
     private boolean regexp;
 
     /**

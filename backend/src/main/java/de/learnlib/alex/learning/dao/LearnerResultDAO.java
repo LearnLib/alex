@@ -34,19 +34,19 @@ public interface LearnerResultDAO {
     /**
      * Persists a LearnerResult. This method must also verify that the given result is valid.
      *
-     *
      * @param user
      *         The user performing the action.
      * @param learnerResult
      *         The LearnerResult to save.
+     * @throws NotFoundException
+     *         If one of the required resources could not be found.
      * @throws ValidationException
      *         If the given LearnerResult was invalid.
      */
     void create(User user, LearnerResult learnerResult) throws NotFoundException, ValidationException;
 
     /**
-     * Get a list of all the LearnerResults for a given
-     * Project.
+     * Get a list of all the LearnerResults for a given Project.
      *
      * @param user
      *         The user performing the action.
@@ -82,12 +82,12 @@ public interface LearnerResultDAO {
      * Get the latest learner result.
      *
      * @param user
-     *          The user.
+     *         The user.
      * @param projectId
-     *          The id of the project.
+     *         The id of the project.
      * @return The latest learner result.
      * @throws NotFoundException
-     *          If the project could not be found.
+     *         If the project could not be found.
      */
     LearnerResult getLatest(User user, Long projectId) throws NotFoundException;
 
@@ -140,6 +140,8 @@ public interface LearnerResultDAO {
      *         The result that the step is part of.
      * @param step
      *         The step the should be saved / updated.
+     * @throws NotFoundException
+     *         If one of the required resources could not be found.
      * @throws ValidationException
      *         If the given LearnerResult was invalid.
      */
@@ -157,5 +159,5 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    void delete(Learner learner, Long projectId, Long... testNo) throws  NotFoundException;
+    void delete(Learner learner, Long projectId, Long... testNo) throws NotFoundException;
 }

@@ -30,6 +30,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,21 +60,16 @@ public class SetVariableByRegexGroup extends SymbolAction {
 
     /** Which match should be used. */
     @NotNull
+    @Min(1)
     private int nthMatch;
 
     /** Which group in the match should be used. */
     @NotNull
+    @Min(0)
     private int mthGroup;
 
     @Override
     protected ExecuteResult execute(ConnectorManager connector) {
-        if (nthMatch < 1) {
-            nthMatch = 1;
-        }
-        if (mthGroup < 0) {
-            mthGroup = 0;
-        }
-
         String pageSource = connector.getConnector(WebSiteConnector.class)
                 .getDriver()
                 .getPageSource();

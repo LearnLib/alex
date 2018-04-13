@@ -29,6 +29,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * RESTSymbolAction to check if the response body of the last request contains a certain text.
@@ -49,6 +50,7 @@ public class CheckTextRestAction extends RESTSymbolAction {
     private String value;
 
     /** Field to determine if the search string is a regular expression. */
+    @NotNull
     private boolean regexp;
 
     /**

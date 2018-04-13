@@ -42,6 +42,12 @@ public abstract class AbstractWebDriverConfig implements Serializable {
 
     private static final long serialVersionUID = -2663686839180427383L;
 
+    private static final int DEFAULT_IMPLICITLY_WAIT = 0;
+
+    private static final int DEFAULT_PAGE_LOAD_TIMEOUT = 10;
+
+    private static final int DEFAULT_SCRIPT_TIMEOUT = 10;
+
     /** The width of the browser window. */
     private int width;
 
@@ -63,9 +69,9 @@ public abstract class AbstractWebDriverConfig implements Serializable {
     public AbstractWebDriverConfig() {
         this.width = 0;
         this.height = 0;
-        this.implicitlyWait = 0;
-        this.pageLoadTimeout = 10;
-        this.scriptTimeout = 10;
+        this.implicitlyWait = DEFAULT_IMPLICITLY_WAIT;
+        this.pageLoadTimeout = DEFAULT_PAGE_LOAD_TIMEOUT;
+        this.scriptTimeout = DEFAULT_SCRIPT_TIMEOUT;
     }
 
     /**

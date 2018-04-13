@@ -48,13 +48,20 @@ public class SymbolMapper implements SULMapper<
     /**
      * Constructor. Initialize the map name -> symbol.
      *
-     * @param symbols - The symbols for the learning process.
+     * @param symbols
+     *         The symbols for the learning process.
      */
     public SymbolMapper(List<Symbol> symbols) {
         this.symbolMap = new HashMap<>();
         symbols.forEach(s -> this.symbolMap.put(s.getName(), s));
     }
 
+    /**
+     * Adds a new symbol to the mapper.
+     *
+     * @param symbol
+     *         The symbol to add.
+     */
     public void addSymbol(Symbol symbol) {
         this.symbolMap.putIfAbsent(symbol.getName(), symbol);
     }

@@ -17,7 +17,11 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.WebElementLocator;
+import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
+import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,11 +57,17 @@ public class ClickElementByTextActionTest extends WebActionTest {
     public void setUp() {
         super.setUp();
 
+        final Symbol symbol = new Symbol();
+        symbol.setProject(new Project(0L));
+
         action = new ClickElementByTextAction();
         action.setNode(new WebElementLocator("body", WebElementLocator.Type.CSS));
         action.setTagName(TAG_NAME);
         action.setText(TEXT);
+        action.setSymbol(symbol);
 
+        given(connectors.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
+        given(connectors.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
         given(webSiteConnector.getDriver()).willReturn(driver);
 
         given(driver.findElement(action.getNode().getBy())).willReturn(container);
@@ -66,7 +76,8 @@ public class ClickElementByTextActionTest extends WebActionTest {
     @Test
     public void itShouldFailIfNoElementWithTagNameIsFound() {
         given(container.findElements(By.tagName(TAG_NAME))).willReturn(new ArrayList<>());
-        final ExecuteResult result = action.execute(connectors);
+
+        final ExecuteResult result = action.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 
@@ -78,7 +89,7 @@ public class ClickElementByTextActionTest extends WebActionTest {
 
         given(container.findElements(By.tagName(TAG_NAME))).willReturn(elements);
 
-        final ExecuteResult result = action.execute(connectors);
+        final ExecuteResult result = action.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 
@@ -91,7 +102,7 @@ public class ClickElementByTextActionTest extends WebActionTest {
         given(button.isDisplayed()).willReturn(false);
         given(container.findElements(By.tagName(TAG_NAME))).willReturn(elements);
 
-        final ExecuteResult result = action.execute(connectors);
+        final ExecuteResult result = action.executeAction(connectors);
         assertFalse(result.isSuccess());
     }
 
@@ -109,7 +120,7 @@ public class ClickElementByTextActionTest extends WebActionTest {
         given(button2.isEnabled()).willReturn(true);
         given(container.findElements(By.tagName(TAG_NAME))).willReturn(elements);
 
-        final ExecuteResult result = action.execute(connectors);
+        final ExecuteResult result = action.executeAction(connectors);
         assertTrue(result.isSuccess());
 
         verify(button1, never()).click();

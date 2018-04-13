@@ -78,7 +78,13 @@ public class TestService {
      * Constructor.
      *
      * @param contextHandlerFactory
-     *         The injected {@link ConnectorContextHandlerFactory}
+     *         The injected {@see ConnectorContextHandlerFactory}.
+     * @param webhookService
+     *         The injected {@see WebhookService}.
+     * @param testDAO
+     *         The injected {@see TestDAO}.
+     * @param testReportDAO
+     *         The injected {@see TestReportDAO}.
      */
     @Inject
     public TestService(ConnectorContextHandlerFactory contextHandlerFactory, WebhookService webhookService,
@@ -169,9 +175,12 @@ public class TestService {
      *         The tests that should be executed.
      * @param driverConfig
      *         The config for the web driver.
-     * @return
+     * @param results
+     *         The map with the test results.
+     * @return The updated test result map.
      */
-    public Map<Long, TestResult> executeTests(User user, List<Test> tests, AbstractWebDriverConfig driverConfig, Map<Long, TestResult> results) {
+    public Map<Long, TestResult> executeTests(User user, List<Test> tests, AbstractWebDriverConfig driverConfig,
+                                              Map<Long, TestResult> results) {
         for (Test test : tests) {
             if (test instanceof TestCase) {
                 executeTestCase(user, (TestCase) test, driverConfig, results);
@@ -191,9 +200,12 @@ public class TestService {
      *         The test suite that is being executed.
      * @param driverConfig
      *         The config for the web driver.
-     * @return
+     * @param results
+     *         The map with the test results.
+     * @return The updated test result map.
      */
-    public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, AbstractWebDriverConfig driverConfig, Map<Long, TestResult> results) {
+    public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, AbstractWebDriverConfig driverConfig,
+                                            Map<Long, TestResult> results) {
         TestSuiteResult tsResult = new TestSuiteResult(testSuite, 0L, 0L);
 
         for (Test test : testSuite.getTests()) {
@@ -219,9 +231,12 @@ public class TestService {
      *         The test case that is being executed.
      * @param driverConfig
      *         The config for the web driver.
-     * @return
+     * @param results
+     *         The map with the test results.
+     * @return The updated test result map.
      */
-    public TestCaseResult executeTestCase(User user, TestCase testCase, AbstractWebDriverConfig driverConfig, Map<Long, TestResult> results) {
+    public TestCaseResult executeTestCase(User user, TestCase testCase, AbstractWebDriverConfig driverConfig,
+                                          Map<Long, TestResult> results) {
         final ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, testCase.getProject(),
                 driverConfig);
         ctxHandler.setResetSymbol(new Symbol());

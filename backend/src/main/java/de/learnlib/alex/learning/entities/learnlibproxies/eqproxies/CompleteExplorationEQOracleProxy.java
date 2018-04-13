@@ -17,9 +17,9 @@
 package de.learnlib.alex.learning.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import de.learnlib.alex.learning.services.eqOracles.CompleteExplorationEQOracle;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
+import de.learnlib.oracle.equivalence.CompleteExplorationEQOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 

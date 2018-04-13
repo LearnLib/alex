@@ -54,9 +54,9 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final Marker GROUP_MARKER = MarkerManager.getMarker("GROUP");
-    private static final Marker DAO_MARKER   = MarkerManager.getMarker("DAO");
-    private static final Marker IMPL_MARKER  = MarkerManager.getMarker("GROUP_DAO")
-                                                                .setParents(DAO_MARKER, GROUP_MARKER);
+    private static final Marker DAO_MARKER = MarkerManager.getMarker("DAO");
+    private static final Marker IMPL_MARKER = MarkerManager.getMarker("GROUP_DAO")
+            .setParents(DAO_MARKER, GROUP_MARKER);
 
     /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
@@ -78,12 +78,16 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
      *
      * @param projectRepository
      *         The ProjectRepository to use.
+     * @param projectDAO
+     *         The ProjectDAO to use.
      * @param symbolGroupRepository
      *         The SymbolGroupRepository to use.
      * @param symbolRepository
      *         The SymbolRepository to use.
      * @param symbolActionRepository
      *         The SymbolActionRepository to use.
+     * @param symbolParameterRepository
+     *         The SymbolParameterRepository to use.
      */
     @Inject
     public SymbolGroupDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
@@ -96,7 +100,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         this.symbolRepository = symbolRepository;
 
         this.symbolDAO = new SymbolDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
-                                           symbolActionRepository, symbolParameterRepository);
+                symbolActionRepository, symbolParameterRepository);
     }
 
     @Override
@@ -120,7 +124,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
             beforePersistGroup(group);
             symbolGroupRepository.save(group);
-        // error handling
+            // error handling
         } catch (DataIntegrityViolationException e) {
             LOGGER.info(IMPL_MARKER, "SymbolGroup creation failed:", e);
             throw new ValidationException("SymbolGroup could not be created.", e);
@@ -158,7 +162,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         SymbolGroup result = symbolGroupRepository.findOneByProject_IdAndId(projectId, groupId);
         if (result == null) {
             throw new NotFoundException("Could not find a group with the id " + groupId
-                                             + " in the project " + projectId + ".");
+                    + " in the project " + projectId + ".");
         }
 
         initLazyRelations(user, result, embedFields);
@@ -185,7 +189,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             groupInDB.setProject(project);
             groupInDB.setName(group.getName());
             symbolGroupRepository.save(groupInDB);
-        // error handling
+            // error handling
         } catch (DataIntegrityViolationException e) {
             LOGGER.info(IMPL_MARKER, "SymbolGroup update failed:", e);
             throw new ValidationException("SymbolGroup could not be updated.", e);

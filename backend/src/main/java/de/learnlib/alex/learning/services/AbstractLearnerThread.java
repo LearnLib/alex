@@ -57,6 +57,8 @@ import java.util.stream.Collectors;
 /**
  * Thread to run a learning process. It needs to be a Thread so that the server can still deal with other requests. This
  * class contains the actual learning loop.
+ *
+ * @param <T> The type of the configuration.
  */
 public abstract class AbstractLearnerThread<T extends AbstractLearnerConfiguration> extends Thread {
 
@@ -118,7 +120,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /**
      * Constructor.
      *
-     * @param user
+     * @param user             The current user.
      * @param learnerResultDAO {@link #learnerResultDAO}.
      * @param webhookService   {@link #webhookService}.
      * @param context          The context to use.

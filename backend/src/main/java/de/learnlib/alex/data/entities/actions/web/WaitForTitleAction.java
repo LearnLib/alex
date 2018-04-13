@@ -30,6 +30,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -97,6 +98,7 @@ public class WaitForTitleAction extends WebSymbolAction {
      * How many seconds should be waited before the action fails.
      */
     @NotNull
+    @Min(0)
     private long maxWaitTime;
 
     /**

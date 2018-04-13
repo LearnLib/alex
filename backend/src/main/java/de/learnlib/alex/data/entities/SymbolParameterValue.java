@@ -24,7 +24,7 @@ public class SymbolParameterValue implements Serializable {
     @GeneratedValue
     private Long id;
 
-    /** The parameter for which its value is saved */
+    /** The parameter for which its value is saved. */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "symbolParameterId")
     private SymbolParameter parameter;
@@ -35,7 +35,7 @@ public class SymbolParameterValue implements Serializable {
     @JsonIgnore
     private TestCaseSymbolStep step;
 
-    /** The value for the parameter */
+    /** The value for the parameter. */
     private String value;
 
     public Long getId() {

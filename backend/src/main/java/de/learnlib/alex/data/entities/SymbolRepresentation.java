@@ -18,7 +18,7 @@ package de.learnlib.alex.data.entities;
 
 import java.util.List;
 
-/** Compact representation of a symbol */
+/** Compact representation of a symbol. */
 public class SymbolRepresentation {
 
     /** The id of the symbol. */

@@ -18,8 +18,8 @@ package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.actions.web.WebSymbolAction;
-import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
+import de.learnlib.alex.data.entities.SymbolAction;
+import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -27,6 +27,8 @@ import org.apache.logging.log4j.MarkerManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * Action to wait for a specific amount of time.
@@ -34,7 +36,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("wait")
 @JsonTypeName("wait")
-public class WaitAction extends WebSymbolAction {
+public class WaitAction extends SymbolAction {
 
     private static final long serialVersionUID = 7122950041811279742L;
 
@@ -44,8 +46,9 @@ public class WaitAction extends WebSymbolAction {
 
     /**
      * The duration to wait in ms.
-     * @requiredField
      */
+    @NotNull
+    @Min(0)
     private Long duration;
 
     /**
@@ -68,7 +71,7 @@ public class WaitAction extends WebSymbolAction {
     }
 
     @Override
-    public ExecuteResult execute(WebSiteConnector connector) {
+    public ExecuteResult execute(ConnectorManager connector) {
         try {
             LOGGER.info(LEARNER_MARKER, "Waiting for {} ms.", duration);
             Thread.sleep(duration);

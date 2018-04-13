@@ -56,10 +56,10 @@ public class ValidateJsonAction extends RESTSymbolAction {
 
         try {
             final JsonNode obj = mapper.readTree(body);
-            final JsonNode schema = mapper.readTree(this.schema);
+            final JsonNode jsonSchema = mapper.readTree(this.schema);
 
             final ProcessingReport report = JsonSchemaFactory.byDefault()
-                    .getJsonSchema(schema)
+                    .getJsonSchema(jsonSchema)
                     .validate(obj);
 
             return report.isSuccess() ? getSuccessOutput() : getFailedOutput();

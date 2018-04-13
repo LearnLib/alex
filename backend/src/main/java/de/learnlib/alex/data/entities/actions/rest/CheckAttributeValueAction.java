@@ -30,6 +30,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * RESTSymbolAction to check if the request body of the last request has a JSON Attribute with a specific value.
@@ -54,6 +55,7 @@ public class CheckAttributeValueAction extends RESTSymbolAction {
     private String value;
 
     /** Field to determine if the search string is a regular expression. */
+    @NotNull
     private boolean regexp;
 
     /**
@@ -152,6 +154,5 @@ public class CheckAttributeValueAction extends RESTSymbolAction {
             return getFailedOutput();
         }
     }
-
 
 }

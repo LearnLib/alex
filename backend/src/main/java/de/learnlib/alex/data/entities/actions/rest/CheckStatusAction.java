@@ -26,6 +26,8 @@ import org.apache.logging.log4j.MarkerManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * RESTSymbolAction to check if the last call returned a specific status code.
@@ -41,7 +43,11 @@ public class CheckStatusAction extends RESTSymbolAction {
 
     private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
+    private static final int MIN_HTTP_STATUS = 100;
+
     /** The status code to check. */
+    @NotNull
+    @Min(MIN_HTTP_STATUS)
     private int status;
 
     /**

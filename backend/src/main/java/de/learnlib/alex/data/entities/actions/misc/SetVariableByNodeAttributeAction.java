@@ -59,7 +59,7 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
     protected WebElementLocator node;
 
     /** The attribute name of the node to look for. */
-    @NotNull
+    @NotBlank
     protected String attribute;
 
     /**

@@ -23,17 +23,34 @@ import java.util.List;
  * The supported web drivers.
  */
 public class WebDrivers {
+
+    /** Identifier for the google chrome driver. */
     public static final String CHROME = "chrome";
+
+    /** Identifier for the microsoft edge driver. */
     public static final String EDGE = "edge";
+
+    /** Identifier for the mozilla firefox. */
     public static final String FIREFOX = "firefox";
+
+    /** Identifier for the html unit driver. */
     public static final String HTML_UNIT = "htmlUnit";
+
+    /** Identifier for the remote driver. */
     public static final String REMOTE = "remote";
+
+    /** Identifier for the safari driver.. */
     public static final String SAFARI = "safari";
 
     /** Constructor. */
     private WebDrivers() {
     }
 
+    /**
+     * Get the list of driver identifiers.
+     *
+     * @return The list of driver identifiers.
+     */
     public static List<String> asList() {
         return Arrays.asList(CHROME, EDGE, FIREFOX, HTML_UNIT, REMOTE, SAFARI);
     }

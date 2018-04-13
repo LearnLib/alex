@@ -60,6 +60,11 @@ public class ClickAction extends WebSymbolAction {
     @NotNull
     private boolean doubleClick;
 
+    /** Constructor. */
+    public ClickAction() {
+        doubleClick = false;
+    }
+
     /**
      * Get the information to identify the element.
      *

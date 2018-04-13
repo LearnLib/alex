@@ -57,6 +57,7 @@ public class CheckTextWebAction extends WebSymbolAction {
      * Field to determine if the search string is a regular expression.
      * Only works while searching for text.
      */
+    @NotNull
     private boolean regexp;
 
     /**

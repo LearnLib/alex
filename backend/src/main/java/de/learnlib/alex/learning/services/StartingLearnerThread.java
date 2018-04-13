@@ -30,7 +30,7 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
     /**
      * Constructor.
      *
-     * @param user
+     * @param user             The current user.
      * @param learnerResultDAO {@link AbstractLearnerThread#learnerResultDAO}.
      * @param webhookService   {@link AbstractLearnerThread#webhookService}.
      * @param context          The context to use.

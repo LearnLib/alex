@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Symbol;
 
 import javax.persistence.Transient;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,6 +31,7 @@ public class SymbolSet {
 
     /**
      * Link to the Symbols that should be used as a reset Symbol.
+     *
      * @requiredField
      */
     @Transient
@@ -39,8 +39,7 @@ public class SymbolSet {
     private Long resetSymbolAsId;
 
     /**
-     * The actual Symbols that should be used as a reset Symbol.
-     * Only used internally.
+     * The actual Symbols that should be used as a reset Symbol. Only used internally.
      */
     @Transient
     @JsonIgnore
@@ -48,6 +47,7 @@ public class SymbolSet {
 
     /**
      * Link to the Symbols that are used during the learning.
+     *
      * @requiredField
      */
     @Transient
@@ -55,16 +55,24 @@ public class SymbolSet {
     private List<Long> symbolsAsIds;
 
     /**
-     * The actual list of Symbols used during the learning.
-     * Only used internally.
+     * The actual list of Symbols used during the learning. Only used internally.
      */
     @Transient
     @JsonIgnore
     private List<Symbol> symbols;
 
+    /** Constructor. */
     public SymbolSet() {
     }
 
+    /**
+     * Constructor.
+     *
+     * @param resetSymbol
+     *         The reset symbol.
+     * @param symbols
+     *         The symbols.
+     */
     public SymbolSet(Symbol resetSymbol, List<Symbol> symbols) {
         this.resetSymbol = resetSymbol;
         this.symbols = symbols;
@@ -100,7 +108,9 @@ public class SymbolSet {
 
     /**
      * Set the reset symbol. This updates not the IdRevisionPair of the reset symbol.
-     * @param resetSymbol The new reset symbol.
+     *
+     * @param resetSymbol
+     *         The new reset symbol.
      */
     public void setResetSymbol(Symbol resetSymbol) {
         this.resetSymbol = resetSymbol;

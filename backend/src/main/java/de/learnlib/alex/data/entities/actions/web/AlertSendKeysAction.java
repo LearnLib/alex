@@ -29,6 +29,7 @@ import org.openqa.selenium.NoAlertPresentException;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Sends text to a prompt alert from window.prompt("...").
@@ -45,6 +46,7 @@ public class AlertSendKeysAction extends WebSymbolAction {
     private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The text to send to the prompt alert. */
+    @NotNull
     private String text;
 
     @Override

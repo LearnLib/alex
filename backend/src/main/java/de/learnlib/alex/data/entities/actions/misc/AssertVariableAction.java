@@ -54,13 +54,19 @@ public class AssertVariableAction extends SymbolAction {
     /**
      * The value to assert the variable content with.
      */
-    @NotNull
+    @NotBlank
     private String value;
 
     /**
      * Whether the value of the variable is matched against a regular expression.
      */
+    @NotNull
     private boolean regexp;
+
+    /** Constructor. */
+    public AssertVariableAction() {
+        this.regexp = false;
+    }
 
     /**
      * @return The name of the variable to assert.

@@ -28,12 +28,12 @@ import org.apache.logging.log4j.MarkerManager;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -117,6 +117,7 @@ public class WaitForNodeAction extends WebSymbolAction {
      * How many seconds should be waited before the action fails.
      */
     @NotNull
+    @Min(0)
     private long maxWaitTime;
 
     /**

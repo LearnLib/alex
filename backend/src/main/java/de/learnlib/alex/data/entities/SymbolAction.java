@@ -83,6 +83,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -174,12 +175,15 @@ public abstract class SymbolAction implements Serializable {
     protected int number;
 
     /** Should the action be executed or skipped? */
+    @NotNull
     protected boolean disabled;
 
     /** Negate the outcome of the action? */
+    @NotNull
     protected boolean negated;
 
     /** Ignore if the execution of the action failed? */
+    @NotNull
     protected boolean ignoreFailure;
 
     /** The custom output if the execution of this action fails. */

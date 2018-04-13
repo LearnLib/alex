@@ -35,6 +35,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,18 +75,15 @@ public class Project implements Serializable {
 
     /**
      * The name of the project. This property is required & must be unique.
-     *
-     * @requiredField
      */
     @NotBlank
     private String name;
 
     /**
      * The root URL of the project.
-     *
-     * @requiredField
      */
     @NotBlank
+    @Pattern(regexp = "^https?://.+?")
     private String baseUrl;
 
     /**

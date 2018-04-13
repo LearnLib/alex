@@ -34,12 +34,14 @@ public interface CounterDAO {
      * Create a counter.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param counter
      *         The counter to create.
+     * @throws NotFoundException
+     *         If one of the required resources could not be found.
      * @throws ValidationException
-     *         When the counter could not be created,
-     *         e.g. if already a counter with the same name exists in the project.
+     *         When the counter could not be created, e.g. if already a counter with the same name exists in the
+     *         project.
      */
     void create(User user, Counter counter) throws NotFoundException, ValidationException;
 
@@ -47,7 +49,7 @@ public interface CounterDAO {
      * Get all counter of a project.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param projectId
      *         The project of the counters.
      * @return A list of counters within the given project.
@@ -60,7 +62,7 @@ public interface CounterDAO {
      * Get a specific counter.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param projectId
      *         The project of the counter.
      * @param name
@@ -75,7 +77,7 @@ public interface CounterDAO {
      * Update a counter.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param counter
      *         The counter to update.
      * @throws NotFoundException
@@ -89,7 +91,7 @@ public interface CounterDAO {
      * Update many counters at once.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param counters
      *         The counters to update.
      * @throws NotFoundException
@@ -104,7 +106,7 @@ public interface CounterDAO {
      * Deletes counters.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param projectId
      *         The project of the counter.
      * @param names

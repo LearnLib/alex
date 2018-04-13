@@ -31,7 +31,6 @@ import org.openqa.selenium.interactions.Actions;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -59,14 +58,12 @@ public class MoveMouseAction extends WebSymbolAction {
      * The amount in px to move the mouse in x direction from the current position.
      */
     @NotNull
-    @Min(0)
     private int offsetX;
 
     /**
      * The amount in px to move the mouse in y direction from the current position.
      */
     @NotNull
-    @Min(0)
     private int offsetY;
 
     /**

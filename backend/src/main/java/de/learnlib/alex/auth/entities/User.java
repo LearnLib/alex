@@ -24,6 +24,7 @@ import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,7 +32,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -57,13 +57,13 @@ public class User implements Serializable {
     private Long id;
 
     /** The email address of the user he uses to login. */
-    @NotNull
+    @NotBlank
     @Email
     @Column(unique = true)
     private String email;
 
     /** The hash of the users password. */
-    @NotNull
+    @NotBlank
     private String password;
 
     /** The salt that is used to hash the password. */

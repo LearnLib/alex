@@ -99,6 +99,9 @@ public class SetCounterAction extends SymbolAction {
                     break;
             }
         } catch (NumberFormatException | IllegalStateException e) {
+            LOGGER.info(LEARNER_MARKER, "Could not set the counter '{}' to the value '{}' (ignoreFailure: {}, negated: {}).",
+                    name, value, ignoreFailure, negated, e);
+
             return getFailedOutput();
         }
 

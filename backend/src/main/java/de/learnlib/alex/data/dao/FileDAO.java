@@ -45,13 +45,14 @@ public interface FileDAO {
      *         If something during the actual writing went wrong.
      * @throws IllegalStateException
      *         If the file already exists or the destination directory is not a directory or otherwise blocked.
+     * @throws NotFoundException
+     *         If one of the required resources could not be found.
      */
     void create(User user, Long projectId, InputStream uploadedInputStream, FormDataContentDisposition fileDetail)
             throws IllegalStateException, IOException, NotFoundException;
 
     /**
      * Get a list of all fiels of a user within a project.
-     *
      *
      * @param user
      *         The user that belongs to the project
@@ -65,7 +66,6 @@ public interface FileDAO {
 
     /**
      * Get the absolute path to a file on the machine.
-     *
      *
      * @param user
      *         The user that belongs to the project

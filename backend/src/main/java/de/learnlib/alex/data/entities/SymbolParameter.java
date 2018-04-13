@@ -19,7 +19,6 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Entity;
@@ -29,7 +28,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Symbol parameter class.
@@ -44,6 +42,7 @@ public abstract class SymbolParameter implements Serializable {
 
     private static final long serialVersionUID = -5863108479982983205L;
 
+    /** The type of the parameter. */
     public enum ParameterType {
         COUNTER,
         STRING
@@ -64,6 +63,7 @@ public abstract class SymbolParameter implements Serializable {
     @NotBlank
     protected String name;
 
+    /** The type of the parameter. */
     protected ParameterType parameterType;
 
     public Long getId() {

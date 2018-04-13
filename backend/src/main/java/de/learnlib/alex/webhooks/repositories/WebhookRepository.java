@@ -18,11 +18,10 @@ package de.learnlib.alex.webhooks.repositories;
 
 import de.learnlib.alex.webhooks.entities.Webhook;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 /** The repository for webhooks. */
 @Repository
@@ -31,17 +30,24 @@ public interface WebhookRepository extends JpaRepository<Webhook, Long> {
     /**
      * Get a webhook by user id and webhook url.
      *
-     * @param userId The id of the user.
-     * @param url    The url of the webhook.
+     * @param userId
+     *         The id of the user.
+     * @param url
+     *         The url of the webhook.
      * @return The webhook.
      */
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
     Webhook findByUser_IdAndUrl(Long userId, String url);
 
     /**
      * Get all webhooks of a user.
      *
-     * @param userId The id of the user.
+     * @param userId
+     *         The id of the user.
      * @return The list of webhooks.
      */
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
     List<Webhook> findByUser_id(Long userId);
 }

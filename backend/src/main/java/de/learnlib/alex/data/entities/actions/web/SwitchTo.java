@@ -27,6 +27,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Action to submit a specific element.
@@ -46,12 +47,18 @@ public class SwitchTo extends WebSymbolAction {
      * The target to switch to.
      */
     private enum TargetType {
-        PARENT_FRAME, DEFAULT_CONTENT
+
+        /** The parent frame. */
+        PARENT_FRAME,
+
+        /** The default browser frame. */
+        DEFAULT_CONTENT
     }
 
     /**
      * The target type.
      */
+    @NotNull
     private TargetType target;
 
     @Override
@@ -65,7 +72,7 @@ public class SwitchTo extends WebSymbolAction {
                     connector.getDriver().switchTo().defaultContent();
                     break;
                 default:
-                    throw new Exception();
+                    throw new Exception("Undefined target type.");
             }
             LOGGER.info(LEARNER_MARKER, "Switch to '{}'", target);
             return getSuccessOutput();

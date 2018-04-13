@@ -25,7 +25,6 @@ import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.entities.SymbolInputParameter;
 import de.learnlib.alex.data.entities.SymbolOutputParameter;
-import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
@@ -88,6 +87,8 @@ public class SymbolDAOImpl implements SymbolDAO {
      *         The SymbolRepository to use.
      * @param symbolActionRepository
      *         The SymbolActionRepository to use.
+     * @param symbolParameterRepository
+     *         The SymbolParameterRepository to use.
      */
     @Inject
     public SymbolDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
@@ -164,15 +165,15 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new ValidationException("To create a symbol its name must be unique.");
         }
 
-        Long userId    = user.getId();
+        Long userId = user.getId();
         Long projectId = symbol.getProjectId();
-        Long groupId   = symbol.getGroupId();
+        Long groupId = symbol.getGroupId();
 
         Project project = projectDAO.getByID(userId, projectId, ProjectDAO.EmbeddableFields.ALL); // incl. access check
 
         SymbolGroup group = symbolGroupRepository.findOneByProject_IdAndId(projectId, groupId);
         if (group == null) {
-            group =  symbolGroupRepository.findOneByProject_IdAndId(projectId, 0L);
+            group = symbolGroupRepository.findOneByProject_IdAndId(projectId, 0L);
         }
 
         // get the current highest symbol id in the project and add 1 for the next id
@@ -221,7 +222,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         List<Symbol> result = symbolRepository.findByIds(projectId, ids);
         if (result.isEmpty()) {
             throw new NotFoundException("Could not find symbols in the project " + projectId
-                                                + " with the ids.");
+                    + " with the ids.");
         }
 
         // load the lazy relations
@@ -256,7 +257,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         projectDAO.getByID(user.getId(), projectId); // access check
 
         List<Symbol> symbols = symbolRepository.findAll(projectId, groupId,
-                                                        visibilityLevel.getCriterion());
+                visibilityLevel.getCriterion());
 
         symbols.forEach(SymbolDAOImpl::loadLazyRelations);
 
@@ -266,7 +267,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Override
     @Transactional(readOnly = true)
     public List<Symbol> getByIds(User user, Long projectId, SymbolVisibilityLevel visibilityLevel,
-                                                   List<Long> ids) throws NotFoundException {
+                                 List<Long> ids) throws NotFoundException {
         projectDAO.getByID(user.getId(), projectId); // access check
 
         List<Symbol> result = symbolRepository.findByIds(projectId, ids);
@@ -293,7 +294,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         if (result == null) {
             throw new NotFoundException("Could not find the Symbol with the id " + id
-                                                + " in the Project " + projectId + ".");
+                    + " in the Project " + projectId + ".");
         }
         loadLazyRelations(result);
 
@@ -353,8 +354,8 @@ public class SymbolDAOImpl implements SymbolDAO {
     private Symbol doUpdate(User user, Symbol symbol) throws IllegalArgumentException, NotFoundException {
         // checks for valid symbol
         Project project = projectDAO.getByID(user.getId(),
-                                             symbol.getProjectId(),
-                                             ProjectDAO.EmbeddableFields.ALL); // incl. access check
+                symbol.getProjectId(),
+                ProjectDAO.EmbeddableFields.ALL); // incl. access check
 
         // make sure the name of the symbol is unique
         Symbol symbol2 = symbolRepository.getSymbolByName(symbol.getProjectId(), symbol.getName());
@@ -381,15 +382,15 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     @Transactional
-    public void move(User user, List<Symbol> symbols, Long newGroupId) throws NotFoundException  {
+    public void move(User user, List<Symbol> symbols, Long newGroupId) throws NotFoundException {
         for (Symbol symbol : symbols) {
             projectDAO.getByID(user.getId(), symbol.getProjectId()); // access check
 
             SymbolGroup oldGroup = symbolGroupRepository.findOneByProject_IdAndId(symbol.getProjectId(),
-                                                                                  symbol.getGroupId());
+                    symbol.getGroupId());
 
             SymbolGroup newGroup = symbolGroupRepository.findOneByProject_IdAndId(symbol.getProjectId(),
-                                                                                  newGroupId);
+                    newGroupId);
 
             if (newGroup == null) {
                 throw new NotFoundException("The group with the id " + newGroupId + " does not exist!");

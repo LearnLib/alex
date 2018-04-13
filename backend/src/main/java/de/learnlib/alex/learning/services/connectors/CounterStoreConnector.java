@@ -158,6 +158,11 @@ public class CounterStoreConnector implements Connector {
         return countersMap.get(name);
     }
 
+    /**
+     * Copies the connector.
+     *
+     * @return A copy of the connector.
+     */
     public CounterStoreConnector copy() {
         return new CounterStoreConnector(counterDAO, user, project, new ArrayList<>());
     }

@@ -87,10 +87,12 @@ public class SymbolParameterResource {
             return Response.status(Response.Status.CREATED).entity(createdParameter).build();
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolParameterResource.create", Response.Status.UNAUTHORIZED, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolParameterResource.create",
+                    Response.Status.UNAUTHORIZED, e);
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolParameterResource.create", Response.Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolParameterResource.create",
+                    Response.Status.BAD_REQUEST, e);
         }
     }
 
@@ -123,7 +125,8 @@ public class SymbolParameterResource {
             return Response.noContent().build();
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolParameterResource.delete", Response.Status.UNAUTHORIZED, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolParameterResource.delete",
+                    Response.Status.UNAUTHORIZED, e);
         }
     }
 
@@ -164,10 +167,12 @@ public class SymbolParameterResource {
             return Response.ok(updatedParameter).build();
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolParameterResource.create", Response.Status.UNAUTHORIZED, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolParameterResource.create",
+                    Response.Status.UNAUTHORIZED, e);
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolParameterResource.update", Response.Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolParameterResource.update",
+                    Response.Status.BAD_REQUEST, e);
         }
     }
 }

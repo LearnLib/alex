@@ -29,7 +29,7 @@ public class TestReportConfig {
     private Map<Long, TestResult> results;
 
     /**
-     * The test suite the results belong to
+     * The test suite the results belong to.
      */
     private TestSuite parent;
 

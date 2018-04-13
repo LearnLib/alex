@@ -60,7 +60,7 @@ public class Counter implements Serializable {
 
     /** The name of the counter. */
     @NotBlank
-    @Pattern(regexp = "[a-zA-Z0-9]*")
+    @Pattern(regexp = "[a-zA-Z0-9]+[a-zA-Z0-9\\-_]*")
     private String name;
 
     /** The value of the counter. */

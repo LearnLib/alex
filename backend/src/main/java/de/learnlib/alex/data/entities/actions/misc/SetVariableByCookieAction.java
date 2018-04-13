@@ -33,6 +33,7 @@ import org.openqa.selenium.WebDriver;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.NewCookie;
 import java.util.Map;
 
@@ -84,9 +85,8 @@ public class SetVariableByCookieAction extends SetVariableAction {
 
     /**
      * The type of the cookie. Either by selenium cookie or from a http request.
-     *
-     * @requiredField
      */
+    @NotNull
     private CookieType cookieType;
 
     /**

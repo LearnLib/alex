@@ -83,6 +83,7 @@ public class TestReportResource {
      *
      * @param projectId The id of the project.
      * @param reportId  The id of the report in the project.
+     * @param format    The format to export the report to.
      * @return The report.
      * @throws NotFoundException If the project could not be found.
      */
@@ -108,7 +109,8 @@ public class TestReportResource {
                             .build();
                 default:
                     final Exception e = new ValidationException("format " + format + " does not exist");
-                    return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.get", Response.Status.BAD_REQUEST, e);
+                    return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.get",
+                            Response.Status.BAD_REQUEST, e);
             }
         }
     }
@@ -129,7 +131,8 @@ public class TestReportResource {
             final TestReport latestReport = testReportDAO.getLatest(user, projectId);
             return latestReport == null ? Response.noContent().build() : Response.ok(latestReport).build();
         } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.getLatest", Response.Status.NOT_FOUND, e);
+            return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.getLatest",
+                    Response.Status.NOT_FOUND, e);
         }
     }
 
@@ -144,7 +147,8 @@ public class TestReportResource {
     @DELETE
     @Path("/{report_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_id") Long reportId) throws NotFoundException {
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_id") Long reportId)
+            throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         testReportDAO.delete(user, projectId, reportId);
         return Response.noContent().build();
@@ -161,7 +165,8 @@ public class TestReportResource {
     @DELETE
     @Path("/batch/{report_ids}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_ids") IdsList reportIds) throws NotFoundException {
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_ids") IdsList reportIds)
+            throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         testReportDAO.delete(user, projectId, reportIds);
         return Response.noContent().build();

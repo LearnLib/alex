@@ -39,7 +39,9 @@ public interface TestDAO {
      * @param test
      *         The test to create.
      * @throws ValidationException
+     *         If the test is not valid.
      * @throws NotFoundException
+     *         If one of the required entities is not found.
      */
     void create(User user, Test test) throws ValidationException, NotFoundException;
 
@@ -51,7 +53,9 @@ public interface TestDAO {
      * @param tests
      *         The tests to create.
      * @throws ValidationException
+     *         If the test is not valid.
      * @throws NotFoundException
+     *         If one of the required entities is not found.
      */
     void create(User user, List<Test> tests) throws ValidationException, NotFoundException;
 
@@ -67,6 +71,8 @@ public interface TestDAO {
      * @return The test.
      * @throws NotFoundException
      *         If the test could not be found.
+     * @throws UnauthorizedException
+     *         If the user does not have access to one of the resources.
      */
     Test get(User user, Long projectId, Long id) throws NotFoundException, UnauthorizedException;
 
@@ -115,6 +121,8 @@ public interface TestDAO {
      * @return The test.
      * @throws NotFoundException
      *         If a test could not be found.
+     * @throws UnauthorizedException
+     *         If the user does not have access to one of the resources.
      */
     List<Test> get(User user, Long projectId, List<Long> ids) throws NotFoundException, UnauthorizedException;
 
@@ -158,5 +166,19 @@ public interface TestDAO {
      */
     void delete(User user, Long projectId, IdsList ids) throws NotFoundException;
 
+    /**
+     * Checks if the user has access to the test.
+     *
+     * @param user
+     *         The user.
+     * @param project
+     *         The project.
+     * @param test
+     *         The test.
+     * @throws NotFoundException
+     *         If one of the resources could not be found.
+     * @throws UnauthorizedException
+     *         If the user is not allowed to access one of the resources.
+     */
     void checkAccess(User user, Project project, Test test) throws NotFoundException, UnauthorizedException;
 }

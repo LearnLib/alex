@@ -26,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
@@ -47,6 +48,7 @@ public class GotoAction extends WebSymbolAction {
     private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The URL of the site. */
+    @NotBlank
     private String url;
 
     /**

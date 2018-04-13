@@ -18,21 +18,33 @@ package de.learnlib.alex.testing.repositories;
 
 import de.learnlib.alex.testing.entities.TestReport;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 /** The repository for test reports. */
 @Repository
 public interface TestReportRepository extends JpaRepository<TestReport, Long> {
 
+    /**
+     * Get the latest test report in a project.
+     *
+     * @param projectId
+     *         The id of the project.
+     * @return The latest test report.
+     */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     TestReport findFirstByProject_IdOrderByIdDesc(Long projectId);
 
+    /**
+     * Get all test reports in a project.
+     *
+     * @param projectId
+     *         The id of the project.
+     * @return The test reports.
+     */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     List<TestReport> findAllByProject_Id(Long projectId);

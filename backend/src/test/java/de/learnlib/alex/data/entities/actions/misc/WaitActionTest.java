@@ -17,9 +17,8 @@
 package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.data.entities.actions.misc.WaitAction;
-import de.learnlib.alex.data.entities.actions.web.WebSymbolAction;
-import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
+import de.learnlib.alex.data.entities.SymbolAction;
+import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -57,16 +56,16 @@ public class WaitActionTest {
         ObjectMapper mapper = new ObjectMapper();
 
         File file = new File(getClass().getResource("/actions/WaitTestData.json").toURI());
-        WebSymbolAction obj = mapper.readValue(file, WebSymbolAction.class);
+        SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
-        assertTrue(obj instanceof WaitAction);
+        assertTrue(obj instanceof SymbolAction);
         WaitAction objAsAction = (WaitAction) obj;
         assertEquals(ONE_SECOND, objAsAction.getDuration());
     }
 
     @Test
     public void shouldReturnOKIfTimeIsUp() {
-        WebSiteConnector connector = mock(WebSiteConnector.class);
+        ConnectorManager connector = mock(ConnectorManager.class);
         assertTrue(w.execute(connector).isSuccess());
     }
 

@@ -28,6 +28,7 @@ import org.openqa.selenium.NoAlertPresentException;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Accepts or dismisses the current window alert.
@@ -45,11 +46,22 @@ public class AlertAcceptDismissAction extends WebSymbolAction {
 
     /** The actions for an alert. */
     public enum Action {
-        ACCEPT, DISMISS
+
+        /** If the alert should be accepted. */
+        ACCEPT,
+
+        /** If the alert should be dismissed. */
+        DISMISS
     }
 
     /** The action to take with the alert. */
+    @NotNull
     private Action action;
+
+    /** Constructor. */
+    public AlertAcceptDismissAction() {
+        this.action = Action.DISMISS;
+    }
 
     @Override
     protected ExecuteResult execute(final WebSiteConnector connector) {

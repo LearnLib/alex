@@ -96,7 +96,7 @@ public class CheckAttributeTypeAction extends  RESTSymbolAction {
 
     /** The name of the attribute to check for. */
     @NotBlank
-    private  String attribute;
+    private String attribute;
 
     /** The JSON type the attribute should have. */
     @NotNull

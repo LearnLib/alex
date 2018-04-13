@@ -26,12 +26,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.NoAlertPresentException;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.validation.constraints.NotNull;
 
 /**
  * Saves the displayed text of a window.alert, window.confirm and window.prompt alert in a variable.
@@ -48,7 +48,7 @@ public class AlertGetTextAction extends SymbolAction {
     private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The name of the variable to store the displayed text of the alert in. */
-    @NotNull
+    @NotBlank
     private String variableName;
 
     @Override

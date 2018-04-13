@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.auth.entities.User;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -31,10 +30,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Webhook.
@@ -52,13 +51,14 @@ public class Webhook implements Serializable {
 
     /** The url to send data to. */
     @NotNull
+    @Pattern(regexp = "^https?://.+?")
     private String url;
 
     /** The name associated with the webhook. */
     @NotBlank
     private String name;
 
-    /** The user that registered the webhook */
+    /** The user that registered the webhook. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JsonIgnore
     private User user;
@@ -125,11 +125,11 @@ public class Webhook implements Serializable {
 
     @Override
     public String toString() {
-        return "Webhook{" +
-                "id=" + id +
-                ", url='" + url + '\'' +
-                ", name='" + name + '\'' +
-                ", user=" + user +
-                '}';
+        return "Webhook{"
+                + "id=" + id
+                + ", url='" + url + '\''
+                + ", name='" + name + '\''
+                + ", user=" + user
+                + '}';
     }
 }

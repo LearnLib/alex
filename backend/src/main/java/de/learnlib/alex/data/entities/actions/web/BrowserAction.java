@@ -27,6 +27,7 @@ import org.apache.logging.log4j.MarkerManager;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /** Action for doing something with the browser window. */
 @Entity
@@ -42,12 +43,17 @@ public class BrowserAction extends WebSymbolAction {
 
     /** What to to with the open browser window. */
     public enum Action {
+
+        /** If the browser should be restarted. */
         RESTART,
+
+        /** If the browser window should be refreshed. */
         REFRESH
     }
 
     /** The action to execute on the browser window. */
     @Column(name = "browser_action")
+    @NotNull
     private Action action;
 
     /** Constructor. */

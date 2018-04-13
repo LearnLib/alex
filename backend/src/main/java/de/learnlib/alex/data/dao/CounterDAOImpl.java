@@ -50,8 +50,11 @@ public class CounterDAOImpl implements CounterDAO {
 
     /**
      * Creates a new CounterDAO.
+     *
      * @param projectDAO
+     *         The projectDAO to use.
      * @param counterRepository
+     *         The counterRepository to use.
      */
     @Inject
     public CounterDAOImpl(ProjectDAO projectDAO, CounterRepository counterRepository) {

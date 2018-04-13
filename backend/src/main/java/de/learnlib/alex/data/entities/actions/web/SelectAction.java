@@ -31,6 +31,7 @@ import org.openqa.selenium.support.ui.UnexpectedTagNameException;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Action to select an entry from a select field by its value.
@@ -80,9 +81,8 @@ public class SelectAction extends FillAction {
 
     /**
      * The type that an option is selected by.
-     *
-     * @requiredField
      */
+    @NotNull
     private SelectByType selectBy;
 
     /**

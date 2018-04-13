@@ -60,15 +60,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 public class LearnerResourceTest extends JerseyTest {
 
-    private static final String driverConfig = "{\"name\":\"htmlUnit\",\"height\":0,\"implicitlyWait\":0,\"pageLoadTimeout\":10,\"scriptTimeout\":10,\"width\":0}";
+    private static final String DRIVER_CONFIG = "{\"name\":\"htmlUnit\",\"height\":0,\"implicitlyWait\":0,\"pageLoadTimeout\":10,\"scriptTimeout\":10,\"width\":0}";
 
     private static final long USER_TEST_ID = 1;
     private static final long PROJECT_TEST_ID = 1;
@@ -78,7 +76,7 @@ public class LearnerResourceTest extends JerseyTest {
                                            + ",\"resetSymbol\":" + RESET_SYMBOL_TEST_ID
                                            + ",\"algorithm\":{\"name\":\"TTT\"}"
                                            + ",\"eqOracle\": {\"type\": \"complete\"}"
-                                           + ",\"driverConfig\": " + driverConfig +"}";
+                                           + ",\"driverConfig\": " + DRIVER_CONFIG + "}";
 
     private static final String RESUME_JSON = "{\"eqOracle\": {\"type\": \"complete\"},\"stepNo\":1,\"symbolsToAdd\":[],\"maxAmountOfStepsToLearn\":-1}";
 
@@ -254,7 +252,7 @@ public class LearnerResourceTest extends JerseyTest {
         target("/learner/" + PROJECT_TEST_ID + "/start").request().header("Authorization", adminToken)
                 .post(Entity.json(START_JSON));
 
-        Response response = target("/learner/" + PROJECT_TEST_ID + "/resume/"  + TEST_NO).request()
+        Response response = target("/learner/" + PROJECT_TEST_ID + "/resume/" + TEST_NO).request()
                                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -272,7 +270,7 @@ public class LearnerResourceTest extends JerseyTest {
     public void shouldReturn404IfTheUserHasNoPreviousLearnResult() throws NotFoundException {
         given(learner.getResult(PROJECT_TEST_ID)).willReturn(null);
 
-        Response response = target("/learner/" + PROJECT_TEST_ID + "/resume/"  + TEST_NO).request()
+        Response response = target("/learner/" + PROJECT_TEST_ID + "/resume/" + TEST_NO).request()
                                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
@@ -285,7 +283,7 @@ public class LearnerResourceTest extends JerseyTest {
 
         prepareResumeTest();
 
-        Response response = target("/learner/" + PROJECT_TEST_ID + "/resume/"  + TEST_NO).request()
+        Response response = target("/learner/" + PROJECT_TEST_ID + "/resume/" + TEST_NO).request()
                                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));
 
         assertEquals(Response.Status.NOT_MODIFIED.getStatusCode(), response.getStatus());
@@ -295,7 +293,7 @@ public class LearnerResourceTest extends JerseyTest {
     public void shouldReturn404IfTheSymbolsOfTheLearnerAreGone() throws NotFoundException {
         willThrow(NotFoundException.class).given(learner).resume(eq(admin), any(Project.class), any(LearnerResult.class), any(LearnerResumeConfiguration.class));
 
-        Response response = target("/learner/" + PROJECT_TEST_ID + "/resume/"  + TEST_NO).request()
+        Response response = target("/learner/" + PROJECT_TEST_ID + "/resume/" + TEST_NO).request()
                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
@@ -395,7 +393,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReadTheCorrectOutput() {
-        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"driverConfig\":" + driverConfig + "}";
+        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"driverConfig\":" + DRIVER_CONFIG + "}";
 
         Response response = target("/learner/" + PROJECT_TEST_ID + "/outputs")
                                 .request()
@@ -407,7 +405,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldCreateEmptyOutputForNoSymbols() throws NotFoundException {
-        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[]},\"driverConfig\":" + driverConfig + "}";
+        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[]},\"driverConfig\":" + DRIVER_CONFIG + "}";
 
         Response response = target("/learner/" + PROJECT_TEST_ID + "/outputs").request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
@@ -421,7 +419,7 @@ public class LearnerResourceTest extends JerseyTest {
         given(learner.readOutputs(any(), any(), any(), any(), any(HtmlUnitDriverConfig.class)))
                 .willThrow(LearnerException.class);
 
-        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"driverConfig\":" + driverConfig +"}";
+        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"driverConfig\":" + DRIVER_CONFIG + "}";
 
         Response response = target("/learner/" + PROJECT_TEST_ID + "/outputs").request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
@@ -433,7 +431,7 @@ public class LearnerResourceTest extends JerseyTest {
     public void shouldReturn404IfOutputShouldBeCreatedForANotExistingProject() throws NotFoundException {
         given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID)).willThrow(NotFoundException.class);
 
-        String json = "{\"symbols\": {\"resetSymbol\": " + RESET_SYMBOL_TEST_ID + ", \"symbols\": [1,2]}, \"driverConfig\": " + driverConfig + "}";
+        String json = "{\"symbols\": {\"resetSymbol\": " + RESET_SYMBOL_TEST_ID + ", \"symbols\": [1,2]}, \"driverConfig\": " + DRIVER_CONFIG + "}";
         Response response = target("/learner/" + PROJECT_TEST_ID + "/outputs").request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
 
@@ -447,7 +445,7 @@ public class LearnerResourceTest extends JerseyTest {
         given(symbolDAO.get(admin, PROJECT_TEST_ID, RESET_SYMBOL_TEST_ID))
                 .willThrow(NotFoundException.class);
 
-        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"driverConfig\":" + driverConfig +"}";
+        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"driverConfig\":" + DRIVER_CONFIG + "}";
 
         Response response = target("/learner/" + PROJECT_TEST_ID + "/outputs").request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
@@ -459,7 +457,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn404IfOutputShouldBeCreatedWithoutAnyResetSymbol() throws NotFoundException {
-        String json = "{\"symbols\":{\"symbols\":[1,2]},\"driverConfig\":" + driverConfig +"}";
+        String json = "{\"symbols\":{\"symbols\":[1,2]},\"driverConfig\":" + DRIVER_CONFIG + "}";
 
         Response response = target("/learner/" + PROJECT_TEST_ID + "/outputs").request().header("Authorization", adminToken)
                                 .post(Entity.json(json));
@@ -473,7 +471,7 @@ public class LearnerResourceTest extends JerseyTest {
     public void shouldReturn404IfOutputShouldBeCreatedWithForNotExistingSymbols() throws NotFoundException {
         given(symbolDAO.get(admin, PROJECT_TEST_ID, 2L)).willThrow(NotFoundException.class);
 
-        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"driverConfig\":" + driverConfig +"}";
+        String json = "{\"symbols\":{\"resetSymbol\":" + RESET_SYMBOL_TEST_ID + ",\"symbols\":[1,2]},\"driverConfig\":" + DRIVER_CONFIG + "}";
 
         Response response = target("/learner/" + PROJECT_TEST_ID + "/outputs").request().header("Authorization", adminToken)
                                 .post(Entity.json(json));

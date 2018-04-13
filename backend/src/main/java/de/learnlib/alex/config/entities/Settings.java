@@ -25,6 +25,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.ValidationException;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.Serializable;
 
@@ -44,6 +45,7 @@ public class Settings implements Serializable {
 
     /** The settings regarding available web drivers. */
     @Embedded
+    @NotNull
     private DriverSettings driverSettings;
 
     /**

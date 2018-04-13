@@ -69,8 +69,8 @@ public class SymbolGroup implements Serializable {
 
     /**
      * The name of the group.
-     * @requiredField
      */
+    @NotBlank
     private String name;
 
     /** The Symbols manged by this group. */
@@ -81,7 +81,6 @@ public class SymbolGroup implements Serializable {
      */
     public SymbolGroup() {
         this.symbols = new HashSet<>();
-
         this.projectId = 0L;
     }
 

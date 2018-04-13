@@ -19,8 +19,9 @@ package de.learnlib.alex.learning.entities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
-import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /** The abstract learner configuration. */
@@ -37,6 +38,7 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
     protected Long projectId;
 
     /** The type of EQ oracle to find a counter example. */
+    @NotNull
     protected AbstractEquivalenceOracleProxy eqOracle;
 
     /**
@@ -44,6 +46,8 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
      * Must be greater or equal to -1, but not 0.
      * -1 := Do not stop until no counterexample is found.
      */
+    @NotNull
+    @Min(-1)
     protected int maxAmountOfStepsToLearn;
 
     public abstract void checkConfiguration() throws IllegalArgumentException;

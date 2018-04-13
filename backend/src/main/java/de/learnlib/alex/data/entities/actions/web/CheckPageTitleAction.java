@@ -30,6 +30,7 @@ import org.openqa.selenium.WebDriver;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
  * Action to check the page title.
@@ -51,7 +52,13 @@ public class CheckPageTitleAction extends WebSymbolAction {
      * Field to determine if the search string is a regular expression.
      * Only works while searching for text.
      */
+    @NotNull
     private boolean regexp;
+
+    /** Constructor. */
+    public CheckPageTitleAction() {
+        this.regexp = false;
+    }
 
     /**
      * @return The title to search for (without replaced counters nor variables).

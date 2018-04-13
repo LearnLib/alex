@@ -32,6 +32,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -49,7 +50,7 @@ public class WaitForTextAction extends WebSymbolAction {
     private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
-     * The string or pattern to look for
+     * The string or pattern to look for.
      */
     @NotBlank
     @Column(columnDefinition = "CLOB")
@@ -58,18 +59,21 @@ public class WaitForTextAction extends WebSymbolAction {
     /**
      * If the text is interpreted as a regular expression.
      */
+    @NotNull
     private boolean regexp;
 
     /**
      * The element to look for the text.
      * The whole document is used by default.
      */
+    @NotNull
     private WebElementLocator node;
 
     /**
      * The time to wait before a timeout.
      */
     @NotNull
+    @Min(0)
     private long maxWaitTime;
 
     /**
@@ -92,8 +96,8 @@ public class WaitForTextAction extends WebSymbolAction {
 
         try {
             if (regexp) {
-                LOGGER.info(LEARNER_MARKER, "Waiting for pattern '{}' to be present in node '{}' for a maximum of " +
-                        "{}ms.", value, node, maxWaitTime);
+                LOGGER.info(LEARNER_MARKER, "Waiting for pattern '{}' to be present in node '{}' for a maximum of "
+                        + "{}ms.", value, node, maxWaitTime);
                 wait.until(wd -> connector.getElement(node).getText().matches(value));
             } else {
                 LOGGER.info(LEARNER_MARKER, "Waiting for text '{}' to be present in node '{}' for a maximum of {}ms.",

@@ -75,6 +75,8 @@ public class FileResource {
      * @param fileDetail
      *         The form data of the file.
      * @return The HTTP response with the file object on success.
+     * @throws NotFoundException
+     *         If one of the resources could not be found.
      */
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)

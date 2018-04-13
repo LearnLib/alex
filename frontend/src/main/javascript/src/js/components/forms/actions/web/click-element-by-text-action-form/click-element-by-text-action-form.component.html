@@ -10,11 +10,14 @@
 <node-form-group node="vm.action.node" label="Container element"></node-form-group>
 
 <div class="form-group">
-    <label class="control-label">Tag name</label>
-    <input class="form-control" type="text" placeholder="e.g. 'button' or 'div'" required ng-model="vm.action.tagName">
+    <label class="control-label">Visible text</label>
+    <input class="form-control" type="text" placeholder="The text of the element" required ng-model="vm.action.text">
 </div>
 
 <div class="form-group">
-    <label class="control-label">Visible text</label>
-    <input class="form-control" type="text" placeholder="The text of the element" required ng-model="vm.action.text">
+    <label class="control-label">Tag name</label>
+    <input class="form-control" type="text" placeholder="e.g. 'button' or 'div'" ng-model="vm.action.tagName">
+    <p class="help-block">
+        Can be empty but the search for the element will be more expensive.
+    </p>
 </div>

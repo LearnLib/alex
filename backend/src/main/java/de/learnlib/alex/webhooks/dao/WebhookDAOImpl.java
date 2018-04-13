@@ -56,7 +56,8 @@ public class WebhookDAOImpl implements WebhookDAO {
     @Transactional
     public Webhook create(User user, Webhook webhook) throws ValidationException {
         if (webhookRepository.findByUser_IdAndUrl(user.getId(), webhook.getUrl()) != null) {
-            throw new ValidationException("A webhook under the given URL is already registered. Update the existing one instead.");
+            throw new ValidationException("A webhook under the given URL is already registered. "
+                    + "Update the existing one instead.");
         }
 
         webhook.setUser(user);

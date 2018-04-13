@@ -53,7 +53,6 @@ public class ClickElementByTextAction extends WebSymbolAction {
     private WebElementLocator node;
 
     /** The tag name of the node, e.g. "button". */
-    @NotNull
     private String tagName;
 
     /** The visible text of the element. */
@@ -68,15 +67,23 @@ public class ClickElementByTextAction extends WebSymbolAction {
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
         final WebElement root = connector.getDriver().findElement(node.getBy());
-        final List<WebElement> candidates = root.findElements(By.tagName(tagName));
+        final String textWithVariables = insertVariableValues(text);
+
+        final List<WebElement> candidates;
+        if (tagName == null || tagName.trim().equals("")) {
+            candidates = root.findElements(By.xpath("//text()[normalize-space() = '" + textWithVariables + "']"));
+        } else {
+            candidates = root.findElements(By.tagName(tagName));
+        }
 
         try {
             if (candidates.isEmpty()) {
-                throw new NoSuchElementException("No element with tagName '" + tagName + "' found");
+                throw new NoSuchElementException("No candidate with text '" + textWithVariables + "' found.");
             }
 
             for (final WebElement candidate : candidates) {
-                if (candidate.isDisplayed() && candidate.isEnabled() && candidate.getText().equals(text)) {
+                final boolean hasText = candidate.getText().trim().equals(textWithVariables);
+                if (candidate.isDisplayed() && candidate.isEnabled() && hasText) {
                     candidate.click();
 
                     LOGGER.info(LEARNER_MARKER, "Click on element '{}' with text '{}' (ignoreFailure: {}, negated: {}).",

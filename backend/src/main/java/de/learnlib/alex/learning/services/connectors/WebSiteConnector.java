@@ -26,15 +26,13 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Connector to communicate with a WebSite.
- * This is a facade around Seleniums {@link WebDriver}.
+ * Connector to communicate with a WebSite. This is a facade around Seleniums {@link WebDriver}.
  */
 public class WebSiteConnector implements Connector {
 
@@ -97,7 +95,12 @@ public class WebSiteConnector implements Connector {
         }
     }
 
-    /** Restarts the browser. */
+    /**
+     * Restarts the browser.
+     *
+     * @throws Exception
+     *         In case something during the instantiation of the browser goes wrong.
+     */
     public void restart() throws Exception {
         if (this.driver != null) {
             this.driver.quit();
@@ -106,8 +109,7 @@ public class WebSiteConnector implements Connector {
     }
 
     /**
-     * Do a HTTP GET request within the browser.
-     * Optionally credentials for HTTP Basic Auth can be provided.
+     * Do a HTTP GET request within the browser. Optionally credentials for HTTP Basic Auth can be provided.
      *
      * @param path
      *         The path to send the request to.
@@ -167,10 +169,10 @@ public class WebSiteConnector implements Connector {
      * Same as {@link #getElement(WebElementLocator)} but returns a list of web elements.
      *
      * @param locator
-     *          The query to search for the element.
-     * @return  A list of elements.
+     *         The query to search for the element.
+     * @return A list of elements.
      * @throws NoSuchElementException
-     *          If no element was found.
+     *         If no element was found.
      */
     public List<WebElement> getElements(WebElementLocator locator) throws NoSuchElementException {
         if (locator.getType().equals(WebElementLocator.Type.CSS)) {
@@ -204,9 +206,9 @@ public class WebSiteConnector implements Connector {
 
     /**
      * Get the base url of the API to call. All requests will be based on this!
-     * @see BaseUrlManager#getBaseUrl()
      *
      * @return The base url for all the requests.
+     * @see BaseUrlManager#getBaseUrl()
      */
     public String getBaseUrl() {
         return baseUrl.getBaseUrl();
@@ -217,7 +219,6 @@ public class WebSiteConnector implements Connector {
      *         The path to append on the base url.
      * @param credentials
      *         The credentials to use for HTTP Basic Auth. Can be null.
-     *
      * @return An absolute URL as String
      * @see BaseUrlManager#getAbsoluteUrl(String)
      */

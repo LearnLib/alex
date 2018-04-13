@@ -30,7 +30,6 @@ import de.learnlib.alex.data.dao.SymbolGroupDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.PropertyFilterMixIn;
 import de.learnlib.alex.data.entities.SymbolGroup;
-import de.learnlib.alex.webhooks.entities.Webhook;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.test.JerseyTest;

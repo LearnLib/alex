@@ -25,7 +25,16 @@
                             <div><strong>Web</strong></div>
                         </uib-accordion-heading>
 
-                        <a href="" ng-repeat="action in vm.actions.web" ng-click="vm.selectNewActionType(action.type)">{{action.text}}</a>
+                        <div class="list-group list-group-condensed list-group-flush">
+                            <a href=""
+                               class="list-group-item"
+                               ng-class="{'active': action.type === vm.action.type}"
+                               ng-repeat="action in vm.actions.web"
+                               ng-click="vm.selectNewActionType(action.type)"
+                            >
+                                {{action.text}}
+                            </a>
+                        </div>
                     </div>
 
                     <div uib-accordion-group class="panel-default">
@@ -33,7 +42,16 @@
                             <div><strong>REST</strong></div>
                         </uib-accordion-heading>
 
-                        <a href="" ng-repeat="action in vm.actions.rest" ng-click="vm.selectNewActionType(action.type)">{{action.text}}</a>
+                        <div class="list-group list-group-condensed list-group-flush">
+                            <a href=""
+                               class="list-group-item"
+                               ng-class="{'active': action.type === vm.action.type}"
+                               ng-repeat="action in vm.actions.rest"
+                               ng-click="vm.selectNewActionType(action.type)"
+                            >
+                                {{action.text}}
+                            </a>
+                        </div>
                     </div>
 
                     <div uib-accordion-group class="panel-default">
@@ -41,7 +59,16 @@
                             <div><strong>Misc</strong></div>
                         </uib-accordion-heading>
 
-                        <a href="" ng-repeat="action in vm.actions.misc" ng-click="vm.selectNewActionType(action.type)">{{action.text}}</a>
+                        <div class="list-group list-group-condensed list-group-flush">
+                            <a href=""
+                               class="list-group-item"
+                               ng-class="{'active': action.type === vm.action.type}"
+                               ng-repeat="action in vm.actions.misc"
+                               ng-click="vm.selectNewActionType(action.type)"
+                            >
+                                {{action.text}}
+                            </a>
+                        </div>
                     </div>
                 </uib-accordion>
 

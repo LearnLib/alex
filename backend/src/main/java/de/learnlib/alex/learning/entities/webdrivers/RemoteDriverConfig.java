@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -44,7 +43,6 @@ public class RemoteDriverConfig extends AbstractWebDriverConfig implements Seria
 
     /**
      * The browser to run the tests in.
-     * @see BrowserType
      */
     @NotBlank
     private String browser;
