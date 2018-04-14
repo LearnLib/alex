@@ -1,13 +1,15 @@
-<h4><strong>Call Url</strong></h4>
+<h4><strong>Make request</strong></h4>
 
-<p class="text-muted">Make a HTTP request to an URL (relative to your projects base url)</p>
+<p class="text-muted">Make a HTTP request to a URL (relative to your projects base url).</p>
 <hr>
 
 <div class="form-group">
-    <input class="form-control" type="text" placeholder="url" ng-model="vm.action.url">
+    <label>URL</label>
+    <input class="form-control" type="text" placeholder="The URL to make the request to" ng-model="vm.action.url">
 </div>
 
 <div class="form-group">
+    <label>Method</label>
     <select class="form-control" ng-options="m for m in ['DELETE', 'GET', 'POST', 'PUT']"
             ng-model="vm.action.method">
         <option value="" disabled>Select a Method</option>
@@ -16,7 +18,6 @@
 
 <div class="form-group">
     <label>Data</label>
-
     <div ng-model="vm.action.data" ui-ace="vm.aceOptions"></div>
 </div>
 

@@ -1,22 +1,17 @@
-<div class="row">
-    <div class="col-xs-9">
-        <div class="form-group">
-            <label class="control-label">{{vm.label}}</label>
+<div>
+    <label class="control-label">{{vm.label}}</label>
+    <div class="d-flex flex-row">
+        <div class="form-group w-100 mr-1">
             <input class="form-control" type="text" placeholder="{{vm.node.type === 'CSS' ? 'CSS selector' : 'XPath expression'}}" ng-model="vm.node.selector">
         </div>
-    </div>
-    <div class="col-xs-3 no-padding-left">
-        <div class="form-group">
-            <label class="control-label">&nbsp;</label>
+        <div class="form-group mr-1">
             <select class="form-control" ng-options="m for m in ['CSS', 'XPATH']" ng-model="vm.node.type">
                 <option value="" disabled>Select a type</option>
             </select>
         </div>
-    </div>
-    <div class="col-xs-12">
         <div class="form-group">
-            <a class="btn btn-default btn-sm" ng-click="vm.openPicker()">
-                <i class="fa fa-magic fa-fw"></i>&nbsp; Element Picker
+            <a class="btn btn-default" ng-click="vm.openPicker()" uib-tooltip="Element Picker" tooltip-placement="bottom">
+                <i class="fa fa-magic"></i>
             </a>
         </div>
     </div>

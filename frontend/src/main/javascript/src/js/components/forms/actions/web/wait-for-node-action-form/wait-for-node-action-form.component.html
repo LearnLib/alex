@@ -5,8 +5,10 @@
 </p>
 <hr>
 
-<label>Wait until an element</label>
-<div class="radio">
+<node-form-group node="vm.action.node"></node-form-group>
+
+<label>Wait until the element</label>
+<div class="radio mt-0">
     <label>
         <input type="radio" name="waitType" value="VISIBLE" ng-model="vm.action.waitCriterion">
         is visible
@@ -33,14 +35,12 @@
 <div class="radio">
     <label>
         <input type="radio" name="waitType" value="CLICKABLE" ng-model="vm.action.waitCriterion">
-        is clickable
+        is clickable <em>(visible & enabled)</em>
     </label>
 </div>
 
-<node-form-group node="vm.action.node"></node-form-group>
-
-<label>Max. wait time (seconds)</label>
 <div class="form-group">
+    <label>Max. wait time (seconds)</label>
     <input class="form-control" type="number" min="0" placeholder="The maximum time to wait for a change"
            ng-model="vm.action.maxWaitTime">
 </div>
