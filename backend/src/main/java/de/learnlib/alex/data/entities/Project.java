@@ -114,12 +114,6 @@ public class Project implements Serializable {
     private Set<TestReport> testReports;
 
     /**
-     * The next id for a group in the project.
-     */
-    @JsonIgnore
-    private Long nextGroupId;
-
-    /**
      * The symbols used to test.
      */
     @OneToMany(
@@ -173,7 +167,6 @@ public class Project implements Serializable {
     public Project(Long projectId) {
         this.id = projectId;
         this.groups = new HashSet<>();
-        this.nextGroupId = 0L;
         this.symbols = new HashSet<>();
         this.nextSymbolId = 1L;
         this.tests = new HashSet<>();
@@ -317,25 +310,6 @@ public class Project implements Serializable {
     public void addGroup(SymbolGroup group) {
         this.groups.add(group);
         group.setProject(this);
-    }
-
-    /**
-     * Get the next ID that a new group in this project should have.
-     * This will not increment the next ID!
-     *
-     * @return The next group ID.
-     */
-    public Long getNextGroupId() {
-        return nextGroupId;
-    }
-
-    /**
-     * Set a new ID that a group in the project should have.
-     *
-     * @param nextGroupId The new next group id.
-     */
-    public void setNextGroupId(Long nextGroupId) {
-        this.nextGroupId = nextGroupId;
     }
 
     /**

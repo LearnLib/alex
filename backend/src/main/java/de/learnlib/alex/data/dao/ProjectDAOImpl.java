@@ -82,12 +82,10 @@ public class ProjectDAOImpl implements ProjectDAO {
         LOGGER.traceEntry("create({})", project);
         try {
             SymbolGroup defaultGroup = new SymbolGroup();
-            defaultGroup.setId(0L);
             defaultGroup.setName("Default group");
             defaultGroup.setProject(project);
 
             project.addGroup(defaultGroup);
-            project.setNextGroupId(1L);
 
             TestSuite testSuite = new TestSuite();
             testSuite.setName("Root");
@@ -140,7 +138,6 @@ public class ProjectDAOImpl implements ProjectDAO {
         try {
             project.setUser(user);
             project.setGroups(projectInDb.getGroups());
-            project.setNextGroupId(projectInDb.getNextGroupId());
             project.setNextSymbolId(projectInDb.getNextSymbolId());
 
             final Project updatedProject = projectRepository.save(project);

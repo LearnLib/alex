@@ -83,14 +83,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** The Project the Symbol belongs to. */
     private Project project;
 
-    /** The ID of the Project to be used in the JSON. */
-    private Long projectId;
-
     /** The group the symbol belongs to. */
     private SymbolGroup group;
-
-    /** The ID of the Group to be used in the JSON. */
-    private Long groupId;
 
     /** The name of the symbol. */
     private String name;
@@ -163,11 +157,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @JsonIgnore
     public void setProject(Project project) {
         this.project = project;
-        if (project == null) {
-            this.projectId = null;
-        } else {
-            this.projectId = project.getId();
-        }
     }
 
     /**
@@ -179,7 +168,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @Transient
     @JsonProperty("project")
     public Long getProjectId() {
-        return projectId;
+        return project == null ? null : project.getId();
     }
 
     /**
@@ -189,8 +178,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
-        this.project = null;
-        this.projectId = projectId;
+        this.project = new Project(projectId);
     }
 
     /**
@@ -213,11 +201,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @JsonIgnore
     public void setGroup(SymbolGroup group) {
         this.group = group;
-        if (group == null) {
-            this.groupId = null;
-        } else {
-            this.groupId = group.getId();
-        }
     }
 
     /**
@@ -228,7 +211,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @Transient
     @JsonProperty("group")
     public Long getGroupId() {
-        return groupId;
+        return group == null ? null : group.getId();
     }
 
     /**
@@ -238,8 +221,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @JsonProperty("group")
     public void setGroupId(Long groupId) {
-        this.group = null;
-        this.groupId = groupId;
+        this.group = new SymbolGroup();
+        this.group.setId(groupId);
     }
 
     /**
@@ -416,7 +399,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             // get the input counters from the global context
             inputs.stream()
                     .filter(in -> in.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
-                    .forEach(in -> localCounterStore.set(projectId, in.getName(), globalCounterStore.get(in.getName())));
+                    .forEach(in -> localCounterStore.set(project.getId(), in.getName(), globalCounterStore.get(in.getName())));
             connector.addConnector(localCounterStore);
         } catch (IllegalStateException e) {
             return new ExecuteResult(false, e.getMessage());
@@ -448,7 +431,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         // proper values.
         if (result.isSuccess()) {
             if (successOutput != null && !successOutput.trim().equals("")) {
-                result.setOutput(SearchHelper.insertVariableValues(connector, projectId, successOutput));
+                result.setOutput(SearchHelper.insertVariableValues(connector, project.getId(), successOutput));
             } else {
                 result.setOutput(ExecuteResult.DEFAULT_SUCCESS_OUTPUT);
             }
@@ -504,9 +487,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     public void removeParameter(SymbolParameter parameter) {
         if (parameter instanceof SymbolInputParameter) {
-            this.inputs.remove((SymbolInputParameter) parameter);
+            this.inputs.remove(parameter);
         } else if (parameter instanceof SymbolOutputParameter) {
-            this.outputs.remove((SymbolOutputParameter) parameter);
+            this.outputs.remove(parameter);
         }
     }
 

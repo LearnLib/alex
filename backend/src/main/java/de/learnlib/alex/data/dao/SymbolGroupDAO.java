@@ -18,7 +18,9 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -42,8 +44,8 @@ public interface SymbolGroupDAO {
         SYMBOLS;
 
         /**
-         * Parse a string into an entry of this enum.
-         * It is forbidden to override toValue(), so we use this method to allow the lowercase variants, too.
+         * Parse a string into an entry of this enum. It is forbidden to override toValue(), so we use this method to
+         * allow the lowercase variants, too.
          *
          * @param name
          *         THe name to parse into an entry.
@@ -65,9 +67,11 @@ public interface SymbolGroupDAO {
      * Save a group.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param group
-     *         The group to persist. Things like the internal id will be added directly tot this object.
+     *         The group to persist.
+     * @throws NotFoundException
+     *         If one of the entities could not be found.
      * @throws ValidationException
      *         IF the Group is not valid and could not be created.
      */
@@ -77,7 +81,7 @@ public interface SymbolGroupDAO {
      * Get a list of all groups withing one project.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param projectId
      *         The project the groups should belong to.
      * @param embedFields
@@ -92,7 +96,7 @@ public interface SymbolGroupDAO {
      * Get one group.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param projectId
      *         The project the group belongs to.
      * @param groupId
@@ -109,7 +113,7 @@ public interface SymbolGroupDAO {
      * Update a group.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param group
      *         The group to update.
      * @throws NotFoundException
@@ -123,7 +127,7 @@ public interface SymbolGroupDAO {
      * Delete a group.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param projectId
      *         The project the group belongs to.
      * @param groupId
@@ -134,5 +138,21 @@ public interface SymbolGroupDAO {
      *         If The project or group could not be found.
      */
     void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException;
+
+    /**
+     * Checks if the user has access to the group.
+     *
+     * @param user
+     *         The user.
+     * @param project
+     *         The project.
+     * @param group
+     *         The group.
+     * @throws NotFoundException
+     *         If one of the entities could not be found.
+     * @throws UnauthorizedException
+     *         If the user does not have access to one of the resources.
+     */
+    void checkAccess(User user, Project project, SymbolGroup group) throws NotFoundException, UnauthorizedException;
 
 }

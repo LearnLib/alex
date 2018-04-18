@@ -31,6 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
@@ -108,23 +109,14 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     public void create(User user, SymbolGroup group) throws NotFoundException, ValidationException {
         LOGGER.traceEntry("create({})", group);
 
+        final Project project = projectRepository.findOne(group.getProjectId());
+        projectDAO.checkAccess(user, project);
+
         try {
-            // access check
-            Project project = projectDAO.getByID(user.getId(), group.getProjectId(), ProjectDAO.EmbeddableFields.ALL);
-
             checkIfNameIsUnique(project.getId(), group.getName());
-
-            // get the current highest group id in the project and add 1 for the next id
-            long id = project.getNextGroupId();
-            project.setNextGroupId(id + 1);
-            projectRepository.save(project);
-
-            group.setId(id);
             project.addGroup(group);
-
             beforePersistGroup(group);
             symbolGroupRepository.save(group);
-            // error handling
         } catch (DataIntegrityViolationException e) {
             LOGGER.info(IMPL_MARKER, "SymbolGroup creation failed:", e);
             throw new ValidationException("SymbolGroup could not be created.", e);
@@ -141,55 +133,43 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Transactional(readOnly = true)
     public List<SymbolGroup> getAll(User user, long projectId, EmbeddableFields... embedFields)
             throws NotFoundException {
-        projectDAO.getByID(user.getId(), projectId); // access check
+        final Project project = projectRepository.findOne(projectId);
+        projectDAO.checkAccess(user, project);
 
-        List<SymbolGroup> resultList = symbolGroupRepository.findAllByProject_Id(projectId);
-
-        // load lazy relations
-        for (SymbolGroup group : resultList) {
+        final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_Id(projectId);
+        for (SymbolGroup group : groups) {
             initLazyRelations(user, group, embedFields);
         }
 
-        return resultList;
+        return groups;
     }
 
     @Override
     @Transactional(readOnly = true)
     public SymbolGroup get(User user, long projectId, Long groupId, EmbeddableFields... embedFields)
             throws NotFoundException {
-        projectDAO.getByID(user.getId(), projectId); // access check
+        final Project project = projectRepository.findOne(projectId);
+        final SymbolGroup group = symbolGroupRepository.findOne(groupId);
+        checkAccess(user, project, group);
 
-        SymbolGroup result = symbolGroupRepository.findOneByProject_IdAndId(projectId, groupId);
-        if (result == null) {
-            throw new NotFoundException("Could not find a group with the id " + groupId
-                    + " in the project " + projectId + ".");
-        }
+        initLazyRelations(user, group, embedFields);
 
-        initLazyRelations(user, result, embedFields);
-
-        return result;
+        return group;
     }
 
     @Override
     @Transactional
     public void update(User user, SymbolGroup group) throws NotFoundException, ValidationException {
-        // incl. access check
-        Project project = projectDAO.getByID(user.getId(), group.getProjectId(), ProjectDAO.EmbeddableFields.ALL);
-
-        SymbolGroup groupInDB = symbolGroupRepository.findOneByProject_IdAndId(group.getProjectId(), group.getId());
-
-        if (groupInDB == null) {
-            throw new NotFoundException("You can only update existing groups!");
-        }
+        final Project project = projectRepository.findOne(group.getProjectId());
+        final SymbolGroup groupInDB = symbolGroupRepository.findOne(group.getId());
+        checkAccess(user, project, groupInDB);
 
         checkIfNameIsUnique(group.getProjectId(), group.getName());
 
         try {
-            // apply changes
             groupInDB.setProject(project);
             groupInDB.setName(group.getName());
             symbolGroupRepository.save(groupInDB);
-            // error handling
         } catch (DataIntegrityViolationException e) {
             LOGGER.info(IMPL_MARKER, "SymbolGroup update failed:", e);
             throw new ValidationException("SymbolGroup could not be updated.", e);
@@ -203,15 +183,15 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Override
     @Transactional
     public void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException {
-        // access check
-        Project project = projectDAO.getByID(user.getId(), projectId);
-        SymbolGroup group = get(user, projectId, groupId, EmbeddableFields.ALL);
+        final Project project = projectRepository.findOne(projectId);
+        final SymbolGroup group = symbolGroupRepository.findOne(groupId);
+        checkAccess(user, project, group);
 
-        if (group.isDefaultGroup()) {
+        final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(projectId);
+        if (defaultGroup.equals(group)) {
             throw new IllegalArgumentException("You can not delete the default group of a project.");
         }
 
-        SymbolGroup defaultGroup = symbolGroupRepository.findOneByProject_IdAndId(project.getId(), 0L);
         for (Symbol symbol : group.getSymbols()) {
             symbol.setGroup(defaultGroup);
             symbol.setHidden(true);
@@ -220,6 +200,20 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         group.setSymbols(null);
         symbolGroupRepository.delete(group);
+    }
+
+    @Override
+    public void checkAccess(User user, Project project, SymbolGroup group)
+            throws NotFoundException, UnauthorizedException {
+        projectDAO.checkAccess(user, project);
+
+        if (group == null) {
+            throw new NotFoundException("The group could not be found.");
+        }
+
+        if (!group.getProject().equals(project)) {
+            throw new UnauthorizedException("You are not allowed to access the group.");
+        }
     }
 
     private void initLazyRelations(User user, SymbolGroup group, EmbeddableFields... embedFields) {
@@ -261,7 +255,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
      * @param group
      *         The Group to take care of its Symbols.
      */
-    static void beforePersistGroup(SymbolGroup group) {
+    private void beforePersistGroup(SymbolGroup group) {
         LOGGER.traceEntry("beforePersistGroup({})", group);
 
         Project project = group.getProject();

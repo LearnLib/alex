@@ -142,7 +142,6 @@ public class SymbolGroupResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).post(Entity.json(json));
 
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-//        assertEquals("http://localhost:9998/projects/10/groups/1", response.getHeaderString("Location"));
         verify(symbolGroupDAO).create(eq(admin), any(SymbolGroup.class));
     }
 

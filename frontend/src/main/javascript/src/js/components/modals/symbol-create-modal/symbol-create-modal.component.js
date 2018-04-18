@@ -34,6 +34,13 @@ export class SymbolCreateModalComponent {
         this.ToastService = ToastService;
 
         /**
+         * The default group.
+         * @type {null}
+         * @private
+         */
+        this.defaultGroup = null;
+
+        /**
          * The project that is in the session.
          * @type {Project}
          */
@@ -60,6 +67,9 @@ export class SymbolCreateModalComponent {
 
     $onInit() {
         this.groups = this.resolve.modalData.groups;
+        // get the default group
+        this.defaultGroup = this.groups.reduce((acc, curr) => curr.id < acc.id ? curr : acc);
+        this.symbol.group = this.defaultGroup.id;
     }
 
     _createSymbol() {
@@ -68,6 +78,7 @@ export class SymbolCreateModalComponent {
                 this.ToastService.success(`Created symbol "${symbol.name}"`);
                 this.resolve.modalData.onCreated({symbol});
                 this.symbol = new AlphabetSymbol();
+                this.symbol.group = this.defaultGroup.id;
 
                 // set the form to its original state
                 this.form.$setPristine();

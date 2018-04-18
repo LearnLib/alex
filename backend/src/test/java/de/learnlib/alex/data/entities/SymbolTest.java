@@ -35,6 +35,8 @@ import static org.mockito.Mockito.mock;
 @RunWith(MockitoJUnitRunner.class)
 public class SymbolTest {
 
+    private static final Long PROJECT_ID = 1L;
+
     private WebSiteConnector webSiteConnector;
     private ConnectorManager connectorManager;
 
@@ -52,6 +54,7 @@ public class SymbolTest {
 
         symbol = new Symbol();
         symbol.addAction(a1);
+        symbol.setProject(new Project(PROJECT_ID));
 
         connectorManager = mock(ConnectorManager.class);
         webSiteConnector = mock(WebSiteConnector.class);

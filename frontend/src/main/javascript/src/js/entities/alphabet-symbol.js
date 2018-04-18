@@ -40,7 +40,7 @@ export class AlphabetSymbol {
          * The id of the group the symbol should be created in.
          * @type {number}
          */
-        this.group = obj.group || 0;
+        this.group = obj.group || null;
 
         /**
          * The id of the symbol.

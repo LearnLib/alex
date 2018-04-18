@@ -33,12 +33,6 @@ export class PromptModalComponent {
          * @type {string}
          */
         this.text = null;
-
-        /**
-         * The regex the user input has to match.
-         * @type {Pattern}
-         */
-        this.inputPattern = /^[a-zA-Z0-9\.\-,_\s]+$/;
     }
 
     $onInit() {

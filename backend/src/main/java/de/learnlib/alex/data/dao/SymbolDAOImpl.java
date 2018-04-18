@@ -167,13 +167,14 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         Long userId = user.getId();
         Long projectId = symbol.getProjectId();
-        Long groupId = symbol.getGroupId();
 
         Project project = projectDAO.getByID(userId, projectId, ProjectDAO.EmbeddableFields.ALL); // incl. access check
 
-        SymbolGroup group = symbolGroupRepository.findOneByProject_IdAndId(projectId, groupId);
-        if (group == null) {
-            group = symbolGroupRepository.findOneByProject_IdAndId(projectId, 0L);
+        final SymbolGroup group;
+        if (symbol.getGroup() == null || symbol.getGroup().getId() == null) {
+            group = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(projectId); // default group
+        } else {
+            group = symbolGroupRepository.findOne(symbol.getGroup().getId());
         }
 
         // get the current highest symbol id in the project and add 1 for the next id
@@ -184,8 +185,6 @@ public class SymbolDAOImpl implements SymbolDAO {
         // set id, project id and save the symbol
         symbol.setId(id);
         project.addSymbol(symbol);
-
-        // add the symbol to its group
         group.addSymbol(symbol);
 
         beforeSymbolSave(symbol);
@@ -386,11 +385,8 @@ public class SymbolDAOImpl implements SymbolDAO {
         for (Symbol symbol : symbols) {
             projectDAO.getByID(user.getId(), symbol.getProjectId()); // access check
 
-            SymbolGroup oldGroup = symbolGroupRepository.findOneByProject_IdAndId(symbol.getProjectId(),
-                    symbol.getGroupId());
-
-            SymbolGroup newGroup = symbolGroupRepository.findOneByProject_IdAndId(symbol.getProjectId(),
-                    newGroupId);
+            SymbolGroup oldGroup = symbolGroupRepository.findOne(symbol.getGroupId());
+            SymbolGroup newGroup = symbolGroupRepository.findOne(newGroupId);
 
             if (newGroup == null) {
                 throw new NotFoundException("The group with the id " + newGroupId + " does not exist!");
