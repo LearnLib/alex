@@ -281,11 +281,10 @@ export const testSuiteViewComponent = {
 
         openBrowserConfigModal() {
             this.$uibModal.open({
-                component: 'browserConfigModal',
+                component: 'testConfigModal',
                 resolve: {
-                    modalData: () => ({
-                        configuration: JSON.parse(JSON.stringify(this.driverConfig))
-                    })
+                    configuration: () => JSON.parse(JSON.stringify(this.driverConfig)),
+                    project: () => this.project
                 }
             }).result.then(data => {
                 this.ToastService.success('The settings have been updated.');

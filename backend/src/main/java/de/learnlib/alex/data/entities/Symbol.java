@@ -471,12 +471,23 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         }
     }
 
+    /**
+     * Check if the given symbol contains a specific parameter in its inputs or outputs.
+     *
+     * @param parameter The parameter.
+     * @return If the parameter exists as input or output parameter.
+     */
     public boolean containsParameter(SymbolParameter parameter) {
         final List<SymbolParameter> parameters = new ArrayList<>(inputs);
         parameters.addAll(outputs);
         return parameters.contains(parameter);
     }
 
+    /**
+     * Adds a parameter.
+     *
+     * @param parameter The parameter to add.
+     */
     public void addParameter(SymbolParameter parameter) {
         if (parameter instanceof SymbolInputParameter) {
             this.inputs.add((SymbolInputParameter) parameter);
@@ -485,6 +496,11 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         }
     }
 
+    /**
+     * Removes a parameter.
+     *
+     * @param parameter The parameter to remove.
+     */
     public void removeParameter(SymbolParameter parameter) {
         if (parameter instanceof SymbolInputParameter) {
             this.inputs.remove(parameter);

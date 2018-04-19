@@ -39,7 +39,8 @@ public class KearnsVazirani extends AbstractLearningAlgorithm<String, String> im
     private static final long serialVersionUID = 4571297392539122947L;
 
     @Override
-    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> alphabet, MembershipOracle<String, Word<String>> membershipOracle) {
+    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> alphabet,
+            MembershipOracle<String, Word<String>> membershipOracle) {
         return new KearnsVaziraniMealyBuilder<String, String>()
                 .withAlphabet(alphabet)
                 .withOracle(membershipOracle)
@@ -55,7 +56,8 @@ public class KearnsVazirani extends AbstractLearningAlgorithm<String, String> im
     public void resume(LearningAlgorithm.MealyLearner<String, String> learner, byte[] data)
             throws IOException, ClassNotFoundException {
         try (final ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(data))) {
-            final KearnsVaziraniMealyState<String, String> state = (KearnsVaziraniMealyState<String, String>) objectIn.readObject();
+            final KearnsVaziraniMealyState<String, String> state =
+                    (KearnsVaziraniMealyState<String, String>) objectIn.readObject();
             ((KearnsVaziraniMealy<String, String>) learner).resume(state);
         }
     }

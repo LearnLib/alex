@@ -110,7 +110,7 @@ public class TestThread extends Thread {
                 webhookService.fireEvent(user, new TestEvent.ExecutionStarted(new TestExecutionStartedEventData(project.getId(), config)));
             }
 
-            testService.executeTests(user, tests, config.getDriverConfig(), results);
+            testService.executeTests(user, tests, config, results);
             final TestReport report = getReport();
 
             if (config.isCreateReport()) {

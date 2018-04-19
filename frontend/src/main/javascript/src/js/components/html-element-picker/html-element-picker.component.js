@@ -100,7 +100,7 @@ class HtmlElementPickerComponent {
     loadUrl() {
         const self = this;
 
-        this.iframe.attr('src', this.project.baseUrl + (this.url === null ? '/' : this.url));
+        this.iframe.attr('src', this.project.getDefaultUrl().url + (this.url === null ? '/' : this.url));
         this.iframe.on('load', () => {
 
             try {
@@ -118,7 +118,7 @@ class HtmlElementPickerComponent {
                         if (this.getAttribute('href') !== '' && this.getAttribute('href')[0] !== '#') {
                             self.$scope.$apply(() => {
                                 self.url = decodeURIComponent(_this.getAttribute('href'))
-                                    .replace(window.location.origin + '/' + self.project.baseUrl, '');
+                                    .replace(window.location.origin + '/' + self.project.getDefaultUrl().url, '');
                             });
                         }
                     }

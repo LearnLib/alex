@@ -31,7 +31,7 @@
             <div class="list-group" ng-if="!vm.results">
                 <a class="list-group-item" ng-repeat="project in vm.projects" ng-click="vm.selectProject(project)">
                     <strong ng-bind="project.name"></strong><br>
-                    <span class="text-muted" ng-bind="project.baseUrl"></span>
+                    <span class="text-muted" ng-bind="project.getDefaultUrl().url"></span>
                 </a>
             </div>
         </uib-tab>

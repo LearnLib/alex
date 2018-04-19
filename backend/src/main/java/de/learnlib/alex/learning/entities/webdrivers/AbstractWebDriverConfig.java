@@ -42,10 +42,13 @@ public abstract class AbstractWebDriverConfig implements Serializable {
 
     private static final long serialVersionUID = -2663686839180427383L;
 
+    /** The selenium implicit wait time. */
     private static final int DEFAULT_IMPLICITLY_WAIT = 0;
 
+    /** How long should be waited for the page to load before a timeout. */
     private static final int DEFAULT_PAGE_LOAD_TIMEOUT = 10;
 
+    /** How long should be waited for JavaScript to execute before a timeout. */
     private static final int DEFAULT_SCRIPT_TIMEOUT = 10;
 
     /** The width of the browser window. */
@@ -78,7 +81,8 @@ public abstract class AbstractWebDriverConfig implements Serializable {
      * Creates a new instance of a web driver.
      *
      * @return The new web driver.
-     * @throws Exception If the instantiation of the web driver fails.
+     * @throws Exception
+     *         If the instantiation of the web driver fails.
      */
     public abstract WebDriver createDriver() throws Exception;
 

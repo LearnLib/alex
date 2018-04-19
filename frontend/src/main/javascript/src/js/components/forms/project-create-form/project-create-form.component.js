@@ -37,19 +37,22 @@ class ProjectCreateFormComponent {
          * @type {Project}
          */
         this.project = new Project();
-        this.project.baseUrl = 'http://';
     }
 
     /**
      * Creates a new project.
      */
     createProject() {
+        if (this.project.urls.length === 0) {
+            this.ToastService.danger('You have to specify at least one URL.');
+            return;
+        }
+
         this.ProjectResource.create(this.project)
             .then(createdProject => {
                 this.ToastService.success(`Project "${createdProject.name}" created`);
                 this.onCreated({project: createdProject});
                 this.project = new Project();
-                this.project.baseUrl = 'http://';
 
                 // set the form to its original state
                 this.form.$setPristine();

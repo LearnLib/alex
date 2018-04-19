@@ -149,7 +149,7 @@ public class SymbolResource {
         Project project = projectDAO.getByID(user.getId(), projectId);
         if (action instanceof CallAction) { // other actions might be worth testing, too.
             CallAction callAction = (CallAction) action;
-            CallAction.TestResult result = callAction.testRequest(project.getBaseUrl());
+            CallAction.TestResult result = callAction.testRequest(project.getDefaultUrl().getUrl());
             return Response.ok(result).build();
         } else {
             return Response.noContent().build();

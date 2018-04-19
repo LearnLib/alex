@@ -39,7 +39,8 @@ public class DHC extends AbstractLearningAlgorithm<String, String> implements Se
     private static final long serialVersionUID = -1703212406344298512L;
 
     @Override
-    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle) {
+    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
+            MembershipOracle<String, Word<String>> oracle) {
         return new MealyDHCBuilder<String, String>()
                 .withAlphabet(sigma)
                 .withOracle(oracle)

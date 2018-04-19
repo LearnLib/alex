@@ -74,18 +74,11 @@
 
     <div class="learn-start-wrapper flex-row" ng-if="!vm.active">
         <learner-result-panel class="w-100" result="vm.result" ng-if="vm.result">
-            <div class="btn-group btn-group-sm learn-result-panel-resume-button">
-                <button class="btn btn-success" ng-click="vm.resumeLearning()">Resume</button>
-                <button class="btn btn-success" ng-click="vm.toggleSidebar()"
-                        uib-tooltip="{{vm.showSidebar ? 'Close settings' : 'Show settings'}}"
-                        tooltip-placement="left">
-                    <i class="fa fa-fw" ng-class="vm.showSidebar ? 'fa-close' : 'fa-gear'"></i>
-                </button>
-            </div>
+            <button class="btn btn-sm btn-success ml-1" ng-click="vm.resumeLearning()">Resume</button>
         </learner-result-panel>
 
-        <div class="panel-sidebar" ng-class="{'show': vm.showSidebar}" ng-if="vm.resumeConfig !== null && vm.symbols.length > 0">
-            <learn-resume-settings-widget configuration="vm.resumeConfig" result="vm.result" symbols="vm.symbols">
+        <div class="panel-sidebar show" ng-if="vm.resumeConfig !== null && vm.symbols.length > 0">
+            <learn-resume-settings-widget configuration="vm.resumeConfig" result="vm.result" symbols="vm.symbols" project="vm.project">
             </learn-resume-settings-widget>
         </div>
     </div>

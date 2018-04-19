@@ -186,6 +186,7 @@ class LearnerSetupViewComponent {
         this.learnConfiguration.eqOracle = result.steps[0].eqOracle;
         this.learnConfiguration.maxAmountOfStepsToLearn = result.maxAmountOfStepsToLearn;
         this.learnConfiguration.driverConfig = result.driverConfig;
+        this.learnConfiguration.urlIds = result.urls.map(url => url.id);
 
         this.groups.forEach(group => {
             group.symbols.forEach(symbol => {

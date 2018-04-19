@@ -19,10 +19,13 @@ package de.learnlib.alex.learning.entities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /** The abstract learner configuration. */
 public abstract class AbstractLearnerConfiguration implements Serializable {
@@ -36,6 +39,10 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
     /** The ID of the project related to the configuration. */
     @JsonProperty("project")
     protected Long projectId;
+
+    /** The ids of the URLs to use for learning. */
+    @NotEmpty
+    protected List<Long> urlIds;
 
     /** The type of EQ oracle to find a counter example. */
     @NotNull
@@ -72,6 +79,7 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
     public AbstractLearnerConfiguration() {
         this.eqOracle = new MealyRandomWordsEQOracleProxy();
         this.maxAmountOfStepsToLearn = -1;
+        this.urlIds = new ArrayList<>();
     }
 
     public Long getUserId() {
@@ -104,5 +112,13 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
 
     public void setMaxAmountOfStepsToLearn(int maxAmountOfStepsToLearn) {
         this.maxAmountOfStepsToLearn = maxAmountOfStepsToLearn;
+    }
+
+    public List<Long> getUrlIds() {
+        return urlIds;
+    }
+
+    public void setUrlIds(List<Long> urlIds) {
+        this.urlIds = urlIds;
     }
 }

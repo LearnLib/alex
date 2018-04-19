@@ -49,6 +49,7 @@ public class AbstractLearnerConfigurationTest {
                 + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
                 + "\"maxLength\":" + EQ_MAX_VALUE + ",\"seed\":42,\"maxNoOfTests\":1},"
                 + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
+                + "\"urlIds\":[],"
                 + "\"useMQCache\":true,\"user\":null}";
 
         LearnerStartConfiguration configuration = new LearnerStartConfiguration();
@@ -69,6 +70,7 @@ public class AbstractLearnerConfigurationTest {
                 + "\"project\":null,"
                 + "\"resetSymbol\":null,"
                 + "\"symbols\":[],"
+                + "\"urlIds\":[],"
                 + "\"useMQCache\":true,"
                 + "\"user\":null}";
 

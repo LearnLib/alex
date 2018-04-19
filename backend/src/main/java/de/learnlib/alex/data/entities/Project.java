@@ -22,10 +22,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestReport;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,7 +35,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,6 +56,9 @@ public class Project implements Serializable {
 
     private static final long serialVersionUID = -6760395646972200067L;
 
+    /** The maximum length for the project description. */
+    private static final int MAX_DESCRIPTION_LENGTH = 250;
+
     /**
      * The project ID.
      */
@@ -68,11 +71,6 @@ public class Project implements Serializable {
     @JsonIgnore
     private User user;
 
-    /** The plain ID of the User to be used in the JSON. */
-    @Transient
-    @JsonProperty("user")
-    private Long userId;
-
     /**
      * The name of the project. This property is required & must be unique.
      */
@@ -80,16 +78,22 @@ public class Project implements Serializable {
     private String name;
 
     /**
-     * The root URL of the project.
-     */
-    @NotBlank
-    @Pattern(regexp = "^https?://.+?")
-    private String baseUrl;
-
-    /**
      * A text to describe the Project.
      */
+    @Length(max = MAX_DESCRIPTION_LENGTH)
     private String description;
+
+    /**
+     * The URLs where instances of the target system a accessible.
+     */
+    @OneToMany(
+            mappedBy = "project",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    @NotNull
+    private List<ProjectUrl> urls;
 
     /**
      * The list of groups in the project.
@@ -129,6 +133,7 @@ public class Project implements Serializable {
     @JsonIgnore
     private Long nextSymbolId;
 
+    /** The tests of this project. */
     @OneToMany(
             mappedBy = "project",
             fetch = FetchType.LAZY,
@@ -145,12 +150,6 @@ public class Project implements Serializable {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private Set<Counter> counters;
-
-    /**
-     * The URLs of the mirrors of the application.
-     */
-    @ElementCollection
-    private List<String> mirrorUrls;
 
     /**
      * Default constructor.
@@ -171,7 +170,7 @@ public class Project implements Serializable {
         this.nextSymbolId = 1L;
         this.tests = new HashSet<>();
         this.testReports = new HashSet<>();
-        this.mirrorUrls = new ArrayList<>();
+        this.urls = new ArrayList<>();
     }
 
     /**
@@ -206,11 +205,6 @@ public class Project implements Serializable {
     @JsonIgnore
     public void setUser(User user) {
         this.user = user;
-        if (user == null) {
-            this.userId = 0L;
-        } else {
-            this.userId = user.getId();
-        }
     }
 
     /**
@@ -218,7 +212,7 @@ public class Project implements Serializable {
      */
     @JsonProperty("user")
     public Long getUserId() {
-        return userId;
+        return user == null ? null : user.getId();
     }
 
     /**
@@ -226,8 +220,7 @@ public class Project implements Serializable {
      */
     @JsonProperty("user")
     public void setUserId(Long userId) {
-        this.user = null;
-        this.userId = userId;
+        this.user = new User(userId);
     }
 
     /**
@@ -246,24 +239,6 @@ public class Project implements Serializable {
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * Get the root URL of the Project.
-     *
-     * @return The base URl.
-     */
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    /**
-     * Set the base URL of the Project.
-     *
-     * @param baseUrl The new base URL.
-     */
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
     }
 
     /**
@@ -380,10 +355,6 @@ public class Project implements Serializable {
         this.testReports = testReports;
     }
 
-    public void addTest(Test test) {
-        this.tests.add(test);
-    }
-
     /**
      * @return All the counters of the Project.
      */
@@ -400,12 +371,21 @@ public class Project implements Serializable {
         this.counters = counters;
     }
 
-    public List<String> getMirrorUrls() {
-        return mirrorUrls;
+    public List<ProjectUrl> getUrls() {
+        return urls;
     }
 
-    public void setMirrorUrls(List<String> mirrorUrls) {
-        this.mirrorUrls = mirrorUrls;
+    public void setUrls(List<ProjectUrl> urls) {
+        this.urls = urls;
+    }
+
+    @JsonIgnore
+    @Transient
+    public ProjectUrl getDefaultUrl() {
+        return this.urls.stream()
+                .filter(ProjectUrl::isDefault)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -424,7 +404,7 @@ public class Project implements Serializable {
 
     @Override
     public String toString() {
-        return "[Project " + id + "]: " + user + ", " + name + "(" + baseUrl + ")";
+        return "[Project " + id + "]: " + user + ", " + name + "(" + getDefaultUrl() + ")";
     }
 
 }

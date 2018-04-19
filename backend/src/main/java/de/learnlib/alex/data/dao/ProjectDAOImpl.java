@@ -20,8 +20,11 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.testing.entities.TestSuite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +47,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of a ProjectDAO using Spring Data.
@@ -61,36 +65,56 @@ public class ProjectDAOImpl implements ProjectDAO {
     /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
 
+    /** The repository for learner results. */
+    private LearnerResultRepository learnerResultRepository;
+
     /** The FileDAO to use. Will be injected. */
     private FileDAO fileDAO;
 
+    /** The ProjectUrlDAO to use. */
+    private ProjectUrlDAO projectUrlDAO;
+
     /**
-     * Creates a new ProjectDAO.
+     * Constructor.
      *
      * @param projectRepository
      *         The ProjectRepository to use.
+     * @param learnerResultRepository
+     *         The LearnerResultRepository to use.
+     * @param fileDAO
+     *         The FileDAO to use.
+     * @param projectUrlDAO
+     *         The ProjectUrlDAO to use.
      */
     @Inject
-    public ProjectDAOImpl(ProjectRepository projectRepository, @Lazy FileDAO fileDAO) {
+    public ProjectDAOImpl(ProjectRepository projectRepository, LearnerResultRepository learnerResultRepository,
+            @Lazy FileDAO fileDAO, @Lazy ProjectUrlDAO projectUrlDAO) {
         this.projectRepository = projectRepository;
+        this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
+        this.projectUrlDAO = projectUrlDAO;
     }
 
     @Override
     @Transactional
     public Project create(final Project project) throws ValidationException {
         LOGGER.traceEntry("create({})", project);
+
         try {
             SymbolGroup defaultGroup = new SymbolGroup();
             defaultGroup.setName("Default group");
             defaultGroup.setProject(project);
-
             project.addGroup(defaultGroup);
 
             TestSuite testSuite = new TestSuite();
             testSuite.setName("Root");
             testSuite.setProject(project);
-            project.addTest(testSuite);
+            project.getTests().add(testSuite);
+
+            project.getUrls().forEach(url -> {
+                url.setId(null);
+                url.setProject(project);
+            });
 
             final Project createdProject = projectRepository.save(project);
             LOGGER.traceExit(createdProject);
@@ -135,12 +159,27 @@ public class ProjectDAOImpl implements ProjectDAO {
         final Project projectInDb = projectRepository.findOne(project.getId());
         checkAccess(user, projectInDb);
 
+        final List<ProjectUrl> urls = project.getUrls().stream()
+                .filter(url -> url.getId() != null)
+                .collect(Collectors.toList());
+        projectUrlDAO.checkAccess(user, project, urls);
+
         try {
             project.setUser(user);
             project.setGroups(projectInDb.getGroups());
             project.setNextSymbolId(projectInDb.getNextSymbolId());
+            project.getUrls().forEach(url -> url.setProject(project));
+
+            final List<ProjectUrl> urlsToRemove = projectInDb.getUrls().stream()
+                    .filter(url -> !project.getUrls().contains(url))
+                    .collect(Collectors.toList());
+            if (!urlsToRemove.isEmpty()) {
+                removeUrlsFromLearnerResults(urlsToRemove);
+            }
 
             final Project updatedProject = projectRepository.save(project);
+            initLazyRelations(updatedProject);
+
             LOGGER.traceExit(project);
             return updatedProject;
         } catch (DataIntegrityViolationException e) {
@@ -151,6 +190,12 @@ public class ProjectDAOImpl implements ProjectDAO {
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Project was not updated.", cve);
         }
+    }
+
+    private void removeUrlsFromLearnerResults(List<ProjectUrl> urlsToRemove) {
+        final List<LearnerResult> learnerResults = learnerResultRepository.findAllByUrlsIn(urlsToRemove);
+        learnerResults.forEach(result -> result.getUrls().removeAll(urlsToRemove));
+        learnerResultRepository.save(learnerResults);
     }
 
     @Override
@@ -176,7 +221,7 @@ public class ProjectDAOImpl implements ProjectDAO {
      *         The project which needs the 'lazy' objects.
      */
     private void initLazyRelations(Project project, EmbeddableFields... embedFields) {
-        Hibernate.initialize(project.getMirrorUrls());
+        Hibernate.initialize(project.getUrls());
         if (embedFields != null && embedFields.length > 0) {
             Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 

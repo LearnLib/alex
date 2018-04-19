@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-/**
- * Form groups for a project.
- * @type {{templateUrl: string, bindings: {project: string, form: string}, controllerAs: string, controller: projectFormGroups.controller}}
- */
-export const projectFormGroupsComponent = {
-    template: require('./project-form-groups.component.html'),
-    bindings: {
-        project: '=',
-        form: '='
-    },
-    controllerAs: 'vm',
-    controller: class {
-    }
-};
+package de.learnlib.alex.data.repositories;
+
+import de.learnlib.alex.data.entities.ProjectUrl;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+/** The repository for project URLs. */
+@Repository
+public interface ProjectUrlRepository extends JpaRepository<ProjectUrl, Long> {
+}

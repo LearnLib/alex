@@ -36,7 +36,7 @@ export class Project {
          * The base URL of the project.
          * @type {string}
          */
-        this.baseUrl = obj.baseUrl || null;
+        this.urls = obj.urls || [];
 
         /**
          * The description of the project.
@@ -55,11 +55,9 @@ export class Project {
          * @type{number}
          */
         this.user = obj.user;
+    }
 
-        /**
-         * The URLs of the mirrors of the application
-         * @type {string[]}
-         */
-        this.mirrorUrls = obj.mirrorUrls || [];
+    getDefaultUrl() {
+        return this.urls.find(url => url.default);
     }
 }

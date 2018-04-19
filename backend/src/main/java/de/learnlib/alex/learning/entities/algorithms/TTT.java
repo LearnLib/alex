@@ -41,7 +41,8 @@ public class TTT extends AbstractLearningAlgorithm<String, String> implements Se
     private static final long serialVersionUID = -7594934697689034183L;
 
     @Override
-    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle) {
+    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
+            MembershipOracle<String, Word<String>> oracle) {
         return new TTTLearnerMealyBuilder<String, String>()
                 .withAlphabet(sigma)
                 .withOracle(oracle)
@@ -63,7 +64,8 @@ public class TTT extends AbstractLearningAlgorithm<String, String> implements Se
     public void resume(LearningAlgorithm.MealyLearner<String, String> learner, byte[] data)
             throws IOException, ClassNotFoundException {
         try (final ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(data))) {
-            final TTTLearnerState<String, Word<String>> state = (TTTLearnerState<String, Word<String>>) objectIn.readObject();
+            final TTTLearnerState<String, Word<String>> state =
+                    (TTTLearnerState<String, Word<String>>) objectIn.readObject();
             ((TTTLearnerMealy<String, String>) learner).resume(state);
         }
     }

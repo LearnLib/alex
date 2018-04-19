@@ -25,7 +25,9 @@ import uiBootstrap from 'angular-ui-bootstrap';
 import ngFileUpload from 'ng-file-upload';
 import {actionBarComponent} from './components/action-bar/action-bar.component';
 import {actionRecorderComponent} from './components/action-recorder/action-recorder.component';
+import {projectFormUrlGroupsComponent} from './components/forms/project-form-groups/project-form-url-groups/project-form-url-groups.component';
 import {actionSearchFormComponent} from './components/modals/action-create-modal/action-search-form/action-search-form.component';
+import {projectUrlListComponent} from './components/project-url-list/project-url-list.component';
 import {searchFormComponent} from './components/search-form/search-form.component';
 import {alexComponent} from './components/alex/alex.component';
 import {checkboxMultipleComponent} from './components/checkbox-multiple/checkbox-multiple.component';
@@ -100,7 +102,7 @@ import {actionCreateModalComponent} from './components/modals/action-create-moda
 import {actionEditModalHandleDirective} from './components/modals/action-edit-modal/action-edit-modal-handle.directive';
 import {actionEditModalComponent} from './components/modals/action-edit-modal/action-edit-modal.component';
 import {actionRecorderActionsModal} from './components/modals/action-recorder-actions-modal/action-recorder-actions-modal.component';
-import {browserConfigModalComponent} from './components/modals/browser-config-modal/browser-config-modal.component';
+import {testConfigModalComponent} from './components/modals/test-config-modal/test-config-modal.component';
 import {confirmModalComponent} from './components/modals/confirm-modal/confirm-modal.component';
 import {counterCreateModalComponent} from './components/modals/counter-create-modal/counter-create-modal.component';
 import {hypothesisLayoutSettingsModalHandleDirective} from './components/modals/hypothesis-layout-settings-modal/hypothesis-layout-settings-modal-handle.directive';
@@ -322,7 +324,7 @@ angular
     .component('symbolsImportModal', symbolsImportModalComponent)
     .component('promptModal', promptModalComponent)
     .component('confirmModal', confirmModalComponent)
-    .component('browserConfigModal', browserConfigModalComponent)
+    .component('testConfigModal', testConfigModalComponent)
     .component('testsImportModal', testsImportModalComponent)
     .component('webhookCreateModal', webhookCreateModalComponent)
     .component('webhookEditModal', webhookEditModalComponent)
@@ -360,6 +362,7 @@ angular
     .component('actionForm', actionFormComponent)
     .component('projectCreateForm', projectCreateFormComponent)
     .component('projectFormGroups', projectFormGroupsComponent)
+    .component('projectFormUrlGroups', projectFormUrlGroupsComponent)
     .component('userEditForm', userEditFormComponent)
     .component('userLoginForm', userLoginFormComponent)
     .component('nodeFormGroup', nodeFormGroupComponent)
@@ -456,6 +459,7 @@ angular
     .component('testTree', testTreeComponent)
     .component('testCaseNode', testCaseNodeComponent)
     .component('symbolParametersPanel', symbolParametersPanelComponent)
-    .component('testSuiteNode', testSuiteNodeComponent);
+    .component('testSuiteNode', testSuiteNodeComponent)
+    .component('projectUrlList', projectUrlListComponent);
 
 angular.bootstrap(document, ['ALEX']);

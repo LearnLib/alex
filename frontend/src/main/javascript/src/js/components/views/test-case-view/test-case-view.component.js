@@ -76,7 +76,11 @@ export const testCaseViewComponent = {
              * The browser configuration.
              * @type {object}
              */
-            this.browserConfig = DriverConfigService.createFromName(webBrowser.HTML_UNIT);
+            this.testConfig = {
+                testIds: [],
+                urlId: this.project.getDefaultUrl().id,
+                driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
+            };
 
             SymbolGroupResource.getAll(this.project.id, true)
                 .then((groups) => this.groups = groups)
@@ -84,7 +88,7 @@ export const testCaseViewComponent = {
 
             SettingsResource.getSupportedWebDrivers()
                 .then((data) => {
-                    this.browserConfig = DriverConfigService.createFromName(data.defaultWebDriver);
+                    this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver);
                 })
                 .catch(console.log);
 
@@ -109,6 +113,10 @@ export const testCaseViewComponent = {
             });
 
             $scope.$on('testSymbols.drag', () => this.result.outputs = []);
+        }
+
+        $onInit() {
+            this.testConfig.testIds = [this.testCase.id];
         }
 
         /**
@@ -137,22 +145,21 @@ export const testCaseViewComponent = {
             }
 
             this.result = null;
-            this.TestResource.execute(this.testCase, this.browserConfig)
+            this.TestResource.execute(this.testCase, this.testConfig)
                 .then((data) => this.result = data.testResults[0])
                 .catch((err) => this.ToastService.info('The test case could not be executed. ' + err.data.message));
         }
 
-        openBrowserConfigModal() {
+        openTestConfigModal() {
             this.$uibModal.open({
-                component: 'browserConfigModal',
+                component: 'testConfigModal',
                 resolve: {
-                    modalData: () => ({
-                        configuration: JSON.parse(JSON.stringify(this.browserConfig))
-                    })
+                    configuration: () => JSON.parse(JSON.stringify(this.testConfig)),
+                    project: () => this.project
                 }
             }).result.then(data => {
                 this.ToastService.success('The settings have been updated.');
-                this.browserConfig = data;
+                this.testConfig = data;
             });
         }
 

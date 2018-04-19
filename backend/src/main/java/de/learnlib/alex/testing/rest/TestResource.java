@@ -23,7 +23,6 @@ import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
@@ -246,7 +245,7 @@ public class TestResource {
      *         The id of the project.
      * @param id
      *         The id of the test.
-     * @param driverConfig
+     * @param testConfig
      *         The configuration to run the test with.
      * @return The result of the test execution.
      * @throws NotFoundException
@@ -257,7 +256,7 @@ public class TestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("project_id") Long projectId,
                             @PathParam("id") Long id,
-                            AbstractWebDriverConfig driverConfig)
+                            TestExecutionConfig testConfig)
             throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Test test = testDAO.get(user, projectId, id);
@@ -268,7 +267,7 @@ public class TestResource {
         }
 
         final Map<Long, TestResult> results = new HashMap<>();
-        testService.executeTestCase(user, (TestCase) test, driverConfig, results);
+        testService.executeTestCase(user, (TestCase) test, testConfig, results);
 
         final TestReport report = new TestReport();
         report.setTestResults(new ArrayList<>(results.values()));

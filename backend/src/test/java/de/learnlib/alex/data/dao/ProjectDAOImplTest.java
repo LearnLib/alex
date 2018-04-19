@@ -19,8 +19,10 @@ package de.learnlib.alex.data.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,17 +59,28 @@ public class ProjectDAOImplTest {
     @Mock
     private FileDAOImpl fileDAO;
 
+    @Mock
+    private LearnerResultRepository learnerResultRepository;
+
+    @Mock
+    private ProjectUrlDAO projectUrlDAO;
+
     private ProjectDAO projectDAO;
 
     @Before
     public void setUp() {
-        projectDAO = new ProjectDAOImpl(projectRepository, fileDAO);
+        projectDAO = new ProjectDAOImpl(projectRepository, learnerResultRepository, fileDAO, projectUrlDAO);
     }
 
     @Test
     public void shouldCreateAValidEmptyProject() {
+        final ProjectUrl projectUrl = new ProjectUrl();
+
         Project project = new Project();
+        project.getUrls().add(projectUrl);
+
         Project createdProject = new Project();
+        createdProject.getUrls().add(projectUrl);
         createdProject.setId(1L);
 
         given(projectRepository.save(project)).willReturn(createdProject);
@@ -81,8 +94,9 @@ public class ProjectDAOImplTest {
     @Test
     public void shouldCreateAValidPreFilledProject() {
         SymbolGroup testGroup = new SymbolGroup();
-
+        ProjectUrl url = new ProjectUrl();
         Project project = new Project();
+        project.getUrls().add(url);
 
         testGroup.setProject(project);
         project.getGroups().add(testGroup);
@@ -168,11 +182,15 @@ public class ProjectDAOImplTest {
         User user = new User();
         user.setId(USER_ID);
 
+        ProjectUrl url = new ProjectUrl();
+
         Project project = new Project();
         project.setUser(user);
+        project.getUrls().add(url);
         project.setId(PROJECT_ID);
 
         given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
+        given(projectRepository.save(project)).willReturn(project);
 
         projectDAO.update(user, project);
 
@@ -184,9 +202,12 @@ public class ProjectDAOImplTest {
         User user = new User();
         user.setId(USER_ID);
 
+        ProjectUrl url = new ProjectUrl();
+
         Project project = new Project();
         project.setUser(user);
         project.setId(PROJECT_ID);
+        project.getUrls().add(url);
 
         projectDAO.update(user, project);
     }

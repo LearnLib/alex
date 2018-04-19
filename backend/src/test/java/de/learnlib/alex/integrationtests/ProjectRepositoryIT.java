@@ -19,6 +19,7 @@ package de.learnlib.alex.integrationtests;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import org.junit.After;
@@ -69,9 +70,13 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
     @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveAProjectWithoutAnUser() {
+        ProjectUrl url = new ProjectUrl();
+        url.setUrl("http://localhost");
+        url.setDefault(true);
+
         Project project = new Project();
         project.setName("Test Project");
-        project.setBaseUrl("http://localhost");
+        project.getUrls().add(url);
 
         projectRepository.save(project); // should fail
     }
@@ -80,10 +85,14 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
     public void shouldFailToSaveAProjectWithoutAName() {
         User user = createUser("alex@test.example");
         userRepository.save(user);
-        //
+
+        ProjectUrl url = new ProjectUrl();
+        url.setUrl("http://localhost");
+        url.setDefault(true);
+
         Project project = new Project();
         project.setUser(user);
-        project.setBaseUrl("http://localhost");
+        project.getUrls().add(url);
 
         projectRepository.save(project); // should fail
     }

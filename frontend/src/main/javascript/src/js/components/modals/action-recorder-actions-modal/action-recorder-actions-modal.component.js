@@ -97,8 +97,9 @@ export class ActionRecorderActionsModal {
         if (this.action.type === actionType.WEB_GO_TO && el.nodeName === 'A') {
             let href = el.getAttribute('href');
             if (href !== null && href !== '') {
-                if (href.startsWith(this.project.baseUrl)) {
-                    href = href.substr(this.project.baseUrl.length, href.length);
+                const defaultUrl = this.project.getDefaultUrl().url;
+                if (href.startsWith(defaultUrl)) {
+                    href = href.substr(defaultUrl.length, href.length);
                 }
                 this.action.url = href;
             }

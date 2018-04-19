@@ -21,7 +21,9 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
@@ -104,6 +106,10 @@ public class Learner {
     @Inject
     private ConnectorContextHandlerFactory contextHandlerFactory;
 
+    /** The repository for project URLs. */
+    @Inject
+    private ProjectUrlRepository projectUrlRepository;
+
     /** The last thread of an user, if one exists. */
     private final Map<Long, AbstractLearnerThread> userThreads;
 
@@ -161,9 +167,11 @@ public class Learner {
             throw new IllegalStateException("You can not start more than one experiment at the same time.");
         }
 
+        final List<ProjectUrl> urls = projectUrlRepository.findAll(configuration.getUrlIds());
+
         final LearnerResult result = createLearnerResult(user, project, configuration);
 
-        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project,
+        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, urls,
                 configuration.getDriverConfig());
         contextHandler.setResetSymbol(result.getResetSymbol());
 
@@ -201,7 +209,11 @@ public class Learner {
                 new LinkedList<>(result.getSymbolsAsIds()));
         result.setSymbols(symbols);
 
-        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, result.getDriverConfig());
+        final List<ProjectUrl> urls = projectUrlRepository.findAll(configuration.getUrlIds());
+        result.setUrls(urls);
+
+        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, urls,
+                result.getDriverConfig());
         contextHandler.setResetSymbol(result.getResetSymbol());
 
         final AbstractLearnerThread learnThread = new ResumingLearnerThread(user, learnerResultDAO, webhookService,
@@ -238,6 +250,9 @@ public class Learner {
         learnerResult.setAlgorithm(configuration.getAlgorithm());
         learnerResult.setComment(configuration.getComment());
         learnerResult.setUseMQCache(configuration.isUseMQCache());
+
+        final List<ProjectUrl> urls = projectUrlRepository.findAll(configuration.getUrlIds());
+        learnerResult.setUrls(urls);
 
         return learnerResult;
     }

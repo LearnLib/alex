@@ -17,10 +17,10 @@
 /**
  * A modal dialog for the web driver configuration.
  *
- * @type {{templateUrl: string, bindings: {dismiss: string, close: string, resolve: string}, controller: browserConfigModal.controller, controllerAs: string}}
+ * @type {{templateUrl: string, bindings: {dismiss: string, close: string, resolve: string}, controller: testConfigModal.controller, controllerAs: string}}
  */
-export const browserConfigModalComponent = {
-    template: require('./browser-config-modal.component.html'),
+export const testConfigModalComponent = {
+    template: require('./test-config-modal.component.html'),
     bindings: {
         dismiss: '&',
         close: '&',
@@ -38,16 +38,31 @@ export const browserConfigModalComponent = {
              * @type {object}
              */
             this.configuration = null;
+
+            /**
+             * The current project.
+             * @type {Project}
+             */
+            this.project = null;
+
+            /**
+             * The model for the url ids.
+             * @type {number[]}
+             */
+            this.urlIds = [];
         }
 
         $onInit() {
-            this.configuration = this.resolve.modalData.configuration;
+            this.configuration = this.resolve.configuration;
+            this.urlIds = [this.configuration.urlId];
+            this.project = this.resolve.project;
         }
 
         /**
          * Close the modal window and pass the configuration.
          */
         update() {
+            this.configuration.urlId = this.urlIds[0];
             this.close({$value: this.configuration});
         }
     },

@@ -105,6 +105,11 @@ export class LearnResult {
         this.comment = obj.comment;
 
         /**
+         * The list of URLs.
+         */
+        this.urls = obj.urls || [];
+
+        /**
          * If membership queries should be cached.
          * @type {boolean}
          */

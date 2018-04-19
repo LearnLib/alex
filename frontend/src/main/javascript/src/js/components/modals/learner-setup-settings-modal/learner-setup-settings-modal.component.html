@@ -214,6 +214,14 @@
 
                 <browser-config-form config="vm.learnConfiguration.driverConfig"></browser-config-form>
             </uib-tab>
+            <uib-tab heading="Target">
+                <p></p>
+
+                <p class="text-muted">
+                    Specify which URL should be used for learning. Select multiple URLs for learning in parallel.
+                </p>
+                <project-url-list project="vm.project" list-model="vm.learnConfiguration.urlIds" multiple="true"></project-url-list>
+            </uib-tab>
         </uib-tabset>
 
     </div>

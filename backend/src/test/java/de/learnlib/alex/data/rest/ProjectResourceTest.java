@@ -21,6 +21,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -80,11 +81,16 @@ public class ProjectResourceTest extends JerseyTest {
         Symbol symbol = new Symbol();
         symbol.setName("Project Resource Test Symbol");
 
+        ProjectUrl projectUrl = new ProjectUrl();
+        projectUrl.setDefault(true);
+        projectUrl.setUrl("http://www.example.com");
+
         project = new Project();
         project.setUser(admin);
         project.setId(PROJECT_TEST_ID);
         project.setName("Test Project");
         project.addSymbol(symbol);
+
         try {
             given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID)).willReturn(project);
         } catch (NotFoundException e) {
@@ -99,7 +105,7 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldCreateAProject() {
         String json = "{\"id\": " + project.getId() + ","
                         + "\"name\": \"" + project.getName() + "\","
-                        + "\"baseUrl\": \"" + project.getBaseUrl() + "\","
+                        + "\"urls\": [{\"name\": null, \"url\": \"" + project.getDefaultUrl() + "\", \"default\": true}],"
                         + "\"description\": \"" + project.getDescription() + "\"}";
         Response response = target("/projects").request().header("Authorization", adminToken).post(Entity.json(json));
 
@@ -121,7 +127,6 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldReturn400IfProjectNameAlreadyExistsForAUser() {
         Project p = new Project();
         p.setUser(admin);
-        p.setBaseUrl("http://abc");
         p.setName("Test Project");
 
         willThrow(new ValidationException("Test Message")).given(projectDAO).create(p);
@@ -196,7 +201,7 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldUpdateTheRightProject() throws NotFoundException {
         String json = "{\"id\": " + project.getId() + ","
                         + "\"name\": \"" + project.getName() + "\","
-                        + "\"baseUrl\": \"" + project.getBaseUrl() + "\","
+                        + "\"urls\": [{\"name\": null, \"url\": \"" + project.getDefaultUrl() + "\", \"default\": true}],"
                         + "\"description\": \"" + project.getDescription() + "\"}";
 
         target("/project").request().header("Authorization", adminToken).post(Entity.json(project));
@@ -206,19 +211,6 @@ public class ProjectResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         verify(projectDAO).update(admin, project);
     }
-
-    /*
-    @Test
-    public void shouldReturn404OnUpdateWhenProjectNotFound() {
-        project.setId(PROJECT_TEST_ID);
-        project.setName("Test Project - Update 404");
-
-        willThrow(new IllegalArgumentException()).given(projectDAO).update(project);
-        Response response = target("/projects/" + project.getId()).request().put(Entity.json(project));
-
-        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
-    }
-    */
 
     @Test
     public void shouldFailIfIdInUrlAndObjectAreDifferent() throws NotFoundException {

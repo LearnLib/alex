@@ -42,7 +42,8 @@ public class DiscriminationTree extends AbstractLearningAlgorithm<String, String
     private static final long serialVersionUID = 2655022507456200915L;
 
     @Override
-    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle) {
+    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
+            MembershipOracle<String, Word<String>> oracle) {
         return new DTLearnerMealyBuilder<String, String>()
                 .withAlphabet(sigma)
                 .withOracle(oracle)
@@ -63,7 +64,8 @@ public class DiscriminationTree extends AbstractLearningAlgorithm<String, String
     public void resume(LearningAlgorithm.MealyLearner<String, String> learner, byte[] data)
             throws IOException, ClassNotFoundException {
         try (final ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(data))) {
-            final DTLearnerState<String, Word<String>, Void, String> state = (DTLearnerState<String, Word<String>, Void, String>) objectIn.readObject();
+            final DTLearnerState<String, Word<String>, Void, String> state =
+                    (DTLearnerState<String, Word<String>, Void, String>) objectIn.readObject();
             ((DTLearnerMealy<String, String>) learner).resume(state);
         }
     }

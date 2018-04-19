@@ -34,6 +34,9 @@
                 </div>
             </symbol-list-item>
             <div class="panel panel-default mt-1 mb-1" ng-if="symbol === vm.symbolToEdit">
+                <div class="panel-heading">
+                    <strong>Update symbol</strong>
+                </div>
                 <div class="panel-body pb-0">
                     <symbol-edit-form symbol="symbol"
                                       on-aborted="vm.symbolToEdit = null"

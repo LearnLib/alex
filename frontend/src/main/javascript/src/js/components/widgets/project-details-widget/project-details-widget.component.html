@@ -6,12 +6,8 @@
             <td ng-bind="vm.project.name"></td>
         </tr>
         <tr>
-            <td><strong>URL</strong></td>
-            <td><a href="{{vm.project.baseUrl}}" target="_blank" ng-bind="vm.project.baseUrl"></a></td>
-        </tr>
-        <tr>
-            <td><strong>Mirrors</strong></td>
-            <td ng-bind="vm.project.mirrorUrls.length"></td>
+            <td><strong>Default URL</strong></td>
+            <td><a href="{{vm.project.getDefaultUrl().url}}" target="_blank" ng-bind="vm.project.getDefaultUrl().url"></a></td>
         </tr>
         <tr>
             <td><strong>Groups</strong></td>

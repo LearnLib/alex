@@ -20,8 +20,9 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
+import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -46,23 +47,20 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * The service that executes tests.
- */
+/** The service that executes tests. */
 @Service
 public class TestService {
 
     /** Factory to create a new ContextHandler. */
     private final ConnectorContextHandlerFactory contextHandlerFactory;
 
-    /**
-     * The running testing threads. userId -> (projectId -> TestThread).
-     */
+    /** The running testing threads. userId -> (projectId -> TestThread). */
     private final Map<Long, Map<Long, TestThread>> testingThreads;
 
     /** The {@link WebhookService} to use. */
@@ -74,26 +72,32 @@ public class TestService {
     /** The {@link TestReportDAO} to use. */
     private final TestReportDAO testReportDAO;
 
+    /** The {@link ProjectUrlRepository} to use. */
+    private final ProjectUrlRepository projectUrlRepository;
+
     /**
      * Constructor.
      *
      * @param contextHandlerFactory
-     *         The injected {@see ConnectorContextHandlerFactory}.
+     *         The injected {@link ConnectorContextHandlerFactory}.
      * @param webhookService
-     *         The injected {@see WebhookService}.
+     *         The injected {@link WebhookService}.
      * @param testDAO
-     *         The injected {@see TestDAO}.
+     *         The injected {@link TestDAO}.
      * @param testReportDAO
-     *         The injected {@see TestReportDAO}.
+     *         The injected {@link TestReportDAO}.
+     * @param projectUrlRepository
+     *         The injected {@link ProjectUrlRepository}.
      */
     @Inject
     public TestService(ConnectorContextHandlerFactory contextHandlerFactory, WebhookService webhookService,
-                       TestDAO testDAO, TestReportDAO testReportDAO) {
+            TestDAO testDAO, TestReportDAO testReportDAO, ProjectUrlRepository projectUrlRepository) {
         this.contextHandlerFactory = contextHandlerFactory;
         this.webhookService = webhookService;
         this.testDAO = testDAO;
         this.testReportDAO = testReportDAO;
         this.testingThreads = new HashMap<>();
+        this.projectUrlRepository = projectUrlRepository;
     }
 
     /**
@@ -173,19 +177,19 @@ public class TestService {
      *         The user that executes the test suite.
      * @param tests
      *         The tests that should be executed.
-     * @param driverConfig
-     *         The config for the web driver.
+     * @param testConfig
+     *         The config for the test.
      * @param results
      *         The map with the test results.
      * @return The updated test result map.
      */
-    public Map<Long, TestResult> executeTests(User user, List<Test> tests, AbstractWebDriverConfig driverConfig,
-                                              Map<Long, TestResult> results) {
+    public Map<Long, TestResult> executeTests(User user, List<Test> tests, TestExecutionConfig testConfig,
+            Map<Long, TestResult> results) {
         for (Test test : tests) {
             if (test instanceof TestCase) {
-                executeTestCase(user, (TestCase) test, driverConfig, results);
+                executeTestCase(user, (TestCase) test, testConfig, results);
             } else if (test instanceof TestSuite) {
-                executeTestSuite(user, (TestSuite) test, driverConfig, results);
+                executeTestSuite(user, (TestSuite) test, testConfig, results);
             }
         }
         return results;
@@ -198,22 +202,22 @@ public class TestService {
      *         The user that executes the test suite.
      * @param testSuite
      *         The test suite that is being executed.
-     * @param driverConfig
-     *         The config for the web driver.
+     * @param testConfig
+     *         The config for the test.
      * @param results
      *         The map with the test results.
      * @return The updated test result map.
      */
-    public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, AbstractWebDriverConfig driverConfig,
-                                            Map<Long, TestResult> results) {
+    public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, TestExecutionConfig testConfig,
+            Map<Long, TestResult> results) {
         TestSuiteResult tsResult = new TestSuiteResult(testSuite, 0L, 0L);
 
         for (Test test : testSuite.getTests()) {
             if (test instanceof TestCase) {
-                TestCaseResult result = executeTestCase(user, (TestCase) test, driverConfig, results);
+                TestCaseResult result = executeTestCase(user, (TestCase) test, testConfig, results);
                 tsResult.add(result);
             } else {
-                TestSuiteResult r = executeTestSuite(user, (TestSuite) test, driverConfig, results);
+                TestSuiteResult r = executeTestSuite(user, (TestSuite) test, testConfig, results);
                 tsResult.add(r);
             }
         }
@@ -229,16 +233,19 @@ public class TestService {
      *         The user that executes the test suite.
      * @param testCase
      *         The test case that is being executed.
-     * @param driverConfig
-     *         The config for the web driver.
+     * @param testConfig
+     *         The config for the test.
      * @param results
      *         The map with the test results.
      * @return The updated test result map.
      */
-    public TestCaseResult executeTestCase(User user, TestCase testCase, AbstractWebDriverConfig driverConfig,
-                                          Map<Long, TestResult> results) {
+    public TestCaseResult executeTestCase(User user, TestCase testCase, TestExecutionConfig testConfig,
+            Map<Long, TestResult> results) {
+
+        final ProjectUrl projectUrl = projectUrlRepository.findOne(testConfig.getUrlId());
+
         final ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, testCase.getProject(),
-                driverConfig);
+                Collections.singletonList(projectUrl), testConfig.getDriverConfig());
         ctxHandler.setResetSymbol(new Symbol());
 
         final long startTime = System.currentTimeMillis();
@@ -258,7 +265,9 @@ public class TestService {
                 symbolStep.getParameterValues().stream()
                         .filter(value -> value.getValue() != null)
                         .forEach(value -> {
-                            final String valueWithVariables = SearchHelper.insertVariableValues(connectors, testCase.getProjectId(), value.getValue());
+                            final String valueWithVariables =
+                                    SearchHelper.insertVariableValues(connectors, testCase.getProjectId(),
+                                            value.getValue());
                             variableStore.set(value.getParameter().getName(), valueWithVariables);
                         });
             }
@@ -294,7 +303,8 @@ public class TestService {
             if (!output.isSuccess()) {
                 final TestCaseStep step = testCase.getSteps().get(i);
                 if (step instanceof TestCaseSymbolStep) {
-                    failureMessageParts.add(((TestCaseSymbolStep) step).getSymbol().getName() + ": " + output.getOutput());
+                    final String msg = ((TestCaseSymbolStep) step).getSymbol().getName() + ": " + output.getOutput();
+                    failureMessageParts.add(msg);
                 } else if (step instanceof TestCaseActionStep) {
                     failureMessageParts.add(output.getOutput());
                 }
@@ -307,7 +317,8 @@ public class TestService {
                 .map(TestExecuteResult::new)
                 .collect(Collectors.toList());
 
-        final TestCaseResult result = new TestCaseResult(testCase, sulOutputs, passed, time, String.join(", ", failureMessage));
+        final TestCaseResult result =
+                new TestCaseResult(testCase, sulOutputs, passed, time, String.join(", ", failureMessage));
         results.put(testCase.getId(), result);
 
         return result;

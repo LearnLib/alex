@@ -42,7 +42,8 @@ public class LStar extends AbstractLearningAlgorithm<String, String> implements 
     private static final long serialVersionUID = -4916532996322906039L;
 
     @Override
-    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle) {
+    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
+            MembershipOracle<String, Word<String>> oracle) {
         return new ExtensibleLStarMealyBuilder<String, String>()
                 .withAlphabet(sigma)
                 .withOracle(oracle)

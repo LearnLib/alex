@@ -40,6 +40,8 @@ public interface SymbolDAO {
      *         The symbol to save.
      * @throws ValidationException
      *         When the symbol was not valid.
+     * @throws NotFoundException
+     *         If a symbol could not be found.
      */
     void create(User user, Symbol symbol) throws ValidationException, NotFoundException;
 
@@ -52,6 +54,8 @@ public interface SymbolDAO {
      *         The symbols to save.
      * @throws ValidationException
      *         When one the symbols was not valid. In this case all symbols are reverted and not saved.
+     * @throws NotFoundException
+     *         If a symbol could not be found.
      */
     void create(User user, List<Symbol> symbols) throws ValidationException, NotFoundException;
 

@@ -107,7 +107,7 @@ class ActionRecorder {
     loadUrl() {
         const self = this;
 
-        this.iframe.attr('src', this.project.baseUrl + (this.url === null ? '/' : this.url));
+        this.iframe.attr('src', this.project.getDefaultUrl().url + (this.url === null ? '/' : this.url));
         this.iframe.on('load', () => {
             try {
                 this.iframe.contents();

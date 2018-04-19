@@ -133,12 +133,14 @@ class LearnerViewComponentComponent {
         if (this.$state.params.result !== null) {
             this.result = this.$state.params.result;
             this.stepNo = this.result.steps.length;
+
             this.resumeConfig = {
                 eqOracle: this.result.steps[this.stepNo - 1].eqOracle,
                 maxAmountOfStepsToLearn: this.result.steps[this.stepNo - 1].stepsToLearn,
                 stepNo: this.stepNo,
                 symbolsToAdd: [],
-                project: this.project.id
+                project: this.project.id,
+                urlIds: this.result.urls.map(url => url.id),
             };
         } else {
             this.poll();
@@ -175,7 +177,9 @@ class LearnerViewComponentComponent {
                                     eqOracle: lastStep.eqOracle,
                                     maxAmountOfStepsToLearn: lastStep.stepsToLearn,
                                     stepNo: result.steps.length,
-                                    project: this.project.id
+                                    symbolsToAdd: [],
+                                    project: this.project.id,
+                                    urlIds: this.result.urls.map(url => url.id),
                                 };
                             }
 
@@ -235,13 +239,6 @@ class LearnerViewComponentComponent {
             this.ToastService.info('The learner will stop after executing the current query batch');
             this.LearnerResource.stop(this.project.id);
         }
-    }
-
-    /**
-     * Shows or hides the sidebar.
-     */
-    toggleSidebar() {
-        this.showSidebar = !this.showSidebar;
     }
 }
 

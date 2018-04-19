@@ -242,6 +242,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     private void initializeLazyRelations(List<LearnerResult> results, boolean includeSteps) {
         results.forEach(r -> Hibernate.initialize(r.getResetSymbol()));
         results.forEach(r -> Hibernate.initialize(r.getSymbols()));
+        results.forEach(r -> Hibernate.initialize(r.getUrls()));
         if (includeSteps) {
             results.forEach(r -> Hibernate.initialize(r.getSteps()));
         } else {

@@ -67,15 +67,29 @@ public class Test implements Serializable {
 
     private static final long serialVersionUID = 806158197227217171L;
 
+    /** The representation of a test. */
     public static class TestRepresentation {
+
+        /** The id of the test. */
         private Long id;
+
+        /** The id of the parent of the test. */
         private Long parent;
+
+        /** The name of the test. */
         private String name;
+
+        /** The type of the test. */
         private String type;
 
+        /** Constructor. */
         public TestRepresentation() {
         }
 
+        /**
+         * Constructor.
+         * @param test The test to represent.
+         */
         public TestRepresentation(Test test) {
             this.id = test.id;
             this.name = test.getName();

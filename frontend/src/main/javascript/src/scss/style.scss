@@ -33,6 +33,14 @@ body {
   }
 }
 
+.text-wrap {
+  word-wrap: break-word;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
 .list-group-flush {
   margin: 0;
   padding: 0;

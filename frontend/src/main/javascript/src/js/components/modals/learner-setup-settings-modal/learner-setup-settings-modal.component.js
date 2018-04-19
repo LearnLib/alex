@@ -29,10 +29,11 @@ export class LearnerSetupSettingsModalComponent {
      * @param {ToastService} ToastService
      * @param {EventBus} EventBus
      * @param {EqOracleService} EqOracleService
+     * @param {SessionService} SessionService
      * @param {LearningAlgorithmService} LearningAlgorithmService
      */
     // @ngInject
-    constructor(ToastService, EventBus, EqOracleService, LearningAlgorithmService) {
+    constructor(ToastService, EventBus, EqOracleService, SessionService, LearningAlgorithmService) {
         this.ToastService = ToastService;
         this.EventBus = EventBus;
         this.EqOracleService = EqOracleService;
@@ -64,6 +65,12 @@ export class LearnerSetupSettingsModalComponent {
          * The constants for learnAlgorithm names.
          */
         this.selectedLearningAlgorithm = null;
+
+        /**
+         * The current project.
+         * @type {Project}
+         */
+        this.project = SessionService.getProject();
     }
 
     $onInit() {

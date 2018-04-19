@@ -36,8 +36,6 @@ import java.util.Map;
 
 /**
  * Creates a JUnit report of a test result.
- *
- * @see <a href="https://www.ibm.com/support/knowledgecenter/en/SSQ2R2_9.5.0/com.ibm.rsar.analysis.codereview.cobol.doc/topics/cac_useresults_junit.html">JUnit XML format</a>
  */
 public class JUnitTestResultReporter extends TestResultReporter<String> {
 

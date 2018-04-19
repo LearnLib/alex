@@ -30,7 +30,6 @@ import org.springframework.transaction.TransactionSystemException;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;

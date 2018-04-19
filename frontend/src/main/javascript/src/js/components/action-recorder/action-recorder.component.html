@@ -8,7 +8,7 @@
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon" tooltip-placement="right"
-                                     uib-tooltip="{{vm.project.baseUrl}}">
+                                     uib-tooltip="{{vm.project.getDefaultUrl().url}}">
                                     ...
                                 </div>
                                 <input type="text" class="form-control" ng-model="vm.url" placeholder="URL"/>

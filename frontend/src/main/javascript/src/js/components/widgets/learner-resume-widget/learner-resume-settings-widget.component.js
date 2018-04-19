@@ -85,6 +85,7 @@ export const learnerResumeSettingsWidgetComponent = {
     bindings: {
         symbols: '=',
         configuration: '=',
+        project: '<',
         result: '<'
     },
     controller: LearnerResumeSettingsWidgetComponent,

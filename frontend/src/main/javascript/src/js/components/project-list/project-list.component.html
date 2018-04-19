@@ -29,7 +29,7 @@
             </strong>
         </h4>
         <p class="list-group-item-text">
-            <span ng-bind="project.baseUrl"></span> <br>
+            <span ng-bind="project.getDefaultUrl().url"></span> <br>
             <span class="text-muted" ng-if="project.description" ng-bind="project.description"></span>
         </p>
     </div>

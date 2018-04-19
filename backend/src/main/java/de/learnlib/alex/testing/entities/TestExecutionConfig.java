@@ -35,6 +35,9 @@ public class TestExecutionConfig {
     /** If a report should be created. */
     private boolean createReport;
 
+    /** The id of the URL to use for testing. */
+    private Long urlId;
+
     /** Constructor. */
     public TestExecutionConfig() {
         this.testIds = new ArrayList<>();
@@ -43,8 +46,10 @@ public class TestExecutionConfig {
     /**
      * Constructor.
      *
-     * @param testIds      The ids of the tests.
-     * @param driverConfig The configuration for the web driver.
+     * @param testIds
+     *         The ids of the tests.
+     * @param driverConfig
+     *         The configuration for the web driver.
      */
     public TestExecutionConfig(List<Long> testIds, AbstractWebDriverConfig driverConfig) {
         this.testIds = testIds;
@@ -73,5 +78,13 @@ public class TestExecutionConfig {
 
     public void setCreateReport(boolean createReport) {
         this.createReport = createReport;
+    }
+
+    public Long getUrlId() {
+        return urlId;
+    }
+
+    public void setUrlId(Long urlId) {
+        this.urlId = urlId;
     }
 }
