@@ -222,9 +222,13 @@ public class SymbolGroupDAOImplTest {
         group.setId(GROUP_ID);
         group.setProject(project);
 
+        SymbolGroup defaultGroup = new SymbolGroup();
+        defaultGroup.setId(GROUP_ID + 1);
+
         given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
         given(symbolGroupRepository.findOne(GROUP_ID)).willReturn(group);
         given(symbolGroupRepository.findOneByProject_IdAndName(PROJECT_ID, "A group")).willReturn(null);
+        given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(defaultGroup);
 
         symbolGroupDAO.update(user, group);
 
@@ -244,9 +248,13 @@ public class SymbolGroupDAOImplTest {
         group.setId(GROUP_ID);
         group.setProject(project);
 
+        SymbolGroup defaultGroup = new SymbolGroup();
+        defaultGroup.setId(GROUP_ID - 1L);
+
         given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
         given(symbolGroupRepository.findOne(GROUP_ID)).willReturn(group);
         given(symbolGroupRepository.save(group)).willThrow(DataIntegrityViolationException.class);
+        given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(defaultGroup);
 
         symbolGroupDAO.update(user, group); // should fail
     }
@@ -264,6 +272,9 @@ public class SymbolGroupDAOImplTest {
         group.setId(GROUP_ID);
         group.setProject(project);
 
+        SymbolGroup defaultGroup = new SymbolGroup();
+        defaultGroup.setId(GROUP_ID - 1L);
+
         ConstraintViolationException constraintViolationException;
         constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
@@ -274,6 +285,7 @@ public class SymbolGroupDAOImplTest {
         given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
         given(symbolGroupRepository.findOne(GROUP_ID)).willReturn(group);
         given(symbolGroupRepository.save(group)).willThrow(transactionSystemException);
+        given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(defaultGroup);
 
         symbolGroupDAO.update(user, group); // should fail
     }

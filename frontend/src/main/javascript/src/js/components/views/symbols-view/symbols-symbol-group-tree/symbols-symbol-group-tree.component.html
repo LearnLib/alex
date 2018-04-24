@@ -20,13 +20,13 @@
     </symbol-group-header>
     <div uib-collapse="vm.collapse">
         <div class="children" ng-if="vm.group.groups.length > 0">
-            <symbol-group-tree
+            <symbols-symbol-group-tree
                 ng-repeat="group in vm.group.groups | orderBy:'-name':true"
                 group="group"
                 level="{{vm.level + 1}}"
                 selected-symbols="vm.selectedSymbols"
             >
-            </symbol-group-tree>
+            </symbols-symbol-group-tree>
         </div>
         <div class="symbol-list" ng-if="vm.group.symbols.length > 0">
             <symbol-item
