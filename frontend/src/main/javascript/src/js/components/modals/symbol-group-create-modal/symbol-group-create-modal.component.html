@@ -29,12 +29,25 @@
             </div>
         </div>
 
+        <label>Parent group</label>
+        <div class="panel panel-default">
+            <div class="panel-body" style="padding: .5rem; max-height: 240px; overflow: auto">
+                <simple-symbol-group-tree
+                    groups="vm.groups"
+                    selected-symbol-group="vm.selectedSymbolGroup"
+                    on-symbol-group-selected="vm.selectSymbolGroup(group)"
+                >
+                </simple-symbol-group-tree>
+            </div>
+        </div>
+
         <div class="alert alert-danger alert-condensed" ng-if="vm.errorMsg" ng-bind="vm.errorMsg"></div>
 
     </div>
 
     <div class="modal-footer">
         <button class="btn btn-sm btn-primary" type="submit">Create</button>
+        <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
     </div>
 
 </form>

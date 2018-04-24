@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import flatten from 'lodash/flatten';
+import {SymbolGroupUtils} from '../../../../utils/symbol-group-utils';
 
 export const symbolSearchFormComponent = {
     template: require('./symbol-search-form.component.html'),
@@ -38,7 +38,7 @@ export const symbolSearchFormComponent = {
          * @return {*} The actions.
          */
         getSymbols() {
-            return flatten(this.groups.map(g => g.symbols));
+            return SymbolGroupUtils.getSymbols(this.groups);
         }
 
         /**

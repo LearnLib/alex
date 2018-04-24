@@ -1,0 +1,20 @@
+<div class="symbol-item d-flex w-100">
+    <div ng-class="{'visibility-hidden': !vm.selectable}">
+        <checkbox selection-model-ignore model="vm.symbol"></checkbox>
+    </div>
+    <div class="w-100" style="padding: 0 .75rem">
+        <div>
+            <a ui-sref="symbol({projectId: vm.symbol.project, symbolId: vm.symbol.id})">
+                <strong>{{vm.symbol.name}}</strong>
+            </a>
+        </div>
+        <div class="text-muted" ng-if="vm.symbol.actions.length > 0">
+            {{vm.symbol.actions.length}} Actions
+        </div>
+        <div>
+            <span class="label label-info" ng-if="vm.symbol.actions.length === 0">Not implemented</span>
+        </div>
+    </div>
+    <div ng-transclude>
+    </div>
+</div>

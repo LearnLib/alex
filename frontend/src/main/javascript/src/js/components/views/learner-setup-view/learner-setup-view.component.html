@@ -51,40 +51,21 @@
 
             </div>
 
-            <div class="alert alert-info alert-condensed" ng-if="vm.resetSymbol === null">
-                <i class="fa fa-fw fa-info-circle"></i> Select a reset symbol
-            </div>
-
             <hr>
 
             <div class="row">
                 <div class="col-sm-8 col-md-9">
-                    <div class="symbol-group-list" ng-if="vm.groups.length > 0">
-                        <symbol-group-list-item ng-repeat="group in vm.groups | orderBy:'-name':true"
-                                                group="group" editable="false">
 
-                            <div class="symbol-list">
-                                <div ng-repeat="symbol in group.symbols | orderBy:'-name':true" selection-model selection-model-selected-items="vm.selectedSymbols" ng-class="{'bg-info': symbol === vm.resetSymbol}">
-                                    <symbol-list-item symbol="symbol" selectable="symbol !== vm.resetSymbol">
-
-                                        <a class="label label-default label-reset"
-                                           ng-if="vm.resetSymbol !== symbol"
-                                           uib-tooltip="Use as reset" tooltip-placement="left"
-                                           selection-model-ignore
-                                           ng-click="vm.setResetSymbol(symbol)">
-                                            Reset
-                                        </a>
-
-                                        <span ng-if="vm.resetSymbol === symbol" class="label label-primary label-reset">
-                                            Reset
-                                        </span>
-
-                                    </symbol-list-item>
-                                </div>
-                            </div>
-
-                        </symbol-group-list-item>
+                    <div ng-repeat="group in vm.groups | orderBy:'-name':true" style="margin-bottom: 2rem">
+                        <learner-setup-symbol-group-tree
+                            group="group"
+                            selected-symbols="vm.selectedSymbols"
+                            reset-symbol="vm.resetSymbol"
+                            on-reset-symbol-selected="vm.setResetSymbol(symbol)"
+                        >
+                        </learner-setup-symbol-group-tree>
                     </div>
+
                 </div>
 
                 <div class="col-sm-4 col-md-3">
@@ -94,9 +75,12 @@
                         </div>
                         <div class="panel-body panel-body-list">
                             <div class="list-group">
-                                <a href="" class="list-group-item"
-                                   ng-repeat="result in vm.learnResults | orderBy:'-testNo':false | limitTo:5"
-                                   ng-click="vm.reuseConfigurationFromResult(result)">
+                                <a
+                                    href=""
+                                    class="list-group-item"
+                                    ng-repeat="result in vm.learnResults | orderBy:'-testNo':false | limitTo:5"
+                                    ng-click="vm.reuseConfigurationFromResult(result)"
+                                >
                                     <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
                                     TestNo <span ng-bind="result.testNo"></span>
 

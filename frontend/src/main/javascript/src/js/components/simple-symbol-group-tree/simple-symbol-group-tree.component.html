@@ -1,0 +1,11 @@
+<div class="simple-symbol-group-tree">
+    <simple-symbol-group-tree-item
+            ng-repeat="group in vm.groups | orderBy:'-name':true"
+            group="group"
+            selected-symbol-group="vm.selectedSymbolGroup"
+            selected-symbol="vm.selectedSymbol"
+            on-symbol-group-selected="vm.symbolGroupSelected(group)"
+            on-symbol-selected="vm.symbolSelected(symbol)"
+    >
+    </simple-symbol-group-tree-item>
+</div>

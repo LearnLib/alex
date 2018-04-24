@@ -10,6 +10,8 @@
 @import "sidebar";
 @import "animations";
 @import "symbol-parameters-panel.component";
+@import "simple-symbol-group-tree.component";
+@import "symbol-group-tree.component";
 
 *, *:after, *:before {
   box-sizing: border-box;
@@ -31,6 +33,14 @@ body {
       }
     }
   }
+}
+
+.bg-info {
+  background: #d9edf7;
+}
+
+.visibility-hidden {
+  visibility: hidden;
 }
 
 .text-wrap {
@@ -530,34 +540,6 @@ body {
 
 .counterexample-list-item {
   padding: 6px !important;
-}
-
-.symbol-group-list {
-  .symbol-group-list-item {
-    margin-bottom: 20px;
-    border: 1px solid #dadada;
-    border-radius: 4px;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, .075);
-
-    .symbol-list-item {
-      border-bottom: 0;
-      border-top: 1px solid #ddd;
-      padding: 8px 10px;
-    }
-
-    .symbol-group-list-item-header {
-      padding: 1rem;
-      background: #f2f2f2;
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
-      align-items: baseline;
-
-      .symbol-group-title {
-        font-size: 14px;
-        color: grey;
-      }
-    }
-  }
 }
 
 /* Other Stuff

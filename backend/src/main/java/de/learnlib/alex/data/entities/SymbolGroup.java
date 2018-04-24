@@ -33,7 +33,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -43,7 +45,6 @@ import java.util.Set;
 @Entity
 @Table(
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"projectId", "id"}),
                 @UniqueConstraint(columnNames = {"projectId", "name"})
         }
 )
@@ -63,11 +64,14 @@ public class SymbolGroup implements Serializable {
     @GeneratedValue
     private Long id;
 
-    /**
-     * The name of the group.
-     */
+    /** The name of the group. */
     @NotBlank
     private String name;
+
+    /** The parent group. Is null if the group is on the top level. */
+    @ManyToOne
+    @JoinColumn(name = "parentId")
+    private SymbolGroup parent;
 
     /** The Symbols manged by this group. */
     @OneToMany(
@@ -77,9 +81,18 @@ public class SymbolGroup implements Serializable {
     )
     private Set<Symbol> symbols;
 
+    /** The child groups. */
+    @OneToMany(
+            mappedBy = "parent",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    )
+    private List<SymbolGroup> groups;
+
     /** Constructor. */
     public SymbolGroup() {
         this.symbols = new HashSet<>();
+        this.groups = new ArrayList<>();
     }
 
     public Project getProject() {
@@ -134,6 +147,47 @@ public class SymbolGroup implements Serializable {
 
     public void setSymbols(Set<Symbol> symbols) {
         this.symbols = symbols == null ? new HashSet<>() : symbols;
+    }
+
+    public SymbolGroup getParent() {
+        return parent;
+    }
+
+    public void setParent(SymbolGroup parent) {
+        this.parent = parent;
+    }
+
+    /**
+     * Get the id of the parent group.
+     *
+     * @return The id of the parent group.
+     */
+    @Transient
+    @JsonProperty("parent")
+    public Long getParentId() {
+        return this.parent == null ? null : this.parent.getId();
+    }
+
+    /**
+     * Set the parent by its id.
+     *
+     * @param parentId
+     *         The id of the parent group or null.
+     */
+    @JsonProperty("parent")
+    public void setParentId(Long parentId) {
+        if (parentId != null) {
+            this.parent = new SymbolGroup();
+            this.parent.setId(parentId);
+        }
+    }
+
+    public List<SymbolGroup> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<SymbolGroup> groups) {
+        this.groups = groups;
     }
 
     /**

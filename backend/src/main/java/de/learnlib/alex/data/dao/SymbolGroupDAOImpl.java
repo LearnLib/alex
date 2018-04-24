@@ -32,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.hibernate.Hibernate;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
@@ -116,6 +117,16 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             checkIfNameIsUnique(project.getId(), group.getName());
             project.addGroup(group);
             beforePersistGroup(group);
+
+            if (group.getParentId() != null) {
+                final SymbolGroup parent = symbolGroupRepository.findOne(group.getParentId());
+                checkAccess(user, project, parent);
+
+                group.setParent(parent);
+                parent.getGroups().add(parent);
+                symbolGroupRepository.save(parent);
+            }
+
             symbolGroupRepository.save(group);
         } catch (DataIntegrityViolationException e) {
             LOGGER.info(IMPL_MARKER, "SymbolGroup creation failed:", e);
@@ -136,7 +147,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         final Project project = projectRepository.findOne(projectId);
         projectDAO.checkAccess(user, project);
 
-        final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_Id(projectId);
+        final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
         for (SymbolGroup group : groups) {
             initLazyRelations(user, group, embedFields);
         }
@@ -166,6 +177,15 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         checkIfNameIsUnique(group.getProjectId(), group.getName());
 
+        if (group.getParentId() != null && group.getParentId().equals(groupInDB.getId())) {
+            throw new ValidationException("A group cannot have itself as child.");
+        }
+
+        final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(project.getId());
+        if (defaultGroup.equals(groupInDB) && group.getParentId() != null) {
+            throw new ValidationException("The default group cannot be a child of another group.");
+        }
+
         try {
             groupInDB.setProject(project);
             groupInDB.setName(group.getName());
@@ -192,14 +212,26 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             throw new IllegalArgumentException("You can not delete the default group of a project.");
         }
 
+        hideSymbols(group, defaultGroup);
+        for (SymbolGroup child: group.getGroups()) {
+            hideSymbols(child, defaultGroup);
+        }
+
+        if (group.getParent() != null) {
+            group.getParent().getGroups().remove(group);
+            symbolGroupRepository.save(group.getParent());
+        }
+
+        group.setSymbols(null);
+        symbolGroupRepository.delete(group);
+    }
+
+    private void hideSymbols(SymbolGroup group, SymbolGroup defaultGroup) {
         for (Symbol symbol : group.getSymbols()) {
             symbol.setGroup(defaultGroup);
             symbol.setHidden(true);
             symbolRepository.save(symbol);
         }
-
-        group.setSymbols(null);
-        symbolGroupRepository.delete(group);
     }
 
     @Override
@@ -219,6 +251,9 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     private void initLazyRelations(User user, SymbolGroup group, EmbeddableFields... embedFields) {
         Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
+        Hibernate.initialize(group.getGroups());
+        Hibernate.initialize(group.getProject().getUrls());
+
         if (fieldsToLoad.contains(EmbeddableFields.COMPLETE_SYMBOLS)) {
             group.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
         } else if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
@@ -228,8 +263,10 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             } catch (NotFoundException e) {
                 group.setSymbols(null);
             }
-        } else {
-            group.setSymbols(null);
+        }
+
+        for (SymbolGroup child: group.getGroups()) {
+            initLazyRelations(user, child, embedFields);
         }
     }
 

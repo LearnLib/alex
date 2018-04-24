@@ -4,7 +4,7 @@
         <checkbox selection-model-ignore model="vm.symbol" class="pull-left"></checkbox>
     </div>
 
-    <div class="flex-grow-1 mr-1">
+    <div class="w-100 mr-1">
         <div>
             <a ui-sref="symbol({projectId: vm.symbol.project, symbolId: vm.symbol.id})"
                ng-if="vm.symbol.id && !vm.symbol.hidden" style="color: #333">
@@ -13,40 +13,9 @@
             <strong ng-if="vm.symbol.id == null || vm.symbol.hidden">{{vm.symbol.name}}</strong>
         </div>
 
-        <span class="text-muted cursor-pointer" ng-click="vm.toggleCollapsed()" selection-model-ignore>
-            <span ng-bind="vm.symbol.countEnabledActions()"></span>
-            Actions
-            <i class="fa fa-chevron-right"></i>
+        <span class="text-muted" selection-model-ignore>
+            <span>{{vm.symbol.countEnabledActions()}} Actions</span>
         </span>
-
-        <div uib-collapse="!vm.collapsed">
-            <div class="panel panel-default" style="margin-top: 5px;">
-                <div class="panel-heading clearfix">
-                    <button class="btn btn-xs btn-icon pull-right" ng-click="vm.toggleCollapsed()">
-                        <i class="fa fa-close"></i>
-                    </button>
-                    <a ui-sref="symbol({projectId: vm.symbol.project, symbolId: vm.symbol.id})"
-                       class="btn btn-xs btn-default"
-                       ng-if="vm.symbol.id && !vm.symbol.hidden">
-                        Edit actions
-                    </a>
-                </div>
-                <ul class="list-group list-group-condensed">
-                    <li class="list-group-item" ng-repeat="action in vm.symbol.actions" ng-if="!action.disabled">
-
-                        <span class="label label-info pull-right" ng-if="action.negated">
-                            Negate
-                        </span>
-
-                        <span class="label label-danger pull-right" ng-if="action.ignoreFailure">
-                            Ignore failure
-                        </span>
-
-                        <span ng-bind="action.toString()"></span>
-                    </li>
-                </ul>
-            </div>
-        </div>
     </div>
 
     <div ng-transclude selection-model-ignore></div>

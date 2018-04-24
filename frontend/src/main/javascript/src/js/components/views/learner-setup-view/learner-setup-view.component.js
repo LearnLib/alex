@@ -16,6 +16,7 @@
 
 import flatten from 'lodash/flatten';
 import {LearnConfiguration} from '../../../entities/learner-configuration';
+import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
 
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
@@ -112,7 +113,7 @@ class LearnerSetupViewComponent {
                     SymbolGroupResource.getAll(this.project.id, true)
                         .then(groups => {
                             this.groups = groups;
-                            this.allSymbols = flatten(this.groups.map(g => g.symbols));
+                            this.allSymbols = SymbolGroupUtils.getSymbols(this.groups);
                         })
                         .catch(err => console.log(err));
 
@@ -188,13 +189,11 @@ class LearnerSetupViewComponent {
         this.learnConfiguration.driverConfig = result.driverConfig;
         this.learnConfiguration.urlIds = result.urls.map(url => url.id);
 
-        this.groups.forEach(group => {
-            group.symbols.forEach(symbol => {
-                symbol._selected = result.symbols.indexOf(symbol.id) > -1;
-                if (symbol.id === result.resetSymbol) {
-                    this.resetSymbol = symbol;
-                }
-            });
+        SymbolGroupUtils.getSymbols(this.groups).forEach(symbol => {
+            symbol._selected = result.symbols.indexOf(symbol.id) > -1;
+            if (symbol.id === result.resetSymbol) {
+                this.resetSymbol = symbol;
+            }
         });
     }
 }

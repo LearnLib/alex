@@ -34,13 +34,6 @@ export class SymbolCreateModalComponent {
         this.ToastService = ToastService;
 
         /**
-         * The default group.
-         * @type {null}
-         * @private
-         */
-        this.defaultGroup = null;
-
-        /**
          * The project that is in the session.
          * @type {Project}
          */
@@ -63,22 +56,33 @@ export class SymbolCreateModalComponent {
          * @type {String|null}
          */
         this.errorMessage = null;
+
+        /**
+         * The selected symbol group.
+         * @type {SymbolGroup}
+         */
+        this.selectedSymbolGroup = null;
     }
 
     $onInit() {
         this.groups = this.resolve.modalData.groups;
-        // get the default group
-        this.defaultGroup = this.groups.reduce((acc, curr) => curr.id < acc.id ? curr : acc);
-        this.symbol.group = this.defaultGroup.id;
+        this.selectedSymbolGroup = this._getDefaultGroup();
+        this.symbol.group = this.selectedSymbolGroup.id;
+    }
+
+    _getDefaultGroup() {
+        return this.groups.reduce((acc, curr) => curr.id < acc.id ? curr : acc);
     }
 
     _createSymbol() {
+        this.symbol.group = this.selectedSymbolGroup.id;
+
         return this.SymbolResource.create(this.project.id, this.symbol)
             .then(symbol => {
                 this.ToastService.success(`Created symbol "${symbol.name}"`);
                 this.resolve.modalData.onCreated({symbol});
                 this.symbol = new AlphabetSymbol();
-                this.symbol.group = this.defaultGroup.id;
+                this.symbol.group = this._getDefaultGroup().id;
 
                 // set the form to its original state
                 this.form.$setPristine();
@@ -105,6 +109,14 @@ export class SymbolCreateModalComponent {
         this._createSymbol()
             .then(this.dismiss)
             .catch(response => this.errorMessage = response.data.message);
+    }
+
+    selectSymbolGroup(group) {
+        if (this.selectedSymbolGroup != null && this.selectedSymbolGroup.id === group.id) {
+            this.selectedSymbolGroup = this._getDefaultGroup();
+        } else {
+            this.selectedSymbolGroup = group;
+        }
     }
 
 }

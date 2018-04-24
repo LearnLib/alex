@@ -1,0 +1,75 @@
+<div class="symbol-group-tree">
+    <symbol-group-header group="vm.group" collapse="vm.collapse">
+        <div class="btn-group btn-group-xs pull-right" uib-dropdown>
+            <button type="button" class="btn btn-default btn-icon" uib-dropdown-toggle>
+                <i class="fa fa-bars"></i>
+            </button>
+            <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
+                <li>
+                    <a href="" symbol-group-edit-modal-handle group="group">
+                        <i class="fa fa-edit fa-fw"></i> Edit
+                    </a>
+                </li>
+                <li>
+                    <a href="" ng-click="vm.deleteGroup(group)">
+                        <i class="fa fa-trash fa-fw"></i> Delete
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </symbol-group-header>
+    <div uib-collapse="vm.collapse">
+        <div class="children" ng-if="vm.group.groups.length > 0">
+            <symbol-group-tree
+                ng-repeat="group in vm.group.groups | orderBy:'-name':true"
+                group="group"
+                level="{{vm.level + 1}}"
+                selected-symbols="vm.selectedSymbols"
+            >
+            </symbol-group-tree>
+        </div>
+        <div class="symbol-list" ng-if="vm.group.symbols.length > 0">
+            <symbol-item
+                ng-repeat="symbol in vm.group.symbols | orderBy:'-name':true"
+                selection-model
+                selection-model-selected-items="vm.selectedSymbols"
+                selection-model-mode="'multiple-additive'"
+                selectable="true"
+                symbol="symbol"
+                selected-symbols="vm.selectedSymbols"
+            >
+
+                <div class="btn-group btn-group-xs pull-right" uib-dropdown selection-model-ignore>
+                    <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
+                        <li>
+                            <a href="" symbol-edit-modal-handle symbol="symbol">
+                                <i class="fa fa-edit fa-fw"></i> Edit
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" ng-click="vm.copySymbol(symbol)">
+                                <i class="fa fa-copy fa-fw"></i> Copy
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" symbol-move-modal-handle symbols="[symbol]">
+                                <i class="fa fa-exchange fa-fw"></i> Move
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" ng-click="vm.deleteSymbol(symbol)">
+                                <i class="fa fa-trash fa-fw"></i> Delete
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </symbol-item>
+        </div>
+    </div>
+</div>
+
+

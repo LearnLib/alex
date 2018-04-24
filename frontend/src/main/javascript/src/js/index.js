@@ -93,6 +93,10 @@ import {webhookFormComponent} from './components/forms/webhook-form/webhook-form
 import {htmlElementPickerComponent} from './components/html-element-picker/html-element-picker.component';
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
 import {symbolParameterEditModalComponent} from './components/modals/symbol-parameter-edit-modal/symbol-parameter-edit-modal.component';
+import {simpleSymbolGroupTreeItemComponent} from './components/simple-symbol-group-tree/simple-symbol-group-tree-item/simple-symbol-group-tree-item.component';
+import {simpleSymbolGroupTreeComponent} from './components/simple-symbol-group-tree/simple-symbol-group-tree.component';
+import {symbolGroupHeaderComponent} from './components/symbol-group-tree/symbol-group-header/symbol-group-header.component';
+import {symbolItemComponent} from './components/symbol-group-tree/symbol-item/symbol-item.component';
 import {symbolParametersPanelComponent} from './components/symbol-parameters-panel/symbol-parameters-panel.component';
 import {learnerResultListItemComponent} from './components/learner-result-list-item/learner-result-list-item.component';
 import {learnerResultPanelComponent} from './components/learner-result-panel/learner-result-panel.component';
@@ -138,7 +142,6 @@ import {observationTableComponent} from './components/observation-table/observat
 import {projectListComponent} from './components/project-list/project-list.component';
 import {responsiveIframeComponent} from './components/responsive-iframe/responsive-iframe.component';
 import {sidebarComponent} from './components/sidebar/sidebar.component';
-import {symbolGroupListItemComponent} from './components/symbol-group-list-item/symbol-group-list-item.component';
 import {symbolListItemComponent} from './components/symbol-list-item/symbol-list-item.component';
 import {testResultReportComponent} from './components/test-result-report/test-result-report.component';
 import {testCaseNodeComponent} from './components/test-tree/test-case-node/test-case-node.component';
@@ -151,6 +154,7 @@ import {adminUsersViewComponent} from './components/views/admin-users-view/admin
 import {countersViewComponent} from './components/views/counters-view/counters-view.component';
 import {errorViewComponent} from './components/views/error-view/error-view.component';
 import {filesViewComponent} from './components/views/files-view/files-view.component';
+import {learnerSetupSymbolGroupTreeComponent} from './components/views/learner-setup-view/learner-setup-symbol-group-tree/learner-setup-symbol-group-tree.component';
 import {redirectViewComponent} from './components/views/redirect-view/redirect-view.component';
 import {rootViewComponent} from './components/views/root-view/root-view.component';
 import {resultsCompareViewComponent} from './components/views/learner-results-compare-view/learner-results-compare-view.component';
@@ -163,6 +167,7 @@ import {statisticsCompareViewComponent} from './components/views/statistics-comp
 import {symbolViewComponent} from './components/views/symbol-view/symbol-view.component';
 import {symbolsArchiveViewComponent} from './components/views/symbols-archive-view/symbols-archive-view.component';
 import {symbolSearchFormComponent} from './components/views/symbols-view/symbol-search-form/symbol-search-form.component';
+import {symbolsSymbolGroupTreeComponent} from './components/views/symbols-view/symbols-symbol-group-tree/symbols-symbol-group-tree.component';
 import {symbolsViewComponent} from './components/views/symbols-view/symbols-view.component';
 import {testCaseViewComponent} from './components/views/test-case-view/test-case-view.component';
 import {testReportViewComponent} from './components/views/test-report-view/test-report-view.component';
@@ -453,13 +458,18 @@ angular
     .component('learnerResultPanel', learnerResultPanelComponent)
     .component('observationTable', observationTableComponent)
     .component('symbolListItem', symbolListItemComponent)
-    .component('symbolGroupListItem', symbolGroupListItemComponent)
     .component('learnerResultListItem', learnerResultListItemComponent)
     .component('testResultReport', testResultReportComponent)
     .component('testTree', testTreeComponent)
     .component('testCaseNode', testCaseNodeComponent)
     .component('symbolParametersPanel', symbolParametersPanelComponent)
     .component('testSuiteNode', testSuiteNodeComponent)
-    .component('projectUrlList', projectUrlListComponent);
+    .component('projectUrlList', projectUrlListComponent)
+    .component('simpleSymbolGroupTree', simpleSymbolGroupTreeComponent)
+    .component('simpleSymbolGroupTreeItem', simpleSymbolGroupTreeItemComponent)
+    .component('symbolGroupHeader', symbolGroupHeaderComponent)
+    .component('symbolItem', symbolItemComponent)
+    .component('symbolsSymbolGroupTree', symbolsSymbolGroupTreeComponent)
+    .component('learnerSetupSymbolGroupTree', learnerSetupSymbolGroupTreeComponent);
 
 angular.bootstrap(document, ['ALEX']);

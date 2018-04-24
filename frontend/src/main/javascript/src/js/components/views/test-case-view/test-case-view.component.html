@@ -53,23 +53,9 @@
                         <symbol-search-form groups="vm.groups" on-selected="vm.addSymbolStep(symbol)"></symbol-search-form>
                     </div>
 
-                    <div class="panel panel-default" ng-repeat="group in vm.groups">
-                        <div class="panel-heading">
-                            <strong>{{group.name}}</strong>
-                        </div>
-                        <div class="panel-body panel-body-list">
-                            <div class="list-group" style="margin-bottom: 0" ng-if="group.symbols.length">
-                                <div class="list-group-item" ng-repeat="symbol in group.symbols" ng-click="vm.addSymbolStep(symbol)">
-                                    <button ui-sref="symbol({projectId: symbol.project, symbolId: symbol.id})"
-                                            class="text-muted btn btn-xs btn-icon pull-right">
-                                        <i class="fa fa-edit"></i>
-                                    </button>
-                                    {{symbol.name}}
-                                </div>
-                            </div>
-                            <div class="alert alert-info rounded-0" ng-if="!group.symbols.length" style="margin-bottom: 0">
-                                There are no symbols in this group.
-                            </div>
+                    <div class="panel panel-default">
+                        <div class="panel-body" style="padding: .5rem; overflow: auto">
+                            <simple-symbol-group-tree groups="vm.groups" on-symbol-selected="vm.addSymbolStep(symbol)"></simple-symbol-group-tree>
                         </div>
                     </div>
                 </div>

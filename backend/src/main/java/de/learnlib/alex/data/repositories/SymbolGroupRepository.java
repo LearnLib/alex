@@ -41,6 +41,19 @@ public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, Long> 
     List<SymbolGroup> findAllByProject_Id(Long projectId);
 
     /**
+     * Find all symbol groups by project and its parent.
+     *
+     * @param projectId
+     *         The id of the project.
+     * @param parentId
+     *         The id of the parent. May be null.
+     * @return The symbol groups.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<SymbolGroup> findAllByProject_IdAndParent_id(Long projectId, Long parentId);
+
+    /**
      * Find a symbol group by its name.
      *
      * @param projectId

@@ -14,7 +14,7 @@
                         <a href="" symbol-create-modal-handle groups="vm.groups" on-created="vm.addSymbol(symbol)">Symbol</a>
                     </li>
                     <li>
-                        <a href="" symbol-group-create-modal-handle on-created="vm.groups.push(group)">Group</a>
+                        <a href="" symbol-group-create-modal-handle on-created="vm.addGroup(group)">Group</a>
                     </li>
                 </ul>
             </div>
@@ -45,10 +45,6 @@
                     <i class="fa fa-fw fa-download"></i>
                 </button>
             </div>
-
-            <button class="btn btn-sm btn-default" ng-click="vm.copySelectedSymbol()" uib-tooltip="Copy" tooltip-placement="bottom" ng-class="{'disabled': vm.selectedSymbols.length !== 1}">
-                <i class="fa fa-fw fa-copy"></i>
-            </button>
         </div>
     </action-bar>
 
@@ -61,53 +57,8 @@
                 </symbol-search-form>
             </div>
 
-            <div class="symbol-group-list">
-                <symbol-group-list-item ng-repeat="group in vm.groups | orderBy:'-name':true"
-                                        group="group" editable="true">
-
-                    <div class="symbol-list">
-                        <symbol-list-item ng-repeat="symbol in group.symbols | orderBy:'-name':true" symbol="symbol"
-                                          selection-model selection-model-selected-items="vm.selectedSymbols"
-                                          selectable="true">
-
-                            <div class="btn-group btn-group-xs pull-right" uib-dropdown>
-                                <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
-                                    <i class="fa fa-bars"></i>
-                                </button>
-                                <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
-                                    <li>
-                                        <a href="" symbol-edit-modal-handle symbol="symbol">
-                                            <i class="fa fa-edit fa-fw"></i> Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="" ng-click="vm.copySymbol(symbol)">
-                                            <i class="fa fa-copy fa-fw"></i> Copy
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="" ng-click="vm.deleteSymbol(symbol)">
-                                            <i class="fa fa-trash fa-fw"></i> Delete
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="" symbol-move-modal-handle symbols="[symbol]">
-                                            <i class="fa fa-exchange fa-fw"></i> Move
-                                        </a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li>
-                                        <a ui-sref="symbol({projectId: symbol.project, symbolId: symbol.id})">
-                                            <i class="fa fa-list-ol fa-fw"></i> Actions
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                        </symbol-list-item>
-                    </div>
-
-                </symbol-group-list-item>
+            <div style="margin-bottom: 2rem" ng-repeat="group in vm.groups | orderBy:'-name':true">
+                <symbols-symbol-group-tree group="group" selected-symbols="vm.selectedSymbols"></symbols-symbol-group-tree>
             </div>
 
         </div>

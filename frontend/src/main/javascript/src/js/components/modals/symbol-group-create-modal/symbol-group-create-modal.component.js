@@ -46,10 +46,25 @@ export class SymbolGroupCreateModalComponent {
         this.group = new SymbolGroup();
 
         /**
+         * All available groups of the project.
+         * @type {SymbolGroup[]}
+         */
+        this.groups = [];
+
+        /**
+         * The selected symbol group.
+         * @type {SymbolGroup}
+         */
+        this.selectedSymbolGroup = null;
+
+        /**
          * An error message that can be displayed in the modal template.
          * @type {String|null}
          */
         this.errorMsg = null;
+
+        this.SymbolGroupResource.getAll(this.project.id, true)
+            .then(groups => this.groups = groups);
     }
 
     /**
@@ -57,6 +72,7 @@ export class SymbolGroupCreateModalComponent {
      */
     createGroup() {
         this.errorMsg = null;
+        this.group.parent = this.selectedSymbolGroup == null ? null : this.selectedSymbolGroup.id;
 
         this.SymbolGroupResource.create(this.project.id, this.group)
             .then(createdGroup => {
@@ -67,6 +83,14 @@ export class SymbolGroupCreateModalComponent {
             .catch(response => {
                 this.errorMsg = response.data.message;
             });
+    }
+
+    selectSymbolGroup(group) {
+        if (this.selectedSymbolGroup != null && this.selectedSymbolGroup.id === group.id) {
+            this.selectedSymbolGroup = null;
+        } else {
+            this.selectedSymbolGroup = group;
+        }
     }
 }
 

@@ -19,6 +19,7 @@ package de.learnlib.alex.data.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
@@ -155,9 +156,10 @@ public class SymbolGroupDAOImplTest {
         project.setId(PROJECT_ID);
 
         List<SymbolGroup> groups = createGroupsList();
+        groups.forEach(g -> g.setProject(project));
 
         given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
-        given(symbolGroupRepository.findAllByProject_Id(PROJECT_ID)).willReturn(groups);
+        given(symbolGroupRepository.findAllByProject_IdAndParent_id(PROJECT_ID, null)).willReturn(groups);
 
         List<SymbolGroup> allGroups = symbolGroupDAO.getAll(user, PROJECT_ID);
 

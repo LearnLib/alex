@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
+
 /**
  * The directive for the dashboard widget that displays information about the current project.
  */
@@ -53,9 +55,7 @@ class ProjectDetailsWidgetComponent {
         this.SymbolGroupResource.getAll(this.project.id, true)
             .then(groups => {
                 this.numberOfGroups = groups.length;
-                let counter = 0;
-                groups.forEach(g => counter += g.symbols.length);
-                this.numberOfSymbols = counter;
+                this.numberOfSymbols = SymbolGroupUtils.getSymbols(groups).length;
             })
             .catch(err => console.log(err));
 

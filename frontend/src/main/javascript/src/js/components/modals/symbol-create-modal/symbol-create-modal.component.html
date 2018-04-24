@@ -11,11 +11,16 @@
 
         <symbol-form-groups symbol="vm.symbol" form="vm.form"></symbol-form-groups>
 
-        <div class="form-group">
-            <label>Group</label>
-            <select class="form-control" ng-model="vm.symbol.group">
-                <option ng-repeat="group in vm.groups" ng-value="group.id">{{group.name}}</option>
-            </select>
+        <label>Group</label>
+        <div class="panel panel-default">
+            <div class="panel-body" style="padding: .5rem; max-height: 240px; overflow: auto">
+                <simple-symbol-group-tree
+                    groups="vm.groups"
+                    selected-symbol-group="vm.selectedSymbolGroup"
+                    on-symbol-group-selected="vm.selectSymbolGroup(group)"
+                >
+                </simple-symbol-group-tree>
+            </div>
         </div>
 
         <div class="alert alert-danger" ng-if="vm.errorMessage" ng-bind="vm.errorMessage"></div>
@@ -25,6 +30,7 @@
     <div class="modal-footer">
         <a href="" ng-click="vm.createSymbolAndContinue()" class="btn btn-info btn-sm">Create and continue</a>
         <button class="btn btn-primary btn-sm" type="submit">Create</button>
+        <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
     </div>
 
 </form>

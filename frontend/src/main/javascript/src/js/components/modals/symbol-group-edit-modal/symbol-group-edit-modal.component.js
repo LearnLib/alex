@@ -29,12 +29,14 @@ export class SymbolGroupEditModalComponent {
      * @param {SymbolGroupResource} SymbolGroupResource
      * @param {ToastService} ToastService
      * @param {EventBus} EventBus
+     * @param {PromptService} PromptService
      */
     // @ngInject
-    constructor(SymbolGroupResource, ToastService, EventBus) {
+    constructor(SymbolGroupResource, ToastService, EventBus, PromptService) {
         this.SymbolGroupResource = SymbolGroupResource;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
+        this.PromptService = PromptService;
 
         /**
          * The symbol group that should be edited.
@@ -64,25 +66,6 @@ export class SymbolGroupEditModalComponent {
                 this.ToastService.success('Group updated');
                 this.EventBus.emit(events.GROUP_UPDATED, {
                     group: updatedGroup
-                });
-                this.dismiss();
-            })
-            .catch(response => {
-                this.errorMsg = response.data.message;
-            });
-    }
-
-    /**
-     * Deletes the symbol group under edit and closes the modal dialog on success.
-     */
-    deleteGroup() {
-        this.errorMsg = null;
-
-        this.SymbolGroupResource.remove(this.group)
-            .then(() => {
-                this.ToastService.success(`Group <strong>${this.group.name}</strong> deleted`);
-                this.EventBus.emit(events.GROUP_DELETED, {
-                    group: this.group
                 });
                 this.dismiss();
             })

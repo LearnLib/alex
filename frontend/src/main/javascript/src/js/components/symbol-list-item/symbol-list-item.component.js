@@ -29,23 +29,10 @@ export const symbolListItemComponent = {
         constructor() {
 
             /**
-             * Flag that indicates if the actions should be displayed.
-             * @type {boolean}
-             */
-            this.collapsed = false;
-
-            /**
              * If the symbol is selectable.
              * @type {boolean}
              */
             this.selectable = true;
-        }
-
-        /**
-         * Toggles the status of the collapsed action list between visible and not visible.
-         */
-        toggleCollapsed() {
-            this.collapsed = !this.collapsed;
         }
     },
     controllerAs: 'vm',

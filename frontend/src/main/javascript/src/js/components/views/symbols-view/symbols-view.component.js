@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import flatten from 'lodash/flatten';
 import remove from 'lodash/remove';
 import {events} from '../../../constants';
 import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
 import {DateUtils} from '../../../utils/date-utils';
+import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
 
 /**
  * The controller that handles CRUD operations on symbols and symbol groups.
@@ -94,22 +94,12 @@ class SymbolsViewComponent {
     }
 
     /**
-     * Finds the symbol group object from a given symbol. Returns undefined if no symbol group was found.
-     *
-     * @param symbol - The symbol whose group object should be found.
-     * @returns {SymbolGroup|undefined} - The found symbol group or undefined.
-     */
-    findGroupFromSymbol(symbol) {
-        return this.groups.find(g => g.id === symbol.group);
-    }
-
-    /**
      * Extracts all symbols from all symbol groups and merges them into a single array.
      *
      * @returns {AlphabetSymbol[]}
      */
     getAllSymbols() {
-        return flatten(this.groups.map(g => g.symbols));
+        return SymbolGroupUtils.getSymbols(this.groups);
     }
 
     /**
@@ -118,7 +108,8 @@ class SymbolsViewComponent {
      * @param {AlphabetSymbol} symbol - The symbol that should be added.
      */
     addSymbol(symbol) {
-        this.findGroupFromSymbol(symbol).symbols.push(symbol);
+        const group = SymbolGroupUtils.findGroupById(this.groups, symbol.group);
+        group.symbols.push(symbol);
     }
 
     /**
@@ -138,7 +129,7 @@ class SymbolsViewComponent {
      */
     removeSymbols(symbols) {
         symbols.forEach(symbol => {
-            const group = this.findGroupFromSymbol(symbol);
+            const group = SymbolGroupUtils.findGroupById(this.groups, symbol.group);
             remove(group.symbols, {id: symbol.id});
         });
     }
@@ -159,7 +150,7 @@ class SymbolsViewComponent {
      */
     updateSymbols(updatedSymbols) {
         updatedSymbols.forEach(symbol => {
-            const group = this.findGroupFromSymbol(symbol);
+            const group = SymbolGroupUtils.findGroupById(this.groups, symbol.group);
             const i = group.symbols.findIndex(s => s.id === symbol.id);
             if (i > -1) {
                 group.symbols[i].name = symbol.name;
@@ -175,39 +166,15 @@ class SymbolsViewComponent {
      * @param {SymbolGroup} group - The group the symbols should be moved into.
      */
     moveSymbolsToGroup(symbols, group) {
-        const toGroup = this.groups.find(g => g.id === group.id);
+        const toGroup = SymbolGroupUtils.findGroupById(this.groups, group.id);
 
         symbols.forEach(symbol => {
-            const g = this.findGroupFromSymbol(symbol);
+            const g = SymbolGroupUtils.findGroupById(this.groups, symbol.group);
             const i = g.symbols.findIndex(s => s.id === symbol.id);
             g.symbols.splice(i, 1);
             symbol.group = group.id;
             toGroup.symbols.push(symbol);
         });
-    }
-
-    /**
-     * Navigate to the symbol from the search form.
-     * @param {AlphabetSymbol} symbol - The symbol.
-     */
-    selectSymbol(symbol) {
-        this.$state.go('symbol', {projectId: symbol.project, symbolId: symbol.id});
-    }
-
-    /**
-     * Deletes a single symbol from the server and from the scope if the deletion was successful.
-     *
-     * @param {AlphabetSymbol} symbol - The symbol to be deleted.
-     */
-    deleteSymbol(symbol) {
-        this.SymbolResource.remove(symbol)
-            .then(() => {
-                this.ToastService.success('Symbol <strong>' + symbol.name + '</strong> deleted');
-                this.removeSymbols([symbol]);
-            })
-            .catch(response => {
-                this.ToastService.danger('<p><strong>Deleting symbol failed</strong></p>' + response.data.message);
-            });
     }
 
     /**
@@ -225,13 +192,32 @@ class SymbolsViewComponent {
     }
 
     /**
+     * Adds a new group to the list.
+     *
+     * @param {SymbolGroup} createdGroup The created group.
+     */
+    addGroup(createdGroup) {
+        if (createdGroup.parent == null) {
+            this.groups.push(createdGroup);
+        } else {
+            const g = SymbolGroupUtils.findGroupById(this.groups, createdGroup.parent);
+            g.groups.push(createdGroup);
+        }
+    }
+
+    /**
      * Updates a symbol group in the scope by changing its name property to the one of the groups that is passed
      * as a parameter.
      *
      * @param {SymbolGroup} updatedGroup - The updated symbol group.
      */
     updateGroup(updatedGroup) {
-        const group = this.groups.find(g => g.id === updatedGroup.id);
+        let group = null;
+        if (updatedGroup.parent == null) {
+            group = this.groups.find(g => g.id === updatedGroup.id);
+        } else {
+            group = SymbolGroupUtils.findGroupById(this.groups, updatedGroup.id);
+        }
         group.name = updatedGroup.name;
     }
 
@@ -242,7 +228,12 @@ class SymbolsViewComponent {
      */
     deleteGroup(group) {
         this.removeSymbols(group.symbols);
-        remove(this.groups, {id: group.id});
+        if (group.parent == null) {
+            remove(this.groups, {id: group.id});
+        } else {
+            const g = SymbolGroupUtils.findGroupById(this.groups, group.parent);
+            remove(g.groups, {id: group.id});
+        }
     }
 
     /**
@@ -261,53 +252,6 @@ class SymbolsViewComponent {
         } else {
             this.ToastService.info('Select symbols you want to export');
         }
-    }
-
-    /**
-     * Copy a selected symbol.
-     */
-    copySelectedSymbol() {
-        const symbol = this.selectedSymbols.find(s => s._selected);
-        if (symbol) {
-            this.copySymbol(symbol);
-        } else {
-            this.ToastService.info('You have to select a symbol to copy it');
-        }
-    }
-
-    /**
-     * Copy a symbol.
-     * @param {AlphabetSymbol} symbol
-     */
-    copySymbol(symbol) {
-        this.PromptService.prompt('Enter a name for the new symbol', symbol.name)
-            .then(name => {
-                // check if a symbol with the same name exists
-                const symbolWithNameExists = this.getAllSymbols().findIndex(s => s.name === name) > -1;
-                if (symbolWithNameExists) {
-                    this.ToastService.info(`The symbol with the name "${name}" already exists`);
-                    return;
-                }
-
-                const s = new AlphabetSymbol();
-                s.name = name;
-                s.actions = [];
-                s.group = symbol.group;
-                s.project = this.project.id;
-
-                // first create the symbol without actions
-                // then update the symbol with actions
-                this.SymbolResource.create(this.project.id, s)
-                    .then(data => {
-                        data.actions = symbol.actions;
-                        return this.SymbolResource.update(data)
-                            .then(data => {
-                                this.addSymbol(data);
-                                this.ToastService.success('The symbol has been copied.');
-                            });
-                    })
-                    .catch(err => this.ToastService.danger(`The symbol could not be created. ${err.data.message}`));
-            });
     }
 }
 

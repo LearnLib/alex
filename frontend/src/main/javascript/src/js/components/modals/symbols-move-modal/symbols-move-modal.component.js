@@ -57,7 +57,6 @@ export class SymbolMoveModalComponent {
          */
         this.selectedGroup = null;
 
-        // fetch all symbolGroups
         SymbolGroupResource.getAll(project.id).then(groups => {
             this.groups = groups;
         });

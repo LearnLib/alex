@@ -35,6 +35,12 @@ export class SymbolGroup {
         this.name = obj.name || null;
 
         /**
+         * The id of the parent group.
+         * @type {number}
+         */
+        this.parent = obj.parent || null;
+
+        /**
          * The id of the group.
          * @type {number}
          */
@@ -51,5 +57,11 @@ export class SymbolGroup {
          * @type {AlphabetSymbol[]}
          */
         this.symbols = obj.symbols ? obj.symbols.filter(s => !s.hidden).map(s => new AlphabetSymbol(s)) : [];
+
+        /**
+         * The children symbol groups.
+         * @type {SymbolGroup[]}
+         */
+        this.groups = obj.groups ? obj.groups.map(g => new SymbolGroup(g)) : [];
     }
 }
