@@ -90,7 +90,7 @@ public interface SymbolDAO {
      *         If no Symbol was found.
      */
     List<Symbol> getByIds(User user, Long projectId, SymbolVisibilityLevel visibilityLevel,
-                          List<Long> ids)
+            List<Long> ids)
             throws NotFoundException;
 
     /**
@@ -198,28 +198,34 @@ public interface SymbolDAO {
      *
      * @param user
      *         The user performing the action.
-     * @param symbol
-     *         The Symbol to move.
+     * @param projectId
+     *         The id of the project.
+     * @param symbolId
+     *         The id of the symbol to move.
      * @param newGroupId
      *         The new Group.
+     * @return The group with the updated parent group.
      * @throws NotFoundException
      *         If the Symbol or the Group could not be found.
      */
-    void move(User user, Symbol symbol, Long newGroupId) throws NotFoundException;
+    Symbol move(User user, Long projectId, Long symbolId, Long newGroupId) throws NotFoundException;
 
     /**
      * Moves a List of Symbols ot a new Group. If one Symbol failed to be move, no Symbol will be moved.
      *
      * @param user
      *         The user performing the action.
-     * @param symbols
-     *         The Symbol to move.
+     * @param projectId
+     *         The id of the project.
+     * @param symbolIds
+     *         The ids of the symbols to move.
      * @param newGroupId
      *         The new Group.
+     * @return The groups with the updated parent group.
      * @throws NotFoundException
      *         If at least one of the Symbols or if the Group could not be found.
      */
-    void move(User user, List<Symbol> symbols, Long newGroupId) throws NotFoundException;
+    List<Symbol> move(User user, Long projectId, List<Long> symbolIds, Long newGroupId) throws NotFoundException;
 
     /**
      * Mark a symbol as hidden.

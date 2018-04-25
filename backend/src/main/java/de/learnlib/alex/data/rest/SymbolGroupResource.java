@@ -90,7 +90,8 @@ public class SymbolGroupResource {
      * @param group
      *         The group to create.
      * @return On success the added group (enhanced with information from the DB); an error message on failure.
-     * @throws NotFoundException If the related Project could not be found.
+     * @throws NotFoundException
+     *         If the related Project could not be found.
      * @responseType de.learnlib.alex.data.entities.SymbolGroup
      * @successResponse 201 created
      * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
@@ -113,7 +114,7 @@ public class SymbolGroupResource {
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.create",
-                                                               Response.Status.BAD_REQUEST, e);
+                    Response.Status.BAD_REQUEST, e);
         }
     }
 
@@ -125,7 +126,8 @@ public class SymbolGroupResource {
      * @param embed
      *         The properties to embed in the response.
      * @return All groups in a list. If the project contains no groups the list will be empty.
-     * @throws NotFoundException If the related Project could not be found.
+     * @throws NotFoundException
+     *         If the related Project could not be found.
      * @responseType java.util.List<de.learnlib.alex.data.entities.SymbolGroup>
      * @successResponse 200 OK
      * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
@@ -147,7 +149,7 @@ public class SymbolGroupResource {
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
-                                                               Response.Status.BAD_REQUEST, e);
+                    Response.Status.BAD_REQUEST, e);
         }
     }
 
@@ -157,22 +159,23 @@ public class SymbolGroupResource {
      * @param projectId
      *         The ID of the project.
      * @param id
-     *            The ID of the group within the project.
+     *         The ID of the group within the project.
      * @param embed
      *         The properties to embed in the response.
      * @return The requested group.
-     * @throws NotFoundException If the related Project could not be found.
+     * @throws NotFoundException
+     *         If the related Project could not be found.
      * @responseType de.learnlib.alex.data.entities.SymbolGroup
      * @successResponse 200 OK
-     * @errorResponse   400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") long projectId,
-                        @PathParam("id") Long id,
-                        @QueryParam("embed") String embed)
+            @PathParam("id") Long id,
+            @QueryParam("embed") String embed)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {}, {}) for user {}.", projectId, id, embed, user);
@@ -186,20 +189,20 @@ public class SymbolGroupResource {
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get",
-                                                               Response.Status.BAD_REQUEST, e);
+                    Response.Status.BAD_REQUEST, e);
         }
     }
 
     /**
-     * Not implemented yet.
-     * Returns just dummy values.
+     * Not implemented yet. Returns just dummy values.
      *
      * @param projectId
      *         The ID of the project.
      * @param id
      *         The ID of the group within the project.
      * @return The list of symbols within one group.
-     * @throws NotFoundException If the related Project or Group could not be found.
+     * @throws NotFoundException
+     *         If the related Project or Group could not be found.
      * @successResponse 200 OK
      * @responseType java.util.List<de.learnlib.alex.data.entities.Symbol>
      * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
@@ -228,7 +231,8 @@ public class SymbolGroupResource {
      * @param group
      *         The new values
      * @return On success the updated group (enhanced with information from the DB).
-     * @throws NotFoundException If the related Project could not be found.
+     * @throws NotFoundException
+     *         If the related Project could not be found.
      * @responseType de.learnlib.alex.data.entities.SymbolGroup
      * @successResponse 200 OK
      * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
@@ -252,11 +256,51 @@ public class SymbolGroupResource {
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                                                               Response.Status.BAD_REQUEST, e);
+                    Response.Status.BAD_REQUEST, e);
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                                                                Response.Status.UNAUTHORIZED, e);
+                    Response.Status.UNAUTHORIZED, e);
+        }
+    }
+
+    /**
+     * Moves a group to another group.
+     *
+     * @param projectId
+     *         The id of the project.
+     * @param groupId
+     *         The id of the group to move.
+     * @param group
+     *         The group to move with the updated {@link SymbolGroup#parent} property. The parent property may be null
+     *         to indicate that the group is moved to the upmost level.
+     * @return 200 with the updated group.
+     * @throws NotFoundException
+     *         If the group or the project or new parent could not be found.
+     */
+    @PUT
+    @Path("/{groupId}/move")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response move(@PathParam("project_id") Long projectId, @PathParam("groupId") Long groupId, SymbolGroup group)
+            throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("move({}, {}, {}) for user {}.", projectId, groupId, group, user);
+
+        try {
+            final SymbolGroup movedGroup = symbolGroupDAO.move(user, group);
+
+            LOGGER.traceExit(movedGroup);
+            webhookService.fireEvent(user, new SymbolGroupEvent.Moved(movedGroup));
+            return Response.ok(movedGroup).build();
+        } catch (ValidationException e) {
+            LOGGER.traceExit(e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.move",
+                    Response.Status.BAD_REQUEST, e);
+        } catch (UnauthorizedException e) {
+            LOGGER.traceExit(e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.move",
+                    Response.Status.UNAUTHORIZED, e);
         }
     }
 
@@ -268,9 +312,10 @@ public class SymbolGroupResource {
      * @param id
      *         The ID of the group within the project.
      * @return On success no content will be returned.
-     * @throws NotFoundException If the related Project could not be found.
+     * @throws NotFoundException
+     *         If the related Project could not be found.
      * @successResponse 204 OK & no content
-     * @errorResponse   404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("/{id}")
@@ -288,11 +333,11 @@ public class SymbolGroupResource {
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                                                               Response.Status.BAD_REQUEST, e);
+                    Response.Status.BAD_REQUEST, e);
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                                                                Response.Status.UNAUTHORIZED, e);
+                    Response.Status.UNAUTHORIZED, e);
         }
     }
 

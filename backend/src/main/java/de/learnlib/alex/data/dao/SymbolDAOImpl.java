@@ -62,6 +62,9 @@ public class SymbolDAOImpl implements SymbolDAO {
     /** The ProjectDAO to use. Will be injected. */
     private ProjectDAO projectDAO;
 
+    /** The injected DAO for symbol groups. */
+    private SymbolGroupDAO symbolGroupDAO;
+
     /** The SymbolGroupRepository to use. Will be injected. */
     private SymbolGroupRepository symbolGroupRepository;
 
@@ -87,18 +90,22 @@ public class SymbolDAOImpl implements SymbolDAO {
      *         The SymbolRepository to use.
      * @param symbolActionRepository
      *         The SymbolActionRepository to use.
+     * @param symbolGroupDAO
+     *         The symbolGroupDAO to use.
      * @param symbolParameterRepository
      *         The SymbolParameterRepository to use.
      */
     @Inject
     public SymbolDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
                          SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
-                         SymbolActionRepository symbolActionRepository, SymbolParameterRepository symbolParameterRepository) {
+                         SymbolActionRepository symbolActionRepository, SymbolGroupDAO symbolGroupDAO,
+                         SymbolParameterRepository symbolParameterRepository) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
         this.symbolRepository = symbolRepository;
         this.symbolActionRepository = symbolActionRepository;
+        this.symbolGroupDAO = symbolGroupDAO;
         this.symbolParameterRepository = symbolParameterRepository;
     }
 
@@ -275,7 +282,7 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new NotFoundException("Could not find symbols in the project " + projectId + ".");
         }
 
-        result.forEach(s -> loadLazyRelations(s));
+        result.forEach(SymbolDAOImpl::loadLazyRelations);
 
         return result;
     }
@@ -285,10 +292,10 @@ public class SymbolDAOImpl implements SymbolDAO {
     public Symbol get(User user, Long projectId, Long id) throws NotFoundException {
         projectDAO.getByID(user.getId(), projectId); // access check
 
-        return _get(projectId, id);
+        return get(projectId, id);
     }
 
-    private Symbol _get(Long projectId, Long id) throws NotFoundException {
+    private Symbol get(Long projectId, Long id) throws NotFoundException {
         Symbol result = symbolRepository.findOne(projectId, id);
 
         if (result == null) {
@@ -362,7 +369,7 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new ValidationException("To update a symbol its name must be unique.");
         }
 
-        Symbol symbolInDB = _get(symbol.getProjectId(), symbol.getId());
+        Symbol symbolInDB = get(symbol.getProjectId(), symbol.getId());
 
         symbol.setUUID(symbolInDB.getUUID());
         symbol.setProject(project);
@@ -375,28 +382,38 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     @Transactional
-    public void move(User user, Symbol symbol, Long newGroupId) throws NotFoundException {
-        move(user, Collections.singletonList(symbol), newGroupId);
+    public Symbol move(User user, Long projectId, Long symbolId, Long newGroupId) throws NotFoundException {
+        return move(user, projectId, Collections.singletonList(symbolId), newGroupId).get(0);
     }
 
     @Override
     @Transactional
-    public void move(User user, List<Symbol> symbols, Long newGroupId) throws NotFoundException {
+    public List<Symbol> move(User user, Long projectId, List<Long> symbolIds, Long newGroupId)
+            throws NotFoundException {
+
+        final Project project = projectRepository.findOne(projectId);
+        final List<Symbol> symbols = symbolRepository.findByIds(projectId, symbolIds);
+        for (Symbol symbol: symbols) {
+            checkAccess(user, project, symbol);
+        }
+
         for (Symbol symbol : symbols) {
-            projectDAO.getByID(user.getId(), symbol.getProjectId()); // access check
-
-            SymbolGroup oldGroup = symbolGroupRepository.findOne(symbol.getGroupId());
-            SymbolGroup newGroup = symbolGroupRepository.findOne(newGroupId);
-
-            if (newGroup == null) {
-                throw new NotFoundException("The group with the id " + newGroupId + " does not exist!");
-            }
+            final SymbolGroup oldGroup = symbolGroupRepository.findOne(symbol.getGroupId());
+            final SymbolGroup newGroup = symbolGroupRepository.findOne(newGroupId);
+            symbolGroupDAO.checkAccess(user, project, newGroup);
 
             if (!newGroup.equals(oldGroup)) {
-                Symbol s = symbolRepository.findOne(symbol.getProjectId(), symbol.getId());
-                newGroup.addSymbol(s);
+                oldGroup.getSymbols().remove(symbol);
+                newGroup.addSymbol(symbol);
+
+                symbolGroupRepository.save(oldGroup);
+                symbolGroupRepository.save(newGroup);
             }
         }
+
+        final List<Symbol> movedSymbols = symbolRepository.save(symbols);
+        movedSymbols.forEach(SymbolDAOImpl::loadLazyRelations);
+        return movedSymbols;
     }
 
     @Override
@@ -405,7 +422,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL); // access check
 
         for (Long id : ids) {
-            Symbol symbol = _get(projectId, id);
+            Symbol symbol = get(projectId, id);
 
             symbol.setProject(project);
             symbol.setHidden(true);
@@ -419,7 +436,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL); // access check
 
         for (Long id : ids) {
-            Symbol symbol = _get(projectId, id);
+            Symbol symbol = get(projectId, id);
 
             symbol.setProject(project);
             symbol.setHidden(false);
@@ -453,6 +470,7 @@ public class SymbolDAOImpl implements SymbolDAO {
      */
     public static void loadLazyRelations(Symbol symbol) {
         Hibernate.initialize(symbol.getProject());
+        Hibernate.initialize(symbol.getProject().getUrls());
         Hibernate.initialize(symbol.getGroup());
         Hibernate.initialize(symbol.getActions());
         Hibernate.initialize(symbol.getInputs());

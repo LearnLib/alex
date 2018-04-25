@@ -58,6 +58,9 @@ public enum EventType {
     /** Fired when a symbol group is updated.*/
     SYMBOL_GROUP_UPDATED,
 
+    /** Fired when a symbol group is moved.*/
+    SYMBOL_GROUP_MOVED,
+
     /** Fired when a test case or test suite is created.*/
     TEST_CREATED,
 

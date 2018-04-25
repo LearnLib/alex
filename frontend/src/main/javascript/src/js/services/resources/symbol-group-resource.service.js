@@ -70,6 +70,17 @@ export class SymbolGroupResource {
     }
 
     /**
+     * Moves an existing symbol group.
+     *
+     * @param {SymbolGroup} group - The symbol group to move with the new parent.
+     * @returns {*}
+     */
+    move(group) {
+        return this.$http.put(`${apiUrl}/projects/${group.project}/groups/${group.id}/move`, group)
+            .then(response => new SymbolGroup(response.data));
+    }
+
+    /**
      * Deletes a symbol group.
      *
      * @param {SymbolGroup} group - The symbol group that should be deleted.

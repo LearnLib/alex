@@ -1,6 +1,7 @@
 import remove from 'lodash/remove';
 import {events} from '../../../../constants';
 import {AlphabetSymbol} from '../../../../entities/alphabet-symbol';
+import {SymbolGroup} from '../../../../entities/symbol-group';
 
 export const symbolsSymbolGroupTreeComponent = {
     template: require('./symbols-symbol-group-tree.component.html'),
@@ -20,14 +21,16 @@ export const symbolsSymbolGroupTreeComponent = {
          * @param {ToastService} ToastService
          * @param {SymbolResource} SymbolResource
          * @param {EventBus} EventBus
+         * @param $uibModal
          */
         // @ngInject
-        constructor(PromptService, SymbolGroupResource, ToastService, SymbolResource, EventBus) {
+        constructor(PromptService, SymbolGroupResource, ToastService, SymbolResource, EventBus, $uibModal) {
             this.promptService = PromptService;
             this.symbolGroupResource = SymbolGroupResource;
             this.toastService = ToastService;
             this.symbolResource = SymbolResource;
             this.eventBus = EventBus;
+            this.$uibModal = $uibModal;
 
             /**
              * The symbol group to display.
@@ -57,8 +60,6 @@ export const symbolsSymbolGroupTreeComponent = {
          * Deletes the symbol group under edit and closes the modal dialog on success.
          */
         deleteGroup() {
-            this.errorMsg = null;
-
             this.promptService.confirm('Are you sure that you want to delete the group? All symbols will be archived.')
                 .then(() => {
                     this.symbolGroupResource.remove(this.group)
@@ -72,6 +73,18 @@ export const symbolsSymbolGroupTreeComponent = {
                             this.toastService.danger(`The group could not be deleted. ${err.data.message}`);
                         });
                 });
+        }
+
+        /**
+         * Opens the modal dialog for moving a group.
+         */
+        moveGroup() {
+            this.$uibModal.open({
+                component: 'symbolGroupMoveModal',
+                resolve: {
+                    group: () => new SymbolGroup(JSON.parse(JSON.stringify(this.group)))
+                }
+            });
         }
 
         /**

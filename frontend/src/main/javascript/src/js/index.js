@@ -27,6 +27,7 @@ import {actionBarComponent} from './components/action-bar/action-bar.component';
 import {actionRecorderComponent} from './components/action-recorder/action-recorder.component';
 import {projectFormUrlGroupsComponent} from './components/forms/project-form-groups/project-form-url-groups/project-form-url-groups.component';
 import {actionSearchFormComponent} from './components/modals/action-create-modal/action-search-form/action-search-form.component';
+import {symbolGroupMoveModalComponent} from './components/modals/symbol-group-move-modal/symbol-group-move-modal.component';
 import {projectUrlListComponent} from './components/project-url-list/project-url-list.component';
 import {searchFormComponent} from './components/search-form/search-form.component';
 import {alexComponent} from './components/alex/alex.component';
@@ -335,6 +336,7 @@ angular
     .component('webhookEditModal', webhookEditModalComponent)
     .component('symbolParameterCreateModal', symbolParameterCreateModalComponent)
     .component('symbolParameterEditModal', symbolParameterEditModalComponent)
+    .component('symbolGroupMoveModal', symbolGroupMoveModalComponent)
 
     // view components
     .component('aboutView', aboutViewComponent)

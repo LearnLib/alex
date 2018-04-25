@@ -399,7 +399,10 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             // get the input counters from the global context
             inputs.stream()
                     .filter(in -> in.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
-                    .forEach(in -> localCounterStore.set(project.getId(), in.getName(), globalCounterStore.get(in.getName())));
+                    .forEach(in -> {
+                        final String counterName = in.getName();
+                        localCounterStore.set(project.getId(), counterName, globalCounterStore.get(counterName));
+                    });
             connector.addConnector(localCounterStore);
         } catch (IllegalStateException e) {
             return new ExecuteResult(false, e.getMessage());
@@ -451,7 +454,10 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
                 outputs.stream()
                         .filter(out -> out.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
-                        .forEach(out -> globalCounterStore.set(project.getId(), out.getName(), localCounterStore.get(out.getName())));
+                        .forEach(out -> {
+                            final String counterName = out.getName();
+                            globalCounterStore.set(project.getId(), counterName, localCounterStore.get(counterName));
+                        });
             } catch (IllegalStateException e) {
                 return new ExecuteResult(false, e.getMessage());
             }

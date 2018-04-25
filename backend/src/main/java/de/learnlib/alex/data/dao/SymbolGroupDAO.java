@@ -124,6 +124,21 @@ public interface SymbolGroupDAO {
     void update(User user, SymbolGroup group) throws NotFoundException, ValidationException;
 
     /**
+     * Move a group.
+     *
+     * @param user
+     *         The user who wants to perform this method.
+     * @param group
+     *         The group to move which contains the new parent id.
+     * @return The updated group.
+     * @throws NotFoundException
+     *         If the group was not found, because you can only update existing groups.
+     * @throws ValidationException
+     *         If the group was invalid.
+     */
+    SymbolGroup move(User user, SymbolGroup group) throws NotFoundException, ValidationException;
+
+    /**
      * Delete a group.
      *
      * @param user

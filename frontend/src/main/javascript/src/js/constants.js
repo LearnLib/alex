@@ -60,6 +60,7 @@ export const events = {
     // symbol group related events
     GROUP_UPDATED: 'group:updated',
     GROUP_DELETED: 'group:deleted',
+    GROUP_MOVED: 'group:moved',
 
     // hypothesis related events
     HYPOTHESIS_LABEL_SELECTED: 'hypothesis:labelSelected',

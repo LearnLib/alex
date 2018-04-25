@@ -391,13 +391,12 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolId, groupId, user);
 
-        Symbol symbol = symbolDAO.get(user, projectId, symbolId);
-        symbolDAO.move(user, symbol, groupId);
+        final Symbol movedSymbol = symbolDAO.move(user, projectId, symbolId, groupId);
 
-        LOGGER.traceExit(symbol);
+        LOGGER.traceExit(movedSymbol);
 
-        webhookService.fireEvent(user, new SymbolEvent.Updated(symbol));
-        return Response.ok(symbol).build();
+        webhookService.fireEvent(user, new SymbolEvent.Updated(movedSymbol));
+        return Response.ok(movedSymbol).build();
     }
 
     private boolean symbolDoesntMatchURLParameter(Symbol symbol, Long projectId, Long id) {
@@ -435,13 +434,12 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolIds, groupId, user);
 
-        List<Symbol> symbols = symbolDAO.getByIds(user, projectId, SymbolVisibilityLevel.ALL, symbolIds);
-        symbolDAO.move(user, symbols, groupId);
+        final List<Symbol> movedSymbols = symbolDAO.move(user, projectId, symbolIds, groupId);
 
-        LOGGER.traceExit(symbols);
+        LOGGER.traceExit(movedSymbols);
 
-        webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(symbols));
-        return Response.ok(symbols).build();
+        webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(movedSymbols));
+        return Response.ok(movedSymbols).build();
     }
 
     /**

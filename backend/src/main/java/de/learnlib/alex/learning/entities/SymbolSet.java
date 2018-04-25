@@ -144,6 +144,11 @@ public class SymbolSet {
         return symbols;
     }
 
+    /**
+     * Get all symbols in the set.
+     *
+     * @return The list with the reset symbol and all others.
+     */
     public List<Symbol> getAllSymbols() {
         List<Symbol> resultList = new LinkedList<>();
         resultList.add(resetSymbol);

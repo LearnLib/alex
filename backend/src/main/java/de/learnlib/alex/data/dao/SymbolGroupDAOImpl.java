@@ -102,7 +102,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         this.symbolRepository = symbolRepository;
 
         this.symbolDAO = new SymbolDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
-                symbolActionRepository, symbolParameterRepository);
+                symbolActionRepository, this, symbolParameterRepository);
     }
 
     @Override
@@ -198,6 +198,52 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("SymbolGroup was not updated:", cve);
         }
+    }
+
+    @Override
+    @Transactional
+    public SymbolGroup move(User user, SymbolGroup group) throws NotFoundException, ValidationException {
+        final Project project = projectRepository.findOne(group.getProjectId());
+        final SymbolGroup groupInDB = symbolGroupRepository.findOne(group.getId());
+        checkAccess(user, project, groupInDB);
+
+        final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(project.getId());
+        if (defaultGroup.equals(groupInDB)) {
+            throw new ValidationException("You cannot move the default group.");
+        }
+
+        if (group.getParent() != null && groupInDB.getId().equals(group.getParentId())) {
+            throw new ValidationException("A group cannot be a parent of itself.");
+        }
+
+        final SymbolGroup movedGroup;
+        if (group.getParentId() == null) {
+            // move group to the upmost level
+            groupInDB.getParent().getGroups().remove(groupInDB);
+            symbolGroupRepository.save(groupInDB.getParent());
+            movedGroup = symbolGroupRepository.save(group);
+        } else {
+            final SymbolGroup newParent = symbolGroupRepository.findOne(group.getParentId());
+            checkAccess(user, project, newParent);
+
+            // remove group from old parent
+            if (groupInDB.getParent() != null) {
+                if (newParent.isDescendantOf(groupInDB)) {
+                    throw new ValidationException("A group cannot be moved to a child group.");
+                }
+                groupInDB.getParent().getGroups().remove(groupInDB);
+                symbolGroupRepository.save(groupInDB.getParent());
+            }
+
+            // add group to new parent
+            newParent.getGroups().add(groupInDB);
+            groupInDB.setParent(newParent);
+            symbolGroupRepository.save(newParent);
+            movedGroup = symbolGroupRepository.save(groupInDB);
+        }
+
+        initLazyRelations(user, movedGroup, EmbeddableFields.COMPLETE_SYMBOLS);
+        return movedGroup;
     }
 
     @Override

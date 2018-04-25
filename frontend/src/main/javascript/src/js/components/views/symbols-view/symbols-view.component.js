@@ -65,32 +65,31 @@ class SymbolsViewComponent {
          */
         this.groups = [];
 
-        // fetch all symbol groups and include all symbols
         SymbolGroupResource.getAll(this.project.id, true)
             .then(groups => {
                 this.groups = groups;
             })
             .catch(err => console.log(err));
 
-        // listen on group update event
         EventBus.on(events.GROUP_UPDATED, (evt, data) => {
             this.updateGroup(data.group);
         }, $scope);
 
-        // listen on group delete event
         EventBus.on(events.GROUP_DELETED, (evt, data) => {
             this.deleteGroup(data.group);
         }, $scope);
 
-        // listen on symbol update event
         EventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
             this.updateSymbol(data.symbol);
         }, $scope);
 
-        // listen on symbol move event
         EventBus.on(events.SYMBOLS_MOVED, (evt, data) => {
             this.moveSymbolsToGroup(data.symbols, data.group);
         }, $scope);
+
+        EventBus.on(events.GROUP_MOVED, (evt, data) => {
+            this.moveGroup(data.from, data.group);
+        });
     }
 
     /**
@@ -233,6 +232,21 @@ class SymbolsViewComponent {
         } else {
             const g = SymbolGroupUtils.findGroupById(this.groups, group.parent);
             remove(g.groups, {id: group.id});
+        }
+    }
+
+    moveGroup(from, group) {
+        if (from == null && group.parent != null) {
+            remove(this.groups, {id: group.id});
+            SymbolGroupUtils.findGroupById(this.groups, group.parent).groups.push(group);
+        } else if (from != null && group.parent == null) {
+            const oldGroup = SymbolGroupUtils.findGroupById(this.groups, from);
+            remove(oldGroup.groups, {id: group.id});
+            this.groups.push(group);
+        } else if (from != null && group.parent != null) {
+            const oldGroup = SymbolGroupUtils.findGroupById(this.groups, from);
+            remove(oldGroup.groups, {id: group.id});
+            SymbolGroupUtils.findGroupById(this.groups, group.parent).groups.push(group);
         }
     }
 

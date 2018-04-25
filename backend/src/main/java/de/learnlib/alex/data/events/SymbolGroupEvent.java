@@ -23,42 +23,55 @@ import de.learnlib.alex.webhooks.entities.EventType;
 /** Symbol group events. */
 public class SymbolGroupEvent {
 
-    /** Event for when a project is created. */
+    /** Event for when a symbol group is created. */
     public static class Created extends Event<SymbolGroup> {
 
         /**
          * Constructor.
          *
-         * @param symbolGroup The created project.
+         * @param symbolGroup The created symbol group .
          */
         public Created(SymbolGroup symbolGroup) {
             super(symbolGroup, EventType.SYMBOL_GROUP_CREATED);
         }
     }
 
-    /** Event for when a project is deleted. */
+    /** Event for when a symbol group is deleted. */
     public static class Deleted extends Event<Long> {
 
         /**
          * Constructor.
          *
-         * @param id The id of the deleted project.
+         * @param id The id of the deleted symbol group .
          */
         public Deleted(Long id) {
             super(id, EventType.SYMBOL_GROUP_DELETED);
         }
     }
 
-    /** Event for when a project is updated. */
+    /** Event for when a symbol group is updated. */
     public static class Updated extends Event<SymbolGroup> {
 
         /**
          * Constructor.
          *
-         * @param symbolGroup The updated project.
+         * @param symbolGroup The updated symbol group .
          */
         public Updated(SymbolGroup symbolGroup) {
             super(symbolGroup, EventType.SYMBOL_GROUP_UPDATED);
+        }
+    }
+
+    /** Event for when a symbol group is moved. */
+    public static class Moved extends Event<SymbolGroup> {
+
+        /**
+         * Constructor.
+         *
+         * @param symbolGroup The moved symbol group .
+         */
+        public Moved(SymbolGroup symbolGroup) {
+            super(symbolGroup, EventType.SYMBOL_GROUP_MOVED);
         }
     }
 }
