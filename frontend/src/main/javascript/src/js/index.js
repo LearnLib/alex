@@ -127,7 +127,6 @@ import {symbolEditModalHandleDirective} from './components/modals/symbol-edit-mo
 import {symbolEditModalComponent} from './components/modals/symbol-edit-modal/symbol-edit-modal.component';
 import {symbolGroupCreateModalHandleDirective} from './components/modals/symbol-group-create-modal/symbol-group-create-modal-handle.directive';
 import {symbolGroupCreateModalComponent} from './components/modals/symbol-group-create-modal/symbol-group-create-modal.component';
-import {symbolGroupEditModalHandleDirective} from './components/modals/symbol-group-edit-modal/symbol-group-edit-modal-handle.directive';
 import {symbolGroupEditModalComponent} from './components/modals/symbol-group-edit-modal/symbol-group-edit-modal.component';
 import {symbolParameterCreateModalComponent} from './components/modals/symbol-parameter-create-modal/symbol-parameter-create-modal.component';
 import {symbolsImportModalHandleDirective} from './components/modals/symbols-import-modal/symbols-import-modal-handle.directive';
@@ -305,7 +304,6 @@ angular
     .directive('symbolCreateModalHandle', symbolCreateModalHandleDirective)
     .directive('symbolEditModalHandle', symbolEditModalHandleDirective)
     .directive('symbolGroupCreateModalHandle', symbolGroupCreateModalHandleDirective)
-    .directive('symbolGroupEditModalHandle', symbolGroupEditModalHandleDirective)
     .directive('symbolMoveModalHandle', symbolMoveModalHandleDirective)
     .directive('userEditModalHandle', userEditModalHandleDirective)
     .directive('resultListModalHandle', resultListModalHandleDirective)

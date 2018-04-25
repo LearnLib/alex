@@ -46,20 +46,20 @@ export class SymbolGroupEditModalComponent {
 
         /**
          * An error message that can be displayed in the template.
-         * @type {null|String}
+         * @type {String}
          */
-        this.errorMsg = null;
+        this.errorMessage = null;
     }
 
     $onInit() {
-        this.group = this.resolve.modalData.group;
+        this.group = this.resolve.group;
     }
 
     /**
      * Updates the symbol group under edit and closes the modal dialog on success.
      */
     updateGroup() {
-        this.errorMsg = null;
+        this.errorMessage = null;
 
         this.SymbolGroupResource.update(this.group)
             .then(updatedGroup => {
@@ -69,8 +69,8 @@ export class SymbolGroupEditModalComponent {
                 });
                 this.dismiss();
             })
-            .catch(response => {
-                this.errorMsg = response.data.message;
+            .catch(err => {
+                this.errorMessage = err.data.message;
             });
     }
 }

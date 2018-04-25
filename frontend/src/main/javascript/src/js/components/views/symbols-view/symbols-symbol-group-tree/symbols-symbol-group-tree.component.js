@@ -87,6 +87,15 @@ export const symbolsSymbolGroupTreeComponent = {
             });
         }
 
+        editGroup() {
+            this.$uibModal.open({
+                component: 'symbolGroupEditModal',
+                resolve: {
+                    group: () => new SymbolGroup(JSON.parse(JSON.stringify(this.group)))
+                }
+            });
+        }
+
         /**
          * Copy a symbol.
          *
