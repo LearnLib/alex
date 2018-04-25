@@ -62,4 +62,14 @@ export class SymbolGroupUtils {
         const res = find(root);
         return res != null ? res : null;
     }
+
+    /**
+     * Get the default group.
+     *
+     * @param groups The groups where to look for the default group.
+     * @return {*}
+     */
+    static findDefaultGroup(groups) {
+        return groups.reduce((acc, val) => val.id < acc.id ? val : acc);
+    }
 }

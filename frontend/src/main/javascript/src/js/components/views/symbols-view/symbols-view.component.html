@@ -38,7 +38,7 @@
             </div>
 
             <div class="btn-group btn-group-sm" uib-dropdown>
-                <button class="btn btn-default" symbols-import-modal-handle on-imported="vm.addSymbols(symbols)" uib-tooltip="Import" tooltip-placement="bottom">
+                <button class="btn btn-default" ng-click="vm.importSymbols()" uib-tooltip="Import" tooltip-placement="bottom">
                     <i class="fa fa-fw fa-upload"></i>
                 </button>
                 <button class="btn btn-default" ng-click="vm.exportSelectedSymbols()" uib-tooltip="Export" tooltip-placement="bottom" ng-class="{'disabled': vm.selectedSymbols.length === 0}">

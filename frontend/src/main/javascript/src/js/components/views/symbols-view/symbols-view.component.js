@@ -37,15 +37,17 @@ class SymbolsViewComponent {
      * @param {EventBus} EventBus
      * @param {PromptService} PromptService
      * @param $state
+     * @param $uibModal
      */
     // @ngInject
     constructor($scope, SessionService, SymbolResource, SymbolGroupResource, ToastService, DownloadService,
-                EventBus, PromptService, $state) {
+                EventBus, PromptService, $state, $uibModal) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
         this.DownloadService = DownloadService;
         this.PromptService = PromptService;
         this.$state = $state;
+        this.$uibModal = $uibModal;
 
         /**
          * The project that is saved in the session.
@@ -248,6 +250,18 @@ class SymbolsViewComponent {
             remove(oldGroup.groups, {id: group.id});
             SymbolGroupUtils.findGroupById(this.groups, group.parent).groups.push(group);
         }
+    }
+
+    importSymbols() {
+        this.$uibModal.open({
+            component: 'symbolsImportModal',
+            size: 'lg',
+            resolve: {
+                groups: () => this.groups
+            }
+        }).result.then(symbols => {
+            this.addSymbols(symbols);
+        });
     }
 
     /**

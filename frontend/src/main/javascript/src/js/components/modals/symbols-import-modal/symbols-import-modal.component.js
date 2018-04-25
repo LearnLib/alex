@@ -16,6 +16,7 @@
 
 import uniqueId from 'lodash/uniqueId';
 import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
+import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
 
 /**
  * The component for the symbols import modal window.
@@ -35,6 +36,12 @@ export class SymbolsImportModalComponent {
         this.ToastService = ToastService;
 
         /**
+         * The error message.
+         * @type {String}
+         */
+        this.errorMessage = null;
+
+        /**
          * The current project.
          * @type {Project}
          */
@@ -46,7 +53,28 @@ export class SymbolsImportModalComponent {
          */
         this.symbols = [];
 
+        /**
+         * The symbol to edit.
+         * @type {AlphabetSymbol[]}
+         */
         this.symbolToEdit = null;
+
+        /**
+         * The groups in the project.
+         * @type {SymbolGroup[]}
+         */
+        this.groups = [];
+
+        /**
+         * The selected group where the symbols are imported to.
+         * @type {SymbolGroup}
+         */
+        this.selectedGroup = null;
+    }
+
+    $onInit() {
+        this.groups = this.resolve.groups;
+        this.selectedGroup = SymbolGroupUtils.findDefaultGroup(this.groups);
     }
 
     /**
@@ -66,16 +94,21 @@ export class SymbolsImportModalComponent {
      * Import the symbols and close the modal window on success.
      */
     importSymbols() {
+        this.errorMessage = null;
+
         const symbolsToImport = JSON.parse(JSON.stringify(this.symbols));
-        symbolsToImport.forEach(s => delete s.id);
+        symbolsToImport.forEach(s => {
+            delete s.id;
+            s.group = this.selectedGroup.id;
+        });
 
         this.SymbolResource.createMany(this.project.id, symbolsToImport)
             .then(symbols => {
                 this.ToastService.success('Symbols imported');
                 this.close({$value: symbols});
             })
-            .catch(() => {
-                this.ToastService.danger('Import failed. It seems at least on symbol already exists');
+            .catch(err => {
+                this.errorMessage = `The symbols could not be imported. ${err.data.message}`;
             });
     }
 
@@ -98,13 +131,22 @@ export class SymbolsImportModalComponent {
         symbol.name = updatedSymbol.name;
         this.symbolToEdit = null;
     }
+
+    selectGroup(group) {
+        if (group == null || group === this.selectedGroup) {
+            this.selectedGroup = SymbolGroupUtils.findDefaultGroup(this.groups);
+        } else {
+            this.selectedGroup = group;
+        }
+    }
 }
 
 export const symbolsImportModalComponent = {
     template: require('./symbols-import-modal.component.html'),
     bindings: {
         dismiss: '&',
-        close: '&'
+        close: '&',
+        resolve: '='
     },
     controller: SymbolsImportModalComponent,
     controllerAs: 'vm'
