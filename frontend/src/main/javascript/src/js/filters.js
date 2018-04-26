@@ -159,7 +159,8 @@ export function formatMilliseconds() {
             minutes = Math.floor(ms / 60000);
             return minutes + 'min ' + Math.floor((ms % 60000) / 1000) + 's';
         } else {
-            return Math.floor(ms / 1000) + 's';
+            seconds = Math.floor(ms / 1000);
+            return seconds + 's ' + (ms % 1000) + "ms";
         }
     };
 }

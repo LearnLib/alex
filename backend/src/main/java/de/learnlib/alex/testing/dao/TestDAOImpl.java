@@ -27,13 +27,10 @@ import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolInputParameter;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
-import de.learnlib.alex.testing.entities.TestCaseActionStep;
 import de.learnlib.alex.testing.entities.TestCaseStep;
-import de.learnlib.alex.testing.entities.TestCaseSymbolStep;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
@@ -75,22 +72,18 @@ public class TestDAOImpl implements TestDAO {
     /** The repository for test case steps. */
     private TestCaseStepRepository testCaseStepRepository;
 
-    /** The repository for symbol actions. */
-    private SymbolActionRepository symbolActionRepository;
-
     /** The repository for symbol parameter values. */
     private SymbolParameterValueRepository symbolParameterValueRepository;
 
     @Inject
     public TestDAOImpl(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
-                       TestCaseStepRepository testCaseStepRepository, SymbolActionRepository symbolActionRepository,
-                       SymbolParameterValueRepository symbolParameterValueRepository,
-                       ProjectRepository projectRepository) {
+            TestCaseStepRepository testCaseStepRepository,
+            SymbolParameterValueRepository symbolParameterValueRepository,
+            ProjectRepository projectRepository) {
         this.projectDAO = projectDAO;
         this.testRepository = testRepository;
         this.symbolDAO = symbolDAO;
         this.testCaseStepRepository = testCaseStepRepository;
-        this.symbolActionRepository = symbolActionRepository;
         this.symbolParameterValueRepository = symbolParameterValueRepository;
         this.projectRepository = projectRepository;
     }
@@ -354,10 +347,6 @@ public class TestDAOImpl implements TestDAO {
     private void saveTestCaseSteps(TestCase testCase) {
         for (int i = 0; i < testCase.getSteps().size(); i++) {
             final TestCaseStep step = testCase.getSteps().get(i);
-            if (step instanceof TestCaseActionStep) {
-                TestCaseActionStep actionStep = (TestCaseActionStep) step;
-                symbolActionRepository.save(actionStep.getAction());
-            }
             step.setNumber(i);
         }
 
@@ -365,23 +354,22 @@ public class TestDAOImpl implements TestDAO {
 
         // save the parameter values after the test case step is saved so that
         // we won't get an entity detached exception.
-        testCase.getSteps().stream().filter(TestCaseSymbolStep.class::isInstance).forEach(step -> {
-            final TestCaseSymbolStep symbolStep = (TestCaseSymbolStep) step;
+        testCase.getSteps().forEach(step -> {
 
             // if a parameter value has no id yet, because it is imported, we have to set the reference
             // to the parameter manually.
             // name -> parameter
             final Map<String, SymbolInputParameter> parameterMap = new HashMap<>();
-            symbolStep.getSymbol().getInputs().stream()
+            step.getSymbol().getInputs().stream()
                     .filter(input -> input.getParameterType().equals(SymbolParameter.ParameterType.STRING))
                     .forEach(input -> parameterMap.put(input.getName(), input));
 
-            symbolStep.getParameterValues().forEach(value -> {
-                value.setStep(symbolStep);
+            step.getParameterValues().forEach(value -> {
+                value.setStep(step);
                 value.setParameter(parameterMap.get(value.getParameter().getName()));
             });
 
-            symbolParameterValueRepository.save(symbolStep.getParameterValues());
+            symbolParameterValueRepository.save(step.getParameterValues());
         });
     }
 
@@ -396,11 +384,7 @@ public class TestDAOImpl implements TestDAO {
         } else if (test instanceof TestCase) {
             TestCase testCase = (TestCase) test;
             Hibernate.initialize(testCase.getSteps());
-            testCase.getSteps().forEach((step) -> {
-                if (step instanceof TestCaseSymbolStep) {
-                    SymbolDAOImpl.loadLazyRelations(((TestCaseSymbolStep) step).getSymbol());
-                }
-            });
+            testCase.getSteps().forEach(step -> SymbolDAOImpl.loadLazyRelations((step.getSymbol())));
         }
     }
 
@@ -418,12 +402,8 @@ public class TestDAOImpl implements TestDAO {
 
             for (TestCaseStep step : testCase.getSteps()) {
                 step.setTestCase(testCase);
-
-                if (step instanceof TestCaseSymbolStep) {
-                    TestCaseSymbolStep symbolStep = (TestCaseSymbolStep) step;
-                    Symbol symbol = symbolDAO.get(user, projectId, symbolStep.getSymbol().getId());
-                    symbolStep.setSymbol(symbol);
-                }
+                final Symbol symbol = symbolDAO.get(user, projectId, step.getSymbol().getId());
+                step.setSymbol(symbol);
             }
         }
     }

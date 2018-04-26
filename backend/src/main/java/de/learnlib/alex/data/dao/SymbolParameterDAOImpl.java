@@ -28,8 +28,8 @@ import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
-import de.learnlib.alex.testing.entities.TestCaseSymbolStep;
-import de.learnlib.alex.testing.repositories.TestCaseSymbolStepRepository;
+import de.learnlib.alex.testing.entities.TestCaseStep;
+import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.stereotype.Service;
 
@@ -55,9 +55,9 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
     @Inject
     private SymbolParameterRepository symbolParameterRepository;
 
-    /** The injected repository for {@link TestCaseSymbolStep}. */
+    /** The injected repository for {@link TestCaseStep}. */
     @Inject
-    private TestCaseSymbolStepRepository testCaseSymbolStepRepository;
+    private TestCaseStepRepository testCaseStepRepository;
 
     /** The injected repository for {@link SymbolParameterValue}. */
     @Inject
@@ -105,14 +105,14 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
 
         // If a new parameter is created for a symbol, it may be that there are tests that use the symbol.
         // Therefore we have to add a new parameter value to the test steps that use the symbol.
-        final List<TestCaseSymbolStep> symbolSteps = testCaseSymbolStepRepository.findAllByTestCase_Project_IdAndSymbol_Id(project.getId(), symbol.getId());
-        symbolSteps.forEach(step -> {
+        final List<TestCaseStep> steps = testCaseStepRepository.findAllByTestCase_Project_IdAndSymbol_Id(project.getId(), symbol.getId());
+        steps.forEach(step -> {
             final SymbolParameterValue value = new SymbolParameterValue();
             value.setParameter(parameter);
             value.setStep(step);
             step.getParameterValues().add(value);
         });
-        testCaseSymbolStepRepository.save(symbolSteps);
+        testCaseStepRepository.save(steps);
 
         return createdParameter;
     }

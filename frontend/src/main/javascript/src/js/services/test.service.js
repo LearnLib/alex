@@ -45,13 +45,11 @@ export class TestService {
 
             testCase.steps = testCase.steps.map((step) => {
                 delete step.id;
-                if (step.type === 'symbol') {
-                    step.symbol = step.symbol.name;
-                    step.parameterValues.forEach(value => {
-                        delete value.id;
-                        delete value.parameter.id;
-                    });
-                }
+                step.symbol = step.symbol.name;
+                step.parameterValues.forEach(value => {
+                    delete value.id;
+                    delete value.parameter.id;
+                });
                 return step;
             });
         };
@@ -100,11 +98,9 @@ export class TestService {
 
                 const mapTestCaseSymbols = (testCase) => {
                     testCase.steps = testCase.steps.map((step) => {
-                        if (step.type === 'symbol') {
-                            const sym = symbols.find(s => s.name === step.symbol);
-                            if (sym) {
-                                step.symbol = sym.id;
-                            }
+                        const sym = symbols.find(s => s.name === step.symbol);
+                        if (sym) {
+                            step.symbol = sym.id;
                         }
                         return step;
                     });

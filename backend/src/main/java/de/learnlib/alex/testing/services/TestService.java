@@ -31,10 +31,8 @@ import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
-import de.learnlib.alex.testing.entities.TestCaseActionStep;
 import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestCaseStep;
-import de.learnlib.alex.testing.entities.TestCaseSymbolStep;
 import de.learnlib.alex.testing.entities.TestExecuteResult;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestReport;
@@ -210,16 +208,24 @@ public class TestService {
      */
     public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, TestExecutionConfig testConfig,
             Map<Long, TestResult> results) {
-        TestSuiteResult tsResult = new TestSuiteResult(testSuite, 0L, 0L);
+        final TestSuiteResult tsResult = new TestSuiteResult(testSuite, 0L, 0L);
 
-        for (Test test : testSuite.getTests()) {
-            if (test instanceof TestCase) {
-                TestCaseResult result = executeTestCase(user, (TestCase) test, testConfig, results);
-                tsResult.add(result);
-            } else {
-                TestSuiteResult r = executeTestSuite(user, (TestSuite) test, testConfig, results);
-                tsResult.add(r);
-            }
+        final List<Test> testCases = testSuite.getTests().stream()
+                .filter(TestCase.class::isInstance)
+                .collect(Collectors.toList());
+
+        for (Test test: testCases) {
+            final TestCaseResult result = executeTestCase(user, (TestCase) test, testConfig, results);
+            tsResult.add(result);
+        }
+
+        final List<Test> testSuites = testSuite.getTests().stream()
+                .filter(TestSuite.class::isInstance)
+                .collect(Collectors.toList());
+
+        for (Test test: testSuites) {
+            final TestSuiteResult result = executeTestSuite(user, (TestSuite) test, testConfig, results);
+            tsResult.add(result);
         }
 
         results.put(testSuite.getId(), tsResult);
@@ -260,17 +266,14 @@ public class TestService {
             final TestCaseStep step = testCase.getSteps().get(i);
 
             // here, the values for the parameters of the symbols are set
-            if (step instanceof TestCaseSymbolStep) {
-                final TestCaseSymbolStep symbolStep = (TestCaseSymbolStep) step;
-                symbolStep.getParameterValues().stream()
-                        .filter(value -> value.getValue() != null)
-                        .forEach(value -> {
-                            final String valueWithVariables =
-                                    SearchHelper.insertVariableValues(connectors, testCase.getProjectId(),
-                                            value.getValue());
-                            variableStore.set(value.getParameter().getName(), valueWithVariables);
-                        });
-            }
+            step.getParameterValues().stream()
+                    .filter(value -> value.getValue() != null)
+                    .forEach(value -> {
+                        final String valueWithVariables =
+                                SearchHelper.insertVariableValues(connectors, testCase.getProjectId(),
+                                        value.getValue());
+                        variableStore.set(value.getParameter().getName(), valueWithVariables);
+                    });
 
             ExecuteResult result = step.execute(connectors);
             if (!result.isSuccess() && step.isShouldFail()) {
@@ -294,28 +297,27 @@ public class TestService {
         connectors.post();
         final long time = System.currentTimeMillis() - startTime;
 
+        final List<TestExecuteResult> sulOutputs = outputs.stream()
+                .map(TestExecuteResult::new)
+                .collect(Collectors.toList());
+
         final List<String> failureMessageParts = new ArrayList<>();
 
         boolean passed = true;
         for (int i = 0; i < outputs.size(); i++) {
             final ExecuteResult output = outputs.get(i);
             passed = passed & output.isSuccess();
+
+            final TestCaseStep step = testCase.getSteps().get(i);
+            sulOutputs.get(i).setSymbol(step.getSymbol());
+
             if (!output.isSuccess()) {
-                final TestCaseStep step = testCase.getSteps().get(i);
-                if (step instanceof TestCaseSymbolStep) {
-                    final String msg = ((TestCaseSymbolStep) step).getSymbol().getName() + ": " + output.getOutput();
-                    failureMessageParts.add(msg);
-                } else if (step instanceof TestCaseActionStep) {
-                    failureMessageParts.add(output.getOutput());
-                }
+                final String msg = step.getSymbol().getName() + ": " + output.getOutput();
+                failureMessageParts.add(msg);
             }
         }
 
         final String failureMessage = failureMessageParts.isEmpty() ? "" : String.join(", ", failureMessageParts);
-
-        final List<TestExecuteResult> sulOutputs = outputs.stream()
-                .map(TestExecuteResult::new)
-                .collect(Collectors.toList());
 
         final TestCaseResult result =
                 new TestCaseResult(testCase, sulOutputs, passed, time, String.join(", ", failureMessage));

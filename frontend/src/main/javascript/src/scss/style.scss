@@ -35,6 +35,21 @@ body {
   }
 }
 
+report-charts {
+  svg {
+    margin: 0 2rem;
+  }
+}
+
+.table.table-hollow {
+  background: none;
+
+  tr td {
+    border-top: 0;
+    padding: 2px;
+  }
+}
+
 .bg-info {
   background: #d9edf7;
 }
@@ -49,6 +64,10 @@ body {
 
 .justify-end {
   justify-content: flex-end;
+}
+
+.justify-center {
+  justify-content: center;
 }
 
 .list-group-flush {

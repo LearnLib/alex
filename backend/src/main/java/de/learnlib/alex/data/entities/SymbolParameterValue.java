@@ -1,7 +1,7 @@
 package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.learnlib.alex.testing.entities.TestCaseSymbolStep;
+import de.learnlib.alex.testing.entities.TestCaseStep;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,9 +31,9 @@ public class SymbolParameterValue implements Serializable {
 
     /** The step where the value is referenced. */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "testCaseSymbolStepId")
+    @JoinColumn(name = "testCaseStepId")
     @JsonIgnore
-    private TestCaseSymbolStep step;
+    private TestCaseStep step;
 
     /** The value for the parameter. */
     private String value;
@@ -62,11 +62,11 @@ public class SymbolParameterValue implements Serializable {
         this.value = value;
     }
 
-    public TestCaseSymbolStep getStep() {
+    public TestCaseStep getStep() {
         return step;
     }
 
-    public void setStep(TestCaseSymbolStep step) {
+    public void setStep(TestCaseStep step) {
         this.step = step;
     }
 }

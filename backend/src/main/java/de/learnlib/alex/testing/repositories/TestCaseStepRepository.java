@@ -49,4 +49,17 @@ public interface TestCaseStepRepository extends JpaRepository<TestCaseStep, Long
     @Transactional
     @SuppressWarnings("checkstyle:methodname")
     void deleteAllByTestCase_IdAndIdNotIn(Long testId, List<Long> testCaseIds);
+
+    /**
+     * Get all test case steps that use a certain symbol.
+     *
+     * @param projectId
+     *         The id of the project.
+     * @param symbolId
+     *         The id of the symbol.
+     * @return The list of steps that use the symbol.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<TestCaseStep> findAllByTestCase_Project_IdAndSymbol_Id(Long projectId, Long symbolId);
 }

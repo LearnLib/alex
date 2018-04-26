@@ -24,7 +24,7 @@
                     <th>Status</th>
                     <th>Total</th>
                     <th>Failed</th>
-                    <th>Time [ms]</th>
+                    <th>Time</th>
                     <th>&nbsp;</th>
                     <th>&nbsp;</th>
                 </tr>
@@ -45,8 +45,8 @@
                     <td width="1%" class="text-center">
                         {{report.numTestsFailed}}
                     </td>
-                    <td width="1%" style="min-width: 68px">
-                        {{report.time}}
+                    <td width="1%" style="min-width: 80px">
+                        {{report.time | formatMilliseconds}}
                     </td>
                     <td width="100%">
                         <a ui-sref="testReport({projectId: report.project, reportId: report.id})">Details</a>

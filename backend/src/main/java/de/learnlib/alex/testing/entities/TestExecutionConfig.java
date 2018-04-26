@@ -17,7 +17,9 @@
 package de.learnlib.alex.testing.entities;
 
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,15 +29,18 @@ import java.util.List;
 public class TestExecutionConfig {
 
     /** The ids of the tests to execute. */
+    @NotEmpty
     private List<Long> testIds;
 
     /** The configuration for the web driver. */
+    @NotNull
     private AbstractWebDriverConfig driverConfig;
 
     /** If a report should be created. */
     private boolean createReport;
 
     /** The id of the URL to use for testing. */
+    @NotNull
     private Long urlId;
 
     /** Constructor. */
@@ -54,6 +59,7 @@ public class TestExecutionConfig {
     public TestExecutionConfig(List<Long> testIds, AbstractWebDriverConfig driverConfig) {
         this.testIds = testIds;
         this.driverConfig = driverConfig;
+        this.createReport = false;
     }
 
     public List<Long> getTestIds() {

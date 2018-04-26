@@ -15,9 +15,6 @@
  */
 
 import {apiUrl} from '../../../../environments';
-import {ActionService} from '../action.service';
-
-const actionService = new ActionService();
 
 /**
  * The resource to handle actions with test cases over the API.
@@ -62,7 +59,7 @@ export class TestResource {
      */
     getRoot(projectId) {
         return this.$http.get(`${apiUrl}/projects/${projectId}/tests/root`)
-            .then(response => this._mapTest(response.data));
+            .then(response => response.data);
     }
 
     /**
@@ -73,7 +70,7 @@ export class TestResource {
      */
     get(projectId, testCaseId) {
         return this.$http.get(`${apiUrl}/projects/${projectId}/tests/${testCaseId}`)
-            .then(response => this._mapTest(response.data));
+            .then(response => response.data);
     }
 
     /**
@@ -132,27 +129,11 @@ export class TestResource {
     /**
      * Execute multiple tests at once.
      *
-     * @param {object} tests The tests to execute.
-     * @param {object} browserConfig The configuration for the web driver.
+     * @param {number} projectId The id of the project
+     * @param {object} testConfig The configuration for the web driver.
      */
-    executeMany(tests, browserConfig) {
-        return this.$http.post(`${apiUrl}/projects/${tests[0].project}/tests/execute`, {
-            testIds: tests.map((t) => t.id),
-            driverConfig: browserConfig,
-            createReport: true
-        })
+    executeMany(projectId, testConfig) {
+        return this.$http.post(`${apiUrl}/projects/${projectId}/tests/execute`, testConfig)
             .then((response) => response.data);
-    }
-
-    _mapTest(test) {
-        if (test.type === 'case') {
-            test.steps = test.steps.map((step) => {
-                if (step.type === 'action') {
-                    step.action = actionService.create(step.action);
-                }
-                return step;
-            });
-        }
-        return test;
     }
 }

@@ -47,8 +47,6 @@
             <hr>
             <div class="row">
                 <div class="col-md-3 col-sm-5">
-                    <button class="btn btn-default btn-block mb-1" action-create-modal-handle on-created="vm.addActionStep(action)">Add action</button>
-
                     <div style="height: 31px; position: relative; z-index: 10" class="mb-1">
                         <symbol-search-form groups="vm.groups" on-selected="vm.addSymbolStep(symbol)"></symbol-search-form>
                     </div>
@@ -65,24 +63,15 @@
                         <div class="list-group-item" ng-repeat="step in vm.testCase.steps track by $index">
                             <div class="d-flex flex-row">
                                 <div class="w-100">
-                                    <div ng-if="step.type === 'symbol'">
-                                        <strong>{{step.symbol.name}}</strong>
-                                        <div ng-if="step.parameterValues.length > 0" style="margin-top: .5rem">
-                                            <div class="d-flex flex-row text-muted" ng-repeat="parameterValue in step.parameterValues">
-                                                <div style="flex-shrink: 0">
-                                                    <em>{{parameterValue.parameter.name}}</em> =&nbsp;
-                                                </div>
-                                                <div class="w-100">
-                                                    <input class="input-parameter-value w-100 d-block" ng-model="parameterValue.value" type="text" placeholder="null">
-                                                </div>
+                                    <strong>{{step.symbol.name}}</strong>
+                                    <div ng-if="step.parameterValues.length > 0" style="margin-top: .5rem">
+                                        <div class="d-flex flex-row text-muted" ng-repeat="parameterValue in step.parameterValues">
+                                            <div style="flex-shrink: 0">
+                                                <em>{{parameterValue.parameter.name}}</em> =&nbsp;
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div ng-if="step.type === 'action'">
-                                        <i class="fa fa-fw fa-edit mr-1 pull-right" ng-click="vm.openActionEditModal(step.action, $index)"></i>
-                                        <em>{{step.action}}</em>
-                                        <div ng-if="step.action.negated">
-                                            <span class="label label-info">Negate</span>
+                                            <div class="w-100">
+                                                <input class="input-parameter-value w-100 d-block" ng-model="parameterValue.value" type="text" placeholder="null">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

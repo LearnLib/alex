@@ -20,10 +20,14 @@
         <div class="alx-container-fluid">
 
             <h4>
-                <span class="label pull-right label-success" ng-if="vm.report.passed">Passed</span>
-                <span class="label pull-right label-danger" ng-if="!vm.report.passed">Failed</span>
                 <strong>{{vm.report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</strong>
             </h4>
+
+            <hr>
+
+            <div class="d-flex justify-center">
+                <report-charts report="vm.report" ng-if="vm.report != null"></report-charts>
+            </div>
 
             <hr>
 
@@ -34,7 +38,7 @@
                     <th>Name</th>
                     <th>Output</th>
                     <th>Message</th>
-                    <th>Time [ms]</th>
+                    <th>Time</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -47,18 +51,13 @@
                         <a ui-sref="test({projectId: result.project, testId: result.test.id})">{{result.test.name}}</a>
                     </td>
                     <td>
-                        <span class="label"
-                              ng-class="{'label-success': output.success,'label-danger':!output.success}"
-                              style="margin-right: 3px;"
-                              ng-repeat="output in result.outputs track by $index">
-                            {{output.output}}
-                        </span>
+                        <report-outputs-column outputs="result.outputs" project="vm.project"></report-outputs-column>
                     </td>
                     <td>
                         <em ng-if="result.failureMessage">{{result.failureMessage}}</em>
                     </td>
                     <td style="min-width: 68px">
-                        {{result.time}}
+                        {{result.time | formatMilliseconds}}
                     </td>
                 </tr>
                 </tbody>

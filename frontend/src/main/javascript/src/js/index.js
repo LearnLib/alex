@@ -25,11 +25,6 @@ import uiBootstrap from 'angular-ui-bootstrap';
 import ngFileUpload from 'ng-file-upload';
 import {actionBarComponent} from './components/action-bar/action-bar.component';
 import {actionRecorderComponent} from './components/action-recorder/action-recorder.component';
-import {projectFormUrlGroupsComponent} from './components/forms/project-form-groups/project-form-url-groups/project-form-url-groups.component';
-import {actionSearchFormComponent} from './components/modals/action-create-modal/action-search-form/action-search-form.component';
-import {symbolGroupMoveModalComponent} from './components/modals/symbol-group-move-modal/symbol-group-move-modal.component';
-import {projectUrlListComponent} from './components/project-url-list/project-url-list.component';
-import {searchFormComponent} from './components/search-form/search-form.component';
 import {alexComponent} from './components/alex/alex.component';
 import {checkboxMultipleComponent} from './components/checkbox-multiple/checkbox-multiple.component';
 import {checkboxComponent} from './components/checkbox/checkbox.component';
@@ -85,6 +80,7 @@ import {browserConfigFormComponent} from './components/forms/browser-config-form
 import {nodeFormGroupComponent} from './components/forms/node-form-group/node-form-group.component';
 import {projectCreateFormComponent} from './components/forms/project-create-form/project-create-form.component';
 import {projectFormGroupsComponent} from './components/forms/project-form-groups/project-form-groups.component';
+import {projectFormUrlGroupsComponent} from './components/forms/project-form-groups/project-form-url-groups/project-form-url-groups.component';
 import {symbolEditFormComponent} from './components/forms/symbol-edit-form/symbol-edit-form.component';
 import {symbolFormGroupsComponent} from './components/forms/symbol-form-groups/symbol-form-groups.component';
 import {symbolParameterFormGroupsComponent} from './components/forms/symbol-parameter-form-groups/symbol-parameter-form-groups.components';
@@ -93,21 +89,15 @@ import {userLoginFormComponent} from './components/forms/user-login-form/user-lo
 import {webhookFormComponent} from './components/forms/webhook-form/webhook-form.component';
 import {htmlElementPickerComponent} from './components/html-element-picker/html-element-picker.component';
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
-import {symbolParameterEditModalComponent} from './components/modals/symbol-parameter-edit-modal/symbol-parameter-edit-modal.component';
-import {simpleSymbolGroupTreeItemComponent} from './components/simple-symbol-group-tree/simple-symbol-group-tree-item/simple-symbol-group-tree-item.component';
-import {simpleSymbolGroupTreeComponent} from './components/simple-symbol-group-tree/simple-symbol-group-tree.component';
-import {symbolGroupHeaderComponent} from './components/symbol-group-tree/symbol-group-header/symbol-group-header.component';
-import {symbolItemComponent} from './components/symbol-group-tree/symbol-item/symbol-item.component';
-import {symbolParametersPanelComponent} from './components/symbol-parameters-panel/symbol-parameters-panel.component';
 import {learnerResultListItemComponent} from './components/learner-result-list-item/learner-result-list-item.component';
 import {learnerResultPanelComponent} from './components/learner-result-panel/learner-result-panel.component';
 import {loadScreenComponent} from './components/load-screen/load-screen.component';
 import {actionCreateModalHandleDirective} from './components/modals/action-create-modal/action-create-modal-handle.directive';
 import {actionCreateModalComponent} from './components/modals/action-create-modal/action-create-modal.component';
+import {actionSearchFormComponent} from './components/modals/action-create-modal/action-search-form/action-search-form.component';
 import {actionEditModalHandleDirective} from './components/modals/action-edit-modal/action-edit-modal-handle.directive';
 import {actionEditModalComponent} from './components/modals/action-edit-modal/action-edit-modal.component';
 import {actionRecorderActionsModal} from './components/modals/action-recorder-actions-modal/action-recorder-actions-modal.component';
-import {testConfigModalComponent} from './components/modals/test-config-modal/test-config-modal.component';
 import {confirmModalComponent} from './components/modals/confirm-modal/confirm-modal.component';
 import {counterCreateModalComponent} from './components/modals/counter-create-modal/counter-create-modal.component';
 import {hypothesisLayoutSettingsModalHandleDirective} from './components/modals/hypothesis-layout-settings-modal/hypothesis-layout-settings-modal-handle.directive';
@@ -128,10 +118,13 @@ import {symbolEditModalComponent} from './components/modals/symbol-edit-modal/sy
 import {symbolGroupCreateModalHandleDirective} from './components/modals/symbol-group-create-modal/symbol-group-create-modal-handle.directive';
 import {symbolGroupCreateModalComponent} from './components/modals/symbol-group-create-modal/symbol-group-create-modal.component';
 import {symbolGroupEditModalComponent} from './components/modals/symbol-group-edit-modal/symbol-group-edit-modal.component';
+import {symbolGroupMoveModalComponent} from './components/modals/symbol-group-move-modal/symbol-group-move-modal.component';
 import {symbolParameterCreateModalComponent} from './components/modals/symbol-parameter-create-modal/symbol-parameter-create-modal.component';
+import {symbolParameterEditModalComponent} from './components/modals/symbol-parameter-edit-modal/symbol-parameter-edit-modal.component';
 import {symbolsImportModalComponent} from './components/modals/symbols-import-modal/symbols-import-modal.component';
 import {symbolMoveModalHandleDirective} from './components/modals/symbols-move-modal/symbols-move-modal-handle.directive';
 import {symbolMoveModalComponent} from './components/modals/symbols-move-modal/symbols-move-modal.component';
+import {testConfigModalComponent} from './components/modals/test-config-modal/test-config-modal.component';
 import {testsImportModalComponent} from './components/modals/tests-import-modal/tests-import-modal.component';
 import {userEditModalHandleDirective} from './components/modals/user-edit-modal/user-edit-modal-handle.directive';
 import {userEditModalComponent} from './components/modals/user-edit-modal/user-edit-modal.component';
@@ -139,9 +132,16 @@ import {webhookCreateModalComponent} from './components/modals/webhook-create-mo
 import {webhookEditModalComponent} from './components/modals/webhook-edit-modal/webhook-edit-modal.component';
 import {observationTableComponent} from './components/observation-table/observation-table.component';
 import {projectListComponent} from './components/project-list/project-list.component';
+import {projectUrlListComponent} from './components/project-url-list/project-url-list.component';
 import {responsiveIframeComponent} from './components/responsive-iframe/responsive-iframe.component';
+import {searchFormComponent} from './components/search-form/search-form.component';
 import {sidebarComponent} from './components/sidebar/sidebar.component';
+import {simpleSymbolGroupTreeItemComponent} from './components/simple-symbol-group-tree/simple-symbol-group-tree-item/simple-symbol-group-tree-item.component';
+import {simpleSymbolGroupTreeComponent} from './components/simple-symbol-group-tree/simple-symbol-group-tree.component';
+import {symbolGroupHeaderComponent} from './components/symbol-group-tree/symbol-group-header/symbol-group-header.component';
+import {symbolItemComponent} from './components/symbol-group-tree/symbol-item/symbol-item.component';
 import {symbolListItemComponent} from './components/symbol-list-item/symbol-list-item.component';
+import {symbolParametersPanelComponent} from './components/symbol-parameters-panel/symbol-parameters-panel.component';
 import {testResultReportComponent} from './components/test-result-report/test-result-report.component';
 import {testCaseNodeComponent} from './components/test-tree/test-case-node/test-case-node.component';
 import {testSuiteNodeComponent} from './components/test-tree/test-suite-node/test-suite-node.component';
@@ -153,15 +153,16 @@ import {adminUsersViewComponent} from './components/views/admin-users-view/admin
 import {countersViewComponent} from './components/views/counters-view/counters-view.component';
 import {errorViewComponent} from './components/views/error-view/error-view.component';
 import {filesViewComponent} from './components/views/files-view/files-view.component';
-import {learnerSetupSymbolGroupTreeComponent} from './components/views/learner-setup-view/learner-setup-symbol-group-tree/learner-setup-symbol-group-tree.component';
-import {redirectViewComponent} from './components/views/redirect-view/redirect-view.component';
-import {rootViewComponent} from './components/views/root-view/root-view.component';
 import {resultsCompareViewComponent} from './components/views/learner-results-compare-view/learner-results-compare-view.component';
 import {resultsViewComponent} from './components/views/learner-results-view/learner-results-view.component';
+import {learnerSetupSymbolGroupTreeComponent} from './components/views/learner-setup-view/learner-setup-symbol-group-tree/learner-setup-symbol-group-tree.component';
 import {learnerSetupViewComponent} from './components/views/learner-setup-view/learner-setup-view.component';
 import {learnerViewComponent} from './components/views/learner-view/learner-view.component';
+import {profileViewComponent} from './components/views/profile-view/profile-view.component';
 import {projectViewComponent} from './components/views/project-view/project-view.component';
 import {projectsViewComponent} from './components/views/projects-view/projects-view.component';
+import {redirectViewComponent} from './components/views/redirect-view/redirect-view.component';
+import {rootViewComponent} from './components/views/root-view/root-view.component';
 import {statisticsCompareViewComponent} from './components/views/statistics-compare-view/statistics-compare-view.component';
 import {symbolViewComponent} from './components/views/symbol-view/symbol-view.component';
 import {symbolsArchiveViewComponent} from './components/views/symbols-archive-view/symbols-archive-view.component';
@@ -169,11 +170,12 @@ import {symbolSearchFormComponent} from './components/views/symbols-view/symbol-
 import {symbolsSymbolGroupTreeComponent} from './components/views/symbols-view/symbols-symbol-group-tree/symbols-symbol-group-tree.component';
 import {symbolsViewComponent} from './components/views/symbols-view/symbols-view.component';
 import {testCaseViewComponent} from './components/views/test-case-view/test-case-view.component';
+import {reportChartsComponent} from './components/views/test-report-view/report-donut-chart/report-charts.component';
+import {reportOutputsColumnComponent} from './components/views/test-report-view/report-output-column/report-outputs-column.component';
 import {testReportViewComponent} from './components/views/test-report-view/test-report-view.component';
 import {testReportsViewComponent} from './components/views/test-reports-view/test-reports-view.component';
 import {testSuiteViewComponent} from './components/views/test-suite-view/test-suite-view.component';
 import {testsViewComponent} from './components/views/tests-view/tests-view.component';
-import {profileViewComponent} from './components/views/profile-view/profile-view.component';
 import {webhooksViewComponent} from './components/views/webhooks-view/webhooks-view.component';
 import {counterexamplesWidgetComponent} from './components/widgets/counterexamples-widget/counterexamples-widget.component';
 import {latestLearnerResultWidgetComponent} from './components/widgets/latest-learner-result-widget/latest-learner-result-widget.component';
@@ -187,7 +189,8 @@ import * as constant from './constants';
 import {
     formatAlgorithm,
     formatEqOracle,
-    formatMilliseconds, formatParameterType,
+    formatMilliseconds,
+    formatParameterType,
     formatUserRole,
     formatWebBrowser,
     sortTests
@@ -468,6 +471,8 @@ angular
     .component('symbolGroupHeader', symbolGroupHeaderComponent)
     .component('symbolItem', symbolItemComponent)
     .component('symbolsSymbolGroupTree', symbolsSymbolGroupTreeComponent)
+    .component('reportOutputsColumn', reportOutputsColumnComponent)
+    .component('reportCharts', reportChartsComponent)
     .component('learnerSetupSymbolGroupTree', learnerSetupSymbolGroupTreeComponent);
 
 angular.bootstrap(document, ['ALEX']);

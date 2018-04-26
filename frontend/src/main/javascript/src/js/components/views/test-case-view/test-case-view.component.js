@@ -125,9 +125,7 @@ export const testCaseViewComponent = {
         save() {
             const test = JSON.parse(JSON.stringify(this.testCase));
             test.steps = test.steps.map((step) => {
-                if (step.type === 'symbol') {
-                    step.symbol = step.symbol.id;
-                }
+                step.symbol = step.symbol.id;
                 return step;
             });
             this.TestResource.update(test)
@@ -165,7 +163,6 @@ export const testCaseViewComponent = {
 
         addSymbolStep(symbol) {
             this.testCase.steps.push({
-                type: 'symbol',
                 shouldFail: false,
                 symbol: {
                     id: symbol.id,
@@ -174,14 +171,6 @@ export const testCaseViewComponent = {
                 parameterValues: symbol.inputs
                     .filter(input => input.parameterType === 'STRING')
                     .map(input => ({parameter: input, value: ""}))
-            });
-        }
-
-        addActionStep(action) {
-            this.testCase.steps.push({
-                type: 'action',
-                shouldFail: false,
-                action: action
             });
         }
 

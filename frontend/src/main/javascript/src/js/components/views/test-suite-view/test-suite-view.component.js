@@ -96,17 +96,22 @@ export const testSuiteViewComponent = {
 
             /**
              * The driver configuration.
-             * @type {object}
+             * @type {Object}
              */
-            this.driverConfig = DriverConfigService.createFromName(webBrowser.HTML_UNIT);
+            this.testConfig = {
+                testIds: [],
+                urlId: this.project.getDefaultUrl().id,
+                driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
+                createReport: true
+            };
 
             SettingsResource.getSupportedWebDrivers()
-                .then(data => this.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver))
-                .catch(console.log);
+                .then(data => this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver))
+                .catch(console.error);
 
             SymbolGroupResource.getAll(this.project.id, true)
                 .then((groups) => this.groups = groups)
-                .catch(console.log);
+                .catch(console.error);
 
             // check if a test process is active
             this.TestResource.getStatus(this.project.id)
@@ -170,9 +175,7 @@ export const testSuiteViewComponent = {
                         delete testToUpdate.tests;
                     } else {
                         testToUpdate.steps = test.steps.map((step) => {
-                            if (step.type === 'symbol') {
-                                step.symbol = step.symbol.id;
-                            }
+                            step.symbol = step.symbol.id;
                             return step;
                         });
                     }
@@ -223,15 +226,17 @@ export const testSuiteViewComponent = {
         }
 
         executeSelected() {
-            if (this.testSuite.tests.findIndex(t => t._selected) === -1) {
+            const selectedTests = this.testSuite.tests.filter(t => t._selected);
+
+            if (selectedTests.length === 0) {
                 this.ToastService.info('You have to select at least one test case or test suite.');
                 return;
             }
 
             this.reset();
-            const selected = this.testSuite.tests.filter(t => t._selected);
 
-            this.TestResource.executeMany(selected, this.driverConfig)
+            this.testConfig.testIds = selectedTests.map(t => t.id);
+            this.TestResource.executeMany(this.project.id, this.testConfig)
                 .then(() => {
                     this.ToastService.success(`The test execution has been started.`);
                     this._pollStatus();
@@ -283,12 +288,12 @@ export const testSuiteViewComponent = {
             this.$uibModal.open({
                 component: 'testConfigModal',
                 resolve: {
-                    configuration: () => JSON.parse(JSON.stringify(this.driverConfig)),
+                    configuration: () => JSON.parse(JSON.stringify(this.testConfig)),
                     project: () => this.project
                 }
             }).result.then(data => {
                 this.ToastService.success('The settings have been updated.');
-                this.driverConfig = data;
+                this.testConfig = data;
             });
         }
 

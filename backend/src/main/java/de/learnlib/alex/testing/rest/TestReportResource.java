@@ -25,6 +25,8 @@ import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.services.reporters.JUnitTestResultReporter;
 import de.learnlib.alex.testing.services.reporters.TestResultReporter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -45,6 +47,8 @@ import java.util.List;
 @Path("/projects/{project_id}/tests/reports")
 @RolesAllowed({"REGISTERED"})
 public class TestReportResource {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The security context containing the user of the request. */
     @Context
@@ -74,7 +78,11 @@ public class TestReportResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") Long projectId) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
+
         final List<TestReport> testReports = testReportDAO.get(user, projectId);
+
+        LOGGER.traceExit(testReports);
         return Response.ok(testReports).build();
     }
 
@@ -93,6 +101,7 @@ public class TestReportResource {
     public Response get(@PathParam("project_id") Long projectId, @PathParam("report_id") Long reportId,
                         @QueryParam("format") String format) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("get({}, {}) for user {}.", projectId, reportId, user);
 
         final TestReport testReport = testReportDAO.get(user, projectId, reportId);
 
@@ -103,12 +112,16 @@ public class TestReportResource {
                 case "junit+xml":
                     final TestResultReporter<String> reporter = new JUnitTestResultReporter();
                     final String report = reporter.createReport(testReport);
+
+                    LOGGER.traceExit(report);
                     return Response.status(Response.Status.OK)
                             .header("Content-Type", "application/xml")
                             .entity(report)
                             .build();
                 default:
                     final Exception e = new ValidationException("format " + format + " does not exist");
+                    LOGGER.traceExit(e);
+
                     return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.get",
                             Response.Status.BAD_REQUEST, e);
             }
@@ -126,11 +139,14 @@ public class TestReportResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getLatest(@PathParam("project_id") Long projectId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("getLatest({}) for user {}.", projectId, user);
 
         try {
             final TestReport latestReport = testReportDAO.getLatest(user, projectId);
+            LOGGER.traceExit(latestReport);
             return latestReport == null ? Response.noContent().build() : Response.ok(latestReport).build();
         } catch (NotFoundException e) {
+            LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.getLatest",
                     Response.Status.NOT_FOUND, e);
         }
@@ -150,7 +166,11 @@ public class TestReportResource {
     public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_id") Long reportId)
             throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, reportId, user);
+
         testReportDAO.delete(user, projectId, reportId);
+
+        LOGGER.traceExit("Report {} deleted", reportId);
         return Response.noContent().build();
     }
 
@@ -168,7 +188,11 @@ public class TestReportResource {
     public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_ids") IdsList reportIds)
             throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, reportIds, user);
+
         testReportDAO.delete(user, projectId, reportIds);
+
+        LOGGER.traceExit("Reports {} deleted", reportIds);
         return Response.noContent().build();
     }
 }

@@ -47,14 +47,6 @@ import java.util.List;
  * The entity for a test.
  */
 @Entity
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        columnNames = {"projectId"},
-                        name = "Unique Test Case ID per Project"
-                )
-        }
-)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("SUPER")
