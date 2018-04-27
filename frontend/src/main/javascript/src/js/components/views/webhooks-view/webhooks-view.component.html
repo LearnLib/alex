@@ -35,7 +35,7 @@
                                 <span class="label label-success"
                                       style="padding: .75rem 1rem; margin-right: .75rem; margin-bottom: .75rem; display: inline-block"
                                       ng-repeat="event in webhook.events">
-                                    {{event}}
+                                    {{event|normalizeUpperCase}}
                                 </span>
                             </div>
                         </div>

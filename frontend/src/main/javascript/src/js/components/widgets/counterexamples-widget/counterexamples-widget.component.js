@@ -147,21 +147,22 @@ class CounterexamplesWidgetComponent {
                     symbols: testSymbols,
                 },
                 driverConfig: this.result.driverConfig
-            }).then(ce => {
-                ce.shift();
-                let ceFound = false;
-                for (let i = 0; i < ce.length; i++) {
-                    if (ce[i] !== this.counterExample[i].output) {
-                        ceFound = true;
-                        break;
-                    }
-                }
-                if (ceFound) {
-                    deferred.resolve(ce);
-                } else {
-                    deferred.reject();
-                }
             })
+                .then(ce => {
+                    ce.shift();
+                    let ceFound = false;
+                    for (let i = 0; i < ce.length; i++) {
+                        if (ce[i].output !== this.counterExample[i].output) {
+                            ceFound = true;
+                            break;
+                        }
+                    }
+                    if (ceFound) {
+                        deferred.resolve(ce);
+                    } else {
+                        deferred.reject();
+                    }
+                })
                 .catch(err => console.log(err));
         };
 

@@ -1,0 +1,34 @@
+<div>
+    <div class="form-group">
+        <label class="control-label">EQ Oracle</label><br>
+        <select class="form-control" ng-model="vm.selectedType" ng-change="vm.selectEqOracle()"
+                ng-options="(v|formatEqOracle) for (k,v) in vm.types">
+            <option value="" disabled>Select an EQ Oracle</option>
+        </select>
+    </div>
+
+    <random-eq-oracle-form
+        ng-if="vm.eqOracle.type === vm.types.RANDOM"
+        form="vm.form"
+        eq-oracle="vm.eqOracle"
+    >
+    </random-eq-oracle-form>
+    <complete-eq-oracle-form
+        ng-if="vm.eqOracle.type === vm.types.COMPLETE"
+        form="vm.form"
+        eq-oracle="vm.eqOracle"
+    >
+    </complete-eq-oracle-form>
+    <w-method-eq-oracle-form
+        ng-if="vm.eqOracle.type === vm.types.WMETHOD"
+        form="vm.form"
+        eq-oracle="vm.eqOracle"
+    >
+    </w-method-eq-oracle-form>
+    <hypothesis-eq-oracle-form
+        ng-if="vm.eqOracle.type === vm.types.HYPOTHESIS"
+        form="vm.form"
+        eq-oracle="vm.eqOracle"
+    >
+    </hypothesis-eq-oracle-form>
+</div>

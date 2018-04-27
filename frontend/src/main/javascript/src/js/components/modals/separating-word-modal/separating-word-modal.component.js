@@ -14,22 +14,27 @@
  * limitations under the License.
  */
 
-import {eqOracleType} from '../../constants';
+export const separatingWordModalComponent = {
+    template: require('./separating-word-modal.component.html'),
+    bindings: {
+        dismiss: '&',
+        resolve: '='
+    },
+    controllerAs: 'vm',
+    controller: class SeparatingWordModalComponent {
 
-/**
- * The model for the complete eq oracle.
- */
-export class CompleteEqOracle {
+        /** Constructor. */
+        constructor() {
 
-    /**
-     * Constructor.
-     *
-     * @param {number} minDepth
-     * @param {number} maxDepth
-     */
-    constructor(minDepth = 1, maxDepth = 10) {
-        this.type = eqOracleType.COMPLETE;
-        this.minDepth = minDepth;
-        this.maxDepth = maxDepth;
+            /**
+             * The separating word.
+             * @type {Object}
+             */
+            this.diff = null;
+        }
+
+        $onInit() {
+            this.diff = this.resolve.diff;
+        }
     }
-}
+};

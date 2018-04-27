@@ -29,7 +29,7 @@ export class RandomEqOracle {
      * @param {number} maxNoOfTests
      * @param {seed} seed
      */
-    constructor(minLength = 0, maxLength = 0, maxNoOfTests = 0, seed = 42) {
+    constructor(minLength = 10, maxLength = 20, maxNoOfTests = 50, seed = 42) {
         this.type = eqOracleType.RANDOM;
         this.minLength = minLength;
         this.maxLength = maxLength;

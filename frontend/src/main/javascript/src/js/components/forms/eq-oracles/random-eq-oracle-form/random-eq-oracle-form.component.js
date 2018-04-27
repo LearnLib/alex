@@ -14,22 +14,11 @@
  * limitations under the License.
  */
 
-import {eqOracleType} from '../../constants';
-
-/**
- * The model for the complete eq oracle.
- */
-export class CompleteEqOracle {
-
-    /**
-     * Constructor.
-     *
-     * @param {number} minDepth
-     * @param {number} maxDepth
-     */
-    constructor(minDepth = 1, maxDepth = 10) {
-        this.type = eqOracleType.COMPLETE;
-        this.minDepth = minDepth;
-        this.maxDepth = maxDepth;
-    }
-}
+export const randomEqOracleFormComponent = {
+    template: require('./random-eq-oracle-form.component.html'),
+    bindings: {
+        form: '=',
+        eqOracle: '='
+    },
+    controllerAs: 'vm'
+};

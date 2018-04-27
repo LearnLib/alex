@@ -29,6 +29,7 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
+import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
@@ -447,19 +448,23 @@ public class Learner {
      *
      * @return If the machines are different: The corresponding separating word; otherwise: ""
      */
-    public String separatingWord(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {
-        Alphabet<String> alphabetProxy1 = mealy1.createAlphabet();
-        Alphabet<String> alphabetProxy2 = mealy1.createAlphabet();
+    public SeparatingWord separatingWord(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {
+        final Alphabet<String> alphabetProxy1 = mealy1.createAlphabet();
+        final Alphabet<String> alphabetProxy2 = mealy1.createAlphabet();
 
-        CompactMealy<String, String> mealyMachine1 = mealy1.createMealyMachine(alphabetProxy1);
-        CompactMealy<String, String> mealyMachine2 = mealy2.createMealyMachine(alphabetProxy2);
+        final CompactMealy<String, String> mealyMachine1 = mealy1.createMealyMachine(alphabetProxy1);
+        final CompactMealy<String, String> mealyMachine2 = mealy2.createMealyMachine(alphabetProxy2);
 
-        Word<String> separatingWord = Automata.findSeparatingWord(mealyMachine1, mealyMachine2, alphabetProxy1);
+        final Word<String> separatingWord = Automata.findSeparatingWord(mealyMachine1, mealyMachine2, alphabetProxy1);
 
         if (separatingWord != null) {
-            return separatingWord.toString();
+            return new SeparatingWord(
+                    separatingWord,
+                    mealyMachine1.computeOutput(separatingWord),
+                    mealyMachine2.computeOutput(separatingWord)
+            );
         } else {
-            return "";
+            return new SeparatingWord();
         }
     }
 
@@ -480,21 +485,26 @@ public class Learner {
         final CompactMealy<String, String> hyp2 = mealyProxy1.createMealyMachine(alphabet);
 
         // the words where the output differs
-        final List<Word<String>> diff = new ArrayList<>();
+        final List<SeparatingWord> diffs = new ArrayList<>();
 
         final List<Word<String>> transCover = Automata.transitionCover(hyp2, alphabet);
         final List<Word<String>> charSet = Automata.characterizingSet(hyp2, alphabet);
 
         // use the same coverage as for the w method
         for (final Word<String> prefix : transCover) {
-            if (!hyp1.computeOutput(prefix).equals(hyp2.computeOutput(prefix))) {
-                diff.add(prefix);
-            }
-
             for (final Word<String> suffix : charSet) {
                 final Word<String> word = prefix.concat(suffix);
-                if (!hyp1.computeOutput(word).equals(hyp2.computeOutput(word))) {
-                    diff.add(word);
+
+                final Word<String> out1 = hyp1.computeOutput(word);
+                final Word<String> out2 = hyp2.computeOutput(word);
+
+                if (!out1.equals(out2)) {
+                    for (int i = 0; i < word.length(); i++) {
+                        if (!out1.getSymbol(i).equals(out2.getSymbol(i))) {
+                            diffs.add(new SeparatingWord(word.subWord(0, i + 1), out1, out2));
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -508,17 +518,24 @@ public class Learner {
         int i = hyp2.getInitialState();
         int j = diffTree.getInitialState();
 
-        for (final Word<String> word : diff) {
+        for (final SeparatingWord diff : diffs) {
 
             // walk along the hypothesis from its initial state
-            for (final String sym : word) {
+            for (int k = 0; k < diff.getInput().length(); k++) {
+                final String sym = diff.getInput().getSymbol(k);
+
                 final CompactMealyTransition<String> transition = hyp2.getTransition(i, sym);
-                final String out = transition.getOutput();
 
                 if (diffTree.getTransition(j, sym) == null) {
                     // if the transition does not yet exist in the tree
                     // create a new state in the tree and add the same transition
                     final int newState = diffTree.addState();
+
+                    String out = diff.getOutput2().getSymbol(k);
+                    if (k == diff.getInput().length() - 1) {
+                        out += " vs. " + diff.getOutput1().getSymbol(k);
+                    }
+
                     final CompactMealyTransition<String> t = new CompactMealyTransition<>(newState, out);
                     diffTree.addTransition(j, sym, t);
 

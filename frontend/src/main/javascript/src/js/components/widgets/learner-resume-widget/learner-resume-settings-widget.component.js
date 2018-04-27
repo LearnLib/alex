@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {eqOracleType} from '../../../constants';
-
 /**
  * The directive for the widget of the sidebar where learn resume configurations can be edited. Should be included
  * into a <div widget></div> directive for visual appeal.
@@ -25,20 +23,8 @@ import {eqOracleType} from '../../../constants';
  */
 class LearnerResumeSettingsWidgetComponent {
 
-    /**
-     * Constructor.
-     *
-     * @param {EqOracleService} EqOracleService
-     */
-    // @ngInject
-    constructor(EqOracleService) {
-        this.EqOracleService = EqOracleService;
-
-        /**
-         * The dictionary for eq oracle types.
-         * @type {Object}
-         */
-        this.eqOracles = eqOracleType;
+    /** Constructor. */
+    constructor() {
 
         /**
          * The symbols that can be added to the learner.
@@ -48,13 +34,6 @@ class LearnerResumeSettingsWidgetComponent {
     }
 
     $onInit() {
-
-        /**
-         * The selected eq oracle type from the select box.
-         * @type {string}
-         */
-        this.selectedEqOracle = this.configuration.eqOracle.type;
-
         // Make sure only the symbols can be added that are not yet part of the input alphabet.
         // Make sure the reset symbol can not be added as well.
         this.symbols.forEach(s => {
@@ -65,18 +44,10 @@ class LearnerResumeSettingsWidgetComponent {
     }
 
     /**
-     * Load hypothesis.
-     * @param {string} hypothesis
-     */
-    loadHypothesis(hypothesis) {
-        this.configuration.eqOracle.hypothesis = JSON.parse(hypothesis);
-    }
-
-    /**
      * Creates a new eq oracle object from the selected type and assigns it to the configuration.
      */
-    setEqOracle() {
-        this.configuration.eqOracle = this.EqOracleService.createFromType(this.selectedEqOracle);
+    setEqOracle(eqOracle) {
+        this.configuration.eqOracle = eqOracle;
     }
 }
 

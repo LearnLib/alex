@@ -141,6 +141,19 @@ export function formatAlgorithm() {
 }
 
 /**
+ * Transform an upper case string to a normal one.
+ * Example: RANDOM_WORD -> Random word.
+ *
+ * @return {function(string): string}
+ */
+export function normalizeUpperCase() {
+    return str => {
+        let res = str.split('_').map(part => part.toLowerCase()).join(' ');
+        return res.charAt(0).toUpperCase() + res.slice(1);
+    }
+}
+
+/**
  * The filter takes a number representing milliseconds and formats it to [h] [min] s.
  *
  * @returns {Function}

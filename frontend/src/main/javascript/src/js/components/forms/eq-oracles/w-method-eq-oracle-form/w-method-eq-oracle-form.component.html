@@ -1,0 +1,24 @@
+<div class="form-horizontal form-condensed">
+    <div class="form-group">
+        <label class="col-sm-3 control-label">Max depth</label>
+        <div class="col-sm-9">
+            <input
+                class="form-control"
+                name="eq_oracle_wmethod_max_depth"
+                ng-model="vm.eqOracle.maxDepth"
+                type="number"
+                required
+                min="1"
+                placeholder="1"
+            >
+
+            <div
+                class="alert alert-danger alert-condensed mb-0"
+                ng-show="vm.form.eq_oracle_wmethod_max_depth.$dirty && vm.form.eq_oracle_wmethod_max_depth.$invalid"
+            >
+                <small ng-show="vm.form.eq_oracle_wmethod_max_depth.$error.required">The field must not be empty.</small>
+                <small ng-show="vm.form.eq_oracle_wmethod_max_depth.$error.min">The value must be &ge; 1.</small>
+            </div>
+        </div>
+    </div>
+</div>

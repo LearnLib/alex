@@ -125,29 +125,15 @@ class ResultsCompareViewComponent {
         const hypB = this.panels[1].steps[this.panelPointers[1]].hypothesis;
 
         this.LearnerResource.getSeparatingWord(hypA, hypB)
-            .then(data => {
-                if (data.separatingWord === '') {
-                    this.ToastService.info('The two hypotheses are identical');
+            .then(diff => {
+                if (diff.input.length === 0) {
+                    this.ToastService.info('The two hypotheses are identical.');
                 } else {
                     this.$uibModal.open({
-                        template: `
-                            <div class="modal-body">
-                                <h4>Separating word</h4>
-                                <strong ng-bind="vm.word"></strong>
-                            </div>
-                            <div class="modal-footer">
-                                <a class="btn btn-default btn-sm" ng-click="vm.close()">Close</a>
-                            </div>
-                        `,
+                        component: 'separatingWordModal',
                         resolve: {
-                            word: () => data.separatingWord
-                        },
-                        // @ngInject
-                        controller: function ($uibModalInstance, word) {
-                            this.word = word;
-                            this.close = () => $uibModalInstance.close();
-                        },
-                        controllerAs: 'vm',
+                            diff: () => diff
+                        }
                     });
                 }
             })

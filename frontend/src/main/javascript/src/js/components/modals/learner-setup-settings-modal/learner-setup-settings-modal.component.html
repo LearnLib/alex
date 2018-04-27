@@ -6,7 +6,7 @@
     <h3 class="modal-title">Experiment settings</h3>
 </div>
 
-<form name="learn_config_form" ng-submit="vm.ok()">
+<form name="vm.form" ng-submit="vm.ok()">
     <div class="modal-body">
 
         <uib-tabset>
@@ -21,162 +21,12 @@
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label class="control-label">EQ Oracle</label><br>
-                    <select class="form-control" ng-model="vm.selectedEqOracle" ng-change="vm.setEqOracle()"
-                            ng-options="(v|formatEqOracle) for (k,v) in vm.eqOracles">
-                        <option value="" disabled>select an EQ Oracle</option>
-                    </select>
-                </div>
-
-                <!-- BEGIN: EQ Oracle: RANDOM -->
-                <div class="form-horizontal form-condensed" ng-if="vm.learnConfiguration.eqOracle.type === vm.eqOracles.RANDOM">
-                    <div class="form-group">
-                        <div class="col-sm-9">
-                            <input class="form-control" name="eq_oracle_random_min_length"
-                                   ng-model="vm.learnConfiguration.eqOracle.minLength" type="number"
-                                   required min="0"
-                                   placeholder="0">
-                        </div>
-                        <label class="col-sm-3 control-label">min length</label>
-                    </div>
-
-                    <div class="alert alert-danger alert-condensed"
-                         ng-show="learn_config_form.eq_oracle_random_min_length.$dirty && learn_config_form.eq_oracle_random_min_length.$invalid">
-                        <small ng-show="learn_config_form.eq_oracle_complete_min_depth.$error.required">
-                            The field must not be empty.
-                        </small>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-sm-9">
-                            <input class="form-control" name="eq_oracle_random_max_length"
-                                   ng-model="vm.learnConfiguration.eqOracle.maxLength" type="number"
-                                   required min="0"
-                                   placeholder="0">
-                        </div>
-                        <label class="col-sm-3 control-label">max length</label>
-                    </div>
-
-                    <div class="alert alert-danger alert-condensed"
-                         ng-show="learn_config_form.eq_oracle_random_max_length.$dirty && learn_config_form.eq_oracle_random_max_length.$invalid">
-                        <small ng-show="learn_config_form.eq_oracle_random_max_length.$error.required">
-                            The field must not be empty.
-                        </small>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-sm-9">
-                            <input class="form-control" name="eq_oracle_random_no_words"
-                                   ng-model="vm.learnConfiguration.eqOracle.maxNoOfTests" type="number"
-                                   required min="0"
-                                   placeholder="0">
-                        </div>
-                        <label class="col-sm-3 control-label">no of random words</label>
-                    </div>
-
-                    <div class="alert alert-danger alert-condensed"
-                         ng-show="learn_config_form.eq_oracle_random_no_words.$dirty && learn_config_form.eq_oracle_random_no_words.$invalid">
-                        <small ng-show="learn_config_form.eq_oracle_random_no_words.$error.required">
-                            The field must not be empty.
-                        </small>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-sm-9">
-                            <input class="form-control" name="eq_oracle_random_seed"
-                                   ng-model="vm.learnConfiguration.eqOracle.seed" type="number"
-                                   required>
-                        </div>
-                        <label class="col-sm-3 control-label">seed</label>
-                    </div>
-
-                    <div class="alert alert-danger alert-condensed"
-                         ng-show="learn_config_form.eq_oracle_random_seed.$dirty && learn_config_form.eq_oracle_random_seed.$invalid">
-                        <small ng-show="learn_config_form.eq_oracle_random_seed.$error.required">
-                            The field must not be empty.
-                        </small>
-                    </div>
-                </div>
-                <!-- END: EQ Oracle: RANDOM -->
-
-                <!-- BEGIN: EQ Oracle: COMPLETE -->
-                <div class="form-horizontal form-condensed"
-                     ng-if="vm.learnConfiguration.eqOracle.type === vm.eqOracles.COMPLETE">
-                    <div class="form-group">
-                        <div class="col-sm-9">
-                            <input class="form-control" name="eq_oracle_complete_min_depth"
-                                   ng-model="vm.learnConfiguration.eqOracle.minDepth" type="number"
-                                   required min="0"
-                                   placeholder="0">
-                        </div>
-                        <label class="col-sm-3 control-label">min depth</label>
-                    </div>
-
-                    <div class="alert alert-danger alert-condensed"
-                         ng-show="learn_config_form.eq_oracle_complete_min_depth.$dirty && learn_config_form.eq_oracle_complete_min_depth.$invalid">
-                        <small ng-show="learn_config_form.eq_oracle_complete_min_depth.$error.required">
-                            The field must not be empty.
-                        </small>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-sm-9">
-                            <input class="form-control" name="eq_oracle_complete_max_depth"
-                                   ng-model="vm.learnConfiguration.eqOracle.maxDepth" type="number"
-                                   required min="0"
-                                   placeholder="0">
-                        </div>
-                        <label class="col-sm-3 control-label">max depth</label>
-                    </div>
-
-                    <div class="alert alert-danger alert-condensed"
-                         ng-show="learn_config_form.eq_oracle_complete_max_depth.$dirty && learn_config_form.eq_oracle_complete_max_depth.$invalid">
-                        <small ng-show="learn_config_form.eq_oracle_complete_max_depth.$error.required">
-                            The field must not be empty.
-                        </small>
-                    </div>
-
-                </div>
-                <!-- END: EQ Oracle: COMPLETE -->
-
-                <!-- BEGIN: EQ Oracle: WMETHOD -->
-                <div class="form-horizontal form-condensed"
-                     ng-if="vm.learnConfiguration.eqOracle.type === vm.eqOracles.WMETHOD">
-                    <div class="form-group">
-                        <div class="col-sm-9">
-                            <input class="form-control" name="eq_oracle_wmethod_max_depth"
-                                   ng-model="vm.learnConfiguration.eqOracle.maxDepth" type="number"
-                                   required min="0"
-                                   placeholder="0">
-                        </div>
-                        <label class="col-sm-3 control-label">max depth</label>
-                    </div>
-
-                    <div class="alert alert-danger alert-condensed"
-                         ng-show="learn_config_form.eq_oracle_wmethod_max_depth.$dirty && learn_config_form.eq_oracle_wmethod_max_depth.$invalid">
-                        <small ng-show="learn_config_form.eq_oracle_wmethod_max_depth.$error.required">
-                            The field must not be empty.
-                        </small>
-                    </div>
-                </div>
-                <!-- END: EQ Oracle: WMETHOD -->
-
-                <!-- BEGIN: EQ Oracle: HYPOTHESIS -->
-                <div class="form-horizontal form-condensed"
-                     ng-if="vm.learnConfiguration.eqOracle.type === vm.eqOracles.HYPOTHESIS">
-
-                    <file-dropzone on-loaded="vm.fileLoaded.bind(vm)">
-                        <span ng-hide="vm.learnConfiguration.eqOracle.hypothesis.nodes">
-                            Drag and drop *.json file here or click to upload
-                        </span>
-                        <span ng-show="vm.learnConfiguration.eqOracle.hypothesis.nodes">
-                            Use a hypothesis with {{ vm.learnConfiguration.eqOracle.hypothesis.nodes.length }} states
-                        </span>
-                    </file-dropzone>
-
-                </div>
-                <!-- END: EQ Oracle: HYPOTHESIS -->
+                <eq-oracle-form
+                    eq-oracle="vm.learnConfiguration.eqOracle"
+                    form="vm.form"
+                    on-selected="vm.setEqOracle(eqOracle)"
+                >
+                </eq-oracle-form>
 
                 <hr>
 
@@ -194,11 +44,12 @@
                            class="form-control" type="number" placeholder="-1">
                 </div>
 
-                <div class="alert alert-danger alert-condensed"
-                     ng-show="learn_config_form.max_steps.$dirty && learn_config_form.max_steps.$invalid">
-                    <small ng-show="learn_config_form.max_steps.$error.required">
-                        The field must not be empty.
-                    </small>
+                <div
+                    class="alert alert-danger alert-condensed"
+                    ng-show="vm.form.max_steps.$dirty && vm.form.max_steps.$invalid"
+                >
+                    <small ng-show="vm.form.max_steps.$error.required">The field must not be empty.</small>
+                    <small ng-show="vm.form.max_steps.$error.min">The value must be &ge; -1.</small>
                 </div>
 
                 <div class="form-group">

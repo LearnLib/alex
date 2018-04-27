@@ -74,12 +74,12 @@
 
         </div>
         <div class="body">
-            <div class="sidebar" style="overflow: auto; padding: 14px;" dragula='"actionList2"' dragula-model="vm.actions">
+            <div class="sidebar" style="overflow: auto; padding: 14px;">
                 <div class="alert alert-info" ng-if="vm.actions.length === 0">
                     You haven't recorded any actions yet.
                 </div>
 
-                <div class="list-group">
+                <div class="list-group" dragula='"actionList2"' dragula-model="vm.actions">
                     <div class="list-group-item d-flex flex-row" ng-repeat="action in vm.actions">
                         <div class="flex-grow-1" style="word-break: break-all;">
                             {{action.toString()}}

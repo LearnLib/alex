@@ -77,6 +77,11 @@ import {waitForNodeAttributeActionFormComponent} from './components/forms/action
 import {waitForTextActionFormComponent} from './components/forms/actions/web/wait-for-text-action-form/wait-for-text-action-form.component';
 import {waitForTitleActionFormComponent} from './components/forms/actions/web/wait-for-title-action-form/wait-for-title-action-form.component';
 import {browserConfigFormComponent} from './components/forms/browser-config-form/browser-config-form.component';
+import {completeEqOracleFormComponent} from './components/forms/eq-oracles/complete-eq-oracle-form/complete-eq-oracle-form.component';
+import {eqOracleFormComponent} from './components/forms/eq-oracles/eq-oracle-form.component';
+import {hypothesisEqOracleFormComponent} from './components/forms/eq-oracles/hypothesis-eq-oracle-form/hypothesis-eq-oracle-form.component';
+import {randomEqOracleFormComponent} from './components/forms/eq-oracles/random-eq-oracle-form/random-eq-oracle-form.component';
+import {wMethodEqOracleFormComponent} from './components/forms/eq-oracles/w-method-eq-oracle-form/w-method-eq-oracle-form.component';
 import {nodeFormGroupComponent} from './components/forms/node-form-group/node-form-group.component';
 import {projectCreateFormComponent} from './components/forms/project-create-form/project-create-form.component';
 import {projectFormGroupsComponent} from './components/forms/project-form-groups/project-form-groups.component';
@@ -111,6 +116,7 @@ import {learnerSetupSettingsModalComponent} from './components/modals/learner-se
 import {projectEditModalHandleDirective} from './components/modals/project-edit-modal/project-edit-modal-handle.directive';
 import {projectEditModalComponent} from './components/modals/project-edit-modal/project-edit-modal.component';
 import {promptModalComponent} from './components/modals/prompt-modal/prompt-modal.component';
+import {separatingWordModalComponent} from './components/modals/separating-word-modal/separating-word-modal.component';
 import {symbolCreateModalHandleDirective} from './components/modals/symbol-create-modal/symbol-create-modal-handle.directive';
 import {symbolCreateModalComponent} from './components/modals/symbol-create-modal/symbol-create-modal.component';
 import {symbolEditModalHandleDirective} from './components/modals/symbol-edit-modal/symbol-edit-modal-handle.directive';
@@ -192,7 +198,7 @@ import {
     formatMilliseconds,
     formatParameterType,
     formatUserRole,
-    formatWebBrowser,
+    formatWebBrowser, normalizeUpperCase,
     sortTests
 } from './filters';
 import * as routes from './routes';
@@ -262,6 +268,7 @@ angular
     .filter('formatWebBrowser', formatWebBrowser)
     .filter('sortTests', sortTests)
     .filter('formatParameterType', formatParameterType)
+    .filter('normalizeUpperCase', normalizeUpperCase)
 
     // resources
     .service('CounterResource', CounterResource)
@@ -336,6 +343,7 @@ angular
     .component('symbolParameterCreateModal', symbolParameterCreateModalComponent)
     .component('symbolParameterEditModal', symbolParameterEditModalComponent)
     .component('symbolGroupMoveModal', symbolGroupMoveModalComponent)
+    .component('separatingWordModal', separatingWordModalComponent)
 
     // view components
     .component('aboutView', aboutViewComponent)
@@ -380,6 +388,11 @@ angular
     .component('symbolSearchForm', symbolSearchFormComponent)
     .component('webhookForm', webhookFormComponent)
     .component('symbolParameterFormGroups', symbolParameterFormGroupsComponent)
+    .component('eqOracleForm', eqOracleFormComponent)
+    .component('completeEqOracleForm', completeEqOracleFormComponent)
+    .component('randomEqOracleForm', randomEqOracleFormComponent)
+    .component('wMethodEqOracleForm', wMethodEqOracleFormComponent)
+    .component('hypothesisEqOracleForm', hypothesisEqOracleFormComponent)
 
     // widgets components
     .component('widget', widgetComponent)

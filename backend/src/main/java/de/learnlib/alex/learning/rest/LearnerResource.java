@@ -32,6 +32,7 @@ import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
+import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
@@ -478,10 +479,10 @@ public class LearnerResource {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.separatingWord", Status.BAD_REQUEST, e);
         }
 
-        String separatingWord = learner.separatingWord(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
+        final SeparatingWord diff = learner.separatingWord(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
 
-        LOGGER.traceExit(separatingWord);
-        return Response.ok("{\"separatingWord\": \"" + separatingWord + "\"}").build();
+        LOGGER.traceExit(diff);
+        return Response.ok(diff).build();
     }
 
     /**

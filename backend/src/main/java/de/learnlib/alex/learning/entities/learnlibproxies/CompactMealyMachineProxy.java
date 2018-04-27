@@ -64,16 +64,17 @@ public class CompactMealyMachineProxy implements Serializable {
      *
      * @param machine
      *         The MealyMachine the Proxy should wrap in
-     * @param sigma
-     *         The Alphabet of the MealyMachine.
+     * @param alphabet
+     *         The alphabet of the MealyMachine.
      * @return A new Proxy around the given MealyMachine.
      */
     public static CompactMealyMachineProxy createFrom(MealyMachine<?, String, ?, String> machine,
-                                                      Alphabet<String> sigma) {
-        return createProxy(machine, sigma);
+            Alphabet<String> alphabet) {
+        return createProxy(machine, alphabet);
     }
 
-    private static <S, T> CompactMealyMachineProxy createProxy(MealyMachine<S, String, T, String> machine, Alphabet<String> alphabet) {
+    private static <S, T> CompactMealyMachineProxy createProxy(MealyMachine<S, String, T, String> machine,
+            Alphabet<String> alphabet) {
         final StateIDs<S> stateIDs = machine.stateIDs();
 
         final Integer initialStateId = stateIDs.getStateId(machine.getInitialState());
@@ -84,12 +85,15 @@ public class CompactMealyMachineProxy implements Serializable {
         final List<CompactMealyTransitionProxy> transitionProxies = new ArrayList<>();
         machine.getStates().forEach(state ->
                 alphabet.forEach(sym -> {
-                    final CompactMealyTransitionProxy transProxy = new CompactMealyTransitionProxy();
-                    transProxy.setInput(sym);
-                    transProxy.setOutput(machine.getTransitionOutput(machine.getTransition(state, sym)));
-                    transProxy.setFrom(stateIDs.getStateId(state));
-                    transProxy.setTo(stateIDs.getStateId(machine.getSuccessor(state, sym)));
-                    transitionProxies.add(transProxy);
+                    final T trans = machine.getTransition(state, sym);
+                    if (trans != null) {
+                        final CompactMealyTransitionProxy transProxy = new CompactMealyTransitionProxy();
+                        transProxy.setInput(sym);
+                        transProxy.setOutput(machine.getTransitionOutput(trans));
+                        transProxy.setFrom(stateIDs.getStateId(state));
+                        transProxy.setTo(stateIDs.getStateId(machine.getSuccessor(state, sym)));
+                        transitionProxies.add(transProxy);
+                    }
                 })
         );
 

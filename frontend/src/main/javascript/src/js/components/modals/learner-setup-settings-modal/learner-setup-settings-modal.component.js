@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {eqOracleType, learnAlgorithm} from '../../../constants';
+import {learnAlgorithm} from '../../../constants';
 import {LearnConfiguration} from '../../../entities/learner-configuration';
 
 /**
@@ -28,27 +28,14 @@ export class LearnerSetupSettingsModalComponent {
      *
      * @param {ToastService} ToastService
      * @param {EventBus} EventBus
-     * @param {EqOracleService} EqOracleService
      * @param {SessionService} SessionService
      * @param {LearningAlgorithmService} LearningAlgorithmService
      */
     // @ngInject
-    constructor(ToastService, EventBus, EqOracleService, SessionService, LearningAlgorithmService) {
+    constructor(ToastService, EventBus, SessionService, LearningAlgorithmService) {
         this.ToastService = ToastService;
         this.EventBus = EventBus;
-        this.EqOracleService = EqOracleService;
         this.LearningAlgorithmService = LearningAlgorithmService;
-
-        /**
-         * The constants for eqOracles types.
-         */
-        this.eqOracles = eqOracleType;
-
-        /**
-         * The model for the select input that holds a type for an eqOracle.
-         * @type {string}
-         */
-        this.selectedEqOracle = null;
 
         /**
          * The LearnConfiguration to be edited.
@@ -75,32 +62,14 @@ export class LearnerSetupSettingsModalComponent {
 
     $onInit() {
         this.learnConfiguration = this.resolve.modalData.learnConfiguration;
-        this.selectedEqOracle = this.learnConfiguration.eqOracle.type;
         this.selectedLearningAlgorithm = this.learnConfiguration.algorithm.name;
-    }
-
-    /**
-     * Load a hypothesis from a JSON file.
-     *
-     * @param {string} data - A hypothesis as JSON.
-     */
-    fileLoaded(data) {
-        if (this.learnConfiguration.eqOracle.type !== this.eqOracles.HYPOTHESIS) {
-            return;
-        }
-
-        try {
-            this.learnConfiguration.eqOracle.hypothesis = JSON.parse(data);
-        } catch (e) {
-            this.ToastService.danger('<p><strong>Loading json file failed</strong></p> The file is not properly formatted');
-        }
     }
 
     /**
      * Sets the Eq Oracle of the learn configuration depending on the selected value.
      */
-    setEqOracle() {
-        this.learnConfiguration.eqOracle = this.EqOracleService.createFromType(this.selectedEqOracle);
+    setEqOracle(eqOracle) {
+        this.learnConfiguration.eqOracle = eqOracle;
     }
 
     /**
