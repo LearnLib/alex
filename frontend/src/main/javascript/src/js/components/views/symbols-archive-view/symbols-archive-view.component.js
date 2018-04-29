@@ -15,6 +15,8 @@
  */
 
 import remove from 'lodash/remove';
+import {events} from '../../../constants';
+import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
 
 /**
  * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover
@@ -28,11 +30,16 @@ class SymbolsArchiveViewComponent {
      * @param {SessionService} SessionService
      * @param {SymbolResource} SymbolResource
      * @param {ToastService} ToastService
+     * @param {EventBus} EventBus
+     * @param $scope
+     * @param $uibModal
      */
     // @ngInject
-    constructor(SessionService, SymbolResource, ToastService) {
+    constructor(SessionService, SymbolResource, ToastService, EventBus, $scope, $uibModal) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
+        this.EventBus = EventBus;
+        this.$uibModal = $uibModal;
 
         /**
          * The project that is in the session.
@@ -58,6 +65,11 @@ class SymbolsArchiveViewComponent {
                 this.symbols = symbols;
             })
             .catch(err => console.log(err));
+
+        this.EventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
+            const i = this.symbols.findIndex(s => s.id === data.symbol.id);
+            this.symbols[i].name = data.symbol.name;
+        }, $scope);
     }
 
     /**
@@ -80,19 +92,38 @@ class SymbolsArchiveViewComponent {
      * Recovers all symbols that were selected and calls $scope.recoverSymbol for each one.
      */
     recoverSelectedSymbols() {
-        if (this.selectedSymbols.length > 0) {
-            this.SymbolResource.recoverMany(this.selectedSymbols)
-                .then(() => {
-                    this.ToastService.success('Symbols recovered');
-                    this.selectedSymbols.forEach(symbol => {
-                        remove(this.symbols, {id: symbol.id});
-                    });
-                    this.selectedSymbols = [];
-                })
-                .catch(response => {
-                    this.ToastService.danger('<p><strong>Error recovering symbols!</strong></p>' + response.data.message);
-                });
+        if (this.selectedSymbols.length === 0) {
+            this.ToastService.info('You have to select at least one symbol.');
         }
+
+        this.SymbolResource.recoverMany(this.selectedSymbols)
+            .then(() => {
+                this.ToastService.success('Symbols recovered');
+                this.selectedSymbols.forEach(symbol => {
+                    remove(this.symbols, {id: symbol.id});
+                });
+                this.selectedSymbols = [];
+            })
+            .catch(response => {
+                this.ToastService.danger('<p><strong>Error recovering symbols!</strong></p>' + response.data.message);
+            });
+    }
+
+    /**
+     * Edits the symbol.
+     *
+     * @param {AlphabetSymbol} symbol The symbol to edit.
+     */
+    editSymbol(symbol) {
+        this.$uibModal.open({
+            component: 'symbolEditModal',
+            resolve: {
+                modalData: () => ({
+                    symbol: new AlphabetSymbol(JSON.parse(JSON.stringify(symbol))),
+                    updateOnServer: true
+                })
+            }
+        });
     }
 }
 

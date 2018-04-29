@@ -30,25 +30,9 @@
             <div class="alert alert-info alert-condensed clearfix">
                 <i class="fa fa-fw fa-info-circle"></i>
 
-                    Using algorithm <strong ng-bind="(vm.learnConfiguration.algorithm.name | formatAlgorithm)"></strong>
-                    with equivalence oracle <strong ng-bind="(vm.learnConfiguration.eqOracle.type | formatEqOracle)"></strong>
-                <span ng-if="vm.learnConfiguration.eqOracle.type === 'complete'">
-                    (
-                    min-depth: <span ng-bind="vm.learnConfiguration.eqOracle.minDepth"></span>,
-                    max-depth: <span ng-bind="vm.learnConfiguration.eqOracle.maxDepth"></span>
-                    )
-                </span>
-                <span ng-if="vm.learnConfiguration.eqOracle.type === 'wmethod'">
-                    ( max-depth: <span ng-bind="vm.learnConfiguration.eqOracle.maxDepth"></span> )
-                </span>
-                <span ng-if="vm.learnConfiguration.eqOracle.type === 'random_word'">
-                    (
-                    min-length: <span ng-bind="vm.learnConfiguration.eqOracle.minLength"></span>,
-                    max-length: <span ng-bind="vm.learnConfiguration.eqOracle.maxLength"></span>,
-                    #words: <span ng-bind="vm.learnConfiguration.eqOracle.maxNoOfTests"></span>
-                    )
-                </span>
-
+                Use the <strong ng-bind="(vm.learnConfiguration.algorithm.name | formatAlgorithm)"></strong> algorithm
+                with the <strong ng-bind="(vm.learnConfiguration.eqOracle.type | formatEqOracle)"></strong> equivalence oracle
+                in the <strong ng-bind="vm.learnConfiguration.driverConfig.name | formatWebBrowser"></strong> browser.
             </div>
 
             <hr>

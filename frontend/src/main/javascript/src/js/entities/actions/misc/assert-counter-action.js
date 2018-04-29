@@ -40,7 +40,7 @@ export class AssertCounterAction extends Action {
          * The value to compare the content with.
          * @type {*|string}
          */
-        this.value = obj.value || '';
+        this.value = obj.value;
 
         /**
          * The operator to compare two integer values.

@@ -104,7 +104,6 @@ public class FillAction extends WebSymbolAction {
         String valueWithVariables = insertVariableValues(value);
         try {
             WebElement element = connector.getElement(node);
-            element.clear();
             element.sendKeys(valueWithVariables);
 
             LOGGER.info("Filled the element '{}' with {}'(ignoreFailure: {}, negated: {}).",

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {eqOracleType} from '../../../constants';
+
 /**
  * The directive for the widget of the sidebar where learn resume configurations can be edited. Should be included
  * into a <div widget></div> directive for visual appeal.
@@ -25,6 +27,7 @@ class LearnerResumeSettingsWidgetComponent {
 
     /** Constructor. */
     constructor() {
+        this.eqOracleTypes = eqOracleType;
 
         /**
          * The symbols that can be added to the learner.
