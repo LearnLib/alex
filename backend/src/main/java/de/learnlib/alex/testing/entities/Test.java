@@ -36,9 +36,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +78,9 @@ public class Test implements Serializable {
 
         /**
          * Constructor.
-         * @param test The test to represent.
+         *
+         * @param test
+         *         The test to represent.
          */
         public TestRepresentation(Test test) {
             this.id = test.id;
@@ -184,6 +184,12 @@ public class Test implements Serializable {
         return parent == null ? null : parent.getId();
     }
 
+    /**
+     * Set the parent test suite by an id.
+     *
+     * @param parentId
+     *         The id of the parent.
+     */
     @JsonProperty("parent")
     public void setParentId(Long parentId) {
         if (parentId != null) {
@@ -208,7 +214,8 @@ public class Test implements Serializable {
     /**
      * Set the ID of this Test Case (within the project).
      *
-     * @param id The new ID.
+     * @param id
+     *         The new ID.
      */
     @JsonProperty
     public void setId(Long id) {

@@ -75,6 +75,22 @@ public class TestDAOImpl implements TestDAO {
     /** The repository for symbol parameter values. */
     private SymbolParameterValueRepository symbolParameterValueRepository;
 
+    /**
+     * Constructor.
+     *
+     * @param projectDAO
+     *         The injected project DAO.
+     * @param testRepository
+     *         The injected repository for tests.
+     * @param symbolDAO
+     *         The injected symbol DAO.
+     * @param testCaseStepRepository
+     *         The injected repository for test case steps.
+     * @param symbolParameterValueRepository
+     *         The injected repository for symbol parameter values.
+     * @param projectRepository
+     *         The injected repository for projects.
+     */
     @Inject
     public TestDAOImpl(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
             TestCaseStepRepository testCaseStepRepository,

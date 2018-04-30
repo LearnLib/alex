@@ -86,6 +86,12 @@ public abstract class AbstractWebDriverConfig implements Serializable {
      */
     public abstract WebDriver createDriver() throws Exception;
 
+    /**
+     * Handle timeouts and browser dimensions.
+     *
+     * @param driver
+     *         The web driver.
+     */
     protected void manage(final WebDriver driver) {
         driver.manage().timeouts().pageLoadTimeout(pageLoadTimeout, TimeUnit.SECONDS);
         driver.manage().timeouts().setScriptTimeout(scriptTimeout, TimeUnit.SECONDS);

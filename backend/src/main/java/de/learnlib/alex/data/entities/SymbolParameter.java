@@ -44,7 +44,11 @@ public abstract class SymbolParameter implements Serializable {
 
     /** The type of the parameter. */
     public enum ParameterType {
+
+        /** If the parameter is a counter. */
         COUNTER,
+
+        /** If the parameter is a string. */
         STRING
     }
 

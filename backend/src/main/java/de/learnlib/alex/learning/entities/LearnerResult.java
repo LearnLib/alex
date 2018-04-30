@@ -51,6 +51,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Entity class to store the result of a test run, i.e. the outcome of a learn iteration and must not be the final
@@ -252,11 +253,7 @@ public class LearnerResult implements Serializable {
     @Transient
     @JsonProperty("resetSymbol")
     public Long getResetSymbolAsId() {
-        if (resetSymbol == null) {
-            return null;
-        } else {
-            return resetSymbol.getId();
-        }
+        return resetSymbol == null ? null : resetSymbol.getId();
     }
 
     /**
@@ -283,9 +280,9 @@ public class LearnerResult implements Serializable {
     @Transient
     @JsonProperty("symbols")
     public List<Long> getSymbolsAsIds() {
-        List<Long> ids = new LinkedList<>();
-        symbols.stream().map(Symbol::getId).forEach(ids::add);
-        return ids;
+        return symbols.stream()
+                .map(Symbol::getId)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -432,11 +429,7 @@ public class LearnerResult implements Serializable {
     @Transient
     @JsonProperty("error")
     public Boolean isError() {
-        if (errorText == null) {
-            return null; // null instead of false, so that it will not appear in the JSON
-        } else {
-            return Boolean.TRUE;
-        }
+        return errorText != null;
     }
 
     /** @return {@link LearnerResult#useMQCache}. */

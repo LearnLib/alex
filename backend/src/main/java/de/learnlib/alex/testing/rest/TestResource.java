@@ -296,7 +296,8 @@ public class TestResource {
         final Project project = projectDAO.getByID(user.getId(), projectId);
 
         if (testService.isActive(user, projectId)) {
-            return ResourceErrorHandler.createRESTErrorMessage("TestResource.execute", Response.Status.BAD_REQUEST, "There is already a testing process running for this project.");
+            return ResourceErrorHandler.createRESTErrorMessage("TestResource.execute",
+                    Response.Status.BAD_REQUEST, "There is already a testing process running for this project.");
         } else {
             final TestStatus status = testService.start(user, project, testConfig);
             return Response.ok(status).build();

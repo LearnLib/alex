@@ -79,9 +79,9 @@
                     <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle>
                         <i class="fa fa-bars"></i>
                     </button>
-                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu" ng-if="!vm.result.steps[vm.pointer].hypothesis">
+                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
                         <li>
-                            <a href="#" class="btn btn-default btn-sm" ng-click="vm.downloadObservationTable('#observation-table-' + vm.index)">
+                            <a href  ng-click="vm.downloadObservationTable('#observation-table-' + vm.index)">
                                 Download CSV
                             </a>
                         </li>
@@ -99,9 +99,9 @@
                     <button type="button" class="btn btn-default" uib-dropdown-toggle>
                         <i class="fa fa-bars"></i>
                     </button>
-                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu" ng-if="!vm.result.steps[vm.pointer].hypothesis">
+                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
                         <li>
-                            <a href="#" class="btn btn-default btn-sm" ng-click="vm.downloadSvg('#discrimination-tree-' + vm.index)">
+                            <a href ng-click="vm.downloadSvg('#discrimination-tree-' + vm.index)">
                                 Download SVG
                             </a>
                         </li>

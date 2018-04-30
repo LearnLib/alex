@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 /**
  * The result of the execution of a test suite.
@@ -46,9 +47,12 @@ public class TestSuiteResult extends TestResult {
     /**
      * Constructor.
      *
-     * @param testSuite       The test suite that has been executed.
-     * @param testCasesPassed The number of test cases that passed.
-     * @param testCasesFailed The number of test cases that failed.
+     * @param testSuite
+     *         The test suite that has been executed.
+     * @param testCasesPassed
+     *         The number of test cases that passed.
+     * @param testCasesFailed
+     *         The number of test cases that failed.
      */
     public TestSuiteResult(TestSuite testSuite, long testCasesPassed, long testCasesFailed) {
         super(testSuite);
@@ -59,7 +63,8 @@ public class TestSuiteResult extends TestResult {
     /**
      * Adds result from children test cases.
      *
-     * @param result The test case in this suite.
+     * @param result
+     *         The test case in this suite.
      */
     public void add(TestCaseResult result) {
         testCasesPassed += result.isPassed() ? 1 : 0;
@@ -70,7 +75,8 @@ public class TestSuiteResult extends TestResult {
     /**
      * Adds result from children test suites.
      *
-     * @param result The test suite in this suite.
+     * @param result
+     *         The test suite in this suite.
      */
     public void add(TestSuiteResult result) {
         testCasesPassed += result.getTestCasesPassed();
@@ -78,6 +84,12 @@ public class TestSuiteResult extends TestResult {
         time += result.getTime();
     }
 
+    /**
+     * Calculate the number of test cases that run.
+     *
+     * @return The number of test cases.
+     */
+    @Transient
     public long getTestCasesRun() {
         return testCasesPassed + testCasesFailed;
     }
@@ -109,6 +121,12 @@ public class TestSuiteResult extends TestResult {
         this.testCasesFailed += amount;
     }
 
+    /**
+     * Check if the test suite passed.
+     *
+     * @return True if all test cases and nested test suites passed.
+     */
+    @Transient
     @Override
     public boolean isPassed() {
         return testCasesFailed == 0;

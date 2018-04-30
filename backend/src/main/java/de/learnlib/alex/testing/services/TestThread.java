@@ -107,7 +107,8 @@ public class TestThread extends Thread {
 
             // do not fire the event if the test is only called for testing purposes.
             if (config.isCreateReport()) {
-                webhookService.fireEvent(user, new TestEvent.ExecutionStarted(new TestExecutionStartedEventData(project.getId(), config)));
+                final TestExecutionStartedEventData data = new TestExecutionStartedEventData(project.getId(), config);
+                webhookService.fireEvent(user, new TestEvent.ExecutionStarted(data));
             }
 
             testService.executeTests(user, tests, config, results);

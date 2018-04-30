@@ -43,6 +43,7 @@ public class CheckStatusAction extends RESTSymbolAction {
 
     private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
+    /** The smallest possible HTTP status. */
     private static final int MIN_HTTP_STATUS = 100;
 
     /** The status code to check. */

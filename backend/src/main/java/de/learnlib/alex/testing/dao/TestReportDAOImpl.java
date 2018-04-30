@@ -135,7 +135,8 @@ public class TestReportDAOImpl implements TestReportDAO {
     }
 
     @Override
-    public void checkAccess(User user, Project project, TestReport report) throws NotFoundException, UnauthorizedException {
+    public void checkAccess(User user, Project project, TestReport report)
+            throws NotFoundException, UnauthorizedException {
         projectDAO.checkAccess(user, project);
 
         if (report == null) {

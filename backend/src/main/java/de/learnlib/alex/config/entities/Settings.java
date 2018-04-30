@@ -84,6 +84,7 @@ public class Settings implements Serializable {
          * @param chrome  {@link DriverSettings#chrome}
          * @param firefox {@link DriverSettings#firefox}
          * @param edge    {@link DriverSettings#edge}
+         * @param remote  {@link DriverSettings#remote}
          */
         public DriverSettings(String chrome, String firefox, String edge, String remote) {
             this();
@@ -94,11 +95,7 @@ public class Settings implements Serializable {
         }
 
         public String getChrome() {
-            if (chrome == null) {
-                return "";
-            } else {
-                return chrome;
-            }
+            return chrome == null ? "" : chrome;
         }
 
         public void setChrome(String chrome) {
@@ -106,11 +103,7 @@ public class Settings implements Serializable {
         }
 
         public String getFirefox() {
-            if (firefox == null) {
-                return "";
-            } else {
-                return firefox;
-            }
+            return firefox == null ? "" : firefox;
         }
 
         public void setFirefox(String firefox) {
@@ -118,11 +111,7 @@ public class Settings implements Serializable {
         }
 
         public String getEdge() {
-            if (edge == null) {
-                return "";
-            } else {
-                return edge;
-            }
+            return edge == null ? "" : edge;
         }
 
         public void setEdge(String edge) {
@@ -130,11 +119,7 @@ public class Settings implements Serializable {
         }
 
         public String getRemote() {
-            if (remote == null) {
-                return "";
-            } else {
-                return remote;
-            }
+            return remote == null ? "" : remote;
         }
 
         public void setRemote(String remote) {

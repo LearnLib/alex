@@ -199,6 +199,10 @@ public class Learner {
             throw new IllegalStateException("You have to wait until the running experiment is finished.");
         }
 
+        if (result.getSteps().get(configuration.getStepNo() - 1).isError()) {
+            throw new IllegalStateException("You cannot resume from a failed step.");
+        }
+
         if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
             validateCounterexample(user, configuration);
         }

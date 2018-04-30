@@ -320,12 +320,8 @@ public class LearnerResultStep implements Serializable {
      */
     @Transient
     @JsonProperty("error")
-    public Boolean isError() {
-        if (errorText == null) {
-            return null; // null instead of false, so that it will not appear in the JSON
-        } else {
-            return Boolean.TRUE;
-        }
+    public boolean isError() {
+        return errorText != null;
     }
 
     @Column(columnDefinition = "BLOB")

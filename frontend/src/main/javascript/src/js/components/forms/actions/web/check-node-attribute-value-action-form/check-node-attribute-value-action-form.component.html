@@ -21,6 +21,6 @@
 <div class="form-group">
     <label class="control-label">Value check method</label>
     <select class="form-control" ng-model="vm.action.checkMethod" required>
-        <option ng-repeat="method in vm.checkMethods" value="{{method}}">{{method}}</option>
+        <option ng-repeat="method in vm.checkMethods" value="{{method}}">{{method|normalizeUpperCase}}</option>
     </select>
 </div>

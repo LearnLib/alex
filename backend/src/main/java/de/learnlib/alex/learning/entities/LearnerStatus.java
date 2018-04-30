@@ -140,6 +140,11 @@ public class LearnerStatus {
 
     @Override
     public String toString() {
-        return "LearnerStatus for Project " + projectId + " and Test No. " + testNo + ": " + active;
+        return "LearnerStatus{"
+                + "active=" + active
+                + ", projectId=" + projectId
+                + ", testNo=" + testNo
+                + ", stepNo=" + stepNo
+                + '}';
     }
 }

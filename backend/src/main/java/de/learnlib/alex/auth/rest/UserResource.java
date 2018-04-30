@@ -138,7 +138,8 @@ public class UserResource {
 
         if (!user.getRole().equals(UserRole.ADMIN) && !user.getId().equals(userId)) {
             LOGGER.traceExit("only the user itself or an admin should be allowed to the account information.");
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.get", Status.FORBIDDEN, "You are not allowed to get this information.");
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.get", Status.FORBIDDEN,
+                    "You are not allowed to get this information.");
         }
 
         User userById = userDAO.getById(userId);
@@ -194,7 +195,8 @@ public class UserResource {
 
         if (!user.getId().equals(userId)) {
             LOGGER.traceExit("Only the user is allowed to change his own password.");
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.FORBIDDEN, "You are not allowed to do this.");
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.FORBIDDEN,
+                    "You are not allowed to do this.");
         }
 
         String oldPassword = (String) json.get("oldPassword");
@@ -250,7 +252,8 @@ public class UserResource {
 
         if (!user.getId().equals(userId) && !user.getRole().equals(UserRole.ADMIN)) {
             LOGGER.traceExit("Only the user or an admin is allowed to change the email.");
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.FORBIDDEN, "You are not allowed to do this.");
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.FORBIDDEN,
+                    "You are not allowed to do this.");
         }
 
         String email = (String) json.get("email");

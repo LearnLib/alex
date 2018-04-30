@@ -88,7 +88,6 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
                 if (result.isUseMQCache()) {
 
                     // make new alphabet for the cache because it cannot handle a shared growing alphabet instance
-                    // TODO: copy the cached queries from the previous round.
                     final Alphabet<String> alphabet = new SimpleAlphabet<>(abstractAlphabet);
                     alphabet.add(symbol.getName());
 

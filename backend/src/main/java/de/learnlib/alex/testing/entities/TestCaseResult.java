@@ -42,7 +42,7 @@ public class TestCaseResult extends TestResult {
             fetch = FetchType.LAZY,
             cascade = {CascadeType.ALL}
     )
-    private List<TestExecuteResult> outputs;
+    private List<TestExecutionResult> outputs;
 
     /** If the test passed. */
     private boolean passed;
@@ -60,13 +60,19 @@ public class TestCaseResult extends TestResult {
     /**
      * Constructor.
      *
-     * @param testCase       The test case that has been executed.
-     * @param outputs        The recorded outputs.
-     * @param passed         If the test passed.
-     * @param time           The time it took to execute the test in ms.
-     * @param failureMessage The message that is displayed in case the test case failed.
+     * @param testCase
+     *         The test case that has been executed.
+     * @param outputs
+     *         The recorded outputs.
+     * @param passed
+     *         If the test passed.
+     * @param time
+     *         The time it took to execute the test in ms.
+     * @param failureMessage
+     *         The message that is displayed in case the test case failed.
      */
-    public TestCaseResult(TestCase testCase, List<TestExecuteResult> outputs, boolean passed, long time, String failureMessage) {
+    public TestCaseResult(TestCase testCase, List<TestExecutionResult> outputs, boolean passed, long time,
+            String failureMessage) {
         super(testCase);
         this.outputs = outputs;
         this.passed = passed;
@@ -76,11 +82,11 @@ public class TestCaseResult extends TestResult {
         this.outputs.forEach(out -> out.setResult(this));
     }
 
-    public List<TestExecuteResult> getOutputs() {
+    public List<TestExecutionResult> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<TestExecuteResult> outputs) {
+    public void setOutputs(List<TestExecutionResult> outputs) {
         this.outputs = outputs;
     }
 

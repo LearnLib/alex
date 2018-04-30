@@ -58,7 +58,8 @@ import java.util.stream.Collectors;
  * Thread to run a learning process. It needs to be a Thread so that the server can still deal with other requests. This
  * class contains the actual learning loop.
  *
- * @param <T> The type of the configuration.
+ * @param <T>
+ *         The type of the configuration.
  */
 public abstract class AbstractLearnerThread<T extends AbstractLearnerConfiguration> extends Thread {
 
@@ -120,15 +121,21 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /**
      * Constructor.
      *
-     * @param user             The current user.
-     * @param learnerResultDAO {@link #learnerResultDAO}.
-     * @param webhookService   {@link #webhookService}.
-     * @param context          The context to use.
-     * @param result           {@link #result}.
-     * @param configuration    {@link #configuration}.
+     * @param user
+     *         The current user.
+     * @param learnerResultDAO
+     *         {@link #learnerResultDAO}.
+     * @param webhookService
+     *         {@link #webhookService}.
+     * @param context
+     *         The context to use.
+     * @param result
+     *         {@link #result}.
+     * @param configuration
+     *         {@link #configuration}.
      */
     public AbstractLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-                                 ConnectorContextHandler context, LearnerResult result, T configuration) {
+            ConnectorContextHandler context, LearnerResult result, T configuration) {
         this.user = user;
         this.learnerResultDAO = learnerResultDAO;
         this.webhookService = webhookService;
@@ -179,7 +186,21 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     public void run() {
     }
 
-    protected LearnerResultStep createStep(long start, long end, long eqs, DefaultQuery<String, Word<String>> counterexample) {
+    /**
+     * Creates and persists a learner step.
+     *
+     * @param start
+     *         The start time of the step in ns.
+     * @param end
+     *         The end time of the step in ns.
+     * @param eqs
+     *         The number of equivalence queries posed in the step.
+     * @param counterexample
+     *         The counterexample used in the step.
+     * @return The persisted step.
+     */
+    protected LearnerResultStep createStep(long start, long end, long eqs,
+            DefaultQuery<String, Word<String>> counterexample) {
         final Statistics statistics = new Statistics();
         statistics.setStartTime(start);
         statistics.getDuration().setLearner(end - start);
@@ -198,6 +219,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         step.setHypothesis(CompactMealyMachineProxy.createFrom(learner.getHypothesisModel(), abstractAlphabet));
         step.setCounterExample(DefaultQueryProxy.createFrom(counterexample));
         result.getSteps().add(step);
+
         try {
             learnerResultDAO.saveStep(result, step);
         } catch (de.learnlib.alex.common.exceptions.NotFoundException e) {
@@ -209,14 +231,21 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         return step;
     }
 
+    /**
+     * Creates a new steps that only contains an error message for the current step.
+     *
+     * @param e
+     *         The exception that led to the error.
+     */
     protected void updateOnError(Exception e) {
         final String errorMessage = e.getMessage() == null ? e.getClass().getName() : e.getMessage();
 
         if (!result.getSteps().isEmpty()) {
-            final LearnerResultStep lastStep = result.getSteps().get(result.getSteps().size() - 1);
-            lastStep.setErrorText(errorMessage);
+            final LearnerResultStep errorStep = createStep(0L, 0L, 0, null);
+            errorStep.setErrorText(errorMessage);
+
             try {
-                learnerResultDAO.saveStep(result, lastStep);
+                learnerResultDAO.saveStep(result, errorStep);
             } catch (de.learnlib.alex.common.exceptions.NotFoundException e1) {
                 e1.printStackTrace();
             }
@@ -246,6 +275,12 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         sul.resetCounter();
     }
 
+    /**
+     * Execute the learning loop.
+     *
+     * @param currentStep
+     *         The current step.
+     */
     protected void doLearn(LearnerResultStep currentStep) {
         final EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle =
                 configuration.getEqOracle().createEqOracle(mqOracle, maxConcurrentQueries);
@@ -296,7 +331,8 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /**
      * Given a counterexample, test if there is a shorter prefix that is also a counterexample.
      *
-     * @param ce The counterexample.
+     * @param ce
+     *         The counterexample.
      * @return The prefix.
      */
     private DefaultQuery<String, Word<String>> findShortestPrefix(DefaultQuery<String, Word<String>> ce) {

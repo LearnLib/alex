@@ -40,7 +40,7 @@ import java.util.Map;
 public class JUnitTestResultReporter extends TestResultReporter<String> {
 
     /**
-     * Creates a report
+     * Creates a report.
      *
      * @param report The config to create a report from.
      * @return The serialized and formatted xml report as string.

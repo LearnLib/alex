@@ -33,7 +33,7 @@ import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestCaseStep;
-import de.learnlib.alex.testing.entities.TestExecuteResult;
+import de.learnlib.alex.testing.entities.TestExecutionResult;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
@@ -297,8 +297,8 @@ public class TestService {
         connectors.post();
         final long time = System.currentTimeMillis() - startTime;
 
-        final List<TestExecuteResult> sulOutputs = outputs.stream()
-                .map(TestExecuteResult::new)
+        final List<TestExecutionResult> sulOutputs = outputs.stream()
+                .map(TestExecutionResult::new)
                 .collect(Collectors.toList());
 
         final List<String> failureMessageParts = new ArrayList<>();

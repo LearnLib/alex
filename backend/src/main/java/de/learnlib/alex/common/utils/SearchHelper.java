@@ -36,8 +36,8 @@ public final class SearchHelper {
     }
 
     /**
-     * Search for a value within a text.
-     * If you use a regular expression, this method allows to use the '.' for line breaks.
+     * Search for a value within a text. If you use a regular expression, this method allows to use the '.' for line
+     * breaks.
      *
      * @param value
      *         The value to search. This can be a regular expression.
@@ -60,8 +60,7 @@ public final class SearchHelper {
     }
 
     /**
-     * Search for a regular expression within a text.
-     * This method allows to use the '.' for line breaks.
+     * Search for a regular expression within a text. This method allows to use the '.' for line breaks.
      *
      * @param regex
      *         The pattern to search.
@@ -89,7 +88,7 @@ public final class SearchHelper {
      *         If a variable value should be inserted, but the variable does not exists or was never set.
      */
     public static String insertVariableValues(ConnectorManager connector, Long projectId, String text)
-                         throws IllegalStateException {
+            throws IllegalStateException {
 
         final VariableStoreConnector variableStore = connector.getConnector(VariableStoreConnector.class);
         final CounterStoreConnector counterStore = connector.getConnector(CounterStoreConnector.class);
@@ -112,7 +111,8 @@ public final class SearchHelper {
                     result = result.replaceAll("\\{\\{\\#" + name + "}}", String.valueOf(counterStore.get(name)));
                     break;
                 case "\\":
-                    result = result.replaceAll("\\{\\{\\\\" + name + "}}", fileStore.getAbsoluteFileLocation(projectId, name));
+                    final String path = fileStore.getAbsoluteFileLocation(projectId, name);
+                    result = result.replaceAll("\\{\\{\\\\" + name + "}}", path);
                     break;
                 default:
                     break;

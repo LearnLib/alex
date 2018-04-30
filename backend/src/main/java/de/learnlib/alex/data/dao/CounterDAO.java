@@ -88,21 +88,6 @@ public interface CounterDAO {
     void update(User user, Counter counter) throws NotFoundException, ValidationException;
 
     /**
-     * Update many counters at once.
-     *
-     * @param user
-     *         The user who wants to perform this method.
-     * @param counters
-     *         The counters to update.
-     * @throws NotFoundException
-     *         If a counter was not created before and thus could not be found.
-     * @throws ValidationException
-     *         If a counter could not be updated because of not met validation constrains.
-     */
-    void update(User user, List<Counter> counters);
-
-
-    /**
      * Deletes counters.
      *
      * @param user

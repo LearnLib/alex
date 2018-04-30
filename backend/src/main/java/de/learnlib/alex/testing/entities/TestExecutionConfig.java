@@ -17,6 +17,7 @@
 package de.learnlib.alex.testing.entities;
 
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
+import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
@@ -45,7 +46,7 @@ public class TestExecutionConfig {
 
     /** Constructor. */
     public TestExecutionConfig() {
-        this.testIds = new ArrayList<>();
+        this(new ArrayList<>(), new HtmlUnitDriverConfig());
     }
 
     /**

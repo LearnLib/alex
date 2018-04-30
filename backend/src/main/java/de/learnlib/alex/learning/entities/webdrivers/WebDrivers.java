@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * The supported web drivers.
  */
-public class WebDrivers {
+public final class WebDrivers {
 
     /** Identifier for the google chrome driver. */
     public static final String CHROME = "chrome";

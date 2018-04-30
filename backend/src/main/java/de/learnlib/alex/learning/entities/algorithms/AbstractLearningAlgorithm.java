@@ -56,8 +56,10 @@ public abstract class AbstractLearningAlgorithm<I, O> implements Serializable {
      *         The input alphabet.
      * @param oracle
      *         The membership oracle.
+     * @return An instance of the learner.
      */
-    public abstract LearningAlgorithm.MealyLearner<I, O> createLearner(Alphabet<I> alphabet, MembershipOracle<I, Word<O>> oracle);
+    public abstract LearningAlgorithm.MealyLearner<I, O> createLearner(Alphabet<I> alphabet,
+            MembershipOracle<I, Word<O>> oracle);
 
     /**
      * Get the internal data structures as string representation.

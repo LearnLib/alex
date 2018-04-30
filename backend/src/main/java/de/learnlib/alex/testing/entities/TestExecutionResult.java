@@ -31,7 +31,7 @@ import java.io.Serializable;
 
 /** Wrapper for {@link de.learnlib.alex.data.entities.ExecuteResult} that allows persistence for tests. */
 @Entity
-public class TestExecuteResult extends ExecuteResult implements Serializable {
+public class TestExecutionResult extends ExecuteResult implements Serializable {
 
     private static final long serialVersionUID = -3528131025646284916L;
 
@@ -41,12 +41,13 @@ public class TestExecuteResult extends ExecuteResult implements Serializable {
     @JsonIgnore
     private TestCaseResult result;
 
+    /** The symbols that produced the result. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "symbolId")
     private Symbol symbol;
 
     /** Constructor. */
-    public TestExecuteResult() {
+    public TestExecutionResult() {
         super();
     }
 
@@ -55,7 +56,7 @@ public class TestExecuteResult extends ExecuteResult implements Serializable {
      *
      * @param result The output of the SUL.
      */
-    public TestExecuteResult(ExecuteResult result) {
+    public TestExecutionResult(ExecuteResult result) {
         super(result.isSuccess(), result.getOutput());
     }
 
