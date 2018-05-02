@@ -116,6 +116,19 @@ export class TestResource {
     }
 
     /**
+     * Move tests to another test suite.
+     *
+     * @param {Number} projectId The id of the project.
+     * @param {Number[]} testIds The ids of the tests to move.
+     * @param {Number} targetId The id of the target test suite.
+     * @return {*}
+     */
+    moveMany(projectId, testIds, targetId) {
+        return this.$http.put(`${apiUrl}/projects/${projectId}/tests/batch/${testIds.join(',')}/moveTo/${targetId}`)
+            .then(response => response.data);
+    }
+
+    /**
      * Execute a test.
      *
      * @param {object} testCase The test to execute.

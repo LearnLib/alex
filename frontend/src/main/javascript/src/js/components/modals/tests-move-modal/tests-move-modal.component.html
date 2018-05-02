@@ -1,0 +1,30 @@
+<div class="modal-header">
+    <h3 class="modal-title">Move tests</h3>
+</div>
+
+<div class="modal-body pb-0">
+    <div class="alert alert-danger" ng-if="vm.errorMessage !== null">
+        {{vm.errorMessage}}
+    </div>
+
+    <div class="alert alert-info alert-condensed">
+        Move {{vm.tests.length}} test(s) to another test suite.
+    </div>
+
+    <label>Target test suite</label>
+    <div class="panel panel-default" ng-if="vm.root != null">
+        <div class="panel-body" style="overflow: auto; max-height: 420px">
+            <test-suite-tree
+                test-suite="vm.root"
+                selected-test-suite="vm.selectedTestSuite"
+                on-selected="vm.selectTestSuite(testSuite)"
+            >
+            </test-suite-tree>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary btn-sm" ng-click="vm.moveTests()">Move</button>
+    <button class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</button>
+</div>

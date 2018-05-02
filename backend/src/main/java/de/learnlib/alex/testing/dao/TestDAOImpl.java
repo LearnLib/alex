@@ -348,6 +348,50 @@ public class TestDAOImpl implements TestDAO {
     }
 
     @Override
+    @Transactional
+    public List<Test> move(User user, Long projectId, List<Long> testIds, Long targetId)
+            throws NotFoundException, ValidationException {
+        final Project project = projectRepository.findOne(projectId);
+        final List<Test> tests = testRepository.findAll(testIds);
+        final Test targetTest = testRepository.findOne(targetId);
+
+        // validation
+        checkAccess(user, project, targetTest);
+        if (targetTest instanceof TestCase) {
+            throw new ValidationException("The target cannot be a test case.");
+        }
+
+        final TestSuite target = (TestSuite) targetTest;
+
+        for (Test test: tests) {
+            checkAccess(user, project, test);
+            if (test.getId().equals(target.getId())) {
+                throw new ValidationException("A test cannot be a parent of itself.");
+            }
+
+            if (test instanceof TestSuite && target.isDescendantOf((TestSuite) test)) {
+                throw new ValidationException("A test suite cannot be moved to one of its descendants.");
+            }
+        }
+
+        // update references
+        for (Test test: tests) {
+            final TestSuite parent = (TestSuite) test.getParent();
+            parent.getTests().remove(test);
+            testRepository.save(parent);
+            test.setParent(target);
+        }
+
+        target.getTests().addAll(tests);
+        testRepository.save(target);
+
+        final List<Test> movedTests = testRepository.save(tests);
+        movedTests.forEach(this::loadLazyRelations);
+
+        return movedTests;
+    }
+
+    @Override
     public void checkAccess(User user, Project project, Test test) throws NotFoundException, UnauthorizedException {
         projectDAO.checkAccess(user, project);
 

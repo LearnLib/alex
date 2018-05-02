@@ -12,6 +12,7 @@
 @import "symbol-parameters-panel.component";
 @import "simple-symbol-group-tree.component";
 @import "symbol-group-tree.component";
+@import "test-suite-tree.component";
 
 *, *:after, *:before {
   box-sizing: border-box;
@@ -133,6 +134,10 @@ report-charts {
 
 .p-1 {
   padding: 1rem;
+}
+
+.pl-1 {
+  padding-left: 1rem;
 }
 
 .py-1 {

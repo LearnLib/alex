@@ -26,7 +26,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -106,5 +108,31 @@ public class TestSuite extends Test {
         test.setParent(this);
     }
 
+    /**
+     * Check if the test suite is a descendant of another test suite.
+     *
+     * @param ancestor
+     *         The ancestor in the test suite tree.
+     * @return True, if the test suite is a descendant.
+     */
+    public boolean isDescendantOf(TestSuite ancestor) {
+        if (ancestor.getId().equals(id)) {
+            return false;
+        }
+
+        final List<TestSuite> testSuites = new ArrayList<>();
+        ancestor.getTests().stream()
+                .filter(TestSuite.class::isInstance)
+                .forEach(ts -> testSuites.add((TestSuite) ts));
+
+        for (TestSuite testSuite : testSuites) {
+            boolean isDescendant = testSuite.getId().equals(id) || isDescendantOf(testSuite);
+            if (isDescendant) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
 

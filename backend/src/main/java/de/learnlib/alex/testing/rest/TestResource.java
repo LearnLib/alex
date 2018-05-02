@@ -96,7 +96,7 @@ public class TestResource {
      */
     @Inject
     public TestResource(TestDAO testDAO, TestService testService, WebhookService webhookService,
-                        ProjectDAO projectDAO) {
+            ProjectDAO projectDAO) {
         this.testDAO = testDAO;
         this.testService = testService;
         this.webhookService = webhookService;
@@ -255,8 +255,8 @@ public class TestResource {
     @Path("/{id}/execute")
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("project_id") Long projectId,
-                            @PathParam("id") Long id,
-                            TestExecutionConfig testConfig)
+            @PathParam("id") Long id,
+            TestExecutionConfig testConfig)
             throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Test test = testDAO.get(user, projectId, id);
@@ -290,7 +290,7 @@ public class TestResource {
     @Path("/execute")
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("project_id") Long projectId,
-                            TestExecutionConfig testConfig)
+            TestExecutionConfig testConfig)
             throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Project project = projectDAO.getByID(user.getId(), projectId);
@@ -341,8 +341,8 @@ public class TestResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("project_id") Long projectId,
-                           @PathParam("id") Long id,
-                           Test test) throws NotFoundException {
+            @PathParam("id") Long id,
+            Test test) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         if (test.getId() == null) {
@@ -362,6 +362,36 @@ public class TestResource {
             return Response.ok(test).build();
         } catch (ValidationException e) {
             return ResourceErrorHandler.createRESTErrorMessage("TestCase.update", Response.Status.BAD_REQUEST, e);
+        }
+    }
+
+    /**
+     * Move tests to another test suite.
+     *
+     * @param projectId
+     *         The id of the project.
+     * @param testIds
+     *         The ids of the tests to move.
+     * @param targetId
+     *         The id of the target test suite.
+     * @return 200 If the tests have been moved successfully.
+     * @throws NotFoundException
+     *         If one of the entities could not be found.
+     */
+    @PUT
+    @Path("/batch/{testIds}/moveTo/{targetId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response move(@PathParam("project_id") Long projectId, @PathParam("testIds") IdsList testIds,
+            @PathParam("targetId") Long targetId) throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
+        try {
+            final List<Test> movedTests = testDAO.move(user, projectId, testIds, targetId);
+            webhookService.fireEvent(user, new TestEvent.MovedMany(movedTests));
+            return Response.ok(movedTests).build();
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("TestResource.move", Response.Status.BAD_REQUEST, e);
         }
     }
 
@@ -409,7 +439,7 @@ public class TestResource {
     @Path("/batch/{ids}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("project_id") Long projectId,
-                           @PathParam("ids") IdsList ids) throws NotFoundException {
+            @PathParam("ids") IdsList ids) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         try {

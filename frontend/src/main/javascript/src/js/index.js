@@ -132,6 +132,8 @@ import {symbolMoveModalHandleDirective} from './components/modals/symbols-move-m
 import {symbolMoveModalComponent} from './components/modals/symbols-move-modal/symbols-move-modal.component';
 import {testConfigModalComponent} from './components/modals/test-config-modal/test-config-modal.component';
 import {testsImportModalComponent} from './components/modals/tests-import-modal/tests-import-modal.component';
+import {testSuiteTreeComponent} from './components/modals/tests-move-modal/test-suite-tree-component/test-suite-tree.component';
+import {testsMoveModalComponent} from './components/modals/tests-move-modal/tests-move-modal.component';
 import {userEditModalHandleDirective} from './components/modals/user-edit-modal/user-edit-modal-handle.directive';
 import {userEditModalComponent} from './components/modals/user-edit-modal/user-edit-modal.component';
 import {webhookCreateModalComponent} from './components/modals/webhook-create-modal/webhook-create-modal.component';
@@ -344,6 +346,7 @@ angular
     .component('symbolParameterEditModal', symbolParameterEditModalComponent)
     .component('symbolGroupMoveModal', symbolGroupMoveModalComponent)
     .component('separatingWordModal', separatingWordModalComponent)
+    .component('testsMoveModal', testsMoveModalComponent)
 
     // view components
     .component('aboutView', aboutViewComponent)
@@ -486,6 +489,7 @@ angular
     .component('symbolsSymbolGroupTree', symbolsSymbolGroupTreeComponent)
     .component('reportOutputsColumn', reportOutputsColumnComponent)
     .component('reportCharts', reportChartsComponent)
-    .component('learnerSetupSymbolGroupTree', learnerSetupSymbolGroupTreeComponent);
+    .component('learnerSetupSymbolGroupTree', learnerSetupSymbolGroupTreeComponent)
+    .component('testSuiteTree', testSuiteTreeComponent);
 
 angular.bootstrap(document, ['ALEX']);

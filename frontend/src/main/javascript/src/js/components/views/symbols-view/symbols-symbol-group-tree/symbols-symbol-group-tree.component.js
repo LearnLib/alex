@@ -46,11 +46,7 @@ export const symbolsSymbolGroupTreeComponent = {
         }
 
         $onInit() {
-            if (this.level == null) {
-                this.level = 0;
-            }
-
-            this.level = parseInt(this.level);
+            this.level = this.level == null ? 0 : parseInt(this.level);
             if (this.level > 0) {
                 this.collapse = true;
             }

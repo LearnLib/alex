@@ -97,10 +97,10 @@ public class TestEvent {
         /**
          * Constructor.
          *
-         * @param test The created tests.
+         * @param tests The created tests.
          */
-        public CreatedMany(List<Test> test) {
-            super(test, EventType.TESTS_CREATED);
+        public CreatedMany(List<Test> tests) {
+            super(tests, EventType.TESTS_CREATED);
         }
     }
 
@@ -114,6 +114,19 @@ public class TestEvent {
          */
         public DeletedMany(List<Long> ids) {
             super(ids, EventType.TESTS_DELETED);
+        }
+    }
+
+    /** Event for when multiple tests are moved to an new test suite. */
+    public static class MovedMany extends Event<List<Test>> {
+
+        /**
+         * Constructor,
+         *
+         * @param tests The moved tests.
+         */
+        public MovedMany(List<Test> tests) {
+            super(tests, EventType.TESTS_MOVED);
         }
     }
 }

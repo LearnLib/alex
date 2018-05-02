@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import remove from 'lodash/remove';
 import {webBrowser} from '../../../constants';
 import {DriverConfigService} from '../../../services/driver-config.service';
 import {DateUtils} from '../../../utils/date-utils';
@@ -63,6 +64,7 @@ export const testSuiteViewComponent = {
             this.ClipboardService = ClipboardService;
             this.TestReportResource = TestReportResource;
             this.NotificationService = NotificationService;
+            this.$uibModal = $uibModal;
 
             /**
              * The current project.
@@ -119,7 +121,7 @@ export const testSuiteViewComponent = {
                     if (data.active) {
                         this._pollStatus();
                     }
-                })
+                });
         }
 
         createTestSuite() {
@@ -199,8 +201,7 @@ export const testSuiteViewComponent = {
             this.TestResource.remove(test)
                 .then(() => {
                     this.ToastService.success(`The test ${test.type} has been deleted.`);
-                    const i = this.testSuite.tests.findIndex(t => t.id === test.id);
-                    if (i > -1) this.testSuite.tests.splice(i, 1);
+                    remove(this.testSuite.tests, {id: test.id});
                 })
                 .catch((err) => this.ToastService.danger(`The test ${test.type} could not be deleted. ${err.data.message}`));
         }
@@ -217,12 +218,27 @@ export const testSuiteViewComponent = {
             this.TestResource.removeMany(this.project.id, selected)
                 .then(() => {
                     this.ToastService.success('The tests have been deleted.');
-                    selected.forEach(test => {
-                        const i = this.testSuite.tests.findIndex(t => t.id === test.id);
-                        if (i > -1) this.testSuite.tests.splice(i, 1);
-                    });
+                    selected.forEach(test => remove(this.testSuite.tests, {id: test.id}));
                 })
                 .catch((err) => this.ToastService.danger(`Deleting the tests failed. ${err.data.message}`));
+        }
+
+        moveSelected() {
+            const selectedTests = this.testSuite.tests.filter(t => t._selected);
+            if (selectedTests.length === 0) {
+                this.ToastService.info('You have to select at least one test.');
+                return;
+            }
+
+            this.$uibModal.open({
+                component: 'testsMoveModal',
+                resolve: {
+                    tests: () => JSON.parse(JSON.stringify(selectedTests))
+                }
+            }).result.then(tests => {
+                this.TestResource.get(this.project.id, this.testSuite.id)
+                    .then(testSuite => this.testSuite = testSuite);
+            });
         }
 
         executeSelected() {

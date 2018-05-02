@@ -167,6 +167,26 @@ public interface TestDAO {
     void delete(User user, Long projectId, IdsList ids) throws NotFoundException;
 
     /**
+     * Move tests to a new test suite.
+     *
+     * @param user
+     *         The current user.
+     * @param projectId
+     *         The id of the project.
+     * @param testIds
+     *         The ids of the tests to move.
+     * @param targetId
+     *         The id of the target test suite.
+     * @return The moved tests.
+     * @throws NotFoundException
+     *         If one of the entities could not be found.
+     * @throws ValidationException
+     *         If the inputs are not valid.
+     */
+    List<Test> move(User user, Long projectId, List<Long> testIds, Long targetId)
+            throws NotFoundException, ValidationException;
+
+    /**
      * Checks if the user has access to the test.
      *
      * @param user

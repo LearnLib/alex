@@ -82,6 +82,9 @@ public enum EventType {
     /** Fired when multiple tests are deleted. */
     TESTS_DELETED,
 
+    /** Fired when tests are moved to another test suite. */
+    TESTS_MOVED,
+
     /** Fired when a user is deleted. */
     USER_DELETED,
 
