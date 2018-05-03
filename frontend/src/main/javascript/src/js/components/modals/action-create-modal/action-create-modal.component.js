@@ -57,6 +57,7 @@ export class ActionCreateModalComponent {
                 {type: actionType.WEB_BROWSER, text: 'Browser window'},
                 {type: actionType.WEB_CHECK_ATTRIBUTE_VALUE, text: 'Check attribute'},
                 {type: actionType.WEB_CHECK_PAGE_TITLE, text: 'Check page title'},
+                {type: actionType.WEB_CHECK_NODE_SELECTED, text: 'Check element selected'},
                 {type: actionType.WEB_CLEAR, text: 'Clear input'},
                 {type: actionType.WEB_CLICK, text: 'Click element'},
                 {type: actionType.WEB_CLICK_ELEMENT_BY_TEXT, text: 'Click element by text'},

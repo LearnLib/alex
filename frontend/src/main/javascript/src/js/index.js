@@ -58,6 +58,7 @@ import {browserActionFormComponent} from './components/forms/actions/web/browser
 import {checkForNodeActionFormComponent} from './components/forms/actions/web/check-for-node-action-form/check-for-node-action-form.component';
 import {checkForTextActionFormComponent} from './components/forms/actions/web/check-for-text-action-form/check-for-text-action-form.component';
 import {checkNodeAttributeValueActionFormComponent} from './components/forms/actions/web/check-node-attribute-value-action-form/check-node-attribute-value-action-form.component';
+import {checkNodeSelectedActionFormComponent} from './components/forms/actions/web/check-node-selected-action-form/check-node-selected-action-form.component';
 import {checkPageTitleActionFormComponent} from './components/forms/actions/web/check-page-title-action-form/check-page-title-action-form.component';
 import {clearInputActionFormComponent} from './components/forms/actions/web/clear-action-form/clear-action-form.component';
 import {clickActionFormComponent} from './components/forms/actions/web/click-action-form/click-action-form.component';
@@ -415,6 +416,7 @@ angular
     .component('checkForNodeActionForm', checkForNodeActionFormComponent)
     .component('checkForTextActionForm', checkForTextActionFormComponent)
     .component('checkPageTitleActionForm', checkPageTitleActionFormComponent)
+    .component('checkNodeSelectedActionForm', checkNodeSelectedActionFormComponent)
     .component('clearInputActionForm', clearInputActionFormComponent)
     .component('clickActionForm', clickActionFormComponent)
     .component('clickElementByTextActionForm', clickElementByTextActionFormComponent)

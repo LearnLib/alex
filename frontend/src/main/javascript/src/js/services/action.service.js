@@ -42,6 +42,7 @@ import {BrowserAction} from '../entities/actions/web/browser-action';
 import {CheckNodeAttributeValueAction} from '../entities/actions/web/check-attribute-value-action';
 import {CheckForNodeWebAction} from '../entities/actions/web/check-for-node-action';
 import {CheckForTextWebAction} from '../entities/actions/web/check-for-text-action';
+import {CheckNodeSelectedAction} from '../entities/actions/web/check-node-selected-action';
 import {CheckPageTitleAction} from '../entities/actions/web/check-page-title-action';
 import {ClearWebAction} from '../entities/actions/web/clear-action';
 import {ClickElementByTextAction} from '../entities/actions/web/click-element-by-text';
@@ -110,6 +111,8 @@ export class ActionService {
                 return new CheckForTextWebAction(data);
             case actionType.WEB_CHECK_NODE:
                 return new CheckForNodeWebAction(data);
+            case actionType.WEB_CHECK_NODE_SELECTED:
+                return new CheckNodeSelectedAction(data);
             case actionType.WEB_PRESS_KEY:
                 return new PressKeyAction(data);
             case actionType.WEB_CHECK_ATTRIBUTE_VALUE:

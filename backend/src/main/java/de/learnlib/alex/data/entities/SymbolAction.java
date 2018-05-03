@@ -47,6 +47,7 @@ import de.learnlib.alex.data.entities.actions.web.AlertSendKeysAction;
 import de.learnlib.alex.data.entities.actions.web.BrowserAction;
 import de.learnlib.alex.data.entities.actions.web.CheckNodeAction;
 import de.learnlib.alex.data.entities.actions.web.CheckNodeAttributeValueAction;
+import de.learnlib.alex.data.entities.actions.web.CheckNodeSelectedAction;
 import de.learnlib.alex.data.entities.actions.web.CheckPageTitleAction;
 import de.learnlib.alex.data.entities.actions.web.CheckTextWebAction;
 import de.learnlib.alex.data.entities.actions.web.ClearAction;
@@ -122,6 +123,7 @@ import java.util.UUID;
         @JsonSubTypes.Type(name = "web_checkNodeAttributeValue", value = CheckNodeAttributeValueAction.class),
         @JsonSubTypes.Type(name = "web_checkForNode", value = CheckNodeAction.class),
         @JsonSubTypes.Type(name = "web_checkForText", value = CheckTextWebAction.class),
+        @JsonSubTypes.Type(name = "web_checkNodeSelected", value = CheckNodeSelectedAction.class),
         @JsonSubTypes.Type(name = "web_checkPageTitle", value = CheckPageTitleAction.class),
         @JsonSubTypes.Type(name = "web_clear", value = ClearAction.class),
         @JsonSubTypes.Type(name = "web_click", value = ClickAction.class),
