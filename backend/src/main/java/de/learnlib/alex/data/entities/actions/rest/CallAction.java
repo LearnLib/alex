@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.glassfish.jersey.client.ClientProperties;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
@@ -32,6 +33,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
@@ -95,6 +97,11 @@ public class CallAction extends RESTSymbolAction {
     @NotBlank
     private String url;
 
+    /** The amount of time in ms before the request is aborted. The value 0 means wait infinitely long.  */
+    @NotNull
+    @Min(value = 0)
+    private int timeout;
+
     /**
      * Map to store headers, that will be send with the requests. Every header name has a list of values, to be standard
      * conform (e.g. Accept: text/html,application/xml).
@@ -127,6 +134,7 @@ public class CallAction extends RESTSymbolAction {
     public CallAction() {
         this.headers = new HashMap<>();
         this.cookies = new HashMap<>();
+        this.timeout = 0;
     }
 
     /**
@@ -297,6 +305,14 @@ public class CallAction extends RESTSymbolAction {
         this.data = data;
     }
 
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         try {
@@ -320,18 +336,18 @@ public class CallAction extends RESTSymbolAction {
 
         switch (method) {
             case GET:
-                target.get(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues());
+                target.get(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(), timeout);
                 break;
             case POST:
                 target.post(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(),
-                            getDataWithVariableValues());
+                            getDataWithVariableValues(), timeout);
                 break;
             case PUT:
                 target.put(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(),
-                           getDataWithVariableValues());
+                           getDataWithVariableValues(), timeout);
                 break;
             case DELETE:
-                target.delete(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues());
+                target.delete(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(), timeout);
                 break;
             default:
                 LOGGER.error(LEARNER_MARKER, "Tried to make a call to a REST API with an unknown method '{}'.",
@@ -355,6 +371,8 @@ public class CallAction extends RESTSymbolAction {
         final Invocation.Builder builder = target.request();
         headers.forEach(builder::header);
         cookies.forEach(builder::cookie);
+        builder.property(ClientProperties.CONNECT_TIMEOUT, timeout);
+        builder.property(ClientProperties.READ_TIMEOUT, timeout);
 
         javax.ws.rs.client.Entity body = null;
         if (method.equals(Method.POST) || method.equals(Method.PUT)) {

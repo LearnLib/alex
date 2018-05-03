@@ -1,6 +1,6 @@
 <h4><strong>Make request</strong></h4>
 
-<p class="text-muted">Make a HTTP request to a URL (relative to your projects base url).</p>
+<p class="text-muted">Make a HTTP request to a URL (relative to your projects default URL).</p>
 <hr>
 
 <div class="form-group">
@@ -21,9 +21,13 @@
     <div ng-model="vm.action.data" ui-ace="vm.aceOptions"></div>
 </div>
 
+<div class="form-group">
+    <label>Timeout [ms] <em class="text-muted">(0 - The request does not timeout)</em></label>
+    <input class="form-control" type="number" placeholder="Timeout im ms" ng-model="vm.action.timeout" min="0">
+</div>
+
 <uib-tabset>
     <uib-tab heading="HTTP Headers">
-
         <br>
 
         <div class="form-group">

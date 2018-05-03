@@ -66,6 +66,12 @@ export class CallRestAction extends Action {
          * @type {*|{}}
          */
         this.credentials = obj.credentials || {};
+
+        /**
+         * The amount of time in ms before the request times out.
+         * @type {number}
+         */
+        this.timeout = obj.timeout == null ? 0 : obj.timeout;
     }
 
     /**

@@ -97,7 +97,7 @@ public class CallActionTest extends RestActionTest {
         ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
-        verify(webServiceConnector).get(eq(TEST_API_PATH), any(), anySet());
+        verify(webServiceConnector).get(eq(TEST_API_PATH), any(), anySet(), eq(0));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class CallActionTest extends RestActionTest {
         ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
-        verify(webServiceConnector).post(eq(TEST_API_PATH), any(), anySet(), eq("{}"));
+        verify(webServiceConnector).post(eq(TEST_API_PATH), any(), anySet(), eq("{}"), eq(0));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class CallActionTest extends RestActionTest {
         ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
-        verify(webServiceConnector).put(eq(TEST_API_PATH), any(), anySet(), eq("{}"));
+        verify(webServiceConnector).put(eq(TEST_API_PATH), any(), anySet(), eq("{}"), eq(0));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class CallActionTest extends RestActionTest {
         ExecuteResult result = c.executeAction(connectors);
 
         assertTrue(result.isSuccess());
-        verify(webServiceConnector).delete(eq(TEST_API_PATH), any(), anySet());
+        verify(webServiceConnector).delete(eq(TEST_API_PATH), any(), anySet(), eq(0));
     }
 
 }

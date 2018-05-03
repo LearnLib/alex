@@ -121,7 +121,7 @@ public class TestEvent {
     public static class MovedMany extends Event<List<Test>> {
 
         /**
-         * Constructor,
+         * Constructor.
          *
          * @param tests The moved tests.
          */
