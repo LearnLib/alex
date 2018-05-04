@@ -105,14 +105,16 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
 
         // If a new parameter is created for a symbol, it may be that there are tests that use the symbol.
         // Therefore we have to add a new parameter value to the test steps that use the symbol.
-        final List<TestCaseStep> steps = testCaseStepRepository.findAllByTestCase_Project_IdAndSymbol_Id(project.getId(), symbol.getId());
-        steps.forEach(step -> {
-            final SymbolParameterValue value = new SymbolParameterValue();
-            value.setParameter(parameter);
-            value.setStep(step);
-            step.getParameterValues().add(value);
-        });
-        testCaseStepRepository.save(steps);
+        if (parameter instanceof SymbolInputParameter && parameter.getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
+            final List<TestCaseStep> steps = testCaseStepRepository.findAllByTestCase_Project_IdAndSymbol_Id(project.getId(), symbol.getId());
+            steps.forEach(step -> {
+                final SymbolParameterValue value = new SymbolParameterValue();
+                value.setParameter(parameter);
+                value.setStep(step);
+                step.getParameterValues().add(value);
+            });
+            testCaseStepRepository.save(steps);
+        }
 
         return createdParameter;
     }
