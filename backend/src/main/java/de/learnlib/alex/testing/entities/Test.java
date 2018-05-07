@@ -143,6 +143,17 @@ public class Test implements Serializable {
         this.testResults = new ArrayList<>();
     }
 
+    /**
+     * Constructor.
+     *
+     * @param id
+     *         The id of the test.
+     */
+    public Test(Long id) {
+        this();
+        this.id = id;
+    }
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
     @JsonIgnore

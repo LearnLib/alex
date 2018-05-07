@@ -23,6 +23,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.net.URL;
@@ -30,6 +32,8 @@ import java.net.URL;
 /**
  * The configuration for the remote driver.
  */
+@Entity
+@DiscriminatorValue(WebDrivers.REMOTE)
 @JsonTypeName(WebDrivers.REMOTE)
 public class RemoteDriverConfig extends AbstractWebDriverConfig implements Serializable {
 

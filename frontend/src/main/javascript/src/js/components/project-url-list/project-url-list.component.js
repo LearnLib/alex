@@ -39,7 +39,7 @@ export const projectUrlListComponent = {
 
             /**
              * The list of url ids.
-             * @type {number[]}
+             * @type {Object[]}
              */
             this.listModel = [];
 
@@ -52,8 +52,12 @@ export const projectUrlListComponent = {
 
         $onInit() {
             if (this.listModel.length === 0) {
-                this.listModel.push(this.project.getDefaultUrl().id);
+                this.listModel.push(this.project.getDefaultUrl());
             }
+        }
+
+        isSelected(url) {
+            return this.listModel.find(u => u.id === url.id) != null;
         }
 
         /**
@@ -69,20 +73,20 @@ export const projectUrlListComponent = {
         }
 
         _toggleUrlSingle(url) {
-            const i = this.listModel.indexOf(url.id);
+            const i = this.listModel.findIndex(u => u.id === url.id);
             if (i === -1) {
-                this.listModel = [url.id];
+                this.listModel = [url];
             }
         }
 
         _toggleUrlMultiple(url) {
-            const i = this.listModel.indexOf(url.id);
+            const i = this.listModel.findIndex(u => u.id === url.id);
             if (i > -1) {
                 if (this.listModel.length > 1) {
                     this.listModel.splice(i, 1);
                 }
             } else {
-                this.listModel.push(url.id);
+                this.listModel.push(url);
             }
         }
     }

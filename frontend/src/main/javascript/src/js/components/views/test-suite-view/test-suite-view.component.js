@@ -48,11 +48,12 @@ export const testSuiteViewComponent = {
          * @param {ClipboardService} ClipboardService
          * @param {TestReportResource} TestReportResource
          * @param {NotificationService} NotificationService
+         * @param {TestConfigResource} TestConfigResource
          */
         // @ngInject
         constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService, TestResource,
                     PromptService, $uibModal, SettingsResource, DownloadService, TestService, ClipboardService,
-                    TestReportResource, NotificationService) {
+                    TestReportResource, NotificationService, TestConfigResource) {
             this.$state = $state;
             this.LearnerResource = LearnerResource;
             this.ToastService = ToastService;
@@ -65,6 +66,7 @@ export const testSuiteViewComponent = {
             this.TestReportResource = TestReportResource;
             this.NotificationService = NotificationService;
             this.$uibModal = $uibModal;
+            this.TestConfigResource = TestConfigResource;
 
             /**
              * The current project.
@@ -96,13 +98,15 @@ export const testSuiteViewComponent = {
              */
             this.active = false;
 
+            this.testConfigs = [];
+
             /**
              * The driver configuration.
              * @type {Object}
              */
             this.testConfig = {
-                testIds: [],
-                urlId: this.project.getDefaultUrl().id,
+                tests: [],
+                url: this.project.getDefaultUrl(),
                 driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
                 createReport: true
             };
@@ -113,6 +117,10 @@ export const testSuiteViewComponent = {
 
             SymbolGroupResource.getAll(this.project.id, true)
                 .then((groups) => this.groups = groups)
+                .catch(console.error);
+
+            this.TestConfigResource.getAll(this.project.id)
+                .then(testConfigs => this.testConfigs = testConfigs)
                 .catch(console.error);
 
             // check if a test process is active
@@ -173,7 +181,7 @@ export const testSuiteViewComponent = {
                     testToUpdate.name = name;
                     delete testToUpdate._selected;
                     if (testToUpdate.type === 'suite') {
-                        testToUpdate.testIds = test.tests.map(t => t.id);
+                        testToUpdate.tests = test.tests.map(t => t.id);
                         delete testToUpdate.tests;
                     } else {
                         testToUpdate.steps = test.steps.map((step) => {
@@ -243,7 +251,6 @@ export const testSuiteViewComponent = {
 
         executeSelected() {
             const selectedTests = this.testSuite.tests.filter(t => t._selected);
-
             if (selectedTests.length === 0) {
                 this.ToastService.info('You have to select at least one test case or test suite.');
                 return;
@@ -251,8 +258,11 @@ export const testSuiteViewComponent = {
 
             this.reset();
 
-            this.testConfig.testIds = selectedTests.map(t => t.id);
-            this.TestResource.executeMany(this.project.id, this.testConfig)
+            const config = JSON.parse(JSON.stringify(this.testConfig));
+            config.tests = selectedTests.map(t => t.id);
+            config.url = config.url.id;
+
+            this.TestResource.executeMany(this.project.id, config)
                 .then(() => {
                     this.ToastService.success(`The test execution has been started.`);
                     this._pollStatus();
@@ -300,7 +310,7 @@ export const testSuiteViewComponent = {
             poll(100);
         }
 
-        openBrowserConfigModal() {
+        openTestConfigModal() {
             this.$uibModal.open({
                 component: 'testConfigModal',
                 resolve: {
@@ -372,6 +382,39 @@ export const testSuiteViewComponent = {
                     });
             } else {
                 this.ToastService.info('There are not tests in the clipboard.');
+            }
+        }
+
+        saveTestConfig() {
+            let selectedTests = this.testSuite.tests.filter(t => t._selected);
+            if (!selectedTests.length) {
+                this.ToastService.info('You have to select at least one test.');
+                return;
+            }
+
+            const config = JSON.parse(JSON.stringify(this.testConfig));
+            config.id = null;
+            config.driverConfig.id = null;
+            config.tests = selectedTests.map(t => t.id);
+            config.project = this.project.id;
+            config.url = config.url.id;
+
+            this.TestConfigResource.create(this.project.id, config)
+                .then(createdConfig => {
+                    this.testConfigs.push(createdConfig);
+                    this.ToastService.success('Config has been saved');
+                })
+                .catch(err => {
+                    this.ToastService.danger(`The config could not be saved. ${err.data.message}`);
+                });
+        }
+
+        selectTestConfig(config) {
+            if (config != null) {
+                this.testConfig = config;
+                this.testSuite.tests.forEach(test => {
+                    test._selected = config.tests.indexOf(test.id) > -1;
+                });
             }
         }
     }

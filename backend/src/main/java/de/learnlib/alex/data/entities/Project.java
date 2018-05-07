@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.testing.entities.Test;
+import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestReport;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -141,6 +142,15 @@ public class Project implements Serializable {
     @JsonIgnore
     private Set<Test> tests;
 
+    /** The test configurations of this project. */
+    @OneToMany(
+            mappedBy = "project",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    )
+    @JsonIgnore
+    private List<TestExecutionConfig> testExecutionConfigs;
+
     /**
      * The counters of the project.
      */
@@ -170,6 +180,7 @@ public class Project implements Serializable {
         this.nextSymbolId = 1L;
         this.tests = new HashSet<>();
         this.testReports = new HashSet<>();
+        this.testExecutionConfigs = new ArrayList<>();
         this.urls = new ArrayList<>();
     }
 
@@ -386,6 +397,14 @@ public class Project implements Serializable {
                 .filter(ProjectUrl::isDefault)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public List<TestExecutionConfig> getTestExecutionConfigs() {
+        return testExecutionConfigs;
+    }
+
+    public void setTestExecutionConfigs(List<TestExecutionConfig> testExecutionConfigs) {
+        this.testExecutionConfigs = testExecutionConfigs;
     }
 
     @Override

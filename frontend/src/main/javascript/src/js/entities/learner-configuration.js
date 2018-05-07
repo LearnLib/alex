@@ -40,7 +40,7 @@ export class LearnConfiguration {
          * The URLs to use for learning.
          * @type {number[]}
          */
-        this.urlIds = obj.urlIds || [];
+        this.urls = obj.urls || [];
 
         /**
          * The max amount of hypotheses to generate.

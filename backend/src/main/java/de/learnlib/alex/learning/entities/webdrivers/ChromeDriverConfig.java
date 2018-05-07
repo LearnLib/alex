@@ -22,6 +22,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,8 @@ import java.util.Map;
 /**
  * Configuration for the chrome driver.
  */
+@Entity
+@DiscriminatorValue(WebDrivers.CHROME)
 @JsonTypeName(WebDrivers.CHROME)
 public class ChromeDriverConfig extends AbstractWebDriverConfig implements Serializable {
 

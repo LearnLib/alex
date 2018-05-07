@@ -22,12 +22,25 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
  * The abstract web driver configuration class.
  */
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "name", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("SUPER")
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "name")
 @JsonSubTypes({
         @JsonSubTypes.Type(name = WebDrivers.CHROME, value = ChromeDriverConfig.class),
@@ -51,10 +64,17 @@ public abstract class AbstractWebDriverConfig implements Serializable {
     /** How long should be waited for JavaScript to execute before a timeout. */
     private static final int DEFAULT_SCRIPT_TIMEOUT = 10;
 
+    /** The id of the config in the database. */
+    @Id
+    @GeneratedValue
+    private Long id;
+
     /** The width of the browser window. */
+    @Min(value = 0)
     private int width;
 
     /** The height of the browser window. */
+    @Min(value = 0)
     private int height;
 
     /** The implicit wait time for selenium. */
@@ -103,6 +123,14 @@ public abstract class AbstractWebDriverConfig implements Serializable {
         if (height > 0 && width > 0) {
             driver.manage().window().setSize(new Dimension(width, height));
         }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public int getWidth() {

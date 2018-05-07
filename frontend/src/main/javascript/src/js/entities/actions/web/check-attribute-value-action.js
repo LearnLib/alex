@@ -62,7 +62,7 @@ export class CheckNodeAttributeValueAction extends Action {
      */
     toString() {
         if (this.checkMethod === 'EXISTS') {
-            return `Check if the attribute "${this.attribute}" of the element "${this.node.selector}" exists`
+            return `Check if the attribute "${this.attribute}" of the element "${this.node.selector}" exists`;
         } else {
             return `
                 Check if the attribute "${this.attribute}" of the element "${this.node.selector}" 

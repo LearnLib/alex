@@ -71,37 +71,20 @@ public class TestResource {
     private SecurityContext securityContext;
 
     /** The {@link TestDAO} to use. */
+    @Inject
     private TestDAO testDAO;
 
     /** The test service. */
+    @Inject
     private TestService testService;
 
     /** The {@link WebhookService} to use. */
+    @Inject
     private WebhookService webhookService;
 
     /** The {@link ProjectDAO} to use. */
-    private ProjectDAO projectDAO;
-
-    /**
-     * Constructor.
-     *
-     * @param testDAO
-     *         The injected test Dao.
-     * @param testService
-     *         The test service to use.
-     * @param webhookService
-     *         The injected webhook service.
-     * @param projectDAO
-     *         The injected project DAO.
-     */
     @Inject
-    public TestResource(TestDAO testDAO, TestService testService, WebhookService webhookService,
-            ProjectDAO projectDAO) {
-        this.testDAO = testDAO;
-        this.testService = testService;
-        this.webhookService = webhookService;
-        this.projectDAO = projectDAO;
-    }
+    private ProjectDAO projectDAO;
 
     /**
      * Create a test.
@@ -254,10 +237,8 @@ public class TestResource {
     @POST
     @Path("/{id}/execute")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response execute(@PathParam("project_id") Long projectId,
-            @PathParam("id") Long id,
-            TestExecutionConfig testConfig)
-            throws NotFoundException {
+    public Response execute(@PathParam("project_id") Long projectId, @PathParam("id") Long id,
+            TestExecutionConfig testConfig) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Test test = testDAO.get(user, projectId, id);
 

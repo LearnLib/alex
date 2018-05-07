@@ -33,6 +33,7 @@ import de.learnlib.alex.data.rest.SymbolParameterResource;
 import de.learnlib.alex.data.rest.SymbolResource;
 import de.learnlib.alex.learning.rest.LearnerResource;
 import de.learnlib.alex.learning.rest.LearnerResultResource;
+import de.learnlib.alex.testing.rest.TestExecutionConfigResource;
 import de.learnlib.alex.testing.rest.TestReportResource;
 import de.learnlib.alex.testing.rest.TestResource;
 import de.learnlib.alex.webhooks.rest.WebhookResource;
@@ -105,6 +106,7 @@ public class ALEXApplication extends ResourceConfig {
         register(TestResource.class);
         register(TestReportResource.class);
         register(WebhookResource.class);
+        register(TestExecutionConfigResource.class);
 
         // Exceptions
         register(NotFoundExceptionMapper.class);

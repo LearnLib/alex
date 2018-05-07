@@ -21,11 +21,15 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.io.Serializable;
 
 /**
  * The config for the html unit driver.
  */
+@Entity
+@DiscriminatorValue(WebDrivers.HTML_UNIT)
 @JsonTypeName(WebDrivers.HTML_UNIT)
 public class HtmlUnitDriverConfig extends AbstractWebDriverConfig implements Serializable {
 

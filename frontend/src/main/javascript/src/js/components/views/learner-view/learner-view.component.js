@@ -77,12 +77,6 @@ class LearnerViewComponentComponent {
         this.active = false;
 
         /**
-         * Flag for showing or hiding the sidebar.
-         * @type {boolean}
-         */
-        this.showSidebar = true;
-
-        /**
          * Detailed statistics about the active process.
          * @type {any}
          */
@@ -140,7 +134,7 @@ class LearnerViewComponentComponent {
                 stepNo: this.stepNo,
                 symbolsToAdd: [],
                 project: this.project.id,
-                urlIds: this.result.urls.map(url => url.id),
+                urls: this.result.urls,
             };
         } else {
             this.poll();
@@ -179,7 +173,7 @@ class LearnerViewComponentComponent {
                                     stepNo: result.steps.length,
                                     symbolsToAdd: [],
                                     project: this.project.id,
-                                    urlIds: this.result.urls.map(url => url.id),
+                                    urls: this.result.urls
                                 };
                             }
 
@@ -202,20 +196,13 @@ class LearnerViewComponentComponent {
     }
 
     /**
-     * Update the configuration for the continuing test when choosing eqOracle 'sample' and showing an intermediate
-     * hypothesis.
-     *
-     * @param {LearnConfiguration} config - The updated configuration.
-     */
-    updateLearnConfiguration(config) {
-        this.test.configuration = config;
-    }
-
-    /**
      * Tell the server to continue learning with the new or old learn configuration when eqOracle type was 'sample'.
      */
     resumeLearning() {
-        this.LearnerResource.resume(this.project.id, this.result.testNo, this.resumeConfig)
+        const config = JSON.parse(JSON.stringify(this.resumeConfig));
+        config.urls = this.resumeConfig.urls.map(u => u.id);
+
+        this.LearnerResource.resume(this.project.id, this.result.testNo, config)
             .then(() => {
                 this.poll();
                 this.stepNo = this.resumeConfig.stepNo;

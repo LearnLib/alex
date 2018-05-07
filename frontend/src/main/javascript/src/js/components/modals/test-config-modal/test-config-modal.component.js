@@ -47,14 +47,14 @@ export const testConfigModalComponent = {
 
             /**
              * The model for the url ids.
-             * @type {number[]}
+             * @type {Object[]}
              */
-            this.urlIds = [];
+            this.selectedUrls = [];
         }
 
         $onInit() {
             this.configuration = this.resolve.configuration;
-            this.urlIds = [this.configuration.urlId];
+            this.selectedUrls = [this.configuration.url];
             this.project = this.resolve.project;
         }
 
@@ -62,7 +62,7 @@ export const testConfigModalComponent = {
          * Close the modal window and pass the configuration.
          */
         update() {
-            this.configuration.urlId = this.urlIds[0];
+            this.configuration.url = this.selectedUrls[0];
             this.close({$value: this.configuration});
         }
     },

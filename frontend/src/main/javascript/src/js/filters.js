@@ -50,7 +50,7 @@ export function formatParameterType() {
             default:
                 return type;
         }
-    }
+    };
 }
 
 /**
@@ -150,7 +150,7 @@ export function normalizeUpperCase() {
     return str => {
         let res = str.split('_').map(part => part.toLowerCase()).join(' ');
         return res.charAt(0).toUpperCase() + res.slice(1);
-    }
+    };
 }
 
 /**

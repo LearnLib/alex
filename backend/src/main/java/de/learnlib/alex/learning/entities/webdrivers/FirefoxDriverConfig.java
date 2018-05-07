@@ -22,6 +22,8 @@ import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.GeckoDriverService;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,8 @@ import java.util.Map;
 /**
  * The configuration for the firefox driver.
  */
+@Entity
+@DiscriminatorValue(WebDrivers.FIREFOX)
 @JsonTypeName(WebDrivers.FIREFOX)
 public class FirefoxDriverConfig extends AbstractWebDriverConfig implements Serializable {
 

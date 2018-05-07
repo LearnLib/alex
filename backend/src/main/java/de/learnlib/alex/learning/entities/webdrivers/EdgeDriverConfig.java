@@ -20,11 +20,15 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.io.Serializable;
 
 /**
  * The config for the edge driver.
  */
+@Entity
+@DiscriminatorValue(WebDrivers.EDGE)
 @JsonTypeName(WebDrivers.EDGE)
 public class EdgeDriverConfig extends AbstractWebDriverConfig implements Serializable {
 

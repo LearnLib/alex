@@ -38,7 +38,7 @@ export const latestTestReportWidgetComponent = {
         $onInit() {
             this.testReportResource.getLatest(this.project.id)
                 .then(report => {
-                    this.report = report
+                    this.report = report;
                 })
                 .catch(console.log);
         }

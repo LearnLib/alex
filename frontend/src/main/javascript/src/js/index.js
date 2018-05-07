@@ -151,6 +151,7 @@ import {symbolGroupHeaderComponent} from './components/symbol-group-tree/symbol-
 import {symbolItemComponent} from './components/symbol-group-tree/symbol-item/symbol-item.component';
 import {symbolListItemComponent} from './components/symbol-list-item/symbol-list-item.component';
 import {symbolParametersPanelComponent} from './components/symbol-parameters-panel/symbol-parameters-panel.component';
+import {testConfigListComponent} from './components/test-config-list/test-config-list.component';
 import {testResultReportComponent} from './components/test-result-report/test-result-report.component';
 import {testCaseNodeComponent} from './components/test-tree/test-case-node/test-case-node.component';
 import {testSuiteNodeComponent} from './components/test-tree/test-suite-node/test-suite-node.component';
@@ -201,7 +202,8 @@ import {
     formatMilliseconds,
     formatParameterType,
     formatUserRole,
-    formatWebBrowser, normalizeUpperCase,
+    formatWebBrowser,
+    normalizeUpperCase,
     sortTests
 } from './filters';
 import * as routes from './routes';
@@ -226,6 +228,7 @@ import {SettingsResource} from './services/resources/settings-resource.service';
 import {SymbolGroupResource} from './services/resources/symbol-group-resource.service';
 import {SymbolParameterResource} from './services/resources/symbol-parameter-resource.service';
 import {SymbolResource} from './services/resources/symbol-resource.service';
+import {TestConfigResource} from './services/resources/test-config-resource.service';
 import {TestReportResource} from './services/resources/test-report-resource.service';
 import {TestResource} from './services/resources/test-resource.service';
 import {UserResource} from './services/resources/user-resource.service';
@@ -284,6 +287,7 @@ angular
     .service('SymbolParameterResource', SymbolParameterResource)
     .service('SymbolResource', SymbolResource)
     .service('UserResource', UserResource)
+    .service('TestConfigResource', TestConfigResource)
     .service('TestResource', TestResource)
     .service('TestReportResource', TestReportResource)
     .service('WebhookResource', WebhookResource)
@@ -492,6 +496,7 @@ angular
     .component('reportOutputsColumn', reportOutputsColumnComponent)
     .component('reportCharts', reportChartsComponent)
     .component('learnerSetupSymbolGroupTree', learnerSetupSymbolGroupTreeComponent)
+    .component('testConfigList', testConfigListComponent)
     .component('testSuiteTree', testSuiteTreeComponent);
 
 angular.bootstrap(document, ['ALEX']);

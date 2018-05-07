@@ -76,6 +76,7 @@ class LearnerSetupViewComponent {
          * @type {LearnConfiguration}
          */
         this.learnConfiguration = new LearnConfiguration();
+        this.learnConfiguration.urls = [this.project.getDefaultUrl()];
 
         /**
          * The symbol that should be used as a reset symbol.
@@ -156,14 +157,13 @@ class LearnerSetupViewComponent {
                 const i = this.selectedSymbols.findIndex(s => s.id === this.resetSymbol.id);
                 if (i > -1) this.selectedSymbols.splice(i, 1);
 
-                // add selected symbols and the reset symbol to the learn config
-                this.selectedSymbols.forEach(symbol => {
-                    this.learnConfiguration.addSymbol(symbol);
-                });
-                this.learnConfiguration.setResetSymbol(this.resetSymbol);
+                const config = JSON.parse(JSON.stringify(this.learnConfiguration));
+                config.symbols = this.selectedSymbols.map(s => s.id);
+                config.resetSymbol = this.resetSymbol.id;
+                config.urls = this.learnConfiguration.urls.map(u => u.id);
 
                 // start learning
-                this.LearnerResource.start(this.project.id, this.learnConfiguration)
+                this.LearnerResource.start(this.project.id, config)
                     .then(() => {
                         this.ToastService.success('Learn process started successfully.');
                         this.$state.go('learnerStart', {projectId: this.project.id});
@@ -187,7 +187,7 @@ class LearnerSetupViewComponent {
         this.learnConfiguration.eqOracle = result.steps[0].eqOracle;
         this.learnConfiguration.maxAmountOfStepsToLearn = result.maxAmountOfStepsToLearn;
         this.learnConfiguration.driverConfig = result.driverConfig;
-        this.learnConfiguration.urlIds = result.urls.map(url => url.id);
+        this.learnConfiguration.urls = result.urls;
 
         SymbolGroupUtils.getSymbols(this.groups).forEach(symbol => {
             symbol._selected = result.symbols.indexOf(symbol.id) > -1;

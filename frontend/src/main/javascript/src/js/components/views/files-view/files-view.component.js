@@ -161,7 +161,7 @@ class FilesViewComponent {
                 a.click();
 
                 window.URL.revokeObjectURL(objectUrl);
-            })
+            });
     }
 }
 

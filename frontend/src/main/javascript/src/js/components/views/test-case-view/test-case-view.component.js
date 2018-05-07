@@ -77,8 +77,8 @@ export const testCaseViewComponent = {
              * @type {object}
              */
             this.testConfig = {
-                testIds: [],
-                urlId: this.project.getDefaultUrl().id,
+                tests: [],
+                url: this.project.getDefaultUrl(),
                 driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
             };
 
@@ -116,7 +116,7 @@ export const testCaseViewComponent = {
         }
 
         $onInit() {
-            this.testConfig.testIds = [this.testCase.id];
+            this.testConfig.tests = [this.testCase];
         }
 
         /**
@@ -142,8 +142,12 @@ export const testCaseViewComponent = {
                 return;
             }
 
+            const config = JSON.parse(JSON.stringify(this.testConfig));
+            config.tests = [this.testCase.id];
+            config.url = config.url.id;
+
             this.result = null;
-            this.TestResource.execute(this.testCase, this.testConfig)
+            this.TestResource.execute(this.testCase, config)
                 .then((data) => this.result = data.testResults[0])
                 .catch((err) => this.ToastService.info('The test case could not be executed. ' + err.data.message));
         }
@@ -173,19 +177,5 @@ export const testCaseViewComponent = {
                     .map(input => ({parameter: input, value: ""}))
             });
         }
-
-        openActionEditModal(action, index) {
-            this.$uibModal.open({
-                component: 'actionEditModal',
-                resolve: {
-                    modalData: () => ({
-                        action: this.ActionService.create(JSON.parse(JSON.stringify(action)))
-                    })
-                }
-            }).result.then((updatedAction) => {
-                this.testCase.steps[index].action = updatedAction;
-            })
-        }
-
     }
 };
