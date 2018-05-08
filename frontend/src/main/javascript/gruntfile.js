@@ -39,7 +39,7 @@ module.exports = function (grunt) {
 
             watch: {
                 scripts: {
-                    files: ['src/js/**/*.js', 'src/js/**/*.html', './environments.js'],
+                    files: ['src/js/**/*.js', './environments.js', 'src/js/**/*.html'],
                     tasks: ['build-js'],
                     options: {
                         spawn: false
@@ -50,17 +50,6 @@ module.exports = function (grunt) {
                     tasks: ['build-css'],
                     options: {
                         spawn: false
-                    }
-                }
-            },
-
-            sass: {
-                options: {
-                    sourceMap: false
-                },
-                dist: {
-                    files: {
-                        '<%= buildLocation %>/css/style.css': 'src/scss/style.scss'
                     }
                 }
             },
@@ -130,6 +119,10 @@ module.exports = function (grunt) {
                 }
             },
 
+            exec: {
+                'build_css': 'node-sass src/scss/style.scss -o <%= buildLocation %>/css'
+            },
+
             copy: {
                 fonts: {
                     expand: true,
@@ -157,14 +150,14 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-sass');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-postcss');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-exec');
 
     grunt.registerTask('build-js', ['browserify', 'uglify:app']);
-    grunt.registerTask('build-css', ['sass', 'postcss', 'cssmin']);
+    grunt.registerTask('build-css', ['exec:build_css', 'postcss', 'cssmin']);
     grunt.registerTask('default', ['concat:libs', 'uglify:libs', 'build-js', 'copy:fonts', 'build-css', 'copy:images', 'copy:index']);
     grunt.registerTask('lint', 'jshint');
     grunt.registerTask('test', ['karma:unit']);

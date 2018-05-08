@@ -38,7 +38,7 @@ For the installation from the source files make sure your system matches the fol
 
 * Java JDK 8
 * Maven 3
-* Node.js v7.9.* and the NPM
+* Node.js (v10.0.0) and the NPM (v6.0.0)
 
 ALEX currently relies on snapshot versions of [AutomataLib](https://github.com/LearnLib/automatalib) and [LearnLib](https://github.com/LearnLib/leanrlib).
 Follow the build instructions for local development of both libraries and then proceed with the following steps.
