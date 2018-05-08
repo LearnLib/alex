@@ -10,7 +10,7 @@ jdk:
 addons:
   apt:
     sources:
-      - sourceline: "deb https://deb.nodesource.com/node_8.x trusty main"
+      - sourceline: "deb https://deb.nodesource.com/node_10.x trusty main"
         key_url:    "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
     packages:
       - nodejs
@@ -27,7 +27,7 @@ before_cache:
 install: true # skip mvn install, because we essentially run the same command in the script routine
 
 script:
-  - mvn clean package -Pbootstrap
+  - mvn clean package
 
 branches:
   only:
