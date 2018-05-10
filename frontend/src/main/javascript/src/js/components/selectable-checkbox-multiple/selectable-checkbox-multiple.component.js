@@ -14,19 +14,29 @@
  * limitations under the License.
  */
 
-export const symbolItemComponent = {
-    template: require('./symbol-item.component.html'),
+export const selectableCheckboxMultipleComponent = {
+    template: require('./selectable-checkbox-multiple.component.html'),
     bindings: {
-        symbol: '=',
-        selectedSymbols: '=',
+        items: '=',
         selectable: '='
     },
-    transclude: true,
     controllerAs: 'vm',
-    controller: class {
+    controller: class SelectableCheckboxMultipleComponent {
 
-        selectSymbol(symbol) {
-            this.selectedSymbols.select(symbol);
+        selectItem() {
+            if (this.items != null) {
+                this.selectable.toggleSelectMany(this.items);
+            } else {
+                this.selectable.toggleSelectAll(this.items);
+            }
+        }
+
+        isSelected() {
+            if (this.items != null) {
+                return this.selectable.isAnySelectedIn(this.items);
+            } else {
+                return this.selectable.isAnySelected();
+            }
         }
     }
 };

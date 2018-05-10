@@ -70,7 +70,6 @@ export class TestService {
             delete test.project;
             delete test.user;
             delete test.parent;
-            delete test._selected;
         };
 
         for (const test of tests) {

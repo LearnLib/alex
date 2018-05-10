@@ -15,6 +15,7 @@
  */
 
 import remove from 'lodash/remove';
+import {Selectable} from '../../../utils/selectable';
 
 /**
  * The controller for listing all final test results.
@@ -54,14 +55,15 @@ class ResultsViewComponent {
 
         /**
          * The test results the user selected.
-         * @type {LearnResult[]}
+         * @type {Selectable}
          */
-        this.selectedResults = [];
+        this.selectedResults = new Selectable(this.results, 'testNo');
 
         // get all final test results
         this.LearnResultResource.getAll(this.project.id)
             .then(results => {
                 this.results = results;
+                this.selectedResults = new Selectable(this.results, 'testNo');
             })
             .catch(err => console.log(err));
     }
@@ -78,9 +80,10 @@ class ResultsViewComponent {
                     .then(() => {
                         this.ToastService.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
                         remove(this.results, {testNo: result.testNo});
+                        this.selectedResults.unselect(result);
                     })
-                    .catch(response => {
-                        this.ToastService.danger('<p><strong>Result deletion failed</strong></p>' + response.data.message);
+                    .catch(err => {
+                        this.ToastService.danger('<p><strong>Result deletion failed</strong></p>' + err.data.message);
                     });
             });
     }
@@ -89,18 +92,18 @@ class ResultsViewComponent {
      * Deletes selected test results from the server after prompting the user for confirmation.
      */
     deleteResults() {
-        if (this.selectedResults.length > 0) {
+        const selectedResults = this.selectedResults.getSelected();
+        if (selectedResults.length > 0) {
             this.PromptService.confirm('Do you want to permanently delete theses results? Changes cannot be undone.')
                 .then(() => {
-                    this.LearnResultResource.removeMany(this.selectedResults)
+                    this.LearnResultResource.removeMany(selectedResults)
                         .then(() => {
                             this.ToastService.success('Learn results deleted');
-                            this.selectedResults.forEach(result => {
-                                remove(this.results, {testNo: result.testNo});
-                            });
+                            selectedResults.forEach(result => remove(this.results, {testNo: result.testNo}));
+                            this.selectedResults.unselectAll();
                         })
-                        .catch(response => {
-                            this.ToastService.danger('<p><strong>Result deletion failed</strong></p>' + response.data.message);
+                        .catch(err => {
+                            this.ToastService.danger('<p><strong>Result deletion failed</strong></p>' + err.data.message);
                         });
                 });
         } else {
@@ -112,20 +115,24 @@ class ResultsViewComponent {
      * Opens the learning result compare view with the selected results opened.
      */
     openSelectedResults() {
-        if (this.selectedResults.length > 0) {
-            const testNos = this.selectedResults.map(r => r.testNo).join(',');
+        const selectedResults = this.selectedResults.getSelected();
+        if (selectedResults.length > 0) {
+            const testNos = selectedResults.map(r => r.testNo).join(',');
             this.$state.go('learnerResultsCompare', {testNos, projectId: this.project.id});
         }
     }
 
     /**
      * Redirect to the statistics page for the selected results.
-     *
-     * @param {LearnResult|LearnResult[]} results - The result[s] to shows statistics of.
      */
-    showStatistics(results) {
-        const testNos = results.length ? this.selectedResults.map(r => r.testNo).join(',') : results.testNo;
+    showSelectedStatistics() {
+        const selectedResults = this.selectedResults.getSelected();
+        const testNos = selectedResults.map(r => r.testNo).join(',');
         this.$state.go('learnerResultsStatistics', {testNos, projectId: this.project.id});
+    }
+
+    showStatistics(result) {
+        this.$state.go('learnerResultsStatistics', {testNos: '' + result.testNo, projectId: this.project.id});
     }
 
     /**
@@ -142,8 +149,9 @@ class ResultsViewComponent {
      * Exports selected learn results into a csv file.
      */
     exportSelectedAsCSV() {
-        if (this.selectedResults.length > 0) {
-            this.LearnerResultDownloadService.download(this.selectedResults)
+        const selectedResults = this.selectedResults.getSelected();
+        if (selectedResults.length > 0) {
+            this.LearnerResultDownloadService.download(selectedResults)
                 .then(() => this.ToastService.success('The results have been exported.'));
         }
     }

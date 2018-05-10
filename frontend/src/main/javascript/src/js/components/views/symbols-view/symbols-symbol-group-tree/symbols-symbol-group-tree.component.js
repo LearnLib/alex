@@ -8,6 +8,7 @@ export const symbolsSymbolGroupTreeComponent = {
     bindings: {
         group: '=',
         selectedSymbols: '=',
+        symbols: '=',
         level: '@'
     },
     controllerAs: 'vm',
@@ -110,6 +111,7 @@ export const symbolsSymbolGroupTreeComponent = {
                     this.symbolResource.create(symbol.project, symbolToCreate)
                         .then(createdSymbol => {
                             this.group.symbols.push(createdSymbol);
+                            this.symbols.push(createdSymbol);
                             this.toastService.success('The symbol has been copied.');
                         })
                         .catch(err => this.toastService.danger(`The symbol could not be created. ${err.data.message}`));
@@ -126,6 +128,7 @@ export const symbolsSymbolGroupTreeComponent = {
                 .then(() => {
                     this.toastService.success('Symbol <strong>' + symbol.name + '</strong> deleted');
                     remove(this.group.symbols, {id: symbol.id});
+                    this.selectedSymbols.unselect(symbol);
                 })
                 .catch(err => {
                     this.toastService.danger(`The symbol could not be deleted. ${err.data.message}`);

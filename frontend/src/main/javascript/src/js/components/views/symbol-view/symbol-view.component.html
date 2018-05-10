@@ -26,7 +26,13 @@
                 </div>
                 <div class="p-1 border-bottom d-flex flex-row">
                     <div>
-                        <checkbox-multiple model="vm.symbol.actions" class="pull-left" style="margin-top: 7px"></checkbox-multiple>
+                        <selectable-checkbox-multiple
+                            selectable="vm.selectedActions"
+                            class="pull-left"
+                            style="margin-top: 7px"
+                            ng-if="vm.selectedActions != null"
+                        >
+                        </selectable-checkbox-multiple>
                     </div>
                     <div class="w-100 ml-1">
                         <div class="btn-group btn-group-sm">
@@ -42,21 +48,28 @@
                         </div>
 
                         <div class="btn-group btn-group-sm">
-                            <button class="btn btn-default" action-edit-modal-handle action="vm.selectedActions[0]"
-                                    ng-class="{'disabled': vm.selectedActions.length !== 1}" on-updated="vm.updateAction(action)">
+                            <button
+                                class="btn btn-default"
+                                ng-class="{'disabled': vm.selectedActions.getSelected().length !== 1}"
+                                on-updated="vm.updateAction(action)"
+                                ng-click="vm.editSelectedAction()"
+                            >
                                 Edit
                             </button>
-                            <button class="btn btn-default" ng-click="vm.deleteActions(vm.selectedActions)"
-                                    ng-class="{'disabled': vm.selectedActions.length === 0}">
+                            <button
+                                class="btn btn-default"
+                                ng-click="vm.deleteSelectedActions()"
+                                ng-class="{'disabled': vm.selectedActions.getSelected().length === 0}"
+                            >
                                 Delete
                             </button>
                         </div>
 
                         <div class="btn-group btn-group-sm" uib-dropdown>
-                            <button class="btn btn-default" uib-tooltip="Copy" tooltip-placement="bottom" ng-click="vm.copyActions(vm.selectedActions)">
+                            <button class="btn btn-default" uib-tooltip="Copy" tooltip-placement="bottom" ng-click="vm.copySelectedActions()">
                                 <i class="fa fa-copy fa-fw"></i>
                             </button>
-                            <button class="btn btn-default" uib-tooltip="Cut" tooltip-placement="bottom" ng-click="vm.cutActions(vm.selectedActions)">
+                            <button class="btn btn-default" uib-tooltip="Cut" tooltip-placement="bottom" ng-click="vm.cutSelectedActions()">
                                 <i class="fa fa-cut fa-fw"></i>
                             </button>
                             <button class="btn btn-default" uib-tooltip="Paste" tooltip-placement="bottom" ng-click="vm.pasteActions()">
@@ -68,12 +81,11 @@
                 <div class="panel-body" style="padding: 0">
                     <div class="action-list" dragula='"actionList"' dragula-model="vm.symbol.actions"
                          ng-if="vm.symbol.actions.length > 0">
-                        <div class="action-list-item" ng-repeat="action in vm.symbol.actions" selection-model
-                             selection-model-selected-items="vm.selectedActions"
+                        <div class="action-list-item" ng-repeat="action in vm.symbol.actions"
                              ng-class="{'disabled': action.disabled}">
 
                             <div class="flex-item">
-                                <checkbox selection-model-ignore model="action"></checkbox>
+                                <selectable-checkbox item="action" selectable="vm.selectedActions"></selectable-checkbox>
                             </div>
 
                             <div class="flex-item">
@@ -88,15 +100,13 @@
                             </div>
 
                             <div class="flex-item">
-                                <span class="btn btn-sm"
-                                      ng-click="vm.toggleDisableAction(action)"
-                                      selection-model-ignore>
-                                        <span ng-show="!action.disabled" tooltip-placement="left" uib-tooltip="Disable">
-                                            <i class="fa fa-toggle-on fa-fw text-success"></i>
-                                        </span>
-                                        <span ng-show="action.disabled" tooltip-placement="left" uib-tooltip="Enable">
-                                            <i class="fa fa-toggle-off fa-fw text-danger"></i>
-                                        </span>
+                                <span class="btn btn-sm" ng-click="vm.toggleDisableAction(action)">
+                                    <span ng-show="!action.disabled" tooltip-placement="left" uib-tooltip="Disable">
+                                        <i class="fa fa-toggle-on fa-fw text-success"></i>
+                                    </span>
+                                    <span ng-show="action.disabled" tooltip-placement="left" uib-tooltip="Enable">
+                                        <i class="fa fa-toggle-off fa-fw text-danger"></i>
+                                    </span>
                                 </span>
                             </div>
 
@@ -118,12 +128,12 @@
                                         </li>
                                         <li class="divider"></li>
                                         <li>
-                                            <a href="" ng-click="vm.cutActions([action])">
+                                            <a href="" ng-click="vm.cutAction(action)">
                                                 <i class="fa fa-cut fa-fw"></i> Cut
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="" ng-click="vm.copyActions([action])">
+                                            <a href="" ng-click="vm.copyAction(action)">
                                                 <i class="fa fa-copy fa-fw"></i> Copy
                                             </a>
                                         </li>

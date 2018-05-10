@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-
 /**
  * The directive for handling the opening of the modal for moving symbols into another group. Can only be used as
  * an attribute and attaches a click event to its source element.
@@ -37,9 +35,7 @@ export function symbolMoveModalHandleDirective($uibModal) {
                 $uibModal.open({
                     component: 'symbolMoveModal',
                     resolve: {
-                        modalData: () => ({
-                            symbols: scope.symbols.map(s => new AlphabetSymbol(s))
-                        })
+                        symbols: () => scope.symbols
                     }
                 });
             });

@@ -18,22 +18,12 @@
  * Configure some third party libraries and set the http interceptor to send the jwt with each request.
  *
  * @param toastrConfig
- * @param selectionModelOptionsProvider
  * @param jwtInterceptorProvider
  * @param jwtOptionsProvider
  * @param $httpProvider
  */
 // @ngInject
-export function config(selectionModelOptionsProvider, jwtInterceptorProvider, jwtOptionsProvider, $httpProvider,
-                       toastrConfig) {
-
-    // default options for selection model
-    selectionModelOptionsProvider.set({
-        selectedAttribute: '_selected',
-        selectedClass: 'selected',
-        mode: 'multiple',
-        cleanupStrategy: 'deselect'
-    });
+export function config(jwtInterceptorProvider, jwtOptionsProvider, $httpProvider, toastrConfig) {
 
     // configure the toaster
     angular.extend(toastrConfig, {

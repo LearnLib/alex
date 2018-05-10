@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import remove from 'lodash/remove';
+import {Selectable} from '../../../utils/selectable';
+
 /**
  * The component for test reports.
  * @type {{template: *, controllerAs: string, controller: testReportsViewComponent.TestReportsViewComponent}}
@@ -52,8 +55,17 @@ export const testReportsViewComponent = {
              */
             this.reports = [];
 
+            /**
+             * The selected reports.
+             * @type {Selectable}
+             */
+            this.selectedReports = new Selectable(this.reports, 'id');
+
             this.testReportResource.getAll(this.project.id)
-                .then((data) => this.reports = data)
+                .then((reports) => {
+                    this.reports = reports;
+                    this.selectedReports = new Selectable(this.reports, 'id');
+                })
                 .catch((err) => this.toastService.danger(`Failed to load reports. ${err.data.message}`));
         }
 
@@ -65,7 +77,7 @@ export const testReportsViewComponent = {
             this.testReportResource.remove(this.project.id, report.id)
                 .then(() => {
                     this.toastService.success(`The report has been deleted.`);
-                    this.reports = this.reports.filter((r) => r.id !== report.id);
+                    this._deleteReport(report);
                 })
                 .catch((err) => {
                     this.toastService.danger(`The report could not be deleted. ${err.data.message}`);
@@ -74,11 +86,11 @@ export const testReportsViewComponent = {
 
         /** Delete selected reports. */
         deleteSelectedReports() {
-            const reportsToDelete = this.reports.filter((r) => r._selected);
+            const reportsToDelete = this.selectedReports.getSelected();
             this.testReportResource.removeMany(this.project.id, reportsToDelete)
                 .then(() => {
                     this.toastService.success(`The reports have been deleted.`);
-                    this.reports = this.reports.filter((r) => !r._selected);
+                    reportsToDelete.forEach(report => this._deleteReport(report));
                 })
                 .catch((err) => {
                     this.toastService.danger(`The reports could not be deleted. ${err.data.message}`);
@@ -99,6 +111,11 @@ export const testReportsViewComponent = {
          */
         downloadReport(report) {
             this.testReportService.download(this.project.id, report.id);
+        }
+
+        _deleteReport(report) {
+            remove(this.reports, {id: report.id});
+            this.selectedReports.unselect(report);
         }
     }
 };

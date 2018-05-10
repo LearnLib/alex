@@ -2,8 +2,8 @@
     <view-header title="Learner Process Setup"></view-header>
 
     <action-bar>
-        <div ng-if="vm.allSymbols.length > 0">
-            <checkbox-multiple model="vm.allSymbols" class="pull-left"></checkbox-multiple>
+        <div ng-if="vm.selectedSymbols != null">
+            <selectable-checkbox-multiple selectable="vm.selectedSymbols" class="pull-left"></selectable-checkbox-multiple>
 
             <div class="btn-group btn-group-sm pull-right">
                 <button class="btn btn-primary" ng-click="vm.startLearning()">
@@ -37,7 +37,7 @@
 
             <hr>
 
-            <div class="row">
+            <div class="row" ng-if="vm.groups.length > 0">
                 <div class="col-sm-8 col-md-9">
 
                     <div ng-repeat="group in vm.groups | orderBy:'-name':true" style="margin-bottom: 2rem">
@@ -78,6 +78,10 @@
                     </div>
                 </div>
 
+            </div>
+
+            <div class="alert alert-info" ng-if="vm.groups.length === 0">
+                There aren't any symbols in this project yet.
             </div>
         </div>
     </div>

@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+import remove from 'lodash/remove';
+import {User} from '../../../entities/user';
+import {Selectable} from '../../../utils/selectable';
+
 /**
  * The controller for the admin users page.
  */
@@ -26,11 +30,13 @@ class AdminUsersViewComponent {
      * @param {UserResource} UserResource
      * @param {SessionService} SessionService
      * @param {ToastService} ToastService
+     * @param $uibModal
      */
     // @ngInject
-    constructor($scope, UserResource, SessionService, ToastService) {
+    constructor($scope, UserResource, SessionService, ToastService, $uibModal) {
         this.UserResource = UserResource;
         this.ToastService = ToastService;
+        this.$uibModal = $uibModal;
 
         /**
          * The user that is logged in.
@@ -46,17 +52,18 @@ class AdminUsersViewComponent {
 
         /**
          * All selected users.
-         * @type {User[]}
+         * @type {Selectable}
          */
-        this.selectedUsers = [];
+        this.selectedUsers = new Selectable(this.users, 'id');
 
         // fetch all users from the server
         UserResource.getAll()
             .then(users => {
                 this.users = users;
+                this.selectedUsers = new Selectable(this.users, 'id');
             })
-            .catch(response => {
-                ToastService.danger(`Loading users failed! ${response.data.message}`);
+            .catch(err => {
+                ToastService.danger(`Loading users failed! ${err.data.message}`);
             });
     }
 
@@ -65,26 +72,36 @@ class AdminUsersViewComponent {
      * @param {User} user
      */
     removeUser(user) {
+        remove(this.users, {id: user.id});
+    }
+
+    updateUser(user) {
         const i = this.users.findIndex(u => u.id === user.id);
-        if (i > -1) this.users.splice(i, 1);
+        this.users[i] = user;
+        this.selectedUsers.update(user);
     }
 
     /**
      * Updates a user in the list.
      * @param {User} user
      */
-    updateUser(user) {
-        const i = this.users.findIndex(u => u.id === user.id);
-        if (i > -1) this.users[i] = user;
+    editUser(user) {
+        this.$uibModal.open({
+            component: 'userEditModal',
+            resolve: {
+                user: () => new User(user),
+                onUpdated: () => (u) => this.updateUser(u),
+                onDeleted: () => (u) => this.removeUser(u)
+            }
+        })
     }
 
     /**
      * Deletes selected users which are not admins.
      */
     deleteSelectedUsers() {
-        const users = this.selectedUsers.filter(user => user.role !== 'ADMIN');
-
-        if (!users.length) {
+        const users = this.selectedUsers.getSelected().filter(u => u.id !== this.user.id);
+        if (users.length === 0) {
             this.ToastService.info('You have to select at least one user.');
             return;
         }
@@ -95,8 +112,8 @@ class AdminUsersViewComponent {
                 this.ToastService.success('The users have been deleted');
                 users.forEach(user => this.removeUser(user));
             })
-            .catch(response => {
-                this.ToastService.danger(`Deleting failed! ${response.data.message}`);
+            .catch(err => {
+                this.ToastService.danger(`Deleting failed! ${err.data.message}`);
             });
     }
 }

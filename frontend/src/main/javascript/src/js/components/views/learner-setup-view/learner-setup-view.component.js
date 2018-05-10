@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import flatten from 'lodash/flatten';
 import {LearnConfiguration} from '../../../entities/learner-configuration';
+import {Selectable} from '../../../utils/selectable';
 import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
 
 /**
@@ -63,13 +63,13 @@ class LearnerSetupViewComponent {
          * A list of all symbols of all groups that is used in order to select them.
          * @type {AlphabetSymbol[]}
          */
-        this.allSymbols = [];
+        this.symbols = [];
 
         /**
          * A list of selected Symbols.
-         * @type {AlphabetSymbol[]}
+         * @type {Selectable}
          */
-        this.selectedSymbols = [];
+        this.selectedSymbols = new Selectable(this.symbols, 'id');
 
         /**
          * The configuration that is send to the server for learning.
@@ -114,7 +114,8 @@ class LearnerSetupViewComponent {
                     SymbolGroupResource.getAll(this.project.id, true)
                         .then(groups => {
                             this.groups = groups;
-                            this.allSymbols = SymbolGroupUtils.getSymbols(this.groups);
+                            this.symbols = SymbolGroupUtils.getSymbols(this.groups);
+                            this.selectedSymbols = new Selectable(this.symbols, 'id');
                         })
                         .catch(err => console.log(err));
 
@@ -152,13 +153,14 @@ class LearnerSetupViewComponent {
         if (this.resetSymbol === null) {
             this.ToastService.danger('You <strong>must</strong> selected a reset symbol in order to start learning!');
         } else {
-            if (this.selectedSymbols.length > 0) {
 
-                const i = this.selectedSymbols.findIndex(s => s.id === this.resetSymbol.id);
-                if (i > -1) this.selectedSymbols.splice(i, 1);
+            const selectedSymbols = this.selectedSymbols.getSelected();
+            if (selectedSymbols.length > 0) {
+                const i = selectedSymbols.findIndex(s => s.id === this.resetSymbol.id);
+                if (i > -1) selectedSymbols.splice(i, 1);
 
                 const config = JSON.parse(JSON.stringify(this.learnConfiguration));
-                config.symbols = this.selectedSymbols.map(s => s.id);
+                config.symbols = selectedSymbols.map(s => s.id);
                 config.resetSymbol = this.resetSymbol.id;
                 config.urls = this.learnConfiguration.urls.map(u => u.id);
 
@@ -190,7 +192,9 @@ class LearnerSetupViewComponent {
         this.learnConfiguration.urls = result.urls;
 
         SymbolGroupUtils.getSymbols(this.groups).forEach(symbol => {
-            symbol._selected = result.symbols.indexOf(symbol.id) > -1;
+            if (result.symbols.indexOf(symbol.id) > -1) {
+                this.selectedSymbols.select(symbol);
+            }
             if (symbol.id === result.resetSymbol) {
                 this.resetSymbol = symbol;
             }

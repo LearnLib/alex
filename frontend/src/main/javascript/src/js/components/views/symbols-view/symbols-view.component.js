@@ -18,6 +18,7 @@ import remove from 'lodash/remove';
 import {events} from '../../../constants';
 import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
 import {DateUtils} from '../../../utils/date-utils';
+import {Selectable} from '../../../utils/selectable';
 import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
 
 /**
@@ -57,9 +58,9 @@ class SymbolsViewComponent {
 
         /**
          * The model for selected symbols.
-         * @type {AlphabetSymbol[]}
+         * @type {Selectable}
          */
-        this.selectedSymbols = [];
+        this.selectedSymbols = null;
 
         /**
          * The symbol groups that belong to the project.
@@ -67,9 +68,13 @@ class SymbolsViewComponent {
          */
         this.groups = [];
 
+        this.symbols = [];
+
         SymbolGroupResource.getAll(this.project.id, true)
             .then(groups => {
                 this.groups = groups;
+                this.symbols = SymbolGroupUtils.getSymbols(this.groups);
+                this.selectedSymbols = new Selectable(this.symbols, 'id');
             })
             .catch(err => console.log(err));
 
@@ -95,15 +100,6 @@ class SymbolsViewComponent {
     }
 
     /**
-     * Extracts all symbols from all symbol groups and merges them into a single array.
-     *
-     * @returns {AlphabetSymbol[]}
-     */
-    getAllSymbols() {
-        return SymbolGroupUtils.getSymbols(this.groups);
-    }
-
-    /**
      * Adds a single new symbol to the scope by finding its corresponding group and adding it there.
      *
      * @param {AlphabetSymbol} symbol - The symbol that should be added.
@@ -111,6 +107,7 @@ class SymbolsViewComponent {
     addSymbol(symbol) {
         const group = SymbolGroupUtils.findGroupById(this.groups, symbol.group);
         group.symbols.push(symbol);
+        this.symbols.push(symbol);
     }
 
     /**
@@ -132,6 +129,8 @@ class SymbolsViewComponent {
         symbols.forEach(symbol => {
             const group = SymbolGroupUtils.findGroupById(this.groups, symbol.group);
             remove(group.symbols, {id: symbol.id});
+            remove(this.symbols, {id: symbol.id});
+            this.selectedSymbols.unselect(symbol);
         });
     }
 
@@ -160,6 +159,18 @@ class SymbolsViewComponent {
         });
     }
 
+    editSelectedSymbol() {
+        const selectedSymbols = this.selectedSymbols.getSelected();
+        if (selectedSymbols.length === 1) {
+            this.$uibModal.open({
+                component: 'symbolEditModal',
+                resolve: {
+                    symbol: () => new AlphabetSymbol(JSON.parse(JSON.stringify(selectedSymbols[0])))
+                }
+            });
+        }
+    }
+
     /**
      * Moves a list of existing symbols into another group.
      *
@@ -182,14 +193,17 @@ class SymbolsViewComponent {
      * Deletes all symbols that the user selected from the server and the scope, if the deletion was successful.
      */
     deleteSelectedSymbols() {
-        this.SymbolResource.removeMany(this.selectedSymbols)
-            .then(() => {
-                this.ToastService.success('Symbols deleted');
-                this.removeSymbols(this.selectedSymbols);
-            })
-            .catch(response => {
-                this.ToastService.danger('<p><strong>Deleting symbols failed</strong></p>' + response.data.message);
-            });
+        const selectedSymbols = this.selectedSymbols.getSelected();
+        if (selectedSymbols.length > 0) {
+            this.SymbolResource.removeMany(selectedSymbols)
+                .then(() => {
+                    this.ToastService.success('Symbols deleted');
+                    this.removeSymbols(selectedSymbols);
+                })
+                .catch(err => {
+                    this.ToastService.danger('<p><strong>Deleting symbols failed</strong></p>' + err.data.message);
+                });
+        }
     }
 
     /**
@@ -252,6 +266,18 @@ class SymbolsViewComponent {
         }
     }
 
+    moveSelectedSymbols() {
+        const selectedSymbols = this.selectedSymbols.getSelected();
+        if (selectedSymbols.length > 1) {
+            this.$uibModal.open({
+                component: 'symbolMoveModal',
+                resolve: {
+                    symbols: () => selectedSymbols
+                }
+            });
+        }
+    }
+
     importSymbols() {
         this.$uibModal.open({
             component: 'symbolsImportModal',
@@ -264,16 +290,21 @@ class SymbolsViewComponent {
         });
     }
 
+    selectSymbol(symbol) {
+        this.$state.go('symbol', {projectId: this.project.id, symbolId: symbol.id});
+    }
+
     /**
      * Deletes all properties that are not needed for downloading symbols which are the id, project, group
      * and hidden properties. They are removed so that they can later be uploaded and created like new symbols.
      */
     exportSelectedSymbols() {
-        if (this.selectedSymbols.length > 0) {
+        const selectedSymbols = this.selectedSymbols.getSelected();
+        if (selectedSymbols.length > 0) {
             const name = 'symbols-' + DateUtils.YYYYMMDD();
             this.PromptService.prompt('Enter a name for the json file', name)
                 .then(filename => {
-                    const symbolsToExport = this.selectedSymbols.map(s => s.getExportableSymbol());
+                    const symbolsToExport = selectedSymbols.map(s => s.getExportableSymbol());
                     this.DownloadService.downloadObject(symbolsToExport, filename);
                     this.ToastService.success('Symbols exported');
                 });

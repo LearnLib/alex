@@ -17,6 +17,7 @@
 import remove from 'lodash/remove';
 import {events} from '../../../constants';
 import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
+import {Selectable} from '../../../utils/selectable';
 
 /**
  * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover
@@ -55,16 +56,17 @@ class SymbolsArchiveViewComponent {
 
         /**
          * The list of selected symbols.
-         * @type {AlphabetSymbol[]}
+         * @type {Selectable}
          */
-        this.selectedSymbols = [];
+        this.selectedSymbols = new Selectable(this.symbols, 'id');
 
         // fetch all deleted symbols and save them in scope
         this.SymbolResource.getAll(this.project.id, true)
             .then(symbols => {
                 this.symbols = symbols;
+                this.selectedSymbols = new Selectable(this.symbols, 'id');
             })
-            .catch(err => console.log(err));
+            .catch(err => this.ToastService.danger(`Could not get symbols. ${err.data.message}`));
 
         this.EventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
             const i = this.symbols.findIndex(s => s.id === data.symbol.id);
@@ -82,9 +84,10 @@ class SymbolsArchiveViewComponent {
             .then(() => {
                 this.ToastService.success('Symbol ' + symbol.name + ' recovered');
                 remove(this.symbols, {id: symbol.id});
+                this.selectedSymbols.unselect(symbol);
             })
-            .catch(response => {
-                this.ToastService.danger('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + response.data.message);
+            .catch(err => {
+                this.ToastService.danger('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + err.data.message);
             });
     }
 
@@ -92,20 +95,20 @@ class SymbolsArchiveViewComponent {
      * Recovers all symbols that were selected and calls $scope.recoverSymbol for each one.
      */
     recoverSelectedSymbols() {
-        if (this.selectedSymbols.length === 0) {
+        const selectedSymbols = this.selectedSymbols.getSelected();
+        if (selectedSymbols.length === 0) {
             this.ToastService.info('You have to select at least one symbol.');
+            return;
         }
 
-        this.SymbolResource.recoverMany(this.selectedSymbols)
+        this.SymbolResource.recoverMany(selectedSymbols)
             .then(() => {
                 this.ToastService.success('Symbols recovered');
-                this.selectedSymbols.forEach(symbol => {
-                    remove(this.symbols, {id: symbol.id});
-                });
-                this.selectedSymbols = [];
+                selectedSymbols.forEach(symbol => remove(this.symbols, {id: symbol.id}));
+                this.selectedSymbols.unselectAll();
             })
-            .catch(response => {
-                this.ToastService.danger('<p><strong>Error recovering symbols!</strong></p>' + response.data.message);
+            .catch(err => {
+                this.ToastService.danger('<p><strong>Error recovering symbols!</strong></p>' + err.data.message);
             });
     }
 

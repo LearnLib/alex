@@ -40,9 +40,7 @@ export class PromptService {
         return this.$uibModal.open({
             component: 'promptModal',
             resolve: {
-                modalData: function () {
-                    return {text, defaultValue};
-                }
+                modalData: () => ({text, defaultValue})
             }
         }).result;
     }
@@ -57,9 +55,7 @@ export class PromptService {
         return this.$uibModal.open({
             component: 'confirmModal',
             resolve: {
-                modalData: function () {
-                    return {text: text};
-                }
+                modalData: () => ({text})
             }
         }).result;
     }

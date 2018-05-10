@@ -63,7 +63,7 @@ export class SymbolMoveModalComponent {
     }
 
     $onInit() {
-        this.symbols = this.resolve.modalData.symbols;
+        this.symbols = this.resolve.symbols;
     }
 
     /**

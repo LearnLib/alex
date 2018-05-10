@@ -17,6 +17,7 @@
 import remove from 'lodash/remove';
 import uniqueId from 'lodash/uniqueId';
 import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
+import {Selectable} from '../../../utils/selectable';
 
 /**
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
@@ -35,19 +36,19 @@ class SymbolViewComponent {
      * @param {ActionService} ActionService
      * @param {ClipboardService} ClipboardService
      * @param $state
-     * @param {PromptService} PromptService
-     * @param {EventBus} EventBus
      * @param {ActionRecorderService} ActionRecorderService
      * @param dragulaService
+     * @param $uibModal
      */
     // @ngInject
     constructor($scope, $stateParams, SymbolResource, SessionService, ToastService, ActionService, ClipboardService,
-                $state, PromptService, EventBus, dragulaService, ActionRecorderService) {
+                $state, dragulaService, ActionRecorderService, $uibModal) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
         this.ActionService = ActionService;
         this.ClipboardService = ClipboardService;
         this.ActionRecorderService = ActionRecorderService;
+        this.$uibModal = $uibModal;
 
         /**
          * The project that is stored in the session.
@@ -62,10 +63,10 @@ class SymbolViewComponent {
         this.symbol = null;
 
         /**
-         * The list of selected actions.
-         * @type {Object[]}
+         * The selected actions.
+         * @type {Selectable}
          */
-        this.selectedActions = [];
+        this.selectedActions = null;
 
         /**
          * Whether there are unsaved changes to the symbol.
@@ -79,35 +80,15 @@ class SymbolViewComponent {
             .then(symbol => {
 
                 // create unique ids for actions so that they can be found
-                symbol.actions.forEach(action => {
-                    action._id = uniqueId();
-                });
+                symbol.actions.forEach(action => action._id = uniqueId());
 
                 // add symbol to scope and create a copy in order to revert changes
                 this.symbol = symbol;
+                this.selectedActions = new Selectable(this.symbol.actions, '_id');
             })
             .catch(() => {
                 $state.go('error', {message: `The symbol with the ID "${$stateParams.symbolId}" could not be found`});
             });
-
-        // show a confirm dialog if the user leaves the page without having saved changes and
-        // redirect to the state that the user was about to go to if he doesn't want to save changes
-        const offHandler = $scope.$on('$stateChangeStart', (event, toState) => {
-            if (this.hasChanged) {
-                event.preventDefault();
-                PromptService.confirm('Do you want to save the changes?')
-                    .then(() => {
-                        this.saveChanges().then(() => {
-                            offHandler();
-                            $state.go(toState);
-                        });
-                    })
-                    .catch(() => {
-                        offHandler();
-                        $state.go(toState);
-                    });
-            }
-        });
 
         const keyDownHandler = (e) => {
             if (e.ctrlKey && e.which === 83) {
@@ -145,8 +126,31 @@ class SymbolViewComponent {
             actions.forEach(action => {
                 remove(this.symbol.actions, {_id: action._id});
             });
+            this.selectedActions.unselectAll();
             this.ToastService.success('Action' + (actions.length > 1 ? 's' : '') + ' deleted');
             this.hasChanged = true;
+        }
+    }
+
+    deleteSelectedActions() {
+        this.deleteActions(this.selectedActions.getSelected());
+    }
+
+    editSelectedAction() {
+        if (this.selectedActions.getSelected().length === 1) {
+            const action = this.selectedActions.getSelected()[0];
+            this.$uibModal.open({
+                component: 'actionEditModal',
+                resolve: {
+                    modalData: () => {
+                        const a = this.ActionService.create(JSON.parse(JSON.stringify(action)));
+                        a._id = action._id;
+                        return {action: a};
+                    }
+                }
+            }).result.then(updatedAction => {
+                this.updateAction(updatedAction);
+            });
         }
     }
 
@@ -212,30 +216,39 @@ class SymbolViewComponent {
             });
     }
 
-    /**
-     * Copies actions to the clipboard.
-     *
-     * @param {Object[]} actions - The actions to copy.
-     */
-    copyActions(actions) {
-        this.ClipboardService.copy('actions', angular.copy(actions));
-        this.ToastService.info(actions.length + ' action[s] copied to clipboard');
+    /** Copies actions to the clipboard. */
+    copySelectedActions() {
+        const actions = this.selectedActions.getSelected();
+        if (actions.length > 0) {
+            this.ClipboardService.copy('actions', JSON.parse(JSON.stringify(actions)));
+            this.ToastService.info(actions.length + ' actions copied to clipboard');
+        }
+    }
+
+    copyAction(action) {
+        this.ClipboardService.copy('actions', JSON.parse(JSON.stringify([action])));
+        this.ToastService.info('The action has been copied to the clipboard.');
     }
 
     setChanged(changed) {
         this.hasChanged = changed;
     }
 
-    /**
-     * Copies actions to the clipboard and removes them from the scope.
-     *
-     * @param {Object[]} actions - The actions to cut.
-     */
-    cutActions(actions) {
-        this.ClipboardService.cut('actions', angular.copy(actions));
-        this.deleteActions(actions);
-        this.ToastService.info(actions.length + ' action[s] cut to clipboard');
-        this.hasChanged = true;
+    /** Copies actions to the clipboard and removes them from the scope. */
+    cutSelectedActions() {
+        const actions = this.selectedActions.getSelected();
+        if (actions.length > 0) {
+            this.ClipboardService.cut('actions', JSON.parse(JSON.stringify(actions)));
+            this.deleteActions(actions);
+            this.ToastService.info(actions.length + ' actions cut to clipboard');
+            this.hasChanged = true;
+        }
+    }
+
+    cutAction(action) {
+        this.ClipboardService.cut('actions', JSON.parse(JSON.stringify([action])));
+        this.deleteActions([action]);
+        this.ToastService.info('The action has been copied to the clipboard.');
     }
 
     /**

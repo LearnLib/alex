@@ -42,12 +42,6 @@ export class SymbolEditModalComponent {
         this.symbol = null;
 
         /**
-         * A copy of the old symbol.
-         * @type {AlphabetSymbol}
-         */
-        this.symbolCopy = null;
-
-        /**
          * The error message that is displayed when update fails.
          * @type {null|string}
          */
@@ -55,8 +49,7 @@ export class SymbolEditModalComponent {
     }
 
     $onInit() {
-        this.symbol = this.resolve.modalData.symbol;
-        this.symbolCopy = new AlphabetSymbol(this.symbol);
+        this.symbol = this.resolve.symbol;
     }
 
     /**
@@ -64,17 +57,6 @@ export class SymbolEditModalComponent {
      */
     updateSymbol() {
         this.errorMsg = null;
-
-        // do not update on server
-        const updateOnServer = this.resolve.modalData.updateOnServer;
-        if ((updateOnServer !== undefined) && !updateOnServer) {
-            this.EventBus.emit(events.SYMBOL_UPDATED, {
-                newSymbol: this.symbol,
-                oldSymbol: this.symbolCopy
-            });
-            this.dismiss();
-            return;
-        }
 
         // update the symbol and close the modal dialog on success with the updated symbol
         this.SymbolResource.update(this.symbol)

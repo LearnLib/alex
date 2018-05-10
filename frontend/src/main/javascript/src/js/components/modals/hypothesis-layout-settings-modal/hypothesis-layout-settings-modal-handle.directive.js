@@ -40,11 +40,9 @@ export function hypothesisLayoutSettingsModalHandleDirective($uibModal) {
                 $uibModal.open({
                     component: 'hypothesisLayoutSettingsModal',
                     resolve: {
-                        modalData: function () {
-                            return {
-                                layoutSettings: angular.copy(scope.layoutSettings)
-                            };
-                        }
+                        modalData: () => ({
+                            layoutSettings: JSON.parse(JSON.stringify(scope.layoutSettings))
+                        })
                     }
                 });
             });

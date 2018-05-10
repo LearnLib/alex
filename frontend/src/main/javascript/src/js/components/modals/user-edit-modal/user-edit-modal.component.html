@@ -7,6 +7,14 @@
 
 <div class="modal-body">
 
+    <div ng-if="vm.error !== null">
+        <div class="alert alert-condensed alert-danger mb-0">
+            <strong>Updating the user went wrong!</strong> <br/>
+            <span ng-bind="vm.error"></span>
+        </div>
+        <hr>
+    </div>
+
     <h4><strong>Email</strong></h4>
     <form name="vm.mailForm" ng-submit="vm.changeEmail()">
         <div class="form-group">
@@ -47,16 +55,8 @@
         Delete profile
     </button>
 
-    <div ng-if="vm.error !== null">
-        <hr/>
-        <div class="alert alert-condensed alert-danger">
-            <strong>Updating the user went wrong!</strong> <br/>
-            <span ng-bind="vm.error"></span>
-        </div>
-    </div>
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-primary btn-sm" ng-click="vm.dismiss()">Ok</button>
     <button class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</button>
 </div>

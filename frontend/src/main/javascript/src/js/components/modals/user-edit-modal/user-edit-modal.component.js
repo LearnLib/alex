@@ -66,7 +66,7 @@ export class UserEditModalComponent {
     }
 
     $onInit() {
-        this.user = this.resolve.modalData.user;
+        this.user = this.resolve.user;
         this.email = this.user.email;
     }
 
@@ -80,7 +80,8 @@ export class UserEditModalComponent {
                 if (this.SessionService.getUser().id === this.user.id) {
                     this.SessionService.saveUser(user);
                 }
-                this.resolve.modalData.onUpdated({user});
+
+                this.resolve.onUpdated(user);
                 this.dismiss();
                 this.ToastService.success('The email has been changed.');
             })
@@ -97,7 +98,7 @@ export class UserEditModalComponent {
         this.UserResource.promote(this.user)
             .then((user) => {
                 this.ToastService.success('The user now has admin rights.');
-                this.resolve.modalData.onUpdated({user});
+                this.resolve.onUpdated(user);
                 this.dismiss();
             })
             .catch(response => {
@@ -118,7 +119,7 @@ export class UserEditModalComponent {
                     this.SessionService.removeUser();
                     this.$state.go('root');
                 } else {
-                    this.resolve.modalData.onUpdated({user});
+                    this.resolve.onUpdated(user);
                 }
                 this.dismiss();
                 this.ToastService.success('The user now has default user rights.');
@@ -138,7 +139,7 @@ export class UserEditModalComponent {
                 this.UserResource.remove(this.user)
                     .then(() => {
                         this.ToastService.success('The user has been deleted');
-                        this.resolve.modalData.onDeleted({user: this.user});
+                        this.resolve.onDeleted(this.user);
                         this.dismiss();
                     })
                     .catch(response => {

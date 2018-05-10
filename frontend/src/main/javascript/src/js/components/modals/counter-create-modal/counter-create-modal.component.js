@@ -67,7 +67,7 @@ export const counterCreateModalComponent = {
         createCounter() {
             this.errorMessage = null;
 
-            if (this.resolve.modalData.counters.find(c => c.name === this.counter.name)) {
+            if (this.resolve.counters.find(c => c.name === this.counter.name)) {
                 this.errorMessage = `The counter with the name ${this.counter.name} already exists.`;
                 return;
             }

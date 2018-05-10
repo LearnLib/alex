@@ -1,7 +1,7 @@
 <div class="view">
     <view-header title="Test Management"></view-header>
     <action-bar>
-        <checkbox-multiple model="vm.testSuite.tests" class="pull-left"></checkbox-multiple>
+        <selectable-checkbox-multiple selectable="vm.selectedTests" class="pull-left"></selectable-checkbox-multiple>
         <div class="btn-group btn-group-sm" uib-dropdown>
             <button class="btn btn-default" uib-dropdown-toggle>
                 Create <i class="fa fa-fw fa-caret-down"></i>
@@ -92,7 +92,7 @@
 
                             <div class="d-flex flex-row">
                                 <div style="padding-right: 12px">
-                                    <checkbox model="test"></checkbox>
+                                    <selectable-checkbox item="test" selectable="vm.selectedTests"></selectable-checkbox>
                                 </div>
                                 <div class="test-list-item-content flex-grow-1">
                                     <test-tree root="test" results="vm.results"></test-tree>

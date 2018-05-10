@@ -30,18 +30,14 @@ export function symbolEditModalHandleDirective($uibModal) {
     return {
         restrict: 'A',
         scope: {
-            symbol: '=',
-            updateOnServer: '='
+            symbol: '='
         },
         link(scope, el) {
             el.on('click', () => {
                 $uibModal.open({
                     component: 'symbolEditModal',
                     resolve: {
-                        modalData: () => ({
-                            symbol: new AlphabetSymbol(JSON.parse(JSON.stringify(scope.symbol))),
-                            updateOnServer: scope.updateOnServer
-                        })
+                        symbol: () => new AlphabetSymbol(JSON.parse(JSON.stringify(scope.symbol)))
                     }
                 });
             });

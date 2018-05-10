@@ -1,5 +1,5 @@
 <div class="symbol-group-tree">
-    <symbol-group-header group="vm.group" collapse="vm.collapse">
+    <symbol-group-header group="vm.group" selected-symbols="vm.selectedSymbols" collapse="vm.collapse">
         <div class="btn-group btn-group-xs pull-right" uib-dropdown>
             <button type="button" class="btn btn-default btn-icon" uib-dropdown-toggle>
                 <i class="fa fa-bars"></i>
@@ -28,6 +28,7 @@
             <symbols-symbol-group-tree
                 ng-repeat="group in vm.group.groups | orderBy:'-name':true"
                 group="group"
+                symbols="vm.symbols"
                 level="{{vm.level + 1}}"
                 selected-symbols="vm.selectedSymbols"
             >
@@ -36,15 +37,12 @@
         <div class="symbol-list" ng-if="vm.group.symbols.length > 0">
             <symbol-item
                 ng-repeat="symbol in vm.group.symbols | orderBy:'-name':true"
-                selection-model
-                selection-model-selected-items="vm.selectedSymbols"
-                selection-model-mode="'multiple-additive'"
                 selectable="true"
                 symbol="symbol"
                 selected-symbols="vm.selectedSymbols"
             >
 
-                <div class="btn-group btn-group-xs pull-right" uib-dropdown selection-model-ignore>
+                <div class="btn-group btn-group-xs pull-right" uib-dropdown>
                     <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
                         <i class="fa fa-bars"></i>
                     </button>

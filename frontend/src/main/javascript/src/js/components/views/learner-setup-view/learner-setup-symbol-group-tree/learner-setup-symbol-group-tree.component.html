@@ -1,5 +1,10 @@
 <div class="symbol-group-tree">
-    <symbol-group-header group="vm.group" collapse="vm.collapse"></symbol-group-header>
+    <symbol-group-header
+        group="vm.group"
+        selected-symbols="vm.selectedSymbols"
+        collapse="vm.collapse"
+    >
+    </symbol-group-header>
     <div uib-collapse="vm.collapse">
         <div class="children" ng-if="vm.group.groups.length > 0">
             <learner-setup-symbol-group-tree
@@ -15,9 +20,6 @@
         <div class="symbol-list" ng-if="vm.group.symbols.length > 0">
             <div
                 ng-repeat="symbol in vm.group.symbols | orderBy:'-name':true"
-                selection-model
-                selection-model-selected-items="vm.selectedSymbols"
-                selection-model-mode="'multiple-additive'"
                 ng-class="{'bg-info': vm.resetSymbol === symbol}"
             >
                 <symbol-item
@@ -29,7 +31,6 @@
                 <span
                     class="label cursor-pointer"
                     ng-class="{'label-outline-default' : vm.resetSymbol !== symbol, 'label-primary': vm.resetSymbol === symbol}"
-                    selection-model-ignore
                     ng-click="vm.resetSymbolSelected(symbol)"
                 >
                     Reset

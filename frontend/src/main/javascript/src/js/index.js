@@ -26,8 +26,6 @@ import ngFileUpload from 'ng-file-upload';
 import {actionBarComponent} from './components/action-bar/action-bar.component';
 import {actionRecorderComponent} from './components/action-recorder/action-recorder.component';
 import {alexComponent} from './components/alex/alex.component';
-import {checkboxMultipleComponent} from './components/checkbox-multiple/checkbox-multiple.component';
-import {checkboxComponent} from './components/checkbox/checkbox.component';
 import {discriminationTreeComponent} from './components/discrimination-tree/discrimination-tree.component';
 import {fileDropzoneComponent} from './components/file-dropzone/file-dropzone.component';
 import {actionFormComponent} from './components/forms/actions/action-form/action-form.component';
@@ -95,7 +93,7 @@ import {userLoginFormComponent} from './components/forms/user-login-form/user-lo
 import {webhookFormComponent} from './components/forms/webhook-form/webhook-form.component';
 import {htmlElementPickerComponent} from './components/html-element-picker/html-element-picker.component';
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
-import {learnerResultListItemComponent} from './components/learner-result-list-item/learner-result-list-item.component';
+import {learnerResultListItemComponent} from './components/views/learner-results-view/learner-result-list-item/learner-result-list-item.component';
 import {learnerResultPanelComponent} from './components/learner-result-panel/learner-result-panel.component';
 import {loadScreenComponent} from './components/load-screen/load-screen.component';
 import {actionCreateModalHandleDirective} from './components/modals/action-create-modal/action-create-modal-handle.directive';
@@ -135,7 +133,6 @@ import {testConfigModalComponent} from './components/modals/test-config-modal/te
 import {testsImportModalComponent} from './components/modals/tests-import-modal/tests-import-modal.component';
 import {testSuiteTreeComponent} from './components/modals/tests-move-modal/test-suite-tree-component/test-suite-tree.component';
 import {testsMoveModalComponent} from './components/modals/tests-move-modal/tests-move-modal.component';
-import {userEditModalHandleDirective} from './components/modals/user-edit-modal/user-edit-modal-handle.directive';
 import {userEditModalComponent} from './components/modals/user-edit-modal/user-edit-modal.component';
 import {webhookCreateModalComponent} from './components/modals/webhook-create-modal/webhook-create-modal.component';
 import {webhookEditModalComponent} from './components/modals/webhook-edit-modal/webhook-edit-modal.component';
@@ -144,6 +141,8 @@ import {projectListComponent} from './components/project-list/project-list.compo
 import {projectUrlListComponent} from './components/project-url-list/project-url-list.component';
 import {responsiveIframeComponent} from './components/responsive-iframe/responsive-iframe.component';
 import {searchFormComponent} from './components/search-form/search-form.component';
+import {selectableCheckboxMultipleComponent} from './components/selectable-checkbox-multiple/selectable-checkbox-multiple.component';
+import {selectableCheckboxComponent} from './components/selectable-checkbox/selectable-checkbox.component';
 import {sidebarComponent} from './components/sidebar/sidebar.component';
 import {simpleSymbolGroupTreeItemComponent} from './components/simple-symbol-group-tree/simple-symbol-group-tree-item/simple-symbol-group-tree-item.component';
 import {simpleSymbolGroupTreeComponent} from './components/simple-symbol-group-tree/simple-symbol-group-tree.component';
@@ -248,7 +247,6 @@ angular
         uiRouter,
         'ui.ace',
         'n3-line-chart',
-        'selectionModel',
         toastr,
         angularJwt,
         ngFileUpload,
@@ -321,7 +319,6 @@ angular
     .directive('symbolEditModalHandle', symbolEditModalHandleDirective)
     .directive('symbolGroupCreateModalHandle', symbolGroupCreateModalHandleDirective)
     .directive('symbolMoveModalHandle', symbolMoveModalHandleDirective)
-    .directive('userEditModalHandle', userEditModalHandleDirective)
     .directive('resultListModalHandle', resultListModalHandleDirective)
 
     // modals
@@ -466,10 +463,8 @@ angular
     // misc components
     .component('alex', alexComponent)
     .component('actionBar', actionBarComponent)
-    .component('checkbox', checkboxComponent)
     .component('hypothesis', hypothesisComponent)
     .component('discriminationTree', discriminationTreeComponent)
-    .component('checkboxMultiple', checkboxMultipleComponent)
     .component('fileDropzone', fileDropzoneComponent)
     .component('loadScreen', loadScreenComponent)
     .component('projectList', projectListComponent)
@@ -497,6 +492,8 @@ angular
     .component('reportCharts', reportChartsComponent)
     .component('learnerSetupSymbolGroupTree', learnerSetupSymbolGroupTreeComponent)
     .component('testConfigList', testConfigListComponent)
+    .component('selectableCheckbox', selectableCheckboxComponent)
+    .component('selectableCheckboxMultiple', selectableCheckboxMultipleComponent)
     .component('testSuiteTree', testSuiteTreeComponent);
 
 angular.bootstrap(document, ['ALEX']);

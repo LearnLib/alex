@@ -18,6 +18,7 @@ import remove from 'lodash/remove';
 import {webBrowser} from '../../../constants';
 import {DriverConfigService} from '../../../services/driver-config.service';
 import {DateUtils} from '../../../utils/date-utils';
+import {Selectable} from '../../../utils/selectable';
 
 export const testSuiteViewComponent = {
     template: require('./test-suite-view.component.html'),
@@ -100,6 +101,8 @@ export const testSuiteViewComponent = {
 
             this.testConfigs = [];
 
+            this.selectedTests = new Selectable([], 'id');
+
             /**
              * The driver configuration.
              * @type {Object}
@@ -130,6 +133,10 @@ export const testSuiteViewComponent = {
                         this._pollStatus();
                     }
                 });
+        }
+
+        $onInit() {
+            this.selectedTests = new Selectable(this.testSuite.tests, 'id');
         }
 
         createTestSuite() {
@@ -179,7 +186,6 @@ export const testSuiteViewComponent = {
 
                     const testToUpdate = JSON.parse(JSON.stringify(test));
                     testToUpdate.name = name;
-                    delete testToUpdate._selected;
                     if (testToUpdate.type === 'suite') {
                         testToUpdate.tests = test.tests.map(t => t.id);
                         delete testToUpdate.tests;
@@ -210,29 +216,31 @@ export const testSuiteViewComponent = {
                 .then(() => {
                     this.ToastService.success(`The test ${test.type} has been deleted.`);
                     remove(this.testSuite.tests, {id: test.id});
+                    this.selectedTests.unselect(test);
                 })
                 .catch((err) => this.ToastService.danger(`The test ${test.type} could not be deleted. ${err.data.message}`));
         }
 
         deleteSelected() {
-            if (this.testSuite.tests.findIndex(t => t._selected) === -1) {
+            const selectedTests = this.selectedTests.getSelected();
+            if (selectedTests.length === 0) {
                 this.ToastService.info('You have to select at least one test case or test suite.');
                 return;
             }
 
             this.reset();
 
-            const selected = this.testSuite.tests.filter(t => t._selected);
-            this.TestResource.removeMany(this.project.id, selected)
+            this.TestResource.removeMany(this.project.id, selectedTests)
                 .then(() => {
                     this.ToastService.success('The tests have been deleted.');
-                    selected.forEach(test => remove(this.testSuite.tests, {id: test.id}));
+                    selectedTests.forEach(test => remove(this.testSuite.tests, {id: test.id}));
+                    this.selectedTests.unselectAll();
                 })
                 .catch((err) => this.ToastService.danger(`Deleting the tests failed. ${err.data.message}`));
         }
 
         moveSelected() {
-            const selectedTests = this.testSuite.tests.filter(t => t._selected);
+            const selectedTests = this.selectedTests.getSelected();
             if (selectedTests.length === 0) {
                 this.ToastService.info('You have to select at least one test.');
                 return;
@@ -245,12 +253,15 @@ export const testSuiteViewComponent = {
                 }
             }).result.then(tests => {
                 this.TestResource.get(this.project.id, this.testSuite.id)
-                    .then(testSuite => this.testSuite = testSuite);
+                    .then(testSuite => {
+                        this.testSuite = testSuite;
+                        this.selectedTests.updateAll(this.testSuite.tests);
+                    });
             });
         }
 
         executeSelected() {
-            const selectedTests = this.testSuite.tests.filter(t => t._selected);
+            const selectedTests = this.selectedTests.getSelected();
             if (selectedTests.length === 0) {
                 this.ToastService.info('You have to select at least one test case or test suite.');
                 return;
@@ -327,7 +338,7 @@ export const testSuiteViewComponent = {
          * Downloads the tests as JSON file.
          */
         exportSelectedTests() {
-            let tests = this.testSuite.tests.filter(t => t._selected);
+            let tests = this.selectedTests.getSelected();
             if (!tests.length) {
                 this.ToastService.info('You have to select at least one test.');
             } else {
@@ -337,7 +348,7 @@ export const testSuiteViewComponent = {
                 const name = `tests-${this.testSuite.name}-${DateUtils.YYYYMMDD()}`;
                 this.PromptService.prompt('Enter a name for the file', name).then(name => {
                     this.DownloadService.downloadObject(tests, name);
-                    this.ToastService.success('The tests have been exported');
+                    this.ToastService.success('The tests have been exported.');
                 });
             }
         }
@@ -354,8 +365,7 @@ export const testSuiteViewComponent = {
         }
 
         copyTests() {
-            let tests = this.testSuite.tests.filter((t) => t._selected);
-
+            let tests = this.selectedTests.getSelected();
             if (tests.length > 0) {
                 tests = JSON.parse(JSON.stringify(tests));
                 tests = this.TestService.exportTests(tests);
@@ -368,7 +378,7 @@ export const testSuiteViewComponent = {
 
         pasteTests() {
             const tests = this.ClipboardService.paste('tests');
-            if (tests !== null) {
+            if (tests != null) {
                 this.TestService.importTests(this.project.id, tests, this.testSuite.id)
                     .then((importedTests) => {
                         importedTests.forEach((t) => {
@@ -386,7 +396,7 @@ export const testSuiteViewComponent = {
         }
 
         saveTestConfig() {
-            let selectedTests = this.testSuite.tests.filter(t => t._selected);
+            let selectedTests = this.selectedTests.getSelected();
             if (!selectedTests.length) {
                 this.ToastService.info('You have to select at least one test.');
                 return;
@@ -413,7 +423,9 @@ export const testSuiteViewComponent = {
             if (config != null) {
                 this.testConfig = config;
                 this.testSuite.tests.forEach(test => {
-                    test._selected = config.tests.indexOf(test.id) > -1;
+                    if (this.testConfig.tests.indexOf(test.id) > -1) {
+                        this.selectedTests.select(test);
+                    }
                 });
             }
         }

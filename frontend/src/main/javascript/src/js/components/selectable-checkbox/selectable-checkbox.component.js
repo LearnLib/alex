@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-/**
- * The component that displays a learn result list item.
- *
- * Everything that is put between the tags is displayed at the most right.
- */
-export const learnerResultListItemComponent = {
-    template: require('./learner-result-list-item.component.html'),
-    transclude: true,
-    controller: class {
+export const selectableCheckboxComponent = {
+    template: require('./selectable-checkbox.component.html'),
+    bindings: {
+        item: '=',
+        selectable: '='
     },
     controllerAs: 'vm',
-    bindings: {
-        result: '='
+    controller: class SelectableCheckboxComponent {
+
+        selectItem() {
+            this.selectable.toggleSelect(this.item);
+        }
+
+        isSelected() {
+            return this.selectable.isSelected(this.item);
+        }
     }
 };

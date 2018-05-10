@@ -1,7 +1,7 @@
 <div class="view view-webhooks">
     <view-header title="Webhooks"></view-header>
     <action-bar>
-        <checkbox-multiple model="vm.webhooks" class="pull-left"></checkbox-multiple>
+        <selectable-checkbox-multiple selectable="vm.selectedWebhooks" class="pull-left"></selectable-checkbox-multiple>
 
         <div class="pull-left">
             <button class="btn btn-sm btn-primary" ng-click="vm.createWebhook()">
@@ -20,7 +20,7 @@
             <div class="list-group" ng-if="vm.webhooks.length > 0">
                 <div class="list-group-item d-flex flex-row" ng-repeat="webhook in vm.webhooks | orderBy:'-name':true">
                     <div class="mr-1">
-                        <checkbox model="webhook"></checkbox>
+                        <selectable-checkbox item="webhook" selectable="vm.selectedWebhooks"></selectable-checkbox>
                     </div>
 
                     <div class="w-100">

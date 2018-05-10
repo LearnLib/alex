@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import remove from 'lodash/remove';
+import {Selectable} from '../../../utils/selectable';
+
 export const webhooksViewComponent = {
     template: require('./webhooks-view.component.html'),
     controllerAs: 'vm',
@@ -36,12 +39,15 @@ export const webhooksViewComponent = {
              * @type {Object[]}
              */
             this.webhooks = [];
+
+            this.selectedWebhooks = new Selectable(this.webhooks, 'id');
         }
 
         $onInit() {
             this.webhookResource.getAll()
                 .then((webhooks) => {
                     this.webhooks = webhooks;
+                    this.selectedWebhooks = new Selectable(this.webhooks, 'id');
                 })
                 .catch(console.error);
         }
@@ -62,7 +68,6 @@ export const webhooksViewComponent = {
          */
         updateWebhook(webhook) {
             const wh = JSON.parse(JSON.stringify(webhook));
-            delete wh._selected;
 
             this.$uibModal.open({
                 component: 'webhookEditModal',
@@ -71,7 +76,8 @@ export const webhooksViewComponent = {
                 }
             }).result.then((webhook) => {
                 const i = this.webhooks.findIndex((w) => w.id === webhook.id);
-                if (i > -1) this.webhooks[i] = webhook;
+                this.webhooks[i] = webhook;
+                this.selectedWebhooks.update(webhook);
             });
         }
 
@@ -84,7 +90,7 @@ export const webhooksViewComponent = {
             this.webhookResource.remove(webhook)
                 .then(() => {
                     this.toastService.success('The webhook has been deleted.');
-                    this.webhooks = this.webhooks.filter((w) => w.id !== webhook.id);
+                    this._deleteWebhook(webhook);
                 })
                 .catch((error) => {
                     this.toastService.danger(`The webhook could not be deleted. ${error.data.message}`);
@@ -93,7 +99,7 @@ export const webhooksViewComponent = {
 
         /** Deletes all selected webhooks. */
         deleteSelectedWebhooks() {
-            const webhooks = this.webhooks.filter((w) => w._selected);
+            const webhooks = this.selectedWebhooks.getSelected();
             if (webhooks.length === 0) {
                 this.toastService.info('You have to select at least one webhook.');
                 return;
@@ -102,13 +108,16 @@ export const webhooksViewComponent = {
             this.webhookResource.removeMany(webhooks)
                 .then(() => {
                     this.toastService.success('The webhooks have been deleted.');
-                    this.webhooks = this.webhooks.filter((w1) =>
-                        !(webhooks.findIndex((w2) => w2.id === w1.id) > -1)
-                    );
+                    webhooks.forEach(wh => this._deleteWebhook(wh));
                 })
                 .catch((error) => {
                     this.toastService.danger(`The webhooks could not be deleted. ${error.data.message}`);
                 });
+        }
+
+        _deleteWebhook(webhook) {
+            remove(this.webhooks, {id: webhook.id});
+            this.selectedWebhooks.unselect(webhook);
         }
     }
 };

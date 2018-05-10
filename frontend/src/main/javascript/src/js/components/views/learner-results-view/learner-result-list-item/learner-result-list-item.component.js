@@ -14,30 +14,19 @@
  * limitations under the License.
  */
 
-export const PROPERTY_NAME = '_selected';
-
 /**
- * The controller of the checkbox.
- * Use: <checkbox model="..."></checkbox> where
- * 'model' should be an object.
+ * The component that displays a learn result list item.
+ *
+ * Everything that is put between the tags is displayed at the most right.
  */
-class CheckboxComponent {
-
-    /**
-     * select the item given via the model attribute.
-     */
-    toggleSelectItem() {
-        if (this.model) {
-            this.model[PROPERTY_NAME] = !this.model[PROPERTY_NAME];
-        }
-    }
-}
-
-export const checkboxComponent = {
-    bindings: {
-        model: '='
+export const learnerResultListItemComponent = {
+    template: require('./learner-result-list-item.component.html'),
+    transclude: true,
+    controller: class {
     },
-    controller: CheckboxComponent,
     controllerAs: 'vm',
-    template: require('./checkbox.component.html')
+    bindings: {
+        result: '=',
+        selectable: '='
+    }
 };

@@ -3,8 +3,7 @@
 
     <action-bar>
         <div ng-if="vm.symbols.length > 0">
-
-            <checkbox-multiple model="vm.symbols" class="pull-left"></checkbox-multiple>
+            <selectable-checkbox-multiple selectable="vm.selectedSymbols" class="pull-left"></selectable-checkbox-multiple>
 
             <div class="pull-left">
                 <button class="btn btn-sm btn-primary" ng-click="vm.recoverSelectedSymbols()">
@@ -22,10 +21,9 @@
             </div>
 
             <div class="list-group">
-                <div class="list-group-item" ng-repeat="symbol in vm.symbols | orderBy:'-name':true"
-                     selection-model selection-model-selected-items="vm.selectedSymbols">
+                <div class="list-group-item" ng-repeat="symbol in vm.symbols | orderBy:'-name':true">
 
-                    <symbol-list-item symbol="symbol" selectable="true">
+                    <symbol-list-item symbol="symbol" selectable="vm.selectedSymbols">
                         <div class="btn-group btn-group-xs" uib-dropdown>
                             <button type="button" class="btn btn-default btn-icon" uib-dropdown-toggle>
                                 <i class="fa fa-bars"></i>

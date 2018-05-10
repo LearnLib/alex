@@ -30,9 +30,9 @@ export const symbolListItemComponent = {
 
             /**
              * If the symbol is selectable.
-             * @type {boolean}
+             * @type {Selectable}
              */
-            this.selectable = true;
+            this.selectable = null;
         }
     },
     controllerAs: 'vm',

@@ -3,7 +3,7 @@
 
     <action-bar>
         <div ng-if="vm.files.length > 0">
-            <checkbox-multiple model="vm.files" class="pull-left"></checkbox-multiple>
+            <selectable-checkbox-multiple class="pull-left" selectable="vm.selectedFiles"></selectable-checkbox-multiple>
             <button class="btn btn-default btn-sm" ng-click="vm.deleteSelectedFiles()">Delete</button>
         </div>
     </action-bar>
@@ -36,12 +36,10 @@
 
             <div class="list-group" ng-if="vm.files.length > 0">
                 <div class="list-group-item d-flex flew-row"
-                     ng-repeat="file in vm.files"
-                     selection-model
-                     selection-model-selected-items="vm.selectedFiles">
+                     ng-repeat="file in vm.files">
 
                     <div>
-                        <checkbox selection-model-ignore class="pull-left" model="file"></checkbox>
+                        <selectable-checkbox item="file" selectable="vm.selectedFiles" class="pull-left"></selectable-checkbox>
                     </div>
                     <div class="w-100 ml-1 mr-1">
                         <span ng-bind="file.name"></span>

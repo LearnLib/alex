@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+import remove from 'lodash/remove';
 import {apiUrl} from '../../../../../environments';
+import {Selectable} from '../../../utils/selectable';
 
 /**
  * The controller of the files page.
@@ -50,9 +52,9 @@ class FilesViewComponent {
 
         /**
          * The selected files.
-         * @type {{name: string, project: number}[]}
+         * @type {Selectable}
          */
-        this.selectedFiles = [];
+        this.selectedFiles = new Selectable(this.files, 'name');
 
         /**
          * The progress in percent of the current uploading file.
@@ -70,11 +72,10 @@ class FilesViewComponent {
         FileResource.getAll(this.project.id)
             .then(files => {
                 this.files = files;
+                this.selectedFiles = new Selectable(this.files, 'name');
             })
-            .catch(response => {
-                if (response.status !== 404) {
-                    this.ToastService.danger(`Fetching all files failed! ${response.data.message}`);
-                }
+            .catch(err => {
+                this.ToastService.danger(`Fetching all files failed! ${err.data.message}`);
             });
     }
 
@@ -87,11 +88,12 @@ class FilesViewComponent {
         this.FileResource.remove(this.project.id, file)
             .then(() => {
                 this.ToastService.success(`File "${file.name}" has been deleted.`);
-
-                const i = this.files.findIndex(f => f.name === file.name);
-                if (i > -1) this.files.splice(i, 1);
+                remove(this.files, {name: file.name});
+                this.selectedFiles.unselect(file);
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                this.ToastService.danger(`The file could not be deleted. ${err.data.message}`);
+            });
     }
 
     /**
@@ -140,9 +142,12 @@ class FilesViewComponent {
      * Batch delete selected files.
      */
     deleteSelectedFiles() {
-        this.selectedFiles.forEach(file => {
-            this.deleteFile(file);
-        });
+        const selectedFiles = this.selectedFiles.getSelected();
+        if (selectedFiles.length === 0) {
+            this.ToastService.info('You have to select at least one file');
+        } else {
+            selectedFiles.forEach(file => this.deleteFile(file));
+        }
     }
 
     /**
@@ -155,7 +160,7 @@ class FilesViewComponent {
                 const blob = response.data;
                 const objectUrl = URL.createObjectURL(blob);
 
-                const a = document.createElement("a");
+                const a = document.createElement('a');
                 a.href = objectUrl;
                 a.download = file.name;
                 a.click();

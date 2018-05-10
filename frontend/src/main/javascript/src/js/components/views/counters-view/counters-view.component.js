@@ -15,6 +15,7 @@
  */
 
 import remove from 'lodash/remove';
+import {Selectable} from '../../../utils/selectable';
 
 /**
  * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.
@@ -48,6 +49,12 @@ class CountersViewComponent {
         this.counters = [];
 
         /**
+         * The selected counters.
+         * @type {Selectable}
+         */
+        this.selectedCounters = new Selectable(this.counters, 'name');
+
+        /**
          * The counter to edit.
          * @type {Counter}
          */
@@ -57,6 +64,7 @@ class CountersViewComponent {
         this.CounterResource.getAll(this.project.id)
             .then(counters => {
                 this.counters = counters;
+                this.selectedCounters = new Selectable(this.counters, 'name');
             })
             .catch(err => console.log(err));
     }
@@ -70,10 +78,10 @@ class CountersViewComponent {
         this.CounterResource.remove(this.project.id, counter)
             .then(() => {
                 this.ToastService.success('Counter "' + counter.name + '" deleted');
-                remove(this.counters, {name: counter.name});
+                this._deleteCounter(counter);
             })
-            .catch(response => {
-                this.ToastService.danger('<p><strong>Deleting counter "' + counter.name + '" failed</strong></p>' + response.data.message);
+            .catch(err => {
+                this.ToastService.danger('<p><strong>Deleting counter "' + counter.name + '" failed</strong></p>' + err.data.message);
             });
     }
 
@@ -81,18 +89,15 @@ class CountersViewComponent {
      * Delete all selected counters from the server and on success from scope.
      */
     deleteSelectedCounters() {
-        const selectedCounters = JSON.parse(JSON.stringify(this.counters.filter(c => c._selected)));
-
+        const selectedCounters = this.selectedCounters.getSelected();
         if (selectedCounters.length > 0) {
             this.CounterResource.removeMany(this.project.id, selectedCounters)
                 .then(() => {
                     this.ToastService.success('Counters deleted');
-                    selectedCounters.forEach(counter => {
-                        remove(this.counters, {name: counter.name});
-                    });
+                    selectedCounters.forEach(counter => this._deleteCounter(counter));
                 })
-                .catch(response => {
-                    this.ToastService.danger('<p><strong>Deleting counters failed</strong></p>' + response.data.message);
+                .catch(err => {
+                    this.ToastService.danger('<p><strong>Deleting counters failed</strong></p>' + err.data.message);
                 });
         } else {
             this.ToastService.info('You have to select at least one counter.');
@@ -106,7 +111,6 @@ class CountersViewComponent {
      */
     setCounterUnderEdit(counter) {
         this.counterUnderEdit = JSON.parse(JSON.stringify(counter));
-        delete this.counterUnderEdit._selected;
     }
 
     /**
@@ -116,9 +120,9 @@ class CountersViewComponent {
         this.$uibModal.open({
             component: 'counterCreateModal',
             resolve: {
-                modalData: () => ({counters: this.counters})
+                counters: () => this.counters
             }
-        }).result.then(counter => this.counters.push(counter));
+        }).result.then(createdCounter => this.counters.push(createdCounter));
     }
 
     /**
@@ -132,6 +136,11 @@ class CountersViewComponent {
                 this.counterUnderEdit = null;
             })
             .catch(err => this.ToastService.danger(`The counter could not be updated. ${err.data.message}`));
+    }
+
+    _deleteCounter(counter) {
+        remove(this.counters, {name: counter.name});
+        this.selectedCounters.unselect(counter);
     }
 }
 
