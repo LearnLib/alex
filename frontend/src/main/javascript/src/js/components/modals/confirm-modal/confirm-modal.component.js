@@ -30,7 +30,7 @@ export class ConfirmModalComponent {
     }
 
     $onInit() {
-        this.text = this.resolve.modalData.text;
+        this.text = this.resolve.text;
     }
 }
 

@@ -20,16 +20,6 @@
 export class DownloadService {
 
     /**
-     * Constructor.
-     *
-     * @param $document
-     */
-    // @ngInject
-    constructor($document) {
-        this.document = $document[0];
-    }
-
-    /**
      * Downloads a file.
      *
      * @param {string} filename - The name of the file.
@@ -39,7 +29,7 @@ export class DownloadService {
     download(filename, fileExtension, href) {
 
         // create new link element with downloadable content
-        const a = this.document.createElement('a');
+        const a = document.createElement('a');
         a.setAttribute('href', href);
         a.setAttribute('download', filename + '.' + fileExtension);
         a.click();
@@ -77,7 +67,7 @@ export class DownloadService {
      */
     downloadTable(selector, filename) {
         let table = null;
-        const tableCandidate = this.document.querySelector(selector);
+        const tableCandidate = document.querySelector(selector);
         if (tableCandidate.nodeName.toLowerCase() !== 'table') {
             table = tableCandidate.querySelector('table');
             if (table === null) return;
@@ -143,7 +133,7 @@ export class DownloadService {
      */
     downloadSvg(selector, adjustSize, filename) {
         let svg = null;
-        const svgCandidate = this.document.querySelector(selector);
+        const svgCandidate = document.querySelector(selector);
         if (svgCandidate.nodeName.toLowerCase() !== 'svg') {
             svg = svgCandidate.querySelector('svg');
             if (svg === null) return;

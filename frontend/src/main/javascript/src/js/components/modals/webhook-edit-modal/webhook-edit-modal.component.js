@@ -55,7 +55,7 @@ export const webhookEditModalComponent = {
         }
 
         $onInit() {
-            this.webhook = this.resolve.modalData.webhook;
+            this.webhook = this.resolve.webhook;
 
             this.webhookResource.getEvents()
                 .then((events) => this.events = events)

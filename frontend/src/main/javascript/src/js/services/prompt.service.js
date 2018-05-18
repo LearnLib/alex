@@ -32,15 +32,16 @@ export class PromptService {
     /**
      * Opens the prompt dialog.
      *
-     * @param {string} text - The text to display.
-     * @param {string} defaultValue - The default text value.
+     * @param {string} text The text to display.
+     * @param {string} defaultValue The default text value.
      * @return {*} - The modal result promise.
      */
     prompt(text, defaultValue = '') {
         return this.$uibModal.open({
             component: 'promptModal',
             resolve: {
-                modalData: () => ({text, defaultValue})
+                text: () => text,
+                defaultValue: () => defaultValue
             }
         }).result;
     }
@@ -48,14 +49,14 @@ export class PromptService {
     /**
      * Opens the confirm dialog.
      *
-     * @param {string} text - The text to be displayed in the confirm dialog.
-     * @returns {*} - The modal result promise.
+     * @param {string} text The text to be displayed in the confirm dialog.
+     * @returns {*} The modal result promise.
      */
     confirm(text) {
         return this.$uibModal.open({
             component: 'confirmModal',
             resolve: {
-                modalData: () => ({text})
+                text: () => text
             }
         }).result;
     }

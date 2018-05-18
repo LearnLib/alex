@@ -16,7 +16,6 @@
 
 /**
  * The component to edit a symbols name.
- * @type {{template: string, bindings: {symbolRef: string, onUpdated: string, onAborted: string}, controller: controller, controllerAs: string}}
  */
 export const symbolEditFormComponent = {
     template: require('./symbol-edit-form.component.html'),

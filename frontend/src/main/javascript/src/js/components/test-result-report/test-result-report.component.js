@@ -29,20 +29,11 @@ export const testResultReportComponent = {
         /**
          * Constructor.
          *
-         * @param {DownloadService} DownloadService
-         * @param {PromptService} PromptService
-         * @param {ToastService} ToastService
-         * @param {TestReportResource} TestReportResource
          * @param {SessionService} SessionService
          * @param {TestReportService} TestReportService
          */
         // @ngInject
-        constructor(DownloadService, PromptService, ToastService, TestReportResource, SessionService,
-                    TestReportService) {
-            this.DownloadService = DownloadService;
-            this.PromptService = PromptService;
-            this.ToastService = ToastService;
-            this.TestReportResource = TestReportResource;
+        constructor(SessionService, TestReportService) {
             this.SessionService = SessionService;
             this.TestReportService = TestReportService;
 

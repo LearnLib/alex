@@ -26,24 +26,19 @@ class ProjectListComponent {
      *
      * @param $state
      * @param {ProjectResource} ProjectResource
-     * @param {SymbolGroupResource} SymbolGroupResource
      * @param {ToastService} ToastService
      * @param {SessionService} SessionService
      * @param {PromptService} PromptService
      * @param {EventBus} EventBus
-     * @param {DownloadService} DownloadService
      */
     // @ngInject
-    constructor($state, ProjectResource, SymbolGroupResource, ToastService, SessionService, PromptService, EventBus,
-                DownloadService) {
+    constructor($state, ProjectResource, ToastService, SessionService, PromptService, EventBus) {
         this.$state = $state;
         this.ProjectResource = ProjectResource;
-        this.SymbolGroupResource = SymbolGroupResource;
         this.ToastService = ToastService;
         this.SessionService = SessionService;
         this.PromptService = PromptService;
         this.EventBus = EventBus;
-        this.DownloadService = DownloadService;
     }
 
     /**

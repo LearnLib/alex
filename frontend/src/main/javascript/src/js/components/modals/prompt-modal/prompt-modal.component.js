@@ -36,8 +36,8 @@ export class PromptModalComponent {
     }
 
     $onInit() {
-        this.text = this.resolve.modalData.text;
-        this.userInput = this.resolve.modalData.defaultValue;
+        this.text = this.resolve.text;
+        this.userInput = this.resolve.defaultValue;
     }
 
     /**

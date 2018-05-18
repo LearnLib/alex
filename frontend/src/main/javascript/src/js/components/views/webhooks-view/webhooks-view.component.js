@@ -24,6 +24,7 @@ export const webhooksViewComponent = {
 
         /**
          * Constructor.
+         *
          * @param {WebhookResource} WebhookResource
          * @param {ToastService} ToastService
          * @param $uibModal
@@ -67,12 +68,10 @@ export const webhooksViewComponent = {
          * @param {Object} webhook The webhook to edit.
          */
         updateWebhook(webhook) {
-            const wh = JSON.parse(JSON.stringify(webhook));
-
             this.$uibModal.open({
                 component: 'webhookEditModal',
                 resolve: {
-                    modalData: () => ({webhook: wh})
+                    webhook: () => JSON.parse(JSON.stringify(webhook))
                 }
             }).result.then((webhook) => {
                 const i = this.webhooks.findIndex((w) => w.id === webhook.id);

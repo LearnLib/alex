@@ -16,7 +16,6 @@
 
 /**
  * The list for selecting target URLs for learning and testing.
- * @type {{template, bindings: {project: string, listModel: string, multiple: string}, controllerAs: string, controller: projectUrlListComponent.controller}}
  */
 export const projectUrlListComponent = {
     template: require('./project-url-list.component.html'),
