@@ -174,7 +174,7 @@ export const testCaseViewComponent = {
                 },
                 parameterValues: symbol.inputs
                     .filter(input => input.parameterType === 'STRING')
-                    .map(input => ({parameter: input, value: ""}))
+                    .map(input => ({parameter: input, value: null}))
             });
         }
     }

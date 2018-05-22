@@ -281,18 +281,38 @@ report-charts {
   }
 }
 
-.input-parameter-value {
-  padding: 0;
-  margin: 0;
-  border: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0);
 
-  &:active, &:focus, &:hover {
-    box-shadow: none;
+.input-parameter-value {
+  position: relative;
+
+  i {
+    display: none;
   }
 
-  &:active {
-    border-bottom: 1px solid #ddd;
+  &:hover {
+    i {
+      display: block;
+      position: absolute;
+      top: 2px;
+      right: 2px;
+    }
+
+    input {
+      border-bottom: 1px solid #ddd;
+    }
+  }
+
+  input {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0);
+    outline: none;
+
+    &:active, &:focus, &:hover {
+      box-shadow: none;
+      border-bottom: 1px solid #ddd;
+    }
   }
 }
 
