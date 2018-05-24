@@ -18,6 +18,7 @@ package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.mapper.ContextExecutableInputSUL;
 
@@ -45,7 +46,8 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
     /**
      * Add a connector to the set of connectors.
      *
-     * @param connectorManager The new connector manager.
+     * @param connectorManager
+     *         The new connector manager.
      */
     public void addConnectorManager(ConnectorManager connectorManager) {
         try {
@@ -59,7 +61,8 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
     /**
      * Set the reset symbol that should be used to reset the SUL.
      *
-     * @param resetSymbol The new reset symbol.
+     * @param resetSymbol
+     *         The new reset symbol.
      */
     public void setResetSymbol(Symbol resetSymbol) {
         this.resetSymbol = resetSymbol;
@@ -84,6 +87,17 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
 
         ExecuteResult resetResult;
         try {
+            // initialize counters defined in the reset symbol as input
+            final CounterStoreConnector counterStore = connectorManager.getConnector(CounterStoreConnector.class);
+            resetSymbol.getInputs().stream()
+                    .filter(in -> in.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
+                    .forEach(in -> {
+                        try {
+                            counterStore.get(in.getName());
+                        } catch (IllegalStateException e) {
+                            counterStore.set(resetSymbol.getProjectId(), in.getName(), 0);
+                        }
+                    });
             resetResult = resetSymbol.execute(connectorManager);
         } catch (Exception e) {
             throw new LearnerException("An error occurred while executing the reset symbol.", e);

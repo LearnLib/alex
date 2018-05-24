@@ -121,10 +121,7 @@ class SymbolsArchiveViewComponent {
         this.$uibModal.open({
             component: 'symbolEditModal',
             resolve: {
-                modalData: () => ({
-                    symbol: new AlphabetSymbol(JSON.parse(JSON.stringify(symbol))),
-                    updateOnServer: true
-                })
+                symbol: () => new AlphabetSymbol(JSON.parse(JSON.stringify(symbol))),
             }
         });
     }
