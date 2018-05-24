@@ -1,7 +1,7 @@
 {
   "name": "ALEX",
   "version": "1.5.0-SNAPSHOT",
-  "description": "An interface for Active Automata Learning",
+  "description": "A web application for interring Mealy machines of web applications and RESTful web services via active automata learning.",
   "repository": {
     "type": "git",
     "url": "https://github.com/LearnLib/alex.git"

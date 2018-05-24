@@ -3,6 +3,17 @@
 ## Breaking Changes
 
 * Symbols and tests that have been exported with v.1.4.0 and lower can probably not be imported directly.
+  For each symbol in an exported JSON file add the properties `inputs` and `outputs` like:
+  
+  ```JSON
+  // symbols.json
+  [{
+    "name": "symbol",
+    ...,
+    "inputs": [],
+    "outputs": []
+  }, ...]
+  ```
 
 ## Bug Fixes
 
@@ -17,8 +28,12 @@
 * New actions: 
     * Refresh and restart the browser window.
     * Click on a arbitrary element with a given visible text.
+    * Check if an element, e.g. a checkbox, radio button or option is selected.
 * Parameterized symbols: symbols now have dynamic inputs and outputs.
   Values for inputs can be set by a user for modelling tests.
+* Symbols and symbol groups can be nested in a tree like structure.
+* Named project URLs.
+* Download uploaded files.
 
 ## Further Comments
 

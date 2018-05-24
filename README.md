@@ -28,8 +28,8 @@ Password: *admin*
 
 Make sure you have Java 8 installed on your system.
 
-1. Download the latest version. [Download](https://github.com/LearnLib/alex/releases/latest)
-2. Open a terminal and start the *war* archive using `java -jar ALEX.war [--port=XXXX]`
+1. [Download](https://github.com/LearnLib/alex/releases/latest) the latest version.
+2. Open a terminal and start the *war* archive using `java -jar ALEX.war [--alex.port=XXXX]`
 3. Open *http://localhost:8000* in a web browser
 
 #### From source
@@ -42,13 +42,15 @@ For the installation from the source files make sure your system matches the fol
 
 Build and run ALEX by running following commands:
 
-1. `mvn clean package [-DskipTests]`
-2. `java -jar build/target/ALEX/*war [--alex.port=XXXX]`
-3. open *http://localhost:8000* in a web browser
+1. `git clone https://github.com/LearnLib/alex.git`
+2. `cd alex`
+3. `mvn clean package [-DskipTests]`
+4. `java -jar build/target/ALEX/alex-build-1.5.0-SNAPSHOT.war [--alex.port=XXXX]`
+5. open *http://localhost:8000* in a web browser
 
 Or, if you just want to start the backend, you can use:
 
-1. `cd main`
+1. `cd backend`
 2. `mvn spring-boot:run [-Dalex.port=XXXX]`
 3. open *http://localhost:8000* in a web browser
 
