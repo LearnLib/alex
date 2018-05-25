@@ -82,7 +82,7 @@ class SidebarComponent {
                 display: () => this.user && this.user.role === 'ADMIN',
                 items: [
                     {
-                        title: 'App Settings',
+                        title: 'Settings',
                         icon: 'fa-gears',
                         active: () => this.isState('adminSettings'),
                         display: () => true,

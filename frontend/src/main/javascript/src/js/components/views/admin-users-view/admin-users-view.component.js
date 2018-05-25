@@ -81,6 +81,12 @@ class AdminUsersViewComponent {
         this.selectedUsers.update(user);
     }
 
+    createUser() {
+        this.$uibModal.open({
+            component: 'userCreateModal',
+        }).result.then(createdUser => this.users.push(createdUser));
+    }
+
     /**
      * Updates a user in the list.
      * @param {User} user

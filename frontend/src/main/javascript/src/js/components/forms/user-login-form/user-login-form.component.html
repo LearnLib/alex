@@ -22,8 +22,8 @@
             </div>
         </div>
     </div>
-    <div class="d-flex flex-row">
-        <button class="btn btn-primary flex-grow-1" style="margin-right: 12px">Login</button>
-        <a href class="btn btn-default" ng-click="vm.signUp()">Sign up</a>
+    <div class="d-flex flex-row" ng-if="vm.settings != null">
+        <button class="btn btn-primary w-100 mr-1">Login</button>
+        <a href class="btn btn-default" ng-if="vm.settings.allowUserRegistration" ng-click="vm.signUp()">Sign up</a>
     </div>
 </form>

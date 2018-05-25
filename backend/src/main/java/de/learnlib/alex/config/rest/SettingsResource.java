@@ -53,7 +53,6 @@ public class SettingsResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"REGISTERED"})
     public Response get() {
         LOGGER.traceEntry("get()");
 

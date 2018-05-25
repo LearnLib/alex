@@ -80,12 +80,11 @@ export class UserResource {
     /**
      * Creates a new user.
      *
-     * @param {string} email - The email of the user.
-     * @param {string} password - The password of the user.
+     * @param {any} user - The user to create.
      * @returns {*} - A promise.
      */
-    create(email, password) {
-        return this.$http.post(`${apiUrl}/users`, {email, password});
+    create(user) {
+        return this.$http.post(`${apiUrl}/users`, user);
     }
 
     /**

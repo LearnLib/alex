@@ -93,6 +93,7 @@ import {userLoginFormComponent} from './components/forms/user-login-form/user-lo
 import {webhookFormComponent} from './components/forms/webhook-form/webhook-form.component';
 import {htmlElementPickerComponent} from './components/html-element-picker/html-element-picker.component';
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
+import {userCreateModalComponent} from './components/modals/user-create-modal/user-create-modal.component';
 import {learnerResultListItemComponent} from './components/views/learner-results-view/learner-result-list-item/learner-result-list-item.component';
 import {learnerResultPanelComponent} from './components/learner-result-panel/learner-result-panel.component';
 import {loadScreenComponent} from './components/load-screen/load-screen.component';
@@ -335,6 +336,7 @@ angular
     .component('symbolGroupCreateModal', symbolGroupCreateModalComponent)
     .component('symbolGroupEditModal', symbolGroupEditModalComponent)
     .component('symbolMoveModal', symbolMoveModalComponent)
+    .component('userCreateModal', userCreateModalComponent)
     .component('userEditModal', userEditModalComponent)
     .component('resultListModal', resultListModalComponent)
     .component('symbolsImportModal', symbolsImportModalComponent)

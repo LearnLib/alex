@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.config.dao;
 
+import de.learnlib.alex.config.entities.DriverSettings;
 import de.learnlib.alex.config.entities.Settings;
 import de.learnlib.alex.config.repositories.SettingsRepository;
 import org.springframework.stereotype.Service;
@@ -70,7 +71,7 @@ public class SettingsDAOImpl implements SettingsDAO {
         updateDriverSystemProperties(settings.getDriverSettings());
     }
 
-    private void updateDriverSystemProperties(Settings.DriverSettings driverSettings) {
+    private void updateDriverSystemProperties(DriverSettings driverSettings) {
         System.setProperty("webdriver.chrome.driver", driverSettings.getChrome());
         System.setProperty("webdriver.gecko.driver",  driverSettings.getFirefox());
         System.setProperty("webdriver.edge.driver",   driverSettings.getEdge());

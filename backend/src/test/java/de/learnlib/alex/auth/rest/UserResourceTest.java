@@ -23,6 +23,8 @@ import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.UserHelper;
+import de.learnlib.alex.config.dao.SettingsDAO;
+import de.learnlib.alex.config.entities.Settings;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.test.JerseyTest;
@@ -52,6 +54,9 @@ public class UserResourceTest extends JerseyTest {
     @Mock
     private UserDAO userDAO;
 
+    @Mock
+    private SettingsDAO settingsDAO;
+
     private User admin;
 
     private String adminToken;
@@ -59,8 +64,7 @@ public class UserResourceTest extends JerseyTest {
     private User user;
 
     private String userToken;
-
-
+    
     @Override
     protected Application configure() {
         MockitoAnnotations.initMocks(this);
@@ -70,6 +74,7 @@ public class UserResourceTest extends JerseyTest {
             @Override
             protected void configure() {
                 bind(mock(WebhookService.class)).to(WebhookService.class);
+                bind(settingsDAO).to(SettingsDAO.class);
             }
         });
 
@@ -92,14 +97,32 @@ public class UserResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldCreateAnUser() {
+    public void shouldCreateAUserIfRegistrationIsEnabled() {
         user.setId(null);
         String userJson = "{\"email\":\"fake_user@alex.example\",\"password\":\"fake_password\"}";
+
+        Settings settings = new Settings();
+        settings.setAllowUserRegistration(true);
+        given(settingsDAO.get()).willReturn(settings);
 
         Response response = target("/users").request().post(Entity.json(userJson));
 
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         verify(userDAO).create(user);
+    }
+
+    @Test
+    public void shouldNotCreateAUserIfRegistrationIsDisabled() {
+        user.setId(null);
+        String userJson = "{\"email\":\"fake_user@alex.example\",\"password\":\"fake_password\"}";
+
+        Settings settings = new Settings();
+        settings.setAllowUserRegistration(false);
+        given(settingsDAO.get()).willReturn(settings);
+
+        Response response = target("/users").request().post(Entity.json(userJson));
+
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), response.getStatus());
     }
 
     @Test

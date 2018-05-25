@@ -31,15 +31,17 @@ class UserLoginFormComponent {
      * @param {ToastService} ToastService
      * @param {SessionService} SessionService
      * @param {EventBus} EventBus
+     * @param {SettingsResource} SettingsResource
      */
     // @ngInject
-    constructor($state, UserResource, jwtHelper, ToastService, SessionService, EventBus) {
+    constructor($state, UserResource, jwtHelper, ToastService, SessionService, EventBus, SettingsResource) {
         this.$state = $state;
         this.UserResource = UserResource;
         this.jwtHelper = jwtHelper;
         this.ToastService = ToastService;
         this.SessionService = SessionService;
         this.EventBus = EventBus;
+        this.SettingsResource = SettingsResource;
 
         /**
          * The email of the user.
@@ -52,6 +54,12 @@ class UserLoginFormComponent {
          * @type {string}
          */
         this.password = null;
+
+        this.settings = null;
+
+        this.SettingsResource.get()
+            .then(settings => this.settings = settings)
+            .catch(err => this.ToastService.danger(`Could not get settings. ${err.data.message}`));
     }
 
     /**
@@ -91,7 +99,7 @@ class UserLoginFormComponent {
      */
     signUp() {
         if (this.email && this.password) {
-            this.UserResource.create(this.email, this.password)
+            this.UserResource.create({email: this.email, password: this.password})
                 .then(() => {
                     this.ToastService.success('Registration successful. You can now use the credentials to login.');
                 })

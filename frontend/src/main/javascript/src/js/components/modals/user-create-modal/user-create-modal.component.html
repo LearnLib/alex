@@ -1,0 +1,59 @@
+<div class="modal-header">
+  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+    <i class="fa fa-close fa-fw"></i>
+  </a>
+  <h3 class="modal-title">Create a new user</h3>
+</div>
+
+<div class="modal-body">
+
+  <div ng-if="vm.errorMessage != null">
+    <div class="alert alert-danger mb-0">
+      {{vm.errorMessage}}
+    </div>
+    <hr>
+  </div>
+
+  <form name="vm.form">
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" class="form-control" name="email" placeholder="Email address" required
+             ng-model="vm.user.email">
+
+      <div class="help-block" ng-messages="vm.form.email.$error" ng-if="vm.form.email.$touched">
+        <div class="alert alert-danger alert-condensed" ng-message="required">
+          The email is required
+        </div>
+        <div class="alert alert-danger alert-condensed" ng-message="email">
+          You have to enter a valid email address
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" class="form-control" name="password" placeholder="Password" required ng-minlength="1"
+             ng-model="vm.user.password">
+
+      <div class="help-block" ng-messages="vm.form.password.$error" ng-if="vm.form.password.$touched">
+        <div class="alert alert-danger alert-condensed" ng-message="required">
+          The password is required
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Role</label>
+      <select name="role" class="form-control" ng-model="vm.user.role">
+        <option value="REGISTERED">Registered</option>
+        <option value="ADMIN">Admin</option>
+      </select>
+    </div>
+  </form>
+
+</div>
+
+<div class="modal-footer text-right">
+  <button class="btn btn-primary btn-sm" ng-click="vm.createUser()">Create</button>
+  <button class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</button>
+</div>

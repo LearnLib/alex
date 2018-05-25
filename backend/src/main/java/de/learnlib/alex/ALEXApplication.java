@@ -23,6 +23,7 @@ import de.learnlib.alex.auth.rest.UserResource;
 import de.learnlib.alex.auth.security.AuthenticationFilter;
 import de.learnlib.alex.common.exceptions.NotFoundExceptionMapper;
 import de.learnlib.alex.config.dao.SettingsDAO;
+import de.learnlib.alex.config.entities.DriverSettings;
 import de.learnlib.alex.config.entities.Settings;
 import de.learnlib.alex.config.rest.SettingsResource;
 import de.learnlib.alex.data.rest.CounterResource;
@@ -149,7 +150,7 @@ public class ALEXApplication extends ResourceConfig {
                 String edgeDriverPath = System.getProperty("webdriver.edge.driver", "");
                 String remoteDriverURL = System.getProperty("webdriver.remote.url", "");
 
-                final Settings.DriverSettings driverSettings = new Settings.DriverSettings(chromeDriverPath,
+                final DriverSettings driverSettings = new DriverSettings(chromeDriverPath,
                                                                                            geckoDriverPath,
                                                                                            edgeDriverPath,
                                                                                            remoteDriverURL);
