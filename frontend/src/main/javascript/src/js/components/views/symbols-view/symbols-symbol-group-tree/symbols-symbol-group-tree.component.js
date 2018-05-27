@@ -106,6 +106,14 @@ export const symbolsSymbolGroupTreeComponent = {
                     symbolToCreate.actions = symbol.actions;
                     symbolToCreate.group = symbol.group;
                     symbolToCreate.project = symbol.project;
+                    symbolToCreate.inputs = JSON.parse(JSON.stringify(symbol.inputs)).map(input => {
+                        delete input.id;
+                        return input;
+                    });
+                    symbolToCreate.outputs = JSON.parse(JSON.stringify(symbol.outputs)).map(output => {
+                        delete output.id;
+                        return output;
+                    });
 
                     // first create the symbol without actions
                     this.symbolResource.create(symbol.project, symbolToCreate)
