@@ -155,6 +155,17 @@ class ResultsViewComponent {
                 .then(() => this.ToastService.success('The results have been exported.'));
         }
     }
+
+    cloneResult(result) {
+        this.LearnResultResource.clone(result)
+            .then(clonedResult => {
+                this.ToastService.success('The result has been cloned.');
+                this.results.push(clonedResult);
+            })
+            .catch(err => {
+                this.ToastService.danger(`The result could not be cloned. ${err.data.message}`);
+            });
+    }
 }
 
 export const resultsViewComponent = {

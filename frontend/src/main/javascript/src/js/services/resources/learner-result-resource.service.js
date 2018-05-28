@@ -84,4 +84,15 @@ export class LearnResultResource {
         const projectId = results[0].project;
         return this.$http.delete(`${apiUrl}/projects/${projectId}/results/${testNos}`, {});
     }
+
+    /**
+     * Clone a learner result.
+     *
+     * @param {LearnResult} result The result to clone.
+     * @return {*}
+     */
+    clone(result) {
+        return this.$http.post(`${apiUrl}/projects/${result.project}/results/${result.testNo}/clone`, {})
+            .then(res => new LearnResult(res.data));
+    }
 }

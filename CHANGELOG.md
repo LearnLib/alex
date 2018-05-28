@@ -35,6 +35,7 @@
 * Symbols and symbol groups can be nested in a tree like structure.
 * Named project URLs.
 * Download uploaded files.
+* Learner results can be cloned.
 
 ## Further Comments
 

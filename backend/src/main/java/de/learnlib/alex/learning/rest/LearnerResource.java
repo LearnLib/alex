@@ -246,14 +246,8 @@ public class LearnerResource {
 
             configuration.setUserId(user.getId());
 
-            System.out.println(project);
-
             learner.resume(user, project, result, configuration);
-
             LearnerStatus status = learner.getStatus(projectId);
-
-            System.out.println(status);
-
             LOGGER.traceExit(status);
 
             webhookService.fireEvent(user, new LearnerEvent.Resumed(configuration));

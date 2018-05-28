@@ -57,6 +57,19 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, UU
     List<LearnerResult> findByProject_IdAndTestNoIn(Long projectId, Long... testNos);
 
     /**
+     * Find a single learner result.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param testNo
+     *         The test number.
+     * @return The learner result.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    LearnerResult findOneByProject_IdAndTestNo(Long projectId, Long testNo);
+
+    /**
      * Get the highest / latest test no used in a Project.
      *
      * @param projectId

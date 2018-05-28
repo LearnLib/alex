@@ -18,10 +18,12 @@ package de.learnlib.alex.learning.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.entities.AbstractLearnerConfiguration;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.services.Learner;
+import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -160,4 +162,38 @@ public interface LearnerResultDAO {
      *         If the project id or test no. was invalid.
      */
     void delete(Learner learner, Long projectId, Long... testNo) throws NotFoundException;
+
+    /**
+     * Clone learner result.
+     *
+     * @param user
+     *         The user.
+     * @param projectId
+     *         The id of the project.
+     * @param testNo
+     *         The test number.
+     * @return The cloned learner result.
+     * @throws NotFoundException
+     *         If one of the entities could not be found.
+     * @throws UnauthorizedException
+     *         If the user is not allowed to access one of the entities.
+     */
+    LearnerResult clone(User user, Long projectId, Long testNo) throws NotFoundException, UnauthorizedException;
+
+    /**
+     * Check if the user has access to the learner result.
+     *
+     * @param user
+     *         The user.
+     * @param project
+     *         The project.
+     * @param learnerResult
+     *         The learner result.
+     * @throws NotFoundException
+     *         If the project or learner result could not be found.
+     * @throws UnauthorizedException
+     *         If the user is not allowed to access the project or learner result.
+     */
+    void checkAccess(User user, Project project, LearnerResult learnerResult)
+            throws NotFoundException, UnauthorizedException;
 }
