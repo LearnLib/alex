@@ -36,6 +36,7 @@ import {setCounterActionFormComponent} from './components/forms/actions/misc/set
 import {setVariableActionFormComponent} from './components/forms/actions/misc/set-variable-action-form/set-variable-action-form.component';
 import {setVariableByCookieActionFormComponent} from './components/forms/actions/misc/set-variable-by-cookie-action-form/set-variable-by-cookie-action-form.component';
 import {setVariableByHtmlActionFormComponent} from './components/forms/actions/misc/set-variable-by-html-action-form/set-variable-by-html-action-form.component';
+import {setVariableByHttpResponseActionFormComponent} from './components/forms/actions/misc/set-variable-by-http-response-action-form/set-variable-by-http-response-action-form.component';
 import {setVariableByJsonActionFormComponent} from './components/forms/actions/misc/set-variable-by-json-action-form/set-variable-by-json-action-form.component';
 import {setVariableByNodeAttributeActionFormComponent} from './components/forms/actions/misc/set-variable-by-node-attribute-action-form/set-variable-by-node-attribute-action-form.component';
 import {setVariableByNodeCountActionFormComponent} from './components/forms/actions/misc/set-variable-by-node-count-action-form/set-variable-by-node-count-action-form.component';
@@ -455,6 +456,7 @@ angular
     .component('setCounterActionForm', setCounterActionFormComponent)
     .component('setVariableActionForm', setVariableActionFormComponent)
     .component('setVariableByCookieActionForm', setVariableByCookieActionFormComponent)
+    .component('setVariableByHttpResponseActionForm', setVariableByHttpResponseActionFormComponent)
     .component('setVariableByHtmlActionForm', setVariableByHtmlActionFormComponent)
     .component('setVariableByJsonActionForm', setVariableByJsonActionFormComponent)
     .component('setVariableByNodeAttributeActionForm', setVariableByNodeAttributeActionFormComponent)

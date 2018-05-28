@@ -29,6 +29,7 @@
     * Refresh and restart the browser window.
     * Click on a arbitrary element with a given visible text.
     * Check if an element, e.g. a checkbox, radio button or option is selected.
+    * Set variable to HTTP response body.
 * Parameterized symbols: symbols now have dynamic inputs and outputs.
   Values for inputs can be set by a user for modelling tests.
 * Symbols and symbol groups can be nested in a tree like structure.

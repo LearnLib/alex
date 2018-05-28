@@ -19,21 +19,22 @@ import {AssertCounterAction} from '../entities/actions/misc/assert-counter-actio
 import {AssertVariableAction} from '../entities/actions/misc/assert-variable-action';
 import {IncrementCounterGeneralAction} from '../entities/actions/misc/increment-counter-action';
 import {SetCounterGeneralAction} from '../entities/actions/misc/set-counter-action';
+import {SetVariableGeneralAction} from '../entities/actions/misc/set-variable-action';
 import {SetVariableByCookieAction} from '../entities/actions/misc/set-variable-by-cookie-action';
+import {SetVariableByHttpResponseAction} from '../entities/actions/misc/set-variable-by-http-response';
 import {SetVariableByJsonAttributeGeneralAction} from '../entities/actions/misc/set-variable-by-json-attribute-action';
+import {SetVariableByNodeGeneralAction} from '../entities/actions/misc/set-variable-by-node-action';
 import {SetVariableByNodeAttributeGeneralAction} from '../entities/actions/misc/set-variable-by-node-attribute-action';
 import {SetVariableByNodeCountAction} from '../entities/actions/misc/set-variable-by-node-count-action';
-import {SetVariableByNodeGeneralAction} from '../entities/actions/misc/set-variable-by-node-action';
 import {SetVariableByRegexGroup} from '../entities/actions/misc/set-variable-by-regex-group-action';
-import {SetVariableGeneralAction} from '../entities/actions/misc/set-variable-action';
 import {WaitGeneralAction} from '../entities/actions/misc/wait-action';
-import {CallRestAction} from '../entities/actions/rest/request-action';
 import {CheckAttributeExistsRestAction} from '../entities/actions/rest/check-attribute-exists-action';
 import {CheckAttributeTypeRestAction} from '../entities/actions/rest/check-attribute-type-action';
 import {CheckAttributeValueRestAction} from '../entities/actions/rest/check-attribute-value-action';
 import {CheckHeaderFieldRestAction} from '../entities/actions/rest/check-header-field-action';
 import {CheckHTTPBodyTextRestAction} from '../entities/actions/rest/check-http-body-action';
 import {CheckStatusRestAction} from '../entities/actions/rest/check-status-action';
+import {CallRestAction} from '../entities/actions/rest/request-action';
 import {ValidateJsonAction} from '../entities/actions/rest/validate-json-action';
 import {AlertAcceptDismissAction} from '../entities/actions/web/alert-accept-dismiss-action';
 import {AlertGetTextAction} from '../entities/actions/web/alert-get-text-action';
@@ -45,22 +46,22 @@ import {CheckForTextWebAction} from '../entities/actions/web/check-for-text-acti
 import {CheckNodeSelectedAction} from '../entities/actions/web/check-node-selected-action';
 import {CheckPageTitleAction} from '../entities/actions/web/check-page-title-action';
 import {ClearWebAction} from '../entities/actions/web/clear-action';
+import {ClickWebAction} from '../entities/actions/web/click-action';
 import {ClickElementByTextAction} from '../entities/actions/web/click-element-by-text';
 import {ClickLinkByTextWebAction} from '../entities/actions/web/click-link-by-text-action';
-import {ClickWebAction} from '../entities/actions/web/click-action';
 import {ExecuteScriptAction} from '../entities/actions/web/execute-script-action';
-import {FillWebAction} from '../entities/actions/web/send-keys-action';
-import {GoToWebAction} from '../entities/actions/web/open-url-action';
 import {MoveMouseAction} from '../entities/actions/web/move-mouse-action';
+import {GoToWebAction} from '../entities/actions/web/open-url-action';
 import {PressKeyAction} from '../entities/actions/web/press-key-action';
 import {SelectWebAction} from '../entities/actions/web/select-action';
+import {FillWebAction} from '../entities/actions/web/send-keys-action';
 import {SubmitWebAction} from '../entities/actions/web/submit-action';
 import {SwitchToAction} from '../entities/actions/web/switch-to-action';
 import {SwitchToFrameAction} from '../entities/actions/web/switch-to-frame';
 import {WaitForNodeAction} from '../entities/actions/web/wait-for-node-action';
-import {WaitForNodeAttributeAction} from '../entities/actions/web/wiat-for-node-attribute-action';
 import {WaitForTextAction} from '../entities/actions/web/wait-for-text-action';
 import {WaitForTitleAction} from '../entities/actions/web/wait-for-title-action';
+import {WaitForNodeAttributeAction} from '../entities/actions/web/wiat-for-node-attribute-action';
 
 /**
  * The service that is used to create new actions.
@@ -155,6 +156,8 @@ export class ActionService {
                 return new SetVariableByJsonAttributeGeneralAction(data);
             case actionType.GENERAL_SET_VARIABLE_BY_HTML:
                 return new SetVariableByNodeGeneralAction(data);
+            case actionType.GENERAL_SET_VARIABLE_BY_HTTP_RESPONSE:
+                return new SetVariableByHttpResponseAction(data);
             case actionType.GENERAL_SET_VARIABLE:
                 return new SetVariableGeneralAction(data);
             case actionType.GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE:

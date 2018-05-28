@@ -27,6 +27,7 @@ import de.learnlib.alex.data.entities.actions.misc.SetCounterAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByCookieAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByHTMLElementAction;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableByHttpResponse;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByJSONAttributeAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByNodeAttributeAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByNodeCountAction;
@@ -109,6 +110,7 @@ import java.util.UUID;
         @JsonSubTypes.Type(name = "setCounter", value = SetCounterAction.class),
         @JsonSubTypes.Type(name = "setVariable", value = SetVariableAction.class),
         @JsonSubTypes.Type(name = "setVariableByJSON", value = SetVariableByJSONAttributeAction.class),
+        @JsonSubTypes.Type(name = "setVariableByHttpResponse", value = SetVariableByHttpResponse.class),
         @JsonSubTypes.Type(name = "setVariableByHTML", value = SetVariableByHTMLElementAction.class),
         @JsonSubTypes.Type(name = "setVariableByCookie", value = SetVariableByCookieAction.class),
         @JsonSubTypes.Type(name = "setVariableByNodeAttribute", value = SetVariableByNodeAttributeAction.class),
@@ -209,7 +211,7 @@ public abstract class SymbolAction implements Serializable {
      * Set the ID of the Action in the DB.
      *
      * @param uuid
-     *            The DB ID of the Action.
+     *         The DB ID of the Action.
      */
     public void setUUID(UUID uuid) {
         this.uuid = uuid;
@@ -246,7 +248,8 @@ public abstract class SymbolAction implements Serializable {
     /**
      * Set the position the action has in the actions list.
      *
-     * @param no The new position.
+     * @param no
+     *         The new position.
      */
     public void setNumber(int no) {
         this.number = no;
@@ -254,6 +257,7 @@ public abstract class SymbolAction implements Serializable {
 
     /**
      * Should the result of the execute method be inverted?
+     *
      * @return true, if the outcome should be negated; false otherwise.
      */
     public boolean isNegated() {
@@ -271,8 +275,8 @@ public abstract class SymbolAction implements Serializable {
     }
 
     /**
-     * Usually the sequential execution of action will be interrupted if an action returns FAILED.
-     * With this property this behaviour can be overwritten.
+     * Usually the sequential execution of action will be interrupted if an action returns FAILED. With this property
+     * this behaviour can be overwritten.
      *
      * @return true if the following action should be executed, even if the action FAILED; false otherwise.
      */
@@ -304,7 +308,7 @@ public abstract class SymbolAction implements Serializable {
      * Set the enable flag, i.e. if the execution of the action should be skipped
      *
      * @param disabled
-     *          true if the action should be executed, false if should be skipped
+     *         true if the action should be executed, false if should be skipped
      */
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
@@ -334,15 +338,14 @@ public abstract class SymbolAction implements Serializable {
      * Execute the Action. This is the important method in which all the magic will happen.
      *
      * @param connector
-     *              The context to use.
-     * @return An {@link ExecuteResult} to indicate if the action
-     *          run successfully or not.
+     *         The context to use.
+     * @return An {@link ExecuteResult} to indicate if the action run successfully or not.
      */
     protected abstract ExecuteResult execute(ConnectorManager connector);
 
     /**
-     * Checks the given text for any occurrences of a variable and replaces this part with the actual value.
-     * The input string will not be modified.
+     * Checks the given text for any occurrences of a variable and replaces this part with the actual value. The input
+     * string will not be modified.
      *
      * @param text
      *         The text to check for variables, which than will be replaced by the real value.
@@ -353,8 +356,8 @@ public abstract class SymbolAction implements Serializable {
     }
 
     /**
-     * Get the proper return value for a successful action.
-     * This method checks the 'negated' field and should be used by all actions if no failure / error occurred.
+     * Get the proper return value for a successful action. This method checks the 'negated' field and should be used by
+     * all actions if no failure / error occurred.
      *
      * @return OK if 'negated' is false; FALSE if 'negated' is true.
      */
@@ -363,8 +366,8 @@ public abstract class SymbolAction implements Serializable {
     }
 
     /**
-     * Get the proper return value for a failed action.
-     * This method checks the 'negated' field and should be used by all actions if an failure / error occurred.
+     * Get the proper return value for a failed action. This method checks the 'negated' field and should be used by all
+     * actions if an failure / error occurred.
      *
      * @return FAILED if 'negated' is false; OK if 'negated' is true.
      */
