@@ -58,6 +58,11 @@ export class SymbolGroupResource {
             .then(response => new SymbolGroup(response.data));
     }
 
+    createMany(projectId, groups) {
+        return this.$http.post(`${apiUrl}/projects/${projectId}/groups/batch`, groups)
+            .then(res => res.data.map(g => new SymbolGroup(g)));
+    }
+
     /**
      * Updates an existing symbol group.
      *

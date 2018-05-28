@@ -41,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -93,9 +94,9 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
      */
     @Inject
     public SymbolGroupDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
-                              SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
-                              SymbolActionRepository symbolActionRepository,
-                              SymbolParameterRepository symbolParameterRepository) {
+            SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
+            SymbolActionRepository symbolActionRepository,
+            SymbolParameterRepository symbolParameterRepository) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
@@ -114,7 +115,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         projectDAO.checkAccess(user, project);
 
         try {
-            checkIfNameIsUnique(project.getId(), group.getName());
+            group.setName(createGroupName(project, group.getName()));
             project.addGroup(group);
             beforePersistGroup(group);
 
@@ -138,6 +139,54 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         }
 
         LOGGER.traceExit(group);
+    }
+
+    @Override
+    @Transactional
+    public List<SymbolGroup> create(User user, Long projectId, List<SymbolGroup> groups)
+            throws NotFoundException, ValidationException {
+        LOGGER.traceEntry("create({})", groups);
+
+        final Project project = projectRepository.findOne(projectId);
+        projectDAO.checkAccess(user, project);
+
+        List<SymbolGroup> createdGroups = create(user, project, groups, null);
+        createdGroups.forEach(g -> initLazyRelations(user, g, EmbeddableFields.COMPLETE_SYMBOLS));
+        return groups;
+    }
+
+    private List<SymbolGroup> create(User user, Project project, List<SymbolGroup> groups, SymbolGroup parent)
+            throws NotFoundException, ValidationException {
+        final List<SymbolGroup> createdGroups = new ArrayList<>();
+        for (SymbolGroup group : groups) {
+            createdGroups.add(create(user, project, group, parent));
+        }
+        return createdGroups;
+    }
+
+    private SymbolGroup create(User user, Project project, SymbolGroup group, SymbolGroup parent)
+            throws NotFoundException, ValidationException {
+        final List<SymbolGroup> children = group.getGroups();
+        final Set<Symbol> symbols = group.getSymbols();
+
+        group.setGroups(new ArrayList<>());
+        group.setSymbols(new HashSet<>());
+        group.setProject(project);
+        group.setParent(parent);
+        group.setName(createGroupName(project, group.getName()));
+
+        beforePersistGroup(group);
+        final SymbolGroup createdGroup = symbolGroupRepository.save(group);
+
+        symbols.forEach(symbol -> {
+            symbol.setProject(project);
+            symbol.setGroup(createdGroup);
+        });
+        symbolDAO.create(user, new ArrayList<>(symbols));
+
+        final List<SymbolGroup> createdChildren = create(user, project, children, createdGroup);
+        createdGroup.setGroups(createdChildren);
+        return createdGroup;
     }
 
     @Override
@@ -175,7 +224,9 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         final SymbolGroup groupInDB = symbolGroupRepository.findOne(group.getId());
         checkAccess(user, project, groupInDB);
 
-        checkIfNameIsUnique(group.getProjectId(), group.getName());
+        if (!group.getName().equals(groupInDB.getName())) {
+            group.setName(createGroupName(project, group.getName()));
+        }
 
         if (group.getParentId() != null && group.getParentId().equals(groupInDB.getId())) {
             throw new ValidationException("A group cannot have itself as child.");
@@ -259,7 +310,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         }
 
         hideSymbols(group, defaultGroup);
-        for (SymbolGroup child: group.getGroups()) {
+        for (SymbolGroup child : group.getGroups()) {
             hideSymbols(child, defaultGroup);
         }
 
@@ -294,6 +345,15 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         }
     }
 
+    private String createGroupName(Project project, String name) {
+        int i = 1;
+        while (symbolGroupRepository.findOneByProject_IdAndName(project.getId(), name) != null) {
+            name = name + " (" + i + ")";
+            i++;
+        }
+        return name;
+    }
+
     private void initLazyRelations(User user, SymbolGroup group, EmbeddableFields... embedFields) {
         Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
@@ -311,7 +371,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             }
         }
 
-        for (SymbolGroup child: group.getGroups()) {
+        for (SymbolGroup child : group.getGroups()) {
             initLazyRelations(user, child, embedFields);
         }
     }
@@ -324,12 +384,6 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             Collections.addAll(fieldsToLoad, embedFields);
         }
         return fieldsToLoad;
-    }
-
-    private void checkIfNameIsUnique(Long projectId, String name) throws ValidationException {
-        if (symbolGroupRepository.findOneByProject_IdAndName(projectId, name) != null) {
-            throw new ValidationException("The name of the group already exists.");
-        }
     }
 
     /**

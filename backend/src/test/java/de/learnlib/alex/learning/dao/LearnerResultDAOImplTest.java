@@ -37,6 +37,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,12 +75,16 @@ public class LearnerResultDAOImplTest {
     @Mock
     private Learner learner;
 
+    @Mock
+    private EntityManager entityManager;
+
     private LearnerResultDAO learnerResultDAO;
 
 
     @Before
     public void setUp() {
-        learnerResultDAO = new LearnerResultDAOImpl(projectDAO, learnerResultRepository, learnerResultStepRepository);
+        learnerResultDAO = new LearnerResultDAOImpl(projectDAO, learnerResultRepository, learnerResultStepRepository,
+                entityManager);
     }
 
     @Test

@@ -119,6 +119,38 @@ public class SymbolGroupResource {
     }
 
     /**
+     * Create multiple symbol groups including symbols at once.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param groups
+     *         The groups to create.
+     * @return The created groups.
+     * @throws NotFoundException
+     *         If one of the entities could not be found.
+     */
+    @POST
+    @Path("/batch")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createGroups(@PathParam("project_id") Long projectId, List<SymbolGroup> groups)
+            throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("createGroups({}, {}) for user {}.", projectId, groups, user);
+
+        try {
+            final List<SymbolGroup> createdGroups = symbolGroupDAO.create(user, projectId, groups);
+            webhookService.fireEvent(user, new SymbolGroupEvent.CreatedMany(createdGroups));
+            LOGGER.traceExit(createdGroups);
+            return Response.status(Response.Status.CREATED).entity(createdGroups).build();
+        } catch (ValidationException e) {
+            LOGGER.traceExit(e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.create",
+                    Response.Status.BAD_REQUEST, e);
+        }
+    }
+
+    /**
      * Get a list of all groups within on projects.
      *
      * @param projectId

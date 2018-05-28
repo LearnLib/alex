@@ -64,7 +64,7 @@ public class UserResourceTest extends JerseyTest {
     private User user;
 
     private String userToken;
-    
+
     @Override
     protected Application configure() {
         MockitoAnnotations.initMocks(this);

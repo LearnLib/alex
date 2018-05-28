@@ -219,7 +219,7 @@ public class SymbolResourceTest extends JerseyTest {
         // given
         symbol.setProject(null);
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writerWithType(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
+        String json = mapper.writerFor(new TypeReference<List<Symbol>>() { }).writeValueAsString(symbols);
 
         // when
         Response response = target("/projects/" + PROJECT_TEST_ID + "/symbols/batch").request()

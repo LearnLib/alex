@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
+import {version} from '../../../../../environments';
+
 /**
  * The component for the about page.
  */
 export const aboutViewComponent = {
-    controller: class AboutViewComponent {
-    },
+    template: require('./about-view.component.html'),
     controllerAs: 'vm',
-    template: require('./about-view.component.html')
+    controller: class AboutViewComponent {
+        constructor() {
+            this.version = version;
+        }
+    }
 };

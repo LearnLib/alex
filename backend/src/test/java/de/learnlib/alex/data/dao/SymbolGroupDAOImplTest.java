@@ -54,6 +54,7 @@ public class SymbolGroupDAOImplTest {
     private static final long USER_ID    = 21L;
     private static final long PROJECT_ID = 42L;
     private static final long GROUP_ID   = 84L;
+    private static final String GROUP_NAME = "testGroup";
     private static final long DEFAULT_GROUP_ID = 0L;
     private static final int  TEST_GROUP_COUNT = 3;
 
@@ -226,7 +227,6 @@ public class SymbolGroupDAOImplTest {
 
         given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
         given(symbolGroupRepository.findOne(GROUP_ID)).willReturn(group);
-        given(symbolGroupRepository.findOneByProject_IdAndName(PROJECT_ID, "A group")).willReturn(null);
         given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(defaultGroup);
 
         symbolGroupDAO.update(user, group);
@@ -245,6 +245,7 @@ public class SymbolGroupDAOImplTest {
 
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
+        group.setName(GROUP_NAME);
         group.setProject(project);
 
         SymbolGroup defaultGroup = new SymbolGroup();
@@ -269,6 +270,7 @@ public class SymbolGroupDAOImplTest {
 
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
+        group.setName(GROUP_NAME);
         group.setProject(project);
 
         SymbolGroup defaultGroup = new SymbolGroup();

@@ -2,17 +2,23 @@
 
 ## Breaking Changes
 
-* Symbols and tests that have been exported with v.1.4.0 and lower can probably not be imported directly.
-  For each symbol in an exported JSON file add the properties `inputs` and `outputs` like:
-  
+* Symbols and tests that have been exported with v.1.4.0 and lower can not be imported directly.
+  Apply the new export format and for each symbol in an exported JSON file add the properties `inputs` and `outputs` so that the resulting file looks like:
+    
   ```JSON
-  // symbols.json
-  [{
-    "name": "symbol",
-    ...,
-    "inputs": [],
-    "outputs": []
-  }, ...]
+  {
+    "version": "1.4.0",
+    "type": "symbols",
+    "symbols": [
+      {
+        "name": "symbol",
+        ...,
+        "inputs": [],
+        "outputs": []
+      },
+      ...
+    ]
+  }
   ```
 
 ## Bug Fixes

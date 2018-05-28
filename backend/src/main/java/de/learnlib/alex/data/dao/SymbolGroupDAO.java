@@ -78,6 +78,24 @@ public interface SymbolGroupDAO {
     void create(User user, SymbolGroup group) throws NotFoundException, ValidationException;
 
     /**
+     * Create multiple symbol groups.
+     *
+     * @param user
+     *         The user.
+     * @param projectId
+     *         The ID of the project.
+     * @param groups
+     *         The groups to create.
+     * @return The created symbol groups.
+     * @throws NotFoundException
+     *         If one of the entities could not be found.
+     * @throws ValidationException
+     *         If the groups are not valid.
+     */
+    List<SymbolGroup> create(User user, Long projectId, List<SymbolGroup> groups)
+            throws NotFoundException, ValidationException;
+
+    /**
      * Get a list of all groups withing one project.
      *
      * @param user

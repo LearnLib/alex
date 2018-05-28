@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import uniqueId from 'lodash/uniqueId';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
 import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
 
 /**
@@ -29,11 +27,13 @@ export class SymbolsImportModalComponent {
      * @param {SymbolResource} SymbolResource
      * @param {SessionService} SessionService
      * @param {ToastService} ToastService
+     * @param {SymbolGroupResource} SymbolGroupResource
      */
     // @ngInject
-    constructor(SymbolResource, SessionService, ToastService) {
+    constructor(SymbolResource, SessionService, ToastService, SymbolGroupResource) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
+        this.SymbolGroupResource = SymbolGroupResource;
 
         /**
          * The error message.
@@ -48,18 +48,6 @@ export class SymbolsImportModalComponent {
         this.project = SessionService.getProject();
 
         /**
-         * The list of symbols to import.
-         * @type {AlphabetSymbol[]}
-         */
-        this.symbols = [];
-
-        /**
-         * The symbol to edit.
-         * @type {AlphabetSymbol[]}
-         */
-        this.symbolToEdit = null;
-
-        /**
          * The groups in the project.
          * @type {SymbolGroup[]}
          */
@@ -70,11 +58,12 @@ export class SymbolsImportModalComponent {
          * @type {SymbolGroup}
          */
         this.selectedGroup = null;
+
+        this.importData = null;
     }
 
     $onInit() {
         this.groups = this.resolve.groups;
-        this.selectedGroup = SymbolGroupUtils.findDefaultGroup(this.groups);
     }
 
     /**
@@ -83,11 +72,12 @@ export class SymbolsImportModalComponent {
      * @param {string} data - The serialized symbols.
      */
     fileLoaded(data) {
-        this.symbols = JSON.parse(data).map(s => {
-            const symbol = new AlphabetSymbol(s);
-            symbol.id = uniqueId();
-            return symbol;
-        });
+        const importData = JSON.parse(data);
+        if (importData.type == null || ['symbolGroups', 'symbols'].indexOf(importData.type) === -1) {
+            this.errorMessage = 'The file does not seem to contain symbols.';
+        } else {
+            this.importData = importData;
+        }
     }
 
     /**
@@ -96,48 +86,34 @@ export class SymbolsImportModalComponent {
     importSymbols() {
         this.errorMessage = null;
 
-        const symbolsToImport = JSON.parse(JSON.stringify(this.symbols));
-        symbolsToImport.forEach(s => {
-            delete s.id;
-            s.group = this.selectedGroup.id;
-        });
-
-        this.SymbolResource.createMany(this.project.id, symbolsToImport)
-            .then(symbols => {
-                this.ToastService.success('Symbols imported');
-                this.close({$value: symbols});
-            })
-            .catch(err => {
-                this.errorMessage = `The symbols could not be imported. ${err.data.message}`;
+        if (this.importData.type === 'symbols') {
+            const defaultGroup = SymbolGroupUtils.findDefaultGroup(this.groups);
+            this.importData.symbols.forEach(symbol => {
+                symbol.group = this.selectedGroup == null ? defaultGroup.id : this.selectedGroup.id;
             });
-    }
 
-    /**
-     * Updates the name of the symbol to edit.
-     *
-     * @param {AlphabetSymbol} updatedSymbol - The updated symbol.
-     */
-    updateSymbol(updatedSymbol) {
-
-        // check if the name already exists
-        let symbol = this.symbols.find(s => s.name === updatedSymbol.name);
-        if (symbol && symbol.id !== updatedSymbol.id) {
-            this.ToastService.danger(`The symbol with the name "${updatedSymbol.name}" already exists.`);
-            return;
+            this.SymbolResource.createMany(this.project.id, this.importData.symbols)
+                .then(createdSymbols => {
+                    this.ToastService.success('The symbols have been imported');
+                    this.close({$value: {type: 'symbols', symbols: createdSymbols}});
+                })
+                .catch(err => {
+                    this.errorMessage = `The symbols could not be imported. ${err.data.message}`;
+                });
+        } else {
+            this.SymbolGroupResource.createMany(this.project.id, this.importData.symbolGroups)
+                .then(createdGroups => {
+                    this.ToastService.success('The symbols have been imported');
+                    this.close({$value: {type: 'symbolGroups', groups: createdGroups}});
+                })
+                .catch(err => {
+                    this.errorMessage = `The symbols could not be imported. ${err.data.message}`;
+                });
         }
-
-        // update name
-        symbol = this.symbols.find(s => s.id === updatedSymbol.id);
-        symbol.name = updatedSymbol.name;
-        this.symbolToEdit = null;
     }
 
     selectGroup(group) {
-        if (group == null || group === this.selectedGroup) {
-            this.selectedGroup = SymbolGroupUtils.findDefaultGroup(this.groups);
-        } else {
-            this.selectedGroup = group;
-        }
+        this.selectedGroup = group === this.selectedGroup ? null : group;
     }
 }
 

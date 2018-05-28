@@ -17,7 +17,7 @@
 import remove from 'lodash/remove';
 import {events} from '../../../constants';
 import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {DateUtils} from '../../../utils/date-utils';
+import {SymbolGroup} from '../../../entities/symbol-group';
 import {Selectable} from '../../../utils/selectable';
 import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
 
@@ -281,12 +281,15 @@ class SymbolsViewComponent {
     importSymbols() {
         this.$uibModal.open({
             component: 'symbolsImportModal',
-            size: 'lg',
             resolve: {
                 groups: () => this.groups
             }
-        }).result.then(symbols => {
-            this.addSymbols(symbols);
+        }).result.then(data => {
+            if (data.type === 'symbols') {
+                this.addSymbols(data.symbols);
+            } else {
+                data.groups.forEach(g => this.addGroup(g));
+            }
         });
     }
 
@@ -299,17 +302,16 @@ class SymbolsViewComponent {
      * and hidden properties. They are removed so that they can later be uploaded and created like new symbols.
      */
     exportSelectedSymbols() {
-        const selectedSymbols = this.selectedSymbols.getSelected();
-        if (selectedSymbols.length > 0) {
-            const name = 'symbols-' + DateUtils.YYYYMMDD();
-            this.PromptService.prompt('Enter a name for the json file', name)
-                .then(filename => {
-                    const symbolsToExport = selectedSymbols.map(s => s.getExportableSymbol());
-                    this.DownloadService.downloadObject(symbolsToExport, filename);
-                    this.ToastService.success('Symbols exported');
-                });
+        if (this.selectedSymbols.getSelected().length > 0) {
+            this.$uibModal.open({
+                component: 'symbolsExportModal',
+                resolve: {
+                    groups: () => this.groups,
+                    selectedSymbols: () => this.selectedSymbols
+                }
+            });
         } else {
-            this.ToastService.info('Select symbols you want to export');
+            this.ToastService.info('You have to select at least one symbol.');
         }
     }
 }

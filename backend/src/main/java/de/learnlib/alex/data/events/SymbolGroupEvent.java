@@ -20,6 +20,8 @@ import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.webhooks.entities.Event;
 import de.learnlib.alex.webhooks.entities.EventType;
 
+import java.util.List;
+
 /** Symbol group events. */
 public class SymbolGroupEvent {
 
@@ -33,6 +35,19 @@ public class SymbolGroupEvent {
          */
         public Created(SymbolGroup symbolGroup) {
             super(symbolGroup, EventType.SYMBOL_GROUP_CREATED);
+        }
+    }
+
+    /** Event for when a symbol group is created. */
+    public static class CreatedMany extends Event<List<SymbolGroup>> {
+
+        /**
+         * Constructor.
+         *
+         * @param symbolGroups The created symbol group .
+         */
+        public CreatedMany(List<SymbolGroup> symbolGroups) {
+            super(symbolGroups, EventType.SYMBOL_GROUPS_CREATED);
         }
     }
 

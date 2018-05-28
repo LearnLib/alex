@@ -1,0 +1,28 @@
+<div class="modal-header">
+  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+    <i class="fa fa-close fa-fw"></i>
+  </a>
+  <h3 class="modal-title">Export symbols</h3>
+</div>
+
+<form name="vm.form" ng-submit="vm.export()">
+
+  <div class="modal-body">
+    <div class="form-group">
+      <label>Filename</label>
+      <input type="text" ng-model="vm.filename" required class="form-control">
+    </div>
+
+    <div class="checkbox">
+      <label class="control-label">
+        <input type="checkbox" ng-model="vm.exportSymbolsOnly"> Export symbols only
+      </label>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-primary" type="submit">Export</button>
+    <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
+  </div>
+
+</form>
