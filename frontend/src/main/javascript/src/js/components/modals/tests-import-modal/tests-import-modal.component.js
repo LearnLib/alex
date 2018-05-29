@@ -40,8 +40,8 @@ export const testsImportModalComponent = {
 
             this.project = SessionService.getProject();
 
-            this.tests = [];
             this.errorMessage = null;
+            this.importData = null;
         }
 
         /**
@@ -50,11 +50,13 @@ export const testsImportModalComponent = {
          * @param {string} data - The contents of the imported file.
          */
         fileLoaded(data) {
+            this.errorMessage = null;
             try {
-                const tests = JSON.parse(data);
-                if (!tests.length) throw 'The file does not seem to contain any tests';
-                this.tests = tests;
-                this.errorMessage = null;
+                const importData = JSON.parse(data);
+                if (importData.type !== 'tests' || importData.tests == null || importData.tests.length === 0) {
+                    throw 'The file does not seem to contain any tests';
+                }
+                this.importData = importData;
             } catch (exception) {
                 this.errorMessage = '' + exception;
             }
@@ -66,12 +68,12 @@ export const testsImportModalComponent = {
         importTests() {
             this.errorMessage = null;
 
-            if (this.tests.length) {
+            if (this.importData.tests.length) {
                 const parentId = this.resolve.modalData.test.id;
 
-                this.TestService.importTests(this.project.id, this.tests, parentId)
-                    .then((tests) => this.close({$value: tests}))
-                    .catch((err) => this.errorMessage = err.data.message);
+                this.TestService.importTests(this.project.id, this.importData.tests, parentId)
+                    .then(tests => this.close({$value: tests}))
+                    .catch(err => this.errorMessage = err.data.message);
             } else {
                 this.errorMessage = 'There aren\'t any tests to import';
             }

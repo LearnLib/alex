@@ -15,6 +15,7 @@
  */
 
 import remove from 'lodash/remove';
+import {version} from '../../../../../environments';
 import {webBrowser} from '../../../constants';
 import {DriverConfigService} from '../../../services/driver-config.service';
 import {DateUtils} from '../../../utils/date-utils';
@@ -345,9 +346,15 @@ export const testSuiteViewComponent = {
                 tests = JSON.parse(JSON.stringify(tests));
                 tests = this.TestService.exportTests(tests);
 
+                const data = {
+                    version,
+                    type: 'tests',
+                    tests
+                };
+
                 const name = `tests-${this.testSuite.name}-${DateUtils.YYYYMMDD()}`;
                 this.PromptService.prompt('Enter a name for the file', name).then(name => {
-                    this.DownloadService.downloadObject(tests, name);
+                    this.DownloadService.downloadObject(data, name);
                     this.ToastService.success('The tests have been exported.');
                 });
             }

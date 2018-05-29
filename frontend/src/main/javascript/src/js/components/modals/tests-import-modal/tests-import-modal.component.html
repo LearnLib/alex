@@ -6,15 +6,21 @@
         {{vm.errorMessage}}
     </div>
 
-    <file-dropzone on-loaded="vm.fileLoaded.bind(vm)" ng-if="!vm.tests.length">
+    <file-dropzone on-loaded="vm.fileLoaded.bind(vm)" ng-if="vm.importData == null">
         Drag and drop file here or click to select a file
     </file-dropzone>
 
-    <div class="list-group" ng-if="vm.tests.length">
-        <div class="list-group-item d-flex" ng-repeat="test in vm.tests">
+    <div class="alert alert-info" ng-if="vm.importData != null">
+        <i class="fa fa-fw fa-close pull-right cursor-pointer" ng-click="vm.importData = null"></i>
+        <span class="label label-primary">Tests</span> <br>
+        <span class="label label-default">{{vm.importData.version}}</span>
+    </div>
+
+    <div class="list-group" ng-if="vm.importData != null && vm.importData.tests.length">
+        <div class="list-group-item d-flex" ng-repeat="test in vm.importData.tests">
             <i class="fa fa-fw" ng-class="{'fa-file-o': test.type === 'case', 'fa-folder-o': test.type === 'suite'}"></i>
             <strong class="d-block flex-grow-1 ml-1 mr-1">{{test.name}}</strong>
-            <i class="fa fa-fw fa-close pull-right" ng-click="vm.tests.splice($index, 1)"></i>
+            <i class="fa fa-fw fa-close pull-right" ng-click="vm.importData.tests.splice($index, 1)"></i>
         </div>
     </div>
 </div>
