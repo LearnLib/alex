@@ -19,6 +19,7 @@ package de.learnlib.alex.learning.services.connectors;
 import de.learnlib.alex.learning.services.BaseUrlManager;
 import org.glassfish.jersey.client.ClientProperties;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
@@ -56,6 +57,9 @@ public class WebServiceConnector implements Connector {
     /** The cookies from th last call done by the connection. */
     private Map<String, NewCookie> cookies;
 
+    /** Client for following redirects. */
+    private Client client;
+
     /**
      * Constructor which sets the WebTarget to use.
      *
@@ -64,7 +68,9 @@ public class WebServiceConnector implements Connector {
      */
     public WebServiceConnector(String baseUrl) {
         this.baseUrl = new BaseUrlManager(baseUrl);
-        this.target = ClientBuilder.newClient().target(baseUrl);
+        this.target = ClientBuilder.newClient().property(ClientProperties.FOLLOW_REDIRECTS, false)
+                .target(baseUrl);
+        this.client = ClientBuilder.newClient().property(ClientProperties.FOLLOW_REDIRECTS, false);
     }
 
     /**
@@ -166,6 +172,7 @@ public class WebServiceConnector implements Connector {
     public void get(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) {
         final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).get();
         rememberResponseComponents(response);
+        followRedirects(response);
     }
 
     private Entity getBody(Map<String, String> requestHeaders, String data) {
@@ -195,6 +202,7 @@ public class WebServiceConnector implements Connector {
         final Entity body = getBody(requestHeaders, data);
         final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).post(body);
         rememberResponseComponents(response);
+        followRedirects(response);
     }
 
     /**
@@ -216,6 +224,7 @@ public class WebServiceConnector implements Connector {
         final Entity body = getBody(requestHeaders, data);
         final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).put(body);
         rememberResponseComponents(response);
+        followRedirects(response);
     }
 
     /**
@@ -233,6 +242,7 @@ public class WebServiceConnector implements Connector {
     public void delete(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) {
         final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).delete();
         rememberResponseComponents(response);
+        followRedirects(response);
     }
 
     /**
@@ -258,6 +268,23 @@ public class WebServiceConnector implements Connector {
         body = response.readEntity(String.class);
         cookies = response.getCookies();
         init = true;
+    }
+
+    private void followRedirects(Response response) {
+        while (response.getStatus() == Response.Status.FOUND.getStatusCode()) { // 302
+            final String location = response.getHeaderString("Location");
+            response = client.target(location).request().get();
+
+            status = response.getStatus();
+            headers = response.getHeaders();
+            body = response.readEntity(String.class);
+
+            // Overwrite cookies from previous requests if there are new cookies, otherwise keep the old ones.
+            // This way, cookies that may be required don't get lost in redirects.
+            if (!response.getCookies().isEmpty()) {
+                cookies = response.getCookies();
+            }
+        }
     }
 
     /**
