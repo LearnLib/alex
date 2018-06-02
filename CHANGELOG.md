@@ -24,6 +24,7 @@
 ## Bug Fixes
 
 * Resuming a learning process should now work as expected.
+* Various smaller fixes.
 
 ## Features
 
@@ -42,6 +43,7 @@
 * Named project URLs.
 * Download uploaded files.
 * Learner results can be cloned.
+* Import and export symbol groups.
 
 ## Further Comments
 

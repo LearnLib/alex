@@ -22,54 +22,48 @@ class LearnerStatusWidgetComponent {
     /**
      * Constructor.
      *
+     * @param $interval
      * @param {LearnerResource} LearnerResource
      * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor(LearnerResource, ToastService) {
+    constructor($interval, LearnerResource, ToastService) {
+        this.$interval = $interval;
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
 
         /**
-         * Whether the learner is actively learning an application.
-         * @type {boolean}
+         * The status of the learner.
+         * @type {Object}
          */
-        this.isActive = false;
-
-        /**
-         * Whether the learner has finished learning an application.
-         * @type {boolean}
-         */
-        this.hasFinished = false;
-
-        /**
-         * The intermediate or final learning result.
-         * @type {LearnResult}
-         */
-        this.result = null;
+        this.status = null;
 
         /**
          * The current project.
          * @type {Project}
          */
         this.project = null;
+
+        /**
+         * The interval handle
+         * @type {?number}
+         */
+        this.intervalHandle = null;
     }
 
     $onInit() {
-        this.LearnerResource.isActive(this.project.id)
-            .then(data => {
-                this.isActive = data.active;
-                if (!data.active) {
-                    this.LearnerResource.getStatus(this.project.id)
-                        .then(data => {
-                            if (data !== null) {
-                                this.hasFinished = true;
-                                this.result = data;
-                            }
-                        });
-                }
-            })
-            .catch(err => console.log(err));
+        this.getStatus();
+        this.intervalHandle = this.$interval(() => this.getStatus(), 5000)
+    }
+
+    $onDestroy() {
+        this.$interval.cancel(this.intervalHandle);
+    }
+
+    getStatus() {
+        this.LearnerResource.getStatus(this.project.id)
+            .then(status => this.status = status)
+            .catch(console.error);
     }
 
     /**
@@ -78,9 +72,9 @@ class LearnerStatusWidgetComponent {
     abort() {
         this.LearnerResource.stop(this.project.id)
             .then(() => {
-                this.ToastService.info('The Learner stops with the next hypothesis');
+                this.ToastService.info('The learner stops as soon as possible.');
             })
-            .catch(err => console.log(err));
+            .catch(console.error);
     }
 }
 

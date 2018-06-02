@@ -25,7 +25,6 @@ class LearnerViewComponentComponent {
     /**
      * Constructor.
      *
-     * @param $scope
      * @param $state
      * @param $interval
      * @param {SessionService} SessionService
@@ -36,8 +35,8 @@ class LearnerViewComponentComponent {
      * @param {NotificationService} NotificationService
      */
     // @ngInject
-    constructor($scope, $state, $interval, SessionService, LearnerResource, LearnResultResource, ToastService,
-                SymbolResource, NotificationService) {
+    constructor($state, $interval, SessionService, LearnerResource, LearnResultResource, ToastService, SymbolResource,
+                NotificationService) {
         this.$interval = $interval;
         this.$state = $state;
         this.LearnerResource = LearnerResource;
@@ -54,9 +53,9 @@ class LearnerViewComponentComponent {
 
         /**
          * The interval that is used for polling.
-         * @type {null|number}
+         * @type {?number}
          */
-        this.interval = null;
+        this.intervalHandle = null;
 
         /**
          * The interval time for polling.
@@ -65,79 +64,66 @@ class LearnerViewComponentComponent {
         this.intervalTime = 5000;
 
         /**
-         * The complete learn result until the most recent learned one.
-         * @type {LearnResult[]}
-         */
-        this.result = null;
-
-        /**
-         * Indicates if polling the server for a test result is still active.
-         * @type {boolean}
-         */
-        this.active = false;
-
-        /**
-         * Detailed statistics about the active process.
-         * @type {any}
-         */
-        this.statistics = null;
-
-        /**
          * The current step number.
          * @type {number}
          */
         this.stepNo = 1;
 
         /**
-         * The time it took to learn.
-         * @type {number}
-         */
-        this.duration = 0;
-
-        /**
          * The resume configuration.
-         * @type {any}
+         * @type {?Object}
          */
         this.resumeConfig = null;
 
         /**
-         * The current phase of the learner.
-         * @type {string}
+         * The symbols.
+         * @type {AlphabetSymbol[]}
          */
-        this.learnerPhase = null;
-
-        /**
-         * The queries that are executed atm by the learner.
-         * @type {any[]}
-         */
-        this.currentQueries = null;
-
-        /** The symbols. */
         this.symbols = [];
 
-        // stop polling when you leave the page
-        $scope.$on('$destroy', () => {
-            this.$interval.cancel(this.interval);
-        });
+        /**
+         * The current learner status.
+         * @type {?Object}
+         */
+        this.status = null;
+
+        /**
+         * The final learner result of the process.
+         * @type {?LearnResult}
+         */
+        this.finalResult = null;
+
+        /**
+         * If the learning process finished.
+         * @type {boolean}
+         */
+        this.finished = false;
 
         this.SymbolResource.getAll(this.project.id)
             .then(symbols => this.symbols = symbols)
             .catch(console.error);
 
         if (this.$state.params.result !== null) {
-            this.result = this.$state.params.result;
-            this.stepNo = this.result.steps.length;
+            this.finished = true;
+            this.finalResult = this.$state.params.result;
+            this.stepNo = this.finalResult.steps.length;
 
             this.resumeConfig = {
-                eqOracle: this.result.steps[this.stepNo - 1].eqOracle,
-                maxAmountOfStepsToLearn: this.result.steps[this.stepNo - 1].stepsToLearn,
+                eqOracle: this.finalResult.steps[this.stepNo - 1].eqOracle,
+                maxAmountOfStepsToLearn: this.finalResult.steps[this.stepNo - 1].stepsToLearn,
                 stepNo: this.stepNo,
                 symbolsToAdd: [],
                 project: this.project.id,
-                urls: this.result.urls,
+                urls: this.finalResult.urls,
             };
         } else {
             this.poll();
+        }
+    }
+
+    $onDestroy() {
+        if (this.intervalHandle != null) {
+            this.$interval.cancel(this.intervalHandle);
         }
     }
 
@@ -145,54 +131,48 @@ class LearnerViewComponentComponent {
      * Checks every x seconds if the server has finished learning and sets the test if he did.
      */
     poll() {
-        this.active = true;
-        this.interval = this.$interval(() => {
-            this.LearnerResource.isActive(this.project.id)
-                .then(data => {
-                    this.learnerPhase = data.learnerPhase;
-                    this.currentQueries = data.currentQueries;
+        this.finished = false;
+        this.getStatus();
+        this.intervalHandle = this.$interval(() => this.getStatus(), this.intervalTime);
+    }
 
-                    if (data.active && typeof data.testNo !== 'undefined') {
-                        this.stepNo = data.stepNo;
-                        this.LearnResultResource.get(this.project.id, data.testNo)
-                            .then(result => this.result = result)
-                            .catch(err => console.log(err));
-                    }
+    getStatus() {
+        this.LearnerResource.getStatus(this.project.id)
+            .then(status => {
+                this.status = status;
 
-                    if (!data.active) {
-                        this.LearnerResource.getStatus(this.project.id).then(result => {
-                            if (result.error) {
-                                this.$state.go('error', {message: result.errorText});
+                if (!this.status.active) {
+                    this.finished = true;
+
+                    this.LearnResultResource.getLatest(this.project.id)
+                        .then(latestResult => {
+                            if (latestResult.error) {
+                                this.$state.go('error', {message: latestResult.errorText});
                             } else {
-                                this.result = result;
+                                this.finalResult = latestResult;
 
-                                const lastStep = this.result.steps[this.result.steps.length - 1];
+                                const lastStep = this.finalResult.steps[this.finalResult.steps.length - 1];
                                 this.resumeConfig = {
                                     eqOracle: lastStep.eqOracle,
                                     maxAmountOfStepsToLearn: lastStep.stepsToLearn,
-                                    stepNo: result.steps.length,
+                                    stepNo: lastStep.stepNo,
                                     symbolsToAdd: [],
                                     project: this.project.id,
-                                    urls: this.result.urls
+                                    urls: this.finalResult.urls
                                 };
                             }
 
                             this.ToastService.success('The learning process finished');
                             this.NotificationService.notify('ALEX has finished learning the application.');
-                        });
-                        this.$interval.cancel(this.interval);
-                        this.active = false;
-                    }
+                        })
+                        .catch(console.error);
 
-                    if (data.statistics) {
-                        this.statistics = data.statistics;
-                        LearnResult.convertNsToMs(this.statistics.duration);
-
-                        this.duration = Date.now() - Date.parse(data.statistics.startDate);
-                    }
-                })
-                .catch(err => console.log(err));
-        }, this.intervalTime);
+                    this.$interval.cancel(this.intervalHandle);
+                } else {
+                    LearnResult.convertNsToMs(this.status.statistics.duration);
+                }
+            })
+            .catch(console.error);
     }
 
     /**
@@ -202,19 +182,15 @@ class LearnerViewComponentComponent {
         const config = JSON.parse(JSON.stringify(this.resumeConfig));
         config.urls = this.resumeConfig.urls.map(u => u.id);
 
-        this.LearnerResource.resume(this.project.id, this.result.testNo, config)
+        this.LearnerResource.resume(this.project.id, this.finalResult.testNo, config)
             .then(() => {
-                this.poll();
+                this.finalResult = null;
                 this.stepNo = this.resumeConfig.stepNo;
-                this.LearnResultResource.get(this.project.id, this.result.testNo)
-                    .then(result => {
-                        result.steps.pop();
-                        this.result = result;
-                    })
-                    .catch(err => console.log(err));
+                this.status = null;
+                this.poll();
             })
-            .catch(response => {
-                this.ToastService.danger('<p><strong>Resume learning failed!</strong></p>' + response.data.message);
+            .catch(err => {
+                this.ToastService.danger('<p><strong>Resume learning failed!</strong></p>' + err.data.message);
             });
     }
 
@@ -222,7 +198,7 @@ class LearnerViewComponentComponent {
      * Tell the learner to stop learning at the next possible time, when the next hypothesis is generated.
      */
     abort() {
-        if (this.active) {
+        if (this.status.active) {
             this.ToastService.info('The learner will stop after executing the current query batch');
             this.LearnerResource.stop(this.project.id);
         }

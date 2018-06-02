@@ -360,19 +360,15 @@ public class Learner {
      * @return A snapshot of the Learner status.
      */
     public LearnerStatus getStatus(Long projectId) {
-        LearnerStatus status;
-
         boolean active = isActive(projectId);
         if (!active) {
-            status = new LearnerStatus(); // not active
+            return new LearnerStatus();
         } else {
             AbstractLearnerThread thread = userThreads.get(projectId);
             LearnerPhase phase = thread != null ? thread.getLearnerPhase() : null;
             List<DefaultQueryProxy> queries = thread != null ? thread.getCurrentQueries() : null;
-            status = new LearnerStatus(getResult(projectId), phase, queries); // active
+            return new LearnerStatus(getResult(projectId), phase, queries);
         }
-
-        return status;
     }
 
     /**

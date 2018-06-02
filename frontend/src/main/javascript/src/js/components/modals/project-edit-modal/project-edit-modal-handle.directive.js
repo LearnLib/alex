@@ -36,9 +36,9 @@ export function projectEditModalHandleDirective($uibModal, LearnerResource, Toas
 
                 // check if the current project is used in learning and abort deletion
                 // because of unknown side effects
-                LearnerResource.isActive(scope.project.id)
-                    .then(data => {
-                        if (data.active && data.project === scope.project.id) {
+                LearnerResource.getStatus(scope.project.id)
+                    .then(status => {
+                        if (status.active && status.project === scope.project.id) {
                             ToastService.info('You cannot edit this project because a learning process is still active.');
                         } else {
                             $uibModal.open({

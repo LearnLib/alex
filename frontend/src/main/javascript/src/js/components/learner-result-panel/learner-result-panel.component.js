@@ -99,7 +99,7 @@ class LearnerResultPanelComponent {
      * @returns {boolean|*}
      */
     hasInternalDataStructure() {
-        return [learnAlgorithm.DISCRIMINATION_TREE, learnAlgorithm.LSTAR, learnAlgorithm.TTT]
+        return [learnAlgorithm.DT, learnAlgorithm.LSTAR, learnAlgorithm.TTT]
             .indexOf(this.result.algorithm.name) > -1;
     }
 
@@ -111,7 +111,7 @@ class LearnerResultPanelComponent {
             case learnAlgorithm.LSTAR:
                 this.mode = this.modes.OBSERVATION_TABLE;
                 break;
-            case learnAlgorithm.DISCRIMINATION_TREE:
+            case learnAlgorithm.DT:
                 this.mode = this.modes.DISCRIMINATION_TREE;
                 break;
             case learnAlgorithm.TTT:

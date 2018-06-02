@@ -6,59 +6,59 @@
 
 [![Travis CI](https://travis-ci.org/LearnLib/alex.svg?branch=developer)](https://travis-ci.org/LearnLib/alex)
 
-Automata Learning Experience (ALEX) is an extension of the [LearnLib](https://github.com/LearnLib/learnlib) that allows 
-you run automated tests on web applications and JSON-based REST APIs using active automata learning.
+Automata Learning EXperience (ALEX) is an extension of [LearnLib][learnlib] that allows you run automated tests on web 
+applications and JSON-based REST APIs using active automata learning.
 
-Users model basic test inputs for their target application which are used by ALEX to automatically infer an automaton 
-model, or to be more precise, a [Mealy machine](https://en.wikipedia.org/wiki/Mealy_machine) that represents the 
-behavior of the web application.
+Users model [Selenium][selenium]- or HTTP-based test inputs for their application, which are used to automatically infer 
+an automaton model (a [Mealy machine][mealy]), which represents the behavior of the web application.
 
-## Installation and login
+## Installation
 
-We developed and tested ALEX using either Windows 8.1 and higher and Linux Ubuntu 14.10 and higher.
-As the application runs on JAVA, any other system with an installed JVM should do fine.
-We also advise to use a modern web browser like Google Chrome, Mozilla Firefox or Microsoft Edge with JavaScript enabled.
+Make sure you have Java 8 installed on your system.
+We advise to use a modern web browser like Google Chrome, Mozilla Firefox or Microsoft Edge with JavaScript enabled.
 
-After the first start, you can login as an admin using the account below.
+1. [Download](https://github.com/LearnLib/alex/releases/latest) the latest version.
+2. Open a terminal and start ALEX via `java -jar alex-1.5.0.war [--alex.port=XXXX]`.
+3. Wait until the command line prints something like `de.learnlib.alex.App - Started App in XX.XXX seconds`.
+3. Open *http://localhost:8000* in a web browser.
+
+After the first start, you can login as an admin using the account below:
 
 Email: *admin@alex.example* <br>
 Password: *admin*
 
-#### Using the packaged version
+## Build instructions
 
-Make sure you have Java 8 installed on your system.
-
-1. [Download](https://github.com/LearnLib/alex/releases/latest) the latest version.
-2. Open a terminal and start the *war* archive using `java -jar ALEX.war [--alex.port=XXXX]`
-3. Open *http://localhost:8000* in a web browser
-
-#### From source
-
-For the installation from the source files make sure your system matches the following requirements:
+In order to build ALEX from source make sure your system matches the following requirements:
 
 * Java JDK 8
 * Maven 3
 * Node.js (v10.0.0) and the NPM (v6.0.0)
 
-Build and run ALEX by running following commands:
+To build ALEX, open a terminal and follow the instructions below:
 
-1. `git clone https://github.com/LearnLib/alex.git`
-2. `cd alex`
-3. `mvn clean package [-DskipTests]`
-4. `java -jar build/target/ALEX/alex-build-1.5.0-SNAPSHOT.war [--alex.port=XXXX]`
-5. open *http://localhost:8000* in a web browser
+```bash
+# clone the repository
+git clone https://github.com/LearnLib/alex.git
 
-Or, if you just want to start the backend, you can use:
+# navigate to the project directory
+cd alex
 
-1. `cd backend`
-2. `mvn spring-boot:run [-Dalex.port=XXXX]`
-3. open *http://localhost:8000* in a web browser
+# build ALEX
+mvn install package [-DskipTests]
+```
 
+The bundle can then be found at `build/target/alex-build-1.5.0.war`.
 
 ## Further reading
 
-* [User manual](http://learnlib.github.io/alex/book/1.4.0/contents/user-manual/index.html)
-* [Examples](http://learnlib.github.io/alex/book/1.4.0/contents/examples/index.html)
-* [Developer docs](http://learnlib.github.io/alex/book/1.4.0/contents/developer-documents/index.html)
+* [User manual](http://learnlib.github.io/alex/book/1.5.0/contents/user-manual/index.html)
+* [Examples](http://learnlib.github.io/alex/book/1.5.0/contents/examples/index.html)
+* [Developer docs](http://learnlib.github.io/alex/book/1.5.0/contents/developer-documents/index.html)
 * [Active automata learning](https://scholar.google.de/scholar?hl=de&q=active+automata+learning)
 * [LearnLib](http://learnlib.de/)
+
+
+[learnlib]: https://github.com/LearnLib/learnlib
+[mealy]: https://en.wikipedia.org/wiki/Mealy_machine
+[selenium]: https://www.seleniumhq.org/

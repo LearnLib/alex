@@ -130,7 +130,7 @@ export function formatAlgorithm() {
                 return 'DHC';
             case learnAlgorithm.TTT:
                 return 'TTT';
-            case learnAlgorithm.DISCRIMINATION_TREE:
+            case learnAlgorithm.DT:
                 return 'Discrimination Tree';
             case learnAlgorithm.KEARNS_VAZIRANI:
                 return 'Kearns Vazirani';

@@ -293,27 +293,6 @@ public class LearnerResource {
     }
 
     /**
-     * Is the learner active?
-     *
-     * @param projectId The project to check.
-     * @return The status of the current learn process.
-     * @successResponse 200 OK
-     * @responseType de.learnlib.alex.learning.entities.LearnerStatus
-     */
-    @GET
-    @Path("/{project_id}/active")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response isActive(@PathParam("project_id") long projectId) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("isActive() for user {}.", user);
-
-        LearnerStatus status = learner.getStatus(projectId);
-
-        LOGGER.traceExit(status);
-        return Response.ok(status).build();
-    }
-
-    /**
      * Get the parameters & (temporary) results of the learning.
      *
      * @param projectId The project to get the Status of.
@@ -330,16 +309,10 @@ public class LearnerResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getResult() for user {}.", user);
 
-        LearnerResult resultInThread = learner.getResult(projectId);
-        if (resultInThread == null) {
-            throw new NotFoundException("No result was learned in this instance of ALEX.");
-        }
+        LearnerStatus status = learner.getStatus(projectId);
 
-        learnerResultDAO.get(user, resultInThread.getProjectId(),
-                             resultInThread.getTestNo(), false);
-
-        LOGGER.traceExit(resultInThread);
-        return Response.ok(resultInThread).build();
+        LOGGER.traceExit(status);
+        return Response.ok(status).build();
     }
 
     /**

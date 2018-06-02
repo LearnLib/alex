@@ -1,15 +1,16 @@
 <widget title="Learner status">
-    <div class="alert alert-info no-margin-bottom" ng-if="!vm.isActive && !vm.hasFinished">
+    <div class="alert alert-info no-margin-bottom" ng-if="!vm.status.active">
         The learner is not active. <a ui-sref="learnerSetup({projectId: vm.project.id})">Start learning</a> your application!
     </div>
-    <div class="alert alert-info no-margin-bottom" ng-if="!vm.isActive && vm.hasFinished">
-        The learner is not active and created a model.
-        <a ui-sref="learnerStart({projectId: vm.project.id})">Refine it</a>,
-        <a ui-sref="learnerResultsCompare({testNos: [vm.result.testNo], projectId: vm.project.id})">have a look at it</a> or
-        <a ui-sref="learnerSetup({projectId: vm.project.id})">Start a new test!</a>
-    </div>
-    <div class="alert alert-warning no-margin-bottom clearfix" ng-if="vm.isActive">
+    <div class="alert alert-warning no-margin-bottom clearfix" ng-if="vm.status.active">
         The learner is currently learning an application. <hr>
-        <button class="btn btn-xs btn-warning pull-right" ng-click="vm.abort()">Abort</button>
+        <div>
+            <a class="btn btn-xs btn-warning" ui-sref="learnerStart({projectId: vm.project.id})">
+                <i class="fa fa-eye fa-fw"></i> Show progress
+            </a>
+            <button class="btn btn-xs btn-warning" ng-click="vm.abort()">
+                <i class="fa fa-times fa-fw"></i> Abort
+            </button>
+        </div>
     </div>
 </widget>

@@ -31,8 +31,8 @@ export class LearningAlgorithmService {
         switch (obj.type) {
             case learnAlgorithm.DHC:
                 return {name: learnAlgorithm.DHC};
-            case learnAlgorithm.DISCRIMINATION_TREE:
-                return {name: learnAlgorithm.DISCRIMINATION_TREE};
+            case learnAlgorithm.DT:
+                return {name: learnAlgorithm.DT};
             case learnAlgorithm.LSTAR:
                 return {name: learnAlgorithm.LSTAR};
             case learnAlgorithm.KEARNS_VAZIRANI:

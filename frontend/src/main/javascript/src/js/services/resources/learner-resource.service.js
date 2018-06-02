@@ -68,27 +68,15 @@ export class LearnerResource {
     }
 
     /**
-     * Gets the learner result that includes the hypothesis. make sure isActive() returns true before calling this
-     * function.
+     * Gets the status of the learner.
      *
      * @param {number} projectId - The id of the test to resume with.
      * @return {*}
      */
     getStatus(projectId) {
         return this.$http.get(`${apiUrl}/learner/${projectId}/status`)
-            .then(response => new LearnResult(response.data))
+            .then(res => res.data)
             .catch(() => null);
-    }
-
-    /**
-     * Check if the server is finished learning a project.
-     *
-     * @param {number} projectId - The id of the test to resume with.
-     * @return {*}
-     */
-    isActive(projectId) {
-        return this.$http.get(`${apiUrl}/learner/${projectId}/active`)
-            .then(response => response.data);
     }
 
     /**

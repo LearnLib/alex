@@ -85,10 +85,10 @@ class LearnerSetupViewComponent {
         this.resetSymbol = null;
 
         /**
-         * Indicates whether there is a learning process that can be continued (the last one).
-         * @type {boolean}
+         * The latest learner result in the project.
+         * @type {?LearnResult}
          */
-        this.canContinueLearnProcess = false;
+        this.latestLearnerResult = null;
 
         SettingsResource.getSupportedWebDrivers()
             .then(data => {
@@ -98,15 +98,14 @@ class LearnerSetupViewComponent {
 
         // make sure that there isn't any other learn process active
         // redirect to the load screen in case there is an active one
-        this.LearnerResource.isActive(this.project.id)
+        this.LearnerResource.getStatus(this.project.id)
             .then(data => {
                 if (data.active) {
                     if (data.project === this.project.id) {
-                        this.ToastService.info('There is currently running a learn process.');
+                        this.ToastService.info('There is an active learning process for this project.');
                         this.$state.go('learnerStart', {projectId: this.project.id});
                     } else {
-                        this.ToastService.danger('There is already running a test from another project.');
-                        this.$state.go('project', {projectId: this.project.id});
+                        this.ToastService.info('There is an active learning process for another project.');
                     }
                 } else {
 
@@ -117,22 +116,19 @@ class LearnerSetupViewComponent {
                             this.symbols = SymbolGroupUtils.getSymbols(this.groups);
                             this.selectedSymbols = new Selectable(this.symbols, 'id');
                         })
-                        .catch(err => console.log(err));
+                        .catch(console.error);
 
                     // load learn results so that their configuration can be reused
                     LearnResultResource.getAll(this.project.id)
-                        .then(learnResults => {
-                            this.learnResults = learnResults;
-                        })
-                        .catch(err => console.log(err));
+                        .then(learnResults => this.learnResults = learnResults)
+                        .catch(console.error);
+
+                    LearnResultResource.getLatest(this.project.id)
+                        .then(latestLearnerResult => this.latestLearnerResult = latestLearnerResult)
+                        .catch(console.error);
                 }
             })
-            .catch(err => console.log(err));
-
-        // get the status to check if there is a learn process that can be continued
-        this.LearnerResource.getStatus(this.project.id).then(data => {
-            this.canContinueLearnProcess = data !== null;
-        });
+            .catch(console.error);
     }
 
     /** @param {LearnConfiguration} config - The config to use. */

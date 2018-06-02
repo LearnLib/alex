@@ -90,9 +90,6 @@ public class LearnerResourceTest extends JerseyTest {
     private LearnerResultDAO learnerResultDAO;
 
     @Mock
-    private LearnerResource learnerResource;
-
-    @Mock
     private Learner learner;
 
     @Mock
@@ -165,13 +162,6 @@ public class LearnerResourceTest extends JerseyTest {
                 .post(Entity.json(START_JSON));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-        String expectedJSON = "{\"active\":true,\"currentQueries\":[],\"learnerPhase\":\"LEARNING\","
-                + "\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
-                + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":0,\"eqOracle\":0,"
-                + "\"total\":0},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
-                + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
-        assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).start(eq(admin), eq(project), any(LearnerStartConfiguration.class));
     }
 
@@ -256,13 +246,6 @@ public class LearnerResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).post(Entity.json(RESUME_JSON));
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"currentQueries\":[],\"learnerPhase\":\"LEARNING\","
-                + "\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
-                + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":0,\"eqOracle\":0,"
-                + "\"total\":0},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
-                + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
-
-        assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).resume(any(User.class), any(Project.class), any(LearnerResult.class), any(LearnerResumeConfiguration.class));
     }
 
@@ -314,12 +297,6 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/" + PROJECT_TEST_ID + "/stop").request().header("Authorization", adminToken).get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"currentQueries\":[],\"learnerPhase\":\"LEARNING\","
-                + "\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
-                + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":0,\"eqOracle\":0,"
-                + "\"total\":0},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
-                + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
-        assertEquals(expectedJSON, response.readEntity(String.class));
         verify(learner).stop(admin);
     }
 
@@ -339,31 +316,6 @@ public class LearnerResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldReturnTheRightActiveInformationIfALearningProcessIsActive() {
-        Response response = target("/learner/" + PROJECT_TEST_ID + "/active").request().header("Authorization", adminToken).get();
-
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":true,\"currentQueries\":[],\"learnerPhase\":\"LEARNING\","
-                + "\"project\":" + PROJECT_TEST_ID + ",\"statistics\":{\"duration\":{\"learner\":0,"
-                + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":0,\"eqOracle\":0,"
-                + "\"total\":0},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
-                + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":" + TEST_NO + "}";
-        assertEquals(expectedJSON, response.readEntity(String.class));
-    }
-
-    @Test
-    public void shouldReturnTheRightActiveInformationIfNoLearningProcessIsActive() {
-        LearnerStatus learnerStatus = new LearnerStatus();
-        given(learner.getStatus(PROJECT_TEST_ID)).willReturn(learnerStatus);
-
-        Response response = target("/learner/" + PROJECT_TEST_ID + "/active").request().header("Authorization", adminToken).get();
-
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "{\"active\":false}";
-        assertEquals(expectedJSON, response.readEntity(String.class));
-    }
-
-    @Test
     public void shouldReturnAnActiveStatus() {
         LearnerResult realResult = new LearnerResult();
         given(learner.getResult(PROJECT_TEST_ID)).willReturn(realResult);
@@ -371,24 +323,6 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/" + PROJECT_TEST_ID + "/status").request().header("Authorization", adminToken).get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    }
-
-    @Test
-    public void shouldReturn404IfNoStatusIsAvailable() {
-        given(learner.getResult(PROJECT_TEST_ID)).willReturn(null);
-
-        Response response = target("/learner/" + PROJECT_TEST_ID + "/status").request().header("Authorization", adminToken).get();
-
-        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-    }
-
-    @Test
-    public void shouldReturn404IfStatusWasDeletedInTheDB() throws NotFoundException {
-        given(learnerResultDAO.get(admin, PROJECT_TEST_ID, TEST_NO, false)).willThrow(NotFoundException.class);
-
-        Response response = target("/learner/" + PROJECT_TEST_ID + "/status").request().header("Authorization", adminToken).get();
-
-        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
 
     @Test
