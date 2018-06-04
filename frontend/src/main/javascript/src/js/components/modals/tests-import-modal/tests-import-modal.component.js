@@ -69,7 +69,7 @@ export const testsImportModalComponent = {
             this.errorMessage = null;
 
             if (this.importData.tests.length) {
-                const parentId = this.resolve.modalData.test.id;
+                const parentId = this.resolve.parent.id;
 
                 this.TestService.importTests(this.project.id, this.importData.tests, parentId)
                     .then(tests => this.close({$value: tests}))

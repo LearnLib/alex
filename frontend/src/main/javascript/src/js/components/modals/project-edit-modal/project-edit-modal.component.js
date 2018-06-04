@@ -56,7 +56,7 @@ export class ProjectEditModalComponent {
     }
 
     $onInit() {
-        this.project = this.resolve.modalData.project;
+        this.project = this.resolve.project;
     }
 
     /**

@@ -138,13 +138,13 @@ export class TestService {
     /**
      * Opens the test import modal.
      *
-     * @param {object} testSuite The test suite where the imported tests should be imported.
+     * @param {Object} testSuite The test suite where the imported tests should be imported.
      */
     openImportModal(testSuite) {
         return this.$uibModal.open({
             component: 'testsImportModal',
             resolve: {
-                modalData: () => ({test: testSuite})
+                parent: () => testSuite
             }
         }).result;
     }

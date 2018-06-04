@@ -268,7 +268,7 @@ class SymbolsViewComponent {
 
     moveSelectedSymbols() {
         const selectedSymbols = this.selectedSymbols.getSelected();
-        if (selectedSymbols.length > 1) {
+        if (selectedSymbols.length > 0) {
             this.$uibModal.open({
                 component: 'symbolMoveModal',
                 resolve: {

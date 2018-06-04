@@ -44,9 +44,7 @@ export function projectEditModalHandleDirective($uibModal, LearnerResource, Toas
                             $uibModal.open({
                                 component: 'projectEditModal',
                                 resolve: {
-                                    modalData: () => ({
-                                        project: new Project(scope.project)
-                                    })
+                                    project: () => new Project(JSON.parse(JSON.stringify(scope.project)))
                                 }
                             });
                         }
