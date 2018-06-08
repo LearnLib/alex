@@ -70,7 +70,7 @@ export class LearnResult {
 
         /**
          * The steps of the learn process.
-         * @type {{eqOracle:Object, stepNo:number, statistics:Object, hypothesis:Object}}
+         * @type {Object}
          */
         this.steps = obj.steps;
 
@@ -118,7 +118,7 @@ export class LearnResult {
         // convert ns to ms
         LearnResult.convertNsToMs(this.statistics.duration);
 
-        if (this.steps) {
+        if (this.steps != null && this.steps.length > 0) {
             this.steps.forEach(step => LearnResult.convertNsToMs(step.statistics.duration));
         }
     }

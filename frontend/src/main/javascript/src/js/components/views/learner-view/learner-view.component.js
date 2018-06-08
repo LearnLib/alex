@@ -169,7 +169,7 @@ class LearnerViewComponentComponent {
 
                     this.$interval.cancel(this.intervalHandle);
                 } else {
-                    LearnResult.convertNsToMs(this.status.statistics.duration);
+                    LearnResult.convertNsToMs(this.status.result.statistics.duration);
                 }
             })
             .catch(console.error);

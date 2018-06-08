@@ -98,14 +98,16 @@ export function config($stateProvider, $urlRouterProvider) {
             onEnter: function ($state, SessionService, ProjectResource, $stateParams) {
                 const projectId = $stateParams.projectId;
 
-                SessionService.removeProject();
-                return ProjectResource.get(projectId)
-                    .then(project => {
-                        SessionService.saveProject(project);
-                    })
-                    .catch(() => {
-                        $state.go('error', {message: `The project with the id ${projectId} could not be found`});
-                    });
+                const project = SessionService.getProject();
+                if (project != null || project.id !== projectId) {
+                    return ProjectResource.get(projectId)
+                        .then(project => {
+                            SessionService.saveProject(project);
+                        })
+                        .catch(() => {
+                            $state.go('error', {message: `The project with the id ${projectId} could not be found`});
+                        });
+                }
             }
         })
 

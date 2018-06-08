@@ -62,7 +62,7 @@ export class LearnResultResource {
      */
     getLatest(projectId) {
         return this.$http.get(`${apiUrl}/projects/${projectId}/results/latest`)
-            .then(response => new LearnResult(response.data));
+            .then(res => res.data === '' ? null : new LearnResult(res.data));
     }
 
     /**

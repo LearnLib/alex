@@ -75,7 +75,13 @@ export class LearnerResource {
      */
     getStatus(projectId) {
         return this.$http.get(`${apiUrl}/learner/${projectId}/status`)
-            .then(res => res.data)
+            .then(res => {
+                const status = res.data;
+                if (status.result != null) {
+                    status.result = new LearnResult(status.result);
+                }
+                return status;
+            })
             .catch(() => null);
     }
 

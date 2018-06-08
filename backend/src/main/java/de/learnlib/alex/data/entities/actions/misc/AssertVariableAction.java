@@ -112,19 +112,20 @@ public class AssertVariableAction extends SymbolAction {
 
     @Override
     protected ExecuteResult execute(ConnectorManager connector) {
-        VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
-        String variableValue = storeConnector.get(name);
+        final VariableStoreConnector variableStore = connector.getConnector(VariableStoreConnector.class);
+        final String variableValue = variableStore.get(name);
+        final String valueWithVariables = insertVariableValues(value);
 
-        boolean result;
+        final boolean result;
         if (regexp) {
-            result = variableValue.matches(value);
+            result = variableValue.matches(valueWithVariables);
         } else {
-            result = variableValue.equals(value);
+            result = variableValue.equals(valueWithVariables);
         }
 
         LOGGER.info(LEARNER_MARKER, "Asserting variable '{}' with value '{}' against '{}' => {} "
                                         + "(regex: {}, ignoreFailure: {}, negated: {}).",
-                    name, variableValue, value, result, regexp, ignoreFailure, negated);
+                    name, variableValue, valueWithVariables, result, regexp, ignoreFailure, negated);
 
         if (result) {
             return getSuccessOutput();

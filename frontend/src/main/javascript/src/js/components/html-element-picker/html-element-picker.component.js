@@ -100,11 +100,11 @@ class HtmlElementPickerComponent {
     loadUrl() {
         const self = this;
 
-        this.iframe.attr('src', this.project.getDefaultUrl().url + (this.url === null ? '/' : this.url));
+        this.iframe.attr('src', this.project.getDefaultUrl().url + (this.url == null ? '/' : this.url));
         this.iframe.on('load', () => {
 
             try {
-                this.iframe.contents();
+                const doc = this.iframe[0].contentDocument || this.iframe[0].contentWindow.document;
                 self.$scope.$apply(() => this.corsDisabled = false);
             } catch (err) {
                 self.$scope.$apply(() => this.corsDisabled = true);
