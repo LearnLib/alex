@@ -15,6 +15,7 @@
  */
 
 import {webBrowser} from '../../../constants';
+import {TestCaseStep} from '../../../entities/test-case-step';
 import {DriverConfigService} from '../../../services/driver-config.service';
 
 export const testCaseViewComponent = {
@@ -128,8 +129,19 @@ export const testCaseViewComponent = {
                 step.symbol = step.symbol.id;
                 return step;
             });
+            test.preSteps = test.preSteps.map((step) => {
+                step.symbol = step.symbol.id;
+                return step;
+            });
+            test.postSteps = test.postSteps.map((step) => {
+                step.symbol = step.symbol.id;
+                return step;
+            });
             this.TestResource.update(test)
-                .then(() => this.ToastService.success('The test case has been updated.'))
+                .then(updatedTestCase => {
+                    this.ToastService.success('The test case has been updated.');
+                    this.testCase = updatedTestCase;
+                })
                 .catch((err) => this.ToastService.danger('The test case could not be updated. ' + err.data.message));
         }
 
@@ -166,16 +178,7 @@ export const testCaseViewComponent = {
         }
 
         addSymbolStep(symbol) {
-            this.testCase.steps.push({
-                shouldFail: false,
-                symbol: {
-                    id: symbol.id,
-                    name: symbol.name
-                },
-                parameterValues: symbol.inputs
-                    .filter(input => input.parameterType === 'STRING')
-                    .map(input => ({parameter: input, value: null}))
-            });
+            this.testCase.steps.push(TestCaseStep.fromSymbol(symbol));
         }
     }
 };

@@ -31,7 +31,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -139,6 +138,12 @@ public class TestExecutionConfig implements Serializable {
         return url == null ? null : url.getId();
     }
 
+    /**
+     * The the URL by an URL ID:
+     *
+     * @param urlId
+     *         The ID of the URL.
+     */
     @JsonProperty("url")
     public void setUrlId(Long urlId) {
         this.url = new ProjectUrl();

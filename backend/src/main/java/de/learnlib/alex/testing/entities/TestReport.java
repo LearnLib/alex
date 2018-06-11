@@ -40,7 +40,9 @@ public class TestReport implements Serializable {
 
     private static final long serialVersionUID = 1046158779314008741L;
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+    /** The date formatter for the report. */
+    private static final DateTimeFormatter DATE_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
 
     /** The id in the database. */
     @Id

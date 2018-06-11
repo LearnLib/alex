@@ -33,8 +33,8 @@ import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestCaseStep;
-import de.learnlib.alex.testing.entities.TestExecutionResult;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
+import de.learnlib.alex.testing.entities.TestExecutionResult;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.entities.TestStatus;
@@ -214,7 +214,7 @@ public class TestService {
                 .filter(TestCase.class::isInstance)
                 .collect(Collectors.toList());
 
-        for (Test test: testCases) {
+        for (Test test : testCases) {
             final TestCaseResult result = executeTestCase(user, (TestCase) test, testConfig, results);
             tsResult.add(result);
         }
@@ -223,7 +223,7 @@ public class TestService {
                 .filter(TestSuite.class::isInstance)
                 .collect(Collectors.toList());
 
-        for (Test test: testSuites) {
+        for (Test test : testSuites) {
             final TestSuiteResult result = executeTestSuite(user, (TestSuite) test, testConfig, results);
             tsResult.add(result);
         }
@@ -256,35 +256,31 @@ public class TestService {
 
         final long startTime = System.currentTimeMillis();
         final ConnectorManager connectors = ctxHandler.createContext();
-        final VariableStoreConnector variableStore = connectors.getConnector(VariableStoreConnector.class);
 
         final List<ExecuteResult> outputs = new ArrayList<>();
 
+        boolean preSuccess = executePreSteps(connectors, testCase, testCase.getPreSteps());
+
         // execute the steps as long as they do not fail
         int failedStepIndex = 0;
-        for (int i = 0; i < testCase.getSteps().size(); i++) {
-            final TestCaseStep step = testCase.getSteps().get(i);
 
-            // here, the values for the parameters of the symbols are set
-            step.getParameterValues().stream()
-                    .filter(value -> value.getValue() != null)
-                    .forEach(value -> {
-                        final String valueWithVariables =
-                                SearchHelper.insertVariableValues(connectors, testCase.getProjectId(),
-                                        value.getValue());
-                        variableStore.set(value.getParameter().getName(), valueWithVariables);
-                    });
+        if (preSuccess) {
+            for (int i = 0; i < testCase.getSteps().size(); i++) {
+                final TestCaseStep step = testCase.getSteps().get(i);
 
-            ExecuteResult result = step.execute(connectors);
-            if (!result.isSuccess() && step.isShouldFail()) {
-                result = new ExecuteResult(true, result.getOutput());
+                ExecuteResult result = executeStep(connectors, testCase, step);
+                if (!result.isSuccess() && step.isShouldFail()) {
+                    result = new ExecuteResult(true, result.getOutput());
+                }
+
+                outputs.add(result);
+                failedStepIndex = i;
+                if (!result.isSuccess()) {
+                    break;
+                }
             }
-
-            outputs.add(result);
-            failedStepIndex = i;
-            if (!result.isSuccess()) {
-                break;
-            }
+        } else {
+            failedStepIndex = -1;
         }
 
         // the remaining steps after the failing step are not executed
@@ -292,6 +288,8 @@ public class TestService {
             outputs.add(new ExecuteResult(false, "Not executed"));
             failedStepIndex++;
         }
+
+        executePostSteps(connectors, testCase, testCase.getPostSteps());
 
         connectors.dispose();
         connectors.post();
@@ -326,4 +324,35 @@ public class TestService {
         return result;
     }
 
+    private boolean executePreSteps(ConnectorManager connectors, TestCase testCase, List<TestCaseStep> preSteps) {
+        for (TestCaseStep preStep : preSteps) {
+            final ExecuteResult result = executeStep(connectors, testCase, preStep);
+            if (!result.isSuccess()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void executePostSteps(ConnectorManager connectors, TestCase testCase, List<TestCaseStep> postSteps) {
+        for (TestCaseStep postStep : postSteps) {
+            executeStep(connectors, testCase, postStep);
+        }
+    }
+
+    private ExecuteResult executeStep(ConnectorManager connectors, TestCase testCase, TestCaseStep step) {
+        final VariableStoreConnector variableStore = connectors.getConnector(VariableStoreConnector.class);
+
+        // here, the values for the parameters of the symbols are set
+        step.getParameterValues().stream()
+                .filter(value -> value.getValue() != null)
+                .forEach(value -> {
+                    final String valueWithVariables =
+                            SearchHelper.insertVariableValues(connectors, testCase.getProjectId(),
+                                    value.getValue());
+                    variableStore.set(value.getParameter().getName(), valueWithVariables);
+                });
+
+        return step.execute(connectors);
+    }
 }

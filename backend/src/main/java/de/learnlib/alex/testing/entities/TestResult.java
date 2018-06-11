@@ -54,6 +54,7 @@ public abstract class TestResult implements Serializable {
 
     private static final long serialVersionUID = -4509801862717378522L;
 
+    /** The ID of the test result in the database. */
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -89,7 +90,8 @@ public abstract class TestResult implements Serializable {
     /**
      * Constructor.
      *
-     * @param test The test that has been executed.
+     * @param test
+     *         The test that has been executed.
      */
     public TestResult(Test test) {
         this.test = test;
@@ -116,6 +118,12 @@ public abstract class TestResult implements Serializable {
         return new Test.TestRepresentation(test);
     }
 
+    /**
+     * The the associated test by its ID.
+     *
+     * @param id
+     *         The ID of the test.
+     */
     @JsonProperty("test")
     public void setTestId(Long id) {
         this.test = new Test();

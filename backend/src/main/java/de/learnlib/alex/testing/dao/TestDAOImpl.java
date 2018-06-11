@@ -145,11 +145,29 @@ public class TestDAOImpl implements TestDAO {
             }
 
             beforeSaving(user, test);
-            testRepository.save(test);
-
             if (test instanceof TestCase) {
-                saveTestCaseSteps((TestCase) test);
+                final TestCase testCase = (TestCase) test;
+
+                final List<TestCaseStep> steps = testCase.getSteps();
+                final List<TestCaseStep> preSteps = testCase.getPreSteps();
+                final List<TestCaseStep> postSteps = testCase.getPostSteps();
+
+                testCase.setSteps(new ArrayList<>());
+                testCase.setPreSteps(new ArrayList<>());
+                testCase.setPostSteps(new ArrayList<>());
+
+                testRepository.save(test);
+
+                testCase.setSteps(steps);
+                testCase.setPreSteps(preSteps);
+                testCase.setPostSteps(postSteps);
+
+                saveTestCaseSteps(testCase.getPreSteps());
+                saveTestCaseSteps(testCase.getSteps());
+                saveTestCaseSteps(testCase.getPostSteps());
             }
+
+            testRepository.save(test);
         } catch (Exception e) {
             throw new ValidationException(e);
         }
@@ -293,23 +311,33 @@ public class TestDAOImpl implements TestDAO {
         }
     }
 
-    private void updateTestCase(User user, TestCase testCase) throws NotFoundException {
-        beforeSaving(user, testCase);
-        testRepository.save(testCase);
-
-        // delete all test case steps that have been removed in the update.
-        final List<Long> stepIds = testCase.getSteps().stream()
+    private List<Long> getStepsWithIds(List<TestCaseStep> steps) {
+        return steps.stream()
                 .filter(s -> s.getId() != null)
                 .map(TestCaseStep::getId)
                 .collect(Collectors.toList());
+    }
 
-        if (stepIds.isEmpty()) {
-            testCaseStepRepository.deleteAllByTestCase_Id(testCase.getId());
-        } else {
-            testCaseStepRepository.deleteAllByTestCase_IdAndIdNotIn(testCase.getId(), stepIds);
-        }
+    private void updateTestCase(User user, TestCase testCase) throws NotFoundException {
+        beforeSaving(user, testCase);
 
-        saveTestCaseSteps(testCase);
+        final List<Long> stepIds = getStepsWithIds(testCase.getSteps());
+        final List<Long> preStepIds = getStepsWithIds(testCase.getPreSteps());
+        final List<Long> postStepIds = getStepsWithIds(testCase.getPostSteps());
+
+        final List<Long> allStepIds = new ArrayList<>(); // all ids that still exist in the db
+        allStepIds.addAll(stepIds);
+        allStepIds.addAll(preStepIds);
+        allStepIds.addAll(postStepIds);
+
+        testCaseStepRepository.deleteAllByTestCase_IdAndIdNotIn(testCase.getId(), allStepIds);
+
+        // delete all test case steps that have been removed in the update.
+        saveTestCaseSteps(testCase.getPreSteps());
+        saveTestCaseSteps(testCase.getSteps());
+        saveTestCaseSteps(testCase.getPostSteps());
+
+        testRepository.save(testCase);
     }
 
     private void updateTestSuite(User user, TestSuite testSuite) throws NotFoundException {
@@ -404,17 +432,16 @@ public class TestDAOImpl implements TestDAO {
         }
     }
 
-    private void saveTestCaseSteps(TestCase testCase) {
-        for (int i = 0; i < testCase.getSteps().size(); i++) {
-            final TestCaseStep step = testCase.getSteps().get(i);
-            step.setNumber(i);
+    private void saveTestCaseSteps(List<TestCaseStep> steps) {
+        for (int i = 0; i < steps.size(); i++) {
+            steps.get(i).setNumber(i);
         }
 
-        testCaseStepRepository.save(testCase.getSteps());
+        testCaseStepRepository.save(steps);
 
         // save the parameter values after the test case step is saved so that
         // we won't get an entity detached exception.
-        testCase.getSteps().forEach(step -> {
+        steps.forEach(step -> {
 
             // if a parameter value has no id yet, because it is imported, we have to set the reference
             // to the parameter manually.
@@ -445,6 +472,10 @@ public class TestDAOImpl implements TestDAO {
             TestCase testCase = (TestCase) test;
             Hibernate.initialize(testCase.getSteps());
             testCase.getSteps().forEach(step -> SymbolDAOImpl.loadLazyRelations((step.getSymbol())));
+            Hibernate.initialize(testCase.getPreSteps());
+            testCase.getPreSteps().forEach(step -> SymbolDAOImpl.loadLazyRelations((step.getSymbol())));
+            Hibernate.initialize(testCase.getPostSteps());
+            testCase.getPostSteps().forEach(step -> SymbolDAOImpl.loadLazyRelations((step.getSymbol())));
         }
     }
 
@@ -460,7 +491,19 @@ public class TestDAOImpl implements TestDAO {
         } else if (test instanceof TestCase) {
             TestCase testCase = (TestCase) test;
 
+            for (TestCaseStep step: testCase.getPreSteps()) {
+                step.setTestCase(testCase);
+                final Symbol symbol = symbolDAO.get(user, projectId, step.getSymbol().getId());
+                step.setSymbol(symbol);
+            }
+
             for (TestCaseStep step : testCase.getSteps()) {
+                step.setTestCase(testCase);
+                final Symbol symbol = symbolDAO.get(user, projectId, step.getSymbol().getId());
+                step.setSymbol(symbol);
+            }
+
+            for (TestCaseStep step: testCase.getPostSteps()) {
                 step.setTestCase(testCase);
                 final Symbol symbol = symbolDAO.get(user, projectId, step.getSymbol().getId());
                 step.setSymbol(symbol);

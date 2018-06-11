@@ -43,15 +43,21 @@ export class TestService {
         const prepareTestCase = (testCase) => {
             deleteProperties(testCase);
 
-            testCase.steps = testCase.steps.map((step) => {
-                delete step.id;
-                step.symbol = step.symbol.name;
-                step.parameterValues.forEach(value => {
-                    delete value.id;
-                    delete value.parameter.id;
+            const s = (steps) => {
+                return steps.map((step) => {
+                    delete step.id;
+                    step.symbol = step.symbol.name;
+                    step.parameterValues.forEach(value => {
+                        delete value.id;
+                        delete value.parameter.id;
+                    });
+                    return step;
                 });
-                return step;
-            });
+            };
+
+            testCase.steps = s(testCase.steps);
+            testCase.preSteps = s(testCase.preSteps);
+            testCase.postSteps = s(testCase.postSteps);
         };
 
         const prepareTestSuite = (testSuite) => {
@@ -96,13 +102,20 @@ export class TestService {
                 const tests = JSON.parse(JSON.stringify(testsToImport));
 
                 const mapTestCaseSymbols = (testCase) => {
-                    testCase.steps = testCase.steps.map((step) => {
-                        const sym = symbols.find(s => s.name === step.symbol);
-                        if (sym) {
-                            step.symbol = sym.id;
-                        }
-                        return step;
-                    });
+
+                    const s = (steps) => {
+                        return steps.map((step) => {
+                            const sym = symbols.find(s => s.name === step.symbol);
+                            if (sym) {
+                                step.symbol = sym.id;
+                            }
+                            return step;
+                        });
+                    };
+
+                    testCase.steps = s(testCase.steps);
+                    testCase.preSteps = s(testCase.preSteps);
+                    testCase.postSteps = s(testCase.postSteps);
                 };
 
                 const prepareTestCase = (testCase, parent) => {

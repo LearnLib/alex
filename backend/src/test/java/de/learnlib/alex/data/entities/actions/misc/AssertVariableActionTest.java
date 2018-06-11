@@ -18,6 +18,8 @@ package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
@@ -46,10 +48,14 @@ public class AssertVariableActionTest {
 
     @Before
     public void setUp() {
+        final Symbol symbol = new Symbol();
+        symbol.setProject(new Project(1L));
+
         assertAction = new AssertVariableAction();
         assertAction.setName(TEST_NAME);
         assertAction.setValue(TEST_VALUE);
         assertAction.setRegexp(false);
+        assertAction.setSymbol(symbol);
     }
 
     @Test
@@ -74,7 +80,7 @@ public class AssertVariableActionTest {
         AssertVariableAction objAsAction = (AssertVariableAction) obj;
         assertEquals(TEST_NAME, objAsAction.getName());
         assertEquals(TEST_VALUE, objAsAction.getValue());
-        assertEquals(true, objAsAction.isRegexp());
+        assertTrue(objAsAction.isRegexp());
     }
 
     @Test
@@ -85,12 +91,12 @@ public class AssertVariableActionTest {
 
         // OK
         given(variables.get(TEST_NAME)).willReturn(TEST_VALUE);
-        ExecuteResult result = assertAction.execute(connector);
+        ExecuteResult result = assertAction.executeAction(connector);
         assertTrue(result.isSuccess());
 
         // not OK
         given(variables.get(TEST_NAME)).willReturn(TEST_VALUE + " - invalid");
-        result = assertAction.execute(connector);
+        result = assertAction.executeAction(connector);
         assertFalse(result.isSuccess());
     }
 
@@ -105,12 +111,12 @@ public class AssertVariableActionTest {
 
         // OK
         given(variables.get(TEST_NAME)).willReturn(TEST_VALUE);
-        ExecuteResult result = assertAction.execute(connector);
+        ExecuteResult result = assertAction.executeAction(connector);
         assertTrue(result.isSuccess());
 
         // not OK
         given(variables.get(TEST_NAME)).willReturn(TEST_VALUE + " - invalid");
-        result = assertAction.execute(connector);
+        result = assertAction.executeAction(connector);
         assertFalse(result.isSuccess());
     }
 

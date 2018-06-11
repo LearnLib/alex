@@ -195,6 +195,14 @@ export const testSuiteViewComponent = {
                             step.symbol = step.symbol.id;
                             return step;
                         });
+                        testToUpdate.preSteps = testToUpdate.preSteps.map((step) => {
+                            step.symbol = step.symbol.id;
+                            return step;
+                        });
+                        testToUpdate.postSteps = testToUpdate.postSteps.map((step) => {
+                            step.symbol = step.symbol.id;
+                            return step;
+                        });
                     }
 
                     this.TestResource.update(testToUpdate)

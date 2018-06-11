@@ -30,6 +30,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -51,7 +52,11 @@ public class TestCaseStep implements Serializable {
 
     /** The text case. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "testCase_id")
+    @JoinTable(
+            name = "testCase_testCaseStep",
+            joinColumns = {@JoinColumn(name = "testCaseStepId", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "testCaseId", referencedColumnName = "id")}
+    )
     @JsonIgnore
     private TestCase testCase;
 
@@ -133,6 +138,12 @@ public class TestCaseStep implements Serializable {
         return new SymbolRepresentation(symbol);
     }
 
+    /**
+     * Set the symbol by a symbol ID.
+     *
+     * @param symbolId
+     *         The ID of the symbol.
+     */
     @JsonProperty("symbol")
     public void setSymbolId(Long symbolId) {
         symbol = new Symbol();

@@ -59,6 +59,14 @@
                 </div>
                 <div class="col-md-9 col-sm-7">
 
+                    <pre-post-test-case-step
+                      text="Pre"
+                      groups="vm.groups"
+                      steps="vm.testCase.preSteps"
+                    >
+                    </pre-post-test-case-step>
+                    <hr>
+
                     <div class="list-group" ng-if="vm.testCase.steps.length" dragula='"testSymbols"' dragula-model="vm.testCase.steps">
                         <div class="list-group-item" ng-repeat="step in vm.testCase.steps track by $index">
                             <div class="d-flex flex-row">
@@ -102,6 +110,14 @@
                     <div class="alert alert-info" ng-if="!vm.testCase.steps.length">
                         Select a symbol to model the test case.
                     </div>
+
+                    <hr>
+                    <pre-post-test-case-step
+                      text="Post"
+                      groups="vm.groups"
+                      steps="vm.testCase.postSteps"
+                    >
+                    </pre-post-test-case-step>
 
                 </div>
             </div>

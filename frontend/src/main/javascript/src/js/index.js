@@ -181,6 +181,7 @@ import {symbolsArchiveViewComponent} from './components/views/symbols-archive-vi
 import {symbolSearchFormComponent} from './components/views/symbols-view/symbol-search-form/symbol-search-form.component';
 import {symbolsSymbolGroupTreeComponent} from './components/views/symbols-view/symbols-symbol-group-tree/symbols-symbol-group-tree.component';
 import {symbolsViewComponent} from './components/views/symbols-view/symbols-view.component';
+import {prePostTestCaseStepComponent} from './components/views/test-case-view/pre-post-test-case-step/pre-post-test-case-step.component';
 import {testCaseViewComponent} from './components/views/test-case-view/test-case-view.component';
 import {reportChartsComponent} from './components/views/test-report-view/report-donut-chart/report-charts.component';
 import {reportOutputsColumnComponent} from './components/views/test-report-view/report-output-column/report-outputs-column.component';
@@ -500,6 +501,7 @@ angular
     .component('testConfigList', testConfigListComponent)
     .component('selectableCheckbox', selectableCheckboxComponent)
     .component('selectableCheckboxMultiple', selectableCheckboxMultipleComponent)
+    .component('prePostTestCaseStep', prePostTestCaseStepComponent)
     .component('testSuiteTree', testSuiteTreeComponent);
 
 angular.bootstrap(document, ['ALEX']);
