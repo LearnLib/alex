@@ -18,7 +18,7 @@
  * The version of ALEX.
  * @type {string}
  */
-export const version = '1.5.0-SNAPSHOT';
+export const version = '1.5.0';
 
 /**
  * API URL
@@ -30,3 +30,4 @@ export const version = '1.5.0-SNAPSHOT';
  */
 export const apiUrl = '/rest';
 // export const apiUrl = 'http://localhost:8000/rest';
+//
