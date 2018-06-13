@@ -63,8 +63,7 @@ public class WaitForTextAction extends WebSymbolAction {
     private boolean regexp;
 
     /**
-     * The element to look for the text.
-     * The whole document is used by default.
+     * The element to look for the text. The whole document is used by default.
      */
     @NotNull
     private WebElementLocator node;
@@ -91,24 +90,25 @@ public class WaitForTextAction extends WebSymbolAction {
     protected ExecuteResult execute(final WebSiteConnector connector) {
         final WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
 
-        node.setSelector(insertVariableValues(node.getSelector()));
-        value = insertVariableValues(value);
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
+        final String valueWithVariables = insertVariableValues(value);
 
         try {
             if (regexp) {
                 LOGGER.info(LEARNER_MARKER, "Waiting for pattern '{}' to be present in node '{}' for a maximum of "
-                        + "{}ms.", value, node, maxWaitTime);
-                wait.until(wd -> connector.getElement(node).getText().matches(value));
+                        + "{}ms.", valueWithVariables, nodeWithVariables, maxWaitTime);
+                wait.until(wd -> connector.getElement(nodeWithVariables).getText().matches(valueWithVariables));
             } else {
                 LOGGER.info(LEARNER_MARKER, "Waiting for text '{}' to be present in node '{}' for a maximum of {}ms.",
-                            value, node, maxWaitTime);
-                wait.until(wd -> connector.getElement(node).getText().contains(value));
+                        valueWithVariables, nodeWithVariables, maxWaitTime);
+                wait.until(wd -> connector.getElement(nodeWithVariables).getText().contains(valueWithVariables));
             }
 
             return getSuccessOutput();
         } catch (NoSuchElementException | TimeoutException e) {
             LOGGER.info(LEARNER_MARKER, "Waiting for text/patter '{}' to be present in node '{}' failed.",
-                        value, node);
+                    valueWithVariables, nodeWithVariables);
             return getFailedOutput();
         }
     }

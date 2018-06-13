@@ -139,7 +139,7 @@ public class TestExecutionConfig implements Serializable {
     }
 
     /**
-     * The the URL by an URL ID:
+     * The the URL by an URL ID.
      *
      * @param urlId
      *         The ID of the URL.

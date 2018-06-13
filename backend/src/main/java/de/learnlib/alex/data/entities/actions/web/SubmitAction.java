@@ -71,16 +71,18 @@ public class SubmitAction extends WebSymbolAction {
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
+
         try {
-            node.setSelector(insertVariableValues(node.getSelector()));
-            connector.getElement(node).submit();
+            connector.getElement(nodeWithVariables).submit();
 
             LOGGER.info(LEARNER_MARKER, "Submitted '{}' (ignoreFailure: {}, negated: {}).",
-                        node, ignoreFailure, negated);
+                    nodeWithVariables, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not submit '{}' (ignoreFailure: {}, negated: {}).",
-                        node, ignoreFailure, negated, e);
+                    nodeWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

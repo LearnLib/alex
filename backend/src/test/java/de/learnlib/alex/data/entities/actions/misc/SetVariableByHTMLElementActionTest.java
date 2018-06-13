@@ -18,6 +18,8 @@ package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -59,7 +61,11 @@ public class SetVariableByHTMLElementActionTest {
         node.setSelector(NODE_NAME);
         node.setType(WebElementLocator.Type.CSS);
 
+        Symbol symbol = new Symbol();
+        symbol.setProject(new Project(1L));
+
         setAction = new SetVariableByHTMLElementAction();
+        setAction.setSymbol(symbol);
         setAction.setName(VARIABLE);
         setAction.setNode(node);
     }
@@ -100,7 +106,7 @@ public class SetVariableByHTMLElementActionTest {
         given(webSiteConnector.getElement(node)).willReturn(element);
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
 
-        ExecuteResult result = setAction.execute(connector);
+        ExecuteResult result = setAction.executeAction(connector);
 
         assertTrue(result.isSuccess());
         verify(variables).set(VARIABLE, NODE_VALUE);
@@ -116,7 +122,7 @@ public class SetVariableByHTMLElementActionTest {
         given(webSiteConnector.getElement(node)).willThrow(NoSuchElementException.class);
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
 
-        ExecuteResult result = setAction.execute(connector);
+        ExecuteResult result = setAction.executeAction(connector);
 
         assertFalse(result.isSuccess());
         verify(variables, never()).set(eq(VARIABLE), anyString());

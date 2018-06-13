@@ -67,8 +67,7 @@ public class GotoAction extends WebSymbolAction {
     private Credentials credentials;
 
     /**
-     * Get the URL this action will navigate to.
-     * All variables and counters will be replaced with their values.
+     * Get the URL this action will navigate to. All variables and counters will be replaced with their values.
      *
      * @return The site URL the element is on.
      */
@@ -81,7 +80,7 @@ public class GotoAction extends WebSymbolAction {
      * Set the URL of the site where this element is navigating to..
      *
      * @param url
-     *            The new site URL.
+     *         The new site URL.
      */
     public void setUrl(String url) {
         this.url = url;
@@ -106,7 +105,7 @@ public class GotoAction extends WebSymbolAction {
             return new Credentials();
         }
 
-        String name     = insertVariableValues(credentials.getName());
+        String name = insertVariableValues(credentials.getName());
         String password = insertVariableValues(credentials.getPassword());
 
         return new Credentials(name, password);
@@ -115,7 +114,8 @@ public class GotoAction extends WebSymbolAction {
     /**
      * Set the credentials to use for authentication.
      *
-     * @param credentials The new credentials to use.
+     * @param credentials
+     *         The new credentials to use.
      */
     public void setCredentials(Credentials credentials) {
         this.credentials = credentials;
@@ -126,11 +126,11 @@ public class GotoAction extends WebSymbolAction {
         try {
             connector.get(getURLWithVariableValues(), getCredentialsWithVariableValues());
             LOGGER.info(LEARNER_MARKER, "Could goto '{}' (ignoreFailure: {}, negated: {}).",
-                        url, ignoreFailure, negated);
+                    url, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (Exception e) {
             LOGGER.info(LEARNER_MARKER, "Could not goto '{}' (ignoreFailure: {}, negated: {}).",
-                        url, ignoreFailure, negated, e);
+                    url, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

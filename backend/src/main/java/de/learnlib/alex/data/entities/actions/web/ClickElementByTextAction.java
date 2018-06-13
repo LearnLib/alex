@@ -66,7 +66,10 @@ public class ClickElementByTextAction extends WebSymbolAction {
 
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
-        final WebElement root = connector.getDriver().findElement(node.getBy());
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
+
+        final WebElement root = connector.getElement(nodeWithVariables);
         final String textWithVariables = insertVariableValues(text);
 
         final List<WebElement> candidates;

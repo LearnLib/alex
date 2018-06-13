@@ -19,6 +19,7 @@ package de.learnlib.alex.data.entities.actions.web;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -93,7 +94,8 @@ public class SelectAction extends FillAction {
     }
 
     /**
-     * @param selectBy The new method to select the value in the node.
+     * @param selectBy
+     *         The new method to select the value in the node.
      */
     public void setSelectBy(SelectByType selectBy) {
         this.selectBy = selectBy;
@@ -101,12 +103,14 @@ public class SelectAction extends FillAction {
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
-        try {
-            String valueWithVariables = insertVariableValues(value);
-            node.setSelector(insertVariableValues(node.getSelector()));
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
 
-            WebElement selectElement = connector.getElement(node);
-            Select select = new Select(selectElement);
+        try {
+            final String valueWithVariables = insertVariableValues(value);
+
+            final WebElement selectElement = connector.getElement(nodeWithVariables);
+            final Select select = new Select(selectElement);
             switch (selectBy) {
                 case VALUE:
                     select.selectByValue(valueWithVariables);
@@ -115,7 +119,7 @@ public class SelectAction extends FillAction {
                     select.selectByVisibleText(valueWithVariables);
                     break;
                 case INDEX:
-                    select.selectByIndex(Integer.parseInt(getValue()));
+                    select.selectByIndex(Integer.parseInt(value));
                     break;
                 default:
                     select.selectByIndex(0);
@@ -123,11 +127,11 @@ public class SelectAction extends FillAction {
             }
 
             LOGGER.info(LEARNER_MARKER, "Selected '{}' of '{}' by '{}' (ignoreFailure: {}, negated: {}).",
-                        value, node, selectBy, ignoreFailure, negated);
+                    value, nodeWithVariables, selectBy, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException | NumberFormatException | UnexpectedTagNameException e) {
             LOGGER.info(LEARNER_MARKER, "Could not select '{}' of '{}' by '{}' (ignoreFailure: {}, negated: {}).",
-                        value, node, selectBy, ignoreFailure, negated, e);
+                    value, nodeWithVariables, selectBy, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

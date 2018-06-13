@@ -51,6 +51,7 @@ public class WaitForTitleAction extends WebSymbolAction {
      * Enumeration to specify the wait criterion.
      */
     public enum WaitCriterion {
+
         /**
          * If the title should be the value.
          */
@@ -60,7 +61,6 @@ public class WaitForTitleAction extends WebSymbolAction {
          * If the title should contain the value.
          */
         CONTAINS;
-
 
         /**
          * Parser function to handle the enum names case insensitive.
@@ -113,7 +113,8 @@ public class WaitForTitleAction extends WebSymbolAction {
     /**
      * Set the expected value of the title.
      *
-     * @param value The expected value of the title
+     * @param value
+     *         The expected value of the title
      */
     public void setValue(String value) {
         this.value = value;
@@ -131,7 +132,8 @@ public class WaitForTitleAction extends WebSymbolAction {
     /**
      * Set the wait criterion.
      *
-     * @param waitCriterion The wait criterion
+     * @param waitCriterion
+     *         The wait criterion
      */
     public void setWaitCriterion(WaitCriterion waitCriterion) {
         this.waitCriterion = waitCriterion;
@@ -149,7 +151,8 @@ public class WaitForTitleAction extends WebSymbolAction {
     /**
      * Set the max amount of time in seconds to wait before the action fails.
      *
-     * @param maxWaitTime The max amount of time in seconds
+     * @param maxWaitTime
+     *         The max amount of time in seconds
      */
     public void setMaxWaitTime(long maxWaitTime) {
         this.maxWaitTime = maxWaitTime;
@@ -161,17 +164,16 @@ public class WaitForTitleAction extends WebSymbolAction {
             return getFailedOutput();
         }
 
-        WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
-
-        value = insertVariableValues(value);
+        final WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
+        final String valueWithVariables = insertVariableValues(value);
 
         try {
             switch (waitCriterion) {
                 case IS:
-                    wait.until(wd -> wd.getTitle().equals(value));
+                    wait.until(wd -> wd.getTitle().equals(valueWithVariables));
                     break;
                 case CONTAINS:
-                    wait.until(wd -> wd.getTitle().contains(value));
+                    wait.until(wd -> wd.getTitle().contains(valueWithVariables));
                     break;
                 default:
                     return getFailedOutput();
@@ -180,8 +182,8 @@ public class WaitForTitleAction extends WebSymbolAction {
             return getSuccessOutput();
         } catch (TimeoutException e) {
             LOGGER.info(LEARNER_MARKER, "Waiting on the title '{}' (criterion: '{}') timed out. "
-                                            + "Last known title was '{}'.",
-                        value, waitCriterion, connector.getDriver().getTitle());
+                            + "Last known title was '{}'.",
+                    valueWithVariables, waitCriterion, connector.getDriver().getTitle());
             return getFailedOutput();
         }
     }

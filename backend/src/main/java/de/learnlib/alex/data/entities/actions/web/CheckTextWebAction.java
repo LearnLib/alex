@@ -28,7 +28,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
-import org.openqa.selenium.WebDriver;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
@@ -54,8 +53,7 @@ public class CheckTextWebAction extends WebSymbolAction {
     private String value;
 
     /**
-     * Field to determine if the search string is a regular expression.
-     * Only works while searching for text.
+     * Field to determine if the search string is a regular expression. Only works while searching for text.
      */
     @NotNull
     private boolean regexp;
@@ -85,8 +83,7 @@ public class CheckTextWebAction extends WebSymbolAction {
     }
 
     /**
-     * Get the value to check.
-     * All variables and counters will be replaced with their values.
+     * Get the value to check. All variables and counters will be replaced with their values.
      *
      * @return The value to check.
      */
@@ -99,7 +96,7 @@ public class CheckTextWebAction extends WebSymbolAction {
      * Set the value to check for.
      *
      * @param value
-     *            The new value.
+     *         The new value.
      */
     public void setValue(String value) {
         this.value = value;
@@ -134,28 +131,24 @@ public class CheckTextWebAction extends WebSymbolAction {
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
-        final WebDriver driver = connector.getDriver();
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
 
         try {
-            String source;
-            if (node.getSelector().equals("document")) {
+            final String source;
+            if (nodeWithVariables.getSelector().equals("document")) {
                 source = connector.getPageSource();
             } else {
-                source = driver.findElement(node.getBy()).getAttribute("innerHTML");
+                source = connector.getElement(nodeWithVariables).getAttribute("innerHTML");
             }
 
-            node.setSelector(insertVariableValues(node.getSelector()));
             final boolean found = SearchHelper.search(getValueWithVariableValues(), source, regexp);
 
             LOGGER.info(LEARNER_MARKER, "Check if the current pages contains '{}' => {} "
                             + "(regExp: {}, ignoreFailure: {}, negated: {}).",
                     value, found, regexp, ignoreFailure, negated);
 
-            if (found) {
-                return getSuccessOutput();
-            } else {
-                return getFailedOutput();
-            }
+            return found ? getSuccessOutput() : getFailedOutput();
         } catch (ElementNotFoundException e) {
             LOGGER.error(LEARNER_MARKER, "Could not find text \"{}\" in element \"{}\""
                             + "(regExp: {}, ignoreFailure: {}, negated: {}).",

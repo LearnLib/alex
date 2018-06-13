@@ -86,7 +86,8 @@ public class ClickAction extends WebSymbolAction {
     /**
      * Set if a double click should be executed.
      *
-     * @param doubleClick The flag.
+     * @param doubleClick
+     *         The flag.
      */
     public void setDoubleClick(boolean doubleClick) {
         this.doubleClick = doubleClick;
@@ -95,7 +96,8 @@ public class ClickAction extends WebSymbolAction {
     /**
      * Set the information to identify the element.
      *
-     * @param node The new element identifier.
+     * @param node
+     *         The new element identifier.
      */
     public void setNode(WebElementLocator node) {
         this.node = node;
@@ -103,9 +105,11 @@ public class ClickAction extends WebSymbolAction {
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
+
         try {
-            node.setSelector(insertVariableValues(node.getSelector()));
-            WebElement element = connector.getElement(node);
+            final WebElement element = connector.getElement(nodeWithVariables);
 
             if (doubleClick) {
                 new Actions(connector.getDriver()).doubleClick(element).build().perform();
@@ -114,13 +118,13 @@ public class ClickAction extends WebSymbolAction {
             }
 
             LOGGER.info(LEARNER_MARKER, "Clicked on the element '{}' "
-                                            + "(doubleClick: {}, ignoreFailure: {}, negated: {}).",
-                        node, doubleClick, ignoreFailure, negated);
+                            + "(doubleClick: {}, ignoreFailure: {}, negated: {}).",
+                    nodeWithVariables, doubleClick, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not click on the element '{}' "
-                                            + "(doubleClick: {}, ignoreFailure: {}, negated: {}).",
-                        node, doubleClick, ignoreFailure, negated);
+                            + "(doubleClick: {}, ignoreFailure: {}, negated: {}).",
+                    nodeWithVariables, doubleClick, ignoreFailure, negated);
             return getFailedOutput();
         }
     }

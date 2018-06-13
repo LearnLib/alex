@@ -64,19 +64,21 @@ public class PressKeyAction extends WebSymbolAction {
 
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
-        String unescapedKey = StringEscapeUtils.unescapeJava(this.key);
-        Keys keyToPress = Keys.getKeyFromUnicode(unescapedKey.toCharArray()[0]);
+        final String unescapedKey = StringEscapeUtils.unescapeJava(this.key);
+        final Keys keyToPress = Keys.getKeyFromUnicode(unescapedKey.toCharArray()[0]);
+
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
 
         try {
-            node.setSelector(insertVariableValues(node.getSelector()));
-            WebElement element = connector.getElement(node);
+            final WebElement element = connector.getElement(nodeWithVariables);
             element.sendKeys(keyToPress);
             LOGGER.info(LEARNER_MARKER, "Pressed the key '{}' on the element '{}' (ignoreFailure: {}, negated: {}).",
-                    keyToPress.toString(), node, ignoreFailure, negated);
+                    keyToPress.toString(), nodeWithVariables, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not press key '{}' on element '{}' (ignoreFailure: {}, negated: {}).",
-                    keyToPress.toString(), node, ignoreFailure, negated, e);
+                    keyToPress.toString(), nodeWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }
@@ -89,7 +91,8 @@ public class PressKeyAction extends WebSymbolAction {
     }
 
     /**
-     * @param node The node.
+     * @param node
+     *         The node.
      */
     public void setNode(WebElementLocator node) {
         this.node = node;
@@ -103,7 +106,8 @@ public class PressKeyAction extends WebSymbolAction {
     }
 
     /**
-     * @param key The escaped unicode of the key.
+     * @param key
+     *         The escaped unicode of the key.
      */
     public void setKey(String key) {
         this.key = key;

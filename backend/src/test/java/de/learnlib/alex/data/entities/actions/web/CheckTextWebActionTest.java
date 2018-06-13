@@ -17,6 +17,7 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.WebElementLocator;
@@ -26,8 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.io.File;
@@ -45,13 +44,12 @@ public class CheckTextWebActionTest extends WebActionTest {
 
     private CheckTextWebAction checkText;
 
-    private final WebDriver driver = mock(WebDriver.class);
-
     @Before
     public void setUp() {
         super.setUp();
 
         Symbol symbol = new Symbol();
+        symbol.setProject(new Project(1L));
 
         checkText = new CheckTextWebAction();
         checkText.setSymbol(symbol);
@@ -61,7 +59,6 @@ public class CheckTextWebActionTest extends WebActionTest {
 
         given(connectors.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
         given(connectors.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
-        given(webSiteConnector.getDriver()).willReturn(driver);
     }
 
     @Test
@@ -127,15 +124,16 @@ public class CheckTextWebActionTest extends WebActionTest {
         WebElement barElement = mock(WebElement.class);
         given(barElement.getAttribute("innerHTML")).willReturn("bar");
 
-        given(driver.findElement(By.cssSelector("#foo"))).willReturn(fooElement);
-        given(driver.findElement(By.cssSelector("#bar"))).willReturn(barElement);
-
         checkText.setValue("foo");
         checkText.getNode().setSelector("#foo");
+
+        given(webSiteConnector.getElement(checkText.getNode())).willReturn(fooElement);
 
         assertTrue(checkText.executeAction(connectors).isSuccess());
 
         checkText.getNode().setSelector("#bar");
+
+        given(webSiteConnector.getElement(checkText.getNode())).willReturn(barElement);
 
         assertFalse(checkText.executeAction(connectors).isSuccess());
     }

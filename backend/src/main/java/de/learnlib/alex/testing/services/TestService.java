@@ -350,6 +350,7 @@ public class TestService {
                     final String valueWithVariables =
                             SearchHelper.insertVariableValues(connectors, testCase.getProjectId(),
                                     value.getValue());
+
                     variableStore.set(value.getParameter().getName(), valueWithVariables);
                 });
 

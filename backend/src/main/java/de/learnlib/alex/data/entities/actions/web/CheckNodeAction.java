@@ -55,23 +55,28 @@ public class CheckNodeAction extends WebSymbolAction {
         return node;
     }
 
-    /** @param node {@link #node}. */
+    /**
+     * @param node
+     *         {@link #node}.
+     */
     public void setNode(WebElementLocator node) {
         this.node = node;
     }
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
+
         try {
-            node.setSelector(insertVariableValues(node.getSelector()));
-            connector.getElement(node);
+            connector.getElement(nodeWithVariables);
 
             LOGGER.info(LEARNER_MARKER, "Found the node '{}' (ignoreFailure: {}, negated: {}).",
-                        node, ignoreFailure, negated);
+                    nodeWithVariables, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not find the node '{}' (ignoreFailure: {}, negated: {}).",
-                        node, ignoreFailure, negated, e);
+                    nodeWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

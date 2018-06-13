@@ -70,7 +70,8 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
     }
 
     /**
-     * @param name The name of the new variable to set.
+     * @param name
+     *         The name of the new variable to set.
      */
     public void setName(String name) {
         this.name = name;
@@ -84,7 +85,8 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
     }
 
     /**
-     * @param node The new identifier for the node to get the attribute from.
+     * @param node
+     *         The new identifier for the node to get the attribute from.
      */
     public void setNode(WebElementLocator node) {
         this.node = node;
@@ -98,7 +100,8 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
     }
 
     /**
-     * @param attribute The identifier of the new attribute to get the value from.
+     * @param attribute
+     *         The identifier of the new attribute to get the value from.
      */
     public void setAttribute(String attribute) {
         this.attribute = attribute;
@@ -109,15 +112,21 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
         WebSiteConnector webSiteConnector = connector.getConnector(WebSiteConnector.class);
 
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
+
         try {
-            String value = webSiteConnector.getElement(node).getAttribute(attribute);
+            String value = webSiteConnector.getElement(nodeWithVariables).getAttribute(attribute);
             storeConnector.set(name, value);
+
+            LOGGER.info(LEARNER_MARKER, "Set variable '{}' to attribute '{}' of element '{}'.",
+                    name, attribute, nodeWithVariables);
 
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LEARNER_MARKER, "Could not set the variable '{}' to the value of the attribute "
-                                            + "of the HTML node '{}'.",
-                        name, node);
+            LOGGER.info(LEARNER_MARKER, "Could not set variable '{}' to attribute '{}' of element '{}'.",
+                    name, attribute, nodeWithVariables);
+
             return getFailedOutput();
         }
     }

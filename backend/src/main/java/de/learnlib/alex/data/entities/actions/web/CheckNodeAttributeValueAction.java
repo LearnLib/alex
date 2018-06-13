@@ -118,30 +118,35 @@ public class CheckNodeAttributeValueAction extends WebSymbolAction {
 
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
+
+        final String valueWithVariables = insertVariableValues(value);
+
         try {
-            node.setSelector(insertVariableValues(node.getSelector()));
-            WebElement element = connector.getElement(node);
-            String attributeValue = element.getAttribute(attribute);
+            final WebElement element = connector.getElement(nodeWithVariables);
+            final String attributeValue = element.getAttribute(attribute);
+
             if (attributeValue == null) {
                 LOGGER.info(LEARNER_MARKER, "Attribute '{}' not found on element '{}'",
-                        attribute, node);
+                        attribute, nodeWithVariables);
                 return getFailedOutput();
             }
 
             boolean isValid = false;
             switch (checkMethod) {
                 case IS:
-                    isValid = attributeValue.equals(value);
+                    isValid = attributeValue.equals(valueWithVariables);
                     break;
                 case EXISTS:
                     // since the case that the attribute does not exist is checked above, we can set this to true.
                     isValid = true;
                     break;
                 case CONTAINS:
-                    isValid = attributeValue.contains(value);
+                    isValid = attributeValue.contains(valueWithVariables);
                     break;
                 case MATCHES:
-                    isValid = attributeValue.matches(value);
+                    isValid = attributeValue.matches(valueWithVariables);
                     break;
                 default:
                     break;
@@ -150,17 +155,17 @@ public class CheckNodeAttributeValueAction extends WebSymbolAction {
             if (isValid) {
                 LOGGER.info(LEARNER_MARKER, "The value of the attribute '{}' of the node '{}'"
                                 + " '{}' the searched value '{}' (ignoreFailure: {}, negated: {}).",
-                        attribute, node, checkMethod, value, ignoreFailure, negated);
+                        attribute, nodeWithVariables, checkMethod, valueWithVariables, ignoreFailure, negated);
                 return getSuccessOutput();
             } else {
                 LOGGER.info(LEARNER_MARKER, "The value of the attribute '{}' of the node '{}'"
                                 + " does not '{}' the searched value '{}' (ignoreFailure: {}, negated: {}).",
-                        attribute, node, checkMethod, value, ignoreFailure, negated);
+                        attribute, nodeWithVariables, checkMethod, valueWithVariables, ignoreFailure, negated);
                 return getFailedOutput();
             }
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not find the node '{}' (ignoreFailure: {}, negated: {}).",
-                    node, ignoreFailure, negated, e);
+                    nodeWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

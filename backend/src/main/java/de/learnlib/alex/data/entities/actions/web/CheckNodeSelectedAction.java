@@ -51,22 +51,23 @@ public class CheckNodeSelectedAction extends WebSymbolAction {
 
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
-        node.setSelector(insertVariableValues(node.getSelector()));
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
 
         try {
-            final WebElement element = connector.getElement(node);
+            final WebElement element = connector.getElement(nodeWithVariables);
             if (element.isSelected()) {
                 LOGGER.info(LEARNER_MARKER, "Element '{}' is selected (ignoreFailure: {}, negated: {}).",
-                        node, ignoreFailure, negated);
+                        nodeWithVariables, ignoreFailure, negated);
                 return getSuccessOutput();
             } else {
                 LOGGER.info(LEARNER_MARKER, "Element '{}' is not selected (ignoreFailure: {}, negated: {}).",
-                        node, ignoreFailure, negated);
+                        nodeWithVariables, ignoreFailure, negated);
                 return getFailedOutput();
             }
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not assert if element '{}' is selected "
-                    + "(ignoreFailure: {}, negated: {}).", node, ignoreFailure, negated);
+                    + "(ignoreFailure: {}, negated: {}).", nodeWithVariables, ignoreFailure, negated);
             return getFailedOutput();
         }
     }

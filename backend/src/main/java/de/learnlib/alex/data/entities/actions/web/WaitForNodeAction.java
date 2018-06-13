@@ -132,7 +132,8 @@ public class WaitForNodeAction extends WebSymbolAction {
     /**
      * Set the selector of the element.
      *
-     * @param node The selector of the element
+     * @param node
+     *         The selector of the element
      */
     public void setNode(WebElementLocator node) {
         this.node = node;
@@ -150,7 +151,8 @@ public class WaitForNodeAction extends WebSymbolAction {
     /**
      * Set the wait criterion.
      *
-     * @param waitCriterion The wait criterion
+     * @param waitCriterion
+     *         The wait criterion
      */
     public void setWaitCriterion(WaitCriterion waitCriterion) {
         this.waitCriterion = waitCriterion;
@@ -168,7 +170,8 @@ public class WaitForNodeAction extends WebSymbolAction {
     /**
      * Set the max amount of time in seconds to wait before the action fails.
      *
-     * @param maxWaitTime The max amount of time in seconds
+     * @param maxWaitTime
+     *         The max amount of time in seconds
      */
     public void setMaxWaitTime(long maxWaitTime) {
         this.maxWaitTime = maxWaitTime;
@@ -180,31 +183,32 @@ public class WaitForNodeAction extends WebSymbolAction {
             return getFailedOutput();
         }
 
-        WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
-        node.setSelector(insertVariableValues(node.getSelector()));
+        final WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
 
         try {
             switch (waitCriterion) {
                 case VISIBLE:
-                    wait.until(wd -> connector.getElement(node).isDisplayed());
+                    wait.until(wd -> connector.getElement(nodeWithVariables).isDisplayed());
                     break;
                 case INVISIBLE:
-                    wait.until(wd -> !connector.getElement(node).isDisplayed());
+                    wait.until(wd -> !connector.getElement(nodeWithVariables).isDisplayed());
                     break;
                 case ADDED:
                     wait.until(wd -> {
-                       try {
-                           connector.getElement(node);
-                           return true;
-                       } catch (Exception e) {
-                           return false;
-                       }
+                        try {
+                            connector.getElement(nodeWithVariables);
+                            return true;
+                        } catch (Exception e) {
+                            return false;
+                        }
                     });
                     break;
                 case REMOVED:
                     wait.until(wd -> {
                         try {
-                            connector.getElement(node);
+                            connector.getElement(nodeWithVariables);
                             return false;
                         } catch (Exception e) {
                             return true;
@@ -213,7 +217,7 @@ public class WaitForNodeAction extends WebSymbolAction {
                     break;
                 case CLICKABLE:
                     wait.until(wd -> {
-                        final WebElement element = connector.getElement(node);
+                        final WebElement element = connector.getElement(nodeWithVariables);
                         return element.isDisplayed() && element.isEnabled();
                     });
                     break;
@@ -223,11 +227,11 @@ public class WaitForNodeAction extends WebSymbolAction {
             return getSuccessOutput();
         } catch (TimeoutException e) {
             LOGGER.info(LEARNER_MARKER, "Waiting on the node '{}' (criterion: '{}') timed out.",
-                        node, waitCriterion);
+                    nodeWithVariables, waitCriterion);
             return getFailedOutput();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "The node with the selector {} (criterion: '{}') could not be found.",
-                    node, waitCriterion);
+                    nodeWithVariables, waitCriterion);
             return getFailedOutput();
         }
     }

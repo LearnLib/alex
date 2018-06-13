@@ -49,8 +49,7 @@ public class CheckPageTitleAction extends WebSymbolAction {
     private String title;
 
     /**
-     * Field to determine if the search string is a regular expression.
-     * Only works while searching for text.
+     * Field to determine if the search string is a regular expression. Only works while searching for text.
      */
     @NotNull
     private boolean regexp;
@@ -68,8 +67,7 @@ public class CheckPageTitleAction extends WebSymbolAction {
     }
 
     /**
-     * Get the title to check.
-     * All variables and counters will be replaced with their values.
+     * Get the title to check. All variables and counters will be replaced with their values.
      *
      * @return The title to check.
      */
@@ -79,7 +77,8 @@ public class CheckPageTitleAction extends WebSymbolAction {
     }
 
     /**
-     * @param title The new title to search for.
+     * @param title
+     *         The new title to search for.
      */
     public void setTitle(String title) {
         this.title = title;
@@ -93,7 +92,8 @@ public class CheckPageTitleAction extends WebSymbolAction {
     }
 
     /**
-     * @param regexp True if the title is a regexp; False otherwise.
+     * @param regexp
+     *         True if the title is a regexp; False otherwise.
      */
     public void setRegexp(boolean regexp) {
         this.regexp = regexp;
@@ -101,12 +101,12 @@ public class CheckPageTitleAction extends WebSymbolAction {
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
-        WebDriver driver = connector.getDriver();
-        boolean result = SearchHelper.search(getTitleWithVariableValues(), driver.getTitle(), regexp);
+        final WebDriver driver = connector.getDriver();
+        final boolean result = SearchHelper.search(getTitleWithVariableValues(), driver.getTitle(), regexp);
 
         LOGGER.info(LEARNER_MARKER, "Check if the current pages has the title '{}' => {} "
-                                        + "(regExp: {}, ignoreFailure: {}, negated: {}).",
-                    title, result, regexp, ignoreFailure, negated);
+                        + "(regExp: {}, ignoreFailure: {}, negated: {}).",
+                title, result, regexp, ignoreFailure, negated);
         if (result) {
             return getSuccessOutput();
         } else {

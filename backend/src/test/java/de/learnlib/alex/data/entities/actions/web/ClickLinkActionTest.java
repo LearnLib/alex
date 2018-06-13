@@ -25,7 +25,6 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.io.File;
@@ -43,9 +42,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ClickLinkActionTest extends WebActionTest {
 
-    private ClickLinkAction c;
-
-    private final WebDriver driver = mock(WebDriver.class);
+    private ClickLinkAction action;
 
     @Before
     public void setUp() {
@@ -53,21 +50,19 @@ public class ClickLinkActionTest extends WebActionTest {
 
         Symbol symbol = new Symbol();
 
-        c = new ClickLinkAction();
-        c.setSymbol(symbol);
-        c.setValue("Click Me");
-        c.setNode(new WebElementLocator("body", WebElementLocator.Type.CSS));
-
-        given(webSiteConnector.getDriver()).willReturn(driver);
+        action = new ClickLinkAction();
+        action.setSymbol(symbol);
+        action.setValue("Click Me");
+        action.setNode(new WebElementLocator("body", WebElementLocator.Type.CSS));
     }
 
     @Test
     public void testJSON() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(c);
+        String json = mapper.writeValueAsString(action);
         ClickLinkAction c2 = mapper.readValue(json, ClickLinkAction.class);
 
-        assertEquals(c.getValue(), c2.getValue());
+        assertEquals(action.getValue(), c2.getValue());
     }
 
     @Test
@@ -87,10 +82,10 @@ public class ClickLinkActionTest extends WebActionTest {
         WebElement body = mock(WebElement.class);
         WebElement fooLink = mock(WebElement.class);
 
-        given(driver.findElement(c.getNode().getBy())).willReturn(body);
-        given(body.findElement(By.linkText(c.getValue()))).willReturn(fooLink);
+        given(webSiteConnector.getElement(action.getNode())).willReturn(body);
+        given(body.findElement(By.linkText(action.getValue()))).willReturn(fooLink);
 
-        assertTrue(c.executeAction(connectors).isSuccess());
+        assertTrue(action.executeAction(connectors).isSuccess());
         verify(fooLink).click();
     }
 
@@ -98,11 +93,11 @@ public class ClickLinkActionTest extends WebActionTest {
     public void shouldReturnFailedIfLinkCouldNotBeClicked() {
         WebElement body = mock(WebElement.class);
 
-        given(driver.findElement(c.getNode().getBy())).willReturn(body);
+        given(webSiteConnector.getElement(action.getNode())).willReturn(body);
 
         when(body.findElement(By.linkText("Click Me"))).thenThrow(new NoSuchElementException(""));
 
-        assertFalse(c.executeAction(connectors).isSuccess());
+        assertFalse(action.executeAction(connectors).isSuccess());
     }
 
 }

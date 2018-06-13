@@ -68,9 +68,7 @@ public class ClickElementByTextActionTest extends WebActionTest {
 
         given(connectors.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
         given(connectors.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
-        given(webSiteConnector.getDriver()).willReturn(driver);
-
-        given(driver.findElement(action.getNode().getBy())).willReturn(container);
+        given(webSiteConnector.getElement(action.getNode())).willReturn(container);
     }
 
     @Test

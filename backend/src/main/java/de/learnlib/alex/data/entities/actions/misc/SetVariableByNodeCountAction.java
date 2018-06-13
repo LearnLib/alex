@@ -61,16 +61,17 @@ public class SetVariableByNodeCountAction extends SymbolAction {
     @Override
     protected ExecuteResult execute(ConnectorManager connector) {
         int nodeCount = 0;
-        node.setSelector(insertVariableValues(node.getSelector()));
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
 
         try {
             nodeCount = connector.getConnector(WebSiteConnector.class)
-                    .getElements(node)
+                    .getElements(nodeWithVariables)
                     .size();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not find elements with the selector '{}' "
-                        + "(ignoreFailure: {}, negated: {}).",
-                    node, ignoreFailure, negated);
+                            + "(ignoreFailure: {}, negated: {}).",
+                    nodeWithVariables, ignoreFailure, negated);
         }
 
         connector.getConnector(VariableStoreConnector.class)
@@ -84,7 +85,10 @@ public class SetVariableByNodeCountAction extends SymbolAction {
         return name;
     }
 
-    /** @param name {@link #name}. */
+    /**
+     * @param name
+     *         {@link #name}.
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -94,7 +98,10 @@ public class SetVariableByNodeCountAction extends SymbolAction {
         return node;
     }
 
-    /** @param node {@link #node}. */
+    /**
+     * @param node
+     *         {@link #node}.
+     */
     public void setNode(WebElementLocator node) {
         this.node = node;
     }

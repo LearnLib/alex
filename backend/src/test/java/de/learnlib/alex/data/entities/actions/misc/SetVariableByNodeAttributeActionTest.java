@@ -18,6 +18,8 @@ package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -45,9 +47,9 @@ import static org.mockito.Mockito.verify;
 
 public class SetVariableByNodeAttributeActionTest {
 
-    private static final String VARIABLE  = "variable";
-    private static final String NODE      = "node";
-    private static final String ATTRIBUTE_NAME  = "attribute";
+    private static final String VARIABLE = "variable";
+    private static final String NODE = "node";
+    private static final String ATTRIBUTE_NAME = "attribute";
     private static final String ATTRIBUTE_VALUE = "foobar";
 
     private SetVariableByNodeAttributeAction setAction;
@@ -60,7 +62,11 @@ public class SetVariableByNodeAttributeActionTest {
         node.setSelector(NODE);
         node.setType(WebElementLocator.Type.CSS);
 
+        Symbol symbol = new Symbol();
+        symbol.setProject(new Project(1L));
+
         setAction = new SetVariableByNodeAttributeAction();
+        setAction.setSymbol(symbol);
         setAction.setName(VARIABLE);
         setAction.setNode(node);
         setAction.setAttribute(ATTRIBUTE_NAME);
@@ -105,7 +111,7 @@ public class SetVariableByNodeAttributeActionTest {
         given(webSiteConnector.getElement(node)).willReturn(element);
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
 
-        ExecuteResult result = setAction.execute(connector);
+        ExecuteResult result = setAction.executeAction(connector);
 
         assertTrue(result.isSuccess());
         verify(variables).set(VARIABLE, ATTRIBUTE_VALUE);
@@ -121,7 +127,7 @@ public class SetVariableByNodeAttributeActionTest {
         given(webSiteConnector.getElement(node)).willThrow(NoSuchElementException.class);
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
 
-        ExecuteResult result = setAction.execute(connector);
+        ExecuteResult result = setAction.executeAction(connector);
 
         assertFalse(result.isSuccess());
         verify(variables, never()).set(eq(VARIABLE), anyString());

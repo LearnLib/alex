@@ -28,7 +28,6 @@ import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import javax.persistence.DiscriminatorValue;
@@ -76,8 +75,7 @@ public class ClickLinkAction extends WebSymbolAction {
     }
 
     /**
-     * Get the value to check.
-     * All variables and counters will be replaced with their values.
+     * Get the value to check. All variables and counters will be replaced with their values.
      *
      * @return The value to check.
      */
@@ -90,7 +88,7 @@ public class ClickLinkAction extends WebSymbolAction {
      * Set the value to check for.
      *
      * @param value
-     *            The new value.
+     *         The new value.
      */
     public void setValue(String value) {
         this.value = value;
@@ -106,23 +104,23 @@ public class ClickLinkAction extends WebSymbolAction {
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
-        final WebDriver driver = connector.getDriver();
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
 
         try {
             final String linkText = getValueWithVariableValues();
 
-            final WebElement element = driver
-                    .findElement(node.getBy())
+            final WebElement element = connector.getElement(nodeWithVariables)
                     .findElement(By.linkText(linkText));
 
             element.click();
 
             LOGGER.info(LEARNER_MARKER, "Clicked on the link '{}' (ignoreFailure: {}, negated: {}).",
-                        value, ignoreFailure, negated);
+                    value, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not click on the link '{}' (ignoreFailure: {}, negated: {}).",
-                        value, ignoreFailure, negated, e);
+                    value, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

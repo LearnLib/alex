@@ -71,16 +71,18 @@ public class ClearAction extends WebSymbolAction {
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
+
         try {
-            node.setSelector(insertVariableValues(node.getSelector()));
-            connector.getElement(node).clear();
+            connector.getElement(nodeWithVariables).clear();
 
             LOGGER.info(LEARNER_MARKER, "Cleared the element '{}' (ignoreFailure: {}, negated: {}).",
-                        node, ignoreFailure, negated);
+                    nodeWithVariables, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not clear the element '{}' (ignoreFailure: {}, negated: {}).",
-                        node, ignoreFailure, negated, e);
+                    nodeWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

@@ -92,7 +92,7 @@ public class FillAction extends WebSymbolAction {
      * Set the value to be used when filling the element.
      *
      * @param value
-     *            The new value.
+     *         The new value.
      */
     public void setValue(String value) {
         this.value = value;
@@ -100,19 +100,21 @@ public class FillAction extends WebSymbolAction {
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
-        node.setSelector(insertVariableValues(node.getSelector()));
-        String valueWithVariables = insertVariableValues(value);
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
+
+        final String valueWithVariables = insertVariableValues(value);
         try {
-            WebElement element = connector.getElement(node);
+            WebElement element = connector.getElement(nodeWithVariables);
             element.sendKeys(valueWithVariables);
 
             LOGGER.info("Filled the element '{}' with {}'(ignoreFailure: {}, negated: {}).",
-                        node, value, ignoreFailure, negated);
+                    nodeWithVariables, value, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not find the element '{}' to fill it with '{}' "
-                                            + "(ignoreFailure: {}, negated: {}).",
-                        node, valueWithVariables, ignoreFailure, negated, e);
+                            + "(ignoreFailure: {}, negated: {}).",
+                    nodeWithVariables, valueWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

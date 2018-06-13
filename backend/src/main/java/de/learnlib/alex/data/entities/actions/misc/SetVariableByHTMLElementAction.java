@@ -63,18 +63,21 @@ public class SetVariableByHTMLElementAction extends SymbolAction {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
         WebSiteConnector webSiteConnector = connector.getConnector(WebSiteConnector.class);
 
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
+
         try {
-            String text = webSiteConnector.getElement(node).getText().trim();
+            String text = webSiteConnector.getElement(nodeWithVariables).getText().trim();
             storeConnector.set(name, text);
 
             LOGGER.info(LEARNER_MARKER, "Set the variable '{}' to the value '{}' of the HTML node '{}' "
-                                + "(ignoreFailure: {}, negated: {}).",
-                        name, text, node, ignoreFailure, negated);
+                            + "(ignoreFailure: {}, negated: {}).",
+                    name, text, nodeWithVariables, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not set the variable '{}' to the value of the HTML node '{}' "
-                                            + "(ignoreFailure: {}, negated: {}).",
-                        name, node, ignoreFailure, negated);
+                            + "(ignoreFailure: {}, negated: {}).",
+                    name, nodeWithVariables, ignoreFailure, negated);
             return getFailedOutput();
         }
     }
@@ -84,7 +87,10 @@ public class SetVariableByHTMLElementAction extends SymbolAction {
         return name;
     }
 
-    /** @param name {@link #name}. */
+    /**
+     * @param name
+     *         {@link #name}.
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -94,7 +100,10 @@ public class SetVariableByHTMLElementAction extends SymbolAction {
         return node;
     }
 
-    /** @param node {@link #node}. */
+    /**
+     * @param node
+     *         {@link #node}.
+     */
     public void setNode(WebElementLocator node) {
         this.node = node;
     }

@@ -34,8 +34,8 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
 /**
- * Action to move the mouse to an element or a screen position, e.g. in order to make
- * invisible elements visible or to scroll on the page.
+ * Action to move the mouse to an element or a screen position, e.g. in order to make invisible elements visible or to
+ * scroll on the page.
  */
 @Entity
 @DiscriminatorValue("web_moveMouse")
@@ -78,7 +78,8 @@ public class MoveMouseAction extends WebSymbolAction {
     /**
      * Sets offset y.
      *
-     * @param offsetY the offset y
+     * @param offsetY
+     *         the offset y
      */
     public void setOffsetY(int offsetY) {
         this.offsetY = offsetY;
@@ -96,7 +97,8 @@ public class MoveMouseAction extends WebSymbolAction {
     /**
      * Sets node.
      *
-     * @param node the node
+     * @param node
+     *         the node
      */
     public void setNode(WebElementLocator node) {
         this.node = node;
@@ -114,7 +116,8 @@ public class MoveMouseAction extends WebSymbolAction {
     /**
      * Sets offset x.
      *
-     * @param offsetX the offset x
+     * @param offsetX
+     *         the offset x
      */
     public void setOffsetX(int offsetX) {
         this.offsetX = offsetX;
@@ -122,29 +125,30 @@ public class MoveMouseAction extends WebSymbolAction {
 
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
+        final WebElementLocator nodeWithVariables = node == null ? null
+                : new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
 
         try {
-            Actions actions = new Actions(connector.getDriver());
+            final Actions actions = new Actions(connector.getDriver());
 
-            if (node == null || node.getSelector().trim().equals("")) {
+            if (nodeWithVariables == null || nodeWithVariables.getSelector().trim().equals("")) {
                 actions.moveByOffset(offsetX, offsetY).build().perform();
                 LOGGER.info(LEARNER_MARKER, "Moved the mouse to the position ({}, {}) "
-                                                + "(ignoreFailure: {}, negated: {}).",
-                            offsetX, offsetY, ignoreFailure, negated);
+                                + "(ignoreFailure: {}, negated: {}).",
+                        offsetX, offsetY, ignoreFailure, negated);
             } else {
-                node.setSelector(insertVariableValues(node.getSelector()));
-                WebElement element = connector.getElement(node);
+                final WebElement element = connector.getElement(nodeWithVariables);
                 actions.moveToElement(element, offsetX, offsetY).build().perform();
                 LOGGER.info(LEARNER_MARKER, "Moved the mouse to the element '{}' "
-                                                + "(ignoreFailure: {}, negated: {}).",
-                            node, ignoreFailure, negated);
+                                + "(ignoreFailure: {}, negated: {}).",
+                        nodeWithVariables, ignoreFailure, negated);
             }
 
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
             LOGGER.info(LEARNER_MARKER, "Could not move the mouse to the element '{}' or the position ({}, {}) "
-                                            + "(ignoreFailure: {}, negated: {}).",
-                        node, offsetX, offsetY, ignoreFailure, negated, e);
+                            + "(ignoreFailure: {}, negated: {}).",
+                    nodeWithVariables, offsetX, offsetY, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

@@ -91,6 +91,42 @@ public class WaitForNodeAttributeAction extends WebSymbolAction {
     @Embedded
     private WebElementLocator node;
 
+    @Override
+    protected ExecuteResult execute(WebSiteConnector connector) {
+        if (maxWaitTime < 0) {
+            return getFailedOutput();
+        }
+
+        final WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
+
+        final String valueWithVariables = insertVariableValues(value);
+
+        try {
+            switch (waitCriterion) {
+                case IS:
+                    wait.until(wd -> connector.getElement(nodeWithVariables)
+                            .getAttribute(attribute)
+                            .equals(valueWithVariables));
+                    break;
+                case CONTAINS:
+                    wait.until(wd -> connector.getElement(nodeWithVariables)
+                            .getAttribute(attribute)
+                            .contains(valueWithVariables));
+                    break;
+                default:
+                    return getFailedOutput();
+            }
+
+            return getSuccessOutput();
+        } catch (TimeoutException e) {
+            LOGGER.info(LEARNER_MARKER, "Waiting on the attribute '{}' (criterion: '{}') timed out. ",
+                    attribute, waitCriterion);
+            return getFailedOutput();
+        }
+    }
+
     public String getValue() {
         return value;
     }
@@ -129,36 +165,6 @@ public class WaitForNodeAttributeAction extends WebSymbolAction {
 
     public void setNode(WebElementLocator node) {
         this.node = node;
-    }
-
-    @Override
-    protected ExecuteResult execute(WebSiteConnector connector) {
-        if (maxWaitTime < 0) {
-            return getFailedOutput();
-        }
-
-        WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
-
-        value = insertVariableValues(value);
-
-        try {
-            switch (waitCriterion) {
-                case IS:
-                    wait.until(wd -> connector.getElement(node).getAttribute(attribute).equals(value));
-                    break;
-                case CONTAINS:
-                    wait.until(wd -> connector.getElement(node).getAttribute(attribute).contains(value));
-                    break;
-                default:
-                    return getFailedOutput();
-            }
-
-            return getSuccessOutput();
-        } catch (TimeoutException e) {
-            LOGGER.info(LEARNER_MARKER, "Waiting on the attribute '{}' (criterion: '{}') timed out. ",
-                        attribute, waitCriterion);
-            return getFailedOutput();
-        }
     }
 
 }
