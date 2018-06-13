@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,16 @@ package de.learnlib.alex.auth.rest;
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
+import de.learnlib.alex.auth.events.UserEvent;
 import de.learnlib.alex.auth.security.JWTHelper;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.ResponseHelper;
+import de.learnlib.alex.config.dao.SettingsDAO;
+import de.learnlib.alex.config.entities.Settings;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -55,6 +59,7 @@ import java.util.List;
 
 /**
  * REST resource to handle users.
+ *
  * @resourcePath users
  * @resourceDescription Operations around users.
  */
@@ -63,10 +68,10 @@ public class UserResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker USER_MARKER     = MarkerManager.getMarker("USER");
-    private static final Marker REST_MARKER     = MarkerManager.getMarker("REST");
+    private static final Marker USER_MARKER = MarkerManager.getMarker("USER");
+    private static final Marker REST_MARKER = MarkerManager.getMarker("REST");
     private static final Marker RESOURCE_MARKER = MarkerManager.getMarker("USER_RESOURCE")
-                                                                    .setParents(USER_MARKER, REST_MARKER);
+            .setParents(USER_MARKER, REST_MARKER);
 
     /** The UserDAO to user. */
     @Inject
@@ -76,33 +81,64 @@ public class UserResource {
     @Context
     private SecurityContext securityContext;
 
+    /** The webhook service to use. */
+    @Inject
+    private WebhookService webhookService;
+
+    /** The injected settings DAO. */
+    @Inject
+    private SettingsDAO settingsDAO;
+
     /**
      * Creates a new user.
      *
-     * @param user
+     * @param newUser
      *         The user to create
      * @return The created user (enhanced with information form the DB); an error message on failure.
      * @responseType de.learnlib.alex.auth.entities.User
      * @successResponse 201 created
-     * @errorResponse   400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(User user) {
-        LOGGER.traceEntry("create({}).", user);
+    public Response create(User newUser) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("create({}).", newUser);
+
         try {
-            // validate email address
-            if (!new EmailValidator().isValid(user.getEmail(), null)) {
+            if (!new EmailValidator().isValid(newUser.getEmail(), null)) {
                 throw new ValidationException("The email is not valid");
             }
 
-            user.setEncryptedPassword(user.getPassword());
+            final Settings settings = settingsDAO.get();
 
-            // create user
-            userDAO.create(user);
-            LOGGER.traceExit(user);
-            return Response.status(Status.CREATED).entity(user).build();
+            if (user.getId() == null) { // anonymous registration
+                if (!settings.isAllowUserRegistration()) {
+                    return ResourceErrorHandler.createRESTErrorMessage("UserResource.create", Status.FORBIDDEN,
+                            new Exception("Public user registration is not allowed."));
+                }
+
+                newUser.setRole(UserRole.REGISTERED);
+                newUser.setEncryptedPassword(newUser.getPassword());
+
+                // create user
+                userDAO.create(newUser);
+                LOGGER.traceExit(newUser);
+                return Response.status(Status.CREATED).entity(newUser).build();
+            } else {
+                if (user.getRole().equals(UserRole.REGISTERED)) {
+                    return ResourceErrorHandler.createRESTErrorMessage("UserResource.create", Status.UNAUTHORIZED,
+                            new Exception("You are not allowed to create new accounts."));
+                } else {
+                    newUser.setEncryptedPassword(newUser.getPassword());
+
+                    // create user
+                    userDAO.create(newUser);
+                    LOGGER.traceExit(newUser);
+                    return Response.status(Status.CREATED).entity(newUser).build();
+                }
+            }
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.create", Status.BAD_REQUEST, e);
@@ -110,17 +146,17 @@ public class UserResource {
     }
 
     /**
-     * Get the account information about one user.
-     * This only works for your own account or if you are an administrator.
+     * Get the account information about one user. This only works for your own account or if you are an administrator.
      *
      * @param userId
      *         The ID of the user.
      * @return Detailed information about the user.
-     * @throws NotFoundException If the requested User could not be found.
+     * @throws NotFoundException
+     *         If the requested User could not be found.
      * @responseType de.learnlib.alex.auth.entities.User
      * @successResponse 200 Ok
-     * @errorResponse   400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   403 forbidden   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 403 forbidden   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/{id}")
@@ -132,7 +168,8 @@ public class UserResource {
 
         if (!user.getRole().equals(UserRole.ADMIN) && !user.getId().equals(userId)) {
             LOGGER.traceExit("only the user itself or an admin should be allowed to the account information.");
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.get", Status.FORBIDDEN, null);
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.get", Status.FORBIDDEN,
+                    "You are not allowed to get this information.");
         }
 
         User userById = userDAO.getById(userId);
@@ -141,8 +178,7 @@ public class UserResource {
     }
 
     /**
-     * Get all users.
-     * This is only allowed for admins.
+     * Get all users. This is only allowed for admins.
      *
      * @return A list of all users. This list can be empty.
      * @responseType java.util.List<de.learnlib.alex.auth.entities.User>
@@ -169,13 +205,13 @@ public class UserResource {
      * @param json
      *         The pair of oldPassword and newPassword as json
      * @return The updated user.
-     * @throws NotFoundException If the requested User could not be found.
-     *
+     * @throws NotFoundException
+     *         If the requested User could not be found.
      * @responseType de.learnlib.alex.auth.entities.User
      * @successResponse 200 Ok
-     * @errorResponse   400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   403 forbidden   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 403 forbidden   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @PUT
     @Path("/{id}/password")
@@ -188,7 +224,8 @@ public class UserResource {
 
         if (!user.getId().equals(userId)) {
             LOGGER.traceExit("Only the user is allowed to change his own password.");
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.FORBIDDEN, null);
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.FORBIDDEN,
+                    "You are not allowed to do this.");
         }
 
         String oldPassword = (String) json.get("oldPassword");
@@ -206,6 +243,8 @@ public class UserResource {
             userDAO.update(realUser);
 
             LOGGER.traceExit(realUser);
+
+            webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
             return Response.ok(user).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
@@ -214,8 +253,7 @@ public class UserResource {
     }
 
     /**
-     * Changes the email of the user.
-     * This can only be invoked for your own account or if you are an administrator.
+     * Changes the email of the user. This can only be invoked for your own account or if you are an administrator.
      * Please also note: Your new email must not be your current one and no other user should already have this email.
      *
      * @param userId
@@ -223,13 +261,13 @@ public class UserResource {
      * @param json
      *         the json with a property 'email'
      * @return The updated user.
-     * @throws NotFoundException If the requested User could not be found.
-     *
+     * @throws NotFoundException
+     *         If the requested User could not be found.
      * @responseType de.learnlib.alex.auth.entities.User
      * @successResponse 200 Ok
-     * @errorResponse   400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   403 forbidden   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 403 forbidden   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @PUT
     @Path("/{id}/email")
@@ -242,7 +280,8 @@ public class UserResource {
 
         if (!user.getId().equals(userId) && !user.getRole().equals(UserRole.ADMIN)) {
             LOGGER.traceExit("Only the user or an admin is allowed to change the email.");
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.FORBIDDEN, null);
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changePassword", Status.FORBIDDEN,
+                    "You are not allowed to do this.");
         }
 
         String email = (String) json.get("email");
@@ -264,6 +303,8 @@ public class UserResource {
             userDAO.update(realUser);
 
             LOGGER.traceExit(realUser);
+
+            webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
             return Response.ok(realUser).build();
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
@@ -281,17 +322,16 @@ public class UserResource {
     }
 
     /**
-     * Promotes an user to be an administrator.
-     * This can only be done by administrators.
+     * Promotes an user to be an administrator. This can only be done by administrators.
      *
      * @param userId
      *         The ID of the user to promote.
      * @return The account information of the new administrator.
-     * @throws NotFoundException If the given User could not be found.
-     *
+     * @throws NotFoundException
+     *         If the given User could not be found.
      * @responseType de.learnlib.alex.auth.entities.User
      * @successResponse 200 Ok
-     * @errorResponse   404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @PUT
     @Path("/{id}/promote")
@@ -308,23 +348,23 @@ public class UserResource {
         LOGGER.info(RESOURCE_MARKER, "User {} promoted.", user);
 
         LOGGER.traceExit(userToPromote);
+        webhookService.fireEvent(user, new UserEvent.RoleUpdated(userToPromote));
         return Response.ok(userToPromote).build();
     }
 
     /**
-     * Demotes an user to be an simple use (and no administrator anymore).
-     * This can only be done by administrators.
+     * Demotes an user to be an simple use (and no administrator anymore). This can only be done by administrators.
      * Please also note: At least one administrator has to remain in the system.
      *
      * @param userId
      *         The ID of the user to demote.
      * @return The account information of the formally administrator.
-     * @throws NotFoundException If the given User could not be found.
-     *
+     * @throws NotFoundException
+     *         If the given User could not be found.
      * @responseType de.learnlib.alex.auth.entities.User
      * @successResponse 200 Ok
-     * @errorResponse   400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @PUT
     @Path("/{id}/demote")
@@ -350,6 +390,7 @@ public class UserResource {
             userDAO.update(userToDemote);
 
             LOGGER.traceExit(userToDemote);
+            webhookService.fireEvent(user, new UserEvent.RoleUpdated(userToDemote));
             return Response.ok(userToDemote).build();
         } catch (BadRequestException e) {
             LOGGER.traceExit(e);
@@ -358,14 +399,13 @@ public class UserResource {
     }
 
     /**
-     * Delete an user.
-     * This is only allowed for your own account or if you are an administrator.
+     * Delete an user. This is only allowed for your own account or if you are an administrator.
      *
      * @param userId
      *         The ID of the user to delete.
      * @return Nothing if the user was deleted.
-     * @throws NotFoundException If the given User could not be found.
-     *
+     * @throws NotFoundException
+     *         If the given User could not be found.
      * @successResponse 204 No Content
      * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
@@ -384,21 +424,24 @@ public class UserResource {
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.delete", Status.FORBIDDEN, e);
         }
 
+        // the event is not fired if we do it after the user is deleted in the next line
+        // since all webhooks registered to the user are deleted as well.
+        webhookService.fireEvent(new User(userId), new UserEvent.Deleted(userId));
         userDAO.delete(userId);
 
         LOGGER.traceExit("User {} deleted.", userId);
+
         return Response.status(Status.NO_CONTENT).build();
     }
 
     /**
-     * Deletes multiples users.
-     * An admin cannot delete himself.
+     * Deletes multiples users. An admin cannot delete himself.
      *
      * @param ids
-     *          The ids of the user to delete.
+     *         The ids of the user to delete.
      * @return Nothing if the users have been deleted.
-     * @throws NotFoundException If the given Users could not be found.
-     *
+     * @throws NotFoundException
+     *         If the given Users could not be found.
      * @successResponse 204 No Content
      * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
@@ -420,6 +463,8 @@ public class UserResource {
         userDAO.delete(ids);
 
         LOGGER.traceExit("User(s) {} deleted.", ids);
+
+        ids.forEach(id -> webhookService.fireEvent(new User(id), new UserEvent.Deleted(id)));
         return Response.status(Status.NO_CONTENT).build();
     }
 
@@ -430,11 +475,11 @@ public class UserResource {
      * @param user
      *         The user to login
      * @return If the user was successfully logged in: a JSON Object with the authentication token as only field.
-     * @throws NotFoundException If the given User could not be found.
-     *
+     * @throws NotFoundException
+     *         If the given User could not be found.
      * @successResponse 200 Ok
-     * @errorResponse   401 unauthorized `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   404 not found    `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 401 unauthorized `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found    `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

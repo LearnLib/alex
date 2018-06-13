@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,7 +47,7 @@ public class ConnectorContextHandlerTest {
 
     @Test
     public void shouldCreateTheContextCorrectly() throws Exception {
-        given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.OK);
+        given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(new ExecuteResult(true));
 
         ConnectorManager connectorManager = new ConnectorManager();
         Connector connector1 = mock(VariableStoreConnector.class);
@@ -66,7 +66,7 @@ public class ConnectorContextHandlerTest {
 
     @Test(expected = LearnerException.class)
     public void shouldThrowAnExceptionIfTheResetSymbolExecutionFailed() {
-        given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.FAILED);
+        given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(new ExecuteResult(false));
 
         handler.addConnectorManager(createConnectorManager());
         handler.createContext(); // should fail

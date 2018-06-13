@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.learning.repositories;
 
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -56,6 +57,19 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, UU
     List<LearnerResult> findByProject_IdAndTestNoIn(Long projectId, Long... testNos);
 
     /**
+     * Find a single learner result.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param testNo
+     *         The test number.
+     * @return The learner result.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    LearnerResult findOneByProject_IdAndTestNo(Long projectId, Long testNo);
+
+    /**
      * Get the highest / latest test no used in a Project.
      *
      * @param projectId
@@ -66,6 +80,28 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, UU
     @SuppressWarnings("checkstyle:methodname")
     @Query("SELECT MAX(l.testNo) FROM LearnerResult l WHERE l.project.id = ?1")
     Long findHighestTestNo(Long projectId);
+
+    /**
+     * Get all learner results that contain specific project URLs.
+     *
+     * @param urls
+     *         The URLs the learner result should contain.
+     * @return The learner results.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<LearnerResult> findAllByUrlsIn(List<ProjectUrl> urls);
+
+    /**
+     * Get the latest learner result.
+     *
+     * @param projectId
+     *         The id of the project.
+     * @return The latest learner result.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    LearnerResult findFirstByProject_IdOrderByTestNoDesc(Long projectId);
 
     /**
      * Delete LearnResults by their test no in a Project.

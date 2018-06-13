@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
+import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -38,6 +40,8 @@ public interface SymbolDAO {
      *         The symbol to save.
      * @throws ValidationException
      *         When the symbol was not valid.
+     * @throws NotFoundException
+     *         If a symbol could not be found.
      */
     void create(User user, Symbol symbol) throws ValidationException, NotFoundException;
 
@@ -49,8 +53,9 @@ public interface SymbolDAO {
      * @param symbols
      *         The symbols to save.
      * @throws ValidationException
-     *         When one the symbols was not valid.
-     *         In this case all symbols are reverted and not saved.
+     *         When one the symbols was not valid. In this case all symbols are reverted and not saved.
+     * @throws NotFoundException
+     *         If a symbol could not be found.
      */
     void create(User user, List<Symbol> symbols) throws ValidationException, NotFoundException;
 
@@ -85,7 +90,7 @@ public interface SymbolDAO {
      *         If no Symbol was found.
      */
     List<Symbol> getByIds(User user, Long projectId, SymbolVisibilityLevel visibilityLevel,
-                          List<Long> ids)
+            List<Long> ids)
             throws NotFoundException;
 
     /**
@@ -160,6 +165,7 @@ public interface SymbolDAO {
      *         The user performing the action.
      * @param symbol
      *         The symbol to update.
+     * @return The updated symbol.
      * @throws IllegalArgumentException
      *         If an old revision is used.
      * @throws NotFoundException
@@ -167,7 +173,7 @@ public interface SymbolDAO {
      * @throws ValidationException
      *         When the Symbol was not valid.
      */
-    void update(User user, Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException;
+    Symbol update(User user, Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException;
 
     /**
      * Update a list of Symbols.
@@ -176,6 +182,7 @@ public interface SymbolDAO {
      *         The user performing the action.
      * @param symbols
      *         The symbol sto update.
+     * @return The list of updated symbols.
      * @throws IllegalArgumentException
      *         If an old revision is used.
      * @throws NotFoundException
@@ -183,7 +190,7 @@ public interface SymbolDAO {
      * @throws ValidationException
      *         When one of the Symbol was not valid.
      */
-    void update(User user, List<Symbol> symbols)
+    List<Symbol> update(User user, List<Symbol> symbols)
             throws IllegalArgumentException, NotFoundException, ValidationException;
 
     /**
@@ -191,29 +198,34 @@ public interface SymbolDAO {
      *
      * @param user
      *         The user performing the action.
-     * @param symbol
-     *         The Symbol to move.
+     * @param projectId
+     *         The id of the project.
+     * @param symbolId
+     *         The id of the symbol to move.
      * @param newGroupId
      *         The new Group.
+     * @return The group with the updated parent group.
      * @throws NotFoundException
      *         If the Symbol or the Group could not be found.
      */
-    void move(User user, Symbol symbol, Long newGroupId) throws NotFoundException;
+    Symbol move(User user, Long projectId, Long symbolId, Long newGroupId) throws NotFoundException;
 
     /**
-     * Moves a List of Symbols ot a new Group.
-     * If one Symbol failed to be move, no Symbol will be moved.
+     * Moves a List of Symbols ot a new Group. If one Symbol failed to be move, no Symbol will be moved.
      *
      * @param user
      *         The user performing the action.
-     * @param symbols
-     *         The Symbol to move.
+     * @param projectId
+     *         The id of the project.
+     * @param symbolIds
+     *         The ids of the symbols to move.
      * @param newGroupId
      *         The new Group.
+     * @return The groups with the updated parent group.
      * @throws NotFoundException
      *         If at least one of the Symbols or if the Group could not be found.
      */
-    void move(User user, List<Symbol> symbols, Long newGroupId) throws NotFoundException;
+    List<Symbol> move(User user, Long projectId, List<Long> symbolIds, Long newGroupId) throws NotFoundException;
 
     /**
      * Mark a symbol as hidden.
@@ -243,4 +255,19 @@ public interface SymbolDAO {
      */
     void show(User user, Long projectId, List<Long> ids) throws NotFoundException;
 
+    /**
+     * Check if the user can access or modify a symbol.
+     *
+     * @param user
+     *         The user.
+     * @param project
+     *         the project.
+     * @param symbol
+     *         The symbol.
+     * @throws NotFoundException
+     *         If one of the resources could not be found.
+     * @throws UnauthorizedException
+     *         If the user has no access to one of the resources.
+     */
+    void checkAccess(User user, Project project, Symbol symbol) throws NotFoundException, UnauthorizedException;
 }

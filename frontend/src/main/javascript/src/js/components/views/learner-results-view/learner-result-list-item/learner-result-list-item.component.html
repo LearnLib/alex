@@ -1,0 +1,19 @@
+<div class="d-flex learner-result-list-item">
+    <selectable-checkbox item="vm.result" selectable="vm.selectable" class="pull-left"></selectable-checkbox>
+    <div class="flex-grow-1 mr-1 ml-1">
+        <span class="label label-danger pull-right" ng-if="vm.result.error">Failed</span>
+        <strong>
+            <a ui-sref="learnerResultsCompare({testNos: [vm.result.testNo], projectId: vm.result.project})">
+                Test No <span ng-bind="vm.result.testNo"></span>
+            </a>
+        </strong>
+        [<span ng-bind="(vm.result.algorithm.name|formatAlgorithm)"></span>]
+        <div class="text-muted">
+            <em>
+                Started: <span ng-bind="(vm.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
+            </em>
+        </div>
+        <div class="comment text-muted" ng-if="vm.result.comment" ng-bind="vm.result.comment"></div>
+    </div>
+    <div ng-transclude></div>
+</div>

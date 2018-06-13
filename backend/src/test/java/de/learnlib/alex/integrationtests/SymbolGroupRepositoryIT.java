@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.springframework.transaction.TransactionSystemException;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -237,9 +236,7 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(user, project, 1L, "Test Group 1");
         symbolGroupRepository.save(group);
 
-        SymbolGroup groupFromDB = symbolGroupRepository.findOneByProject_IdAndId(
-                project.getId(),
-                                                                                           group.getId());
+        SymbolGroup groupFromDB = symbolGroupRepository.findOne(group.getId());
 
         assertThat(groupFromDB.getProject(), is(equalTo(project)));
         assertThat(groupFromDB.getId(), is(equalTo(1L)));
@@ -251,11 +248,8 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         user = userRepository.save(user);
         //
         Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
 
-        SymbolGroup groupFromDB = symbolGroupRepository.findOneByProject_IdAndId(
-                project.getId(),
-                                                                                           -1L);
+        SymbolGroup groupFromDB = symbolGroupRepository.findOne(-1L);
 
         assertNull(groupFromDB);
     }
@@ -278,9 +272,8 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
     @Test(expected = EmptyResultDataAccessException.class)
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingGroup() {
-        symbolGroupRepository.delete(UUID.fromString("fd53b43d-69ba-4c07-955c-f45915d69f7e")); // random uuid
+        symbolGroupRepository.delete(55L); // random uuid
     }
-
 
     static SymbolGroup createGroup(User user, Project project, Long id, String name) {
         SymbolGroup group = new SymbolGroup();

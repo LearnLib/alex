@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class AbstractLearnerConfigurationTest {
 
     private static final AbstractLearningAlgorithm<String, String> ALGORITHM = new TTT();
 
-    private final String driverConfig = "{\"name\":\"htmlUnit\",\"height\":0,\"implicitlyWait\":0,\"pageLoadTimeout\":10,\"scriptTimeout\":10,\"width\":0}";
+    private final String driverConfig = "{\"name\":\"htmlUnit\",\"height\":0,\"id\":null,\"implicitlyWait\":0,\"pageLoadTimeout\":10,\"scriptTimeout\":10,\"width\":0}";
 
     @Test
     public void shouldCreateTheCorrectDefaultJSON() throws JsonProcessingException {
@@ -49,6 +49,7 @@ public class AbstractLearnerConfigurationTest {
                 + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
                 + "\"maxLength\":" + EQ_MAX_VALUE + ",\"seed\":42,\"maxNoOfTests\":1},"
                 + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
+                + "\"urls\":[],"
                 + "\"useMQCache\":true,\"user\":null}";
 
         LearnerStartConfiguration configuration = new LearnerStartConfiguration();
@@ -69,6 +70,7 @@ public class AbstractLearnerConfigurationTest {
                 + "\"project\":null,"
                 + "\"resetSymbol\":null,"
                 + "\"symbols\":[],"
+                + "\"urls\":[],"
                 + "\"useMQCache\":true,"
                 + "\"user\":null}";
 

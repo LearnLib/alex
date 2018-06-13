@@ -1,0 +1,10 @@
+<form>
+    <div class="form-group">
+        <label>Name</label>
+        <input type="text" class="form-control" required ng-model="vm.symbol.name">
+    </div>
+    <div class="form-group text-right">
+        <button class="btn btn-primary btn-sm" ng-click="vm.onUpdated({symbol: vm.symbol})">Update</button>
+        <button class="btn btn-default btn-sm" ng-click="vm.onAborted()">Cancel</button>
+    </div>
+</form>

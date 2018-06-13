@@ -1,0 +1,126 @@
+<div class="view view-test-case">
+    <view-header title="Test Management"></view-header>
+    <action-bar>
+        <button class="btn btn-sm btn-success" ng-click="vm.save()">
+            <i class="fa fa-fw fa-save"></i> Save
+        </button>
+        <button class="btn btn-sm btn-default"
+                ui-sref="test({projectId: vm.testCase.project, testId: vm.testCase.parent})">
+            <i class="fa fa-fw fa-close"></i> Cancel
+        </button>
+        <div class="btn-group btn-group-sm pull-right">
+            <button class="btn btn-primary" ng-click="vm.execute()">
+                Execute
+            </button>
+            <button class="btn btn-primary" ng-click="vm.openTestConfigModal()">
+                <i class="fa fa-fm fa-gear"></i>
+            </button>
+        </div>
+    </action-bar>
+    <div class="view-body">
+        <div class="alx-container-fluid">
+
+            <div ng-if="vm.result">
+                <div class="alert alert-danger" ng-if="!vm.result.passed">
+                    <i class="fa fa-fw fa-close pull-right" ng-click="vm.result = null"></i>
+                    <i class="fa fa-fw fa-warning"></i> <strong>The test case failed.</strong>
+                </div>
+                <div class="alert alert-success" ng-if="vm.result.passed">
+                    <i class="fa fa-fw fa-close pull-right" ng-click="vm.result = null"></i>
+                    <i class="fa fa-fw fa-check"></i> <strong>The test case passed.</strong>
+                </div>
+            </div>
+
+            <div class="d-flex" style="align-items: center">
+                <button class="btn btn-sm btn-default"
+                        ui-sref="test({projectId: vm.testCase.project, testId: vm.testCase.parent})"
+                        style="margin-right: 12px">
+                    <i class="fa fa-fw fa-level-up"></i>
+                </button>
+                <h4 class="flex-grow-1" style="margin: 0;">
+                    <strong>
+                        <i class="fa fa-fw fa-file-o"></i> {{vm.testCase.name}}
+                    </strong>
+                </h4>
+            </div>
+
+            <hr>
+            <div class="row">
+                <div class="col-md-3 col-sm-5">
+                    <div style="height: 31px; position: relative; z-index: 10" class="mb-1">
+                        <symbol-search-form groups="vm.groups" on-selected="vm.addSymbolStep(symbol)"></symbol-search-form>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-body" style="padding: .5rem; overflow: auto">
+                            <simple-symbol-group-tree groups="vm.groups" on-symbol-selected="vm.addSymbolStep(symbol)"></simple-symbol-group-tree>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-9 col-sm-7">
+
+                    <pre-post-test-case-step
+                      text="Pre"
+                      groups="vm.groups"
+                      steps="vm.testCase.preSteps"
+                    >
+                    </pre-post-test-case-step>
+                    <hr>
+
+                    <div class="list-group" ng-if="vm.testCase.steps.length" dragula='"testSymbols"' dragula-model="vm.testCase.steps">
+                        <div class="list-group-item" ng-repeat="step in vm.testCase.steps track by $index">
+                            <div class="d-flex flex-row">
+                                <div class="w-100">
+                                    <strong>{{step.symbol.name}}</strong>
+                                    <div ng-if="step.parameterValues.length > 0" style="margin-top: .5rem">
+                                        <div class="d-flex flex-row text-muted" ng-repeat="parameterValue in step.parameterValues">
+                                            <div style="flex-shrink: 0">
+                                                <em>{{parameterValue.parameter.name}}</em> =&nbsp;
+                                            </div>
+                                            <div class="w-100 input-parameter-value" style="position: relative">
+                                                <i class="fa fa-fw fa-close cursor-pointer"
+                                                   ng-click="parameterValue.value = null"></i>
+                                                <input
+                                                  class="w-100 d-block"
+                                                  type="text"
+                                                  ng-model="parameterValue.value"
+                                                  placeholder="{{parameterValue.value == null ? 'null' : ''}}"
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mr-1">
+                                <span class="cursor-pointer" ng-click="step.shouldFail = !step.shouldFail">
+                                    <span class="label label-outline-danger" ng-if="step.shouldFail">Should fail</span>
+                                    <span class="label label-outline-success" ng-if="!step.shouldFail">Should pass</span>
+                                </span>
+                                </div>
+                                <div>
+                                    <i class="fa fa-close cursor-pointer" ng-click="vm.testCase.steps.splice($index, 1)"></i>
+                                </div>
+                            </div>
+                            <div ng-if="vm.result.outputs[$index]" style="margin-top: .75rem; padding-top: .75rem; border-top: 1px dashed #dddddd;">
+                                <span class="label" ng-class="{'label-success': vm.result.outputs[$index].success,'label-danger': !vm.result.outputs[$index].success}">
+                                    {{vm.result.outputs[$index].output}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info" ng-if="!vm.testCase.steps.length">
+                        Select a symbol to model the test case.
+                    </div>
+
+                    <hr>
+                    <pre-post-test-case-step
+                      text="Post"
+                      groups="vm.groups"
+                      steps="vm.testCase.postSteps"
+                    >
+                    </pre-post-test-case-step>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

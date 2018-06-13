@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import javax.validation.ValidationException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -44,6 +45,7 @@ import java.util.List;
 
 /**
  * REST API to fetch the test results.
+ *
  * @resourcePath results
  * @resourceDescription Operations around the test results / hypotheses
  */
@@ -70,14 +72,15 @@ public class LearnerResultResource {
      * @param projectId
      *         The project of the learn results.
      * @param embed
-     *         By default no steps are included in the response. However you can ask to include them with
-     *         this parameter set to 'steps'.
+     *         By default no steps are included in the response. However you can ask to include them with this parameter
+     *         set to 'steps'.
      * @return A List of all learn results within one project.
-     * @throws NotFoundException If the related Project could not be found.
+     * @throws NotFoundException
+     *         If the related Project could not be found.
      * @successResponse 200 OK
-     * @responseType    java.util.List<de.learnlib.alex.learning.entities.LearnerResult>
-     * @errorResponse   400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @responseType java.util.List<de.learnlib.alex.learning.entities.LearnerResult>
+     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -94,7 +97,34 @@ public class LearnerResultResource {
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
-                                                               Response.Status.BAD_REQUEST,  e);
+                    Response.Status.BAD_REQUEST, e);
+        }
+    }
+
+    /**
+     * Get the latest learner result.
+     *
+     * @param projectId
+     *         The id of the project.
+     * @return 200 with The latest learner result. 204 If there is not result.
+     * @throws NotFoundException
+     *         If the project could not be found.
+     */
+    @GET
+    @Path("/latest")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getLatest(@PathParam("project_id") long projectId)
+            throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.trace("LearnerResultResource.getLatest(" + projectId + ") for user " + user + ".");
+
+        try {
+            final LearnerResult result = learnerResultDAO.getLatest(user, projectId);
+            return result == null ? Response.noContent().build() : Response.ok(result).build();
+        } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getLatest",
+                    Response.Status.NOT_FOUND, e);
         }
     }
 
@@ -106,21 +136,22 @@ public class LearnerResultResource {
      * @param testNos
      *         The number(s) of the learn result(s).
      * @param embed
-     *         By default no steps are included in the response. However you can ask to include them with
-     *         this parameter set to 'steps'.
+     *         By default no steps are included in the response. However you can ask to include them with this parameter
+     *         set to 'steps'.
      * @return A List of all step of possible multiple test runs.
-     * @throws NotFoundException If the requested results or the related Project could not be found.
+     * @throws NotFoundException
+     *         If the requested results or the related Project could not be found.
      * @successResponse 200 OK
-     * @responseType    java.util.List<de.learnlib.alex.learning.entities.LearnerResult>
-     * @errorResponse   400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @responseType java.util.List<de.learnlib.alex.learning.entities.LearnerResult>
+     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("{test_nos}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") Long projectId,
-                           @PathParam("test_nos") IdsList testNos,
-                           @QueryParam("embed") String embed)
+            @PathParam("test_nos") IdsList testNos,
+            @QueryParam("embed") String embed)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.getAllSteps(" + projectId + ", " + testNos + ") for user " + user + ".");
@@ -141,7 +172,36 @@ public class LearnerResultResource {
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
-                                                               Response.Status.BAD_REQUEST,  e);
+                    Response.Status.BAD_REQUEST, e);
+        }
+    }
+
+    /**
+     * Clone a learner result.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param testNo
+     *         The test no of the learner result to clone.
+     * @return The cloned learner result.
+     * @throws NotFoundException
+     *         If one of the entities could not be found.
+     */
+    @POST
+    @Path("{test_no}/clone")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response clone(@PathParam("project_id") Long projectId, @PathParam("test_no") Long testNo)
+            throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("LearnerResultResource.clone(" + projectId + ", " + testNo + ") for user " + user + ".");
+
+        try {
+            final LearnerResult clonedResult = learnerResultDAO.clone(user, projectId, testNo);
+            return Response.status(Response.Status.CREATED).entity(clonedResult).build();
+        } catch (IllegalArgumentException e) {
+            LOGGER.traceExit(e);
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.clone",
+                    Response.Status.BAD_REQUEST, e);
         }
     }
 
@@ -153,20 +213,21 @@ public class LearnerResultResource {
      * @param testNumbers
      *         The test numbers of the results to delete as a comma (',') separated list. E.g. 1,2,3
      * @return On success no content will be returned.
-     * @throws NotFoundException If the given results or the related Project could not be found.
+     * @throws NotFoundException
+     *         If the given results or the related Project could not be found.
      * @successResponse 204 OK & no content
-     * @errorResponse   400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
+     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("{test_numbers}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteResultSet(@PathParam("project_id") Long projectId,
-                                    @PathParam("test_numbers") IdsList testNumbers)
+            @PathParam("test_numbers") IdsList testNumbers)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.deleteResultSet(" + projectId + ", " + testNumbers + ") "
-                     + "for user " + user + ".");
+                + "for user " + user + ".");
 
         try {
             Long[] numbersLongArray = testNumbers.toArray(new Long[testNumbers.size()]);
@@ -176,7 +237,7 @@ public class LearnerResultResource {
         } catch (ValidationException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.deleteResultSet",
-                                                                Response.Status.BAD_REQUEST, e);
+                    Response.Status.BAD_REQUEST, e);
         }
     }
 

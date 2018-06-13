@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,22 +23,26 @@ import de.learnlib.alex.auth.rest.UserResource;
 import de.learnlib.alex.auth.security.AuthenticationFilter;
 import de.learnlib.alex.common.exceptions.NotFoundExceptionMapper;
 import de.learnlib.alex.config.dao.SettingsDAO;
+import de.learnlib.alex.config.entities.DriverSettings;
 import de.learnlib.alex.config.entities.Settings;
 import de.learnlib.alex.config.rest.SettingsResource;
 import de.learnlib.alex.data.rest.CounterResource;
 import de.learnlib.alex.data.rest.FileResource;
 import de.learnlib.alex.data.rest.ProjectResource;
 import de.learnlib.alex.data.rest.SymbolGroupResource;
+import de.learnlib.alex.data.rest.SymbolParameterResource;
 import de.learnlib.alex.data.rest.SymbolResource;
 import de.learnlib.alex.learning.rest.LearnerResource;
 import de.learnlib.alex.learning.rest.LearnerResultResource;
-import de.learnlib.alex.testsuites.rest.TestResource;
+import de.learnlib.alex.testing.rest.TestExecutionConfigResource;
+import de.learnlib.alex.testing.rest.TestReportResource;
+import de.learnlib.alex.testing.rest.TestResource;
+import de.learnlib.alex.webhooks.rest.WebhookResource;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
@@ -96,10 +100,14 @@ public class ALEXApplication extends ResourceConfig {
         register(LearnerResultResource.class);
         register(ProjectResource.class);
         register(SettingsResource.class);
-        register(SymbolGroupResource.class);
         register(SymbolResource.class);
+        register(SymbolGroupResource.class);
+        register(SymbolParameterResource.class);
         register(UserResource.class);
         register(TestResource.class);
+        register(TestReportResource.class);
+        register(WebhookResource.class);
+        register(TestExecutionConfigResource.class);
 
         // Exceptions
         register(NotFoundExceptionMapper.class);
@@ -142,7 +150,7 @@ public class ALEXApplication extends ResourceConfig {
                 String edgeDriverPath = System.getProperty("webdriver.edge.driver", "");
                 String remoteDriverURL = System.getProperty("webdriver.remote.url", "");
 
-                final Settings.DriverSettings driverSettings = new Settings.DriverSettings(chromeDriverPath,
+                final DriverSettings driverSettings = new DriverSettings(chromeDriverPath,
                                                                                            geckoDriverPath,
                                                                                            edgeDriverPath,
                                                                                            remoteDriverURL);

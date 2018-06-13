@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
+import net.automatalib.automata.concepts.StateIDs;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
@@ -31,16 +32,13 @@ import javax.persistence.Transient;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Proxy around a {@link MealyMachine} from the LearnLib.
- * The Proxy is needed to make it easier to (de-)serialize the MealyMachine into/ from JSON.
+ * Proxy around a {@link MealyMachine} from the LearnLib. The Proxy is needed to make it easier to (de-)serialize the
+ * MealyMachine into/ from JSON.
  *
  * @see net.automatalib.automata.transout.impl.compact.CompactMealy
  */
@@ -66,54 +64,45 @@ public class CompactMealyMachineProxy implements Serializable {
      *
      * @param machine
      *         The MealyMachine the Proxy should wrap in
-     * @param sigma
-     *         The Alphabet of the MealyMachine.
+     * @param alphabet
+     *         The alphabet of the MealyMachine.
      * @return A new Proxy around the given MealyMachine.
      */
     public static CompactMealyMachineProxy createFrom(MealyMachine<?, String, ?, String> machine,
-                                                      Alphabet<String> sigma) {
-        CompactMealyMachineProxy newProxy = new CompactMealyMachineProxy();
-
-        Map<Object, Integer> statesIndex = createStatesIndex(machine);
-        List newStates = readStatesFrom(statesIndex);
-        newProxy.setNodes(newStates);
-        newProxy.initNode = statesIndex.get(machine.getInitialState());
-
-        List newTransitions = readTransitionsFrom(machine, statesIndex, sigma);
-        newProxy.setEdges(newTransitions);
-
-        return newProxy;
+            Alphabet<String> alphabet) {
+        return createProxy(machine, alphabet);
     }
 
-    private static Map<Object, Integer> createStatesIndex(MealyMachine<?, String, ?, String> machine) {
-        Map<Object, Integer> states = new HashMap<>(machine.getStates().size());
-        int i = 0;
-        for (Object state : machine) {
-            states.put(state, i++);
-        }
-        return states;
-    }
+    private static <S, T> CompactMealyMachineProxy createProxy(MealyMachine<S, String, T, String> machine,
+            Alphabet<String> alphabet) {
+        final StateIDs<S> stateIDs = machine.stateIDs();
 
-    private static List<Integer> readStatesFrom(Map<Object, Integer> statesIndex) {
-        return new ArrayList<>(statesIndex.values());
-    }
+        final Integer initialStateId = stateIDs.getStateId(machine.getInitialState());
+        final List<Integer> stateIds = machine.getStates().stream()
+                .map(stateIDs::getStateId)
+                .collect(Collectors.toList());
 
-    private static List<CompactMealyTransitionProxy> readTransitionsFrom(MealyMachine machine,
-                                                                         Map<Object, Integer> statesIndex,
-                                                                         Alphabet<String> sigma) {
-        List<CompactMealyTransitionProxy> newTransitions = new LinkedList<>();
-        for (Object state : machine) {
-            Integer v = statesIndex.get(state);
-            for (String input : sigma) {
-                Integer w = statesIndex.get(machine.getSuccessor(state, input));
-                if (w != null) {
-                    String output = machine.getOutput(state, input).toString();
-                    CompactMealyTransitionProxy newTransition = new CompactMealyTransitionProxy(v, input, w, output);
-                    newTransitions.add(newTransition);
-                }
-            }
-        }
-        return newTransitions;
+        final List<CompactMealyTransitionProxy> transitionProxies = new ArrayList<>();
+        machine.getStates().forEach(state ->
+                alphabet.forEach(sym -> {
+                    final T trans = machine.getTransition(state, sym);
+                    if (trans != null) {
+                        final CompactMealyTransitionProxy transProxy = new CompactMealyTransitionProxy();
+                        transProxy.setInput(sym);
+                        transProxy.setOutput(machine.getTransitionOutput(trans));
+                        transProxy.setFrom(stateIDs.getStateId(state));
+                        transProxy.setTo(stateIDs.getStateId(machine.getSuccessor(state, sym)));
+                        transitionProxies.add(transProxy);
+                    }
+                })
+        );
+
+        final CompactMealyMachineProxy proxy = new CompactMealyMachineProxy();
+        proxy.setInitNode(initialStateId);
+        proxy.setNodes(stateIds);
+        proxy.setEdges(transitionProxies);
+
+        return proxy;
     }
 
     /**
@@ -162,7 +151,7 @@ public class CompactMealyMachineProxy implements Serializable {
     public void setNodesDB(String nodesAsString) {
         try {
             CollectionType valueType = OBJECT_MAPPER.getTypeFactory()
-                                                    .constructCollectionType(List.class, Integer.class);
+                    .constructCollectionType(List.class, Integer.class);
             this.nodes = OBJECT_MAPPER.readValue(nodesAsString, valueType);
         } catch (IOException e) {
             e.printStackTrace();
@@ -234,8 +223,8 @@ public class CompactMealyMachineProxy implements Serializable {
     public void setEdgesDB(String edgesAsString) {
         try {
             CollectionType valueType = OBJECT_MAPPER.getTypeFactory()
-                                                   .constructCollectionType(List.class,
-                                                                            CompactMealyTransitionProxy.class);
+                    .constructCollectionType(List.class,
+                            CompactMealyTransitionProxy.class);
             this.edges = OBJECT_MAPPER.readValue(edgesAsString, valueType);
         } catch (IOException e) {
             e.printStackTrace();
@@ -251,7 +240,7 @@ public class CompactMealyMachineProxy implements Serializable {
     @JsonIgnore
     public Alphabet<String> createAlphabet() {
         Set<String> inputs = edges.stream().map(CompactMealyTransitionProxy::getInput)
-                                           .collect(Collectors.toSet());
+                .collect(Collectors.toSet());
 
         Alphabet<String> alphabet = new SimpleAlphabet<>(inputs);
         return alphabet;

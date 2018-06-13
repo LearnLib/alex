@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class Counter implements Serializable {
 
     /** The name of the counter. */
     @NotBlank
-    @Pattern(regexp = "[a-zA-Z0-9]*")
+    @Pattern(regexp = "[a-zA-Z0-9]+[a-zA-Z0-9\\-_]*")
     private String name;
 
     /** The value of the counter. */

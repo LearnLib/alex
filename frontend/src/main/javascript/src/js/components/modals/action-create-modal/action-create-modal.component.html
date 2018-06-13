@@ -1,0 +1,94 @@
+<div class="modal-header">
+
+    <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+
+    <h3 class="modal-title">Create a new action</h3>
+</div>
+
+<form ng-submit="vm.createAction()" id="action-create-form">
+
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-xs-4">
+
+                <action-search-form actions="vm.actions"
+                                    on-selected="vm.selectNewActionType(type)">
+                </action-search-form>
+
+                <div style="margin-top: 36px;"></div>
+
+                <uib-accordion close-others="true" class="action-types-accordion">
+                    <div uib-accordion-group class="panel-default" is-open="true">
+                        <uib-accordion-heading>
+                            <div><strong>Web</strong></div>
+                        </uib-accordion-heading>
+
+                        <div class="list-group list-group-condensed list-group-flush">
+                            <a href=""
+                               class="list-group-item"
+                               ng-class="{'active': action.type === vm.action.type}"
+                               ng-repeat="action in vm.actions.web"
+                               ng-click="vm.selectNewActionType(action.type)"
+                            >
+                                {{action.text}}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div uib-accordion-group class="panel-default">
+                        <uib-accordion-heading>
+                            <div><strong>REST</strong></div>
+                        </uib-accordion-heading>
+
+                        <div class="list-group list-group-condensed list-group-flush">
+                            <a href=""
+                               class="list-group-item"
+                               ng-class="{'active': action.type === vm.action.type}"
+                               ng-repeat="action in vm.actions.rest"
+                               ng-click="vm.selectNewActionType(action.type)"
+                            >
+                                {{action.text}}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div uib-accordion-group class="panel-default">
+                        <uib-accordion-heading>
+                            <div><strong>Misc</strong></div>
+                        </uib-accordion-heading>
+
+                        <div class="list-group list-group-condensed list-group-flush">
+                            <a href=""
+                               class="list-group-item"
+                               ng-class="{'active': action.type === vm.action.type}"
+                               ng-repeat="action in vm.actions.misc"
+                               ng-click="vm.selectNewActionType(action.type)"
+                            >
+                                {{action.text}}
+                            </a>
+                        </div>
+                    </div>
+                </uib-accordion>
+
+            </div>
+            <div class="col-xs-8">
+
+                <div class="alert alert-info alert-condensed" ng-show="vm.action === null">
+                    Select the action you want to create.
+                </div>
+
+                <action-form action="vm.action" symbols="vm.symbols" ng-if="vm.action !== null"></action-form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <a href="" class="btn btn-info btn-sm" ng-click="vm.createActionAndContinue()">Create and continue</a>
+        <button class="btn btn-primary btn-sm" type="submit">Create</button>
+        <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
+    </div>
+
+</form>

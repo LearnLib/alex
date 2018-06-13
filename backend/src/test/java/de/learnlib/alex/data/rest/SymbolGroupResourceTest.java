@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import de.learnlib.alex.data.dao.SymbolGroupDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.PropertyFilterMixIn;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
@@ -53,6 +54,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class SymbolGroupResourceTest extends JerseyTest {
@@ -86,7 +88,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("symbolAmount");
         FilterProvider filters = new SimpleFilterProvider().addFilter("filter properties by name", filter);
         ObjectMapper mapper = new ObjectMapper();
-        mapper.addMixInAnnotations(Object.class, PropertyFilterMixIn.class);
+        mapper.addMixIn(Object.class, PropertyFilterMixIn.class);
         return mapper.writer(filters).writeValueAsString(group);
     }
 
@@ -103,6 +105,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
                 bind(projectDAO).to(ProjectDAO.class);
                 bind(symbolDAO).to(SymbolDAO.class);
                 bind(symbolGroupDAO).to(SymbolGroupDAO.class);
+                bind(mock(WebhookService.class)).to(WebhookService.class);
             }
         });
         return testApplication;
@@ -139,7 +142,6 @@ public class SymbolGroupResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).post(Entity.json(json));
 
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-//        assertEquals("http://localhost:9998/projects/10/groups/1", response.getHeaderString("Location"));
         verify(symbolGroupDAO).create(eq(admin), any(SymbolGroup.class));
     }
 

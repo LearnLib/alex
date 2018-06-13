@@ -1,0 +1,11 @@
+<div class="list-group">
+    <a href
+       class="list-group-item"
+       ng-repeat="url in vm.project.urls"
+       ng-click="vm.toggleUrl(url)"
+       ng-class="{'active': vm.isSelected(url)}"
+    >
+        <strong class="d-block text-wrap" ng-if="url.name != null">{{url.name}}</strong>
+        <span class="text-wrap">{{url.url}}</span>
+    </a>
+</div>

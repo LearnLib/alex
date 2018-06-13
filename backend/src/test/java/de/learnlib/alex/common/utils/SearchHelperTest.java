@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,14 @@ package de.learnlib.alex.common.utils;
 
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
+import de.learnlib.alex.learning.services.connectors.FileStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 public class SearchHelperTest {
 
@@ -43,15 +41,17 @@ public class SearchHelperTest {
         given(counter.get("counter")).willReturn(COUNTER_VALUE);
         ConnectorManager connector = mock(ConnectorManager.class);
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
+        FileStoreConnector fileStoreConnector = mock(FileStoreConnector.class);
+        given(fileStoreConnector.getAbsoluteFileLocation(PROJECT_ID, "file.txt")).willReturn("/dir/file.text");
         given(webSiteConnector.getBaseUrl()).willReturn(PROJECT_URL);
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counter);
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
+        given(connector.getConnector(FileStoreConnector.class)).willReturn(fileStoreConnector);
 
-        String result = SearchHelper.insertVariableValues(connector, PROJECT_ID,
-                                                          "Hello {{$name}}, you are {{user}} no. {{#counter}}!");
+        String result = SearchHelper.insertVariableValues(connector, PROJECT_ID, "Hello {{$name}}, you are {{user}} no. {{#counter}} and want to upload file {{\\file.txt}} that belongs to {{$name}}!");
 
-        assertEquals("Hello Jon Doe, you are {{user}} no. " + COUNTER_VALUE + "!", result);
+        assertEquals("Hello Jon Doe, you are {{user}} no. " + COUNTER_VALUE + " and want to upload file /dir/file.text that belongs to Jon Doe!", result);
     }
 
     @Test
@@ -62,6 +62,5 @@ public class SearchHelperTest {
                                                           "Hello Jon Doe, you are user no. 42!");
 
         assertEquals("Hello Jon Doe, you are user no. " + COUNTER_VALUE + "!", result);
-        verify(connector, never()).getConnector(any(Class.class));
     }
 }

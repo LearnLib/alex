@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package de.learnlib.alex.learning.entities.learnlibproxies.eqproxies;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import de.learnlib.alex.learning.services.eqOracles.WMethodEQOracle;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
+import de.learnlib.oracle.equivalence.WMethodEQOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
@@ -76,6 +76,6 @@ public class WMethodEQOracleProxy extends AbstractEquivalenceOracleProxy impleme
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
             MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
-        return new WMethodEQOracle.MealyWMethodEQOracle<>(this.maxDepth, membershipOracle, batchSize);
+        return new WMethodEQOracle.MealyWMethodEQOracle<>(membershipOracle, this.maxDepth, batchSize);
     }
 }

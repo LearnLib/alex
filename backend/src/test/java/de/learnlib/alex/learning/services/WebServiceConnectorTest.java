@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -62,42 +63,42 @@ public class WebServiceConnectorTest {
 
     @Test
     public void shouldGetASiteAndRememberTheResponse() {
-        connector.get("/", requestHeaders, cookies);
+        connector.get("/", requestHeaders, cookies, 0);
 
         verify(builder, atLeast(1)).get();
         assertEquals(OK_STATUS, connector.getStatus());
-        assertEquals(null, connector.getHeaders());
+        assertNull(connector.getHeaders());
         assertEquals("{}", connector.getBody());
     }
 
     @Test
     public void shouldPostToASiteAndRememberTheResponse() {
-        connector.post("/", requestHeaders, cookies, FAKE_MESSAGE);
+        connector.post("/", requestHeaders, cookies, FAKE_MESSAGE, 0);
 
         verify(builder).post(Entity.json(FAKE_MESSAGE));
         assertEquals(OK_STATUS, connector.getStatus());
-        assertEquals(null, connector.getHeaders());
+        assertNull(connector.getHeaders());
         assertEquals(FAKE_MESSAGE, connector.getBody());
     }
 
     @Test
     public void shouldPutToASiteAndRememberTheResponse() {
-        connector.put("/", requestHeaders, cookies, FAKE_MESSAGE);
+        connector.put("/", requestHeaders, cookies, FAKE_MESSAGE, 0);
 
         verify(builder).put(Entity.json(FAKE_MESSAGE));
         assertEquals(OK_STATUS, connector.getStatus());
-        assertEquals(null, connector.getHeaders());
+        assertNull(connector.getHeaders());
         assertEquals(FAKE_MESSAGE, connector.getBody());
     }
 
 
     @Test
     public void shouldDeleteToASiteAndRememberTheResponse() {
-        connector.delete("/", requestHeaders, cookies);
+        connector.delete("/", requestHeaders, cookies, 0);
 
         verify(builder).delete();
         assertEquals(OK_STATUS, connector.getStatus());
-        assertEquals(null, connector.getHeaders());
+        assertNull(connector.getHeaders());
         assertEquals(FAKE_MESSAGE, connector.getBody());
     }
 

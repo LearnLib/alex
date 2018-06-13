@@ -1,0 +1,45 @@
+<div class="d-flex flex-row">
+    <div class="w-100" ng-if="vm.collapse">
+        <span
+            class="label"
+            style="margin-left: 3px"
+            ng-repeat="output in vm.outputs track by $index"
+            ng-class="{'label-success': output.success,'label-danger':!output.success}"
+        >
+            {{output.output}}
+        </span>
+    </div>
+    <div class="w-100" ng-if="!vm.collapse">
+        <table class="table table-condensed table-hollow">
+            <tbody>
+            <tr ng-repeat="output in vm.outputs track by $index">
+                <td style="width: 1px" class="text-right">
+                    <span
+                        ui-sref="symbol({projectId: vm.project.id, symbolId: output.symbol.id})"
+                        class="label label-default cursor-pointer"
+                    >
+                        {{output.symbol.name}}
+                    </span>
+                </td>
+                <td>
+                    <span
+                        class="label"
+                        ng-class="{'label-success': output.success,'label-danger':!output.success}"
+                    >
+                        {{output.output}}
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <i
+            class="fa fa-fw cursor-pointer"
+            ng-class="{'fa-caret-square-o-down': !vm.collapse, 'fa-caret-square-o-right': vm.collapse}"
+            ng-click="vm.toggleCollapse()"
+            uib-tooltip="Show details" tooltip-placement="left"
+        >
+        </i>
+    </div>
+</div>

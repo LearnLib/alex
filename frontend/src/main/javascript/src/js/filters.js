@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,19 @@ export function formatEqOracle() {
                 return 'W-Method';
             case  eqOracleType.HYPOTHESIS:
                 return 'Hypothesis';
+            default:
+                return type;
+        }
+    };
+}
+
+export function formatParameterType() {
+    return type => {
+        switch (type) {
+            case 'STRING':
+                return 'String';
+            case 'COUNTER':
+                return 'Counter';
             default:
                 return type;
         }
@@ -117,13 +130,26 @@ export function formatAlgorithm() {
                 return 'DHC';
             case learnAlgorithm.TTT:
                 return 'TTT';
-            case learnAlgorithm.DISCRIMINATION_TREE:
+            case learnAlgorithm.DT:
                 return 'Discrimination Tree';
             case learnAlgorithm.KEARNS_VAZIRANI:
                 return 'Kearns Vazirani';
             default:
                 return name;
         }
+    };
+}
+
+/**
+ * Transform an upper case string to a normal one.
+ * Example: RANDOM_WORD -> Random word.
+ *
+ * @return {function(string): string}
+ */
+export function normalizeUpperCase() {
+    return str => {
+        let res = str.split('_').map(part => part.toLowerCase()).join(' ');
+        return res.charAt(0).toUpperCase() + res.slice(1);
     };
 }
 
@@ -146,7 +172,8 @@ export function formatMilliseconds() {
             minutes = Math.floor(ms / 60000);
             return minutes + 'min ' + Math.floor((ms % 60000) / 1000) + 's';
         } else {
-            return Math.floor(ms / 1000) + 's';
+            seconds = Math.floor(ms / 1000);
+            return seconds + 's ' + (ms % 1000) + "ms";
         }
     };
 }

@@ -1,0 +1,42 @@
+<div class="form-group">
+    <label>Name</label>
+    <input class="form-control" type="text" required placeholder="The name of the webhook"
+           ng-model="vm.webhook.name">
+</div>
+<div class="form-group">
+    <label>URL</label>
+    <input class="form-control" type="url" required placeholder="The URL registered to the webhook"
+           ng-model="vm.webhook.url">
+</div>
+<div>
+    <label>Name</label>
+    <div class="d-flex flex-row">
+        <div class="form-group w-100 mr-1">
+            <select class="form-control" ng-model="vm.selectedEvent">
+                <option selected disabled value="">Select an event</option>
+                <option ng-repeat="event in vm.events" ng-value="event">{{event|normalizeUpperCase}}</option>
+            </select>
+        </div>
+        <div class="form-group mr-1">
+            <button class="btn btn-default" ng-click="vm.addSelectedEvent()">Add</button>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-default" ng-click="vm.addAllEvents()">Add all</button>
+        </div>
+    </div>
+</div>
+<div class="d-flex flex-row" ng-if="vm.webhook.events.length > 0">
+    <div style="padding-right: .75rem; min-width: 65px; padding-top: .5rem">
+        <label>Listen on:</label>
+    </div>
+    <div class="w-100">
+        <span class="label label-success"
+              style="padding: .75rem 1rem; margin-right: .75rem; margin-bottom: .75rem; display: inline-block"
+              ng-repeat="event in vm.webhook.events">
+            {{event|normalizeUpperCase}} <i class="fa fa-close cursor-pointer" style="margin-left: .75rem" ng-click="vm.removeEvent($index)"></i>
+        </span>
+    </div>
+</div>
+<div class="alert alert-info mb-0" ng-if="vm.webhook.events.length === 0">
+    There are no events configured yet.
+</div>

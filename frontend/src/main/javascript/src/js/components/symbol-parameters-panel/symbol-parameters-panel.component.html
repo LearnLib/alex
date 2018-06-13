@@ -1,0 +1,78 @@
+<div class="symbol-io-panel panel panel-default">
+    <div class="panel-heading">
+        <strong>Input & output parameters</strong>
+    </div>
+    <div class="p-1 border-bottom">
+        <button type="button" class="btn btn-default btn-sm" ng-click="vm.addInput()">
+            Add input
+        </button>
+        <button type="button" class="btn btn-default btn-sm" ng-click="vm.addOutput()">
+            Add output
+        </button>
+    </div>
+    <div class="panel-body">
+
+        <div class="d-flex">
+            <div class="d-flex" style="margin: auto">
+
+                <div>
+                    <div ng-repeat="input in vm.symbol.inputs" ng-if="vm.symbol.inputs.length > 0">
+                        <div class="d-flex" style="padding: .5rem 0">
+                            <div class="input w-100">
+                                <span class="btn-close pull-right ml-1" ng-click="vm.removeInput($index)">
+                                    <i class="fa fa-close"></i>
+                                </span>
+
+                                <strong class="cursor-pointer" ng-click="vm.editInput(input, $index)">{{input.name}}</strong>: <em>{{input.parameterType | formatParameterType}}</em>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <svg width="68px" height="14px" xmlns="http://www.w3.org/2000/svg">
+                                    <line x1="0" y1="7" x2="50" y2="7" stroke="#000" stroke-width="2"/>
+                                    <polygon points="50,13 50,1 68,7" style="fill:#000" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-if="vm.symbol.inputs.length === 0" class="d-flex align-items-center h-100">
+                        <div class="alert alert-info mr-1 mb-0">
+                            There are no inputs defined.
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="symbol h-100 d-flex align-items-center">
+                        <strong>{{vm.symbol.name}}</strong>
+                    </div>
+                </div>
+
+                <div>
+                    <div ng-repeat="output in vm.symbol.outputs" ng-if="vm.symbol.outputs.length > 0">
+                        <div class="d-flex" style="padding: .5rem 0">
+                            <div class="d-flex align-items-center">
+                                <svg width="68px" height="14px" xmlns="http://www.w3.org/2000/svg">
+                                    <line x1="0" y1="7" x2="50" y2="7" stroke="#000" stroke-width="2" />
+                                    <polygon points="50,13 50,1 68,7" style="fill:#000" />
+                                </svg>
+                            </div>
+                            <div class="output w-100">
+                                <span class="btn-close pull-right ml-1" ng-click="vm.removeOutput($index)">
+                                    <i class="fa fa-close"></i>
+                                </span>
+
+                                <strong class="cursor-pointer" ng-click="vm.editOutput(output, $index)">{{output.name}}</strong>: <em>{{output.parameterType | formatParameterType}}</em>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-if="vm.symbol.outputs.length === 0" class="d-flex align-items-center h-100">
+                        <div class="alert alert-info ml-1 mb-0">
+                            There are no outputs defined.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

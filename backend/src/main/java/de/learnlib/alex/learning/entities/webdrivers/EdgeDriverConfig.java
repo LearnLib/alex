@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,15 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.io.Serializable;
 
 /**
  * The config for the edge driver.
  */
+@Entity
+@DiscriminatorValue(WebDrivers.EDGE)
 @JsonTypeName(WebDrivers.EDGE)
 public class EdgeDriverConfig extends AbstractWebDriverConfig implements Serializable {
 

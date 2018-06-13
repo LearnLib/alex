@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ export class DomUtils {
                 names.unshift('#' + el.id);
                 break;
             } else {
-                if (el == el.ownerDocument.documentElement) {
+                if (el === el.ownerDocument.documentElement) {
                     names.unshift(el.tagName);
                 } else {
                     for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++) ;
@@ -58,7 +58,7 @@ export class DomUtils {
                 names.unshift('//' + el.nodeName.toLowerCase() + '[@id=\'' + el.id + '\']');
                 break;
             } else {
-                if (el == el.ownerDocument.documentElement) {
+                if (el === el.ownerDocument.documentElement) {
                     names.unshift(el.tagName);
                 } else {
                     for (var c = 1, e = el; e.previousElementSibling; e = e.previousElementSibling, c++) ;

@@ -1,0 +1,21 @@
+<div style="position: relative" ng-class="{'focused': vm.focused}">
+    <div class="wrapper">
+        <div class="form-group mb-0">
+            <i class="fa fa-fw fa-search text-muted"></i>
+            <input class="form-control"
+                   type="text"
+                   ng-focus="vm.handleFocus()"
+                   ng-model="vm.value"
+                   ng-model-options='{debounce: 300}'
+                   ng-change='vm.updateItemList()' placeholder="{{vm.placeholder}}">
+        </div>
+
+        <div class="list-group list-group-condensed mb-0" ng-if="vm.focused">
+            <div class="list-group-item"
+                 ng-repeat="item in vm.itemList"
+                 ng-click="vm.selectItem(item)">
+                {{vm.displayFn()(item)}}
+            </div>
+        </div>
+    </div>
+</div>

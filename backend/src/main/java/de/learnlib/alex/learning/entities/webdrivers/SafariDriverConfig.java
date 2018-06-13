@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,15 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.io.Serializable;
 
 /**
  * The configuration for the safari driver.
  */
+@Entity
+@DiscriminatorValue(WebDrivers.SAFARI)
 @JsonTypeName(WebDrivers.SAFARI)
 public class SafariDriverConfig extends AbstractWebDriverConfig implements Serializable {
 

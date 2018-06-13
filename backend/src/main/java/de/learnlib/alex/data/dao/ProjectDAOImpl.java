@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,17 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.testsuites.entities.TestSuite;
+import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.testing.entities.TestSuite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -43,6 +47,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of a ProjectDAO using Spring Data.
@@ -53,51 +58,69 @@ public class ProjectDAOImpl implements ProjectDAO {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final Marker PROJECT_MARKER = MarkerManager.getMarker("PROJECT");
-    private static final Marker DAO_MARKER     = MarkerManager.getMarker("DAO");
-    private static final Marker IMPL_MARKER    = MarkerManager.getMarker("PROJECT_DAO")
-                                                                .setParents(DAO_MARKER, PROJECT_MARKER);
+    private static final Marker DAO_MARKER = MarkerManager.getMarker("DAO");
+    private static final Marker IMPL_MARKER = MarkerManager.getMarker("PROJECT_DAO")
+            .setParents(DAO_MARKER, PROJECT_MARKER);
 
     /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
 
+    /** The repository for learner results. */
+    private LearnerResultRepository learnerResultRepository;
+
     /** The FileDAO to use. Will be injected. */
     private FileDAO fileDAO;
 
+    /** The ProjectUrlDAO to use. */
+    private ProjectUrlDAO projectUrlDAO;
+
     /**
-     * Creates a new ProjectDAO.
+     * Constructor.
      *
      * @param projectRepository
      *         The ProjectRepository to use.
+     * @param learnerResultRepository
+     *         The LearnerResultRepository to use.
+     * @param fileDAO
+     *         The FileDAO to use.
+     * @param projectUrlDAO
+     *         The ProjectUrlDAO to use.
      */
     @Inject
-    public ProjectDAOImpl(ProjectRepository projectRepository, @Lazy FileDAO fileDAO) {
+    public ProjectDAOImpl(ProjectRepository projectRepository, LearnerResultRepository learnerResultRepository,
+            @Lazy FileDAO fileDAO, @Lazy ProjectUrlDAO projectUrlDAO) {
         this.projectRepository = projectRepository;
+        this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
+        this.projectUrlDAO = projectUrlDAO;
     }
 
     @Override
     @Transactional
-    public void create(final Project project) throws ValidationException {
+    public Project create(final Project project) throws ValidationException {
         LOGGER.traceEntry("create({})", project);
+
         try {
             SymbolGroup defaultGroup = new SymbolGroup();
-            defaultGroup.setId(0L);
             defaultGroup.setName("Default group");
             defaultGroup.setProject(project);
-
             project.addGroup(defaultGroup);
-            project.setNextGroupId(1L);
 
             TestSuite testSuite = new TestSuite();
-            testSuite.setId(0L);
             testSuite.setName("Root");
             testSuite.setProject(project);
-            project.addTest(testSuite);
+            project.getTests().add(testSuite);
 
-            Project createdProject = projectRepository.save(project);
-            project.setId(createdProject.getId());
+            project.getUrls().forEach(url -> {
+                url.setId(null);
+                url.setProject(project);
+            });
+
+            final Project createdProject = projectRepository.save(project);
+            LOGGER.traceExit(createdProject);
+            return createdProject;
         } catch (DataIntegrityViolationException e) {
-            LOGGER.info(IMPL_MARKER, "Project creation failed:", e);
+            LOGGER.info(IMPL_MARKER, "Project creation failed: ", e);
             e.printStackTrace();
             LOGGER.traceExit(e);
             throw new javax.validation.ValidationException("Project could not be created.", e);
@@ -107,8 +130,6 @@ public class ProjectDAOImpl implements ProjectDAO {
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Project was not created:", cve);
         }
-
-        LOGGER.traceExit(project);
     }
 
     @Override
@@ -122,47 +143,45 @@ public class ProjectDAOImpl implements ProjectDAO {
     @Override
     @Transactional(readOnly = true)
     public Project getByID(Long userId, Long projectId, EmbeddableFields... embedFields) throws NotFoundException {
-        Project result = projectRepository.findOneByUser_IdAndId(userId, projectId);
+        final Project project = projectRepository.findOne(projectId);
+        checkAccess(new User(userId), project);
 
-        if (result == null) {
-            throw new NotFoundException("Could not find the project with the id " + projectId + ".");
-        }
+        initLazyRelations(project, embedFields);
 
-        initLazyRelations(result, embedFields);
-
-        return result;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Project getByName(Long userId, String projectName, EmbeddableFields... embedFields)
-            throws NotFoundException {
-        Project result = projectRepository.findOneByUser_IdAndName(userId, projectName);
-
-        if (result == null) {
-            throw new NotFoundException("Could not find the project with the name " + projectName + ".");
-        }
-
-        initLazyRelations(result, embedFields);
-
-        return result;
+        return project;
     }
 
     @Override
     @Transactional
-    public void update(User user, Project project) throws NotFoundException, ValidationException {
+    public Project update(User user, Project project) throws NotFoundException, ValidationException {
         LOGGER.traceEntry("update({})", project);
+
+        final Project projectInDb = projectRepository.findOne(project.getId());
+        checkAccess(user, projectInDb);
+
+        final List<ProjectUrl> urls = project.getUrls().stream()
+                .filter(url -> url.getId() != null)
+                .collect(Collectors.toList());
+        projectUrlDAO.checkAccess(user, project, urls);
+
         try {
-            Project projectInDB = getByID(user.getId(), project.getId(), EmbeddableFields.ALL);
-
             project.setUser(user);
-            project.setGroups(projectInDB.getGroups());
-            project.setNextGroupId(projectInDB.getNextGroupId());
-            project.setNextSymbolId(projectInDB.getNextSymbolId());
+            project.setGroups(projectInDb.getGroups());
+            project.setNextSymbolId(projectInDb.getNextSymbolId());
+            project.getUrls().forEach(url -> url.setProject(project));
 
-            projectRepository.save(project);
+            final List<ProjectUrl> urlsToRemove = projectInDb.getUrls().stream()
+                    .filter(url -> !project.getUrls().contains(url))
+                    .collect(Collectors.toList());
+            if (!urlsToRemove.isEmpty()) {
+                removeUrlsFromLearnerResults(urlsToRemove);
+            }
 
-        // error handling
+            final Project updatedProject = projectRepository.save(project);
+            initLazyRelations(updatedProject);
+
+            LOGGER.traceExit(project);
+            return updatedProject;
         } catch (DataIntegrityViolationException e) {
             LOGGER.info(IMPL_MARKER, "Project update failed:", e);
             throw new javax.validation.ValidationException("Project could not be updated.", e);
@@ -171,16 +190,19 @@ public class ProjectDAOImpl implements ProjectDAO {
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Project was not updated.", cve);
         }
-        LOGGER.traceExit(project);
+    }
+
+    private void removeUrlsFromLearnerResults(List<ProjectUrl> urlsToRemove) {
+        final List<LearnerResult> learnerResults = learnerResultRepository.findAllByUrlsIn(urlsToRemove);
+        learnerResults.forEach(result -> result.getUrls().removeAll(urlsToRemove));
+        learnerResultRepository.save(learnerResults);
     }
 
     @Override
     @Transactional
     public void delete(User user, Long projectId) throws NotFoundException {
-        Project project = projectRepository.findOneByUser_IdAndId(user.getId(), projectId);
-        if (project == null) {
-            throw new NotFoundException("Could not delete the project with the id " + projectId + ".");
-        }
+        final Project project = projectRepository.findOne(projectId);
+        checkAccess(user, project);
 
         projectRepository.delete(project);
 
@@ -194,10 +216,12 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     /**
      * Load objects that are connected with a project over a 'lazy' relation ship.
+     *
      * @param project
      *         The project which needs the 'lazy' objects.
      */
     private void initLazyRelations(Project project, EmbeddableFields... embedFields) {
+        Hibernate.initialize(project.getUrls());
         if (embedFields != null && embedFields.length > 0) {
             Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
@@ -213,12 +237,6 @@ public class ProjectDAOImpl implements ProjectDAO {
                 project.setSymbols(null);
             }
 
-            if (fieldsToLoad.contains(EmbeddableFields.TEST_RESULTS)) {
-                Hibernate.initialize(project.getTestResults());
-            } else {
-                project.setTestResults(null);
-            }
-
             if (fieldsToLoad.contains(EmbeddableFields.COUNTERS)) {
                 Hibernate.initialize(project.getCounters());
             } else {
@@ -227,7 +245,6 @@ public class ProjectDAOImpl implements ProjectDAO {
         } else {
             project.setGroups(null);
             project.setSymbols(null);
-            project.setTestResults(null);
             project.setCounters(null);
         }
     }
@@ -237,7 +254,6 @@ public class ProjectDAOImpl implements ProjectDAO {
         if (Arrays.asList(embedFields).contains(EmbeddableFields.ALL)) {
             fieldsToLoad.add(EmbeddableFields.GROUPS);
             fieldsToLoad.add(EmbeddableFields.SYMBOLS);
-            fieldsToLoad.add(EmbeddableFields.TEST_RESULTS);
             fieldsToLoad.add(EmbeddableFields.COUNTERS);
         } else {
             Collections.addAll(fieldsToLoad, embedFields);
@@ -245,4 +261,14 @@ public class ProjectDAOImpl implements ProjectDAO {
         return fieldsToLoad;
     }
 
+    @Override
+    public void checkAccess(User user, Project project) throws NotFoundException, UnauthorizedException {
+        if (project == null) {
+            throw new NotFoundException("The project does not exist.");
+        }
+
+        if (!project.getUser().equals(user)) {
+            throw new UnauthorizedException("You are not allowed to access the project.");
+        }
+    }
 }

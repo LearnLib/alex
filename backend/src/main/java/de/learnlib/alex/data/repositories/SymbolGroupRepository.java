@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Repository to persist SymbolGroups.
  */
 @Repository
-public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, UUID> {
+public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, Long> {
 
     /**
      * Find all SymbolGroups in a Project.
@@ -42,17 +41,17 @@ public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, UUID> 
     List<SymbolGroup> findAllByProject_Id(Long projectId);
 
     /**
-     * Find a SymbolGroup.
+     * Find all symbol groups by project and its parent.
      *
      * @param projectId
-     *         The ID the User the SymbolGroup belongs to.
-     * @param id
-     *         The ID of the Project within the Project space.
-     * @return The SymbolGroup or null.
+     *         The id of the project.
+     * @param parentId
+     *         The id of the parent. May be null.
+     * @return The symbol groups.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    SymbolGroup findOneByProject_IdAndId(Long projectId, Long id);
+    List<SymbolGroup> findAllByProject_IdAndParent_id(Long projectId, Long parentId);
 
     /**
      * Find a symbol group by its name.
@@ -67,4 +66,14 @@ public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, UUID> 
     @SuppressWarnings("checkstyle:methodname")
     SymbolGroup findOneByProject_IdAndName(Long projectId, String name);
 
+    /**
+     * Get the default group of the project which is the one that is created during the project creation.
+     *
+     * @param projectId
+     *         The id of the project.
+     * @return The default symbol group.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    SymbolGroup findFirstByProject_IdOrderByIdAsc(Long projectId);
 }

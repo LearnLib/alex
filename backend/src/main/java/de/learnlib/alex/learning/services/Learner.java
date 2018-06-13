@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,15 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
+import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
@@ -37,6 +40,7 @@ import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.automata.transout.impl.compact.CompactMealyTransition;
 import net.automatalib.util.automata.Automata;
@@ -95,9 +99,17 @@ public class Learner {
     @Inject
     private LearnerResultDAO learnerResultDAO;
 
+    /** The {@link WebhookService} to use. */
+    @Inject
+    private WebhookService webhookService;
+
     /** Factory to create a new ContextHandler. */
     @Inject
     private ConnectorContextHandlerFactory contextHandlerFactory;
+
+    /** The repository for project URLs. */
+    @Inject
+    private ProjectUrlRepository projectUrlRepository;
 
     /** The last thread of an user, if one exists. */
     private final Map<Long, AbstractLearnerThread> userThreads;
@@ -156,13 +168,16 @@ public class Learner {
             throw new IllegalStateException("You can not start more than one experiment at the same time.");
         }
 
+        final List<ProjectUrl> urls = projectUrlRepository.findAll(configuration.getUrlIds());
+
         final LearnerResult result = createLearnerResult(user, project, configuration);
 
-        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project,
+        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, urls,
                 configuration.getDriverConfig());
         contextHandler.setResetSymbol(result.getResetSymbol());
 
-        final AbstractLearnerThread learnThread = new StartingLearnerThread(user, learnerResultDAO, contextHandler, result, configuration);
+        final AbstractLearnerThread learnThread = new StartingLearnerThread(user, learnerResultDAO, webhookService,
+                                                                            contextHandler, result, configuration);
         startThread(project.getId(), learnThread);
     }
 
@@ -184,7 +199,10 @@ public class Learner {
             throw new IllegalStateException("You have to wait until the running experiment is finished.");
         }
 
-        configuration.checkConfiguration();
+        if (result.getSteps().get(configuration.getStepNo() - 1).isError()) {
+            throw new IllegalStateException("You cannot resume from a failed step.");
+        }
+
         if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
             validateCounterexample(user, configuration);
         }
@@ -192,14 +210,19 @@ public class Learner {
         final Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbolAsId());
         result.setResetSymbol(resetSymbol);
 
-        List<Symbol> symbols = symbolDAO.getByIds(user, project.getId(),
+        final List<Symbol> symbols = symbolDAO.getByIds(user, project.getId(),
                 new LinkedList<>(result.getSymbolsAsIds()));
         result.setSymbols(symbols);
 
-        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, result.getDriverConfig());
+        final List<ProjectUrl> urls = projectUrlRepository.findAll(configuration.getUrlIds());
+        result.setUrls(urls);
+
+        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, urls,
+                result.getDriverConfig());
         contextHandler.setResetSymbol(result.getResetSymbol());
 
-        final AbstractLearnerThread learnThread = new ResumingLearnerThread(user, learnerResultDAO, contextHandler, result, configuration);
+        final AbstractLearnerThread learnThread = new ResumingLearnerThread(user, learnerResultDAO, webhookService,
+                                                                            contextHandler, result, configuration);
         startThread(project.getId(), learnThread);
     }
 
@@ -232,6 +255,9 @@ public class Learner {
         learnerResult.setAlgorithm(configuration.getAlgorithm());
         learnerResult.setComment(configuration.getComment());
         learnerResult.setUseMQCache(configuration.isUseMQCache());
+
+        final List<ProjectUrl> urls = projectUrlRepository.findAll(configuration.getUrlIds());
+        learnerResult.setUrls(urls);
 
         return learnerResult;
     }
@@ -287,7 +313,10 @@ public class Learner {
                                         lastResult.getProject(),
                                         lastResult.getResetSymbol(),
                                         symbolsFromCounterexample,
-                                        lastResult.getDriverConfig());
+                                        lastResult.getDriverConfig())
+                    .stream()
+                    .map(ExecuteResult::getOutput)
+                    .collect(Collectors.toList());
 
             // remove the reset symbol from the outputs
             results.remove(0);
@@ -331,19 +360,15 @@ public class Learner {
      * @return A snapshot of the Learner status.
      */
     public LearnerStatus getStatus(Long projectId) {
-        LearnerStatus status;
-
         boolean active = isActive(projectId);
         if (!active) {
-            status = new LearnerStatus(); // not active
+            return new LearnerStatus();
         } else {
             AbstractLearnerThread thread = userThreads.get(projectId);
             LearnerPhase phase = thread != null ? thread.getLearnerPhase() : null;
             List<DefaultQueryProxy> queries = thread != null ? thread.getCurrentQueries() : null;
-            status = new LearnerStatus(getResult(projectId), phase, queries); // active
+            return new LearnerStatus(getResult(projectId), phase, queries);
         }
-
-        return status;
     }
 
     /**
@@ -372,7 +397,7 @@ public class Learner {
      *
      * @throws LearnerException If something went wrong while testing the symbols.
      */
-    public List<String> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols,
+    public List<ExecuteResult> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols,
                                     AbstractWebDriverConfig driverConfig)
             throws LearnerException {
         ThreadContext.put("userId", String.valueOf(user.getId()));
@@ -384,31 +409,7 @@ public class Learner {
         SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols);
         ReadOutputConfig config = new ReadOutputConfig(symbolSet, driverConfig);
 
-        return readOutputsAsString(user, project, config);
-    }
-
-    /**
-     * Determine the output of the SUL by testing a sequence of input symbols.
-     *
-     * @param user             The user in which context the test should happen.
-     * @param project          The project in which context the test should happen.
-     * @param readOutputConfig The config for reading the outputs.
-     *
-     * @return The following output sequence.
-     *
-     * @throws LearnerException If something went wrong while testing the symbols.
-     */
-    public List<String> readOutputsAsString(User user, Project project, ReadOutputConfig readOutputConfig)
-            throws LearnerException {
-        ThreadContext.put("userId", String.valueOf(user.getId()));
-        ThreadContext.put("testNo", "readOutputs");
-        ThreadContext.put("indent", "");
-        LOGGER.traceEntry();
-        LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {})", user, project, readOutputConfig);
-
-        return readOutputs(user, project, readOutputConfig).stream()
-                                                           .map(ExecuteResult::getOutput)
-                                                           .collect(Collectors.toList());
+        return readOutputs(user, project, config);
     }
 
     public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {
@@ -426,11 +427,13 @@ public class Learner {
                                                 .map(s -> s.execute(connectors))
                                                 .collect(Collectors.toList());
             connectors.dispose();
+            connectors.post();
 
             LOGGER.traceExit(output);
             return output;
         } catch (Exception e) {
             connectors.dispose();
+            connectors.post();
 
             LOGGER.traceExit(e);
             throw new LearnerException("Could not read the outputs", e);
@@ -445,19 +448,23 @@ public class Learner {
      *
      * @return If the machines are different: The corresponding separating word; otherwise: ""
      */
-    public String separatingWord(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {
-        Alphabet<String> alphabetProxy1 = mealy1.createAlphabet();
-        Alphabet<String> alphabetProxy2 = mealy1.createAlphabet();
+    public SeparatingWord separatingWord(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {
+        final Alphabet<String> alphabetProxy1 = mealy1.createAlphabet();
+        final Alphabet<String> alphabetProxy2 = mealy1.createAlphabet();
 
-        CompactMealy<String, String> mealyMachine1 = mealy1.createMealyMachine(alphabetProxy1);
-        CompactMealy<String, String> mealyMachine2 = mealy2.createMealyMachine(alphabetProxy2);
+        final CompactMealy<String, String> mealyMachine1 = mealy1.createMealyMachine(alphabetProxy1);
+        final CompactMealy<String, String> mealyMachine2 = mealy2.createMealyMachine(alphabetProxy2);
 
-        Word<String> separatingWord = Automata.findSeparatingWord(mealyMachine1, mealyMachine2, alphabetProxy1);
+        final Word<String> separatingWord = Automata.findSeparatingWord(mealyMachine1, mealyMachine2, alphabetProxy1);
 
         if (separatingWord != null) {
-            return separatingWord.toString();
+            return new SeparatingWord(
+                    separatingWord,
+                    mealyMachine1.computeOutput(separatingWord),
+                    mealyMachine2.computeOutput(separatingWord)
+            );
         } else {
-            return "";
+            return new SeparatingWord();
         }
     }
 
@@ -478,21 +485,26 @@ public class Learner {
         final CompactMealy<String, String> hyp2 = mealyProxy1.createMealyMachine(alphabet);
 
         // the words where the output differs
-        final List<Word<String>> diff = new ArrayList<>();
+        final List<SeparatingWord> diffs = new ArrayList<>();
 
         final List<Word<String>> transCover = Automata.transitionCover(hyp2, alphabet);
         final List<Word<String>> charSet = Automata.characterizingSet(hyp2, alphabet);
 
         // use the same coverage as for the w method
         for (final Word<String> prefix : transCover) {
-            if (!hyp1.computeOutput(prefix).equals(hyp2.computeOutput(prefix))) {
-                diff.add(prefix);
-            }
-
             for (final Word<String> suffix : charSet) {
                 final Word<String> word = prefix.concat(suffix);
-                if (!hyp1.computeOutput(word).equals(hyp2.computeOutput(word))) {
-                    diff.add(word);
+
+                final Word<String> out1 = hyp1.computeOutput(word);
+                final Word<String> out2 = hyp2.computeOutput(word);
+
+                if (!out1.equals(out2)) {
+                    for (int i = 0; i < word.length(); i++) {
+                        if (!out1.getSymbol(i).equals(out2.getSymbol(i))) {
+                            diffs.add(new SeparatingWord(word.subWord(0, i + 1), out1, out2));
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -506,17 +518,24 @@ public class Learner {
         int i = hyp2.getInitialState();
         int j = diffTree.getInitialState();
 
-        for (final Word<String> word : diff) {
+        for (final SeparatingWord diff : diffs) {
 
             // walk along the hypothesis from its initial state
-            for (final String sym : word) {
+            for (int k = 0; k < diff.getInput().length(); k++) {
+                final String sym = diff.getInput().getSymbol(k);
+
                 final CompactMealyTransition<String> transition = hyp2.getTransition(i, sym);
-                final String out = transition.getOutput();
 
                 if (diffTree.getTransition(j, sym) == null) {
                     // if the transition does not yet exist in the tree
                     // create a new state in the tree and add the same transition
                     final int newState = diffTree.addState();
+
+                    String out = diff.getOutput2().getSymbol(k);
+                    if (k == diff.getInput().length() - 1) {
+                        out += " vs. " + diff.getOutput1().getSymbol(k);
+                    }
+
                     final CompactMealyTransition<String> t = new CompactMealyTransition<>(newState, out);
                     diffTree.addTransition(j, sym, t);
 

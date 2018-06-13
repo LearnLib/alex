@@ -1,0 +1,16 @@
+<div class="test-case-node">
+    <div class="header d-flex flex-row">
+        <div class="test-icon">
+            <i class="fa fa-fw fa-file"></i>
+        </div>
+        <div class="name flex-grow-1" ui-sref="test({projectId: vm.case.project, testId: vm.case.id})">
+            <span class="pull-right" ng-if="vm.result">
+                <span class="label label-success" ng-if="vm.result.passed">Passed</span>
+                <span class="label label-danger" ng-if="!vm.result.passed">Failed</span>
+            </span>
+
+            <strong ng-if="vm.parent === null">{{vm.case.name}}</strong>
+            <span ng-if="vm.parent !== null">{{vm.case.name}}</span>
+        </div>
+    </div>
+</div>

@@ -6,6 +6,8 @@
 <suppressions>
 
     <!-- The tests should not need any JavaDoc -->
+	<suppress checks="JavadocPackage" files="src/.*\.java" />
+	<suppress checks="JavadocPackage" files="src\\.*\.java" />
 	<suppress checks="JavadocPackage" files="src/test/.*\.java" />
 	<suppress checks="JavadocPackage" files="src\\test\\.*\.java" />
 	<suppress checks="JavadocMethod" files="src/test/.*\.java" />

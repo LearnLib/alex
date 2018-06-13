@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import org.springframework.stereotype.Service;
 
@@ -52,15 +53,28 @@ public class ConnectorContextHandlerFactory {
      *         The current project in which the context should be.
      * @param driverConfig
      *         The driver config to use for the frontend learning.
-     *
      * @return A ContextHandler for the project with all the connectors.
      */
     public ConnectorContextHandler createContext(User user, Project project, AbstractWebDriverConfig driverConfig) {
-        final ConnectorContextHandler context = new ConnectorContextHandler();
+        return createContext(user, project, project.getUrls(), driverConfig);
+    }
 
-        final List<String> urls = new ArrayList<>();
-        urls.add(project.getBaseUrl());
-        urls.addAll(project.getMirrorUrls());
+    /**
+     * Factor to create a ContextHandler which knows all available connectors.
+     *
+     * @param user
+     *         The user that executes the learning experiment.
+     * @param project
+     *         The current project in which the context should be.
+     * @param urls
+     *         The URLs to use for learning.
+     * @param driverConfig
+     *         The driver config to use for the frontend learning.
+     * @return A ContextHandler for the project with all the connectors.
+     */
+    public ConnectorContextHandler createContext(User user, Project project, List<ProjectUrl> urls,
+                                                 AbstractWebDriverConfig driverConfig) {
+        final ConnectorContextHandler context = new ConnectorContextHandler();
 
         final List<Counter> counters = new ArrayList<>();
         try {
@@ -69,10 +83,10 @@ public class ConnectorContextHandlerFactory {
             e.printStackTrace();
         }
 
-        for (final String url: urls) {
+        for (final ProjectUrl url : urls) {
             final ConnectorManager connectorManager = new ConnectorManager();
-            connectorManager.addConnector(new WebSiteConnector(url, driverConfig));
-            connectorManager.addConnector(new WebServiceConnector(url));
+            connectorManager.addConnector(new WebSiteConnector(url.getUrl(), driverConfig));
+            connectorManager.addConnector(new WebServiceConnector(url.getUrl()));
             connectorManager.addConnector(new CounterStoreConnector(counterDAO, user, project, counters));
             connectorManager.addConnector(new VariableStoreConnector());
             connectorManager.addConnector(new FileStoreConnector(fileDAO, user));

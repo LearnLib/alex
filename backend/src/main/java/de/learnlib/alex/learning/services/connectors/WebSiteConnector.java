@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,15 +26,13 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Connector to communicate with a WebSite.
- * This is a facade around Seleniums {@link WebDriver}.
+ * Connector to communicate with a WebSite. This is a facade around Seleniums {@link WebDriver}.
  */
 public class WebSiteConnector implements Connector {
 
@@ -66,22 +64,52 @@ public class WebSiteConnector implements Connector {
         this.driverConfig = driverConfig;
     }
 
-    /**
-     * Try to clear all data from the browser, including Cookies, local storage & session storage.
-     */
     @Override
     public void reset() throws Exception {
-        this.driver = driverConfig.createDriver();
+        if (this.driver == null) {
+            this.driver = driverConfig.createDriver();
+        }
     }
 
     @Override
     public void dispose() {
-        this.driver.quit();
+        driver.manage().deleteAllCookies();
+        if (driver instanceof JavascriptExecutor) {
+            final JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("window.localStorage.clear();");
+            js.executeScript("window.sessionStorage.clear();");
+        }
+    }
+
+    @Override
+    public void post() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
+    /** Refreshes the browser window. */
+    public void refresh() {
+        if (this.driver != null) {
+            this.driver.navigate().refresh();
+        }
     }
 
     /**
-     * Do a HTTP GET request within the browser.
-     * Optionally credentials for HTTP Basic Auth can be provided.
+     * Restarts the browser.
+     *
+     * @throws Exception
+     *         In case something during the instantiation of the browser goes wrong.
+     */
+    public void restart() throws Exception {
+        if (this.driver != null) {
+            this.driver.quit();
+            this.driver = driverConfig.createDriver();
+        }
+    }
+
+    /**
+     * Do a HTTP GET request within the browser. Optionally credentials for HTTP Basic Auth can be provided.
      *
      * @param path
      *         The path to send the request to.
@@ -99,7 +127,7 @@ public class WebSiteConnector implements Connector {
 
                 // wait until the browser is loaded
                 if (driver instanceof JavascriptExecutor) {
-                    new WebDriverWait(driver, READY_STATE_TIMEOUT).until((ExpectedCondition<Boolean>) wd ->
+                    new WebDriverWait(driver, READY_STATE_TIMEOUT).until(wd ->
                             ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
                 }
 
@@ -141,10 +169,10 @@ public class WebSiteConnector implements Connector {
      * Same as {@link #getElement(WebElementLocator)} but returns a list of web elements.
      *
      * @param locator
-     *          The query to search for the element.
-     * @return  A list of elements.
+     *         The query to search for the element.
+     * @return A list of elements.
      * @throws NoSuchElementException
-     *          If no element was found.
+     *         If no element was found.
      */
     public List<WebElement> getElements(WebElementLocator locator) throws NoSuchElementException {
         if (locator.getType().equals(WebElementLocator.Type.CSS)) {
@@ -178,9 +206,9 @@ public class WebSiteConnector implements Connector {
 
     /**
      * Get the base url of the API to call. All requests will be based on this!
-     * @see BaseUrlManager#getBaseUrl()
      *
      * @return The base url for all the requests.
+     * @see BaseUrlManager#getBaseUrl()
      */
     public String getBaseUrl() {
         return baseUrl.getBaseUrl();
@@ -191,7 +219,6 @@ public class WebSiteConnector implements Connector {
      *         The path to append on the base url.
      * @param credentials
      *         The credentials to use for HTTP Basic Auth. Can be null.
-     *
      * @return An absolute URL as String
      * @see BaseUrlManager#getAbsoluteUrl(String)
      */

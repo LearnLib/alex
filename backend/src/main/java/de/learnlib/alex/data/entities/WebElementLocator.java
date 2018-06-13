@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,23 @@ public class WebElementLocator implements Serializable {
     @NotNull
     @Column(name = "selectorType")
     private Type type;
+
+    /**
+     * Constructor.
+     */
+    public WebElementLocator() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param selector The selector.
+     * @param type The selector type.
+     */
+    public WebElementLocator(String selector, Type type) {
+        this.selector = selector;
+        this.type = type;
+    }
 
     /**
      * Get the selector as selenium By object.

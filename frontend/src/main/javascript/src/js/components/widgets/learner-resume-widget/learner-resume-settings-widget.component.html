@@ -1,0 +1,73 @@
+<widget title="Resume configuration">
+
+    <form name="vm.form">
+
+        <div class="form-group">
+            <label class="control-label">Step from where to continue</label><br>
+            <input name="step_no" class="form-control" type="number" min="1" max="{{vm.result.steps.length}}"
+                   required ng-model="vm.configuration.stepNo">
+        </div>
+
+        <div
+            class="alert alert-danger alert-condensed"
+            ng-show="vm.form.step_no.$dirty && vm.form.step_no.$invalid"
+        >
+            <small ng-show="vm.form.step_no.$error.required">The field must not be empty.</small>
+            <small ng-show="vm.form.step_no.$error.min">The value must be &ge; 1.</small>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label">Steps to learn</label>
+            <input ng-model="vm.configuration.maxAmountOfStepsToLearn" class="form-control"
+                   type="number" required min="-1" placeholder="-1" name="max_steps">
+            <p class="help-block">(-1 := learn until no counterexample can be found)</p>
+        </div>
+
+        <div
+            class="alert alert-danger alert-condensed"
+            ng-show="vm.form.max_steps.$dirty && vm.form.max_steps.$invalid"
+        >
+            <small ng-show="vm.form.max_steps.$error.required">The field must not be empty.</small>
+            <small ng-show="vm.form.max_steps.$error.min">The value must be &ge; -1.</small>
+        </div>
+
+        <hr>
+
+        <eq-oracle-form
+            eq-oracle="vm.configuration.eqOracle"
+            form="vm.form"
+            on-selected="vm.setEqOracle(eqOracle)"
+        >
+        </eq-oracle-form>
+
+        <div class="form-horizontal form-condensed" ng-if="vm.configuration.eqOracle.type === vm.eqOracleTypes.SAMPLE">
+            <counterexamples-widget counterexamples="vm.configuration.eqOracle.counterExamples" result="vm.result">
+            </counterexamples-widget>
+        </div>
+
+        <hr>
+
+        <div class="form-group">
+            <label class="control-label">Symbols to add</label><br>
+
+            <select multiple class="form-control" ng-model="vm.configuration.symbolsToAdd"
+                    ng-options="s.id as s.name for s in vm.symbolsToAdd">
+                <option value="" disabled>Select symbols to add</option>
+            </select>
+        </div>
+
+        <hr>
+
+        <div class="form-group">
+            <label>Target URLs</label>
+
+            <project-url-list
+                project="vm.project"
+                list-model="vm.configuration.urls"
+                multiple="true"
+            >
+            </project-url-list>
+        </div>
+
+    </form>
+</widget>

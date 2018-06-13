@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@
 package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.learning.services.BaseUrlManager;
+import org.glassfish.jersey.client.ClientProperties;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
@@ -55,22 +57,31 @@ public class WebServiceConnector implements Connector {
     /** The cookies from th last call done by the connection. */
     private Map<String, NewCookie> cookies;
 
+    /** Client for following redirects. */
+    private Client client;
+
     /**
      * Constructor which sets the WebTarget to use.
      *
-     * @param baseUrl The base url used by the connector. All other paths will treated as suffix to this.
+     * @param baseUrl
+     *         The base url used by the connector. All other paths will treated as suffix to this.
      */
     public WebServiceConnector(String baseUrl) {
         this.baseUrl = new BaseUrlManager(baseUrl);
-        this.target = ClientBuilder.newClient().target(baseUrl);
+        this.target = ClientBuilder.newClient().property(ClientProperties.FOLLOW_REDIRECTS, false)
+                .target(baseUrl);
+        this.client = ClientBuilder.newClient().property(ClientProperties.FOLLOW_REDIRECTS, false);
     }
 
     /**
      * Constructor for testing purpose which sets the WebTarget to use.
      *
-     * @param target   The WebTarget the connection will use.
-     * @param baseUrl  The base URL used by the connector. All other paths will treated as suffix to this.
-     * @param resetUrl The url to reset the SUL. This URL is relative to the base URL.
+     * @param target
+     *         The WebTarget the connection will use.
+     * @param baseUrl
+     *         The base URL used by the connector. All other paths will treated as suffix to this.
+     * @param resetUrl
+     *         The url to reset the SUL. This URL is relative to the base URL.
      */
     public WebServiceConnector(WebTarget target, String baseUrl, String resetUrl) {
         this.baseUrl = new BaseUrlManager(baseUrl);
@@ -86,14 +97,16 @@ public class WebServiceConnector implements Connector {
     public void dispose() {
     }
 
+    @Override
+    public void post() {
+    }
+
     /**
-     * Get the response status of the last request. You have to do at least one request ({@link #get(String, Map, Set)}|
-     * {@link #post(String, Map, Set, String)}| {@link #put(String, Map, Set, String)}| {@link #delete(String, Map,
-     * Set)}).
+     * Get the response status of the last request.
      *
      * @return The last status received by the connections.
-     *
-     * @throws java.lang.IllegalStateException If no request was done before the method call.
+     * @throws java.lang.IllegalStateException
+     *         If no request was done before the method call.
      */
     public int getStatus() throws IllegalStateException {
         if (!init) {
@@ -103,13 +116,11 @@ public class WebServiceConnector implements Connector {
     }
 
     /**
-     * Get the response HTTP header of the last request. You have to do at least on request ({@link #get(String, Map,
-     * Set)}| {@link #post(String, Map, Set, String)}| {@link #put(String, Map, Set, String)}| {@link #delete(String,
-     * Map, Set)}).
+     * Get the response HTTP header of the last request.
      *
      * @return The last HTTP header received by the connections.
-     *
-     * @throws java.lang.IllegalStateException If no request was done before the method call.
+     * @throws java.lang.IllegalStateException
+     *         If no request was done before the method call.
      */
     public MultivaluedMap<String, Object> getHeaders() throws IllegalStateException {
         if (!init) {
@@ -119,13 +130,11 @@ public class WebServiceConnector implements Connector {
     }
 
     /**
-     * Get the response body of the last request. You have to do at least on request ({@link #get(String, Map, Set)}|
-     * {@link #post(String, Map, Set, String)}| {@link #put(String, Map, Set, String)}| {@link #delete(String, Map,
-     * Set)}).
+     * Get the response body of the last request.
      *
      * @return The last body received by the connections.
-     *
-     * @throws java.lang.IllegalStateException If no request was done before the method call.
+     * @throws java.lang.IllegalStateException
+     *         If no request was done before the method call.
      */
     public String getBody() throws IllegalStateException {
         if (!init) {
@@ -138,8 +147,8 @@ public class WebServiceConnector implements Connector {
      * Get the cookies.
      *
      * @return The cookies.
-     *
-     * @throws IllegalStateException If no request was done before the method call.
+     * @throws IllegalStateException
+     *         If no request was done before the method call.
      */
     public Map<String, NewCookie> getCookies() throws IllegalStateException {
         if (!init) {
@@ -151,13 +160,19 @@ public class WebServiceConnector implements Connector {
     /**
      * Do a HTTP GET request.
      *
-     * @param path           The path to send the request to.
-     * @param requestHeaders The headers to send with the request.
-     * @param requestCookies The cookies to send with the request.
+     * @param path
+     *         The path to send the request to.
+     * @param requestHeaders
+     *         The headers to send with the request.
+     * @param requestCookies
+     *         The cookies to send with the request.
+     * @param timeout
+     *         The amount of time in ms before the request is canceled.
      */
-    public void get(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies) {
-        final Response response = getRequestObject(path, requestHeaders, requestCookies).get();
+    public void get(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) {
+        final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).get();
         rememberResponseComponents(response);
+        followRedirects(response);
     }
 
     private Entity getBody(Map<String, String> requestHeaders, String data) {
@@ -171,48 +186,70 @@ public class WebServiceConnector implements Connector {
     /**
      * Do a HTTP POST request.
      *
-     * @param path           The path to send the request to.
-     * @param requestHeaders The headers to send with the request.
-     * @param requestCookies The cookies to send with the request.
-     * @param data           The data to send with the request.
+     * @param path
+     *         The path to send the request to.
+     * @param requestHeaders
+     *         The headers to send with the request.
+     * @param requestCookies
+     *         The cookies to send with the request.
+     * @param data
+     *         The data to send with the request.
+     * @param timeout
+     *         The amount of time in ms before the request is canceled.
      */
-    public void post(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, String data) {
+    public void post(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, String data,
+            int timeout) {
         final Entity body = getBody(requestHeaders, data);
-        final Response response = getRequestObject(path, requestHeaders, requestCookies).post(body);
+        final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).post(body);
         rememberResponseComponents(response);
+        followRedirects(response);
     }
 
     /**
      * Do a HTTP PUT request.
      *
-     * @param path           The path to send the request to.
-     * @param requestHeaders The headers to send with the request.
-     * @param requestCookies The cookies to send with the request.
-     * @param data           The data to send with the request.
+     * @param path
+     *         The path to send the request to.
+     * @param requestHeaders
+     *         The headers to send with the request.
+     * @param requestCookies
+     *         The cookies to send with the request.
+     * @param data
+     *         The data to send with the request.
+     * @param timeout
+     *         The amount of time in ms before the request is canceled.
      */
     public void put(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies,
-                    String data) {
+            String data, int timeout) {
         final Entity body = getBody(requestHeaders, data);
-        final Response response = getRequestObject(path, requestHeaders, requestCookies).put(body);
+        final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).put(body);
         rememberResponseComponents(response);
+        followRedirects(response);
     }
 
     /**
      * Do a HTTP DELETE request.
      *
-     * @param path           The path to send the request to.
-     * @param requestHeaders The headers to send with the request.
-     * @param requestCookies The cookies to send with the request.
+     * @param path
+     *         The path to send the request to.
+     * @param requestHeaders
+     *         The headers to send with the request.
+     * @param requestCookies
+     *         The cookies to send with the request.
+     * @param timeout
+     *         The amount of time in ms before the request is canceled.
      */
-    public void delete(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies) {
-        final Response response = getRequestObject(path, requestHeaders, requestCookies).delete();
+    public void delete(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) {
+        final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).delete();
         rememberResponseComponents(response);
+        followRedirects(response);
     }
 
     /**
      * Reset the connector and the SUL.
      *
-     * @param resetUrl The url (based on the base url) to reset the SUL.
+     * @param resetUrl
+     *         The url (based on the base url) to reset the SUL.
      */
     public void reset(String resetUrl) {
         target.path(resetUrl).request().get();
@@ -222,7 +259,8 @@ public class WebServiceConnector implements Connector {
     /**
      * Multi setter for all the fields based on the response.
      *
-     * @param response The response all other fields will be based on.
+     * @param response
+     *         The response all other fields will be based on.
      */
     private void rememberResponseComponents(Response response) {
         status = response.getStatus();
@@ -232,11 +270,27 @@ public class WebServiceConnector implements Connector {
         init = true;
     }
 
+    private void followRedirects(Response response) {
+        while (response.getStatus() == Response.Status.FOUND.getStatusCode()) { // 302
+            final String location = response.getHeaderString("Location");
+            response = client.target(location).request().get();
+
+            status = response.getStatus();
+            headers = response.getHeaders();
+            body = response.readEntity(String.class);
+
+            // Overwrite cookies from previous requests if there are new cookies, otherwise keep the old ones.
+            // This way, cookies that may be required don't get lost in redirects.
+            if (!response.getCookies().isEmpty()) {
+                cookies = response.getCookies();
+            }
+        }
+    }
+
     /**
      * Get the base url of the API to call. All requests will be based on this!
      *
      * @return The base url for all the requests.
-     *
      * @see BaseUrlManager#getBaseUrl()
      */
     public String getBaseUrl() {
@@ -246,14 +300,18 @@ public class WebServiceConnector implements Connector {
     /**
      * Creates a request object that is passed to further REST actions.
      *
-     * @param path           The URI that is called.
-     * @param requestHeaders The HTTP headers of the request.
-     * @param requestCookies The cookies of the request.
-     *
+     * @param path
+     *         The URI that is called.
+     * @param requestHeaders
+     *         The HTTP headers of the request.
+     * @param requestCookies
+     *         The cookies of the request.
+     * @param timeout
+     *         The amount of time in ms before the request is canceled.
      * @return The request object.
      */
     private Invocation.Builder getRequestObject(String path, Map<String, String> requestHeaders,
-                                                Set<Cookie> requestCookies) {
+            Set<Cookie> requestCookies, int timeout) {
         final String[] splitPath = path.split("\\?");
         WebTarget tmpTarget = target.path(splitPath[0]);
 
@@ -269,6 +327,9 @@ public class WebServiceConnector implements Connector {
         final Invocation.Builder builder = tmpTarget.request();
         requestHeaders.forEach(builder::header);
         requestCookies.forEach(builder::cookie);
+
+        builder.property(ClientProperties.CONNECT_TIMEOUT, timeout);
+        builder.property(ClientProperties.READ_TIMEOUT, timeout);
 
         return builder;
     }

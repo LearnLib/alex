@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
-import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
+import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -151,7 +151,7 @@ public class LearnerTest {
         List<Symbol> symbols = new LinkedList<>();
         for (int i = 0; i < SYMBOL_AMOUNT; i++) {
             Symbol symbol = mock(Symbol.class);
-            given(symbol.execute(any(ConnectorManager.class))).willReturn(ExecuteResult.OK);
+            given(symbol.execute(any(ConnectorManager.class))).willReturn(new ExecuteResult(true));
             symbols.add(symbol);
         }
         //
@@ -162,10 +162,10 @@ public class LearnerTest {
         ConnectorManager connectorManager = mock(ConnectorManager.class);
         given(ctxHandler.createContext()).willReturn(connectorManager);
 
-        List<String> outputs = learner.readOutputs(user, project, resetSymbol, symbols, new HtmlUnitDriverConfig());
+        List<ExecuteResult> outputs = learner.readOutputs(user, project, resetSymbol, symbols, new HtmlUnitDriverConfig());
 
         assertEquals(symbols.size(), outputs.size());
-        assertTrue("at least one output was not OK", outputs.stream().allMatch(output -> output.equals("OK")));
+        assertTrue("at least one output was not OK", outputs.stream().allMatch(r -> r.getOutput().equals("OK")));
         verify(connectorManager).dispose();
     }
 

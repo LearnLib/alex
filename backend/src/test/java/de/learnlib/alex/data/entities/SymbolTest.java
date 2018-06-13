@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@
 
 package de.learnlib.alex.data.entities;
 
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckTextWebAction;
+import de.learnlib.alex.data.entities.actions.web.CheckTextWebAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
+import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,11 +27,15 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SymbolTest {
+
+    private static final Long PROJECT_ID = 1L;
 
     private WebSiteConnector webSiteConnector;
     private ConnectorManager connectorManager;
@@ -48,11 +54,14 @@ public class SymbolTest {
 
         symbol = new Symbol();
         symbol.addAction(a1);
+        symbol.setProject(new Project(PROJECT_ID));
 
         connectorManager = mock(ConnectorManager.class);
         webSiteConnector = mock(WebSiteConnector.class);
 
         given(connectorManager.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
+        given(connectorManager.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
+        given(connectorManager.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
     }
 
     @Test
@@ -61,7 +70,7 @@ public class SymbolTest {
 
         ExecuteResult result = symbol.execute(connectorManager);
 
-        assertEquals(result, ExecuteResult.OK);
+        assertTrue(result.isSuccess());
         assertEquals(result.getOutput(), ExecuteResult.DEFAULT_SUCCESS_OUTPUT);
     }
 
@@ -74,7 +83,7 @@ public class SymbolTest {
         symbol.setSuccessOutput(output);
         ExecuteResult result = symbol.execute(connectorManager);
 
-        assertEquals(result, ExecuteResult.OK);
+        assertTrue(result.isSuccess());
         assertEquals(result.getOutput(), output);
     }
 
@@ -85,7 +94,7 @@ public class SymbolTest {
 
         ExecuteResult result = symbol.execute(connectorManager);
 
-        assertEquals(result, ExecuteResult.FAILED);
+        assertFalse(result.isSuccess());
         assertEquals(result.getOutput(), ExecuteResult.DEFAULT_ERROR_OUTPUT + " (1)");
     }
 
@@ -99,7 +108,7 @@ public class SymbolTest {
 
         ExecuteResult result = symbol.execute(connectorManager);
 
-        assertEquals(result, ExecuteResult.FAILED);
+        assertFalse(result.isSuccess());
         assertEquals(result.getOutput(), output);
     }
 }

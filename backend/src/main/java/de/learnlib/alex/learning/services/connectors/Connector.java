@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,20 @@ public interface Connector {
 
     /**
      * Method called during the reset of the SUL.
-     * Set the connector back to init. state.
-     * @throws Exception
-     *          If an exception occurred while the reset.
+     * Set the connector back to the initial state.
+     *
+     * @throws Exception If an exception occurred while the reset.
      */
     void reset() throws Exception;
 
     /**
-     * Dispose the connector.
-     * This method will be called after the learning and allows to do necessary clean ups.
-     * After this method is called, the connector should not work anymore.
+     * Method that is called after a membership query has been executed.
      */
     void dispose();
 
+    /**
+     * Method that should be called after the learning that allows to do necessary clean ups.
+     * After this method is called, the connector should not work anymore.
+     */
+    void post();
 }

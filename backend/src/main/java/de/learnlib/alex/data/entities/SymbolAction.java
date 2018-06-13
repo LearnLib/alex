@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,52 +20,57 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.alex.common.utils.SearchHelper;
-import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CallAction;
-import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CheckAttributeExistsAction;
-import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CheckAttributeTypeAction;
-import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CheckAttributeValueAction;
-import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CheckHeaderFieldAction;
-import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CheckStatusAction;
-import de.learnlib.alex.data.entities.actions.RESTSymbolActions.CheckTextRestAction;
-import de.learnlib.alex.data.entities.actions.RESTSymbolActions.RESTSymbolAction;
-import de.learnlib.alex.data.entities.actions.RESTSymbolActions.ValidateJsonAction;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.AssertCounterAction;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.AssertVariableAction;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.IncrementCounterAction;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.SetCounterAction;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.SetVariableAction;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.SetVariableByCookieAction;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.SetVariableByHTMLElementAction;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.SetVariableByJSONAttributeAction;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.SetVariableByNodeAttributeAction;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.SetVariableByNodeCountAction;
-import de.learnlib.alex.data.entities.actions.StoreSymbolActions.SetVariableByRegexGroup;
-import de.learnlib.alex.data.entities.actions.WaitAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.AlertAcceptDismissAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.AlertGetTextAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.AlertSendKeysAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckNodeAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckNodeAttributeValueAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckPageTitleAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.CheckTextWebAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.ClearAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.ClickAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.ClickLinkAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.ExecuteScriptAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.FillAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.GotoAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.MoveMouseAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.PressKeyAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.SelectAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.SubmitAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.SwitchTo;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.SwitchToFrame;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.WaitForNodeAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.WaitForNodeAttributeAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.WaitForTextAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.WaitForTitleAction;
-import de.learnlib.alex.data.entities.actions.WebSymbolActions.WebSymbolAction;
+import de.learnlib.alex.data.entities.actions.misc.AssertCounterAction;
+import de.learnlib.alex.data.entities.actions.misc.AssertVariableAction;
+import de.learnlib.alex.data.entities.actions.misc.IncrementCounterAction;
+import de.learnlib.alex.data.entities.actions.misc.SetCounterAction;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableAction;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableByCookieAction;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableByHTMLElementAction;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableByHttpResponse;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableByJSONAttributeAction;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableByNodeAttributeAction;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableByNodeCountAction;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableByRegexGroup;
+import de.learnlib.alex.data.entities.actions.misc.WaitAction;
+import de.learnlib.alex.data.entities.actions.rest.CallAction;
+import de.learnlib.alex.data.entities.actions.rest.CheckAttributeExistsAction;
+import de.learnlib.alex.data.entities.actions.rest.CheckAttributeTypeAction;
+import de.learnlib.alex.data.entities.actions.rest.CheckAttributeValueAction;
+import de.learnlib.alex.data.entities.actions.rest.CheckHeaderFieldAction;
+import de.learnlib.alex.data.entities.actions.rest.CheckStatusAction;
+import de.learnlib.alex.data.entities.actions.rest.CheckTextRestAction;
+import de.learnlib.alex.data.entities.actions.rest.RESTSymbolAction;
+import de.learnlib.alex.data.entities.actions.rest.ValidateJsonAction;
+import de.learnlib.alex.data.entities.actions.web.AlertAcceptDismissAction;
+import de.learnlib.alex.data.entities.actions.web.AlertGetTextAction;
+import de.learnlib.alex.data.entities.actions.web.AlertSendKeysAction;
+import de.learnlib.alex.data.entities.actions.web.BrowserAction;
+import de.learnlib.alex.data.entities.actions.web.CheckNodeAction;
+import de.learnlib.alex.data.entities.actions.web.CheckNodeAttributeValueAction;
+import de.learnlib.alex.data.entities.actions.web.CheckNodeSelectedAction;
+import de.learnlib.alex.data.entities.actions.web.CheckPageTitleAction;
+import de.learnlib.alex.data.entities.actions.web.CheckTextWebAction;
+import de.learnlib.alex.data.entities.actions.web.ClearAction;
+import de.learnlib.alex.data.entities.actions.web.ClickAction;
+import de.learnlib.alex.data.entities.actions.web.ClickElementByTextAction;
+import de.learnlib.alex.data.entities.actions.web.ClickLinkAction;
+import de.learnlib.alex.data.entities.actions.web.ExecuteScriptAction;
+import de.learnlib.alex.data.entities.actions.web.FillAction;
+import de.learnlib.alex.data.entities.actions.web.GotoAction;
+import de.learnlib.alex.data.entities.actions.web.MoveMouseAction;
+import de.learnlib.alex.data.entities.actions.web.PressKeyAction;
+import de.learnlib.alex.data.entities.actions.web.SelectAction;
+import de.learnlib.alex.data.entities.actions.web.SubmitAction;
+import de.learnlib.alex.data.entities.actions.web.SwitchTo;
+import de.learnlib.alex.data.entities.actions.web.SwitchToFrame;
+import de.learnlib.alex.data.entities.actions.web.WaitForNodeAction;
+import de.learnlib.alex.data.entities.actions.web.WaitForNodeAttributeAction;
+import de.learnlib.alex.data.entities.actions.web.WaitForTextAction;
+import de.learnlib.alex.data.entities.actions.web.WaitForTitleAction;
+import de.learnlib.alex.data.entities.actions.web.WebSymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.DiscriminatorColumn;
@@ -81,6 +86,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -105,6 +111,7 @@ import java.util.UUID;
         @JsonSubTypes.Type(name = "setCounter", value = SetCounterAction.class),
         @JsonSubTypes.Type(name = "setVariable", value = SetVariableAction.class),
         @JsonSubTypes.Type(name = "setVariableByJSON", value = SetVariableByJSONAttributeAction.class),
+        @JsonSubTypes.Type(name = "setVariableByHttpResponse", value = SetVariableByHttpResponse.class),
         @JsonSubTypes.Type(name = "setVariableByHTML", value = SetVariableByHTMLElementAction.class),
         @JsonSubTypes.Type(name = "setVariableByCookie", value = SetVariableByCookieAction.class),
         @JsonSubTypes.Type(name = "setVariableByNodeAttribute", value = SetVariableByNodeAttributeAction.class),
@@ -115,12 +122,15 @@ import java.util.UUID;
         @JsonSubTypes.Type(name = "web_alertAcceptDismiss", value = AlertAcceptDismissAction.class),
         @JsonSubTypes.Type(name = "web_alertGetText", value = AlertGetTextAction.class),
         @JsonSubTypes.Type(name = "web_alertSendKeys", value = AlertSendKeysAction.class),
+        @JsonSubTypes.Type(name = "web_browser", value = BrowserAction.class),
         @JsonSubTypes.Type(name = "web_checkNodeAttributeValue", value = CheckNodeAttributeValueAction.class),
         @JsonSubTypes.Type(name = "web_checkForNode", value = CheckNodeAction.class),
         @JsonSubTypes.Type(name = "web_checkForText", value = CheckTextWebAction.class),
+        @JsonSubTypes.Type(name = "web_checkNodeSelected", value = CheckNodeSelectedAction.class),
         @JsonSubTypes.Type(name = "web_checkPageTitle", value = CheckPageTitleAction.class),
         @JsonSubTypes.Type(name = "web_clear", value = ClearAction.class),
         @JsonSubTypes.Type(name = "web_click", value = ClickAction.class),
+        @JsonSubTypes.Type(name = "web_clickElementByText", value = ClickElementByTextAction.class),
         @JsonSubTypes.Type(name = "web_clickLinkByText", value = ClickLinkAction.class),
         @JsonSubTypes.Type(name = "web_executeScript", value = ExecuteScriptAction.class),
         @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
@@ -170,12 +180,15 @@ public abstract class SymbolAction implements Serializable {
     protected int number;
 
     /** Should the action be executed or skipped? */
+    @NotNull
     protected boolean disabled;
 
     /** Negate the outcome of the action? */
+    @NotNull
     protected boolean negated;
 
     /** Ignore if the execution of the action failed? */
+    @NotNull
     protected boolean ignoreFailure;
 
     /** The custom output if the execution of this action fails. */
@@ -199,7 +212,7 @@ public abstract class SymbolAction implements Serializable {
      * Set the ID of the Action in the DB.
      *
      * @param uuid
-     *            The DB ID of the Action.
+     *         The DB ID of the Action.
      */
     public void setUUID(UUID uuid) {
         this.uuid = uuid;
@@ -236,7 +249,8 @@ public abstract class SymbolAction implements Serializable {
     /**
      * Set the position the action has in the actions list.
      *
-     * @param no The new position.
+     * @param no
+     *         The new position.
      */
     public void setNumber(int no) {
         this.number = no;
@@ -244,6 +258,7 @@ public abstract class SymbolAction implements Serializable {
 
     /**
      * Should the result of the execute method be inverted?
+     *
      * @return true, if the outcome should be negated; false otherwise.
      */
     public boolean isNegated() {
@@ -261,8 +276,8 @@ public abstract class SymbolAction implements Serializable {
     }
 
     /**
-     * Usually the sequential execution of action will be interrupted if an action returns FAILED.
-     * With this property this behaviour can be overwritten.
+     * Usually the sequential execution of action will be interrupted if an action returns FAILED. With this property
+     * this behaviour can be overwritten.
      *
      * @return true if the following action should be executed, even if the action FAILED; false otherwise.
      */
@@ -294,7 +309,7 @@ public abstract class SymbolAction implements Serializable {
      * Set the enable flag, i.e. if the execution of the action should be skipped
      *
      * @param disabled
-     *          true if the action should be executed, false if should be skipped
+     *         true if the action should be executed, false if should be skipped
      */
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
@@ -324,15 +339,14 @@ public abstract class SymbolAction implements Serializable {
      * Execute the Action. This is the important method in which all the magic will happen.
      *
      * @param connector
-     *              The context to use.
-     * @return An {@link ExecuteResult} to indicate if the action
-     *          run successfully or not.
+     *         The context to use.
+     * @return An {@link ExecuteResult} to indicate if the action run successfully or not.
      */
     protected abstract ExecuteResult execute(ConnectorManager connector);
 
     /**
-     * Checks the given text for any occurrences of a variable and replaces this part with the actual value.
-     * The input string will not be modified.
+     * Checks the given text for any occurrences of a variable and replaces this part with the actual value. The input
+     * string will not be modified.
      *
      * @param text
      *         The text to check for variables, which than will be replaced by the real value.
@@ -343,23 +357,23 @@ public abstract class SymbolAction implements Serializable {
     }
 
     /**
-     * Get the proper return value for a successful action.
-     * This method checks the 'negated' field and should be used by all actions if no failure / error occurred.
+     * Get the proper return value for a successful action. This method checks the 'negated' field and should be used by
+     * all actions if no failure / error occurred.
      *
      * @return OK if 'negated' is false; FALSE if 'negated' is true.
      */
     protected final ExecuteResult getSuccessOutput() {
-        return negated ? ExecuteResult.FAILED : ExecuteResult.OK;
+        return negated ? new ExecuteResult(false, errorOutput) : new ExecuteResult(true);
     }
 
     /**
-     * Get the proper return value for a failed action.
-     * This method checks the 'negated' field and should be used by all actions if an failure / error occurred.
+     * Get the proper return value for a failed action. This method checks the 'negated' field and should be used by all
+     * actions if an failure / error occurred.
      *
      * @return FAILED if 'negated' is false; OK if 'negated' is true.
      */
     protected final ExecuteResult getFailedOutput() {
-        return negated ? ExecuteResult.OK : ExecuteResult.FAILED;
+        return negated ? new ExecuteResult(true) : new ExecuteResult(false, errorOutput);
     }
 
     //CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber|NeedBraces - auto generated by IntelliJ
@@ -383,6 +397,5 @@ public abstract class SymbolAction implements Serializable {
         return result;
     }
     //CHECKSTYLE.ON: AvoidInlineConditionals|MagicNumber|NeedBraces
-
 
 }

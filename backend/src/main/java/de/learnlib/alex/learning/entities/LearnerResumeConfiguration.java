@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@ package de.learnlib.alex.learning.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import org.springframework.data.annotation.Transient;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +36,12 @@ public class LearnerResumeConfiguration extends AbstractLearnerConfiguration imp
 
     /** The step number from where to continue. */
     @JsonProperty("stepNo")
+    @NotNull
     private int stepNo;
 
     /** The ids of the symbols to add. */
     @JsonProperty("symbolsToAdd")
+    @NotNull
     private List<Long> symbolsToAddAsIds;
 
     /** The ids of the symbols to add. */
@@ -56,7 +60,21 @@ public class LearnerResumeConfiguration extends AbstractLearnerConfiguration imp
 
     @Override
     public void checkConfiguration() throws IllegalArgumentException {
-        super.check();
+
+        // one should be able to continue learning if the sample eq oracle is used without
+        // having specified a counterexample if a new symbol is added.
+        if (eqOracle instanceof SampleEQOracleProxy) {
+            try {
+                eqOracle.checkParameters();
+            } catch (IllegalArgumentException e) { // counterexamples are empty
+                if (symbolsToAddAsIds.isEmpty()) {
+                    throw new IllegalArgumentException("You haven't specified neither a counterexample nor a symbol to add.");
+                }
+            }
+        } else {
+            super.check();
+        }
+
         if (stepNo <= 0) {
             throw new IllegalArgumentException("The step number may not be less than 1");
         }

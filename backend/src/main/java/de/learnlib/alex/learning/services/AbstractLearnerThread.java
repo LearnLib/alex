@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,10 @@ import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
+import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import de.learnlib.api.SUL;
 import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.api.oracle.EquivalenceOracle;
@@ -46,6 +48,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -54,6 +57,9 @@ import java.util.stream.Collectors;
 /**
  * Thread to run a learning process. It needs to be a Thread so that the server can still deal with other requests. This
  * class contains the actual learning loop.
+ *
+ * @param <T>
+ *         The type of the configuration.
  */
 public abstract class AbstractLearnerThread<T extends AbstractLearnerConfiguration> extends Thread {
 
@@ -72,6 +78,9 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
 
     /** The DAO to remember the learn results. */
     protected final LearnerResultDAO learnerResultDAO;
+
+    /** The webhook service to user. */
+    private final WebhookService webhookService;
 
     /** The learner to use during the learning. */
     protected final LearningAlgorithm.MealyLearner<String, String> learner;
@@ -103,23 +112,33 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /** The queries that are executed at the moment. */
     private List<DefaultQueryProxy> currentQueries;
 
+    /** The oracle where all queries are posed to. */
     private MultiSULOracle<String, String> multiSULOracle;
+
+    /** The current connector context. */
+    protected ConnectorContextHandler context;
 
     /**
      * Constructor.
      *
      * @param user
-     * @param learnerResultDAO {@link #learnerResultDAO}.
-     * @param context          The context to use.
-     * @param result           {@link #result}.
-     * @param configuration    {@link #configuration}.
+     *         The current user.
+     * @param learnerResultDAO
+     *         {@link #learnerResultDAO}.
+     * @param webhookService
+     *         {@link #webhookService}.
+     * @param context
+     *         The context to use.
+     * @param result
+     *         {@link #result}.
+     * @param configuration
+     *         {@link #configuration}.
      */
-    public AbstractLearnerThread(User user, LearnerResultDAO learnerResultDAO,
-                                 ConnectorContextHandler context,
-                                 LearnerResult result,
-                                 T configuration) {
+    public AbstractLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
+            ConnectorContextHandler context, LearnerResult result, T configuration) {
         this.user = user;
         this.learnerResultDAO = learnerResultDAO;
+        this.webhookService = webhookService;
         this.result = result;
         this.configuration = configuration;
         this.abstractAlphabet = new SimpleAlphabet<>(
@@ -129,6 +148,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
                         .collect(Collectors.toList())
         );
 
+        this.context = context;
         this.finished = false;
         this.maxConcurrentQueries = context.getMaxConcurrentQueries();
         this.currentQueries = new ArrayList<>();
@@ -166,7 +186,21 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     public void run() {
     }
 
-    protected LearnerResultStep createStep(long start, long end, long eqs, DefaultQuery<String, Word<String>> counterexample) {
+    /**
+     * Creates and persists a learner step.
+     *
+     * @param start
+     *         The start time of the step in ns.
+     * @param end
+     *         The end time of the step in ns.
+     * @param eqs
+     *         The number of equivalence queries posed in the step.
+     * @param counterexample
+     *         The counterexample used in the step.
+     * @return The persisted step.
+     */
+    protected LearnerResultStep createStep(long start, long end, long eqs,
+            DefaultQuery<String, Word<String>> counterexample) {
         final Statistics statistics = new Statistics();
         statistics.setStartTime(start);
         statistics.getDuration().setLearner(end - start);
@@ -176,10 +210,16 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
 
         final LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
         step.setStatistics(statistics);
+        try {
+            step.setState(result.getAlgorithm().suspend(learner));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         step.setAlgorithmInformation(result.getAlgorithm().getInternalData(learner));
         step.setHypothesis(CompactMealyMachineProxy.createFrom(learner.getHypothesisModel(), abstractAlphabet));
         step.setCounterExample(DefaultQueryProxy.createFrom(counterexample));
         result.getSteps().add(step);
+
         try {
             learnerResultDAO.saveStep(result, step);
         } catch (de.learnlib.alex.common.exceptions.NotFoundException e) {
@@ -191,14 +231,21 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         return step;
     }
 
+    /**
+     * Creates a new steps that only contains an error message for the current step.
+     *
+     * @param e
+     *         The exception that led to the error.
+     */
     protected void updateOnError(Exception e) {
         final String errorMessage = e.getMessage() == null ? e.getClass().getName() : e.getMessage();
 
         if (!result.getSteps().isEmpty()) {
-            final LearnerResultStep lastStep = result.getSteps().get(result.getSteps().size() - 1);
-            lastStep.setErrorText(errorMessage);
+            final LearnerResultStep errorStep = createStep(0L, 0L, 0, null);
+            errorStep.setErrorText(errorMessage);
+
             try {
-                learnerResultDAO.saveStep(result, lastStep);
+                learnerResultDAO.saveStep(result, errorStep);
             } catch (de.learnlib.alex.common.exceptions.NotFoundException e1) {
                 e1.printStackTrace();
             }
@@ -228,6 +275,12 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         sul.resetCounter();
     }
 
+    /**
+     * Execute the learning loop.
+     *
+     * @param currentStep
+     *         The current step.
+     */
     protected void doLearn(LearnerResultStep currentStep) {
         final EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle =
                 configuration.getEqOracle().createEqOracle(mqOracle, maxConcurrentQueries);
@@ -267,6 +320,8 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
 
             rounds++;
         }
+
+        webhookService.fireEvent(user, new LearnerEvent.Finished(result));
     }
 
     private boolean continueLearning(final LearnerResultStep step, final long rounds) {
@@ -276,8 +331,8 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /**
      * Given a counterexample, test if there is a shorter prefix that is also a counterexample.
      *
-     * @param ce The counterexample.
-     *
+     * @param ce
+     *         The counterexample.
      * @return The prefix.
      */
     private DefaultQuery<String, Word<String>> findShortestPrefix(DefaultQuery<String, Word<String>> ce) {

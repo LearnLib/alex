@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package de.learnlib.alex.learning.entities.algorithms;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.algorithms.discriminationtree.DTLearnerState;
 import de.learnlib.algorithms.discriminationtree.hypothesis.HState;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealyBuilder;
@@ -27,6 +28,9 @@ import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDiscr
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
@@ -38,26 +42,39 @@ public class DiscriminationTree extends AbstractLearningAlgorithm<String, String
     private static final long serialVersionUID = 2655022507456200915L;
 
     @Override
-    public LearningAlgorithm.MealyLearner<String, String> createLearner(
-            Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle) {
-        return new DTLearnerMealyBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
+    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
+            MembershipOracle<String, Word<String>> oracle) {
+        return new DTLearnerMealyBuilder<String, String>()
+                .withAlphabet(sigma)
+                .withOracle(oracle)
+                .create();
     }
 
     @Override
     public String getInternalData(LearningAlgorithm.MealyLearner<String, String> learner) {
         if (!(learner instanceof DTLearnerMealy)) {
             throw new IllegalArgumentException("Can not read the internal data because the algorithm types"
-                                                       + "were different");
+                    + "were different");
         }
 
         return toJSON(((DTLearnerMealy<String, String>) learner).getDiscriminationTree());
     }
 
+    @Override
+    public void resume(LearningAlgorithm.MealyLearner<String, String> learner, byte[] data)
+            throws IOException, ClassNotFoundException {
+        try (final ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(data))) {
+            final DTLearnerState<String, Word<String>, Void, String> state =
+                    (DTLearnerState<String, Word<String>, Void, String>) objectIn.readObject();
+            ((DTLearnerMealy<String, String>) learner).resume(state);
+        }
+    }
+
     /**
      * Serializes the discrimination tree of the discrimination tree algorithm into JSON.
      *
-     * @param dtree The tree to convert into nice JSON.
-     *
+     * @param dtree
+     *         The tree to convert into nice JSON.
      * @return The JSON string of the given tree.
      */
     private String toJSON(AbstractWordBasedDiscriminationTree<String, Word<String>, HState<String, Word<String>, Void, String>> dtree) {

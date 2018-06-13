@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,20 @@
 
 package de.learnlib.alex.learning.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.Transient;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /** The abstract learner configuration. */
 public abstract class AbstractLearnerConfiguration implements Serializable {
@@ -35,14 +44,20 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
     @JsonProperty("project")
     protected Long projectId;
 
+    /** The ids of the URLs to use for learning. */
+    @NotEmpty
+    protected List<ProjectUrl> urls;
+
     /** The type of EQ oracle to find a counter example. */
+    @NotNull
     protected AbstractEquivalenceOracleProxy eqOracle;
 
     /**
-     * How many steps should the learner take before stopping the process.
-     * Must be greater or equal to -1, but not 0.
-     * -1 := Do not stop until no counterexample is found.
+     * How many steps should the learner take before stopping the process. Must be greater or equal to -1, but not 0. -1
+     * := Do not stop until no counterexample is found.
      */
+    @NotNull
+    @Min(-1)
     protected int maxAmountOfStepsToLearn;
 
     public abstract void checkConfiguration() throws IllegalArgumentException;
@@ -50,7 +65,8 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
     /**
      * Check if the configuration is valid, i.e. it is possible to create a test based on the given data.
      *
-     * @throws IllegalArgumentException If the configuration is invalid.
+     * @throws IllegalArgumentException
+     *         If the configuration is invalid.
      */
     protected void check() throws IllegalArgumentException {
         if (maxAmountOfStepsToLearn < -1) {
@@ -67,6 +83,7 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
     public AbstractLearnerConfiguration() {
         this.eqOracle = new MealyRandomWordsEQOracleProxy();
         this.maxAmountOfStepsToLearn = -1;
+        this.urls = new ArrayList<>();
     }
 
     public Long getUserId() {
@@ -99,5 +116,32 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
 
     public void setMaxAmountOfStepsToLearn(int maxAmountOfStepsToLearn) {
         this.maxAmountOfStepsToLearn = maxAmountOfStepsToLearn;
+    }
+
+    public List<ProjectUrl> getUrls() {
+        return urls;
+    }
+
+    public void setUrls(List<ProjectUrl> urls) {
+        this.urls = urls;
+    }
+
+    @Transient
+    @JsonIgnore
+    public List<Long> getUrlIds() {
+        return urls.stream()
+                .map(ProjectUrl::getId)
+                .collect(Collectors.toList());
+    }
+
+    @JsonProperty("urls")
+    public void setUrlIds(List<Long> urlIds) {
+        this.urls = urlIds.stream()
+                .map(id -> {
+                    final ProjectUrl url = new ProjectUrl();
+                    url.setId(id);
+                    return url;
+                })
+                .collect(Collectors.toList());
     }
 }

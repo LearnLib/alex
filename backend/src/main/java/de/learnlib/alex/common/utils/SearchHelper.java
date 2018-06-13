@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ public final class SearchHelper {
     }
 
     /**
-     * Search for a value within a text.
-     * If you use a regular expression, this method allows to use the '.' for line breaks.
+     * Search for a value within a text. If you use a regular expression, this method allows to use the '.' for line
+     * breaks.
      *
      * @param value
      *         The value to search. This can be a regular expression.
@@ -60,8 +60,7 @@ public final class SearchHelper {
     }
 
     /**
-     * Search for a regular expression within a text.
-     * This method allows to use the '.' for line breaks.
+     * Search for a regular expression within a text. This method allows to use the '.' for line breaks.
      *
      * @param regex
      *         The pattern to search.
@@ -89,48 +88,38 @@ public final class SearchHelper {
      *         If a variable value should be inserted, but the variable does not exists or was never set.
      */
     public static String insertVariableValues(ConnectorManager connector, Long projectId, String text)
-                         throws IllegalStateException {
-        final int endPosOffset = -2;  // because ...}}
-        final int startPosOffset = 3; // because {{$...
+            throws IllegalStateException {
 
-        StringBuilder result = new StringBuilder();
-        int variableStartPos = text.indexOf("{{");
-        int variableEndPos = endPosOffset; // because of the length of '}}' we will always +2 to the endPos,
-                                 // so this is a start at 0
+        final VariableStoreConnector variableStore = connector.getConnector(VariableStoreConnector.class);
+        final CounterStoreConnector counterStore = connector.getConnector(CounterStoreConnector.class);
+        final FileStoreConnector fileStore = connector.getConnector(FileStoreConnector.class);
 
-        while (variableStartPos > -1) {
-            result.append(text.substring(variableEndPos + 2, variableStartPos)); // add everything before the variable.
+        String result = "" + text;
 
-            variableEndPos = text.indexOf("}}", variableStartPos);
-            String variableName = text.substring(variableStartPos + startPosOffset, variableEndPos);
+        final Pattern pattern = Pattern.compile("\\{\\{(\\$|\\#|\\\\)(.*?)}}");
+        final Matcher matcher = pattern.matcher(result);
 
-            String variableValue;
-            switch (text.charAt(variableStartPos + 2)) {
-                case '#': // counter
-                    variableValue = String.valueOf(connector.getConnector(CounterStoreConnector.class)
-                            .get(variableName));
-                    result.append(variableValue);
+        while (matcher.find()) {
+            final String type = matcher.group(1);
+            final String name = matcher.group(2);
+
+            switch (type) {
+                case "$":
+                    result = result.replaceAll("\\{\\{\\$" + name + "}}", variableStore.get(name));
                     break;
-                case '$': // variable:
-                    variableValue = connector.getConnector(VariableStoreConnector.class).get(variableName);
-                    result.append(variableValue);
+                case "#":
+                    result = result.replaceAll("\\{\\{\\#" + name + "}}", String.valueOf(counterStore.get(name)));
                     break;
-                case '/': // file name
-                    variableValue = connector.getConnector(FileStoreConnector.class)
-                                             .getAbsoluteFileLocation(projectId, variableName);
-                    result.append(variableValue);
+                case "\\":
+                    final String path = fileStore.getAbsoluteFileLocation(projectId, name);
+                    result = result.replaceAll("\\{\\{\\\\" + name + "}}", path);
                     break;
-                default: // bullshit
-                    result.append(text.substring(variableStartPos, variableEndPos + 2));
+                default:
                     break;
             }
-
-            variableStartPos = text.indexOf("{{", variableEndPos); // prepare next step
         }
 
-        result.append(text.substring(variableEndPos + 2));
-
-        return result.toString();
+        return result;
     }
 
 }

@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <h4 ng-bind="vm.text"></h4>
+</div>
+
+<form name="vm.form" ng-submit="vm.ok()">
+
+    <div class="modal-body">
+
+        <div class="form-group">
+            <input name="user_input" type="text" class="form-control" ng-model="vm.userInput" required>
+        </div>
+
+        <div class="help-block" ng-messages="vm.form.user_input.$error" ng-if="vm.form.user_input.$touched">
+            <div class="alert alert-danger alert-condensed" ng-message="required">
+                The name is required
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary btn-sm">Ok</button>
+        <a class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
+    </div>
+
+</form>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,13 +48,20 @@ public class SymbolMapper implements SULMapper<
     /**
      * Constructor. Initialize the map name -> symbol.
      *
-     * @param symbols - The symbols for the learning process.
+     * @param symbols
+     *         The symbols for the learning process.
      */
     public SymbolMapper(List<Symbol> symbols) {
         this.symbolMap = new HashMap<>();
         symbols.forEach(s -> this.symbolMap.put(s.getName(), s));
     }
 
+    /**
+     * Adds a new symbol to the mapper.
+     *
+     * @param symbol
+     *         The symbol to add.
+     */
     public void addSymbol(Symbol symbol) {
         this.symbolMap.putIfAbsent(symbol.getName(), symbol);
     }
@@ -65,8 +72,8 @@ public class SymbolMapper implements SULMapper<
     }
 
     @Override
-    public String mapOutput(ExecuteResult concreteOutput) {
-        return concreteOutput.toString();
+    public String mapOutput(ExecuteResult result) {
+        return result.getOutput();
     }
 
     @Override

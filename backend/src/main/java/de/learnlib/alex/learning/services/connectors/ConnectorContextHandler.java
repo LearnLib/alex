@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.mapper.ContextExecutableInputSUL;
 
@@ -86,14 +87,25 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
 
         ExecuteResult resetResult;
         try {
+            // initialize counters defined in the reset symbol as input
+            final CounterStoreConnector counterStore = connectorManager.getConnector(CounterStoreConnector.class);
+            resetSymbol.getInputs().stream()
+                    .filter(in -> in.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
+                    .forEach(in -> {
+                        try {
+                            counterStore.get(in.getName());
+                        } catch (IllegalStateException e) {
+                            counterStore.set(resetSymbol.getProjectId(), in.getName(), 0);
+                        }
+                    });
             resetResult = resetSymbol.execute(connectorManager);
         } catch (Exception e) {
             throw new LearnerException("An error occurred while executing the reset symbol.", e);
         }
 
-        if (resetResult.equals(ExecuteResult.FAILED)) {
+        if (!resetResult.isSuccess()) {
             throw new LearnerException("The execution of the reset symbol failed: "
-                                               + resetResult.toString() + ".");
+                    + resetResult.toString() + ".");
         }
 
         return connectorManager;
@@ -107,6 +119,11 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
         } catch (InterruptedException e) {
             throw new LearnerException(e.getMessage(), e);
         }
+    }
+
+    /** Execute the {@link ConnectorManager#post} method after the learner has finished. */
+    public void post() {
+        pool.forEach(ConnectorManager::post);
     }
 
     /** @return The number of mqs executed in parallel. */

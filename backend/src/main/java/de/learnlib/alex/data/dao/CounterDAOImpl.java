@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,8 +50,11 @@ public class CounterDAOImpl implements CounterDAO {
 
     /**
      * Creates a new CounterDAO.
+     *
      * @param projectDAO
+     *         The projectDAO to use.
      * @param counterRepository
+     *         The counterRepository to use.
      */
     @Inject
     public CounterDAOImpl(ProjectDAO projectDAO, CounterRepository counterRepository) {
@@ -118,12 +121,6 @@ public class CounterDAOImpl implements CounterDAO {
         } catch (NotFoundException e) {
             throw e;
         }
-    }
-
-    @Override
-    public void update(User user, List<Counter> counters) {
-        // TODO: Do some checks before updating a list of counters.
-        counterRepository.save(counters);
     }
 
     @Override

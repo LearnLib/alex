@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,9 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,10 +33,11 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Entity to organize symbols.
@@ -46,7 +45,6 @@ import java.util.UUID;
 @Entity
 @Table(
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"projectId", "id"}),
                 @UniqueConstraint(columnNames = {"projectId", "name"})
         }
 )
@@ -55,81 +53,54 @@ public class SymbolGroup implements Serializable {
 
     private static final long serialVersionUID = 4986838799404559274L;
 
-    /** The ID of the SymbolGroup in the DB. */
-    private UUID uuid;
-
     /** The related project. */
-    private Project project;
-
-    /** The plain ID of the Project to be used in the JSON. */
-    private Long projectId;
-
-    /** The ID of the group within the project. */
-    private Long id;
-
-    /**
-     * The name of the group.
-     * @requiredField
-     */
-    private String name;
-
-    /** The Symbols manged by this group. */
-    private Set<Symbol> symbols;
-
-    /**
-     * Default constructor.
-     */
-    public SymbolGroup() {
-        this.symbols = new HashSet<>();
-
-        this.projectId = 0L;
-    }
-
-    /**
-     * @return The internal ID of the SymbolGroup used by the database.
-     */
-    @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @JsonIgnore
-    public UUID getUUID() {
-        return uuid;
-    }
-
-    /**
-     * @param uuid The new internal ID of the SymbolGroup used by the database.
-     */
-    @JsonIgnore
-    public void setUUID(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    /**
-     * Get the related/ 'parent' project of the group.
-     *
-     * @return The project the group is a part of.
-     */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "projectId")
     @JsonIgnore
+    private Project project;
+
+    /** The ID of the group in the db. */
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    /** The name of the group. */
+    @NotBlank
+    private String name;
+
+    /** The parent group. Is null if the group is on the top level. */
+    @ManyToOne
+    @JoinColumn(name = "parentId")
+    private SymbolGroup parent;
+
+    /** The Symbols manged by this group. */
+    @OneToMany(
+            mappedBy = "group",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    )
+    private Set<Symbol> symbols;
+
+    /** The child groups. */
+    @OneToMany(
+            mappedBy = "parent",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+    )
+    private List<SymbolGroup> groups;
+
+    /** Constructor. */
+    public SymbolGroup() {
+        this.symbols = new HashSet<>();
+        this.groups = new ArrayList<>();
+    }
+
     public Project getProject() {
         return project;
     }
 
-    /**
-     * Set a new project for the group.
-     *
-     * @param project
-     *         The new project.
-     */
-    @JsonIgnore
     public void setProject(Project project) {
         this.project = project;
-        if (project == null) {
-            this.projectId = null;
-        } else {
-            this.projectId = project.getId();
-        }
     }
 
     /**
@@ -140,7 +111,7 @@ public class SymbolGroup implements Serializable {
     @Transient
     @JsonProperty("project")
     public Long getProjectId() {
-        return projectId;
+        return project == null ? null : project.getId();
     }
 
     /**
@@ -151,92 +122,72 @@ public class SymbolGroup implements Serializable {
      */
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
-        this.project = null;
-        this.projectId = projectId;
+        this.project = new Project(projectId);
     }
 
-    /**
-     * Get the ID of the group within the project.
-     *
-     * @return THe group id.
-     */
-    @Column(nullable = false)
     public Long getId() {
         return id;
     }
 
-    /**
-     * Set a new ID for the group within the project.
-     *
-     * @param id
-     *         The new group ID.
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * Get the name of the group.
-     *
-     * @return The group name.
-     */
-    @NotBlank
     public String getName() {
         return name;
     }
 
-    /**
-     * Set a new group name.
-     *
-     * @param name
-     *         The new name.
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Get all symbols that are organized in the group.
-     *
-     * @return The related symbols.
-     */
-    @OneToMany(
-            mappedBy = "group",
-            fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
-    )
-    @JsonProperty
     public Set<Symbol> getSymbols() {
         return symbols;
     }
 
-    /**
-     * Get the amount of symbols that are organized in the group.
-     *
-     * @return The amount of related symbols.
-     */
-    @Transient
-    @JsonProperty("symbolAmount")
-    public int getSymbolSize() {
-        if (symbols == null) {
-            return 0;
-        }
-        return this.symbols.size();
+    public void setSymbols(Set<Symbol> symbols) {
+        this.symbols = symbols == null ? new HashSet<>() : symbols;
+    }
+
+    public SymbolGroup getParent() {
+        return parent;
+    }
+
+    public void setParent(SymbolGroup parent) {
+        this.parent = parent;
     }
 
     /**
-     * Set a new set of related symbols.
+     * Get the id of the parent group.
      *
-     * @param symbols
-     *         The new set of related symbols.
+     * @return The id of the parent group.
      */
-    @JsonProperty
-    public void setSymbols(Set<Symbol> symbols) {
-        if (symbols == null) {
-            this.symbols = new HashSet<>();
-        } else {
-            this.symbols = symbols;
+    @Transient
+    @JsonProperty("parent")
+    public Long getParentId() {
+        return this.parent == null ? null : this.parent.getId();
+    }
+
+    /**
+     * Set the parent by its id.
+     *
+     * @param parentId
+     *         The id of the parent group or null.
+     */
+    @JsonProperty("parent")
+    public void setParentId(Long parentId) {
+        if (parentId != null) {
+            this.parent = new SymbolGroup();
+            this.parent.setId(parentId);
         }
+    }
+
+    public List<SymbolGroup> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<SymbolGroup> groups) {
+        this.groups = groups;
     }
 
     /**
@@ -252,14 +203,25 @@ public class SymbolGroup implements Serializable {
     }
 
     /**
-     * If the group is the default group.
+     * Check if the group is a descendant of another group.
      *
-     * @return If the group is the default group.
+     * @param ancestor
+     *         The ancestor in the group tree.
+     * @return True, if the group is a descendant.
      */
-    @JsonIgnore
-    @Transient
-    public boolean isDefaultGroup() {
-        return id == 0L;
+    public boolean isDescendantOf(SymbolGroup ancestor) {
+        if (ancestor.equals(this)) {
+            return false;
+        }
+
+        for (SymbolGroup group : ancestor.getGroups()) {
+            boolean isDescendant = group.equals(this) || isDescendantOf(group);
+            if (isDescendant) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -268,16 +230,16 @@ public class SymbolGroup implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SymbolGroup group = (SymbolGroup) o;
-        return Objects.equals(uuid, group.uuid);
+        return Objects.equals(id, group.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return "SymbolGroup[" + uuid + "]: " + project + ", " + id + ", " + name;
+        return "SymbolGroup[" + id + "]: " + project + ", " + name;
     }
 }

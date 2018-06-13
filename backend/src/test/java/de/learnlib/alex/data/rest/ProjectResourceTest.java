@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,9 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
@@ -42,6 +44,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -63,23 +66,31 @@ public class ProjectResourceTest extends JerseyTest {
         MockitoAnnotations.initMocks(this);
 
         ALEXTestApplication testApplication = new ALEXTestApplication(ProjectResource.class);
+
         admin = testApplication.getAdmin();
         adminToken = testApplication.getAdminToken();
+
         testApplication.register(new AbstractBinder() {
             @Override
             protected void configure() {
                 bind(projectDAO).to(ProjectDAO.class);
+                bind(mock(WebhookService.class)).to(WebhookService.class);
             }
         });
 
         Symbol symbol = new Symbol();
         symbol.setName("Project Resource Test Symbol");
 
+        ProjectUrl projectUrl = new ProjectUrl();
+        projectUrl.setDefault(true);
+        projectUrl.setUrl("http://www.example.com");
+
         project = new Project();
         project.setUser(admin);
         project.setId(PROJECT_TEST_ID);
         project.setName("Test Project");
         project.addSymbol(symbol);
+
         try {
             given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID)).willReturn(project);
         } catch (NotFoundException e) {
@@ -94,12 +105,11 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldCreateAProject() {
         String json = "{\"id\": " + project.getId() + ","
                         + "\"name\": \"" + project.getName() + "\","
-                        + "\"baseUrl\": \"" + project.getBaseUrl() + "\","
+                        + "\"urls\": [{\"name\": null, \"url\": \"" + project.getDefaultUrl() + "\", \"default\": true}],"
                         + "\"description\": \"" + project.getDescription() + "\"}";
         Response response = target("/projects").request().header("Authorization", adminToken).post(Entity.json(json));
 
         assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-        assertEquals("http://localhost:9998/projects/1", response.getHeaderString("Location"));
         verify(projectDAO).create(project);
     }
 
@@ -117,7 +127,6 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldReturn400IfProjectNameAlreadyExistsForAUser() {
         Project p = new Project();
         p.setUser(admin);
-        p.setBaseUrl("http://abc");
         p.setName("Test Project");
 
         willThrow(new ValidationException("Test Message")).given(projectDAO).create(p);
@@ -144,15 +153,15 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldReturnAllProjectsWithEmbedded() {
         List<Project> projects = new ArrayList<>();
         projects.add(project);
-        given(projectDAO.getAll(admin, ProjectDAO.EmbeddableFields.SYMBOLS, ProjectDAO.EmbeddableFields.TEST_RESULTS))
+        given(projectDAO.getAll(admin, ProjectDAO.EmbeddableFields.SYMBOLS))
                 .willReturn(projects);
 
-        Response response = target("/projects").queryParam("embed", "symbols,test_results").request()
+        Response response = target("/projects").queryParam("embed", "symbols").request()
                                 .header("Authorization", adminToken).get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertEquals("1", response.getHeaderString("X-Total-Count"));
-        verify(projectDAO).getAll(admin, ProjectDAO.EmbeddableFields.SYMBOLS, ProjectDAO.EmbeddableFields.TEST_RESULTS);
+        verify(projectDAO).getAll(admin, ProjectDAO.EmbeddableFields.SYMBOLS);
     }
 
     @Test
@@ -167,17 +176,15 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldGetTheRightProjectWithEmbedded() throws NotFoundException {
         given(projectDAO.getByID(USER_TEST_ID,
                                  PROJECT_TEST_ID,
-                                 ProjectDAO.EmbeddableFields.SYMBOLS,
-                                 ProjectDAO.EmbeddableFields.TEST_RESULTS))
+                                 ProjectDAO.EmbeddableFields.SYMBOLS))
                 .willReturn(project);
-        Response response = target("/projects/" + PROJECT_TEST_ID).queryParam("embed", "symbols,test_results")
+        Response response = target("/projects/" + PROJECT_TEST_ID).queryParam("embed", "symbols")
                                 .request().header("Authorization", adminToken).get();
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
 
         verify(projectDAO).getByID(USER_TEST_ID,
                                    PROJECT_TEST_ID,
-                                   ProjectDAO.EmbeddableFields.SYMBOLS,
-                                   ProjectDAO.EmbeddableFields.TEST_RESULTS);
+                                   ProjectDAO.EmbeddableFields.SYMBOLS);
     }
 
     @Test
@@ -194,7 +201,7 @@ public class ProjectResourceTest extends JerseyTest {
     public void shouldUpdateTheRightProject() throws NotFoundException {
         String json = "{\"id\": " + project.getId() + ","
                         + "\"name\": \"" + project.getName() + "\","
-                        + "\"baseUrl\": \"" + project.getBaseUrl() + "\","
+                        + "\"urls\": [{\"name\": null, \"url\": \"" + project.getDefaultUrl() + "\", \"default\": true}],"
                         + "\"description\": \"" + project.getDescription() + "\"}";
 
         target("/project").request().header("Authorization", adminToken).post(Entity.json(project));
@@ -204,19 +211,6 @@ public class ProjectResourceTest extends JerseyTest {
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         verify(projectDAO).update(admin, project);
     }
-
-    /*
-    @Test
-    public void shouldReturn404OnUpdateWhenProjectNotFound() {
-        project.setId(PROJECT_TEST_ID);
-        project.setName("Test Project - Update 404");
-
-        willThrow(new IllegalArgumentException()).given(projectDAO).update(project);
-        Response response = target("/projects/" + project.getId()).request().put(Entity.json(project));
-
-        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
-    }
-    */
 
     @Test
     public void shouldFailIfIdInUrlAndObjectAreDifferent() throws NotFoundException {

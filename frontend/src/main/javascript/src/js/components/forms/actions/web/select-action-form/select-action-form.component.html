@@ -1,0 +1,29 @@
+<h4><strong>Select value</strong></h4>
+
+<p class="text-muted">
+    Select a value from a select input.
+</p>
+<hr>
+
+<node-form-group node="vm.action.node"></node-form-group>
+
+<div class="form-group">
+    <label class="control-label">Value</label>
+    <input class="form-control" type="text" placeholder="Selected value" ng-model="vm.action.value">
+</div>
+
+<div class="checkbox">
+    <label>
+        <input type="radio" name="selectBy" ng-model="vm.action.selectBy" value="TEXT"> By visible text
+    </label>
+</div>
+<div class="checkbox">
+    <label>
+        <input type="radio" name="selectBy" ng-model="vm.action.selectBy" value="VALUE"> By "value" attribute
+    </label>
+</div>
+<div class="checkbox">
+    <label>
+        <input type="radio" name="selectBy" ng-model="vm.action.selectBy" value="INDEX"> By index
+    </label>
+</div>

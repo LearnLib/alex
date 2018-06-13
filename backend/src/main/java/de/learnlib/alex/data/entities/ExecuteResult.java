@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,20 @@
 
 package de.learnlib.alex.data.entities;
 
-/** Enum to determine if a symbol has been executed successfully. */
-public enum ExecuteResult {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
-    /** The symbol has been executed successfully. */
-    OK(true),
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.UUID;
 
-    /** The execution of an action of the symbol failed during its execution. */
-    FAILED(false);
+/** Class to determine if a symbol has been executed successfully. */
+@Entity
+public class ExecuteResult implements Serializable {
+
+    private static final long serialVersionUID = -4296479981133118914L;
 
     /** The default output on success. */
     public static final String DEFAULT_SUCCESS_OUTPUT = "Ok";
@@ -31,31 +37,66 @@ public enum ExecuteResult {
     /** The default output on error. */
     public static final String DEFAULT_ERROR_OUTPUT = "Failed";
 
-    private boolean successful;
+    /** The id of the execute result in the db. */
+    @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @JsonIgnore
+    private UUID uuid;
 
-    /** The output. */
+    /** If the symbol has been execute successfully. */
+    private boolean success;
+
+    /** The output of the SUL. */
     private String output;
 
-    ExecuteResult(boolean successful) {
-        this.successful = successful;
+    /** Constructor. */
+    public ExecuteResult() {
+        this(true);
     }
 
-    public boolean isSuccessful() {
-        return successful;
+    /**
+     * Constructor.
+     *
+     * @param success {@link #success}.
+     */
+    public ExecuteResult(boolean success) {
+        this(success, null);
     }
 
-    /** @return {@link #output}. */
+    /**
+     * Constructor.
+     *
+     * @param success {@link #success}.
+     * @param output  {@link #output}.
+     */
+    public ExecuteResult(boolean success, String output) {
+        this.success = success;
+        this.output = output == null ? success ? DEFAULT_SUCCESS_OUTPUT : DEFAULT_ERROR_OUTPUT : output;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
     public String getOutput() {
         return output;
     }
 
-    /** @param output {@link #output}. */
     public void setOutput(String output) {
         this.output = output;
     }
 
-    @Override
-    public String toString() {
-        return output;
+    public UUID getUuid() {
+        return uuid;
     }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.algorithms.TTT;
-import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
+import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -40,21 +42,26 @@ public class LearnerStartConfiguration extends AbstractLearnerConfiguration impl
     private static final int MAX_COMMENT_LENGTH = 255;
 
     /** Link to the Symbols that are used during the learning. */
+    @NotEmpty
     private List<Long> symbolsAsIds;
 
     /** Link to the Symbols that should be used as a reset symbol. */
+    @NotNull
     private Long resetSymbolAsId;
 
     /** The algorithm to be used during the learning. */
+    @NotNull
     private AbstractLearningAlgorithm<String, String> algorithm;
 
     /** The browser to use during the learn process. */
+    @NotNull
     private AbstractWebDriverConfig driverConfig;
 
     /** A shot comment to describe the learn set up. */
     private String comment;
 
     /** If membership queries should be cached. */
+    @NotNull
     private boolean useMQCache;
 
     /** Constructor. */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package de.learnlib.alex.integrationtests;
 import de.learnlib.alex.App;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,10 +37,14 @@ public abstract class AbstractRepositoryIT {
     }
 
     Project createProject(User user, String name) {
+        ProjectUrl url = new ProjectUrl();
+        url.setUrl("http://localhost");
+        url.setDefault(true);
+
         Project project = new Project();
         project.setUser(user);
         project.setName(name);
-        project.setBaseUrl("http://localhost");
+        project.getUrls().add(url);
 
         SymbolGroup defaultGroup = new SymbolGroup();
         defaultGroup.setProject(project);

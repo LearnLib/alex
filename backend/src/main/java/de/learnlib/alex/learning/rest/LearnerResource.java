@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
+import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
@@ -31,13 +32,16 @@ import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
+import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
+import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.learning.services.Learner;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import org.apache.logging.log4j.LogManager;
@@ -67,7 +71,7 @@ import java.util.List;
  * @resourcePath learner
  * @resourceDescription Operations about the learning
  */
-@Path("/learner/")
+@Path("/learner")
 @RolesAllowed({"REGISTERED"})
 public class LearnerResource {
 
@@ -106,6 +110,10 @@ public class LearnerResource {
     @Context
     private SecurityContext securityContext;
 
+    /** The {@link WebhookService} to use. */
+    @Inject
+    private WebhookService webhookService;
+
     /**
      * Start the learning.
      *
@@ -135,6 +143,8 @@ public class LearnerResource {
                         + "they must match the parameters in the path!");
             }
 
+            configuration.setProjectId(projectId);
+
             if (configuration.getSymbolsAsIds().contains(configuration.getResetSymbolAsId())) {
                 throw new IllegalArgumentException("The reset may not be a part of the input alphabet");
             }
@@ -145,6 +155,8 @@ public class LearnerResource {
             LearnerStatus status = learner.getStatus(projectId);
 
             LOGGER.traceExit(status);
+
+            webhookService.fireEvent(user, new LearnerEvent.Started(configuration));
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
             LOGGER.traceExit(e);
@@ -183,6 +195,7 @@ public class LearnerResource {
         LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
 
         try {
+            configuration.checkConfiguration();
             Project project = projectDAO.getByID(user.getId(), projectId); // check if project exists
             LearnerResult result = learnerResultDAO.get(user, projectId, testNo, true);
 
@@ -197,7 +210,7 @@ public class LearnerResource {
                         + "with the latest learn result!");
             }
 
-            if (configuration.getStepNo() < 0 || configuration.getStepNo() > result.getSteps().size()) {
+            if (configuration.getStepNo() > result.getSteps().size()) {
                 throw new IllegalArgumentException("The step number is not valid.");
             }
 
@@ -207,9 +220,11 @@ public class LearnerResource {
                         .filter(s -> s.getStepNo() > configuration.getStepNo())
                         .forEach(learnerResultStepRepository::delete);
                 learnerResultStepRepository.flush();
+
                 result = learnerResultDAO.get(user, projectId, testNo, true);
                 result.setHypothesis(result.getSteps().get(configuration.getStepNo() - 1).getHypothesis());
                 result.getStatistics().setEqsUsed(result.getSteps().size());
+
 
                 // since we allow alphabets to grow, set the alphabet to the one of the latest hypothesis
                 LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
@@ -229,10 +244,13 @@ public class LearnerResource {
                 learnerResultRepository.saveAndFlush(result);
             }
 
+            configuration.setUserId(user.getId());
+
             learner.resume(user, project, result, configuration);
             LearnerStatus status = learner.getStatus(projectId);
-
             LOGGER.traceExit(status);
+
+            webhookService.fireEvent(user, new LearnerEvent.Resumed(configuration));
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
             LOGGER.info(RESOURCE_MARKER, "tried to restart the learning while the learner is running.");
@@ -275,27 +293,6 @@ public class LearnerResource {
     }
 
     /**
-     * Is the learner active?
-     *
-     * @param projectId The project to check.
-     * @return The status of the current learn process.
-     * @successResponse 200 OK
-     * @responseType de.learnlib.alex.learning.entities.LearnerStatus
-     */
-    @GET
-    @Path("/{project_id}/active")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response isActive(@PathParam("project_id") long projectId) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("isActive() for user {}.", user);
-
-        LearnerStatus status = learner.getStatus(projectId);
-
-        LOGGER.traceExit(status);
-        return Response.ok(status).build();
-    }
-
-    /**
      * Get the parameters & (temporary) results of the learning.
      *
      * @param projectId The project to get the Status of.
@@ -312,16 +309,10 @@ public class LearnerResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getResult() for user {}.", user);
 
-        LearnerResult resultInThread = learner.getResult(projectId);
-        if (resultInThread == null) {
-            throw new NotFoundException("No result was learned in this instance of ALEX.");
-        }
+        LearnerStatus status = learner.getStatus(projectId);
 
-        learnerResultDAO.get(user, resultInThread.getProjectId(),
-                             resultInThread.getTestNo(), false);
-
-        LOGGER.traceExit(resultInThread);
-        return Response.ok(resultInThread).build();
+        LOGGER.traceExit(status);
+        return Response.ok(status).build();
     }
 
     /**
@@ -358,7 +349,7 @@ public class LearnerResource {
             Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsId);
             List<Symbol> symbols = loadSymbols(user, projectId, outputConfig.getSymbols().getSymbolsAsIds());
 
-            List<String> outputs = learner.readOutputs(user, project, resetSymbol, symbols, outputConfig.getDriverConfig());
+            List<ExecuteResult> outputs = learner.readOutputs(user, project, resetSymbol, symbols, outputConfig.getDriverConfig());
 
             LOGGER.traceExit(outputs);
             return ResponseHelper.renderList(outputs, Status.OK);
@@ -404,7 +395,7 @@ public class LearnerResource {
             SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols);
             readOutputConfig.setSymbols(symbolSet);
 
-            List<String> results = learner.readOutputsAsString(user, project, readOutputConfig);
+            List<ExecuteResult> results = learner.readOutputs(user, project, readOutputConfig);
 
             LOGGER.traceExit(results);
             return ResponseHelper.renderList(results, Status.OK);
@@ -455,10 +446,10 @@ public class LearnerResource {
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.separatingWord", Status.BAD_REQUEST, e);
         }
 
-        String separatingWord = learner.separatingWord(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
+        final SeparatingWord diff = learner.separatingWord(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
 
-        LOGGER.traceExit(separatingWord);
-        return Response.ok("{\"separatingWord\": \"" + separatingWord + "\"}").build();
+        LOGGER.traceExit(diff);
+        return Response.ok(diff).build();
     }
 
     /**

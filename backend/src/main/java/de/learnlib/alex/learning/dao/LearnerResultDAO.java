@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,12 @@ package de.learnlib.alex.learning.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.entities.AbstractLearnerConfiguration;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.services.Learner;
+import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -34,19 +36,19 @@ public interface LearnerResultDAO {
     /**
      * Persists a LearnerResult. This method must also verify that the given result is valid.
      *
-     *
      * @param user
      *         The user performing the action.
      * @param learnerResult
      *         The LearnerResult to save.
+     * @throws NotFoundException
+     *         If one of the required resources could not be found.
      * @throws ValidationException
      *         If the given LearnerResult was invalid.
      */
     void create(User user, LearnerResult learnerResult) throws NotFoundException, ValidationException;
 
     /**
-     * Get a list of all the LearnerResults for a given
-     * Project.
+     * Get a list of all the LearnerResults for a given Project.
      *
      * @param user
      *         The user performing the action.
@@ -77,6 +79,19 @@ public interface LearnerResultDAO {
      */
     List<LearnerResult> getAll(User user, Long projectId, Long[] testNos, boolean includeSteps)
             throws NotFoundException;
+
+    /**
+     * Get the latest learner result.
+     *
+     * @param user
+     *         The user.
+     * @param projectId
+     *         The id of the project.
+     * @return The latest learner result.
+     * @throws NotFoundException
+     *         If the project could not be found.
+     */
+    LearnerResult getLatest(User user, Long projectId) throws NotFoundException;
 
     /**
      * Get a single LearnResult.
@@ -127,6 +142,8 @@ public interface LearnerResultDAO {
      *         The result that the step is part of.
      * @param step
      *         The step the should be saved / updated.
+     * @throws NotFoundException
+     *         If one of the required resources could not be found.
      * @throws ValidationException
      *         If the given LearnerResult was invalid.
      */
@@ -144,5 +161,39 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    void delete(Learner learner, Long projectId, Long... testNo) throws  NotFoundException;
+    void delete(Learner learner, Long projectId, Long... testNo) throws NotFoundException;
+
+    /**
+     * Clone learner result.
+     *
+     * @param user
+     *         The user.
+     * @param projectId
+     *         The id of the project.
+     * @param testNo
+     *         The test number.
+     * @return The cloned learner result.
+     * @throws NotFoundException
+     *         If one of the entities could not be found.
+     * @throws UnauthorizedException
+     *         If the user is not allowed to access one of the entities.
+     */
+    LearnerResult clone(User user, Long projectId, Long testNo) throws NotFoundException, UnauthorizedException;
+
+    /**
+     * Check if the user has access to the learner result.
+     *
+     * @param user
+     *         The user.
+     * @param project
+     *         The project.
+     * @param learnerResult
+     *         The learner result.
+     * @throws NotFoundException
+     *         If the project or learner result could not be found.
+     * @throws UnauthorizedException
+     *         If the user is not allowed to access the project or learner result.
+     */
+    void checkAccess(User user, Project project, LearnerResult learnerResult)
+            throws NotFoundException, UnauthorizedException;
 }

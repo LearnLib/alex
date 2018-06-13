@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,14 @@
 export const learnAlgorithm = {
     LSTAR: 'LSTAR',
     DHC: 'DHC',
-    DISCRIMINATION_TREE: 'DT',
+    DT: 'DT',
     TTT: 'TTT',
     KEARNS_VAZIRANI: 'KEARNS_VAZIRANI'
+};
+
+export const symbolParameterType = {
+    STRING: 'STRING',
+    COUNTER: 'COUNTER'
 };
 
 export const webBrowser = {
@@ -50,10 +55,12 @@ export const events = {
     PROJECT_UPDATED: 'project:updated',
     PROJECT_DELETED: 'project:deleted',
     PROJECT_OPENED: 'project:opened',
+    PROJECT_CLOSED: 'project:closed',
 
     // symbol group related events
     GROUP_UPDATED: 'group:updated',
     GROUP_DELETED: 'group:deleted',
+    GROUP_MOVED: 'group:moved',
 
     // hypothesis related events
     HYPOTHESIS_LABEL_SELECTED: 'hypothesis:labelSelected',
@@ -73,10 +80,13 @@ export const actionType = {
     WEB_ALERT_ACCEPT_DISMISS: 'web_alertAcceptDismiss',
     WEB_ALERT_GET_TEXT: 'web_alertGetText',
     WEB_ALERT_SEND_KEYS: 'web_alertSendKeys',
+    WEB_BROWSER: 'web_browser',
     WEB_CHECK_NODE: 'web_checkForNode',
     WEB_CHECK_TEXT: 'web_checkForText',
     WEB_CHECK_PAGE_TITLE: 'web_checkPageTitle',
+    WEB_CHECK_NODE_SELECTED: 'web_checkNodeSelected',
     WEB_CLEAR: 'web_clear',
+    WEB_CLICK_ELEMENT_BY_TEXT: 'web_clickElementByText',
     WEB_CLICK_LINK_BY_TEXT: 'web_clickLinkByText',
     WEB_CLICK: 'web_click',
     WEB_EXECUTE_SCRIPT: 'web_executeScript',
@@ -111,6 +121,7 @@ export const actionType = {
     GENERAL_SET_COUNTER: 'setCounter',
     GENERAL_SET_VARIABLE_BY_COOKIE: 'setVariableByCookie',
     GENERAL_SET_VARIABLE_BY_JSON: 'setVariableByJSON',
+    GENERAL_SET_VARIABLE_BY_HTTP_RESPONSE: 'setVariableByHttpResponse',
     GENERAL_SET_VARIABLE_BY_HTML: 'setVariableByHTML',
     GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE: 'setVariableByNodeAttribute',
     GENERAL_SET_VARIABLE_BY_NODE_COUNT: 'setVariableByNodeCount',

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,6 @@ public class Statistics implements Serializable {
 
     /** Standard DateTimeFormatter that will create a nice ISO 8160 string with milliseconds and a time zone. */
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
-
-    /** A ZonedDateTime object based at the unix time 0. */
-    private static final ZonedDateTime UNIX_TIME_START = ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00");
 
     /** Sub Statistics class to store information by Learner and EqOracle. */
     @Embeddable

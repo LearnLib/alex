@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,11 @@ import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import de.learnlib.api.algorithm.feature.SupportsGrowingAlphabet;
-import de.learnlib.api.oracle.MembershipOracle;
-import de.learnlib.api.query.DefaultQuery;
 import de.learnlib.filter.cache.mealy.MealyCacheOracle;
-import de.learnlib.oracle.membership.SimulatorOracle;
-import net.automatalib.automata.transout.impl.compact.CompactMealy;
-import net.automatalib.util.automata.Automata;
-import net.automatalib.words.Word;
+import net.automatalib.words.Alphabet;
+import net.automatalib.words.impl.SimpleAlphabet;
 
 /** The learner thread that is used for resuming an old experiment from a given step. */
 public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeConfiguration> {
@@ -41,14 +38,22 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
      * Constructor.
      *
      * @param user
-     * @param learnerResultDAO {@link AbstractLearnerThread#learnerResultDAO}.
-     * @param context          The context to use.
-     * @param result           {@link AbstractLearnerThread#result}.
-     * @param configuration    The configuration to use.
+     *         The user that runs the learning experiment.
+     * @param learnerResultDAO
+     *         {@link AbstractLearnerThread#learnerResultDAO}.
+     * @param webhookService
+     *         {@link AbstractLearnerThread#webhookService}.
+     * @param context
+     *         The context to use.
+     * @param result
+     *         {@link AbstractLearnerThread#result}.
+     * @param configuration
+     *         The configuration to use.
      */
-    public ResumingLearnerThread(User user, LearnerResultDAO learnerResultDAO, ConnectorContextHandler context,
-                                 LearnerResult result, LearnerResumeConfiguration configuration) {
-        super(user, learnerResultDAO, context, result, configuration);
+    public ResumingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
+                                 ConnectorContextHandler context, LearnerResult result,
+                                 LearnerResumeConfiguration configuration) {
+        super(user, learnerResultDAO, webhookService, context, result, configuration);
     }
 
     @Override
@@ -63,6 +68,7 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
             e.printStackTrace();
             updateOnError(e);
         } finally {
+            context.post();
             finished = true;
             LOGGER.info(LEARNER_MARKER, "The learner finished resuming the experiment.");
             LOGGER.traceExit();
@@ -71,17 +77,21 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
 
     private void resumeLearning() throws Exception {
         LOGGER.traceEntry();
-        learnFromHypothesis(configuration.getStepNo());
+        result.getAlgorithm().resume(learner, result.getSteps().get(configuration.getStepNo() - 1).getState());
 
         if (configuration.getSymbolsToAdd().size() > 0 && learner instanceof SupportsGrowingAlphabet) {
             final SupportsGrowingAlphabet<String> growingAlphabetLearner = (SupportsGrowingAlphabet) learner;
             for (final Symbol symbol : configuration.getSymbolsToAdd()) {
-                abstractAlphabet.add(symbol.getName());
                 symbolMapper.addSymbol(symbol);
 
                 // if the cache is not reinitialized with the new alphabet, we will get cache errors later
                 if (result.isUseMQCache()) {
-                    this.mqOracle.setDelegate(MealyCacheOracle.createDAGCacheOracle(abstractAlphabet, monitorOracle));
+
+                    // make new alphabet for the cache because it cannot handle a shared growing alphabet instance
+                    final Alphabet<String> alphabet = new SimpleAlphabet<>(abstractAlphabet);
+                    alphabet.add(symbol.getName());
+
+                    this.mqOracle.setDelegate(MealyCacheOracle.createDAGCacheOracle(alphabet, monitorOracle));
                 }
 
                 // measure how much time and membership queries it takes to add the symbol
@@ -96,7 +106,9 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
                 sul.resetCounter();
 
                 final LearnerResultStep step = learnerResultDAO.createStep(result);
+
                 step.setHypothesis(CompactMealyMachineProxy.createFrom(learner.getHypothesisModel(), abstractAlphabet));
+                step.setState(result.getAlgorithm().suspend(learner));
                 step.setAlgorithmInformation(result.getAlgorithm().getInternalData(learner));
                 step.setStatistics(statistics);
 
@@ -111,29 +123,4 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
         LOGGER.traceExit();
     }
 
-    /**
-     * Use the hypothesis of a previous step as a SUL and learn until no more counterexamples can be found. The learner
-     * is then internally where it stopped the last time.
-     */
-    private void learnFromHypothesis(int step) {
-        final CompactMealy<String, String> hypothesis = result.getSteps().get(step - 1).getHypothesis()
-                .createMealyMachine(abstractAlphabet);
-
-        final MembershipOracle<String, Word<String>> oracle = mqOracle.getDelegate();
-        mqOracle.setDelegate(new SimulatorOracle<>(hypothesis));
-
-        learner.startLearning();
-        while (true) {
-            final Word<String> input = Automata.findSeparatingWord(learner.getHypothesisModel(), hypothesis,
-                    abstractAlphabet);
-            if (input == null) {
-                break;
-            }
-            final DefaultQuery<String, Word<String>> counterexample = new DefaultQuery<>(input);
-            counterexample.answer(hypothesis.computeOutput(input));
-            learner.refineHypothesis(counterexample);
-        }
-
-        mqOracle.setDelegate(oracle);
-    }
 }

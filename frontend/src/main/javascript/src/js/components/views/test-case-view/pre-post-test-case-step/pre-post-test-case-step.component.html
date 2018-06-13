@@ -1,0 +1,22 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    {{vm.text}}:
+    <em class="text-muted" ng-if="vm.steps.length === 0">none</em>
+    <strong ng-if="vm.steps.length > 0">{{vm.steps[0].symbol.name}}</strong>
+    <em class="actions pull-right">
+      <button class="btn btn-xs btn-default" ng-click="vm.showSymbolGroupTree = true">Change</button>
+      <button class="btn btn-xs btn-default" ng-click="vm.removeStep()">Remove</button>
+    </em>
+  </div>
+  <div class="panel-body" ng-if="vm.showSymbolGroupTree">
+    <p>
+      <em>Select a symbol (<a href ng-click="vm.showSymbolGroupTree = false">cancel</a>)</em>
+    </p>
+    <simple-symbol-group-tree
+      groups="vm.groups"
+      selected-symbol="vm.steps[0].symbol"
+      on-symbol-selected="vm.selectSymbol(symbol)"
+    >
+    </simple-symbol-group-tree>
+  </div>
+</div>

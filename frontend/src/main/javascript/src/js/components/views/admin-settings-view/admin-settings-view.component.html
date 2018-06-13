@@ -1,0 +1,101 @@
+<div class="view">
+    <view-header title="Settings"></view-header>
+    <action-bar>
+        <div class="alx-container">
+            <button class="btn btn-sm btn-success pull-right" ng-click="vm.updateSettings()">
+                <i class="fa fa-save fa-fw"></i> Save
+            </button>
+        </div>
+    </action-bar>
+
+    <div class="view-body settings">
+        <div class="alx-container">
+
+            <form ng-submit="vm.updateSettings()">
+
+                <section>
+                    <h3>Web drivers</h3>
+                    <p class="text-muted">
+                        Web drivers are used for executing tests and learning processes.
+                        Decide which driver will be available for your end users.
+                        Make sure the drivers are executable on the system.
+                    </p>
+
+                    <hr>
+
+                    <div class="form-group">
+                        <label>ChromeDriver path</label>
+                        <input class="form-control" ng-model="vm.settings.driver.chrome"
+                               placeholder="Enter the absolute path to the chromedriver executable">
+
+                        <p class="help-block">
+                            You can find the latest ChromeDriver over at the
+                            <a href="https://sites.google.com/a/chromium.org/chromedriver/downloads" target="_blank">
+                                ChromeDriver download page</a>.
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Geckodriver path</label>
+                        <input class="form-control" ng-model="vm.settings.driver.firefox"
+                               placeholder="Enter the absolute path to the geckodriver executable">
+
+                        <p class="help-block">
+                            You can find the latest driver over at the
+                            <a href="https://github.com/mozilla/geckodriver/releases" target="_blank">Mozilla Geckodriver
+                                Github Repository</a>.
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Edgedriver path</label>
+                        <input class="form-control" ng-model="vm.settings.driver.edge"
+                               placeholder="Enter the absolute path to the edgedriver executable">
+
+                        <p class="help-block">
+                            You can find the latest driver over at the
+                            <a href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/" target="_blank">
+                                Edge developer page
+                            </a>.
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Remote Selenium Server URL</label>
+                        <input class="form-control" ng-model="vm.settings.driver.remote"
+                               placeholder="Enter the URL to the remote Selenium Server">
+                        <p class="help-block">
+                            Make sure the selenium server is on version <em>2.7.1</em>
+                        </p>
+                    </div>
+
+                    <hr>
+
+                    <div class="form-group">
+                        <label>Per default, use</label>
+                        <select class="form-control" ng-options="(v|formatWebBrowser) for (k,v) in vm.webBrowsers"
+                                ng-model="vm.settings.driver.defaultDriver">
+                        </select>
+                    </div>
+                </section>
+
+                <section style="margin-top: 6rem">
+                    <h3>User registration</h3>
+                    <p class="text-muted">
+                        Settings for the user registration process.
+                    </p>
+                    <hr>
+
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" ng-model="vm.settings.allowUserRegistration"> Allow public user
+                            registration
+                        </label>
+                    </div>
+                </section>
+
+            </form>
+
+        </div>
+    </div>
+</div>

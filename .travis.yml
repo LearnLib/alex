@@ -1,0 +1,35 @@
+language: java
+
+dist: trusty
+sudo: false
+
+jdk:
+  - oraclejdk8
+  - openjdk8
+
+addons:
+  apt:
+    sources:
+      - sourceline: "deb https://deb.nodesource.com/node_10.x trusty main"
+        key_url:    "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    packages:
+      - nodejs
+
+cache:
+  directories:
+  - $HOME/.m2
+  - frontend/src/main/javascript/node_modules
+
+before_cache:
+  # do not cache our local archives
+  - rm -rf $HOME/.m2/repository/de/learnlib/alex/
+
+install: true # skip mvn install, because we essentially run the same command in the script routine
+
+script:
+  - mvn clean package
+
+branches:
+  only:
+  - master
+  - developer

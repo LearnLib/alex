@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2016 TU Dortmund
+  ~ Copyright 2018 TU Dortmund
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@
 
     <groupId>de.learnlib.alex</groupId>
     <artifactId>alex-parent</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
     <packaging>pom</packaging>
 
     <name>Automata Learning Experience (ALEX)</name>
     <description>
-        A RESTful application with a fancy web frontend to configure and run automata learning algorithms on websites and web services.
+        A web application for interring Mealy machines of web applications and RESTful web services via active automata learning.
     </description>
 
     <licenses>
@@ -85,7 +85,6 @@
     <modules>
         <module>backend</module>
         <module>build</module>
-        <module>cli</module>
         <module>frontend</module>
     </modules>
 
@@ -120,7 +119,7 @@
         <versions-plugin.version>2.2</versions-plugin.version>
 
         <!-- dependencies versions -->
-        <spring-boot.version>1.5.8.RELEASE</spring-boot.version>
+        <spring-boot.version>1.5.10.RELEASE</spring-boot.version>
     </properties>
 
     <!--===== build ======-->

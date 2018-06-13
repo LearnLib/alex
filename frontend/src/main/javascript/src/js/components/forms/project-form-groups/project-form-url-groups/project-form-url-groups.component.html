@@ -1,0 +1,58 @@
+<div class="form-group">
+    <label>URLs*</label>
+
+    <div class="d-flex mb-1">
+        <input class="form-control mr-1" style="width: 100px" type="text" placeholder="Name" ng-model="vm.url.name">
+        <input class="form-control mr-1 w-100" type="text" placeholder="The URL of the application" ng-model="vm.url.url">
+        <a ng-click="vm.addUrl()" class="btn btn-default btn-sm">
+            <i class="fa fa-plus fa-fw"></i>
+        </a>
+    </div>
+
+    <div class="list-group">
+        <div class="list-group-item" ng-repeat="url in vm.project.urls">
+            <div class="d-flex flex-row" ng-if="vm.urlUnderEditIndex !== $index">
+                <div class="w-100">
+                    <strong class="d-block" ng-if="url.name">{{url.name}}</strong>
+                    <span class="d-block">{{url.url}}</span>
+                    <span class="label label-info" ng-if="url.default">Default</span>
+                    <span class="label label-outline-default cursor-pointer" ng-if="!url.default" ng-click="vm.changeDefaultUrl($index)">Default</span>
+                </div>
+                <div>
+                    <div class="btn-group btn-group-xs" uib-dropdown>
+                        <button type="button" class="btn btn-default btn-icon" uib-dropdown-toggle>
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
+                            <li>
+                                <a href="" ng-click="vm.setUrlUnderEdit($index)">
+                                    <i class="fa fa-edit fa-fw"></i> Edit
+                                </a>
+                            </li>
+                            <li>
+                                <a href="" ng-click="vm.removeUrl($index)">
+                                    <i class="fa fa-trash fa-fw"></i> Delete
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default mb-0" ng-if="vm.urlUnderEditIndex === $index">
+                <div class="panel-heading">
+                    <strong>Update URL</strong>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group mb-0">
+                        <div class="d-flex mb-1">
+                            <input class="form-control mr-1" style="width: 100px" type="text" placeholder="Name" ng-model="vm.urlUnderEdit.name">
+                            <input class="form-control w-100" type="url" placeholder="The URL of the application" ng-model="vm.urlUnderEdit.url">
+                        </div>
+                        <a href class="btn btn-sm btn-primary" ng-click="vm.updateUrl()">Update</a>
+                        <a href class="btn btn-sm btn-default" ng-click="vm.cancelUpdate()">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

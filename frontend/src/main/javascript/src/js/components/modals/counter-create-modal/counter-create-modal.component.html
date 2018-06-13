@@ -1,0 +1,57 @@
+<div class="modal-header">
+    <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+    <h3 class="modal-title">Create a new counter</h3>
+</div>
+
+<form name="vm.form" ng-submit="vm.createCounter()">
+
+    <div class="modal-body">
+
+        <div class="form-group">
+            <label>Name</label>
+            <input class="form-control"
+                   name="name"
+                   type="text"
+                   placeholder="The name of the counter"
+                   required
+                   ng-model="vm.counter.name">
+
+            <div class="help-block" ng-messages="vm.form.name.$error" ng-if="vm.form.name.$touched">
+                <div class="alert alert-danger alert-condensed" ng-message="required">
+                    The name is required.
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Value</label>
+            <input class="form-control"
+                   name="value"
+                   type="number"
+                   placeholder="The value of the counter"
+                   required
+                   min="0"
+                   ng-model="vm.counter.value">
+
+            <div class="help-block" ng-messages="vm.form.value.$error" ng-if="vm.form.name.$touched">
+                <div class="alert alert-danger alert-condensed" ng-message="required">
+                    The value is required.
+                </div>
+                <div class="alert alert-danger alert-condensed" ng-message="min">
+                    The value may not be smaller than 0.
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-danger alert-condensed" ng-if="vm.errorMessage" ng-bind="vm.errorMessage"></div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-sm btn-primary" type="submit">Create</button>
+        <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
+    </div>
+
+</form>

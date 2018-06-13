@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,24 +49,30 @@ public class FileDAOImpl implements FileDAO {
     private ProjectDAO projectDAO;
 
     /**
-     * The path of the upload directory as String.
-     * This will be injected by Spring and is configured in the applications.properties file.
+     * The path of the upload directory as String. This will be injected by Spring and is configured in the
+     * applications.properties file.
      */
     @Value("${alex.filesRootDir}")
     private String filesRootDir;
 
+    /**
+     * Constructor.
+     *
+     * @param projectDAO
+     *         The injected project DAO to use.
+     */
     @Inject
     public FileDAOImpl(ProjectDAO projectDAO) {
         this.projectDAO = projectDAO;
     }
 
     /**
-     * Create the uploads directory, if necessary.
-     * Called by Spring after the DAO object is created and all injections are present.
+     * Create the uploads directory, if necessary. Called by Spring after the DAO object is created and all injections
+     * are present.
      */
     @PostConstruct
     private void init() {
-        File uploadBaseDirectory =  Paths.get(filesRootDir, "users").toFile();
+        File uploadBaseDirectory = Paths.get(filesRootDir, "users").toFile();
         if (!uploadBaseDirectory.exists()) {
             uploadBaseDirectory.mkdirs();
         }
@@ -74,7 +80,7 @@ public class FileDAOImpl implements FileDAO {
 
     @Override
     public void create(User user, Long projectId, InputStream uploadedInputStream,
-                       FormDataContentDisposition fileDetail)
+            FormDataContentDisposition fileDetail)
             throws IllegalStateException, IOException, NotFoundException {
         projectDAO.getByID(user.getId(), projectId); // access check
 
@@ -90,7 +96,7 @@ public class FileDAOImpl implements FileDAO {
         }
 
         Path uploadedFileLocation = Paths.get(uploadedDirectoryLocation.toString(),
-                                                            fileDetail.getFileName());
+                fileDetail.getFileName());
 
         if (uploadedFileLocation.toFile().exists()) {
             throw new IllegalStateException("The file already exists.");

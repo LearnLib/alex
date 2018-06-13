@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.common.utils.LoggerUtil;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
+import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.api.exception.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import org.apache.logging.log4j.Level;
@@ -45,6 +47,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -80,14 +83,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** The Project the Symbol belongs to. */
     private Project project;
 
-    /** The ID of the Project to be used in the JSON. */
-    private Long projectId;
-
     /** The group the symbol belongs to. */
     private SymbolGroup group;
-
-    /** The ID of the Group to be used in the JSON. */
-    private Long groupId;
 
     /** The name of the symbol. */
     private String name;
@@ -104,9 +101,17 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** The custom output if the symbol is executed successfully. */
     private String successOutput;
 
+    /** The list of input variables. */
+    private List<SymbolInputParameter> inputs;
+
+    /** The list of output variables. */
+    private List<SymbolOutputParameter> outputs;
+
     /** Constructor. */
     public Symbol() {
         this.actions = new LinkedList<>();
+        this.inputs = new ArrayList<>();
+        this.outputs = new ArrayList<>();
     }
 
     /**
@@ -152,11 +157,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @JsonIgnore
     public void setProject(Project project) {
         this.project = project;
-        if (project == null) {
-            this.projectId = null;
-        } else {
-            this.projectId = project.getId();
-        }
     }
 
     /**
@@ -168,7 +168,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @Transient
     @JsonProperty("project")
     public Long getProjectId() {
-        return projectId;
+        return project == null ? null : project.getId();
     }
 
     /**
@@ -178,8 +178,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
-        this.project   = null;
-        this.projectId = projectId;
+        this.project = new Project(projectId);
     }
 
     /**
@@ -202,11 +201,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @JsonIgnore
     public void setGroup(SymbolGroup group) {
         this.group = group;
-        if (group == null) {
-            this.groupId = null;
-        } else {
-            this.groupId = group.getId();
-        }
     }
 
     /**
@@ -217,7 +211,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @Transient
     @JsonProperty("group")
     public Long getGroupId() {
-        return groupId;
+        return group == null ? null : group.getId();
     }
 
     /**
@@ -227,8 +221,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      */
     @JsonProperty("group")
     public void setGroupId(Long groupId) {
-        this.group = null;
-        this.groupId = groupId;
+        this.group = new SymbolGroup();
+        this.group.setId(groupId);
     }
 
     /**
@@ -332,6 +326,38 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         }
     }
 
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    @OrderBy("name ASC")
+    @JsonProperty
+    public List<SymbolInputParameter> getInputs() {
+        return inputs;
+    }
+
+    @JsonProperty
+    public void setInputs(List<SymbolInputParameter> inputs) {
+        this.inputs = inputs;
+    }
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.REMOVE},
+            orphanRemoval = true
+    )
+    @OrderBy("name ASC")
+    @JsonProperty
+    public List<SymbolOutputParameter> getOutputs() {
+        return outputs;
+    }
+
+    @JsonProperty
+    public void setOutputs(List<SymbolOutputParameter> outputs) {
+        this.outputs = outputs;
+    }
+
     /**
      * Add one action to the end of the Action List.
      *
@@ -353,8 +379,37 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             LoggerUtil.increaseIndent();
         }
 
+        final VariableStoreConnector globalVariableStore = connector.getConnector(VariableStoreConnector.class);
+        final VariableStoreConnector localVariableStore = new VariableStoreConnector();
+
+        try {
+            // get the input variables from the global context
+            inputs.stream()
+                    .filter(in -> in.getParameterType().equals(SymbolParameter.ParameterType.STRING))
+                    .forEach(in -> localVariableStore.set(in.getName(), globalVariableStore.get(in.getName())));
+            connector.addConnector(localVariableStore);
+        } catch (IllegalStateException e) {
+            return new ExecuteResult(false, e.getMessage());
+        }
+
+        final CounterStoreConnector globalCounterStore = connector.getConnector(CounterStoreConnector.class);
+        final CounterStoreConnector localCounterStore = globalCounterStore.copy();
+
+        try {
+            // get the input counters from the global context
+            inputs.stream()
+                    .filter(in -> in.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
+                    .forEach(in -> {
+                        final String counterName = in.getName();
+                        localCounterStore.set(project.getId(), counterName, globalCounterStore.get(counterName));
+                    });
+            connector.addConnector(localCounterStore);
+        } catch (IllegalStateException e) {
+            return new ExecuteResult(false, e.getMessage());
+        }
+
         // assume the output is ok until proven otherwise
-        ExecuteResult result = ExecuteResult.OK;
+        ExecuteResult result = new ExecuteResult(true);
 
         for (int i = 0; i < actions.size(); i++) {
             final SymbolAction action = actions.get(i);
@@ -363,7 +418,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
                 final ExecuteResult actionResult = executeAction(action, connector);
 
                 // if the execution of one symbol fails do not continue executing the following actions
-                if (actionResult == ExecuteResult.FAILED && !action.isIgnoreFailure()) {
+                if (!actionResult.isSuccess() && !action.isIgnoreFailure()) {
                     if (action.getErrorOutput() != null && !action.getErrorOutput().trim().equals("")) {
                         actionResult.setOutput(action.insertVariableValues(action.getErrorOutput()));
                     } else {
@@ -377,9 +432,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
         // set the output of the symbol *after* all actions are executed so that variables and counters have their
         // proper values.
-        if (result == ExecuteResult.OK) {
+        if (result.isSuccess()) {
             if (successOutput != null && !successOutput.trim().equals("")) {
-                result.setOutput(SearchHelper.insertVariableValues(connector, projectId, successOutput));
+                result.setOutput(SearchHelper.insertVariableValues(connector, project.getId(), successOutput));
             } else {
                 result.setOutput(ExecuteResult.DEFAULT_SUCCESS_OUTPUT);
             }
@@ -389,6 +444,27 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             LoggerUtil.decreaseIndent();
         }
         LOGGER.info(LEARNER_MARKER, "Executed the Symbol {} ({}) => {}.", String.valueOf(id), name, result);
+
+        // set the values of the outputs to the global context
+        if (result.isSuccess()) {
+            try {
+                outputs.stream()
+                        .filter(out -> out.getParameterType().equals(SymbolParameter.ParameterType.STRING))
+                        .forEach(out -> globalVariableStore.set(out.getName(), localVariableStore.get(out.getName())));
+
+                outputs.stream()
+                        .filter(out -> out.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
+                        .forEach(out -> {
+                            final String counterName = out.getName();
+                            globalCounterStore.set(project.getId(), counterName, localCounterStore.get(counterName));
+                        });
+            } catch (IllegalStateException e) {
+                return new ExecuteResult(false, e.getMessage());
+            }
+        }
+        connector.addConnector(globalVariableStore);
+        connector.addConnector(globalCounterStore);
+
         return result;
     }
 
@@ -397,7 +473,45 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             return action.executeAction(connector);
         } catch (Exception e) {
             LOGGER.info(LEARNER_MARKER, "Error while executing the action '{}' in the symbol '{}':", action, this, e);
-            return ExecuteResult.FAILED;
+            return new ExecuteResult(false);
+        }
+    }
+
+    /**
+     * Check if the given symbol contains a specific parameter in its inputs or outputs.
+     *
+     * @param parameter The parameter.
+     * @return If the parameter exists as input or output parameter.
+     */
+    public boolean containsParameter(SymbolParameter parameter) {
+        final List<SymbolParameter> parameters = new ArrayList<>(inputs);
+        parameters.addAll(outputs);
+        return parameters.contains(parameter);
+    }
+
+    /**
+     * Adds a parameter.
+     *
+     * @param parameter The parameter to add.
+     */
+    public void addParameter(SymbolParameter parameter) {
+        if (parameter instanceof SymbolInputParameter) {
+            this.inputs.add((SymbolInputParameter) parameter);
+        } else if (parameter instanceof SymbolOutputParameter) {
+            this.outputs.add((SymbolOutputParameter) parameter);
+        }
+    }
+
+    /**
+     * Removes a parameter.
+     *
+     * @param parameter The parameter to remove.
+     */
+    public void removeParameter(SymbolParameter parameter) {
+        if (parameter instanceof SymbolInputParameter) {
+            this.inputs.remove(parameter);
+        } else if (parameter instanceof SymbolOutputParameter) {
+            this.outputs.remove(parameter);
         }
     }
 

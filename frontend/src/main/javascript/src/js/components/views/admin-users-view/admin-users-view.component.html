@@ -1,0 +1,67 @@
+<div class="view">
+    <view-header title="Manage Users"></view-header>
+
+    <action-bar>
+        <div ng-if="vm.users.length > 0">
+            <selectable-checkbox-multiple selectable="vm.selectedUsers" class="pull-left"></selectable-checkbox-multiple>
+
+            <div class="pull-left">
+                <button class="btn btn-sm btn-primary" ng-click="vm.createUser()">
+                    Create
+                </button>
+                <button class="btn btn-sm btn-default" ng-click="vm.deleteSelectedUsers()"
+                        ng-class="{'disabled': vm.selectedUsers.length === 0}">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </action-bar>
+
+    <div class="view-body">
+        <div class="alx-container-fluid">
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th width="1">&nbsp;</th>
+                    <th width="1">ID</th>
+                    <th width="1">Email</th>
+                    <th>Role</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                    ng-repeat="user in vm.users"
+                    ng-class="{'success': user.id === vm.user.id, 'info': user.role === 'ADMIN' && user.id !== vm.user.id}"
+                >
+                    <td>
+                        <selectable-checkbox
+                            item="user"
+                            selectable="vm.selectedUsers"
+                            class="pull-left"
+                        >
+                        </selectable-checkbox>
+                    </td>
+                    <td ng-bind="user.id"></td>
+                    <td ng-bind="user.email"></td>
+                    <td>
+                        <span
+                            class="label"
+                            ng-class="user.role === 'ADMIN' ? 'label-danger' : 'label-primary'"
+                            ng-bind="user.role | formatUserRole"
+                        >
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-icon btn-xs pull-right" ng-click="vm.editUser(user)">
+                            <i class="fa fa-edit fa-fw"></i> Edit
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

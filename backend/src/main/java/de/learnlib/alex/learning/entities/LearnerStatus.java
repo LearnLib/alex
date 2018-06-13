@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,14 +43,14 @@ public class LearnerStatus {
     /** The current step number. */
     private final Long stepNo;
 
-    /** The statistics of the learner. */
-    private final Statistics statistics;
-
     /** The phase the learner is in. */
     private final Learner.LearnerPhase learnerPhase;
 
     /** The list of queries that are processed atm. */
     private final List<DefaultQueryProxy> currentQueries;
+
+    /** The current learner result. */
+    private final LearnerResult result;
 
     /**
      * Constructor for a status of an inactive thread.
@@ -60,86 +60,68 @@ public class LearnerStatus {
         this.projectId = null;
         this.testNo = null;
         this.stepNo = null;
-        this.statistics = null;
         this.learnerPhase = null;
         this.currentQueries = null;
+        this.result = null;
     }
 
     /**
      * Constructor for a status of an active thread.
      *
-     * @param learnerResult  The result that contain the interesting statistics and information for the status.
-     * @param learnerPhase   The current phase of the experiment.
-     * @param currentQueries The queries that are executed at the moment.
+     * @param learnerResult
+     *         The result that contain the interesting statistics and information for the status.
+     * @param learnerPhase
+     *         The current phase of the experiment.
+     * @param currentQueries
+     *         The queries that are executed at the moment.
      */
     public LearnerStatus(LearnerResult learnerResult, Learner.LearnerPhase learnerPhase,
-                         List<DefaultQueryProxy> currentQueries) {
+            List<DefaultQueryProxy> currentQueries) {
         this.active = true;
         this.projectId = learnerResult.getProjectId();
         this.testNo = learnerResult.getTestNo();
         this.stepNo = (long) learnerResult.getSteps().size();
-        this.statistics = learnerResult.getStatistics();
         this.learnerPhase = learnerPhase;
         this.currentQueries = currentQueries;
+        this.result = learnerResult;
     }
 
-    /**
-     * Is the learn process active?
-     *
-     * @return true if the learn process is active; false otherwise
-     */
     public boolean isActive() {
         return active;
     }
 
-    /**
-     * The project id of the currently active project.
-     * Only included if the learner is active.
-     *
-     * @return The active project id.
-     */
     @JsonProperty("project")
     public Long getProjectId() {
         return projectId;
     }
 
-    /**
-     * The test no in the active project of the currently active learn process.
-     * Only included if the learner is active.
-     *
-     * @return The active test no in the project.
-     */
     public Long getTestNo() {
         return testNo;
     }
 
-    /**
-     * Additional Statistics of the learn process.
-     * Only included if the learner is active.
-     *
-     * @return Additional statistics, e.g. the start date.
-     */
-    public Statistics getStatistics() {
-        return statistics;
-    }
-
-    /** @return {@link #stepNo}. */
     public Long getStepNo() {
         return stepNo;
     }
 
-    /** @return {@link #learnerPhase}. */
     public Learner.LearnerPhase getLearnerPhase() {
         return learnerPhase;
     }
 
-    /** @return {@link #currentQueries}. */
     public List<DefaultQueryProxy> getCurrentQueries() {
         return currentQueries;
     }
 
+    public LearnerResult getResult() {
+        return result;
+    }
+
     @Override
     public String toString() {
-        return "LearnerStatus for Project " + projectId + " and Test No. " + testNo + ": " + active;
+        return "LearnerStatus{"
+                + "active=" + active
+                + ", projectId=" + projectId
+                + ", testNo=" + testNo
+                + ", stepNo=" + stepNo
+                + '}';
     }
 }

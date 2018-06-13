@@ -1,0 +1,41 @@
+.symbol-group-tree {
+
+  .symbol-group-header {
+    border-radius: 4px 4px 0 4px;
+    padding: 1rem;
+    margin-top: -1px;
+    background: #f2f2f2;
+    border: 1px solid #ddd;
+
+    .symbol-group-name {
+      color: rgba(0, 0, 0, 0.5);
+      font-size: 14px;
+    }
+
+    &.collapse {
+      border-radius: 4px;
+    }
+  }
+
+  .symbol-item {
+    border: 1px solid #ddd;
+    margin-top: -1px;
+    padding: .75rem 1rem;
+  }
+
+  .children {
+    margin-left: 2.7rem;
+
+    .symbol-group-header {
+      border-radius: 0 0 0 4px;
+
+      &.collapse {
+        border-radius: 0;
+      }
+    }
+  }
+
+  .symbol-list {
+    margin-left: 2.7rem;
+  }
+}

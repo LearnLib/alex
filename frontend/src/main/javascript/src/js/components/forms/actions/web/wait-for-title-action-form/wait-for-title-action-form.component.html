@@ -1,0 +1,30 @@
+<h4><strong>Wait for title</strong></h4>
+
+<p class="text-muted">
+    Wait until the title of the page changes.
+</p>
+<hr>
+
+<label>Value</label>
+<div class="form-group">
+    <input class="form-control" type="text" placeholder="The value of the title" ng-model="vm.action.value">
+</div>
+
+<div class="radio">
+    <label>
+        <input type="radio" name="waitType" value="IS" ng-model="vm.action.waitCriterion">
+        Wait until the title <strong>is</strong> the given value
+    </label>
+</div>
+<div class="radio">
+    <label>
+        <input type="radio" name="waitType" value="CONTAINS" ng-model="vm.action.waitCriterion">
+        Wait until the title <strong>contains</strong> the given value
+    </label>
+</div>
+
+<div class="form-group">
+    <label>Max. wait time (seconds)</label>
+    <input class="form-control" type="number" min="0" placeholder="The maximum time to wait for a change"
+           ng-model="vm.action.maxWaitTime">
+</div>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import javax.validation.ValidationException;
 import java.util.List;
 
 /**
- * Interface to describe how a counter should be handed.
+ * Interface to describe how a counter should be handled.
  */
 @Service
 public interface CounterDAO {
@@ -34,12 +34,14 @@ public interface CounterDAO {
      * Create a counter.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param counter
      *         The counter to create.
+     * @throws NotFoundException
+     *         If one of the required resources could not be found.
      * @throws ValidationException
-     *         When the counter could not be created,
-     *         e.g. if already a counter with the same name exists in the project.
+     *         When the counter could not be created, e.g. if already a counter with the same name exists in the
+     *         project.
      */
     void create(User user, Counter counter) throws NotFoundException, ValidationException;
 
@@ -47,7 +49,7 @@ public interface CounterDAO {
      * Get all counter of a project.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param projectId
      *         The project of the counters.
      * @return A list of counters within the given project.
@@ -60,7 +62,7 @@ public interface CounterDAO {
      * Get a specific counter.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param projectId
      *         The project of the counter.
      * @param name
@@ -75,7 +77,7 @@ public interface CounterDAO {
      * Update a counter.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param counter
      *         The counter to update.
      * @throws NotFoundException
@@ -86,25 +88,10 @@ public interface CounterDAO {
     void update(User user, Counter counter) throws NotFoundException, ValidationException;
 
     /**
-     * Update many counters at once.
-     *
-     * @param user
-     *          The user who wants to perform this method.
-     * @param counters
-     *         The counters to update.
-     * @throws NotFoundException
-     *         If a counter was not created before and thus could not be found.
-     * @throws ValidationException
-     *         If a counter could not be updated because of not met validation constrains.
-     */
-    void update(User user, List<Counter> counters);
-
-
-    /**
      * Deletes counters.
      *
      * @param user
-     *          The user who wants to perform this method.
+     *         The user who wants to perform this method.
      * @param projectId
      *         The project of the counter.
      * @param names

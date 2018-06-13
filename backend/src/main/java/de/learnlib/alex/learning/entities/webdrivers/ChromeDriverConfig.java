@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,8 @@ import java.util.Map;
 /**
  * Configuration for the chrome driver.
  */
+@Entity
+@DiscriminatorValue(WebDrivers.CHROME)
 @JsonTypeName(WebDrivers.CHROME)
 public class ChromeDriverConfig extends AbstractWebDriverConfig implements Serializable {
 

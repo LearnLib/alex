@@ -1,0 +1,73 @@
+<div class="view view-webhooks">
+    <view-header title="Webhooks"></view-header>
+    <action-bar>
+        <selectable-checkbox-multiple selectable="vm.selectedWebhooks" class="pull-left"></selectable-checkbox-multiple>
+
+        <div class="pull-left">
+            <button class="btn btn-sm btn-primary" ng-click="vm.createWebhook()">
+                Create
+            </button>
+
+            <button class="btn btn-sm btn-default" ng-click="vm.deleteSelectedWebhooks()">
+                Delete
+            </button>
+        </div>
+    </action-bar>
+
+    <div class="view-body">
+        <div class="alx-container-fluid">
+
+            <div class="list-group" ng-if="vm.webhooks.length > 0">
+                <div class="list-group-item d-flex flex-row" ng-repeat="webhook in vm.webhooks | orderBy:'-name':true">
+                    <div class="mr-1">
+                        <selectable-checkbox item="webhook" selectable="vm.selectedWebhooks"></selectable-checkbox>
+                    </div>
+
+                    <div class="w-100">
+                        <strong class="d-block">{{webhook.name}}</strong>
+                        <em class="text-muted d-block">{{webhook.url}}</em>
+                        <hr style="margin: 1rem 0">
+                        <div class="d-flex flex-row">
+                            <div style="padding-right: .75rem; min-width: 65px; padding-top: .5rem">
+                                <label>Listen on:</label>
+                            </div>
+                            <div class="w-100">
+                                <span class="label label-success"
+                                      style="padding: .75rem 1rem; margin-right: .75rem; margin-bottom: .75rem; display: inline-block"
+                                      ng-repeat="event in webhook.events">
+                                    {{event|normalizeUpperCase}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+
+                        <div class="btn-group btn-group-sm" uib-dropdown>
+                            <button class="btn btn-sm btn-icon" uib-dropdown-toggle>
+                                <i class="fa fa-fw fa-bars"></i>
+                            </button>
+                            <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
+                                <li>
+                                    <a href="" ng-click="vm.updateWebhook(webhook)">
+                                        <i class="fa fa-fw fa-edit"></i> Edit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="" ng-click="vm.deleteWebhook(webhook)">
+                                        <i class="fa fa-fw fa-trash"></i> Delete
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info" ng-if="vm.webhooks.length === 0">
+                You haven't registered any webhooks yet.
+            </div>
+
+        </div>
+    </div>
+</div>

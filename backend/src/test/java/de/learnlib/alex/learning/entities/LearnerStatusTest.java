@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +17,29 @@
 package de.learnlib.alex.learning.entities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.learning.services.Learner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LearnerStatusTest {
 
-    @Mock
-    private User user;
-
-    @Mock
-    private Learner learner;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void shouldCreateTheCorrectJSONIfActive() throws JsonProcessingException {
+    public void shouldCreateTheCorrectJSONIfActive() throws JsonProcessingException, IOException {
         LearnerResult learnerResult = new LearnerResult();
         Statistics statistics = new Statistics();
         statistics.setStartDate(ZonedDateTime.parse("1970-01-01T00:00:00.000+00:00"));
@@ -48,29 +47,27 @@ public class LearnerStatusTest {
         learnerResult.setStatistics(statistics);
         learnerResult.setTestNo(0L);
 
-        String expectedJSON = "{\"active\":true,\"currentQueries\":[],\"learnerPhase\":\"LEARNING\","
-                + "\"project\":0,\"statistics\":{\"duration\":{\"learner\":0,"
-                + "\"eqOracle\":0,\"total\":0},\"eqsUsed\":0,\"mqsUsed\":{\"learner\":1,\"eqOracle\":1,"
-                + "\"total\":2},\"startDate\":\"1970-01-01T00:00:00.000+00:00\",\"symbolsUsed\":{\"learner\":0,"
-                + "\"eqOracle\":0,\"total\":0}},\"stepNo\":0,\"testNo\":0}";
-
         LearnerStatus status = new LearnerStatus(learnerResult, Learner.LearnerPhase.LEARNING, new ArrayList<>());
+        JsonNode json = mapper.readTree(mapper.writeValueAsString(status));
 
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(status);
+        assertTrue(json.get("active").asBoolean());
+        assertTrue(json.hasNonNull("currentQueries"));
+        assertTrue(json.get("currentQueries").isArray());
+        assertNotNull(json.get("learnerPhase"));
+        assertNotNull(json.get("project"));
+        assertNotNull(json.get("stepNo"));
+        assertNotNull(json.get("testNo"));
+        assertNotNull(json.get("result"));
+        assertTrue(json.get("result").isObject());
 
-        assertEquals(expectedJSON, json);
     }
 
     @Test
-    public void shouldCreateTheCorrectJSONIfInactive() throws JsonProcessingException {
-        String expectedJSON = "{\"active\":false}";
-
+    public void shouldCreateTheCorrectJSONIfInactive() throws IOException {
         LearnerStatus status = new LearnerStatus();
+        JsonNode json = mapper.readTree(mapper.writeValueAsString(status));
 
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(status);
-
-        assertEquals(expectedJSON, json);
+        assertEquals(json.size(), 1);
+        assertFalse(json.get("active").asBoolean());
     }
 }

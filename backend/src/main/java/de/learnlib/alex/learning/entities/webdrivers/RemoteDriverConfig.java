@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,11 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.net.URL;
@@ -31,6 +32,8 @@ import java.net.URL;
 /**
  * The configuration for the remote driver.
  */
+@Entity
+@DiscriminatorValue(WebDrivers.REMOTE)
 @JsonTypeName(WebDrivers.REMOTE)
 public class RemoteDriverConfig extends AbstractWebDriverConfig implements Serializable {
 
@@ -44,7 +47,6 @@ public class RemoteDriverConfig extends AbstractWebDriverConfig implements Seria
 
     /**
      * The browser to run the tests in.
-     * @see BrowserType
      */
     @NotBlank
     private String browser;

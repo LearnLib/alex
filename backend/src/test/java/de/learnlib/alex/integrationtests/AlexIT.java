@@ -72,7 +72,7 @@ public class AlexIT {
         projectId = project.getId();
         assertTrue(projectId > 0);
         assertEquals(PROJECT_NAME, project.getName());
-        assertEquals(PROJECT_URL, project.getBaseUrl());
+        assertEquals(PROJECT_URL, project.getDefaultUrl().getUrl());
         assertNotNull(project.getSymbols());
         assertEquals(0, project.getSymbols().size()); // no symbol
     }

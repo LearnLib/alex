@@ -1,0 +1,13 @@
+.test-suite-tree {
+  .header {
+    border-radius: 4px;
+
+    &.selected, &:hover {
+      background: #ddd;
+    }
+  }
+
+  .children {
+    padding-left: 1.5rem;
+  }
+}

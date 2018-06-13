@@ -1,4 +1,8 @@
 {
     "type": "web_checkForText",
-    "value": "Lorem Ipsum"
+    "value": "Lorem Ipsum",
+    "node": {
+        "selector": "document",
+        "type": "CSS"
+    }
 }

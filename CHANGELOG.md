@@ -1,3 +1,55 @@
+# ALEX 1.5.0
+
+## Breaking Changes
+
+* Symbols and tests that have been exported with v.1.4.0 and lower can not be imported directly.
+  Apply the new export format and for each symbol in an exported JSON file add the properties `inputs` and `outputs` so that the resulting file looks like:
+    
+  ```JSON
+  {
+    "version": "1.4.0",
+    "type": "symbols",
+    "symbols": [
+      {
+        "name": "symbol",
+        ...,
+        "inputs": [],
+        "outputs": []
+      },
+      ...
+    ]
+  }
+  ```
+
+## Bug Fixes
+
+* Resuming a learning process should now work as expected.
+* Various smaller fixes.
+
+## Features
+
+* The results of test executions are saved in reports.
+* Added webhooks to notify external applications about changes.
+* Reuse the browser instance for membership queries. 
+  A hard reset with a new browser instance can be achieved with a new action.
+* New actions: 
+    * Refresh and restart the browser window.
+    * Click on a arbitrary element with a given visible text.
+    * Check if an element, e.g. a checkbox, radio button or option is selected.
+    * Set variable to HTTP response body.
+* Parameterized symbols: symbols now have dynamic inputs and outputs.
+  Values for inputs can be set by a user for modelling tests.
+* Symbols and symbol groups can be nested in a tree like structure.
+* Named project URLs.
+* Download uploaded files.
+* Learner results can be cloned.
+* Import and export symbol groups.
+
+## Further Comments
+
+* The CLI for ALEX is now a standalone NPM package and can be installed via `npm install alex-cli`
+
+
 # ALEX 1.4.0
 
 ## Breaking Changes

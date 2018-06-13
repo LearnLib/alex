@@ -1,0 +1,44 @@
+<widget title="Latest learner result">
+    <div ng-if="vm.result != null">
+        <table class="table table-condensed">
+            <tbody>
+                <tr>
+                    <td><strong>Date</strong></td>
+                    <td>{{(vm.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Algorithm</strong></td>
+                    <td>{{vm.result.algorithm.name | formatAlgorithm}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Browser</strong></td>
+                    <td>{{vm.result.driverConfig.name | formatWebBrowser}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Status</strong></td>
+                    <td>
+                        <div ng-if="vm.result.error">
+                            <span class="label label-danger">Error</span>
+                        </div>
+                        <div ng-if="!vm.result.error">
+                            <span class="label label-success">Success</span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button class="btn btn-xs btn-default" ui-sref="learnerStart({projectId: vm.project.id, result: result})">
+            <i class="fa fa-fw fa-play"></i> Continue learning
+        </button>
+        <button class="btn btn-xs btn-default" ui-sref="learnerResultsCompare({testNos: [vm.result.testNo], projectId: vm.project.id})">
+            <i class="fa fa-fw fa-eye"></i> View result
+        </button>
+        <button class="btn btn-xs btn-default" ui-sref="learnerResultsStatistics({testNos: [vm.result.testNo], projectId: vm.project.id})">
+            <i class="fa fa-fw fa-bar-chart-o"></i> View statistics
+        </button>
+    </div>
+    <div class="alert alert-info mb-0" ng-if="vm.result == null">
+        There are no learner results in the database.
+    </div>
+</widget>

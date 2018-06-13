@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package de.learnlib.alex.integrationtests;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import org.junit.After;
@@ -35,7 +36,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -70,9 +70,13 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
     @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveAProjectWithoutAnUser() {
+        ProjectUrl url = new ProjectUrl();
+        url.setUrl("http://localhost");
+        url.setDefault(true);
+
         Project project = new Project();
         project.setName("Test Project");
-        project.setBaseUrl("http://localhost");
+        project.getUrls().add(url);
 
         projectRepository.save(project); // should fail
     }
@@ -81,10 +85,14 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
     public void shouldFailToSaveAProjectWithoutAName() {
         User user = createUser("alex@test.example");
         userRepository.save(user);
-        //
+
+        ProjectUrl url = new ProjectUrl();
+        url.setUrl("http://localhost");
+        url.setDefault(true);
+
         Project project = new Project();
         project.setUser(user);
-        project.setBaseUrl("http://localhost");
+        project.getUrls().add(url);
 
         projectRepository.save(project); // should fail
     }
@@ -168,7 +176,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
 
-        Project projectFromDB = projectRepository.findOneByUser_IdAndId(user.getId(), project.getId());
+        Project projectFromDB = projectRepository.findOne(project.getId());
 
         assertThat(projectFromDB, is(equalTo(project)));
     }
@@ -178,22 +186,9 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         User user = createUser("alex@test.example");
         userRepository.save(user);
 
-        Project projectFromDB = projectRepository.findOneByUser_IdAndId(user.getId(), -1L);
+        Project projectFromDB = projectRepository.findOne(-1L);
 
         assertNull(projectFromDB);
-    }
-
-    @Test
-    public void shouldFetchAProjectsOfAUserByItsName() {
-        User user = createUser("alex@test.example");
-        userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-
-        Project projectFromDB = projectRepository.findOneByUser_IdAndName(user.getId(), project.getName());
-
-        assertThat(projectFromDB, is(equalTo(project)));
     }
 
     @Test
@@ -201,7 +196,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         User user = createUser("alex@test.example");
         userRepository.save(user);
 
-        Project projectFromDB = projectRepository.findOneByUser_IdAndId(user.getId(), null);
+        Project projectFromDB = projectRepository.findOne(-1L);
 
         assertNull(projectFromDB);
     }

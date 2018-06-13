@@ -1,0 +1,24 @@
+<div class="modal-header">
+    <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+        <i class="fa fa-close fa-fw"></i>
+    </a>
+    <h3 class="modal-title">Edit project <strong ng-bind="::vm.project.name"></strong></h3>
+</div>
+
+<form name="vm.form" ng-submit="vm.updateProject()">
+
+    <div class="modal-body">
+        <project-form-groups project="vm.project" form="vm.form"></project-form-groups>
+
+        <hr>
+        <div class="text-muted">
+            <em>* These fields are required</em>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-sm" type="submit">Update</button>
+        <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
+    </div>
+
+</form>

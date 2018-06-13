@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +46,7 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
@@ -73,12 +75,16 @@ public class LearnerResultDAOImplTest {
     @Mock
     private Learner learner;
 
+    @Mock
+    private EntityManager entityManager;
+
     private LearnerResultDAO learnerResultDAO;
 
 
     @Before
     public void setUp() {
-        learnerResultDAO = new LearnerResultDAOImpl(projectDAO, learnerResultRepository, learnerResultStepRepository);
+        learnerResultDAO = new LearnerResultDAOImpl(projectDAO, learnerResultRepository, learnerResultStepRepository,
+                entityManager);
     }
 
     @Test
@@ -150,22 +156,6 @@ public class LearnerResultDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldNotSaveALearnResultWithoutAnUser() {
-        User user = new User();
-        //
-        Project project = new Project();
-        //
-        LearnerResult result = new LearnerResult();
-        result.setProject(project);
-
-        try {
-            learnerResultDAO.create(user, result); // should fail
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test(expected = ValidationException.class)
     public void shouldNotSaveALearnResultWithoutAProject() {
         User user = new User();
         //
@@ -212,14 +202,15 @@ public class LearnerResultDAOImplTest {
         }
     }
 
-    @Test(expected = NotFoundException.class)
-    public void ensureThatGettingAllResultsThrowsAnExceptionIfNoLearnerResultCouldBeFound() throws NotFoundException {
+    @Test
+    public void ensureThatGettingAllResultsReturnsAnEmptyListIfNoLearnerResultCouldBeFound() throws NotFoundException {
         User user = new User();
-        //
+
         given(learnerResultRepository.findByProject_IdOrderByTestNoAsc(PROJECT_ID))
                 .willReturn(Collections.emptyList());
 
-        learnerResultDAO.getAll(user, PROJECT_ID, true); // should fail
+        List<LearnerResult> results = learnerResultDAO.getAll(user, PROJECT_ID, true);
+        assertEquals(results.size(), 0);
     }
 
 

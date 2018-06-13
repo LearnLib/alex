@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package de.learnlib.alex.learning.entities.algorithms;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.algorithms.ttt.base.AbstractBaseDTNode;
 import de.learnlib.algorithms.ttt.base.BaseTTTDiscriminationTree;
+import de.learnlib.algorithms.ttt.base.TTTLearnerState;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
 import de.learnlib.api.algorithm.LearningAlgorithm;
@@ -26,6 +27,9 @@ import de.learnlib.api.oracle.MembershipOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
@@ -37,26 +41,40 @@ public class TTT extends AbstractLearningAlgorithm<String, String> implements Se
     private static final long serialVersionUID = -7594934697689034183L;
 
     @Override
-    public LearningAlgorithm.MealyLearner<String, String> createLearner(
-            Alphabet<String> sigma, MembershipOracle<String, Word<String>> oracle) {
-        return new TTTLearnerMealyBuilder<String, String>().withAlphabet(sigma).withOracle(oracle).create();
+    public LearningAlgorithm.MealyLearner<String, String> createLearner(Alphabet<String> sigma,
+            MembershipOracle<String, Word<String>> oracle) {
+        return new TTTLearnerMealyBuilder<String, String>()
+                .withAlphabet(sigma)
+                .withOracle(oracle)
+                .create();
     }
 
     @Override
     public String getInternalData(LearningAlgorithm.MealyLearner<String, String> learner) {
         if (!(learner instanceof TTTLearnerMealy)) {
             throw new IllegalArgumentException("Can not read the internal data because the algorithm types"
-                                                       + "were different");
+                    + "were different");
         }
 
         TTTLearnerMealy<String, String> tttLearner = (TTTLearnerMealy<String, String>) learner;
         return toJSON(tttLearner.getDiscriminationTree());
     }
 
+    @Override
+    public void resume(LearningAlgorithm.MealyLearner<String, String> learner, byte[] data)
+            throws IOException, ClassNotFoundException {
+        try (final ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(data))) {
+            final TTTLearnerState<String, Word<String>> state =
+                    (TTTLearnerState<String, Word<String>>) objectIn.readObject();
+            ((TTTLearnerMealy<String, String>) learner).resume(state);
+        }
+    }
+
     /**
      * Serializes the discrimination tree of the TTT algorithm into JSON.
      *
-     * @param dtree The tree to convert into nice JSON.
+     * @param dtree
+     *         The tree to convert into nice JSON.
      * @return The JSON string of the given tree.
      */
     private String toJSON(BaseTTTDiscriminationTree<String, Word<String>> dtree) {

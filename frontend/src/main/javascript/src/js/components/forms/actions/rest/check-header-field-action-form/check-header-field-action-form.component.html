@@ -1,0 +1,20 @@
+<h4><strong>Check header field</strong></h4>
+
+<p class="text-muted">Check if a HTTP response header has a specific value.</p>
+<hr>
+
+<div class="form-group">
+    <label>Header</label>
+    <input class="form-control" type="text" placeholder="http header field, e.g. Content-Type"
+           ng-model="vm.action.key">
+</div>
+<div class="form-group">
+    <label>Value</label>
+    <input class="form-control" type="text"
+           placeholder="HTTP header value, e.g. application/json" ng-model="vm.action.value">
+</div>
+<div class="checkbox">
+    <label>
+        <input type="checkbox" ng-model="vm.action.regexp">is regular expression
+    </label>
+</div>

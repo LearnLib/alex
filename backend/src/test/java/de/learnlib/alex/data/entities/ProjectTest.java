@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 TU Dortmund
+ * Copyright 2018 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,12 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -79,25 +78,11 @@ public class ProjectTest {
         Project p = mapper.readValue(file, Project.class);
 
         assertEquals("Test Project", p.getName());
-        assertEquals("http://example.com", p.getBaseUrl());
+        assertEquals("http://example.com", p.getDefaultUrl().getUrl());
         assertEquals(LOREM_IPSUM, p.getDescription());
-        assertTrue(p.getSymbols() != null);
+        assertNotNull(p.getSymbols());
         // symbols are not included in the Project directly, instead they're parts of groups now
         assertEquals(0, p.getSymbols().size());
-    }
-
-    @Test
-    public void shouldGetAndSetMirrorUrlsCorrectly() {
-        Project p = new Project();
-        assertEquals(0, p.getMirrorUrls().size());
-
-        p.setMirrorUrls(new ArrayList<>());
-        assertEquals(0, p.getMirrorUrls().size());
-
-        List<String> urls = Arrays.asList("http://localhost:8080", "http://localhost:8081");
-        p.setMirrorUrls(urls);
-
-        assertEquals(2, p.getMirrorUrls().size());
     }
 
     @Test

@@ -1,6 +1,19 @@
 {
     "name": "Test Project",
-    "baseUrl": "http://example.com",
+    "urls": [
+        {
+            "id": 1,
+            "name": null,
+            "url": "http://example.com",
+            "default": true
+        },
+        {
+            "id": 2,
+            "name": null,
+            "url": "http://example.com",
+            "default": false
+        }
+    ],
     "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore",
     "symbols": [
         {
@@ -35,7 +48,7 @@
                 {
                     "type": "wait",
                     "duration": 1000
-                    
+
                 }
             ]
         }
