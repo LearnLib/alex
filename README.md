@@ -18,7 +18,7 @@ Make sure you have Java 8 installed on your system.
 We advise to use a modern web browser like Google Chrome, Mozilla Firefox or Microsoft Edge with JavaScript enabled.
 
 1. [Download](https://github.com/LearnLib/alex/releases/latest) the latest version.
-2. Open a terminal and start ALEX via `java -jar alex-1.5.0.war [--alex.port=XXXX]`.
+2. Open a terminal and start ALEX via `java -jar alex-1.5.1.war [--alex.port=XXXX]`.
 3. Wait until the command line prints something like `de.learnlib.alex.App - Started App in XX.XXX seconds`.
 3. Open *http://localhost:8000* in a web browser.
 
@@ -48,7 +48,7 @@ cd alex
 mvn install package [-DskipTests]
 ```
 
-The bundle can then be found at `build/target/alex-build-1.5.0.war`.
+The bundle can then be found at `build/target/alex-build-1.5.1.war`.
 
 ## Further reading
 
