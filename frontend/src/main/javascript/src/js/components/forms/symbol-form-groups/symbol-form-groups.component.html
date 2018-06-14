@@ -17,3 +17,21 @@
         </div>
     </div>
 </div>
+
+<div class="form-group">
+    <label>Description</label>
+    <textarea
+      class="form-control"
+      name="description"
+      placeholder="Describe what the symbol does."
+      ng-maxlength="1024"
+      ng-model="vm.symbol.description" rows="2"
+    >
+    </textarea>
+
+    <div class="help-block" ng-messages="vm.form.description.$error" ng-if="vm.form.description.$touched">
+        <div class="alert alert-danger alert-condensed" ng-message="maxlength">
+            The description cannot be more than 255 characters long
+        </div>
+    </div>
+</div>

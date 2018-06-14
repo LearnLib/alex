@@ -20,6 +20,15 @@
                 <i class="fa fa-fw fa-info"></i> There are unsaved changes made to the symbol
             </div>
 
+            <div class="panel panel-default" ng-if="vm.symbol.description != null && vm.symbol.description !== ''">
+                <div class="panel-heading">
+                    <strong>Description</strong>
+                </div>
+                <div class="panel-body">
+                    <p class="text-muted pb-0 mb-0">{{vm.symbol.description}}</p>
+                </div>
+            </div>
+
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <strong>Actions</strong>

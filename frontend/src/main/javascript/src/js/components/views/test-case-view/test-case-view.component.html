@@ -71,30 +71,41 @@
                         <div class="list-group-item" ng-repeat="step in vm.testCase.steps track by $index">
                             <div class="d-flex flex-row">
                                 <div class="w-100">
-                                    <strong>{{step.symbol.name}}</strong>
-                                    <div ng-if="step.parameterValues.length > 0" style="margin-top: .5rem">
+                                  <div class="row">
+                                    <div class="col-xs-8">
+                                      <strong>{{step.symbol.name}}</strong>
+                                      <div ng-if="step.parameterValues.length > 0" style="margin-top: .5rem">
                                         <div class="d-flex flex-row text-muted" ng-repeat="parameterValue in step.parameterValues">
-                                            <div style="flex-shrink: 0">
-                                                <em>{{parameterValue.parameter.name}}</em> =&nbsp;
-                                            </div>
-                                            <div class="w-100 input-parameter-value" style="position: relative">
-                                                <i class="fa fa-fw fa-close cursor-pointer"
-                                                   ng-click="parameterValue.value = null"></i>
-                                                <input
-                                                  class="w-100 d-block"
-                                                  type="text"
-                                                  ng-model="parameterValue.value"
-                                                  placeholder="{{parameterValue.value == null ? 'null' : ''}}"
-                                                >
-                                            </div>
+                                          <div style="flex-shrink: 0">
+                                            <em>{{parameterValue.parameter.name}}</em> =&nbsp;
+                                          </div>
+                                          <div class="w-100 input-parameter-value" style="position: relative">
+                                            <i class="fa fa-fw fa-close cursor-pointer"
+                                               ng-click="parameterValue.value = null"></i>
+                                            <input
+                                              class="w-100 d-block"
+                                              type="text"
+                                              ng-model="parameterValue.value"
+                                              placeholder="{{parameterValue.value == null ? 'null' : ''}}"
+                                            >
+                                          </div>
                                         </div>
+                                      </div>
                                     </div>
+                                    <div class="col-xs-4">
+                                      <div class="mr-1">
+                                        <em class="text-muted">Expected result</em>
+                                        <textarea class="form-control" ng-model="step.expectedResult" rows="2">
+                                        </textarea>
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
                                 <div class="mr-1">
-                                <span class="cursor-pointer" ng-click="step.shouldFail = !step.shouldFail">
-                                    <span class="label label-outline-danger" ng-if="step.shouldFail">Should fail</span>
-                                    <span class="label label-outline-success" ng-if="!step.shouldFail">Should pass</span>
-                                </span>
+                                    <span class="cursor-pointer" ng-click="step.shouldFail = !step.shouldFail">
+                                        <span class="label label-outline-danger" ng-if="step.shouldFail">Should fail</span>
+                                        <span class="label label-outline-success" ng-if="!step.shouldFail">Should pass</span>
+                                    </span>
                                 </div>
                                 <div>
                                     <i class="fa fa-close cursor-pointer" ng-click="vm.testCase.steps.splice($index, 1)"></i>
