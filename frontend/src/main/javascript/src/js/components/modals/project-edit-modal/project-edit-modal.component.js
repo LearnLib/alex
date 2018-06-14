@@ -52,7 +52,7 @@ export class ProjectEditModalComponent {
          * An error message that is displayed on a failed updated.
          * @type {null|string}
          */
-        this.error = null;
+        this.errorMessage = null;
     }
 
     $onInit() {
@@ -63,7 +63,7 @@ export class ProjectEditModalComponent {
      * Updates the project. Closes the modal window on success.
      */
     updateProject() {
-        this.error = null;
+        this.errorMessage = null;
 
         this.ProjectResource.update(this.project)
             .then(updatedProject => {
@@ -77,8 +77,8 @@ export class ProjectEditModalComponent {
                 this.form.$setPristine();
                 this.form.$setUntouched();
             })
-            .catch(response => {
-                this.error = response.data.message;
+            .catch(err => {
+                this.errorMessage = err.data.message;
             });
     }
 }

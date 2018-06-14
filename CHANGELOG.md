@@ -1,3 +1,8 @@
+# ALEX 1.5.1
+
+This release only contains some bug fixes.
+
+
 # ALEX 1.5.0
 
 ## Breaking Changes

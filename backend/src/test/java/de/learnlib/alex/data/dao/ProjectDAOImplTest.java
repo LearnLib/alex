@@ -23,6 +23,7 @@ import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +36,7 @@ import org.springframework.transaction.TransactionSystemException;
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,11 +67,15 @@ public class ProjectDAOImplTest {
     @Mock
     private ProjectUrlDAO projectUrlDAO;
 
+    @Mock
+    private TestReportRepository testReportRepository;
+
     private ProjectDAO projectDAO;
 
     @Before
     public void setUp() {
-        projectDAO = new ProjectDAOImpl(projectRepository, learnerResultRepository, fileDAO, projectUrlDAO);
+        projectDAO = new ProjectDAOImpl(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
+                projectUrlDAO);
     }
 
     @Test
@@ -89,6 +95,30 @@ public class ProjectDAOImplTest {
 
         verify(projectRepository).save(project);
         assertThat(p.getId(), is(equalTo(1L)));
+    }
+
+    @Test(expected = ValidationException.class)
+    public void shouldNotCreateAProjectIfUrlsAreEmpty() throws NotFoundException {
+        User user = new User(USER_ID);
+
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        project.setUser(user);
+
+        projectDAO.create(project);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void shouldNotUpdateAProjectIfUrlsAreEmpty() throws NotFoundException {
+        User user = new User(USER_ID);
+
+        Project project = new Project();
+        project.setId(PROJECT_ID);
+        project.setUser(user);
+
+        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
+
+        projectDAO.update(user, project);
     }
 
     @Test
@@ -111,6 +141,7 @@ public class ProjectDAOImplTest {
     @Test(expected = ValidationException.class)
     public void shouldHandleConstraintViolationExceptionOnProjectCreationGracefully() {
         Project project = new Project();
+        project.setUrls(Collections.singletonList(new ProjectUrl()));
         //
         given(projectRepository.save(project)).willThrow(ConstraintViolationException.class);
 
@@ -120,6 +151,7 @@ public class ProjectDAOImplTest {
     @Test(expected = ValidationException.class)
     public void shouldHandleDataIntegrityViolationExceptionOnProjectCreationGracefully() {
         Project project = new Project();
+        project.setUrls(Collections.singletonList(new ProjectUrl()));
         //
         given(projectRepository.save(project)).willThrow(DataIntegrityViolationException.class);
 
@@ -129,6 +161,7 @@ public class ProjectDAOImplTest {
     @Test(expected = ValidationException.class)
     public void shouldHandleTransactionSystemExceptionOnProjectCreationGracefully() {
         Project project = new Project();
+        project.setUrls(Collections.singletonList(new ProjectUrl()));
         //
         ConstraintViolationException constraintViolationException;
         constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
@@ -218,6 +251,7 @@ public class ProjectDAOImplTest {
         user.setId(USER_ID);
 
         Project project = new Project();
+        project.setUrls(Collections.singletonList(new ProjectUrl()));
         project.setUser(user);
         project.setId(PROJECT_ID);
 
@@ -235,6 +269,7 @@ public class ProjectDAOImplTest {
         Project project = new Project();
         project.setUser(user);
         project.setId(PROJECT_ID);
+        project.setUrls(Collections.singletonList(new ProjectUrl()));
 
         given(projectRepository.save(project)).willThrow(DataIntegrityViolationException.class);
         given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
@@ -248,6 +283,7 @@ public class ProjectDAOImplTest {
         user.setId(USER_ID);
 
         Project project = new Project();
+        project.setUrls(Collections.singletonList(new ProjectUrl()));
         project.setUser(user);
         project.setId(PROJECT_ID);
 

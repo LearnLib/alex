@@ -297,7 +297,7 @@ public class LearnerResourceTest extends JerseyTest {
         Response response = target("/learner/" + PROJECT_TEST_ID + "/stop").request().header("Authorization", adminToken).get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        verify(learner).stop(admin);
+        verify(learner).stop(PROJECT_TEST_ID);
     }
 
     @Test
@@ -312,7 +312,7 @@ public class LearnerResourceTest extends JerseyTest {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String expectedJSON = "{\"active\":false}";
         assertEquals(expectedJSON, response.readEntity(String.class));
-        verify(learner, never()).stop(admin);
+        verify(learner, never()).stop(PROJECT_TEST_ID);
     }
 
     @Test

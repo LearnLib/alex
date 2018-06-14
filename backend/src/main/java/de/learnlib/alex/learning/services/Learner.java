@@ -331,10 +331,11 @@ public class Learner {
     /**
      * Ends the learning process after the current step.
      *
-     * @param user The user that wants to stop his active thread.
+     * @param projectId The id of the project that is learned.
      */
-    public void stop(User user) {
-        final AbstractLearnerThread learnerThread = userThreads.get(user);
+    public void stop(Long projectId) {
+        final AbstractLearnerThread learnerThread = userThreads.get(projectId);
+
         if (learnerThread != null) {
             learnerThread.stopLearning();
         }
