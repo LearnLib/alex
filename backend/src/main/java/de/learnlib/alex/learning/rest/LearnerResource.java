@@ -269,7 +269,7 @@ public class LearnerResource {
      * This will always return OK, even if there is nothing to stop.
      * To see if there is currently a learning process, the status like '/active' will be returned.
      *
-     * @param projectId     The project to stop.
+     * @param projectId The project to stop.
      * @return The status of the current learn process.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.learning.entities.LearnerStatus
@@ -281,8 +281,14 @@ public class LearnerResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("stop() for user {}.", user);
 
+        try {
+            projectDAO.getByID(user.getId(), projectId);
+        } catch (NotFoundException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.stop", Status.NOT_FOUND, e);
+        }
+
         if (learner.isActive(projectId)) {
-            learner.stop(user); // Hammer Time
+            learner.stop(projectId); // Hammer Time
         } else {
             LOGGER.info(RESOURCE_MARKER, "tried to stop the learning again.");
         }
@@ -297,7 +303,6 @@ public class LearnerResource {
      *
      * @param projectId The project to get the Status of.
      * @return The information of the learning
-     * @throws NotFoundException If the previous learn job or the related Project could not be found.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.learning.entities.LearnerResult
      * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
@@ -305,9 +310,9 @@ public class LearnerResource {
     @GET
     @Path("/{project_id}/status")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getResult(@PathParam("project_id") long projectId) throws NotFoundException {
+    public Response getStatus(@PathParam("project_id") long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("getResult() for user {}.", user);
+        LOGGER.traceEntry("getStatus() for user {}.", user);
 
         LearnerStatus status = learner.getStatus(projectId);
 

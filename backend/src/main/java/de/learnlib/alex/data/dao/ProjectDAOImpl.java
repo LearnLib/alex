@@ -26,6 +26,7 @@ import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.testing.entities.TestSuite;
+import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -68,6 +69,9 @@ public class ProjectDAOImpl implements ProjectDAO {
     /** The repository for learner results. */
     private LearnerResultRepository learnerResultRepository;
 
+    /** The repository for test reports. */
+    private TestReportRepository testReportRepository;
+
     /** The FileDAO to use. Will be injected. */
     private FileDAO fileDAO;
 
@@ -85,14 +89,17 @@ public class ProjectDAOImpl implements ProjectDAO {
      *         The FileDAO to use.
      * @param projectUrlDAO
      *         The ProjectUrlDAO to use.
+     * @param testReportRepository
+     *         The repository for test reports.
      */
     @Inject
     public ProjectDAOImpl(ProjectRepository projectRepository, LearnerResultRepository learnerResultRepository,
-            @Lazy FileDAO fileDAO, @Lazy ProjectUrlDAO projectUrlDAO) {
+            TestReportRepository testReportRepository, @Lazy FileDAO fileDAO, @Lazy ProjectUrlDAO projectUrlDAO) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
         this.projectUrlDAO = projectUrlDAO;
+        this.testReportRepository = testReportRepository;
     }
 
     @Override
@@ -110,6 +117,10 @@ public class ProjectDAOImpl implements ProjectDAO {
             testSuite.setName("Root");
             testSuite.setProject(project);
             project.getTests().add(testSuite);
+
+            if (project.getUrls().isEmpty()) {
+                throw new ValidationException("The project has to have at least one URL.");
+            }
 
             project.getUrls().forEach(url -> {
                 url.setId(null);
@@ -164,6 +175,10 @@ public class ProjectDAOImpl implements ProjectDAO {
                 .collect(Collectors.toList());
         projectUrlDAO.checkAccess(user, project, urls);
 
+        if (project.getUrls().isEmpty()) {
+            throw new ValidationException("The project has to have at least one URL.");
+        }
+
         try {
             project.setUser(user);
             project.setGroups(projectInDb.getGroups());
@@ -204,6 +219,8 @@ public class ProjectDAOImpl implements ProjectDAO {
         final Project project = projectRepository.findOne(projectId);
         checkAccess(user, project);
 
+        testReportRepository.deleteAllByProject_Id(projectId);
+        learnerResultRepository.deleteAllByProject_Id(projectId);
         projectRepository.delete(project);
 
         // delete the project directory

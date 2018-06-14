@@ -116,4 +116,15 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, UU
     @SuppressWarnings("checkstyle:methodname")
     Long deleteByProject_IdAndTestNoIn(Long projectId, Long... testNos);
 
+    /**
+     * Delete all learner results in a project.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @return The amount of deleted LearnResults.
+     */
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
+    Long deleteAllByProject_Id(Long projectId);
+
 }

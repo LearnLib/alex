@@ -48,4 +48,15 @@ public interface TestReportRepository extends JpaRepository<TestReport, Long> {
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     List<TestReport> findAllByProject_Id(Long projectId);
+
+    /**
+     * Delete all test reports by project id.
+     *
+     * @param projectId
+     *         The id of the project.
+     * @return The number of deleted test reports.
+     */
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
+    Long deleteAllByProject_Id(Long projectId);
 }

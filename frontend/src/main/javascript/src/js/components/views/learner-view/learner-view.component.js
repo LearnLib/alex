@@ -140,6 +140,11 @@ class LearnerViewComponentComponent {
         this.LearnerResource.getStatus(this.project.id)
             .then(status => {
                 this.status = status;
+                if (this.status.result != null) {
+                    const now = new Date();
+                    const start = new Date(this.status.result.statistics.startDate);
+                    this.status.result.statistics.duration.total = now - start;
+                }
 
                 if (!this.status.active) {
                     this.finished = true;
@@ -168,8 +173,6 @@ class LearnerViewComponentComponent {
                         .catch(console.error);
 
                     this.$interval.cancel(this.intervalHandle);
-                } else {
-                    LearnResult.convertNsToMs(this.status.result.statistics.duration);
                 }
             })
             .catch(console.error);

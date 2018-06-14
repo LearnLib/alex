@@ -118,7 +118,7 @@ public class LearnerTest {
 
     @Test
     public void shouldStopAThread() throws NotFoundException {
-        learner.stop(user);
+        learner.stop(-1L);
     }
 
     @Test

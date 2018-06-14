@@ -21,7 +21,10 @@
 export function config($stateProvider, $urlRouterProvider) {
 
     // redirect to the start page when no other route fits
-    $urlRouterProvider.otherwise('');
+    $urlRouterProvider.otherwise($injector => {
+        const $state = $injector.get('$state');
+        $state.go('root');
+    });
 
     $stateProvider
         .state('root', {
