@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.integrationtests;
+package de.learnlib.alex.integrationtests.repositories;
 
 import de.learnlib.alex.App;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @ContextConfiguration(classes = App.class)
+@Ignore
 public abstract class AbstractRepositoryIT {
 
     User createUser(String email) {

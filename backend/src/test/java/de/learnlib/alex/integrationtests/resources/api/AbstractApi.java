@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-/**
- * The version of ALEX.
- * @type {string}
- */
-export const version = '1.5.1';
+package de.learnlib.alex.integrationtests.resources.api;
 
-/**
- * API URL
- *
- * Change it to '/rest' before ALEX is packaged.
- * Otherwise change it to the URL where the API is currently running.
- *
- * @type {string}
- */
-// export const apiUrl = '/rest';
-export const apiUrl = 'http://localhost:8000/rest';
+import javax.ws.rs.client.Client;
+
+public abstract class AbstractApi {
+
+    protected final Client client;
+
+    protected final int port;
+
+    protected AbstractApi(Client client, int port) {
+        this.client = client;
+        this.port = port;
+    }
+
+    protected String baseUrl() {
+        return "http://localhost:" + port + "/rest";
+    }
+}

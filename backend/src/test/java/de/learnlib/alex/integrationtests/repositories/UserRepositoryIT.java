@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.integrationtests;
+package de.learnlib.alex.integrationtests.repositories;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.repositories.UserRepository;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -36,6 +37,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class UserRepositoryIT extends AbstractRepositoryIT {
 
     @Inject

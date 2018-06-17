@@ -50,4 +50,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional(readOnly = true)
     User findOneByEmail(String email);
 
+    /**
+     * Find multiple users by IDs.
+     *
+     * @param userIds
+     *         The IDs of the users to get.
+     * @return The matching users.
+     */
+    @Transactional(readOnly = true)
+    List<User> findAllByIdIn(List<Long> userIds);
+
 }

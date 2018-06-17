@@ -115,8 +115,23 @@ public class UserDAOImpl implements UserDAO {
     @Override
     @Transactional
     public void delete(Long id) throws NotFoundException {
-        User user = getById(id);
+        delete(getById(id));
+    }
 
+    @Override
+    @Transactional
+    public void delete(IdsList ids) throws NotFoundException {
+        final List<User> users = userRepository.findAllByIdIn(ids);
+        if (users.size() != ids.size()) {
+            throw new NotFoundException("At least one user could not be found.");
+        }
+
+        for (User user: users) {
+            delete(user);
+        }
+    }
+
+    private void delete(User user) throws NotFoundException {
         // make sure there is at least one registered admin
         if (user.getRole().equals(UserRole.ADMIN)) {
             List<User> admins = userRepository.findByRole(UserRole.ADMIN);
@@ -133,15 +148,6 @@ public class UserDAOImpl implements UserDAO {
             fileDAO.deleteUserDirectory(user);
         } catch (IOException e) {
             LOGGER.info("The user has been deleted, the user directory, however, not.");
-        }
-    }
-
-    @Override
-    @Transactional
-    public void delete(IdsList ids) throws NotFoundException {
-        for (Long id: ids) {
-            User user = getById(id);
-            userRepository.delete(user);
         }
     }
 

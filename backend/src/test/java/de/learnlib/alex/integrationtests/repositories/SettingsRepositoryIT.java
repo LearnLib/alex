@@ -1,7 +1,8 @@
-package de.learnlib.alex.integrationtests;
+package de.learnlib.alex.integrationtests.repositories;
 
 import de.learnlib.alex.config.entities.Settings;
 import de.learnlib.alex.config.repositories.SettingsRepository;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -11,6 +12,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class SettingsRepositoryIT extends AbstractRepositoryIT {
 
     @Inject

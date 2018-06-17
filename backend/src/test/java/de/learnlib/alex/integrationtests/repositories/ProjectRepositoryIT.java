@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.integrationtests;
+package de.learnlib.alex.integrationtests.repositories;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.repositories.UserRepository;
@@ -23,6 +23,7 @@ import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -39,6 +40,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
     @Inject
