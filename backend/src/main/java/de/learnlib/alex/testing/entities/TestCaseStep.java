@@ -25,6 +25,7 @@ import de.learnlib.alex.data.entities.SymbolRepresentation;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -84,10 +85,15 @@ public class TestCaseStep implements Serializable {
     @NotNull
     private boolean shouldFail;
 
+    /** The expected result of the step in a natural language. */
+    @Column(columnDefinition = "CLOB")
+    private String expectedResult;
+
     /** Constructor. */
     public TestCaseStep() {
         this.shouldFail = false;
         this.parameterValues = new ArrayList<>();
+        this.expectedResult = "";
     }
 
     /**
@@ -164,5 +170,13 @@ public class TestCaseStep implements Serializable {
 
     public void setShouldFail(boolean shouldFail) {
         this.shouldFail = shouldFail;
+    }
+
+    public String getExpectedResult() {
+        return expectedResult;
+    }
+
+    public void setExpectedResult(String expectedResult) {
+        this.expectedResult = expectedResult == null ? "" : expectedResult;
     }
 }

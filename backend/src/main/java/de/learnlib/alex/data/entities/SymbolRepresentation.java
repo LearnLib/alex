@@ -27,6 +27,9 @@ public class SymbolRepresentation {
     /** The name of the symbol. */
     private String name;
 
+    /** The description of the symbol. */
+    private String description;
+
     /** The inputs of the symbol. */
     private List<SymbolInputParameter> inputs;
 
@@ -43,6 +46,7 @@ public class SymbolRepresentation {
         this.name = symbol.getName();
         this.inputs = symbol.getInputs();
         this.outputs = symbol.getOutputs();
+        this.description = symbol.getDescription();
     }
 
     public Long getId() {
@@ -75,5 +79,13 @@ public class SymbolRepresentation {
 
     public void setOutputs(List<SymbolOutputParameter> outputs) {
         this.outputs = outputs;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

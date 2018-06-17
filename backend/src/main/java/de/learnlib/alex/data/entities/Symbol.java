@@ -35,6 +35,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -88,6 +89,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     /** The name of the symbol. */
     private String name;
+
+    /** The description of the symbol. */
+    private String description;
 
     /**
      * flag to mark a symbol as hidden.
@@ -265,6 +269,17 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @JsonProperty
     public void setName(String name) {
         this.name = name;
+    }
+
+    @JsonProperty
+    @Column(columnDefinition = "CLOB")
+    public String getDescription() {
+        return description;
+    }
+
+    @JsonProperty
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**

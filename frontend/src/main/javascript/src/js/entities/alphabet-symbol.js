@@ -79,6 +79,12 @@ export class AlphabetSymbol {
         this.outputs = obj.outputs || [];
 
         /**
+         * The description of the symbol.
+         * @type {?string}
+         */
+        this.description = obj.description || null;
+
+        /**
          * The actions of the symbol.
          * @type {Action[]}
          */
@@ -106,6 +112,7 @@ export class AlphabetSymbol {
 
         return {
             name: symbol.name,
+            description: symbol.description,
             actions: symbol.actions,
             successOutput: symbol.successOutput,
             inputs: symbol.inputs,
