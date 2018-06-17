@@ -70,7 +70,6 @@ import de.learnlib.alex.data.entities.actions.web.WaitForTextAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForTitleAction;
 import de.learnlib.alex.data.entities.actions.web.WebSymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.DiscriminatorColumn;

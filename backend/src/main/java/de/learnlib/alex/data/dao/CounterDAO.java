@@ -19,6 +19,8 @@ package de.learnlib.alex.data.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Counter;
+import de.learnlib.alex.data.entities.Project;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.validation.ValidationException;
@@ -101,4 +103,19 @@ public interface CounterDAO {
      */
     void delete(User user, Long projectId, String... names) throws NotFoundException;
 
+    /**
+     * Checks if the user can access the counter.
+     *
+     * @param user
+     *         The user.
+     * @param project
+     *         The project.
+     * @param counter
+     *         The counter.
+     * @throws NotFoundException
+     *         If one of the entities could not be found.
+     * @throws UnauthorizedException
+     *         If the user has no access to one of the entities.
+     */
+    void checkAccess(User user, Project project, Counter counter) throws NotFoundException, UnauthorizedException;
 }

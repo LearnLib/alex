@@ -293,7 +293,7 @@ public class SymbolResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "[{\"actions\":[],\"group\":0,"
+        String expectedJSON = "[{\"actions\":[],\"description\":null,\"group\":0,"
                 + "\"hidden\":false,\"id\":1,\"inputs\":[],\"name\":\"Symbol Resource Test Symbol\","
                 + "\"outputs\":[],\"project\":10,\"successOutput\":null}]";
         assertEquals(expectedJSON, response.readEntity(String.class));
@@ -313,7 +313,7 @@ public class SymbolResourceTest extends JerseyTest {
                             .request().header("Authorization", adminToken).get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "[{\"actions\":[],\"group\":0,"
+        String expectedJSON = "[{\"actions\":[],\"description\":null,\"group\":0,"
                                 + "\"hidden\":false,\"id\":1,\"inputs\":[],\"name\":\"Symbol Resource Test Symbol\","
                                 + "\"outputs\":[],\"project\":10,\"successOutput\":null}]";
         assertEquals(expectedJSON, response.readEntity(String.class));

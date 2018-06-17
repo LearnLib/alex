@@ -22,6 +22,8 @@ import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.rest.UserResource;
 import de.learnlib.alex.auth.security.AuthenticationFilter;
 import de.learnlib.alex.common.exceptions.NotFoundExceptionMapper;
+import de.learnlib.alex.common.exceptions.UnauthorizedExceptionMapper;
+import de.learnlib.alex.common.exceptions.ValidationExceptionMapper;
 import de.learnlib.alex.config.dao.SettingsDAO;
 import de.learnlib.alex.config.entities.DriverSettings;
 import de.learnlib.alex.config.entities.Settings;
@@ -111,6 +113,8 @@ public class ALEXApplication extends ResourceConfig {
 
         // Exceptions
         register(NotFoundExceptionMapper.class);
+        register(UnauthorizedExceptionMapper.class);
+        register(ValidationExceptionMapper.class);
 
         // Other
         register(MultiPartFeature.class);

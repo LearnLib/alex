@@ -19,7 +19,6 @@ package de.learnlib.alex.integrationtests.resources;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -45,9 +44,9 @@ import static org.junit.Assert.assertEquals;
 )
 public abstract class AbstractResourceIT {
 
-    protected final String ADMIN_EMAIL = "admin@alex.example";
+    protected static final String ADMIN_EMAIL = "admin@alex.example";
 
-    protected final String ADMIN_PASSWORD = "admin";
+    protected static final String ADMIN_PASSWORD = "admin";
 
     @LocalServerPort
     protected int port;
