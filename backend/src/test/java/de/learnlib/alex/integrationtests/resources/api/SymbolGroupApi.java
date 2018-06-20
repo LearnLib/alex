@@ -17,9 +17,11 @@
 package de.learnlib.alex.integrationtests.resources.api;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 public class SymbolGroupApi extends AbstractApi {
 
@@ -32,6 +34,43 @@ public class SymbolGroupApi extends AbstractApi {
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .get();
+    }
+
+    public Response create(int projectId, String group, String jwt) {
+        return client.target(url(projectId)).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .post(Entity.json(group));
+    }
+
+    public Response create(int projectId, List<String> groups, String jwt) {
+        return client.target(url(projectId) + "/batch").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .post(Entity.json(groups));
+    }
+
+    public Response get(int projectId, int groupId, String jwt) {
+        return client.target(url(projectId) + "/" + groupId).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .get();
+    }
+
+    public Response update(int projectId, int groupId, String group, String jwt) {
+        return client.target(url(projectId) + "/" + groupId).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .put(Entity.json(group));
+    }
+
+    public Response move(int projectId, int groupId, String group, String jwt) {
+        return client.target(url(projectId) + "/" + groupId + "/move").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .put(Entity.json(group));
+    }
+
+    public Response delete(int projectId, int groupId, String jwt) {
+        return client.target(url(projectId) + "/" + groupId).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .delete();
     }
 
     public String url(int projectId) {
