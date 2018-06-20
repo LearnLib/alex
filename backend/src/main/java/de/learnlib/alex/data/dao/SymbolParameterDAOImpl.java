@@ -110,7 +110,6 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
             steps.forEach(step -> {
                 final SymbolParameterValue value = new SymbolParameterValue();
                 value.setParameter(parameter);
-                value.setStep(step);
                 step.getParameterValues().add(value);
             });
             testCaseStepRepository.save(steps);

@@ -451,10 +451,9 @@ public class TestDAOImpl implements TestDAO {
                     .filter(input -> input.getParameterType().equals(SymbolParameter.ParameterType.STRING))
                     .forEach(input -> parameterMap.put(input.getName(), input));
 
-            step.getParameterValues().forEach(value -> {
-                value.setStep(step);
-                value.setParameter(parameterMap.get(value.getParameter().getName()));
-            });
+            step.getParameterValues().forEach(value ->
+                    value.setParameter(parameterMap.get(value.getParameter().getName()))
+            );
 
             symbolParameterValueRepository.save(step.getParameterValues());
         });

@@ -75,21 +75,7 @@
                                     <div class="col-xs-8">
                                       <strong>{{step.symbol.name}}</strong>
                                       <div ng-if="step.parameterValues.length > 0" style="margin-top: .5rem">
-                                        <div class="d-flex flex-row text-muted" ng-repeat="parameterValue in step.parameterValues">
-                                          <div style="flex-shrink: 0">
-                                            <em>{{parameterValue.parameter.name}}</em> =&nbsp;
-                                          </div>
-                                          <div class="w-100 input-parameter-value" style="position: relative">
-                                            <i class="fa fa-fw fa-close cursor-pointer"
-                                               ng-click="parameterValue.value = null"></i>
-                                            <input
-                                              class="w-100 d-block"
-                                              type="text"
-                                              ng-model="parameterValue.value"
-                                              placeholder="{{parameterValue.value == null ? 'null' : ''}}"
-                                            >
-                                          </div>
-                                        </div>
+                                        <symbol-parameters parameter-values="step.parameterValues"></symbol-parameters>
                                       </div>
                                     </div>
                                     <div class="col-xs-4">

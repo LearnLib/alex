@@ -60,6 +60,12 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
     @Min(-1)
     protected int maxAmountOfStepsToLearn;
 
+    /**
+     * Checks if the configuration is correct.
+     *
+     * @throws IllegalArgumentException
+     *         If the configuration is not valid.
+     */
     public abstract void checkConfiguration() throws IllegalArgumentException;
 
     /**

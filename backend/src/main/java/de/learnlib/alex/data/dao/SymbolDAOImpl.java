@@ -218,11 +218,12 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Override
     @Transactional(readOnly = true)
     public List<Symbol> getByIds(User user, Long projectId, List<Long> ids) throws NotFoundException {
+        projectDAO.getByID(user.getId(), projectId); // access check
+
         // no DB interaction if no symbols are requested
         if (ids.isEmpty()) {
             return new LinkedList<>();
         }
-        projectDAO.getByID(user.getId(), projectId); // access check
 
         // get the symbols
         List<Symbol> result = symbolRepository.findByIds(projectId, ids);

@@ -19,7 +19,12 @@ package de.learnlib.alex.learning.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectUrl;
+import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
+import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
@@ -78,26 +83,31 @@ public class LearnerResultDAOImplTest {
     @Mock
     private EntityManager entityManager;
 
+    @Mock
+    private ParameterizedSymbolRepository parameterizedSymbolRepository;
+    @Mock
+    private SymbolParameterValueRepository symbolParameterValueRepository;
+
     private LearnerResultDAO learnerResultDAO;
 
 
     @Before
     public void setUp() {
         learnerResultDAO = new LearnerResultDAOImpl(projectDAO, learnerResultRepository, learnerResultStepRepository,
-                entityManager);
+                entityManager, parameterizedSymbolRepository, symbolParameterValueRepository);
     }
 
     @Test
-    public void shouldSaveAValidLearnerResult() {
+    public void shouldSaveAValidLearnerResult() throws Exception {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
-        LearnerResult result = new LearnerResult();
+
+        LearnerResult result = createLearnerResultsList().get(0);
         result.setProject(project);
-        //
+
         given(learnerResultRepository.findHighestTestNo(PROJECT_ID)).willReturn(1L);
         given(learnerResultRepository.save(result)).willReturn(result);
 
@@ -112,14 +122,14 @@ public class LearnerResultDAOImplTest {
     }
 
     @Test
-    public void shouldSaveAValidLearnerResultWhenItIsTheFirstResult() {
+    public void shouldSaveAValidLearnerResultWhenItIsTheFirstResult() throws Exception {
         User user = new User();
         user.setId(USER_ID);
         //
         Project project = new Project();
         project.setId(PROJECT_ID);
         //
-        LearnerResult result = new LearnerResult();
+        LearnerResult result = createLearnerResultsList().get(0);
         result.setProject(project);
         //
         given(learnerResultRepository.findHighestTestNo(PROJECT_ID)).willReturn(null);
@@ -136,16 +146,16 @@ public class LearnerResultDAOImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldHandleDataIntegrityViolationExceptionOnLearnerResultCreationGracefully() {
+    public void shouldHandleDataIntegrityViolationExceptionOnLearnerResultCreationGracefully() throws Exception {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
-        LearnerResult result = new LearnerResult();
+
+        LearnerResult result = createLearnerResultsList().get(0);
         result.setProject(project);
-        //
+
         given(learnerResultRepository.save(result)).willThrow(DataIntegrityViolationException.class);
 
         try {
@@ -158,7 +168,7 @@ public class LearnerResultDAOImplTest {
     @Test(expected = ValidationException.class)
     public void shouldNotSaveALearnResultWithoutAProject() {
         User user = new User();
-        //
+
         LearnerResult result = new LearnerResult();
 
         try {
@@ -217,10 +227,10 @@ public class LearnerResultDAOImplTest {
     @Test
     public void shouldGetMultipleResults() throws NotFoundException {
         User user = new User();
-        //
+
         List<LearnerResult> results = createLearnerResultsList();
         Long[] testNos = new Long[]{0L, 1L, 2L};
-        //
+
         given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, testNos))
                 .willReturn(results);
 
@@ -247,10 +257,10 @@ public class LearnerResultDAOImplTest {
     @Test
     public void shouldGetOneResult() throws NotFoundException {
         User user = new User();
-        //
-        LearnerResult result = new LearnerResult();
+
+        LearnerResult result = createLearnerResultsList().get(0);
         Long[] testNos = new Long[]{0L};
-        //
+
         given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, testNos[0]))
                 .willReturn(Collections.singletonList(result));
 
@@ -379,16 +389,14 @@ public class LearnerResultDAOImplTest {
 
     @Test(expected = ValidationException.class)
     public void shouldThrowAnExceptionIfTheTestResultToDeleteIsActive() throws NotFoundException {
-        User user = new User();
-        //
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         LearnerResult result = new LearnerResult();
         result.setProject(project);
         result.setTestNo(0L);
         Long[] testNos = new Long[]{0L, 1L};
-        //
+
         LearnerStatus status = new LearnerStatus(result, Learner.LearnerPhase.LEARNING, new ArrayList<>());
         given(learner.getStatus(PROJECT_ID)).willReturn(status);
 
@@ -399,6 +407,16 @@ public class LearnerResultDAOImplTest {
         List<LearnerResult> results = new LinkedList<>();
         for (int i = 0; i < RESULTS_AMOUNT; i++) {
             LearnerResult r = new LearnerResult();
+            Project project = new Project(1L);
+            project.setUrls(Collections.singletonList(new ProjectUrl()));
+            Symbol s1 = new Symbol();
+            s1.setId(1L);
+            s1.setProject(project);
+            Symbol s2 = new Symbol();
+            s2.setId(2L);
+            s2.setProject(project);
+            r.setResetSymbol(new ParameterizedSymbol(s1));
+            r.setSymbols(Collections.singletonList(new ParameterizedSymbol(s2)));
             results.add(r);
         }
         return results;

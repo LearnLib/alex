@@ -80,7 +80,8 @@
       <button class="btn btn-sm btn-success ml-1" ng-click="vm.resumeLearning()">Resume</button>
     </learner-result-panel>
 
-    <div class="panel-sidebar show" ng-if="vm.resumeConfig != null && vm.symbols.length > 0 && vm.finalResult != null">
+    <div class="panel-sidebar show" style="min-width: 280px"
+         ng-if="vm.resumeConfig != null && vm.symbols.length > 0 && vm.finalResult != null">
       <learn-resume-settings-widget
         configuration="vm.resumeConfig"
         result="vm.finalResult"

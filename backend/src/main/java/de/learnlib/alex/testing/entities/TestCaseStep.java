@@ -74,8 +74,7 @@ public class TestCaseStep implements Serializable {
 
     /** The values for the parameters defined in {@link #symbol}. */
     @OneToMany(
-            mappedBy = "step",
-            cascade = CascadeType.MERGE,
+            cascade = {CascadeType.MERGE, CascadeType.REMOVE},
             fetch = FetchType.EAGER,
             orphanRemoval = true
     )

@@ -96,6 +96,8 @@ import {htmlElementPickerComponent} from './components/html-element-picker/html-
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
 import {symbolsExportModalComponent} from './components/modals/symbols-export-modal/symbols-export-modal.component';
 import {userCreateModalComponent} from './components/modals/user-create-modal/user-create-modal.component';
+import {symbolParametersComponent} from './components/symbol-parameters/symbol-parameters.component';
+import {symbolSelectDropdownComponent} from './components/symbol-select-dropdown/symbol-select-dropdown.component';
 import {learnerResultListItemComponent} from './components/views/learner-results-view/learner-result-list-item/learner-result-list-item.component';
 import {learnerResultPanelComponent} from './components/learner-result-panel/learner-result-panel.component';
 import {loadScreenComponent} from './components/load-screen/load-screen.component';
@@ -167,7 +169,6 @@ import {errorViewComponent} from './components/views/error-view/error-view.compo
 import {filesViewComponent} from './components/views/files-view/files-view.component';
 import {resultsCompareViewComponent} from './components/views/learner-results-compare-view/learner-results-compare-view.component';
 import {resultsViewComponent} from './components/views/learner-results-view/learner-results-view.component';
-import {learnerSetupSymbolGroupTreeComponent} from './components/views/learner-setup-view/learner-setup-symbol-group-tree/learner-setup-symbol-group-tree.component';
 import {learnerSetupViewComponent} from './components/views/learner-setup-view/learner-setup-view.component';
 import {learnerViewComponent} from './components/views/learner-view/learner-view.component';
 import {profileViewComponent} from './components/views/profile-view/profile-view.component';
@@ -497,11 +498,12 @@ angular
     .component('symbolsSymbolGroupTree', symbolsSymbolGroupTreeComponent)
     .component('reportOutputsColumn', reportOutputsColumnComponent)
     .component('reportCharts', reportChartsComponent)
-    .component('learnerSetupSymbolGroupTree', learnerSetupSymbolGroupTreeComponent)
     .component('testConfigList', testConfigListComponent)
     .component('selectableCheckbox', selectableCheckboxComponent)
     .component('selectableCheckboxMultiple', selectableCheckboxMultipleComponent)
     .component('prePostTestCaseStep', prePostTestCaseStepComponent)
+    .component('symbolParameters', symbolParametersComponent)
+    .component('symbolSelectDropdown', symbolSelectDropdownComponent)
     .component('testSuiteTree', testSuiteTreeComponent);
 
 angular.bootstrap(document, ['ALEX']);

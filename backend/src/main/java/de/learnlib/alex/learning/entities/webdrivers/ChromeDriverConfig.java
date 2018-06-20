@@ -56,7 +56,6 @@ public class ChromeDriverConfig extends AbstractWebDriverConfig implements Seria
     @Override
     public WebDriver createDriver() throws Exception {
         final ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--no-sandbox");
         if (headless) {
             chromeOptions.setHeadless(true);
         }

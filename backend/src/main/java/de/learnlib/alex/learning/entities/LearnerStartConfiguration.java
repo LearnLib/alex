@@ -18,6 +18,7 @@ package de.learnlib.alex.learning.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.algorithms.TTT;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
@@ -43,11 +44,11 @@ public class LearnerStartConfiguration extends AbstractLearnerConfiguration impl
 
     /** Link to the Symbols that are used during the learning. */
     @NotEmpty
-    private List<Long> symbolsAsIds;
+    private List<ParameterizedSymbol> symbols;
 
     /** Link to the Symbols that should be used as a reset symbol. */
     @NotNull
-    private Long resetSymbolAsId;
+    private ParameterizedSymbol resetSymbol;
 
     /** The algorithm to be used during the learning. */
     @NotNull
@@ -67,7 +68,7 @@ public class LearnerStartConfiguration extends AbstractLearnerConfiguration impl
     /** Constructor. */
     public LearnerStartConfiguration() {
         super();
-        this.symbolsAsIds = new ArrayList<>();
+        this.symbols = new ArrayList<>();
         this.algorithm = new TTT();
         this.comment = "";
         this.driverConfig = new HtmlUnitDriverConfig();
@@ -80,25 +81,25 @@ public class LearnerStartConfiguration extends AbstractLearnerConfiguration impl
     }
 
     @JsonProperty("symbols")
-    public List<Long> getSymbolsAsIds() {
-        if (symbolsAsIds == null || symbolsAsIds.isEmpty()) {
-            symbolsAsIds = new ArrayList<>();
+    public List<ParameterizedSymbol> getSymbols() {
+        if (symbols == null || symbols.isEmpty()) {
+            symbols = new ArrayList<>();
         }
-        return symbolsAsIds;
+        return symbols;
     }
 
     @JsonProperty("symbols")
-    public void setSymbolsAsIds(List<Long> symbolsAsIds) {
-        this.symbolsAsIds = symbolsAsIds;
+    public void setSymbols(List<ParameterizedSymbol> symbols) {
+        this.symbols = symbols;
     }
 
     @JsonProperty("resetSymbol")
-    public Long getResetSymbolAsId() {
-        return resetSymbolAsId;
+    public ParameterizedSymbol getResetSymbol() {
+        return resetSymbol;
     }
 
-    public void setResetSymbolAsId(Long resetSymbolAsId) {
-        this.resetSymbolAsId = resetSymbolAsId;
+    public void setResetSymbol(ParameterizedSymbol resetSymbol) {
+        this.resetSymbol = resetSymbol;
     }
 
     public AbstractLearningAlgorithm<String, String> getAlgorithm() {

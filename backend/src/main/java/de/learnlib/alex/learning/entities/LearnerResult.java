@@ -20,9 +20,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
-import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Entity class to store the result of a test run, i.e. the outcome of a learn iteration and must not be the final
@@ -81,10 +80,10 @@ public class LearnerResult implements Serializable {
     private List<LearnerResultStep> steps;
 
     /** The reset symbol to use during the learning. */
-    private Symbol resetSymbol;
+    private ParameterizedSymbol resetSymbol;
 
     /** The symbols to use during the learning. */
-    private List<Symbol> symbols;
+    private List<ParameterizedSymbol> symbols;
 
     /** The Alphabet used while learning. */
     private AlphabetProxy sigma;
@@ -232,56 +231,30 @@ public class LearnerResult implements Serializable {
      * @return The reset symbol used during the learning.
      */
     @ManyToOne
-    @JsonIgnore
-    public Symbol getResetSymbol() {
+    public ParameterizedSymbol getResetSymbol() {
         return resetSymbol;
     }
 
     /**
      * @param resetSymbol The new reset symbol to use during the learning.
      */
-    public void setResetSymbol(Symbol resetSymbol) {
+    public void setResetSymbol(ParameterizedSymbol resetSymbol) {
         this.resetSymbol = resetSymbol;
-    }
-
-    /**
-     * Return the reset symbol as ID and revision pair for the JSON output.
-     *
-     * @return The ID of the reset symbol.
-     */
-    @Transient
-    @JsonProperty("resetSymbol")
-    public Long getResetSymbolAsId() {
-        return resetSymbol == null ? null : resetSymbol.getId();
     }
 
     /**
      * @return Get the symbols used during the learning.
      */
     @ManyToMany
-    @JsonIgnore
-    public List<Symbol> getSymbols() {
+    public List<ParameterizedSymbol> getSymbols() {
         return symbols;
     }
 
     /**
      * @param symbols The new set of symbols used during the learning.
      */
-    public void setSymbols(List<Symbol> symbols) {
+    public void setSymbols(List<ParameterizedSymbol> symbols) {
         this.symbols = symbols;
-    }
-
-    /**
-     * Return the set of symbol as List of ID and revision pairs for the JSON output.
-     *
-     * @return The IDs of the symbols.
-     */
-    @Transient
-    @JsonProperty("symbols")
-    public List<Long> getSymbolsAsIds() {
-        return symbols.stream()
-                .map(Symbol::getId)
-                .collect(Collectors.toList());
     }
 
     /**

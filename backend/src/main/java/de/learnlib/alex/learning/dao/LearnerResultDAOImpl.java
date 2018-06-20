@@ -19,7 +19,10 @@ package de.learnlib.alex.learning.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.data.dao.SymbolDAOImpl;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
+import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.learning.entities.AbstractLearnerConfiguration;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
@@ -60,6 +63,13 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     /** The LearnerResultStepRepository to use. Will be injected. */
     private LearnerResultStepRepository learnerResultStepRepository;
 
+    /** The repository for parameterized symbols. */
+    private ParameterizedSymbolRepository parameterizedSymbolRepository;
+
+    /** The repository for symbol parameter values. */
+    private SymbolParameterValueRepository symbolParameterValueRepository;
+
+    /** The entity manager. */
     private EntityManager entityManager;
 
     /**
@@ -71,14 +81,24 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
      *         The LearnerResultRepository to use.
      * @param learnerResultStepRepository
      *         The {@link LearnerResultStepRepository} to use.
+     * @param entityManager
+     *         The entity manager.
+     * @param parameterizedSymbolRepository
+     *         The repository for parameterized symbols.
+     * @param symbolParameterValueRepository
+     *         The repository for symbol parameter values.
      */
     @Inject
     public LearnerResultDAOImpl(ProjectDAO projectDAO, LearnerResultRepository learnerResultRepository,
-            LearnerResultStepRepository learnerResultStepRepository, EntityManager entityManager) {
+            LearnerResultStepRepository learnerResultStepRepository, EntityManager entityManager,
+            ParameterizedSymbolRepository parameterizedSymbolRepository,
+            SymbolParameterValueRepository symbolParameterValueRepository) {
         this.projectDAO = projectDAO;
         this.learnerResultRepository = learnerResultRepository;
         this.learnerResultStepRepository = learnerResultStepRepository;
         this.entityManager = entityManager;
+        this.parameterizedSymbolRepository = parameterizedSymbolRepository;
+        this.symbolParameterValueRepository = symbolParameterValueRepository;
     }
 
     @Override
@@ -104,6 +124,11 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
 
         learnerResult.setUUID(null);
         learnerResult.setTestNo(nextTestNo);
+
+        symbolParameterValueRepository.save(learnerResult.getResetSymbol().getParameterValues());
+        learnerResult.getSymbols().forEach(s -> symbolParameterValueRepository.save(s.getParameterValues()));
+        parameterizedSymbolRepository.save(learnerResult.getResetSymbol());
+        parameterizedSymbolRepository.save(learnerResult.getSymbols());
 
         try {
             LearnerResult learnerResultSaved = learnerResultRepository.save(learnerResult);
@@ -264,9 +289,13 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
             throws NotFoundException, ValidationException {
         checkIfResultsCanBeDeleted(learner, projectId, testNo);
 
-        Long amountOfDeletedResults = learnerResultRepository.deleteByProject_IdAndTestNoIn(
-                projectId,
-                testNo);
+        final List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNo);
+        results.forEach(result -> {
+            parameterizedSymbolRepository.delete(result.getResetSymbol());
+            parameterizedSymbolRepository.delete(result.getSymbols());
+        });
+
+        Long amountOfDeletedResults = learnerResultRepository.deleteByProject_IdAndTestNoIn(projectId, testNo);
         if (amountOfDeletedResults != testNo.length) {
             throw new NotFoundException("Could not delete all results!");
         }
@@ -279,8 +308,18 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     private void initializeLazyRelations(List<LearnerResult> results, boolean includeSteps) {
-        results.forEach(r -> Hibernate.initialize(r.getResetSymbol()));
-        results.forEach(r -> Hibernate.initialize(r.getSymbols()));
+        results.forEach(r -> {
+            Hibernate.initialize(r.getResetSymbol());
+            Hibernate.initialize(r.getResetSymbol().getParameterValues());
+            SymbolDAOImpl.loadLazyRelations(r.getResetSymbol().getSymbol());
+        });
+        results.forEach(r -> {
+            Hibernate.initialize(r.getSymbols());
+            r.getSymbols().forEach(s -> {
+                Hibernate.initialize(s.getParameterValues());
+                SymbolDAOImpl.loadLazyRelations(s.getSymbol());
+            });
+        });
         results.forEach(r -> Hibernate.initialize(r.getUrls()));
         if (includeSteps) {
             results.forEach(r -> Hibernate.initialize(r.getSteps()));

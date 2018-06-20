@@ -1,73 +1,108 @@
-<widget title="Resume configuration">
+<div class="panel panel-default learner-resume-settings-widget">
+  <div class="panel-heading">
+    <strong class="text-muted">Resume configuration</strong>
+  </div>
+  <div class="panel-body" style="padding: 0">
 
     <form name="vm.form">
 
-        <div class="form-group">
-            <label class="control-label">Step from where to continue</label><br>
-            <input name="step_no" class="form-control" type="number" min="1" max="{{vm.result.steps.length}}"
-                   required ng-model="vm.configuration.stepNo">
+      <uib-accordion close-others="true">
+        <div uib-accordion-group is-open="true">
+          <uib-accordion-heading>
+            <div>General configuration</div>
+          </uib-accordion-heading>
+
+          <div>
+            <div class="form-group">
+              <label class="control-label">Step from where to continue</label><br>
+              <input name="step_no" class="form-control" type="number" min="1" max="{{vm.result.steps.length}}"
+                     required ng-model="vm.configuration.stepNo">
+            </div>
+
+            <div
+              class="alert alert-danger alert-condensed"
+              ng-show="vm.form.step_no.$dirty && vm.form.step_no.$invalid"
+            >
+              <small ng-show="vm.form.step_no.$error.required">The field must not be empty.</small>
+              <small ng-show="vm.form.step_no.$error.min">The value must be &ge; 1.</small>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label">Steps to learn</label>
+              <input ng-model="vm.configuration.maxAmountOfStepsToLearn" class="form-control"
+                     type="number" required min="-1" placeholder="-1" name="max_steps">
+              <p class="help-block">(-1 := learn until no counterexample can be found)</p>
+            </div>
+
+            <div
+              class="alert alert-danger alert-condensed"
+              ng-show="vm.form.max_steps.$dirty && vm.form.max_steps.$invalid"
+            >
+              <small ng-show="vm.form.max_steps.$error.required">The field must not be empty.</small>
+              <small ng-show="vm.form.max_steps.$error.min">The value must be &ge; -1.</small>
+            </div>
+          </div>
         </div>
+        <div uib-accordion-group>
+          <uib-accordion-heading>
+            <div>Equivalence oracle</div>
+          </uib-accordion-heading>
+          <div>
 
-        <div
-            class="alert alert-danger alert-condensed"
-            ng-show="vm.form.step_no.$dirty && vm.form.step_no.$invalid"
-        >
-            <small ng-show="vm.form.step_no.$error.required">The field must not be empty.</small>
-            <small ng-show="vm.form.step_no.$error.min">The value must be &ge; 1.</small>
+            <eq-oracle-form
+              eq-oracle="vm.configuration.eqOracle"
+              form="vm.form"
+              on-selected="vm.setEqOracle(eqOracle)"
+            >
+            </eq-oracle-form>
+
+            <div class="form-horizontal form-condensed"
+                 ng-if="vm.configuration.eqOracle.type === vm.eqOracleTypes.SAMPLE">
+              <counterexamples-widget counterexamples="vm.configuration.eqOracle.counterExamples" result="vm.result">
+              </counterexamples-widget>
+            </div>
+
+          </div>
         </div>
+        <div uib-accordion-group>
+          <uib-accordion-heading>
+            <div>Symbols</div>
+          </uib-accordion-heading>
+          <div>
 
-        <div class="form-group">
-            <label class="control-label">Steps to learn</label>
-            <input ng-model="vm.configuration.maxAmountOfStepsToLearn" class="form-control"
-                   type="number" required min="-1" placeholder="-1" name="max_steps">
-            <p class="help-block">(-1 := learn until no counterexample can be found)</p>
-        </div>
+            <div class="form-group">
+              <label class="control-label">Symbols to add</label><br>
 
-        <div
-            class="alert alert-danger alert-condensed"
-            ng-show="vm.form.max_steps.$dirty && vm.form.max_steps.$invalid"
-        >
-            <small ng-show="vm.form.max_steps.$error.required">The field must not be empty.</small>
-            <small ng-show="vm.form.max_steps.$error.min">The value must be &ge; -1.</small>
-        </div>
-
-        <hr>
-
-        <eq-oracle-form
-            eq-oracle="vm.configuration.eqOracle"
-            form="vm.form"
-            on-selected="vm.setEqOracle(eqOracle)"
-        >
-        </eq-oracle-form>
-
-        <div class="form-horizontal form-condensed" ng-if="vm.configuration.eqOracle.type === vm.eqOracleTypes.SAMPLE">
-            <counterexamples-widget counterexamples="vm.configuration.eqOracle.counterExamples" result="vm.result">
-            </counterexamples-widget>
-        </div>
-
-        <hr>
-
-        <div class="form-group">
-            <label class="control-label">Symbols to add</label><br>
-
-            <select multiple class="form-control" ng-model="vm.configuration.symbolsToAdd"
-                    ng-options="s.id as s.name for s in vm.symbolsToAdd">
+              <select multiple class="form-control" ng-model="vm.configuration.symbolsToAdd"
+                      ng-options="s.id as s.name for s in vm.symbolsToAdd">
                 <option value="" disabled>Select symbols to add</option>
-            </select>
+              </select>
+            </div>
+
+          </div>
         </div>
+        <div uib-accordion-group>
+          <uib-accordion-heading>
+            <div>Target URLs</div>
+          </uib-accordion-heading>
+          <div>
 
-        <hr>
+            <div class="form-group">
+              <label>Target URLs</label>
 
-        <div class="form-group">
-            <label>Target URLs</label>
-
-            <project-url-list
+              <project-url-list
                 project="vm.project"
                 list-model="vm.configuration.urls"
                 multiple="true"
-            >
-            </project-url-list>
+              >
+              </project-url-list>
+            </div>
+
+          </div>
         </div>
+      </uib-accordion>
 
     </form>
-</widget>
+
+  </div>
+</div>

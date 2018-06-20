@@ -24,6 +24,7 @@ import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
@@ -32,9 +33,8 @@ import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
-import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
-import de.learnlib.alex.learning.entities.SymbolSet;
+import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.exceptions.LearnerException;
@@ -62,8 +62,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * REST API to manage the learning.
@@ -117,10 +119,13 @@ public class LearnerResource {
     /**
      * Start the learning.
      *
-     * @param projectId     The project to learn.
-     * @param configuration The configuration to customize the learning.
+     * @param projectId
+     *         The project to learn.
+     * @param configuration
+     *         The configuration to customize the learning.
      * @return The status of the current learn process.
-     * @throws NotFoundException If the related Project could not be found.
+     * @throws NotFoundException
+     *         If the related Project could not be found.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.learning.entities.LearnerStatus
      * @errorResponse 302 not modified `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
@@ -145,7 +150,7 @@ public class LearnerResource {
 
             configuration.setProjectId(projectId);
 
-            if (configuration.getSymbolsAsIds().contains(configuration.getResetSymbolAsId())) {
+            if (configuration.getSymbols().contains(configuration.getResetSymbol())) {
                 throw new IllegalArgumentException("The reset may not be a part of the input alphabet");
             }
 
@@ -168,15 +173,18 @@ public class LearnerResource {
     }
 
     /**
-     * Resume the learning.
-     * The project id and the test no must be the same as the very last started learn process.
-     * The server must not be restarted
+     * Resume the learning. The project id and the test no must be the same as the very last started learn process. The
+     * server must not be restarted
      *
-     * @param projectId     The project to learn.
-     * @param testNo     The number of the test run which should be resumed.
-     * @param configuration The configuration to specify the settings for the next learning steps.
+     * @param projectId
+     *         The project to learn.
+     * @param testNo
+     *         The number of the test run which should be resumed.
+     * @param configuration
+     *         The configuration to specify the settings for the next learning steps.
      * @return The status of the current learn process.
-     * @throws NotFoundException If the previous learn job or the related Project could not be found.
+     * @throws NotFoundException
+     *         If the previous learn job or the related Project could not be found.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.learning.entities.LearnerStatus
      * @errorResponse 302 not modified `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
@@ -188,13 +196,14 @@ public class LearnerResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response resume(@PathParam("project_id") long projectId,
-                           @PathParam("test_no") long testNo,
-                           LearnerResumeConfiguration configuration)
+            @PathParam("test_no") long testNo,
+            LearnerResumeConfiguration configuration)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
 
         try {
+            configuration.setTestNo(testNo);
             configuration.checkConfiguration();
             Project project = projectDAO.getByID(user.getId(), projectId); // check if project exists
             LearnerResult result = learnerResultDAO.get(user, projectId, testNo, true);
@@ -225,20 +234,18 @@ public class LearnerResource {
                 result.setHypothesis(result.getSteps().get(configuration.getStepNo() - 1).getHypothesis());
                 result.getStatistics().setEqsUsed(result.getSteps().size());
 
-
                 // since we allow alphabets to grow, set the alphabet to the one of the latest hypothesis
                 LearnerResultStep latestStep = result.getSteps().get(result.getSteps().size() - 1);
                 Alphabet<String> alphabet = latestStep.getHypothesis().createAlphabet();
-                result.getSymbols().removeIf(s -> !alphabet.contains(s.getName()));
+
+                result.getSymbols().removeIf(s -> !alphabet.contains(s.getComputedName()));
 
                 // add the new alphabet symbols to the config.
-                if (configuration.getSymbolsToAddAsIds().size() > 0) {
-                    List<Symbol> symbolsToAdd = symbolDAO.getByIds(user, projectId, configuration.getSymbolsToAddAsIds());
-                    for (Symbol symbolToAdd: symbolsToAdd) {
-                        if (!result.getSymbols().contains(symbolToAdd)) {
-                            configuration.getSymbolsToAdd().add(symbolToAdd);
-                        }
-                    }
+                if (configuration.getSymbolsToAdd().size() > 0) {
+                    Map<Long, Symbol> symbolMap = new HashMap<>();
+                    symbolDAO.getByIds(user, projectId, configuration.getSymbolIds())
+                            .forEach(s -> symbolMap.put(s.getId(), s));
+                    configuration.getSymbolsToAdd().forEach(ps -> ps.setSymbol(symbolMap.get(ps.getSymbol().getId())));
                 }
 
                 learnerResultRepository.saveAndFlush(result);
@@ -264,12 +271,12 @@ public class LearnerResource {
     }
 
     /**
-     * Stop the learning after the current step.
-     * This does not stop the learning immediately!
-     * This will always return OK, even if there is nothing to stop.
-     * To see if there is currently a learning process, the status like '/active' will be returned.
+     * Stop the learning after the current step. This does not stop the learning immediately! This will always return
+     * OK, even if there is nothing to stop. To see if there is currently a learning process, the status like '/active'
+     * will be returned.
      *
-     * @param projectId The project to stop.
+     * @param projectId
+     *         The project to stop.
      * @return The status of the current learn process.
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.learning.entities.LearnerStatus
@@ -301,7 +308,8 @@ public class LearnerResource {
     /**
      * Get the parameters & (temporary) results of the learning.
      *
-     * @param projectId The project to get the Status of.
+     * @param projectId
+     *         The project to get the Status of.
      * @return The information of the learning
      * @successResponse 200 OK
      * @responseType de.learnlib.alex.learning.entities.LearnerResult
@@ -321,13 +329,15 @@ public class LearnerResource {
     }
 
     /**
-     * Get the output of a (possible) counterexample.
-     * This output is generated by executing the symbols on the SUL.
+     * Get the output of a (possible) counterexample. This output is generated by executing the symbols on the SUL.
      *
-     * @param projectId The project id the counter example takes place in.
-     * @param outputConfig The output config.
+     * @param projectId
+     *         The project id the counter example takes place in.
+     * @param outputConfig
+     *         The output config.
      * @return The observed output of the given input set.
-     * @throws NotFoundException If the related Project could not be found.
+     * @throws NotFoundException
+     *         If the related Project could not be found.
      * @successResponse 200 OK
      * @responseType java.util.List<String>
      * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
@@ -344,66 +354,30 @@ public class LearnerResource {
         LOGGER.traceEntry("readOutput({}, {}) for user {}.", projectId, outputConfig, user);
 
         try {
+            if (outputConfig.getSymbols().getSymbols().isEmpty()) {
+                final Exception e = new Exception("You have to specify at least one symbol.");
+                return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
+            }
+
             Project project = projectDAO.getByID(user.getId(), projectId);
 
-            Long resetSymbolAsId = outputConfig.getSymbols().getResetSymbolAsId();
-            if (resetSymbolAsId == null) {
+            final ParameterizedSymbol pResetSymbol = outputConfig.getSymbols().getResetSymbol();
+            if (pResetSymbol == null) {
                 throw new NotFoundException("No reset symbol specified!");
             }
 
-            Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsId);
-            List<Symbol> symbols = loadSymbols(user, projectId, outputConfig.getSymbols().getSymbolsAsIds());
+            final Symbol resetSymbol = symbolDAO.get(user, projectId, pResetSymbol.getSymbol().getId());
+            outputConfig.getSymbols().getResetSymbol().setSymbol(resetSymbol);
 
-            List<ExecuteResult> outputs = learner.readOutputs(user, project, resetSymbol, symbols, outputConfig.getDriverConfig());
+            final List<Symbol> symbols = loadSymbols(user, projectId, outputConfig.getSymbols().getSymbolIds());
+            final Map<Long, Symbol> symbolMap = new HashMap<>();
+            symbols.forEach(s -> symbolMap.put(s.getId(), s));
+            outputConfig.getSymbols().getSymbols().forEach(ps -> ps.setSymbol(symbolMap.get(ps.getSymbol().getId())));
+
+            List<ExecuteResult> outputs = learner.readOutputs(user, project, outputConfig);
 
             LOGGER.traceExit(outputs);
             return ResponseHelper.renderList(outputs, Status.OK);
-        } catch (LearnerException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
-        }
-    }
-
-    /**
-     * Get the outputs of a word when executed to the SUL.
-     *
-     * @param projectId
-     *          The id of the project.
-     * @param readOutputConfig
-     *          The config that is used to query the SUL.
-     * @return
-     *          A response with the output of the word.
-     * @throws NotFoundException
-     *          If a symbol could not be found.
-     */
-    @POST
-    @Path("/{project_id}/words/outputs")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response readWordOutput(@PathParam("project_id") Long projectId, ReadOutputConfig readOutputConfig)
-            throws NotFoundException {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("readOutput({}, {}) in browser {} for user {}.", projectId, readOutputConfig.getSymbols(),
-                readOutputConfig.getDriverConfig(), user);
-
-        try {
-            Project project = projectDAO.getByID(user.getId(), projectId);
-
-            Long resetSymbolAsId = readOutputConfig.getSymbols().getResetSymbolAsId();
-            if (resetSymbolAsId == null) {
-                throw new NotFoundException("No reset symbol specified!");
-            }
-
-            Symbol resetSymbol = symbolDAO.get(user, projectId, resetSymbolAsId);
-            List<Symbol> symbols = loadSymbols(user, projectId, readOutputConfig.getSymbols().getSymbolsAsIds());
-
-            SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols);
-            readOutputConfig.setSymbols(symbolSet);
-
-            List<ExecuteResult> results = learner.readOutputs(user, project, readOutputConfig);
-
-            LOGGER.traceExit(results);
-            return ResponseHelper.renderList(results, Status.OK);
         } catch (LearnerException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
@@ -421,11 +395,11 @@ public class LearnerResource {
     }
 
     /**
-     * Test if two hypotheses are equal or not.
-     * If a difference was found the separating word will be returned.
+     * Test if two hypotheses are equal or not. If a difference was found the separating word will be returned.
      * Otherwise, i.e. the hypotheses are equal.
      *
-     * @param mealyMachineProxies A List of two (!) hypotheses, which will be compared.
+     * @param mealyMachineProxies
+     *         A List of two (!) hypotheses, which will be compared.
      * @return '{"separatingWord": "separating word, if any"}'
      */
     @POST
@@ -447,7 +421,7 @@ public class LearnerResource {
 
         if (sigmaA.size() != sigmaB.size() || !sigmaA.containsAll(sigmaB)) {
             IllegalArgumentException e = new IllegalArgumentException("The alphabets of the hypotheses are not "
-                                                                              + "identical!");
+                    + "identical!");
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.separatingWord", Status.BAD_REQUEST, e);
         }
 
@@ -460,7 +434,8 @@ public class LearnerResource {
     /**
      * Calculates the difference tree of two hypotheses.
      *
-     * @param mealyMachineProxies A List of two (!) hypotheses, which will be compared.
+     * @param mealyMachineProxies
+     *         A List of two (!) hypotheses, which will be compared.
      * @return The difference tree
      */
     @POST
@@ -482,11 +457,12 @@ public class LearnerResource {
 
         if (sigmaA.size() != sigmaB.size() || !sigmaA.containsAll(sigmaB)) {
             IllegalArgumentException e = new IllegalArgumentException("The alphabets of the hypotheses are not "
-                                                                              + "identical!");
+                    + "identical!");
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.differenceTree", Status.BAD_REQUEST, e);
         }
 
-        final CompactMealy<String, String> diffTree = learner.differenceTree(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
+        final CompactMealy<String, String> diffTree =
+                learner.differenceTree(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
 
         LOGGER.traceExit(diffTree);
         return Response.ok(CompactMealyMachineProxy.createFrom(diffTree, sigmaA)).build();

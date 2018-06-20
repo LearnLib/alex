@@ -26,7 +26,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -88,7 +87,7 @@ public class AbstractLearnerConfigurationTest {
 
     @Test
     public void shouldReadJSONCorrectly() throws IOException, URISyntaxException {
-        String json = "{\"symbols\": [1,2],\"algorithm\":{\"name\":\"DHC\"}, "
+        String json = "{\"symbols\": [{\"symbol\":1, \"parameterValues\":[]},{\"symbol\":2, \"parameterValues\":[]}],\"algorithm\":{\"name\":\"DHC\"}, "
                 + "\"driverConfig\":" + driverConfig + ","
                 + "\"eqOracle\":{\"type\": \"complete\"}}";
 
@@ -98,8 +97,6 @@ public class AbstractLearnerConfigurationTest {
 
         assertEquals(DHC.class, configuration.getAlgorithm().getClass());
         assertTrue(configuration.getEqOracle() instanceof CompleteExplorationEQOracleProxy);
-        assertEquals(2, configuration.getSymbolsAsIds().size());
-        LinkedList<Long> ids = new LinkedList<>(configuration.getSymbolsAsIds());
-        assertEquals(Long.valueOf(1L), ids.get(0));
+        assertEquals(2, configuration.getSymbols().size());
     }
 }

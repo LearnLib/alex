@@ -1,0 +1,15 @@
+<div class="symbol-parameter-values d-flex flex-row text-muted" ng-repeat="parameterValue in vm.parameterValues">
+  <div style="flex-shrink: 0">
+    <em>{{parameterValue.parameter.name}}</em> =&nbsp;
+  </div>
+  <div class="w-100 input-parameter-value" style="position: relative">
+    <i class="fa fa-fw fa-close cursor-pointer"
+       ng-click="parameterValue.value = null"></i>
+    <input
+      class="w-100 d-block"
+      type="text"
+      ng-model="parameterValue.value"
+      placeholder="{{parameterValue.value == null ? 'null' : ''}}"
+    >
+  </div>
+</div>

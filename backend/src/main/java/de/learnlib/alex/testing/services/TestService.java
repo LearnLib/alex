@@ -19,6 +19,7 @@ package de.learnlib.alex.testing.services;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.Symbol;
@@ -252,7 +253,7 @@ public class TestService {
 
         final ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, testCase.getProject(),
                 Collections.singletonList(projectUrl), testConfig.getDriverConfig());
-        ctxHandler.setResetSymbol(new Symbol());
+        ctxHandler.setResetSymbol(new ParameterizedSymbol(new Symbol()));
 
         final long startTime = System.currentTimeMillis();
         final ConnectorManager connectors = ctxHandler.createContext();

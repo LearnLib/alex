@@ -17,7 +17,7 @@
 package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.mapper.ContextExecutableInputSUL;
@@ -34,7 +34,7 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
     private BlockingQueue<ConnectorManager> pool;
 
     /** The symbol used to reset the SUL. */
-    private Symbol resetSymbol;
+    private ParameterizedSymbol resetSymbol;
 
     /**
      * Default constructor.
@@ -64,7 +64,7 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
      * @param resetSymbol
      *         The new reset symbol.
      */
-    public void setResetSymbol(Symbol resetSymbol) {
+    public void setResetSymbol(ParameterizedSymbol resetSymbol) {
         this.resetSymbol = resetSymbol;
     }
 
@@ -89,13 +89,14 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
         try {
             // initialize counters defined in the reset symbol as input
             final CounterStoreConnector counterStore = connectorManager.getConnector(CounterStoreConnector.class);
-            resetSymbol.getInputs().stream()
+
+            resetSymbol.getSymbol().getInputs().stream()
                     .filter(in -> in.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
                     .forEach(in -> {
                         try {
                             counterStore.get(in.getName());
                         } catch (IllegalStateException e) {
-                            counterStore.set(resetSymbol.getProjectId(), in.getName(), 0);
+                            counterStore.set(resetSymbol.getSymbol().getProjectId(), in.getName(), 0);
                         }
                     });
             resetResult = resetSymbol.execute(connectorManager);

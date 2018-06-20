@@ -24,7 +24,7 @@ export const simpleSymbolGroupTreeItemComponent = {
         selectedSymbol: '=',
         selectedSymbolGroup: '=',
         onSymbolGroupSelected: '&',
-        onSymbolSelected: '&',
+        onSymbolSelected: '&'
     },
     controllerAs: 'vm',
     controller: class {

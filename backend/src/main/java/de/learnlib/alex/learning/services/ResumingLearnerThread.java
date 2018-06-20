@@ -17,7 +17,7 @@
 package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
@@ -81,7 +81,7 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
 
         if (configuration.getSymbolsToAdd().size() > 0 && learner instanceof SupportsGrowingAlphabet) {
             final SupportsGrowingAlphabet<String> growingAlphabetLearner = (SupportsGrowingAlphabet) learner;
-            for (final Symbol symbol : configuration.getSymbolsToAdd()) {
+            for (final ParameterizedSymbol symbol : configuration.getSymbolsToAdd()) {
                 symbolMapper.addSymbol(symbol);
 
                 // if the cache is not reinitialized with the new alphabet, we will get cache errors later
@@ -89,14 +89,14 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
 
                     // make new alphabet for the cache because it cannot handle a shared growing alphabet instance
                     final Alphabet<String> alphabet = new SimpleAlphabet<>(abstractAlphabet);
-                    alphabet.add(symbol.getName());
+                    alphabet.add(symbol.getComputedName());
 
                     this.mqOracle.setDelegate(MealyCacheOracle.createDAGCacheOracle(alphabet, monitorOracle));
                 }
 
                 // measure how much time and membership queries it takes to add the symbol
                 final long start = System.nanoTime();
-                growingAlphabetLearner.addAlphabetSymbol(symbol.getName());
+                growingAlphabetLearner.addAlphabetSymbol(symbol.getComputedName());
                 final long end = System.nanoTime();
 
                 final Statistics statistics = new Statistics();
@@ -112,7 +112,6 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
                 step.setAlgorithmInformation(result.getAlgorithm().getInternalData(learner));
                 step.setStatistics(statistics);
 
-                result.getSymbols().add(symbol);
                 learnerResultDAO.saveStep(result, step);
             }
         }

@@ -18,7 +18,7 @@ package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.AbstractLearnerConfiguration;
 import de.learnlib.alex.learning.entities.LearnerResult;
@@ -50,6 +50,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -141,12 +142,13 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         this.webhookService = webhookService;
         this.result = result;
         this.configuration = configuration;
-        this.abstractAlphabet = new SimpleAlphabet<>(
+
+        this.abstractAlphabet = new SimpleAlphabet<>(new HashSet<>(// remove duplicate names with set
                 result.getSymbols().stream()
-                        .map(Symbol::getName)
+                        .map(ParameterizedSymbol::getComputedName)
                         .sorted(String::compareTo)
                         .collect(Collectors.toList())
-        );
+        ));
 
         this.context = context;
         this.finished = false;

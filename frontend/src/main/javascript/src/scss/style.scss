@@ -42,6 +42,10 @@ report-charts {
   }
 }
 
+.hr-small {
+  margin: 10px 0;
+}
+
 .table.table-hollow {
   background: none;
 
@@ -755,5 +759,22 @@ project-details-widget {
   table tr > td:nth-of-type(2) {
     max-width: 200px;
     @include text-overflow-ellipsis();
+  }
+}
+
+learn-resume-settings-widget {
+  .panel-group {
+    margin-bottom: 0;
+  }
+
+  .panel-title {
+    font-size: 12px;
+
+  }
+
+  project-list {
+    .list-group {
+      margin-bottom: 0;
+    }
   }
 }

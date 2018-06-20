@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.Symbol;
@@ -58,7 +59,6 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -207,12 +207,16 @@ public class Learner {
             validateCounterexample(user, configuration);
         }
 
-        final Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbolAsId());
-        result.setResetSymbol(resetSymbol);
+        final Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbol().getSymbol().getId());
+        result.getResetSymbol().setSymbol(resetSymbol);
 
-        final List<Symbol> symbols = symbolDAO.getByIds(user, project.getId(),
-                new LinkedList<>(result.getSymbolsAsIds()));
-        result.setSymbols(symbols);
+        final List<Long> symbolIds = result.getSymbols().stream().map(s -> s.getSymbol().getId()).collect(Collectors.toList());
+        final List<Symbol> symbols = symbolDAO.getByIds(user, project.getId(), symbolIds);
+
+        final Map<Long, Symbol> symbolMap = new HashMap<>();
+        symbols.forEach(s -> symbolMap.put(s.getId(), s));
+
+        result.getSymbols().forEach(ps -> ps.setSymbol(symbolMap.get(ps.getSymbol().getId())));
 
         final List<ProjectUrl> urls = projectUrlRepository.findAll(configuration.getUrlIds());
         result.setUrls(urls);
@@ -243,14 +247,25 @@ public class Learner {
         learnerResult.setProject(project);
 
         try {
-            final Symbol reset = symbolDAO.get(user, project.getId(), configuration.getResetSymbolAsId());
-            learnerResult.setResetSymbol(reset);
+            final ParameterizedSymbol parameterizedReset = configuration.getResetSymbol();
+            final Symbol reset = symbolDAO.get(user, project.getId(), parameterizedReset.getSymbol().getId());
+            parameterizedReset.setSymbol(reset);
+            learnerResult.setResetSymbol(parameterizedReset);
         } catch (NotFoundException e) {
             throw new NotFoundException("Could not find the reset symbol", e);
         }
 
-        final List<Symbol> alphabet = symbolDAO.getByIds(user, project.getId(), configuration.getSymbolsAsIds());
-        learnerResult.setSymbols(alphabet);
+        final List<Long> symbolIds = configuration.getSymbols().stream()
+                .map(s -> s.getSymbol().getId())
+                .collect(Collectors.toList());
+        final List<Symbol> alphabet = symbolDAO.getByIds(user, project.getId(), symbolIds);
+
+        final Map<Long, Symbol> symbolMap = new HashMap<>();
+        alphabet.forEach(s -> symbolMap.put(s.getId(), s));
+
+        configuration.getSymbols().forEach(s -> s.setSymbol(symbolMap.get(s.getSymbol().getId())));
+
+        learnerResult.setSymbols(configuration.getSymbols());
         learnerResult.setDriverConfig(configuration.getDriverConfig());
         learnerResult.setAlgorithm(configuration.getAlgorithm());
         learnerResult.setComment(configuration.getComment());
@@ -285,17 +300,23 @@ public class Learner {
     private void validateCounterexample(User user, LearnerResumeConfiguration configuration)
             throws IllegalArgumentException {
 
-        SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
-        LearnerResult lastResult = getResult(configuration.getProjectId());
+        final SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
+        final LearnerResult lastResult;
+
+        try {
+            lastResult = learnerResultDAO.get(user, configuration.getProjectId(), configuration.getTestNo(), false);
+        } catch (NotFoundException e) {
+            throw new IllegalArgumentException(e);
+        }
 
         for (List<SampleEQOracleProxy.InputOutputPair> counterexample : oracle.getCounterExamples()) {
-            List<Symbol> symbolsFromCounterexample = new ArrayList<>();
+            List<ParameterizedSymbol> symbolsFromCounterexample = new ArrayList<>();
             List<String> outputs = new ArrayList<>();
 
             // search symbols in configuration where symbol.name == counterexample.input
             for (SampleEQOracleProxy.InputOutputPair io : counterexample) {
-                Optional<Symbol> symbol = lastResult.getSymbols().stream()
-                        .filter(s -> s.getName().equals(io.getInput()))
+                Optional<ParameterizedSymbol> symbol = lastResult.getSymbols().stream()
+                        .filter(s -> s.getComputedName().equals(io.getInput()))
                         .findFirst();
 
                 // collect all outputs in order to compare it with the result of learner.readOutputs()
@@ -398,9 +419,8 @@ public class Learner {
      *
      * @throws LearnerException If something went wrong while testing the symbols.
      */
-    public List<ExecuteResult> readOutputs(User user, Project project, Symbol resetSymbol, List<Symbol> symbols,
-                                    AbstractWebDriverConfig driverConfig)
-            throws LearnerException {
+    public List<ExecuteResult> readOutputs(User user, Project project, ParameterizedSymbol resetSymbol,
+            List<ParameterizedSymbol> symbols, AbstractWebDriverConfig driverConfig) throws LearnerException {
         ThreadContext.put("userId", String.valueOf(user.getId()));
         ThreadContext.put("testNo", "readOutputs");
         ThreadContext.put("indent", "");
@@ -415,13 +435,13 @@ public class Learner {
 
     public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {
         ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, project, readOutputConfig.getDriverConfig());
-        ctxHandler.setResetSymbol(new Symbol());
+        ctxHandler.setResetSymbol(readOutputConfig.getSymbols().getResetSymbol());
         ConnectorManager connectors = ctxHandler.createContext();
 
         return readOutputs(readOutputConfig.getSymbols().getAllSymbols(), connectors);
     }
 
-    private List<ExecuteResult> readOutputs(List<Symbol> symbols, ConnectorManager connectors) {
+    private List<ExecuteResult> readOutputs(List<ParameterizedSymbol> symbols, ConnectorManager connectors) {
         LOGGER.traceEntry();
         try {
             List<ExecuteResult> output = symbols.stream()

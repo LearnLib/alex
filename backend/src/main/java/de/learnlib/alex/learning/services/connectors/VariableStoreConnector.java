@@ -95,4 +95,15 @@ public class VariableStoreConnector implements Connector {
 
         return variable;
     }
+
+    /**
+     * Clones the store.
+     *
+     * @return The cloned store.
+     */
+    public VariableStoreConnector clone() {
+        final VariableStoreConnector clone = new VariableStoreConnector();
+        store.forEach(clone::set);
+        return clone;
+    }
 }

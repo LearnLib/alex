@@ -27,7 +27,7 @@ export const simpleSymbolGroupTreeComponent = {
         onSymbolSelected: '&'
     },
     controllerAs: 'vm',
-    controller: class {
+    controller: class SimpleSymbolGroupTreeComponent {
 
         /**
          * Wrapper for the 'onSymbolGroupSelected' component attribute that is passed to child components.

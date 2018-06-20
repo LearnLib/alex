@@ -225,8 +225,8 @@ class HypothesisComponent {
                 const label = this.innerHTML.split('/'); // separate name from output
                 $scope.$apply(() => {
                     EventBus.emit(events.HYPOTHESIS_LABEL_SELECTED, {
-                        input: label[0].trim(),
-                        output: label[1].trim()
+                        input: label[0].trim().replace('&lt;','<').replace('&gt;', '>'),
+                        output: label[1].trim().replace('&lt;','<').replace('&gt;', '>')
                     });
                 });
             });
