@@ -39,9 +39,11 @@ public class SymbolSet {
      */
     private List<ParameterizedSymbol> symbols;
 
+    private ParameterizedSymbol postSymbol;
+
     /** Constructor. */
     public SymbolSet() {
-        this(null, new ArrayList<>());
+        this(null, new ArrayList<>(), null);
     }
 
     /**
@@ -52,9 +54,10 @@ public class SymbolSet {
      * @param symbols
      *         The symbols.
      */
-    public SymbolSet(ParameterizedSymbol resetSymbol, List<ParameterizedSymbol> symbols) {
+    public SymbolSet(ParameterizedSymbol resetSymbol, List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol) {
         this.resetSymbol = resetSymbol;
         this.symbols = symbols;
+        this.postSymbol = postSymbol;
     }
 
     public ParameterizedSymbol getResetSymbol() {
@@ -73,6 +76,14 @@ public class SymbolSet {
         this.symbols = symbols;
     }
 
+    public ParameterizedSymbol getPostSymbol() {
+        return postSymbol;
+    }
+
+    public void setPostSymbol(ParameterizedSymbol postSymbol) {
+        this.postSymbol = postSymbol;
+    }
+
     @JsonIgnore
     public List<Long> getSymbolIds() {
         return symbols.stream().map(ps -> ps.getSymbol().getId()).collect(Collectors.toList());
@@ -87,6 +98,9 @@ public class SymbolSet {
         List<ParameterizedSymbol> resultList = new LinkedList<>();
         resultList.add(resetSymbol);
         resultList.addAll(symbols);
+        if (postSymbol != null) {
+            resultList.add(postSymbol);
+        }
         return resultList;
     }
 

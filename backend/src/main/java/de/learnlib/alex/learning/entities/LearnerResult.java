@@ -82,6 +82,9 @@ public class LearnerResult implements Serializable {
     /** The reset symbol to use during the learning. */
     private ParameterizedSymbol resetSymbol;
 
+    /** The symbol that is executed after a membership query. */
+    private ParameterizedSymbol postSymbol;
+
     /** The symbols to use during the learning. */
     private List<ParameterizedSymbol> symbols;
 
@@ -240,6 +243,15 @@ public class LearnerResult implements Serializable {
      */
     public void setResetSymbol(ParameterizedSymbol resetSymbol) {
         this.resetSymbol = resetSymbol;
+    }
+
+    @ManyToOne
+    public ParameterizedSymbol getPostSymbol() {
+        return postSymbol;
+    }
+
+    public void setPostSymbol(ParameterizedSymbol postSymbol) {
+        this.postSymbol = postSymbol;
     }
 
     /**

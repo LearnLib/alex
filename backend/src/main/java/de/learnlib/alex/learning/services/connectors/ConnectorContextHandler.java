@@ -36,6 +36,9 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
     /** The symbol used to reset the SUL. */
     private ParameterizedSymbol resetSymbol;
 
+    /** The symbol used after a membership query. */
+    private ParameterizedSymbol postSymbol;
+
     /**
      * Default constructor.
      */
@@ -66,6 +69,10 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
      */
     public void setResetSymbol(ParameterizedSymbol resetSymbol) {
         this.resetSymbol = resetSymbol;
+    }
+
+    public void setPostSymbol(ParameterizedSymbol postSymbol) {
+        this.postSymbol = postSymbol;
     }
 
     @Override
@@ -114,6 +121,14 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
 
     @Override
     public void disposeContext(ConnectorManager connectorManager) {
+
+        try {
+            if (this.postSymbol != null) {
+                this.postSymbol.execute(connectorManager);
+            }
+        } catch (Exception e) {
+        }
+
         try {
             pool.put(connectorManager);
             connectorManager.dispose();

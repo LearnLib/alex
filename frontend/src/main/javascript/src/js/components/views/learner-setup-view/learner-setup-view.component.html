@@ -57,7 +57,7 @@
 
                 <div class="col-md-4 col-lg-6">
 
-                    <h5><strong>Reset</strong></h5>
+                    <h5><strong>Pre</strong></h5>
                     <hr class="hr-small">
                     <div class="alert alert-info" ng-if="vm.pResetSymbol == null">
                         <symbol-select-dropdown
@@ -67,7 +67,7 @@
                           class="pull-right"
                         >
                         </symbol-select-dropdown>
-                        Select a reset symbol
+                        Select a reset symbol <em>(required)</em>
                     </div>
 
                     <div class="list-group" ng-if="vm.pResetSymbol != null">
@@ -104,7 +104,8 @@
                                 <symbol-parameters parameter-values="pSymbol.parameterValues"></symbol-parameters>
                             </div>
                             <div style="flex-shrink: 0">
-                                <i class="fa fa-fw fa-trash text-muted cursor-pointer" ng-click="vm.pSymbols.splice($index, 1)"></i>
+                                <i class="fa fa-fw fa-close text-muted cursor-pointer"
+                                   ng-click="vm.pSymbols.splice($index, 1)"></i>
                             </div>
                         </div>
                     </div>
@@ -113,6 +114,44 @@
                         Select symbols to create an input alphabet.
                     </div>
 
+                    <h5 style="margin-top: 3rem"><strong>Post</strong></h5>
+                    <hr class="hr-small">
+                    <div class="alert alert-info" ng-if="vm.pPostSymbol == null">
+                        <symbol-select-dropdown
+                          groups="vm.groups"
+                          on-symbol-selected="vm.setPostSymbol(symbol)"
+                          variant="btn-xs btn-info"
+                          class="pull-right"
+                        >
+                        </symbol-select-dropdown>
+                        Select a post symbol <em>(optional)</em>
+                    </div>
+
+                    <div class="list-group" ng-if="vm.pPostSymbol != null">
+                        <div class="d-flex flex-row list-group-item">
+                            <div class="w-100">
+                                <div>
+                                    <strong>{{vm.pPostSymbol.symbol.name}}</strong>
+                                </div>
+                                <symbol-parameters
+                                  parameter-values="vm.pPostSymbol.parameterValues"
+                                >
+                                </symbol-parameters>
+                            </div>
+                            <div style="flex-shrink: 0">
+                                <symbol-select-dropdown
+                                  groups="vm.groups"
+                                  on-symbol-selected="vm.setResetSymbol(symbol)"
+                                  variant="btn-xs btn-default"
+                                  class="d-inline-block"
+                                >
+                                </symbol-select-dropdown>
+                                <button class="btn btn-xs btn-default" ng-click="vm.pPostSymbol = null">
+                                    <i class="fa fa-fw fa-close"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-md-4 col-lg-3">

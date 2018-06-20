@@ -373,7 +373,7 @@ public class LearnerResourceTest extends JerseyTest {
 
     @Test
     public void shouldReturn400IfCreatingAnOutputFailed() throws NotFoundException {
-        given(learner.readOutputs(any(), any(), any(), any(), any(HtmlUnitDriverConfig.class)))
+        given(learner.readOutputs(any(), any(), any(), any(), any(), any(HtmlUnitDriverConfig.class)))
                 .willThrow(LearnerException.class);
 
         String json =
@@ -398,7 +398,7 @@ public class LearnerResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
         verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(ParameterizedSymbol.class), anyList(),
-                any(AbstractWebDriverConfig.class));
+                any(ParameterizedSymbol.class), any(AbstractWebDriverConfig.class));
     }
 
     @Test
@@ -415,7 +415,7 @@ public class LearnerResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
         verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(ParameterizedSymbol.class), any(),
-                any(AbstractWebDriverConfig.class));
+                any(ParameterizedSymbol.class), any(AbstractWebDriverConfig.class));
     }
 
     @Test
@@ -429,7 +429,7 @@ public class LearnerResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
         verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(ParameterizedSymbol.class), anyList(),
-                any(AbstractWebDriverConfig.class));
+                any(ParameterizedSymbol.class), any(AbstractWebDriverConfig.class));
     }
 
     @Test
@@ -449,7 +449,7 @@ public class LearnerResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
         verify(learner, never()).readOutputs(any(User.class), any(Project.class), any(ParameterizedSymbol.class), anyList(),
-                any(AbstractWebDriverConfig.class));
+                any(ParameterizedSymbol.class), any(AbstractWebDriverConfig.class));
     }
 
     private void prepareResumeTest() throws NotFoundException {

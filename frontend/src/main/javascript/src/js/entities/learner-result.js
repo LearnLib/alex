@@ -54,9 +54,15 @@ export class LearnResult {
 
         /**
          * The id of the reset symbol.
-         * @type {*}
+         * @type {ParametrizedSymbol}
          */
         this.resetSymbol = new ParametrizedSymbol(obj.resetSymbol);
+
+        /**
+         * The id of the post symbol.
+         * @type {ParametrizedSymbol}
+         */
+        this.postSymbol = new ParametrizedSymbol(obj.postSymbol);
 
         /**
          * The alphabet the process has been learned with.

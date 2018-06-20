@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.learning.entities;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
@@ -50,6 +49,9 @@ public class LearnerStartConfiguration extends AbstractLearnerConfiguration impl
     @NotNull
     private ParameterizedSymbol resetSymbol;
 
+    /** The symbol that is executed after a membership query. */
+    private ParameterizedSymbol postSymbol;
+
     /** The algorithm to be used during the learning. */
     @NotNull
     private AbstractLearningAlgorithm<String, String> algorithm;
@@ -80,26 +82,28 @@ public class LearnerStartConfiguration extends AbstractLearnerConfiguration impl
         super.check();
     }
 
-    @JsonProperty("symbols")
     public List<ParameterizedSymbol> getSymbols() {
-        if (symbols == null || symbols.isEmpty()) {
-            symbols = new ArrayList<>();
-        }
         return symbols;
     }
 
-    @JsonProperty("symbols")
     public void setSymbols(List<ParameterizedSymbol> symbols) {
         this.symbols = symbols;
     }
 
-    @JsonProperty("resetSymbol")
     public ParameterizedSymbol getResetSymbol() {
         return resetSymbol;
     }
 
     public void setResetSymbol(ParameterizedSymbol resetSymbol) {
         this.resetSymbol = resetSymbol;
+    }
+
+    public ParameterizedSymbol getPostSymbol() {
+        return postSymbol;
+    }
+
+    public void setPostSymbol(ParameterizedSymbol postSymbol) {
+        this.postSymbol = postSymbol;
     }
 
     public AbstractLearningAlgorithm<String, String> getAlgorithm() {

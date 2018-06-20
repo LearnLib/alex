@@ -129,6 +129,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         learnerResult.getSymbols().forEach(s -> symbolParameterValueRepository.save(s.getParameterValues()));
         parameterizedSymbolRepository.save(learnerResult.getResetSymbol());
         parameterizedSymbolRepository.save(learnerResult.getSymbols());
+        if (learnerResult.getPostSymbol() != null) {
+            parameterizedSymbolRepository.save(learnerResult.getPostSymbol());
+        }
 
         try {
             LearnerResult learnerResultSaved = learnerResultRepository.save(learnerResult);
@@ -293,6 +296,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         results.forEach(result -> {
             parameterizedSymbolRepository.delete(result.getResetSymbol());
             parameterizedSymbolRepository.delete(result.getSymbols());
+            if (result.getPostSymbol() != null) {
+                parameterizedSymbolRepository.delete(result.getPostSymbol());
+            }
         });
 
         Long amountOfDeletedResults = learnerResultRepository.deleteByProject_IdAndTestNoIn(projectId, testNo);
@@ -312,6 +318,11 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
             Hibernate.initialize(r.getResetSymbol());
             Hibernate.initialize(r.getResetSymbol().getParameterValues());
             SymbolDAOImpl.loadLazyRelations(r.getResetSymbol().getSymbol());
+            if (r.getPostSymbol() != null) {
+                Hibernate.initialize(r.getPostSymbol());
+                Hibernate.initialize(r.getPostSymbol().getParameterValues());
+                SymbolDAOImpl.loadLazyRelations(r.getPostSymbol().getSymbol());
+            }
         });
         results.forEach(r -> {
             Hibernate.initialize(r.getSymbols());

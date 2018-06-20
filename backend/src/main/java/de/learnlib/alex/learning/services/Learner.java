@@ -175,6 +175,7 @@ public class Learner {
         final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, urls,
                 configuration.getDriverConfig());
         contextHandler.setResetSymbol(result.getResetSymbol());
+        contextHandler.setPostSymbol(result.getPostSymbol());
 
         final AbstractLearnerThread learnThread = new StartingLearnerThread(user, learnerResultDAO, webhookService,
                                                                             contextHandler, result, configuration);
@@ -215,7 +216,6 @@ public class Learner {
 
         final Map<Long, Symbol> symbolMap = new HashMap<>();
         symbols.forEach(s -> symbolMap.put(s.getId(), s));
-
         result.getSymbols().forEach(ps -> ps.setSymbol(symbolMap.get(ps.getSymbol().getId())));
 
         final List<ProjectUrl> urls = projectUrlRepository.findAll(configuration.getUrlIds());
@@ -224,6 +224,12 @@ public class Learner {
         final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, urls,
                 result.getDriverConfig());
         contextHandler.setResetSymbol(result.getResetSymbol());
+
+        if (result.getPostSymbol() != null) {
+            final Symbol postSymbol = symbolDAO.get(user, project.getId(), result.getPostSymbol().getSymbol().getId());
+            result.getPostSymbol().setSymbol(postSymbol);
+            contextHandler.setPostSymbol(result.getPostSymbol());
+        }
 
         final AbstractLearnerThread learnThread = new ResumingLearnerThread(user, learnerResultDAO, webhookService,
                                                                             contextHandler, result, configuration);
@@ -247,10 +253,17 @@ public class Learner {
         learnerResult.setProject(project);
 
         try {
-            final ParameterizedSymbol parameterizedReset = configuration.getResetSymbol();
-            final Symbol reset = symbolDAO.get(user, project.getId(), parameterizedReset.getSymbol().getId());
-            parameterizedReset.setSymbol(reset);
-            learnerResult.setResetSymbol(parameterizedReset);
+            final ParameterizedSymbol pResetSymbol = configuration.getResetSymbol();
+            final Symbol resetSymbol = symbolDAO.get(user, project.getId(), pResetSymbol.getSymbol().getId());
+            pResetSymbol.setSymbol(resetSymbol);
+            learnerResult.setResetSymbol(pResetSymbol);
+
+            if (configuration.getPostSymbol() != null) {
+                final ParameterizedSymbol pPostSymbol = configuration.getPostSymbol();
+                final Symbol postSymbol = symbolDAO.get(user, project.getId(), pPostSymbol.getSymbol().getId());
+                pPostSymbol.setSymbol(postSymbol);
+                learnerResult.setPostSymbol(pPostSymbol);
+            }
         } catch (NotFoundException e) {
             throw new NotFoundException("Could not find the reset symbol", e);
         }
@@ -334,13 +347,17 @@ public class Learner {
                                         lastResult.getProject(),
                                         lastResult.getResetSymbol(),
                                         symbolsFromCounterexample,
+                                        lastResult.getPostSymbol(),
                                         lastResult.getDriverConfig())
                     .stream()
                     .map(ExecuteResult::getOutput)
                     .collect(Collectors.toList());
 
-            // remove the reset symbol from the outputs
+            // remove the reset symbol and the post symbol from the outputs
             results.remove(0);
+            if (lastResult.getPostSymbol() != null) {
+                results.remove(results.size() - 1);
+            }
 
             if (!results.equals(outputs)) {
                 throw new IllegalArgumentException("At least one of the given samples for counterexamples"
@@ -420,14 +437,14 @@ public class Learner {
      * @throws LearnerException If something went wrong while testing the symbols.
      */
     public List<ExecuteResult> readOutputs(User user, Project project, ParameterizedSymbol resetSymbol,
-            List<ParameterizedSymbol> symbols, AbstractWebDriverConfig driverConfig) throws LearnerException {
+            List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, AbstractWebDriverConfig driverConfig) throws LearnerException {
         ThreadContext.put("userId", String.valueOf(user.getId()));
         ThreadContext.put("testNo", "readOutputs");
         ThreadContext.put("indent", "");
         LOGGER.traceEntry();
         LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, driverConfig);
 
-        SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols);
+        SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols, postSymbol);
         ReadOutputConfig config = new ReadOutputConfig(symbolSet, driverConfig);
 
         return readOutputs(user, project, config);
@@ -436,6 +453,9 @@ public class Learner {
     public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {
         ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, project, readOutputConfig.getDriverConfig());
         ctxHandler.setResetSymbol(readOutputConfig.getSymbols().getResetSymbol());
+        if (readOutputConfig.getSymbols().getPostSymbol() != null) {
+            ctxHandler.setPostSymbol(readOutputConfig.getSymbols().getPostSymbol());
+        }
         ConnectorManager connectors = ctxHandler.createContext();
 
         return readOutputs(readOutputConfig.getSymbols().getAllSymbols(), connectors);

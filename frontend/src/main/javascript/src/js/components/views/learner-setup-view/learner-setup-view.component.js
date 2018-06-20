@@ -35,13 +35,11 @@ class LearnerSetupViewComponent {
      * @param {SettingsResource} SettingsResource
      */
     // @ngInject
-    constructor($state, $scope, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource,
-                SettingsResource, dragulaService) {
-        this.$scope = $scope;
+    constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource,
+                SettingsResource) {
         this.$state = $state;
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
-        this.dragulaService = dragulaService;
 
         /**
          * The project that is in the session.
@@ -77,6 +75,8 @@ class LearnerSetupViewComponent {
         this.pSymbols = [];
 
         this.pResetSymbol = null;
+
+        this.pPostSymbol = null;
 
         SettingsResource.getSupportedWebDrivers()
             .then(data => this.learnConfiguration.driverConfig.name = data.defaultWebDriver)
@@ -123,6 +123,10 @@ class LearnerSetupViewComponent {
         this.pResetSymbol = ParametrizedSymbol.fromSymbol(symbol);
     }
 
+    setPostSymbol(symbol) {
+        this.pPostSymbol = ParametrizedSymbol.fromSymbol(symbol);
+    }
+
     handleSymbolSelected(symbol) {
         this.pSymbols.push(ParametrizedSymbol.fromSymbol(symbol));
     }
@@ -146,6 +150,8 @@ class LearnerSetupViewComponent {
                 config.symbols.forEach(ps => ps.symbol = ps.symbol.id);
                 config.resetSymbol = JSON.parse(JSON.stringify(this.pResetSymbol));
                 config.resetSymbol.symbol = config.resetSymbol.symbol.id;
+                config.postSymbol = JSON.parse(JSON.stringify(this.pPostSymbol));
+                config.postSymbol.symbol = config.postSymbol.symbol.id;
                 config.urls = this.learnConfiguration.urls.map(u => u.id);
 
                 // start learning
@@ -177,6 +183,9 @@ class LearnerSetupViewComponent {
         this.learnConfiguration.resetSymbol = result.resetSymbol;
         this.learnConfiguration.resetSymbol.id = null;
         this.learnConfiguration.resetSymbol.parameterValues.forEach(v => v.id = null);
+        this.learnConfiguration.postSymbol = result.postSymbol;
+        this.learnConfiguration.postSymbol.id = null;
+        this.learnConfiguration.postSymbol.parameterValues.forEach(v => v.id = null);
         this.learnConfiguration.symbols = result.symbols;
         this.learnConfiguration.symbols.forEach(s => {
             s.id = null;
@@ -185,6 +194,7 @@ class LearnerSetupViewComponent {
 
         this.pSymbols = this.learnConfiguration.symbols;
         this.pResetSymbol = this.learnConfiguration.resetSymbol;
+        this.pPostSymbol = this.learnConfiguration.postSymbol;
     }
 }
 

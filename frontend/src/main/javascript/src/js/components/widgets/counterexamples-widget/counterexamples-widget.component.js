@@ -137,9 +137,14 @@ class CounterexamplesWidgetComponent {
             const symbols = JSON.parse(JSON.stringify(testSymbols));
             symbols.forEach(s => s.symbol = s.symbol.id);
 
+            const postSymbol = JSON.parse(JSON.stringify(this.result.postSymbol));
+            if (postSymbol != null) {
+                postSymbol.symbol = postSymbol.symbol.id;
+            }
+
             // actually test the counterexample
             this.LearnerResource.readOutputs(this.result.project, {
-                symbols: {resetSymbol, symbols},
+                symbols: {resetSymbol, symbols, postSymbol},
                 driverConfig: this.result.driverConfig
             }).then(ce => {
                 ce.shift();

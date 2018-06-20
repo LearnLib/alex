@@ -56,7 +56,6 @@ import static org.mockito.Mockito.verify;
 public class LearnerTest {
 
     private static final long   PROJECT_ID    = 42L;
-    private static final String FAKE_URL      = "http://example.com";
     private static final int    SYMBOL_AMOUNT = 5;
 
     @Mock
@@ -149,6 +148,7 @@ public class LearnerTest {
     @Test
     public void shouldReadTheCorrectOutputOfSomeSymbols() {
         ParameterizedSymbol resetSymbol = mock(ParameterizedSymbol.class);
+        ParameterizedSymbol postSymbol = mock(ParameterizedSymbol.class);
         //
         List<ParameterizedSymbol> symbols = new LinkedList<>();
         for (int i = 0; i < SYMBOL_AMOUNT; i++) {
@@ -166,7 +166,7 @@ public class LearnerTest {
 
         final ReadOutputConfig config = new ReadOutputConfig();
         config.setDriverConfig(new HtmlUnitDriverConfig());
-        config.setSymbols(new SymbolSet(resetSymbol, symbols));
+        config.setSymbols(new SymbolSet(resetSymbol, symbols, postSymbol));
 
         List<ExecuteResult> outputs = learner.readOutputs(user, project, config);
 

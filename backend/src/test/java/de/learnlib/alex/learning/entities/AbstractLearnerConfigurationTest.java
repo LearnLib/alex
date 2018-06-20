@@ -16,13 +16,13 @@
 
 package de.learnlib.alex.learning.entities;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.algorithms.DHC;
 import de.learnlib.alex.learning.entities.algorithms.TTT;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.CompleteExplorationEQOracleProxy;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -40,14 +40,14 @@ public class AbstractLearnerConfigurationTest {
     private final String driverConfig = "{\"name\":\"htmlUnit\",\"height\":0,\"id\":null,\"implicitlyWait\":0,\"pageLoadTimeout\":10,\"scriptTimeout\":10,\"width\":0}";
 
     @Test
-    public void shouldCreateTheCorrectDefaultJSON() throws JsonProcessingException {
+    public void shouldCreateTheCorrectDefaultJSON() throws Exception {
         String expectedJSON = "{\"algorithm\":{\"name\":\"TTT\"},"
                 + "\"comment\":\"\","
                 + "\"driverConfig\":" + driverConfig + ","
                 + "\"eqOracle\":"
                 + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
                 + "\"maxLength\":" + EQ_MAX_VALUE + ",\"seed\":42,\"maxNoOfTests\":1},"
-                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"symbols\":[],"
+                + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"postSymbol\":null,\"symbols\":[],"
                 + "\"urls\":[],"
                 + "\"useMQCache\":true,\"user\":null}";
 
@@ -56,11 +56,11 @@ public class AbstractLearnerConfigurationTest {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(configuration);
 
-        assertEquals(expectedJSON, json);
+        JSONAssert.assertEquals(expectedJSON, json, true);
     }
 
     @Test
-    public void shouldCreateTheCorrectJSON() throws JsonProcessingException {
+    public void shouldCreateTheCorrectJSON() throws Exception {
         String expectedJSON = "{\"algorithm\":{\"name\":\"TTT\"},"
                 + "\"comment\":\"test\","
                 + "\"driverConfig\":" + driverConfig + ","
@@ -68,6 +68,7 @@ public class AbstractLearnerConfigurationTest {
                 + "\"maxAmountOfStepsToLearn\":-1,"
                 + "\"project\":null,"
                 + "\"resetSymbol\":null,"
+                + "\"postSymbol\":null,"
                 + "\"symbols\":[],"
                 + "\"urls\":[],"
                 + "\"useMQCache\":true,"
@@ -82,7 +83,7 @@ public class AbstractLearnerConfigurationTest {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(configuration);
 
-        assertEquals(expectedJSON, json);
+        JSONAssert.assertEquals(expectedJSON, json, true);
     }
 
     @Test
