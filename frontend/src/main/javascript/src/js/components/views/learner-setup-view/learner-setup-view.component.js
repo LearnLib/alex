@@ -150,8 +150,10 @@ class LearnerSetupViewComponent {
                 config.symbols.forEach(ps => ps.symbol = ps.symbol.id);
                 config.resetSymbol = JSON.parse(JSON.stringify(this.pResetSymbol));
                 config.resetSymbol.symbol = config.resetSymbol.symbol.id;
-                config.postSymbol = JSON.parse(JSON.stringify(this.pPostSymbol));
-                config.postSymbol.symbol = config.postSymbol.symbol.id;
+                if (this.pPostSymbol != null) {
+                    config.postSymbol = JSON.parse(JSON.stringify(this.pPostSymbol));
+                    config.postSymbol.symbol = config.postSymbol.symbol.id;
+                }
                 config.urls = this.learnConfiguration.urls.map(u => u.id);
 
                 // start learning
@@ -183,9 +185,11 @@ class LearnerSetupViewComponent {
         this.learnConfiguration.resetSymbol = result.resetSymbol;
         this.learnConfiguration.resetSymbol.id = null;
         this.learnConfiguration.resetSymbol.parameterValues.forEach(v => v.id = null);
-        this.learnConfiguration.postSymbol = result.postSymbol;
-        this.learnConfiguration.postSymbol.id = null;
-        this.learnConfiguration.postSymbol.parameterValues.forEach(v => v.id = null);
+        if (result.postSymbol != null) {
+            this.learnConfiguration.postSymbol = result.postSymbol;
+            this.learnConfiguration.postSymbol.id = null;
+            this.learnConfiguration.postSymbol.parameterValues.forEach(v => v.id = null);
+        }
         this.learnConfiguration.symbols = result.symbols;
         this.learnConfiguration.symbols.forEach(s => {
             s.id = null;

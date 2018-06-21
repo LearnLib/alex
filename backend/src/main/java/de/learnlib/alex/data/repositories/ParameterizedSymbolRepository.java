@@ -19,10 +19,34 @@ package de.learnlib.alex.data.repositories;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * The JPA repository for parameterized symbols {@link ParameterizedSymbol}.
  */
 @Repository
 public interface ParameterizedSymbolRepository extends JpaRepository<ParameterizedSymbol, Long> {
+
+    /**
+     * Get all parameterized symbols by project ID.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @return The parameterized symbols.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<ParameterizedSymbol> findAllBySymbol_Project_Id(Long projectId);
+
+    /**
+     * Delete all parameterized symbols by project ID.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @return The number of deleted parameterized symbols.
+     */
+    @Transactional
+    Long deleteAllBySymbol_Project_Id(Long projectId);
 }

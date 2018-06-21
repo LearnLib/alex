@@ -539,8 +539,6 @@ report-charts {
     @include selection-list-item();
     user-select: none;
     -webkit-user-select: none;
-    display: flex;
-    flex-direction: row;
     align-items: baseline;
     padding: 6px 10px;
 
@@ -551,13 +549,6 @@ report-charts {
     &.gu-transit {
       opacity: .5;
       border: 1px dashed #244061;
-    }
-
-    .flex-item {
-      &:nth-child(2) {
-        flex: 1 0 0;
-        padding: 0 10px;
-      }
     }
 
     .action-output {

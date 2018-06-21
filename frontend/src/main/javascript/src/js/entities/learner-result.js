@@ -60,9 +60,9 @@ export class LearnResult {
 
         /**
          * The id of the post symbol.
-         * @type {ParametrizedSymbol}
+         * @type {?ParametrizedSymbol}
          */
-        this.postSymbol = new ParametrizedSymbol(obj.postSymbol);
+        this.postSymbol = obj.postSymbol != null ? new ParametrizedSymbol(obj.postSymbol) : null;
 
         /**
          * The alphabet the process has been learned with.

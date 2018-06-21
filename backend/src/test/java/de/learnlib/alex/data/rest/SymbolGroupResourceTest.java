@@ -172,15 +172,6 @@ public class SymbolGroupResourceTest extends JerseyTest {
     }
 
     @Test
-    public void shouldGetAllSymbolsOfAGroup() throws NotFoundException {
-        String path = "/projects/" + PROJECT_TEST_ID + "/groups/" + group1.getId() + "/symbols";
-        Response response = target(path).request().header("Authorization", adminToken).get();
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-
-        verify(symbolDAO).getAll(admin, PROJECT_TEST_ID, group1.getId());
-    }
-
-    @Test
     public void shouldReturn404IfYouWantToGetAllGroupsOfANonExistingProject() throws NotFoundException {
         willThrow(NotFoundException.class).given(symbolGroupDAO).getAll(admin, PROJECT_TEST_ID);
 

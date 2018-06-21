@@ -18,12 +18,14 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolInputParameter;
 import de.learnlib.alex.data.entities.SymbolOutputParameter;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolParameterValue;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
@@ -38,6 +40,7 @@ import javax.transaction.Transactional;
 import javax.xml.bind.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /** The concrete DAO for symbol parameters. */
 @Service
@@ -62,6 +65,9 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
     /** The injected repository for {@link SymbolParameterValue}. */
     @Inject
     private SymbolParameterValueRepository symbolParameterValueRepository;
+
+    @Inject
+    private ParameterizedSymbolRepository parameterizedSymbolRepository;
 
     /** The symbol DAO to use. */
     @Inject
@@ -145,6 +151,14 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
         // annotated with orphanRemoval = true
         symbol.removeParameter(parameter);
         symbolRepository.save(symbol);
+
+        final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Project_Id(projectId);
+        for (ParameterizedSymbol pSymbol: pSymbols) {
+            pSymbol.setParameterValues(pSymbol.getParameterValues().stream()
+                    .filter(pv -> !pv.getParameter().getId().equals(parameterId))
+                    .collect(Collectors.toList()));
+            parameterizedSymbolRepository.save(pSymbol);
+        }
 
         // also delete all values for the parameter
         symbolParameterValueRepository.removeAllByParameter_Id(parameterId);

@@ -21,7 +21,9 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.hamcrest.MatcherAssert;
@@ -70,12 +72,18 @@ public class ProjectDAOImplTest {
     @Mock
     private TestReportRepository testReportRepository;
 
+    @Mock
+    private SymbolParameterRepository symbolParameterRepository;
+
+    @Mock
+    private ParameterizedSymbolRepository parameterizedSymbolRepository;
+
     private ProjectDAO projectDAO;
 
     @Before
     public void setUp() {
         projectDAO = new ProjectDAOImpl(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
-                projectUrlDAO);
+                projectUrlDAO, symbolParameterRepository, parameterizedSymbolRepository);
     }
 
     @Test

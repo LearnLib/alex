@@ -19,8 +19,19 @@ package de.learnlib.alex.data.repositories;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /** Repository for symbol parameters. */
 @Repository
 public interface SymbolParameterRepository extends JpaRepository<SymbolParameter, Long> {
+
+    /**
+     * Delete all symbol parameters by project ID.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @return The number of deleted parameters.
+     */
+    @Transactional
+    Long deleteAllBySymbol_Project_Id(Long projectId);
 }

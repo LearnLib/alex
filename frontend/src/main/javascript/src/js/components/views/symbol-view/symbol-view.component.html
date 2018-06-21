@@ -90,14 +90,18 @@
                 <div class="panel-body" style="padding: 0">
                     <div class="action-list" dragula='"actionList"' dragula-model="vm.symbol.actions"
                          ng-if="vm.symbol.actions.length > 0">
-                        <div class="action-list-item" ng-repeat="action in vm.symbol.actions"
+                        <div class="action-list-item d-flex flex-row" ng-repeat="action in vm.symbol.actions"
                              ng-class="{'disabled': action.disabled}">
 
-                            <div class="flex-item">
+                            <div>
                                 <selectable-checkbox item="action" selectable="vm.selectedActions"></selectable-checkbox>
                             </div>
 
-                            <div class="flex-item">
+                            <div style="padding: 0 10px" class="text-muted">
+                                <span>{{$index + 1}})</span>
+                            </div>
+
+                            <div class="w-100">
                                 <div class="action-description" ng-bind="action.toString()"></div>
                                 <div class="action-labels">
                                     <span class="label label-info" ng-show="action.negated">Negate</span>
@@ -108,7 +112,7 @@
                                 </div>
                             </div>
 
-                            <div class="flex-item">
+                            <div>
                                 <span class="btn btn-sm" ng-click="vm.toggleDisableAction(action)">
                                     <span ng-show="!action.disabled" tooltip-placement="left" uib-tooltip="Disable">
                                         <i class="fa fa-toggle-on fa-fw text-success"></i>
@@ -119,7 +123,7 @@
                                 </span>
                             </div>
 
-                            <div class="flex-item">
+                            <div>
                                 <div class="btn-group btn-group-sm" uib-dropdown>
                                     <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
                                         <i class="fa fa-bars"></i>

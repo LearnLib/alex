@@ -22,7 +22,9 @@ import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.testing.entities.TestSuite;
@@ -72,6 +74,10 @@ public class ProjectDAOImpl implements ProjectDAO {
     /** The repository for test reports. */
     private TestReportRepository testReportRepository;
 
+    private SymbolParameterRepository symbolParameterRepository;
+
+    private ParameterizedSymbolRepository parameterizedSymbolRepository;
+
     /** The FileDAO to use. Will be injected. */
     private FileDAO fileDAO;
 
@@ -94,12 +100,15 @@ public class ProjectDAOImpl implements ProjectDAO {
      */
     @Inject
     public ProjectDAOImpl(ProjectRepository projectRepository, LearnerResultRepository learnerResultRepository,
-            TestReportRepository testReportRepository, @Lazy FileDAO fileDAO, @Lazy ProjectUrlDAO projectUrlDAO) {
+            TestReportRepository testReportRepository, @Lazy FileDAO fileDAO, @Lazy ProjectUrlDAO projectUrlDAO,
+            SymbolParameterRepository symbolParameterRepository, ParameterizedSymbolRepository parameterizedSymbolRepository) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
         this.projectUrlDAO = projectUrlDAO;
         this.testReportRepository = testReportRepository;
+        this.symbolParameterRepository = symbolParameterRepository;
+        this.parameterizedSymbolRepository = parameterizedSymbolRepository;
     }
 
     @Override
@@ -219,6 +228,8 @@ public class ProjectDAOImpl implements ProjectDAO {
         final Project project = projectRepository.findOne(projectId);
         checkAccess(user, project);
 
+        symbolParameterRepository.deleteAllBySymbol_Project_Id(projectId);
+        parameterizedSymbolRepository.deleteAllBySymbol_Project_Id(projectId);
         testReportRepository.deleteAllByProject_Id(projectId);
         learnerResultRepository.deleteAllByProject_Id(projectId);
         projectRepository.delete(project);

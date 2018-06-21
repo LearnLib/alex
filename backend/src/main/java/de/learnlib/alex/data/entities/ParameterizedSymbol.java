@@ -59,9 +59,7 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
 
     /** The parameter values for the symbol to execute. */
     @OneToMany(
-            cascade = {CascadeType.MERGE, CascadeType.REMOVE},
-            fetch = FetchType.EAGER,
-            orphanRemoval = true
+            fetch = FetchType.EAGER
     )
     private List<SymbolParameterValue> parameterValues;
 
