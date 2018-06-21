@@ -1,4 +1,5 @@
-<div class="symbol-parameter-values d-flex flex-row text-muted" ng-repeat="parameterValue in vm.parameterValues">
+<div class="symbol-parameter-values d-flex flex-row text-muted" ng-repeat="parameterValue in vm.parameterValues"
+     ng-if="!parameterValue.parameter.private">
   <div style="flex-shrink: 0">
     <em>{{parameterValue.parameter.name}}</em> =&nbsp;
   </div>

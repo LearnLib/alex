@@ -18,15 +18,18 @@ package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.SearchHelper;
+import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
@@ -343,18 +346,27 @@ public class TestService {
 
     private ExecuteResult executeStep(ConnectorManager connectors, TestCase testCase, TestCaseStep step) {
         final VariableStoreConnector variableStore = connectors.getConnector(VariableStoreConnector.class);
+        final CounterStoreConnector counterStore = connectors.getConnector(CounterStoreConnector.class);
 
-        // here, the values for the parameters of the symbols are set
-        step.getParameterValues().stream()
-                .filter(value -> value.getValue() != null)
-                .forEach(value -> {
-                    final String valueWithVariables =
-                            SearchHelper.insertVariableValues(connectors, testCase.getProjectId(),
-                                    value.getValue());
+        try {
+            // here, the values for the parameters of the symbols are set
+            step.getParameterValues().stream()
+                    .filter(value -> value.getValue() != null)
+                    .forEach(value -> {
+                        final String valueWithVariables =
+                                SearchHelper.insertVariableValues(connectors, testCase.getProjectId(),
+                                        value.getValue());
 
-                    variableStore.set(value.getParameter().getName(), valueWithVariables);
-                });
+                        if (value.getParameter().getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
+                            variableStore.set(value.getParameter().getName(), valueWithVariables);
+                        } else {
+                            counterStore.set(testCase.getProject().getId(), value.getParameter().getName(), Integer.valueOf(valueWithVariables));
+                        }
+                    });
 
-        return step.execute(connectors);
+            return step.execute(connectors);
+        } catch (Exception e) {
+            return new ExecuteResult(false);
+        }
     }
 }

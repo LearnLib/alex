@@ -56,7 +56,6 @@ export class TestCaseStep {
                 name: symbol.name
             },
             parameterValues: symbol.inputs
-                .filter(input => input.parameterType === 'STRING')
                 .map(input => ({parameter: input, value: null}))
         });
     }

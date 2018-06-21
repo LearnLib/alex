@@ -17,12 +17,14 @@
 package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,9 +44,14 @@ public class SymbolInputParameter extends SymbolParameter {
     @JsonIgnore
     private List<SymbolParameterValue> parameterValues;
 
+    /** If the parameter may not be set by the user. */
+    @NotNull
+    private boolean isPrivate;
+
     /** Constructor. */
     public SymbolInputParameter() {
         this.parameterValues = new ArrayList<>();
+        this.isPrivate = false;
     }
 
     public List<SymbolParameterValue> getParameterValues() {
@@ -53,5 +60,15 @@ public class SymbolInputParameter extends SymbolParameter {
 
     public void setParameterValues(List<SymbolParameterValue> parameterValues) {
         this.parameterValues = parameterValues;
+    }
+
+    @JsonProperty("private")
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    @JsonProperty("private")
+    public void setPrivate(boolean aPrivate) {
+        isPrivate = aPrivate;
     }
 }

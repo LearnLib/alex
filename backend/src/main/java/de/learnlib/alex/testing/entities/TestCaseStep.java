@@ -75,8 +75,7 @@ public class TestCaseStep implements Serializable {
     /** The values for the parameters defined in {@link #symbol}. */
     @OneToMany(
             cascade = {CascadeType.MERGE, CascadeType.REMOVE},
-            fetch = FetchType.EAGER,
-            orphanRemoval = true
+            fetch = FetchType.EAGER
     )
     private List<SymbolParameterValue> parameterValues;
 

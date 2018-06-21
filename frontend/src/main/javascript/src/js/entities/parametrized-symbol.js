@@ -58,9 +58,7 @@ export class ParametrizedSymbol {
             id: symbol.id,
             name: symbol.name
         };
-        pSymbol.parameterValues = symbol.inputs
-            .filter(input => input.parameterType === 'STRING')
-            .map(input => ({parameter: input, value: null}));
+        pSymbol.parameterValues = symbol.inputs.map(input => ({parameter: input, value: null}));
         return pSymbol;
     }
 }

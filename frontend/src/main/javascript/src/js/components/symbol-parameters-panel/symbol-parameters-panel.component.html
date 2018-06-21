@@ -23,6 +23,7 @@
                                     <i class="fa fa-close"></i>
                                 </span>
 
+                                <i class="fa fa-fw fa-lock" ng-class="{'fa-lock': input.private, 'fa-unlock': !input.private}"></i>
                                 <strong class="cursor-pointer" ng-click="vm.editInput(input, $index)">{{input.name}}</strong>: <em>{{input.parameterType | formatParameterType}}</em>
                             </div>
                             <div class="d-flex align-items-center">

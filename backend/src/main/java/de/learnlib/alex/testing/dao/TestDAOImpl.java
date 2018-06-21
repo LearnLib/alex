@@ -447,9 +447,7 @@ public class TestDAOImpl implements TestDAO {
             // to the parameter manually.
             // name -> parameter
             final Map<String, SymbolInputParameter> parameterMap = new HashMap<>();
-            step.getSymbol().getInputs().stream()
-                    .filter(input -> input.getParameterType().equals(SymbolParameter.ParameterType.STRING))
-                    .forEach(input -> parameterMap.put(input.getName(), input));
+            step.getSymbol().getInputs().forEach(input -> parameterMap.put(input.getName(), input));
 
             step.getParameterValues().forEach(value ->
                     value.setParameter(parameterMap.get(value.getParameter().getName()))

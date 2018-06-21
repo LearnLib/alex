@@ -397,27 +397,19 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         final VariableStoreConnector globalVariableStore = connector.getConnector(VariableStoreConnector.class);
         final VariableStoreConnector localVariableStore = new VariableStoreConnector();
 
-        try {
-            // get the input variables from the global context
-            inputs.stream()
-                    .filter(in -> in.getParameterType().equals(SymbolParameter.ParameterType.STRING))
-                    .forEach(in -> localVariableStore.set(in.getName(), globalVariableStore.get(in.getName())));
-            connector.addConnector(localVariableStore);
-        } catch (IllegalStateException e) {
-            return new ExecuteResult(false, e.getMessage());
-        }
-
         final CounterStoreConnector globalCounterStore = connector.getConnector(CounterStoreConnector.class);
         final CounterStoreConnector localCounterStore = globalCounterStore.copy();
 
         try {
-            // get the input counters from the global context
-            inputs.stream()
-                    .filter(in -> in.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
-                    .forEach(in -> {
-                        final String counterName = in.getName();
-                        localCounterStore.set(project.getId(), counterName, globalCounterStore.get(counterName));
-                    });
+            // get the input variables from the global context
+            inputs.forEach(in -> {
+                if (in.getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
+                    localVariableStore.set(in.getName(), globalVariableStore.get(in.getName()));
+                } else {
+                    localCounterStore.set(project.getId(), in.getName(), globalCounterStore.get(in.getName()));
+                }
+            });
+            connector.addConnector(localVariableStore);
             connector.addConnector(localCounterStore);
         } catch (IllegalStateException e) {
             return new ExecuteResult(false, e.getMessage());
@@ -463,16 +455,13 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         // set the values of the outputs to the global context
         if (result.isSuccess()) {
             try {
-                outputs.stream()
-                        .filter(out -> out.getParameterType().equals(SymbolParameter.ParameterType.STRING))
-                        .forEach(out -> globalVariableStore.set(out.getName(), localVariableStore.get(out.getName())));
-
-                outputs.stream()
-                        .filter(out -> out.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
-                        .forEach(out -> {
-                            final String counterName = out.getName();
-                            globalCounterStore.set(project.getId(), counterName, localCounterStore.get(counterName));
-                        });
+                outputs.forEach(out -> {
+                    if (out.getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
+                        globalVariableStore.set(out.getName(), localVariableStore.get(out.getName()));
+                    } else {
+                        globalCounterStore.set(project.getId(), out.getName(), localCounterStore.get(out.getName()));
+                    }
+                });
             } catch (IllegalStateException e) {
                 return new ExecuteResult(false, e.getMessage());
             }
