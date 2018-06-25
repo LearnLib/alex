@@ -142,12 +142,10 @@ class CounterexamplesWidgetComponent {
                 postSymbol.symbol = postSymbol.symbol.id;
             }
 
-            // actually test the counterexample
             this.LearnerResource.readOutputs(this.result.project, {
                 symbols: {resetSymbol, symbols, postSymbol},
                 driverConfig: this.result.driverConfig
             }).then(ce => {
-                ce.shift();
                 let ceFound = false;
                 for (let i = 0; i < ce.length; i++) {
                     if (ce[i].output !== this.counterExample[i].output) {

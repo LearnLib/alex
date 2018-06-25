@@ -39,10 +39,14 @@ export class ParametrizedSymbol {
     }
 
     getComputedName() {
-        if (this.parameterValues.length === 0) {
+        const params = this.parameterValues
+            .filter(v => !v.parameter.private && v.value != null)
+            .map(v => v.value);
+
+        if (params.length === 0) {
             return this.symbol.name;
         } else {
-            return `${this.symbol.name} <${this.parameterValues.map(v => v.value).join(', ')}>`;
+            return `${this.symbol.name} <${params.join(', ')}>`;
         }
     }
 

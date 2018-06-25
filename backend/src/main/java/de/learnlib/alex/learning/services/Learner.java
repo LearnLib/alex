@@ -30,8 +30,8 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
-import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
+import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
@@ -67,8 +67,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
- * Basic class to control and monitor a learn process.
- * This class is a high level abstraction of the LearnLib.
+ * Basic class to control and monitor a learn process. This class is a high level abstraction of the LearnLib.
  */
 @Service
 @Scope("singleton")
@@ -118,8 +117,7 @@ public class Learner {
     private ExecutorService executorService;
 
     /**
-     * This constructor creates a new Learner
-     * The SymbolDAO and LearnerResultDAO must be externally injected.
+     * This constructor creates a new Learner The SymbolDAO and LearnerResultDAO must be externally injected.
      */
     public Learner() {
         this.userThreads = new HashMap<>();
@@ -129,12 +127,15 @@ public class Learner {
     /**
      * Constructor that sets all fields by the given parameter.
      *
-     * @param symbolDAO             The SymbolDAO to use.
-     * @param learnerResultDAO      The LearnerResultDAO to use.
-     * @param contextHandlerFactory The factory that will be used to create new context handler.
+     * @param symbolDAO
+     *         The SymbolDAO to use.
+     * @param learnerResultDAO
+     *         The LearnerResultDAO to use.
+     * @param contextHandlerFactory
+     *         The factory that will be used to create new context handler.
      */
     public Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO,
-                   ConnectorContextHandlerFactory contextHandlerFactory) {
+            ConnectorContextHandlerFactory contextHandlerFactory) {
         this();
         this.symbolDAO = symbolDAO;
         this.learnerResultDAO = learnerResultDAO;
@@ -142,8 +143,7 @@ public class Learner {
     }
 
     /**
-     * Method should be called before the Learner is 'destroyed'.
-     * It will shutdown the executor service gracefully.
+     * Method should be called before the Learner is 'destroyed'. It will shutdown the executor service gracefully.
      */
     @PreDestroy
     public void destroy() {
@@ -153,14 +153,18 @@ public class Learner {
     /**
      * Start a learning process by activating a LearningThread.
      *
-     * @param user          The user that wants to start the learning process.
-     * @param project       The project the learning process runs in.
-     * @param configuration The configuration to use for the learning process.
-     *
-     * @throws IllegalArgumentException If the configuration was invalid or the user tried to start a second active
-     *                                  learning thread.
-     * @throws IllegalStateException    If a learning process is already active.
-     * @throws NotFoundException        If the symbols specified in the configuration could not be found.
+     * @param user
+     *         The user that wants to start the learning process.
+     * @param project
+     *         The project the learning process runs in.
+     * @param configuration
+     *         The configuration to use for the learning process.
+     * @throws IllegalArgumentException
+     *         If the configuration was invalid or the user tried to start a second active learning thread.
+     * @throws IllegalStateException
+     *         If a learning process is already active.
+     * @throws NotFoundException
+     *         If the symbols specified in the configuration could not be found.
      */
     public void start(User user, Project project, LearnerStartConfiguration configuration)
             throws IllegalArgumentException, IllegalStateException, NotFoundException {
@@ -178,21 +182,27 @@ public class Learner {
         contextHandler.setPostSymbol(result.getPostSymbol());
 
         final AbstractLearnerThread learnThread = new StartingLearnerThread(user, learnerResultDAO, webhookService,
-                                                                            contextHandler, result, configuration);
+                contextHandler, result, configuration);
         startThread(project.getId(), learnThread);
     }
 
     /**
      * Resuming a learning process by activating a LearningThread.
      *
-     * @param user          The user that wants to restart his latest thread.
-     * @param project       The project that is learned.
-     * @param result        The result of a previous process.
-     * @param configuration The configuration to use for the next learning steps.
-     *
-     * @throws IllegalArgumentException If the new configuration has errors.
-     * @throws IllegalStateException    If a learning process is already active or if now process to resume was found.
-     * @throws NotFoundException        If the symbols specified in the configuration could not be found.
+     * @param user
+     *         The user that wants to restart his latest thread.
+     * @param project
+     *         The project that is learned.
+     * @param result
+     *         The result of a previous process.
+     * @param configuration
+     *         The configuration to use for the next learning steps.
+     * @throws IllegalArgumentException
+     *         If the new configuration has errors.
+     * @throws IllegalStateException
+     *         If a learning process is already active or if now process to resume was found.
+     * @throws NotFoundException
+     *         If the symbols specified in the configuration could not be found.
      */
     public void resume(User user, Project project, LearnerResult result, LearnerResumeConfiguration configuration)
             throws IllegalArgumentException, IllegalStateException, NotFoundException {
@@ -211,7 +221,8 @@ public class Learner {
         final Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbol().getSymbol().getId());
         result.getResetSymbol().setSymbol(resetSymbol);
 
-        final List<Long> symbolIds = result.getSymbols().stream().map(s -> s.getSymbol().getId()).collect(Collectors.toList());
+        final List<Long> symbolIds =
+                result.getSymbols().stream().map(s -> s.getSymbol().getId()).collect(Collectors.toList());
         final List<Symbol> symbols = symbolDAO.getByIds(user, project.getId(), symbolIds);
 
         final Map<Long, Symbol> symbolMap = new HashMap<>();
@@ -232,7 +243,7 @@ public class Learner {
         }
 
         final AbstractLearnerThread learnThread = new ResumingLearnerThread(user, learnerResultDAO, webhookService,
-                                                                            contextHandler, result, configuration);
+                contextHandler, result, configuration);
         startThread(project.getId(), learnThread);
     }
 
@@ -293,8 +304,10 @@ public class Learner {
     /**
      * Starts the thread and updates the thread maps.
      *
-     * @param projectId The id of the project.
-     * @param learnThread The thread to start.
+     * @param projectId
+     *         The id of the project.
+     * @param learnThread
+     *         The thread to start.
      */
     private void startThread(Long projectId, AbstractLearnerThread learnThread) {
         executorService.submit(learnThread);
@@ -304,11 +317,12 @@ public class Learner {
     /**
      * If the new configuration is base on manual counterexamples, these samples must be checked.
      *
-     * @param user          The user to validate the counterexample for.
-     * @param configuration The new configuration.
-     *
-     * @throws IllegalArgumentException If the new configuration is based on manual counterexamples and at least one of
-     *                                  them is wrong.
+     * @param user
+     *         The user to validate the counterexample for.
+     * @param configuration
+     *         The new configuration.
+     * @throws IllegalArgumentException
+     *         If the new configuration is based on manual counterexamples and at least one of them is wrong.
      */
     private void validateCounterexample(User user, LearnerResumeConfiguration configuration)
             throws IllegalArgumentException {
@@ -344,20 +358,14 @@ public class Learner {
 
             // finally check if the given sample matches the behavior of the SUL
             List<String> results = readOutputs(user,
-                                        lastResult.getProject(),
-                                        lastResult.getResetSymbol(),
-                                        symbolsFromCounterexample,
-                                        lastResult.getPostSymbol(),
-                                        lastResult.getDriverConfig())
+                    lastResult.getProject(),
+                    lastResult.getResetSymbol(),
+                    symbolsFromCounterexample,
+                    lastResult.getPostSymbol(),
+                    lastResult.getDriverConfig())
                     .stream()
                     .map(ExecuteResult::getOutput)
                     .collect(Collectors.toList());
-
-            // remove the reset symbol and the post symbol from the outputs
-            results.remove(0);
-            if (lastResult.getPostSymbol() != null) {
-                results.remove(results.size() - 1);
-            }
 
             if (!results.equals(outputs)) {
                 throw new IllegalArgumentException("At least one of the given samples for counterexamples"
@@ -369,7 +377,8 @@ public class Learner {
     /**
      * Ends the learning process after the current step.
      *
-     * @param projectId The id of the project that is learned.
+     * @param projectId
+     *         The id of the project that is learned.
      */
     public void stop(Long projectId) {
         final AbstractLearnerThread learnerThread = userThreads.get(projectId);
@@ -382,8 +391,8 @@ public class Learner {
     /**
      * Method to check if a learning process is still active or if it has finished.
      *
-     * @param projectId The id of the project.
-     *
+     * @param projectId
+     *         The id of the project.
      * @return true if the learning process is active, false otherwise.
      */
     public boolean isActive(Long projectId) {
@@ -394,8 +403,8 @@ public class Learner {
     /**
      * Get the status of the Learner as immutable object.
      *
-     * @param projectId The id of the project.
-     *
+     * @param projectId
+     *         The id of the project.
      * @return A snapshot of the Learner status.
      */
     public LearnerStatus getStatus(Long projectId) {
@@ -411,11 +420,10 @@ public class Learner {
     }
 
     /**
-     * Get the current result of the learning process.
-     * This must not be a valid step of a test run!
+     * Get the current result of the learning process. This must not be a valid step of a test run!
      *
-     * @param projectId The id of the project.
-     *
+     * @param projectId
+     *         The id of the project.
      * @return The current result of the AbstractLearnerThread.
      */
     public LearnerResult getResult(Long projectId) {
@@ -426,18 +434,23 @@ public class Learner {
     /**
      * Determine the output of the SUL by testing a sequence of input symbols.
      *
-     * @param user          The user in which context the test should happen.
-     * @param project       The project in which context the test should happen.
-     * @param resetSymbol   The reset symbol to use.
-     * @param symbols       The symbol sequence to process in order to generate the output sequence.
-     * @param driverConfig  The configuration to use for the web browser.
-     *
+     * @param user
+     *         The user in which context the test should happen.
+     * @param project
+     *         The project in which context the test should happen.
+     * @param resetSymbol
+     *         The reset symbol to use.
+     * @param symbols
+     *         The symbol sequence to process in order to generate the output sequence.
+     * @param driverConfig
+     *         The configuration to use for the web browser.
      * @return The following output sequence.
-     *
-     * @throws LearnerException If something went wrong while testing the symbols.
+     * @throws LearnerException
+     *         If something went wrong while testing the symbols.
      */
     public List<ExecuteResult> readOutputs(User user, Project project, ParameterizedSymbol resetSymbol,
-            List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, AbstractWebDriverConfig driverConfig) throws LearnerException {
+            List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, AbstractWebDriverConfig driverConfig)
+            throws LearnerException {
         ThreadContext.put("userId", String.valueOf(user.getId()));
         ThreadContext.put("testNo", "readOutputs");
         ThreadContext.put("indent", "");
@@ -451,32 +464,25 @@ public class Learner {
     }
 
     public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {
-        ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, project, readOutputConfig.getDriverConfig());
+        ConnectorContextHandler ctxHandler =
+                contextHandlerFactory.createContext(user, project, readOutputConfig.getDriverConfig());
         ctxHandler.setResetSymbol(readOutputConfig.getSymbols().getResetSymbol());
         if (readOutputConfig.getSymbols().getPostSymbol() != null) {
             ctxHandler.setPostSymbol(readOutputConfig.getSymbols().getPostSymbol());
         }
         ConnectorManager connectors = ctxHandler.createContext();
 
-        return readOutputs(readOutputConfig.getSymbols().getAllSymbols(), connectors);
-    }
-
-    private List<ExecuteResult> readOutputs(List<ParameterizedSymbol> symbols, ConnectorManager connectors) {
-        LOGGER.traceEntry();
         try {
-            List<ExecuteResult> output = symbols.stream()
-                                                .map(s -> s.execute(connectors))
-                                                .collect(Collectors.toList());
+            List<ExecuteResult> outputs = readOutputConfig.getSymbols().getSymbols().stream()
+                    .map(s -> s.execute(connectors))
+                    .collect(Collectors.toList());
             connectors.dispose();
             connectors.post();
-
-            LOGGER.traceExit(output);
-            return output;
+            return outputs;
         } catch (Exception e) {
             connectors.dispose();
             connectors.post();
 
-            LOGGER.traceExit(e);
             throw new LearnerException("Could not read the outputs", e);
         }
     }
@@ -484,9 +490,10 @@ public class Learner {
     /**
      * Compare two MealyMachines and calculate their separating word.
      *
-     * @param mealy1 The first Mealy to compare.
-     * @param mealy2 The second Mealy to compare.
-     *
+     * @param mealy1
+     *         The first Mealy to compare.
+     * @param mealy2
+     *         The second Mealy to compare.
      * @return If the machines are different: The corresponding separating word; otherwise: ""
      */
     public SeparatingWord separatingWord(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {
@@ -510,16 +517,17 @@ public class Learner {
     }
 
     /**
-     * Tests all words from the transition cover from <code>mealyProxy1</code> on <code>mealyProxy2</code>.
-     * Words with a different output are added to the difference.
+     * Tests all words from the transition cover from <code>mealyProxy1</code> on <code>mealyProxy2</code>. Words with a
+     * different output are added to the difference.
      *
-     * @param mealyProxy1 The hypothesis that is tested on the other.
-     * @param mealyProxy2 The hypothesis that is used for testing.
-     *
+     * @param mealyProxy1
+     *         The hypothesis that is tested on the other.
+     * @param mealyProxy2
+     *         The hypothesis that is used for testing.
      * @return The difference tree.
      */
     public CompactMealy<String, String> differenceTree(final CompactMealyMachineProxy mealyProxy1,
-                                                       final CompactMealyMachineProxy mealyProxy2) {
+            final CompactMealyMachineProxy mealyProxy2) {
         final Alphabet<String> alphabet = mealyProxy1.createAlphabet();
 
         final CompactMealy<String, String> hyp1 = mealyProxy2.createMealyMachine(alphabet);
