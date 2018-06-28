@@ -59,7 +59,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
 
     @After
     public void tearDown() {
-        // deleting the user should (!) also delete all projects, groups, symbols, ... related to that user.
+        // deleting the user should (!) also deleteMany all projects, groups, symbols, ... related to that user.
         userRepository.deleteAll();
     }
 
@@ -78,7 +78,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
 
         symbol = symbolRepository.save(symbol);
 
-        assertNotNull(symbol.getUUID());
+        assertNotNull(symbol.getId());
     }
 
     @Test(expected = DataIntegrityViolationException.class)
@@ -181,7 +181,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
 
         symbolRepository.save(symbol2);
 
-        assertNotNull(symbol2.getUUID());
+        assertNotNull(symbol2.getId());
     }
 
     @Test
@@ -204,7 +204,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         Symbol symbol2rev1 = createSymbol(user, project, group, 1L, "Test Symbol 2");
         symbolRepository.save(symbol2rev1);
 
-        Symbol symbolFromDB = symbolRepository.findOne(project.getId(), 0L);
+        Symbol symbolFromDB = symbolRepository.findOne(0L);
 
         assertThat(symbolFromDB, is(equalTo(symbol1rev0)));
     }
@@ -230,7 +230,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         symbolRepository.save(symbol2rev1);
         //
         List<Long> ids = Arrays.asList(symbol1rev0.getId(), symbol2rev1.getId());
-        List<Symbol> symbolsFromDB = symbolRepository.findByIds(project.getId(), ids);
+        List<Symbol> symbolsFromDB = symbolRepository.findAllByIdIn(ids);
 
         assertThat(symbolsFromDB.size(), is(equalTo(2)));
         assertThat(symbolsFromDB, hasItem(equalTo(symbol1rev0)));

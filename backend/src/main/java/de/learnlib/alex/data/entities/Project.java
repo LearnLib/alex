@@ -128,12 +128,6 @@ public class Project implements Serializable {
     @JsonIgnore
     private Set<Symbol> symbols;
 
-    /**
-     * The next id for a symbol in this project.
-     */
-    @JsonIgnore
-    private Long nextSymbolId;
-
     /** The tests of this project. */
     @OneToMany(
             mappedBy = "project",
@@ -177,7 +171,6 @@ public class Project implements Serializable {
         this.id = projectId;
         this.groups = new HashSet<>();
         this.symbols = new HashSet<>();
-        this.nextSymbolId = 1L;
         this.tests = new HashSet<>();
         this.testReports = new HashSet<>();
         this.testExecutionConfigs = new ArrayList<>();
@@ -328,24 +321,6 @@ public class Project implements Serializable {
         symbol.setProject(this);
     }
 
-    /**
-     * Get the next free id for a symbol in the project.
-     *
-     * @return The next symbol id.
-     */
-    public Long getNextSymbolId() {
-        return nextSymbolId;
-    }
-
-    /**
-     * Set the ID the next symbol in this project should have.
-     *
-     * @param nextSymbolId The next free id for a symbol.
-     */
-    public void setNextSymbolId(Long nextSymbolId) {
-        this.nextSymbolId = nextSymbolId;
-    }
-
     @JsonIgnore
     public Collection<Test> getTests() {
         return tests;
@@ -423,7 +398,7 @@ public class Project implements Serializable {
 
     @Override
     public String toString() {
-        return "[Project " + id + "]: " + user + ", " + name + "(" + getDefaultUrl() + ")";
+        return "[Project " + id + "]: " + user + ", " + name;
     }
 
 }

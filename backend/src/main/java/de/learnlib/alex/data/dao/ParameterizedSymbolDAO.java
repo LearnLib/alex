@@ -14,13 +14,23 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.data.repositories;
+package de.learnlib.alex.data.dao;
 
-import de.learnlib.alex.data.entities.SymbolParameter;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 
-/** Repository for symbol parameters. */
-@Repository
-public interface SymbolParameterRepository extends JpaRepository<SymbolParameter, Long> {
+/**
+ * DAO for parameterized symbols.
+ */
+public interface ParameterizedSymbolDAO {
+
+    /**
+     * Create a new parameterized symbol.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param pSymbol
+     *         The parameterized symbol to create.
+     * @return The created parameterized symbol.
+     */
+    ParameterizedSymbol create(Long projectId, ParameterizedSymbol pSymbol);
 }

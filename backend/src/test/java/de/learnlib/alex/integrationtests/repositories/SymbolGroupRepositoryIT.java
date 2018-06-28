@@ -53,7 +53,7 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
     @After
     public void tearDown() {
-        // deleting the user should (!) also delete all projects, groups, symbols, ... related to that user.
+        // deleting the user should (!) also deleteMany all projects, groups, symbols, ... related to that user.
         userRepository.deleteAll();
     }
 

@@ -1,0 +1,26 @@
+<div class="modal-header">
+  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+    <i class="fa fa-close fa-fw"></i>
+  </a>
+  <h3 class="modal-title">Select a symbol</h3>
+</div>
+
+<form ng-submit="vm.ok()">
+  <div class="modal-body">
+    <div class="panel panel-default mb-0">
+      <div class="panel-body">
+        <simple-symbol-group-tree
+          groups="vm.groups"
+          on-symbol-selected="vm.selectSymbol(symbol)"
+          selected-symbol="vm.selectedSymbol"
+        >
+        </simple-symbol-group-tree>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="submit">Add</button>
+    <a href class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
+  </div>
+</form>

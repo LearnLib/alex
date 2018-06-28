@@ -18,7 +18,6 @@ package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.SearchHelper;
-import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;

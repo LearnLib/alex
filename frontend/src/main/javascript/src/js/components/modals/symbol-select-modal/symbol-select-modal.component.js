@@ -14,29 +14,36 @@
  * limitations under the License.
  */
 
-export const symbolSelectDropdownComponent = {
-    template: require('./symbol-select-dropdown.component.html'),
+export const symbolSelectModalComponent = {
+    template: require('./symbol-select-modal.component.html'),
     bindings: {
-        groups: '=',
-        onSymbolSelected: '&',
-        variant: '@',
+        dismiss: '&',
+        close: '&',
+        resolve: '='
     },
     controllerAs: 'vm',
-    controller: class SymbolSelectDropdownComponent {
+    controller: class SymbolSelectModalComponent {
 
+        /** Constructor. */
         constructor() {
             this.selectedSymbol = null;
-            this.showMenu = false;
+            this.groups = [];
         }
 
-        handleSymbolSelected(symbol) {
+        $onInit() {
+            this.groups = this.resolve.groups;
+        }
+
+        selectSymbol(symbol) {
             this.selectedSymbol = symbol;
-            this.showMenu = false;
-            this.onSymbolSelected({symbol});
         }
 
-        enableSelection() {
-            this.showMenu = !this.showMenu;
+        ok() {
+            if (this.selectedSymbol == null) {
+                this.dismiss();
+            } else {
+                this.close({$value: this.selectedSymbol});
+            }
         }
     }
 };

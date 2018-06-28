@@ -8,10 +8,7 @@
                 <strong>{{vm.symbol.name}}</strong>
             </a>
         </div>
-        <div class="text-muted" ng-if="vm.symbol.actions.length > 0">
-            <small>{{vm.symbol.actions.length}} Actions</small>
-        </div>
-        <div ng-if="vm.symbol.actions.length === 0">
+        <div ng-if="vm.symbol.steps.length === 0">
             <span class="label label-info">Not implemented</span>
         </div>
     </div>

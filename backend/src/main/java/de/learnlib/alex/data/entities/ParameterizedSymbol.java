@@ -18,6 +18,7 @@ package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.api.exception.SULException;
@@ -59,7 +60,8 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
 
     /** The parameter values for the symbol to execute. */
     @OneToMany(
-            fetch = FetchType.EAGER
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST}
     )
     private List<SymbolParameterValue> parameterValues;
 
@@ -87,7 +89,8 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
 
         parameterValues.forEach(v -> {
             if (v.getValue() != null) {
-                localVariableStore.set(v.getParameter().getName(), v.getValue());
+                final String value = v.getValue() == null ? null : SearchHelper.insertVariableValues(connectors, symbol.getProjectId(), v.getValue());
+                localVariableStore.set(v.getParameter().getName(), value);
             }
         });
 
@@ -115,10 +118,22 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
         return new SymbolRepresentation(symbol);
     }
 
+    /**
+     * Set the symbol by an ID.
+     *
+     * @param symbolId
+     *         The ID of the symbol.
+     */
     @JsonProperty("symbol")
     public void setSymbolId(Long symbolId) {
         symbol = new Symbol();
         symbol.setId(symbolId);
+    }
+
+    @JsonProperty("symbolFromName")
+    public void setSymbolFromName(String symbolName) {
+        symbol = new Symbol();
+        symbol.setName(symbolName);
     }
 
     public List<SymbolParameterValue> getParameterValues() {

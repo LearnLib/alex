@@ -47,14 +47,14 @@ public class SymbolTest {
     @Before
     public void setUp() {
         a1 = new CheckTextWebAction();
-        a1.setDisabled(false);
         a1.setIgnoreFailure(false);
         a1.setRegexp(false);
         a1.setValue("test");
 
         symbol = new Symbol();
-        symbol.addAction(a1);
+        symbol.getSteps().add(new SymbolActionStep(a1));
         symbol.setProject(new Project(PROJECT_ID));
+        a1.setSymbol(symbol);
 
         connectorManager = mock(ConnectorManager.class);
         webSiteConnector = mock(WebSiteConnector.class);

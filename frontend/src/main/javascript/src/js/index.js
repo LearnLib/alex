@@ -94,6 +94,7 @@ import {userLoginFormComponent} from './components/forms/user-login-form/user-lo
 import {webhookFormComponent} from './components/forms/webhook-form/webhook-form.component';
 import {htmlElementPickerComponent} from './components/html-element-picker/html-element-picker.component';
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
+import {symbolSelectModalComponent} from './components/modals/symbol-select-modal/symbol-select-modal.component';
 import {symbolsExportModalComponent} from './components/modals/symbols-export-modal/symbols-export-modal.component';
 import {userCreateModalComponent} from './components/modals/user-create-modal/user-create-modal.component';
 import {symbolParametersComponent} from './components/symbol-parameters/symbol-parameters.component';
@@ -356,6 +357,7 @@ angular
     .component('symbolGroupMoveModal', symbolGroupMoveModalComponent)
     .component('separatingWordModal', separatingWordModalComponent)
     .component('testsMoveModal', testsMoveModalComponent)
+    .component('symbolSelectModal', symbolSelectModalComponent)
 
     // view components
     .component('aboutView', aboutViewComponent)

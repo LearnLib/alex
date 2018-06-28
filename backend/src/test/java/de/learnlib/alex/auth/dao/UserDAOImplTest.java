@@ -22,6 +22,8 @@ import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.dao.FileDAOImpl;
+import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.data.repositories.ProjectRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,11 +59,17 @@ public class UserDAOImplTest {
     @Mock
     private FileDAOImpl fileDAO;
 
+    @Mock
+    private ProjectDAO projectDAO;
+
+    @Mock
+    private ProjectRepository projectRepository;
+
     private UserDAO userDAO;
 
     @Before
     public void setUp() throws NotFoundException {
-        userDAO = new UserDAOImpl(userRepository, fileDAO);
+        userDAO = new UserDAOImpl(userRepository, fileDAO, projectDAO, projectRepository);
     }
 
     @Test

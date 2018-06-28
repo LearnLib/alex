@@ -27,6 +27,7 @@ import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
+import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -91,19 +92,25 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
      *         The SymbolActionRepository to use.
      * @param symbolParameterRepository
      *         The SymbolParameterRepository to use.
+     * @param symbolStepRepository
+     *         The repository for symbol steps.
+     * @param parameterizedSymbolDAO
+     *         The DAO for parameterized symbols.
      */
     @Inject
     public SymbolGroupDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
             SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
             SymbolActionRepository symbolActionRepository,
-            SymbolParameterRepository symbolParameterRepository) {
+            SymbolParameterRepository symbolParameterRepository, ParameterizedSymbolDAO parameterizedSymbolDAO,
+            SymbolStepRepository symbolStepRepository) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
         this.symbolRepository = symbolRepository;
 
         this.symbolDAO = new SymbolDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
-                symbolActionRepository, this, symbolParameterRepository);
+                symbolActionRepository, this, symbolParameterRepository, symbolStepRepository,
+                parameterizedSymbolDAO);
     }
 
     @Override
@@ -182,7 +189,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             symbol.setProject(project);
             symbol.setGroup(createdGroup);
         });
-        symbolDAO.create(user, new ArrayList<>(symbols));
+        symbolDAO.create(user, project.getId(), new ArrayList<>(symbols));
 
         final List<SymbolGroup> createdChildren = create(user, project, children, createdGroup);
         createdGroup.setGroups(createdChildren);
@@ -398,12 +405,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Project project = group.getProject();
 
         group.getSymbols().forEach(symbol -> {
-            Long symbolId = project.getNextSymbolId();
             project.addSymbol(symbol);
             symbol.setGroup(group);
-            symbol.setId(symbolId);
-            project.setNextSymbolId(symbolId + 1);
-
             SymbolDAOImpl.beforeSymbolSave(symbol);
         });
 

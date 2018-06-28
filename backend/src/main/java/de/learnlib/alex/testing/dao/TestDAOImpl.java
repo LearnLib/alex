@@ -25,7 +25,6 @@ import de.learnlib.alex.data.dao.SymbolDAOImpl;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolInputParameter;
-import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.testing.entities.Test;

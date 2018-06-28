@@ -44,7 +44,6 @@ export class Selectable {
     }
 
     unselectAll() {
-        const items = this.getSelected();
         this.selectedItems = {};
     }
 

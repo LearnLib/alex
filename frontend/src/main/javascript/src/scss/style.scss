@@ -316,6 +316,7 @@ report-charts {
     border: 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0);
     outline: none;
+    background: none;
 
     &:active, &:focus, &:hover {
       box-shadow: none;
@@ -562,7 +563,8 @@ report-charts {
     }
 
     &.disabled {
-      .action-description {
+      .action-description,
+      .symbol-description {
         text-decoration: line-through;
         opacity: 0.5;
       }
