@@ -444,6 +444,8 @@ public class Learner {
      *         The symbol sequence to process in order to generate the output sequence.
      * @param driverConfig
      *         The configuration to use for the web browser.
+     * @param postSymbol
+     *         The symbol to execute after each membership query.
      * @return The following output sequence.
      * @throws LearnerException
      *         If something went wrong while testing the symbols.

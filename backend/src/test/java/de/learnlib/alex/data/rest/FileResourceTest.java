@@ -60,10 +60,10 @@ public class FileResourceTest extends JerseyTest {
     @Test
     public void shouldUploadAFile() {
         Path path = Paths.get(System.getProperty("user.dir"),
-                              "src", "test", "resources", "rest", "IFrameProxyTestData.html");
+                              "src", "test", "resources", "integrationtest", "test_app.html");
         FileDataBodyPart filePart = new FileDataBodyPart("file", path.toFile());
         filePart.setContentDisposition(FormDataContentDisposition.name("file")
-                                               .fileName("IFrameProxyTestData.html")
+                                               .fileName("test_app.html")
                                                .build());
         MultiPart multipartEntity = new FormDataMultiPart().bodyPart(filePart);
         Response response = target("/projects/" + PROJECT_TEST_ID + "/files")
@@ -71,7 +71,6 @@ public class FileResourceTest extends JerseyTest {
                                 .request()
                                 .post(Entity.entity(multipartEntity, MediaType.MULTIPART_FORM_DATA));
         System.out.println(" -> " + response.readEntity(String.class));
-//        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
 
 }

@@ -154,6 +154,7 @@ class SymbolsViewComponent {
             const i = group.symbols.findIndex(s => s.id === symbol.id);
             if (i > -1) {
                 group.symbols[i].name = symbol.name;
+                group.symbols[i].description = symbol.description;
                 group.symbols[i].group = symbol.group;
             }
         });

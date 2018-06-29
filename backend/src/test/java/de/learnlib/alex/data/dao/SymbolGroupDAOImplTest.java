@@ -25,6 +25,7 @@ import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
+import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,12 +52,12 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class SymbolGroupDAOImplTest {
 
-    private static final long USER_ID    = 21L;
+    private static final long USER_ID = 21L;
     private static final long PROJECT_ID = 42L;
-    private static final long GROUP_ID   = 84L;
+    private static final long GROUP_ID = 84L;
     private static final String GROUP_NAME = "testGroup";
     private static final long DEFAULT_GROUP_ID = 0L;
-    private static final int  TEST_GROUP_COUNT = 3;
+    private static final int TEST_GROUP_COUNT = 3;
 
     @Mock
     private ProjectRepository projectRepository;
@@ -76,12 +77,19 @@ public class SymbolGroupDAOImplTest {
     @Mock
     private SymbolParameterRepository symbolParameterRepository;
 
+    @Mock
+    private ParameterizedSymbolDAO parameterizedSymbolDAO;
+
+    @Mock
+    private SymbolStepRepository symbolStepRepository;
+
     private SymbolGroupDAO symbolGroupDAO;
 
     @Before
     public void setUp() {
         symbolGroupDAO = new SymbolGroupDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
-                                                symbolActionRepository, symbolParameterRepository);
+                symbolActionRepository, symbolParameterRepository, parameterizedSymbolDAO,
+                symbolStepRepository);
     }
 
     @Test
@@ -139,7 +147,7 @@ public class SymbolGroupDAOImplTest {
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
         TransactionSystemException transactionSystemException;
         transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
-                                                                    rollbackException);
+                rollbackException);
 
         given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
         given(symbolGroupRepository.save(group)).willThrow(transactionSystemException);
@@ -281,7 +289,7 @@ public class SymbolGroupDAOImplTest {
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
         TransactionSystemException transactionSystemException;
         transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
-                                                                    rollbackException);
+                rollbackException);
 
         given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
         given(symbolGroupRepository.findOne(GROUP_ID)).willReturn(group);
@@ -348,7 +356,7 @@ public class SymbolGroupDAOImplTest {
 
     private List<SymbolGroup> createGroupsList() {
         List<SymbolGroup> groups = new LinkedList<>();
-        for (int i = 0; i  < TEST_GROUP_COUNT; i++) {
+        for (int i = 0; i < TEST_GROUP_COUNT; i++) {
             SymbolGroup g = new SymbolGroup();
             groups.add(g);
         }

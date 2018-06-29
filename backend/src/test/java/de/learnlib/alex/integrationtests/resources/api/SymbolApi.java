@@ -22,58 +22,52 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class SymbolGroupApi extends AbstractApi {
+public class SymbolApi extends AbstractApi {
 
-    public SymbolGroupApi(Client client, int port) {
+    public SymbolApi(Client client, int port) {
         super(client, port);
     }
 
     public Response getAll(int projectId, String jwt) {
-        return client.target(url(projectId) + "?embed=all").request()
-                .header(HttpHeaders.AUTHORIZATION, jwt)
-                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-                .get();
-    }
-
-    public Response create(int projectId, String group, String jwt) {
         return client.target(url(projectId)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
-                .post(Entity.json(group));
-    }
-
-    public Response create(int projectId, List<String> groups, String jwt) {
-        return client.target(url(projectId) + "/batch").request()
-                .header(HttpHeaders.AUTHORIZATION, jwt)
-                .post(Entity.json(groups));
-    }
-
-    public Response get(int projectId, int groupId, String jwt) {
-        return client.target(url(projectId) + "/" + groupId).request()
-                .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .get();
     }
 
-    public Response update(int projectId, int groupId, String group, String jwt) {
-        return client.target(url(projectId) + "/" + groupId).request()
+    public Response create(int projectId, String symbol, String jwt) {
+        return client.target(url(projectId)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
-                .put(Entity.json(group));
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .post(Entity.json(symbol));
     }
 
-    public Response move(int projectId, int groupId, String group, String jwt) {
-        return client.target(url(projectId) + "/" + groupId + "/move").request()
+    public Response createMany(int projectId, String symbols, String jwt) {
+        return client.target(url(projectId) + "/batch").request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
-                .put(Entity.json(group));
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .post(Entity.json(symbols));
     }
 
-    public Response delete(int projectId, int groupId, String jwt) {
-        return client.target(url(projectId) + "/" + groupId).request()
+    public Response archive(int projectId, int symbolId, String jwt) {
+        return client.target(url(projectId) + "/" + symbolId + "/hide").request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
-                .delete();
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .post(null);
     }
 
-    public String url(int projectId) {
-        return baseUrl() + "/projects/" + projectId + "/groups";
+    public Response archiveMany(int projectId, List<Integer> symbolIds, String jwt) {
+        final List<String> ids = symbolIds.stream().map(String::valueOf).collect(Collectors.toList());
+
+        return client.target(url(projectId) + "/batch/" + String.join(",", ids) + "/hide").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .post(null);
+    }
+
+    public String url(long projectId) {
+        return baseUrl() + "/projects/" + projectId + "/symbols";
     }
 }

@@ -130,6 +130,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         parameterizedSymbolRepository.save(learnerResult.getResetSymbol());
         parameterizedSymbolRepository.save(learnerResult.getSymbols());
         if (learnerResult.getPostSymbol() != null) {
+            symbolParameterValueRepository.save(learnerResult.getPostSymbol().getParameterValues());
             parameterizedSymbolRepository.save(learnerResult.getPostSymbol());
         }
 

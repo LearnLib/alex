@@ -461,13 +461,11 @@ public class UserResource {
         }
 
         userDAO.delete(ids);
-
         LOGGER.traceExit("User(s) {} deleted.", ids);
 
         ids.forEach(id -> webhookService.fireEvent(new User(id), new UserEvent.Deleted(id)));
         return Response.status(Status.NO_CONTENT).build();
     }
-
 
     /**
      * Logs in a user by generating a unique JWT for him that needs to be send in every request.

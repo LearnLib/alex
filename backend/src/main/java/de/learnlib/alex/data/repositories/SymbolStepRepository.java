@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.data.repositories;
 
-import de.learnlib.alex.data.entities.ParameterizedSymbol;
+import de.learnlib.alex.data.entities.SymbolStep;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,30 +24,40 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * The JPA repository for parameterized symbols {@link ParameterizedSymbol}.
+ * The repository for {@link SymbolStep}.
  */
 @Repository
-public interface ParameterizedSymbolRepository extends JpaRepository<ParameterizedSymbol, Long> {
+public interface SymbolStepRepository extends JpaRepository<SymbolStep, Long> {
 
     /**
-     * Get all parameterized symbols by project ID.
+     * Delete all steps by a project ID.
      *
      * @param projectId
      *         The ID of the project.
-     * @return The parameterized symbols.
-     */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
-    List<ParameterizedSymbol> findAllBySymbol_Project_Id(Long projectId);
-
-    /**
-     * Delete all parameterized symbols by project ID.
-     *
-     * @param projectId
-     *         The ID of the project.
-     * @return The number of deleted parameterized symbols.
      */
     @Transactional
     @SuppressWarnings("checkstyle:methodname")
-    Long deleteAllBySymbol_Project_Id(Long projectId);
+    void deleteAllBySymbol_Project_Id(Long projectId);
+
+    /**
+     * Delete all steps by a symbol ID.
+     *
+     * @param symbolId
+     *         The ID of the symbol.
+     * @param stepIds
+     *         The IDs to delete.
+     */
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
+    void deleteAllBySymbol_IdAndIdNotIn(Long symbolId, List<Long> stepIds);
+
+    /**
+     * Delete all steps by a symbol ID.
+     *
+     * @param symbolId
+     *         The ID of the symbol.
+     */
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
+    void deleteAllBySymbol_Id(Long symbolId);
 }

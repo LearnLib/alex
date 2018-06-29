@@ -59,14 +59,14 @@ export class SymbolEditModalComponent {
         this.errorMsg = null;
 
         // update the symbol and close the modal dialog on success with the updated symbol
-        this.SymbolResource.update(this.symbol)
+        this.SymbolResource.update(this.symbol.toJson())
             .then(updatedSymbol => {
                 this.ToastService.success('Symbol updated');
                 this.EventBus.emit(events.SYMBOL_UPDATED, {symbol: updatedSymbol});
                 this.dismiss();
             })
-            .catch(response => {
-                this.errorMsg = response.data.message;
+            .catch(err => {
+                this.errorMsg = err.data.message;
             });
     }
 }

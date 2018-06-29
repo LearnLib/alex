@@ -24,7 +24,8 @@ import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.data.repositories.SymbolParameterRepository;
+import de.learnlib.alex.data.repositories.SymbolActionRepository;
+import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.testing.entities.TestSuite;
@@ -74,9 +75,14 @@ public class ProjectDAOImpl implements ProjectDAO {
     /** The repository for test reports. */
     private TestReportRepository testReportRepository;
 
-    private SymbolParameterRepository symbolParameterRepository;
-
+    /** The repository for parameterized symbols. */
     private ParameterizedSymbolRepository parameterizedSymbolRepository;
+
+    /** The repository for symbol steps. */
+    private SymbolStepRepository symbolStepRepository;
+
+    /** The repository for actions. */
+    private SymbolActionRepository symbolActionRepository;
 
     /** The FileDAO to use. Will be injected. */
     private FileDAO fileDAO;
@@ -97,18 +103,26 @@ public class ProjectDAOImpl implements ProjectDAO {
      *         The ProjectUrlDAO to use.
      * @param testReportRepository
      *         The repository for test reports.
+     * @param parameterizedSymbolRepository
+     *         The repository for parameterized symbols.
+     * @param symbolStepRepository
+     *         The repository for symbol steps.
+     * @param symbolActionRepository
+     *         The repository for actions.
      */
     @Inject
     public ProjectDAOImpl(ProjectRepository projectRepository, LearnerResultRepository learnerResultRepository,
             TestReportRepository testReportRepository, @Lazy FileDAO fileDAO, @Lazy ProjectUrlDAO projectUrlDAO,
-            SymbolParameterRepository symbolParameterRepository, ParameterizedSymbolRepository parameterizedSymbolRepository) {
+            ParameterizedSymbolRepository parameterizedSymbolRepository,
+            SymbolStepRepository symbolStepRepository, SymbolActionRepository symbolActionRepository) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
         this.projectUrlDAO = projectUrlDAO;
         this.testReportRepository = testReportRepository;
-        this.symbolParameterRepository = symbolParameterRepository;
         this.parameterizedSymbolRepository = parameterizedSymbolRepository;
+        this.symbolStepRepository = symbolStepRepository;
+        this.symbolActionRepository = symbolActionRepository;
     }
 
     @Override
@@ -191,7 +205,6 @@ public class ProjectDAOImpl implements ProjectDAO {
         try {
             project.setUser(user);
             project.setGroups(projectInDb.getGroups());
-            project.setNextSymbolId(projectInDb.getNextSymbolId());
             project.getUrls().forEach(url -> url.setProject(project));
 
             final List<ProjectUrl> urlsToRemove = projectInDb.getUrls().stream()
@@ -228,7 +241,8 @@ public class ProjectDAOImpl implements ProjectDAO {
         final Project project = projectRepository.findOne(projectId);
         checkAccess(user, project);
 
-        symbolParameterRepository.deleteAllBySymbol_Project_Id(projectId);
+        symbolActionRepository.deleteAllBySymbol_Project_Id(projectId);
+        symbolStepRepository.deleteAllBySymbol_Project_Id(projectId);
         parameterizedSymbolRepository.deleteAllBySymbol_Project_Id(projectId);
         testReportRepository.deleteAllByProject_Id(projectId);
         learnerResultRepository.deleteAllByProject_Id(projectId);
@@ -270,6 +284,8 @@ public class ProjectDAOImpl implements ProjectDAO {
             } else {
                 project.setCounters(null);
             }
+
+            Hibernate.initialize(project.getUrls());
         } else {
             project.setGroups(null);
             project.setSymbols(null);

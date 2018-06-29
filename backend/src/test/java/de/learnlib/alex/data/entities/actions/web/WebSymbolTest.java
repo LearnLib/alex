@@ -26,19 +26,23 @@ import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.PropertyFilterMixIn;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolActionStep;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.entities.actions.misc.WaitAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -55,8 +59,12 @@ public class WebSymbolTest {
 
     private Symbol symbol;
 
+    private ObjectMapper mapper;
+
     @Before
     public void setUp() {
+        mapper = new ObjectMapper();
+
         User user = new User();
         user.setId(42L);
 
@@ -74,30 +82,32 @@ public class WebSymbolTest {
         symbol.setName("WebSymbol");
 
         WebSymbolAction a1 = new ClickAction();
-        symbol.addAction(a1);
+        a1.setId(1L);
         CheckTextWebAction a2 = new CheckTextWebAction();
+        a2.setId(2L);
         a2.setValue("F[oO0]+");
         a2.setRegexp(true);
-        symbol.addAction(a2);
         WaitAction a3 = new WaitAction();
+        a3.setId(3L);
         a3.setDuration(ONE_SECOND);
-        symbol.addAction(a3);
-    }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldAddingSymbolBidirectional() {
-        symbol.addAction(null);
-    }
+        final SymbolActionStep step1 = new SymbolActionStep();
+        step1.setPosition(0);
+        step1.setAction(a1);
 
-    @Test
-    public void shouldFailOnAddingNullSymbol() {
-        WebSymbolAction a1 = mock(WebSymbolAction.class);
-        symbol.addAction(a1);
+        final SymbolActionStep step2 = new SymbolActionStep();
+        step2.setPosition(1);
+        step2.setAction(a2);
+
+        final SymbolActionStep step3 = new SymbolActionStep();
+        step3.setPosition(2);
+        step3.setAction(a3);
+
+        symbol.getSteps().addAll(Arrays.asList(step1, step2, step3));
     }
 
     @Test
     public void ensureThatSerializingAndThenDeserializingChangesNothing() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(symbol);
 
         Symbol symbolFromMapper = mapper.readValue(json, Symbol.class);
@@ -108,41 +118,29 @@ public class WebSymbolTest {
     }
 
     @Test
-    public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException {
-        String expectedJson = "{\"actions\":["
-                + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"node\":null,\"doubleClick\":false},"
-                + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"value\":\"F[oO0]+\",\"regexp\":true,\"node\":{\"selector\":\"document\",\"type\":\"CSS\"}},"
-                + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"duration\":1000}"
-                + "],\"description\":null,\"group\":2,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":null,\"successOutput\":null}";
+    public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException, JSONException {
+        String expectedJson = "{\"steps\":" + createActionSteps(symbol.getId()) + ",\"description\":null,\"group\":2,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":null,\"successOutput\":null}";
         symbol.setProject(null);
 
-        ObjectMapper mapper = new ObjectMapper();
         mapper.addMixIn(Object.class, PropertyFilterMixIn.class);
 
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("hidden");
         FilterProvider filters = new SimpleFilterProvider().addFilter("filter properties by name", filter);
 
         String json = mapper.writer(filters).writeValueAsString(symbol);
-
-        assertEquals(expectedJson, json);
+        JSONAssert.assertEquals(expectedJson, json, true);
     }
 
     @Test
-    public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException {
-        String expectedJson = "{\"actions\":["
-                + "{\"type\":\"web_click\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"node\":null,\"doubleClick\":false},"
-                + "{\"type\":\"web_checkForText\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"value\":\"F[oO0]+\",\"regexp\":true,\"node\":{\"selector\":\"document\",\"type\":\"CSS\"}},"
-                + "{\"type\":\"wait\",\"disabled\":false,\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"duration\":" + ONE_SECOND + "}],"
-                + "\"description\":null,\"group\":2,\"hidden\":false,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":1,\"successOutput\":null}";
-        ObjectMapper mapper = new ObjectMapper();
+    public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException, JSONException {
+        String expectedJson = "{\"steps\":" + createActionSteps(symbol.getId()) + ",\"description\":null,\"group\":2,\"hidden\":false,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":1,\"successOutput\":null}";
         String json = mapper.writeValueAsString(symbol);
 
-        assertEquals(expectedJson, json);
+        JSONAssert.assertEquals(expectedJson, json, true);
     }
 
     @Test
     public void shouldReadJSONFileCorrectly() throws IOException, URISyntaxException {
-        ObjectMapper mapper = new ObjectMapper();
         File file = new File(getClass().getResource("/actions/websymbolactions/WebSymbolTestData.json").toURI());
         symbol = mapper.readValue(file, Symbol.class);
 
@@ -158,9 +156,9 @@ public class WebSymbolTest {
                 WaitAction.class
         };
 
-        assertEquals(expectedActions.length, symbol.getActions().size());
+        assertEquals(expectedActions.length, symbol.getSteps().size());
         for (int i = 0; i < expectedActions.length; i++) {
-            assertTrue(expectedActions[i].isInstance(symbol.getActions().get(i)));
+            assertTrue(expectedActions[i].isInstance(((SymbolActionStep) symbol.getSteps().get(i)).getAction()));
         }
     }
 
@@ -175,9 +173,11 @@ public class WebSymbolTest {
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
 
+        final SymbolActionStep s1 = new SymbolActionStep(action1);
+        final SymbolActionStep s2 = new SymbolActionStep(action2);
+
         symbol = new Symbol();
-        symbol.addAction(action1);
-        symbol.addAction(action2);
+        symbol.getSteps().addAll(Arrays.asList(s1, s2));
 
         assertTrue(symbol.execute(connector).isSuccess());
     }
@@ -192,12 +192,21 @@ public class WebSymbolTest {
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
 
+        final SymbolActionStep s1 = new SymbolActionStep(action1);
+        final SymbolActionStep s2 = new SymbolActionStep(action2);
+
         symbol = new Symbol();
-        symbol.addAction(action1);
-        symbol.addAction(action2);
+        symbol.getSteps().addAll(Arrays.asList(s1, s2));
 
         assertFalse(symbol.execute(connector).isSuccess());
         verify(action2, never()).execute(connector);
     }
 
+    private String createActionSteps(Long symbolId) {
+        return "["
+                + "{\"id\": null, \"position\": 0, \"symbol\": " + symbolId + ", \"disabled\": false, \"type\": \"action\", \"action\": {\"id\": 1,\"type\":\"web_click\",\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"node\":null,\"doubleClick\":false}}"
+                + ",{\"id\": null, \"position\": 1, \"symbol\": " + symbolId + ", \"disabled\": false, \"type\": \"action\", \"action\": {\"id\": 2,\"type\":\"web_checkForText\",\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"value\":\"F[oO0]+\",\"regexp\":true,\"node\":{\"selector\":\"document\",\"type\":\"CSS\"}}}"
+                + ",{\"id\": null, \"position\": 2, \"symbol\": " + symbolId + ", \"disabled\": false, \"type\": \"action\", \"action\": {\"id\": 3,\"type\":\"wait\",\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"duration\":1000}}"
+                + "]";
+    }
 }

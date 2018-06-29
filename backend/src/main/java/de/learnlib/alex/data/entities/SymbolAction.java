@@ -70,7 +70,6 @@ import de.learnlib.alex.data.entities.actions.web.WaitForTextAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForTitleAction;
 import de.learnlib.alex.data.entities.actions.web.WebSymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -87,7 +86,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.UUID;
+import java.util.Objects;
 
 /**
  * Abstract super type of how a Action for Symbols should look & work like.
@@ -95,7 +94,7 @@ import java.util.UUID;
 @Entity
 @Table(
         name = "ACTIONS",
-        indexes = @Index(columnList = "symbolId, number")
+        indexes = @Index(columnList = "symbolId")
 )
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
@@ -159,28 +158,14 @@ public abstract class SymbolAction implements Serializable {
 
     /** The ID of the Action in the DB. */
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @JsonIgnore
-    protected UUID uuid;
+    @GeneratedValue
+    protected Long id;
 
     /** The symbol the action belongs to. */
     @ManyToOne
     @JoinColumn(name = "symbolId")
     @JsonIgnore
     protected Symbol symbol;
-
-    /** The position the action has in the actions list of the Symbol. */
-    @GeneratedValue(generator = "symbol_action_number_generator")
-    @GenericGenerator(
-            name = "symbol_action_number_generator",
-            strategy = "de.learnlib.alex.core.entities.validators.SymbolActionNumberGenerator")
-    @JsonIgnore
-    protected int number;
-
-    /** Should the action be executed or skipped? */
-    @NotNull
-    protected boolean disabled;
 
     /** Negate the outcome of the action? */
     @NotNull
@@ -198,23 +183,12 @@ public abstract class SymbolAction implements Serializable {
     @JsonIgnore
     private ConnectorManager connectorManager;
 
-    /**
-     * Get the ID of the Action used in the DB.
-     *
-     * @return The DB ID of the Action.
-     */
-    public UUID getUUID() {
-        return uuid;
+    public Long getId() {
+        return id;
     }
 
-    /**
-     * Set the ID of the Action in the DB.
-     *
-     * @param uuid
-     *         The DB ID of the Action.
-     */
-    public void setUUID(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
@@ -234,25 +208,6 @@ public abstract class SymbolAction implements Serializable {
      */
     public void setSymbol(Symbol symbol) {
         this.symbol = symbol;
-    }
-
-    /**
-     * Get the position the action has in the actions list of the {@link Symbol}.
-     *
-     * @return The position of the action in the list.
-     */
-    public int getNumber() {
-        return number;
-    }
-
-    /**
-     * Set the position the action has in the actions list.
-     *
-     * @param no
-     *         The new position.
-     */
-    public void setNumber(int no) {
-        this.number = no;
     }
 
     /**
@@ -292,26 +247,6 @@ public abstract class SymbolAction implements Serializable {
      */
     public void setIgnoreFailure(boolean ignoreFailure) {
         this.ignoreFailure = ignoreFailure;
-    }
-
-    /**
-     * As a default, an action is executed when the learner calls a symbols. If this method returns false, the learner
-     * skips the execution of the action and executes the following
-     *
-     * @return true if the action should be executed, false if should be skipped
-     */
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    /**
-     * Set the enable flag, i.e. if the execution of the action should be skipped
-     *
-     * @param disabled
-     *         true if the action should be executed, false if should be skipped
-     */
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
     }
 
     public String getErrorOutput() {
@@ -383,7 +318,6 @@ public abstract class SymbolAction implements Serializable {
 
         SymbolAction that = (SymbolAction) o;
 
-        if (number != that.number) return false;
         if (symbol != null ? !symbol.equals(that.symbol) : that.symbol != null) return false;
 
         return true;
@@ -391,9 +325,7 @@ public abstract class SymbolAction implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = symbol != null ? symbol.hashCode() : 0;
-        result = 31 * result + number;
-        return result;
+        return Objects.hash(getId(), getSymbol(), isNegated(), isIgnoreFailure(), getErrorOutput(), connectorManager);
     }
     //CHECKSTYLE.ON: AvoidInlineConditionals|MagicNumber|NeedBraces
 

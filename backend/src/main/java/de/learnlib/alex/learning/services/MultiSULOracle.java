@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.learning.services;
 
+import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.api.SUL;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.Query;
@@ -71,25 +72,39 @@ public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
 
                 // forking the sul allows us to pose multiple
                 // queries in parallel to multiple suls
-                SUL<I, O> forkedSul = sul.fork();
-                forkedSul.pre();
+                SUL<I, O> forkedSul = null;
+                Exception lastException;
+                int i = 0;
+                while (i < 2) {
+                    try {
+                        forkedSul = sul.fork();
+                        forkedSul.pre();
 
-                try {
+                        // Prefix: Execute symbols, don't record output
+                        for (I sym : q.getPrefix()) {
+                            forkedSul.step(sym);
+                        }
 
-                    // Prefix: Execute symbols, don't record output
-                    for (I sym : q.getPrefix()) {
-                        forkedSul.step(sym);
+                        // Suffix: Execute symbols, outputs constitute output word
+                        WordBuilder<O> wb = new WordBuilder<>(q.getSuffix().length());
+                        for (I sym : q.getSuffix()) {
+                            wb.add(forkedSul.step(sym));
+                        }
+
+                        q.answer(wb.toWord());
+                        forkedSul.post();
+                        break;
+                    } catch (Exception e) {
+                        lastException = e;
+                        if (forkedSul != null) {
+                            forkedSul.post();
+                        }
+                        i++;
                     }
 
-                    // Suffix: Execute symbols, outputs constitute output word
-                    WordBuilder<O> wb = new WordBuilder<>(q.getSuffix().length());
-                    for (I sym : q.getSuffix()) {
-                        wb.add(forkedSul.step(sym));
+                    if (i == 2) {
+                        throw new LearnerException("Retried 2 times without success. " + lastException.getMessage());
                     }
-
-                    q.answer(wb.toWord());
-                } finally {
-                    forkedSul.post();
                 }
             };
 

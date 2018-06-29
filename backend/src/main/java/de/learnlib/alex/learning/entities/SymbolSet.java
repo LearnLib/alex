@@ -39,6 +39,9 @@ public class SymbolSet {
      */
     private List<ParameterizedSymbol> symbols;
 
+    /**
+     * The symbol to execute after a membership query.
+     */
     private ParameterizedSymbol postSymbol;
 
     /** Constructor. */
@@ -53,8 +56,11 @@ public class SymbolSet {
      *         The reset symbol.
      * @param symbols
      *         The symbols.
+     * @param postSymbol
+     *         The post symbol.
      */
-    public SymbolSet(ParameterizedSymbol resetSymbol, List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol) {
+    public SymbolSet(ParameterizedSymbol resetSymbol, List<ParameterizedSymbol> symbols,
+            ParameterizedSymbol postSymbol) {
         this.resetSymbol = resetSymbol;
         this.symbols = symbols;
         this.postSymbol = postSymbol;

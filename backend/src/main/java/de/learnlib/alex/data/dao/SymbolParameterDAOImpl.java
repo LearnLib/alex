@@ -25,11 +25,13 @@ import de.learnlib.alex.data.entities.SymbolInputParameter;
 import de.learnlib.alex.data.entities.SymbolOutputParameter;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolParameterValue;
+import de.learnlib.alex.data.entities.SymbolPSymbolStep;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
+import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
 import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -47,38 +49,53 @@ import java.util.stream.Collectors;
 public class SymbolParameterDAOImpl implements SymbolParameterDAO {
 
     /** The project repository to use. */
-    @Inject
     private ProjectRepository projectRepository;
 
     /** The symbol repository to use. */
-    @Inject
     private SymbolRepository symbolRepository;
 
     /** The symbol parameter repository to use. */
-    @Inject
     private SymbolParameterRepository symbolParameterRepository;
 
     /** The injected repository for {@link TestCaseStep}. */
-    @Inject
     private TestCaseStepRepository testCaseStepRepository;
 
     /** The injected repository for {@link SymbolParameterValue}. */
-    @Inject
     private SymbolParameterValueRepository symbolParameterValueRepository;
 
-    @Inject
+    /** The injected repository for {@link ParameterizedSymbol}. */
     private ParameterizedSymbolRepository parameterizedSymbolRepository;
 
+    /** The repository for symbol repositories. */
+    private SymbolSymbolStepRepository symbolSymbolStepRepository;
+
     /** The symbol DAO to use. */
-    @Inject
     private SymbolDAO symbolDAO;
+
+    @Inject
+    public SymbolParameterDAOImpl(ProjectRepository projectRepository,
+            SymbolRepository symbolRepository,
+            SymbolParameterRepository symbolParameterRepository,
+            TestCaseStepRepository testCaseStepRepository,
+            SymbolParameterValueRepository symbolParameterValueRepository,
+            ParameterizedSymbolRepository parameterizedSymbolRepository,
+            SymbolSymbolStepRepository symbolSymbolStepRepository, SymbolDAO symbolDAO) {
+        this.projectRepository = projectRepository;
+        this.symbolRepository = symbolRepository;
+        this.symbolParameterRepository = symbolParameterRepository;
+        this.testCaseStepRepository = testCaseStepRepository;
+        this.symbolParameterValueRepository = symbolParameterValueRepository;
+        this.parameterizedSymbolRepository = parameterizedSymbolRepository;
+        this.symbolSymbolStepRepository = symbolSymbolStepRepository;
+        this.symbolDAO = symbolDAO;
+    }
 
     @Override
     @Transactional
     public SymbolParameter create(User user, Long projectId, Long symbolId, SymbolParameter parameter)
             throws NotFoundException, UnauthorizedException, ValidationException {
         final Project project = projectRepository.findOne(projectId);
-        final Symbol symbol = symbolRepository.findOne(projectId, symbolId);
+        final Symbol symbol = symbolRepository.findOne(symbolId);
 
         return create(user, project, symbol, parameter);
     }
@@ -88,7 +105,7 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
     public List<SymbolParameter> create(User user, Long projectId, Long symbolId, List<SymbolParameter> parameters)
             throws NotFoundException, UnauthorizedException, ValidationException {
         final Project project = projectRepository.findOne(projectId);
-        final Symbol symbol = symbolRepository.findOne(projectId, symbolId);
+        final Symbol symbol = symbolRepository.findOne(symbolId);
 
         final List<SymbolParameter> createdParameters = new ArrayList<>();
         for (final SymbolParameter param : parameters) {
@@ -112,13 +129,21 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
         // If a new parameter is created for a symbol, it may be that there are tests that use the symbol.
         // Therefore we have to add a new parameter value to the test steps that use the symbol.
         if (parameter instanceof SymbolInputParameter) {
-            final List<TestCaseStep> steps = testCaseStepRepository.findAllByTestCase_Project_IdAndSymbol_Id(project.getId(), symbol.getId());
-            steps.forEach(step -> {
+            final List<TestCaseStep> testSteps = testCaseStepRepository.findAllByTestCase_Project_IdAndSymbol_Id(project.getId(), symbol.getId());
+            testSteps.forEach(step -> {
                 final SymbolParameterValue value = new SymbolParameterValue();
                 value.setParameter(parameter);
                 step.getParameterValues().add(value);
             });
-            testCaseStepRepository.save(steps);
+            testCaseStepRepository.save(testSteps);
+
+            final List<SymbolPSymbolStep> symbolSteps = symbolSymbolStepRepository.findAllByPSymbol_Symbol_Id(symbol.getId());
+            symbolSteps.forEach(symbolStep -> {
+                final SymbolParameterValue value = new SymbolParameterValue();
+                value.setParameter(parameter);
+                symbolStep.getPSymbol().getParameterValues().add(value);
+            });
+            symbolSymbolStepRepository.save(symbolSteps);
         }
 
         return createdParameter;
@@ -129,7 +154,7 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
     public SymbolParameter update(User user, Long projectId, Long symbolId, SymbolParameter parameter)
             throws NotFoundException, UnauthorizedException, ValidationException {
         final Project project = projectRepository.findOne(projectId);
-        final Symbol symbol = symbolRepository.findOne(projectId, symbolId);
+        final Symbol symbol = symbolRepository.findOne(symbolId);
 
         checkAccess(user, project, symbol, parameter);
         checkIfTypeWithNameExists(symbol, parameter);
@@ -146,6 +171,14 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
                     }
                 }));
                 testCaseStepRepository.save(steps);
+
+                final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Project_Id(projectId);
+                for (ParameterizedSymbol pSymbol: pSymbols) {
+                    pSymbol.setParameterValues(pSymbol.getParameterValues().stream()
+                            .filter(pv -> !pv.getParameter().getId().equals(parameter.getId()))
+                            .collect(Collectors.toList()));
+                }
+                parameterizedSymbolRepository.save(pSymbols);
             }
         }
 
@@ -157,7 +190,7 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
     public void delete(User user, Long projectId, Long symbolId, Long parameterId)
             throws NotFoundException, UnauthorizedException {
         final Project project = projectRepository.findOne(projectId);
-        final Symbol symbol = symbolRepository.findOne(projectId, symbolId);
+        final Symbol symbol = symbolRepository.findOne(symbolId);
         final SymbolParameter parameter = symbolParameterRepository.findOne(parameterId);
 
         checkAccess(user, project, symbol, parameter);

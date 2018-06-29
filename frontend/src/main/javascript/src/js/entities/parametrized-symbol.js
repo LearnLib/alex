@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {AlphabetSymbol} from './alphabet-symbol';
+
 /**
  * The parametrized symbol.
  */
@@ -26,10 +28,16 @@ export class ParametrizedSymbol {
     constructor(obj = {}) {
 
         /**
+         * The ID of the parameterized symbol.
+         * @type {?number}
+         */
+        this.id = obj.id == null ? null : obj.id;
+
+        /**
          * The symbol to execute.
          * @type {?AlphabetSymbol}
          */
-        this.symbol = obj.symbol || null;
+        this.symbol = obj.symbol != null ? new AlphabetSymbol(obj.symbol) : null;
 
         /**
          * The parameter values for the symbol.
