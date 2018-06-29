@@ -1,3 +1,18 @@
+# ALEX 1.6.0
+
+## Breaking Changes
+
+* Symbols have to be migrated to the new version.
+  Please use the migration script `migrate-symbols-1.5.0-to-1.6.0.js` via:
+  
+  `node migrate-symbols-1.5.0-to-1.6.0.js -i ./symbols-from-1.5.0.json -o ./symbols-for-1.6.0.json`
+   
+## Features
+
+* Symbols can be composed of other symbols.
+* Symbols can be parameterized in learning experiments.
+
+
 # ALEX 1.5.1
 
 This release only contains some bug fixes.
