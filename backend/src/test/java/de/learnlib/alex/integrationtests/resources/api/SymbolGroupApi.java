@@ -48,13 +48,6 @@ public class SymbolGroupApi extends AbstractApi {
                 .post(Entity.json(groups));
     }
 
-    public Response get(int projectId, int groupId, String jwt) {
-        return client.target(url(projectId) + "/" + groupId).request()
-                .header(HttpHeaders.AUTHORIZATION, jwt)
-                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-                .get();
-    }
-
     public Response update(int projectId, int groupId, String group, String jwt) {
         return client.target(url(projectId) + "/" + groupId).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)

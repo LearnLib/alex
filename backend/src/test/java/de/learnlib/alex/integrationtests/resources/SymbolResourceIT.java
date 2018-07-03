@@ -17,6 +17,7 @@
 package de.learnlib.alex.integrationtests.resources;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolApi;
@@ -24,10 +25,10 @@ import de.learnlib.alex.integrationtests.resources.api.SymbolGroupApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import org.junit.Before;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
-
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
@@ -72,8 +73,10 @@ public class SymbolResourceIT extends AbstractResourceIT {
         projectId1 = JsonPath.read(res1.readEntity(String.class), "id");
         projectId2 = JsonPath.read(res2.readEntity(String.class), "id");
 
-        final Response res3 = symbolGroupApi.create(projectId1, "{\"name\":\"group1\", \"project\": " + projectId1 + "}", jwtUser1);
-        final Response res4 = symbolGroupApi.create(projectId2, "{\"name\":\"group2\", \"project\": " + projectId2 + "}", jwtUser2);
+        final Response res3 =
+                symbolGroupApi.create(projectId1, "{\"name\":\"group1\", \"project\": " + projectId1 + "}", jwtUser1);
+        final Response res4 =
+                symbolGroupApi.create(projectId2, "{\"name\":\"group2\", \"project\": " + projectId2 + "}", jwtUser2);
 
         symbolGroupId1 = JsonPath.read(res3.readEntity(String.class), "id");
         symbolGroupId2 = JsonPath.read(res4.readEntity(String.class), "id");
@@ -95,6 +98,22 @@ public class SymbolResourceIT extends AbstractResourceIT {
 
         assertEquals(HttpStatus.CREATED.value(), res.getStatus());
         assertEquals(1, getNumberOfSymbols(projectId1, jwtUser1));
+    }
+
+    @Test
+    public void shouldCreateASymbolWithAllProperties() throws Exception {
+        final String symbolJson = createSymbolWithAllPropertiesJson(projectId1, symbolGroupId1, "s1");
+        final Response res1 = symbolApi.create(projectId1, symbolJson, jwtUser1);
+
+        assertEquals(HttpStatus.CREATED.value(), res1.getStatus());
+        final String symbolRes = res1.readEntity(String.class);
+        final JsonNode symbolNode = objectMapper.readTree(symbolJson);
+        ((ObjectNode) symbolNode).put("id", objectMapper.readTree(symbolRes).get("id").intValue());
+        JSONAssert.assertEquals(symbolNode.toString(), symbolRes, true);
+
+        final Response res2 = symbolGroupApi.getAll(projectId1, jwtUser1);
+        final String symbolInGroup = objectMapper.readTree(res2.readEntity(String.class)).get(1).get("symbols").get(0).toString();
+        JSONAssert.assertEquals(symbolNode.toString(), symbolInGroup, true);
     }
 
     @Test
@@ -230,6 +249,21 @@ public class SymbolResourceIT extends AbstractResourceIT {
         assertTrue(hidden2);
     }
 
+    @Test
+    public void shouldCreateSymbolsWithSymbolSteps() throws Exception {
+        symbolApi.create(projectId1, createSymbolWithAllPropertiesJson(projectId1, symbolGroupId1, "s2"), jwtUser1);
+        symbolApi.create(projectId1, createSymbolWithAllPropertiesJson(projectId1, symbolGroupId1, "s3"), jwtUser1);
+
+        final String symbolWithSymbolStepsJson = createSymbolWithSymbolStepsJson(projectId1, symbolGroupId1, "s1");
+        final Response resS1 = symbolApi.create(projectId1, symbolWithSymbolStepsJson, jwtUser1);
+        assertEquals(HttpStatus.CREATED.value(), resS1.getStatus());
+
+        final JsonNode groupsNode = objectMapper.readTree(symbolGroupApi.getAll(projectId1, jwtUser1).readEntity(String.class));
+        final JsonNode symbolNode = groupsNode.get(1).get("symbols").get(2);
+
+        assertEquals(2, symbolNode.get("steps").size());
+    }
+
     private void validateSymbol(String symbol, int projectId) {
         int symbolId = JsonPath.read(symbol, "$.id");
         int symbolProjectId = JsonPath.read(symbol, "$.project");
@@ -261,6 +295,18 @@ public class SymbolResourceIT extends AbstractResourceIT {
                 + "}";
     }
 
+    private String createSymbolWithSymbolStepsJson(int projectId, int groupId, String name) {
+        return "{"
+                + "\"name\":\"" + name + "\""
+                + ",\"project\": " + projectId
+                + ",\"group\": " + groupId
+                + ",\"steps\": ["
+                + "{\"type\":\"symbol\", \"disabled\": false, \"pSymbol\": {\"symbolFromName\": \"s2\", \"parameterValues\": []}}"
+                + ",{\"type\":\"symbol\", \"disabled\": false, \"pSymbol\": {\"symbolFromName\": \"s3\", \"parameterValues\": []}}"
+                + "]"
+                + "}";
+    }
+
     private String createSymbolWithProjectJson(int projectId, String name) {
         return "{"
                 + "\"name\":\"" + name + "\""
@@ -278,10 +324,17 @@ public class SymbolResourceIT extends AbstractResourceIT {
                 + "}";
     }
 
-    private String createSymbolJson(String name) {
+    private String createSymbolWithAllPropertiesJson(int projectId, int groupId, String name) {
         return "{"
                 + "\"name\":\"" + name + "\""
+                + ",\"project\": " + projectId
+                + ",\"group\":" + groupId
                 + ",\"steps\": []"
+                + ",\"description\": \"test description\""
+                + ",\"hidden\": false"
+                + ",\"inputs\": []"
+                + ",\"outputs\": []"
+                + ",\"successOutput\": \"yep\""
                 + "}";
     }
 }

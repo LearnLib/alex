@@ -23,9 +23,9 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolActionStep;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.entities.SymbolPSymbolStep;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolStep;
-import de.learnlib.alex.data.entities.SymbolPSymbolStep;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
@@ -161,7 +161,8 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     @Transactional
-    public List<Symbol> create(User user, Long projectId, List<Symbol> symbols) throws NotFoundException, ValidationException {
+    public List<Symbol> create(User user, Long projectId, List<Symbol> symbols)
+            throws NotFoundException, ValidationException {
         try {
             final List<Symbol> createdSymbols = new ArrayList<>();
             final Map<Long, List<SymbolStep>> symbolStepMap = new HashMap<>();
@@ -215,6 +216,9 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbolToCreate.setName(symbol.getName());
         symbolToCreate.setProject(project);
         symbolToCreate.setGroup(group);
+        symbolToCreate.setDescription(symbol.getDescription());
+        symbolToCreate.setHidden(symbol.isHidden());
+        symbolToCreate.setSuccessOutput(symbol.getSuccessOutput());
         group.getSymbols().add(symbolToCreate);
         project.getSymbols().add(symbolToCreate);
 
@@ -234,12 +238,14 @@ public class SymbolDAOImpl implements SymbolDAO {
         return createdSymbol;
     }
 
-    private void saveSymbolSteps(Long projectId, List<Symbol> createdSymbols, Map<Long, List<SymbolStep>> symbolStepMap) {
+    private void saveSymbolSteps(Long projectId, List<Symbol> createdSymbols, Map<Long, List<SymbolStep>> symbolStepMap)
+            throws NotFoundException {
+
         final List<Symbol> allSymbols = symbolRepository.findAllByProject_Id(projectId);
         final Map<String, Symbol> symbolMap = new HashMap<>();
         allSymbols.forEach(symbol -> symbolMap.put(symbol.getName(), symbol));
 
-        for (Symbol createdSymbol: createdSymbols) {
+        for (Symbol createdSymbol : createdSymbols) {
             createdSymbol.setSteps(symbolStepMap.get(createdSymbol.getId()));
 
             for (int i = 0; i < createdSymbol.getSteps().size(); i++) {
@@ -254,7 +260,11 @@ public class SymbolDAOImpl implements SymbolDAO {
                 } else if (step instanceof SymbolPSymbolStep) {
                     // first, set the reference to the corresponding symbol
                     final SymbolPSymbolStep symbolStep = (SymbolPSymbolStep) step;
-                    final Symbol symbol = symbolMap.get(symbolStep.getPSymbol().getSymbol().getName());
+                    final String symbolname = symbolStep.getPSymbol().getSymbol().getName();
+                    final Symbol symbol = symbolMap.get(symbolname);
+                    if (symbol == null) {
+                        throw new NotFoundException("The symbol with the name " + symbolname + " does not exist.");
+                    }
                     symbolStep.getPSymbol().setSymbol(symbol);
 
                     // then, set the referenced symbol parameters
@@ -397,29 +407,26 @@ public class SymbolDAOImpl implements SymbolDAO {
             }
             return updatedSymbols;
         } catch (javax.validation.ConstraintViolationException e) {
-            symbols.forEach(s -> s.setId(null));
             throw ValidationExceptionHelper.createValidationException("Symbols were not updated:", e);
         } catch (org.hibernate.exception.ConstraintViolationException e) {
-            symbols.forEach(s -> s.setId(null));
             throw new ValidationException("Symbols were not updated: " + e.getMessage(), e);
         } catch (IllegalStateException e) {
-            symbols.forEach(s -> s.setId(null));
             throw new ValidationException("Could not update the Symbols because one is not valid.", e);
         } catch (IllegalArgumentException e) {
-            symbols.forEach(s -> s.setId(null));
             throw e;
         } catch (NotFoundException e) {
-            symbols.forEach(s -> s.setId(null));
             throw new NotFoundException("Could not update the Symbol because it was nowhere to be found.", e);
         }
     }
 
-    private Symbol doUpdate(User user, Long projectId, Symbol symbol) throws IllegalArgumentException, NotFoundException {
+    private Symbol doUpdate(User user, Long projectId, Symbol symbol)
+            throws IllegalArgumentException, NotFoundException {
         final Project project = projectRepository.findOne(projectId);
         checkAccess(user, project, symbol);
 
         // make sure the name of the symbol is unique
-        final Symbol symbolWithSameName = symbolRepository.findOneByProject_IdAndName(symbol.getProjectId(), symbol.getName());
+        final Symbol symbolWithSameName =
+                symbolRepository.findOneByProject_IdAndName(symbol.getProjectId(), symbol.getName());
         if (symbolWithSameName != null && !symbolWithSameName.getId().equals(symbol.getId())) {
             throw new ValidationException("To update a symbol its name must be unique.");
         }
@@ -530,8 +537,8 @@ public class SymbolDAOImpl implements SymbolDAO {
             map.put(symbol.getName(), state);
         });
 
-        for (final Symbol symbol: symbols) {
-            for (final SymbolStep step: symbol.getSteps()) {
+        for (final Symbol symbol : symbols) {
+            for (final SymbolStep step : symbol.getSteps()) {
                 if (step instanceof SymbolPSymbolStep) {
                     final SymbolPSymbolStep symbolStep = (SymbolPSymbolStep) step;
                     final Symbol target = symbolStep.getPSymbol().getSymbol();
@@ -545,8 +552,12 @@ public class SymbolDAOImpl implements SymbolDAO {
             }
         }
 
-        final Set<Set<Integer>> computedSCCs = SCCs.collectSCCs(graph).stream().map(HashSet::new).collect(Collectors.toSet());
-        return computedSCCs.stream().filter(s -> s.size() > 1).collect(Collectors.toSet()).size() > 0; // remove single component SCC
+        final Set<Set<Integer>> computedSCCs =
+                SCCs.collectSCCs(graph).stream().map(HashSet::new).collect(Collectors.toSet());
+        return computedSCCs.stream()
+                .filter(s -> s.size() > 1)
+                .collect(Collectors.toSet())
+                .size() > 0; // remove single component SCC
     }
 
     @Override
@@ -554,11 +565,11 @@ public class SymbolDAOImpl implements SymbolDAO {
     public List<Symbol> hide(User user, Long projectId, List<Long> ids) throws NotFoundException {
         final Project project = projectRepository.findOne(projectId);
         final List<Symbol> symbols = symbolRepository.findAllByIdIn(ids);
-        for (Symbol symbol: symbols) {
+        for (Symbol symbol : symbols) {
             checkAccess(user, project, symbol);
         }
 
-        for (Symbol symbol: symbols) {
+        for (Symbol symbol : symbols) {
             symbol.setProject(project);
             symbol.setHidden(true);
         }
