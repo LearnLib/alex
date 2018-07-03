@@ -17,7 +17,9 @@
 package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.SearchHelper;
+import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
@@ -76,6 +78,9 @@ public class TestService {
     /** The {@link ProjectUrlRepository} to use. */
     private final ProjectUrlRepository projectUrlRepository;
 
+    /** The {@link ProjectDAO} to use. */
+    private final ProjectDAO projectDAO;
+
     /**
      * Constructor.
      *
@@ -89,29 +94,20 @@ public class TestService {
      *         The injected {@link TestReportDAO}.
      * @param projectUrlRepository
      *         The injected {@link ProjectUrlRepository}.
+     * @param projectDAO
+     *         The injected {@link ProjectDAO}.
      */
     @Inject
     public TestService(ConnectorContextHandlerFactory contextHandlerFactory, WebhookService webhookService,
-            TestDAO testDAO, TestReportDAO testReportDAO, ProjectUrlRepository projectUrlRepository) {
+            TestDAO testDAO, TestReportDAO testReportDAO, ProjectUrlRepository projectUrlRepository,
+            ProjectDAO projectDAO) {
         this.contextHandlerFactory = contextHandlerFactory;
         this.webhookService = webhookService;
         this.testDAO = testDAO;
         this.testReportDAO = testReportDAO;
         this.testingThreads = new HashMap<>();
         this.projectUrlRepository = projectUrlRepository;
-    }
-
-    /**
-     * Check if a test process in active for a project.
-     *
-     * @param user
-     *         The current user.
-     * @param projectId
-     *         The id of the the project.
-     * @return If a test process is active.
-     */
-    public boolean isActive(User user, Long projectId) {
-        return testingThreads.containsKey(user.getId()) && testingThreads.get(user.getId()).containsKey(projectId);
+        this.projectDAO = projectDAO;
     }
 
     /**
@@ -134,14 +130,37 @@ public class TestService {
             }
         });
 
-        this.testingThreads.putIfAbsent(user.getId(), new HashMap<>());
-        this.testingThreads.get(user.getId()).put(project.getId(), thread);
+        if (testingThreads.containsKey(user.getId())) {
+            if (testingThreads.get(user.getId()).containsKey(project.getId())) {
+                testingThreads.get(user.getId()).get(project.getId()).add(config);
+            } else {
+                testingThreads.get(user.getId()).put(project.getId(), thread);
+                thread.start();
+            }
+        } else {
+            this.testingThreads.put(user.getId(), new HashMap<>());
+            this.testingThreads.get(user.getId()).put(project.getId(), thread);
+            thread.start();
+        }
 
-        thread.start();
+        return getStatus(user, project);
+    }
 
-        final TestStatus status = new TestStatus();
-        status.setActive(true);
-        return status;
+    /**
+     * Abort the test thread of the user and the project.
+     *
+     * @param user
+     *         The user.
+     * @param projectId
+     *         The ID of the project.
+     * @throws NotFoundException
+     *         If the project cannot be found.
+     */
+    public void abort(User user, Long projectId) throws NotFoundException {
+        final Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.COUNTERS);
+        if (testingThreads.containsKey(user.getId()) && testingThreads.get(user.getId()).containsKey(project.getId())) {
+            testingThreads.get(user.getId()).get(project.getId()).abort();
+        }
     }
 
     /**
@@ -165,6 +184,7 @@ public class TestService {
                 final TestReport report = testingThreads.get(user.getId()).get(project.getId()).getReport();
                 status.setReport(report);
                 status.setActive(true);
+                status.setTestsInQueue(testingThreads.get(user.getId()).get(project.getId()).getNumberOfTestsInQueue());
             }
         }
 
@@ -359,7 +379,8 @@ public class TestService {
                         if (value.getParameter().getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
                             variableStore.set(value.getParameter().getName(), valueWithVariables);
                         } else {
-                            counterStore.set(testCase.getProject().getId(), value.getParameter().getName(), Integer.valueOf(valueWithVariables));
+                            counterStore.set(testCase.getProject().getId(), value.getParameter()
+                                    .getName(), Integer.valueOf(valueWithVariables));
                         }
                     });
 

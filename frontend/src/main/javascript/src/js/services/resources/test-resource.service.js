@@ -84,6 +84,17 @@ export class TestResource {
     }
 
     /**
+     * Abort the execution of the current test processes.
+     *
+     * @param {number} projectId The ID of the project.
+     * @return {*}
+     */
+    abort(projectId) {
+        return this.$http.post(`${apiUrl}/projects/${projectId}/tests/abort`)
+            .then(response => response.data);
+    }
+
+    /**
      * Update a test case.
      *
      * @param testCase The updated test case.

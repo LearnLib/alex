@@ -94,11 +94,9 @@ export const testSuiteViewComponent = {
              */
             this.report = null;
 
-            /**
-             * If tests are being executed.
-             * @type {boolean}
-             */
-            this.active = false;
+            this.status = {
+                active: false
+            };
 
             this.testConfigs = [];
 
@@ -130,6 +128,7 @@ export const testSuiteViewComponent = {
             // check if a test process is active
             this.TestResource.getStatus(this.project.id)
                 .then(data => {
+                    this.status = data;
                     if (data.active) {
                         this._pollStatus();
                     }
@@ -260,7 +259,7 @@ export const testSuiteViewComponent = {
                 resolve: {
                     tests: () => JSON.parse(JSON.stringify(selectedTests))
                 }
-            }).result.then(tests => {
+            }).result.then(() => {
                 this.TestResource.get(this.project.id, this.testSuite.id)
                     .then(testSuite => {
                         this.testSuite = testSuite;
@@ -285,7 +284,9 @@ export const testSuiteViewComponent = {
             this.TestResource.executeMany(this.project.id, config)
                 .then(() => {
                     this.ToastService.success(`The test execution has been started.`);
-                    this._pollStatus();
+                    if (!this.status.active) {
+                        this._pollStatus();
+                    }
                 })
                 .catch((err) => {
                     this.ToastService.danger(`The test execution failed. ${err.data.message}`);
@@ -293,20 +294,20 @@ export const testSuiteViewComponent = {
         }
 
         _pollStatus() {
-            this.active = true;
+            this.status.active = true;
             this.report = null;
 
             const poll = (wait) => {
                 window.setTimeout(() => {
                     this.TestResource.getStatus(this.project.id)
                         .then(data => {
+                            this.status = data;
                             if (data.report != null) {
                                 data.report.testResults.forEach((result) => {
                                     this.results[result.test.id] = result;
                                 });
                                 this.report = data.report;
                             }
-                            this.active = data.active;
                             if (!data.active) {
 
                                 this.ToastService.success('The test process finished');
@@ -328,6 +329,12 @@ export const testSuiteViewComponent = {
             };
 
             poll(100);
+        }
+
+        abortTesting() {
+            this.TestResource.abort(this.project.id)
+                .then(() => this.ToastService.success('The testing process has been aborted.'))
+                .catch(err => this.ToastService.danger(`Could not abort the testing process. ${err.data.message}`));
         }
 
         openTestConfigModal() {

@@ -27,6 +27,22 @@ public class TestStatus {
     /** The test report that contains intermediate results. */
     private TestReport report;
 
+    /** The number of tests in queue. */
+    private int testsInQueue;
+
+    /** Constructor. */
+    public TestStatus() {
+        this.testsInQueue = 0;
+    }
+
+    public int getTestsInQueue() {
+        return testsInQueue;
+    }
+
+    public void setTestsInQueue(int testsInQueue) {
+        this.testsInQueue = testsInQueue;
+    }
+
     public boolean isActive() {
         return active;
     }

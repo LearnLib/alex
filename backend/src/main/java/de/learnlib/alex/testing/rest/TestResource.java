@@ -33,7 +33,10 @@ import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.testing.events.TestEvent;
 import de.learnlib.alex.testing.services.TestService;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.http.HttpStatus;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -65,6 +68,8 @@ import java.util.Map;
 @Path("/projects/{project_id}/tests")
 @RolesAllowed({"REGISTERED"})
 public class TestResource {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The security context containing the user of the request. */
     @Context
@@ -192,13 +197,17 @@ public class TestResource {
     public Response getAll(@PathParam("project_id") Long projectId, @QueryParam("type") String type)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("getAll(projectId: {}, type: {}) with user {}", projectId, type, user);
 
         try {
             final List<Test> tests = testDAO.getByType(user, projectId, type);
+            LOGGER.traceExit("getAll() with status {}", Response.Status.OK);
             return Response.ok(tests).build();
         } catch (UnauthorizedException e) {
+            LOGGER.traceExit("getAll() with status {}", Response.Status.UNAUTHORIZED);
             return ResourceErrorHandler.createRESTErrorMessage("Tests.get", Response.Status.UNAUTHORIZED, e);
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit("getAll() with status {}", Response.Status.BAD_REQUEST);
             return ResourceErrorHandler.createRESTErrorMessage("Tests.get", Response.Status.BAD_REQUEST, e);
         }
     }
@@ -275,14 +284,8 @@ public class TestResource {
             throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Project project = projectDAO.getByID(user.getId(), projectId);
-
-        if (testService.isActive(user, projectId)) {
-            return ResourceErrorHandler.createRESTErrorMessage("TestResource.execute",
-                    Response.Status.BAD_REQUEST, "There is already a testing process running for this project.");
-        } else {
-            final TestStatus status = testService.start(user, project, testConfig);
-            return Response.ok(status).build();
-        }
+        final TestStatus status = testService.start(user, project, testConfig);
+        return Response.ok(status).build();
     }
 
     /**
@@ -299,9 +302,34 @@ public class TestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response status(@PathParam("project_id") Long projectId) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("status(projectId: {}) with user {}", projectId, user);
         final Project project = projectDAO.getByID(user.getId(), projectId);
         final TestStatus status = testService.getStatus(user, project);
+        LOGGER.traceExit("status() with status {}", status);
         return Response.ok(status).build();
+    }
+
+    /**
+     * Abort the testing process.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @return 200 if the process could be aborted.
+     */
+    @POST
+    @Path("/abort")
+    public Response abort(@PathParam("project_id") Long projectId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("abort(projectId: {}) with user {}", projectId, user);
+
+        try {
+            testService.abort(user, projectId);
+            LOGGER.traceExit("abort() with status {}", Response.Status.OK.getStatusCode());
+            return Response.ok().build();
+        } catch (NotFoundException e) {
+            LOGGER.traceExit("abort() with status {}", HttpStatus.NOT_FOUND.value());
+            return ResourceErrorHandler.createRESTErrorMessage("TestResource.abort", Response.Status.NOT_FOUND, e.getMessage());
+        }
     }
 
     /**
