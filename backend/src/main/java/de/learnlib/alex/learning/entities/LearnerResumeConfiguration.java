@@ -42,7 +42,6 @@ public class LearnerResumeConfiguration extends AbstractLearnerConfiguration imp
     private int stepNo;
 
     /** The ids of the symbols to add. */
-    @JsonIgnore
     private List<ParameterizedSymbol> symbolsToAdd;
 
     /**
@@ -55,7 +54,6 @@ public class LearnerResumeConfiguration extends AbstractLearnerConfiguration imp
 
     @Override
     public void checkConfiguration() throws IllegalArgumentException {
-
         // one should be able to continue learning if the sample eq oracle is used without
         // having specified a counterexample if a new symbol is added.
         if (eqOracle instanceof SampleEQOracleProxy) {

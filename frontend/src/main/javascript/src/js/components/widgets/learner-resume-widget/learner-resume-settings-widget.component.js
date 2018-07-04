@@ -15,6 +15,7 @@
  */
 
 import {eqOracleType} from '../../../constants';
+import {ParametrizedSymbol} from '../../../entities/parametrized-symbol';
 
 /**
  * The directive for the widget of the sidebar where learn resume configurations can be edited. Should be included
@@ -30,15 +31,15 @@ class LearnerResumeSettingsWidgetComponent {
         this.eqOracleTypes = eqOracleType;
 
         /**
-         * The symbols that can be added to the learner.
-         * @type {AlphabetSymbol[]}
+         * The selected symbol to add.
+         * @type {?AlphabetSymbol}
          */
-        this.symbolsToAdd = [];
+        this.selectedSymbol = null;
     }
 
-    $onInit() {
-        // Make sure the reset symbol can not be added.
-          this.symbolsToAdd = this.symbols.filter(s => s.id !== this.result.resetSymbol.symbol.id);
+    addSelectedSymbol() {
+        this.configuration.symbolsToAdd.push(ParametrizedSymbol.fromSymbol(this.selectedSymbol));
+        this.selectedSymbol = null;
     }
 
     /**

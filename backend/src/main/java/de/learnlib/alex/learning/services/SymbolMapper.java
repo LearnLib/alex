@@ -63,7 +63,7 @@ public class SymbolMapper implements SULMapper<
      *         The symbol to add.
      */
     public void addSymbol(ParameterizedSymbol symbol) {
-        this.symbolMap.putIfAbsent(symbol.getSymbol().getName(), symbol);
+        this.symbolMap.putIfAbsent(symbol.getComputedName(), symbol);
     }
 
     @Override
