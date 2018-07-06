@@ -19,6 +19,7 @@ package de.learnlib.alex.learning.entities;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.services.Learner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +47,7 @@ public class LearnerStatusTest {
         statistics.setMqsUsed(new Statistics.DetailedStatistics(1L, 1L));
         learnerResult.setStatistics(statistics);
         learnerResult.setTestNo(0L);
+        learnerResult.setProject(new Project(1L));
 
         LearnerStatus status = new LearnerStatus(learnerResult, Learner.LearnerPhase.LEARNING, new ArrayList<>());
         JsonNode json = mapper.readTree(mapper.writeValueAsString(status));

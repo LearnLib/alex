@@ -37,7 +37,7 @@ public class AbstractLearnerConfigurationTest {
 
     private static final AbstractLearningAlgorithm<String, String> ALGORITHM = new TTT();
 
-    private final String driverConfig = "{\"name\":\"htmlUnit\",\"height\":0,\"id\":null,\"implicitlyWait\":0,\"pageLoadTimeout\":10,\"scriptTimeout\":10,\"width\":0}";
+    private final String driverConfig = "{\"name\":\"htmlUnit\",\"height\":0,\"implicitlyWait\":0,\"pageLoadTimeout\":10,\"scriptTimeout\":10,\"width\":0}";
 
     @Test
     public void shouldCreateTheCorrectDefaultJSON() throws Exception {
@@ -55,6 +55,9 @@ public class AbstractLearnerConfigurationTest {
 
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(configuration);
+
+        System.out.println(expectedJSON);
+        System.out.println(json);
 
         JSONAssert.assertEquals(expectedJSON, json, true);
     }

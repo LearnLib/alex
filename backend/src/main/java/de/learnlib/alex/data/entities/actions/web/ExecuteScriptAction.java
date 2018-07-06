@@ -53,7 +53,7 @@ public class ExecuteScriptAction extends SymbolAction {
      * The javascript to execute.
      */
     @NotBlank
-    @Column(columnDefinition = "CLOB")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String script;
 
     /**

@@ -48,7 +48,7 @@ public class WebElementLocator implements Serializable {
 
     /** The selector of the element[s]. */
     @NotBlank
-    @Column(columnDefinition = "CLOB")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String selector;
 
     /** What kind of selector {@link #selector} is. */

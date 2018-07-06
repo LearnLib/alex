@@ -28,6 +28,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
@@ -86,6 +87,7 @@ public class WaitForTitleAction extends WebSymbolAction {
      * The value the title should match / contain.
      */
     @NotBlank
+    @Column(name = "\"value\"")
     private String value;
 
     /**

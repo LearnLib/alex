@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.learning.entities.webdrivers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -67,6 +68,7 @@ public abstract class AbstractWebDriverConfig implements Serializable {
     /** The id of the config in the database. */
     @Id
     @GeneratedValue
+    @JsonIgnore
     private Long id;
 
     /** The width of the browser window. */

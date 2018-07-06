@@ -29,6 +29,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -108,6 +109,7 @@ public class CheckNodeAttributeValueAction extends WebSymbolAction {
      * The attribute value to check for.
      */
     @NotNull
+    @Column(name = "\"value\"")
     private String value;
 
     /**

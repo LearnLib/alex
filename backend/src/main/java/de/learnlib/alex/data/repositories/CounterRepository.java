@@ -23,13 +23,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Repository to persist Counters.
  */
 @Repository
-public interface CounterRepository extends JpaRepository<Counter, UUID> {
+public interface CounterRepository extends JpaRepository<Counter, Long> {
 
     /**
      * Find all counters in a Project of an User.

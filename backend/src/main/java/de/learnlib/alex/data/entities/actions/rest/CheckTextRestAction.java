@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -47,10 +48,12 @@ public class CheckTextRestAction extends RESTSymbolAction {
 
     /** The expected text in the response body of the last request. */
     @NotBlank
+    @Column(name = "\"value\"")
     private String value;
 
     /** Field to determine if the search string is a regular expression. */
     @NotNull
+    @Column(name = "\"regexp\"")
     private boolean regexp;
 
     /**

@@ -40,6 +40,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -89,7 +90,6 @@ public class LearnerResult implements Serializable {
     private AlphabetProxy sigma;
 
     /** The {@link AbstractLearningAlgorithm} to use during the learning. */
-    @Cascade(CascadeType.ALL)
     private AbstractLearningAlgorithm<String, String> algorithm;
 
     /** The URLs that were used for learning. */
@@ -98,9 +98,7 @@ public class LearnerResult implements Serializable {
     /** The browser to use during the learning. */
     private AbstractWebDriverConfig driverConfig;
 
-    /**
-     * A comment to describe the intention / setting of the learn process. This field is optional.
-     */
+    /** A comment to describe the intention / setting of the learn process. This field is optional. */
     private String comment;
 
     /** The hypothesis of the result. */
@@ -169,11 +167,7 @@ public class LearnerResult implements Serializable {
     @Transient
     @JsonProperty("project")
     public Long getProjectId() {
-        if (project == null) {
-            return 0L;
-        } else {
-            return project.getId();
-        }
+        return project == null ? null : project.getId();
     }
 
     /**
@@ -282,6 +276,7 @@ public class LearnerResult implements Serializable {
     /**
      * @return The algorithm to use during the learning.
      */
+    @Cascade(CascadeType.ALL)
     public AbstractLearningAlgorithm<String, String> getAlgorithm() {
         return algorithm;
     }
@@ -294,7 +289,8 @@ public class LearnerResult implements Serializable {
         this.algorithm = algorithm;
     }
 
-    @Column(columnDefinition = "BLOB")
+    @OneToOne
+    @Cascade(CascadeType.ALL)
     public AbstractWebDriverConfig getDriverConfig() {
         return driverConfig;
     }

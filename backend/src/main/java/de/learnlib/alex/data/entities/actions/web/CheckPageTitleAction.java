@@ -28,6 +28,7 @@ import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.WebDriver;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -52,6 +53,7 @@ public class CheckPageTitleAction extends WebSymbolAction {
      * Field to determine if the search string is a regular expression. Only works while searching for text.
      */
     @NotNull
+    @Column(name = "\"regexp\"")
     private boolean regexp;
 
     /** Constructor. */

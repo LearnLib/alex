@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.data.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -43,6 +44,7 @@ public class SymbolParameterValue implements Serializable {
     private SymbolParameter parameter;
 
     /** The value for the parameter. */
+    @Column(name = "\"value\"")
     private String value;
 
     public Long getId() {

@@ -60,7 +60,7 @@ import java.util.Objects;
         uniqueConstraints = {
                 @UniqueConstraint(
                         columnNames = {"projectId", "name"},
-                        name = "Unique name in project")
+                        name = "unique_name_in_project")
         }
 )
 @JsonPropertyOrder(alphabetic = true)
@@ -248,7 +248,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     @JsonProperty
-    @Column(columnDefinition = "CLOB")
+    @Column(columnDefinition = "MEDIUMTEXT")
     public String getDescription() {
         return description;
     }

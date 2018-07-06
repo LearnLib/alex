@@ -19,7 +19,6 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Entity;
@@ -32,7 +31,6 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * A simple counter class.
@@ -48,10 +46,9 @@ public class Counter implements Serializable {
 
     /** The ID of the counter in the DB. */
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @GeneratedValue
     @JsonIgnore
-    private UUID uuid;
+    private Long id;
 
     /** The project the counter belongs to. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
@@ -74,32 +71,18 @@ public class Counter implements Serializable {
         value = 0;
     }
 
-    /**
-     * @return The internal ID used by the database.
-     */
-    public UUID getUUID() {
-        return uuid;
+    public Long getId() {
+        return id;
     }
 
-    /** @param uuid The counter id. */
-    public void setUUID(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    /**
-     * Get the project in which the counter is used in..
-     * @return The related project.
-     */
     public Project getProject() {
         return project;
     }
 
-    /**
-     * Set a new project for the counter.
-     *
-     * @param project
-     *         The new related project.
-     */
     public void setProject(Project project) {
         this.project = project;
     }
@@ -112,11 +95,7 @@ public class Counter implements Serializable {
      */
     @JsonProperty("project")
     public Long getProjectId() {
-        if (project == null) {
-            return 0L;
-        } else {
-            return this.project.getId();
-        }
+        return project == null ? null : project.getId();
     }
 
     /**
@@ -171,7 +150,7 @@ public class Counter implements Serializable {
     @Override
     public Counter clone() {
         Counter counter = new Counter();
-        counter.setUUID(uuid);
+        counter.setId(id);
         counter.setName(name);
         counter.setProject(project);
         counter.setValue(value);

@@ -46,7 +46,7 @@ public class ValidateJsonAction extends RESTSymbolAction {
      * The JSON schema to validate the response of the latest request against.
      */
     @NotBlank
-    @Column(columnDefinition = "CLOB")
+    @Column(name = "\"schema\"", columnDefinition = "MEDIUMTEXT")
     private String schema;
 
     @Override

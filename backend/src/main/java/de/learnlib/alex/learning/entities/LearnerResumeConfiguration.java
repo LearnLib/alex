@@ -44,9 +44,7 @@ public class LearnerResumeConfiguration extends AbstractLearnerConfiguration imp
     /** The ids of the symbols to add. */
     private List<ParameterizedSymbol> symbolsToAdd;
 
-    /**
-     * Constructor.
-     */
+    /** Constructor. */
     public LearnerResumeConfiguration() {
         super();
         this.symbolsToAdd = new ArrayList<>();

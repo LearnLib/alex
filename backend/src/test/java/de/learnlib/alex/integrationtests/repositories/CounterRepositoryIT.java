@@ -31,7 +31,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
-import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -70,7 +69,7 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
         counter = counterRepository.save(counter);
 
-        assertNotNull(counter.getUUID());
+        assertNotNull(counter.getId());
         assertThat(counterRepository.count(), is(equalTo(1L)));
     }
 
@@ -143,7 +142,7 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
         counter2 = counterRepository.save(counter2);
 
-        assertNotNull(counter2.getUUID());
+        assertNotNull(counter2.getId());
     }
 
     @Test
@@ -182,13 +181,14 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         counter3 = counterRepository.save(counter3);
 
         List<Counter> counters = counterRepository.findAllByProjectAndNameIn(project,
-                                                                             "TestCounter1", "TestCounter3");
+                "TestCounter1", "TestCounter3");
 
         assertThat(counters.size(), is(equalTo(2)));
         assertThat(counters, hasItem(equalTo(counter1)));
         assertThat(counters, not(hasItem(equalTo(counter2))));
         assertThat(counters, hasItem(equalTo(counter3)));
     }
+
     @Test
     public void shouldFetchOntCountersOfAProjectByItsName() {
         User user = createUser("alex@test.example");
@@ -216,14 +216,14 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         Counter counter = createCounter(project, "TestCounter");
         counter = counterRepository.save(counter);
 
-        counterRepository.delete(counter.getUUID());
+        counterRepository.delete(counter.getId());
 
         assertThat(counterRepository.count(), is(equalTo(0L)));
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingCounter() {
-        counterRepository.delete(UUID.randomUUID());
+        counterRepository.delete(-1L);
     }
 
 
