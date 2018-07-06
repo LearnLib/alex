@@ -45,6 +45,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import javax.persistence.EntityManager;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -229,7 +230,7 @@ public class LearnerResultDAOImplTest {
         User user = new User();
 
         List<LearnerResult> results = createLearnerResultsList();
-        Long[] testNos = new Long[]{0L, 1L, 2L};
+        List<Long> testNos = Arrays.asList(0L, 1L, 2L);
 
         given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, testNos))
                 .willReturn(results);
@@ -245,9 +246,8 @@ public class LearnerResultDAOImplTest {
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingMultipleResultThrowsAnExceptionIfOneResultIdIsInvalid() throws NotFoundException {
         User user = new User();
-        //
-        Long[] testNos = new Long[]{0L, 1L, 2L};
-        //
+        List<Long> testNos = Arrays.asList(0L, 1L, 2L);
+
         given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, testNos))
                 .willReturn(Collections.emptyList());
 
@@ -259,9 +259,8 @@ public class LearnerResultDAOImplTest {
         User user = new User();
 
         LearnerResult result = createLearnerResultsList().get(0);
-        Long[] testNos = new Long[]{0L};
 
-        given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, testNos[0]))
+        given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, Collections.singletonList(0L)))
                 .willReturn(Collections.singletonList(result));
 
         LearnerResult resultFromDAO = learnerResultDAO.get(user, PROJECT_ID, 0L, true);
@@ -272,10 +271,8 @@ public class LearnerResultDAOImplTest {
     @Test(expected = NotFoundException.class)
     public void ensureThatGettingANonExistingResultThrowsAnException() throws NotFoundException {
         User user = new User();
-        //
-        Long[] testNos = new Long[]{0L};
-        //
-        given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, testNos[0]))
+
+        given(learnerResultRepository.findByProject_IdAndTestNoIn(PROJECT_ID, Collections.singletonList(0L)))
                 .willReturn(Collections.emptyList());
 
         learnerResultDAO.get(user, PROJECT_ID, 0L, true); // should fail
@@ -359,13 +356,10 @@ public class LearnerResultDAOImplTest {
 
     @Test
     public void shouldDeleteMultipleResults() throws NotFoundException {
-        User user = new User();
-        //
-        Long[] testNos = new Long[]{0L, 1L};
-        //
+        List<Long> testNos = Arrays.asList(0L, 1L);
         LearnerStatus status = new LearnerStatus();
+
         given(learner.getStatus(PROJECT_ID)).willReturn(status);
-        //
         given(learnerResultRepository.deleteByProject_IdAndTestNoIn(PROJECT_ID, testNos)).willReturn(2L);
 
         learnerResultDAO.delete(learner, PROJECT_ID, testNos);
@@ -375,13 +369,10 @@ public class LearnerResultDAOImplTest {
 
     @Test(expected = NotFoundException.class)
     public void shouldThrowAnExceptionIfTheTestResultToDeleteWasNotFound() throws NotFoundException {
-        User user = new User();
-        //
-        Long[] testNos = new Long[]{0L, 1L};
-        //
+        List<Long> testNos = Arrays.asList(0L, 1L);
         LearnerStatus status = new LearnerStatus();
+
         given(learner.getStatus(PROJECT_ID)).willReturn(status);
-        //
         given(learnerResultRepository.deleteByProject_IdAndTestNoIn(PROJECT_ID, testNos)).willReturn(1L);
 
         learnerResultDAO.delete(learner, PROJECT_ID, testNos);
@@ -395,7 +386,7 @@ public class LearnerResultDAOImplTest {
         LearnerResult result = new LearnerResult();
         result.setProject(project);
         result.setTestNo(0L);
-        Long[] testNos = new Long[]{0L, 1L};
+        List<Long> testNos = Arrays.asList(0L, 1L);
 
         LearnerStatus status = new LearnerStatus(result, Learner.LearnerPhase.LEARNING, new ArrayList<>());
         given(learner.getStatus(PROJECT_ID)).willReturn(status);

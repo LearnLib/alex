@@ -89,7 +89,9 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
 
         parameterValues.forEach(v -> {
             if (v.getValue() != null) {
-                final String value = v.getValue() == null ? null : SearchHelper.insertVariableValues(connectors, symbol.getProjectId(), v.getValue());
+                final String value = v.getValue() == null ?
+                        null :
+                        SearchHelper.insertVariableValues(connectors, symbol.getProjectId(), v.getValue());
                 localVariableStore.set(v.getParameter().getName(), value);
             }
         });
@@ -153,10 +155,30 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
     @JsonIgnore
     public String getComputedName() {
         final List<String> parameters = parameterValues.stream()
+                .filter(pv -> !((SymbolInputParameter) pv.getParameter()).isPrivate() && pv.getValue() != null)
                 .map(SymbolParameterValue::getValue)
-                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         final String suffix = parameters.isEmpty() ? "" : " <" + String.join(", ", parameters) + ">";
         return getSymbol().getName() + suffix;
+    }
+
+    /**
+     * Copies the parameterized symbol. There are new instances created that do not contain IDs so that the copy can be
+     * saved directly in the database.
+     *
+     * @return The copied parameterized symbol.
+     */
+    public ParameterizedSymbol copy() {
+        final ParameterizedSymbol pSymbol = new ParameterizedSymbol();
+        pSymbol.setSymbol(symbol);
+        pSymbol.setParameterValues(
+                parameterValues.stream().map(pv -> {
+                    final SymbolParameterValue value = new SymbolParameterValue();
+                    value.setParameter(pv.getParameter());
+                    value.setValue(pv.getValue());
+                    return value;
+                }).collect(Collectors.toList())
+        );
+        return pSymbol;
     }
 }

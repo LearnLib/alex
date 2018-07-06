@@ -31,7 +31,6 @@ import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 import net.automatalib.automata.transout.MealyMachine;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -49,17 +48,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Entity class to store the result of a test run, i.e. the outcome of a learn iteration and must not be the final
- * result.
- * The result contains the configuration of the learning process, the resulting hypothesis and some meta data
+ * result. The result contains the configuration of the learning process, the resulting hypothesis and some meta data
  * (duration, #EQ, ...).
  */
 @Entity
 @Table(
-    uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "testNo"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "testNo"})
 )
 @JsonPropertyOrder(alphabetic = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -68,7 +65,7 @@ public class LearnerResult implements Serializable {
     private static final long serialVersionUID = 4619722174562257862L;
 
     /** The id of the LearnerResult in the DB. */
-    private UUID uuid;
+    private Long id;
 
     /** The reference to the Project the test run belongs to. */
     private Project project;
@@ -101,8 +98,9 @@ public class LearnerResult implements Serializable {
     /** The browser to use during the learning. */
     private AbstractWebDriverConfig driverConfig;
 
-    /** A comment to describe the intention / setting of the learn process.
-     *  This field is optional. */
+    /**
+     * A comment to describe the intention / setting of the learn process. This field is optional.
+     */
     private String comment;
 
     /** The hypothesis of the result. */
@@ -112,9 +110,9 @@ public class LearnerResult implements Serializable {
     private Statistics statistics;
 
     /**
-     * If this field is set some sort of error occurred during the learning.
-     * In this case this field stores more information about the error.
-     * All other field can still have data, that are valid to some extend and should only be used carefully.
+     * If this field is set some sort of error occurred during the learning. In this case this field stores more
+     * information about the error. All other field can still have data, that are valid to some extend and should only
+     * be used carefully.
      */
     private String errorText;
 
@@ -132,27 +130,14 @@ public class LearnerResult implements Serializable {
         this.urls = new ArrayList<>();
     }
 
-    /**
-     * Get the ID of the result used in the DB.
-     *
-     * @return The ID of teh result.
-     */
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @JsonIgnore
-    public UUID getUUID() {
-        return uuid;
+    @GeneratedValue
+    public Long getId() {
+        return id;
     }
 
-    /**
-     * Set a new ID for the result in the DB.
-     *
-     * @param uuid
-     *         The new ID for the result.
-     */
-    public void setUUID(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
@@ -224,7 +209,8 @@ public class LearnerResult implements Serializable {
     }
 
     /**
-     * @param steps The new list of steps for the result.
+     * @param steps
+     *         The new list of steps for the result.
      */
     public void setSteps(List<LearnerResultStep> steps) {
         this.steps = steps;
@@ -239,7 +225,8 @@ public class LearnerResult implements Serializable {
     }
 
     /**
-     * @param resetSymbol The new reset symbol to use during the learning.
+     * @param resetSymbol
+     *         The new reset symbol to use during the learning.
      */
     public void setResetSymbol(ParameterizedSymbol resetSymbol) {
         this.resetSymbol = resetSymbol;
@@ -263,7 +250,8 @@ public class LearnerResult implements Serializable {
     }
 
     /**
-     * @param symbols The new set of symbols used during the learning.
+     * @param symbols
+     *         The new set of symbols used during the learning.
      */
     public void setSymbols(List<ParameterizedSymbol> symbols) {
         this.symbols = symbols;
@@ -299,7 +287,8 @@ public class LearnerResult implements Serializable {
     }
 
     /**
-     * @param algorithm The new algorithm to use during the learning.
+     * @param algorithm
+     *         The new algorithm to use during the learning.
      */
     public void setAlgorithm(AbstractLearningAlgorithm<String, String> algorithm) {
         this.algorithm = algorithm;
@@ -322,7 +311,8 @@ public class LearnerResult implements Serializable {
     }
 
     /**
-     * @param comment The new comment to describe the result. Can be empty.
+     * @param comment
+     *         The new comment to describe the result. Can be empty.
      */
     public void setComment(String comment) {
         this.comment = comment;
@@ -394,9 +384,8 @@ public class LearnerResult implements Serializable {
     }
 
     /**
-     * Set an error text as part of the learning result.
-     * If a error text is set, it also implies that something during the learning went wrong and
-     * {@link #isError()} will return True.
+     * Set an error text as part of the learning result. If a error text is set, it also implies that something during
+     * the learning went wrong and {@link #isError()} will return True.
      *
      * @param errorText
      *         The new error text.
@@ -421,7 +410,10 @@ public class LearnerResult implements Serializable {
         return useMQCache;
     }
 
-    /** @param useMQCache {@link LearnerResult#useMQCache}. */
+    /**
+     * @param useMQCache
+     *         {@link LearnerResult#useMQCache}.
+     */
     public void setUseMQCache(boolean useMQCache) {
         this.useMQCache = useMQCache;
     }
@@ -441,17 +433,17 @@ public class LearnerResult implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LearnerResult result = (LearnerResult) o;
-        return Objects.equals(uuid, result.uuid);
+        return Objects.equals(id, result.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return "[LearnerResult " + uuid + "] " + project + " / " + testNo + " / "
+        return "[LearnerResult " + id + "] " + project + " / " + testNo + " / "
                 + ": " + sigma + ", " + hypothesis;
     }
 

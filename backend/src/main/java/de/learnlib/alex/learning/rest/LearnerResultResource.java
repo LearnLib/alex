@@ -163,10 +163,7 @@ public class LearnerResultResource {
                 LearnerResult result = learnerResultDAO.get(user, projectId, testNos.get(0), includeSteps);
                 return Response.ok(result).build();
             } else {
-                List<LearnerResult> result = learnerResultDAO.getAll(
-                        user, projectId,
-                        testNos.toArray(new Long[testNos.size()]),
-                        includeSteps);
+                List<LearnerResult> result = learnerResultDAO.getAll(user, projectId, testNos, includeSteps);
                 return ResponseHelper.renderList(result, Response.Status.OK);
             }
         } catch (IllegalArgumentException e) {
@@ -223,15 +220,13 @@ public class LearnerResultResource {
     @Path("{test_numbers}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteResultSet(@PathParam("project_id") Long projectId,
-            @PathParam("test_numbers") IdsList testNumbers)
-            throws NotFoundException {
+            @PathParam("test_numbers") IdsList testNumbers) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.deleteResultSet(" + projectId + ", " + testNumbers + ") "
                 + "for user " + user + ".");
 
         try {
-            Long[] numbersLongArray = testNumbers.toArray(new Long[testNumbers.size()]);
-            learnerResultDAO.delete(learner, projectId, numbersLongArray);
+            learnerResultDAO.delete(learner, projectId, testNumbers);
             return Response.status(Response.Status.NO_CONTENT).build();
 
         } catch (ValidationException e) {

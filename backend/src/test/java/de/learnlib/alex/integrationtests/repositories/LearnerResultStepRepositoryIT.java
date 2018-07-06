@@ -70,7 +70,7 @@ public class LearnerResultStepRepositoryIT extends AbstractRepositoryIT {
 
         learnerResultStepRepository.save(step);
 
-        assertNotNull(result.getUUID());
+        assertNotNull(result.getId());
     }
 
     @Test(expected = DataIntegrityViolationException.class)
@@ -174,7 +174,7 @@ public class LearnerResultStepRepositoryIT extends AbstractRepositoryIT {
 
         learnerResultStepRepository.save(step2);
 
-        assertNotNull(result2.getUUID());
+        assertNotNull(result2.getId());
     }
 
     /*

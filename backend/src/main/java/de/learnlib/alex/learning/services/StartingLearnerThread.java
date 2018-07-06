@@ -76,7 +76,7 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
 
         // persist the learner result for the first time.
         // also persist the first step.
-        learnerResultDAO.create(user, result);
+        result = learnerResultDAO.create(user, result);
         LearnerResultStep currentStep = createStep(start, end, 0, null);
 
         doLearn(currentStep);

@@ -252,9 +252,9 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
                 e1.printStackTrace();
             }
         } else {
-            if (result.getUUID() == null) {
+            if (result.getId() == null) {
                 try {
-                    learnerResultDAO.create(user, result);
+                    result = learnerResultDAO.create(user, result);
                 } catch (de.learnlib.alex.common.exceptions.NotFoundException e1) {
                     e1.printStackTrace();
                 }
