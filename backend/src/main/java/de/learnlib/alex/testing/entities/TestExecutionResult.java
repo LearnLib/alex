@@ -37,7 +37,7 @@ public class TestExecutionResult extends ExecuteResult implements Serializable {
 
     /** The referenced test result. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "testResultUuid")
+    @JoinColumn(name = "testResultId")
     @JsonIgnore
     private TestCaseResult result;
 

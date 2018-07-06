@@ -125,7 +125,7 @@ public class CallAction extends RESTSymbolAction {
     /**
      * Optional data to sent with a POST or PUT request.
      */
-    @Column(columnDefinition = "CLOB")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String data;
 
     /**

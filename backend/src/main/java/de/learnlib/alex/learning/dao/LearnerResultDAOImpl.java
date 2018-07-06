@@ -251,11 +251,14 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         result.setSteps(new ArrayList<>());
         result.setSymbols(new ArrayList<>());
 
+        entityManager.detach(result.getDriverConfig());
+        result.getDriverConfig().setId(null);
+
         final LearnerResult clonedResult = learnerResultRepository.save(result);
 
         steps.forEach(step -> {
             entityManager.detach(step);
-            step.setUUID(null);
+            step.setId(null);
             step.setResult(clonedResult);
         });
 
@@ -346,20 +349,20 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
                 Hibernate.initialize(r.getPostSymbol().getParameterValues());
                 SymbolDAOImpl.loadLazyRelations(r.getPostSymbol().getSymbol());
             }
-        });
-        results.forEach(r -> {
+
             Hibernate.initialize(r.getSymbols());
             r.getSymbols().forEach(s -> {
                 Hibernate.initialize(s.getParameterValues());
                 SymbolDAOImpl.loadLazyRelations(s.getSymbol());
             });
+
+            Hibernate.initialize(r.getUrls());
+            Hibernate.initialize(r.getDriverConfig());
+
+            if (includeSteps) {
+                Hibernate.initialize(r.getSteps());
+            }
         });
-        results.forEach(r -> Hibernate.initialize(r.getUrls()));
-        if (includeSteps) {
-            results.forEach(r -> Hibernate.initialize(r.getSteps()));
-        } else {
-            results.forEach(r -> r.setSteps(null));
-        }
     }
 
     private void checkIfResultsCanBeDeleted(Learner learner, Long projectId, List<Long> testNos)

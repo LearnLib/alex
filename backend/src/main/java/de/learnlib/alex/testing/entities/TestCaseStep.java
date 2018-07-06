@@ -84,7 +84,7 @@ public class TestCaseStep implements Serializable {
     private boolean shouldFail;
 
     /** The expected result of the step in a natural language. */
-    @Column(columnDefinition = "CLOB")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String expectedResult;
 
     /** Constructor. */

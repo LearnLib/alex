@@ -30,6 +30,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -49,6 +50,7 @@ public class ClickLinkAction extends WebSymbolAction {
 
     /** The value the site is checked for. */
     @NotBlank
+    @Column(name = "\"value\"")
     private String value;
 
     /**

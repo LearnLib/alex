@@ -53,13 +53,14 @@ public class WaitForTextAction extends WebSymbolAction {
      * The string or pattern to look for.
      */
     @NotBlank
-    @Column(columnDefinition = "CLOB")
+    @Column(name = "\"value\"", columnDefinition = "MEDIUMTEXT")
     private String value;
 
     /**
      * If the text is interpreted as a regular expression.
      */
     @NotNull
+    @Column(name = "\"regexp\"")
     private boolean regexp;
 
     /**

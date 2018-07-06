@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -55,12 +56,14 @@ public class AssertVariableAction extends SymbolAction {
      * The value to assert the variable content with.
      */
     @NotBlank
+    @Column(name = "\"value\"")
     private String value;
 
     /**
      * Whether the value of the variable is matched against a regular expression.
      */
     @NotNull
+    @Column(name = "\"regexp\"")
     private boolean regexp;
 
     /** Constructor. */

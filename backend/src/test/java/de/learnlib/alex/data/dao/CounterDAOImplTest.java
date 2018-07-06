@@ -279,12 +279,13 @@ public class CounterDAOImplTest {
     public void shouldDeleteACounter() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
-        //
+
         Counter counter = new Counter();
+        counter.setProject(project);
         List<Counter> counterAsList = Collections.singletonList(counter);
-        //
+
         given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
         given(counterRepository.findAllByProjectAndNameIn(project, COUNTER_NAME)).willReturn(counterAsList);
 

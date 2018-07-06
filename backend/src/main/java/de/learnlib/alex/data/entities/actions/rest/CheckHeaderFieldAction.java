@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -48,14 +49,17 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
 
     /** The key of the header field to check for the value. */
     @NotBlank
+    @Column(name = "\"key\"")
     private String key;
 
     /** The expected value which should be in the header field. */
     @NotBlank
+    @Column(name = "\"value\"")
     private String value;
 
     /** Field to determine if the search string is a regular expression. */
     @NotNull
+    @Column(name = "\"regexp\"")
     private boolean regexp;
 
     /**

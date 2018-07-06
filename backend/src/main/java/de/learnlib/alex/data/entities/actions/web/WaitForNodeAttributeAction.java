@@ -29,6 +29,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -71,6 +72,7 @@ public class WaitForNodeAttributeAction extends WebSymbolAction {
 
     /** The value the attribute should match / contain. */
     @NotBlank
+    @Column(name = "\"value\"")
     private String value;
 
     /** The attribute to wait for. */

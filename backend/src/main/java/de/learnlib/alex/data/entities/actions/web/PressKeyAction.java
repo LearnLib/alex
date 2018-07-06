@@ -30,6 +30,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -60,6 +61,7 @@ public class PressKeyAction extends WebSymbolAction {
      * The escaped string representation of the unicode that represents the key.
      **/
     @NotBlank
+    @Column(name = "\"key\"")
     private String key;
 
     @Override

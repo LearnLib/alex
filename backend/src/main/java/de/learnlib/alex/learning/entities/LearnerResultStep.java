@@ -39,7 +39,6 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Entity class to store the result of a test run, i.e. the outcome of a learn iteration and must not be the final
@@ -57,7 +56,7 @@ public class LearnerResultStep implements Serializable {
     private static final long serialVersionUID = -6932946318109366918L;
 
     /** The id of the LearnerResult in the DB. */
-    private UUID uuid;
+    private Long id;
 
     /** The result the step is part of. */
     private LearnerResult result;
@@ -100,26 +99,15 @@ public class LearnerResultStep implements Serializable {
         this.statistics = new Statistics();
     }
 
-    /**
-     * Get the ID of the result used in the DB.
-     *
-     * @return The ID of teh result.
-     */
     @Id
     @GeneratedValue
     @JsonIgnore
-    public UUID getUUID() {
-        return uuid;
+    public Long getId() {
+        return id;
     }
 
-    /**
-     * Set a new ID for the result in the DB.
-     *
-     * @param uuid
-     *         The new ID for the result.
-     */
-    public void setUUID(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
@@ -287,7 +275,7 @@ public class LearnerResultStep implements Serializable {
      *
      * @return More (internal) information of the algorithm as string.
      */
-    @Column(columnDefinition = "CLOB")
+    @Column(columnDefinition = "MEDIUMTEXT")
     public String getAlgorithmInformation() {
         return algorithmInformation;
     }
@@ -350,12 +338,12 @@ public class LearnerResultStep implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LearnerResultStep step = (LearnerResultStep) o;
-        return Objects.equals(uuid, step.uuid);
+        return Objects.equals(id, step.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid);
+        return Objects.hash(id);
     }
 
     @Override
@@ -365,7 +353,7 @@ public class LearnerResultStep implements Serializable {
             testNo = result.getTestNo();
         }
 
-        return "[LearnerResultStep " + this.uuid + "] " + result + " / " + testNo + " / " + stepNo + ": " + hypothesis;
+        return "[LearnerResultStep " + this.id + "] " + result + " / " + testNo + " / " + stepNo + ": " + hypothesis;
     }
 
 }
