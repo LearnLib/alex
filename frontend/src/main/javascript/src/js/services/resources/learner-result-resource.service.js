@@ -95,4 +95,17 @@ export class LearnResultResource {
         return this.$http.post(`${apiUrl}/projects/${result.project}/results/${result.testNo}/clone`, {})
             .then(res => new LearnResult(res.data));
     }
+
+    /**
+     * Generate a test suite of a discrimination tree.
+     *
+     * @param {number} projectId The ID of the project.
+     * @param {number} testNo The test number.
+     * @param {Object} config The config object.
+     * @return {*}
+     */
+    generateTestSuite(projectId, testNo, config) {
+        return this.$http.post(`${apiUrl}/projects/${projectId}/results/${testNo}/generateTestSuite`, config)
+            .then(res => res.data);
+    }
 }

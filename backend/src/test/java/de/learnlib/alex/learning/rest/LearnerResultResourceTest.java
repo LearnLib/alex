@@ -24,9 +24,9 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.learning.services.Learner;
+import de.learnlib.alex.learning.services.TestGenerator;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -64,11 +64,11 @@ public class LearnerResultResourceTest extends JerseyTest {
     @Mock
     private Learner learner;
 
+    @Mock
+    private TestGenerator testGenerator;
+
     private User admin;
     private String adminToken;
-
-    @Mock
-    private LearnerStatus status;
 
     private Project project;
 
@@ -84,6 +84,7 @@ public class LearnerResultResourceTest extends JerseyTest {
             protected void configure() {
                 bind(learnerResultDAO).to(LearnerResultDAO.class);
                 bind(learner).to(Learner.class);
+                bind(testGenerator).to(TestGenerator.class);
             }
         });
         return testApplication;

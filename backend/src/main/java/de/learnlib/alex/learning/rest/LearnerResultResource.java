@@ -24,7 +24,10 @@ import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.learning.entities.TestSuiteGenerationConfig;
 import de.learnlib.alex.learning.services.Learner;
+import de.learnlib.alex.learning.services.TestGenerator;
+import de.learnlib.alex.testing.entities.TestSuite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -61,6 +64,9 @@ public class LearnerResultResource {
     /** The Learner to check if a result is not active before deletion. */
     @Inject
     private Learner learner;
+
+    @Inject
+    private TestGenerator testGenerator;
 
     /** The security context containing the user of the request. */
     @Context
@@ -203,6 +209,32 @@ public class LearnerResultResource {
     }
 
     /**
+     * Generate a test suite from the discrimination tree.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param testNo
+     *         The number of the learning experiment.
+     * @param config
+     *         The configuration object.
+     * @return The generated test suite.
+     */
+    @POST
+    @Path("{test_no}/generateTestSuite")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response generateTestSuite(@PathParam("project_id") Long projectId, @PathParam("test_no") Long testNo,
+            TestSuiteGenerationConfig config) throws Exception {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("generateTestSuite(projectId: {}, testNo: {}, config: {}) for user {}", projectId, testNo, config, user);
+
+        config.validate();
+        final TestSuite testSuite = testGenerator.generate(user, projectId, testNo, config);
+
+        LOGGER.traceEntry("generateTestSuite() with status {}", Response.Status.CREATED);
+        return Response.status(Response.Status.CREATED).entity(testSuite).build();
+    }
+
+    /**
      * Delete one or more learn result(s).
      *
      * @param projectId
@@ -237,8 +269,7 @@ public class LearnerResultResource {
     }
 
     private boolean parseEmbeddableFields(String embed) throws IllegalArgumentException {
-        if (embed == null
-                || embed.isEmpty()) {
+        if (embed == null || embed.isEmpty()) {
             return false;
         } else if (embed.toLowerCase().equals("steps")) {
             return true;

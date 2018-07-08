@@ -96,6 +96,7 @@ import {htmlElementPickerComponent} from './components/html-element-picker/html-
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
 import {symbolSelectModalComponent} from './components/modals/symbol-select-modal/symbol-select-modal.component';
 import {symbolsExportModalComponent} from './components/modals/symbols-export-modal/symbols-export-modal.component';
+import {testSuiteGenerationModalComponent} from './components/modals/test-suite-generation-modal/test-suite-generation-modal.component';
 import {userCreateModalComponent} from './components/modals/user-create-modal/user-create-modal.component';
 import {symbolParametersComponent} from './components/symbol-parameters/symbol-parameters.component';
 import {symbolSelectDropdownComponent} from './components/symbol-select-dropdown/symbol-select-dropdown.component';
@@ -358,6 +359,7 @@ angular
     .component('separatingWordModal', separatingWordModalComponent)
     .component('testsMoveModal', testsMoveModalComponent)
     .component('symbolSelectModal', symbolSelectModalComponent)
+    .component('testSuiteGenerationModal', testSuiteGenerationModalComponent)
 
     // view components
     .component('aboutView', aboutViewComponent)
