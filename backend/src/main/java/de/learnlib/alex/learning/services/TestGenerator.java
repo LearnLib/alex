@@ -18,10 +18,8 @@ package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
-import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
@@ -49,7 +47,6 @@ import javax.inject.Inject;
 import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -64,9 +61,6 @@ public class TestGenerator {
     /** The injected DAO for learner results. */
     private final LearnerResultDAO learnerResultDAO;
 
-    /** The injected DAO for tests. */
-    private final SymbolDAO symbolDAO;
-
     /** The injected DAO for symbols. */
     private final TestDAO testDAO;
 
@@ -77,14 +71,11 @@ public class TestGenerator {
      *         The injected DAO for learner results.
      * @param testDAO
      *         The injected DAO for tests.
-     * @param symbolDAO
-     *         The injected DAO for symbols.
      */
     @Inject
-    public TestGenerator(LearnerResultDAO learnerResultDAO, TestDAO testDAO, SymbolDAO symbolDAO) {
+    public TestGenerator(LearnerResultDAO learnerResultDAO, TestDAO testDAO) {
         this.learnerResultDAO = learnerResultDAO;
         this.testDAO = testDAO;
-        this.symbolDAO = symbolDAO;
     }
 
     /**
@@ -163,7 +154,7 @@ public class TestGenerator {
                 Word<String> accessSequenceOutcome = asTransformer.apply(accessSequence);
 
                 List<Long> accessSequenceAsIds =
-                        new ArrayList<>(convertWordToSymbolIds(accessSequence, lr.getSymbols()));
+                        new ArrayList<>(convertWordToPSymbolIds(accessSequence, lr.getSymbols()));
                 List<String> outcomeList = new ArrayList<>();
                 List<Long> testCaseSymbols = new ArrayList<>();
 
@@ -178,7 +169,7 @@ public class TestGenerator {
 
                     DSCR discriminator = nodeP.getDiscriminator();
                     testCaseSymbols.addAll(accessSequenceAsIds);
-                    testCaseSymbols.addAll(convertWordToSymbolIds(dscrExtractor.apply(discriminator), lr.getSymbols()));
+                    testCaseSymbols.addAll(convertWordToPSymbolIds(dscrExtractor.apply(discriminator), lr.getSymbols()));
 
                     final TestCase testCase = new TestCase();
                     if (tree instanceof MultiDTree) {
@@ -187,15 +178,15 @@ public class TestGenerator {
                         testCase.setName(e.getData() + " " + config.getName() + " " + testCaseNumber);
                     }
 
-                    setPreSteps(lr, testCase, config.isIncludeParameterValues());
-                    setStepsBySymbolIds(testCase, testCaseSymbols, user, projectId, config.isIncludeParameterValues());
-                    setPostSteps(lr, testCase, config.isIncludeParameterValues());
+                    setSteps(lr.getResetSymbol(), testCase, testCase.getPreSteps(), config.isIncludeParameterValues());
+                    setStepsByPSymbolIds(lr, testCase, testCaseSymbols, config.isIncludeParameterValues());
+                    setSteps(lr.getPostSymbol(), testCase, testCase.getPostSteps(), config.isIncludeParameterValues());
                     testCase.setProjectId(projectId);
                     testCase.setParent(testSuite);
                     testSuite.addTest(testCase);
 
                     outcomeList.addAll(convertWordToStringList(inEdge));
-                    // TODO: interpret other output values than OK and FAILED
+                    // TODO: interpret other output values than 'Ok' and 'Failed'
                     for (int i = 0; i < outcomeList.size(); i++) {
                         final TestCaseStep step = testCase.getSteps().get(i);
                         if (outcomeList.get(i).startsWith(ExecuteResult.DEFAULT_SUCCESS_OUTPUT)) {
@@ -217,53 +208,42 @@ public class TestGenerator {
                 accessSequenceAsIds.clear();
             } else if (e.isRoot() && e.getData() != null) {
                 final List<Long> accessSequenceAsList =
-                        convertWordToSymbolIds(accessSequenceExtractor.apply(e.getData()), lr.getSymbols());
-                try {
-                    final TestCase testCase = new TestCase();
-                    testCase.setName(e.getData() + " " + config.getName());
-                    testCase.setProjectId(projectId);
-                    setPreSteps(lr, testCase, config.isIncludeParameterValues());
-                    setStepsBySymbolIds(testCase, accessSequenceAsList, user, projectId, config.isIncludeParameterValues());
-                    setPostSteps(lr, testCase, config.isIncludeParameterValues());
-                    testCase.setParent(testSuite);
-                    testDAO.create(user, testCase);
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
+                        convertWordToPSymbolIds(accessSequenceExtractor.apply(e.getData()), lr.getSymbols());
+
+                final TestCase testCase = new TestCase();
+                testCase.setName(e.getData() + " " + config.getName());
+                testCase.setProjectId(projectId);
+                setSteps(lr.getResetSymbol(), testCase, testCase.getPreSteps(), config.isIncludeParameterValues());
+                setStepsByPSymbolIds(lr, testCase, accessSequenceAsList, config.isIncludeParameterValues());
+                setSteps(lr.getPostSymbol(), testCase, testCase.getPostSteps(), config.isIncludeParameterValues());
+                testCase.setParent(testSuite);
+                testDAO.create(user, testCase);
 
                 accessSequenceAsList.clear();
             }
         }
     }
 
-    private void setPreSteps(LearnerResult result, TestCase testCase, boolean includeValues)
-            throws NotFoundException {
-        final TestCaseStep preStep = new TestCaseStep();
-        preStep.setTestCase(testCase);
-        preStep.setPSymbol(result.getResetSymbol().copy());
-        testCase.getPreSteps().addAll(Collections.singletonList(preStep));
-    }
-
-    private void setPostSteps(LearnerResult result, TestCase testCase, boolean includeValues)
-            throws NotFoundException {
-        if (result.getPostSymbol() != null) {
-            final TestCaseStep postStep = new TestCaseStep();
-            postStep.setTestCase(testCase);
-            postStep.setPSymbol(result.getPostSymbol().copy());
-            testCase.getPostSteps().addAll(Collections.singletonList(postStep));
+    private void setSteps(ParameterizedSymbol pSymbol, TestCase testCase, List<TestCaseStep> stepList,
+            boolean includeValues) {
+        if (pSymbol != null) { // It can be that e.g. the post symbol has not been used
+            final TestCaseStep step = new TestCaseStep();
+            step.setTestCase(testCase);
+            step.setPSymbol(pSymbol.copy());
+            if (!includeValues) {
+                step.getPSymbol().getParameterValues().forEach(value -> value.setValue(null));
+            }
+            stepList.add(step);
         }
     }
 
-    private void setStepsBySymbolIds(TestCase testCase, List<Long> symbolIds, User user, Long projectId,
+    private void setStepsByPSymbolIds(LearnerResult result, TestCase testCase, List<Long> pSymbolIds,
             boolean includeValues) throws NotFoundException {
-        final Map<Long, Symbol> symbolMap = symbolDAO.getByIds(user, projectId, symbolIds).stream()
-                .collect(Collectors.toMap(Symbol::getId, Function.identity()));
+        final Map<Long, ParameterizedSymbol> pSymbolMap = result.getSymbols().stream()
+                .collect(Collectors.toMap(ParameterizedSymbol::getId, Function.identity()));
 
-        for (Long id : symbolIds) {
-            final TestCaseStep step = new TestCaseStep();
-            step.setTestCase(testCase);
-            step.setPSymbol(ParameterizedSymbol.fromSymbol(symbolMap.get(id)));
-            testCase.getSteps().add(step);
+        for (Long id : pSymbolIds) {
+            setSteps(pSymbolMap.get(id), testCase, testCase.getSteps(), includeValues);
         }
     }
 
@@ -271,9 +251,9 @@ public class TestGenerator {
         return word.stream().collect(Collectors.toList());
     }
 
-    private List<Long> convertWordToSymbolIds(Word<String> word, List<ParameterizedSymbol> pSymbols) {
-        final Map<String, Symbol> symbolMap = pSymbols.stream()
-                .collect(Collectors.toMap(ParameterizedSymbol::getComputedName, ParameterizedSymbol::getSymbol));
+    private List<Long> convertWordToPSymbolIds(Word<String> word, List<ParameterizedSymbol> pSymbols) {
+        final Map<String, ParameterizedSymbol> symbolMap = pSymbols.stream()
+                .collect(Collectors.toMap(ParameterizedSymbol::getComputedName, Function.identity()));
 
         return word.stream().map(symbol -> symbolMap.get(symbol).getId()).collect(Collectors.toList());
     }
