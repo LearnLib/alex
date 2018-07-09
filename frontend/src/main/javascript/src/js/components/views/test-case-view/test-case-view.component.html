@@ -73,9 +73,10 @@
                                 <div class="w-100">
                                   <div class="row">
                                     <div class="col-xs-8">
-                                      <strong>{{step.symbol.name}}</strong>
-                                      <div ng-if="step.parameterValues.length > 0" style="margin-top: .5rem">
-                                        <symbol-parameters parameter-values="step.parameterValues"></symbol-parameters>
+                                      <strong>{{step.pSymbol.symbol.name}}</strong>
+                                      <div ng-if="step.pSymbol.parameterValues.length > 0" style="margin-top: .5rem">
+                                        <symbol-parameters
+                                          parameter-values="step.pSymbol.parameterValues"></symbol-parameters>
                                       </div>
                                     </div>
                                     <div class="col-xs-4">

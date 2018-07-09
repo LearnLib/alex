@@ -330,10 +330,10 @@ public class TestService {
             passed = passed & output.isSuccess();
 
             final TestCaseStep step = testCase.getSteps().get(i);
-            sulOutputs.get(i).setSymbol(step.getSymbol());
+            sulOutputs.get(i).setSymbol(step.getPSymbol().getSymbol());
 
             if (!output.isSuccess()) {
-                final String msg = step.getSymbol().getName() + ": " + output.getOutput();
+                final String msg = step.getPSymbol().getSymbol().getName() + ": " + output.getOutput();
                 failureMessageParts.add(msg);
             }
         }
@@ -369,12 +369,11 @@ public class TestService {
 
         try {
             // here, the values for the parameters of the symbols are set
-            step.getParameterValues().stream()
+            step.getPSymbol().getParameterValues().stream()
                     .filter(value -> value.getValue() != null)
                     .forEach(value -> {
                         final String valueWithVariables =
-                                SearchHelper.insertVariableValues(connectors, testCase.getProjectId(),
-                                        value.getValue());
+                                SearchHelper.insertVariableValues(connectors, testCase.getProjectId(), value.getValue());
 
                         if (value.getParameter().getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
                             variableStore.set(value.getParameter().getName(), valueWithVariables);

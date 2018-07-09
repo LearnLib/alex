@@ -60,7 +60,7 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
     /** The parameter values for the symbol to execute. */
     @OneToMany(
             fetch = FetchType.EAGER,
-            cascade = {CascadeType.PERSIST}
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
     )
     private List<SymbolParameterValue> parameterValues;
 
@@ -175,6 +175,26 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
                     final SymbolParameterValue value = new SymbolParameterValue();
                     value.setParameter(pv.getParameter());
                     value.setValue(pv.getValue());
+                    return value;
+                }).collect(Collectors.toList())
+        );
+        return pSymbol;
+    }
+
+    /**
+     * Create a parameterized symbol from a symbol.
+     *
+     * @param symbol
+     *         The symbol to use.
+     * @return The parameterized symbol.
+     */
+    public static ParameterizedSymbol fromSymbol(Symbol symbol) {
+        final ParameterizedSymbol pSymbol = new ParameterizedSymbol();
+        pSymbol.setSymbol(symbol);
+        pSymbol.setParameterValues(
+                symbol.getInputs().stream().map(input -> {
+                    final SymbolParameterValue value = new SymbolParameterValue();
+                    value.setParameter(input);
                     return value;
                 }).collect(Collectors.toList())
         );

@@ -25,15 +25,11 @@ import de.learnlib.alex.data.entities.SymbolInputParameter;
 import de.learnlib.alex.data.entities.SymbolOutputParameter;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolParameterValue;
-import de.learnlib.alex.data.entities.SymbolPSymbolStep;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
-import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
-import de.learnlib.alex.testing.entities.TestCaseStep;
-import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.stereotype.Service;
 
@@ -57,17 +53,11 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
     /** The symbol parameter repository to use. */
     private SymbolParameterRepository symbolParameterRepository;
 
-    /** The injected repository for {@link TestCaseStep}. */
-    private TestCaseStepRepository testCaseStepRepository;
-
     /** The injected repository for {@link SymbolParameterValue}. */
     private SymbolParameterValueRepository symbolParameterValueRepository;
 
     /** The injected repository for {@link ParameterizedSymbol}. */
     private ParameterizedSymbolRepository parameterizedSymbolRepository;
-
-    /** The repository for symbol repositories. */
-    private SymbolSymbolStepRepository symbolSymbolStepRepository;
 
     /** The symbol DAO to use. */
     private SymbolDAO symbolDAO;
@@ -76,17 +66,14 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
     public SymbolParameterDAOImpl(ProjectRepository projectRepository,
             SymbolRepository symbolRepository,
             SymbolParameterRepository symbolParameterRepository,
-            TestCaseStepRepository testCaseStepRepository,
             SymbolParameterValueRepository symbolParameterValueRepository,
             ParameterizedSymbolRepository parameterizedSymbolRepository,
-            SymbolSymbolStepRepository symbolSymbolStepRepository, SymbolDAO symbolDAO) {
+            SymbolDAO symbolDAO) {
         this.projectRepository = projectRepository;
         this.symbolRepository = symbolRepository;
         this.symbolParameterRepository = symbolParameterRepository;
-        this.testCaseStepRepository = testCaseStepRepository;
         this.symbolParameterValueRepository = symbolParameterValueRepository;
         this.parameterizedSymbolRepository = parameterizedSymbolRepository;
-        this.symbolSymbolStepRepository = symbolSymbolStepRepository;
         this.symbolDAO = symbolDAO;
     }
 
@@ -129,21 +116,14 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
         // If a new parameter is created for a symbol, it may be that there are tests that use the symbol.
         // Therefore we have to add a new parameter value to the test steps that use the symbol.
         if (parameter instanceof SymbolInputParameter) {
-            final List<TestCaseStep> testSteps = testCaseStepRepository.findAllByTestCase_Project_IdAndSymbol_Id(project.getId(), symbol.getId());
-            testSteps.forEach(step -> {
+            final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Id(symbol.getId());
+            pSymbols.forEach(pSymbol -> {
                 final SymbolParameterValue value = new SymbolParameterValue();
                 value.setParameter(parameter);
-                step.getParameterValues().add(value);
+                pSymbol.getParameterValues().add(value);
+                symbolParameterValueRepository.save(pSymbol.getParameterValues());
             });
-            testCaseStepRepository.save(testSteps);
-
-            final List<SymbolPSymbolStep> symbolSteps = symbolSymbolStepRepository.findAllByPSymbol_Symbol_Id(symbol.getId());
-            symbolSteps.forEach(symbolStep -> {
-                final SymbolParameterValue value = new SymbolParameterValue();
-                value.setParameter(parameter);
-                symbolStep.getPSymbol().getParameterValues().add(value);
-            });
-            symbolSymbolStepRepository.save(symbolSteps);
+            parameterizedSymbolRepository.save(pSymbols);
         }
 
         return createdParameter;
@@ -164,19 +144,13 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
         if (parameter instanceof SymbolInputParameter) {
             final SymbolParameter parameterInDb = symbolParameterRepository.findOne(parameter.getId());
             if (((SymbolInputParameter) parameter).isPrivate() && !((SymbolInputParameter) parameterInDb).isPrivate()) {
-                final List<TestCaseStep> steps = testCaseStepRepository.findAllByTestCase_Project_IdAndSymbol_Id(projectId, symbolId);
-                steps.forEach(step -> step.getParameterValues().forEach(pv -> {
-                    if (pv.getParameter().getId().equals(parameter.getId())) {
-                        pv.setValue(null);
-                    }
-                }));
-                testCaseStepRepository.save(steps);
-
-                final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Project_Id(projectId);
-                for (ParameterizedSymbol pSymbol: pSymbols) {
-                    pSymbol.setParameterValues(pSymbol.getParameterValues().stream()
-                            .filter(pv -> !pv.getParameter().getId().equals(parameter.getId()))
-                            .collect(Collectors.toList()));
+                final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Id(symbolId);
+                for (ParameterizedSymbol pSymbol : pSymbols) {
+                    pSymbol.getParameterValues().forEach(pv -> {
+                        if (pv.getParameter().getId().equals(parameter.getId())) {
+                            pv.setValue(null);
+                        }
+                    });
                 }
                 parameterizedSymbolRepository.save(pSymbols);
             }
@@ -200,21 +174,13 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
         symbol.removeParameter(parameter);
         symbolRepository.save(symbol);
 
-        final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Project_Id(projectId);
-        for (ParameterizedSymbol pSymbol: pSymbols) {
+        final List<ParameterizedSymbol> pSymbols = parameterizedSymbolRepository.findAllBySymbol_Id(symbolId);
+        for (ParameterizedSymbol pSymbol : pSymbols) {
             pSymbol.setParameterValues(pSymbol.getParameterValues().stream()
                     .filter(pv -> !pv.getParameter().getId().equals(parameterId))
                     .collect(Collectors.toList()));
         }
         parameterizedSymbolRepository.save(pSymbols);
-
-        final List<TestCaseStep> steps = testCaseStepRepository.findAllByTestCase_Project_IdAndSymbol_Id(projectId, symbolId);
-        for (TestCaseStep step: steps) {
-            step.setParameterValues(step.getParameterValues().stream()
-                    .filter(pv -> !pv.getParameter().getId().equals(parameterId))
-                    .collect(Collectors.toList()));
-        }
-        testCaseStepRepository.save(steps);
 
         // also delete all values for the parameter
         symbolParameterValueRepository.removeAllByParameter_Id(parameterId);

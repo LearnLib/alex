@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {ParametrizedSymbol} from './parametrized-symbol';
+
 export class TestCaseStep {
 
     /**
@@ -31,15 +33,9 @@ export class TestCaseStep {
 
         /**
          * The symbol to execute in the step.
-         * @type {?AlphabetSymbol}
+         * @type {?ParametrizedSymbol}
          */
-        this.symbol = obj.symbol || null;
-
-        /**
-         * The values of the parameters for the symbol.
-         * @type {Object[]}
-         */
-        this.parameterValues = obj.parameterValues || [];
+        this.pSymbol = obj.pSymbol == null ? null : new ParametrizedSymbol(obj.pSymbol);
     }
 
     /**
@@ -51,12 +47,7 @@ export class TestCaseStep {
     static fromSymbol(symbol) {
         return new TestCaseStep({
             shouldFail: false,
-            symbol: {
-                id: symbol.id,
-                name: symbol.name
-            },
-            parameterValues: symbol.inputs
-                .map(input => ({parameter: input, value: null}))
+            pSymbol: ParametrizedSymbol.fromSymbol(symbol)
         });
     }
 }

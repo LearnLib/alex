@@ -1,0 +1,39 @@
+<div class="modal-header">
+  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+    <i class="fa fa-close fa-fw"></i>
+  </a>
+
+  <h3 class="modal-title">Generate test suite</h3>
+</div>
+
+<div class="modal-body">
+
+  <div ng-if="vm.errorMessage != null">
+    <div class="alert alert-danger">
+      The test suite could not be generated. {{vm.errorMessage}}
+    </div>
+    <hr>
+  </div>
+
+  <div class="form-group">
+    <label>Name</label>
+    <input type="text" required minlength="1" ng-model="vm.config.name" class="form-control"
+           placeholder="The name of the generated test suite">
+  </div>
+  <div class="form-group">
+    <label>Step No</label>
+    <input type="number" required min="1" max="{{vm.result.steps.length}}" ng-model="vm.config.stepNo"
+           class="form-control">
+  </div>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="vm.config.includeParameterValues"> Include parameter values
+    </label>
+  </div>
+
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-primary btn-sm" ng-click="vm.generate()">Generate</button>
+  <button class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</button>
+</div>
