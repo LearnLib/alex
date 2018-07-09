@@ -22,7 +22,6 @@ import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.data.entities.SymbolParameterValue;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
@@ -188,9 +187,9 @@ public class TestGenerator {
                         testCase.setName(e.getData() + " " + config.getName() + " " + testCaseNumber);
                     }
 
-                    setPreSteps(user, projectId, lr, testCase, config.isIncludeParameterValues());
+                    setPreSteps(lr, testCase, config.isIncludeParameterValues());
                     setStepsBySymbolIds(testCase, testCaseSymbols, user, projectId, config.isIncludeParameterValues());
-                    setPostSteps(user, projectId, lr, testCase, config.isIncludeParameterValues());
+                    setPostSteps(lr, testCase, config.isIncludeParameterValues());
                     testCase.setProjectId(projectId);
                     testCase.setParent(testSuite);
                     testSuite.addTest(testCase);
@@ -223,9 +222,9 @@ public class TestGenerator {
                     final TestCase testCase = new TestCase();
                     testCase.setName(e.getData() + " " + config.getName());
                     testCase.setProjectId(projectId);
-                    setPreSteps(user, projectId, lr, testCase, config.isIncludeParameterValues());
+                    setPreSteps(lr, testCase, config.isIncludeParameterValues());
                     setStepsBySymbolIds(testCase, accessSequenceAsList, user, projectId, config.isIncludeParameterValues());
-                    setPostSteps(user, projectId, lr, testCase, config.isIncludeParameterValues());
+                    setPostSteps(lr, testCase, config.isIncludeParameterValues());
                     testCase.setParent(testSuite);
                     testDAO.create(user, testCase);
                 } catch (Exception e1) {
@@ -237,36 +236,20 @@ public class TestGenerator {
         }
     }
 
-    private void setPreSteps(User user, Long projectId, LearnerResult result, TestCase testCase, boolean includeValues)
+    private void setPreSteps(LearnerResult result, TestCase testCase, boolean includeValues)
             throws NotFoundException {
         final TestCaseStep preStep = new TestCaseStep();
         preStep.setTestCase(testCase);
-        preStep.setSymbol(symbolDAO.get(user, projectId, result.getResetSymbol().getSymbol().getId()));
-        preStep.setParameterValues(
-                result.getResetSymbol().getParameterValues().stream().map(pv -> {
-                    final SymbolParameterValue value = new SymbolParameterValue();
-                    value.setParameter(pv.getParameter());
-                    value.setValue(includeValues ? pv.getValue() : null);
-                    return value;
-                }).collect(Collectors.toList())
-        );
+        preStep.setPSymbol(result.getResetSymbol().copy());
         testCase.getPreSteps().addAll(Collections.singletonList(preStep));
     }
 
-    private void setPostSteps(User user, Long projectId, LearnerResult result, TestCase testCase, boolean includeValues)
+    private void setPostSteps(LearnerResult result, TestCase testCase, boolean includeValues)
             throws NotFoundException {
         if (result.getPostSymbol() != null) {
             final TestCaseStep postStep = new TestCaseStep();
             postStep.setTestCase(testCase);
-            postStep.setSymbol(symbolDAO.get(user, projectId, result.getPostSymbol().getSymbol().getId()));
-            postStep.setParameterValues(
-                    result.getPostSymbol().getParameterValues().stream().map(pv -> {
-                        final SymbolParameterValue value = new SymbolParameterValue();
-                        value.setParameter(pv.getParameter());
-                        value.setValue(includeValues ? pv.getValue() : null);
-                        return value;
-                    }).collect(Collectors.toList())
-            );
+            postStep.setPSymbol(result.getPostSymbol().copy());
             testCase.getPostSteps().addAll(Collections.singletonList(postStep));
         }
     }
@@ -279,15 +262,7 @@ public class TestGenerator {
         for (Long id : symbolIds) {
             final TestCaseStep step = new TestCaseStep();
             step.setTestCase(testCase);
-            step.setSymbol(symbolMap.get(id));
-            step.setParameterValues(
-                    symbolMap.get(id).getInputs().stream().map(input -> {
-                        final SymbolParameterValue value = new SymbolParameterValue();
-                        value.setParameter(input);
-                        // TODO: parse input values from input
-                        return value;
-                    }).collect(Collectors.toList())
-            );
+            step.setPSymbol(ParameterizedSymbol.fromSymbol(symbolMap.get(id)));
             testCase.getSteps().add(step);
         }
     }

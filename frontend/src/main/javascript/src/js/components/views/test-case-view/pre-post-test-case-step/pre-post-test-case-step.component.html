@@ -4,10 +4,10 @@
       <div>
         {{vm.text}}:
         <em class="text-muted" ng-if="vm.steps.length === 0">none</em>
-        <strong ng-if="vm.steps.length > 0">{{vm.steps[0].symbol.name}}</strong>
+        <strong ng-if="vm.steps.length > 0">{{vm.steps[0].pSymbol.symbol.name}}</strong>
       </div>
       <div ng-if="vm.steps.length > 0">
-        <symbol-parameters parameter-values="vm.steps[0].parameterValues"></symbol-parameters>
+        <symbol-parameters parameter-values="vm.steps[0].pSymbol.parameterValues"></symbol-parameters>
       </div>
     </div>
     <div style="flex-shrink: 0">

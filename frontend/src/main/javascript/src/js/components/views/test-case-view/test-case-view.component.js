@@ -126,15 +126,15 @@ export const testCaseViewComponent = {
         save() {
             const test = JSON.parse(JSON.stringify(this.testCase));
             test.steps = test.steps.map((step) => {
-                step.symbol = step.symbol.id;
+                step.pSymbol.symbol = step.pSymbol.symbol.id;
                 return step;
             });
             test.preSteps = test.preSteps.map((step) => {
-                step.symbol = step.symbol.id;
+                step.pSymbol.symbol = step.pSymbol.symbol.id;
                 return step;
             });
             test.postSteps = test.postSteps.map((step) => {
-                step.symbol = step.symbol.id;
+                step.pSymbol.symbol = step.pSymbol.symbol.id;
                 return step;
             });
             this.TestResource.update(test)

@@ -30,15 +30,15 @@ import java.util.List;
 public interface ParameterizedSymbolRepository extends JpaRepository<ParameterizedSymbol, Long> {
 
     /**
-     * Get all parameterized symbols by project ID.
+     * Get all parameterized symbols by symbol ID.
      *
-     * @param projectId
-     *         The ID of the project.
+     * @param symbolId
+     *         The ID of the symbol.
      * @return The parameterized symbols.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    List<ParameterizedSymbol> findAllBySymbol_Project_Id(Long projectId);
+    List<ParameterizedSymbol> findAllBySymbol_Id(Long symbolId);
 
     /**
      * Delete all parameterized symbols by project ID.
