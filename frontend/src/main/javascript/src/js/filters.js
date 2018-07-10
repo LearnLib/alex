@@ -34,6 +34,8 @@ export function formatEqOracle() {
                 return 'W-Method';
             case  eqOracleType.HYPOTHESIS:
                 return 'Hypothesis';
+            case eqOracleType.TEST_SUITE:
+                return 'Test suite';
             default:
                 return type;
         }

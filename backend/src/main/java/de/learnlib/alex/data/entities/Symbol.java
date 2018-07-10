@@ -384,7 +384,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         // proper values.
         if (result.isSuccess()) {
             if (successOutput != null && !successOutput.trim().equals("")) {
-                result.setOutput(SearchHelper.insertVariableValues(connector, project.getId(), successOutput));
+                result.setSuccessOutput(SearchHelper.insertVariableValues(connector, project.getId(), successOutput));
             } else {
                 result.setOutput(ExecuteResult.DEFAULT_SUCCESS_OUTPUT);
             }

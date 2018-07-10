@@ -42,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -415,6 +416,39 @@ public class TestDAOImpl implements TestDAO {
         movedTests.forEach(this::loadLazyRelations);
 
         return movedTests;
+    }
+
+    @Override
+    @Transactional
+    public List<TestCase> getTestCases(User user, Long projectId, Long testSuiteId, boolean includeChildTestSuites)
+            throws NotFoundException, ValidationException {
+        final Project project = projectRepository.findOne(projectId);
+        final Test test = testRepository.findOne(testSuiteId);
+        checkAccess(user, project, test);
+
+        if (!(test instanceof TestSuite)) {
+            throw new ValidationException("The ID has to belong to a test suite.");
+        }
+
+        final TestSuite testSuite = (TestSuite) test;
+        final List<TestCase> testCases = new ArrayList<>();
+
+        final ArrayDeque<TestSuite> queue = new ArrayDeque<>();
+        queue.add(testSuite);
+
+        while (!queue.isEmpty()) {
+            final TestSuite currentTestSuite = queue.poll();
+            for (Test t : currentTestSuite.getTests()) {
+                if (t instanceof TestSuite) {
+                    queue.addLast((TestSuite) t);
+                } else {
+                    loadLazyRelations(t);
+                    testCases.add((TestCase) t);
+                }
+            }
+        }
+
+        return testCases;
     }
 
     @Override

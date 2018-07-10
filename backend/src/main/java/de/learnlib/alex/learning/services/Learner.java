@@ -41,6 +41,7 @@ import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.automata.transout.impl.compact.CompactMealyTransition;
@@ -109,6 +110,10 @@ public class Learner {
     /** The repository for project URLs. */
     @Inject
     private ProjectUrlRepository projectUrlRepository;
+
+    /** The injected test DAO. */
+    @Inject
+    private TestDAO testDAO;
 
     /** The last thread of an user, if one exists. */
     private final Map<Long, AbstractLearnerThread> userThreads;
@@ -182,7 +187,7 @@ public class Learner {
         contextHandler.setPostSymbol(result.getPostSymbol());
 
         final AbstractLearnerThread learnThread = new StartingLearnerThread(user, learnerResultDAO, webhookService,
-                contextHandler, result, configuration);
+                testDAO, contextHandler, result, configuration);
         startThread(project.getId(), learnThread);
     }
 
@@ -243,7 +248,7 @@ public class Learner {
         }
 
         final AbstractLearnerThread learnThread = new ResumingLearnerThread(user, learnerResultDAO, webhookService,
-                contextHandler, result, configuration);
+                testDAO, contextHandler, result, configuration);
         startThread(project.getId(), learnThread);
     }
 
@@ -465,6 +470,17 @@ public class Learner {
         return readOutputs(user, project, config);
     }
 
+    /**
+     * Determine the output of the SUL by testing a sequence of input symbols.
+     *
+     * @param user
+     *         The current user.
+     * @param project
+     *         The project.
+     * @param readOutputConfig
+     *         The config to use.
+     * @return The outputs of the SUL.
+     */
     public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {
         ConnectorContextHandler ctxHandler =
                 contextHandlerFactory.createContext(user, project, readOutputConfig.getDriverConfig());

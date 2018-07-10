@@ -27,9 +27,11 @@ import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
+import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.TestSuiteEQOracleProxy;
 import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import de.learnlib.api.SUL;
 import de.learnlib.api.algorithm.LearningAlgorithm;
@@ -107,6 +109,9 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /** The oracle that monitors which queries are being posed. */
     protected final QueryMonitorOracle<String, String> monitorOracle;
 
+    /** The test DAO. */
+    protected final TestDAO testDAO;
+
     /** The number of mqs executed in parallel. */
     private int maxConcurrentQueries;
 
@@ -130,18 +135,21 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
      *         {@link #webhookService}.
      * @param context
      *         The context to use.
+     * @param testDAO
+     *         The test DAO to use.
      * @param result
      *         {@link #result}.
      * @param configuration
      *         {@link #configuration}.
      */
     public AbstractLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-            ConnectorContextHandler context, LearnerResult result, T configuration) {
+            TestDAO testDAO, ConnectorContextHandler context, LearnerResult result, T configuration) {
         this.user = user;
         this.learnerResultDAO = learnerResultDAO;
         this.webhookService = webhookService;
         this.result = result;
         this.configuration = configuration;
+        this.testDAO = testDAO;
 
         this.abstractAlphabet = new SimpleAlphabet<>(new HashSet<>(// remove duplicate names with set
                 result.getSymbols().stream()
@@ -284,8 +292,14 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
      *         The current step.
      */
     protected void doLearn(LearnerResultStep currentStep) {
-        final EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle =
-                configuration.getEqOracle().createEqOracle(mqOracle, maxConcurrentQueries);
+
+        final EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
+        if (configuration.getEqOracle() instanceof TestSuiteEQOracleProxy) {
+            eqOracle =
+                    ((TestSuiteEQOracleProxy) configuration.getEqOracle()).createEqOracle(mqOracle, maxConcurrentQueries, testDAO, user, result);
+        } else {
+            eqOracle = configuration.getEqOracle().createEqOracle(mqOracle, maxConcurrentQueries);
+        }
 
         long start, end;
         long rounds = 0;

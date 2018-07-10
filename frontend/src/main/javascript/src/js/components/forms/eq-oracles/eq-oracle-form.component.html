@@ -31,4 +31,10 @@
         eq-oracle="vm.eqOracle"
     >
     </hypothesis-eq-oracle-form>
+    <test-suite-eq-oracle-form
+      ng-if="vm.eqOracle.type === vm.types.TEST_SUITE"
+      form="vm.form"
+      eq-oracle="vm.eqOracle"
+    >
+    </test-suite-eq-oracle-form>
 </div>

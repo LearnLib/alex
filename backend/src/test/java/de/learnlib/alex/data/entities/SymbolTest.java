@@ -76,15 +76,15 @@ public class SymbolTest {
 
     @Test
     public void itShouldReturnACustomOutputOnSuccess() {
-        String output = "success";
+        String output = "Ok (success)";
 
         given(webSiteConnector.getPageSource()).willReturn("test");
 
-        symbol.setSuccessOutput(output);
+        symbol.setSuccessOutput("success");
         ExecuteResult result = symbol.execute(connectorManager);
 
         assertTrue(result.isSuccess());
-        assertEquals(result.getOutput(), output);
+        assertEquals(output, result.getOutput());
     }
 
     @Test
@@ -95,13 +95,13 @@ public class SymbolTest {
         ExecuteResult result = symbol.execute(connectorManager);
 
         assertFalse(result.isSuccess());
-        assertEquals(result.getOutput(), ExecuteResult.DEFAULT_ERROR_OUTPUT + " (1)");
+        assertEquals(ExecuteResult.DEFAULT_ERROR_OUTPUT + " (1)", result.getOutput() );
     }
 
     @Test
     public void itShouldReturnCustomOutputOnError() {
-        String output = "textNotFound";
-        a1.setErrorOutput(output);
+        String output = "Failed (textNotFound)";
+        a1.setErrorOutput("textNotFound");
 
         // let the first action fail
         given(webSiteConnector.getPageSource()).willReturn("something");
@@ -109,6 +109,6 @@ public class SymbolTest {
         ExecuteResult result = symbol.execute(connectorManager);
 
         assertFalse(result.isSuccess());
-        assertEquals(result.getOutput(), output);
+        assertEquals(output, result.getOutput());
     }
 }

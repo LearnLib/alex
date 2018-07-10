@@ -19,6 +19,7 @@ import {CompleteEqOracle} from '../entities/eq-oracles/complete-eq-oracle';
 import {HypothesisEqOracle} from '../entities/eq-oracles/hypothesis-eq-oracle';
 import {RandomEqOracle} from '../entities/eq-oracles/random-eq-oracle';
 import {SampleEqOracle} from '../entities/eq-oracles/sample-eq-oracle';
+import {TestSuiteEqOracle} from '../entities/eq-oracles/test-suite-eq-oracle';
 import {WMethodEqOracle} from '../entities/eq-oracles/w-method-eq-oracle';
 
 /**
@@ -44,6 +45,8 @@ export class EqOracleService {
                 return new WMethodEqOracle(obj.maxDepth);
             case eqOracleType.HYPOTHESIS:
                 return new HypothesisEqOracle(obj.hypothesis);
+            case eqOracleType.TEST_SUITE:
+                return new TestSuiteEqOracle(obj.testSuiteId, obj.includeChildTestSuites);
             default:
                 return null;
         }

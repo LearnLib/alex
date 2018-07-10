@@ -25,6 +25,7 @@ import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
+import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import de.learnlib.api.algorithm.feature.SupportsGrowingAlphabet;
 import de.learnlib.filter.cache.mealy.MealyCacheOracle;
@@ -51,9 +52,9 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
      *         The configuration to use.
      */
     public ResumingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-                                 ConnectorContextHandler context, LearnerResult result,
-                                 LearnerResumeConfiguration configuration) {
-        super(user, learnerResultDAO, webhookService, context, result, configuration);
+            TestDAO testDAO, ConnectorContextHandler context, LearnerResult result,
+            LearnerResumeConfiguration configuration) {
+        super(user, learnerResultDAO, webhookService, testDAO, context, result, configuration);
     }
 
     @Override

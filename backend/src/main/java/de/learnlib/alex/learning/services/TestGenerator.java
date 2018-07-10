@@ -186,7 +186,6 @@ public class TestGenerator {
                     testSuite.addTest(testCase);
 
                     outcomeList.addAll(convertWordToStringList(inEdge));
-                    // TODO: interpret other output values than 'Ok' and 'Failed'
                     for (int i = 0; i < outcomeList.size(); i++) {
                         final TestCaseStep step = testCase.getSteps().get(i);
                         if (outcomeList.get(i).startsWith(ExecuteResult.DEFAULT_SUCCESS_OUTPUT)) {

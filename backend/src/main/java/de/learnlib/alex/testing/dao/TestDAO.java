@@ -21,6 +21,7 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.testing.entities.Test;
+import de.learnlib.alex.testing.entities.TestCase;
 import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.validation.ValidationException;
@@ -75,6 +76,22 @@ public interface TestDAO {
      *         If the user does not have access to one of the resources.
      */
     Test get(User user, Long projectId, Long id) throws NotFoundException, UnauthorizedException;
+
+    /**
+     * Get all test cases of a test suite.
+     *
+     * @param user
+     *         The user.
+     * @param projectId
+     *         The ID of the project.
+     * @param testSuiteId
+     *         The ID of the test suite.
+     * @param includeChildTestSuites
+     *         If test cases in child test suites should be included as well.
+     * @return All test cases.
+     */
+    List<TestCase> getTestCases(User user, Long projectId, Long testSuiteId, boolean includeChildTestSuites)
+            throws NotFoundException, ValidationException;
 
     /**
      * Gets all tests of a specific type.

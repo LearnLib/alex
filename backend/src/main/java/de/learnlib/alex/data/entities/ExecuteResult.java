@@ -72,7 +72,20 @@ public class ExecuteResult implements Serializable {
      */
     public ExecuteResult(boolean success, String output) {
         this.success = success;
-        this.output = output == null ? success ? DEFAULT_SUCCESS_OUTPUT : DEFAULT_ERROR_OUTPUT : output;
+
+        if (success) {
+            if (output == null) {
+                setOutput(DEFAULT_SUCCESS_OUTPUT);
+            } else {
+                setSuccessOutput(output);
+            }
+        } else {
+            if (output == null) {
+                setOutput(DEFAULT_ERROR_OUTPUT);
+            } else {
+                setErrorOutput(output);
+            }
+        }
     }
 
     public boolean isSuccess() {
@@ -89,6 +102,14 @@ public class ExecuteResult implements Serializable {
 
     public void setOutput(String output) {
         this.output = output;
+    }
+
+    public void setSuccessOutput(String output) {
+        this.output = DEFAULT_SUCCESS_OUTPUT + " (" + output + ")";
+    }
+
+    public void setErrorOutput(String output) {
+        this.output = DEFAULT_ERROR_OUTPUT + " (" + output + ")";
     }
 
     public Long getId() {

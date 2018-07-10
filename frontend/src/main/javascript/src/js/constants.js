@@ -41,7 +41,8 @@ export const eqOracleType = {
     COMPLETE: 'complete',
     SAMPLE: 'sample',
     WMETHOD: 'wmethod',
-    HYPOTHESIS: 'hypothesis'
+    HYPOTHESIS: 'hypothesis',
+    TEST_SUITE: 'test_suite'
 };
 
 export const userRole = {

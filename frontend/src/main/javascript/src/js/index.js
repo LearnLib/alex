@@ -81,6 +81,7 @@ import {completeEqOracleFormComponent} from './components/forms/eq-oracles/compl
 import {eqOracleFormComponent} from './components/forms/eq-oracles/eq-oracle-form.component';
 import {hypothesisEqOracleFormComponent} from './components/forms/eq-oracles/hypothesis-eq-oracle-form/hypothesis-eq-oracle-form.component';
 import {randomEqOracleFormComponent} from './components/forms/eq-oracles/random-eq-oracle-form/random-eq-oracle-form.component';
+import {testSuiteEqOracleFormComponent} from './components/forms/eq-oracles/test-suite-eq-oracle-form/test-suite-eq-oracle-form.component';
 import {wMethodEqOracleFormComponent} from './components/forms/eq-oracles/w-method-eq-oracle-form/w-method-eq-oracle-form.component';
 import {nodeFormGroupComponent} from './components/forms/node-form-group/node-form-group.component';
 import {projectCreateFormComponent} from './components/forms/project-create-form/project-create-form.component';
@@ -409,6 +410,7 @@ angular
     .component('randomEqOracleForm', randomEqOracleFormComponent)
     .component('wMethodEqOracleForm', wMethodEqOracleFormComponent)
     .component('hypothesisEqOracleForm', hypothesisEqOracleFormComponent)
+    .component('testSuiteEqOracleForm', testSuiteEqOracleFormComponent)
 
     // widgets components
     .component('widget', widgetComponent)

@@ -1,0 +1,23 @@
+<div class="form-condensed">
+  <div class="form-group">
+    <label>Select a test suite:</label>
+    <em>{{vm.selectedTestSuite.name}}</em>
+
+    <div class="panel panel-default">
+      <div class="panel-body" style="overflow: auto; max-height: 320px">
+        <test-suite-tree
+          test-suite="vm.root"
+          on-selected="vm.onSelected(testSuite)"
+          selected-test-suite="vm.selectedTestSuite"
+          ng-if="vm.root != null"
+        >
+        </test-suite-tree>
+      </div>
+    </div>
+  </div>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox" ng-model="vm.eqOracle.includeChildTestSuites"> Include test cases from child test suites
+    </label>
+  </div>
+</div>

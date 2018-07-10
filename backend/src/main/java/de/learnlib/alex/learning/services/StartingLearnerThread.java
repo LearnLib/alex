@@ -22,6 +22,7 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
+import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 
 /** The learner thread that is used for starting a new experiment. */
@@ -38,9 +39,9 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
      * @param configuration    The configuration to use.
      */
     public StartingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-                                 ConnectorContextHandler context, LearnerResult result,
-                                 LearnerStartConfiguration configuration) {
-        super(user, learnerResultDAO, webhookService, context, result, configuration);
+            TestDAO testDAO, ConnectorContextHandler context, LearnerResult result,
+            LearnerStartConfiguration configuration) {
+        super(user, learnerResultDAO, webhookService, testDAO, context, result, configuration);
     }
 
     @Override
