@@ -20,6 +20,8 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import de.learnlib.alex.webhooks.entities.Event;
 import de.learnlib.alex.webhooks.entities.Webhook;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.client.ClientProperties;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,8 @@ import java.util.List;
  */
 @Service
 public class WebhookService {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The client timeout. */
     private static final int READ_CONNECT_TIMEOUT = 3000;
@@ -66,13 +70,16 @@ public class WebhookService {
      * @param <T>   The type of the event.
      */
     public <T> void fireEvent(User user, Event<T> event) {
+        LOGGER.traceEntry();
         final List<Webhook> webhooks = webhookDAO.getByUserAndEvent(user, event.getEventType());
         for (final Webhook webhook : webhooks) {
-            new Thread(() ->
-                    client.target(webhook.getUrl())
-                            .request(MediaType.APPLICATION_JSON)
-                            .post(Entity.json(event))
-            ).start();
+            new Thread(() -> {
+                LOGGER.info("send {} to {}", event, webhook.getUrl());
+                client.target(webhook.getUrl())
+                        .request(MediaType.APPLICATION_JSON)
+                        .post(Entity.json(event));
+            }).start();
         }
+        LOGGER.traceExit();
     }
 }

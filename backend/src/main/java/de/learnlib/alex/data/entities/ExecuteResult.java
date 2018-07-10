@@ -17,10 +17,12 @@
 package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 /** Class to determine if a symbol has been executed successfully. */
@@ -45,7 +47,7 @@ public class ExecuteResult implements Serializable {
     private boolean success;
 
     /** The output of the SUL. */
-    private String output;
+    private String message;
 
     /** Constructor. */
     public ExecuteResult() {
@@ -67,25 +69,12 @@ public class ExecuteResult implements Serializable {
      *
      * @param success
      *         {@link #success}.
-     * @param output
-     *         {@link #output}.
+     * @param message
+     *         {@link #message}.
      */
-    public ExecuteResult(boolean success, String output) {
+    public ExecuteResult(boolean success, String message) {
         this.success = success;
-
-        if (success) {
-            if (output == null) {
-                setOutput(DEFAULT_SUCCESS_OUTPUT);
-            } else {
-                setSuccessOutput(output);
-            }
-        } else {
-            if (output == null) {
-                setOutput(DEFAULT_ERROR_OUTPUT);
-            } else {
-                setErrorOutput(output);
-            }
-        }
+        this.message = message;
     }
 
     public boolean isSuccess() {
@@ -96,20 +85,22 @@ public class ExecuteResult implements Serializable {
         this.success = success;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    @Transient
+    @JsonProperty("output")
     public String getOutput() {
-        return output;
-    }
-
-    public void setOutput(String output) {
-        this.output = output;
-    }
-
-    public void setSuccessOutput(String output) {
-        this.output = DEFAULT_SUCCESS_OUTPUT + " (" + output + ")";
-    }
-
-    public void setErrorOutput(String output) {
-        this.output = DEFAULT_ERROR_OUTPUT + " (" + output + ")";
+        if (success) {
+            return DEFAULT_SUCCESS_OUTPUT + (message == null ? "" : " (" + message + ")");
+        } else {
+            return DEFAULT_ERROR_OUTPUT + (message == null ? "" : " (" + message + ")");
+        }
     }
 
     public Long getId() {

@@ -31,7 +31,6 @@ import org.jose4j.lang.JoseException;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-//@Configuration
 public class ALEXTestApplication extends ResourceConfig {
 
     private User admin;

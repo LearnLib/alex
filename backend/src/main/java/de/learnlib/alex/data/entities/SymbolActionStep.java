@@ -57,9 +57,9 @@ public class SymbolActionStep extends SymbolStep implements Serializable {
         // if the execution of one symbol fails do not continue executing the following actions
         if (!result.isSuccess() && !action.isIgnoreFailure()) {
             if (action.getErrorOutput() != null && !action.getErrorOutput().trim().equals("")) {
-                result.setErrorOutput(action.insertVariableValues(action.getErrorOutput()));
+                result.setMessage(action.insertVariableValues(action.getErrorOutput()));
             } else {
-                result.setErrorOutput(String.valueOf(i + 1));
+                result.setMessage(String.valueOf(i + 1));
             }
         }
 
