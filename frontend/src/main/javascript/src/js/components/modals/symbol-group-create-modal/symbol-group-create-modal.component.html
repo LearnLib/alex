@@ -17,7 +17,8 @@
                    placeholder="The name of the group"
                    required
                    ng-maxlength="100"
-                   ng-model="vm.group.name">
+                   ng-model="vm.group.name"
+                   autofocus>
 
             <div class="help-block" ng-messages="vm.form.name.$error" ng-if="vm.form.name.$touched">
                 <div class="alert alert-danger alert-condensed" ng-message="required">

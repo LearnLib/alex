@@ -6,7 +6,8 @@
            placeholder="The name of the symbol"
            required
            ng-maxlength="100"
-           ng-model="vm.symbol.name">
+           ng-model="vm.symbol.name"
+           autofocus>
 
     <div class="help-block" ng-messages="vm.form.name.$error" ng-if="vm.form.name.$touched">
         <div class="alert alert-danger alert-condensed" ng-message="required">
