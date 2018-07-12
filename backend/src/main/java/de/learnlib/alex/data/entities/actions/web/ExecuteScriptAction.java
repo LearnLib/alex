@@ -17,6 +17,7 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -24,8 +25,6 @@ import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
@@ -47,8 +46,6 @@ public class ExecuteScriptAction extends SymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /**
      * The javascript to execute.
      */
@@ -60,26 +57,6 @@ public class ExecuteScriptAction extends SymbolAction {
      * The name of the variable to store the result into.
      */
     private String name;
-
-    /** @return {@link #script}. */
-    public String getScript() {
-        return script;
-    }
-
-    /** @param script {@link #script}. */
-    public void setScript(String script) {
-        this.script = script;
-    }
-
-    /** @return {@link #name}. */
-    public String getName() {
-        return name;
-    }
-
-    /** @param name {@link #name}. */
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
@@ -93,24 +70,40 @@ public class ExecuteScriptAction extends SymbolAction {
                 if (returnValue == null) {
                     variableStoreConnector.set(name, "null");
                 } else if (returnValue instanceof Double || returnValue instanceof Long
-                           || returnValue instanceof Boolean) {
+                        || returnValue instanceof Boolean) {
                     variableStoreConnector.set(name, String.valueOf(returnValue));
                 } else if (returnValue instanceof WebElement || returnValue instanceof List) {
-                    LOGGER.info(LEARNER_MARKER, "WebElements and lists as return values are not supported.");
+                    LOGGER.info(LoggerMarkers.LEARNER, "WebElements and lists as return values are not supported.");
                     return getFailedOutput();
                 } else {
                     variableStoreConnector.set(name, (String) returnValue);
                 }
             }
 
-            LOGGER.info(LEARNER_MARKER, "JavaScript {} successfully executed (ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "JavaScript {} successfully executed (ignoreFailure: {}, negated: {}).",
                     ignoreFailure, negated);
             return getSuccessOutput();
         } else {
-            LOGGER.info(LEARNER_MARKER, "This driver does not support JavaScript (ignoreFailure: {}, negated: {})!",
+            LOGGER.info(LoggerMarkers.LEARNER, "This driver does not support JavaScript (ignoreFailure: {}, negated: {})!",
                     ignoreFailure, negated);
             return getFailedOutput();
         }
+    }
+
+    public String getScript() {
+        return script;
+    }
+
+    public void setScript(String script) {
+        this.script = script;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

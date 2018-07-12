@@ -19,8 +19,6 @@ package de.learnlib.alex.common.exceptions;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.validation.ValidationException;
 import javax.ws.rs.core.Response;
@@ -35,13 +33,11 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker REST_MARKER = MarkerManager.getMarker("REST");
-
     @Override
     public Response toResponse(ValidationException e) {
-        LOGGER.info(REST_MARKER, "ValidationException caught.", e);
+        LOGGER.info("ValidationException caught.", e);
 
-        ResourceErrorHandler.RESTError error = new ResourceErrorHandler.RESTError(Response.Status.BAD_REQUEST, e);
+        final ResourceErrorHandler.RESTError error = new ResourceErrorHandler.RESTError(Response.Status.BAD_REQUEST, e);
         return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
     }
 }

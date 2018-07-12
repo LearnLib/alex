@@ -17,13 +17,12 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -45,8 +44,6 @@ public class ClickAction extends WebSymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /**
      * The information to identify the element.
      */
@@ -65,44 +62,6 @@ public class ClickAction extends WebSymbolAction {
         doubleClick = false;
     }
 
-    /**
-     * Get the information to identify the element.
-     *
-     * @return The element identifier.
-     */
-    public WebElementLocator getNode() {
-        return node;
-    }
-
-    /**
-     * If a double click should be executed.
-     *
-     * @return The flag.
-     */
-    public boolean isDoubleClick() {
-        return doubleClick;
-    }
-
-    /**
-     * Set if a double click should be executed.
-     *
-     * @param doubleClick
-     *         The flag.
-     */
-    public void setDoubleClick(boolean doubleClick) {
-        this.doubleClick = doubleClick;
-    }
-
-    /**
-     * Set the information to identify the element.
-     *
-     * @param node
-     *         The new element identifier.
-     */
-    public void setNode(WebElementLocator node) {
-        this.node = node;
-    }
-
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         final WebElementLocator nodeWithVariables =
@@ -117,15 +76,31 @@ public class ClickAction extends WebSymbolAction {
                 element.click();
             }
 
-            LOGGER.info(LEARNER_MARKER, "Clicked on the element '{}' "
+            LOGGER.info(LoggerMarkers.LEARNER, "Clicked on the element '{}' "
                             + "(doubleClick: {}, ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, doubleClick, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LEARNER_MARKER, "Could not click on the element '{}' "
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not click on the element '{}' "
                             + "(doubleClick: {}, ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, doubleClick, ignoreFailure, negated);
             return getFailedOutput();
         }
+    }
+
+    public WebElementLocator getNode() {
+        return node;
+    }
+
+    public boolean isDoubleClick() {
+        return doubleClick;
+    }
+
+    public void setDoubleClick(boolean doubleClick) {
+        this.doubleClick = doubleClick;
+    }
+
+    public void setNode(WebElementLocator node) {
+        this.node = node;
     }
 }

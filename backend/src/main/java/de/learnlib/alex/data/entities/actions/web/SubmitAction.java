@@ -17,13 +17,12 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.openqa.selenium.NoSuchElementException;
 
 import javax.persistence.DiscriminatorValue;
@@ -43,31 +42,10 @@ public class SubmitAction extends WebSymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /** The information to identify the element. */
     @NotNull
     @Embedded
     private WebElementLocator node;
-
-    /**
-     * Get the node to look for.
-     *
-     * @return The node to look for.
-     */
-    public WebElementLocator getNode() {
-        return node;
-    }
-
-    /**
-     * Set the node to check for.
-     *
-     * @param node
-     *         The new node to check for.
-     */
-    public void setNode(WebElementLocator node) {
-        this.node = node;
-    }
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
@@ -77,14 +55,22 @@ public class SubmitAction extends WebSymbolAction {
         try {
             connector.getElement(nodeWithVariables).submit();
 
-            LOGGER.info(LEARNER_MARKER, "Submitted '{}' (ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "Submitted '{}' (ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LEARNER_MARKER, "Could not submit '{}' (ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not submit '{}' (ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();
         }
+    }
+
+    public WebElementLocator getNode() {
+        return node;
+    }
+
+    public void setNode(WebElementLocator node) {
+        this.node = node;
     }
 
 }

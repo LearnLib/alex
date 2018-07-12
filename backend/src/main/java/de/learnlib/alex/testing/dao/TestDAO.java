@@ -89,6 +89,8 @@ public interface TestDAO {
      * @param includeChildTestSuites
      *         If test cases in child test suites should be included as well.
      * @return All test cases.
+     * @throws NotFoundException If the test or project could not be found.
+     * @throws ValidationException If the ID does not belong to a test suite.
      */
     List<TestCase> getTestCases(User user, Long projectId, Long testSuiteId, boolean includeChildTestSuites)
             throws NotFoundException, ValidationException;

@@ -24,11 +24,8 @@ import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
-import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
-import de.learnlib.alex.data.entities.actions.rest.CallAction;
 import de.learnlib.alex.data.events.SymbolEvent;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
@@ -124,36 +121,6 @@ public class SymbolResource {
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.UNAUTHORIZED, e);
-        }
-    }
-
-    /**
-     * Execute an action without creating a learning context.
-     *
-     * @param projectId
-     *         The id of the project.
-     * @param action
-     *         The action to test
-     * @return The result of the executed action.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
-     */
-    @POST
-    @Path("/actions/test")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response testSymbolAction(@PathParam("project_id") Long projectId, SymbolAction action)
-            throws NotFoundException {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("testSymbolAction({}, {}) for user {}.", projectId, action, user);
-
-        Project project = projectDAO.getByID(user.getId(), projectId);
-        if (action instanceof CallAction) { // other actions might be worth testing, too.
-            CallAction callAction = (CallAction) action;
-            CallAction.TestResult result = callAction.testRequest(project.getDefaultUrl().getUrl());
-            return Response.ok(result).build();
-        } else {
-            return Response.noContent().build();
         }
     }
 

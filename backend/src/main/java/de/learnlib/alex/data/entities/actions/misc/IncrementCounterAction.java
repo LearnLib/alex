@@ -17,14 +17,13 @@
 package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
@@ -41,8 +40,6 @@ public class IncrementCounterAction extends SymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger("learner");
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /** The name of the counter to increment. */
     @NotBlank
     private String name;
@@ -56,27 +53,23 @@ public class IncrementCounterAction extends SymbolAction {
         CounterStoreConnector counterConnector = connector.getConnector(CounterStoreConnector.class);
         counterConnector.incrementBy(symbol.getProjectId(), name, incrementBy);
 
-        LOGGER.info(LEARNER_MARKER, "Incremented counter '{}' by '{}' (ignoreFailure: {}, negated: {}).",
-                    name, incrementBy, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Incremented counter '{}' by '{}' (ignoreFailure: {}, negated: {}).",
+                name, incrementBy, ignoreFailure, negated);
         return getSuccessOutput();
     }
 
-    /** @return {@link #name}. */
     public String getName() {
         return name;
     }
 
-    /** @param name {@link #name}. */
     public void setName(String name) {
         this.name = name;
     }
 
-    /** @return {@link #incrementBy}. */
     public int getIncrementBy() {
         return incrementBy;
     }
 
-    /** @param incrementBy {@link #incrementBy}. */
     public void setIncrementBy(int incrementBy) {
         this.incrementBy = incrementBy;
     }

@@ -19,8 +19,6 @@ package de.learnlib.alex.common.exceptions;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.ws.rs.core.Response;
@@ -35,11 +33,9 @@ public class UnauthorizedExceptionMapper implements ExceptionMapper<Unauthorized
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker REST_MARKER = MarkerManager.getMarker("REST");
-
     @Override
     public Response toResponse(UnauthorizedException e) {
-        LOGGER.info(REST_MARKER, "UnauthorizedException caught.", e);
+        LOGGER.info("UnauthorizedException caught.", e);
 
         ResourceErrorHandler.RESTError error = new ResourceErrorHandler.RESTError(Response.Status.UNAUTHORIZED, e);
         return Response.status(Response.Status.UNAUTHORIZED).entity(error).build();

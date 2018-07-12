@@ -18,12 +18,11 @@ package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -45,8 +44,6 @@ public class WaitForTitleAction extends WebSymbolAction {
     private static final long serialVersionUID = -7416267361597106520L;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Enumeration to specify the wait criterion.
@@ -103,63 +100,6 @@ public class WaitForTitleAction extends WebSymbolAction {
     @Min(0)
     private long maxWaitTime;
 
-    /**
-     * Get the value for the title.
-     *
-     * @return The value for the title
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * Set the expected value of the title.
-     *
-     * @param value
-     *         The expected value of the title
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    /**
-     * Get the wait criterion.
-     *
-     * @return The wait criterion
-     */
-    public WaitCriterion getWaitCriterion() {
-        return waitCriterion;
-    }
-
-    /**
-     * Set the wait criterion.
-     *
-     * @param waitCriterion
-     *         The wait criterion
-     */
-    public void setWaitCriterion(WaitCriterion waitCriterion) {
-        this.waitCriterion = waitCriterion;
-    }
-
-    /**
-     * Get the max amount of time in seconds to wait before the action fails.
-     *
-     * @return The max amount of time
-     */
-    public long getMaxWaitTime() {
-        return maxWaitTime;
-    }
-
-    /**
-     * Set the max amount of time in seconds to wait before the action fails.
-     *
-     * @param maxWaitTime
-     *         The max amount of time in seconds
-     */
-    public void setMaxWaitTime(long maxWaitTime) {
-        this.maxWaitTime = maxWaitTime;
-    }
-
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
         if (maxWaitTime < 0) {
@@ -183,11 +123,35 @@ public class WaitForTitleAction extends WebSymbolAction {
 
             return getSuccessOutput();
         } catch (TimeoutException e) {
-            LOGGER.info(LEARNER_MARKER, "Waiting on the title '{}' (criterion: '{}') timed out. "
+            LOGGER.info(LoggerMarkers.LEARNER, "Waiting on the title '{}' (criterion: '{}') timed out. "
                             + "Last known title was '{}'.",
                     valueWithVariables, waitCriterion, connector.getDriver().getTitle());
             return getFailedOutput();
         }
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public WaitCriterion getWaitCriterion() {
+        return waitCriterion;
+    }
+
+    public void setWaitCriterion(WaitCriterion waitCriterion) {
+        this.waitCriterion = waitCriterion;
+    }
+
+    public long getMaxWaitTime() {
+        return maxWaitTime;
+    }
+
+    public void setMaxWaitTime(long maxWaitTime) {
+        this.maxWaitTime = maxWaitTime;
     }
 
 }

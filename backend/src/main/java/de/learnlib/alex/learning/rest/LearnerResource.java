@@ -19,6 +19,7 @@ package de.learnlib.alex.learning.rest;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.data.dao.ProjectDAO;
@@ -46,8 +47,6 @@ import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -78,11 +77,6 @@ import java.util.Map;
 public class LearnerResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-    private static final Marker REST_MARKER = MarkerManager.getMarker("REST");
-    private static final Marker RESOURCE_MARKER = MarkerManager.getMarker("LEARNER_RESOURCE")
-            .setParents(LEARNER_MARKER, REST_MARKER);
 
     /** The {@link ProjectDAO} to use. */
     @Inject
@@ -160,7 +154,6 @@ public class LearnerResource {
             LearnerStatus status = learner.getStatus(projectId);
 
             LOGGER.traceExit(status);
-
             webhookService.fireEvent(user, new LearnerEvent.Started(configuration));
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
@@ -213,10 +206,8 @@ public class LearnerResource {
             }
 
             if (result.getProjectId() != projectId || result.getTestNo() != testNo) {
-                LOGGER.info(RESOURCE_MARKER,
-                        "could not resume the learner of another project or with an wrong test run.");
-                throw new IllegalArgumentException("The given project id or test no does not match "
-                        + "with the latest learn result!");
+                LOGGER.info(LoggerMarkers.LEARNER, "could not resume the learner of another project or with an wrong test run.");
+                throw new IllegalArgumentException("The given project id or test no does not match with the latest learn result!");
             }
 
             if (configuration.getStepNo() > result.getSteps().size()) {
@@ -260,7 +251,7 @@ public class LearnerResource {
             webhookService.fireEvent(user, new LearnerEvent.Resumed(configuration));
             return Response.ok(status).build();
         } catch (IllegalStateException e) {
-            LOGGER.info(RESOURCE_MARKER, "tried to restart the learning while the learner is running.");
+            LOGGER.info(LoggerMarkers.LEARNER, "tried to restart the learning while the learner is running.");
             LOGGER.traceExit(e);
             LearnerStatus status = learner.getStatus(projectId);
             return Response.status(Status.NOT_MODIFIED).entity(status).build();
@@ -295,9 +286,9 @@ public class LearnerResource {
         }
 
         if (learner.isActive(projectId)) {
-            learner.stop(projectId); // Hammer Time
+            learner.stop(projectId);
         } else {
-            LOGGER.info(RESOURCE_MARKER, "tried to stop the learning again.");
+            LOGGER.info(LoggerMarkers.LEARNER, "tried to stop the learning again.");
         }
         LearnerStatus status = learner.getStatus(projectId);
 

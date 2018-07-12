@@ -17,13 +17,12 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -44,8 +43,6 @@ import java.util.List;
 public class ClickElementByTextAction extends WebSymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** Search link in a specific element. */
     @NotNull
@@ -89,15 +86,15 @@ public class ClickElementByTextAction extends WebSymbolAction {
                 if (candidate.isDisplayed() && candidate.isEnabled() && hasText) {
                     candidate.click();
 
-                    LOGGER.info(LEARNER_MARKER, "Click on element '{}' with text '{}' "
-                                    + "(ignoreFailure: {}, negated: {}).", tagName, text, ignoreFailure, negated);
+                    LOGGER.info(LoggerMarkers.LEARNER, "Click on element '{}' with text '{}' "
+                            + "(ignoreFailure: {}, negated: {}).", tagName, text, ignoreFailure, negated);
                     return getSuccessOutput();
                 }
             }
             throw new NoSuchElementException("No clickable element found.");
         } catch (NoSuchElementException e) {
-            LOGGER.info(LEARNER_MARKER, "Could not click on element '{}' with text '{}' "
-                            + "(ignoreFailure: {}, negated: {}).", tagName, text, ignoreFailure, negated, e);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not click on element '{}' with text '{}' "
+                    + "(ignoreFailure: {}, negated: {}).", tagName, text, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

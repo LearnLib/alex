@@ -17,6 +17,7 @@
 package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
@@ -31,6 +32,7 @@ import de.learnlib.api.algorithm.feature.SupportsGrowingAlphabet;
 import de.learnlib.filter.cache.mealy.MealyCacheOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
+import org.apache.logging.log4j.ThreadContext;
 
 /** The learner thread that is used for resuming an old experiment from a given step. */
 public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeConfiguration> {
@@ -50,6 +52,8 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
      *         {@link AbstractLearnerThread#result}.
      * @param configuration
      *         The configuration to use.
+     * @param testDAO
+     *         The DAO for tests that is passed to the eq oracle.
      */
     public ResumingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
             TestDAO testDAO, ConnectorContextHandler context, LearnerResult result,
@@ -59,20 +63,23 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
 
     @Override
     public void run() {
+        ThreadContext.put("userId", String.valueOf(user.getId()));
         LOGGER.traceEntry();
-        LOGGER.info(LEARNER_MARKER, "Resuming a learner thread.");
+        LOGGER.info(LoggerMarkers.LEARNER, "Resuming a learner thread.");
 
         try {
             resumeLearning();
         } catch (Exception e) {
-            LOGGER.warn(LEARNER_MARKER, "Something in the LearnerThread while resuming went wrong:", e);
+            LOGGER.error(LoggerMarkers.LEARNER, "Something in the LearnerThread while resuming went wrong:", e);
             e.printStackTrace();
             updateOnError(e);
         } finally {
             context.post();
             finished = true;
-            LOGGER.info(LEARNER_MARKER, "The learner finished resuming the experiment.");
+
+            LOGGER.info(LoggerMarkers.LEARNER, "The learner finished resuming the experiment.");
             LOGGER.traceExit();
+            ThreadContext.remove("userId");
         }
     }
 

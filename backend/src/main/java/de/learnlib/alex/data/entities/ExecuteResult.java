@@ -24,6 +24,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.StringJoiner;
 
 /** Class to determine if a symbol has been executed successfully. */
 @Entity
@@ -109,5 +110,13 @@ public class ExecuteResult implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", this.getClass().getSimpleName() + "[", "]")
+                .add("success = " + success)
+                .add("output = " + getOutput())
+                .toString();
     }
 }

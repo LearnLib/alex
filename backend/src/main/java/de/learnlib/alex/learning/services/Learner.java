@@ -18,6 +18,7 @@ package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
@@ -50,9 +51,6 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-import org.apache.logging.log4j.ThreadContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -78,8 +76,6 @@ public class Learner {
     private static final int MAX_CONCURRENT_THREADS = 2;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** Indicator for in which phase the learner currently is. */
     public enum LearnerPhase {
@@ -458,15 +454,13 @@ public class Learner {
     public List<ExecuteResult> readOutputs(User user, Project project, ParameterizedSymbol resetSymbol,
             List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, AbstractWebDriverConfig driverConfig)
             throws LearnerException {
-        ThreadContext.put("userId", String.valueOf(user.getId()));
-        ThreadContext.put("testNo", "readOutputs");
-        ThreadContext.put("indent", "");
         LOGGER.traceEntry();
-        LOGGER.info(LEARNER_MARKER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, driverConfig);
+        LOGGER.info(LoggerMarkers.LEARNER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, driverConfig);
 
         SymbolSet symbolSet = new SymbolSet(resetSymbol, symbols, postSymbol);
         ReadOutputConfig config = new ReadOutputConfig(symbolSet, driverConfig);
 
+        LOGGER.traceExit();
         return readOutputs(user, project, config);
     }
 

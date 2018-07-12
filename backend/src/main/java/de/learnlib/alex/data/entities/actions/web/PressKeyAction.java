@@ -17,14 +17,13 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
@@ -47,8 +46,6 @@ public class PressKeyAction extends WebSymbolAction {
     private static final long serialVersionUID = 3238529954083029446L;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * The selector of the element.
@@ -75,42 +72,28 @@ public class PressKeyAction extends WebSymbolAction {
         try {
             final WebElement element = connector.getElement(nodeWithVariables);
             element.sendKeys(keyToPress);
-            LOGGER.info(LEARNER_MARKER, "Pressed the key '{}' on the element '{}' (ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "Pressed the key '{}' on the element '{}' (ignoreFailure: {}, negated: {}).",
                     keyToPress.toString(), nodeWithVariables, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LEARNER_MARKER, "Could not press key '{}' on element '{}' (ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not press key '{}' on element '{}' (ignoreFailure: {}, negated: {}).",
                     keyToPress.toString(), nodeWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }
 
-    /**
-     * @return The node.
-     */
     public WebElementLocator getNode() {
         return node;
     }
 
-    /**
-     * @param node
-     *         The node.
-     */
     public void setNode(WebElementLocator node) {
         this.node = node;
     }
 
-    /**
-     * @return The escaped unicode of the key.
-     */
     public String getKey() {
         return key;
     }
 
-    /**
-     * @param key
-     *         The escaped unicode of the key.
-     */
     public void setKey(String key) {
         this.key = key;
     }

@@ -19,18 +19,15 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.learnlib.alex.common.utils.LoggerUtil;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.api.exception.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
@@ -69,8 +66,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     private static final long serialVersionUID = 7987585761829495962L;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The id of the symbol in the project. */
     private Long id;
@@ -339,10 +334,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @Override
     public ExecuteResult execute(ConnectorManager connector) throws SULException {
-        LOGGER.info(LEARNER_MARKER, "Executing Symbol {} ({})...", String.valueOf(id), name);
-        if (LOGGER.isEnabled(Level.INFO, LEARNER_MARKER)) {
-            LoggerUtil.increaseIndent();
-        }
+        LOGGER.info(LoggerMarkers.LEARNER, "Executing Symbol {} ({})...", String.valueOf(id), name);
 
         final VariableStoreConnector globalVariableStore = connector.getConnector(VariableStoreConnector.class);
         final VariableStoreConnector localVariableStore = new VariableStoreConnector();
@@ -388,10 +380,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             }
         }
 
-        if (LOGGER.isEnabled(Level.INFO, LEARNER_MARKER)) {
-            LoggerUtil.decreaseIndent();
-        }
-        LOGGER.info(LEARNER_MARKER, "Executed the Symbol {} ({}) => {}.", String.valueOf(id), name, result);
+        LOGGER.info(LoggerMarkers.LEARNER, "Executed the Symbol {} ({}) => {}.", String.valueOf(id), name, result);
 
         // set the values of the outputs to the global context
         if (result.isSuccess()) {

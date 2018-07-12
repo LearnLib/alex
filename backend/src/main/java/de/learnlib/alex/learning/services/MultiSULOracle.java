@@ -16,12 +16,14 @@
 
 package de.learnlib.alex.learning.services;
 
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.api.SUL;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.Query;
 import net.automatalib.words.Word;
 import net.automatalib.words.WordBuilder;
+import org.apache.logging.log4j.ThreadContext;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
@@ -31,8 +33,10 @@ import java.util.concurrent.Executors;
 /**
  * Oracle that allows batched execution of membership queries to multiple suls.
  *
- * @param <I> Input symbol type.
- * @param <O> Output symbol type.
+ * @param <I>
+ *         Input symbol type.
+ * @param <O>
+ *         Output symbol type.
  */
 @ParametersAreNonnullByDefault
 public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
@@ -40,16 +44,23 @@ public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
     /** The sul the membership queries should be posed to. */
     private final SUL<I, O> sul;
 
+    /** The current user. Is used for logging purposes. */
+    private User user;
+
     /** If the learning experiment has been interrupted by the user. */
     private boolean isInterrupted = false;
 
     /**
      * Constructor.
      *
-     * @param sul The sul the membership queries should be posed to.
+     * @param sul
+     *         The sul the membership queries should be posed to.
+     * @param user
+     *         The current user for logging purposes.
      */
-    public MultiSULOracle(SUL<I, O> sul) {
+    public MultiSULOracle(SUL<I, O> sul, User user) {
         this.sul = sul;
+        this.user = user;
     }
 
     @Override
@@ -69,6 +80,7 @@ public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
 
         for (Query<I, Word<O>> q : queries) {
             Runnable worker = () -> {
+                ThreadContext.put("userId", String.valueOf(user.getId()));
 
                 // forking the sul allows us to pose multiple
                 // queries in parallel to multiple suls
@@ -103,9 +115,12 @@ public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
                     }
 
                     if (i == 2) {
+                        ThreadContext.remove("userId");
                         throw new LearnerException("Retried 2 times without success. " + lastException.getMessage());
                     }
                 }
+
+                ThreadContext.remove("userId");
             };
 
             executor.submit(worker);

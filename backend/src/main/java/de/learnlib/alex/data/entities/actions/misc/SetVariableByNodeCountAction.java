@@ -17,6 +17,7 @@
 package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.WebElementLocator;
@@ -25,8 +26,6 @@ import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 
@@ -46,8 +45,6 @@ public class SetVariableByNodeCountAction extends SymbolAction {
     private static final long serialVersionUID = 8693471212825524162L;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The name of the variable. */
     @NotBlank
@@ -69,7 +66,7 @@ public class SetVariableByNodeCountAction extends SymbolAction {
                     .getElements(nodeWithVariables)
                     .size();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LEARNER_MARKER, "Could not find elements with the selector '{}' "
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not find elements with the selector '{}' "
                             + "(ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, ignoreFailure, negated);
         }
@@ -80,29 +77,20 @@ public class SetVariableByNodeCountAction extends SymbolAction {
         return getSuccessOutput();
     }
 
-    /** @return {@link #name}. */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name
-     *         {@link #name}.
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /** @return {@link #node}. */
     public WebElementLocator getNode() {
         return node;
     }
 
-    /**
-     * @param node
-     *         {@link #node}.
-     */
     public void setNode(WebElementLocator node) {
         this.node = node;
     }
+
 }

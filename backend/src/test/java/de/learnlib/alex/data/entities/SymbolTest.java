@@ -95,7 +95,7 @@ public class SymbolTest {
         ExecuteResult result = symbol.execute(connectorManager);
 
         assertFalse(result.isSuccess());
-        assertEquals(ExecuteResult.DEFAULT_ERROR_OUTPUT + " (1)", result.getOutput() );
+        assertEquals(ExecuteResult.DEFAULT_ERROR_OUTPUT + " (1)", result.getOutput());
     }
 
     @Test

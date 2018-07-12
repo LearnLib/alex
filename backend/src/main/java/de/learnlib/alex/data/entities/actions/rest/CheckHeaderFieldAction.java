@@ -18,18 +18,18 @@ package de.learnlib.alex.data.entities.actions.rest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -44,8 +44,6 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
     private static final long serialVersionUID = -7234083244640666736L;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The key of the header field to check for the value. */
     @NotBlank
@@ -62,81 +60,13 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
     @Column(name = "\"regexp\"")
     private boolean regexp;
 
-    /**
-     * Get the key of the header field to inspect.
-     *
-     * @return The key of the header field.
-     */
-    public String getKey() {
-        return key;
-    }
-
-    /**
-     * Set the key of the header field to inspect.
-     *
-     * @param key
-     *         The new key of the header field.
-     */
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    /**
-     * Get the expected value of the header field.
-     *
-     * @return The value to search for.
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * Get the expected value of the header field.
-     * All variables and counters will be replaced with their values.
-     *
-     * @return The value to search for.
-     */
-    @JsonIgnore
-    public String getValueWithVariableValues() {
-        return insertVariableValues(value);
-    }
-
-    /**
-     * Set the value which should be inside of the header field.
-     *
-     * @param value
-     *         The new value to look for.
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    /**
-     * Should the value be treated as regular expression while searching for a text?
-     *
-     * @return true, if value should be a regular expression: false otherwise.
-     */
-    public boolean isRegexp() {
-        return regexp;
-    }
-
-    /**
-     * Set the flag if the value is a regular expression for the text search.
-     *
-     * @param regexp
-     *         true if the value is a regular expression.
-     */
-    public void setRegexp(boolean regexp) {
-        this.regexp = regexp;
-    }
-
     @Override
     public ExecuteResult execute(WebServiceConnector connector) {
         List<Object> headerFieldValues = connector.getHeaders().get(key);
         if (headerFieldValues == null) {
-            LOGGER.info(LEARNER_MARKER, "Could header {} against the value {}, because the header was not found "
-                                            + "(regExp: {}, ignoreFailure: {}, negated: {}).",
-                        key, value, regexp, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could header {} against the value {}, because the header was not found "
+                            + "(regExp: {}, ignoreFailure: {}, negated: {}).",
+                    key, value, regexp, ignoreFailure, negated);
             return getFailedOutput();
         }
 
@@ -147,14 +77,49 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
             result = search(headerFieldValues);
         }
 
-        LOGGER.info(LEARNER_MARKER, "Checked header {} with the value {} against {} => {}"
-                                        + "(regExp: {}, ignoreFailure: {}, negated: {}).",
-                    key, headerFieldValues, value, result, regexp, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Checked header {} with the value {} against {} => {}"
+                        + "(regExp: {}, ignoreFailure: {}, negated: {}).",
+                key, headerFieldValues, value, result, regexp, ignoreFailure, negated);
         if (result) {
             return getSuccessOutput();
         } else {
             return getFailedOutput();
         }
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * Get the expected value of the header field. All variables and counters will be replaced with their values.
+     *
+     * @return The value to search for.
+     */
+    @Transient
+    @JsonIgnore
+    public String getValueWithVariableValues() {
+        return insertVariableValues(value);
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public boolean isRegexp() {
+        return regexp;
+    }
+
+    public void setRegexp(boolean regexp) {
+        this.regexp = regexp;
     }
 
     private boolean search(List<Object> headerFieldValues) {

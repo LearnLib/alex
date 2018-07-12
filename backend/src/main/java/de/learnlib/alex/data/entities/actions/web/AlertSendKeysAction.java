@@ -17,12 +17,11 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.ElementNotSelectableException;
 import org.openqa.selenium.NoAlertPresentException;
@@ -43,8 +42,6 @@ public class AlertSendKeysAction extends WebSymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /** The text to send to the prompt alert. */
     @NotNull
     private String text;
@@ -55,13 +52,13 @@ public class AlertSendKeysAction extends WebSymbolAction {
             final Alert alert = connector.getDriver().switchTo().alert();
             alert.sendKeys(insertVariableValues(text));
 
-            LOGGER.info(LEARNER_MARKER, "Send text '{}' to prompt window (ignoreFailure: {}, negated: {}).",
-                        text, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Send text '{}' to prompt window (ignoreFailure: {}, negated: {}).",
+                    text, ignoreFailure, negated);
 
             return getSuccessOutput();
         } catch (NoAlertPresentException | ElementNotSelectableException e) {
-            LOGGER.info(LEARNER_MARKER, "Failed to send text '{}' to prompt window (ignoreFailure: {}, negated: {}).",
-                        text, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Failed to send text '{}' to prompt window (ignoreFailure: {}, negated: {}).",
+                    text, ignoreFailure, negated);
 
             return getFailedOutput();
         }

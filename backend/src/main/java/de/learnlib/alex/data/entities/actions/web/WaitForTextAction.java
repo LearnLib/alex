@@ -17,13 +17,12 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
@@ -46,8 +45,6 @@ public class WaitForTextAction extends WebSymbolAction {
     private static final long serialVersionUID = -7420326002014507646L;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * The string or pattern to look for.
@@ -97,18 +94,18 @@ public class WaitForTextAction extends WebSymbolAction {
 
         try {
             if (regexp) {
-                LOGGER.info(LEARNER_MARKER, "Waiting for pattern '{}' to be present in node '{}' for a maximum of "
+                LOGGER.info(LoggerMarkers.LEARNER, "Waiting for pattern '{}' to be present in node '{}' for a maximum of "
                         + "{}ms.", valueWithVariables, nodeWithVariables, maxWaitTime);
                 wait.until(wd -> connector.getElement(nodeWithVariables).getText().matches(valueWithVariables));
             } else {
-                LOGGER.info(LEARNER_MARKER, "Waiting for text '{}' to be present in node '{}' for a maximum of {}ms.",
+                LOGGER.info(LoggerMarkers.LEARNER, "Waiting for text '{}' to be present in node '{}' for a maximum of {}ms.",
                         valueWithVariables, nodeWithVariables, maxWaitTime);
                 wait.until(wd -> connector.getElement(nodeWithVariables).getText().contains(valueWithVariables));
             }
 
             return getSuccessOutput();
         } catch (NoSuchElementException | TimeoutException e) {
-            LOGGER.info(LEARNER_MARKER, "Waiting for text/patter '{}' to be present in node '{}' failed.",
+            LOGGER.info(LoggerMarkers.LEARNER, "Waiting for text/patter '{}' to be present in node '{}' failed.",
                     valueWithVariables, nodeWithVariables);
             return getFailedOutput();
         }

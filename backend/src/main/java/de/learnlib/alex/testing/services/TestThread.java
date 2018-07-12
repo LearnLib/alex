@@ -17,6 +17,7 @@
 package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
@@ -27,6 +28,9 @@ import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.events.TestEvent;
 import de.learnlib.alex.testing.events.TestExecutionStartedEventData;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 import java.util.ArrayList;
 import java.util.Deque;
@@ -39,6 +43,8 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * The thread that executes tests. There should ever only be one test per project.
  */
 public class TestThread extends Thread {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** Listener for when the test process finished. */
     public interface FinishedListener {
@@ -113,6 +119,8 @@ public class TestThread extends Thread {
 
     @Override
     public void run() {
+        ThreadContext.put("userId", String.valueOf(user.getId()));
+
         while (!queue.isEmpty()) {
             if (aborted) {
                 break;
@@ -121,6 +129,8 @@ public class TestThread extends Thread {
             try {
                 final TestExecutionConfig config = queue.getFirst();
                 final List<Test> tests = testDAO.get(user, project.getId(), config.getTestIds());
+
+                LOGGER.info(LoggerMarkers.LEARNER, "Start executing tests: {}", config.getTestIds());
 
                 // do not fire the event if the test is only called for testing purposes.
                 if (config.isCreateReport()) {
@@ -136,7 +146,10 @@ public class TestThread extends Thread {
                     testReportDAO.create(user, project.getId(), report);
                     webhookService.fireEvent(user, new TestEvent.ExecutionFinished(report));
                 }
+
+                LOGGER.info(LoggerMarkers.LEARNER, "Successfully executed tests");
             } catch (Exception e) {
+                LOGGER.info(LoggerMarkers.LEARNER, "Could not execute all tests", e);
                 e.printStackTrace();
             } finally {
                 queue.removeFirst();
@@ -145,6 +158,9 @@ public class TestThread extends Thread {
 
         finishedListener.handleFinished();
         queue.clear();
+
+        LOGGER.info(LoggerMarkers.LEARNER, "Finished testing");
+        ThreadContext.remove("userId");
     }
 
     /**

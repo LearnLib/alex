@@ -17,12 +17,11 @@
 package de.learnlib.alex.data.entities.actions.rest;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -41,8 +40,6 @@ public class CheckStatusAction extends RESTSymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /** The smallest possible HTTP status. */
     private static final int MIN_HTTP_STATUS = 100;
 
@@ -51,38 +48,26 @@ public class CheckStatusAction extends RESTSymbolAction {
     @Min(MIN_HTTP_STATUS)
     private int status;
 
-    /**
-     * Get the status code the last request should return.
-     *
-     * @return The status code to check.
-     */
-    public int getStatus() {
-        return status;
-    }
-
-    /**
-     * Set the status code the last request should return.
-     *
-     * @param status
-     *         The status code to check.
-     */
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         int returnedStatus = target.getStatus();
 
         boolean result = this.status == returnedStatus;
 
-        LOGGER.info(LEARNER_MARKER, "Checked if the returned status code '{}' is equal to '{}' => {}"
-                                        + "(ignoreFailure: {}, negated: {}).",
-                    returnedStatus, status, result, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Checked if the returned status code '{}' is equal to '{}' => {} (ignoreFailure: {}, negated: {}).",
+                returnedStatus, status, result, ignoreFailure, negated);
         if (result) {
             return getSuccessOutput();
         } else {
             return getFailedOutput();
         }
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

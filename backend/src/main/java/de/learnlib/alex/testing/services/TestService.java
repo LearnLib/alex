@@ -18,6 +18,7 @@ package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
@@ -46,6 +47,8 @@ import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.entities.TestSuiteResult;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -59,6 +62,8 @@ import java.util.stream.Collectors;
 /** The service that executes tests. */
 @Service
 public class TestService {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** Factory to create a new ContextHandler. */
     private final ConnectorContextHandlerFactory contextHandlerFactory;
@@ -270,6 +275,7 @@ public class TestService {
      */
     public TestCaseResult executeTestCase(User user, TestCase testCase, TestExecutionConfig testConfig,
             Map<Long, TestResult> results) {
+        LOGGER.info(LoggerMarkers.LEARNER, "Execute test[id={}] '{}'", testCase.getId(), testCase.getName());
 
         final ProjectUrl projectUrl = projectUrlRepository.findOne(testConfig.getUrlId());
 
@@ -344,6 +350,7 @@ public class TestService {
                 new TestCaseResult(testCase, sulOutputs, passed, time, String.join(", ", failureMessage));
         results.put(testCase.getId(), result);
 
+        LOGGER.info(LoggerMarkers.LEARNER, "Finished executing test[id={}], passed=" + String.valueOf(passed), testCase.getId());
         return result;
     }
 

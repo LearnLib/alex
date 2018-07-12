@@ -17,6 +17,7 @@
 package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
@@ -24,6 +25,7 @@ import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import org.apache.logging.log4j.ThreadContext;
 
 /** The learner thread that is used for starting a new experiment. */
 public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartConfiguration> {
@@ -31,12 +33,20 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
     /**
      * Constructor.
      *
-     * @param user             The current user.
-     * @param learnerResultDAO {@link AbstractLearnerThread#learnerResultDAO}.
-     * @param webhookService   {@link AbstractLearnerThread#webhookService}.
-     * @param context          The context to use.
-     * @param result           {@link AbstractLearnerThread#result}.
-     * @param configuration    The configuration to use.
+     * @param user
+     *         The current user.
+     * @param learnerResultDAO
+     *         {@link AbstractLearnerThread#learnerResultDAO}.
+     * @param webhookService
+     *         {@link AbstractLearnerThread#webhookService}.
+     * @param context
+     *         The context to use.
+     * @param result
+     *         {@link AbstractLearnerThread#result}.
+     * @param configuration
+     *         The configuration to use.
+     * @param testDAO
+     *         The DAO for tests that is passed to the eq oracle.
      */
     public StartingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
             TestDAO testDAO, ConnectorContextHandler context, LearnerResult result,
@@ -46,20 +56,23 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
 
     @Override
     public void run() {
+        ThreadContext.put("userId", String.valueOf(user.getId()));
         LOGGER.traceEntry();
-        LOGGER.info(LEARNER_MARKER, "Started a new learner thread.");
+        LOGGER.info(LoggerMarkers.LEARNER, "Started a new learner thread.");
 
         try {
             startLearning();
         } catch (Exception e) {
-            LOGGER.warn(LEARNER_MARKER, "Something in the LearnerThread went wrong:", e);
+            LOGGER.error(LoggerMarkers.LEARNER, "Something in the LearnerThread went wrong:", e);
             e.printStackTrace();
             updateOnError(e);
         } finally {
             context.post();
             finished = true;
-            LOGGER.info(LEARNER_MARKER, "The learner thread has finished.");
+
+            LOGGER.info(LoggerMarkers.LEARNER, "The learner thread has finished.");
             LOGGER.traceExit();
+            ThreadContext.remove("userId");
         }
     }
 

@@ -18,14 +18,12 @@ package de.learnlib.alex.data.entities.actions.rest;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.actions.Credentials;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-import org.glassfish.jersey.client.ClientProperties;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
@@ -35,11 +33,7 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -57,8 +51,6 @@ public class CallAction extends RESTSymbolAction {
     private static final long serialVersionUID = 7971257988991996022L;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Enumeration to specify the HTTP method.
@@ -97,7 +89,7 @@ public class CallAction extends RESTSymbolAction {
     @NotBlank
     private String url;
 
-    /** The amount of time in ms before the request is aborted. The value 0 means wait infinitely long.  */
+    /** The amount of time in ms before the request is aborted. The value 0 means wait infinitely long. */
     @NotNull
     @Min(value = 0)
     private int timeout;
@@ -137,29 +129,28 @@ public class CallAction extends RESTSymbolAction {
         this.timeout = 0;
     }
 
-    /**
-     * Get the method to use for the next request.
-     *
-     * @return The selected method.
-     */
+    @Override
+    public ExecuteResult execute(WebServiceConnector target) {
+        try {
+            LOGGER.info(LoggerMarkers.LEARNER, "Doing REST request '{} {}' (ignoreFailure: {}, negated: {}).",
+                    method, url, ignoreFailure, negated);
+
+            doRequest(target);
+            return getSuccessOutput();
+        } catch (Exception e) {
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not call {}.", getUrlWithVariableValues(), e);
+            return getFailedOutput();
+        }
+    }
+
     public Method getMethod() {
         return method;
     }
 
-    /**
-     * Select a method to use for the request.
-     *
-     * @param method The new method to use.
-     */
     public void setMethod(Method method) {
         this.method = method;
     }
 
-    /**
-     * Get the URL the request will go to.
-     *
-     * @return The URL which will be called.
-     */
     public String getUrl() {
         return url;
     }
@@ -173,21 +164,10 @@ public class CallAction extends RESTSymbolAction {
         return insertVariableValues(url);
     }
 
-    /**
-     * Set the URL to send the request to.
-     *
-     * @param url The URL to call.
-     */
     public void setUrl(String url) {
         this.url = url;
     }
 
-    /**
-     * Get the map of the request header fields. Every header has a list of values to follow the HTTP standard (e.g.
-     * Accept: text/html,application/xml).
-     *
-     * @return The map of request headers.
-     */
     public HashMap<String, String> getHeaders() {
         return headers;
     }
@@ -203,21 +183,10 @@ public class CallAction extends RESTSymbolAction {
         return result;
     }
 
-    /**
-     * Set the map of request headers. Every header can have multiple values, see {@link #getHeaders()} for more
-     * information.
-     *
-     * @param headers The new request headers.
-     */
     public void setHeaders(HashMap<String, String> headers) {
         this.headers = headers;
     }
 
-    /**
-     * Get the credentials to authenticate.
-     *
-     * @return The credentials to use for authentication.
-     */
     public Credentials getCredentials() {
         return credentials;
     }
@@ -238,20 +207,10 @@ public class CallAction extends RESTSymbolAction {
         return new Credentials(name, password);
     }
 
-    /**
-     * Set the credentials to use for authentication.
-     *
-     * @param credentials The new credentials to use.
-     */
     public void setCredentials(Credentials credentials) {
         this.credentials = credentials;
     }
 
-    /**
-     * Get the map of cookies that will be used for the requests.
-     *
-     * @return The map of cookies.
-     */
     public HashMap<String, String> getCookies() {
         return cookies;
     }
@@ -268,20 +227,10 @@ public class CallAction extends RESTSymbolAction {
         return result;
     }
 
-    /**
-     * Set a new map of cookies for the request.
-     *
-     * @param cookies The new cookies.
-     */
     public void setCookies(HashMap<String, String> cookies) {
         this.cookies = cookies;
     }
 
-    /**
-     * Get the optional data which will be send together with a POST or PUT request.
-     *
-     * @return The data to include in the next POST/ PUT request.
-     */
     public String getData() {
         return data;
     }
@@ -296,11 +245,6 @@ public class CallAction extends RESTSymbolAction {
         return insertVariableValues(data);
     }
 
-    /**
-     * Set the optional data which will be send together with a POST or PUT request.
-     *
-     * @param data The data to include in the next POST/ PUT request.
-     */
     public void setData(String data) {
         this.data = data;
     }
@@ -313,24 +257,10 @@ public class CallAction extends RESTSymbolAction {
         this.timeout = timeout;
     }
 
-    @Override
-    public ExecuteResult execute(WebServiceConnector target) {
-        try {
-            LOGGER.info(LEARNER_MARKER, "Doing REST request '{} {}' (ignoreFailure: {}, negated: {}).",
-                        method, url, ignoreFailure, negated);
-
-            doRequest(target);
-            return getSuccessOutput();
-        } catch (Exception e) {
-            LOGGER.info(LEARNER_MARKER, "Could not call {}.", getUrlWithVariableValues(), e);
-            return getFailedOutput();
-        }
-    }
-
     private void doRequest(WebServiceConnector target) {
         final Map<String, String> requestHeaders = getHeadersWithVariableValues();
         if (credentials != null && credentials.areValid()) {
-            LOGGER.info(LEARNER_MARKER, "Using credentials '{}'.", credentials);
+            LOGGER.info(LoggerMarkers.LEARNER, "Using credentials '{}'.", credentials);
             requestHeaders.put("Authorization", "Basic " + getCredentialsWithVariableValues().toBase64());
         }
 
@@ -340,139 +270,19 @@ public class CallAction extends RESTSymbolAction {
                 break;
             case POST:
                 target.post(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(),
-                            getDataWithVariableValues(), timeout);
+                        getDataWithVariableValues(), timeout);
                 break;
             case PUT:
                 target.put(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(),
-                           getDataWithVariableValues(), timeout);
+                        getDataWithVariableValues(), timeout);
                 break;
             case DELETE:
                 target.delete(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(), timeout);
                 break;
             default:
-                LOGGER.error(LEARNER_MARKER, "Tried to make a call to a REST API with an unknown method '{}'.",
-                             method.name());
+                LOGGER.error(LoggerMarkers.LEARNER, "Tried to make a call to a REST API with an unknown method '{}'.",
+                        method.name());
         }
     }
 
-    /**
-     * Execute an HTTP request without counters and variables.
-     *
-     * @param baseUrl The base url of the project.
-     *
-     * @return The response of the request.
-     */
-    public TestResult testRequest(String baseUrl) {
-        if (credentials != null && credentials.areValid()) {
-            headers.put("Authorization", "Basic " + credentials.toBase64());
-        }
-
-        final WebTarget target = ClientBuilder.newClient().target(baseUrl + url);
-        final Invocation.Builder builder = target.request();
-        headers.forEach(builder::header);
-        cookies.forEach(builder::cookie);
-        builder.property(ClientProperties.CONNECT_TIMEOUT, timeout);
-        builder.property(ClientProperties.READ_TIMEOUT, timeout);
-
-        javax.ws.rs.client.Entity body = null;
-        if (method.equals(Method.POST) || method.equals(Method.PUT)) {
-            if (headers.containsKey("Content-Type")) {
-                body = javax.ws.rs.client.Entity.entity(data, headers.get("Content-Type"));
-            } else {
-                body = javax.ws.rs.client.Entity.json(data);
-            }
-        }
-
-        final Response response;
-        switch (method) {
-            case GET:
-                response = builder.get();
-                break;
-            case POST:
-                response = builder.post(body);
-                break;
-            case PUT:
-                response = builder.put(body);
-                break;
-            case DELETE:
-                response = builder.delete();
-                break;
-            default:
-                return null;
-        }
-
-        final TestResult result = new TestResult();
-        result.status = response.getStatus();
-        result.body = response.readEntity(String.class);
-
-        response.getCookies().values().forEach(cookie -> {
-            result.cookies.put(cookie.getName(), cookie.getValue());
-        });
-
-        response.getStringHeaders().forEach((key, obj) -> {
-            String value = obj.toString();
-            value = value.substring(1, value.length() - 1);
-            result.headers.put(key, value);
-        });
-
-        return result;
-    }
-
-    /**
-     * The result object for the {@link #testRequest(String)} method.
-     */
-    public static class TestResult {
-
-        /** The status of the HTTP response. */
-        private int status;
-
-        /** The body of the HTTP response. */
-        private String body;
-
-        /** The cookies of the HTTP response. */
-        private Map<String, String> cookies = new HashMap<>();
-
-        /** The headers of the HTTP response. */
-        private Map<String, String> headers = new HashMap<>();
-
-        /** @return The status. */
-        public int getStatus() {
-            return status;
-        }
-
-        /** @param status The status. */
-        public void setStatus(int status) {
-            this.status = status;
-        }
-
-        /** @return The body. */
-        public String getBody() {
-            return body;
-        }
-
-        /** @param body The body. */
-        public void setBody(String body) {
-            this.body = body;
-        }
-
-        /** @return The cookies. */
-        public Map<String, String> getCookies() {
-            return cookies;
-        }
-
-        /** @param cookies The cookies. */
-        public void setCookies(Map<String, String> cookies) {
-            this.cookies = cookies;
-        }
-
-        /** @return The header. */
-        public Map<String, String> getHeaders() {
-            return headers;
-        }
-
-        /** @param headers The headers. */
-        public void setHeaders(Map<String, String> headers) {
-            this.headers = headers;
-        }
-    }
 }

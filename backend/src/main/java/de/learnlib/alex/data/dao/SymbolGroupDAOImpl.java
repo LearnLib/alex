@@ -30,8 +30,6 @@ import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -56,11 +54,6 @@ import java.util.Set;
 public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker GROUP_MARKER = MarkerManager.getMarker("GROUP");
-    private static final Marker DAO_MARKER = MarkerManager.getMarker("DAO");
-    private static final Marker IMPL_MARKER = MarkerManager.getMarker("GROUP_DAO")
-            .setParents(DAO_MARKER, GROUP_MARKER);
 
     /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
@@ -137,10 +130,10 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
             symbolGroupRepository.save(group);
         } catch (DataIntegrityViolationException e) {
-            LOGGER.info(IMPL_MARKER, "SymbolGroup creation failed:", e);
+            LOGGER.info("SymbolGroup creation failed:", e);
             throw new ValidationException("SymbolGroup could not be created.", e);
         } catch (TransactionSystemException e) {
-            LOGGER.info(IMPL_MARKER, "SymbolGroup creation failed:", e);
+            LOGGER.info("SymbolGroup creation failed:", e);
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("SymbolGroup was not created:", cve);
         }
@@ -249,10 +242,10 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             groupInDB.setName(group.getName());
             symbolGroupRepository.save(groupInDB);
         } catch (DataIntegrityViolationException e) {
-            LOGGER.info(IMPL_MARKER, "SymbolGroup update failed:", e);
+            LOGGER.info("SymbolGroup update failed:", e);
             throw new ValidationException("SymbolGroup could not be updated.", e);
         } catch (TransactionSystemException e) {
-            LOGGER.info(IMPL_MARKER, "SymbolGroup update failed:", e);
+            LOGGER.info("SymbolGroup update failed:", e);
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("SymbolGroup was not updated:", cve);
         }

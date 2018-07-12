@@ -26,8 +26,8 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
- * Base for the different action a test could do.
- * This action layer is basically a wrapper around Selenium to be more OO and can be (de-)serialized in JSON.
+ * Base for the different action a test could do. This action layer is basically a wrapper around Selenium to be more OO
+ * and can be (de-)serialized in JSON.
  */
 @Entity
 @DiscriminatorValue("web")
@@ -44,7 +44,8 @@ public abstract class WebSymbolAction extends SymbolAction {
     /**
      * Execute a Web action, i.e. an action that interacts with a web site over an browser.
      *
-     * @param connector The connector to connect to web site (via Selenium).
+     * @param connector
+     *         The connector to connect to web site (via Selenium).
      * @return An indicator of the action was executed successfully or not.
      */
     protected abstract ExecuteResult execute(WebSiteConnector connector);

@@ -29,6 +29,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
@@ -262,6 +263,45 @@ public class SymbolResourceIT extends AbstractResourceIT {
         final JsonNode symbolNode = groupsNode.get(1).get("symbols").get(2);
 
         assertEquals(2, symbolNode.get("steps").size());
+    }
+
+    @Test
+    public void shouldCreateASymbolWithAllWebActions() throws Exception {
+        final File file = new File(getClass().getResource("/core/entities/symbol-with-all-web-actions.json").toURI());
+        final JsonNode symbolJson = objectMapper.readTree(file);
+        final int numberOfSteps = symbolJson.get("steps").size();
+
+        final Response response = symbolApi.create(projectId1, symbolJson.toString(), jwtUser1);
+        assertEquals(HttpStatus.CREATED.value(), response.getStatus());
+        final JsonNode symbol = objectMapper.readTree(response.readEntity(String.class));
+
+        assertEquals(numberOfSteps, symbol.get("steps").size());
+    }
+
+    @Test
+    public void shouldCreateASymbolWithAllRestActions() throws Exception {
+        final File file = new File(getClass().getResource("/core/entities/symbol-with-all-rest-actions.json").toURI());
+        final JsonNode symbolJson = objectMapper.readTree(file);
+        final int numberOfSteps = symbolJson.get("steps").size();
+
+        final Response response = symbolApi.create(projectId1, symbolJson.toString(), jwtUser1);
+        assertEquals(HttpStatus.CREATED.value(), response.getStatus());
+        final JsonNode symbol = objectMapper.readTree(response.readEntity(String.class));
+
+        assertEquals(numberOfSteps, symbol.get("steps").size());
+    }
+
+    @Test
+    public void shouldCreateASymbolWithAllMiscActions() throws Exception {
+        final File file = new File(getClass().getResource("/core/entities/symbol-with-all-misc-actions.json").toURI());
+        final JsonNode symbolJson = objectMapper.readTree(file);
+        final int numberOfSteps = symbolJson.get("steps").size();
+
+        final Response response = symbolApi.create(projectId1, symbolJson.toString(), jwtUser1);
+        assertEquals(HttpStatus.CREATED.value(), response.getStatus());
+        final JsonNode symbol = objectMapper.readTree(response.readEntity(String.class));
+
+        assertEquals(numberOfSteps, symbol.get("steps").size());
     }
 
     private void validateSymbol(String symbol, int projectId) {

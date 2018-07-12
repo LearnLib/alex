@@ -32,8 +32,6 @@ import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Lazy;
@@ -60,11 +58,6 @@ import java.util.stream.Collectors;
 public class ProjectDAOImpl implements ProjectDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker PROJECT_MARKER = MarkerManager.getMarker("PROJECT");
-    private static final Marker DAO_MARKER = MarkerManager.getMarker("DAO");
-    private static final Marker IMPL_MARKER = MarkerManager.getMarker("PROJECT_DAO")
-            .setParents(DAO_MARKER, PROJECT_MARKER);
 
     /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
@@ -154,12 +147,12 @@ public class ProjectDAOImpl implements ProjectDAO {
             LOGGER.traceExit(createdProject);
             return createdProject;
         } catch (DataIntegrityViolationException e) {
-            LOGGER.info(IMPL_MARKER, "Project creation failed: ", e);
+            LOGGER.info("Project creation failed: ", e);
             e.printStackTrace();
             LOGGER.traceExit(e);
             throw new javax.validation.ValidationException("Project could not be created.", e);
         } catch (TransactionSystemException e) {
-            LOGGER.info(IMPL_MARKER, "Project creation failed:", e);
+            LOGGER.info("Project creation failed:", e);
             LOGGER.traceExit(e);
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Project was not created:", cve);
@@ -220,10 +213,10 @@ public class ProjectDAOImpl implements ProjectDAO {
             LOGGER.traceExit(project);
             return updatedProject;
         } catch (DataIntegrityViolationException e) {
-            LOGGER.info(IMPL_MARKER, "Project update failed:", e);
+            LOGGER.info("Project update failed:", e);
             throw new javax.validation.ValidationException("Project could not be updated.", e);
         } catch (TransactionSystemException e) {
-            LOGGER.info(IMPL_MARKER, "Project update failed:", e);
+            LOGGER.info("Project update failed:", e);
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Project was not updated.", cve);
         }

@@ -47,6 +47,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -64,6 +66,8 @@ import java.util.stream.Collectors;
 public class SymbolDAOImpl implements SymbolDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH:mm:ss");
 
     /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
@@ -199,7 +203,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         projectDAO.checkAccess(user, project);
 
         // make sure the name of the symbol is unique
-        if (symbolRepository.findOneByProject_IdAndName(symbol.getProjectId(), symbol.getName()) != null) {
+        if (symbolRepository.findOneByProject_IdAndName(projectId, symbol.getName()) != null) {
             throw new ValidationException("To create a symbol its name must be unique.");
         }
 
@@ -412,8 +416,6 @@ public class SymbolDAOImpl implements SymbolDAO {
             throw new ValidationException("Symbols were not updated: " + e.getMessage(), e);
         } catch (IllegalStateException e) {
             throw new ValidationException("Could not update the Symbols because one is not valid.", e);
-        } catch (IllegalArgumentException e) {
-            throw e;
         } catch (NotFoundException e) {
             throw new NotFoundException("Could not update the Symbol because it was nowhere to be found.", e);
         }
@@ -426,7 +428,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         // make sure the name of the symbol is unique
         final Symbol symbolWithSameName =
-                symbolRepository.findOneByProject_IdAndName(symbol.getProjectId(), symbol.getName());
+                symbolRepository.findOneByProject_IdAndName(projectId, symbol.getName());
         if (symbolWithSameName != null && !symbolWithSameName.getId().equals(symbol.getId())) {
             throw new ValidationException("To update a symbol its name must be unique.");
         }
@@ -572,6 +574,10 @@ public class SymbolDAOImpl implements SymbolDAO {
         for (Symbol symbol : symbols) {
             symbol.setProject(project);
             symbol.setHidden(true);
+
+            // rename the symbol so that there can be another new symbol with the name
+            final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            symbol.setName(symbol.getName() + "--" + dateFormat.format(timestamp));
         }
 
         final List<Symbol> archivedSymbols = symbolRepository.save(symbols);

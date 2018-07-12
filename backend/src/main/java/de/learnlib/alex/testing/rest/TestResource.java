@@ -35,6 +35,7 @@ import de.learnlib.alex.testing.services.TestService;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 
@@ -249,8 +250,9 @@ public class TestResource {
     public Response execute(@PathParam("project_id") Long projectId, @PathParam("id") Long id,
             TestExecutionConfig testConfig) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        final Test test = testDAO.get(user, projectId, id);
+        ThreadContext.put("userId", String.valueOf(user.getId()));
 
+        final Test test = testDAO.get(user, projectId, id);
         if (!(test instanceof TestCase)) {
             final Exception e = new Exception("The test is not a test case.");
             return ResourceErrorHandler.createRESTErrorMessage("TestResource.execute", Response.Status.BAD_REQUEST, e);
@@ -262,6 +264,7 @@ public class TestResource {
         final TestReport report = new TestReport();
         report.setTestResults(new ArrayList<>(results.values()));
 
+        ThreadContext.remove("userId");
         return Response.ok(report).build();
     }
 

@@ -17,13 +17,12 @@
 package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -42,8 +41,6 @@ public class WaitAction extends SymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /**
      * The duration to wait in ms.
      */
@@ -51,35 +48,24 @@ public class WaitAction extends SymbolAction {
     @Min(0)
     private Long duration;
 
-    /**
-     * Get the duration of the wait.
-     *
-     * @return The duration in milliseconds.
-     */
+    @Override
+    public ExecuteResult execute(ConnectorManager connector) {
+        try {
+            LOGGER.info(LoggerMarkers.LEARNER, "Waiting for {} ms.", duration);
+            Thread.sleep(duration);
+            return getSuccessOutput();
+        } catch (InterruptedException e) {
+            LOGGER.error(LoggerMarkers.LEARNER, "Failed to wait.", e);
+            return getFailedOutput();
+        }
+    }
+
     public Long getDuration() {
         return duration;
     }
 
-    /**
-     * Set the duration to wait.
-     *
-     * @param duration
-     *         The new duration in milliseconds.
-     */
     public void setDuration(Long duration) {
         this.duration = duration;
-    }
-
-    @Override
-    public ExecuteResult execute(ConnectorManager connector) {
-        try {
-            LOGGER.info(LEARNER_MARKER, "Waiting for {} ms.", duration);
-            Thread.sleep(duration);
-            return getSuccessOutput();
-        } catch (InterruptedException e) {
-            LOGGER.error(LEARNER_MARKER, "Failed to wait.", e);
-            return getFailedOutput();
-        }
     }
 
 }

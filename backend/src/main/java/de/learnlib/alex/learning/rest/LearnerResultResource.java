@@ -218,6 +218,8 @@ public class LearnerResultResource {
      * @param config
      *         The configuration object.
      * @return The generated test suite.
+     * @throws Exception
+     *         If something goes wrong.
      */
     @POST
     @Path("{test_no}/generateTestSuite")

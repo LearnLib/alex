@@ -20,16 +20,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import de.learnlib.alex.common.utils.JSONHelpers;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -38,38 +38,36 @@ import javax.validation.constraints.NotNull;
 @Entity
 @DiscriminatorValue("rest_checkAttributeType")
 @JsonTypeName("rest_checkAttributeType")
-public class CheckAttributeTypeAction extends  RESTSymbolAction {
+public class CheckAttributeTypeAction extends RESTSymbolAction {
 
     private static final long serialVersionUID = 6962742356381266855L;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Enumeration to refer to a type of a JSON field.
      */
     public enum JsonType {
         /** NULL POINTER INCOMMMMING!!!1111. */
-        NULL (JsonNodeType.NULL),
+        NULL(JsonNodeType.NULL),
 
         /** The attribute has a string value. */
-        STRING (JsonNodeType.STRING),
+        STRING(JsonNodeType.STRING),
 
         /** The attribute has a integer value. */
-        INTEGER (JsonNodeType.NUMBER),
+        INTEGER(JsonNodeType.NUMBER),
 
         /** The attribute has a boolean value. */
-        BOOLEAN (JsonNodeType.BOOLEAN),
+        BOOLEAN(JsonNodeType.BOOLEAN),
 
         /** The attribute has an object as value. */
-        OBJECT (JsonNodeType.OBJECT),
+        OBJECT(JsonNodeType.OBJECT),
 
         /** The attribute has an array as value. */
-        ARRAY (JsonNodeType.ARRAY),
+        ARRAY(JsonNodeType.ARRAY),
 
         /** The attribute has unknown or missing type. */
-        UNKNOWN (JsonNodeType.MISSING);
+        UNKNOWN(JsonNodeType.MISSING);
 
         /** Connection between our minimal type set and the bigger one from Jackson. */
         private JsonNodeType relatedType;
@@ -102,55 +100,6 @@ public class CheckAttributeTypeAction extends  RESTSymbolAction {
     @NotNull
     private JsonType jsonType;
 
-    /**
-     * Get the field name of the requested attribute.
-     *
-     * @return The name of the attribute.
-     */
-    public String getAttribute() {
-        return attribute;
-    }
-
-    /**
-     * Get the field name of the requested attribute.
-     * All variables and counters will be replaced with their values.
-     *
-     * @return The name of the attribute.
-     */
-    @JsonIgnore
-    public String getAttributeWithVariableValues() {
-        return insertVariableValues(attribute);
-    }
-
-    /**
-     * Set the field name of the attribute which should be searched for.
-     *
-     * @param attribute
-     *         The name of the attribute.
-     */
-    public void setAttribute(String attribute) {
-        this.attribute = attribute;
-    }
-
-    /**
-     * Get the expected type of the JSON attribute.
-     *
-     * @return The expected type of the JSON attribute.
-     */
-    public JsonType getJsonType() {
-        return jsonType;
-    }
-
-    /**
-     * Set the expected type of the JSON attribute.
-     *
-     * @param jsonType
-     *         The expected type of the JSON attribute.
-     */
-    public void setJsonType(JsonType jsonType) {
-        this.jsonType = jsonType;
-    }
-
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         String body = target.getBody();
@@ -158,14 +107,40 @@ public class CheckAttributeTypeAction extends  RESTSymbolAction {
 
         boolean result = typeInBody != null && typeInBody.equals(jsonType);
 
-        LOGGER.info(LEARNER_MARKER, "Check if the attribute '{}' has the type '{}' in '{}' => {} "
-                            + "(ignoreFailure: {}, negated: {}).",
-                    attribute, jsonType, body, result, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' has the type '{}' in '{}' => {} (ignoreFailure: {}, negated: {}).",
+                attribute, jsonType, body, result, ignoreFailure, negated);
         if (result) {
             return getSuccessOutput();
         } else {
-            return  getFailedOutput();
+            return getFailedOutput();
         }
+    }
+
+    public String getAttribute() {
+        return attribute;
+    }
+
+    /**
+     * Get the field name of the requested attribute. All variables and counters will be replaced with their values.
+     *
+     * @return The name of the attribute.
+     */
+    @Transient
+    @JsonIgnore
+    public String getAttributeWithVariableValues() {
+        return insertVariableValues(attribute);
+    }
+
+    public void setAttribute(String attribute) {
+        this.attribute = attribute;
+    }
+
+    public JsonType getJsonType() {
+        return jsonType;
+    }
+
+    public void setJsonType(JsonType jsonType) {
+        this.jsonType = jsonType;
     }
 
 }

@@ -18,19 +18,19 @@ package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.WebDriver;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -42,8 +42,6 @@ import javax.validation.constraints.NotNull;
 public class CheckPageTitleAction extends WebSymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The title of the web page. */
     @NotBlank
@@ -61,9 +59,21 @@ public class CheckPageTitleAction extends WebSymbolAction {
         this.regexp = false;
     }
 
-    /**
-     * @return The title to search for (without replaced counters nor variables).
-     */
+    @Override
+    public ExecuteResult execute(WebSiteConnector connector) {
+        final WebDriver driver = connector.getDriver();
+        final boolean result = SearchHelper.search(getTitleWithVariableValues(), driver.getTitle(), regexp);
+
+        LOGGER.info(LoggerMarkers.LEARNER, "Check if the current pages has the title '{}' => {} "
+                        + "(regExp: {}, ignoreFailure: {}, negated: {}).",
+                title, result, regexp, ignoreFailure, negated);
+        if (result) {
+            return getSuccessOutput();
+        } else {
+            return getFailedOutput();
+        }
+    }
+
     public String getTitle() {
         return title;
     }
@@ -73,47 +83,22 @@ public class CheckPageTitleAction extends WebSymbolAction {
      *
      * @return The title to check.
      */
+    @Transient
     @JsonIgnore
     public String getTitleWithVariableValues() {
         return insertVariableValues(title);
     }
 
-    /**
-     * @param title
-     *         The new title to search for.
-     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    /**
-     * @return Is the title to search for a regexp?
-     */
     public boolean isRegexp() {
         return regexp;
     }
 
-    /**
-     * @param regexp
-     *         True if the title is a regexp; False otherwise.
-     */
     public void setRegexp(boolean regexp) {
         this.regexp = regexp;
-    }
-
-    @Override
-    public ExecuteResult execute(WebSiteConnector connector) {
-        final WebDriver driver = connector.getDriver();
-        final boolean result = SearchHelper.search(getTitleWithVariableValues(), driver.getTitle(), regexp);
-
-        LOGGER.info(LEARNER_MARKER, "Check if the current pages has the title '{}' => {} "
-                        + "(regExp: {}, ignoreFailure: {}, negated: {}).",
-                title, result, regexp, ignoreFailure, negated);
-        if (result) {
-            return getSuccessOutput();
-        } else {
-            return getFailedOutput();
-        }
     }
 
 }

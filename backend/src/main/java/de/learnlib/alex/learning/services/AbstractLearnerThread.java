@@ -47,8 +47,6 @@ import net.automatalib.words.Word;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,8 +65,6 @@ import java.util.stream.Collectors;
 public abstract class AbstractLearnerThread<T extends AbstractLearnerConfiguration> extends Thread {
 
     protected static final Logger LOGGER = LogManager.getLogger();
-
-    protected static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The user who is stating the Learning Thread. */
     protected User user;
@@ -170,7 +166,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         final SUL<String, String> mappedSUL = SULMappers.apply(symbolMapper, ceiSUL);
         this.sul = new AlexSUL<>(mappedSUL);
 
-        this.multiSULOracle = new MultiSULOracle<>(sul);
+        this.multiSULOracle = new MultiSULOracle<>(sul, user);
 
         // monitor which queries are being processed.
         monitorOracle = new QueryMonitorOracle<>(multiSULOracle);

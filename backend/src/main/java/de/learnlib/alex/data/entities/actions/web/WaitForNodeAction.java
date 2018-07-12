@@ -18,13 +18,12 @@ package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
@@ -47,8 +46,6 @@ public class WaitForNodeAction extends WebSymbolAction {
     private static final long serialVersionUID = 4029222122474954117L;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Enumeration to specify the wait criterion.
@@ -120,63 +117,6 @@ public class WaitForNodeAction extends WebSymbolAction {
     @Min(0)
     private long maxWaitTime;
 
-    /**
-     * Get the selector of the element.
-     *
-     * @return The selector of the element
-     */
-    public WebElementLocator getNode() {
-        return node;
-    }
-
-    /**
-     * Set the selector of the element.
-     *
-     * @param node
-     *         The selector of the element
-     */
-    public void setNode(WebElementLocator node) {
-        this.node = node;
-    }
-
-    /**
-     * Get the wait criterion.
-     *
-     * @return The wait criterion
-     */
-    public WaitCriterion getWaitCriterion() {
-        return waitCriterion;
-    }
-
-    /**
-     * Set the wait criterion.
-     *
-     * @param waitCriterion
-     *         The wait criterion
-     */
-    public void setWaitCriterion(WaitCriterion waitCriterion) {
-        this.waitCriterion = waitCriterion;
-    }
-
-    /**
-     * Get the max amount of time in seconds to wait before the action fails.
-     *
-     * @return The max amount of time
-     */
-    public long getMaxWaitTime() {
-        return maxWaitTime;
-    }
-
-    /**
-     * Set the max amount of time in seconds to wait before the action fails.
-     *
-     * @param maxWaitTime
-     *         The max amount of time in seconds
-     */
-    public void setMaxWaitTime(long maxWaitTime) {
-        this.maxWaitTime = maxWaitTime;
-    }
-
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
         if (maxWaitTime < 0) {
@@ -226,13 +166,37 @@ public class WaitForNodeAction extends WebSymbolAction {
             }
             return getSuccessOutput();
         } catch (TimeoutException e) {
-            LOGGER.info(LEARNER_MARKER, "Waiting on the node '{}' (criterion: '{}') timed out.",
+            LOGGER.info(LoggerMarkers.LEARNER, "Waiting on the node '{}' (criterion: '{}') timed out.",
                     nodeWithVariables, waitCriterion);
             return getFailedOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LEARNER_MARKER, "The node with the selector {} (criterion: '{}') could not be found.",
+            LOGGER.info(LoggerMarkers.LEARNER, "The node with the selector {} (criterion: '{}') could not be found.",
                     nodeWithVariables, waitCriterion);
             return getFailedOutput();
         }
+    }
+
+    public WebElementLocator getNode() {
+        return node;
+    }
+
+    public void setNode(WebElementLocator node) {
+        this.node = node;
+    }
+
+    public WaitCriterion getWaitCriterion() {
+        return waitCriterion;
+    }
+
+    public void setWaitCriterion(WaitCriterion waitCriterion) {
+        this.waitCriterion = waitCriterion;
+    }
+
+    public long getMaxWaitTime() {
+        return maxWaitTime;
+    }
+
+    public void setMaxWaitTime(long maxWaitTime) {
+        this.maxWaitTime = maxWaitTime;
     }
 }

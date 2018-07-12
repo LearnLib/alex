@@ -17,13 +17,12 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
@@ -43,8 +42,6 @@ public class CheckNodeSelectedAction extends WebSymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /** The input element. */
     @NotNull
     private WebElementLocator node;
@@ -57,16 +54,16 @@ public class CheckNodeSelectedAction extends WebSymbolAction {
         try {
             final WebElement element = connector.getElement(nodeWithVariables);
             if (element.isSelected()) {
-                LOGGER.info(LEARNER_MARKER, "Element '{}' is selected (ignoreFailure: {}, negated: {}).",
+                LOGGER.info(LoggerMarkers.LEARNER, "Element '{}' is selected (ignoreFailure: {}, negated: {}).",
                         nodeWithVariables, ignoreFailure, negated);
                 return getSuccessOutput();
             } else {
-                LOGGER.info(LEARNER_MARKER, "Element '{}' is not selected (ignoreFailure: {}, negated: {}).",
+                LOGGER.info(LoggerMarkers.LEARNER, "Element '{}' is not selected (ignoreFailure: {}, negated: {}).",
                         nodeWithVariables, ignoreFailure, negated);
                 return getFailedOutput();
             }
         } catch (NoSuchElementException e) {
-            LOGGER.info(LEARNER_MARKER, "Could not assert if element '{}' is selected "
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not assert if element '{}' is selected "
                     + "(ignoreFailure: {}, negated: {}).", nodeWithVariables, ignoreFailure, negated);
             return getFailedOutput();
         }
