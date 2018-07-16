@@ -32,6 +32,12 @@ export class TestCaseStep {
         this.shouldFail = obj.shouldFail != null ? obj.shouldFail : false;
 
         /**
+         * The expected result of the test step.
+         * @type {string}
+         */
+        this.expectedResult = obj.expectedResult || '';
+
+        /**
          * The symbol to execute in the step.
          * @type {?ParametrizedSymbol}
          */
@@ -47,6 +53,7 @@ export class TestCaseStep {
     static fromSymbol(symbol) {
         return new TestCaseStep({
             shouldFail: false,
+            expectedResult: symbol.expectedResult,
             pSymbol: ParametrizedSymbol.fromSymbol(symbol)
         });
     }

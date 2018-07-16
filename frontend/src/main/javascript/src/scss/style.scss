@@ -36,6 +36,11 @@ body {
   }
 }
 
+.fa-drag-handle:before {
+  content: "\f142 \f142";
+  letter-spacing: 0.1em;
+}
+
 report-charts {
   svg {
     margin: 0 2rem;
@@ -97,6 +102,12 @@ report-charts {
 .cursor-pointer {
   &:hover {
     cursor: pointer;
+  }
+}
+
+.cursor-grabbing {
+  &:hover {
+    cursor: grabbing;
   }
 }
 

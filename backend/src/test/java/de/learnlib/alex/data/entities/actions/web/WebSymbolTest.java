@@ -119,7 +119,7 @@ public class WebSymbolTest {
 
     @Test
     public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException, JSONException {
-        String expectedJson = "{\"steps\":" + createActionSteps(symbol.getId()) + ",\"description\":null,\"group\":2,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":null,\"successOutput\":null}";
+        String expectedJson = "{\"steps\":" + createActionSteps(symbol.getId()) + ",\"description\":\"\",\"expectedResult\":\"\",\"group\":2,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":null,\"successOutput\":null}";
         symbol.setProject(null);
 
         mapper.addMixIn(Object.class, PropertyFilterMixIn.class);
@@ -133,7 +133,7 @@ public class WebSymbolTest {
 
     @Test
     public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException, JSONException {
-        String expectedJson = "{\"steps\":" + createActionSteps(symbol.getId()) + ",\"description\":null,\"group\":2,\"hidden\":false,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":1,\"successOutput\":null}";
+        String expectedJson = "{\"steps\":" + createActionSteps(symbol.getId()) + ",\"description\":\"\",\"expectedResult\":\"\",\"group\":2,\"hidden\":false,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":1,\"successOutput\":null}";
         String json = mapper.writeValueAsString(symbol);
 
         JSONAssert.assertEquals(expectedJson, json, true);

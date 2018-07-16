@@ -28,7 +28,7 @@ export const testCaseViewComponent = {
     /**
      * The controller of the view.
      */
-    controller: class {
+    controller: class TestCaseViewComponent {
 
         /**
          * Constructor.
@@ -88,14 +88,15 @@ export const testCaseViewComponent = {
                 .catch(console.log);
 
             SettingsResource.getSupportedWebDrivers()
-                .then((data) => {
-                    this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver);
-                })
+                .then((data) => this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver))
                 .catch(console.log);
 
             dragulaService.options($scope, 'testSymbols', {
                 removeOnSpill: false,
-                mirrorContainer: document.createElement('div')
+                mirrorContainer: document.createElement('div'),
+                moves: (el, container, handle) => {
+                    return handle.classList.contains('handle');
+                }
             });
 
             const keyDownHandler = (e) => {

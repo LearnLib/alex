@@ -75,12 +75,6 @@ public class SymbolResourceTest extends JerseyTest {
     @Mock
     private SymbolDAO symbolDAO;
 
-    @Mock
-    private ProjectRepository projectRepository;
-
-    @Mock
-    private SymbolRepository symbolRepository;
-
     private User admin;
     private String adminToken;
 
@@ -264,7 +258,7 @@ public class SymbolResourceTest extends JerseyTest {
                 .header("Authorization", adminToken).get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "[{\"steps\":[],\"description\":null,\"group\":0,"
+        String expectedJSON = "[{\"steps\":[],\"description\":\"\",\"expectedResult\":\"\",\"group\":0,"
                 + "\"hidden\":false,\"id\":1,\"inputs\":[],\"name\":\"Symbol Resource Test Symbol\","
                 + "\"outputs\":[],\"project\":10,\"successOutput\":null}]";
         JSONAssert.assertEquals(expectedJSON, response.readEntity(String.class), true);
@@ -284,7 +278,7 @@ public class SymbolResourceTest extends JerseyTest {
                 .request().header("Authorization", adminToken).get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        String expectedJSON = "[{\"steps\":[],\"description\":null,\"group\":0,"
+        String expectedJSON = "[{\"steps\":[],\"description\":\"\",\"expectedResult\":\"\",\"group\":0,"
                 + "\"hidden\":false,\"id\":1,\"inputs\":[],\"name\":\"Symbol Resource Test Symbol\","
                 + "\"outputs\":[],\"project\":10,\"successOutput\":null}]";
         JSONAssert.assertEquals(expectedJSON, response.readEntity(String.class), true);

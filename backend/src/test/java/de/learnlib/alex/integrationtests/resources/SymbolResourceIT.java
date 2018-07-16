@@ -371,6 +371,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
                 + ",\"group\":" + groupId
                 + ",\"steps\": []"
                 + ",\"description\": \"test description\""
+                + ",\"expectedResult\": \"test\""
                 + ",\"hidden\": false"
                 + ",\"inputs\": []"
                 + ",\"outputs\": []"

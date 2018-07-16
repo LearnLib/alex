@@ -155,6 +155,7 @@ class SymbolsViewComponent {
             if (i > -1) {
                 group.symbols[i].name = symbol.name;
                 group.symbols[i].description = symbol.description;
+                group.symbols[i].expectedResult = symbol.expectedResult;
                 group.symbols[i].group = symbol.group;
             }
         });

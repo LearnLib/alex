@@ -82,6 +82,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** The description of the symbol. */
     private String description;
 
+    /** Description of what should be the state after the symbol has been executed. */
+    private String expectedResult;
+
     /** flag to mark a symbol as hidden. readonly. */
     private boolean hidden;
 
@@ -102,6 +105,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         this.inputs = new ArrayList<>();
         this.outputs = new ArrayList<>();
         this.steps = new ArrayList<>();
+        this.expectedResult = "";
+        this.description = "";
     }
 
     /**
@@ -250,7 +255,18 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
 
     @JsonProperty
     public void setDescription(String description) {
-        this.description = description;
+        this.description = description == null ? "" : description;
+    }
+
+    @JsonProperty
+    @Column(columnDefinition = "MEDIUMTEXT")
+    public String getExpectedResult() {
+        return expectedResult;
+    }
+
+    @Column
+    public void setExpectedResult(String expectedResult) {
+        this.expectedResult = expectedResult == null ? "" : expectedResult;
     }
 
     /**

@@ -186,6 +186,7 @@ import {symbolSearchFormComponent} from './components/views/symbols-view/symbol-
 import {symbolsSymbolGroupTreeComponent} from './components/views/symbols-view/symbols-symbol-group-tree/symbols-symbol-group-tree.component';
 import {symbolsViewComponent} from './components/views/symbols-view/symbols-view.component';
 import {prePostTestCaseStepComponent} from './components/views/test-case-view/pre-post-test-case-step/pre-post-test-case-step.component';
+import {testCaseExpectedResultComponent} from './components/views/test-case-view/test-case-expected-result/test-case-expected-result.component';
 import {testCaseViewComponent} from './components/views/test-case-view/test-case-view.component';
 import {reportChartsComponent} from './components/views/test-report-view/report-donut-chart/report-charts.component';
 import {reportOutputsColumnComponent} from './components/views/test-report-view/report-output-column/report-outputs-column.component';
@@ -510,6 +511,7 @@ angular
     .component('prePostTestCaseStep', prePostTestCaseStepComponent)
     .component('symbolParameters', symbolParametersComponent)
     .component('symbolSelectDropdown', symbolSelectDropdownComponent)
+    .component('testCaseExpectedResult', testCaseExpectedResultComponent)
     .component('testSuiteTree', testSuiteTreeComponent);
 
 angular.bootstrap(document, ['ALEX']);

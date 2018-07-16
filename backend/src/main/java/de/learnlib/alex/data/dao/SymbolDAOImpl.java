@@ -221,6 +221,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbolToCreate.setProject(project);
         symbolToCreate.setGroup(group);
         symbolToCreate.setDescription(symbol.getDescription());
+        symbolToCreate.setExpectedResult(symbol.getExpectedResult());
         symbolToCreate.setHidden(symbol.isHidden());
         symbolToCreate.setSuccessOutput(symbol.getSuccessOutput());
         group.getSymbols().add(symbolToCreate);

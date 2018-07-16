@@ -68,7 +68,8 @@ export class ParametrizedSymbol {
         const pSymbol = new ParametrizedSymbol();
         pSymbol.symbol = {
             id: symbol.id,
-            name: symbol.name
+            name: symbol.name,
+            expectedResult: symbol.expectedResult
         };
         pSymbol.parameterValues = symbol.inputs.map(input => ({parameter: input, value: null}));
         return pSymbol;

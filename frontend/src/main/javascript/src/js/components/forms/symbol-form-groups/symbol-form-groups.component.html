@@ -1,5 +1,5 @@
 <div class="form-group">
-    <label>Symbol name</label>
+    <label>Name</label>
     <input class="form-control"
            name="name"
            type="text"
@@ -32,7 +32,25 @@
 
     <div class="help-block" ng-messages="vm.form.description.$error" ng-if="vm.form.description.$touched">
         <div class="alert alert-danger alert-condensed" ng-message="maxlength">
-            The description cannot be more than 255 characters long
+            The description cannot be more than 1024 characters long
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label>Expected result</label>
+    <textarea
+      class="form-control"
+      name="description"
+      placeholder="Describe what should be the state after the symbol has been executed."
+      ng-maxlength="1024"
+      ng-model="vm.symbol.expectedResult" rows="2"
+    >
+    </textarea>
+
+    <div class="help-block" ng-messages="vm.form.expectedResult.$error" ng-if="vm.form.expectedResult.$touched">
+        <div class="alert alert-danger alert-condensed" ng-message="maxlength">
+            The expected result cannot be more than 1024 characters long
         </div>
     </div>
 </div>

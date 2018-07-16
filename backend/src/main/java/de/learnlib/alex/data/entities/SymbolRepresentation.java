@@ -30,6 +30,9 @@ public class SymbolRepresentation {
     /** The description of the symbol. */
     private String description;
 
+    /** The expected result. */
+    private String expectedResult;
+
     /** The inputs of the symbol. */
     private List<SymbolInputParameter> inputs;
 
@@ -39,7 +42,8 @@ public class SymbolRepresentation {
     /**
      * Constructor.
      *
-     * @param symbol The symbol.
+     * @param symbol
+     *         The symbol.
      */
     public SymbolRepresentation(Symbol symbol) {
         this.id = symbol.getId();
@@ -47,6 +51,7 @@ public class SymbolRepresentation {
         this.inputs = symbol.getInputs();
         this.outputs = symbol.getOutputs();
         this.description = symbol.getDescription();
+        this.expectedResult = symbol.getExpectedResult();
     }
 
     public Long getId() {
@@ -87,5 +92,13 @@ public class SymbolRepresentation {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getExpectedResult() {
+        return expectedResult;
+    }
+
+    public void setExpectedResult(String expectedResult) {
+        this.expectedResult = expectedResult;
     }
 }

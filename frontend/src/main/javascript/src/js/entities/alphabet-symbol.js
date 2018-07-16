@@ -96,7 +96,13 @@ export class AlphabetSymbol {
          * The description of the symbol.
          * @type {?string}
          */
-        this.description = obj.description || null;
+        this.description = obj.description || '';
+
+        /**
+         * The expected result of the symbol.
+         * @type {?string}
+         */
+        this.expectedResult = obj.expectedResult || '';
     }
 
     /**
@@ -120,6 +126,7 @@ export class AlphabetSymbol {
         return {
             name: symbol.name,
             description: symbol.description,
+            expectedResult: symbol.expectedResult,
             successOutput: symbol.successOutput,
             inputs: symbol.inputs,
             outputs: symbol.outputs,
