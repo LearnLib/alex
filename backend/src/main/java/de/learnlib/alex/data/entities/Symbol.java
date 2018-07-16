@@ -360,6 +360,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         // assume the output is ok until proven otherwise
         ExecuteResult result = new ExecuteResult(true);
 
+        final long startTime = System.currentTimeMillis();
         for (int i = 0; i < steps.size(); i++) {
             final SymbolStep step = steps.get(i);
 
@@ -371,6 +372,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
                 }
             }
         }
+        result.setTime(System.currentTimeMillis() - startTime);
 
         // set the output of the symbol *after* all actions are executed so that variables and counters have their
         // proper values.

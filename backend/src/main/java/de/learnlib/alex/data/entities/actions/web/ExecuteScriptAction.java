@@ -64,25 +64,30 @@ public class ExecuteScriptAction extends SymbolAction {
         VariableStoreConnector variableStoreConnector = connector.getConnector(VariableStoreConnector.class);
 
         if (webSiteConnector.getDriver() instanceof JavascriptExecutor) {
-            Object returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeScript(script);
+            try {
+                Object returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeScript(script);
 
-            if (name != null) {
-                if (returnValue == null) {
-                    variableStoreConnector.set(name, "null");
-                } else if (returnValue instanceof Double || returnValue instanceof Long
-                        || returnValue instanceof Boolean) {
-                    variableStoreConnector.set(name, String.valueOf(returnValue));
-                } else if (returnValue instanceof WebElement || returnValue instanceof List) {
-                    LOGGER.info(LoggerMarkers.LEARNER, "WebElements and lists as return values are not supported.");
-                    return getFailedOutput();
-                } else {
-                    variableStoreConnector.set(name, (String) returnValue);
+                if (name != null) {
+                    if (returnValue == null) {
+                        variableStoreConnector.set(name, "null");
+                    } else if (returnValue instanceof Double || returnValue instanceof Long
+                            || returnValue instanceof Boolean) {
+                        variableStoreConnector.set(name, String.valueOf(returnValue));
+                    } else if (returnValue instanceof WebElement || returnValue instanceof List) {
+                        LOGGER.info(LoggerMarkers.LEARNER, "WebElements and lists as return values are not supported.");
+                        return getFailedOutput();
+                    } else {
+                        variableStoreConnector.set(name, (String) returnValue);
+                    }
                 }
-            }
 
-            LOGGER.info(LoggerMarkers.LEARNER, "JavaScript {} successfully executed (ignoreFailure: {}, negated: {}).",
-                    ignoreFailure, negated);
-            return getSuccessOutput();
+                LOGGER.info(LoggerMarkers.LEARNER, "JavaScript {} successfully executed (ignoreFailure: {}, negated: {}).",
+                        ignoreFailure, negated);
+                return getSuccessOutput();
+            } catch (Exception e) {
+                LOGGER.info(LoggerMarkers.LEARNER, "Could not execute JavaScript", e);
+                return getFailedOutput();
+            }
         } else {
             LOGGER.info(LoggerMarkers.LEARNER, "This driver does not support JavaScript (ignoreFailure: {}, negated: {})!",
                     ignoreFailure, negated);

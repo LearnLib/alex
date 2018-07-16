@@ -50,6 +50,9 @@ public class ExecuteResult implements Serializable {
     /** The output of the SUL. */
     private String message;
 
+    /** The time in ms it took to execute the step. */
+    private Long time;
+
     /** Constructor. */
     public ExecuteResult() {
         this(true);
@@ -74,8 +77,23 @@ public class ExecuteResult implements Serializable {
      *         {@link #message}.
      */
     public ExecuteResult(boolean success, String message) {
+        this(success, message, 0L);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param success
+     *         {@link #success}.
+     * @param message
+     *         {@link #message}.
+     * @param time
+     *         {@link #time}.
+     */
+    public ExecuteResult(boolean success, String message, Long time) {
         this.success = success;
         this.message = message;
+        this.time = time;
     }
 
     public boolean isSuccess() {
@@ -110,6 +128,14 @@ public class ExecuteResult implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
     }
 
     @Override

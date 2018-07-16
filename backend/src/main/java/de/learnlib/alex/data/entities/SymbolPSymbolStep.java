@@ -37,7 +37,11 @@ public class SymbolPSymbolStep extends SymbolStep implements Serializable {
 
     @Override
     public ExecuteResult execute(int i, ConnectorManager connectors) {
-        return pSymbol.execute(connectors);
+        final ExecuteResult result = pSymbol.execute(connectors);
+        if (!result.isSuccess()) {
+            result.setMessage(String.valueOf(i + 1));
+        }
+        return result;
     }
 
     @JsonProperty("pSymbol")

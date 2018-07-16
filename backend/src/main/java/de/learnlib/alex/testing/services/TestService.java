@@ -299,7 +299,7 @@ public class TestService {
 
                 ExecuteResult result = executeStep(connectors, testCase, step);
                 if (!result.isSuccess() && step.isShouldFail()) {
-                    result = new ExecuteResult(true, result.getOutput());
+                    result = new ExecuteResult(true, result.getOutput(), result.getTime());
                 }
 
                 outputs.add(result);

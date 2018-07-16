@@ -26,7 +26,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import javax.persistence.Column;
@@ -75,7 +74,7 @@ public class PressKeyAction extends WebSymbolAction {
             LOGGER.info(LoggerMarkers.LEARNER, "Pressed the key '{}' on the element '{}' (ignoreFailure: {}, negated: {}).",
                     keyToPress.toString(), nodeWithVariables, ignoreFailure, negated);
             return getSuccessOutput();
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             LOGGER.info(LoggerMarkers.LEARNER, "Could not press key '{}' on element '{}' (ignoreFailure: {}, negated: {}).",
                     keyToPress.toString(), nodeWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();

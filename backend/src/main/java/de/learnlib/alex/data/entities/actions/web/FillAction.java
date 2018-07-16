@@ -24,7 +24,6 @@ import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.constraints.NotBlank;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 
 import javax.persistence.Column;
@@ -72,7 +71,7 @@ public class FillAction extends WebSymbolAction {
             LOGGER.info("Filled the element '{}' with {}'(ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, value, ignoreFailure, negated);
             return getSuccessOutput();
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             LOGGER.info(LoggerMarkers.LEARNER, "Could not find the element '{}' to fill it with '{}' "
                             + "(ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, valueWithVariables, ignoreFailure, negated, e);

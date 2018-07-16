@@ -92,7 +92,7 @@ public class ClickElementByTextAction extends WebSymbolAction {
                 }
             }
             throw new NoSuchElementException("No clickable element found.");
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             LOGGER.info(LoggerMarkers.LEARNER, "Could not click on element '{}' with text '{}' "
                     + "(ignoreFailure: {}, negated: {}).", tagName, text, ignoreFailure, negated, e);
             return getFailedOutput();

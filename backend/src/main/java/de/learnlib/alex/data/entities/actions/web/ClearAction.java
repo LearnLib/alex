@@ -23,7 +23,6 @@ import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.NoSuchElementException;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
@@ -58,7 +57,7 @@ public class ClearAction extends WebSymbolAction {
             LOGGER.info(LoggerMarkers.LEARNER, "Cleared the element '{}' (ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, ignoreFailure, negated);
             return getSuccessOutput();
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             LOGGER.info(LoggerMarkers.LEARNER, "Could not clear the element '{}' (ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();

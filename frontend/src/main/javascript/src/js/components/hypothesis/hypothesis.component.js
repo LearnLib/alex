@@ -62,6 +62,10 @@ class HypothesisComponent {
         this.renderer = new Renderer();
         this.graph = null;
 
+        // from -> (to -> edge)
+        // needed so that we get the correct input output on edge label click
+        this.edgeData = {};
+
         this.svg = d3.select($element.find('svg')[0]);
         this.svgGroup = this.svg.select('g');
         this.svgContainer = $element.find('svg')[0].parentNode;
@@ -148,6 +152,14 @@ class HypothesisComponent {
         // build data structure for the alternative representation by
         // pushing some data
         this.data.edges.forEach(edge => {
+            if (this.edgeData[edge.from] == null) {
+                this.edgeData[edge.from] = {};
+            }
+            if (this.edgeData[edge.from][edge.to] == null) {
+                this.edgeData[edge.from][edge.to] = [];
+            }
+            this.edgeData[edge.from][edge.to].push(edge);
+
             if (!graph[edge.from]) {
                 graph[edge.from] = {};
                 graph[edge.from][edge.to] = [edge.input + ' / ' + edge.output];
@@ -168,7 +180,7 @@ class HypothesisComponent {
                     labeloffset: 5,
                     style: STYLE.edge,
                     labelStyle: STYLE.edgeLabel,
-                    curve: d3.curveBasis
+                    curve: d3.curveBasis,
                 }, (from + '' + to));
             });
         });
@@ -220,14 +232,13 @@ class HypothesisComponent {
 
         // attach click events for the selection of counter examples to the edge labels
         // only if counterexamples is defined
+        const self = this;
         if (this.isSelectable) {
-            this.svg.selectAll('.edgeLabel tspan').on('click', function () {
-                const label = this.innerHTML.split('/'); // separate name from output
+            this.svg.selectAll('.edgeLabel tspan').on('click', function (d) {
+                const edges = self.edgeData[d.v][d.w];
+                const edge = edges.filter(e => (e.input + ' / ' + e.output) === this.textContent)[0];
                 $scope.$apply(() => {
-                    EventBus.emit(events.HYPOTHESIS_LABEL_SELECTED, {
-                        input: label[0].trim().replace('&lt;','<').replace('&gt;', '>'),
-                        output: label[1].trim().replace('&lt;','<').replace('&gt;', '>')
-                    });
+                    EventBus.emit(events.HYPOTHESIS_LABEL_SELECTED, {input: edge.input, output: edge.output});
                 });
             });
         }

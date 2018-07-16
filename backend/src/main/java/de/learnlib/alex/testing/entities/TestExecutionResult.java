@@ -57,7 +57,7 @@ public class TestExecutionResult extends ExecuteResult implements Serializable {
      * @param result The output of the SUL.
      */
     public TestExecutionResult(ExecuteResult result) {
-        super(result.isSuccess(), result.getMessage());
+        super(result.isSuccess(), result.getMessage(), result.getTime());
     }
 
     public TestCaseResult getResult() {

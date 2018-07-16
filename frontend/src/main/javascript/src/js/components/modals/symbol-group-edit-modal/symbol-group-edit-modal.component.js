@@ -61,6 +61,7 @@ export class SymbolGroupEditModalComponent {
     updateGroup() {
         this.errorMessage = null;
 
+        this.group.symbols = [];
         this.SymbolGroupResource.update(this.group)
             .then(updatedGroup => {
                 this.ToastService.success('Group updated');
