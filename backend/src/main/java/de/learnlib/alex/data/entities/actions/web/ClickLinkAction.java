@@ -77,11 +77,11 @@ public class ClickLinkAction extends WebSymbolAction {
 
             element.click();
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Clicked on the link '{}' (ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "Clicked on link '{}' (ignoreFailure: {}, negated: {}).",
                     value, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not click on the link '{}' (ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not click on link '{}' (ignoreFailure: {}, negated: {}).",
                     value, ignoreFailure, negated, e);
             return getFailedOutput();
         }

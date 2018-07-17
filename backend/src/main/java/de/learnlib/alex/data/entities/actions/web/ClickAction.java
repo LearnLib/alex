@@ -75,13 +75,11 @@ public class ClickAction extends WebSymbolAction {
                 element.click();
             }
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Clicked on the element '{}' "
-                            + "(doubleClick: {}, ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "Clicked on element '{}' (doubleClick: {}, ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, doubleClick, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not click on the element '{}' "
-                            + "(doubleClick: {}, ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not click on element '{}' (doubleClick: {}, ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, doubleClick, ignoreFailure, negated);
             return getFailedOutput();
         }

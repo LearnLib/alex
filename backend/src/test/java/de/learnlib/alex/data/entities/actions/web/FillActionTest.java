@@ -93,7 +93,7 @@ public class FillActionTest extends WebActionTest {
     }
 
     @Test
-    public void shouldReturnFaliedIfNodeCouldNotBeFilled() {
+    public void shouldReturnFailedIfNodeCouldNotBeFilled() {
         when(webSiteConnector.getElement(node)).thenThrow(new NoSuchElementException(""));
 
         assertFalse(f.executeAction(connectors).isSuccess());

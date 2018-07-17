@@ -90,7 +90,7 @@ public class CheckNodeActionTest extends WebActionTest {
     }
 
     @Test
-    public void shouldReturnFaliedIfNodeWasNotFound() {
+    public void shouldReturnFailedIfNodeWasNotFound() {
         when(webSiteConnector.getElement(node)).thenThrow(new NoSuchElementException(""));
 
         assertFalse(checkNode.executeAction(connectors).isSuccess());

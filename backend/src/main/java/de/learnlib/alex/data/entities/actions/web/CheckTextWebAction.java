@@ -18,15 +18,16 @@ package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.constraints.NotBlank;
+import org.openqa.selenium.NoSuchElementException;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -87,18 +88,20 @@ public class CheckTextWebAction extends WebSymbolAction {
                 source = connector.getElement(nodeWithVariables).getAttribute("innerHTML");
             }
 
-            final boolean found = SearchHelper.search(getValueWithVariableValues(), source, regexp);
+            final String htmlEscapedValue = StringEscapeUtils.escapeHtml4(getValueWithVariableValues());
+            final boolean found = SearchHelper.search(htmlEscapedValue, source, regexp);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Check if the current pages contains '{}' => {} "
-                            + "(regExp: {}, ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "Check if the current pages contains '{}' => {} (regExp: {}, ignoreFailure: {}, negated: {}).",
                     value, found, regexp, ignoreFailure, negated);
 
             return found ? getSuccessOutput() : getFailedOutput();
-        } catch (ElementNotFoundException e) {
-            LOGGER.error(LoggerMarkers.LEARNER, "Could not find text \"{}\" in element \"{}\""
-                            + "(regExp: {}, ignoreFailure: {}, negated: {}).",
+        } catch (NoSuchElementException e) {
+            LOGGER.error(LoggerMarkers.LEARNER, "Could not find text \"{}\" in element \"{}\" (regExp: {}, ignoreFailure: {}, negated: {}).",
                     value, node.getSelector(), regexp, ignoreFailure, negated);
-
+            return getFailedOutput();
+        } catch (Exception e) {
+            LOGGER.error(LoggerMarkers.LEARNER, "Failed to search for text \"{}\" in element \"{}\" (regExp: {}, ignoreFailure: {}, negated: {}).",
+                    value, node.getSelector(), regexp, ignoreFailure, negated, e);
             return getFailedOutput();
         }
     }

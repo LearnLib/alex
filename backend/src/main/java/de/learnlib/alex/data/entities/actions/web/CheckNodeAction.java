@@ -55,11 +55,11 @@ public class CheckNodeAction extends WebSymbolAction {
         try {
             connector.getElement(nodeWithVariables);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Found the node '{}' (ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "Found element '{}' (ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find the node '{}' (ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not find element '{}' (ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();
         }

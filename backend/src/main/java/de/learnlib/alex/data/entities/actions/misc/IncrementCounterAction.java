@@ -38,7 +38,7 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("incrementCounter")
 public class IncrementCounterAction extends SymbolAction {
 
-    private static final Logger LOGGER = LogManager.getLogger("learner");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /** The name of the counter to increment. */
     @NotBlank

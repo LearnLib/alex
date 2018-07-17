@@ -54,11 +54,11 @@ public class ClearAction extends WebSymbolAction {
         try {
             connector.getElement(nodeWithVariables).clear();
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Cleared the element '{}' (ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "Cleared element '{}' (ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, ignoreFailure, negated);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not clear the element '{}' (ignoreFailure: {}, negated: {}).",
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not clear element '{}' (ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, ignoreFailure, negated, e);
             return getFailedOutput();
         }
