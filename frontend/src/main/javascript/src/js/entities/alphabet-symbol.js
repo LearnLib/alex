@@ -134,6 +134,15 @@ export class AlphabetSymbol {
         };
     }
 
+    copy() {
+        const copy = new AlphabetSymbol(JSON.parse(JSON.stringify(this)));
+        delete copy.id;
+        copy.steps = copy.steps.map(AlphabetSymbol.stepsToJson);
+        copy.inputs.forEach(input => delete input.id);
+        copy.outputs.forEach(output => delete output.id);
+        return copy;
+    }
+
     static stepsToJson(step) {
         const s = JSON.parse(JSON.stringify(step));
         delete s.$$hashKey;

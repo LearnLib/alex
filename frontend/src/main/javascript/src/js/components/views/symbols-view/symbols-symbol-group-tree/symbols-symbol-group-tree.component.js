@@ -101,19 +101,8 @@ export const symbolsSymbolGroupTreeComponent = {
         copySymbol(symbol) {
             this.promptService.prompt('Enter a name for the new symbol', symbol.name)
                 .then(name => {
-                    const symbolToCreate = new AlphabetSymbol();
+                    const symbolToCreate = symbol.copy();
                     symbolToCreate.name = name;
-                    symbolToCreate.actions = symbol.actions;
-                    symbolToCreate.group = symbol.group;
-                    symbolToCreate.project = symbol.project;
-                    symbolToCreate.inputs = JSON.parse(JSON.stringify(symbol.inputs)).map(input => {
-                        delete input.id;
-                        return input;
-                    });
-                    symbolToCreate.outputs = JSON.parse(JSON.stringify(symbol.outputs)).map(output => {
-                        delete output.id;
-                        return output;
-                    });
 
                     // first create the symbol without actions
                     this.symbolResource.create(symbol.project, symbolToCreate)
