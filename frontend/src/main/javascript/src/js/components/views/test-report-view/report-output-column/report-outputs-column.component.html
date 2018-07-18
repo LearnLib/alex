@@ -14,12 +14,12 @@
             <tbody>
             <tr ng-repeat="output in vm.outputs track by $index">
                 <td style="width: 1px" class="text-right">
-                    <span
+                    <a
                         ui-sref="symbol({projectId: vm.project.id, symbolId: output.symbol.id})"
                         class="label label-default cursor-pointer"
                     >
                         {{output.symbol.name}}
-                    </span>
+                    </a>
                 </td>
                 <td>
                     <span

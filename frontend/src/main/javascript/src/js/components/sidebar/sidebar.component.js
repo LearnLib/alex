@@ -161,7 +161,7 @@ class SidebarComponent {
                         icon: 'fa-wrench',
                         active: () => this.isState('test'),
                         display: () => true,
-                        click: () => $state.go('test', {projectId: this.project.id})
+                        click: () => $state.go('test', {projectId: this.project.id, testId: null})
                     },
                     {
                         title: 'Reports',

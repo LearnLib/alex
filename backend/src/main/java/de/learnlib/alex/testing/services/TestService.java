@@ -27,6 +27,7 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolParameter;
+import de.learnlib.alex.data.entities.SymbolStep;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
@@ -281,7 +282,17 @@ public class TestService {
 
         final ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, testCase.getProject(),
                 Collections.singletonList(projectUrl), testConfig.getDriverConfig());
-        ctxHandler.setResetSymbol(new ParameterizedSymbol(new Symbol()));
+
+        final Symbol dummySymbol = new Symbol();
+        dummySymbol.setName("dummy");
+        dummySymbol.getSteps().add(new SymbolStep() {
+            @Override
+            public ExecuteResult execute(int i, ConnectorManager connectors) {
+                return new ExecuteResult(true);
+            }
+        });
+
+        ctxHandler.setResetSymbol(new ParameterizedSymbol(dummySymbol));
 
         final long startTime = System.currentTimeMillis();
         final ConnectorManager connectors = ctxHandler.createContext();

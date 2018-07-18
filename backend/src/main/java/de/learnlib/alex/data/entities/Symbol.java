@@ -352,6 +352,10 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     public ExecuteResult execute(ConnectorManager connector) throws SULException {
         LOGGER.info(LoggerMarkers.LEARNER, "Executing Symbol {} ({})...", String.valueOf(id), name);
 
+        if (steps.isEmpty()) {
+            return new ExecuteResult(false, "Not implemented");
+        }
+
         final VariableStoreConnector globalVariableStore = connector.getConnector(VariableStoreConnector.class);
         final VariableStoreConnector localVariableStore = new VariableStoreConnector();
 

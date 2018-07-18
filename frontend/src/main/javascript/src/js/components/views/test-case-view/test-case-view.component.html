@@ -84,7 +84,18 @@
                           </td>
                           <td>
                             <div>
-                              <strong>{{step.pSymbol.symbol.name}}</strong>
+                              <strong>
+                                <a
+                                  class="text-black"
+                                  ui-sref="symbol({project: vm.project.id, symbolId: step.pSymbol.symbol.id})"
+                                >
+                                  {{step.pSymbol.symbol.name}}
+                                </a>
+                              </strong>
+                              <span ng-if="vm.symbolMap[step.pSymbol.symbol.id].steps.length === 0"
+                                    class="label label-info">
+                                Not implemented
+                              </span>
                               <div ng-if="step.pSymbol.parameterValues.length > 0" style="margin-top: .5rem">
                                 <symbol-parameters parameter-values="step.pSymbol.parameterValues"></symbol-parameters>
                               </div>

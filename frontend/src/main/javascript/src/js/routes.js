@@ -100,9 +100,9 @@ export function config($stateProvider, $urlRouterProvider) {
             // @ngInject
             onEnter: function ($state, SessionService, ProjectResource, $stateParams) {
                 const projectId = $stateParams.projectId;
-
                 const project = SessionService.getProject();
-                if (project != null || project.id !== projectId) {
+
+                if (project == null || project.id !== projectId) {
                     return ProjectResource.get(projectId)
                         .then(project => {
                             SessionService.saveProject(project);

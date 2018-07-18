@@ -41,6 +41,14 @@ body {
   letter-spacing: 0.1em;
 }
 
+.text-black {
+  color: #000;
+
+  &:hover {
+    color: #000;
+  }
+}
+
 report-charts {
   svg {
     margin: 0 2rem;

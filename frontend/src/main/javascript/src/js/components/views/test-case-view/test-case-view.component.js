@@ -17,6 +17,7 @@
 import {webBrowser} from '../../../constants';
 import {TestCaseStep} from '../../../entities/test-case-step';
 import {DriverConfigService} from '../../../services/driver-config.service';
+import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
 
 export const testCaseViewComponent = {
     template: require('./test-case-view.component.html'),
@@ -73,6 +74,8 @@ export const testCaseViewComponent = {
              */
             this.result = null;
 
+            this.symbolMap = {};
+
             /**
              * The browser configuration.
              * @type {object}
@@ -84,7 +87,10 @@ export const testCaseViewComponent = {
             };
 
             SymbolGroupResource.getAll(this.project.id, true)
-                .then((groups) => this.groups = groups)
+                .then((groups) => {
+                    this.groups = groups;
+                    SymbolGroupUtils.getSymbols(this.groups).forEach(s => this.symbolMap[s.id] = s);
+                })
                 .catch(console.log);
 
             SettingsResource.getSupportedWebDrivers()
