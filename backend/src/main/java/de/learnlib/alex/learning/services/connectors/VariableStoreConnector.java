@@ -20,7 +20,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Connector to hold and manage variables.
@@ -66,17 +69,6 @@ public class VariableStoreConnector implements Connector {
     }
 
     /**
-     * Check if a variable with a specific name exists.
-     *
-     * @param name
-     *         The name to check.
-     * @return true if the variable exists; false otherwise.
-     */
-    public boolean contains(String name) {
-        return store.containsKey(name);
-    }
-
-    /**
      * Get the value of a variable.
      *
      * @param name
@@ -92,8 +84,19 @@ public class VariableStoreConnector implements Connector {
         }
 
         LOGGER.debug("Got the variable '{}' with the value '{}'.", name, variable);
-
         return variable;
+    }
+
+    /**
+     * Updates the current store by variables in another store.
+     *
+     * @param storeToMerge
+     *         The store with updated variables.
+     * @param namesToMerge
+     *         The names of the variables that should be transferred to this one.
+     */
+    public void merge(VariableStoreConnector storeToMerge, List<String> namesToMerge) {
+        namesToMerge.stream().collect(Collectors.toMap(Function.identity(), storeToMerge::get)).forEach(store::put);
     }
 
     /**

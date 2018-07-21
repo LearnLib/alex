@@ -124,10 +124,11 @@ public class WaitForNodeAction extends WebSymbolAction {
         }
 
         final WebDriverWait wait = new WebDriverWait(connector.getDriver(), maxWaitTime);
-        final WebElementLocator nodeWithVariables =
-                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
+        final WebElementLocator nodeWithVariables = new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
 
         try {
+            LOGGER.info(LoggerMarkers.LEARNER, "Wait for element '{}' (criterion: '{}').",
+                    nodeWithVariables, waitCriterion);
             switch (waitCriterion) {
                 case VISIBLE:
                     wait.until(wd -> connector.getElement(nodeWithVariables).isDisplayed());

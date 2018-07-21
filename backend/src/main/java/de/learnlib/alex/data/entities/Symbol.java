@@ -47,6 +47,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Representation of a symbol for the learning process. A Symbol is one unit which will be executed and it is made of a
@@ -385,6 +386,16 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             final SymbolStep step = steps.get(i);
 
             if (!step.isDisabled()) {
+
+                // save dummy variables in the local context so that outputs of executed symbols are saved
+                if (step instanceof SymbolPSymbolStep) {
+                    ((SymbolPSymbolStep) step).getPSymbol().getSymbol().getOutputs().forEach(out -> {
+                        if (out.getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
+                            localVariableStore.set(out.getName(), "");
+                        }
+                    });
+                }
+
                 final ExecuteResult stepResult = step.execute(i, connector);
                 if (!stepResult.isSuccess()) {
                     result = stepResult;
@@ -407,13 +418,16 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         // set the values of the outputs to the global context
         if (result.isSuccess()) {
             try {
-                outputs.forEach(out -> {
-                    if (out.getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
-                        globalVariableStore.set(out.getName(), localVariableStore.get(out.getName()));
-                    } else {
-                        globalCounterStore.set(project.getId(), out.getName(), localCounterStore.get(out.getName()));
-                    }
-                });
+                globalVariableStore.merge(localVariableStore, outputs.stream()
+                        .filter(out -> out.getParameterType().equals(SymbolParameter.ParameterType.STRING))
+                        .map(SymbolParameter::getName)
+                        .collect(Collectors.toList()));
+
+                globalCounterStore.merge(localCounterStore, outputs.stream()
+                        .filter(out -> out.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
+                        .map(SymbolParameter::getName)
+                        .collect(Collectors.toList())
+                );
             } catch (IllegalStateException e) {
                 return new ExecuteResult(false, e.getMessage());
             }

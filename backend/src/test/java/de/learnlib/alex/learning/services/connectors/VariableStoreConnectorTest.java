@@ -21,6 +21,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class VariableStoreConnectorTest {
@@ -39,18 +41,16 @@ public class VariableStoreConnectorTest {
     public void shouldCorrectlyStoreAVariable() {
         connector.set(VARIABLE_NAME, VARIABLE_VALUE);
 
-        assertTrue(connector.contains(VARIABLE_NAME));
+        assertNotNull(connector.get(VARIABLE_NAME));
         assertEquals(VARIABLE_VALUE, connector.get(VARIABLE_NAME));
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void shouldResetTheStorage() {
         connector.set(VARIABLE_NAME, VARIABLE_VALUE);
-        assertTrue(connector.contains(VARIABLE_NAME));
 
         connector.reset();
-
-        assertFalse(connector.contains(VARIABLE_NAME));
+        assertNull(connector.get(VARIABLE_NAME));
     }
 
     @Test(expected = IllegalStateException.class)
