@@ -33,7 +33,8 @@ export const webBrowser = {
     EDGE: 'edge',
     HTML_UNIT: 'htmlUnit',
     SAFARI: 'safari',
-    REMOTE: 'remote'
+    REMOTE: 'remote',
+    IE: 'ie'
 };
 
 export const eqOracleType = {

@@ -68,6 +68,10 @@ export class DriverConfigService {
                     browser: '',
                     version: ''
                 });
+            case webBrowser.IE:
+                return Object.assign(config, {
+                    name: webBrowser.IE
+                });
             default:
                 return {};
         }

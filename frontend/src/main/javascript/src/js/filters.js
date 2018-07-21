@@ -112,6 +112,8 @@ export function formatWebBrowser() {
                 return 'Safari';
             case webBrowser.REMOTE:
                 return 'Remote driver';
+            case webBrowser.IE:
+                return 'Internet Explorer';
             default:
                 return browser;
         }

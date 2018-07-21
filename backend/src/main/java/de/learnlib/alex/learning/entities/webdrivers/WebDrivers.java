@@ -42,6 +42,9 @@ public final class WebDrivers {
     /** Identifier for the safari driver.. */
     public static final String SAFARI = "safari";
 
+    /** Identifier for the internet explorer. */
+    public static final String IE = "ie";
+
     /** Constructor. */
     private WebDrivers() {
     }
@@ -52,6 +55,6 @@ public final class WebDrivers {
      * @return The list of driver identifiers.
      */
     public static List<String> asList() {
-        return Arrays.asList(CHROME, EDGE, FIREFOX, HTML_UNIT, REMOTE, SAFARI);
+        return Arrays.asList(CHROME, EDGE, FIREFOX, HTML_UNIT, IE, REMOTE, SAFARI);
     }
 }

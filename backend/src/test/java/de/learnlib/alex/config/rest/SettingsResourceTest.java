@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
@@ -81,8 +82,8 @@ public class SettingsResourceTest extends JerseyTest {
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         String json = response.readEntity(String.class);
-        String expectedJSON = "{\"allowUserRegistration\":true,\"driver\":{\"chrome\":\"\",\"defaultDriver\":\"htmlUnit\",\"edge\":\"\",\"firefox\":\"\",\"remote\":\"\"},\"id\":1}";
-        assertEquals(expectedJSON, json);
+        String expectedJSON = "{\"allowUserRegistration\":true,\"driver\":{\"ie\":\"\",\"chrome\":\"\",\"defaultDriver\":\"htmlUnit\",\"edge\":\"\",\"firefox\":\"\",\"remote\":\"\"},\"id\":1}";
+        JSONAssert.assertEquals(expectedJSON, json, true);
     }
 
     @Test

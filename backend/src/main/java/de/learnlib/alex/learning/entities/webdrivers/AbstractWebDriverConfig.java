@@ -48,6 +48,7 @@ import java.util.concurrent.TimeUnit;
         @JsonSubTypes.Type(name = WebDrivers.EDGE, value = EdgeDriverConfig.class),
         @JsonSubTypes.Type(name = WebDrivers.FIREFOX, value = FirefoxDriverConfig.class),
         @JsonSubTypes.Type(name = WebDrivers.HTML_UNIT, value = HtmlUnitDriverConfig.class),
+        @JsonSubTypes.Type(name = WebDrivers.IE, value = IEDriverConfig.class),
         @JsonSubTypes.Type(name = WebDrivers.REMOTE, value = RemoteDriverConfig.class),
         @JsonSubTypes.Type(name = WebDrivers.SAFARI, value = SafariDriverConfig.class)
 })
