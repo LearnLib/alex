@@ -41,6 +41,18 @@ export class ExecuteScriptAction extends Action {
          * @type {string}
          */
         this.name = obj.name || null;
+
+        /**
+         * If the script is executed asynchronous.
+         * @type {boolean}
+         */
+        this.async = obj.async == null ? false : obj.async;
+
+        /**
+         * How long to wait until the script times out.
+         * @type {number}
+         */
+        this.timeout = obj.timeout == null ? 10 : obj.timeout;
     }
 
     /**
@@ -49,7 +61,7 @@ export class ExecuteScriptAction extends Action {
      * @returns {string}
      */
     toString() {
-        let output = 'Execute JavaScript in the browser';
+        let output = `Execute JavaScript (${this.async ? 'asynchronous' : 'synchronous'}) in the browser`;
         if (this.name && this.name.trim() !== '') {
             output += ` and store the result in variable "${this.name}"`;
         }

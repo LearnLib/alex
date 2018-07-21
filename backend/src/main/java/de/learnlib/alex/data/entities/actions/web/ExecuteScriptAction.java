@@ -32,7 +32,10 @@ import org.openqa.selenium.WebElement;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Action to execute JavaScript on the opened browser.
@@ -46,12 +49,19 @@ public class ExecuteScriptAction extends SymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /**
-     * The javascript to execute.
-     */
+    /** The JavaScript to execute. */
     @NotBlank
     @Column(columnDefinition = "MEDIUMTEXT")
     private String script;
+
+    /** If the script should be executed asynchronously. */
+    @NotNull
+    private boolean async = false;
+
+    /** When the script should be timed out in s. */
+    @NotNull
+    @Min(value = 0)
+    private int timeout = 10;
 
     /**
      * The name of the variable to store the result into.
@@ -65,7 +75,14 @@ public class ExecuteScriptAction extends SymbolAction {
 
         if (webSiteConnector.getDriver() instanceof JavascriptExecutor) {
             try {
-                Object returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeScript(script);
+                webSiteConnector.getDriver().manage().timeouts().setScriptTimeout(timeout, TimeUnit.SECONDS);
+
+                final Object returnValue;
+                if (async) {
+                    returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeAsyncScript(script);
+                } else {
+                    returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeScript(script);
+                }
 
                 if (name != null) {
                     if (returnValue == null) {
@@ -111,4 +128,19 @@ public class ExecuteScriptAction extends SymbolAction {
         this.name = name;
     }
 
+    public boolean isAsync() {
+        return async;
+    }
+
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
 }
