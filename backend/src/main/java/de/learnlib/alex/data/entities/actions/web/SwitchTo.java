@@ -49,7 +49,10 @@ public class SwitchTo extends WebSymbolAction {
         PARENT_FRAME,
 
         /** The default browser frame. */
-        DEFAULT_CONTENT
+        DEFAULT_CONTENT,
+
+        /** The last frame that has been visited. */
+        LAST_FRAME
     }
 
     /**
@@ -68,13 +71,16 @@ public class SwitchTo extends WebSymbolAction {
                 case DEFAULT_CONTENT:
                     connector.getDriver().switchTo().defaultContent();
                     break;
+                case LAST_FRAME:
+                    connector.getDriver().switchTo().frame(connector.getLastFrame());
+                    break;
                 default:
                     throw new Exception("Undefined target type.");
             }
             LOGGER.info(LoggerMarkers.LEARNER, "Switch to '{}'", target);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not switch to '{}'", target);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not switch to '{}'", target, e);
             return getFailedOutput();
         }
     }

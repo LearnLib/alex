@@ -58,6 +58,7 @@ public class SwitchToFrame extends WebSymbolAction {
         try {
             final WebElement element = connector.getElement(nodeWithVariables);
             connector.getDriver().switchTo().frame(element);
+            connector.setLastFrame(element);
             LOGGER.info(LoggerMarkers.LEARNER, "Switch to frame with selector '{}'", nodeWithVariables);
             return getSuccessOutput();
         } catch (Exception e) {

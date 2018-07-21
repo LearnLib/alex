@@ -52,6 +52,9 @@ public class WebSiteConnector implements Connector {
     /** The driver used to send and receive data to a WebSite. */
     private WebDriver driver;
 
+    /** The last visited frame. */
+    private WebElement lastFrame = null;
+
     /**
      * Constructor.
      *
@@ -234,5 +237,13 @@ public class WebSiteConnector implements Connector {
      */
     public WebDriver getDriver() {
         return driver;
+    }
+
+    public WebElement getLastFrame() {
+        return lastFrame;
+    }
+
+    public void setLastFrame(WebElement lastFrame) {
+        this.lastFrame = lastFrame;
     }
 }
