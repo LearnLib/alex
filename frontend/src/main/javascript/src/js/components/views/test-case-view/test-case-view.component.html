@@ -8,7 +8,7 @@
                 ui-sref="test({projectId: vm.testCase.project, testId: vm.testCase.parent})">
             <i class="fa fa-fw fa-close"></i> Cancel
         </button>
-        <div class="btn-group btn-group-sm pull-right">
+        <div class="btn-group btn-group-sm pull-right mr-0">
             <button class="btn btn-primary" ng-click="vm.execute()">
                 Execute
             </button>
@@ -31,17 +31,32 @@
                 </div>
             </div>
 
-            <div class="d-flex" style="align-items: center">
-                <button class="btn btn-sm btn-default"
-                        ui-sref="test({projectId: vm.testCase.project, testId: vm.testCase.parent})"
-                        style="margin-right: 12px">
+            <div class="d-flex align-items-center">
+                <div class="mr-1">
+                  <button class="btn btn-sm btn-default"
+                          ui-sref="test({projectId: vm.testCase.project, testId: vm.testCase.parent})">
                     <i class="fa fa-fw fa-level-up"></i>
-                </button>
-                <h4 class="flex-grow-1" style="margin: 0;">
-                    <strong>
-                        <i class="fa fa-fw fa-file-o"></i> {{vm.testCase.name}}
-                    </strong>
+                  </button>
+                </div>
+                <h4 class="w-100" style="margin: 0;">
+                  <strong>
+                    <i class="fa fa-fw fa-file-o"></i> {{vm.testCase.name}}
+                  </strong>
                 </h4>
+                <div>
+                  <div class="btn-group btn-group-sm" uib-dropdown>
+                    <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                      <i class="fa fa-gears"></i>
+                    </button>
+                    <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
+                      <li>
+                        <a href="" ng-click="vm.options.showSymbolOutputs = !vm.options.showSymbolOutputs">
+                          <i class="fa fa-fw" ng-class="{'fa-check': vm.options.showSymbolOutputs}"></i> Show symbol outputs
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
             </div>
 
             <hr>
@@ -98,6 +113,15 @@
                               </span>
                               <div ng-if="step.pSymbol.parameterValues.length > 0" style="margin-top: .5rem">
                                 <symbol-parameters parameter-values="step.pSymbol.parameterValues"></symbol-parameters>
+                              </div>
+                              <div ng-if="vm.options.showSymbolOutputs && step.pSymbol.symbol.outputs.length > 0"
+                                   style="margin-top: .25rem">
+                                <div ng-repeat="output in step.pSymbol.symbol.outputs" style="margin-bottom: 4px">
+                                  <i class="fa fa-fw fa-level-up fa-rotate-90"></i>
+                                  <span class="output">
+                                    <strong>{{output.name}}</strong>: <em>{{output.parameterType}}</em>
+                                  </span>
+                                </div>
                               </div>
                             </div>
                             <div ng-if="vm.result.outputs[$index]" style="margin-top: .75rem; padding-top: .75rem; border-top: 1px dashed #dddddd;">

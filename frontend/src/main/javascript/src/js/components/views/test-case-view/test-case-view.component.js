@@ -76,6 +76,10 @@ export const testCaseViewComponent = {
 
             this.symbolMap = {};
 
+            this.options = {
+                showSymbolOutputs: false
+            };
+
             /**
              * The browser configuration.
              * @type {object}
