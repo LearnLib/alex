@@ -185,6 +185,7 @@ import {symbolsArchiveViewComponent} from './components/views/symbols-archive-vi
 import {symbolSearchFormComponent} from './components/views/symbols-view/symbol-search-form/symbol-search-form.component';
 import {symbolsSymbolGroupTreeComponent} from './components/views/symbols-view/symbols-symbol-group-tree/symbols-symbol-group-tree.component';
 import {symbolsViewComponent} from './components/views/symbols-view/symbols-view.component';
+import {testCaseResultsViewComponent} from './components/views/test-case-results-view/test-case-results-view.component';
 import {prePostTestCaseStepComponent} from './components/views/test-case-view/pre-post-test-case-step/pre-post-test-case-step.component';
 import {testCaseExpectedResultComponent} from './components/views/test-case-view/test-case-expected-result/test-case-expected-result.component';
 import {testCaseViewComponent} from './components/views/test-case-view/test-case-view.component';
@@ -381,6 +382,7 @@ angular
     .component('symbolView', symbolViewComponent)
     .component('symbolsView', symbolsViewComponent)
     .component('testsView', testsViewComponent)
+    .component('testCaseResultsView', testCaseResultsViewComponent)
     .component('symbolsArchiveView', symbolsArchiveViewComponent)
     .component('profileView', profileViewComponent)
     .component('testCaseView', testCaseViewComponent)

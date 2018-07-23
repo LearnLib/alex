@@ -22,8 +22,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Connector to hold and manage variables.
@@ -96,7 +94,11 @@ public class VariableStoreConnector implements Connector {
      *         The names of the variables that should be transferred to this one.
      */
     public void merge(VariableStoreConnector storeToMerge, List<String> namesToMerge) {
-        namesToMerge.stream().collect(Collectors.toMap(Function.identity(), storeToMerge::get)).forEach(store::put);
+        namesToMerge.forEach(name -> {
+            if (storeToMerge.store.containsKey(name)) {
+                store.put(name, storeToMerge.store.get(name));
+            }
+        });
     }
 
     /**

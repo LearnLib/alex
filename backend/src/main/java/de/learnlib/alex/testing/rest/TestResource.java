@@ -24,6 +24,7 @@ import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.testing.dao.TestDAO;
+import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
@@ -87,6 +88,10 @@ public class TestResource {
     /** The {@link WebhookService} to use. */
     @Inject
     private WebhookService webhookService;
+
+    /** The {@link TestReportDAO} to use. */
+    @Inject
+    private TestReportDAO testReportDAO;
 
     /** The {@link ProjectDAO} to use. */
     @Inject
@@ -263,6 +268,11 @@ public class TestResource {
 
         final TestReport report = new TestReport();
         report.setTestResults(new ArrayList<>(results.values()));
+
+        if (testConfig.isCreateReport()) {
+            testReportDAO.create(user, projectId, report);
+            webhookService.fireEvent(user, new TestEvent.ExecutionFinished(report));
+        }
 
         ThreadContext.remove("userId");
         return Response.ok(report).build();
@@ -464,5 +474,26 @@ public class TestResource {
 
         webhookService.fireEvent(user, new TestEvent.DeletedMany(ids));
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    /**
+     * Get all test results of a test.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param testId
+     *         The ID of the test.
+     * @return All test results of a test.
+     * @throws NotFoundException
+     *         If the project or test could not be found.
+     */
+    @GET
+    @Path("/{testId}/results")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getResults(@PathParam("project_id") Long projectId, @PathParam("testId") Long testId)
+            throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final List<TestResult> results = testDAO.getResults(user, projectId, testId);
+        return Response.ok(results).build();
     }
 }

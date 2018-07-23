@@ -23,6 +23,7 @@ import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
@@ -78,11 +79,15 @@ public class ClickAction extends WebSymbolAction {
             LOGGER.info(LoggerMarkers.LEARNER, "Clicked on element '{}' (doubleClick: {}, ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, doubleClick, ignoreFailure, negated);
             return getSuccessOutput();
-        } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not click on element '{}' (doubleClick: {}, ignoreFailure: {}, negated: {}).",
+        } catch (NoSuchElementException e) {
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not find element '{}' (doubleClick: {}, ignoreFailure: {}, negated: {}).",
                     nodeWithVariables, doubleClick, ignoreFailure, negated);
-            return getFailedOutput();
+        } catch (Exception e) {
+            LOGGER.info(LoggerMarkers.LEARNER, "Failed to click on element '{}' (doubleClick: {}, ignoreFailure: {}, negated: {}).",
+                    nodeWithVariables, doubleClick, ignoreFailure, negated, e);
         }
+
+        return getFailedOutput();
     }
 
     public WebElementLocator getNode() {

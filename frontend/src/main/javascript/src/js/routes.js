@@ -194,6 +194,14 @@ export function config($stateProvider, $urlRouterProvider) {
             },
             data: {title: 'Tests > Reports'}
         })
+        .state('testResults', {
+            parent: 'test',
+            url: '/results',
+            views: {
+                '@': {template: '<test-case-results-view></test-case-results-view>'}
+            },
+            data: {title: 'Tests > Results'},
+        })
 
         // learning related routes
         .state('learner', {

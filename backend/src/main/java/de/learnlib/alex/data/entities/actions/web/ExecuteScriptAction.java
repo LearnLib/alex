@@ -49,6 +49,8 @@ public class ExecuteScriptAction extends SymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private static final int DEFAULT_SCRIPT_TIMEOUT = 10;
+
     /** The JavaScript to execute. */
     @NotBlank
     @Column(columnDefinition = "MEDIUMTEXT")
@@ -61,7 +63,7 @@ public class ExecuteScriptAction extends SymbolAction {
     /** When the script should be timed out in s. */
     @NotNull
     @Min(value = 0)
-    private int timeout = 10;
+    private int timeout = DEFAULT_SCRIPT_TIMEOUT;
 
     /**
      * The name of the variable to store the result into.

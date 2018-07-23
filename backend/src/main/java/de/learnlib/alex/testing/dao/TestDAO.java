@@ -22,6 +22,7 @@ import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
+import de.learnlib.alex.testing.entities.TestResult;
 import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.validation.ValidationException;
@@ -89,8 +90,10 @@ public interface TestDAO {
      * @param includeChildTestSuites
      *         If test cases in child test suites should be included as well.
      * @return All test cases.
-     * @throws NotFoundException If the test or project could not be found.
-     * @throws ValidationException If the ID does not belong to a test suite.
+     * @throws NotFoundException
+     *         If the test or project could not be found.
+     * @throws ValidationException
+     *         If the ID does not belong to a test suite.
      */
     List<TestCase> getTestCases(User user, Long projectId, Long testSuiteId, boolean includeChildTestSuites)
             throws NotFoundException, ValidationException;
@@ -204,6 +207,21 @@ public interface TestDAO {
      */
     List<Test> move(User user, Long projectId, List<Long> testIds, Long targetId)
             throws NotFoundException, ValidationException;
+
+    /**
+     * Get all test results for a test.
+     *
+     * @param user
+     *         The user.
+     * @param projectId
+     *         The ID of the project.
+     * @param testId
+     *         The ID of the test.
+     * @return The test results.
+     * @throws NotFoundException
+     *         If the project or test could not be found.
+     */
+    List<TestResult> getResults(User user, Long projectId, Long testId) throws NotFoundException;
 
     /**
      * Checks if the user has access to the test.

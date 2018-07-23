@@ -160,4 +160,16 @@ export class TestResource {
         return this.$http.post(`${apiUrl}/projects/${projectId}/tests/execute`, testConfig)
             .then((response) => response.data);
     }
+
+    /**
+     * Get all available results of a test.
+     *
+     * @param {number} projectId The ID of the project.
+     * @param {number} testId The ID of the test.
+     * @return {*}
+     */
+    getResults(projectId, testId) {
+        return this.$http.get(`${apiUrl}/projects/${projectId}/tests/${testId}/results`)
+            .then(response => response.data);
+    }
 }

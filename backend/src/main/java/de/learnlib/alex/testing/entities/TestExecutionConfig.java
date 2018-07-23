@@ -92,7 +92,7 @@ public class TestExecutionConfig implements Serializable {
     public TestExecutionConfig(List<Long> testIds, AbstractWebDriverConfig driverConfig) {
         this.setTestIds(testIds);
         this.driverConfig = driverConfig;
-        this.createReport = false;
+        this.createReport = true;
     }
 
     public Long getId() {

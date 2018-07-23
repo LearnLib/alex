@@ -1,0 +1,57 @@
+<div class="view view-test-case-results">
+  <view-header title="Test Results"></view-header>
+  <action-bar></action-bar>
+  <div class="view-body">
+    <div class="alx-container-fluid">
+
+      <div class="d-flex align-items-center">
+        <h4 class="w-100" style="margin: 0;">
+          <strong>
+            <i class="fa fa-fw fa-file-o"></i> {{vm.test.name}}
+          </strong>
+          <a ui-sref="test({projectId: vm.project.id, testId: vm.test.id})">
+            (<i class="fa fa-fw fa-edit"></i> Edit)
+          </a>
+        </h4>
+      </div>
+      <hr>
+
+      <table class="table table-striped" ng-if="vm.results.length > 0">
+        <thead>
+        <tr>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Output</th>
+          <th>Message</th>
+          <th>Time</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="result in vm.results">
+          <td width="150">
+            {{result.date | date : 'EEE, dd.MM.yyyy, HH:mm'}}
+          </td>
+          <td width="50">
+            <span class="label label-success" ng-if="result.passed">Passed</span>
+            <span class="label label-danger" ng-if="!result.passed">Failed</span>
+          </td>
+          <td>
+            <report-outputs-column outputs="result.outputs" project="vm.project"></report-outputs-column>
+          </td>
+          <td>
+            <em ng-if="result.failureMessage">{{result.failureMessage}}</em>
+          </td>
+          <td width="70">
+            {{result.time | formatMilliseconds}}
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div class="alert alert-info" ng-if="vm.results.length === 0">
+        There are not results for this test yet.
+      </div>
+
+    </div>
+  </div>
+</div>

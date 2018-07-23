@@ -163,4 +163,10 @@ public abstract class TestResult implements Serializable {
 
     @Transient
     public abstract boolean isPassed();
+
+    @Transient
+    @JsonProperty("date")
+    public String getDate() {
+        return testReport == null ? null : testReport.getStartDateAsString();
+    }
 }

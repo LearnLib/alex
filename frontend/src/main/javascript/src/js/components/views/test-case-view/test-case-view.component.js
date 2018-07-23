@@ -74,7 +74,19 @@ export const testCaseViewComponent = {
              */
             this.result = null;
 
+            this.report = null;
+
+            /**
+             * Map id -> symbol.
+             * @type {Object}
+             */
             this.symbolMap = {};
+
+            /**
+             * If testing is in progress.
+             * @type {boolean}
+             */
+            this.active = false;
 
             this.options = {
                 showSymbolOutputs: false
@@ -82,12 +94,13 @@ export const testCaseViewComponent = {
 
             /**
              * The browser configuration.
-             * @type {object}
+             * @type {Object}
              */
             this.testConfig = {
                 tests: [],
                 url: this.project.getDefaultUrl(),
                 driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
+                createReport: true,
             };
 
             SymbolGroupResource.getAll(this.project.id, true)
@@ -95,11 +108,11 @@ export const testCaseViewComponent = {
                     this.groups = groups;
                     SymbolGroupUtils.getSymbols(this.groups).forEach(s => this.symbolMap[s.id] = s);
                 })
-                .catch(console.log);
+                .catch(console.error);
 
             SettingsResource.getSupportedWebDrivers()
                 .then((data) => this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver))
-                .catch(console.log);
+                .catch(console.error);
 
             dragulaService.options($scope, 'testSymbols', {
                 removeOnSpill: false,
@@ -170,9 +183,17 @@ export const testCaseViewComponent = {
             config.url = config.url.id;
 
             this.result = null;
+            this.active = true;
             this.TestResource.execute(this.testCase, config)
-                .then((data) => this.result = data.testResults[0])
-                .catch((err) => this.ToastService.info('The test case could not be executed. ' + err.data.message));
+                .then(data => {
+                    this.report = data;
+                    this.result = data.testResults[0];
+                    this.active = false;
+                })
+                .catch((err) => {
+                    this.ToastService.info('The test case could not be executed. ' + err.data.message);
+                    this.active = false;
+                });
         }
 
         openTestConfigModal() {

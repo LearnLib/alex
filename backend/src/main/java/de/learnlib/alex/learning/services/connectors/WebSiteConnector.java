@@ -157,10 +157,21 @@ public class WebSiteConnector implements Connector {
      *         If no element was found.
      */
     public WebElement getElement(WebElementLocator locator) throws NoSuchElementException {
-        if (locator.getType().equals(WebElementLocator.Type.CSS)) {
-            return driver.findElement(By.cssSelector(CSSUtils.escapeSelector(locator.getSelector())));
-        } else {
-            return driver.findElement(By.xpath(locator.getSelector()));
+        switch (locator.getType()) {
+            case XPATH:
+                return driver.findElement(By.xpath(locator.getSelector()));
+            case CSS:
+                return driver.findElement(By.cssSelector(CSSUtils.escapeSelector(locator.getSelector())));
+            case JS:
+                if (driver instanceof JavascriptExecutor) {
+                    try {
+                        return (WebElement) ((JavascriptExecutor) driver).executeScript(locator.getSelector());
+                    } catch (ClassCastException e) {
+                        throw new NoSuchElementException("Return result is not a WebElement");
+                    }
+                }
+            default:
+                throw new NoSuchElementException("Invalid selector type");
         }
     }
 

@@ -120,6 +120,12 @@
                                                     <i class="fa fa-fw fa-trash"></i> Delete
                                                 </a>
                                             </li>
+                                            <li class="divider" ng-if="test.type === 'case'"></li>
+                                            <li ng-if="test.type === 'case'">
+                                                <a ui-sref="testResults({projectId: vm.project.id, testId: test.id})">
+                                                    <i class="fa fa-fw fa-history"></i> Results
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>

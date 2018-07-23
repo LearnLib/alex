@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Connector to store and manage counters.
@@ -181,7 +179,11 @@ public class CounterStoreConnector implements Connector {
      *         The names of the variables that should be transferred to this one.
      */
     public void merge(CounterStoreConnector storeToMerge, List<String> namesToMerge) {
-        namesToMerge.stream().collect(Collectors.toMap(Function.identity(), storeToMerge::get)).forEach(countersMap::put);
+        namesToMerge.forEach(name -> {
+            if (storeToMerge.countersMap.containsKey(name)) {
+                countersMap.put(name, storeToMerge.countersMap.get(name));
+            }
+        });
     }
 
     /**

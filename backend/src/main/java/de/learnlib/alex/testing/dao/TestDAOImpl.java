@@ -29,10 +29,13 @@ import de.learnlib.alex.data.entities.SymbolInputParameter;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
+import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestCaseStep;
+import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
+import de.learnlib.alex.testing.repositories.TestResultRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -75,6 +78,9 @@ public class TestDAOImpl implements TestDAO {
     /** The injected DAP for parameterized symbols. */
     private ParameterizedSymbolDAO parameterizedSymbolDAO;
 
+    /** The {@link TestResultRepository} to use. */
+    private TestResultRepository testResultRepository;
+
     /**
      * Constructor.
      *
@@ -89,18 +95,21 @@ public class TestDAOImpl implements TestDAO {
      * @param projectRepository
      *         The injected repository for projects.
      * @param parameterizedSymbolDAO
-     *         The injected DAP for parameterized symbols.
+     *         The injected DAO for parameterized symbols.
+     * @param testResultRepository
+     *         The injected repository for test results.
      */
     @Inject
     public TestDAOImpl(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
             TestCaseStepRepository testCaseStepRepository, ProjectRepository projectRepository,
-            ParameterizedSymbolDAO parameterizedSymbolDAO) {
+            ParameterizedSymbolDAO parameterizedSymbolDAO, TestResultRepository testResultRepository) {
         this.projectDAO = projectDAO;
         this.testRepository = testRepository;
         this.symbolDAO = symbolDAO;
         this.testCaseStepRepository = testCaseStepRepository;
         this.projectRepository = projectRepository;
         this.parameterizedSymbolDAO = parameterizedSymbolDAO;
+        this.testResultRepository = testResultRepository;
     }
 
     @Override
@@ -452,6 +461,17 @@ public class TestDAOImpl implements TestDAO {
     }
 
     @Override
+    @Transactional
+    public List<TestResult> getResults(User user, Long projectId, Long testId) throws NotFoundException {
+        get(user, projectId, testId);
+
+        final List<TestResult> results = testResultRepository.findAllByTest_IdOrderByTestReport_StartDateDesc(testId);
+        results.forEach(this::loadLazyRelations);
+
+        return results;
+    }
+
+    @Override
     public void checkAccess(User user, Project project, Test test) throws NotFoundException, UnauthorizedException {
         projectDAO.checkAccess(user, project);
 
@@ -487,6 +507,13 @@ public class TestDAOImpl implements TestDAO {
 
             parameterizedSymbolDAO.create(projectId, step.getPSymbol());
         });
+    }
+
+    private void loadLazyRelations(TestResult testResult) {
+        if (testResult instanceof TestCaseResult) {
+            Hibernate.initialize(((TestCaseResult) testResult).getOutputs());
+            ((TestCaseResult) testResult).getOutputs().forEach(out -> Hibernate.initialize(out.getSymbol()));
+        }
     }
 
     private void loadLazyRelations(Test test) {

@@ -16,11 +16,8 @@
 
 package de.learnlib.alex.data.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import de.learnlib.alex.common.utils.CSSUtils;
 import org.hibernate.validator.constraints.NotBlank;
-import org.openqa.selenium.By;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -43,7 +40,10 @@ public class WebElementLocator implements Serializable {
         CSS,
 
         /** If the selector is an XPath expression. */
-        XPATH
+        XPATH,
+
+        /** If the element should be received by a JavaScript. */
+        JS
     }
 
     /** The selector of the element[s]. */
@@ -65,25 +65,14 @@ public class WebElementLocator implements Serializable {
     /**
      * Constructor.
      *
-     * @param selector The selector.
-     * @param type The selector type.
+     * @param selector
+     *         The selector.
+     * @param type
+     *         The selector type.
      */
     public WebElementLocator(String selector, Type type) {
         this.selector = selector;
         this.type = type;
-    }
-
-    /**
-     * Get the selector as selenium By object.
-     * @return Selenium By object.
-     */
-    @JsonIgnore
-    public By getBy() {
-        if (type.equals(Type.CSS)) {
-            return By.cssSelector(CSSUtils.escapeSelector(selector));
-        } else {
-            return By.xpath(selector);
-        }
     }
 
     /** @return {@link #selector}. */
@@ -91,7 +80,10 @@ public class WebElementLocator implements Serializable {
         return selector;
     }
 
-    /** @param selector {@link #selector}. */
+    /**
+     * @param selector
+     *         {@link #selector}.
+     */
     public void setSelector(String selector) {
         this.selector = selector;
     }
@@ -101,7 +93,10 @@ public class WebElementLocator implements Serializable {
         return type;
     }
 
-    /** @param type {@link #selector}. */
+    /**
+     * @param type
+     *         {@link #selector}.
+     */
     public void setType(Type type) {
         this.type = type;
     }
