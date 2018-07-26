@@ -138,6 +138,16 @@ export class SymbolResource {
     }
 
     /**
+     * Deletes a symbol permanently.
+     *
+     * @param {AlphabetSymbol} symbol The ID of the symbol.
+     * @return {*}
+     */
+    delete(symbol) {
+        return this.$http.delete(`${apiUrl}/projects/${symbol.project}/symbols/${symbol.id}`);
+    }
+
+    /**
      * Recovers a single symbol by setting its property 'visible' to true.
      *
      * @param {AlphabetSymbol} symbol - The symbol to recover.

@@ -22,12 +22,16 @@ import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
+import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
+import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
+import de.learnlib.alex.testing.repositories.TestExecutionResultRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -89,13 +93,23 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
      *         The repository for symbol steps.
      * @param parameterizedSymbolDAO
      *         The DAO for parameterized symbols.
+     * @param testCaseStepRepository
+     *         The testCaseStepRepository to use.
+     * @param parameterizedSymbolRepository
+     *         The parameterizedSymbolRepository to use.
+     * @param symbolSymbolStepRepository
+     *         The symbolSymbolStepRepository to use.
+     * @param testExecutionResultRepository
+     *         The testExecutionResultRepository to use.
      */
     @Inject
     public SymbolGroupDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
             SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
             SymbolActionRepository symbolActionRepository,
             SymbolParameterRepository symbolParameterRepository, ParameterizedSymbolDAO parameterizedSymbolDAO,
-            SymbolStepRepository symbolStepRepository) {
+            SymbolStepRepository symbolStepRepository, ParameterizedSymbolRepository parameterizedSymbolRepository,
+            TestCaseStepRepository testCaseStepRepository, TestExecutionResultRepository testExecutionResultRepository,
+            SymbolSymbolStepRepository symbolSymbolStepRepository) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
@@ -103,7 +117,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         this.symbolDAO = new SymbolDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
                 symbolActionRepository, this, symbolParameterRepository, symbolStepRepository,
-                parameterizedSymbolDAO);
+                parameterizedSymbolDAO, parameterizedSymbolRepository, symbolSymbolStepRepository,
+                testCaseStepRepository, testExecutionResultRepository);
     }
 
     @Override

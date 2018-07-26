@@ -21,8 +21,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 /**
  * Repository for {@link SymbolPSymbolStep}.
  */
@@ -30,13 +28,13 @@ import java.util.List;
 public interface SymbolSymbolStepRepository extends JpaRepository<SymbolPSymbolStep, Long> {
 
     /**
-     * Find all steps by a given symbol ID.
+     * Count all symbol steps by a used symbol ID.
      *
      * @param symbolId
      *         The ID of the symbol.
-     * @return The step
+     * @return The count.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    List<SymbolPSymbolStep> findAllByPSymbol_Symbol_Id(Long symbolId);
+    Long countAllByPSymbol_Symbol_Id(Long symbolId);
 }

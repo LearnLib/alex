@@ -330,6 +330,10 @@ public class LearnerResult implements Serializable {
         return symbols.stream().map(ParameterizedSymbol::getComputedName).collect(Collectors.toList());
     }
 
+    @JsonIgnore
+    public void setSigma(List<String> sigma) {
+    }
+
     /**
      * Get the statistic of this learn step.
      *

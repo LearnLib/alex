@@ -16,32 +16,17 @@
 
 package de.learnlib.alex.testing.repositories;
 
-import de.learnlib.alex.testing.entities.TestCaseStep;
+import de.learnlib.alex.testing.entities.TestExecutionResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-/** The repository for test case steps. */
+/** The repository for test results. */
 @Repository
-public interface TestCaseStepRepository extends JpaRepository<TestCaseStep, Long> {
+public interface TestExecutionResultRepository extends JpaRepository<TestExecutionResult, Long> {
 
     /**
-     * Delete all those test steps of a test whose ids are not specified to stay. This should be used when updating a
-     * test case.
-     *
-     * @param testId
-     *         The id of the test in the db.
-     * @param testCaseIds
-     *         The ids of the test case steps in the db.
-     */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
-    void deleteAllByTestCase_IdAndIdNotIn(Long testId, List<Long> testCaseIds);
-
-    /**
-     * Count the number of test steps that use a symbol.
+     * Count all results by used symbol ID.
      *
      * @param symbolId
      *         The ID of the symbol.
@@ -49,5 +34,5 @@ public interface TestCaseStepRepository extends JpaRepository<TestCaseStep, Long
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    Long countAllByPSymbol_Symbol_Id(Long symbolId);
+    Long countAllBySymbol_Id(Long symbolId);
 }

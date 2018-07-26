@@ -268,6 +268,20 @@ public interface SymbolDAO {
     void show(User user, Long projectId, List<Long> ids) throws NotFoundException;
 
     /**
+     * Delete a symbol permanently but only if there are no more references to it.
+     *
+     * @param user
+     *         The user.
+     * @param projectId
+     *         The ID of the project.
+     * @param symbolId
+     *         The ID of the symbol to delete.
+     * @throws NotFoundException
+     *         If the project or symbol could not be found.
+     */
+    void delete(User user, Long projectId, Long symbolId) throws NotFoundException;
+
+    /**
      * Check if the user can access or modify a symbol.
      *
      * @param user

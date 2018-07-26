@@ -20,12 +20,16 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
+import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
+import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
+import de.learnlib.alex.testing.repositories.TestExecutionResultRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,13 +87,26 @@ public class SymbolGroupDAOImplTest {
     @Mock
     private SymbolStepRepository symbolStepRepository;
 
+    @Mock
+    private SymbolSymbolStepRepository symbolSymbolStepRepository;
+
+    @Mock
+    private ParameterizedSymbolRepository parameterizedSymbolRepository;
+
+    @Mock
+    private TestCaseStepRepository testCaseStepRepository;
+
+    @Mock
+    private TestExecutionResultRepository testExecutionResultRepository;
+
     private SymbolGroupDAO symbolGroupDAO;
 
     @Before
     public void setUp() {
         symbolGroupDAO = new SymbolGroupDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
-                symbolActionRepository, symbolParameterRepository, parameterizedSymbolDAO,
-                symbolStepRepository);
+                symbolActionRepository, symbolParameterRepository, parameterizedSymbolDAO, symbolStepRepository,
+                parameterizedSymbolRepository, testCaseStepRepository, testExecutionResultRepository,
+                symbolSymbolStepRepository);
     }
 
     @Test

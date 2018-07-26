@@ -27,12 +27,16 @@ import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.data.entities.actions.misc.WaitAction;
 import de.learnlib.alex.data.entities.actions.web.ClearAction;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
+import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
+import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
+import de.learnlib.alex.testing.repositories.TestExecutionResultRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -97,12 +101,27 @@ public class SymbolDAOImplTest {
     @Mock
     private ParameterizedSymbolDAO parameterizedSymbolDAO;
 
+    @Mock
+    private SymbolSymbolStepRepository symbolSymbolStepRepository;
+
+    @Mock
+    private ParameterizedSymbolRepository parameterizedSymbolRepository;
+
+    @Mock
+    private TestCaseStepRepository testCaseStepRepository;
+
+    @Mock
+    private TestExecutionResultRepository testExecutionResultRepository;
+
+
     private SymbolDAO symbolDAO;
 
     @Before
     public void setUp() {
         symbolDAO = new SymbolDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
-                symbolActionRepository, symbolGroupDAO, symbolParameterRepository, symbolStepRepository, parameterizedSymbolDAO);
+                symbolActionRepository, symbolGroupDAO, symbolParameterRepository, symbolStepRepository,
+                parameterizedSymbolDAO, parameterizedSymbolRepository, symbolSymbolStepRepository,
+                testCaseStepRepository, testExecutionResultRepository);
     }
 
     @Test

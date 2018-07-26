@@ -36,6 +36,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -452,6 +453,35 @@ public class SymbolResource {
         } catch (UnauthorizedException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.hide", Status.UNAUTHORIZED, e);
+        }
+    }
+
+    /**
+     * Permanently delete a symbol.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param symbolId
+     *         The ID of the symbol.
+     * @return 204 No content if the symbol could be deleted.
+     * @throws NotFoundException
+     *         If the symbol or the project could not be found.
+     */
+    @DELETE
+    @Path("/{symbol_id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("symbol_id") Long symbolId)
+            throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("delete symbol ({}, {}) for user {}.", projectId, symbolId, user);
+
+        try {
+            symbolDAO.delete(user, projectId, symbolId);
+            LOGGER.traceExit("deleted symbol {}", symbolId);
+            return Response.noContent().build();
+        } catch (ValidationException e) {
+            LOGGER.traceExit(e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.delete", Status.BAD_REQUEST, e);
         }
     }
 

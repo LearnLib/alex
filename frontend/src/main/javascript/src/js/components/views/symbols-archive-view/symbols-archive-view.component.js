@@ -83,8 +83,8 @@ class SymbolsArchiveViewComponent {
         this.SymbolResource.recover(symbol)
             .then(() => {
                 this.ToastService.success('Symbol ' + symbol.name + ' recovered');
-                remove(this.symbols, {id: symbol.id});
                 this.selectedSymbols.unselect(symbol);
+                remove(this.symbols, {id: symbol.id});
             })
             .catch(err => {
                 this.ToastService.danger('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + err.data.message);
@@ -124,6 +124,16 @@ class SymbolsArchiveViewComponent {
                 symbol: () => new AlphabetSymbol(JSON.parse(JSON.stringify(symbol))),
             }
         });
+    }
+
+    deleteSymbol(symbol) {
+        this.SymbolResource.delete(symbol)
+            .then(() => {
+                this.ToastService.success('The symbol has been deleted permanently.');
+                this.selectedSymbols.unselect(symbol);
+                remove(this.symbols, {id: symbol.id});
+            })
+            .catch(err => this.ToastService.danger(`The symbol could be deleted permanently. ${err.data.message}`));
     }
 }
 

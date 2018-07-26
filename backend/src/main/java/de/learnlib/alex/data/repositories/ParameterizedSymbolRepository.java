@@ -41,6 +41,17 @@ public interface ParameterizedSymbolRepository extends JpaRepository<Parameteriz
     List<ParameterizedSymbol> findAllBySymbol_Id(Long symbolId);
 
     /**
+     * Count all by symbol ID.
+     *
+     * @param symbolId
+     *         The ID of the symbol.
+     * @return The count.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    Long countAllBySymbol_Id(Long symbolId);
+
+    /**
      * Delete all parameterized symbols by project ID.
      *
      * @param projectId

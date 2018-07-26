@@ -88,7 +88,9 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
 
         parameterValues.forEach(v -> {
             if (v.getValue() != null) {
-                final String value = v.getValue() == null ? null : SearchHelper.insertVariableValues(connectors, symbol.getProjectId(), v.getValue());
+                final String value = v.getValue() == null ?
+                        null :
+                        SearchHelper.insertVariableValues(connectors, symbol.getProjectId(), v.getValue());
                 localVariableStore.set(v.getParameter().getName(), value);
             }
         });
@@ -102,7 +104,7 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
                 .collect(Collectors.toList())
         );
         connectors.addConnector(variableStore);
-        
+
         return result;
     }
 

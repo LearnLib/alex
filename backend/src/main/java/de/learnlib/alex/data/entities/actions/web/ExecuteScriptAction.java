@@ -49,6 +49,7 @@ public class ExecuteScriptAction extends SymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    /** How long in seconds should be waited before the script times out. */
     private static final int DEFAULT_SCRIPT_TIMEOUT = 10;
 
     /** The JavaScript to execute. */
@@ -65,9 +66,7 @@ public class ExecuteScriptAction extends SymbolAction {
     @Min(value = 0)
     private int timeout = DEFAULT_SCRIPT_TIMEOUT;
 
-    /**
-     * The name of the variable to store the result into.
-     */
+    /** The name of the variable to store the result into. */
     private String name;
 
     @Override

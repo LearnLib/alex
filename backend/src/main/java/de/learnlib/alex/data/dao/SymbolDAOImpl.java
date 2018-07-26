@@ -27,12 +27,16 @@ import de.learnlib.alex.data.entities.SymbolPSymbolStep;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolStep;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterRepository;
 import de.learnlib.alex.data.repositories.SymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
+import de.learnlib.alex.data.repositories.SymbolSymbolStepRepository;
+import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
+import de.learnlib.alex.testing.repositories.TestExecutionResultRepository;
 import net.automatalib.graphs.base.compact.CompactSimpleGraph;
 import net.automatalib.util.graphs.scc.SCCs;
 import org.apache.logging.log4j.LogManager;
@@ -96,6 +100,18 @@ public class SymbolDAOImpl implements SymbolDAO {
     /** The repository for parameterized symbols. */
     private ParameterizedSymbolDAO parameterizedSymbolDAO;
 
+    /** The repository for symbol steps. */
+    private SymbolSymbolStepRepository symbolSymbolStepRepository;
+
+    /** The repository for parameterized symbols. */
+    private ParameterizedSymbolRepository parameterizedSymbolRepository;
+
+    /** The repository for test case steps. */
+    private TestCaseStepRepository testCaseStepRepository;
+
+    /** The repository for test results. */
+    private TestExecutionResultRepository testExecutionResultRepository;
+
     /**
      * Creates a new SymbolDAO.
      *
@@ -117,13 +133,25 @@ public class SymbolDAOImpl implements SymbolDAO {
      *         The repository for symbol steps.
      * @param parameterizedSymbolDAO
      *         The DAO for parameterized symbols.
+     * @param symbolSymbolStepRepository
+     *         {@link #symbolSymbolStepRepository}
+     * @param parameterizedSymbolRepository
+     *         {@link #parameterizedSymbolRepository}
+     * @param testCaseStepRepository
+     *         {@link #testCaseStepRepository}
+     * @param testExecutionResultRepository
+     *         {@link #testExecutionResultRepository}
      */
     @Inject
     public SymbolDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
             SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
             SymbolActionRepository symbolActionRepository, SymbolGroupDAO symbolGroupDAO,
             SymbolParameterRepository symbolParameterRepository, SymbolStepRepository symbolStepRepository,
-            ParameterizedSymbolDAO parameterizedSymbolDAO) {
+            ParameterizedSymbolDAO parameterizedSymbolDAO,
+            ParameterizedSymbolRepository parameterizedSymbolRepository,
+            SymbolSymbolStepRepository symbolSymbolStepRepository,
+            TestCaseStepRepository testCaseStepRepository,
+            TestExecutionResultRepository testExecutionResultRepository) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
@@ -133,6 +161,10 @@ public class SymbolDAOImpl implements SymbolDAO {
         this.symbolParameterRepository = symbolParameterRepository;
         this.symbolStepRepository = symbolStepRepository;
         this.parameterizedSymbolDAO = parameterizedSymbolDAO;
+        this.parameterizedSymbolRepository = parameterizedSymbolRepository;
+        this.symbolSymbolStepRepository = symbolSymbolStepRepository;
+        this.testCaseStepRepository = testCaseStepRepository;
+        this.testExecutionResultRepository = testExecutionResultRepository;
     }
 
     @Override
@@ -597,6 +629,33 @@ public class SymbolDAOImpl implements SymbolDAO {
             symbol.setProject(project);
             symbol.setHidden(false);
             symbolRepository.save(symbol);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void delete(User user, Long projectId, Long symbolId) throws NotFoundException {
+        final Symbol symbol = get(user, projectId, symbolId);
+
+        if (!symbol.isHidden()) {
+            throw new ValidationException("Symbol has to be archived first.");
+        }
+
+        long r1 = parameterizedSymbolRepository.countAllBySymbol_Id(symbolId);
+        long r2 = symbolSymbolStepRepository.countAllByPSymbol_Symbol_Id(symbolId);
+        long r3 = testCaseStepRepository.countAllByPSymbol_Symbol_Id(symbolId);
+        long r4 = testExecutionResultRepository.countAllBySymbol_Id(symbolId);
+
+        long refCount = r1 + r2 + r3 + r4;
+        if (refCount > 0) {
+            throw new ValidationException("There are " + refCount + " references to this symbol.");
+        } else {
+            symbolActionRepository.deleteAllBySymbol_Id(symbolId);
+            parameterizedSymbolRepository.delete(symbol.getSteps().stream()
+                    .filter(s -> s instanceof SymbolPSymbolStep)
+                    .map(s -> ((SymbolPSymbolStep) s).getPSymbol())
+                    .collect(Collectors.toList()));
+            symbolRepository.delete(symbolId);
         }
     }
 

@@ -23,9 +23,11 @@ import de.learnlib.alex.data.dao.ParameterizedSymbolDAO;
 import de.learnlib.alex.data.dao.ParameterizedSymbolDAOImpl;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolInputParameter;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
@@ -81,6 +83,9 @@ public class TestDAOImpl implements TestDAO {
     /** The {@link TestResultRepository} to use. */
     private TestResultRepository testResultRepository;
 
+    /** The {@link ParameterizedSymbolRepository} to use. */
+    private ParameterizedSymbolRepository parameterizedSymbolRepository;
+
     /**
      * Constructor.
      *
@@ -98,11 +103,14 @@ public class TestDAOImpl implements TestDAO {
      *         The injected DAO for parameterized symbols.
      * @param testResultRepository
      *         The injected repository for test results.
+     * @param parameterizedSymbolRepository
+     *         {@link #parameterizedSymbolRepository}
      */
     @Inject
     public TestDAOImpl(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
             TestCaseStepRepository testCaseStepRepository, ProjectRepository projectRepository,
-            ParameterizedSymbolDAO parameterizedSymbolDAO, TestResultRepository testResultRepository) {
+            ParameterizedSymbolDAO parameterizedSymbolDAO, TestResultRepository testResultRepository,
+            ParameterizedSymbolRepository parameterizedSymbolRepository) {
         this.projectDAO = projectDAO;
         this.testRepository = testRepository;
         this.symbolDAO = symbolDAO;
@@ -110,6 +118,7 @@ public class TestDAOImpl implements TestDAO {
         this.projectRepository = projectRepository;
         this.parameterizedSymbolDAO = parameterizedSymbolDAO;
         this.testResultRepository = testResultRepository;
+        this.parameterizedSymbolRepository = parameterizedSymbolRepository;
     }
 
     @Override
@@ -370,6 +379,13 @@ public class TestDAOImpl implements TestDAO {
         if (parent != null) {
             ((TestSuite) parent).getTests().remove(test);
             test.setParent(null);
+        }
+
+        if (test instanceof TestCase) {
+            final List<ParameterizedSymbol> pSymbols = ((TestCase) test).getSteps().stream()
+                    .map(TestCaseStep::getPSymbol)
+                    .collect(Collectors.toList());
+            parameterizedSymbolRepository.delete(pSymbols);
         }
 
         testRepository.delete(test);
