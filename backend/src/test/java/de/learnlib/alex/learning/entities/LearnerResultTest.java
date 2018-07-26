@@ -22,7 +22,6 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.algorithms.TTT;
-import de.learnlib.alex.learning.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
@@ -84,7 +83,6 @@ public class LearnerResultTest {
         result.setProject(project);
         result.setTestNo(ID);
         result.setAlgorithm(ALGORITHM);
-        result.setSigma(AlphabetProxy.createFrom(sigma));
         result.createHypothesisFrom(hypothesis);
         result.setStatistics(statistics);
 

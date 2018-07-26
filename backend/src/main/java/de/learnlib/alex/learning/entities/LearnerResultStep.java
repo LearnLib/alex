@@ -24,6 +24,7 @@ import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachinePro
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.words.impl.SimpleAlphabet;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -211,7 +212,7 @@ public class LearnerResultStep implements Serializable {
     @Transient
     @JsonIgnore
     public void createHypothesisFrom(MealyMachine<?, String, ?, String> mealyMachine) {
-        this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, result.getSigma().createAlphabet());
+        this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, new SimpleAlphabet<>(result.getSigma()));
     }
 
     /**

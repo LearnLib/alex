@@ -24,11 +24,11 @@ import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
-import de.learnlib.alex.learning.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.words.impl.SimpleAlphabet;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -49,6 +49,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Entity class to store the result of a test run, i.e. the outcome of a learn iteration and must not be the final
@@ -85,9 +86,6 @@ public class LearnerResult implements Serializable {
 
     /** The symbols to use during the learning. */
     private List<ParameterizedSymbol> symbols;
-
-    /** The Alphabet used while learning. */
-    private AlphabetProxy sigma;
 
     /** The {@link AbstractLearningAlgorithm} to use during the learning. */
     private AbstractLearningAlgorithm<String, String> algorithm;
@@ -252,28 +250,6 @@ public class LearnerResult implements Serializable {
     }
 
     /**
-     * Get the Alphabet used during the learning process. This Alphabet is also used in the hypothesis.
-     *
-     * @return The Alphabet of the learning process & the hypothesis.
-     */
-    @Column(name = "sigma", columnDefinition = "BLOB")
-    @JsonProperty("sigma")
-    public AlphabetProxy getSigma() {
-        return sigma;
-    }
-
-    /**
-     * Set a new Alphabet. The Alphabet should be the one used during the learning and must be used in the hypothesis.
-     *
-     * @param sigma
-     *         The new Alphabet.
-     */
-    @JsonIgnore
-    public void setSigma(AlphabetProxy sigma) {
-        this.sigma = sigma;
-    }
-
-    /**
      * @return The algorithm to use during the learning.
      */
     @Cascade(CascadeType.ALL)
@@ -345,7 +321,13 @@ public class LearnerResult implements Serializable {
     @Transient
     @JsonIgnore
     public void createHypothesisFrom(MealyMachine<?, String, ?, String> mealyMachine) {
-        this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, sigma.createAlphabet());
+        this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, new SimpleAlphabet<>(getSigma()));
+    }
+
+    @Transient
+    @JsonProperty("sigma")
+    public List<String> getSigma() {
+        return symbols.stream().map(ParameterizedSymbol::getComputedName).collect(Collectors.toList());
     }
 
     /**
@@ -439,8 +421,6 @@ public class LearnerResult implements Serializable {
 
     @Override
     public String toString() {
-        return "[LearnerResult " + id + "] " + project + " / " + testNo + " / "
-                + ": " + sigma + ", " + hypothesis;
+        return "[LearnerResult " + id + "] " + project + " / " + testNo;
     }
-
 }

@@ -24,7 +24,6 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.learning.services.Learner;
 import de.learnlib.alex.learning.services.TestGenerator;
 import net.automatalib.words.Alphabet;
@@ -158,7 +157,6 @@ public class LearnerResultResourceTest extends JerseyTest {
         LearnerResult learnerResult = new LearnerResult();
         learnerResult.setProject(project);
         learnerResult.setTestNo(RESULT_ID);
-        learnerResult.setSigma(AlphabetProxy.createFrom(sigma));
 
         given(learnerResultDAO.get(admin, PROJECT_ID, RESULT_ID, false)).willReturn(learnerResult);
 
@@ -304,7 +302,6 @@ public class LearnerResultResourceTest extends JerseyTest {
             LearnerResult learnerResult = new LearnerResult();
             learnerResult.setProject(project);
             learnerResult.setTestNo(i);
-            learnerResult.setSigma(AlphabetProxy.createFrom(sigma));
 
             results.add(learnerResult);
         }

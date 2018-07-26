@@ -65,12 +65,6 @@ export class LearnResult {
         this.postSymbol = obj.postSymbol != null ? new ParametrizedSymbol(obj.postSymbol) : null;
 
         /**
-         * The alphabet the process has been learned with.
-         * @type {number[]}
-         */
-        this.sigma = obj.sigma;
-
-        /**
          * The cumulated statistics.
          * @type {*}
          */
@@ -83,7 +77,7 @@ export class LearnResult {
         this.steps = obj.steps;
 
         /**
-         * Sigma.
+         * The input alphabet.
          * @type {*}
          */
         this.symbols = obj.symbols.map(s => new ParametrizedSymbol(s));
