@@ -17,7 +17,10 @@
 package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
@@ -29,6 +32,8 @@ import java.io.Serializable;
 @Entity
 @JsonTypeName("action")
 public class SymbolActionStep extends SymbolStep implements Serializable {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private static final long serialVersionUID = 5116902783136721652L;
 
@@ -52,18 +57,23 @@ public class SymbolActionStep extends SymbolStep implements Serializable {
 
     @Override
     public ExecuteResult execute(int i, ConnectorManager connectors) {
-        final ExecuteResult result = action.executeAction(connectors);
+        try {
+            final ExecuteResult result = action.executeAction(connectors);
 
-        // if the execution of one symbol fails do not continue executing the following actions
-        if (!result.isSuccess() && !action.isIgnoreFailure()) {
-            if (action.getErrorOutput() != null && !action.getErrorOutput().trim().equals("")) {
-                result.setMessage(action.insertVariableValues(action.getErrorOutput()));
-            } else {
-                result.setMessage(String.valueOf(i + 1));
+            // if the execution of one symbol fails do not continue executing the following actions
+            if (!result.isSuccess() && !action.isIgnoreFailure()) {
+                if (action.getErrorOutput() != null && !action.getErrorOutput().trim().equals("")) {
+                    result.setMessage(action.insertVariableValues(action.getErrorOutput()));
+                } else {
+                    result.setMessage(String.valueOf(i + 1));
+                }
             }
-        }
 
-        return result;
+            return result;
+        } catch (Exception e) {
+            LOGGER.error(LoggerMarkers.LEARNER, "The action could not be executed.", e);
+            return new ExecuteResult(false, String.valueOf(i + 1));
+        }
     }
 
     public SymbolAction getAction() {

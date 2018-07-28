@@ -390,7 +390,8 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
                 // save dummy variables in the local context so that outputs of executed symbols are saved
                 if (step instanceof SymbolPSymbolStep) {
                     ((SymbolPSymbolStep) step).getPSymbol().getSymbol().getOutputs().forEach(out -> {
-                        if (out.getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
+                        if (out.getParameterType().equals(SymbolParameter.ParameterType.STRING)
+                                && !localVariableStore.contains(out.getName())) {
                             localVariableStore.set(out.getName(), "");
                         }
                     });

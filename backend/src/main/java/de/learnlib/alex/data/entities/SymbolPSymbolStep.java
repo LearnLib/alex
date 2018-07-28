@@ -18,8 +18,12 @@ package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import javax.persistence.Cache;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
@@ -31,17 +35,24 @@ import java.io.Serializable;
 @JsonTypeName("symbol")
 public class SymbolPSymbolStep extends SymbolStep implements Serializable {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
     /** The symbol to execute. */
     @OneToOne
     private ParameterizedSymbol pSymbol;
 
     @Override
     public ExecuteResult execute(int i, ConnectorManager connectors) {
-        final ExecuteResult result = pSymbol.execute(connectors);
-        if (!result.isSuccess()) {
-            result.setMessage(String.valueOf(i + 1));
+        try {
+            final ExecuteResult result = pSymbol.execute(connectors);
+            if (!result.isSuccess()) {
+                result.setMessage(String.valueOf(i + 1));
+            }
+            return result;
+        } catch (Exception e) {
+            LOGGER.error(LoggerMarkers.LEARNER, "The symbol could not be executed.", e);
+            return new ExecuteResult(false, String.valueOf(i + 1));
         }
-        return result;
     }
 
     @JsonProperty("pSymbol")

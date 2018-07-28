@@ -381,13 +381,6 @@ public class TestDAOImpl implements TestDAO {
             test.setParent(null);
         }
 
-        if (test instanceof TestCase) {
-            final List<ParameterizedSymbol> pSymbols = ((TestCase) test).getSteps().stream()
-                    .map(TestCaseStep::getPSymbol)
-                    .collect(Collectors.toList());
-            parameterizedSymbolRepository.delete(pSymbols);
-        }
-
         testRepository.delete(test);
     }
 

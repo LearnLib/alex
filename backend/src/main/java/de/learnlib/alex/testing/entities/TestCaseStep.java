@@ -22,6 +22,7 @@ import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -61,7 +62,8 @@ public class TestCaseStep implements Serializable {
 
     /** The symbol to execute. */
     @OneToOne(
-            fetch = FetchType.EAGER
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.REMOVE
     )
     private ParameterizedSymbol pSymbol;
 

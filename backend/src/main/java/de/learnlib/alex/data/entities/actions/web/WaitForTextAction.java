@@ -33,6 +33,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.regex.Pattern;
 
 /**
  * Action to wait for a text to be present on the page.
@@ -96,7 +97,10 @@ public class WaitForTextAction extends WebSymbolAction {
             if (regexp) {
                 LOGGER.info(LoggerMarkers.LEARNER, "Waiting for pattern '{}' to be present in node '{}' for a maximum of "
                         + "{}ms.", valueWithVariables, nodeWithVariables, maxWaitTime);
-                wait.until(wd -> connector.getElement(nodeWithVariables).getText().matches(valueWithVariables));
+                wait.until(wd -> {
+                    final String text = connector.getElement(nodeWithVariables).getText();
+                    return Pattern.compile(value).matcher(text).find();
+                });
             } else {
                 LOGGER.info(LoggerMarkers.LEARNER, "Waiting for text '{}' to be present in node '{}' for a maximum of {}ms.",
                         valueWithVariables, nodeWithVariables, maxWaitTime);

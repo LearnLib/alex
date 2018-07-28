@@ -134,6 +134,10 @@ export class AlphabetSymbol {
         };
     }
 
+    containsSymbolSteps() {
+        return this.steps.filter(s => s.type === 'symbol').length > 0;
+    }
+
     copy() {
         const copy = new AlphabetSymbol(JSON.parse(JSON.stringify(this)));
         delete copy.id;

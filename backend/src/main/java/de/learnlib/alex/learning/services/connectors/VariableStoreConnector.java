@@ -102,6 +102,17 @@ public class VariableStoreConnector implements Connector {
     }
 
     /**
+     * Check if the store contains a variable.
+     *
+     * @param name
+     *         The name of the variable.
+     * @return If the variable is present.
+     */
+    public boolean contains(String name) {
+        return store.containsKey(name);
+    }
+
+    /**
      * Clones the store.
      *
      * @return The cloned store.

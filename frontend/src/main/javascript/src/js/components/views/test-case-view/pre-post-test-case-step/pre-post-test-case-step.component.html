@@ -4,7 +4,14 @@
       <div>
         {{vm.text}}:
         <em class="text-muted" ng-if="vm.steps.length === 0">none</em>
-        <strong ng-if="vm.steps.length > 0">{{vm.steps[0].pSymbol.symbol.name}}</strong>
+        <strong ng-if="vm.steps.length > 0">
+          <a
+            class="text-black"
+            ui-sref="symbol({project: vm.steps[0].pSymbol.symbol.project, symbolId: vm.steps[0].pSymbol.symbol.id})"
+          >
+            {{vm.steps[0].pSymbol.symbol.name}}
+          </a>
+        </strong>
       </div>
       <div ng-if="vm.steps.length > 0">
         <symbol-parameters parameter-values="vm.steps[0].pSymbol.parameterValues"></symbol-parameters>
