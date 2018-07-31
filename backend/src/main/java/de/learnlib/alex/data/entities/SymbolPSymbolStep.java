@@ -23,7 +23,6 @@ import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.persistence.Cache;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
@@ -44,11 +43,7 @@ public class SymbolPSymbolStep extends SymbolStep implements Serializable {
     @Override
     public ExecuteResult execute(int i, ConnectorManager connectors) {
         try {
-            final ExecuteResult result = pSymbol.execute(connectors);
-            if (!result.isSuccess()) {
-                result.setMessage(String.valueOf(i + 1));
-            }
-            return result;
+            return getExecuteResult(i, connectors, pSymbol.execute(connectors));
         } catch (Exception e) {
             LOGGER.error(LoggerMarkers.LEARNER, "The symbol could not be executed.", e);
             return new ExecuteResult(false, String.valueOf(i + 1));

@@ -99,16 +99,14 @@ public class ExecuteScriptAction extends SymbolAction {
                     }
                 }
 
-                LOGGER.info(LoggerMarkers.LEARNER, "JavaScript {} successfully executed (ignoreFailure: {}, negated: {}).",
-                        ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "JavaScript {} successfully executed.");
                 return getSuccessOutput();
             } catch (Exception e) {
                 LOGGER.info(LoggerMarkers.LEARNER, "Could not execute JavaScript", e);
                 return getFailedOutput();
             }
         } else {
-            LOGGER.info(LoggerMarkers.LEARNER, "This driver does not support JavaScript (ignoreFailure: {}, negated: {})!",
-                    ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "This driver does not support JavaScript!");
             return getFailedOutput();
         }
     }

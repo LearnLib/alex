@@ -64,22 +64,18 @@ public class BrowserAction extends WebSymbolAction {
             switch (action) {
                 case RESTART:
                     connector.restart();
-                    LOGGER.info(LoggerMarkers.LEARNER, "Restart browser (ignoreFailure: {}, negated: {}).",
-                            ignoreFailure, negated);
+                    LOGGER.info(LoggerMarkers.LEARNER, "Restart browser.");
                     break;
                 case REFRESH:
                     connector.refresh();
-                    LOGGER.info(LoggerMarkers.LEARNER, "Refresh browser (ignoreFailure: {}, negated: {}).",
-                            ignoreFailure, negated);
+                    LOGGER.info(LoggerMarkers.LEARNER, "Refresh browser.");
                     break;
                 default:
                     throw new Exception("Invalid browser action.");
             }
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Browser could not be refreshed or restarted (ignoreFailure: {}, negated: {}).",
-                    ignoreFailure, negated, e);
-
+            LOGGER.info(LoggerMarkers.LEARNER, "Browser could not be refreshed or restarted.", e);
             return getFailedOutput();
         }
     }

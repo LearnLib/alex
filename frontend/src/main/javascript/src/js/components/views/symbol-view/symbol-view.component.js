@@ -150,6 +150,9 @@ class SymbolViewComponent {
     addAction(action) {
         this.symbol.steps.push({
             type: 'action',
+            errorOutput: null,
+            negated: false,
+            ignoreFailure: false,
             action: this.ActionService.create(JSON.parse(JSON.stringify(action)))
         });
     }
@@ -171,6 +174,9 @@ class SymbolViewComponent {
 
             this.symbol.steps.push({
                 type: 'symbol',
+                errorOutput: null,
+                negated: false,
+                ignoreFailure: false,
                 pSymbol: ParametrizedSymbol.fromSymbol(symbol)
             });
         });

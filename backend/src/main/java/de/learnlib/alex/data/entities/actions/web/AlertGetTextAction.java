@@ -58,14 +58,10 @@ public class AlertGetTextAction extends SymbolAction {
             final String text = alert.getText();
             variableStore.set(variableName, text);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Save text '{}' from alert to variable '{}' (ignoreFailure: {}, negated: {}).",
-                    text, variableName, ignoreFailure, negated);
-
+            LOGGER.info(LoggerMarkers.LEARNER, "Save text '{}' from alert to variable '{}'.", text, variableName);
             return getSuccessOutput();
         } catch (NoAlertPresentException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Failed to get text from alert (ignoreFailure: {}, negated: {}).",
-                    ignoreFailure, negated);
-
+            LOGGER.info(LoggerMarkers.LEARNER, "Failed to get text from alert.");
             return getFailedOutput();
         }
     }

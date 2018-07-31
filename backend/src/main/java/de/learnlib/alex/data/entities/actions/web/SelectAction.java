@@ -109,12 +109,12 @@ public class SelectAction extends FillAction {
                     break;
             }
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Selected '{}' of '{}' by '{}' (ignoreFailure: {}, negated: {}).",
-                    value, nodeWithVariables, selectBy, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Selected '{}' of '{}' by '{}'.",
+                    value, nodeWithVariables, selectBy);
             return getSuccessOutput();
         } catch (NoSuchElementException | NumberFormatException | UnexpectedTagNameException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not select '{}' of '{}' by '{}' (ignoreFailure: {}, negated: {}).",
-                    value, nodeWithVariables, selectBy, ignoreFailure, negated, e);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not select '{}' of '{}' by '{}'.",
+                    value, nodeWithVariables, selectBy, e);
             return getFailedOutput();
         }
     }

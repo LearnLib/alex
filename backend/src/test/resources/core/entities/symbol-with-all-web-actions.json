@@ -7,84 +7,84 @@
   "steps": [
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_alertAcceptDismiss",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "action": "ACCEPT"
       },
       "position": 0
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_alertAcceptDismiss",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "action": "DISMISS"
       },
       "position": 1
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_alertGetText",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "variableName": "test"
       },
       "position": 2
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_alertSendKeys",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "text": "test"
       },
       "position": 3
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_browser",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "action": "RESTART"
       },
       "position": 4
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_browser",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "action": "REFRESH"
       },
       "position": 5
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_checkNodeAttributeValue",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -97,12 +97,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_checkNodeAttributeValue",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -115,12 +115,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_checkNodeAttributeValue",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -133,12 +133,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_checkNodeAttributeValue",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -151,12 +151,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_checkPageTitle",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "title": "test",
         "regexp": false
       },
@@ -164,12 +164,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_checkPageTitle",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "title": "test",
         "regexp": true
       },
@@ -177,12 +177,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_checkNodeSelected",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -192,12 +192,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_clear",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -207,12 +207,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_click",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -223,12 +223,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_click",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -239,12 +239,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_clickElementByText",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "body",
           "type": "CSS"
@@ -256,12 +256,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_clickLinkByText",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "value": "test",
         "node": {
           "selector": "body",
@@ -272,12 +272,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_executeScript",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "script": "console.log(\"test\")",
         "name": null
       },
@@ -285,12 +285,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_executeScript",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "script": "return \"5\";",
         "name": "test"
       },
@@ -298,12 +298,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_fill",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -314,12 +314,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_moveMouse",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -331,12 +331,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_goto",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "url": "test",
         "credentials": {
           "name": "",
@@ -347,12 +347,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_goto",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "url": "test",
         "credentials": {
           "name": "test",
@@ -363,12 +363,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_pressKey",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -379,12 +379,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_checkForText",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "value": "test",
         "regexp": false,
         "node": {
@@ -396,12 +396,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_checkForText",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "value": "test",
         "regexp": true,
         "node": {
@@ -413,12 +413,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_checkForNode",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -428,12 +428,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_select",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -445,12 +445,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_select",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -462,12 +462,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_select",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -479,12 +479,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_submit",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -494,36 +494,36 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_switchTo",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "target": "DEFAULT_CONTENT"
       },
       "position": 32
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_switchTo",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "target": "PARENT_FRAME"
       },
       "position": 33
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_switchToFrame",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "#test",
           "type": "CSS"
@@ -533,12 +533,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_waitForNodeAttribute",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "waitCriterion": "IS",
         "node": {
           "selector": "#test",
@@ -552,12 +552,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_waitForNodeAttribute",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "waitCriterion": "CONTAINS",
         "node": {
           "selector": "#test",
@@ -571,12 +571,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_waitForNode",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "waitCriterion": "VISIBLE",
         "node": {
           "selector": "#test",
@@ -588,12 +588,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_waitForNode",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "waitCriterion": "INVISIBLE",
         "node": {
           "selector": "#test",
@@ -605,12 +605,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_waitForNode",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "waitCriterion": "ADDED",
         "node": {
           "selector": "#test",
@@ -622,12 +622,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_waitForNode",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "waitCriterion": "REMOVED",
         "node": {
           "selector": "#test",
@@ -639,12 +639,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_waitForNode",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "waitCriterion": "CLICKABLE",
         "node": {
           "selector": "#test",
@@ -656,12 +656,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_waitForText",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "body",
           "type": "CSS"
@@ -674,12 +674,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_waitForText",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "node": {
           "selector": "body",
           "type": "CSS"
@@ -692,12 +692,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_waitForTitle",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "waitCriterion": "IS",
         "value": "test",
         "maxWaitTime": 10
@@ -706,12 +706,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "web_waitForTitle",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "waitCriterion": "CONTAINS",
         "value": "test",
         "maxWaitTime": 10

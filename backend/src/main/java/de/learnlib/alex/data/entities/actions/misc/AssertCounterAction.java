@@ -131,9 +131,8 @@ public class AssertCounterAction extends SymbolAction {
                 break;
         }
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Asserting counter '{}' with value '{}' against '{}' using {} => {} "
-                        + "(ignoreFailure: {}, negated: {}).",
-                name, counterValue, value, operator, result, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Asserting counter '{}' with value '{}' against '{}' using {} => {}.",
+                name, counterValue, value, operator, result);
 
         if (result) {
             return getSuccessOutput();

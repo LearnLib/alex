@@ -53,8 +53,7 @@ public class IncrementCounterAction extends SymbolAction {
         CounterStoreConnector counterConnector = connector.getConnector(CounterStoreConnector.class);
         counterConnector.incrementBy(symbol.getProjectId(), name, incrementBy);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Incremented counter '{}' by '{}' (ignoreFailure: {}, negated: {}).",
-                name, incrementBy, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Incremented counter '{}' by '{}'.", name, incrementBy);
         return getSuccessOutput();
     }
 

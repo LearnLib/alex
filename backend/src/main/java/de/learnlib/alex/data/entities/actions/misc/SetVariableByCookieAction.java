@@ -109,28 +109,24 @@ public class SetVariableByCookieAction extends SetVariableAction {
                     cookieValue = cookie.getValue();
                 }
             } else {
-                LOGGER.warn(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the cookie '{}' "
-                                + "because the type '{}' is not supported (ignoreFailure: {}, negated: {})!",
-                        name, value, cookieType, ignoreFailure, negated);
+                LOGGER.warn(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the cookie '{}' because the type '{}' is not supported!",
+                        name, value, cookieType);
                 return getFailedOutput();
             }
 
             if (cookieValue != null) {
                 storeConnector.set(name, cookieValue);
-                LOGGER.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}' of the cookie '{}:{}' "
-                                + "(ignoreFailure: {}, negated: {}).",
-                        name, cookieValue, cookieType, value, ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}' of the cookie '{}:{}' ",
+                        name, cookieValue, cookieType, value);
                 return getSuccessOutput();
             } else {
-                LOGGER.info(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the cookie '{}:{}' "
-                                + "because the cookie was not found (ignoreFailure: {}, negated: {})!",
-                        name, cookieType, value, ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the cookie '{}:{}' because the cookie was not found!",
+                        name, cookieType, value);
                 return getFailedOutput();
             }
         } catch (IllegalStateException | NoSuchElementException e) {
-            LOGGER.warn(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the cookie '{}' because of an error "
-                            + "(ignoreFailure: {}, negated: {})!",
-                    name, value, ignoreFailure, negated, e);
+            LOGGER.warn(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the cookie '{}' because of an error.",
+                    name, value, e);
             return getFailedOutput();
         }
     }

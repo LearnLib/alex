@@ -67,14 +67,12 @@ public class SetVariableByHTMLElementAction extends SymbolAction {
             String text = webSiteConnector.getElement(nodeWithVariables).getText().trim();
             storeConnector.set(name, text);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}' of the HTML node '{}' "
-                            + "(ignoreFailure: {}, negated: {}).",
-                    name, text, nodeWithVariables, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}' of the HTML node '{}':",
+                    name, text, nodeWithVariables);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the value of the HTML node '{}' "
-                            + "(ignoreFailure: {}, negated: {}).",
-                    name, nodeWithVariables, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the value of the HTML node '{}'.",
+                    name, nodeWithVariables);
             return getFailedOutput();
         }
     }

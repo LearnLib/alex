@@ -64,9 +64,8 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
     public ExecuteResult execute(WebServiceConnector connector) {
         List<Object> headerFieldValues = connector.getHeaders().get(key);
         if (headerFieldValues == null) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could header {} against the value {}, because the header was not found "
-                            + "(regExp: {}, ignoreFailure: {}, negated: {}).",
-                    key, value, regexp, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could header {} against the value {}, because the header was not found (regExp: {}).",
+                    key, value, regexp);
             return getFailedOutput();
         }
 
@@ -77,9 +76,8 @@ public class CheckHeaderFieldAction extends RESTSymbolAction {
             result = search(headerFieldValues);
         }
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Checked header {} with the value {} against {} => {}"
-                        + "(regExp: {}, ignoreFailure: {}, negated: {}).",
-                key, headerFieldValues, value, result, regexp, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Checked header {} with the value {} against {} => {} (regExp: {}).",
+                key, headerFieldValues, value, result, regexp);
         if (result) {
             return getSuccessOutput();
         } else {

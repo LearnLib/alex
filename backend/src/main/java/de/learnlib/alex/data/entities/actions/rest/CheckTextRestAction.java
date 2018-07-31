@@ -59,8 +59,8 @@ public class CheckTextRestAction extends RESTSymbolAction {
         String body = target.getBody();
         boolean result = SearchHelper.search(getValueWithVariableValues(), body, regexp);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Check if the value '{}' is in '{}' => {} (regexp: {}, ignoreFailure: {}, negated: {}).",
-                value, value, body, result, regexp, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Check if the value '{}' is in '{}' => {} (regexp: {}).",
+                value, value, body, result, regexp);
         if (result) {
             return getSuccessOutput();
         } else {

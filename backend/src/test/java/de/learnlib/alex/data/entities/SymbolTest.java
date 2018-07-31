@@ -44,17 +44,37 @@ public class SymbolTest {
 
     private CheckTextWebAction a1;
 
+    private SymbolActionStep actionStep;
+    private SymbolPSymbolStep symbolStep;
+
+    private ParameterizedSymbol pSymbol;
+
     @Before
     public void setUp() {
+        symbol = new Symbol();
+        symbol.setProject(new Project(PROJECT_ID));
+
         a1 = new CheckTextWebAction();
-        a1.setIgnoreFailure(false);
         a1.setRegexp(false);
         a1.setValue("test");
-
-        symbol = new Symbol();
-        symbol.getSteps().add(new SymbolActionStep(a1));
-        symbol.setProject(new Project(PROJECT_ID));
         a1.setSymbol(symbol);
+
+        actionStep = new SymbolActionStep(a1);
+        actionStep.setSymbol(symbol);
+
+        final Symbol s = new Symbol();
+        s.setProject(new Project(PROJECT_ID));
+        s.getSteps().add(new SymbolActionStep(a1));
+
+        pSymbol = new ParameterizedSymbol();
+        pSymbol.setSymbol(s);
+
+        symbolStep = new SymbolPSymbolStep();
+        symbolStep.setSymbol(symbol);
+        symbolStep.setPSymbol(pSymbol);
+
+        symbol.getSteps().add(actionStep);
+        symbol.getSteps().add(symbolStep);
 
         connectorManager = mock(ConnectorManager.class);
         webSiteConnector = mock(WebSiteConnector.class);
@@ -76,15 +96,13 @@ public class SymbolTest {
 
     @Test
     public void itShouldReturnACustomOutputOnSuccess() {
-        String output = "Ok (success)";
-
         given(webSiteConnector.getPageSource()).willReturn("test");
 
         symbol.setSuccessOutput("success");
         ExecuteResult result = symbol.execute(connectorManager);
 
         assertTrue(result.isSuccess());
-        assertEquals(output, result.getOutput());
+        assertEquals(ExecuteResult.DEFAULT_SUCCESS_OUTPUT + " (success)", result.getOutput());
     }
 
     @Test
@@ -99,16 +117,14 @@ public class SymbolTest {
     }
 
     @Test
-    public void itShouldReturnCustomOutputOnError() {
-        String output = "Failed (textNotFound)";
-        a1.setErrorOutput("textNotFound");
-
+    public void itShouldReturnFailedOnErrorAndCustomOutput() {
+        actionStep.setErrorOutput("not found");
         // let the first action fail
         given(webSiteConnector.getPageSource()).willReturn("something");
 
         ExecuteResult result = symbol.execute(connectorManager);
 
         assertFalse(result.isSuccess());
-        assertEquals(output, result.getOutput());
+        assertEquals(ExecuteResult.DEFAULT_ERROR_OUTPUT + " (not found)", result.getOutput());
     }
 }

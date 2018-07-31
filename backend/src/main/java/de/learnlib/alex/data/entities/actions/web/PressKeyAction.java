@@ -71,12 +71,12 @@ public class PressKeyAction extends WebSymbolAction {
         try {
             final WebElement element = connector.getElement(nodeWithVariables);
             element.sendKeys(keyToPress);
-            LOGGER.info(LoggerMarkers.LEARNER, "Pressed the key '{}' on the element '{}' (ignoreFailure: {}, negated: {}).",
-                    keyToPress.toString(), nodeWithVariables, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Pressed the key '{}' on the element '{}'.",
+                    keyToPress.toString(), nodeWithVariables);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not press key '{}' on element '{}' (ignoreFailure: {}, negated: {}).",
-                    keyToPress.toString(), nodeWithVariables, ignoreFailure, negated, e);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not press key '{}' on element '{}'.",
+                    keyToPress.toString(), nodeWithVariables, e);
             return getFailedOutput();
         }
     }

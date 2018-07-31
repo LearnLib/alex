@@ -64,9 +64,8 @@ public class CheckPageTitleAction extends WebSymbolAction {
         final WebDriver driver = connector.getDriver();
         final boolean result = SearchHelper.search(getTitleWithVariableValues(), driver.getTitle(), regexp);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Check if the current page has title '{}' => {} "
-                        + "(regExp: {}, ignoreFailure: {}, negated: {}).",
-                title, result, regexp, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Check if the current page has title '{}' => {} (regExp: {}).",
+                title, result, regexp);
 
         return result ? getSuccessOutput() : getFailedOutput();
     }

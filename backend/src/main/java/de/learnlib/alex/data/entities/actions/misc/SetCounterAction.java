@@ -98,16 +98,14 @@ public class SetCounterAction extends SymbolAction {
                     break;
             }
         } catch (NumberFormatException | IllegalStateException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not set the counter '{}' to the value '{}' "
-                    + "(ignoreFailure: {}, negated: {}).", name, value, ignoreFailure, negated, e);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not set the counter '{}' to the value '{}' ", name, value, e);
 
             return getFailedOutput();
         }
 
         counterStoreConnector.set(symbol.getProjectId(), name, val);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Set the counter '{}' to the value '{}' (ignoreFailure: {}, negated: {}).",
-                name, value, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Set the counter '{}' to the value '{}'.", name, value);
         return getSuccessOutput();
     }
 

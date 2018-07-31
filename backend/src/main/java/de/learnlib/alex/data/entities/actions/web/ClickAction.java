@@ -76,15 +76,15 @@ public class ClickAction extends WebSymbolAction {
                 element.click();
             }
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Clicked on element '{}' (doubleClick: {}, ignoreFailure: {}, negated: {}).",
-                    nodeWithVariables, doubleClick, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Clicked on element '{}' (doubleClick: {}).",
+                    nodeWithVariables, doubleClick);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find element '{}' (doubleClick: {}, ignoreFailure: {}, negated: {}).",
-                    nodeWithVariables, doubleClick, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not find element '{}' (doubleClick: {}).",
+                    nodeWithVariables, doubleClick);
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Failed to click on element '{}' (doubleClick: {}, ignoreFailure: {}, negated: {}).",
-                    nodeWithVariables, doubleClick, ignoreFailure, negated, e);
+            LOGGER.info(LoggerMarkers.LEARNER, "Failed to click on element '{}' (doubleClick: {}).",
+                    nodeWithVariables, doubleClick, e);
         }
 
         return getFailedOutput();

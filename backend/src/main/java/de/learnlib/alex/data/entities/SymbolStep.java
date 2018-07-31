@@ -19,6 +19,7 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 
 import javax.persistence.Entity;
@@ -47,6 +48,15 @@ public abstract class SymbolStep {
     /** If the step is disabled and therefor should not be executed. */
     protected boolean disabled;
 
+    /** If the failure should be ignored. */
+    protected boolean ignoreFailure;
+
+    /** If the result should be negated. */
+    protected boolean negated;
+
+    /** The custom output if the execution of this action fails. */
+    protected String errorOutput;
+
     /** The position in the step list. */
     protected Integer position;
 
@@ -58,6 +68,8 @@ public abstract class SymbolStep {
     /** Constructor. */
     public SymbolStep() {
         this.disabled = false;
+        this.ignoreFailure = false;
+        this.negated = false;
     }
 
     /**
@@ -70,6 +82,38 @@ public abstract class SymbolStep {
      * @return The result of the execution.
      */
     public abstract ExecuteResult execute(int i, ConnectorManager connectors);
+
+    /**
+     * Get the execute result.
+     *
+     * @param i
+     *         The index of the step.
+     * @param connectors
+     *         The connector manager.
+     * @param result
+     *         The result from the step.
+     * @return The final result.
+     */
+    protected ExecuteResult getExecuteResult(int i, ConnectorManager connectors, ExecuteResult result) {
+        if (!result.isSuccess() && errorOutput != null && !errorOutput.trim().equals("")) {
+            result.setMessage(errorOutput);
+        }
+
+        if (negated) {
+            result.negate();
+        }
+
+        if (!result.isSuccess()) {
+            final String message = result.getMessage();
+            if (message != null && !message.trim().equals("")) {
+                result.setMessage(SearchHelper.insertVariableValues(connectors, getSymbol().getProjectId(), message));
+            } else {
+                result.setMessage(String.valueOf(i + 1));
+            }
+        }
+
+        return result;
+    }
 
     public Long getId() {
         return id;
@@ -120,5 +164,29 @@ public abstract class SymbolStep {
     @JsonProperty("position")
     public void setPosition(Integer position) {
         this.position = position;
+    }
+
+    public boolean isIgnoreFailure() {
+        return ignoreFailure;
+    }
+
+    public void setIgnoreFailure(boolean ignoreFailure) {
+        this.ignoreFailure = ignoreFailure;
+    }
+
+    public boolean isNegated() {
+        return negated;
+    }
+
+    public void setNegated(boolean negated) {
+        this.negated = negated;
+    }
+
+    public String getErrorOutput() {
+        return errorOutput;
+    }
+
+    public void setErrorOutput(String errorOutput) {
+        this.errorOutput = errorOutput;
     }
 }

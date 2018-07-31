@@ -91,17 +91,17 @@ public class CheckTextWebAction extends WebSymbolAction {
             final String htmlEscapedValue = StringEscapeUtils.escapeHtml4(getValueWithVariableValues());
             final boolean found = SearchHelper.search(htmlEscapedValue, source, regexp);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Check if the current pages contains '{}' => {} (regExp: {}, ignoreFailure: {}, negated: {}).",
-                    value, found, regexp, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Check if the current pages contains '{}' => {} (regExp: {}).",
+                    value, found, regexp);
 
             return found ? getSuccessOutput() : getFailedOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.error(LoggerMarkers.LEARNER, "Could not find text \"{}\" in element \"{}\" (regExp: {}, ignoreFailure: {}, negated: {}).",
-                    value, node.getSelector(), regexp, ignoreFailure, negated);
+            LOGGER.error(LoggerMarkers.LEARNER, "Could not find text '{}' in element '{}' (regExp: {}).",
+                    value, node.getSelector(), regexp);
             return getFailedOutput();
         } catch (Exception e) {
-            LOGGER.error(LoggerMarkers.LEARNER, "Failed to search for text \"{}\" in element \"{}\" (regExp: {}, ignoreFailure: {}, negated: {}).",
-                    value, node.getSelector(), regexp, ignoreFailure, negated, e);
+            LOGGER.error(LoggerMarkers.LEARNER, "Failed to search for text '{}' in element '{}' (regExp: {}).",
+                    value, node.getSelector(), regexp, e);
             return getFailedOutput();
         }
     }

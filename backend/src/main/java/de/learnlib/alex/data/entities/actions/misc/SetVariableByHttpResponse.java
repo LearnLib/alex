@@ -55,12 +55,10 @@ public class SetVariableByHttpResponse extends SymbolAction {
             final String body = webServiceConnector.getBody();
             variableStore.set(name, body);
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Set variable '{}' to HTTP body. (ignoreFailure: {}, negated: {}).",
-                    name, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Set variable '{}' to HTTP body.", name);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to HTTP body. (ignoreFailure: {}, negated: {}).",
-                    name, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to HTTP body.", name);
             return getFailedOutput();
         }
     }

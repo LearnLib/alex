@@ -48,6 +48,7 @@ public class CheckAttributeTypeAction extends RESTSymbolAction {
      * Enumeration to refer to a type of a JSON field.
      */
     public enum JsonType {
+
         /** NULL POINTER INCOMMMMING!!!1111. */
         NULL(JsonNodeType.NULL),
 
@@ -107,8 +108,8 @@ public class CheckAttributeTypeAction extends RESTSymbolAction {
 
         boolean result = typeInBody != null && typeInBody.equals(jsonType);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' has the type '{}' in '{}' => {} (ignoreFailure: {}, negated: {}).",
-                attribute, jsonType, body, result, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' has the type '{}' in '{}' => {}.",
+                attribute, jsonType, body, result);
         if (result) {
             return getSuccessOutput();
         } else {

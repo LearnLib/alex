@@ -67,21 +67,15 @@ public class AlertAcceptDismissAction extends WebSymbolAction {
 
             if (this.action == Action.ACCEPT) {
                 alert.accept();
-
-                LOGGER.info(LoggerMarkers.LEARNER, "Accept alert window (ignoreFailure: {}, negated: {}).",
-                        ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Accept alert window.");
             } else {
                 alert.dismiss();
-
-                LOGGER.info(LoggerMarkers.LEARNER, "Dismiss alert window (ignoreFailure: {}, negated: {}).",
-                        ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Dismiss alert window.");
             }
 
             return getSuccessOutput();
         } catch (NoAlertPresentException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Failed accept or dismiss alert window (ignoreFailure: {}, negated: {}).",
-                    ignoreFailure, negated);
-
+            LOGGER.info(LoggerMarkers.LEARNER, "Failed accept or dismiss alert window.");
             return getFailedOutput();
         }
     }

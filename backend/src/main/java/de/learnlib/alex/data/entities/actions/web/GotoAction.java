@@ -59,12 +59,10 @@ public class GotoAction extends WebSymbolAction {
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
             connector.get(getURLWithVariableValues(), getCredentialsWithVariableValues());
-            LOGGER.info(LoggerMarkers.LEARNER, "Could goto '{}' (ignoreFailure: {}, negated: {}).",
-                    url, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could goto '{}'.", url);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not goto '{}' (ignoreFailure: {}, negated: {}).",
-                    url, ignoreFailure, negated, e);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not goto '{}'.", url, e);
             return getFailedOutput();
         }
     }

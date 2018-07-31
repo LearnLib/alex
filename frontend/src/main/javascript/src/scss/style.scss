@@ -587,11 +587,21 @@ report-charts {
 
     &.disabled {
       .action-description,
-      .symbol-description {
+      .symbol-description,
+      .step-output {
         text-decoration: line-through;
         opacity: 0.5;
       }
     }
+  }
+
+  .step-output {
+    border-top: 1px dashed #ddd;
+    padding-top: 6px;
+  }
+
+  .step-labels {
+    margin-bottom: 6px;
   }
 }
 

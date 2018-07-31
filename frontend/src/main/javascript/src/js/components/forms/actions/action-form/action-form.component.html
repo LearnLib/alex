@@ -54,27 +54,4 @@
         <set-variable-by-regex-group-action-form action="vm.action" ng-switch-when="setVariableByRegexGroup"></set-variable-by-regex-group-action-form>
         <wait-action-form action="vm.action" ng-switch-when="wait"></wait-action-form>
     </div>
-    <hr>
-    <div class="form-group">
-        <label>Output on failure <span class="text-muted">(optional)</span></label>
-        <input class="form-control" type="text" ng-model="vm.action.errorOutput" placeholder="Failed">
-    </div>
-    <hr>
-    <p>
-        <a href="" ng-click="vm.showOptions = !vm.showOptions">
-            <i class="fa fa-gear fa-fw"></i> More options
-        </a>
-    </p>
-    <div uib-collapse="!vm.showOptions">
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" ng-model="vm.action.negated"> Negate
-            </label>
-        </div>
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" ng-model="vm.action.ignoreFailure"> Ignore failure
-            </label>
-        </div>
-    </div>
 </div>

@@ -54,8 +54,8 @@ public class CheckStatusAction extends RESTSymbolAction {
 
         boolean result = this.status == returnedStatus;
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Checked if the returned status code '{}' is equal to '{}' => {} (ignoreFailure: {}, negated: {}).",
-                returnedStatus, status, result, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Checked if the returned status code '{}' is equal to '{}' => {}.",
+                returnedStatus, status, result);
         if (result) {
             return getSuccessOutput();
         } else {

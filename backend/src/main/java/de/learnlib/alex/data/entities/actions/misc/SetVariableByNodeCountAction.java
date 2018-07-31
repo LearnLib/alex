@@ -66,9 +66,8 @@ public class SetVariableByNodeCountAction extends SymbolAction {
                     .getElements(nodeWithVariables)
                     .size();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find elements with the selector '{}' "
-                            + "(ignoreFailure: {}, negated: {}).",
-                    nodeWithVariables, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not find elements with the selector '{}'.",
+                    nodeWithVariables);
         }
 
         connector.getConnector(VariableStoreConnector.class)

@@ -138,6 +138,11 @@ public class ExecuteResult implements Serializable {
         this.time = time;
     }
 
+    /** Negate the result. */
+    public void negate() {
+        this.success = !this.success;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", this.getClass().getSimpleName() + "[", "]")

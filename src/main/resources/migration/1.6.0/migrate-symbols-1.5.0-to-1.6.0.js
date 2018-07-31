@@ -15,11 +15,17 @@ function migrateSymbols(symbols) {
 	symbols.forEach(symbol => {
 		symbol.steps = symbol.actions.map(action => {
 			const disabled = action.disabled;
+			const negated = action.negated;
+			const ignoreFailure = action.ignoreFailure;
 			delete action.disabled;
+			delete action.negated;
+			delete action.ignoreFailure;
 			return {
 				type: "action",
 				disabled: disabled,
-				action: action
+				action: action,
+                negated: negated,
+                ignoreFailure: ignoreFailure
 			}
 		});
 		delete symbol.actions;

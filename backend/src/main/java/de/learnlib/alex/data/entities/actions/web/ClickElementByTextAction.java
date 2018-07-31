@@ -86,15 +86,13 @@ public class ClickElementByTextAction extends WebSymbolAction {
                 if (candidate.isDisplayed() && candidate.isEnabled() && hasText) {
                     candidate.click();
 
-                    LOGGER.info(LoggerMarkers.LEARNER, "Click on element '{}' with text '{}' "
-                            + "(ignoreFailure: {}, negated: {}).", tagName, text, ignoreFailure, negated);
+                    LOGGER.info(LoggerMarkers.LEARNER, "Click on element '{}' with text '{}' ", tagName, text);
                     return getSuccessOutput();
                 }
             }
             throw new NoSuchElementException("No clickable element found.");
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not click on element '{}' with text '{}' "
-                    + "(ignoreFailure: {}, negated: {}).", tagName, text, ignoreFailure, negated, e);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not click on element '{}' with text '{}' ", tagName, text, e);
             return getFailedOutput();
         }
     }

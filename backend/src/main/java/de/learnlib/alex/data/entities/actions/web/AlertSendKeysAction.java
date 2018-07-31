@@ -52,14 +52,10 @@ public class AlertSendKeysAction extends WebSymbolAction {
             final Alert alert = connector.getDriver().switchTo().alert();
             alert.sendKeys(insertVariableValues(text));
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Send text '{}' to prompt window (ignoreFailure: {}, negated: {}).",
-                    text, ignoreFailure, negated);
-
+            LOGGER.info(LoggerMarkers.LEARNER, "Send text '{}' to prompt window.", text);
             return getSuccessOutput();
         } catch (NoAlertPresentException | ElementNotSelectableException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Failed to send text '{}' to prompt window (ignoreFailure: {}, negated: {}).",
-                    text, ignoreFailure, negated);
-
+            LOGGER.info(LoggerMarkers.LEARNER, "Failed to send text '{}' to prompt window.", text);
             return getFailedOutput();
         }
     }

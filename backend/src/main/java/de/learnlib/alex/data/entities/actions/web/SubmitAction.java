@@ -55,12 +55,10 @@ public class SubmitAction extends WebSymbolAction {
         try {
             connector.getElement(nodeWithVariables).submit();
 
-            LOGGER.info(LoggerMarkers.LEARNER, "Submitted '{}' (ignoreFailure: {}, negated: {}).",
-                    nodeWithVariables, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Submitted '{}'.", nodeWithVariables);
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not submit '{}' (ignoreFailure: {}, negated: {}).",
-                    nodeWithVariables, ignoreFailure, negated, e);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not submit '{}'.", nodeWithVariables, e);
             return getFailedOutput();
         }
     }

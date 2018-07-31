@@ -72,22 +72,17 @@ public class MoveMouseAction extends WebSymbolAction {
 
             if (nodeWithVariables == null || nodeWithVariables.getSelector().trim().equals("")) {
                 actions.moveByOffset(offsetX, offsetY).build().perform();
-                LOGGER.info(LoggerMarkers.LEARNER, "Moved the mouse to the position ({}, {}) "
-                                + "(ignoreFailure: {}, negated: {}).",
-                        offsetX, offsetY, ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Moved the mouse to the position ({}, {}) ", offsetX, offsetY);
             } else {
                 final WebElement element = connector.getElement(nodeWithVariables);
                 actions.moveToElement(element, offsetX, offsetY).build().perform();
-                LOGGER.info(LoggerMarkers.LEARNER, "Moved the mouse to the element '{}' "
-                                + "(ignoreFailure: {}, negated: {}).",
-                        nodeWithVariables, ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Moved the mouse to the element '{}'", nodeWithVariables);
             }
 
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not move the mouse to the element '{}' or the position ({}, {}) "
-                            + "(ignoreFailure: {}, negated: {}).",
-                    nodeWithVariables, offsetX, offsetY, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not move the mouse to the element '{}' or the position ({}, {})",
+                    nodeWithVariables, offsetX, offsetY);
             return getFailedOutput();
         }
     }

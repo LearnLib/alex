@@ -58,18 +58,7 @@ public class SymbolActionStep extends SymbolStep implements Serializable {
     @Override
     public ExecuteResult execute(int i, ConnectorManager connectors) {
         try {
-            final ExecuteResult result = action.executeAction(connectors);
-
-            // if the execution of one symbol fails do not continue executing the following actions
-            if (!result.isSuccess() && !action.isIgnoreFailure()) {
-                if (action.getErrorOutput() != null && !action.getErrorOutput().trim().equals("")) {
-                    result.setMessage(action.insertVariableValues(action.getErrorOutput()));
-                } else {
-                    result.setMessage(String.valueOf(i + 1));
-                }
-            }
-
-            return result;
+            return getExecuteResult(i, connectors, action.executeAction(connectors));
         } catch (Exception e) {
             LOGGER.error(LoggerMarkers.LEARNER, "The action could not be executed.", e);
             return new ExecuteResult(false, String.valueOf(i + 1));

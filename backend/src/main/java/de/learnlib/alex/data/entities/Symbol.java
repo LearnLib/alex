@@ -398,8 +398,16 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
                 }
 
                 final ExecuteResult stepResult = step.execute(i, connector);
-                if (!stepResult.isSuccess()) {
+
+                if (!stepResult.isSuccess() && !step.isIgnoreFailure()) {
                     result = stepResult;
+
+                    if (step.errorOutput != null && !step.errorOutput.equals("")) {
+                        result.setMessage(SearchHelper.insertVariableValues(connector, getProjectId(), step.errorOutput));
+                    } else {
+                        result.setMessage(String.valueOf(i + 1));
+                    }
+
                     break;
                 }
             }

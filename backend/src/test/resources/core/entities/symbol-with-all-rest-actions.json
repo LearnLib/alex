@@ -7,24 +7,24 @@
   "steps": [
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkAttributeExists",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "attribute": "test"
       },
       "position": 0
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkAttributeType",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "attribute": "test",
         "jsonType": "STRING"
       },
@@ -32,12 +32,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkAttributeType",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "attribute": "test",
         "jsonType": "ARRAY"
       },
@@ -45,12 +45,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkAttributeType",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "attribute": "test",
         "jsonType": "BOOLEAN"
       },
@@ -58,12 +58,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkAttributeType",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "attribute": "test",
         "jsonType": "INTEGER"
       },
@@ -71,12 +71,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkAttributeType",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "attribute": "test",
         "jsonType": "INTEGER"
       },
@@ -84,12 +84,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkAttributeType",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "attribute": "test",
         "jsonType": "OBJECT"
       },
@@ -97,12 +97,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkAttributeType",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "attribute": "test",
         "jsonType": "NULL"
       },
@@ -110,12 +110,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkAttributeValue",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "attribute": "test",
         "value": "test",
         "regexp": false
@@ -124,12 +124,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkAttributeValue",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "attribute": "test",
         "value": "test",
         "regexp": true
@@ -138,12 +138,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkHeaderField",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "key": "test",
         "value": "test",
         "regexp": false
@@ -152,12 +152,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkHeaderField",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "key": "test",
         "value": "test",
         "regexp": true
@@ -166,24 +166,24 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkStatus",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "status": 200
       },
       "position": 12
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_call",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "method": "GET",
         "url": "test",
         "data": "{\"test\":\"test\"}",
@@ -199,12 +199,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_call",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "method": "POST",
         "url": "test",
         "data": "{\"test\":\"test\"}",
@@ -220,12 +220,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_call",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "method": "GET",
         "url": "test",
         "data": null,
@@ -245,12 +245,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkForText",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "value": "test",
         "regexp": false
       },
@@ -258,12 +258,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_checkForText",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "value": "test",
         "regexp": true
       },
@@ -271,12 +271,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "rest_validateJson",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "schema": "{}"
       },
       "position": 18

@@ -81,9 +81,8 @@ public class AssertVariableAction extends SymbolAction {
             result = variableValue.equals(valueWithVariables);
         }
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Asserting variable '{}' with value '{}' against '{}' => {} "
-                        + "(regex: {}, ignoreFailure: {}, negated: {}).",
-                name, variableValue, valueWithVariables, result, regexp, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Asserting variable '{}' with value '{}' against '{}' => {} (regex: {}).",
+                name, variableValue, valueWithVariables, result, regexp);
 
         if (result) {
             return getSuccessOutput();

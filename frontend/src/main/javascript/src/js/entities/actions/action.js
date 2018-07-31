@@ -38,24 +38,6 @@ export class Action {
          * @type {String}
          */
         this.type = type || '';
-
-        /**
-         * Whether the outcome is negated.
-         * @type {boolean}
-         */
-        this.negated = obj.negated || false;
-
-        /**
-         * Whether the learner continues despite failure.
-         * @type {boolean}
-         */
-        this.ignoreFailure = obj.ignoreFailure || false;
-
-        /**
-         * The custom output of the action on failure.
-         * @type {null}
-         */
-        this.errorOutput = obj.errorOutput || null;
     }
 
     /**

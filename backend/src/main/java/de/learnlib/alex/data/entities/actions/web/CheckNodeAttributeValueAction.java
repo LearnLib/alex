@@ -155,18 +155,17 @@ public class CheckNodeAttributeValueAction extends WebSymbolAction {
 
             if (isValid) {
                 LOGGER.info(LoggerMarkers.LEARNER, "The value of the attribute '{}' of the node '{}'"
-                                + " '{}' the searched value '{}' (ignoreFailure: {}, negated: {}).",
-                        attribute, nodeWithVariables, checkMethod, valueWithVariables, ignoreFailure, negated);
+                                + " '{}' the searched value '{}'.",
+                        attribute, nodeWithVariables, checkMethod, valueWithVariables);
                 return getSuccessOutput();
             } else {
                 LOGGER.info(LoggerMarkers.LEARNER, "The value of the attribute '{}' of the node '{}'"
-                                + " does not '{}' the searched value '{}' (ignoreFailure: {}, negated: {}).",
-                        attribute, nodeWithVariables, checkMethod, valueWithVariables, ignoreFailure, negated);
+                                + " does not '{}' the searched value '{}'.",
+                        attribute, nodeWithVariables, checkMethod, valueWithVariables);
                 return getFailedOutput();
             }
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find the node '{}' (ignoreFailure: {}, negated: {}).",
-                    nodeWithVariables, ignoreFailure, negated, e);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not find the node '{}'.", nodeWithVariables, e);
             return getFailedOutput();
         }
     }

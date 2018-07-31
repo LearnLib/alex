@@ -15,10 +15,6 @@
     <div class="view-body has-sub-nav">
         <div class="alx-container-fluid">
 
-            <div class="alert alert-info alert-condensed" ng-show="vm.hasChanged">
-                <i class="fa fa-fw fa-info"></i> There are unsaved changes made to the symbol
-            </div>
-
             <div class="panel panel-default" ng-if="vm.symbol.description != null && vm.symbol.description !== ''">
                 <div class="panel-heading">
                     <strong>Description</strong>
@@ -113,7 +109,6 @@
                              ng-class="{'disabled': step.disabled}">
 
                             <div class="d-flex flex-row align-items-center">
-
                                 <div>
                                     <selectable-checkbox
                                       item="step"
@@ -126,23 +121,40 @@
                                     <span>{{$index + 1}})</span>
                                 </div>
 
-                                <div class="w-100 action-step" ng-if="step.type === 'action'">
-                                    <div class="action-description" ng-bind="step.action.toString()"></div>
-                                    <div class="action-labels">
-                                        <span class="label label-info" ng-show="step.action.negated">Negate</span>
-                                        <span class="label label-danger" ng-show="step.action.ignoreFailure">Ignore Failure</span>
+                                <div class="w-100 action-step">
+                                    <div class="action-description" ng-if="step.type === 'action'" ng-bind="step.action.toString()"></div>
+                                    <div class="symbol-description" ng-if="step.type === 'symbol'">
+                                        <span class="symbol-description">
+                                            Execute symbol
+                                            <a ui-sref="symbol({projectId: vm.project.id, symbolId: step.pSymbol.symbol.id})">
+                                                <strong>{{step.pSymbol.symbol.name}}</strong>
+                                            </a>
+                                        </span>
+                                        <br>
+                                        <symbol-parameters parameter-values="step.pSymbol.parameterValues"></symbol-parameters>
                                     </div>
-                                    <div ng-if="step.action.errorOutput" class="action-output text-muted">
-                                        <em>Output on error: <strong>{{step.action.errorOutput}}</strong></em>
-                                    </div>
-                                </div>
 
-                                <div class="w-100 symbol-step" ng-if="step.type === 'symbol'">
-                                    <span class="symbol-description"> Execute symbol <a
-                                  ui-sref="symbol({projectId: vm.project.id, symbolId: step.pSymbol.symbol.id})"><strong>
-                                        {{step.pSymbol.symbol.name}}</strong></a> </span><br>
-                                    <symbol-parameters
-                                      parameter-values="step.pSymbol.parameterValues"></symbol-parameters>
+                                    <div class="step-labels">
+                                        <span class="label label-info" ng-show="step.negated">Negate</span>
+                                        <span class="label label-danger" ng-show="step.ignoreFailure">Ignore Failure</span>
+                                    </div>
+                                    <div class="step-output text-muted d-flex">
+                                        <div style="flex-shrink: 0">
+                                            <em>Output on error:&nbsp;</em>
+                                        </div>
+                                        <div class="w-100 input-parameter-value" style="position: relative">
+                                            <i class="fa fa-fw fa-close cursor-pointer"
+                                               ng-click="step.errorOutput = null"></i>
+                                            <em>
+                                                <input
+                                                  class="w-100 d-block"
+                                                  type="text"
+                                                  ng-model="step.errorOutput"
+                                                  placeholder="Failed ({{$index + 1}})"
+                                                >
+                                            </em>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div>
@@ -184,6 +196,19 @@
                                             <li>
                                                 <a href="" ng-click="vm.copyStep($index)">
                                                     <i class="fa fa-copy fa-fw"></i> Copy
+                                                </a>
+                                            </li>
+                                            <li class="divider"></li>
+                                            <li>
+                                                <a href="" ng-click="step.negated = !step.negated">
+                                                    <i class="fa fa-fw" ng-class="{'fa-check': step.negated}"></i>
+                                                    Negate result
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="" ng-click="step.ignoreFailure = !step.ignoreFailure">
+                                                    <i class="fa fa-fw" ng-class="{'fa-check': step.ignoreFailure}"></i>
+                                                    Ignore failure
                                                 </a>
                                             </li>
                                         </ul>

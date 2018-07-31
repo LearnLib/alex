@@ -204,9 +204,9 @@ public class WebSymbolTest {
 
     private String createActionSteps(Long symbolId) {
         return "["
-                + "{\"id\": null, \"position\": 0, \"symbol\": " + symbolId + ", \"disabled\": false, \"type\": \"action\", \"action\": {\"id\": 1,\"type\":\"web_click\",\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"node\":null,\"doubleClick\":false}}"
-                + ",{\"id\": null, \"position\": 1, \"symbol\": " + symbolId + ", \"disabled\": false, \"type\": \"action\", \"action\": {\"id\": 2,\"type\":\"web_checkForText\",\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"value\":\"F[oO0]+\",\"regexp\":true,\"node\":{\"selector\":\"document\",\"type\":\"CSS\"}}}"
-                + ",{\"id\": null, \"position\": 2, \"symbol\": " + symbolId + ", \"disabled\": false, \"type\": \"action\", \"action\": {\"id\": 3,\"type\":\"wait\",\"negated\":false,\"ignoreFailure\":false,\"errorOutput\":null,\"duration\":1000}}"
+                + "{\"id\": null, \"errorOutput\":null, \"negated\":false, \"ignoreFailure\": false, \"position\": 0, \"symbol\": " + symbolId + ", \"disabled\": false, \"type\": \"action\", \"action\": {\"id\": 1,\"type\":\"web_click\",\"node\":null,\"doubleClick\":false}}"
+                + ",{\"id\": null, \"errorOutput\":null, \"negated\":false, \"ignoreFailure\": false, \"position\": 1, \"symbol\": " + symbolId + ", \"disabled\": false, \"type\": \"action\", \"action\": {\"id\": 2,\"type\":\"web_checkForText\",\"value\":\"F[oO0]+\",\"regexp\":true,\"node\":{\"selector\":\"document\",\"type\":\"CSS\"}}}"
+                + ",{\"id\": null, \"errorOutput\":null, \"negated\":false, \"ignoreFailure\": false, \"position\": 2, \"symbol\": " + symbolId + ", \"disabled\": false, \"type\": \"action\", \"action\": {\"id\": 3,\"type\":\"wait\",\"duration\":1000}}"
                 + "]";
     }
 }

@@ -67,9 +67,8 @@ public class CheckAttributeValueAction extends RESTSymbolAction {
         boolean result = valueInTheBody != null
                 && SearchHelper.search(getValueWithVariableValues(), valueInTheBody, regexp);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' has the value '{}' in '{}' => {} "
-                        + "(regexp: {}, ignoreFailure: {}, negated: {}).",
-                attribute, value, body, result, regexp, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' has the value '{}' in '{}' => {} (regexp: {}).",
+                attribute, value, body, result, regexp);
         if (result) {
             return getSuccessOutput();
         } else {

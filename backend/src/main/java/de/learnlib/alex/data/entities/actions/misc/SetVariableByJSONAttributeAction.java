@@ -48,9 +48,8 @@ public class SetVariableByJSONAttributeAction extends SetVariableAction {
         String valueInTheBody = JSONHelpers.getAttributeValue(body, value);
 
         if (valueInTheBody == null) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the value of the  JSON attribute '{}' "
-                            + "in the body '{}' (ignoreFailure: {}, negated: {}).",
-                    name, value, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to the value of the JSON attribute '{}' ",
+                    name, value);
             return getFailedOutput();
         }
 

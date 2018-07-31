@@ -329,8 +329,8 @@ public class SymbolResourceIT extends AbstractResourceIT {
                 + "\"name\":\"" + name + "\""
                 + ",\"project\": " + projectId
                 + ",\"steps\": ["
-                + "{\"type\":\"action\", \"disabled\": false, \"action\": {\"type\": \"wait\", \"negated\": false, \"ignoreFailure\": false, \"duration\": 1000}}"
-                + ",{\"type\":\"action\", \"disabled\": false, \"action\": {\"type\": \"wait\", \"negated\": false, \"ignoreFailure\": false, \"duration\": 1000}}"
+                + "{\"type\":\"action\", \"negated\": false, \"errorOutput\": null, \"ignoreFailure\": false, \"disabled\": false, \"action\": {\"type\": \"wait\", \"duration\": 1000}}"
+                + ",{\"type\":\"action\", \"negated\": false, \"errorOutput\": null, \"ignoreFailure\": false, \"disabled\": false, \"action\": {\"type\": \"wait\", \"duration\": 1000}}"
                 + "]"
                 + "}";
     }
@@ -341,8 +341,8 @@ public class SymbolResourceIT extends AbstractResourceIT {
                 + ",\"project\": " + projectId
                 + ",\"group\": " + groupId
                 + ",\"steps\": ["
-                + "{\"type\":\"symbol\", \"disabled\": false, \"pSymbol\": {\"symbolFromName\": \"s2\", \"parameterValues\": []}}"
-                + ",{\"type\":\"symbol\", \"disabled\": false, \"pSymbol\": {\"symbolFromName\": \"s3\", \"parameterValues\": []}}"
+                + "{\"type\":\"symbol\", \"negated\": false, \"errorOutput\": null, \"ignoreFailure\": false, \"disabled\": false, \"pSymbol\": {\"symbolFromName\": \"s2\", \"parameterValues\": []}}"
+                + ",{\"type\":\"symbol\", \"negated\": false, \"errorOutput\": null, \"ignoreFailure\": false, \"disabled\": false, \"pSymbol\": {\"symbolFromName\": \"s3\", \"parameterValues\": []}}"
                 + "]"
                 + "}";
     }

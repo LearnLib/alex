@@ -54,17 +54,14 @@ public class CheckNodeSelectedAction extends WebSymbolAction {
         try {
             final WebElement element = connector.getElement(nodeWithVariables);
             if (element.isSelected()) {
-                LOGGER.info(LoggerMarkers.LEARNER, "Element '{}' is selected (ignoreFailure: {}, negated: {}).",
-                        nodeWithVariables, ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Element '{}' is selected.", nodeWithVariables);
                 return getSuccessOutput();
             } else {
-                LOGGER.info(LoggerMarkers.LEARNER, "Element '{}' is not selected (ignoreFailure: {}, negated: {}).",
-                        nodeWithVariables, ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Element '{}' is not selected.", nodeWithVariables);
                 return getFailedOutput();
             }
         } catch (NoSuchElementException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not assert if element '{}' is selected "
-                    + "(ignoreFailure: {}, negated: {}).", nodeWithVariables, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not assert if element '{}' is selected ", nodeWithVariables);
             return getFailedOutput();
         }
     }

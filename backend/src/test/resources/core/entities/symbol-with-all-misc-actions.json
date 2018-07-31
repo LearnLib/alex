@@ -7,12 +7,12 @@
   "steps": [
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "assertCounter",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": 5,
         "operator": "EQUAL"
@@ -21,12 +21,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "assertCounter",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": 5,
         "operator": "LESS_THAN"
@@ -35,12 +35,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "assertCounter",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": 5,
         "operator": "LESS_OR_EQUAL"
@@ -49,12 +49,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "assertCounter",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": 5,
         "operator": "GREATER_OR_EQUAL"
@@ -63,12 +63,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "assertCounter",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": 5,
         "operator": "GREATER_THAN"
@@ -77,12 +77,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "assertVariable",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": "test",
         "regexp": false
@@ -91,12 +91,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "assertVariable",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": "test",
         "regexp": true
@@ -105,12 +105,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "incrementCounter",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "incrementBy": 1
       },
@@ -118,12 +118,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "incrementCounter",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "incrementBy": -1
       },
@@ -131,12 +131,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "setCounter",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": "0",
         "valueType": "NUMBER"
@@ -145,12 +145,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "setCounter",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": "test",
         "valueType": "VARIABLE"
@@ -159,12 +159,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "setVariable",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": "test"
       },
@@ -172,12 +172,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "setVariable",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": ""
       },
@@ -185,12 +185,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "setVariableByCookie",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": "test",
         "cookieType": "WEB"
@@ -199,12 +199,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "setVariableByCookie",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": "test",
         "cookieType": "REST"
@@ -213,24 +213,24 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "setVariableByHttpResponse",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test"
       },
       "position": 15
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "setVariableByHTML",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "node": {
           "selector": "#test",
@@ -241,12 +241,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "setVariableByJSON",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "value": "test"
       },
@@ -254,12 +254,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "setVariableByNodeAttribute",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "node": {
           "selector": "#test",
@@ -271,12 +271,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "setVariableByNodeCount",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "node": {
           "selector": "#test",
@@ -287,12 +287,12 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "setVariableByRegexGroup",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "name": "test",
         "regex": "test",
         "nthMatch": 1,
@@ -302,24 +302,24 @@
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "wait",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "duration": 0
       },
       "position": 21
     },
     {
       "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
       "disabled": false,
       "action": {
         "type": "wait",
-        "negated": false,
-        "ignoreFailure": false,
-        "errorOutput": null,
         "duration": 1000
       },
       "position": 22

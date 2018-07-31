@@ -52,8 +52,8 @@ public class CheckAttributeExistsAction extends RESTSymbolAction {
 
         boolean result = JSONHelpers.getAttributeValue(body, getAttributeWithVariableValues()) != null;
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' exists in '{}' => {} (ignoreFailure: {}, negated: {}).",
-                attribute, body, result, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Check if the attribute '{}' exists in '{}' => {}.",
+                attribute, body, result);
         if (result) {
             return getSuccessOutput();
         } else {

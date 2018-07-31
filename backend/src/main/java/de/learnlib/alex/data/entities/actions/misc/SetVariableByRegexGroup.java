@@ -90,13 +90,11 @@ public class SetVariableByRegexGroup extends SymbolAction {
             }
 
             if (!matchFound) {
-                LOGGER.info(LoggerMarkers.LEARNER, "Could not find a string that matches regex '{}' "
-                        + "(ignoreFailure: {}, negated: {})", regex, ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Could not find a string that matches regex '{}' ", regex);
                 return getFailedOutput();
             }
         } catch (IndexOutOfBoundsException e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find group {} in regex '{}' "
-                    + "(ignoreFailure: {}, negated: {})", mthGroup, regex, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not find group {} in regex '{}' ", mthGroup, regex);
             return getFailedOutput();
         }
 

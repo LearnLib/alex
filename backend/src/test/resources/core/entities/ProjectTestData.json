@@ -1,56 +1,55 @@
 {
-    "name": "Test Project",
-    "urls": [
+  "name": "Test Project",
+  "urls": [
+    {
+      "id": 1,
+      "name": null,
+      "url": "http://example.com",
+      "default": true
+    },
+    {
+      "id": 2,
+      "name": null,
+      "url": "http://example.com",
+      "default": false
+    }
+  ],
+  "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore",
+  "symbols": [
+    {
+      "id": 1,
+      "name": "Test Symbol",
+      "actions": [
         {
-            "id": 1,
-            "name": null,
-            "url": "http://example.com",
-            "default": true
+          "type": "web_checkForNode",
+          "value": "#node"
         },
         {
-            "id": 2,
-            "name": null,
-            "url": "http://example.com",
-            "default": false
-        }
-    ],
-    "description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore",
-    "symbols": [
+          "type": "web_checkForText",
+          "value": "Lorem Ipsum"
+        },
         {
-            "id": 1,
-            "name" : "Test Symbol",
-            "actions" : [
-                {
-                    "type": "web_checkForNode",
-                    "value": "#node"
-                },
-                {
-                    "type": "web_checkForText",
-                    "value": "Lorem Ipsum"
-                },
-                {
-                    "type": "web_clear",
-                    "node": "#node"
-                },
-                {
-                    "type": "web_click",
-                    "node": "#node"
-                },
-                {
-                    "type" : "web_fill",
-                    "node" : "#input",
-                    "value" : "Lorem Ipsum"
-                },
-                {
-                    "type": "web_submit",
-                    "node": "#node"
-                },
-                {
-                    "type": "wait",
-                    "duration": 1000
-
-                }
-            ]
+          "type": "web_clear",
+          "node": "#node"
+        },
+        {
+          "type": "web_click",
+          "node": "#node"
+        },
+        {
+          "type": "web_fill",
+          "node": "#input",
+          "value": "Lorem Ipsum"
+        },
+        {
+          "type": "web_submit",
+          "node": "#node"
+        },
+        {
+          "type": "wait",
+          "duration": 1000
         }
-    ]
+      ]
+    }
+  ]
 }

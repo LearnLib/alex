@@ -57,8 +57,7 @@ public class SetVariableAction extends SymbolAction {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
         storeConnector.set(name, insertVariableValues(value));
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}' (ignoreFailure: {}, negated: {}).",
-                name, value, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}'.", name, value);
         return getSuccessOutput();
     }
 

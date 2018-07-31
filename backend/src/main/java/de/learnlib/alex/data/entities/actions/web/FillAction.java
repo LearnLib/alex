@@ -68,13 +68,11 @@ public class FillAction extends WebSymbolAction {
             WebElement element = connector.getElement(nodeWithVariables);
             element.sendKeys(valueWithVariables);
 
-            LOGGER.info("Filled the element '{}' with {}'(ignoreFailure: {}, negated: {}).",
-                    nodeWithVariables, value, ignoreFailure, negated);
+            LOGGER.info("Filled the element '{}' with '{}'.", nodeWithVariables, value);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not find the element '{}' to fill it with '{}' "
-                            + "(ignoreFailure: {}, negated: {}).",
-                    nodeWithVariables, valueWithVariables, ignoreFailure, negated, e);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not find the element '{}' to fill it with '{}'",
+                    nodeWithVariables, valueWithVariables, e);
             return getFailedOutput();
         }
     }
