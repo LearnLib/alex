@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,7 +128,6 @@ public class CounterStoreConnector implements Connector {
      */
     public void set(Long projectId, String name, Integer value) {
         countersMap.put(name, value);
-
         LOGGER.debug("Set the counter '{}' in the project <{}> to '{}'.", name, projectId, value);
     }
 
@@ -184,6 +184,14 @@ public class CounterStoreConnector implements Connector {
                 countersMap.put(name, storeToMerge.countersMap.get(name));
             }
         });
+    }
+
+    /**
+     * Get the store as read only map.
+     * @return The store.
+     */
+    public Map<String, Integer> getStore() {
+        return Collections.unmodifiableMap(countersMap);
     }
 
     /**

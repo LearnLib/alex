@@ -113,6 +113,14 @@ public class VariableStoreConnector implements Connector {
     }
 
     /**
+     * Get the store as read only map.
+     * @return The store.
+     */
+    public Map<String, String> getStore() {
+        return store;
+    }
+
+    /**
      * Clones the store.
      *
      * @return The cloned store.

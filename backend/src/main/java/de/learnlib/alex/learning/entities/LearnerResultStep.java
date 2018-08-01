@@ -314,10 +314,12 @@ public class LearnerResultStep implements Serializable {
     }
 
     @Column(columnDefinition = "BLOB")
+    @JsonIgnore
     public byte[] getState() {
         return state;
     }
 
+    @JsonIgnore
     public void setState(byte[] state) {
         this.state = state;
     }

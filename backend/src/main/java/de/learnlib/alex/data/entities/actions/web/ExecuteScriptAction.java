@@ -21,6 +21,7 @@ import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +35,9 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -72,30 +75,36 @@ public class ExecuteScriptAction extends SymbolAction {
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         WebSiteConnector webSiteConnector = connector.getConnector(WebSiteConnector.class);
-        VariableStoreConnector variableStoreConnector = connector.getConnector(VariableStoreConnector.class);
+        VariableStoreConnector variableStore = connector.getConnector(VariableStoreConnector.class);
+        CounterStoreConnector counterStore = connector.getConnector(CounterStoreConnector.class);
 
         if (webSiteConnector.getDriver() instanceof JavascriptExecutor) {
+
+            final Map<String, Map<String, ? extends Object>> store = new HashMap<>();
+            store.put("variables", variableStore.getStore());
+            store.put("counters", counterStore.getStore());
+
             try {
                 webSiteConnector.getDriver().manage().timeouts().setScriptTimeout(timeout, TimeUnit.SECONDS);
 
                 final Object returnValue;
                 if (async) {
-                    returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeAsyncScript(script);
+                    returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeAsyncScript(script, store);
                 } else {
-                    returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeScript(script);
+                    returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeScript(script, store);
                 }
 
                 if (name != null) {
                     if (returnValue == null) {
-                        variableStoreConnector.set(name, "null");
+                        variableStore.set(name, "null");
                     } else if (returnValue instanceof Double || returnValue instanceof Long
                             || returnValue instanceof Boolean) {
-                        variableStoreConnector.set(name, String.valueOf(returnValue));
+                        variableStore.set(name, String.valueOf(returnValue));
                     } else if (returnValue instanceof WebElement || returnValue instanceof List) {
                         LOGGER.info(LoggerMarkers.LEARNER, "WebElements and lists as return values are not supported.");
                         return getFailedOutput();
                     } else {
-                        variableStoreConnector.set(name, (String) returnValue);
+                        variableStore.set(name, (String) returnValue);
                     }
                 }
 
