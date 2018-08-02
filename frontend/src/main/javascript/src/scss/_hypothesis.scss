@@ -11,11 +11,30 @@
 .hypothesis {
   width: 100%;
 
+  .edgePath {
+    &.selected {
+      > .path {
+        stroke: #0089ff !important;
+        stroke-width: 4px !important;
+      }
+
+      marker path {
+        stroke-width: 0 !important;
+        stroke: darken(#0089ff, 20);
+        fill: darken(#0089ff, 20);
+      }
+    }
+  }
+
   .edgeLabel tspan {
 
     &:hover {
       cursor: pointer;
-      fill: #428bca;
+      fill: #0089ff;
+    }
+
+    &.selected {
+      fill: #0089ff !important;
     }
   }
 }

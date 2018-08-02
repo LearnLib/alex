@@ -66,9 +66,9 @@ class HypothesisComponent {
         // needed so that we get the correct input output on edge label click
         this.edgeData = {};
 
-        this.svg = d3.select($element.find('svg')[0]);
+        this.svg = d3.select(this.$element.find('svg')[0]);
         this.svgGroup = this.svg.select('g');
-        this.svgContainer = $element.find('svg')[0].parentNode;
+        this.svgContainer = this.$element.find('svg')[0].parentNode;
 
         this.resizeHandler = this.fitSize.bind(this);
 
@@ -176,11 +176,12 @@ class HypothesisComponent {
         forEach(graph, (k, from) => {
             forEach(k, (labels, to) => {
                 this.graph.setEdge(from, to, {
+                    id: 'edge-' + from + '' + to,
                     label: labels.join('\n'),
                     labeloffset: 5,
                     style: STYLE.edge,
                     labelStyle: STYLE.edgeLabel,
-                    curve: d3.curveBasis,
+                    curve: d3.curveBasis
                 }, (from + '' + to));
             });
         });
@@ -235,6 +236,27 @@ class HypothesisComponent {
         const self = this;
         if (this.isSelectable) {
             this.svg.selectAll('.edgeLabel tspan').on('click', function (d) {
+                const edgeEl = self.svg.select(`.edgePath[id="edge-${d.name}"]`);
+
+                let refs = edgeEl.attr('data-refs');
+                refs = refs == null ? [] : JSON.parse(refs);
+
+                const i = refs.findIndex(s => s === this.textContent);
+                if (i > -1) {
+                    refs.splice(i, 1);
+                } else {
+                    refs.push(this.textContent);
+                }
+
+                if (this.classList.contains('selected')) {
+                    this.classList.remove('selected');
+                } else {
+                    this.classList.add('selected');
+                }
+
+                edgeEl.classed('selected', refs.length > 0);
+                edgeEl.attr('data-refs', JSON.stringify(refs));
+
                 const edges = self.edgeData[d.v][d.w];
                 const edge = edges.filter(e => (e.input + ' / ' + e.output) === this.textContent)[0];
                 $scope.$apply(() => {
