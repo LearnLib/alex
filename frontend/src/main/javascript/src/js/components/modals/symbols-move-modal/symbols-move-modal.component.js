@@ -27,17 +27,15 @@ export class SymbolMoveModalComponent {
      *
      * @param {SymbolResource} SymbolResource
      * @param {SymbolGroupResource} SymbolGroupResource
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {ToastService} ToastService
      * @param {EventBus} EventBus
      */
     // @ngInject
-    constructor(SymbolResource, SymbolGroupResource, SessionService, ToastService, EventBus) {
+    constructor(SymbolResource, SymbolGroupResource, ProjectService, ToastService, EventBus) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
         this.EventBus = EventBus;
-
-        const project = SessionService.getProject();
 
         /**
          * The list of symbols that should be moved.
@@ -57,6 +55,7 @@ export class SymbolMoveModalComponent {
          */
         this.selectedGroup = null;
 
+        const project = ProjectService.store.currentProject;
         SymbolGroupResource.getAll(project.id).then(groups => {
             this.groups = groups;
         });

@@ -1,9 +1,9 @@
 <load-screen></load-screen>
-<div id="alex">
-    <div class="sidebar-wrapper">
-        <sidebar></sidebar>
-    </div>
-    <div class="view-wrapper">
-        <div ui-view></div>
-    </div>
+<div id="alex" ng-class="{'layout-collapsed': vm.collapsed}">
+  <div class="sidebar-wrapper">
+    <sidebar></sidebar>
+  </div>
+  <div class="view-wrapper">
+    <div ui-view></div>
+  </div>
 </div>

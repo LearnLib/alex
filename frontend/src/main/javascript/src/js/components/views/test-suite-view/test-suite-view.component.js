@@ -31,14 +31,14 @@ export const testSuiteViewComponent = {
     /**
      * The controller of the view.
      */
-    controller: class {
+    controller: class TestSuiteViewComponent {
 
         /**
          * Constructor.
          *
          * @param {$state} $state
          * @param {SymbolGroupResource} SymbolGroupResource
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          * @param {LearnerResource} LearnerResource
          * @param {ToastService} ToastService
          * @param {TestResource} TestResource
@@ -53,7 +53,7 @@ export const testSuiteViewComponent = {
          * @param {TestConfigResource} TestConfigResource
          */
         // @ngInject
-        constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService, TestResource,
+        constructor($state, SymbolGroupResource, ProjectService, LearnerResource, ToastService, TestResource,
                     PromptService, $uibModal, SettingsResource, DownloadService, TestService, ClipboardService,
                     TestReportResource, NotificationService, TestConfigResource) {
             this.$state = $state;
@@ -69,12 +69,7 @@ export const testSuiteViewComponent = {
             this.NotificationService = NotificationService;
             this.$uibModal = $uibModal;
             this.TestConfigResource = TestConfigResource;
-
-            /**
-             * The current project.
-             * @type {Project}
-             */
-            this.project = SessionService.getProject();
+            this.ProjectService = ProjectService;
 
             /**
              * The test suite.
@@ -450,6 +445,10 @@ export const testSuiteViewComponent = {
                     }
                 });
             }
+        }
+
+        get project() {
+            return this.ProjectService.store.currentProject;
         }
     }
 };

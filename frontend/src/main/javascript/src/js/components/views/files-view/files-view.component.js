@@ -28,21 +28,15 @@ class FilesViewComponent {
      *
      * @param Upload
      * @param {ToastService} ToastService
-     * @param {SessionService} SessionService
      * @param {FileResource} FileResource
+     * @param {ProjectService} ProjectService
      */
     // @ngInject
-    constructor(Upload, ToastService, SessionService, FileResource) {
+    constructor(Upload, ToastService, FileResource, ProjectService) {
         this.Upload = Upload;
         this.ToastService = ToastService;
-        this.SessionService = SessionService;
         this.FileResource = FileResource;
-
-        /**
-         * The project that is in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.ProjectService = ProjectService;
 
         /**
          * All project related files.
@@ -167,6 +161,10 @@ class FilesViewComponent {
 
                 window.URL.revokeObjectURL(objectUrl);
             });
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

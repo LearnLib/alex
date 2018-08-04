@@ -24,7 +24,6 @@ import toastr from 'angular-toastr';
 import uiBootstrap from 'angular-ui-bootstrap';
 import ngFileUpload from 'ng-file-upload';
 import {actionBarComponent} from './components/action-bar/action-bar.component';
-import {actionRecorderComponent} from './components/action-recorder/action-recorder.component';
 import {alexComponent} from './components/alex/alex.component';
 import {discriminationTreeComponent} from './components/discrimination-tree/discrimination-tree.component';
 import {fileDropzoneComponent} from './components/file-dropzone/file-dropzone.component';
@@ -109,7 +108,6 @@ import {actionCreateModalComponent} from './components/modals/action-create-moda
 import {actionSearchFormComponent} from './components/modals/action-create-modal/action-search-form/action-search-form.component';
 import {actionEditModalHandleDirective} from './components/modals/action-edit-modal/action-edit-modal-handle.directive';
 import {actionEditModalComponent} from './components/modals/action-edit-modal/action-edit-modal.component';
-import {actionRecorderActionsModal} from './components/modals/action-recorder-actions-modal/action-recorder-actions-modal.component';
 import {confirmModalComponent} from './components/modals/confirm-modal/confirm-modal.component';
 import {counterCreateModalComponent} from './components/modals/counter-create-modal/counter-create-modal.component';
 import {hypothesisLayoutSettingsModalHandleDirective} from './components/modals/hypothesis-layout-settings-modal/hypothesis-layout-settings-modal-handle.directive';
@@ -120,7 +118,6 @@ import {resultListModalHandleDirective} from './components/modals/learner-result
 import {resultListModalComponent} from './components/modals/learner-result-list-modal/learner-result-list-modal.component';
 import {learnerSetupSettingsModalHandleDirective} from './components/modals/learner-setup-settings-modal/learner-setup-settings-modal-handle.directive';
 import {learnerSetupSettingsModalComponent} from './components/modals/learner-setup-settings-modal/learner-setup-settings-modal.component';
-import {projectEditModalHandleDirective} from './components/modals/project-edit-modal/project-edit-modal-handle.directive';
 import {projectEditModalComponent} from './components/modals/project-edit-modal/project-edit-modal.component';
 import {promptModalComponent} from './components/modals/prompt-modal/prompt-modal.component';
 import {separatingWordModalComponent} from './components/modals/separating-word-modal/separating-word-modal.component';
@@ -216,7 +213,6 @@ import {
     sortTests
 } from './filters';
 import * as routes from './routes';
-import {ActionRecorderService} from './services/action-recorder.service';
 import {ActionService} from './services/action.service';
 import {ClipboardService} from './services/clipboard.service';
 import {DownloadService} from './services/download.service';
@@ -227,6 +223,7 @@ import {LearnerResultChartService} from './services/learner-result-chart.service
 import {LearnerResultDownloadService} from './services/learner-result-download.service';
 import {LearningAlgorithmService} from './services/learning-algorithm.service';
 import {NotificationService} from './services/notification.service';
+import {ProjectService} from './services/project.service';
 import {PromptService} from './services/prompt.service';
 import {CounterResource} from './services/resources/counter-resource.service';
 import {FileResource} from './services/resources/file-resource.service';
@@ -242,10 +239,11 @@ import {TestReportResource} from './services/resources/test-report-resource.serv
 import {TestResource} from './services/resources/test-resource.service';
 import {UserResource} from './services/resources/user-resource.service';
 import {WebhookResource} from './services/resources/webhook-resource.service';
-import {SessionService} from './services/session.service';
 import {TestReportService} from './services/test-report.service';
 import {TestService} from './services/test.service';
 import {ToastService} from './services/toast.service';
+import {UiService} from './services/ui.service';
+import {UserService} from './services/user.service';
 
 angular
     .module('ALEX', [
@@ -309,14 +307,15 @@ angular
     .service('DownloadService', DownloadService)
     .service('LearnerResultChartService', LearnerResultChartService)
     .service('PromptService', PromptService)
-    .service('SessionService', SessionService)
     .service('ToastService', ToastService)
     .service('LearnerResultDownloadService', LearnerResultDownloadService)
     .service('HtmlElementPickerService', HtmlElementPickerService)
-    .service('ActionRecorderService', ActionRecorderService)
     .service('TestService', TestService)
     .service('TestReportService', TestReportService)
     .service('NotificationService', NotificationService)
+    .service('ProjectService', ProjectService)
+    .service('UserService', UserService)
+    .service('UiService', UiService)
 
     // modal handles
     .directive('actionCreateModalHandle', actionCreateModalHandleDirective)
@@ -324,7 +323,6 @@ angular
     .directive('hypothesisLayoutSettingsModalHandle', hypothesisLayoutSettingsModalHandleDirective)
     .directive('learnerResultDetailsModalHandle', learnerResultDetailsModalHandleDirective)
     .directive('learnerSetupSettingsModalHandle', learnerSetupSettingsModalHandleDirective)
-    .directive('projectEditModalHandle', projectEditModalHandleDirective)
     .directive('symbolCreateModalHandle', symbolCreateModalHandleDirective)
     .directive('symbolEditModalHandle', symbolEditModalHandleDirective)
     .directive('symbolGroupCreateModalHandle', symbolGroupCreateModalHandleDirective)
@@ -333,7 +331,6 @@ angular
 
     // modals
     .component('actionCreateModal', actionCreateModalComponent)
-    .component('actionRecorderActionsModal', actionRecorderActionsModal)
     .component('actionEditModal', actionEditModalComponent)
     .component('counterCreateModal', counterCreateModalComponent)
     .component('hypothesisLayoutSettingsModal', hypothesisLayoutSettingsModalComponent)
@@ -489,7 +486,6 @@ angular
     .component('responsiveIframe', responsiveIframeComponent)
     .component('viewHeader', viewHeaderComponent)
     .component('htmlElementPicker', htmlElementPickerComponent)
-    .component('actionRecorder', actionRecorderComponent)
     .component('learnerResultPanel', learnerResultPanelComponent)
     .component('observationTable', observationTableComponent)
     .component('symbolListItem', symbolListItemComponent)

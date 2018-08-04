@@ -4,7 +4,6 @@
 @import "font-awesome";
 @import "hypothesis";
 @import "html-element-picker";
-@import "action-recorder";
 @import "search-form";
 @import "test-tree";
 @import "sidebar";
@@ -25,9 +24,8 @@
 body {
   overflow-x: hidden;
 
-  &.layout-collapsed {
-
-    #alex {
+  #alex {
+    &.layout-collapsed {
       .sidebar-wrapper {
         min-width: $sidebar-width-collapsed;
         max-width: $sidebar-width-collapsed;

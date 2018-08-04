@@ -24,13 +24,13 @@ class ProjectCreateFormComponent {
     /**
      * Constructor.
      *
-     * @param {ProjectResource} ProjectResource
+     * @param {ProjectService} ProjectService
      * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor(ProjectResource, ToastService) {
-        this.ProjectResource = ProjectResource;
-        this.ToastService = ToastService;
+    constructor(ProjectService, ToastService) {
+        this.projectService = ProjectService;
+        this.toastService = ToastService;
 
         /**
          * The empty project model that is used for the form.
@@ -44,31 +44,27 @@ class ProjectCreateFormComponent {
      */
     createProject() {
         if (this.project.urls.length === 0) {
-            this.ToastService.danger('You have to specify at least one URL.');
+            this.toastService.danger('You have to specify at least one URL.');
             return;
         }
 
-        this.ProjectResource.create(this.project)
+        this.projectService.create(this.project)
             .then(createdProject => {
-                this.ToastService.success(`Project "${createdProject.name}" created`);
-                this.onCreated({project: createdProject});
+                this.toastService.success(`Project "${createdProject.name}" created`);
                 this.project = new Project();
 
                 // set the form to its original state
                 this.form.$setPristine();
                 this.form.$setUntouched();
             })
-            .catch(response => {
-                this.ToastService.danger('<p><strong>Creation of project failed</strong></p>' + response.data.message);
+            .catch(err => {
+                this.toastService.danger(`The project could not be created. ${err.data.message}`);
             });
     }
 }
 
 export const projectCreateFormComponent = {
     template: require('./project-create-form.component.html'),
-    bindings: {
-        onCreated: '&'
-    },
     controller: ProjectCreateFormComponent,
     controllerAs: 'vm'
 };

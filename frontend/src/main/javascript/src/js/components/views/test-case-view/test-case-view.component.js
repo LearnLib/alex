@@ -38,7 +38,7 @@ export const testCaseViewComponent = {
          * @param $state
          * @param dragulaService
          * @param {SymbolGroupResource} SymbolGroupResource
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          * @param {ToastService} ToastService
          * @param {TestResource} TestResource
          * @param {LearnerResource} LearnerResource
@@ -47,7 +47,7 @@ export const testCaseViewComponent = {
          * @param {ActionService} ActionService
          */
         // @ngInject
-        constructor($scope, $state, dragulaService, SymbolGroupResource, SessionService, ToastService, TestResource,
+        constructor($scope, $state, dragulaService, SymbolGroupResource, ProjectService, ToastService, TestResource,
                     LearnerResource, $uibModal, SettingsResource, ActionService) {
             this.$state = $state;
             this.ToastService = ToastService;
@@ -55,12 +55,7 @@ export const testCaseViewComponent = {
             this.LearnerResource = LearnerResource;
             this.$uibModal = $uibModal;
             this.ActionService = ActionService;
-
-            /**
-             * The current project.
-             * @type {Project}
-             */
-            this.project = SessionService.getProject();
+            this.ProjectService = ProjectService;
 
             /**
              * The current test
@@ -211,6 +206,10 @@ export const testCaseViewComponent = {
 
         addSymbolStep(symbol) {
             this.testCase.steps.push(TestCaseStep.fromSymbol(symbol));
+        }
+
+        get project() {
+            return this.ProjectService.store.currentProject;
         }
     }
 };

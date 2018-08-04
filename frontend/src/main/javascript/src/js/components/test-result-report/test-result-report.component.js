@@ -16,7 +16,7 @@
 
 /**
  * Displays a test result.
- * @type {{templateUrl: string, bindings: {result: string}, controllerAs: string, controller: testResult.controller}}
+ * @type {{template, bindings: {report: string}, controllerAs: string, controller: testResultReportComponent.TestResultReportComponent}}
  */
 export const testResultReportComponent = {
     template: require('./test-result-report.component.html'),
@@ -24,17 +24,17 @@ export const testResultReportComponent = {
         report: '='
     },
     controllerAs: 'vm',
-    controller: class {
+    controller: class TestResultReportComponent {
 
         /**
          * Constructor.
          *
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          * @param {TestReportService} TestReportService
          */
         // @ngInject
-        constructor(SessionService, TestReportService) {
-            this.SessionService = SessionService;
+        constructor(ProjectService, TestReportService) {
+            this.ProjectService = ProjectService;
             this.TestReportService = TestReportService;
 
             /**
@@ -42,17 +42,15 @@ export const testResultReportComponent = {
              * @type {object}
              */
             this.report = null;
-
-            /**
-             * The project.
-             * @type {Project}
-             */
-            this.project = this.SessionService.getProject();
         }
 
         /** Saves the report as JUnit XML. */
         exportReport() {
             this.TestReportService.download(this.project.id, this.report.id);
+        }
+
+        get project() {
+            return this.ProjectService.store.currentProject;
         }
     }
 };

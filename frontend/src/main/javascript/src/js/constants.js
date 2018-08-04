@@ -53,12 +53,6 @@ export const userRole = {
 
 export const events = {
 
-    // project related events
-    PROJECT_UPDATED: 'project:updated',
-    PROJECT_DELETED: 'project:deleted',
-    PROJECT_OPENED: 'project:opened',
-    PROJECT_CLOSED: 'project:closed',
-
     // symbol group related events
     GROUP_UPDATED: 'group:updated',
     GROUP_DELETED: 'group:deleted',
@@ -67,9 +61,6 @@ export const events = {
     // hypothesis related events
     HYPOTHESIS_LABEL_SELECTED: 'hypothesis:labelSelected',
     HYPOTHESIS_LAYOUT_UPDATED: 'hypothesis:layoutUpdated',
-
-    // user related events
-    USER_LOGGED_IN: 'user:loggedIn',
 
     // symbol related events
     SYMBOL_UPDATED: 'symbol:updated',

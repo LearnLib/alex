@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
-
 /**
  * The component that displays a list of projects.
  */
@@ -25,20 +23,16 @@ class ProjectListComponent {
      * Constructor.
      *
      * @param $state
-     * @param {ProjectResource} ProjectResource
      * @param {ToastService} ToastService
-     * @param {SessionService} SessionService
      * @param {PromptService} PromptService
-     * @param {EventBus} EventBus
+     * @param {ProjectService} ProjectService
      */
     // @ngInject
-    constructor($state, ProjectResource, ToastService, SessionService, PromptService, EventBus) {
+    constructor($state, ToastService, PromptService, ProjectService) {
         this.$state = $state;
-        this.ProjectResource = ProjectResource;
         this.ToastService = ToastService;
-        this.SessionService = SessionService;
         this.PromptService = PromptService;
-        this.EventBus = EventBus;
+        this.ProjectService = ProjectService;
     }
 
     /**
@@ -47,35 +41,45 @@ class ProjectListComponent {
      * @param {Project} project - The project to work on.
      */
     openProject(project) {
-        this.SessionService.saveProject(project);
-        this.EventBus.emit(events.PROJECT_OPENED, {project});
+        this.ProjectService.open(project);
         this.$state.go('project', {projectId: project.id});
     }
 
     /**
      * Deletes a project.
      *
-     * @param {Project} project - The project to delete.
+     * @param {Project} project The project to delete.
      */
     deleteProject(project) {
         this.PromptService.confirm('Do you really want to delete this project? All related data will be lost.')
             .then(() => {
-                this.ProjectResource.remove(project)
+                this.ProjectService.delete(project)
                     .then(() => {
-                        this.ToastService.success('Project ' + project.name + ' deleted');
-                        this.EventBus.emit(events.PROJECT_DELETED, {project: project});
+                        this.ToastService.success(`The project '${project.name}' has been deleted.`);
                     })
                     .catch(response => {
                         this.ToastService.danger(`The project could not be deleted. ${response.data.message}`);
                     });
             });
     }
+
+    /**
+     * Edit the project.
+     *
+     * @param {Project} project The project to edit.
+     */
+    editProject(project) {
+        this.ProjectService.update(project)
+            .catch(err => this.ToastService.danger(`The project could not be update. ${err.data.message}`));
+    }
 }
 
 export const projectListComponent = {
     template: require('./project-list.component.html'),
     bindings: {
-        projects: '='
+        projects: '=',
+        onDeleted: '&',
+        onUpdated: '&'
     },
     controller: ProjectListComponent,
     controllerAs: 'vm'

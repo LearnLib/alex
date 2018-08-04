@@ -26,26 +26,21 @@ class ResultsViewComponent {
      * Constructor.
      *
      * @param $state
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {LearnResultResource} LearnResultResource
      * @param {PromptService} PromptService
      * @param {ToastService} ToastService
      * @param {LearnerResultDownloadService} LearnerResultDownloadService
      */
     // @ngInject
-    constructor($state, SessionService, LearnResultResource, PromptService, ToastService,
+    constructor($state, ProjectService, LearnResultResource, PromptService, ToastService,
                 LearnerResultDownloadService) {
         this.$state = $state;
         this.PromptService = PromptService;
         this.ToastService = ToastService;
         this.LearnResultResource = LearnResultResource;
         this.LearnerResultDownloadService = LearnerResultDownloadService;
-
-        /**
-         * The project that is in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.ProjectService = ProjectService;
 
         /**
          * All final test results of a project.
@@ -165,6 +160,10 @@ class ResultsViewComponent {
             .catch(err => {
                 this.ToastService.danger(`The result could not be cloned. ${err.data.message}`);
             });
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

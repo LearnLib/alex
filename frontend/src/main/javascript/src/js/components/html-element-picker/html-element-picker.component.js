@@ -21,20 +21,18 @@ import {DomUtils} from '../../utils/dom-utils';
  * of urls. Works as a 'mini embedded browser'
  *
  * Use: '<html-element-picker></html-element-picker>'
- *
- * @param SessionService - The SessionService
  */
 class HtmlElementPickerComponent {
 
     /**
      * Constructor.
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param $element
      * @param $scope
      */
     // @ngInject
-    constructor(SessionService, $element, $scope) {
-        this.SessionService = SessionService;
+    constructor(ProjectService, $element, $scope) {
+        this.ProjectService = ProjectService;
         this.iframe = $element.find('iframe');
         this.$scope = $scope;
 
@@ -80,12 +78,6 @@ class HtmlElementPickerComponent {
          * @type {null}
          */
         this.corsDisabled = null;
-
-        /**
-         * The current project.
-         * @type {Project}
-         */
-        this.project = this.SessionService.getProject();
 
         this.mouseMoveHandler = null;
         this.keyUpHandler = null;
@@ -247,6 +239,10 @@ class HtmlElementPickerComponent {
             this.node.selector = null;
         }
         this.isSelectable = !this.isSelectable;
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

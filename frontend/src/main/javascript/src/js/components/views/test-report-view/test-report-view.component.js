@@ -27,26 +27,20 @@ export const testReportViewComponent = {
          * Constructor.
          *
          * @param {TestReportResource} TestReportResource
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          * @param {ToastService} ToastService
          * @param {TestReportService} TestReportService
          * @param $state
          * @param $stateParams
          */
         // @ngInject
-        constructor(TestReportResource, SessionService, ToastService, TestReportService, $state, $stateParams) {
+        constructor(TestReportResource, ProjectService, ToastService, TestReportService, $state, $stateParams) {
             this.testReportResource = TestReportResource;
-            this.sessionService = SessionService;
+            this.projectService = ProjectService;
             this.toastService = ToastService;
             this.testReportService = TestReportService;
             this.$state = $state;
             this.$stateParams = $stateParams;
-
-            /**
-             * The current project.
-             * @type {Project}
-             */
-            this.project = this.sessionService.getProject();
 
             /**
              * The report.
@@ -72,6 +66,10 @@ export const testReportViewComponent = {
         /** Download the report. */
         downloadReport() {
             this.testReportService.download(this.project.id, this.report.id);
+        }
+
+        get project() {
+            return this.projectService.store.currentProject;
         }
     }
 };

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {UiService} from '../../services/ui.service';
+
 /**
  * The components of the load screen.
  */
@@ -22,23 +24,15 @@ class LoadScreenComponent {
     /**
      * Constructor.
      *
-     * @param $scope
-     * @param $http
+     * @param {UiService} UiService
      */
     // @ngInject
-    constructor($scope, $http) {
+    constructor(UiService) {
+        this.uiService = UiService;
+    }
 
-        /**
-         * If the load screen is visible or not.
-         * @type {boolean}
-         */
-        this.visible = false;
-
-        // watch for pending http requests and make the load screen visible
-        $scope.$watch(() => $http.pendingRequests.length > 0, value => {
-            this.visible = value;
-        });
-
+    get visible() {
+        return this.uiService.store.loading;
     }
 }
 

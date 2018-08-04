@@ -27,24 +27,19 @@ class ResultsCompareViewComponent {
      * @param $uibModal
      * @param $state
      * @param $stateParams
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {LearnResultResource} LearnResultResource
      * @param {LearnerResource} LearnerResource
      * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor($uibModal, $state, $stateParams, SessionService, LearnResultResource, LearnerResource,
+    constructor($uibModal, $state, $stateParams, ProjectService, LearnResultResource, LearnerResource,
                 ToastService) {
         this.$uibModal = $uibModal;
         this.LearnResultResource = LearnResultResource;
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
-
-        /**
-         * The project that is in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.ProjectService = ProjectService;
 
         /**
          * All final learn results from all tests that were made for a project.
@@ -163,6 +158,10 @@ class ResultsCompareViewComponent {
                 }
             })
             .catch(err => this.ToastService.danger(err.data.message));
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

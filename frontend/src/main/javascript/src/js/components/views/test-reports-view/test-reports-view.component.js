@@ -30,24 +30,18 @@ export const testReportsViewComponent = {
          * Constructor.
          *
          * @param {TestReportResource} TestReportResource
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          * @param {ToastService} ToastService
          * @param {TestReportService} TestReportService
          * @param $state
          */
         // @ngInject
-        constructor(TestReportResource, SessionService, ToastService, TestReportService, $state) {
+        constructor(TestReportResource, ProjectService, ToastService, TestReportService, $state) {
             this.testReportResource = TestReportResource;
-            this.sessionService = SessionService;
+            this.projectService = ProjectService;
             this.toastService = ToastService;
             this.testReportService = TestReportService;
             this.$state = $state;
-
-            /**
-             * The current project.
-             * @type {Project}
-             */
-            this.project = this.sessionService.getProject();
 
             /**
              * The reports.
@@ -116,6 +110,10 @@ export const testReportsViewComponent = {
         _deleteReport(report) {
             remove(this.reports, {id: report.id});
             this.selectedReports.unselect(report);
+        }
+
+        get project() {
+            return this.projectService.store.currentProject;
         }
     }
 };

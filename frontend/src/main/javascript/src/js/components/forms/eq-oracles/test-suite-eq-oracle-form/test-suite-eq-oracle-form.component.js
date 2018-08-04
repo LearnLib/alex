@@ -26,12 +26,12 @@ export const testSuiteEqOracleFormComponent = {
         /**
          * Constructor.
          *
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          * @param {TestResource} TestResource
          */
         // @ngInject
-        constructor(SessionService, TestResource) {
-            this.sessionService = SessionService;
+        constructor(ProjectService, TestResource) {
+            this.projectService = ProjectService;
             this.testResource = TestResource;
 
             /**
@@ -48,13 +48,13 @@ export const testSuiteEqOracleFormComponent = {
         }
 
         $onInit() {
-            const projectId = this.sessionService.getProject().id;
+            const project = this.projectService.store.currentProject;
 
-            this.testResource.getRoot(projectId)
+            this.testResource.getRoot(project.id)
                 .then(root => this.root = root);
 
             if (this.eqOracle.testSuiteId != null) {
-                this.testResource.get(projectId, this.eqOracle.testSuiteId)
+                this.testResource.get(project.id, this.eqOracle.testSuiteId)
                     .then(ts => this.selectedTestSuite = ts);
 
             }

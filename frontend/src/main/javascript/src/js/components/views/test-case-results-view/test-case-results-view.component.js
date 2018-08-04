@@ -22,20 +22,14 @@ export const testCaseResultsViewComponent = {
         /**
          * Constructor.
          *
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          * @param {TestResource} TestResource
          * @param {Object} $stateParams
          */
         // @ngInject
-        constructor(SessionService, TestResource, $stateParams) {
-            this.sessionService = SessionService;
+        constructor(ProjectService, TestResource, $stateParams) {
+            this.projectService = ProjectService;
             this.testResource = TestResource;
-
-            /**
-             * The current project.
-             * @type {Project}
-             */
-            this.project = this.sessionService.getProject();
 
             /**
              * The test.
@@ -56,6 +50,10 @@ export const testCaseResultsViewComponent = {
                         .then(results => this.results = results);
                 })
                 .catch(console.error);
+        }
+
+        get project() {
+            return this.projectService.store.currentProject;
         }
     }
 };

@@ -27,15 +27,14 @@ export class LearnerSetupSettingsModalComponent {
      * Constructor.
      *
      * @param {ToastService} ToastService
-     * @param {EventBus} EventBus
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {LearningAlgorithmService} LearningAlgorithmService
      */
     // @ngInject
-    constructor(ToastService, EventBus, SessionService, LearningAlgorithmService) {
+    constructor(ToastService, ProjectService, LearningAlgorithmService) {
         this.ToastService = ToastService;
-        this.EventBus = EventBus;
         this.LearningAlgorithmService = LearningAlgorithmService;
+        this.ProjectService = ProjectService;
 
         /**
          * The LearnConfiguration to be edited.
@@ -52,12 +51,6 @@ export class LearnerSetupSettingsModalComponent {
          * The constants for learnAlgorithm names.
          */
         this.selectedLearningAlgorithm = null;
-
-        /**
-         * The current project.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
     }
 
     $onInit() {
@@ -85,6 +78,10 @@ export class LearnerSetupSettingsModalComponent {
     ok() {
         this.ToastService.success('Learn configuration updated');
         this.close({$value: this.learnConfiguration});
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

@@ -24,18 +24,11 @@ export const requestActionFormComponent = {
     },
     controllerAs: 'vm',
 
-    /**
-     * Constructor.
-     *
-     * @param $http
-     * @param {SessionService} SessionService
-     */
-    // @ngInject
-    controller($http, SessionService) {
-        this.project = SessionService.getProject();
+    /** Constructor. */
+    controller() {
         this.cookie = {name: null, value: null};
         this.header = {name: null, value: null};
-        this.testResult = null;
+
         this.aceOptions = {
             useWrapMode: true,
             showGutter: true

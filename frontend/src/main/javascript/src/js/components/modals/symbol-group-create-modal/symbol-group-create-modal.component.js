@@ -24,20 +24,15 @@ export class SymbolGroupCreateModalComponent {
     /**
      * Constructor.
      *
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {SymbolGroupResource} SymbolGroupResource
      * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor(SessionService, SymbolGroupResource, ToastService) {
+    constructor(ProjectService, SymbolGroupResource, ToastService) {
         this.SymbolGroupResource = SymbolGroupResource;
         this.ToastService = ToastService;
-
-        /**
-         * The project that is in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.ProjectService = ProjectService;
 
         /**
          * The new symbol group.
@@ -91,6 +86,10 @@ export class SymbolGroupCreateModalComponent {
         } else {
             this.selectedSymbolGroup = group;
         }
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

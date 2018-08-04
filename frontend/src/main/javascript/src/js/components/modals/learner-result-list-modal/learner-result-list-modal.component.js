@@ -22,20 +22,15 @@ export class ResultListModalComponent {
     /**
      * Constructor.
      *
-     * @param {ProjectResource} ProjectResource
+     * @param {ProjectService} ProjectService
      * @param {LearnResultResource} LearnResultResource
      * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor(ProjectResource, LearnResultResource, ToastService) {
+    constructor(ProjectService, LearnResultResource, ToastService) {
         this.LearnResultResource = LearnResultResource;
         this.ToastService = ToastService;
-
-        /**
-         * The projects.
-         * @type {Project[]}
-         */
-        this.projects = [];
+        this.ProjectService = ProjectService;
 
         /**
          * The results of the current project.
@@ -43,9 +38,7 @@ export class ResultListModalComponent {
          */
         this.results = null;
 
-        ProjectResource.getAll()
-            .then(projects => this.projects = projects)
-            .catch(err => console.log(err));
+        ProjectService.load();
     }
 
     $onInit() {
@@ -81,14 +74,14 @@ export class ResultListModalComponent {
      */
     loadResultFromFile(hypothesis) {
         try {
-            this.close({
-                $value: {
-                    steps: [{hypothesis: JSON.parse(hypothesis)}]
-                }
-            });
+            this.close({$value: {steps: [{hypothesis: JSON.parse(hypothesis)}]}});
         } catch (e) {
             this.ToastService.danger('Could not parse the file.');
         }
+    }
+
+    get projects() {
+        return this.ProjectService.store.projects;
     }
 }
 

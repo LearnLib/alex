@@ -28,24 +28,19 @@ class LearnerSetupViewComponent {
      *
      * @param $state
      * @param {SymbolGroupResource} SymbolGroupResource
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {LearnerResource} LearnerResource
      * @param {ToastService} ToastService
      * @param {LearnResultResource} LearnResultResource
      * @param {SettingsResource} SettingsResource
      */
     // @ngInject
-    constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource,
+    constructor($state, SymbolGroupResource, ProjectService, LearnerResource, ToastService, LearnResultResource,
                 SettingsResource) {
         this.$state = $state;
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
-
-        /**
-         * The project that is in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.ProjectService = ProjectService;
 
         /**
          * All symbol groups that belong the the sessions project.
@@ -199,6 +194,10 @@ class LearnerSetupViewComponent {
         this.pSymbols = this.learnConfiguration.symbols;
         this.pResetSymbol = this.learnConfiguration.resetSymbol;
         this.pPostSymbol = this.learnConfiguration.postSymbol;
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

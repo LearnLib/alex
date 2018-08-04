@@ -26,5 +26,18 @@ export const alexComponent = {
     template: require('./alex.component.html'),
     controllerAs: 'vm',
     controller: class AlexComponent {
+
+        /**
+         * Constructor.
+         * @param {UiService} UiService
+         */
+        // @ngInject
+        constructor(UiService) {
+            this.uiService = UiService;
+        }
+
+        get collapsed() {
+            return this.uiService.store.sidebar.collapsed;
+        }
     }
 };

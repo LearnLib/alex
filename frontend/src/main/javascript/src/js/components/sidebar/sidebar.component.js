@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {events} from '../../constants';
-
 /**
  * The controller for the sidebar.
  */
@@ -24,33 +22,17 @@ class SidebarComponent {
     /**
      * Constructor.
      *
-     * @param $scope
      * @param $state
-     * @param {SessionService} SessionService
-     * @param {EventBus} EventBus
+     * @param {ProjectService} ProjectService
+     * @param {UserService} UserService
+     * @param {UiService} UiService
      */
     // @ngInject
-    constructor($scope, $state, SessionService, EventBus) {
+    constructor($state, ProjectService, UserService, UiService) {
         this.$state = $state;
-        this.SessionService = SessionService;
-
-        /**
-         * The project that is stored in the session.
-         * @type {Project|null}
-         */
-        this.project = this.SessionService.getProject();
-
-        /**
-         * The user that is in the session.
-         * @type {User|null}
-         */
-        this.user = this.SessionService.getUser();
-
-        /**
-         * Indicator for the collapsed state.
-         * @type {boolean}
-         */
-        this.collapsed = sessionStorage.getItem('sidebarCollapsed') === 'true';
+        this.ProjectService = ProjectService;
+        this.UserService = UserService;
+        this.UiService = UiService;
 
         /**
          * The item groups
@@ -213,54 +195,24 @@ class SidebarComponent {
                 ]
             }
         ];
-
-        // listen on project open event
-        EventBus.on(events.PROJECT_OPENED, (evt, data) => {
-            this.project = data.project;
-        }, $scope);
-
-        EventBus.on(events.PROJECT_CLOSED, () => {
-            this.project = null;
-        }, $scope);
-
-        // listen on user login event
-        EventBus.on(events.USER_LOGGED_IN, (evt, data) => {
-            this.user = data.user;
-        }, $scope);
-
-        this.updateLayout();
     }
 
     /** Removes the project object from the session and redirect to the start page. */
     closeProject() {
-        this.SessionService.removeProject();
-        this.project = null;
+        this.ProjectService.close();
         this.$state.go('projects');
     }
 
     /** Remove project & user from the session. */
     logout() {
-        this.SessionService.removeProject();
-        this.SessionService.removeUser();
-        this.user = null;
-        this.project = null;
+        this.ProjectService.close();
+        this.UserService.logout();
         this.$state.go('root');
     }
 
     /** Toggles the collapsed state. */
     toggleCollapse() {
-        this.collapsed = !this.collapsed;
-        sessionStorage.setItem('sidebarCollapsed', this.collapsed);
-        this.updateLayout();
-    }
-
-    /** Update the class on the body depending on the toggle state. */
-    updateLayout() {
-        if (this.collapsed) {
-            document.body.classList.add('layout-collapsed');
-        } else {
-            document.body.classList.remove('layout-collapsed');
-        }
+        this.UiService.toggleSidebar();
     }
 
     /**
@@ -275,6 +227,18 @@ class SidebarComponent {
             result = result || this.$state.current.name === arguments[i];
         }
         return result;
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
+    }
+
+    get user() {
+        return this.UserService.store.currentUser;
+    }
+
+    get collapsed() {
+        return this.UiService.store.sidebar.collapsed;
     }
 }
 

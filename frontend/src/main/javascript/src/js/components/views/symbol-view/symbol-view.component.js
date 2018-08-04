@@ -32,32 +32,25 @@ class SymbolViewComponent {
      * @param $scope
      * @param $stateParams
      * @param {SymbolResource} SymbolResource
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {ToastService} ToastService
      * @param {ActionService} ActionService
      * @param {ClipboardService} ClipboardService
      * @param $state
-     * @param {ActionRecorderService} ActionRecorderService
      * @param dragulaService
      * @param $uibModal
      * @param {SymbolGroupResource} SymbolGroupResource
      */
     // @ngInject
-    constructor($scope, $stateParams, SymbolResource, SessionService, ToastService, ActionService, ClipboardService,
-                $state, dragulaService, ActionRecorderService, $uibModal, SymbolGroupResource) {
+    constructor($scope, $stateParams, SymbolResource, ProjectService, ToastService, ActionService, ClipboardService,
+                $state, dragulaService, $uibModal, SymbolGroupResource) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
         this.ActionService = ActionService;
         this.ClipboardService = ClipboardService;
-        this.ActionRecorderService = ActionRecorderService;
         this.$uibModal = $uibModal;
         this.SymbolGroupResource = SymbolGroupResource;
-
-        /**
-         * The project that is stored in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.ProjectService = ProjectService;
 
         /**
          * The symbol whose actions are managed.
@@ -284,11 +277,6 @@ class SymbolViewComponent {
         }
     }
 
-    openRecorder() {
-        this.ActionRecorderService.open()
-            .then(actions => this.addActions(actions));
-    }
-
     /**
      * Toggles the disabled flag on an action.
      *
@@ -325,6 +313,10 @@ class SymbolViewComponent {
 
             step.symbol = ParametrizedSymbol.fromSymbol(selectedSymbol);
         });
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

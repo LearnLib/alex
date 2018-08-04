@@ -25,27 +25,22 @@ export class SymbolsImportModalComponent {
      * Constructor.
      *
      * @param {SymbolResource} SymbolResource
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {ToastService} ToastService
      * @param {SymbolGroupResource} SymbolGroupResource
      */
     // @ngInject
-    constructor(SymbolResource, SessionService, ToastService, SymbolGroupResource) {
+    constructor(SymbolResource, ProjectService, ToastService, SymbolGroupResource) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
         this.SymbolGroupResource = SymbolGroupResource;
+        this.ProjectService = ProjectService;
 
         /**
          * The error message.
          * @type {String}
          */
         this.errorMessage = null;
-
-        /**
-         * The current project.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
 
         /**
          * The groups in the project.
@@ -114,6 +109,10 @@ export class SymbolsImportModalComponent {
 
     selectGroup(group) {
         this.selectedGroup = group === this.selectedGroup ? null : group;
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

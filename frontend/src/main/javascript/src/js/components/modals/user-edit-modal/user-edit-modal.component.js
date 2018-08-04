@@ -30,19 +30,21 @@ export class UserEditModalComponent {
      * @param {UserResource} UserResource
      * @param {ToastService} ToastService
      * @param {PromptService} PromptService
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
+     * @param {UserService} UserService
      */
     // @ngInject
-    constructor($state, UserResource, ToastService, PromptService, SessionService) {
+    constructor($state, UserResource, ToastService, PromptService, ProjectService, UserService) {
         this.$state = $state;
         this.UserResource = UserResource;
         this.ToastService = ToastService;
         this.PromptService = PromptService;
-        this.SessionService = SessionService;
+        this.ProjectService = ProjectService;
+        this.UserService = UserService;
 
         /**
          * The error message in case the update goes wrong.
-         * @type {null|string}
+         * @type {?string}
          */
         this.error = null;
 
@@ -60,7 +62,7 @@ export class UserEditModalComponent {
 
         /**
          * The model for the input of the users mail.
-         * @type {string}
+         * @type {?string}
          */
         this.email = null;
     }
@@ -77,8 +79,8 @@ export class UserEditModalComponent {
         this.error = null;
         this.UserResource.changeEmail(this.user, this.email)
             .then((user) => {
-                if (this.SessionService.getUser().id === this.user.id) {
-                    this.SessionService.saveUser(user);
+                if (this.currentUser.id === this.user.id) {
+                    this.UserService.login(user);
                 }
 
                 this.resolve.onUpdated(user);
@@ -114,9 +116,9 @@ export class UserEditModalComponent {
         this.error = null;
         this.UserResource.demote(this.user)
             .then((user) => {
-                if (this.SessionService.getUser().id === this.user.id) {
-                    this.SessionService.removeProject();
-                    this.SessionService.removeUser();
+                if (this.currentUser.id === this.user.id) {
+                    this.ProjectService.close();
+                    this.UserService.logout();
                     this.$state.go('root');
                 } else {
                     this.resolve.onUpdated(user);
@@ -146,6 +148,10 @@ export class UserEditModalComponent {
                         this.error = response.data.message;
                     });
             });
+    }
+
+    get currentUser() {
+        return this.UserService.store.currentUser;
     }
 }
 

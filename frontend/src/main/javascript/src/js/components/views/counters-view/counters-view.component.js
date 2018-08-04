@@ -25,22 +25,17 @@ class CountersViewComponent {
     /**
      * Constructor.
      *
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {CounterResource} CounterResource
      * @param {ToastService} ToastService
      * @param $uibModal
      */
     // @ngInject
-    constructor(SessionService, CounterResource, ToastService, $uibModal) {
+    constructor(ProjectService, CounterResource, ToastService, $uibModal) {
         this.CounterResource = CounterResource;
         this.ToastService = ToastService;
         this.$uibModal = $uibModal;
-
-        /**
-         * The project that is in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.ProjectService = ProjectService;
 
         /**
          * The counters of the project.
@@ -141,6 +136,10 @@ class CountersViewComponent {
     _deleteCounter(counter) {
         remove(this.counters, {name: counter.name});
         this.selectedCounters.unselect(counter);
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

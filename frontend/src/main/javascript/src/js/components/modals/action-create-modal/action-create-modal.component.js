@@ -26,13 +26,11 @@ export class ActionCreateModalComponent {
      *
      * @param {ActionService} ActionService
      * @param {SymbolResource} SymbolResource
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      */
     // @ngInject
-    constructor(ActionService, SymbolResource, SessionService) {
+    constructor(ActionService, SymbolResource, ProjectService) {
         this.ActionService = ActionService;
-
-        const project = SessionService.getProject();
 
         /**
          * The model for the new action.
@@ -106,6 +104,7 @@ export class ActionCreateModalComponent {
         };
 
         // get all symbols
+        const project = ProjectService.store.currentProject;
         SymbolResource.getAll(project.id).then(symbols => {
             this.symbols = symbols;
         });
