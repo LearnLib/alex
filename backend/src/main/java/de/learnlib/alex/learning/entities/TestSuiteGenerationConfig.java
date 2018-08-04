@@ -21,6 +21,16 @@ import javax.validation.ValidationException;
 /** The configuration class for the test suite generation. */
 public class TestSuiteGenerationConfig {
 
+    /** Which strategy is used for test generation. */
+    public enum GenerationMethod {
+
+        /** Use discrimination tree. */
+        DT,
+
+        /** Use w method. */
+        W_METHOD
+    }
+
     /** The number of the step. */
     private Long stepNo;
 
@@ -29,6 +39,17 @@ public class TestSuiteGenerationConfig {
 
     /** If concrete parameter values are generated as well. */
     private boolean includeParameterValues;
+
+    /** which method is used. */
+    private GenerationMethod method;
+
+    /** Constructor. */
+    public TestSuiteGenerationConfig() {
+        this.stepNo = 1L;
+        this.name = "test suite";
+        this.includeParameterValues = true;
+        this.method = GenerationMethod.DT;
+    }
 
     public Long getStepNo() {
         return stepNo;
@@ -52,6 +73,14 @@ public class TestSuiteGenerationConfig {
 
     public void setIncludeParameterValues(boolean includeParameterValues) {
         this.includeParameterValues = includeParameterValues;
+    }
+
+    public GenerationMethod getMethod() {
+        return method;
+    }
+
+    public void setMethod(GenerationMethod method) {
+        this.method = method;
     }
 
     /**

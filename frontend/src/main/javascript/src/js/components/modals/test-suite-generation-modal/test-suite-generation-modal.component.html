@@ -25,10 +25,27 @@
     <input type="number" required min="1" max="{{vm.result.steps.length}}" ng-model="vm.config.stepNo"
            class="form-control">
   </div>
-  <div class="checkbox">
-    <label>
-      <input type="checkbox" ng-model="vm.config.includeParameterValues"> Include parameter values
-    </label>
+
+  <p>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" ng-model="vm.config.includeParameterValues"> Include parameter values
+      </label>
+    </div>
+  </p>
+
+  <p>
+    <strong>Test generation based on</strong>
+    <div class="radio mt-0">
+      <label>
+        <input type="radio" ng-model="vm.config.method" name="method" ng-value="'DT'"> Discrimination tree
+      </label>
+    </div>
+    <div class="radio">
+      <label>
+        <input type="radio" ng-model="vm.config.method" name="method" ng-value="'W_METHOD'"> W-Method
+      </label>
+    </div>
   </div>
 
 </div>

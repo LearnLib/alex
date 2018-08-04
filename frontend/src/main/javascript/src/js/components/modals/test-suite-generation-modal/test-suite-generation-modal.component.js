@@ -50,8 +50,9 @@ export const testSuiteGenerationModalComponent = {
             /** The config to use for the generation. */
             this.config = {
                 stepNo: 0,
-                includeParameterValues: false,
+                includeParameterValues: true,
                 name: '',
+                method: 'DT'
             };
         }
 

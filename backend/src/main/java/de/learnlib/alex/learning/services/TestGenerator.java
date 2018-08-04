@@ -25,6 +25,7 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.TestSuiteGenerationConfig;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
+import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseStep;
@@ -39,6 +40,8 @@ import de.learnlib.datastructure.discriminationtree.MultiDTree;
 import de.learnlib.datastructure.discriminationtree.model.AbstractDTNode;
 import de.learnlib.datastructure.discriminationtree.model.AbstractDiscriminationTree;
 import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDiscriminationTree;
+import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.util.automata.conformance.WMethodTestsIterator;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.springframework.stereotype.Service;
@@ -119,27 +122,50 @@ public class TestGenerator {
         testSuite.setProjectId(projectId);
         testDAO.create(user, testSuite);
 
-        // compute test cases based on the dt of the used algorithm.
-        if (learner instanceof TTTLearnerMealy) {
-            final TTTLearnerMealy<String, String> tttLearner = (TTTLearnerMealy<String, String>) learner;
-            final BaseTTTDiscriminationTree<String, Word<String>> tree = tttLearner.getDiscriminationTree();
-            computeTestCases(tree, TTTState::getAccessSequence, (as) -> tttLearner.getHypothesisModel()
-                            .computeOutput(as),
-                    Function.identity(), Function.identity(), result, config, user, projectId, testSuite);
-        } else if (learner instanceof DTLearnerMealy) {
-            final DTLearnerMealy<String, String> dtLearner = (DTLearnerMealy<String, String>) learner;
-            final AbstractWordBasedDiscriminationTree<String, Word<String>, HState<String, Word<String>, Void, String>>
-                    dtree = dtLearner.getDiscriminationTree();
-            computeTestCases(dtree, HState::getAccessSequence, (as) -> dtLearner.getHypothesisModel().computeOutput(as),
-                    Function.identity(), Function.identity(), result, config, user, projectId, testSuite);
-        } else {
-            throw new ValidationException("Can only generate test suites for TTT and DT algorithm.");
+        switch (config.getMethod()) {
+            case DT:
+                if (learner instanceof TTTLearnerMealy) {
+                    final TTTLearnerMealy<String, String> tttLearner = (TTTLearnerMealy<String, String>) learner;
+                    final BaseTTTDiscriminationTree<String, Word<String>> tree = tttLearner.getDiscriminationTree();
+                    computeTestCasesDt(tree, TTTState::getAccessSequence, (as) -> tttLearner.getHypothesisModel()
+                                    .computeOutput(as),
+                            Function.identity(), Function.identity(), result, config, user, projectId, testSuite);
+                } else if (learner instanceof DTLearnerMealy) {
+                    final DTLearnerMealy<String, String> dtLearner = (DTLearnerMealy<String, String>) learner;
+                    final AbstractWordBasedDiscriminationTree<String, Word<String>, HState<String, Word<String>, Void, String>>
+                            dtree = dtLearner.getDiscriminationTree();
+                    computeTestCasesDt(dtree, HState::getAccessSequence, (as) -> dtLearner.getHypothesisModel()
+                                    .computeOutput(as),
+                            Function.identity(), Function.identity(), result, config, user, projectId, testSuite);
+                } else {
+                    throw new ValidationException("Can only generate test suites for TTT and DT algorithm.");
+                }
+                break;
+            case W_METHOD:
+                computeTestCasesWMethod(learner.getHypothesisModel(), user, projectId, testSuite, result, config);
+                break;
+
         }
 
         return testSuite;
     }
 
-    private <DSCR, I, O, D, N extends AbstractDTNode<DSCR, O, D, N>> void computeTestCases(
+    private void computeTestCasesWMethod(MealyMachine<?, String, ?, String> hypothesis, User user, long projectId,
+            TestSuite testSuite, LearnerResult lr, TestSuiteGenerationConfig config) throws NotFoundException {
+
+        final WMethodTestsIterator<String> testsIterator = new WMethodTestsIterator<>(hypothesis, lr.getSigma(), 0);
+        int testNum = 0;
+        while (testsIterator.hasNext()) {
+            final Word<String> word = testsIterator.next();
+            final List<Long> pSymbolIds = convertWordToPSymbolIds(word, lr.getSymbols());
+            final TestCase testCase = new TestCase();
+            testCase.setName(String.valueOf(testNum++));
+            createTestCase(testSuite, testCase, projectId, lr, config, pSymbolIds, hypothesis.computeOutput(word));
+            testDAO.create(user, testCase);
+        }
+    }
+
+    private <DSCR, I, O, D, N extends AbstractDTNode<DSCR, O, D, N>> void computeTestCasesDt(
             AbstractDiscriminationTree<DSCR, I, O, D, N> tree,
             Function<D, Word<String>> accessSequenceExtractor,
             Function<Word<String>, Word<String>> asTransformer,
@@ -178,25 +204,8 @@ public class TestGenerator {
                         testCase.setName(e.getData() + " " + config.getName() + " " + testCaseNumber);
                     }
 
-                    setSteps(lr.getResetSymbol(), testCase, testCase.getPreSteps(), config.isIncludeParameterValues());
-                    setStepsByPSymbolIds(lr, testCase, testCaseSymbols, config.isIncludeParameterValues());
-                    setSteps(lr.getPostSymbol(), testCase, testCase.getPostSteps(), config.isIncludeParameterValues());
-                    testCase.setProjectId(projectId);
-                    testCase.setParent(testSuite);
-                    testSuite.addTest(testCase);
-
                     outcomeList.addAll(convertWordToStringList(inEdge));
-                    for (int i = 0; i < outcomeList.size(); i++) {
-                        final TestCaseStep step = testCase.getSteps().get(i);
-                        if (outcomeList.get(i).startsWith(ExecuteResult.DEFAULT_SUCCESS_OUTPUT)) {
-                            step.setShouldFail(false);
-                        } else if (outcomeList.get(i).startsWith(ExecuteResult.DEFAULT_ERROR_OUTPUT)) {
-                            step.setShouldFail(true);
-                        } else {
-                            step.setShouldFail(false);
-                        }
-                    }
-
+                    createTestCase(testSuite, testCase, projectId, lr, config, testCaseSymbols, Word.fromList(outcomeList));
                     testDAO.create(user, testCase);
 
                     outcomeList.clear();
@@ -219,6 +228,27 @@ public class TestGenerator {
                 testDAO.create(user, testCase);
 
                 accessSequenceAsList.clear();
+            }
+        }
+    }
+
+    private void createTestCase(TestSuite testSuite, TestCase testCase, long projectId, LearnerResult lr,
+            TestSuiteGenerationConfig config, List<Long> pSymbolIds, Word<String> outputs) throws NotFoundException {
+        setSteps(lr.getResetSymbol(), testCase, testCase.getPreSteps(), config.isIncludeParameterValues());
+        setStepsByPSymbolIds(lr, testCase, pSymbolIds, config.isIncludeParameterValues());
+        setSteps(lr.getPostSymbol(), testCase, testCase.getPostSteps(), config.isIncludeParameterValues());
+        testCase.setProjectId(projectId);
+        testCase.setParent(testSuite);
+        testSuite.addTest(testCase);
+
+        for (int i = 0; i < outputs.size(); i++) {
+            final TestCaseStep step = testCase.getSteps().get(i);
+            if (outputs.getSymbol(i).startsWith(ExecuteResult.DEFAULT_SUCCESS_OUTPUT)) {
+                step.setShouldFail(false);
+            } else if (outputs.getSymbol(i).startsWith(ExecuteResult.DEFAULT_ERROR_OUTPUT)) {
+                step.setShouldFail(true);
+            } else {
+                step.setShouldFail(false);
             }
         }
     }
