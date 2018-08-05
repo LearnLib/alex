@@ -41,6 +41,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -470,10 +472,10 @@ public class TestDAOImpl implements TestDAO {
 
     @Override
     @Transactional
-    public List<TestResult> getResults(User user, Long projectId, Long testId) throws NotFoundException {
+    public Page<TestResult> getResults(User user, Long projectId, Long testId, Pageable pageable) throws NotFoundException {
         get(user, projectId, testId);
 
-        final List<TestResult> results = testResultRepository.findAllByTest_IdOrderByTestReport_StartDateDesc(testId);
+        final Page<TestResult> results = testResultRepository.findAllByTest_IdOrderByTestReport_StartDateDesc(testId, pageable);
         results.forEach(this::loadLazyRelations);
 
         return results;

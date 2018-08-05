@@ -24,6 +24,8 @@ import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestResult;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -217,11 +219,13 @@ public interface TestDAO {
      *         The ID of the project.
      * @param testId
      *         The ID of the test.
+     * @param pageable
+     *         The page object.
      * @return The test results.
      * @throws NotFoundException
      *         If the project or test could not be found.
      */
-    List<TestResult> getResults(User user, Long projectId, Long testId) throws NotFoundException;
+    Page<TestResult> getResults(User user, Long projectId, Long testId, Pageable pageable) throws NotFoundException;
 
     /**
      * Checks if the user has access to the test.

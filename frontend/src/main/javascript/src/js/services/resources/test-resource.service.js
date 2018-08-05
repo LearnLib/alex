@@ -166,10 +166,12 @@ export class TestResource {
      *
      * @param {number} projectId The ID of the project.
      * @param {number} testId The ID of the test.
+     * @param {number} page
+     * @param {number} size
      * @return {*}
      */
-    getResults(projectId, testId) {
-        return this.$http.get(`${apiUrl}/projects/${projectId}/tests/${testId}/results`)
+    getResults(projectId, testId, page = 0, size = 20) {
+        return this.$http.get(`${apiUrl}/projects/${projectId}/tests/${testId}/results?page=${page}&size=${size}`)
             .then(response => response.data);
     }
 }

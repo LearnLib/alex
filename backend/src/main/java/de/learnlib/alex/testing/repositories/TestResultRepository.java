@@ -17,11 +17,11 @@
 package de.learnlib.alex.testing.repositories;
 
 import de.learnlib.alex.testing.entities.TestResult;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * Repository for test results.
@@ -34,9 +34,11 @@ public interface TestResultRepository extends JpaRepository<TestResult, Long> {
      *
      * @param testId
      *         The ID of the test.
+     * @param pageable
+     *         The pageable object.
      * @return The test results in descending order.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    List<TestResult> findAllByTest_IdOrderByTestReport_StartDateDesc(Long testId);
+    Page<TestResult> findAllByTest_IdOrderByTestReport_StartDateDesc(Long testId, Pageable pageable);
 }

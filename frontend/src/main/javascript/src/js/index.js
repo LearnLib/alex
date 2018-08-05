@@ -98,6 +98,7 @@ import {symbolSelectModalComponent} from './components/modals/symbol-select-moda
 import {symbolsExportModalComponent} from './components/modals/symbols-export-modal/symbols-export-modal.component';
 import {testSuiteGenerationModalComponent} from './components/modals/test-suite-generation-modal/test-suite-generation-modal.component';
 import {userCreateModalComponent} from './components/modals/user-create-modal/user-create-modal.component';
+import {paginationComponent} from './components/pagination/pagination.component';
 import {symbolParametersComponent} from './components/symbol-parameters/symbol-parameters.component';
 import {symbolSelectDropdownComponent} from './components/symbol-select-dropdown/symbol-select-dropdown.component';
 import {learnerResultListItemComponent} from './components/views/learner-results-view/learner-result-list-item/learner-result-list-item.component';
@@ -510,6 +511,7 @@ angular
     .component('symbolParameters', symbolParametersComponent)
     .component('symbolSelectDropdown', symbolSelectDropdownComponent)
     .component('testCaseExpectedResult', testCaseExpectedResultComponent)
+    .component('pagination', paginationComponent)
     .component('testSuiteTree', testSuiteTreeComponent);
 
 angular.bootstrap(document, ['ALEX']);

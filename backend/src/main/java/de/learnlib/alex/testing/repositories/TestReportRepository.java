@@ -17,11 +17,11 @@
 package de.learnlib.alex.testing.repositories;
 
 import de.learnlib.alex.testing.entities.TestReport;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /** The repository for test reports. */
 @Repository
@@ -43,11 +43,13 @@ public interface TestReportRepository extends JpaRepository<TestReport, Long> {
      *
      * @param projectId
      *         The id of the project.
+     * @param pageable
+     *         The pageable object.
      * @return The test reports.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    List<TestReport> findAllByProject_Id(Long projectId);
+    Page<TestReport> findAllByProject_Id(Long projectId, Pageable pageable);
 
     /**
      * Delete all test reports by project id.

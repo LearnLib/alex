@@ -43,13 +43,31 @@ export const testCaseResultsViewComponent = {
              */
             this.results = [];
 
+            /** The current page object. */
+            this.page = {};
+
             this.testResource.get(this.project.id, $stateParams.testId)
                 .then(test => {
                     this.test = test;
-                    return this.testResource.getResults(this.project.id, this.test.id)
-                        .then(results => this.results = results);
+                    return this.loadTestResults();
                 })
                 .catch(console.error);
+        }
+
+        loadTestResults(page = 0) {
+            return this.testResource.getResults(this.project.id, this.test.id, page)
+                .then(page => {
+                    this.page = page;
+                    this.results = page.content;
+                });
+        }
+
+        nextPage() {
+            this.loadTestResults(Math.min(this.page.totalPages, this.page.number + 1));
+        }
+
+        previousPage() {
+            this.loadTestResults(Math.max(0, this.page.number - 1));
         }
 
         get project() {

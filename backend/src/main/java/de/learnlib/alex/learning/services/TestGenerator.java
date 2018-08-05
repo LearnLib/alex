@@ -25,7 +25,6 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.TestSuiteGenerationConfig;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
-import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseStep;
@@ -144,7 +143,8 @@ public class TestGenerator {
             case W_METHOD:
                 computeTestCasesWMethod(learner.getHypothesisModel(), user, projectId, testSuite, result, config);
                 break;
-
+            default:
+                break;
         }
 
         return testSuite;

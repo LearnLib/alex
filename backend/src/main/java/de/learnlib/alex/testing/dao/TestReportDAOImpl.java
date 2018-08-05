@@ -26,6 +26,8 @@ import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -81,11 +83,11 @@ public class TestReportDAOImpl implements TestReportDAO {
 
     @Override
     @Transactional
-    public List<TestReport> get(User user, Long projectId) throws NotFoundException {
+    public Page<TestReport> getAll(User user, Long projectId, Pageable pageable) throws NotFoundException {
         final Project project = projectRepository.findOne(projectId);
         projectDAO.checkAccess(user, project);
 
-        final List<TestReport> testReports = testReportRepository.findAllByProject_Id(projectId);
+        final Page<TestReport> testReports = testReportRepository.findAllByProject_Id(projectId, pageable);
         testReports.forEach(this::loadLazyRelations);
         return testReports;
     }

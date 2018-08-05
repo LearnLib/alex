@@ -21,6 +21,8 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.testing.entities.TestReport;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -48,11 +50,13 @@ public interface TestReportDAO {
      *         The user.
      * @param projectId
      *         The id of the project.
+     * @param pageable
+     *         The pageable object.
      * @return The reports in the project.
      * @throws NotFoundException
      *         If the project could not be found.
      */
-    List<TestReport> get(User user, Long projectId) throws NotFoundException;
+    Page<TestReport> getAll(User user, Long projectId, Pageable pageable) throws NotFoundException;
 
     /**
      * Get a single test report.

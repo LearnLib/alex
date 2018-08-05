@@ -38,6 +38,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 
 import javax.annotation.security.RolesAllowed;
@@ -460,8 +462,8 @@ public class TestResource {
     @DELETE
     @Path("/batch/{ids}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId,
-            @PathParam("ids") IdsList ids) throws NotFoundException {
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("ids") IdsList ids)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         try {
@@ -483,6 +485,10 @@ public class TestResource {
      *         The ID of the project.
      * @param testId
      *         The ID of the test.
+     * @param page
+     *         The page number.
+     * @param size
+     *         The number of items in the page.
      * @return All test results of a test.
      * @throws NotFoundException
      *         If the project or test could not be found.
@@ -490,10 +496,10 @@ public class TestResource {
     @GET
     @Path("/{testId}/results")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getResults(@PathParam("project_id") Long projectId, @PathParam("testId") Long testId)
-            throws NotFoundException {
+    public Response getResults(@PathParam("project_id") Long projectId, @PathParam("testId") Long testId,
+            @QueryParam("page") int page, @QueryParam("size") int size) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        final List<TestResult> results = testDAO.getResults(user, projectId, testId);
+        final Page<TestResult> results = testDAO.getResults(user, projectId, testId, new PageRequest(page, size));
         return Response.ok(results).build();
     }
 }
