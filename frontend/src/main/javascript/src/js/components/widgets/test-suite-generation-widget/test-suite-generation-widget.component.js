@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-export const testSuiteGenerationModalComponent = {
-    template: require('./test-suite-generation-modal.component.html'),
+export const testSuiteGenerationWidgetComponent = {
+    template: require('./test-suite-generation-widget.component.html'),
     bindings: {
-        resolve: '=',
-        close: '&',
-        dismiss: '&'
+        result: '=',
+        stepNo: '='
     },
     controllerAs: 'vm',
-    controller: class TestSuiteGenerationModalComponent {
+    controller: class TestSuiteGenerationWidgetComponent {
 
         /**
          * Constructor.
@@ -41,12 +40,6 @@ export const testSuiteGenerationModalComponent = {
              */
             this.result = null;
 
-            /**
-             * The error message.
-             * @type {?string}
-             */
-            this.errorMessage = null;
-
             /** The config to use for the generation. */
             this.config = {
                 stepNo: 0,
@@ -57,26 +50,24 @@ export const testSuiteGenerationModalComponent = {
         }
 
         $onInit() {
-            this.result = this.resolve.result;
-            this.config.stepNo = this.resolve.stepNo;
+            this.config.stepNo = this.stepNo + 1;
             this.config.name = `TestNo ${this.result.testNo} (Generated)`;
         }
 
-        generate() {
+        generateTestSuite() {
             this.errorMessage = null;
 
             if (this.config.name.trim() === '') {
-                this.errorMessage = 'The name may not be empty.';
+                this.toastService.danger(`The name may not be empty`);
                 return;
             }
 
             this.learnResultResource.generateTestSuite(this.result.project, this.result.testNo, this.config)
-                .then(testSuite => {
+                .then(() => {
                     this.toastService.success('The test suite has been generated.');
-                    this.close({$value: testSuite});
                 })
                 .catch(err => {
-                    this.errorMessage = `The test suite could not be generated. ${err.data.message}`;
+                    this.toastService.danger(`The test suite could not ne generated. ${err.data.message}`);
                 });
         }
     }

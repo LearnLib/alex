@@ -97,11 +97,12 @@ import {htmlElementPickerComponent} from './components/html-element-picker/html-
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
 import {symbolSelectModalComponent} from './components/modals/symbol-select-modal/symbol-select-modal.component';
 import {symbolsExportModalComponent} from './components/modals/symbols-export-modal/symbols-export-modal.component';
-import {testSuiteGenerationModalComponent} from './components/modals/test-suite-generation-modal/test-suite-generation-modal.component';
 import {userCreateModalComponent} from './components/modals/user-create-modal/user-create-modal.component';
 import {paginationComponent} from './components/pagination/pagination.component';
 import {symbolParametersComponent} from './components/symbol-parameters/symbol-parameters.component';
 import {symbolSelectDropdownComponent} from './components/symbol-select-dropdown/symbol-select-dropdown.component';
+import {testCaseGenerationWidgetComponent} from './components/widgets/test-case-generation-widget/test-case-generation-widget.component';
+import {testSuiteGenerationWidgetComponent} from './components/widgets/test-suite-generation-widget/test-suite-generation-widget.component';
 import {learnerResultListItemComponent} from './components/views/learner-results-view/learner-result-list-item/learner-result-list-item.component';
 import {learnerResultPanelComponent} from './components/learner-result-panel/learner-result-panel.component';
 import {loadScreenComponent} from './components/load-screen/load-screen.component';
@@ -361,7 +362,6 @@ angular
     .component('separatingWordModal', separatingWordModalComponent)
     .component('testsMoveModal', testsMoveModalComponent)
     .component('symbolSelectModal', symbolSelectModalComponent)
-    .component('testSuiteGenerationModal', testSuiteGenerationModalComponent)
 
     // view components
     .component('aboutView', aboutViewComponent)
@@ -423,6 +423,8 @@ angular
     .component('latestLearnResultWidget', latestLearnerResultWidgetComponent)
     .component('projectDetailsWidget', projectDetailsWidgetComponent)
     .component('latestTestReportWidget', latestTestReportWidgetComponent)
+    .component('testCaseGenerationWidget', testCaseGenerationWidgetComponent)
+    .component('testSuiteGenerationWidget', testSuiteGenerationWidgetComponent)
 
     // web action forms
     .component('alertAcceptDismissActionForm', alertAcceptDismissActionFormComponent)

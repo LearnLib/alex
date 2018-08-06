@@ -236,26 +236,27 @@ class HypothesisComponent {
         const self = this;
         if (this.isSelectable) {
             this.svg.selectAll('.edgeLabel tspan').on('click', function (d) {
-                const edgeEl = self.svg.select(`.edgePath[id="edge-${d.name}"]`);
 
-                let refs = edgeEl.attr('data-refs');
-                refs = refs == null ? [] : JSON.parse(refs);
-
-                const i = refs.findIndex(s => s === this.textContent);
-                if (i > -1) {
-                    refs.splice(i, 1);
-                } else {
-                    refs.push(this.textContent);
-                }
-
-                if (this.classList.contains('selected')) {
-                    this.classList.remove('selected');
-                } else {
-                    this.classList.add('selected');
-                }
-
-                edgeEl.classed('selected', refs.length > 0);
-                edgeEl.attr('data-refs', JSON.stringify(refs));
+                // const edgeEl = self.svg.select(`.edgePath[id="edge-${d.name}"]`);
+                //
+                // let refs = edgeEl.attr('data-refs');
+                // refs = refs == null ? [] : JSON.parse(refs);
+                //
+                // const i = refs.findIndex(s => s === this.textContent);
+                // if (i > -1) {
+                //     refs.splice(i, 1);
+                // } else {
+                //     refs.push(this.textContent);
+                // }
+                //
+                // if (this.classList.contains('selected')) {
+                //     this.classList.remove('selected');
+                // } else {
+                //     this.classList.add('selected');
+                // }
+                //
+                // edgeEl.classed('selected', refs.length > 0);
+                // edgeEl.attr('data-refs', JSON.stringify(refs));
 
                 const edges = self.edgeData[d.v][d.w];
                 const edge = edges.filter(e => (e.input + ' / ' + e.output) === this.textContent)[0];

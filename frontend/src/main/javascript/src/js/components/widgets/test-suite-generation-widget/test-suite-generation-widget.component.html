@@ -1,0 +1,58 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <strong>Generate test suite</strong>
+  </div>
+  <div class="panel-body">
+    <div class="form-group">
+      <label>Name</label>
+      <input
+        type="text"
+        required
+        minlength="1"
+        ng-model="vm.config.name"
+        class="form-control"
+        placeholder="The name of the generated test suite"
+      >
+    </div>
+    <div class="form-group">
+      <label>Step No</label>
+      <input
+        type="number"
+        required
+        min="1"
+        max="{{vm.result.steps.length}}"
+        ng-model="vm.config.stepNo"
+        class="form-control"
+      >
+    </div>
+
+    <p>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" ng-model="vm.config.includeParameterValues"> Include parameter values
+      </label>
+    </div>
+    </p>
+
+    <p>
+      <strong>Test generation based on</strong>
+    <div class="radio mt-0">
+      <label>
+        <input type="radio" ng-model="vm.config.method" name="method" ng-value="'DT'"> Discrimination tree
+      </label>
+    </div>
+    <div class="radio">
+      <label>
+        <input type="radio" ng-model="vm.config.method" name="method" ng-value="'W_METHOD'"> W-Method
+      </label>
+    </div>
+    <div class="radio">
+      <label>
+        <input type="radio" ng-model="vm.config.method" name="method" ng-value="'WP_METHOD'"> Wp-Method
+      </label>
+    </div>
+  </div>
+  <div class="panel-footer text-right">
+    <button class="btn btn-primary btn-sm" ng-click="vm.generateTestSuite()">Generate</button>
+  </div>
+</div>

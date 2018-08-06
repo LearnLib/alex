@@ -73,6 +73,9 @@ class LearnerResultPanelComponent {
          * @type {number}
          */
         this.mode = this.modes.HYPOTHESIS;
+
+        this.view = 'DEFAULT';
+
     }
 
     $onInit() {
@@ -92,16 +95,6 @@ class LearnerResultPanelComponent {
         this.EventBus.on(events.HYPOTHESIS_LAYOUT_UPDATED, (evt, data) => {
             this.layoutSettings = data.settings;
         }, this.$scope);
-    }
-
-    generateTestSuite() {
-        this.$uibModal.open({
-            component: 'testSuiteGenerationModal',
-            resolve: {
-                result: () => this.result,
-                stepNo: () => this.pointer + 1
-            }
-        });
     }
 
     /**
