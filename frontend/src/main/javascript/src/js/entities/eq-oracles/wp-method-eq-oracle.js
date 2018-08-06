@@ -19,7 +19,7 @@ import {eqOracleType} from '../../constants';
 /**
  * The model for the wmethod eq oracle.
  */
-export class WMethodEqOracle {
+export class WpMethodEqOracle {
 
     /**
      * Constructor.
@@ -27,7 +27,7 @@ export class WMethodEqOracle {
      * @param {number} maxDepth
      */
     constructor(maxDepth = 0) {
-        this.type = eqOracleType.WMETHOD;
+        this.type = eqOracleType.WP_METHOD;
         this.maxDepth = maxDepth;
     }
 }

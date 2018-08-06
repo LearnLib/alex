@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-import {eqOracleType} from '../../constants';
-
-/**
- * The model for the wmethod eq oracle.
- */
-export class WMethodEqOracle {
-
-    /**
-     * Constructor.
-     *
-     * @param {number} maxDepth
-     */
-    constructor(maxDepth = 0) {
-        this.type = eqOracleType.WMETHOD;
-        this.maxDepth = maxDepth;
-    }
-}
+export const wpMethodEqOracleFormComponent = {
+    template: require('./wp-method-eq-oracle-form.component.html'),
+    bindings: {
+        form: '=',
+        eqOracle: '='
+    },
+    controllerAs: 'vm'
+};

@@ -19,22 +19,22 @@ package de.learnlib.alex.learning.entities.learnlibproxies.eqproxies;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
-import de.learnlib.oracle.equivalence.WMethodEQOracle;
+import de.learnlib.oracle.equivalence.WpMethodEQOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
 
 import java.io.Serializable;
 
 /**
- * Proxy around a WMethodEQOracle.
+ * Proxy around a WpMethodEQOracle.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
  *
  * @see de.learnlib.oracle.equivalence.WMethodEQOracle
  */
-@JsonTypeName("wmethod")
-public class WMethodEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
+@JsonTypeName("wp_method")
+public class WpMethodEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
 
-    private static final long serialVersionUID = 2016142289217760178L;
+    private static final long serialVersionUID = -4694711328777712181L;
 
     /** The maximal depth to explore. */
     private int maxDepth;
@@ -42,40 +42,28 @@ public class WMethodEQOracleProxy extends AbstractEquivalenceOracleProxy impleme
     /**
      * Default constructor.
      */
-    public WMethodEQOracleProxy() {
+    public WpMethodEQOracleProxy() {
         this.maxDepth = 0;
     }
-
-    /**
-     * Get the maximal depth to explore, i.e. the maximal length of the words to test.
-     *
-     * @return The maximal depth to explore.
-     */
-    public int getMaxDepth() {
-        return maxDepth;
-    }
-
-    /**
-     * Set a new maximum for the exploration level.
-     *
-     * @param maxDepth
-     *         The new maximal depth to explore.
-     */
-    public void setMaxDepth(int maxDepth) {
-        this.maxDepth = maxDepth;
-    }
-
 
     @Override
     public void checkParameters() throws IllegalArgumentException {
         if (maxDepth < 0) {
-            throw new IllegalArgumentException("W Method EQ Oracle: max depth must not be negative.");
+            throw new IllegalArgumentException("Wp Method EQ Oracle: max depth must not be negative.");
         }
     }
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
             MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
-        return new WMethodEQOracle.MealyWMethodEQOracle<>(membershipOracle, this.maxDepth, batchSize);
+        return new WpMethodEQOracle.MealyWpMethodEQOracle<>(membershipOracle, maxDepth, batchSize);
+    }
+
+    public int getMaxDepth() {
+        return maxDepth;
+    }
+
+    public void setMaxDepth(int maxDepth) {
+        this.maxDepth = maxDepth;
     }
 }

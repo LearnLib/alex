@@ -37,7 +37,8 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "sample", value = SampleEQOracleProxy.class),
         @JsonSubTypes.Type(name = "wmethod", value = WMethodEQOracleProxy.class),
         @JsonSubTypes.Type(name = "hypothesis", value = HypothesisEQOracleProxy.class),
-        @JsonSubTypes.Type(name = "test_suite", value = TestSuiteEQOracleProxy.class)
+        @JsonSubTypes.Type(name = "test_suite", value = TestSuiteEQOracleProxy.class),
+        @JsonSubTypes.Type(name = "wp_method", value = WpMethodEQOracleProxy.class)
 })
 public abstract class AbstractEquivalenceOracleProxy implements Serializable {
 

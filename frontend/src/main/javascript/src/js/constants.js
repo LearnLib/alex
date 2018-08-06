@@ -42,6 +42,7 @@ export const eqOracleType = {
     COMPLETE: 'complete',
     SAMPLE: 'sample',
     WMETHOD: 'wmethod',
+    WP_METHOD: 'wp_method',
     HYPOTHESIS: 'hypothesis',
     TEST_SUITE: 'test_suite'
 };

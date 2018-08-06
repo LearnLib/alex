@@ -28,7 +28,10 @@ public class TestSuiteGenerationConfig {
         DT,
 
         /** Use w method. */
-        W_METHOD
+        W_METHOD,
+
+        /** Use the wp method. */
+        WP_METHOD,
     }
 
     /** The number of the step. */

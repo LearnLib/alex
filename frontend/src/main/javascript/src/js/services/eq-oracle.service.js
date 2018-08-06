@@ -21,6 +21,7 @@ import {RandomEqOracle} from '../entities/eq-oracles/random-eq-oracle';
 import {SampleEqOracle} from '../entities/eq-oracles/sample-eq-oracle';
 import {TestSuiteEqOracle} from '../entities/eq-oracles/test-suite-eq-oracle';
 import {WMethodEqOracle} from '../entities/eq-oracles/w-method-eq-oracle';
+import {WpMethodEqOracle} from '../entities/eq-oracles/wp-method-eq-oracle';
 
 /**
  * The service to create new eq oracles.
@@ -47,6 +48,8 @@ export class EqOracleService {
                 return new HypothesisEqOracle(obj.hypothesis);
             case eqOracleType.TEST_SUITE:
                 return new TestSuiteEqOracle(obj.testSuiteId, obj.includeChildTestSuites);
+            case eqOracleType.WP_METHOD:
+                return new WpMethodEqOracle(obj.maxDepth);
             default:
                 return null;
         }

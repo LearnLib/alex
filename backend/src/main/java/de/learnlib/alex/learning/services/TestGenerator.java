@@ -41,6 +41,7 @@ import de.learnlib.datastructure.discriminationtree.model.AbstractDiscrimination
 import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDiscriminationTree;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.util.automata.conformance.WMethodTestsIterator;
+import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,7 @@ import javax.inject.Inject;
 import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -141,7 +143,12 @@ public class TestGenerator {
                 }
                 break;
             case W_METHOD:
-                computeTestCasesWMethod(learner.getHypothesisModel(), user, projectId, testSuite, result, config);
+                computeTestCasesWMethod(learner.getHypothesisModel(), user, projectId, testSuite, result, config,
+                        new WMethodTestsIterator<>(learner.getHypothesisModel(), result.getSigma(), 0));
+                break;
+            case WP_METHOD:
+                computeTestCasesWMethod(learner.getHypothesisModel(), user, projectId, testSuite, result, config,
+                        new WpMethodTestsIterator<>(learner.getHypothesisModel(), result.getSigma(), 0));
                 break;
             default:
                 break;
@@ -151,17 +158,15 @@ public class TestGenerator {
     }
 
     private void computeTestCasesWMethod(MealyMachine<?, String, ?, String> hypothesis, User user, long projectId,
-            TestSuite testSuite, LearnerResult lr, TestSuiteGenerationConfig config) throws NotFoundException {
-
-        final WMethodTestsIterator<String> testsIterator = new WMethodTestsIterator<>(hypothesis, lr.getSigma(), 0);
+            TestSuite testSuite, LearnerResult lr, TestSuiteGenerationConfig config,
+            Iterator<Word<String>> testsIterator) throws NotFoundException {
         int testNum = 0;
         while (testsIterator.hasNext()) {
             final Word<String> word = testsIterator.next();
             final List<Long> pSymbolIds = convertWordToPSymbolIds(word, lr.getSymbols());
             final TestCase testCase = new TestCase();
             testCase.setName(String.valueOf(testNum++));
-            createTestCase(testSuite, testCase, projectId, lr, config, pSymbolIds, hypothesis.computeOutput(word));
-            testDAO.create(user, testCase);
+            createTestCase(user, testSuite, testCase, projectId, lr, config, pSymbolIds, hypothesis.computeOutput(word));
         }
     }
 
@@ -205,8 +210,7 @@ public class TestGenerator {
                     }
 
                     outcomeList.addAll(convertWordToStringList(inEdge));
-                    createTestCase(testSuite, testCase, projectId, lr, config, testCaseSymbols, Word.fromList(outcomeList));
-                    testDAO.create(user, testCase);
+                    createTestCase(user, testSuite, testCase, projectId, lr, config, testCaseSymbols, Word.fromList(outcomeList));
 
                     outcomeList.clear();
                     testCaseSymbols.clear();
@@ -232,7 +236,7 @@ public class TestGenerator {
         }
     }
 
-    private void createTestCase(TestSuite testSuite, TestCase testCase, long projectId, LearnerResult lr,
+    private void createTestCase(User user, TestSuite testSuite, TestCase testCase, long projectId, LearnerResult lr,
             TestSuiteGenerationConfig config, List<Long> pSymbolIds, Word<String> outputs) throws NotFoundException {
         setSteps(lr.getResetSymbol(), testCase, testCase.getPreSteps(), config.isIncludeParameterValues());
         setStepsByPSymbolIds(lr, testCase, pSymbolIds, config.isIncludeParameterValues());
@@ -251,6 +255,8 @@ public class TestGenerator {
                 step.setShouldFail(false);
             }
         }
+
+        testDAO.create(user, testCase);
     }
 
     private void setSteps(ParameterizedSymbol pSymbol, TestCase testCase, List<TestCaseStep> stepList,
