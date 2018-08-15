@@ -339,8 +339,6 @@ public class TestService {
                 .map(TestExecutionResult::new)
                 .collect(Collectors.toList());
 
-        final List<String> failureMessageParts = new ArrayList<>();
-
         boolean passed = true;
         for (int i = 0; i < outputs.size(); i++) {
             final ExecuteResult output = outputs.get(i);
@@ -348,17 +346,9 @@ public class TestService {
 
             final TestCaseStep step = testCase.getSteps().get(i);
             sulOutputs.get(i).setSymbol(step.getPSymbol().getSymbol());
-
-            if (!output.isSuccess()) {
-                final String msg = step.getPSymbol().getSymbol().getName() + ": " + output.getOutput();
-                failureMessageParts.add(msg);
-            }
         }
 
-        final String failureMessage = failureMessageParts.isEmpty() ? "" : String.join(", ", failureMessageParts);
-
-        final TestCaseResult result =
-                new TestCaseResult(testCase, sulOutputs, passed, time, String.join(", ", failureMessage));
+        final TestCaseResult result = new TestCaseResult(testCase, sulOutputs, passed, time);
         results.put(testCase.getId(), result);
 
         LOGGER.info(LoggerMarkers.LEARNER, "Finished executing test[id={}], passed=" + String.valueOf(passed), testCase.getId());
