@@ -47,6 +47,7 @@ export const testCaseGenerationWidgetComponent = {
             this.eventBus.on(events.HYPOTHESIS_LABEL_SELECTED, (evt, data) => {
                 const step = TestCaseStep.fromSymbol(this.symbolMap[data.input].symbol);
                 step.shouldFail = !data.output.startsWith('Ok');
+                step.pSymbol.parameterValues = this.symbolMap[data.input].parameterValues;
                 this.testCase.steps.push(step);
             }, $scope);
         }
