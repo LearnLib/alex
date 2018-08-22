@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import net.automatalib.words.Word;
 
 import java.util.List;
+import java.util.Objects;
 
 /** Helper class for the output difference of two hypotheses. */
 public class SeparatingWord {
@@ -79,5 +80,20 @@ public class SeparatingWord {
     @JsonProperty("output2")
     public List<String> getOutput2List() {
         return output2.asList();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SeparatingWord)) return false;
+        SeparatingWord that = (SeparatingWord) o;
+        return Objects.equals(getInput(), that.getInput()) &&
+                Objects.equals(getOutput1(), that.getOutput1()) &&
+                Objects.equals(getOutput2(), that.getOutput2());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getInput(), getOutput1(), getOutput2());
     }
 }

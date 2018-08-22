@@ -144,11 +144,6 @@ class ResultsCompareViewComponent {
         let hypLeft = this.panels[0].steps[this.panelPointers[0]].hypothesis;
         let hypRight = this.panels[1].steps[this.panelPointers[1]].hypothesis;
 
-        if (invert) {
-            hypLeft = this.panels[1].steps[this.panelPointers[1]].hypothesis;
-            hypRight = this.panels[0].steps[this.panelPointers[0]].hypothesis;
-        }
-
         this.LearnerResource.getDifferenceTree(hypLeft, hypRight)
             .then(data => {
                 if (data.edges.length === 0) {

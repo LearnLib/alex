@@ -6,20 +6,10 @@
                 <i class="fa fa-fw fa-bolt"></i> Separating word
             </button>
 
-            &nbsp;
-            <div class="btn-group btn-group-sm" uib-dropdown>
-                <button class="btn btn-default btn-dropdown" uib-dropdown-toggle>
-                    <i class="fa fa-fw fa-sitemap"></i> Difference tree <i class="fa fa-fw fa-caret-down"></i>
-                </button>
-                <ul uib-dropdown-menu class="dropdown-menu" role="menu">
-                    <li>
-                        <a href ng-click="vm.showDifferenceTree(false)">Test left on right</a>
-                    </li>
-                    <li>
-                        <a href ng-click="vm.showDifferenceTree(true)">Test right on left</a>
-                    </li>
-                </ul>
-            </div>
+            <button class="btn btn-sm btn-default"
+                    ng-click="vm.showDifferenceTree()">
+                <i class="fa fa-fw fa-sitemap"></i> Differences
+            </button>
         </div>
 
         <button class="btn btn-sm btn-success pull-right"

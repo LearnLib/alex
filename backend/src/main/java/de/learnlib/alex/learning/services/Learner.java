@@ -58,9 +58,11 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -529,24 +531,84 @@ public class Learner {
     }
 
     /**
-     * Tests all words from the transition cover from <code>mealyProxy1</code> on <code>mealyProxy2</code>. Words with a
-     * different output are added to the difference.
+     * Find differences between two models.
      *
      * @param mealyProxy1
-     *         The hypothesis that is tested on the other.
+     *         The one model.
      * @param mealyProxy2
-     *         The hypothesis that is used for testing.
-     * @return The difference tree.
+     *         The other model.
+     * @return The differences found as a minimized, incomplete mealy machine
      */
-    public CompactMealy<String, String> differenceTree(final CompactMealyMachineProxy mealyProxy1,
+    public CompactMealy<String, String> differenceTree(
+            final CompactMealyMachineProxy mealyProxy1,
             final CompactMealyMachineProxy mealyProxy2) {
         final Alphabet<String> alphabet = mealyProxy1.createAlphabet();
-
         final CompactMealy<String, String> hyp1 = mealyProxy2.createMealyMachine(alphabet);
         final CompactMealy<String, String> hyp2 = mealyProxy1.createMealyMachine(alphabet);
 
         // the words where the output differs
-        final List<SeparatingWord> diffs = new ArrayList<>();
+        final Set<SeparatingWord> diffs = new HashSet<>();
+        findDifferences(hyp1, hyp2, alphabet, diffs);
+        findDifferences(hyp2, hyp1, alphabet, diffs);
+
+        // build tree
+        // the tree is organized as an incomplete mealy machine
+        final CompactMealy<String, String> diffTree = new CompactMealy<>(alphabet);
+        diffTree.addInitialState();
+
+        for (final SeparatingWord diff : diffs) {
+            int currentState = diffTree.getInitialState();
+
+            for (int k = 0; k < diff.getInput().length(); k++) {
+                final String sym = diff.getInput().getSymbol(k);
+
+                if (diffTree.getTransition(currentState, sym) == null) {
+                    // if the transition does not yet exist in the tree
+                    // create a new state in the tree and add the same transition
+                    final int newState = diffTree.addState();
+
+                    String out = diff.getOutput2().getSymbol(k);
+                    if (k == diff.getInput().length() - 1) {
+                        out += " vs. " + diff.getOutput1().getSymbol(k);
+                    }
+
+                    final CompactMealyTransition<String> t = new CompactMealyTransition<>(newState, out);
+                    diffTree.addTransition(currentState, sym, t);
+
+                    // update the current state of the tree to the newly created one
+                    currentState = newState;
+                } else {
+                    // update the current state of the tree accordingly
+                    currentState = diffTree.getTransition(currentState, sym).getSuccId();
+                }
+            }
+        }
+
+        // minimize the tree
+        final CompactMealy<String, String> target = new CompactMealy<>(alphabet);
+        Automata.minimize(diffTree, alphabet, target);
+
+        return target;
+    }
+
+    /**
+     * Tests all words from the w method from <code>mealyProxy1</code> on <code>mealyProxy2</code>. Words with a
+     * different output are added to the difference.
+     *
+     * @param hyp1
+     *         The hypothesis to test the tests on.
+     * @param hyp2
+     *         The hypothesis to generate the w-method tests from.
+     * @param alphabet
+     *         The alphabet.
+     * @param diffs
+     *         The set of words that have a different output.
+     */
+    private void findDifferences(
+            final CompactMealy<String, String> hyp1,
+            final CompactMealy<String, String> hyp2,
+            final Alphabet<String> alphabet,
+            final Set<SeparatingWord> diffs) {
 
         final List<Word<String>> transCover = Automata.transitionCover(hyp2, alphabet);
         final List<Word<String>> charSet = Automata.characterizingSet(hyp2, alphabet);
@@ -569,57 +631,5 @@ public class Learner {
                 }
             }
         }
-
-        // build tree
-        // the tree is organized as an incomplete mealy machine
-        final CompactMealy<String, String> diffTree = new CompactMealy<>(alphabet);
-        diffTree.addInitialState();
-
-        // variables to remember the current state
-        int i = hyp2.getInitialState();
-        int j = diffTree.getInitialState();
-
-        for (final SeparatingWord diff : diffs) {
-
-            // walk along the hypothesis from its initial state
-            for (int k = 0; k < diff.getInput().length(); k++) {
-                final String sym = diff.getInput().getSymbol(k);
-
-                final CompactMealyTransition<String> transition = hyp2.getTransition(i, sym);
-
-                if (diffTree.getTransition(j, sym) == null) {
-                    // if the transition does not yet exist in the tree
-                    // create a new state in the tree and add the same transition
-                    final int newState = diffTree.addState();
-
-                    String out = diff.getOutput2().getSymbol(k);
-                    if (k == diff.getInput().length() - 1) {
-                        out += " vs. " + diff.getOutput1().getSymbol(k);
-                    }
-
-                    final CompactMealyTransition<String> t = new CompactMealyTransition<>(newState, out);
-                    diffTree.addTransition(j, sym, t);
-
-                    // update the current state of the tree to the newly created one
-                    j = newState;
-                } else {
-                    // update the current state of the tree accordingly
-                    j = diffTree.getTransition(j, sym).getSuccId();
-                }
-
-                // update the current state in the hypothesis
-                i = transition.getSuccId();
-            }
-
-            // reset hypothesis and tree to the initial state
-            i = hyp2.getInitialState();
-            j = diffTree.getInitialState();
-        }
-
-        // minimize the tree
-        final CompactMealy<String, String> target = new CompactMealy<>(alphabet);
-        Automata.minimize(diffTree, alphabet, target);
-
-        return target;
     }
 }
