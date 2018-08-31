@@ -513,6 +513,10 @@ public class Learner {
     public SeparatingWord separatingWord(CompactMealyMachineProxy mealy1, CompactMealyMachineProxy mealy2) {
         final Alphabet<String> alphabetProxy1 = mealy1.createAlphabet();
         final Alphabet<String> alphabetProxy2 = mealy1.createAlphabet();
+        if (alphabetProxy1.size() != alphabetProxy2.size() || !alphabetProxy1.containsAll(alphabetProxy2)) {
+            throw new IllegalArgumentException("The alphabets of the hypotheses are not "
+                    + "identical!");
+        }
 
         final CompactMealy<String, String> mealyMachine1 = mealy1.createMealyMachine(alphabetProxy1);
         final CompactMealy<String, String> mealyMachine2 = mealy2.createMealyMachine(alphabetProxy2);
@@ -542,9 +546,16 @@ public class Learner {
     public CompactMealy<String, String> differenceTree(
             final CompactMealyMachineProxy mealyProxy1,
             final CompactMealyMachineProxy mealyProxy2) {
+
         final Alphabet<String> alphabet = mealyProxy1.createAlphabet();
-        final CompactMealy<String, String> hyp1 = mealyProxy2.createMealyMachine(alphabet);
-        final CompactMealy<String, String> hyp2 = mealyProxy1.createMealyMachine(alphabet);
+        final Alphabet<String> alph2 = mealyProxy2.createAlphabet();
+        if (alphabet.size() != alph2.size() || !alphabet.containsAll(alph2)) {
+            throw new IllegalArgumentException("The alphabets of the hypotheses are not "
+                    + "identical!");
+        }
+
+        final CompactMealy<String, String> hyp1 = mealyProxy1.createMealyMachine(alphabet);
+        final CompactMealy<String, String> hyp2 = mealyProxy2.createMealyMachine(alphabet);
 
         // the words where the output differs
         final Set<SeparatingWord> diffs = new HashSet<>();

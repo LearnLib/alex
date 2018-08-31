@@ -500,4 +500,21 @@ public class UserResource {
         }
     }
 
+    /**
+     * Get the current logged in user.
+     *
+     * @return The user.
+     * @throws NotFoundException
+     *         If the user could not be found.
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/myself")
+    @RolesAllowed({"ADMIN", "REGISTERED"})
+    public Response myself() throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
+        final User myself = userDAO.getById(user.getId());
+        return Response.ok(myself).build();
+    }
 }

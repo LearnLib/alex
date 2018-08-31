@@ -107,6 +107,18 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
 
     @Override
     @Transactional
+    public TestExecutionConfig get(User user, Long projectId, Long configId)
+            throws NotFoundException, UnauthorizedException {
+        final Project project = projectRepository.findOne(projectId);
+        final TestExecutionConfig config = testExecutionConfigRepository.findOne(configId);
+        checkAccess(user, project, config);
+
+        loadLazyRelations(config);
+        return config;
+    }
+
+    @Override
+    @Transactional
     public void delete(User user, Long projectId, Long configId)
             throws NotFoundException, UnauthorizedException {
         final Project project = projectRepository.findOne(projectId);

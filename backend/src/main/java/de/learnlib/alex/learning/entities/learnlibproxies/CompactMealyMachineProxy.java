@@ -242,8 +242,7 @@ public class CompactMealyMachineProxy implements Serializable {
         Set<String> inputs = edges.stream().map(CompactMealyTransitionProxy::getInput)
                 .collect(Collectors.toSet());
 
-        Alphabet<String> alphabet = new SimpleAlphabet<>(inputs);
-        return alphabet;
+        return new SimpleAlphabet<>(inputs);
     }
 
     /**

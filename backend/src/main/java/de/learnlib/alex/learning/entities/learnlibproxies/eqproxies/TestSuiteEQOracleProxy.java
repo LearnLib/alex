@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.testing.dao.TestDAO;
-import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.DefaultQuery;
@@ -54,7 +53,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
     private int batchSize;
 
     /** The test cases in the test suite. Once a test case has been tried, it is removed from the queue. */
-    private Queue<TestCase> testCases;
+    private Queue<Word<String>> testCases;
 
     /** Constructor. */
     public TestSuiteEQOracleProxy() {
@@ -86,7 +85,14 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
         this.batchSize = batchSize;
 
         try {
-            testCases.addAll(testDAO.getTestCases(user, result.getProjectId(), testSuiteId, includeChildTestSuites));
+            testDAO.getTestCases(user, result.getProjectId(), testSuiteId, includeChildTestSuites).forEach(tc -> {
+                final Word<String> input = Word.fromList(
+                        tc.getSteps().stream()
+                                .map(step -> step.getPSymbol().getComputedName())
+                                .collect(Collectors.toList())
+                );
+                testCases.add(input);
+            });
         } catch (Exception e) {
             // if something does not work, we use an empty collection which simply results in no counterexample being found.
             e.printStackTrace();
@@ -135,13 +141,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
 
         while (!testCases.isEmpty()) {
             try {
-                final TestCase testCase = testCases.poll();
-                final Word<String> input = Word.fromList(
-                        testCase.getSteps().stream()
-                                .map(step -> step.getPSymbol().getComputedName())
-                                .collect(Collectors.toList())
-                );
-
+                final Word<String> input = testCases.poll();
                 final Word<String> hypOutput = hyp.computeOutput(input);
                 final Word<String> sulOutput = oracle.answerQuery(input);
 

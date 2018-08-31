@@ -83,6 +83,7 @@ public class SeparatingWord {
     }
 
     @Override
+    @SuppressWarnings({"checkstyle:needbraces", "checkstyle:operatorwrap"})
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof SeparatingWord)) return false;
