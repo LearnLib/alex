@@ -64,6 +64,7 @@ import de.learnlib.alex.data.entities.actions.web.SelectAction;
 import de.learnlib.alex.data.entities.actions.web.SubmitAction;
 import de.learnlib.alex.data.entities.actions.web.SwitchTo;
 import de.learnlib.alex.data.entities.actions.web.SwitchToFrame;
+import de.learnlib.alex.data.entities.actions.web.UploadFileAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForNodeAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForNodeAttributeAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForTextAction;
@@ -138,6 +139,7 @@ import java.util.Objects;
         @JsonSubTypes.Type(name = "web_select", value = SelectAction.class),
         @JsonSubTypes.Type(name = "web_switchTo", value = SwitchTo.class),
         @JsonSubTypes.Type(name = "web_switchToFrame", value = SwitchToFrame.class),
+        @JsonSubTypes.Type(name = "web_uploadFile", value = UploadFileAction.class),
         @JsonSubTypes.Type(name = "web_waitForTitle", value = WaitForTitleAction.class),
         @JsonSubTypes.Type(name = "web_waitForNode", value = WaitForNodeAction.class),
         @JsonSubTypes.Type(name = "web_waitForNodeAttribute", value = WaitForNodeAttributeAction.class),

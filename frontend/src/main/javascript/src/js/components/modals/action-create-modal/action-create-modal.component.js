@@ -71,10 +71,11 @@ export class ActionCreateModalComponent {
                 {type: actionType.WEB_SUBMIT, text: 'Submit form'},
                 {type: actionType.WEB_SWITCH_TO, text: 'Switch to'},
                 {type: actionType.WEB_SWITCH_TO_FRAME, text: 'Switch to frame'},
+                {type: actionType.WEB_UPLOAD_FILE, text: 'Upload file'},
                 {type: actionType.WAIT_FOR_NODE_ATTRIBUTE, text: 'Wait for an attribute'},
                 {type: actionType.WAIT_FOR_NODE, text: 'Wait for an element'},
                 {type: actionType.WAIT_FOR_TEXT, text: 'Wait for text'},
-                {type: actionType.WAIT_FOR_TITLE, text: 'Wait for page title'},
+                {type: actionType.WAIT_FOR_TITLE, text: 'Wait for page title'}
             ],
             rest: [
                 {type: actionType.REST_CHECK_ATTRIBUTE_EXISTS, text: 'Check attribute'},

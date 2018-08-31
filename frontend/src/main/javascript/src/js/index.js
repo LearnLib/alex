@@ -71,6 +71,7 @@ import {sendKeysActionFormComponent} from './components/forms/actions/web/send-k
 import {submitActionFormComponent} from './components/forms/actions/web/submit-action-form/submit-action-form.component';
 import {switchToFrameActionFormComponent} from './components/forms/actions/web/switch-to-frame/switch-to-frame-action-form.component';
 import {switchToActionFormComponent} from './components/forms/actions/web/switch-to/switch-to-action-form.component';
+import {uploadFileActionFormComponent} from './components/forms/actions/web/upload-file-action-form/upload-file-action-form.component';
 import {waitForNodeActionFormComponent} from './components/forms/actions/web/wait-for-node-action-form/wait-for-node-action-form.component';
 import {waitForNodeAttributeActionFormComponent} from './components/forms/actions/web/wait-for-node-attribute-action-form/wait-for-node-attribute-action-form.component';
 import {waitForTextActionFormComponent} from './components/forms/actions/web/wait-for-text-action-form/wait-for-text-action-form.component';
@@ -453,6 +454,7 @@ angular
     .component('waitForTextActionForm', waitForTextActionFormComponent)
     .component('pressKeyActionForm', pressKeyActionFormComponent)
     .component('waitForNodeAttributeActionForm', waitForNodeAttributeActionFormComponent)
+    .component('uploadFileActionForm', uploadFileActionFormComponent)
 
     // rest action forms
     .component('requestActionForm', requestActionFormComponent)

@@ -91,6 +91,7 @@ export const actionType = {
     WEB_SUBMIT: 'web_submit',
     WEB_SWITCH_TO: 'web_switchTo',
     WEB_SWITCH_TO_FRAME: 'web_switchToFrame',
+    WEB_UPLOAD_FILE: 'web_uploadFile',
     WEB_PRESS_KEY: 'web_pressKey',
     WAIT_FOR_NODE: 'web_waitForNode',
     WAIT_FOR_NODE_ATTRIBUTE: 'web_waitForNodeAttribute',

@@ -26,7 +26,7 @@ export class ClipboardService {
 
         /**
          * The map of clipboard entries.
-         * @type {object}
+         * @type {Object}
          */
         this.entries = {};
     }
