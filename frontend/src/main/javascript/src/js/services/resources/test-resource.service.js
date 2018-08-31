@@ -170,7 +170,7 @@ export class TestResource {
      * @param {number} size
      * @return {*}
      */
-    getResults(projectId, testId, page = 0, size = 20) {
+    getResults(projectId, testId, page = 0, size = 25) {
         return this.$http.get(`${apiUrl}/projects/${projectId}/tests/${testId}/results?page=${page}&size=${size}`)
             .then(response => response.data);
     }
