@@ -18,6 +18,7 @@ import remove from 'lodash/remove';
 import uniqueId from 'lodash/uniqueId';
 import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
 import {ParametrizedSymbol} from '../../../entities/parametrized-symbol';
+import {ClipboardService} from '../../../services/clipboard.service';
 import {Selectable} from '../../../utils/selectable';
 
 /**
@@ -222,7 +223,7 @@ class SymbolViewComponent {
             steps.forEach(step => {
                 delete step._id;
             });
-            this.ClipboardService.copy('symbolSteps', steps);
+            this.ClipboardService.copy(this.project.id, 'symbolSteps', steps);
             this.ToastService.info(steps.length + ' steps copied to clipboard');
         }
     }
@@ -231,7 +232,7 @@ class SymbolViewComponent {
         const s = AlphabetSymbol.stepsToJson(step);
         delete s._id;
 
-        this.ClipboardService.copy('symbolSteps', [s]);
+        this.ClipboardService.copy(this.project.id, 'symbolSteps', [s]);
         this.ToastService.info('The action has been copied to the clipboard.');
     }
 
@@ -243,7 +244,7 @@ class SymbolViewComponent {
             cpy.forEach(step => {
                 delete step._id;
             });
-            this.ClipboardService.cut('symbolSteps', cpy);
+            this.ClipboardService.copy(this.project.id, 'symbolSteps', cpy, ClipboardService.Mode.CUT);
             this.deleteSteps(steps);
             this.ToastService.info(steps.length + ' steps cut to clipboard');
         }
@@ -253,7 +254,7 @@ class SymbolViewComponent {
         const s = AlphabetSymbol.stepsToJson(step);
         delete s._id;
 
-        this.ClipboardService.cut('symbolSteps', [s]);
+        this.ClipboardService.copy(this.project.id, 'symbolSteps', [s], ClipboardService.Mode.CUT);
         this.deleteSteps([step]);
         this.ToastService.info('The action has been copied to the clipboard.');
     }
@@ -262,7 +263,7 @@ class SymbolViewComponent {
      * Pastes the actions from the clipboard to the end of of the action list.
      */
     pasteSteps() {
-        let steps = this.ClipboardService.paste('symbolSteps');
+        let steps = this.ClipboardService.paste(this.project.id, 'symbolSteps');
         if (steps != null) {
             steps.forEach(step => {
                 step._id = uniqueId();

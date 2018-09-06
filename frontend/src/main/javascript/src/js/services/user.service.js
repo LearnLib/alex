@@ -22,10 +22,12 @@ export class UserService {
      * Constructor.
      *
      * @param {ProjectService} ProjectService
+     * @param {ClipboardService} ClipboardService
      */
     // @ngInject
-    constructor(ProjectService) {
+    constructor(ProjectService, ClipboardService) {
         this.projectService = ProjectService;
+        this.clipboardService = ClipboardService;
 
         /**
          * The store.
@@ -48,6 +50,7 @@ export class UserService {
     }
 
     login(user, jwt = null) {
+        this.clipboardService.clear();
         localStorage.setItem('user', JSON.stringify(user));
         this.store.currentUser = user;
         if (jwt) {
@@ -62,5 +65,6 @@ export class UserService {
         this.store.currentUser = null;
         this.store.jwt = null;
         this.projectService.reset();
+        this.clipboardService.clear();
     }
 }

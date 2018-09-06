@@ -386,7 +386,7 @@ export const testSuiteViewComponent = {
             if (tests.length > 0) {
                 tests = JSON.parse(JSON.stringify(tests));
                 tests = this.TestService.exportTests(tests);
-                this.ClipboardService.copy('tests', tests);
+                this.ClipboardService.copy(this.project.id, 'tests', tests);
                 this.ToastService.info('Tests copied to clipboard.');
             } else {
                 this.ToastService.info('You have to select at least one test');
@@ -394,7 +394,7 @@ export const testSuiteViewComponent = {
         }
 
         pasteTests() {
-            const tests = this.ClipboardService.paste('tests');
+            const tests = this.ClipboardService.paste(this.project.id, 'tests');
             if (tests != null) {
                 this.TestService.importTests(this.project.id, tests, this.testSuite.id)
                     .then((importedTests) => {

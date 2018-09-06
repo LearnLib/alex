@@ -19,59 +19,65 @@
  */
 export class ClipboardService {
 
-    /**
-     * Constructor.
-     */
+    /** Constructor. */
     constructor() {
-
-        /**
-         * The map of clipboard entries.
-         * @type {Object}
-         */
-        this.entries = {};
+        // initialize clipboard
+        const clipboard = localStorage.getItem('clipboard');
+        if (clipboard == null) {
+            localStorage.setItem('clipboard', JSON.stringify({}));
+        }
     }
 
     /**
      * Copies an item to the Clipboard.
      *
-     * @param {string} key - The key the data is saved under.
-     * @param {any} data - the data to copy to the clipboard.
+     * @param {number} projectId The ID of the project.
+     * @param {string} key The key the data is saved under.
+     * @param {any} data The data to copy to the clipboard.
+     * @param {string} mode The mode for copying.
      */
-    copy(key, data) {
-        this.entries[key] = {
-            data,
-            mode: 'copy'
-        };
-    }
+    copy(projectId, key, data, mode = ClipboardService.Mode.COPY) {
+        const clipboard = JSON.parse(localStorage.getItem('clipboard'));
+        if (clipboard[projectId] == null) {
+            clipboard[projectId] = {};
+        }
 
-    /**
-     * Cuts an item to the clipboard.
-     *
-     * @param {string} key - The key under which the data is accessed.
-     * @param {any} data - The data to store.
-     */
-    cut(key, data) {
-        this.entries[key] = {
+        clipboard[projectId][key] = {
             data,
-            mode: 'cut'
+            mode
         };
+
+        localStorage.setItem('clipboard', JSON.stringify(clipboard));
     }
 
     /**
      * Pastes an item from the clipboard. Deletes the item if mode has been 'cut'.
      *
-     * @param {string} key - The key whose data to get.
-     * @returns {any|null}
+     * @param {number} projectId The ID of the project.
+     * @param {string} key The key whose data to get.
+     * @returns {?any}
      */
-    paste(key) {
-        if (this.entries[key]) {
-            const item = this.entries[key];
-            if (item.mode === 'cut') {
-                delete this.entries[key];
+    paste(projectId, key) {
+        const clipboard = JSON.parse(localStorage.getItem('clipboard'));
+        const entry = clipboard[projectId][key];
+        if (entry) {
+            if (entry.mode === ClipboardService.Mode.CUT) {
+                delete clipboard[projectId][key];
+                localStorage.setItem('clipboard', JSON.stringify(clipboard));
             }
-            return item.data;
+            return entry.data;
         } else {
             return null;
         }
     }
+
+    /** Clear the clipboard. */
+    clear() {
+        localStorage.setItem('clipboard', JSON.stringify({}));
+    }
 }
+
+ClipboardService.Mode = {
+    COPY: 'copy',
+    CUT: 'cut'
+};
