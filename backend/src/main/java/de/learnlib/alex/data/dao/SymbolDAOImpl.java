@@ -71,7 +71,8 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HH:mm:ss");
+    /** The format for archived symbols. */
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HH:mm:ss");
 
     /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
@@ -610,7 +611,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
             // rename the symbol so that there can be another new symbol with the name
             final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            symbol.setName(symbol.getName() + "--" + dateFormat.format(timestamp));
+            symbol.setName(symbol.getName() + "--" + DATE_FORMAT.format(timestamp));
         }
 
         final List<Symbol> archivedSymbols = symbolRepository.save(symbols);

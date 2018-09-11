@@ -1,9 +1,7 @@
 .test-tree {
   user-select: none;
 
-  .name {
-    padding: 2px;
-
+  .test-name {
     &:hover {
       cursor: pointer;
     }
@@ -17,7 +15,8 @@
     }
 
     .test-icon {
-      padding: 2px 4px 2px 2px;
+      padding: 2px;
+      margin-right: .5rem;
     }
 
     .collapse-icon {
@@ -52,6 +51,14 @@
 
     > .header > .test-icon i {
       color: #5a99d0;
+    }
+  }
+
+  .test-case-node .test-name,
+  .test-suite-node .name {
+    color: #555;
+    &:hover {
+      text-decoration: none;
     }
   }
 }

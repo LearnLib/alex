@@ -1,32 +1,28 @@
 <div class="test-suite-node">
-    <div class="header d-flex flex-row">
-        <div class="test-icon">
-            <i class="fa fa-fw fa-folder"></i>
-        </div>
-        <div class="name flex-grow-1" ui-sref="test({projectId: vm.suite.project, testId: vm.suite.id})">
-            <strong ng-if="vm.parent === null">{{vm.suite.name}}</strong>
-            <span ng-if="vm.parent !== null">{{vm.suite.name}}</span>
-
-            <span class="pull-right" ng-if="vm.result">
-                <span class="label label-success" ng-if="vm.result.passed">
-                    Passed
-                </span>
-                <span class="label label-danger" ng-if="!vm.result.passed && vm.result.testCasesPassed === 0">
-                    Failed
-                </span>
-                <span class="label label-warning" ng-if="!vm.result.passed && vm.result.testCasesPassed > 0">
-                    {{vm.result.testCasesFailed}}/{{vm.result.testCasesRun}} Failed
-                </span>
-            </span>
-        </div>
-        <div class="collapse-icon" ng-click="vm.collapsed = !vm.collapsed">
-            <i class="fa fa-fw" ng-class="vm.collapsed ? 'fa-caret-right' : 'fa-caret-down'"></i>
-        </div>
+  <div class="header d-flex flex-row">
+    <div class="test-icon">
+      <i class="fa fa-fw fa-folder"></i>
     </div>
-    <div class="children" ng-show="!vm.collapsed">
-        <div ng-repeat="test in vm.suite.tests | sortTests">
-            <test-suite-node suite="test" ng-if="test.type === 'suite'" results="vm.results"></test-suite-node>
-            <test-case-node case="test" ng-if="test.type === 'case'" results="vm.results"></test-case-node>
-        </div>
-    </div>
+    <a
+      class="name d-flex flex-row align-items-center w-100"
+      ui-sref="test({projectId: vm.suite.project, testId: vm.suite.id})"
+    >
+      <div class="w-100">
+        <strong>{{vm.suite.name}}</strong>
+      </div>
+      <div>
+        <span class="pull-right" ng-if="vm.result">
+          <span class="label label-success" ng-if="vm.result.passed">
+            Passed
+          </span>
+          <span class="label label-danger" ng-if="!vm.result.passed && vm.result.testCasesPassed === 0">
+            Failed
+          </span>
+          <span class="label label-warning" ng-if="!vm.result.passed && vm.result.testCasesPassed > 0">
+            {{vm.result.testCasesFailed}}/{{vm.result.testCasesRun}} Failed
+          </span>
+        </span>
+      </div>
+    </a>
+  </div>
 </div>
