@@ -1,11 +1,15 @@
 <div>
     <label class="control-label">{{vm.label}}</label>
     <div class="d-flex flex-row">
-        <div class="form-group w-100 mr-1">
+        <div class="form-group w-100 mr-1" ng-if="vm.node.type !== 'JS'">
             <input class="form-control" type="text" placeholder="{{vm.node.type === 'CSS' ? 'CSS selector' : 'XPath expression'}}" ng-model="vm.node.selector">
         </div>
+        <div class="form-group w-100 mr-1" ng-if="vm.node.type === 'JS'">
+            <textarea class="form-control" placeholder="return document.getElementById('el');"
+                      ng-model="vm.node.selector" rows="3"></textarea>
+        </div>
         <div class="form-group mr-1">
-            <select class="form-control" ng-options="m for m in ['CSS', 'XPATH']" ng-model="vm.node.type">
+            <select class="form-control" ng-options="m for m in ['CSS', 'XPATH', 'JS']" ng-model="vm.node.type">
                 <option value="" disabled>Select a type</option>
             </select>
         </div>

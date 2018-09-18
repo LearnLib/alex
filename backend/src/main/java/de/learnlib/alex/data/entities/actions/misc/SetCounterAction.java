@@ -17,6 +17,7 @@
 package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -24,10 +25,9 @@ import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -43,8 +43,6 @@ public class SetCounterAction extends SymbolAction {
     private static final long serialVersionUID = -6023597222318880440L;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * How {@link SetCounterAction#value} should be interpreted.
@@ -72,6 +70,7 @@ public class SetCounterAction extends SymbolAction {
      * The new value.
      */
     @NotNull
+    @Column(name = "\"value\"")
     private String value;
 
     /**
@@ -99,53 +98,37 @@ public class SetCounterAction extends SymbolAction {
                     break;
             }
         } catch (NumberFormatException | IllegalStateException e) {
-            LOGGER.info(LEARNER_MARKER, "Could not set the counter '{}' to the value '{}' "
-                            + "(ignoreFailure: {}, negated: {}).", name, value, ignoreFailure, negated, e);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not set the counter '{}' to the value '{}' ", name, value, e);
 
             return getFailedOutput();
         }
 
         counterStoreConnector.set(symbol.getProjectId(), name, val);
 
-        LOGGER.info(LEARNER_MARKER, "Set the counter '{}' to the value '{}' (ignoreFailure: {}, negated: {}).",
-                name, value, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Set the counter '{}' to the value '{}'.", name, value);
         return getSuccessOutput();
     }
 
-    /**
-     * @return The name of the counter to set.
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * @param name The new name of the counter to set.
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * @return The value to set the counter to.
-     */
     public String getValue() {
         return value;
     }
 
-    /**
-     * @param value The new value to set the counter to.
-     */
     public void setValue(String value) {
         this.value = value;
     }
 
-    /** @return {@link SetCounterAction#value}. */
     public ValueType getValueType() {
         return valueType;
     }
 
-    /** @param valueType {@link SetCounterAction#value}. */
     public void setValueType(ValueType valueType) {
         this.valueType = valueType;
     }

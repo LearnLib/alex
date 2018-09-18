@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {apiUrl} from '../../../../../../../environments';
-
 /**
  * @type {{templateUrl: string, bindings: {action: string}, controllerAs: string, controller(*, *, *): void}}
  */
@@ -26,19 +24,11 @@ export const requestActionFormComponent = {
     },
     controllerAs: 'vm',
 
-    /**
-     * Constructor.
-     *
-     * @param $http
-     * @param {SessionService} SessionService
-     */
-    // @ngInject
-    controller($http, SessionService) {
-        this.project = SessionService.getProject();
+    /** Constructor. */
+    controller() {
         this.cookie = {name: null, value: null};
         this.header = {name: null, value: null};
-        this.testResult = null;
-        this.error = null;
+
         this.aceOptions = {
             useWrapMode: true,
             showGutter: true
@@ -54,17 +44,6 @@ export const requestActionFormComponent = {
             this.action.addCookie(this.cookie.name, this.cookie.value);
             this.header.name = null;
             this.header.value = null;
-        };
-
-        this.test = function () {
-            this.error = null;
-            this.testResult = null;
-            const action = angular.copy(this.action);
-            delete action._id;
-
-            $http.post(`${apiUrl}/projects/${this.project.id}/symbols/actions/test`, action)
-                .then(res => this.testResult = res.data)
-                .catch(res => this.error = res.data.message);
         };
     }
 };

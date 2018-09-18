@@ -22,7 +22,7 @@ class StatisticsCompareViewComponent {
     /**
      * Constructor.
      *
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {LearnResultResource} LearnResultResource
      * @param {LearnerResultChartService} LearnerResultChartService
      * @param {ToastService} ToastService
@@ -32,7 +32,7 @@ class StatisticsCompareViewComponent {
      * @param {PromptService} PromptService
      */
     // @ngInject
-    constructor(SessionService, LearnResultResource, LearnerResultChartService, ToastService, $stateParams, $state,
+    constructor(ProjectService, LearnResultResource, LearnerResultChartService, ToastService, $stateParams, $state,
                 DownloadService, PromptService) {
         this.LearnResultResource = LearnResultResource;
         this.LearnerResultChartService = LearnerResultChartService;
@@ -41,6 +41,7 @@ class StatisticsCompareViewComponent {
         this.$state = $state;
         this.DownloadService = DownloadService;
         this.PromptService = PromptService;
+        this.ProjectService = ProjectService;
 
         // make sure there is at least one test number given in the URL
         if (!$stateParams.testNos || $stateParams.testNos === '') {
@@ -59,12 +60,6 @@ class StatisticsCompareViewComponent {
             MULTIPLE_FINAL: 2,
             MULTIPLE_COMPLETE: 3
         };
-
-        /**
-         * The project that is in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
 
         /**
          * The list of test result nos that are used for the chart.
@@ -183,6 +178,10 @@ class StatisticsCompareViewComponent {
             .then(filename => {
                 this.DownloadService.downloadSvg(selector, false, filename);
             });
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

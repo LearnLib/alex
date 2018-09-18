@@ -30,10 +30,13 @@ export class TestReportResource {
 
     /**
      * Get all reports.
+     *
      * @param {number} projectId The id of the project.
+     * @param {number} page The page.
+     * @param {number} size The number of items in the page.
      */
-    getAll(projectId) {
-        return this.$http.get(`${apiUrl}/projects/${projectId}/tests/reports`)
+    getAll(projectId, page = 0, size = 25) {
+        return this.$http.get(`${apiUrl}/projects/${projectId}/tests/reports?page=${page}&size=${size}`)
             .then(response => response.data);
     }
 

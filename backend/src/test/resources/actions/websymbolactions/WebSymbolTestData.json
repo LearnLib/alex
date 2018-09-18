@@ -1,50 +1,71 @@
 {
-    "id": 1,
-    "name" : "Test Symbol",
-    "actions" : [
-        {
-            "type": "web_checkForNode",
-            "node": {
-                "selector": "#node",
-                "type": "CSS"
-            }
-        },
-        {
-            "type": "web_checkForText",
-            "value": "Lorem Ipsum"
-        },
-        {
-            "type": "web_clear",
-            "node": {
-                "selector": "#node",
-                "type": "CSS"
-            }
-        },
-        {
-            "type": "web_click",
-            "node": {
-                "selector": "#node",
-                "type": "CSS"
-            }
-        },
-        {
-            "type" : "web_fill",
-            "node" : {
-                "selector": "#input",
-                "type": "CSS"
-            },
-            "value" : "Lorem Ipsum"
-        },
-        {
-            "type": "web_submit",
-            "node": {
-                "selector": "#node",
-                "type": "CSS"
-            }
-        },
-        {
-            "type": "wait",
-            "duration": 1000
+  "id": 1,
+  "name": "Test Symbol",
+  "steps": [
+    {
+      "type": "action",
+      "action": {
+        "type": "web_checkForNode",
+        "node": {
+          "selector": "#node",
+          "type": "CSS"
         }
-    ]
+      }
+    },
+    {
+      "type": "action",
+      "action": {
+        "type": "web_checkForText",
+        "value": "Lorem Ipsum"
+      }
+    },
+    {
+      "type": "action",
+      "action": {
+        "type": "web_clear",
+        "node": {
+          "selector": "#node",
+          "type": "CSS"
+        }
+      }
+    },
+    {
+      "type": "action",
+      "action": {
+        "type": "web_click",
+        "node": {
+          "selector": "#node",
+          "type": "CSS"
+        }
+      }
+    },
+    {
+      "type": "action",
+      "action": {
+        "type": "web_fill",
+        "node": {
+          "selector": "#input",
+          "type": "CSS"
+        },
+        "value": "Lorem Ipsum"
+      }
+    },
+    {
+      "type": "action",
+      "action": {
+        "type": "web_submit",
+        "node": {
+          "selector": "#node",
+          "type": "CSS"
+        }
+      }
+    },
+    {
+      "type": "action",
+      "action": {
+        "type": "wait",
+        "duration": 1000
+      }
+    }
+  ]
 }

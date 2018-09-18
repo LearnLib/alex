@@ -27,16 +27,18 @@ import net.automatalib.words.Word;
 import java.io.Serializable;
 
 /**
- * Base class for Proxies around a the different EquivalenceOracles from the LearnLib.
- * The Proxy is needed to make it easier to (de-)serialize the EQ oracles into/ from JSON.
+ * Base class for Proxies around a the different EquivalenceOracles from the LearnLib. The Proxy is needed to make it
+ * easier to (de-)serialize the EQ oracles into/ from JSON.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
-    @JsonSubTypes.Type(name = "random_word", value = MealyRandomWordsEQOracleProxy.class),
-    @JsonSubTypes.Type(name = "complete", value = CompleteExplorationEQOracleProxy.class),
-    @JsonSubTypes.Type(name = "sample", value = SampleEQOracleProxy.class),
-    @JsonSubTypes.Type(name = "wmethod", value = WMethodEQOracleProxy.class),
-    @JsonSubTypes.Type(name = "hypothesis", value = HypothesisEQOracleProxy.class)
+        @JsonSubTypes.Type(name = "random_word", value = MealyRandomWordsEQOracleProxy.class),
+        @JsonSubTypes.Type(name = "complete", value = CompleteExplorationEQOracleProxy.class),
+        @JsonSubTypes.Type(name = "sample", value = SampleEQOracleProxy.class),
+        @JsonSubTypes.Type(name = "wmethod", value = WMethodEQOracleProxy.class),
+        @JsonSubTypes.Type(name = "hypothesis", value = HypothesisEQOracleProxy.class),
+        @JsonSubTypes.Type(name = "test_suite", value = TestSuiteEQOracleProxy.class),
+        @JsonSubTypes.Type(name = "wp_method", value = WpMethodEQOracleProxy.class)
 })
 public abstract class AbstractEquivalenceOracleProxy implements Serializable {
 
@@ -44,11 +46,11 @@ public abstract class AbstractEquivalenceOracleProxy implements Serializable {
 
     /**
      * Check if the parameter of the proxy are valid, i.e. it is possible to create a functional EQ oracle out of the
-     * proxy.
-     * If everything is OK nothing will happen.
-     * If there are errors an exception will be thrown. This exception should have a clear error message.
+     * proxy. If everything is OK nothing will happen. If there are errors an exception will be thrown. This exception
+     * should have a clear error message.
      *
-     * @throws IllegalArgumentException If the parameters are wrong.
+     * @throws IllegalArgumentException
+     *         If the parameters are wrong.
      */
     public abstract void checkParameters() throws IllegalArgumentException;
 

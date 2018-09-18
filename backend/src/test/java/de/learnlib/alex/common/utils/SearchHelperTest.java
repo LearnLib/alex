@@ -49,7 +49,8 @@ public class SearchHelperTest {
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
         given(connector.getConnector(FileStoreConnector.class)).willReturn(fileStoreConnector);
 
-        String result = SearchHelper.insertVariableValues(connector, PROJECT_ID, "Hello {{$name}}, you are {{user}} no. {{#counter}} and want to upload file {{\\file.txt}} that belongs to {{$name}}!");
+        String result =
+                SearchHelper.insertVariableValues(connector, PROJECT_ID, "Hello {{$name}}, you are {{user}} no. {{#counter}} and want to upload file {{\\file.txt}} that belongs to {{$name}}!");
 
         assertEquals("Hello Jon Doe, you are {{user}} no. " + COUNTER_VALUE + " and want to upload file /dir/file.text that belongs to Jon Doe!", result);
     }
@@ -58,9 +59,21 @@ public class SearchHelperTest {
     public void shouldNotReplaceAnythingIfTextContainsNoVariables() {
         ConnectorManager connector = mock(ConnectorManager.class);
 
-        String result = SearchHelper.insertVariableValues(connector, PROJECT_ID,
-                                                          "Hello Jon Doe, you are user no. 42!");
+        String result = SearchHelper.insertVariableValues(connector, PROJECT_ID, "Hello Jon Doe, you are user no. 42!");
 
         assertEquals("Hello Jon Doe, you are user no. " + COUNTER_VALUE + "!", result);
+    }
+
+    @Test
+    public void shouldEscapeDollarSignAndBackSlashInVariableValues() {
+        final ConnectorManager connector = mock(ConnectorManager.class);
+        final VariableStoreConnector variables = mock(VariableStoreConnector.class);
+
+        given(variables.get("text")).willReturn("text with $ and \\ sign");
+        given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
+
+        final String result = SearchHelper.insertVariableValues(connector, PROJECT_ID, "this is a {{$text}}");
+
+        assertEquals("this is a text with $ and \\ sign", result);
     }
 }

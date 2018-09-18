@@ -1,0 +1,38 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <strong>Generate test case</strong>
+  </div>
+  <div class="panel-body">
+    <div class="form-group">
+      <label>Name of the test</label>
+      <input type="text" class="form-control" placeholder="Test 1" ng-model="vm.testCase.name">
+    </div>
+
+    <p>
+      <strong>Test case</strong>
+    </p>
+
+    <div class="list-group mb-0" ng-if="vm.testCase.steps.length > 0">
+      <div class="list-group-item d-flex" ng-repeat="step in vm.testCase.steps">
+        <div class="w-100 mr-1">
+          {{step.pSymbol.symbol.name}}
+        </div>
+        <div class="mr-1">
+          <span class="label label-outline-success" ng-if="!step.shouldFail">Should pass</span>
+          <span class="label label-outline-danger" ng-if="step.shouldFail">Should fail</span>
+        </div>
+        <div>
+          <i class="fa fa-fw fa-close text-muted cursor-pointer" ng-click="vm.testCase.steps.splice($index, 1)"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-info mb-0" ng-if="vm.testCase.steps.length === 0">
+      Select the labels of the model to create a test.
+    </div>
+  </div>
+  <div class="panel-footer text-right">
+    <button class="btn btn-sm btn-primary" ng-click="vm.generateTestCase()">Generate</button>
+    <button class="btn btn-sm btn-default" ng-click="vm.cancel()">Cancel</button>
+  </div>
+</div>

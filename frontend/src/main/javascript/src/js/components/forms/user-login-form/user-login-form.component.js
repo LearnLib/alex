@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {events} from '../../../constants';
 import {User} from '../../../entities/user';
 
 /**
@@ -29,19 +28,17 @@ class UserLoginFormComponent {
      * @param {UserResource} UserResource
      * @param jwtHelper
      * @param {ToastService} ToastService
-     * @param {SessionService} SessionService
-     * @param {EventBus} EventBus
      * @param {SettingsResource} SettingsResource
+     * @param {UserService} UserService
      */
     // @ngInject
-    constructor($state, UserResource, jwtHelper, ToastService, SessionService, EventBus, SettingsResource) {
+    constructor($state, UserResource, jwtHelper, ToastService, SettingsResource, UserService) {
         this.$state = $state;
         this.UserResource = UserResource;
         this.jwtHelper = jwtHelper;
         this.ToastService = ToastService;
-        this.SessionService = SessionService;
-        this.EventBus = EventBus;
         this.SettingsResource = SettingsResource;
+        this.UserService = UserService;
 
         /**
          * The email of the user.
@@ -80,8 +77,7 @@ class UserLoginFormComponent {
                         email: tokenPayload.email
                     });
 
-                    this.SessionService.saveUser(user, token);
-                    this.EventBus.emit(events.USER_LOGGED_IN, {user: user});
+                    this.UserService.login(user, token);
                     if (this.onLoggedIn != null) {
                         this.onLoggedIn();
                     }

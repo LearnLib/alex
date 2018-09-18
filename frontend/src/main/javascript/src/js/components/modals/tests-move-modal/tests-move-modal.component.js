@@ -29,19 +29,13 @@ export const testsMoveModalComponent = {
          *
          * @param {TestResource} TestResource
          * @param {ToastService} ToastService
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          */
         // @ngInject
-        constructor(TestResource, ToastService, SessionService) {
+        constructor(TestResource, ToastService, ProjectService) {
             this.testResource = TestResource;
             this.toastService = ToastService;
-            this.sessionService = SessionService;
-
-            /**
-             * The current project.
-             * @type {Project}
-             */
-            this.project = this.sessionService.getProject();
+            this.projectService = ProjectService;
 
             /**
              * The root test suite.
@@ -111,6 +105,10 @@ export const testsMoveModalComponent = {
                 .catch(err => {
                     this.errorMessage = `The tests could not be moved. ${err.data.message}`;
                 });
+        }
+
+        get project() {
+            return this.projectService.store.currentProject;
         }
     }
 };

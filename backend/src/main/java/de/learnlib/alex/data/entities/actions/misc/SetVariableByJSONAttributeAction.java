@@ -18,14 +18,13 @@ package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.JSONHelpers;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -40,8 +39,6 @@ public class SetVariableByJSONAttributeAction extends SetVariableAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
@@ -51,13 +48,13 @@ public class SetVariableByJSONAttributeAction extends SetVariableAction {
         String valueInTheBody = JSONHelpers.getAttributeValue(body, value);
 
         if (valueInTheBody == null) {
-            LOGGER.info(LEARNER_MARKER, "Could not set the variable '{}' to the value of the  JSON attribute '{}' "
-                            + "in the body '{}' (ignoreFailure: {}, negated: {}).",
-                        name, value, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to the value of the JSON attribute '{}' ",
+                    name, value);
             return getFailedOutput();
         }
 
         storeConnector.set(name, valueInTheBody);
         return getSuccessOutput();
     }
+
 }

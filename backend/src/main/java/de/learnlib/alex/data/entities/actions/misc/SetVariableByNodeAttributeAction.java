@@ -17,6 +17,7 @@
 package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.WebElementLocator;
@@ -25,8 +26,6 @@ import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.NoSuchElementException;
 
@@ -47,8 +46,6 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /** The name of the variable. */
     @NotBlank
     protected String name;
@@ -62,51 +59,6 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
     @NotBlank
     protected String attribute;
 
-    /**
-     * @return The name of the variable to set.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name
-     *         The name of the new variable to set.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return The node to get the attribute from.
-     */
-    public WebElementLocator getNode() {
-        return node;
-    }
-
-    /**
-     * @param node
-     *         The new identifier for the node to get the attribute from.
-     */
-    public void setNode(WebElementLocator node) {
-        this.node = node;
-    }
-
-    /**
-     * @return The identifier of the attribute to get the value from.
-     */
-    public String getAttribute() {
-        return attribute;
-    }
-
-    /**
-     * @param attribute
-     *         The identifier of the new attribute to get the value from.
-     */
-    public void setAttribute(String attribute) {
-        this.attribute = attribute;
-    }
-
     @Override
     protected ExecuteResult execute(ConnectorManager connector) {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
@@ -119,16 +71,40 @@ public class SetVariableByNodeAttributeAction extends SymbolAction {
             String value = webSiteConnector.getElement(nodeWithVariables).getAttribute(attribute);
             storeConnector.set(name, value);
 
-            LOGGER.info(LEARNER_MARKER, "Set variable '{}' to attribute '{}' of element '{}'.",
+            LOGGER.info(LoggerMarkers.LEARNER, "Set variable '{}' to attribute '{}' of element '{}'.",
                     name, attribute, nodeWithVariables);
 
             return getSuccessOutput();
         } catch (NoSuchElementException e) {
-            LOGGER.info(LEARNER_MARKER, "Could not set variable '{}' to attribute '{}' of element '{}'.",
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to attribute '{}' of element '{}'.",
                     name, attribute, nodeWithVariables);
 
             return getFailedOutput();
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public WebElementLocator getNode() {
+        return node;
+    }
+
+    public void setNode(WebElementLocator node) {
+        this.node = node;
+    }
+
+    public String getAttribute() {
+        return attribute;
+    }
+
+    public void setAttribute(String attribute) {
+        this.attribute = attribute;
     }
 
 }

@@ -19,18 +19,18 @@ package de.learnlib.alex.data.entities.actions.web;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.actions.Credentials;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 /**
  * Action to navigate to a new URL.
@@ -45,20 +45,9 @@ public class GotoAction extends WebSymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /** The URL of the site. */
     @NotBlank
     private String url;
-
-    /**
-     * Get the URL this action will navigate to.
-     *
-     * @return The site URL the element is on.
-     */
-    public String getUrl() {
-        return url;
-    }
 
     /**
      * Optional credentials to authenticate via HTTP basic auth.
@@ -66,31 +55,37 @@ public class GotoAction extends WebSymbolAction {
     @Embedded
     private Credentials credentials;
 
+    @Override
+    public ExecuteResult execute(WebSiteConnector connector) {
+        try {
+            connector.get(getURLWithVariableValues(), getCredentialsWithVariableValues());
+            LOGGER.info(LoggerMarkers.LEARNER, "Could goto '{}'.", url);
+            return getSuccessOutput();
+        } catch (Exception e) {
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not goto '{}'.", url, e);
+            return getFailedOutput();
+        }
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
     /**
      * Get the URL this action will navigate to. All variables and counters will be replaced with their values.
      *
      * @return The site URL the element is on.
      */
+    @Transient
     @JsonIgnore
     public String getURLWithVariableValues() {
         return insertVariableValues(url);
     }
 
-    /**
-     * Set the URL of the site where this element is navigating to..
-     *
-     * @param url
-     *         The new site URL.
-     */
     public void setUrl(String url) {
         this.url = url;
     }
 
-    /**
-     * Get the credentials to authenticate.
-     *
-     * @return The credentials to use for authentication.
-     */
     public Credentials getCredentials() {
         return credentials;
     }
@@ -111,28 +106,8 @@ public class GotoAction extends WebSymbolAction {
         return new Credentials(name, password);
     }
 
-    /**
-     * Set the credentials to use for authentication.
-     *
-     * @param credentials
-     *         The new credentials to use.
-     */
     public void setCredentials(Credentials credentials) {
         this.credentials = credentials;
-    }
-
-    @Override
-    public ExecuteResult execute(WebSiteConnector connector) {
-        try {
-            connector.get(getURLWithVariableValues(), getCredentialsWithVariableValues());
-            LOGGER.info(LEARNER_MARKER, "Could goto '{}' (ignoreFailure: {}, negated: {}).",
-                    url, ignoreFailure, negated);
-            return getSuccessOutput();
-        } catch (Exception e) {
-            LOGGER.info(LEARNER_MARKER, "Could not goto '{}' (ignoreFailure: {}, negated: {}).",
-                    url, ignoreFailure, negated, e);
-            return getFailedOutput();
-        }
     }
 
 }

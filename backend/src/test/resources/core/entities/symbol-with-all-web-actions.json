@@ -1,0 +1,722 @@
+{
+  "name": "all web actions",
+  "description": null,
+  "successOutput": null,
+  "inputs": [],
+  "outputs": [],
+  "steps": [
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_alertAcceptDismiss",
+        "action": "ACCEPT"
+      },
+      "position": 0
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_alertAcceptDismiss",
+        "action": "DISMISS"
+      },
+      "position": 1
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_alertGetText",
+        "variableName": "test"
+      },
+      "position": 2
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_alertSendKeys",
+        "text": "test"
+      },
+      "position": 3
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_browser",
+        "action": "RESTART"
+      },
+      "position": 4
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_browser",
+        "action": "REFRESH"
+      },
+      "position": 5
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_checkNodeAttributeValue",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "attribute": "test",
+        "value": "test",
+        "checkMethod": "IS"
+      },
+      "position": 6
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_checkNodeAttributeValue",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "attribute": "test",
+        "value": "test",
+        "checkMethod": "CONTAINS"
+      },
+      "position": 7
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_checkNodeAttributeValue",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "attribute": "test",
+        "value": "test",
+        "checkMethod": "MATCHES"
+      },
+      "position": 8
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_checkNodeAttributeValue",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "attribute": "test",
+        "value": "test",
+        "checkMethod": "MATCHES"
+      },
+      "position": 9
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_checkPageTitle",
+        "title": "test",
+        "regexp": false
+      },
+      "position": 10
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_checkPageTitle",
+        "title": "test",
+        "regexp": true
+      },
+      "position": 11
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_checkNodeSelected",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        }
+      },
+      "position": 12
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_clear",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        }
+      },
+      "position": 13
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_click",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "doubleClick": false
+      },
+      "position": 14
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_click",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "doubleClick": true
+      },
+      "position": 15
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_clickElementByText",
+        "node": {
+          "selector": "body",
+          "type": "CSS"
+        },
+        "text": "test",
+        "tagName": "div"
+      },
+      "position": 16
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_clickLinkByText",
+        "value": "test",
+        "node": {
+          "selector": "body",
+          "type": "CSS"
+        }
+      },
+      "position": 17
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_executeScript",
+        "script": "console.log(\"test\")",
+        "name": null
+      },
+      "position": 18
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_executeScript",
+        "script": "return \"5\";",
+        "name": "test"
+      },
+      "position": 19
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_fill",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "value": "test"
+      },
+      "position": 20
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_moveMouse",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "offsetX": 0,
+        "offsetY": 0
+      },
+      "position": 21
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_goto",
+        "url": "test",
+        "credentials": {
+          "name": "",
+          "password": ""
+        }
+      },
+      "position": 22
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_goto",
+        "url": "test",
+        "credentials": {
+          "name": "test",
+          "password": "test"
+        }
+      },
+      "position": 23
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_pressKey",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "key": "\\ue001"
+      },
+      "position": 24
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_checkForText",
+        "value": "test",
+        "regexp": false,
+        "node": {
+          "selector": "document",
+          "type": "CSS"
+        }
+      },
+      "position": 25
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_checkForText",
+        "value": "test",
+        "regexp": true,
+        "node": {
+          "selector": "document",
+          "type": "CSS"
+        }
+      },
+      "position": 26
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_checkForNode",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        }
+      },
+      "position": 27
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_select",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "value": "test",
+        "selectBy": "TEXT"
+      },
+      "position": 28
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_select",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "value": "test",
+        "selectBy": "VALUE"
+      },
+      "position": 29
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_select",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "value": "1",
+        "selectBy": "INDEX"
+      },
+      "position": 30
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_submit",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        }
+      },
+      "position": 31
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_switchTo",
+        "target": "DEFAULT_CONTENT"
+      },
+      "position": 32
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_switchTo",
+        "target": "PARENT_FRAME"
+      },
+      "position": 33
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_switchToFrame",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        }
+      },
+      "position": 34
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_waitForNodeAttribute",
+        "waitCriterion": "IS",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "attribute": "test",
+        "value": "test",
+        "maxWaitTime": 10
+      },
+      "position": 35
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_waitForNodeAttribute",
+        "waitCriterion": "CONTAINS",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "attribute": "test",
+        "value": "test",
+        "maxWaitTime": 10
+      },
+      "position": 36
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_waitForNode",
+        "waitCriterion": "VISIBLE",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "maxWaitTime": 10
+      },
+      "position": 37
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_waitForNode",
+        "waitCriterion": "INVISIBLE",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "maxWaitTime": 10
+      },
+      "position": 38
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_waitForNode",
+        "waitCriterion": "ADDED",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "maxWaitTime": 10
+      },
+      "position": 39
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_waitForNode",
+        "waitCriterion": "REMOVED",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "maxWaitTime": 10
+      },
+      "position": 40
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_waitForNode",
+        "waitCriterion": "CLICKABLE",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "maxWaitTime": 10
+      },
+      "position": 41
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_waitForText",
+        "node": {
+          "selector": "body",
+          "type": "CSS"
+        },
+        "value": "test",
+        "regexp": false,
+        "maxWaitTime": 10
+      },
+      "position": 42
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_waitForText",
+        "node": {
+          "selector": "body",
+          "type": "CSS"
+        },
+        "value": "test",
+        "regexp": true,
+        "maxWaitTime": 10
+      },
+      "position": 43
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_waitForTitle",
+        "waitCriterion": "IS",
+        "value": "test",
+        "maxWaitTime": 10
+      },
+      "position": 44
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "web_waitForTitle",
+        "waitCriterion": "CONTAINS",
+        "value": "test",
+        "maxWaitTime": 10
+      },
+      "position": 45
+    }
+  ]
+}

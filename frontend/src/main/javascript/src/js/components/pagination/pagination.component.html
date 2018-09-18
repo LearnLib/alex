@@ -1,0 +1,11 @@
+<ul class="pagination mt-0">
+  <li ng-class="{'disabled': vm.page.first}">
+    <a href ng-click="vm.previous()">Previous</a>
+  </li>
+  <li class="disabled">
+    <span>{{(vm.page.number + 1)}} / {{vm.page.totalPages}}</span>
+  </li>
+  <li ng-class="{'disabled': vm.page.last}">
+    <a href ng-click="vm.next()">Next</a>
+  </li>
+</ul>

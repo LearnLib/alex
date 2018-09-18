@@ -76,14 +76,14 @@ public class SymbolParameterTest {
         a1.setSymbol(reset);
         a1.setName(VARIABLE_NAME);
         a1.setValue(VARIABLE_VALUE_PRE);
-        reset.getActions().add(a1);
+        reset.getSteps().add(new SymbolActionStep(a1));
 
         SetCounterAction a2 = new SetCounterAction();
         a2.setSymbol(reset);
         a2.setName(COUNTER_NAME);
         a2.setValueType(SetCounterAction.ValueType.NUMBER);
         a2.setValue(String.valueOf(COUNTER_VALUE_PRE));
-        reset.getActions().add(a2);
+        reset.getSteps().add(new SymbolActionStep(a2));
 
         SymbolOutputParameter out1 = new SymbolOutputParameter();
         out1.setSymbol(reset);
@@ -109,7 +109,7 @@ public class SymbolParameterTest {
         action.setIncrementBy(2);
         action.setName(COUNTER_NAME);
         action.setSymbol(symbol);
-        symbol.getActions().add(action);
+        symbol.getSteps().add(new SymbolActionStep(action));
 
         reset.execute(connectors);
         symbol.execute(connectors);
@@ -128,7 +128,7 @@ public class SymbolParameterTest {
         action.setIncrementBy(2);
         action.setName(COUNTER_NAME);
         action.setSymbol(symbol);
-        symbol.getActions().add(action);
+        symbol.getSteps().add(new SymbolActionStep(action));
 
         SymbolOutputParameter outParam = new SymbolOutputParameter();
         outParam.setName(COUNTER_NAME);
@@ -152,7 +152,7 @@ public class SymbolParameterTest {
         action.setSymbol(symbol);
         action.setName(VARIABLE_NAME);
         action.setValue(VARIABLE_VALUE_POST);
-        symbol.getActions().add(action);
+        symbol.getSteps().add(new SymbolActionStep(action));
 
         reset.execute(connectors);
         symbol.execute(connectors);
@@ -176,7 +176,7 @@ public class SymbolParameterTest {
         action.setSymbol(symbol);
         action.setName(VARIABLE_NAME);
         action.setValue(VARIABLE_VALUE_POST);
-        symbol.getActions().add(action);
+        symbol.getSteps().add(new SymbolActionStep(action));
 
         reset.execute(connectors);
         symbol.execute(connectors);

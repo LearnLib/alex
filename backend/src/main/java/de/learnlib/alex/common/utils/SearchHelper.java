@@ -105,7 +105,7 @@ public final class SearchHelper {
 
             switch (type) {
                 case "$":
-                    result = result.replaceAll("\\{\\{\\$" + name + "}}", variableStore.get(name));
+                    result = result.replaceAll("\\{\\{\\$" + name + "}}", Matcher.quoteReplacement(variableStore.get(name)));
                     break;
                 case "#":
                     result = result.replaceAll("\\{\\{\\#" + name + "}}", String.valueOf(counterStore.get(name)));

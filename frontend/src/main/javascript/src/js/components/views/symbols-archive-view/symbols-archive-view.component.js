@@ -15,7 +15,6 @@
  */
 
 import remove from 'lodash/remove';
-import {events} from '../../../constants';
 import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
 import {Selectable} from '../../../utils/selectable';
 
@@ -28,25 +27,17 @@ class SymbolsArchiveViewComponent {
     /**
      * Constructor.
      *
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {SymbolResource} SymbolResource
      * @param {ToastService} ToastService
-     * @param {EventBus} EventBus
-     * @param $scope
      * @param $uibModal
      */
     // @ngInject
-    constructor(SessionService, SymbolResource, ToastService, EventBus, $scope, $uibModal) {
+    constructor(ProjectService, SymbolResource, ToastService, $uibModal) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
-        this.EventBus = EventBus;
         this.$uibModal = $uibModal;
-
-        /**
-         * The project that is in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.ProjectService = ProjectService;
 
         /**
          * The list of deleted symbols.
@@ -67,11 +58,6 @@ class SymbolsArchiveViewComponent {
                 this.selectedSymbols = new Selectable(this.symbols, 'id');
             })
             .catch(err => this.ToastService.danger(`Could not get symbols. ${err.data.message}`));
-
-        this.EventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
-            const i = this.symbols.findIndex(s => s.id === data.symbol.id);
-            this.symbols[i].name = data.symbol.name;
-        }, $scope);
     }
 
     /**
@@ -83,8 +69,8 @@ class SymbolsArchiveViewComponent {
         this.SymbolResource.recover(symbol)
             .then(() => {
                 this.ToastService.success('Symbol ' + symbol.name + ' recovered');
-                remove(this.symbols, {id: symbol.id});
                 this.selectedSymbols.unselect(symbol);
+                remove(this.symbols, {id: symbol.id});
             })
             .catch(err => {
                 this.ToastService.danger('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + err.data.message);
@@ -123,7 +109,24 @@ class SymbolsArchiveViewComponent {
             resolve: {
                 symbol: () => new AlphabetSymbol(JSON.parse(JSON.stringify(symbol))),
             }
+        }).result.then(updatedSymbol => {
+            const i = this.symbols.findIndex(s => s.id === updatedSymbol.id);
+            this.symbols[i].name = updatedSymbol.name;
         });
+    }
+
+    deleteSymbol(symbol) {
+        this.SymbolResource.delete(symbol)
+            .then(() => {
+                this.ToastService.success('The symbol has been deleted permanently.');
+                this.selectedSymbols.unselect(symbol);
+                remove(this.symbols, {id: symbol.id});
+            })
+            .catch(err => this.ToastService.danger(`The symbol could be deleted permanently. ${err.data.message}`));
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

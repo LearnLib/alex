@@ -23,7 +23,7 @@
     <parent>
         <groupId>de.learnlib.alex</groupId>
         <artifactId>alex-parent</artifactId>
-        <version>1.5.1</version>
+        <version>1.6.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -59,6 +59,7 @@
         <mockito.version>2.12.0</mockito.version>
         <powermock.version>1.7.3</powermock.version>
         <json-schema-validator.version>2.2.8</json-schema-validator.version>
+        <mysql-connector.version>8.0.11</mysql-connector.version>
     </properties>
 
     <!--===== dependencies ======-->
@@ -180,6 +181,12 @@
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
             <version>${json-path.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql-connector.version}</version>
         </dependency>
 
         <!-- LearnLib -->
@@ -423,11 +430,12 @@
         </plugins>
     </build>
 
+
     <profiles>
         <profile>
             <id>createRestDoc</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <build>
                 <plugins>

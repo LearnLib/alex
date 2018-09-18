@@ -28,25 +28,20 @@ export const counterCreateModalComponent = {
         resolve: '='
     },
     controllerAs: 'vm',
-    controller: class {
+    controller: class CounterCreateModalComponent {
 
         /**
          * Constructor.
          *
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          * @param {CounterResource} CounterResource
          * @param {ToastService} ToastService
          */
         // @ngInject
-        constructor(SessionService, CounterResource, ToastService) {
+        constructor(ProjectService, CounterResource, ToastService) {
             this.CounterResource = CounterResource;
             this.ToastService = ToastService;
-
-            /**
-             * The project that is in the session.
-             * @type {Project}
-             */
-            this.project = SessionService.getProject();
+            this.ProjectService = ProjectService;
 
             /**
              * The new counter.
@@ -80,6 +75,10 @@ export const counterCreateModalComponent = {
                 .catch(response => {
                     this.errorMessage = response.data.message;
                 });
+        }
+
+        get project() {
+            return this.ProjectService.store.currentProject;
         }
     },
 };

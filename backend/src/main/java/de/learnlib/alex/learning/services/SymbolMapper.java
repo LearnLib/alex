@@ -17,7 +17,7 @@
 package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.api.exception.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
@@ -43,7 +43,7 @@ public class SymbolMapper implements SULMapper<
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** Map to manage the symbols according to their name in the Alphabet. */
-    private final Map<String, Symbol> symbolMap;
+    private final Map<String, ParameterizedSymbol> symbolMap;
 
     /**
      * Constructor. Initialize the map name -> symbol.
@@ -51,9 +51,9 @@ public class SymbolMapper implements SULMapper<
      * @param symbols
      *         The symbols for the learning process.
      */
-    public SymbolMapper(List<Symbol> symbols) {
+    public SymbolMapper(List<ParameterizedSymbol> symbols) {
         this.symbolMap = new HashMap<>();
-        symbols.forEach(s -> this.symbolMap.put(s.getName(), s));
+        symbols.forEach(s -> this.symbolMap.put(s.getComputedName(), s));
     }
 
     /**
@@ -62,8 +62,8 @@ public class SymbolMapper implements SULMapper<
      * @param symbol
      *         The symbol to add.
      */
-    public void addSymbol(Symbol symbol) {
-        this.symbolMap.putIfAbsent(symbol.getName(), symbol);
+    public void addSymbol(ParameterizedSymbol symbol) {
+        this.symbolMap.putIfAbsent(symbol.getComputedName(), symbol);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class SymbolMapper implements SULMapper<
      *
      * @return The list of symbols.
      */
-    public List<Symbol> getSymbols() {
+    public List<ParameterizedSymbol> getSymbols() {
         return new ArrayList<>(symbolMap.values());
     }
 

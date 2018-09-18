@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.learning.entities.webdrivers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -47,6 +48,7 @@ import java.util.concurrent.TimeUnit;
         @JsonSubTypes.Type(name = WebDrivers.EDGE, value = EdgeDriverConfig.class),
         @JsonSubTypes.Type(name = WebDrivers.FIREFOX, value = FirefoxDriverConfig.class),
         @JsonSubTypes.Type(name = WebDrivers.HTML_UNIT, value = HtmlUnitDriverConfig.class),
+        @JsonSubTypes.Type(name = WebDrivers.IE, value = IEDriverConfig.class),
         @JsonSubTypes.Type(name = WebDrivers.REMOTE, value = RemoteDriverConfig.class),
         @JsonSubTypes.Type(name = WebDrivers.SAFARI, value = SafariDriverConfig.class)
 })
@@ -67,6 +69,7 @@ public abstract class AbstractWebDriverConfig implements Serializable {
     /** The id of the config in the database. */
     @Id
     @GeneratedValue
+    @JsonIgnore
     private Long id;
 
     /** The width of the browser window. */

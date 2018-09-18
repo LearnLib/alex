@@ -20,18 +20,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
-import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
-import de.learnlib.alex.learning.entities.learnlibproxies.AlphabetProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.words.impl.SimpleAlphabet;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -41,6 +40,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -49,18 +49,16 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
  * Entity class to store the result of a test run, i.e. the outcome of a learn iteration and must not be the final
- * result.
- * The result contains the configuration of the learning process, the resulting hypothesis and some meta data
+ * result. The result contains the configuration of the learning process, the resulting hypothesis and some meta data
  * (duration, #EQ, ...).
  */
 @Entity
 @Table(
-    uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "testNo"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "testNo"})
 )
 @JsonPropertyOrder(alphabetic = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -69,7 +67,7 @@ public class LearnerResult implements Serializable {
     private static final long serialVersionUID = 4619722174562257862L;
 
     /** The id of the LearnerResult in the DB. */
-    private UUID uuid;
+    private Long id;
 
     /** The reference to the Project the test run belongs to. */
     private Project project;
@@ -81,16 +79,15 @@ public class LearnerResult implements Serializable {
     private List<LearnerResultStep> steps;
 
     /** The reset symbol to use during the learning. */
-    private Symbol resetSymbol;
+    private ParameterizedSymbol resetSymbol;
+
+    /** The symbol that is executed after a membership query. */
+    private ParameterizedSymbol postSymbol;
 
     /** The symbols to use during the learning. */
-    private List<Symbol> symbols;
-
-    /** The Alphabet used while learning. */
-    private AlphabetProxy sigma;
+    private List<ParameterizedSymbol> symbols;
 
     /** The {@link AbstractLearningAlgorithm} to use during the learning. */
-    @Cascade(CascadeType.ALL)
     private AbstractLearningAlgorithm<String, String> algorithm;
 
     /** The URLs that were used for learning. */
@@ -99,8 +96,7 @@ public class LearnerResult implements Serializable {
     /** The browser to use during the learning. */
     private AbstractWebDriverConfig driverConfig;
 
-    /** A comment to describe the intention / setting of the learn process.
-     *  This field is optional. */
+    /** A comment to describe the intention / setting of the learn process. This field is optional. */
     private String comment;
 
     /** The hypothesis of the result. */
@@ -110,9 +106,9 @@ public class LearnerResult implements Serializable {
     private Statistics statistics;
 
     /**
-     * If this field is set some sort of error occurred during the learning.
-     * In this case this field stores more information about the error.
-     * All other field can still have data, that are valid to some extend and should only be used carefully.
+     * If this field is set some sort of error occurred during the learning. In this case this field stores more
+     * information about the error. All other field can still have data, that are valid to some extend and should only
+     * be used carefully.
      */
     private String errorText;
 
@@ -130,27 +126,14 @@ public class LearnerResult implements Serializable {
         this.urls = new ArrayList<>();
     }
 
-    /**
-     * Get the ID of the result used in the DB.
-     *
-     * @return The ID of teh result.
-     */
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @JsonIgnore
-    public UUID getUUID() {
-        return uuid;
+    @GeneratedValue
+    public Long getId() {
+        return id;
     }
 
-    /**
-     * Set a new ID for the result in the DB.
-     *
-     * @param uuid
-     *         The new ID for the result.
-     */
-    public void setUUID(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
@@ -182,11 +165,7 @@ public class LearnerResult implements Serializable {
     @Transient
     @JsonProperty("project")
     public Long getProjectId() {
-        if (project == null) {
-            return 0L;
-        } else {
-            return project.getId();
-        }
+        return project == null ? null : project.getId();
     }
 
     /**
@@ -222,7 +201,8 @@ public class LearnerResult implements Serializable {
     }
 
     /**
-     * @param steps The new list of steps for the result.
+     * @param steps
+     *         The new list of steps for the result.
      */
     public void setSteps(List<LearnerResultStep> steps) {
         this.steps = steps;
@@ -232,95 +212,61 @@ public class LearnerResult implements Serializable {
      * @return The reset symbol used during the learning.
      */
     @ManyToOne
-    @JsonIgnore
-    public Symbol getResetSymbol() {
+    public ParameterizedSymbol getResetSymbol() {
         return resetSymbol;
     }
 
     /**
-     * @param resetSymbol The new reset symbol to use during the learning.
+     * @param resetSymbol
+     *         The new reset symbol to use during the learning.
      */
-    public void setResetSymbol(Symbol resetSymbol) {
+    public void setResetSymbol(ParameterizedSymbol resetSymbol) {
         this.resetSymbol = resetSymbol;
     }
 
-    /**
-     * Return the reset symbol as ID and revision pair for the JSON output.
-     *
-     * @return The ID of the reset symbol.
-     */
-    @Transient
-    @JsonProperty("resetSymbol")
-    public Long getResetSymbolAsId() {
-        return resetSymbol == null ? null : resetSymbol.getId();
+    @ManyToOne
+    public ParameterizedSymbol getPostSymbol() {
+        return postSymbol;
+    }
+
+    public void setPostSymbol(ParameterizedSymbol postSymbol) {
+        this.postSymbol = postSymbol;
     }
 
     /**
      * @return Get the symbols used during the learning.
      */
     @ManyToMany
-    @JsonIgnore
-    public List<Symbol> getSymbols() {
+    public List<ParameterizedSymbol> getSymbols() {
         return symbols;
     }
 
     /**
-     * @param symbols The new set of symbols used during the learning.
+     * @param symbols
+     *         The new set of symbols used during the learning.
      */
-    public void setSymbols(List<Symbol> symbols) {
+    public void setSymbols(List<ParameterizedSymbol> symbols) {
         this.symbols = symbols;
-    }
-
-    /**
-     * Return the set of symbol as List of ID and revision pairs for the JSON output.
-     *
-     * @return The IDs of the symbols.
-     */
-    @Transient
-    @JsonProperty("symbols")
-    public List<Long> getSymbolsAsIds() {
-        return symbols.stream()
-                .map(Symbol::getId)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Get the Alphabet used during the learning process. This Alphabet is also used in the hypothesis.
-     *
-     * @return The Alphabet of the learning process & the hypothesis.
-     */
-    @Column(name = "sigma", columnDefinition = "BLOB")
-    @JsonProperty("sigma")
-    public AlphabetProxy getSigma() {
-        return sigma;
-    }
-
-    /**
-     * Set a new Alphabet. The Alphabet should be the one used during the learning and must be used in the hypothesis.
-     *
-     * @param sigma
-     *         The new Alphabet.
-     */
-    @JsonIgnore
-    public void setSigma(AlphabetProxy sigma) {
-        this.sigma = sigma;
     }
 
     /**
      * @return The algorithm to use during the learning.
      */
+    @Cascade(CascadeType.ALL)
     public AbstractLearningAlgorithm<String, String> getAlgorithm() {
         return algorithm;
     }
 
     /**
-     * @param algorithm The new algorithm to use during the learning.
+     * @param algorithm
+     *         The new algorithm to use during the learning.
      */
     public void setAlgorithm(AbstractLearningAlgorithm<String, String> algorithm) {
         this.algorithm = algorithm;
     }
 
-    @Column(columnDefinition = "BLOB")
+    @OneToOne
+    @Cascade(CascadeType.ALL)
     public AbstractWebDriverConfig getDriverConfig() {
         return driverConfig;
     }
@@ -337,7 +283,8 @@ public class LearnerResult implements Serializable {
     }
 
     /**
-     * @param comment The new comment to describe the result. Can be empty.
+     * @param comment
+     *         The new comment to describe the result. Can be empty.
      */
     public void setComment(String comment) {
         this.comment = comment;
@@ -374,7 +321,17 @@ public class LearnerResult implements Serializable {
     @Transient
     @JsonIgnore
     public void createHypothesisFrom(MealyMachine<?, String, ?, String> mealyMachine) {
-        this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, sigma.createAlphabet());
+        this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, new SimpleAlphabet<>(getSigma()));
+    }
+
+    @Transient
+    @JsonProperty("sigma")
+    public List<String> getSigma() {
+        return symbols.stream().map(ParameterizedSymbol::getComputedName).collect(Collectors.toList());
+    }
+
+    @JsonIgnore
+    public void setSigma(List<String> sigma) {
     }
 
     /**
@@ -409,9 +366,8 @@ public class LearnerResult implements Serializable {
     }
 
     /**
-     * Set an error text as part of the learning result.
-     * If a error text is set, it also implies that something during the learning went wrong and
-     * {@link #isError()} will return True.
+     * Set an error text as part of the learning result. If a error text is set, it also implies that something during
+     * the learning went wrong and {@link #isError()} will return True.
      *
      * @param errorText
      *         The new error text.
@@ -436,7 +392,10 @@ public class LearnerResult implements Serializable {
         return useMQCache;
     }
 
-    /** @param useMQCache {@link LearnerResult#useMQCache}. */
+    /**
+     * @param useMQCache
+     *         {@link LearnerResult#useMQCache}.
+     */
     public void setUseMQCache(boolean useMQCache) {
         this.useMQCache = useMQCache;
     }
@@ -456,18 +415,16 @@ public class LearnerResult implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LearnerResult result = (LearnerResult) o;
-        return Objects.equals(uuid, result.uuid);
+        return Objects.equals(id, result.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return "[LearnerResult " + uuid + "] " + project + " / " + testNo + " / "
-                + ": " + sigma + ", " + hypothesis;
+        return "[LearnerResult " + id + "] " + project + " / " + testNo;
     }
-
 }

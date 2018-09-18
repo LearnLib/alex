@@ -51,7 +51,7 @@ public class Settings implements Serializable {
 
     /** Constructor. */
     public Settings() {
-        this.driverSettings = new DriverSettings("", "", "", "");
+        this.driverSettings = new DriverSettings("", "", "", "", "");
         this.allowUserRegistration = true;
     }
 

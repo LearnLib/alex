@@ -32,8 +32,12 @@ export function formatEqOracle() {
                 return 'Sample';
             case  eqOracleType.WMETHOD:
                 return 'W-Method';
+            case eqOracleType.WP_METHOD:
+                return 'Wp-Method';
             case  eqOracleType.HYPOTHESIS:
                 return 'Hypothesis';
+            case eqOracleType.TEST_SUITE:
+                return 'Test suite';
             default:
                 return type;
         }
@@ -110,6 +114,8 @@ export function formatWebBrowser() {
                 return 'Safari';
             case webBrowser.REMOTE:
                 return 'Remote driver';
+            case webBrowser.IE:
+                return 'Internet Explorer';
             default:
                 return browser;
         }

@@ -58,6 +58,7 @@ import {FillWebAction} from '../entities/actions/web/send-keys-action';
 import {SubmitWebAction} from '../entities/actions/web/submit-action';
 import {SwitchToAction} from '../entities/actions/web/switch-to-action';
 import {SwitchToFrameAction} from '../entities/actions/web/switch-to-frame';
+import {UploadFileAction} from '../entities/actions/web/upload-file-action';
 import {WaitForNodeAction} from '../entities/actions/web/wait-for-node-action';
 import {WaitForTextAction} from '../entities/actions/web/wait-for-text-action';
 import {WaitForTitleAction} from '../entities/actions/web/wait-for-title-action';
@@ -122,6 +123,8 @@ export class ActionService {
                 return new SwitchToAction(data);
             case actionType.WEB_SWITCH_TO_FRAME:
                 return new SwitchToFrameAction(data);
+            case actionType.WEB_UPLOAD_FILE:
+                return new UploadFileAction(data);
 
             // rest actions
             case actionType.REST_CALL:

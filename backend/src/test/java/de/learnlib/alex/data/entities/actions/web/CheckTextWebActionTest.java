@@ -44,9 +44,12 @@ public class CheckTextWebActionTest extends WebActionTest {
 
     private CheckTextWebAction checkText;
 
+    private ObjectMapper mapper;
+
     @Before
     public void setUp() {
         super.setUp();
+        mapper = new ObjectMapper();
 
         Symbol symbol = new Symbol();
         symbol.setProject(new Project(1L));
@@ -63,7 +66,6 @@ public class CheckTextWebActionTest extends WebActionTest {
 
     @Test
     public void testJSON() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(checkText);
         CheckTextWebAction c2 = (CheckTextWebAction) mapper.readValue(json, SymbolAction.class);
 
@@ -72,14 +74,20 @@ public class CheckTextWebActionTest extends WebActionTest {
 
     @Test
     public void testJSONFile() throws IOException, URISyntaxException {
-        ObjectMapper mapper = new ObjectMapper();
-
         File file = new File(getClass().getResource("/actions/websymbolactions/CheckTextTestData.json").toURI());
         SymbolAction obj = mapper.readValue(file, SymbolAction.class);
 
         assertTrue(obj instanceof CheckTextWebAction);
         CheckTextWebAction c = (CheckTextWebAction) obj;
         assertEquals("Lorem Ipsum", c.getValue());
+    }
+
+    @Test
+    public void shouldEncodeHtmlCharsInValue() {
+        given(webSiteConnector.getPageSource()).willReturn(createHtmlDoc("<div>this is a $&amp; test</div>"));
+        checkText.setValue("this is a $& test");
+
+        assertTrue(checkText.executeAction(connectors).isSuccess());
     }
 
     @Test
@@ -90,7 +98,7 @@ public class CheckTextWebActionTest extends WebActionTest {
     }
 
     @Test
-    public void shouldReturnFaliedIfTextWasNotFoundWithoutRegexp() {
+    public void shouldReturnFailedIfTextWasNotFoundWithoutRegexp() {
         given(webSiteConnector.getPageSource()).willReturn("");
 
         assertFalse(checkText.executeAction(connectors).isSuccess());
@@ -136,5 +144,9 @@ public class CheckTextWebActionTest extends WebActionTest {
         given(webSiteConnector.getElement(checkText.getNode())).willReturn(barElement);
 
         assertFalse(checkText.executeAction(connectors).isSuccess());
+    }
+
+    private String createHtmlDoc(String content) {
+        return "<!doctype html><html><head></head><body>" + content + "</body></html>";
     }
 }

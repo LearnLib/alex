@@ -17,13 +17,12 @@
 package de.learnlib.alex.learning.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 
-import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Set of symbols to manage a reset symbol and a list of symbols together.
@@ -31,40 +30,23 @@ import java.util.List;
 public class SymbolSet {
 
     /**
-     * Link to the Symbols that should be used as a reset Symbol.
-     *
-     * @requiredField
-     */
-    @Transient
-    @JsonProperty("resetSymbol")
-    private Long resetSymbolAsId;
-
-    /**
      * The actual Symbols that should be used as a reset Symbol. Only used internally.
      */
-    @Transient
-    @JsonIgnore
-    private Symbol resetSymbol;
-
-    /**
-     * Link to the Symbols that are used during the learning.
-     *
-     * @requiredField
-     */
-    @Transient
-    @JsonProperty("symbols")
-    private List<Long> symbolsAsIds;
+    private ParameterizedSymbol resetSymbol;
 
     /**
      * The actual list of Symbols used during the learning. Only used internally.
      */
-    @Transient
-    @JsonIgnore
-    private List<Symbol> symbols;
+    private List<ParameterizedSymbol> symbols;
+
+    /**
+     * The symbol to execute after a membership query.
+     */
+    private ParameterizedSymbol postSymbol;
 
     /** Constructor. */
     public SymbolSet() {
-        this(null, new ArrayList<>());
+        this(null, new ArrayList<>(), null);
     }
 
     /**
@@ -74,76 +56,43 @@ public class SymbolSet {
      *         The reset symbol.
      * @param symbols
      *         The symbols.
+     * @param postSymbol
+     *         The post symbol.
      */
-    public SymbolSet(Symbol resetSymbol, List<Symbol> symbols) {
+    public SymbolSet(ParameterizedSymbol resetSymbol, List<ParameterizedSymbol> symbols,
+            ParameterizedSymbol postSymbol) {
         this.resetSymbol = resetSymbol;
         this.symbols = symbols;
+        this.postSymbol = postSymbol;
     }
 
-    /**
-     * Get the IdRevisionPair of the reset symbol.
-     *
-     * @return The link to the reset symbol.
-     */
-    public Long getResetSymbolAsId() {
-        return resetSymbolAsId;
-    }
-
-    /**
-     * Set the IdRevisionPair of the reset symbol. This updates not the reset symbol itself.
-     *
-     * @param resetSymbolAsId
-     *         The new id of the reset symbol.
-     */
-    public void setResetSymbolAsId(Long resetSymbolAsId) {
-        this.resetSymbolAsId = resetSymbolAsId;
-    }
-
-    /**
-     * Get the actual reset symbol.
-     *
-     * @return The reset symbol.
-     */
-    public Symbol getResetSymbol() {
+    public ParameterizedSymbol getResetSymbol() {
         return resetSymbol;
     }
 
-    /**
-     * Set the reset symbol. This updates not the IdRevisionPair of the reset symbol.
-     *
-     * @param resetSymbol
-     *         The new reset symbol.
-     */
-    public void setResetSymbol(Symbol resetSymbol) {
+    public void setResetSymbol(ParameterizedSymbol resetSymbol) {
         this.resetSymbol = resetSymbol;
     }
 
-    /**
-     * Get a List of IdRevisionPairs that describes the symbols to be used during the learning process.
-     *
-     * @return A List of IdRevisionPair referring to symbols that must be used during the learning.
-     */
-    public List<Long> getSymbolsAsIds() {
-        return symbolsAsIds;
-    }
-
-    /**
-     * Set a List of ids to find all the symbols that must be used during a learning process.
-     *
-     * @param symbolsAsIds
-     *         The List of ids to refer to symbols that must be used during the learning.
-     */
-    public void setSymbolsAsIds(List<Long> symbolsAsIds) {
-        this.symbolsAsIds = symbolsAsIds;
-    }
-
-    /**
-     * Get the list of Symbols that must be used for the learning process.
-     *
-     * @return The list of Symbols.
-     */
-    public List<Symbol> getSymbols() {
+    public List<ParameterizedSymbol> getSymbols() {
         return symbols;
+    }
+
+    public void setSymbols(List<ParameterizedSymbol> symbols) {
+        this.symbols = symbols;
+    }
+
+    public ParameterizedSymbol getPostSymbol() {
+        return postSymbol;
+    }
+
+    public void setPostSymbol(ParameterizedSymbol postSymbol) {
+        this.postSymbol = postSymbol;
+    }
+
+    @JsonIgnore
+    public List<Long> getSymbolIds() {
+        return symbols.stream().map(ps -> ps.getSymbol().getId()).collect(Collectors.toList());
     }
 
     /**
@@ -151,21 +100,14 @@ public class SymbolSet {
      *
      * @return The list with the reset symbol and all others.
      */
-    public List<Symbol> getAllSymbols() {
-        List<Symbol> resultList = new LinkedList<>();
+    public List<ParameterizedSymbol> getAllSymbols() {
+        List<ParameterizedSymbol> resultList = new LinkedList<>();
         resultList.add(resetSymbol);
         resultList.addAll(symbols);
+        if (postSymbol != null) {
+            resultList.add(postSymbol);
+        }
         return resultList;
-    }
-
-    /**
-     * Set a list of symbols to be used for the learning process.
-     *
-     * @param symbols
-     *         The new list of Symbols.
-     */
-    public void setSymbols(List<Symbol> symbols) {
-        this.symbols = symbols;
     }
 
 }

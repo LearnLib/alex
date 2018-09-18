@@ -27,18 +27,17 @@ export const testsImportModalComponent = {
         /**
          * Constructor.
          *
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          * @param {SymbolResource} SymbolResource
          * @param {TestResource} TestResource
          * @param {TestService} TestService
          */
         // @ngInject
-        constructor(SessionService, SymbolResource, TestResource, TestService) {
+        constructor(ProjectService, SymbolResource, TestResource, TestService) {
             this.SymbolResource = SymbolResource;
             this.TestResource = TestResource;
             this.TestService = TestService;
-
-            this.project = SessionService.getProject();
+            this.ProjectService = ProjectService;
 
             this.errorMessage = null;
             this.importData = null;
@@ -77,6 +76,10 @@ export const testsImportModalComponent = {
             } else {
                 this.errorMessage = 'There aren\'t any tests to import';
             }
+        }
+
+        get project() {
+            return this.ProjectService.store.currentProject;
         }
     }
 };

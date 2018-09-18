@@ -17,6 +17,7 @@
 package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -24,8 +25,6 @@ import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.DiscriminatorValue;
@@ -43,8 +42,6 @@ public class SetVariableByHttpResponse extends SymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /** The name of the variable. */
     @NotEmpty
     private String name;
@@ -58,12 +55,10 @@ public class SetVariableByHttpResponse extends SymbolAction {
             final String body = webServiceConnector.getBody();
             variableStore.set(name, body);
 
-            LOGGER.info(LEARNER_MARKER, "Set variable '{}' to HTTP body. (ignoreFailure: {}, negated: {}).",
-                    name, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Set variable '{}' to HTTP body.", name);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LEARNER_MARKER, "Could not set variable '{}' to HTTP body. (ignoreFailure: {}, negated: {}).",
-                    name, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not set variable '{}' to HTTP body.", name);
             return getFailedOutput();
         }
     }

@@ -18,7 +18,6 @@ export const testCaseNodeComponent = {
     template: require('./test-case-node.component.html'),
     bindings: {
         case: '=',
-        parent: '=',
         results: '='
     },
     controllerAs: 'vm',

@@ -45,39 +45,13 @@ public class Credentials implements Serializable {
     /**
      * Create a credential with a user and password.
      *
-     * @param name The name to use.
-     * @param password The password to use.
+     * @param name
+     *         The name to use.
+     * @param password
+     *         The password to use.
      */
     public Credentials(String name, String password) {
         this.name = name;
-        this.password = password;
-    }
-
-    /**
-     * @return The name to use for authentication.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name The new name to use for authentication.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return The password to use for authentication.
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * @param password The new password to use for authentication.
-     */
-    public void setPassword(String password) {
         this.password = password;
     }
 
@@ -88,7 +62,7 @@ public class Credentials implements Serializable {
      */
     public String toBase64() {
         String credentialsAsString = name + ":" + password;
-        return  Base64.encodeBase64String(credentialsAsString.getBytes());
+        return Base64.encodeBase64String(credentialsAsString.getBytes());
     }
 
     /**
@@ -99,4 +73,21 @@ public class Credentials implements Serializable {
     public boolean areValid() {
         return !name.trim().equals("") && !password.trim().equals("");
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
 }

@@ -22,5 +22,6 @@ main/src/main/webapp/restdocs
 main/uploads
 
 frontend/src/main/javascript/npm-debug\.log
+frontend/src/main/javascript/package-lock\.json
 
 backend/debug.log

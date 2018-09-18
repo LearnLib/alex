@@ -17,13 +17,14 @@
 package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.GenericGenerator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.UUID;
+import java.util.StringJoiner;
 
 /** Class to determine if a symbol has been executed successfully. */
 @Entity
@@ -39,16 +40,18 @@ public class ExecuteResult implements Serializable {
 
     /** The id of the execute result in the db. */
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @GeneratedValue
     @JsonIgnore
-    private UUID uuid;
+    private Long id;
 
     /** If the symbol has been execute successfully. */
     private boolean success;
 
     /** The output of the SUL. */
-    private String output;
+    private String message;
+
+    /** The time in ms it took to execute the step. */
+    private Long time;
 
     /** Constructor. */
     public ExecuteResult() {
@@ -58,7 +61,8 @@ public class ExecuteResult implements Serializable {
     /**
      * Constructor.
      *
-     * @param success {@link #success}.
+     * @param success
+     *         {@link #success}.
      */
     public ExecuteResult(boolean success) {
         this(success, null);
@@ -67,12 +71,29 @@ public class ExecuteResult implements Serializable {
     /**
      * Constructor.
      *
-     * @param success {@link #success}.
-     * @param output  {@link #output}.
+     * @param success
+     *         {@link #success}.
+     * @param message
+     *         {@link #message}.
      */
-    public ExecuteResult(boolean success, String output) {
+    public ExecuteResult(boolean success, String message) {
+        this(success, message, 0L);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param success
+     *         {@link #success}.
+     * @param message
+     *         {@link #message}.
+     * @param time
+     *         {@link #time}.
+     */
+    public ExecuteResult(boolean success, String message, Long time) {
         this.success = success;
-        this.output = output == null ? success ? DEFAULT_SUCCESS_OUTPUT : DEFAULT_ERROR_OUTPUT : output;
+        this.message = message;
+        this.time = time;
     }
 
     public boolean isSuccess() {
@@ -83,20 +104,50 @@ public class ExecuteResult implements Serializable {
         this.success = success;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    @Transient
+    @JsonProperty("output")
     public String getOutput() {
-        return output;
+        if (success) {
+            return DEFAULT_SUCCESS_OUTPUT + (message == null ? "" : " (" + message + ")");
+        } else {
+            return DEFAULT_ERROR_OUTPUT + (message == null ? "" : " (" + message + ")");
+        }
     }
 
-    public void setOutput(String output) {
-        this.output = output;
+    public Long getId() {
+        return id;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public Long getTime() {
+        return time;
     }
 
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
+    /** Negate the result. */
+    public void negate() {
+        this.success = !this.success;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", this.getClass().getSimpleName() + "[", "]")
+                .add("success = " + success)
+                .add("output = " + getOutput())
+                .toString();
+    }
 }

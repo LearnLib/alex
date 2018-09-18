@@ -40,14 +40,26 @@ export class TestService {
      * @return {*}
      */
     exportTests(tests) {
-        const prepareTestCase = (testCase) => {
+        for (const test of tests) {
+            if (test.type === 'case') {
+                prepareTestCase(test);
+            } else {
+                prepareTestSuite(test);
+            }
+        }
+
+        return tests;
+
+        function prepareTestCase(testCase) {
             deleteProperties(testCase);
 
             const s = (steps) => {
                 return steps.map((step) => {
                     delete step.id;
-                    step.symbol = step.symbol.name;
-                    step.parameterValues.forEach(value => {
+                    delete step.pSymbol.id;
+                    step.pSymbol.symbolFromName = step.pSymbol.symbol.name;
+                    delete step.pSymbol.symbol;
+                    step.pSymbol.parameterValues.forEach(value => {
                         delete value.id;
                         delete value.parameter.id;
                     });
@@ -58,9 +70,9 @@ export class TestService {
             testCase.steps = s(testCase.steps);
             testCase.preSteps = s(testCase.preSteps);
             testCase.postSteps = s(testCase.postSteps);
-        };
+        }
 
-        const prepareTestSuite = (testSuite) => {
+        function prepareTestSuite(testSuite) {
             deleteProperties(testSuite);
             testSuite.tests.forEach(test => {
                 if (test.type === 'case') {
@@ -69,24 +81,14 @@ export class TestService {
                     prepareTestSuite(test);
                 }
             });
-        };
+        }
 
-        const deleteProperties = (test) => {
+        function deleteProperties(test) {
             delete test.id;
             delete test.project;
             delete test.user;
             delete test.parent;
-        };
-
-        for (const test of tests) {
-            if (test.type === 'case') {
-                prepareTestCase(test);
-            } else {
-                prepareTestSuite(test);
-            }
         }
-
-        return tests;
     }
 
     /**
@@ -101,41 +103,6 @@ export class TestService {
             .then((symbols) => {
                 const tests = JSON.parse(JSON.stringify(testsToImport));
 
-                const mapTestCaseSymbols = (testCase) => {
-
-                    const s = (steps) => {
-                        return steps.map((step) => {
-                            const sym = symbols.find(s => s.name === step.symbol);
-                            if (sym) {
-                                step.symbol = sym.id;
-                            }
-                            return step;
-                        });
-                    };
-
-                    testCase.steps = s(testCase.steps);
-                    testCase.preSteps = s(testCase.preSteps);
-                    testCase.postSteps = s(testCase.postSteps);
-                };
-
-                const prepareTestCase = (testCase, parent) => {
-                    testCase.project = projectId;
-                    testCase.parent = parent;
-                    mapTestCaseSymbols(testCase);
-                };
-
-                const prepareTestSuite = (testSuite, parent) => {
-                    testSuite.project = projectId;
-                    testSuite.parent = parent;
-                    testSuite.tests.forEach(test => {
-                        if (test.type === 'case') {
-                            prepareTestCase(test, null);
-                        } else {
-                            prepareTestSuite(test, null);
-                        }
-                    });
-                };
-
                 for (let test of tests) {
                     if (test.type === 'case') {
                         prepareTestCase(test, parentId);
@@ -145,6 +112,40 @@ export class TestService {
                 }
 
                 return this.TestResource.createMany(projectId, tests);
+
+                function prepareTestCase(testCase, parent) {
+                    testCase.project = projectId;
+                    testCase.parent = parent;
+                    mapTestCaseSymbols(testCase);
+                }
+
+                function prepareTestSuite(testSuite, parent) {
+                    testSuite.project = projectId;
+                    testSuite.parent = parent;
+                    testSuite.tests.forEach(test => {
+                        if (test.type === 'case') {
+                            prepareTestCase(test, null);
+                        } else {
+                            prepareTestSuite(test, null);
+                        }
+                    });
+                }
+
+                function mapTestCaseSymbols(testCase) {
+                    const s = (steps) => {
+                        return steps.map((step) => {
+                            const sym = symbols.find(s => s.name === step.pSymbol.symbolFromName);
+                            if (sym) {
+                                step.pSymbol.symbol = sym.id;
+                            }
+                            return step;
+                        });
+                    };
+
+                    testCase.steps = s(testCase.steps);
+                    testCase.preSteps = s(testCase.preSteps);
+                    testCase.postSteps = s(testCase.postSteps);
+                }
             });
     }
 

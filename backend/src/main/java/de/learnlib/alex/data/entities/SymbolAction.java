@@ -64,14 +64,13 @@ import de.learnlib.alex.data.entities.actions.web.SelectAction;
 import de.learnlib.alex.data.entities.actions.web.SubmitAction;
 import de.learnlib.alex.data.entities.actions.web.SwitchTo;
 import de.learnlib.alex.data.entities.actions.web.SwitchToFrame;
+import de.learnlib.alex.data.entities.actions.web.UploadFileAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForNodeAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForNodeAttributeAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForTextAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForTitleAction;
 import de.learnlib.alex.data.entities.actions.web.WebSymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -86,9 +85,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.UUID;
+import java.util.Objects;
 
 /**
  * Abstract super type of how a Action for Symbols should look & work like.
@@ -96,7 +94,7 @@ import java.util.UUID;
 @Entity
 @Table(
         name = "ACTIONS",
-        indexes = @Index(columnList = "symbolId, number")
+        indexes = @Index(columnList = "symbolId")
 )
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
@@ -141,6 +139,7 @@ import java.util.UUID;
         @JsonSubTypes.Type(name = "web_select", value = SelectAction.class),
         @JsonSubTypes.Type(name = "web_switchTo", value = SwitchTo.class),
         @JsonSubTypes.Type(name = "web_switchToFrame", value = SwitchToFrame.class),
+        @JsonSubTypes.Type(name = "web_uploadFile", value = UploadFileAction.class),
         @JsonSubTypes.Type(name = "web_waitForTitle", value = WaitForTitleAction.class),
         @JsonSubTypes.Type(name = "web_waitForNode", value = WaitForNodeAction.class),
         @JsonSubTypes.Type(name = "web_waitForNodeAttribute", value = WaitForNodeAttributeAction.class),
@@ -160,10 +159,8 @@ public abstract class SymbolAction implements Serializable {
 
     /** The ID of the Action in the DB. */
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @JsonIgnore
-    protected UUID uuid;
+    @GeneratedValue
+    protected Long id;
 
     /** The symbol the action belongs to. */
     @ManyToOne
@@ -171,51 +168,19 @@ public abstract class SymbolAction implements Serializable {
     @JsonIgnore
     protected Symbol symbol;
 
-    /** The position the action has in the actions list of the Symbol. */
-    @GeneratedValue(generator = "symbol_action_number_generator")
-    @GenericGenerator(
-            name = "symbol_action_number_generator",
-            strategy = "de.learnlib.alex.core.entities.validators.SymbolActionNumberGenerator")
-    @JsonIgnore
-    protected int number;
 
-    /** Should the action be executed or skipped? */
-    @NotNull
-    protected boolean disabled;
-
-    /** Negate the outcome of the action? */
-    @NotNull
-    protected boolean negated;
-
-    /** Ignore if the execution of the action failed? */
-    @NotNull
-    protected boolean ignoreFailure;
-
-    /** The custom output if the execution of this action fails. */
-    protected String errorOutput;
 
     /** The connections that the action can use. */
     @Transient
     @JsonIgnore
     private ConnectorManager connectorManager;
 
-    /**
-     * Get the ID of the Action used in the DB.
-     *
-     * @return The DB ID of the Action.
-     */
-    public UUID getUUID() {
-        return uuid;
+    public Long getId() {
+        return id;
     }
 
-    /**
-     * Set the ID of the Action in the DB.
-     *
-     * @param uuid
-     *         The DB ID of the Action.
-     */
-    public void setUUID(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
@@ -235,92 +200,6 @@ public abstract class SymbolAction implements Serializable {
      */
     public void setSymbol(Symbol symbol) {
         this.symbol = symbol;
-    }
-
-    /**
-     * Get the position the action has in the actions list of the {@link Symbol}.
-     *
-     * @return The position of the action in the list.
-     */
-    public int getNumber() {
-        return number;
-    }
-
-    /**
-     * Set the position the action has in the actions list.
-     *
-     * @param no
-     *         The new position.
-     */
-    public void setNumber(int no) {
-        this.number = no;
-    }
-
-    /**
-     * Should the result of the execute method be inverted?
-     *
-     * @return true, if the outcome should be negated; false otherwise.
-     */
-    public boolean isNegated() {
-        return negated;
-    }
-
-    /**
-     * Set the negated flag, i.e. if the outcome of the execute method will be inverted.
-     *
-     * @param negated
-     *         true, if the outcome should be inverted.
-     */
-    public void setNegated(boolean negated) {
-        this.negated = negated;
-    }
-
-    /**
-     * Usually the sequential execution of action will be interrupted if an action returns FAILED. With this property
-     * this behaviour can be overwritten.
-     *
-     * @return true if the following action should be executed, even if the action FAILED; false otherwise.
-     */
-    public boolean isIgnoreFailure() {
-        return ignoreFailure;
-    }
-
-    /**
-     * Set the ignore failure flag, i.e. even if the action FAILED following actions will be executed.
-     *
-     * @param ignoreFailure
-     *         true, if the following action should be executed; false otherwise.
-     */
-    public void setIgnoreFailure(boolean ignoreFailure) {
-        this.ignoreFailure = ignoreFailure;
-    }
-
-    /**
-     * As a default, an action is executed when the learner calls a symbols. If this method returns false, the learner
-     * skips the execution of the action and executes the following
-     *
-     * @return true if the action should be executed, false if should be skipped
-     */
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    /**
-     * Set the enable flag, i.e. if the execution of the action should be skipped
-     *
-     * @param disabled
-     *         true if the action should be executed, false if should be skipped
-     */
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-    }
-
-    public String getErrorOutput() {
-        return errorOutput;
-    }
-
-    public void setErrorOutput(String errorOutput) {
-        this.errorOutput = errorOutput;
     }
 
     /**
@@ -363,7 +242,7 @@ public abstract class SymbolAction implements Serializable {
      * @return OK if 'negated' is false; FALSE if 'negated' is true.
      */
     protected final ExecuteResult getSuccessOutput() {
-        return negated ? new ExecuteResult(false, errorOutput) : new ExecuteResult(true);
+        return new ExecuteResult(true);
     }
 
     /**
@@ -373,7 +252,7 @@ public abstract class SymbolAction implements Serializable {
      * @return FAILED if 'negated' is false; OK if 'negated' is true.
      */
     protected final ExecuteResult getFailedOutput() {
-        return negated ? new ExecuteResult(true) : new ExecuteResult(false, errorOutput);
+        return new ExecuteResult(false);
     }
 
     //CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber|NeedBraces - auto generated by IntelliJ
@@ -384,7 +263,6 @@ public abstract class SymbolAction implements Serializable {
 
         SymbolAction that = (SymbolAction) o;
 
-        if (number != that.number) return false;
         if (symbol != null ? !symbol.equals(that.symbol) : that.symbol != null) return false;
 
         return true;
@@ -392,9 +270,7 @@ public abstract class SymbolAction implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = symbol != null ? symbol.hashCode() : 0;
-        result = 31 * result + number;
-        return result;
+        return Objects.hash(getId(), getSymbol(), connectorManager);
     }
     //CHECKSTYLE.ON: AvoidInlineConditionals|MagicNumber|NeedBraces
 

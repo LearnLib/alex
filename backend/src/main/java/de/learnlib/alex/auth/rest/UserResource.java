@@ -31,8 +31,6 @@ import de.learnlib.alex.config.entities.Settings;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.jose4j.json.internal.json_simple.JSONObject;
@@ -67,11 +65,6 @@ import java.util.List;
 public class UserResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker USER_MARKER = MarkerManager.getMarker("USER");
-    private static final Marker REST_MARKER = MarkerManager.getMarker("REST");
-    private static final Marker RESOURCE_MARKER = MarkerManager.getMarker("USER_RESOURCE")
-            .setParents(USER_MARKER, REST_MARKER);
 
     /** The UserDAO to user. */
     @Inject
@@ -345,7 +338,7 @@ public class UserResource {
         User userToPromote = userDAO.getById(userId);
         userToPromote.setRole(UserRole.ADMIN);
         userDAO.update(userToPromote);
-        LOGGER.info(RESOURCE_MARKER, "User {} promoted.", user);
+        LOGGER.info("User {} promoted.", user);
 
         LOGGER.traceExit(userToPromote);
         webhookService.fireEvent(user, new UserEvent.RoleUpdated(userToPromote));
@@ -461,13 +454,11 @@ public class UserResource {
         }
 
         userDAO.delete(ids);
-
         LOGGER.traceExit("User(s) {} deleted.", ids);
 
         ids.forEach(id -> webhookService.fireEvent(new User(id), new UserEvent.Deleted(id)));
         return Response.status(Status.NO_CONTENT).build();
     }
-
 
     /**
      * Logs in a user by generating a unique JWT for him that needs to be send in every request.
@@ -509,4 +500,21 @@ public class UserResource {
         }
     }
 
+    /**
+     * Get the current logged in user.
+     *
+     * @return The user.
+     * @throws NotFoundException
+     *         If the user could not be found.
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/myself")
+    @RolesAllowed({"ADMIN", "REGISTERED"})
+    public Response myself() throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
+        final User myself = userDAO.getById(user.getId());
+        return Response.ok(myself).build();
+    }
 }

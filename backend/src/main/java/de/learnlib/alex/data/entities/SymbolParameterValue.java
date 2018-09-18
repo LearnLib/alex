@@ -1,8 +1,22 @@
+/*
+ * Copyright 2018 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.learnlib.alex.data.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.learnlib.alex.testing.entities.TestCaseStep;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -29,13 +43,8 @@ public class SymbolParameterValue implements Serializable {
     @JoinColumn(name = "symbolParameterId")
     private SymbolParameter parameter;
 
-    /** The step where the value is referenced. */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "testCaseStepId")
-    @JsonIgnore
-    private TestCaseStep step;
-
     /** The value for the parameter. */
+    @Column(name = "\"value\"")
     private String value;
 
     public Long getId() {
@@ -60,13 +69,5 @@ public class SymbolParameterValue implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public TestCaseStep getStep() {
-        return step;
-    }
-
-    public void setStep(TestCaseStep step) {
-        this.step = step;
     }
 }

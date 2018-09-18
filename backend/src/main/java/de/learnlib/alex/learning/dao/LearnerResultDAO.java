@@ -40,12 +40,13 @@ public interface LearnerResultDAO {
      *         The user performing the action.
      * @param learnerResult
      *         The LearnerResult to save.
+     * @return The created result.
      * @throws NotFoundException
      *         If one of the required resources could not be found.
      * @throws ValidationException
      *         If the given LearnerResult was invalid.
      */
-    void create(User user, LearnerResult learnerResult) throws NotFoundException, ValidationException;
+    LearnerResult create(User user, LearnerResult learnerResult) throws NotFoundException, ValidationException;
 
     /**
      * Get a list of all the LearnerResults for a given Project.
@@ -77,7 +78,7 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    List<LearnerResult> getAll(User user, Long projectId, Long[] testNos, boolean includeSteps)
+    List<LearnerResult> getAll(User user, Long projectId, List<Long> testNos, boolean includeSteps)
             throws NotFoundException;
 
     /**
@@ -156,12 +157,12 @@ public interface LearnerResultDAO {
      *         The learner.
      * @param projectId
      *         The project id.
-     * @param testNo
+     * @param testNos
      *         The test numbers to delete.
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    void delete(Learner learner, Long projectId, Long... testNo) throws NotFoundException;
+    void delete(Learner learner, Long projectId, List<Long> testNos) throws NotFoundException;
 
     /**
      * Clone learner result.

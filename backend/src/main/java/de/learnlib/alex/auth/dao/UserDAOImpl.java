@@ -23,6 +23,9 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.dao.FileDAO;
+import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.repositories.ProjectRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -45,21 +48,36 @@ public class UserDAOImpl implements UserDAO {
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** The UserRepository to use. Will be injected. */
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     /** The FileDAO to use. Will be injected. */
-    private FileDAO fileDAO;
+    private final FileDAO fileDAO;
+
+    /** The DAO for project. */
+    private final ProjectDAO projectDAO;
+
+    /** The repository for projects. */
+    private final ProjectRepository projectRepository;
 
     /**
      * Creates a new UserDAO.
      *
-     * @param userRepository The UserRepository to use.
-     * @param fileDAO The FileDAO to use.
+     * @param userRepository
+     *         The UserRepository to use.
+     * @param fileDAO
+     *         The FileDAO to use.
+     * @param projectDAO
+     *         The ProjectDAO to use.
+     * @param projectRepository
+     *         The repository for project.
      */
     @Inject
-    public UserDAOImpl(UserRepository userRepository, FileDAO fileDAO) {
+    public UserDAOImpl(UserRepository userRepository, FileDAO fileDAO, ProjectDAO projectDAO,
+            ProjectRepository projectRepository) {
         this.userRepository = userRepository;
         this.fileDAO = fileDAO;
+        this.projectDAO = projectDAO;
+        this.projectRepository = projectRepository;
     }
 
     @Override
@@ -115,8 +133,23 @@ public class UserDAOImpl implements UserDAO {
     @Override
     @Transactional
     public void delete(Long id) throws NotFoundException {
-        User user = getById(id);
+        delete(getById(id));
+    }
 
+    @Override
+    @Transactional
+    public void delete(IdsList ids) throws NotFoundException {
+        final List<User> users = userRepository.findAllByIdIn(ids);
+        if (users.size() != ids.size()) {
+            throw new NotFoundException("At least one user could not be found.");
+        }
+
+        for (User user : users) {
+            delete(user);
+        }
+    }
+
+    private void delete(User user) throws NotFoundException {
         // make sure there is at least one registered admin
         if (user.getRole().equals(UserRole.ADMIN)) {
             List<User> admins = userRepository.findByRole(UserRole.ADMIN);
@@ -126,6 +159,9 @@ public class UserDAOImpl implements UserDAO {
             }
         }
 
+        for (Project project : projectRepository.findAllByUser_Id(user.getId())) {
+            projectDAO.delete(user, project.getId());
+        }
         userRepository.delete(user);
 
         // delete the user directory
@@ -136,19 +172,10 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
-    @Override
-    @Transactional
-    public void delete(IdsList ids) throws NotFoundException {
-        for (Long id: ids) {
-            User user = getById(id);
-            userRepository.delete(user);
-        }
-    }
-
     private void saveUser(User user) {
         try {
             userRepository.save(user);
-        // error handling
+            // error handling
         } catch (TransactionSystemException e) {
             LOGGER.info("Saving a user failed:", e);
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();

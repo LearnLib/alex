@@ -18,14 +18,13 @@ package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
@@ -45,6 +44,7 @@ public class AssertCounterAction extends SymbolAction {
      * Assert types to mimic the different operators.
      */
     public enum Operator {
+
         /** '<'. */
         LESS_THAN,
 
@@ -85,8 +85,6 @@ public class AssertCounterAction extends SymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER  = MarkerManager.getMarker("LEARNER");
-
     /**
      * The name of the counter to assert.
      */
@@ -105,48 +103,6 @@ public class AssertCounterAction extends SymbolAction {
      */
     @NotNull
     private Operator operator;
-
-    /**
-     * @return The name of the counter that will be compared.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name The new name of the counter to compare.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return The value that the counter will be compared with.
-     */
-    public Integer getValue() {
-        return value;
-    }
-
-    /**
-     * @param value The new value to compare the counter with.
-     */
-    public void setValue(Integer value) {
-        this.value = value;
-    }
-
-    /**
-     * @return The current operator to compare the counter with the given value.
-     */
-    public Operator getOperator() {
-        return operator;
-    }
-
-    /**
-     * @param assertMethod Set the new operator to use to compare the counter with the given value.
-     */
-    public void setOperator(Operator assertMethod) {
-        this.operator = assertMethod;
-    }
 
     @Override
     protected ExecuteResult execute(ConnectorManager connector) {
@@ -175,15 +131,38 @@ public class AssertCounterAction extends SymbolAction {
                 break;
         }
 
-        LOGGER.info(LEARNER_MARKER, "Asserting counter '{}' with value '{}' against '{}' using {} => {} "
-                                        + "(ignoreFailure: {}, negated: {}).",
-                    name, counterValue, value, operator, result, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Asserting counter '{}' with value '{}' against '{}' using {} => {}.",
+                name, counterValue, value, operator, result);
 
         if (result) {
             return getSuccessOutput();
         } else {
             return getFailedOutput();
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getValue() {
+        return value;
+    }
+
+    public void setValue(Integer value) {
+        this.value = value;
+    }
+
+    public Operator getOperator() {
+        return operator;
+    }
+
+    public void setOperator(Operator assertMethod) {
+        this.operator = assertMethod;
     }
 
 }

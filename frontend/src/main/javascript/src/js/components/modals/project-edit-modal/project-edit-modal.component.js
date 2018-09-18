@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {events} from '../../../constants';
 import {Project} from '../../../entities/project';
 
 /**
@@ -27,15 +26,13 @@ export class ProjectEditModalComponent {
      *
      * @param {ProjectResource} ProjectResource
      * @param {ToastService} ToastService
-     * @param {EventBus} EventBus
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      */
     // @ngInject
-    constructor(ProjectResource, ToastService, EventBus, SessionService) {
+    constructor(ProjectResource, ToastService, ProjectService) {
         this.ProjectResource = ProjectResource;
         this.ToastService = ToastService;
-        this.EventBus = EventBus;
-        this.SessionService = SessionService;
+        this.ProjectService = ProjectService;
 
         /**
          * The form object.
@@ -68,10 +65,8 @@ export class ProjectEditModalComponent {
         this.ProjectResource.update(this.project)
             .then(updatedProject => {
                 this.ToastService.success('Project updated');
-                this.SessionService.saveProject(updatedProject);
-
-                this.EventBus.emit(events.PROJECT_UPDATED, {project: updatedProject});
-                this.dismiss();
+                this.ProjectService.open(updatedProject);
+                this.close({$value: updatedProject});
 
                 // set the form to its original state
                 this.form.$setPristine();
@@ -87,6 +82,7 @@ export const projectEditModalComponent = {
     template: require('./project-edit-modal.component.html'),
     bindings: {
         dismiss: '&',
+        close: '&',
         resolve: '='
     },
     controller: ProjectEditModalComponent,

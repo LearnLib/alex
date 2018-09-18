@@ -21,9 +21,7 @@ import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.ResponseHelper;
-import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.dao.SymbolGroupDAO;
-import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.events.SymbolGroupEvent;
 import de.learnlib.alex.webhooks.services.WebhookService;
@@ -69,10 +67,6 @@ public class SymbolGroupResource {
     /** The SymbolGroupDAO to use. */
     @Inject
     private SymbolGroupDAO symbolGroupDAO;
-
-    /** The SymbolDAO to use. */
-    @Inject
-    private SymbolDAO symbolDAO;
 
     /** The security context containing the user of the request. */
     @Context
@@ -223,34 +217,6 @@ public class SymbolGroupResource {
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get",
                     Response.Status.BAD_REQUEST, e);
         }
-    }
-
-    /**
-     * Not implemented yet. Returns just dummy values.
-     *
-     * @param projectId
-     *         The ID of the project.
-     * @param id
-     *         The ID of the group within the project.
-     * @return The list of symbols within one group.
-     * @throws NotFoundException
-     *         If the related Project or Group could not be found.
-     * @successResponse 200 OK
-     * @responseType java.util.List<de.learnlib.alex.data.entities.Symbol>
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     */
-    @GET
-    @Path("/{id}/symbols")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getSymbols(@PathParam("project_id") long projectId, @PathParam("id") Long id)
-            throws NotFoundException {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("getSymbols({}, {}) for user {}.", projectId, id, user);
-
-        List<Symbol> symbols = symbolDAO.getAll(user, projectId, id);
-
-        LOGGER.traceExit(symbols);
-        return ResponseHelper.renderList(symbols, Response.Status.OK);
     }
 
     /**

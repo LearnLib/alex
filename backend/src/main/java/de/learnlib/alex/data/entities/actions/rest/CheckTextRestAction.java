@@ -18,17 +18,18 @@ package de.learnlib.alex.data.entities.actions.rest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -43,78 +44,56 @@ public class CheckTextRestAction extends RESTSymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /** The expected text in the response body of the last request. */
     @NotBlank
+    @Column(name = "\"value\"")
     private String value;
 
     /** Field to determine if the search string is a regular expression. */
     @NotNull
+    @Column(name = "\"regexp\"")
     private boolean regexp;
-
-    /**
-     * Get the value which should be in the body of the last request.
-     *
-     * @return The value to search for.
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * Get the value which should be in the body of the last request.
-     * All variables and counters will be replaced with their values.
-     *
-     * @return The value to search for.
-     */
-    @JsonIgnore
-    public String getValueWithVariableValues() {
-        return insertVariableValues(value);
-    }
-
-    /**
-     * Set the value which will be searched in the last response body.
-     *
-     * @param value
-     *         The value to search for.
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    /**
-     * Should the value be treated as regular expression while searching for a text?
-     *
-     * @return true, if value should be a regular expression: false otherwise.
-     */
-    public boolean isRegexp() {
-        return regexp;
-    }
-
-    /**
-     * Set the flag if the value is a regular expression for the text search.
-     *
-     * @param regexp
-     *         true if the value is a regular expression.
-     */
-    public void setRegexp(boolean regexp) {
-        this.regexp = regexp;
-    }
 
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         String body = target.getBody();
         boolean result = SearchHelper.search(getValueWithVariableValues(), body, regexp);
 
-        LOGGER.info(LEARNER_MARKER, "Check if the value '{}' is in '{}' => {} "
-                                        + "(regexp: {}, ignoreFailure: {}, negated: {}).",
-                    value, value, body, result, regexp, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Check if the value '{}' is in '{}' => {} (regexp: {}).",
+                value, value, body, result, regexp);
         if (result) {
             return getSuccessOutput();
         } else {
             return getFailedOutput();
         }
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * Get the value which should be in the body of the last request. All variables and counters will be replaced with
+     * their values.
+     *
+     * @return The value to search for.
+     */
+    @Transient
+    @JsonIgnore
+    public String getValueWithVariableValues() {
+        return insertVariableValues(value);
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public boolean isRegexp() {
+        return regexp;
+    }
+
+    public void setRegexp(boolean regexp) {
+        this.regexp = regexp;
     }
 
 }

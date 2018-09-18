@@ -17,7 +17,8 @@
 package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.common.utils.LoggerMarkers;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
@@ -25,11 +26,13 @@ import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
+import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import de.learnlib.api.algorithm.feature.SupportsGrowingAlphabet;
 import de.learnlib.filter.cache.mealy.MealyCacheOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
+import org.apache.logging.log4j.ThreadContext;
 
 /** The learner thread that is used for resuming an old experiment from a given step. */
 public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeConfiguration> {
@@ -49,29 +52,34 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
      *         {@link AbstractLearnerThread#result}.
      * @param configuration
      *         The configuration to use.
+     * @param testDAO
+     *         The DAO for tests that is passed to the eq oracle.
      */
     public ResumingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-                                 ConnectorContextHandler context, LearnerResult result,
-                                 LearnerResumeConfiguration configuration) {
-        super(user, learnerResultDAO, webhookService, context, result, configuration);
+            TestDAO testDAO, ConnectorContextHandler context, LearnerResult result,
+            LearnerResumeConfiguration configuration) {
+        super(user, learnerResultDAO, webhookService, testDAO, context, result, configuration);
     }
 
     @Override
     public void run() {
+        ThreadContext.put("userId", String.valueOf(user.getId()));
         LOGGER.traceEntry();
-        LOGGER.info(LEARNER_MARKER, "Resuming a learner thread.");
+        LOGGER.info(LoggerMarkers.LEARNER, "Resuming a learner thread.");
 
         try {
             resumeLearning();
         } catch (Exception e) {
-            LOGGER.warn(LEARNER_MARKER, "Something in the LearnerThread while resuming went wrong:", e);
+            LOGGER.error(LoggerMarkers.LEARNER, "Something in the LearnerThread while resuming went wrong:", e);
             e.printStackTrace();
             updateOnError(e);
         } finally {
             context.post();
             finished = true;
-            LOGGER.info(LEARNER_MARKER, "The learner finished resuming the experiment.");
+
+            LOGGER.info(LoggerMarkers.LEARNER, "The learner finished resuming the experiment.");
             LOGGER.traceExit();
+            ThreadContext.remove("userId");
         }
     }
 
@@ -81,7 +89,7 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
 
         if (configuration.getSymbolsToAdd().size() > 0 && learner instanceof SupportsGrowingAlphabet) {
             final SupportsGrowingAlphabet<String> growingAlphabetLearner = (SupportsGrowingAlphabet) learner;
-            for (final Symbol symbol : configuration.getSymbolsToAdd()) {
+            for (final ParameterizedSymbol symbol : configuration.getSymbolsToAdd()) {
                 symbolMapper.addSymbol(symbol);
 
                 // if the cache is not reinitialized with the new alphabet, we will get cache errors later
@@ -89,14 +97,14 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
 
                     // make new alphabet for the cache because it cannot handle a shared growing alphabet instance
                     final Alphabet<String> alphabet = new SimpleAlphabet<>(abstractAlphabet);
-                    alphabet.add(symbol.getName());
+                    alphabet.add(symbol.getComputedName());
 
                     this.mqOracle.setDelegate(MealyCacheOracle.createDAGCacheOracle(alphabet, monitorOracle));
                 }
 
                 // measure how much time and membership queries it takes to add the symbol
                 final long start = System.nanoTime();
-                growingAlphabetLearner.addAlphabetSymbol(symbol.getName());
+                growingAlphabetLearner.addAlphabetSymbol(symbol.getComputedName());
                 final long end = System.nanoTime();
 
                 final Statistics statistics = new Statistics();
@@ -112,7 +120,6 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
                 step.setAlgorithmInformation(result.getAlgorithm().getInternalData(learner));
                 step.setStatistics(statistics);
 
-                result.getSymbols().add(symbol);
                 learnerResultDAO.saveStep(result, step);
             }
         }

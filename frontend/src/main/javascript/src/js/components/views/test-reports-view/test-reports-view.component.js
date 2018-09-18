@@ -30,24 +30,18 @@ export const testReportsViewComponent = {
          * Constructor.
          *
          * @param {TestReportResource} TestReportResource
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          * @param {ToastService} ToastService
          * @param {TestReportService} TestReportService
          * @param $state
          */
         // @ngInject
-        constructor(TestReportResource, SessionService, ToastService, TestReportService, $state) {
+        constructor(TestReportResource, ProjectService, ToastService, TestReportService, $state) {
             this.testReportResource = TestReportResource;
-            this.sessionService = SessionService;
+            this.projectService = ProjectService;
             this.toastService = ToastService;
             this.testReportService = TestReportService;
             this.$state = $state;
-
-            /**
-             * The current project.
-             * @type {Project}
-             */
-            this.project = this.sessionService.getProject();
 
             /**
              * The reports.
@@ -55,15 +49,30 @@ export const testReportsViewComponent = {
              */
             this.reports = [];
 
+            this.page = {};
+
             /**
              * The selected reports.
              * @type {Selectable}
              */
             this.selectedReports = new Selectable(this.reports, 'id');
 
-            this.testReportResource.getAll(this.project.id)
-                .then((reports) => {
-                    this.reports = reports;
+            this.loadTestReports();
+        }
+
+        nextPage() {
+            this.loadTestReports(Math.min(this.page.totalPages, this.page.number + 1));
+        }
+
+        previousPage() {
+            this.loadTestReports(Math.max(0, this.page.number - 1));
+        }
+
+        loadTestReports(page = 0) {
+            this.testReportResource.getAll(this.project.id, page)
+                .then(page => {
+                    this.page = page;
+                    this.reports = this.page.content;
                     this.selectedReports = new Selectable(this.reports, 'id');
                 })
                 .catch((err) => this.toastService.danger(`Failed to load reports. ${err.data.message}`));
@@ -78,6 +87,7 @@ export const testReportsViewComponent = {
                 .then(() => {
                     this.toastService.success(`The report has been deleted.`);
                     this._deleteReport(report);
+                    this.loadTestReports(this.page.number);
                 })
                 .catch((err) => {
                     this.toastService.danger(`The report could not be deleted. ${err.data.message}`);
@@ -91,6 +101,7 @@ export const testReportsViewComponent = {
                 .then(() => {
                     this.toastService.success(`The reports have been deleted.`);
                     reportsToDelete.forEach(report => this._deleteReport(report));
+                    this.loadTestReports(this.page.number);
                 })
                 .catch((err) => {
                     this.toastService.danger(`The reports could not be deleted. ${err.data.message}`);
@@ -116,6 +127,10 @@ export const testReportsViewComponent = {
         _deleteReport(report) {
             remove(this.reports, {id: report.id});
             this.selectedReports.unselect(report);
+        }
+
+        get project() {
+            return this.projectService.store.currentProject;
         }
     }
 };

@@ -22,6 +22,8 @@ import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.rest.UserResource;
 import de.learnlib.alex.auth.security.AuthenticationFilter;
 import de.learnlib.alex.common.exceptions.NotFoundExceptionMapper;
+import de.learnlib.alex.common.exceptions.UnauthorizedExceptionMapper;
+import de.learnlib.alex.common.exceptions.ValidationExceptionMapper;
 import de.learnlib.alex.config.dao.SettingsDAO;
 import de.learnlib.alex.config.entities.DriverSettings;
 import de.learnlib.alex.config.entities.Settings;
@@ -111,6 +113,8 @@ public class ALEXApplication extends ResourceConfig {
 
         // Exceptions
         register(NotFoundExceptionMapper.class);
+        register(UnauthorizedExceptionMapper.class);
+        register(ValidationExceptionMapper.class);
 
         // Other
         register(MultiPartFeature.class);
@@ -148,14 +152,13 @@ public class ALEXApplication extends ResourceConfig {
                 String chromeDriverPath = System.getProperty("webdriver.chrome.driver", "");
                 String geckoDriverPath = System.getProperty("webdriver.gecko.driver", "");
                 String edgeDriverPath = System.getProperty("webdriver.edge.driver", "");
+                String ieDriverPath = System.getProperty("webdriver.ie.driver", "");
                 String remoteDriverURL = System.getProperty("webdriver.remote.url", "");
 
-                final DriverSettings driverSettings = new DriverSettings(chromeDriverPath,
-                                                                                           geckoDriverPath,
-                                                                                           edgeDriverPath,
-                                                                                           remoteDriverURL);
-                settings.setDriverSettings(driverSettings);
+                final DriverSettings driverSettings = new DriverSettings(chromeDriverPath, geckoDriverPath,
+                        edgeDriverPath, remoteDriverURL, ieDriverPath);
 
+                settings.setDriverSettings(driverSettings);
                 settingsDAO.create(settings);
             } catch (ValidationException e) {
                 e.printStackTrace();
@@ -167,21 +170,26 @@ public class ALEXApplication extends ResourceConfig {
         final String chromeDriver = env.getProperty("chromeDriver");
         final String geckoDriver = env.getProperty("geckoDriver");
         final String edgeDriver = env.getProperty("edgeDriver");
+        final String ieDriver = env.getProperty("ieDriver");
         final String remoteDriver = env.getProperty("remoteDriver");
 
-        if (!env.getProperty("chromeDriver").equals("")) {
+        if (!chromeDriver.isEmpty()) {
             settings.getDriverSettings().setChrome(chromeDriver);
         }
 
-        if (!env.getProperty("geckoDriver").equals("")) {
+        if (!geckoDriver.isEmpty()) {
             settings.getDriverSettings().setFirefox(geckoDriver);
         }
 
-        if (!env.getProperty("edgeDriver").equals("")) {
+        if (!edgeDriver.isEmpty()) {
             settings.getDriverSettings().setEdge(edgeDriver);
         }
 
-        if (!env.getProperty("remoteDriver").equals("")) {
+        if (!ieDriver.isEmpty()) {
+            settings.getDriverSettings().setIe(ieDriver);
+        }
+
+        if (!remoteDriver.isEmpty()) {
             settings.getDriverSettings().setRemote(remoteDriver);
         }
 
@@ -197,6 +205,7 @@ public class ALEXApplication extends ResourceConfig {
         System.setProperty("webdriver.chrome.driver", settings.getDriverSettings().getChrome());
         System.setProperty("webdriver.gecko.driver", settings.getDriverSettings().getFirefox());
         System.setProperty("webdriver.edge.driver", settings.getDriverSettings().getEdge());
+        System.setProperty("webdriver.ie.driver", settings.getDriverSettings().getIe());
         System.setProperty("webdriver.remote.url", settings.getDriverSettings().getRemote());
     }
 

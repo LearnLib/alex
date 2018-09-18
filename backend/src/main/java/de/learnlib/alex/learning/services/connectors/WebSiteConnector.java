@@ -17,16 +17,18 @@
 package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.common.utils.CSSUtils;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.data.entities.actions.Credentials;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.services.BaseUrlManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -36,11 +38,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class WebSiteConnector implements Connector {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
     /** How often it should be tried to navigate to a given URL. */
     private static final int MAX_RETRIES = 10;
-
-    /** How long it should be waited for the browser to finish building the site in seconds. */
-    private static final int READY_STATE_TIMEOUT = 10;
 
     /** The browser to use. */
     private AbstractWebDriverConfig driverConfig;
@@ -50,6 +51,9 @@ public class WebSiteConnector implements Connector {
 
     /** The driver used to send and receive data to a WebSite. */
     private WebDriver driver;
+
+    /** The last visited frame. */
+    private WebElement lastFrame = null;
 
     /**
      * Constructor.
@@ -124,21 +128,16 @@ public class WebSiteConnector implements Connector {
         while (numRetries < MAX_RETRIES) {
             try {
                 driver.navigate().to(url);
-
-                // wait until the browser is loaded
-                if (driver instanceof JavascriptExecutor) {
-                    new WebDriverWait(driver, READY_STATE_TIMEOUT).until(wd ->
-                            ((JavascriptExecutor) wd).executeScript("return document.readyState").equals("complete"));
-                }
-
                 break;
             } catch (Exception e1) {
+                LOGGER.warn(LoggerMarkers.LEARNER, "Failed to get URL", e1);
+
                 numRetries++;
                 try {
-                    dispose();
-                    reset();
+                    restart();
                     TimeUnit.SECONDS.sleep(1);
                 } catch (Exception e2) {
+                    LOGGER.warn(LoggerMarkers.LEARNER, "Failed to dispose", e2);
                 }
             }
         }
@@ -158,10 +157,21 @@ public class WebSiteConnector implements Connector {
      *         If no element was found.
      */
     public WebElement getElement(WebElementLocator locator) throws NoSuchElementException {
-        if (locator.getType().equals(WebElementLocator.Type.CSS)) {
-            return driver.findElement(By.cssSelector(CSSUtils.escapeSelector(locator.getSelector())));
-        } else {
-            return driver.findElement(By.xpath(locator.getSelector()));
+        switch (locator.getType()) {
+            case XPATH:
+                return driver.findElement(By.xpath(locator.getSelector()));
+            case CSS:
+                return driver.findElement(By.cssSelector(CSSUtils.escapeSelector(locator.getSelector())));
+            case JS:
+                if (driver instanceof JavascriptExecutor) {
+                    try {
+                        return (WebElement) ((JavascriptExecutor) driver).executeScript(locator.getSelector());
+                    } catch (ClassCastException e) {
+                        throw new NoSuchElementException("Return result is not a WebElement");
+                    }
+                }
+            default:
+                throw new NoSuchElementException("Invalid selector type");
         }
     }
 
@@ -238,5 +248,13 @@ public class WebSiteConnector implements Connector {
      */
     public WebDriver getDriver() {
         return driver;
+    }
+
+    public WebElement getLastFrame() {
+        return lastFrame;
+    }
+
+    public void setLastFrame(WebElement lastFrame) {
+        this.lastFrame = lastFrame;
     }
 }

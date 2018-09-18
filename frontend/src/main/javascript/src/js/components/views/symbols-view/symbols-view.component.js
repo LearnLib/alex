@@ -30,7 +30,7 @@ class SymbolsViewComponent {
      * Constructor.
      *
      * @param $scope
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {SymbolResource} SymbolResource
      * @param {SymbolGroupResource} SymbolGroupResource
      * @param {ToastService} ToastService
@@ -41,7 +41,7 @@ class SymbolsViewComponent {
      * @param $uibModal
      */
     // @ngInject
-    constructor($scope, SessionService, SymbolResource, SymbolGroupResource, ToastService, DownloadService,
+    constructor($scope, ProjectService, SymbolResource, SymbolGroupResource, ToastService, DownloadService,
                 EventBus, PromptService, $state, $uibModal) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
@@ -49,12 +49,7 @@ class SymbolsViewComponent {
         this.PromptService = PromptService;
         this.$state = $state;
         this.$uibModal = $uibModal;
-
-        /**
-         * The project that is saved in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.ProjectService = ProjectService;
 
         /**
          * The model for selected symbols.
@@ -154,6 +149,8 @@ class SymbolsViewComponent {
             const i = group.symbols.findIndex(s => s.id === symbol.id);
             if (i > -1) {
                 group.symbols[i].name = symbol.name;
+                group.symbols[i].description = symbol.description;
+                group.symbols[i].expectedResult = symbol.expectedResult;
                 group.symbols[i].group = symbol.group;
             }
         });
@@ -313,6 +310,10 @@ class SymbolsViewComponent {
         } else {
             this.ToastService.info('You have to select at least one symbol.');
         }
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

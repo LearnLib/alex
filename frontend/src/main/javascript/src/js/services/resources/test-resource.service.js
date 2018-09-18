@@ -84,6 +84,17 @@ export class TestResource {
     }
 
     /**
+     * Abort the execution of the current test processes.
+     *
+     * @param {number} projectId The ID of the project.
+     * @return {*}
+     */
+    abort(projectId) {
+        return this.$http.post(`${apiUrl}/projects/${projectId}/tests/abort`)
+            .then(response => response.data);
+    }
+
+    /**
      * Update a test case.
      *
      * @param testCase The updated test case.
@@ -148,5 +159,19 @@ export class TestResource {
     executeMany(projectId, testConfig) {
         return this.$http.post(`${apiUrl}/projects/${projectId}/tests/execute`, testConfig)
             .then((response) => response.data);
+    }
+
+    /**
+     * Get all available results of a test.
+     *
+     * @param {number} projectId The ID of the project.
+     * @param {number} testId The ID of the test.
+     * @param {number} page
+     * @param {number} size
+     * @return {*}
+     */
+    getResults(projectId, testId, page = 0, size = 25) {
+        return this.$http.get(`${apiUrl}/projects/${projectId}/tests/${testId}/results?page=${page}&size=${size}`)
+            .then(response => response.data);
     }
 }

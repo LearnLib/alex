@@ -19,36 +19,42 @@ package de.learnlib.alex.testing.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
+import de.learnlib.alex.data.dao.ParameterizedSymbolDAO;
+import de.learnlib.alex.data.dao.ParameterizedSymbolDAOImpl;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
-import de.learnlib.alex.data.dao.SymbolDAOImpl;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolInputParameter;
-import de.learnlib.alex.data.entities.SymbolParameter;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
+import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestCaseStep;
+import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestCaseStepRepository;
 import de.learnlib.alex.testing.repositories.TestRepository;
+import de.learnlib.alex.testing.repositories.TestResultRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /** The implementation of the test dao. */
@@ -72,8 +78,14 @@ public class TestDAOImpl implements TestDAO {
     /** The repository for test case steps. */
     private TestCaseStepRepository testCaseStepRepository;
 
-    /** The repository for symbol parameter values. */
-    private SymbolParameterValueRepository symbolParameterValueRepository;
+    /** The injected DAP for parameterized symbols. */
+    private ParameterizedSymbolDAO parameterizedSymbolDAO;
+
+    /** The {@link TestResultRepository} to use. */
+    private TestResultRepository testResultRepository;
+
+    /** The {@link ParameterizedSymbolRepository} to use. */
+    private ParameterizedSymbolRepository parameterizedSymbolRepository;
 
     /**
      * Constructor.
@@ -86,22 +98,28 @@ public class TestDAOImpl implements TestDAO {
      *         The injected symbol DAO.
      * @param testCaseStepRepository
      *         The injected repository for test case steps.
-     * @param symbolParameterValueRepository
-     *         The injected repository for symbol parameter values.
      * @param projectRepository
      *         The injected repository for projects.
+     * @param parameterizedSymbolDAO
+     *         The injected DAO for parameterized symbols.
+     * @param testResultRepository
+     *         The injected repository for test results.
+     * @param parameterizedSymbolRepository
+     *         {@link #parameterizedSymbolRepository}
      */
     @Inject
     public TestDAOImpl(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
-            TestCaseStepRepository testCaseStepRepository,
-            SymbolParameterValueRepository symbolParameterValueRepository,
-            ProjectRepository projectRepository) {
+            TestCaseStepRepository testCaseStepRepository, ProjectRepository projectRepository,
+            ParameterizedSymbolDAO parameterizedSymbolDAO, TestResultRepository testResultRepository,
+            ParameterizedSymbolRepository parameterizedSymbolRepository) {
         this.projectDAO = projectDAO;
         this.testRepository = testRepository;
         this.symbolDAO = symbolDAO;
         this.testCaseStepRepository = testCaseStepRepository;
-        this.symbolParameterValueRepository = symbolParameterValueRepository;
         this.projectRepository = projectRepository;
+        this.parameterizedSymbolDAO = parameterizedSymbolDAO;
+        this.testResultRepository = testResultRepository;
+        this.parameterizedSymbolRepository = parameterizedSymbolRepository;
     }
 
     @Override
@@ -162,9 +180,9 @@ public class TestDAOImpl implements TestDAO {
                 testCase.setPreSteps(preSteps);
                 testCase.setPostSteps(postSteps);
 
-                saveTestCaseSteps(testCase.getPreSteps());
-                saveTestCaseSteps(testCase.getSteps());
-                saveTestCaseSteps(testCase.getPostSteps());
+                saveTestCaseSteps(projectId, testCase.getPreSteps());
+                saveTestCaseSteps(projectId, testCase.getSteps());
+                saveTestCaseSteps(projectId, testCase.getPostSteps());
             }
 
             testRepository.save(test);
@@ -333,9 +351,9 @@ public class TestDAOImpl implements TestDAO {
         testCaseStepRepository.deleteAllByTestCase_IdAndIdNotIn(testCase.getId(), allStepIds);
 
         // delete all test case steps that have been removed in the update.
-        saveTestCaseSteps(testCase.getPreSteps());
-        saveTestCaseSteps(testCase.getSteps());
-        saveTestCaseSteps(testCase.getPostSteps());
+        saveTestCaseSteps(testCase.getProjectId(), testCase.getPreSteps());
+        saveTestCaseSteps(testCase.getProjectId(), testCase.getSteps());
+        saveTestCaseSteps(testCase.getProjectId(), testCase.getPostSteps());
 
         testRepository.save(testCase);
     }
@@ -391,7 +409,7 @@ public class TestDAOImpl implements TestDAO {
 
         final TestSuite target = (TestSuite) targetTest;
 
-        for (Test test: tests) {
+        for (Test test : tests) {
             checkAccess(user, project, test);
             if (test.getId().equals(target.getId())) {
                 throw new ValidationException("A test cannot be a parent of itself.");
@@ -403,7 +421,7 @@ public class TestDAOImpl implements TestDAO {
         }
 
         // update references
-        for (Test test: tests) {
+        for (Test test : tests) {
             final TestSuite parent = (TestSuite) test.getParent();
             parent.getTests().remove(test);
             testRepository.save(parent);
@@ -420,6 +438,50 @@ public class TestDAOImpl implements TestDAO {
     }
 
     @Override
+    @Transactional
+    public List<TestCase> getTestCases(User user, Long projectId, Long testSuiteId, boolean includeChildTestSuites)
+            throws NotFoundException, ValidationException {
+        final Project project = projectRepository.findOne(projectId);
+        final Test test = testRepository.findOne(testSuiteId);
+        checkAccess(user, project, test);
+
+        if (!(test instanceof TestSuite)) {
+            throw new ValidationException("The ID has to belong to a test suite.");
+        }
+
+        final TestSuite testSuite = (TestSuite) test;
+        final List<TestCase> testCases = new ArrayList<>();
+
+        final ArrayDeque<TestSuite> queue = new ArrayDeque<>();
+        queue.add(testSuite);
+
+        while (!queue.isEmpty()) {
+            final TestSuite currentTestSuite = queue.poll();
+            for (Test t : currentTestSuite.getTests()) {
+                if (t instanceof TestSuite) {
+                    queue.addLast((TestSuite) t);
+                } else {
+                    loadLazyRelations(t);
+                    testCases.add((TestCase) t);
+                }
+            }
+        }
+
+        return testCases;
+    }
+
+    @Override
+    @Transactional
+    public Page<TestResult> getResults(User user, Long projectId, Long testId, Pageable pageable) throws NotFoundException {
+        get(user, projectId, testId);
+
+        final Page<TestResult> results = testResultRepository.findAllByTest_IdOrderByTestReport_StartDateDesc(testId, pageable);
+        results.forEach(this::loadLazyRelations);
+
+        return results;
+    }
+
+    @Override
     public void checkAccess(User user, Project project, Test test) throws NotFoundException, UnauthorizedException {
         projectDAO.checkAccess(user, project);
 
@@ -432,7 +494,7 @@ public class TestDAOImpl implements TestDAO {
         }
     }
 
-    private void saveTestCaseSteps(List<TestCaseStep> steps) {
+    private void saveTestCaseSteps(Long projectId, List<TestCaseStep> steps) {
         for (int i = 0; i < steps.size(); i++) {
             steps.get(i).setNumber(i);
         }
@@ -446,18 +508,22 @@ public class TestDAOImpl implements TestDAO {
             // if a parameter value has no id yet, because it is imported, we have to set the reference
             // to the parameter manually.
             // name -> parameter
-            final Map<String, SymbolInputParameter> parameterMap = new HashMap<>();
-            step.getSymbol().getInputs().stream()
-                    .filter(input -> input.getParameterType().equals(SymbolParameter.ParameterType.STRING))
-                    .forEach(input -> parameterMap.put(input.getName(), input));
+            final Map<String, SymbolInputParameter> parameterMap = step.getPSymbol().getSymbol().getInputs().stream()
+                    .collect(Collectors.toMap(SymbolInputParameter::getName, Function.identity()));
 
-            step.getParameterValues().forEach(value -> {
-                value.setStep(step);
-                value.setParameter(parameterMap.get(value.getParameter().getName()));
-            });
+            step.getPSymbol().getParameterValues().forEach(value ->
+                    value.setParameter(parameterMap.get(value.getParameter().getName()))
+            );
 
-            symbolParameterValueRepository.save(step.getParameterValues());
+            parameterizedSymbolDAO.create(projectId, step.getPSymbol());
         });
+    }
+
+    private void loadLazyRelations(TestResult testResult) {
+        if (testResult instanceof TestCaseResult) {
+            Hibernate.initialize(((TestCaseResult) testResult).getOutputs());
+            ((TestCaseResult) testResult).getOutputs().forEach(out -> Hibernate.initialize(out.getSymbol()));
+        }
     }
 
     private void loadLazyRelations(Test test) {
@@ -471,11 +537,11 @@ public class TestDAOImpl implements TestDAO {
         } else if (test instanceof TestCase) {
             TestCase testCase = (TestCase) test;
             Hibernate.initialize(testCase.getSteps());
-            testCase.getSteps().forEach(step -> SymbolDAOImpl.loadLazyRelations((step.getSymbol())));
+            testCase.getSteps().forEach(step -> ParameterizedSymbolDAOImpl.loadLazyRelations((step.getPSymbol())));
             Hibernate.initialize(testCase.getPreSteps());
-            testCase.getPreSteps().forEach(step -> SymbolDAOImpl.loadLazyRelations((step.getSymbol())));
+            testCase.getPreSteps().forEach(step -> ParameterizedSymbolDAOImpl.loadLazyRelations((step.getPSymbol())));
             Hibernate.initialize(testCase.getPostSteps());
-            testCase.getPostSteps().forEach(step -> SymbolDAOImpl.loadLazyRelations((step.getSymbol())));
+            testCase.getPostSteps().forEach(step -> ParameterizedSymbolDAOImpl.loadLazyRelations((step.getPSymbol())));
         }
     }
 
@@ -491,22 +557,22 @@ public class TestDAOImpl implements TestDAO {
         } else if (test instanceof TestCase) {
             TestCase testCase = (TestCase) test;
 
-            for (TestCaseStep step: testCase.getPreSteps()) {
+            for (TestCaseStep step : testCase.getPreSteps()) {
                 step.setTestCase(testCase);
-                final Symbol symbol = symbolDAO.get(user, projectId, step.getSymbol().getId());
-                step.setSymbol(symbol);
+                final Symbol symbol = symbolDAO.get(user, projectId, step.getPSymbol().getSymbol().getId());
+                step.getPSymbol().setSymbol(symbol);
             }
 
             for (TestCaseStep step : testCase.getSteps()) {
                 step.setTestCase(testCase);
-                final Symbol symbol = symbolDAO.get(user, projectId, step.getSymbol().getId());
-                step.setSymbol(symbol);
+                final Symbol symbol = symbolDAO.get(user, projectId, step.getPSymbol().getSymbol().getId());
+                step.getPSymbol().setSymbol(symbol);
             }
 
-            for (TestCaseStep step: testCase.getPostSteps()) {
+            for (TestCaseStep step : testCase.getPostSteps()) {
                 step.setTestCase(testCase);
-                final Symbol symbol = symbolDAO.get(user, projectId, step.getSymbol().getId());
-                step.setSymbol(symbol);
+                final Symbol symbol = symbolDAO.get(user, projectId, step.getPSymbol().getSymbol().getId());
+                step.getPSymbol().setSymbol(symbol);
             }
         }
     }

@@ -1,0 +1,328 @@
+{
+  "name": "all general actions",
+  "description": null,
+  "successOutput": null,
+  "inputs": [],
+  "outputs": [],
+  "steps": [
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "assertCounter",
+        "name": "test",
+        "value": 5,
+        "operator": "EQUAL"
+      },
+      "position": 0
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "assertCounter",
+        "name": "test",
+        "value": 5,
+        "operator": "LESS_THAN"
+      },
+      "position": 1
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "assertCounter",
+        "name": "test",
+        "value": 5,
+        "operator": "LESS_OR_EQUAL"
+      },
+      "position": 2
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "assertCounter",
+        "name": "test",
+        "value": 5,
+        "operator": "GREATER_OR_EQUAL"
+      },
+      "position": 3
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "assertCounter",
+        "name": "test",
+        "value": 5,
+        "operator": "GREATER_THAN"
+      },
+      "position": 4
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "assertVariable",
+        "name": "test",
+        "value": "test",
+        "regexp": false
+      },
+      "position": 5
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "assertVariable",
+        "name": "test",
+        "value": "test",
+        "regexp": true
+      },
+      "position": 6
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "incrementCounter",
+        "name": "test",
+        "incrementBy": 1
+      },
+      "position": 7
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "incrementCounter",
+        "name": "test",
+        "incrementBy": -1
+      },
+      "position": 8
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "setCounter",
+        "name": "test",
+        "value": "0",
+        "valueType": "NUMBER"
+      },
+      "position": 9
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "setCounter",
+        "name": "test",
+        "value": "test",
+        "valueType": "VARIABLE"
+      },
+      "position": 10
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "setVariable",
+        "name": "test",
+        "value": "test"
+      },
+      "position": 11
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "setVariable",
+        "name": "test",
+        "value": ""
+      },
+      "position": 12
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "setVariableByCookie",
+        "name": "test",
+        "value": "test",
+        "cookieType": "WEB"
+      },
+      "position": 13
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "setVariableByCookie",
+        "name": "test",
+        "value": "test",
+        "cookieType": "REST"
+      },
+      "position": 14
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "setVariableByHttpResponse",
+        "name": "test"
+      },
+      "position": 15
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "setVariableByHTML",
+        "name": "test",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        }
+      },
+      "position": 16
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "setVariableByJSON",
+        "name": "test",
+        "value": "test"
+      },
+      "position": 17
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "setVariableByNodeAttribute",
+        "name": "test",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        },
+        "attribute": "test"
+      },
+      "position": 18
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "setVariableByNodeCount",
+        "name": "test",
+        "node": {
+          "selector": "#test",
+          "type": "CSS"
+        }
+      },
+      "position": 19
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "setVariableByRegexGroup",
+        "name": "test",
+        "regex": "test",
+        "nthMatch": 1,
+        "mthGroup": 0
+      },
+      "position": 20
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "wait",
+        "duration": 0
+      },
+      "position": 21
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "wait",
+        "duration": 1000
+      },
+      "position": 22
+    }
+  ]
+}

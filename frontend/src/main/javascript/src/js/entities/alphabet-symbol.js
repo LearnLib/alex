@@ -15,6 +15,7 @@
  */
 
 import {ActionService} from '../services/action.service';
+import {ParametrizedSymbol} from './parametrized-symbol';
 
 const actionService = new ActionService();
 
@@ -79,37 +80,96 @@ export class AlphabetSymbol {
         this.outputs = obj.outputs || [];
 
         /**
-         * The actions of the symbol.
-         * @type {Action[]}
+         * The steps that are executed in the symbol.
+         * @type {Object[]}
          */
-        this.actions = obj.actions ? obj.actions.map(action => actionService.create(action)) : [];
-    }
+        this.steps = obj.steps ? obj.steps.map(step => {
+            if (step.type === 'symbol') {
+                step.pSymbol = new ParametrizedSymbol(step.pSymbol);
+            } else if (step.type === 'action') {
+                step.action = actionService.create(step.action);
+            }
+            return step;
+        }) : [];
 
-    /**
-     * Gets the number of enabled actions.
-     *
-     * @returns {number}
-     */
-    countEnabledActions() {
-        return this.actions.filter(action => !action.disabled).length;
+        /**
+         * The description of the symbol.
+         * @type {?string}
+         */
+        this.description = obj.description || '';
+
+        /**
+         * The expected result of the symbol.
+         * @type {?string}
+         */
+        this.expectedResult = obj.expectedResult || '';
     }
 
     /**
      * Gets a reduced version of the symbol that can be used to export it.
      *
-     * @returns {{name: *, actions: Action[]}}
+     * @returns {Object}
      */
     getExportableSymbol() {
         const symbol = JSON.parse(JSON.stringify(this));
         symbol.inputs.forEach(input => delete input.id);
         symbol.outputs.forEach(output => delete output.id);
+        symbol.steps = symbol.steps.map(step => {
+            const s = AlphabetSymbol.stepsToJson(step);
+            if (s.type === 'symbol') {
+                s.pSymbol.symbolFromName = s.pSymbol.symbol.name;
+                delete s.pSymbol.symbol;
+            }
+            return s;
+        });
 
         return {
             name: symbol.name,
-            actions: symbol.actions,
+            description: symbol.description,
+            expectedResult: symbol.expectedResult,
             successOutput: symbol.successOutput,
             inputs: symbol.inputs,
-            outputs: symbol.outputs
+            outputs: symbol.outputs,
+            steps: symbol.steps
         };
+    }
+
+    containsSymbolSteps() {
+        return this.steps.filter(s => s.type === 'symbol').length > 0;
+    }
+
+    copy() {
+        const copy = new AlphabetSymbol(JSON.parse(JSON.stringify(this)));
+        delete copy.id;
+        copy.steps = copy.steps.map(AlphabetSymbol.stepsToJson);
+        copy.inputs.forEach(input => delete input.id);
+        copy.outputs.forEach(output => delete output.id);
+        return copy;
+    }
+
+    static stepsToJson(step) {
+        const s = JSON.parse(JSON.stringify(step));
+        delete s.$$hashKey;
+        delete s.symbol;
+        delete s.id;
+        if (s.type === 'symbol') {
+            delete s.pSymbol.id;
+            s.pSymbol.parameterValues.forEach(pv => {
+                delete pv.id;
+            })
+        } else if (s.type === 'action') {
+            delete s.action.id;
+        }
+        return s;
+    }
+
+    toJson() {
+        const symbol = new AlphabetSymbol(JSON.parse(JSON.stringify(this)));
+        symbol.steps.forEach(step => {
+            if (step.type === 'symbol') {
+                step.pSymbol.symbol = step.pSymbol.symbol.id;
+            }
+        });
+        return symbol;
     }
 }

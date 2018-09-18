@@ -16,11 +16,9 @@
 
 package de.learnlib.alex.common.exceptions;
 
-import de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError;
+import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -35,13 +33,11 @@ public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundExceptio
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker REST_MARKER = MarkerManager.getMarker("REST");
-
     @Override
     public Response toResponse(NotFoundException e) {
-        LOGGER.info(REST_MARKER, "NotFoundException caught.", e);
+        LOGGER.info("NotFoundException caught.", e);
 
-        RESTError error = new RESTError(Status.NOT_FOUND, e);
+        final ResourceErrorHandler.RESTError error = new ResourceErrorHandler.RESTError(Status.NOT_FOUND, e);
         return Response.status(Status.NOT_FOUND).entity(error).build();
     }
 

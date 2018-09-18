@@ -16,6 +16,8 @@
 
 package de.learnlib.alex.testing.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.persistence.CascadeType;
@@ -23,6 +25,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,9 +50,6 @@ public class TestCaseResult extends TestResult {
     /** If the test passed. */
     private boolean passed;
 
-    /** The failure message. */
-    private String failureMessage;
-
     /**
      * Constructor.
      */
@@ -68,16 +68,12 @@ public class TestCaseResult extends TestResult {
      *         If the test passed.
      * @param time
      *         The time it took to execute the test in ms.
-     * @param failureMessage
-     *         The message that is displayed in case the test case failed.
      */
-    public TestCaseResult(TestCase testCase, List<TestExecutionResult> outputs, boolean passed, long time,
-            String failureMessage) {
+    public TestCaseResult(TestCase testCase, List<TestExecutionResult> outputs, boolean passed, long time) {
         super(testCase);
         this.outputs = outputs;
         this.passed = passed;
         this.time = time;
-        this.failureMessage = failureMessage;
 
         this.outputs.forEach(out -> out.setResult(this));
     }
@@ -99,11 +95,18 @@ public class TestCaseResult extends TestResult {
         this.passed = passed;
     }
 
+    @Transient
+    @JsonProperty("failureMessage")
     public String getFailureMessage() {
-        return failureMessage;
+        final List<String> parts = new ArrayList<>();
+        outputs.stream().filter(out -> !out.isSuccess()).forEach(out ->
+                parts.add(out.getSymbol().getName() + ": " + out.getMessage())
+        );
+        return parts.isEmpty() ? "" : String.join(", ", parts);
     }
 
+    @JsonIgnore
+    @JsonProperty("failureMessage")
     public void setFailureMessage(String failureMessage) {
-        this.failureMessage = failureMessage;
     }
 }

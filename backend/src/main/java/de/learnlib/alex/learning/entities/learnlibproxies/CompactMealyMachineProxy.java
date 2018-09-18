@@ -202,7 +202,7 @@ public class CompactMealyMachineProxy implements Serializable {
      *
      * @return The Edges of the machine as JSON string.
      */
-    @Column(name = "edges", columnDefinition = "CLOB")
+    @Column(name = "edges", columnDefinition = "MEDIUMTEXT")
     @JsonIgnore
     public String getEdgesDB() {
         try {
@@ -242,8 +242,7 @@ public class CompactMealyMachineProxy implements Serializable {
         Set<String> inputs = edges.stream().map(CompactMealyTransitionProxy::getInput)
                 .collect(Collectors.toSet());
 
-        Alphabet<String> alphabet = new SimpleAlphabet<>(inputs);
-        return alphabet;
+        return new SimpleAlphabet<>(inputs);
     }
 
     /**

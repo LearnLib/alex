@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.alex.data.entities.Project;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -36,7 +35,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * The result of a test execution.
@@ -56,10 +54,9 @@ public abstract class TestResult implements Serializable {
 
     /** The ID of the test result in the database. */
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @GeneratedValue
     @JsonIgnore
-    protected UUID uuid;
+    private Long id;
 
     /** The test that has been executed. */
     @ManyToOne
@@ -97,12 +94,12 @@ public abstract class TestResult implements Serializable {
         this.test = test;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public Long getId() {
+        return id;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Test getTest() {
@@ -166,4 +163,10 @@ public abstract class TestResult implements Serializable {
 
     @Transient
     public abstract boolean isPassed();
+
+    @Transient
+    @JsonProperty("date")
+    public String getDate() {
+        return testReport == null ? null : testReport.getStartDateAsString();
+    }
 }

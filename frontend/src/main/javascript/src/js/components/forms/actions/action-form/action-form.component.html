@@ -28,6 +28,7 @@
         <check-node-attribute-value-action-form action="vm.action" ng-switch-when="web_checkNodeAttributeValue"></check-node-attribute-value-action-form>
         <switch-to-action-form action="vm.action" ng-switch-when="web_switchTo"></switch-to-action-form>
         <switch-to-frame-action-form action="vm.action" ng-switch-when="web_switchToFrame"></switch-to-frame-action-form>
+        <upload-file-action-form action="vm.action" ng-switch-when="web_uploadFile"></upload-file-action-form>
 
         <!-- rest actions -->
         <request-action-form action="vm.action" ng-switch-when="rest_call"></request-action-form>
@@ -53,28 +54,5 @@
         <set-variable-by-node-count-action-form action="vm.action" ng-switch-when="setVariableByNodeCount"></set-variable-by-node-count-action-form>
         <set-variable-by-regex-group-action-form action="vm.action" ng-switch-when="setVariableByRegexGroup"></set-variable-by-regex-group-action-form>
         <wait-action-form action="vm.action" ng-switch-when="wait"></wait-action-form>
-    </div>
-    <hr>
-    <div class="form-group">
-        <label>Output on failure <span class="text-muted">(optional)</span></label>
-        <input class="form-control" type="text" ng-model="vm.action.errorOutput" placeholder="Failed">
-    </div>
-    <hr>
-    <p>
-        <a href="" ng-click="vm.showOptions = !vm.showOptions">
-            <i class="fa fa-gear fa-fw"></i> More options
-        </a>
-    </p>
-    <div uib-collapse="!vm.showOptions">
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" ng-model="vm.action.negated"> Negate
-            </label>
-        </div>
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" ng-model="vm.action.ignoreFailure"> Ignore failure
-            </label>
-        </div>
     </div>
 </div>

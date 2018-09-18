@@ -17,14 +17,12 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
@@ -46,8 +44,6 @@ public class MoveMouseAction extends WebSymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /**
      * The selector of the element.
      */
@@ -66,63 +62,6 @@ public class MoveMouseAction extends WebSymbolAction {
     @NotNull
     private int offsetY;
 
-    /**
-     * Gets offset y.
-     *
-     * @return the offset y
-     */
-    public int getOffsetY() {
-        return offsetY;
-    }
-
-    /**
-     * Sets offset y.
-     *
-     * @param offsetY
-     *         the offset y
-     */
-    public void setOffsetY(int offsetY) {
-        this.offsetY = offsetY;
-    }
-
-    /**
-     * Gets node.
-     *
-     * @return the node
-     */
-    public WebElementLocator getNode() {
-        return node;
-    }
-
-    /**
-     * Sets node.
-     *
-     * @param node
-     *         the node
-     */
-    public void setNode(WebElementLocator node) {
-        this.node = node;
-    }
-
-    /**
-     * Gets offset x.
-     *
-     * @return the offset x
-     */
-    public int getOffsetX() {
-        return offsetX;
-    }
-
-    /**
-     * Sets offset x.
-     *
-     * @param offsetX
-     *         the offset x
-     */
-    public void setOffsetX(int offsetX) {
-        this.offsetX = offsetX;
-    }
-
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
         final WebElementLocator nodeWithVariables = node == null ? null
@@ -133,23 +72,42 @@ public class MoveMouseAction extends WebSymbolAction {
 
             if (nodeWithVariables == null || nodeWithVariables.getSelector().trim().equals("")) {
                 actions.moveByOffset(offsetX, offsetY).build().perform();
-                LOGGER.info(LEARNER_MARKER, "Moved the mouse to the position ({}, {}) "
-                                + "(ignoreFailure: {}, negated: {}).",
-                        offsetX, offsetY, ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Moved the mouse to the position ({}, {}) ", offsetX, offsetY);
             } else {
                 final WebElement element = connector.getElement(nodeWithVariables);
                 actions.moveToElement(element, offsetX, offsetY).build().perform();
-                LOGGER.info(LEARNER_MARKER, "Moved the mouse to the element '{}' "
-                                + "(ignoreFailure: {}, negated: {}).",
-                        nodeWithVariables, ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Moved the mouse to the element '{}'", nodeWithVariables);
             }
 
             return getSuccessOutput();
-        } catch (NoSuchElementException e) {
-            LOGGER.info(LEARNER_MARKER, "Could not move the mouse to the element '{}' or the position ({}, {}) "
-                            + "(ignoreFailure: {}, negated: {}).",
-                    nodeWithVariables, offsetX, offsetY, ignoreFailure, negated, e);
+        } catch (Exception e) {
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not move the mouse to the element '{}' or the position ({}, {})",
+                    nodeWithVariables, offsetX, offsetY);
             return getFailedOutput();
         }
+    }
+
+    public int getOffsetY() {
+        return offsetY;
+    }
+
+    public void setOffsetY(int offsetY) {
+        this.offsetY = offsetY;
+    }
+
+    public WebElementLocator getNode() {
+        return node;
+    }
+
+    public void setNode(WebElementLocator node) {
+        this.node = node;
+    }
+
+    public int getOffsetX() {
+        return offsetX;
+    }
+
+    public void setOffsetX(int offsetX) {
+        this.offsetX = offsetX;
     }
 }

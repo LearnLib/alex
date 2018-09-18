@@ -18,17 +18,17 @@ package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -46,8 +46,6 @@ public class WaitForNodeAttributeAction extends WebSymbolAction {
     private static final long serialVersionUID = 1759832996792561200L;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** Enum to specify the wait criterion. */
     public enum WaitCriterion {
@@ -71,6 +69,7 @@ public class WaitForNodeAttributeAction extends WebSymbolAction {
 
     /** The value the attribute should match / contain. */
     @NotBlank
+    @Column(name = "\"value\"")
     private String value;
 
     /** The attribute to wait for. */
@@ -121,7 +120,7 @@ public class WaitForNodeAttributeAction extends WebSymbolAction {
 
             return getSuccessOutput();
         } catch (TimeoutException e) {
-            LOGGER.info(LEARNER_MARKER, "Waiting on the attribute '{}' (criterion: '{}') timed out. ",
+            LOGGER.info(LoggerMarkers.LEARNER, "Waiting on the attribute '{}' (criterion: '{}') timed out. ",
                     attribute, waitCriterion);
             return getFailedOutput();
         }

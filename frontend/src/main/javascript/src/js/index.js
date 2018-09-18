@@ -24,7 +24,6 @@ import toastr from 'angular-toastr';
 import uiBootstrap from 'angular-ui-bootstrap';
 import ngFileUpload from 'ng-file-upload';
 import {actionBarComponent} from './components/action-bar/action-bar.component';
-import {actionRecorderComponent} from './components/action-recorder/action-recorder.component';
 import {alexComponent} from './components/alex/alex.component';
 import {discriminationTreeComponent} from './components/discrimination-tree/discrimination-tree.component';
 import {fileDropzoneComponent} from './components/file-dropzone/file-dropzone.component';
@@ -72,6 +71,7 @@ import {sendKeysActionFormComponent} from './components/forms/actions/web/send-k
 import {submitActionFormComponent} from './components/forms/actions/web/submit-action-form/submit-action-form.component';
 import {switchToFrameActionFormComponent} from './components/forms/actions/web/switch-to-frame/switch-to-frame-action-form.component';
 import {switchToActionFormComponent} from './components/forms/actions/web/switch-to/switch-to-action-form.component';
+import {uploadFileActionFormComponent} from './components/forms/actions/web/upload-file-action-form/upload-file-action-form.component';
 import {waitForNodeActionFormComponent} from './components/forms/actions/web/wait-for-node-action-form/wait-for-node-action-form.component';
 import {waitForNodeAttributeActionFormComponent} from './components/forms/actions/web/wait-for-node-attribute-action-form/wait-for-node-attribute-action-form.component';
 import {waitForTextActionFormComponent} from './components/forms/actions/web/wait-for-text-action-form/wait-for-text-action-form.component';
@@ -81,7 +81,9 @@ import {completeEqOracleFormComponent} from './components/forms/eq-oracles/compl
 import {eqOracleFormComponent} from './components/forms/eq-oracles/eq-oracle-form.component';
 import {hypothesisEqOracleFormComponent} from './components/forms/eq-oracles/hypothesis-eq-oracle-form/hypothesis-eq-oracle-form.component';
 import {randomEqOracleFormComponent} from './components/forms/eq-oracles/random-eq-oracle-form/random-eq-oracle-form.component';
+import {testSuiteEqOracleFormComponent} from './components/forms/eq-oracles/test-suite-eq-oracle-form/test-suite-eq-oracle-form.component';
 import {wMethodEqOracleFormComponent} from './components/forms/eq-oracles/w-method-eq-oracle-form/w-method-eq-oracle-form.component';
+import {wpMethodEqOracleFormComponent} from './components/forms/eq-oracles/wp-method-eq-oracle-form/wp-method-eq-oracle-form.component';
 import {nodeFormGroupComponent} from './components/forms/node-form-group/node-form-group.component';
 import {projectCreateFormComponent} from './components/forms/project-create-form/project-create-form.component';
 import {projectFormGroupsComponent} from './components/forms/project-form-groups/project-form-groups.component';
@@ -94,8 +96,14 @@ import {userLoginFormComponent} from './components/forms/user-login-form/user-lo
 import {webhookFormComponent} from './components/forms/webhook-form/webhook-form.component';
 import {htmlElementPickerComponent} from './components/html-element-picker/html-element-picker.component';
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
+import {symbolSelectModalComponent} from './components/modals/symbol-select-modal/symbol-select-modal.component';
 import {symbolsExportModalComponent} from './components/modals/symbols-export-modal/symbols-export-modal.component';
 import {userCreateModalComponent} from './components/modals/user-create-modal/user-create-modal.component';
+import {paginationComponent} from './components/pagination/pagination.component';
+import {symbolParametersComponent} from './components/symbol-parameters/symbol-parameters.component';
+import {symbolSelectDropdownComponent} from './components/symbol-select-dropdown/symbol-select-dropdown.component';
+import {testCaseGenerationWidgetComponent} from './components/widgets/test-case-generation-widget/test-case-generation-widget.component';
+import {testSuiteGenerationWidgetComponent} from './components/widgets/test-suite-generation-widget/test-suite-generation-widget.component';
 import {learnerResultListItemComponent} from './components/views/learner-results-view/learner-result-list-item/learner-result-list-item.component';
 import {learnerResultPanelComponent} from './components/learner-result-panel/learner-result-panel.component';
 import {loadScreenComponent} from './components/load-screen/load-screen.component';
@@ -104,7 +112,6 @@ import {actionCreateModalComponent} from './components/modals/action-create-moda
 import {actionSearchFormComponent} from './components/modals/action-create-modal/action-search-form/action-search-form.component';
 import {actionEditModalHandleDirective} from './components/modals/action-edit-modal/action-edit-modal-handle.directive';
 import {actionEditModalComponent} from './components/modals/action-edit-modal/action-edit-modal.component';
-import {actionRecorderActionsModal} from './components/modals/action-recorder-actions-modal/action-recorder-actions-modal.component';
 import {confirmModalComponent} from './components/modals/confirm-modal/confirm-modal.component';
 import {counterCreateModalComponent} from './components/modals/counter-create-modal/counter-create-modal.component';
 import {hypothesisLayoutSettingsModalHandleDirective} from './components/modals/hypothesis-layout-settings-modal/hypothesis-layout-settings-modal-handle.directive';
@@ -115,7 +122,6 @@ import {resultListModalHandleDirective} from './components/modals/learner-result
 import {resultListModalComponent} from './components/modals/learner-result-list-modal/learner-result-list-modal.component';
 import {learnerSetupSettingsModalHandleDirective} from './components/modals/learner-setup-settings-modal/learner-setup-settings-modal-handle.directive';
 import {learnerSetupSettingsModalComponent} from './components/modals/learner-setup-settings-modal/learner-setup-settings-modal.component';
-import {projectEditModalHandleDirective} from './components/modals/project-edit-modal/project-edit-modal-handle.directive';
 import {projectEditModalComponent} from './components/modals/project-edit-modal/project-edit-modal.component';
 import {promptModalComponent} from './components/modals/prompt-modal/prompt-modal.component';
 import {separatingWordModalComponent} from './components/modals/separating-word-modal/separating-word-modal.component';
@@ -167,7 +173,6 @@ import {errorViewComponent} from './components/views/error-view/error-view.compo
 import {filesViewComponent} from './components/views/files-view/files-view.component';
 import {resultsCompareViewComponent} from './components/views/learner-results-compare-view/learner-results-compare-view.component';
 import {resultsViewComponent} from './components/views/learner-results-view/learner-results-view.component';
-import {learnerSetupSymbolGroupTreeComponent} from './components/views/learner-setup-view/learner-setup-symbol-group-tree/learner-setup-symbol-group-tree.component';
 import {learnerSetupViewComponent} from './components/views/learner-setup-view/learner-setup-view.component';
 import {learnerViewComponent} from './components/views/learner-view/learner-view.component';
 import {profileViewComponent} from './components/views/profile-view/profile-view.component';
@@ -181,7 +186,9 @@ import {symbolsArchiveViewComponent} from './components/views/symbols-archive-vi
 import {symbolSearchFormComponent} from './components/views/symbols-view/symbol-search-form/symbol-search-form.component';
 import {symbolsSymbolGroupTreeComponent} from './components/views/symbols-view/symbols-symbol-group-tree/symbols-symbol-group-tree.component';
 import {symbolsViewComponent} from './components/views/symbols-view/symbols-view.component';
+import {testCaseResultsViewComponent} from './components/views/test-case-results-view/test-case-results-view.component';
 import {prePostTestCaseStepComponent} from './components/views/test-case-view/pre-post-test-case-step/pre-post-test-case-step.component';
+import {testCaseExpectedResultComponent} from './components/views/test-case-view/test-case-expected-result/test-case-expected-result.component';
 import {testCaseViewComponent} from './components/views/test-case-view/test-case-view.component';
 import {reportChartsComponent} from './components/views/test-report-view/report-donut-chart/report-charts.component';
 import {reportOutputsColumnComponent} from './components/views/test-report-view/report-output-column/report-outputs-column.component';
@@ -210,7 +217,6 @@ import {
     sortTests
 } from './filters';
 import * as routes from './routes';
-import {ActionRecorderService} from './services/action-recorder.service';
 import {ActionService} from './services/action.service';
 import {ClipboardService} from './services/clipboard.service';
 import {DownloadService} from './services/download.service';
@@ -221,6 +227,7 @@ import {LearnerResultChartService} from './services/learner-result-chart.service
 import {LearnerResultDownloadService} from './services/learner-result-download.service';
 import {LearningAlgorithmService} from './services/learning-algorithm.service';
 import {NotificationService} from './services/notification.service';
+import {ProjectService} from './services/project.service';
 import {PromptService} from './services/prompt.service';
 import {CounterResource} from './services/resources/counter-resource.service';
 import {FileResource} from './services/resources/file-resource.service';
@@ -236,10 +243,11 @@ import {TestReportResource} from './services/resources/test-report-resource.serv
 import {TestResource} from './services/resources/test-resource.service';
 import {UserResource} from './services/resources/user-resource.service';
 import {WebhookResource} from './services/resources/webhook-resource.service';
-import {SessionService} from './services/session.service';
 import {TestReportService} from './services/test-report.service';
 import {TestService} from './services/test.service';
 import {ToastService} from './services/toast.service';
+import {UiService} from './services/ui.service';
+import {UserService} from './services/user.service';
 
 angular
     .module('ALEX', [
@@ -303,14 +311,15 @@ angular
     .service('DownloadService', DownloadService)
     .service('LearnerResultChartService', LearnerResultChartService)
     .service('PromptService', PromptService)
-    .service('SessionService', SessionService)
     .service('ToastService', ToastService)
     .service('LearnerResultDownloadService', LearnerResultDownloadService)
     .service('HtmlElementPickerService', HtmlElementPickerService)
-    .service('ActionRecorderService', ActionRecorderService)
     .service('TestService', TestService)
     .service('TestReportService', TestReportService)
     .service('NotificationService', NotificationService)
+    .service('ProjectService', ProjectService)
+    .service('UserService', UserService)
+    .service('UiService', UiService)
 
     // modal handles
     .directive('actionCreateModalHandle', actionCreateModalHandleDirective)
@@ -318,7 +327,6 @@ angular
     .directive('hypothesisLayoutSettingsModalHandle', hypothesisLayoutSettingsModalHandleDirective)
     .directive('learnerResultDetailsModalHandle', learnerResultDetailsModalHandleDirective)
     .directive('learnerSetupSettingsModalHandle', learnerSetupSettingsModalHandleDirective)
-    .directive('projectEditModalHandle', projectEditModalHandleDirective)
     .directive('symbolCreateModalHandle', symbolCreateModalHandleDirective)
     .directive('symbolEditModalHandle', symbolEditModalHandleDirective)
     .directive('symbolGroupCreateModalHandle', symbolGroupCreateModalHandleDirective)
@@ -327,7 +335,6 @@ angular
 
     // modals
     .component('actionCreateModal', actionCreateModalComponent)
-    .component('actionRecorderActionsModal', actionRecorderActionsModal)
     .component('actionEditModal', actionEditModalComponent)
     .component('counterCreateModal', counterCreateModalComponent)
     .component('hypothesisLayoutSettingsModal', hypothesisLayoutSettingsModalComponent)
@@ -355,6 +362,7 @@ angular
     .component('symbolGroupMoveModal', symbolGroupMoveModalComponent)
     .component('separatingWordModal', separatingWordModalComponent)
     .component('testsMoveModal', testsMoveModalComponent)
+    .component('symbolSelectModal', symbolSelectModalComponent)
 
     // view components
     .component('aboutView', aboutViewComponent)
@@ -374,6 +382,7 @@ angular
     .component('symbolView', symbolViewComponent)
     .component('symbolsView', symbolsViewComponent)
     .component('testsView', testsViewComponent)
+    .component('testCaseResultsView', testCaseResultsViewComponent)
     .component('symbolsArchiveView', symbolsArchiveViewComponent)
     .component('profileView', profileViewComponent)
     .component('testCaseView', testCaseViewComponent)
@@ -404,6 +413,8 @@ angular
     .component('randomEqOracleForm', randomEqOracleFormComponent)
     .component('wMethodEqOracleForm', wMethodEqOracleFormComponent)
     .component('hypothesisEqOracleForm', hypothesisEqOracleFormComponent)
+    .component('testSuiteEqOracleForm', testSuiteEqOracleFormComponent)
+    .component('wpMethodEqOracleForm', wpMethodEqOracleFormComponent)
 
     // widgets components
     .component('widget', widgetComponent)
@@ -413,6 +424,8 @@ angular
     .component('latestLearnResultWidget', latestLearnerResultWidgetComponent)
     .component('projectDetailsWidget', projectDetailsWidgetComponent)
     .component('latestTestReportWidget', latestTestReportWidgetComponent)
+    .component('testCaseGenerationWidget', testCaseGenerationWidgetComponent)
+    .component('testSuiteGenerationWidget', testSuiteGenerationWidgetComponent)
 
     // web action forms
     .component('alertAcceptDismissActionForm', alertAcceptDismissActionFormComponent)
@@ -441,6 +454,7 @@ angular
     .component('waitForTextActionForm', waitForTextActionFormComponent)
     .component('pressKeyActionForm', pressKeyActionFormComponent)
     .component('waitForNodeAttributeActionForm', waitForNodeAttributeActionFormComponent)
+    .component('uploadFileActionForm', uploadFileActionFormComponent)
 
     // rest action forms
     .component('requestActionForm', requestActionFormComponent)
@@ -479,7 +493,6 @@ angular
     .component('responsiveIframe', responsiveIframeComponent)
     .component('viewHeader', viewHeaderComponent)
     .component('htmlElementPicker', htmlElementPickerComponent)
-    .component('actionRecorder', actionRecorderComponent)
     .component('learnerResultPanel', learnerResultPanelComponent)
     .component('observationTable', observationTableComponent)
     .component('symbolListItem', symbolListItemComponent)
@@ -497,11 +510,14 @@ angular
     .component('symbolsSymbolGroupTree', symbolsSymbolGroupTreeComponent)
     .component('reportOutputsColumn', reportOutputsColumnComponent)
     .component('reportCharts', reportChartsComponent)
-    .component('learnerSetupSymbolGroupTree', learnerSetupSymbolGroupTreeComponent)
     .component('testConfigList', testConfigListComponent)
     .component('selectableCheckbox', selectableCheckboxComponent)
     .component('selectableCheckboxMultiple', selectableCheckboxMultipleComponent)
     .component('prePostTestCaseStep', prePostTestCaseStepComponent)
+    .component('symbolParameters', symbolParametersComponent)
+    .component('symbolSelectDropdown', symbolSelectDropdownComponent)
+    .component('testCaseExpectedResult', testCaseExpectedResultComponent)
+    .component('pagination', paginationComponent)
     .component('testSuiteTree', testSuiteTreeComponent);
 
 angular.bootstrap(document, ['ALEX']);

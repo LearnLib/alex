@@ -7,12 +7,10 @@
             <a ui-sref="symbol({projectId: vm.symbol.project, symbolId: vm.symbol.id})">
                 <strong>{{vm.symbol.name}}</strong>
             </a>
+            <i class="text-muted fa fa-cubes fa-fw" ng-if="vm.symbol.containsSymbolSteps()"></i>
         </div>
-        <div class="text-muted" ng-if="vm.symbol.actions.length > 0">
-            {{vm.symbol.actions.length}} Actions
-        </div>
-        <div>
-            <span class="label label-info" ng-if="vm.symbol.actions.length === 0">Not implemented</span>
+        <div ng-if="vm.symbol.steps.length === 0">
+            <span class="label label-info">Not implemented</span>
         </div>
     </div>
     <div ng-transclude>

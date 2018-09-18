@@ -1,0 +1,285 @@
+{
+  "name": "all rest actions",
+  "description": null,
+  "successOutput": null,
+  "inputs": [],
+  "outputs": [],
+  "steps": [
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkAttributeExists",
+        "attribute": "test"
+      },
+      "position": 0
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkAttributeType",
+        "attribute": "test",
+        "jsonType": "STRING"
+      },
+      "position": 1
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkAttributeType",
+        "attribute": "test",
+        "jsonType": "ARRAY"
+      },
+      "position": 2
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkAttributeType",
+        "attribute": "test",
+        "jsonType": "BOOLEAN"
+      },
+      "position": 3
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkAttributeType",
+        "attribute": "test",
+        "jsonType": "INTEGER"
+      },
+      "position": 4
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkAttributeType",
+        "attribute": "test",
+        "jsonType": "INTEGER"
+      },
+      "position": 5
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkAttributeType",
+        "attribute": "test",
+        "jsonType": "OBJECT"
+      },
+      "position": 6
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkAttributeType",
+        "attribute": "test",
+        "jsonType": "NULL"
+      },
+      "position": 7
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkAttributeValue",
+        "attribute": "test",
+        "value": "test",
+        "regexp": false
+      },
+      "position": 8
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkAttributeValue",
+        "attribute": "test",
+        "value": "test",
+        "regexp": true
+      },
+      "position": 9
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkHeaderField",
+        "key": "test",
+        "value": "test",
+        "regexp": false
+      },
+      "position": 10
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkHeaderField",
+        "key": "test",
+        "value": "test",
+        "regexp": true
+      },
+      "position": 11
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkStatus",
+        "status": 200
+      },
+      "position": 12
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_call",
+        "method": "GET",
+        "url": "test",
+        "data": "{\"test\":\"test\"}",
+        "cookies": {},
+        "headers": {},
+        "credentials": {
+          "name": "",
+          "password": ""
+        },
+        "timeout": 0
+      },
+      "position": 13
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_call",
+        "method": "POST",
+        "url": "test",
+        "data": "{\"test\":\"test\"}",
+        "cookies": {},
+        "headers": {},
+        "credentials": {
+          "name": "",
+          "password": ""
+        },
+        "timeout": 0
+      },
+      "position": 14
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_call",
+        "method": "GET",
+        "url": "test",
+        "data": null,
+        "cookies": {
+          "test": "test"
+        },
+        "headers": {
+          "test": "test"
+        },
+        "credentials": {
+          "name": "test",
+          "password": "test"
+        },
+        "timeout": 0
+      },
+      "position": 15
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkForText",
+        "value": "test",
+        "regexp": false
+      },
+      "position": 16
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_checkForText",
+        "value": "test",
+        "regexp": true
+      },
+      "position": 17
+    },
+    {
+      "type": "action",
+      "negated": false,
+      "ignoreFailure": false,
+      "errorOutput": null,
+      "disabled": false,
+      "action": {
+        "type": "rest_validateJson",
+        "schema": "{}"
+      },
+      "position": 18
+    }
+  ]
+}

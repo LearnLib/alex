@@ -17,16 +17,13 @@
 package de.learnlib.alex.testing.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.data.entities.SymbolRepresentation;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 import java.io.Serializable;
 
 /** Wrapper for {@link de.learnlib.alex.data.entities.ExecuteResult} that allows persistence for tests. */
@@ -37,7 +34,7 @@ public class TestExecutionResult extends ExecuteResult implements Serializable {
 
     /** The referenced test result. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "testResultUuid")
+    @JoinColumn(name = "testResultId")
     @JsonIgnore
     private TestCaseResult result;
 
@@ -54,10 +51,11 @@ public class TestExecutionResult extends ExecuteResult implements Serializable {
     /**
      * Constructor.
      *
-     * @param result The output of the SUL.
+     * @param result
+     *         The output of the SUL.
      */
     public TestExecutionResult(ExecuteResult result) {
-        super(result.isSuccess(), result.getOutput());
+        super(result.isSuccess(), result.getMessage(), result.getTime());
     }
 
     public TestCaseResult getResult() {
@@ -74,11 +72,5 @@ public class TestExecutionResult extends ExecuteResult implements Serializable {
 
     public void setSymbol(Symbol symbol) {
         this.symbol = symbol;
-    }
-
-    @Transient
-    @JsonProperty("symbol")
-    public SymbolRepresentation getSymbolRepresentation() {
-        return new SymbolRepresentation(symbol);
     }
 }

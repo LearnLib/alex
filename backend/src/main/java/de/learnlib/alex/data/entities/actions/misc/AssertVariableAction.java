@@ -17,16 +17,16 @@
 package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -43,8 +43,6 @@ public class AssertVariableAction extends SymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER  = MarkerManager.getMarker("LEARNER");
-
     /**
      * The name of the variable to assert.
      */
@@ -55,59 +53,19 @@ public class AssertVariableAction extends SymbolAction {
      * The value to assert the variable content with.
      */
     @NotBlank
+    @Column(name = "\"value\"")
     private String value;
 
     /**
      * Whether the value of the variable is matched against a regular expression.
      */
     @NotNull
+    @Column(name = "\"regexp\"")
     private boolean regexp;
 
     /** Constructor. */
     public AssertVariableAction() {
         this.regexp = false;
-    }
-
-    /**
-     * @return The name of the variable to assert.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name The new name of the variable to assert.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return The value to check the variable against.
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * @param value The new vlue to check the variable against.
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    /**
-     * @return Treat the value as regexp?
-     */
-    public boolean isRegexp() {
-        return regexp;
-    }
-
-    /**
-     * @param regexp True, if the value is a regular expression; false otherwise.
-     */
-    public void setRegexp(boolean regexp) {
-        this.regexp = regexp;
     }
 
     @Override
@@ -123,15 +81,38 @@ public class AssertVariableAction extends SymbolAction {
             result = variableValue.equals(valueWithVariables);
         }
 
-        LOGGER.info(LEARNER_MARKER, "Asserting variable '{}' with value '{}' against '{}' => {} "
-                                        + "(regex: {}, ignoreFailure: {}, negated: {}).",
-                    name, variableValue, valueWithVariables, result, regexp, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Asserting variable '{}' with value '{}' against '{}' => {} (regex: {}).",
+                name, variableValue, valueWithVariables, result, regexp);
 
         if (result) {
             return getSuccessOutput();
         } else {
             return getFailedOutput();
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public boolean isRegexp() {
+        return regexp;
+    }
+
+    public void setRegexp(boolean regexp) {
+        this.regexp = regexp;
     }
 
 }

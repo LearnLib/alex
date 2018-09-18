@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
 import {LearnConfiguration} from '../../../entities/learner-configuration';
-import {Selectable} from '../../../utils/selectable';
-import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
+import {ParametrizedSymbol} from '../../../entities/parametrized-symbol';
 
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
@@ -28,24 +28,19 @@ class LearnerSetupViewComponent {
      *
      * @param $state
      * @param {SymbolGroupResource} SymbolGroupResource
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {LearnerResource} LearnerResource
      * @param {ToastService} ToastService
      * @param {LearnResultResource} LearnResultResource
      * @param {SettingsResource} SettingsResource
      */
     // @ngInject
-    constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService, LearnResultResource,
+    constructor($state, SymbolGroupResource, ProjectService, LearnerResource, ToastService, LearnResultResource,
                 SettingsResource) {
         this.$state = $state;
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
-
-        /**
-         * The project that is in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.ProjectService = ProjectService;
 
         /**
          * All symbol groups that belong the the sessions project.
@@ -60,18 +55,6 @@ class LearnerSetupViewComponent {
         this.learnResults = [];
 
         /**
-         * A list of all symbols of all groups that is used in order to select them.
-         * @type {AlphabetSymbol[]}
-         */
-        this.symbols = [];
-
-        /**
-         * A list of selected Symbols.
-         * @type {Selectable}
-         */
-        this.selectedSymbols = new Selectable(this.symbols, 'id');
-
-        /**
          * The configuration that is send to the server for learning.
          * @type {LearnConfiguration}
          */
@@ -79,22 +62,20 @@ class LearnerSetupViewComponent {
         this.learnConfiguration.urls = [this.project.getDefaultUrl()];
 
         /**
-         * The symbol that should be used as a reset symbol.
-         * @type {AlphabetSymbol|null}
-         */
-        this.resetSymbol = null;
-
-        /**
          * The latest learner result in the project.
          * @type {?LearnResult}
          */
         this.latestLearnerResult = null;
 
+        this.pSymbols = [];
+
+        this.pResetSymbol = null;
+
+        this.pPostSymbol = null;
+
         SettingsResource.getSupportedWebDrivers()
-            .then(data => {
-                this.learnConfiguration.driverConfig.name = data.defaultWebDriver;
-            })
-            .catch(console.log);
+            .then(data => this.learnConfiguration.driverConfig.name = data.defaultWebDriver)
+            .catch(console.error);
 
         // make sure that there isn't any other learn process active
         // redirect to the load screen in case there is an active one
@@ -111,11 +92,7 @@ class LearnerSetupViewComponent {
 
                     // load all symbols in case there isn't any active learning process
                     SymbolGroupResource.getAll(this.project.id, true)
-                        .then(groups => {
-                            this.groups = groups;
-                            this.symbols = SymbolGroupUtils.getSymbols(this.groups);
-                            this.selectedSymbols = new Selectable(this.symbols, 'id');
-                        })
+                        .then(groups => this.groups = groups)
                         .catch(console.error);
 
                     // load learn results so that their configuration can be reused
@@ -138,7 +115,19 @@ class LearnerSetupViewComponent {
 
     /** @param {AlphabetSymbol} symbol - The symbol that will be used to reset the sul. */
     setResetSymbol(symbol) {
-        this.resetSymbol = symbol;
+        this.pResetSymbol = ParametrizedSymbol.fromSymbol(symbol);
+    }
+
+    setPostSymbol(symbol) {
+        this.pPostSymbol = ParametrizedSymbol.fromSymbol(symbol);
+    }
+
+    handleSymbolSelected(symbol) {
+        this.pSymbols.push(ParametrizedSymbol.fromSymbol(symbol));
+    }
+
+    handleSymbolGroupSelected(group) {
+        group.symbols.forEach(s => this.pSymbols.push(ParametrizedSymbol.fromSymbol(s)));
     }
 
     /**
@@ -146,18 +135,20 @@ class LearnerSetupViewComponent {
      * learning load screen on success.
      */
     startLearning() {
-        if (this.resetSymbol === null) {
+        if (this.pResetSymbol === null) {
             this.ToastService.danger('You <strong>must</strong> selected a reset symbol in order to start learning!');
         } else {
 
-            const selectedSymbols = this.selectedSymbols.getSelected();
-            if (selectedSymbols.length > 0) {
-                const i = selectedSymbols.findIndex(s => s.id === this.resetSymbol.id);
-                if (i > -1) selectedSymbols.splice(i, 1);
-
+            if (this.pSymbols.length > 0) {
                 const config = JSON.parse(JSON.stringify(this.learnConfiguration));
-                config.symbols = selectedSymbols.map(s => s.id);
-                config.resetSymbol = this.resetSymbol.id;
+                config.symbols = JSON.parse(JSON.stringify(this.pSymbols));
+                config.symbols.forEach(ps => ps.symbol = ps.symbol.id);
+                config.resetSymbol = JSON.parse(JSON.stringify(this.pResetSymbol));
+                config.resetSymbol.symbol = config.resetSymbol.symbol.id;
+                if (this.pPostSymbol != null) {
+                    config.postSymbol = JSON.parse(JSON.stringify(this.pPostSymbol));
+                    config.postSymbol.symbol = config.postSymbol.symbol.id;
+                }
                 config.urls = this.learnConfiguration.urls.map(u => u.id);
 
                 // start learning
@@ -166,8 +157,8 @@ class LearnerSetupViewComponent {
                         this.ToastService.success('Learn process started successfully.');
                         this.$state.go('learnerStart', {projectId: this.project.id});
                     })
-                    .catch(response => {
-                        this.ToastService.danger('<p><strong>Start learning failed</strong></p>' + response.data.message);
+                    .catch(error => {
+                        this.ToastService.danger('<p><strong>Start learning failed</strong></p>' + error.data.message);
                     });
             } else {
                 this.ToastService.danger('You <strong>must</strong> at least select one symbol to start learning');
@@ -186,20 +177,32 @@ class LearnerSetupViewComponent {
         this.learnConfiguration.maxAmountOfStepsToLearn = result.maxAmountOfStepsToLearn;
         this.learnConfiguration.driverConfig = result.driverConfig;
         this.learnConfiguration.urls = result.urls;
-
-        SymbolGroupUtils.getSymbols(this.groups).forEach(symbol => {
-            if (result.symbols.indexOf(symbol.id) > -1) {
-                this.selectedSymbols.select(symbol);
-            }
-            if (symbol.id === result.resetSymbol) {
-                this.resetSymbol = symbol;
-            }
+        this.learnConfiguration.resetSymbol = result.resetSymbol;
+        this.learnConfiguration.resetSymbol.id = null;
+        this.learnConfiguration.resetSymbol.parameterValues.forEach(v => v.id = null);
+        if (result.postSymbol != null) {
+            this.learnConfiguration.postSymbol = result.postSymbol;
+            this.learnConfiguration.postSymbol.id = null;
+            this.learnConfiguration.postSymbol.parameterValues.forEach(v => v.id = null);
+        }
+        this.learnConfiguration.symbols = result.symbols;
+        this.learnConfiguration.symbols.forEach(s => {
+            s.id = null;
+            s.parameterValues.forEach(v => v.id = null);
         });
+
+        this.pSymbols = this.learnConfiguration.symbols;
+        this.pResetSymbol = this.learnConfiguration.resetSymbol;
+        this.pPostSymbol = this.learnConfiguration.postSymbol;
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 
 export const learnerSetupViewComponent = {
-    controller: LearnerSetupViewComponent,
+    template: require('./learner-setup-view.component.html'),
     controllerAs: 'vm',
-    template: require('./learner-setup-view.component.html')
+    controller: LearnerSetupViewComponent
 };

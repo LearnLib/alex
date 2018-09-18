@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {events} from '../../../constants';
-
 /**
  * The controller that shows the page to manage projects.
  */
@@ -24,50 +22,29 @@ class ProjectsViewComponent {
     /**
      * Constructor.
      *
-     * @param $scope
      * @param $state
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {ProjectResource} ProjectResource
-     * @param {EventBus} EventBus
      * @param {ToastService} ToastService
      */
     // @ngInject
-    constructor($scope, $state, SessionService, ProjectResource, EventBus, ToastService) {
-
-        /**
-         * The list of all projects.
-         * @type {Project[]}
-         */
-        this.projects = [];
+    constructor($state, ProjectService, ProjectResource, ToastService) {
+        this.projectService = ProjectService;
 
         // go to the dashboard if there is a project in the session
-        const project = SessionService.getProject();
+        const project = this.projectService.store.currentProject;
         if (project !== null) {
             $state.go('project', {projectId: project.id});
             return;
         }
 
         //get all projects from the server
-        ProjectResource.getAll()
-            .then(projects => {
-                this.projects = projects;
-            })
-            .catch(response => {
-                ToastService.danger(`Loading project failed. ${response.data.message}`);
-            });
+        ProjectService.load()
+            .catch(err => ToastService.danger(`Loading project failed. ${err.data.message}`));
+    }
 
-        // listen on project update event
-        EventBus.on(events.PROJECT_UPDATED, (evt, data) => {
-            const project = data.project;
-            const i = this.projects.findIndex(p => p.id === project.id);
-            if (i > -1) this.projects[i] = project;
-        }, $scope);
-
-        // listen on project delete event
-        EventBus.on(events.PROJECT_DELETED, (evt, data) => {
-            const i = this.projects.findIndex(p => p.id === data.project.id);
-            if (i > -1) this.projects.splice(i, 1);
-        }, $scope);
+    get projects() {
+        return this.projectService.store.projects;
     }
 }
 

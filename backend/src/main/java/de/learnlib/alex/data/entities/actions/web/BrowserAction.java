@@ -17,12 +17,11 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -38,8 +37,6 @@ public class BrowserAction extends WebSymbolAction {
     private static final long serialVersionUID = -8427901966480324077L;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** What to to with the open browser window. */
     public enum Action {
@@ -67,22 +64,18 @@ public class BrowserAction extends WebSymbolAction {
             switch (action) {
                 case RESTART:
                     connector.restart();
-                    LOGGER.info(LEARNER_MARKER, "Restart browser (ignoreFailure: {}, negated: {}).",
-                            ignoreFailure, negated);
+                    LOGGER.info(LoggerMarkers.LEARNER, "Restart browser.");
                     break;
                 case REFRESH:
                     connector.refresh();
-                    LOGGER.info(LEARNER_MARKER, "Refresh browser (ignoreFailure: {}, negated: {}).",
-                            ignoreFailure, negated);
+                    LOGGER.info(LoggerMarkers.LEARNER, "Refresh browser.");
                     break;
                 default:
                     throw new Exception("Invalid browser action.");
             }
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LEARNER_MARKER, "Browser could not be refreshed or restarted (ignoreFailure: {}, negated: {}).",
-                    ignoreFailure, negated, e);
-
+            LOGGER.info(LoggerMarkers.LEARNER, "Browser could not be refreshed or restarted.", e);
             return getFailedOutput();
         }
     }

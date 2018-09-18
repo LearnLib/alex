@@ -18,7 +18,7 @@ package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.AbstractLearnerConfiguration;
 import de.learnlib.alex.learning.entities.LearnerResult;
@@ -27,9 +27,11 @@ import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
+import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.TestSuiteEQOracleProxy;
 import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import de.learnlib.api.SUL;
 import de.learnlib.api.algorithm.LearningAlgorithm;
@@ -45,11 +47,10 @@ import net.automatalib.words.Word;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -64,8 +65,6 @@ import java.util.stream.Collectors;
 public abstract class AbstractLearnerThread<T extends AbstractLearnerConfiguration> extends Thread {
 
     protected static final Logger LOGGER = LogManager.getLogger();
-
-    protected static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The user who is stating the Learning Thread. */
     protected User user;
@@ -106,6 +105,9 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /** The oracle that monitors which queries are being posed. */
     protected final QueryMonitorOracle<String, String> monitorOracle;
 
+    /** The test DAO. */
+    protected final TestDAO testDAO;
+
     /** The number of mqs executed in parallel. */
     private int maxConcurrentQueries;
 
@@ -129,24 +131,28 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
      *         {@link #webhookService}.
      * @param context
      *         The context to use.
+     * @param testDAO
+     *         The test DAO to use.
      * @param result
      *         {@link #result}.
      * @param configuration
      *         {@link #configuration}.
      */
     public AbstractLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-            ConnectorContextHandler context, LearnerResult result, T configuration) {
+            TestDAO testDAO, ConnectorContextHandler context, LearnerResult result, T configuration) {
         this.user = user;
         this.learnerResultDAO = learnerResultDAO;
         this.webhookService = webhookService;
         this.result = result;
         this.configuration = configuration;
-        this.abstractAlphabet = new SimpleAlphabet<>(
+        this.testDAO = testDAO;
+
+        this.abstractAlphabet = new SimpleAlphabet<>(new HashSet<>(// remove duplicate names with set
                 result.getSymbols().stream()
-                        .map(Symbol::getName)
+                        .map(ParameterizedSymbol::getComputedName)
                         .sorted(String::compareTo)
                         .collect(Collectors.toList())
-        );
+        ));
 
         this.context = context;
         this.finished = false;
@@ -160,7 +166,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         final SUL<String, String> mappedSUL = SULMappers.apply(symbolMapper, ceiSUL);
         this.sul = new AlexSUL<>(mappedSUL);
 
-        this.multiSULOracle = new MultiSULOracle<>(sul);
+        this.multiSULOracle = new MultiSULOracle<>(sul, user);
 
         // monitor which queries are being processed.
         monitorOracle = new QueryMonitorOracle<>(multiSULOracle);
@@ -250,9 +256,9 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
                 e1.printStackTrace();
             }
         } else {
-            if (result.getUUID() == null) {
+            if (result.getId() == null) {
                 try {
-                    learnerResultDAO.create(user, result);
+                    result = learnerResultDAO.create(user, result);
                 } catch (de.learnlib.alex.common.exceptions.NotFoundException e1) {
                     e1.printStackTrace();
                 }
@@ -282,8 +288,14 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
      *         The current step.
      */
     protected void doLearn(LearnerResultStep currentStep) {
-        final EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle =
-                configuration.getEqOracle().createEqOracle(mqOracle, maxConcurrentQueries);
+
+        final EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
+        if (configuration.getEqOracle() instanceof TestSuiteEQOracleProxy) {
+            eqOracle =
+                    ((TestSuiteEQOracleProxy) configuration.getEqOracle()).createEqOracle(mqOracle, maxConcurrentQueries, testDAO, user, result);
+        } else {
+            eqOracle = configuration.getEqOracle().createEqOracle(mqOracle, maxConcurrentQueries);
+        }
 
         long start, end;
         long rounds = 0;

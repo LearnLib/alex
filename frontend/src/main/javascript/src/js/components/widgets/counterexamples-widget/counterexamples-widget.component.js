@@ -43,12 +43,6 @@ class CounterexamplesWidgetComponent {
         this.$q = $q;
 
         /**
-         * The symbols.
-         * @type {AlphabetSymbol[]}
-         */
-        this.symbols = [];
-
-        /**
          * The array of input output pairs of the shared counterexample.
          * @type {Array}
          */
@@ -129,54 +123,45 @@ class CounterexamplesWidgetComponent {
         const test = () => {
             const testSymbols = [];
 
-            // find ids of symbols from their name in the learnResult
+            const pSymbols = this.result.symbols;
+            const pSymbolNames = pSymbols.map(ps => ps.getComputedName());
+
             for (let i = 0; i < this.counterExample.length; i++) {
-                for (let j = 0; j < this.symbols.length; j++) {
-                    if (this.counterExample[i].input === this.symbols[j].name) {
-                        testSymbols.push(this.symbols[j].id);
-                    }
-                }
+                const j = pSymbolNames.findIndex(name => name === this.counterExample[i].input);
+                testSymbols.push(pSymbols[j]);
             }
 
-            const resetSymbol = this.result.resetSymbol;
+            const resetSymbol = JSON.parse(JSON.stringify(this.result.resetSymbol));
+            resetSymbol.symbol = resetSymbol.symbol.id;
 
-            // actually test the counterexample
+            const symbols = JSON.parse(JSON.stringify(testSymbols));
+            symbols.forEach(s => s.symbol = s.symbol.id);
+
+            const postSymbol = JSON.parse(JSON.stringify(this.result.postSymbol));
+            if (postSymbol != null) {
+                postSymbol.symbol = postSymbol.symbol.id;
+            }
+
             this.LearnerResource.readOutputs(this.result.project, {
-                symbols: {
-                    resetSymbol: resetSymbol,
-                    symbols: testSymbols,
-                },
+                symbols: {resetSymbol, symbols, postSymbol},
                 driverConfig: this.result.driverConfig
-            })
-                .then(ce => {
-                    ce.shift();
-                    let ceFound = false;
-                    for (let i = 0; i < ce.length; i++) {
-                        if (ce[i].output !== this.counterExample[i].output) {
-                            ceFound = true;
-                            break;
-                        }
+            }).then(ce => {
+                let ceFound = false;
+                for (let i = 0; i < ce.length; i++) {
+                    if (ce[i].output !== this.counterExample[i].output) {
+                        ceFound = true;
+                        break;
                     }
-                    if (ceFound) {
-                        deferred.resolve(ce);
-                    } else {
-                        deferred.reject();
-                    }
-                })
-                .catch(err => console.log(err));
+                }
+                if (ceFound) {
+                    deferred.resolve(ce);
+                } else {
+                    deferred.reject();
+                }
+            }).catch(console.error);
         };
 
-        // fetch symbols only once and cache them
-        if (this.symbols.length === 0) {
-            this.SymbolResource.getAll(this.result.project)
-                .then(symbols => {
-                    this.symbols = symbols;
-                    test();
-                })
-                .catch(err => console.log(err));
-        } else {
-            test();
-        }
+        test();
 
         return deferred.promise;
     }

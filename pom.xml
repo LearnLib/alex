@@ -22,7 +22,7 @@
 
     <groupId>de.learnlib.alex</groupId>
     <artifactId>alex-parent</artifactId>
-    <version>1.5.1</version>
+    <version>1.6.0</version>
     <packaging>pom</packaging>
 
     <name>Automata Learning Experience (ALEX)</name>
@@ -66,6 +66,10 @@
         <contributor>
             <name>Prof. Dr. Bernhard Steffen</name>
             <email>bernhard.steffen@tu-dortmund.de</email>
+        </contributor>
+        <contributor>
+            <name>Philipp Koch</name>
+            <email>philipp.koch@tu-dortmund.de</email>
         </contributor>
     </contributors>
     <organization>

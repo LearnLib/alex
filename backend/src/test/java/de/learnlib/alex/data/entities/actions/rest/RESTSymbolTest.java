@@ -18,6 +18,7 @@ package de.learnlib.alex.data.entities.actions.rest;
 
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolActionStep;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
@@ -44,9 +45,15 @@ public class RESTSymbolTest {
         action1 = mock(RESTSymbolAction.class);
         action2 = mock(RESTSymbolAction.class);
 
+        final SymbolActionStep step1 = new SymbolActionStep();
+        step1.setAction(action1);
+
+        final SymbolActionStep step2 = new SymbolActionStep();
+        step2.setAction(action2);
+
         symbol = new Symbol();
-        symbol.addAction(action1);
-        symbol.addAction(action2);
+        symbol.getSteps().add(step1);
+        symbol.getSteps().add(step2);
 
         connectors = mock(ConnectorManager.class);
         given(connectors.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
@@ -65,17 +72,6 @@ public class RESTSymbolTest {
     @Test
     public void shouldReturnFailedIfOneActionsRunFailed() throws Exception {
         given(action1.executeAction(connectors)).willReturn(new ExecuteResult(false));
-        given(action2.executeAction(connectors)).willReturn(new ExecuteResult(true));
-
-        ExecuteResult result = symbol.execute(connectors);
-
-        assertFalse(result.isSuccess());
-        verify(action2, never()).executeAction(connectors);
-    }
-
-    @Test
-    public void shouldReturnFailedIfOneActionsThrowsAnException() throws Exception {
-        given(action1.executeAction(connectors)).willThrow(IllegalStateException.class);
         given(action2.executeAction(connectors)).willReturn(new ExecuteResult(true));
 
         ExecuteResult result = symbol.execute(connectors);

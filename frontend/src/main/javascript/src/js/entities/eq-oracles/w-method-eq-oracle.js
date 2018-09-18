@@ -26,7 +26,7 @@ export class WMethodEqOracle {
      *
      * @param {number} maxDepth
      */
-    constructor(maxDepth = 1) {
+    constructor(maxDepth = 0) {
         this.type = eqOracleType.WMETHOD;
         this.maxDepth = maxDepth;
     }

@@ -36,28 +36,34 @@ public interface SymbolDAO {
      *
      * @param user
      *         The user performing the action.
+     * @param projectId
+     *         The ID of the project.
      * @param symbol
      *         The symbol to save.
+     * @return The created symbol.
      * @throws ValidationException
      *         When the symbol was not valid.
      * @throws NotFoundException
      *         If a symbol could not be found.
      */
-    void create(User user, Symbol symbol) throws ValidationException, NotFoundException;
+    Symbol create(User user, Long projectId, Symbol symbol) throws ValidationException, NotFoundException;
 
     /**
      * Save the given symbols.
      *
      * @param user
      *         The user performing the action.
+     * @param projectId
+     *         The ID of the project.
      * @param symbols
      *         The symbols to save.
+     * @return The created symbols.
      * @throws ValidationException
      *         When one the symbols was not valid. In this case all symbols are reverted and not saved.
      * @throws NotFoundException
      *         If a symbol could not be found.
      */
-    void create(User user, List<Symbol> symbols) throws ValidationException, NotFoundException;
+    List<Symbol> create(User user, Long projectId, List<Symbol> symbols) throws ValidationException, NotFoundException;
 
     /**
      * Get a list of specific symbols of a project.
@@ -165,6 +171,8 @@ public interface SymbolDAO {
      *         The user performing the action.
      * @param symbol
      *         The symbol to update.
+     * @param projectId
+     *         The ID of the project.
      * @return The updated symbol.
      * @throws IllegalArgumentException
      *         If an old revision is used.
@@ -173,7 +181,8 @@ public interface SymbolDAO {
      * @throws ValidationException
      *         When the Symbol was not valid.
      */
-    Symbol update(User user, Symbol symbol) throws IllegalArgumentException, NotFoundException, ValidationException;
+    Symbol update(User user, Long projectId, Symbol symbol)
+            throws IllegalArgumentException, NotFoundException, ValidationException;
 
     /**
      * Update a list of Symbols.
@@ -182,6 +191,8 @@ public interface SymbolDAO {
      *         The user performing the action.
      * @param symbols
      *         The symbol sto update.
+     * @param projectId
+     *         The ID of the project.
      * @return The list of updated symbols.
      * @throws IllegalArgumentException
      *         If an old revision is used.
@@ -190,7 +201,7 @@ public interface SymbolDAO {
      * @throws ValidationException
      *         When one of the Symbol was not valid.
      */
-    List<Symbol> update(User user, List<Symbol> symbols)
+    List<Symbol> update(User user, Long projectId, List<Symbol> symbols)
             throws IllegalArgumentException, NotFoundException, ValidationException;
 
     /**
@@ -236,10 +247,11 @@ public interface SymbolDAO {
      *         The ID of the project the symbol belongs to.
      * @param ids
      *         The IDs of the symbols to hide.
+     * @return The list of hidden symbols.
      * @throws NotFoundException
      *         When the Symbol was not found.
      */
-    void hide(User user, Long projectId, List<Long> ids) throws NotFoundException;
+    List<Symbol> hide(User user, Long projectId, List<Long> ids) throws NotFoundException;
 
     /**
      * Revive a symbol from the hidden state.
@@ -254,6 +266,20 @@ public interface SymbolDAO {
      *         When the Symbol was not found.
      */
     void show(User user, Long projectId, List<Long> ids) throws NotFoundException;
+
+    /**
+     * Delete a symbol permanently but only if there are no more references to it.
+     *
+     * @param user
+     *         The user.
+     * @param projectId
+     *         The ID of the project.
+     * @param symbolId
+     *         The ID of the symbol to delete.
+     * @throws NotFoundException
+     *         If the project or symbol could not be found.
+     */
+    void delete(User user, Long projectId, Long symbolId) throws NotFoundException;
 
     /**
      * Check if the user can access or modify a symbol.

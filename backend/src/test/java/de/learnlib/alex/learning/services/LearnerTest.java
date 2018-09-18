@@ -20,12 +20,14 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
+import de.learnlib.alex.learning.entities.ReadOutputConfig;
+import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
@@ -54,7 +56,6 @@ import static org.mockito.Mockito.verify;
 public class LearnerTest {
 
     private static final long   PROJECT_ID    = 42L;
-    private static final String FAKE_URL      = "http://example.com";
     private static final int    SYMBOL_AMOUNT = 5;
 
     @Mock
@@ -146,11 +147,12 @@ public class LearnerTest {
 
     @Test
     public void shouldReadTheCorrectOutputOfSomeSymbols() {
-        Symbol resetSymbol = mock(Symbol.class);
+        ParameterizedSymbol resetSymbol = mock(ParameterizedSymbol.class);
+        ParameterizedSymbol postSymbol = mock(ParameterizedSymbol.class);
         //
-        List<Symbol> symbols = new LinkedList<>();
+        List<ParameterizedSymbol> symbols = new LinkedList<>();
         for (int i = 0; i < SYMBOL_AMOUNT; i++) {
-            Symbol symbol = mock(Symbol.class);
+            ParameterizedSymbol symbol = mock(ParameterizedSymbol.class);
             given(symbol.execute(any(ConnectorManager.class))).willReturn(new ExecuteResult(true));
             symbols.add(symbol);
         }
@@ -162,7 +164,11 @@ public class LearnerTest {
         ConnectorManager connectorManager = mock(ConnectorManager.class);
         given(ctxHandler.createContext()).willReturn(connectorManager);
 
-        List<ExecuteResult> outputs = learner.readOutputs(user, project, resetSymbol, symbols, new HtmlUnitDriverConfig());
+        final ReadOutputConfig config = new ReadOutputConfig();
+        config.setDriverConfig(new HtmlUnitDriverConfig());
+        config.setSymbols(new SymbolSet(resetSymbol, symbols, postSymbol));
+
+        List<ExecuteResult> outputs = learner.readOutputs(user, project, config);
 
         assertEquals(symbols.size(), outputs.size());
         assertTrue("at least one output was not OK", outputs.stream().allMatch(r -> r.getOutput().equals("OK")));

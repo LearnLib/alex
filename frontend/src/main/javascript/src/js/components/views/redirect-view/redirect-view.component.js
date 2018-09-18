@@ -24,11 +24,12 @@ export const redirectViewComponent = {
          * @param $state
          * @param $stateParams
          * @param $location
-         * @param {SessionService} SessionService
+         * @param {UserService} UserService
          */
         // @ngInject
-        constructor($state, $stateParams, $location, SessionService) {
+        constructor($state, $stateParams, $location, UserService) {
             this.$location = $location;
+            this.userService = UserService;
 
             if ($stateParams.to == null) {
                 $state.go('error', {message: 'You did not specify a target URL.'});
@@ -43,14 +44,17 @@ export const redirectViewComponent = {
                 return;
             }
 
-            const user = SessionService.getUser();
-            if (user != null) {
+            if (this.currentUser != null) {
                 this.redirect();
             }
         }
 
         redirect() {
             this.$location.url(this.targetUrl);
+        }
+
+        get currentUser() {
+            return this.userService.store.currentUser;
         }
     },
     controllerAs: 'vm',

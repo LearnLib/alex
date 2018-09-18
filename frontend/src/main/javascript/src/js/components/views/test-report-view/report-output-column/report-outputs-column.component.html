@@ -1,7 +1,7 @@
 <div class="d-flex flex-row">
     <div class="w-100" ng-if="vm.collapse">
         <span
-            class="label"
+            class="label d-inline-block"
             style="margin-left: 3px"
             ng-repeat="output in vm.outputs track by $index"
             ng-class="{'label-success': output.success,'label-danger':!output.success}"
@@ -14,12 +14,12 @@
             <tbody>
             <tr ng-repeat="output in vm.outputs track by $index">
                 <td style="width: 1px" class="text-right">
-                    <span
+                    <a
                         ui-sref="symbol({projectId: vm.project.id, symbolId: output.symbol.id})"
                         class="label label-default cursor-pointer"
                     >
                         {{output.symbol.name}}
-                    </span>
+                    </a>
                 </td>
                 <td>
                     <span

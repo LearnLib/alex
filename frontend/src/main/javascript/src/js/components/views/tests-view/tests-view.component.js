@@ -23,18 +23,17 @@ export const testsViewComponent = {
     /**
      * The controller of the view.
      */
-    controller: class {
+    controller: class TestsViewComponent {
 
         /**
          * Constructor.
          *
          * @param $state
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          * @param {TestResource} TestResource
          */
         // @ngInject
-        constructor($state, SessionService, TestResource) {
-            const project = SessionService.getProject();
+        constructor($state, ProjectService, TestResource) {
 
             /**
              * The test case or test suite.
@@ -42,6 +41,7 @@ export const testsViewComponent = {
              */
             this.test = null;
 
+            const project = ProjectService.store.currentProject;
             const testId = $state.params.testId;
             if (testId === 0) {
                 TestResource.getRoot(project.id)

@@ -22,6 +22,8 @@ import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.dao.FileDAOImpl;
+import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.data.repositories.ProjectRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +39,7 @@ import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -56,11 +59,17 @@ public class UserDAOImplTest {
     @Mock
     private FileDAOImpl fileDAO;
 
+    @Mock
+    private ProjectDAO projectDAO;
+
+    @Mock
+    private ProjectRepository projectRepository;
+
     private UserDAO userDAO;
 
     @Before
     public void setUp() throws NotFoundException {
-        userDAO = new UserDAOImpl(userRepository, fileDAO);
+        userDAO = new UserDAOImpl(userRepository, fileDAO, projectDAO, projectRepository);
     }
 
     @Test
@@ -251,14 +260,14 @@ public class UserDAOImplTest {
         user1.setId(42L);
         user1.setEmail("user1@mail.de");
         user1.setEncryptedPassword("test");
-        //
+
         User user2 = new User();
         user2.setId(21L);
         user2.setEmail("user2@mail.de");
         user2.setEncryptedPassword("test");
-        //
-        BDDMockito.given(userRepository.findOne(42L)).willReturn(user1);
-        BDDMockito.given(userRepository.findOne(21L)).willReturn(user2);
+
+        BDDMockito.given(userRepository.findAllByIdIn(Arrays.asList(user1.getId(), user2.getId())))
+                .willReturn(Arrays.asList(user1, user2));
 
         IdsList ids = new IdsList(String.valueOf(user1.getId()) + "," + String.valueOf(user2.getId()));
         userDAO.delete(ids);

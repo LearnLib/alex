@@ -63,12 +63,10 @@ class DiscriminationTreeComponent {
     }
 
     $onInit() {
-
         // render the new discrimination tree when property 'data' changes
         this.$scope.$watch('vm.data', data => {
             if (data) {
-                const graph = this.createGraph(JSON.parse(data));
-                this.layout(graph);
+                this.createGraph(JSON.parse(data));
                 this.render();
             }
         });
@@ -82,98 +80,49 @@ class DiscriminationTreeComponent {
     /**
      * Creates a graph structure from a discrimination tree in order to layout it with the given dagreD3 library.
      *
-     * @param {Object} dt - The discrimination tree.
-     * @returns {{nodes: Array, edges: Array}} - The tree as graph representation.
+     * @param {Object} dt The discrimination tree.
      */
     createGraph(dt) {
-        const nodes = [];
-        const edges = [];
-
-        const createGraphData = (node, parent) => {
-
-            // root without children
-            if (!node.children && parent === null) {
-                nodes.push(node.data);
-                return;
-            }
-
-            // is leaf?
-            if (node.children.length === 0) {
-                return;
-            }
-
-            // add node if not exists
-            if (!find(nodes, node.discriminator)) {
-                nodes.push(node.discriminator);
-            }
-
-            if (parent !== null) {
-                edges.push({
-                    from: parent.discriminator,
-                    to: node.discriminator,
-                    label: node.edgeLabel
-                });
-            }
-
-            node.children.forEach(child => {
-                if (child.data) {
-                    nodes.push(child.data);
-                    edges.push({
-                        from: node.discriminator,
-                        to: child.data,
-                        label: child.edgeLabel
-                    });
-                }
-            });
-
-            node.children.forEach(child => {
-                if (child.discriminator) createGraphData(child, node);
-            });
-        };
-
-        createGraphData(dt, null);
-
-        return {
-            nodes: nodes,
-            edges: edges
-        };
-    }
-
-    /**
-     * Creates positions for nodes and edges of the discrimination tree that can be rendered with dagreD3.
-     *
-     * @param {Object} graph - The discrimination tree as graph.
-     */
-    layout(graph) {
-
         // initialize graph
-        this.graph = new graphlib.Graph({
-            directed: true
-        });
+        this.graph = new graphlib.Graph({directed: true});
         this.graph.setGraph({});
 
-        // add nodes to the graph
-        graph.nodes.forEach(node => {
-            this.graph.setNode(node, {
-                shape: node[0] === 'q' ? 'rect' : 'circle',     // draw a rectangle when node is a leaf
-                label: node,
+        let i = 0; // for uniquely prefixing discriminators
+
+        function createNode(node, shape) {
+            return {
+                shape,
+                label:  node.replace(/^[0-9]+_/, ''),
                 width: 25,
                 style: STYLE.node,
                 labelStyle: STYLE.nodeLabel
-            });
-        });
+            }
+        }
 
-        //add edges to the graph
-        graph.edges.forEach(edge => {
-            this.graph.setEdge(edge.from, edge.to, {
-                style: STYLE.edge,
-                label: edge.label,
-                labelStyle: STYLE.edgeLabel,
-                curve: d3.curveBasis
-            });
-        });
+        const self = this;
+        function buildTree(dTree) {
+            if (dTree.discriminator) {
+                dTree.discriminator = (i++) + '_' + dTree.discriminator;
+                self.graph.setNode(dTree.discriminator, createNode(dTree.discriminator, 'circle'));
+            }
 
-        // layout
+            if (dTree.data) { // node is a leaf
+                dTree.data = (i++) + '_' + dTree.data;
+                self.graph.setNode(dTree.data, createNode(dTree.data, 'rect'));
+            } else if (dTree.children) {
+                dTree.children.forEach(buildTree);
+                dTree.children.forEach(child => {
+                    self.graph.setEdge(dTree.discriminator, child.discriminator ? child.discriminator : child.data, {
+                        style: STYLE.edge,
+                        label: child.edgeLabel,
+                        labelStyle: STYLE.edgeLabel,
+                        curve: d3.curveBasis
+                    });
+                });
+            }
+        }
+        buildTree(dt);
+
         dagre.layout(this.graph, {});
     }
 

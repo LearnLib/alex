@@ -36,14 +36,14 @@ public class WMethodEQOracleProxy extends AbstractEquivalenceOracleProxy impleme
 
     private static final long serialVersionUID = 2016142289217760178L;
 
-    /** The maximal depth to explore, i.e. minimal length of words to test. */
+    /** The maximal depth to explore. */
     private int maxDepth;
 
     /**
      * Default constructor.
      */
     public WMethodEQOracleProxy() {
-        this.maxDepth = 1;
+        this.maxDepth = 0;
     }
 
     /**

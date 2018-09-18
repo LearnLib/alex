@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,17 +67,6 @@ public class VariableStoreConnector implements Connector {
     }
 
     /**
-     * Check if a variable with a specific name exists.
-     *
-     * @param name
-     *         The name to check.
-     * @return true if the variable exists; false otherwise.
-     */
-    public boolean contains(String name) {
-        return store.containsKey(name);
-    }
-
-    /**
      * Get the value of a variable.
      *
      * @param name
@@ -92,7 +82,52 @@ public class VariableStoreConnector implements Connector {
         }
 
         LOGGER.debug("Got the variable '{}' with the value '{}'.", name, variable);
-
         return variable;
+    }
+
+    /**
+     * Updates the current store by variables in another store.
+     *
+     * @param storeToMerge
+     *         The store with updated variables.
+     * @param namesToMerge
+     *         The names of the variables that should be transferred to this one.
+     */
+    public void merge(VariableStoreConnector storeToMerge, List<String> namesToMerge) {
+        namesToMerge.forEach(name -> {
+            if (storeToMerge.store.containsKey(name)) {
+                store.put(name, storeToMerge.store.get(name));
+            }
+        });
+    }
+
+    /**
+     * Check if the store contains a variable.
+     *
+     * @param name
+     *         The name of the variable.
+     * @return If the variable is present.
+     */
+    public boolean contains(String name) {
+        return store.containsKey(name);
+    }
+
+    /**
+     * Get the store as read only map.
+     * @return The store.
+     */
+    public Map<String, String> getStore() {
+        return store;
+    }
+
+    /**
+     * Clones the store.
+     *
+     * @return The cloned store.
+     */
+    public VariableStoreConnector clone() {
+        final VariableStoreConnector clone = new VariableStoreConnector();
+        store.forEach(clone::set);
+        return clone;
     }
 }

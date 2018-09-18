@@ -18,13 +18,12 @@ package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -42,10 +41,13 @@ import javax.validation.constraints.NotNull;
 @JsonTypeName("web_select")
 public class SelectAction extends FillAction {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
     /**
      * Enum to choose how to interact with the selection input.
      */
     public enum SelectByType {
+
         /** Select by the value attribute. */
         VALUE,
 
@@ -76,30 +78,11 @@ public class SelectAction extends FillAction {
 
     }
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /**
      * The type that an option is selected by.
      */
     @NotNull
     private SelectByType selectBy;
-
-    /**
-     * @return How to do the selection of the node.
-     */
-    public SelectByType getSelectBy() {
-        return selectBy;
-    }
-
-    /**
-     * @param selectBy
-     *         The new method to select the value in the node.
-     */
-    public void setSelectBy(SelectByType selectBy) {
-        this.selectBy = selectBy;
-    }
 
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
@@ -126,14 +109,22 @@ public class SelectAction extends FillAction {
                     break;
             }
 
-            LOGGER.info(LEARNER_MARKER, "Selected '{}' of '{}' by '{}' (ignoreFailure: {}, negated: {}).",
-                    value, nodeWithVariables, selectBy, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Selected '{}' of '{}' by '{}'.",
+                    value, nodeWithVariables, selectBy);
             return getSuccessOutput();
         } catch (NoSuchElementException | NumberFormatException | UnexpectedTagNameException e) {
-            LOGGER.info(LEARNER_MARKER, "Could not select '{}' of '{}' by '{}' (ignoreFailure: {}, negated: {}).",
-                    value, nodeWithVariables, selectBy, ignoreFailure, negated, e);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not select '{}' of '{}' by '{}'.",
+                    value, nodeWithVariables, selectBy, e);
             return getFailedOutput();
         }
+    }
+
+    public SelectByType getSelectBy() {
+        return selectBy;
+    }
+
+    public void setSelectBy(SelectByType selectBy) {
+        this.selectBy = selectBy;
     }
 
 }

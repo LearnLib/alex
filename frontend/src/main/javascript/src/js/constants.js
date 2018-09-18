@@ -33,7 +33,8 @@ export const webBrowser = {
     EDGE: 'edge',
     HTML_UNIT: 'htmlUnit',
     SAFARI: 'safari',
-    REMOTE: 'remote'
+    REMOTE: 'remote',
+    IE: 'ie'
 };
 
 export const eqOracleType = {
@@ -41,7 +42,9 @@ export const eqOracleType = {
     COMPLETE: 'complete',
     SAMPLE: 'sample',
     WMETHOD: 'wmethod',
-    HYPOTHESIS: 'hypothesis'
+    WP_METHOD: 'wp_method',
+    HYPOTHESIS: 'hypothesis',
+    TEST_SUITE: 'test_suite'
 };
 
 export const userRole = {
@@ -51,12 +54,6 @@ export const userRole = {
 
 export const events = {
 
-    // project related events
-    PROJECT_UPDATED: 'project:updated',
-    PROJECT_DELETED: 'project:deleted',
-    PROJECT_OPENED: 'project:opened',
-    PROJECT_CLOSED: 'project:closed',
-
     // symbol group related events
     GROUP_UPDATED: 'group:updated',
     GROUP_DELETED: 'group:deleted',
@@ -65,9 +62,6 @@ export const events = {
     // hypothesis related events
     HYPOTHESIS_LABEL_SELECTED: 'hypothesis:labelSelected',
     HYPOTHESIS_LAYOUT_UPDATED: 'hypothesis:layoutUpdated',
-
-    // user related events
-    USER_LOGGED_IN: 'user:loggedIn',
 
     // symbol related events
     SYMBOL_UPDATED: 'symbol:updated',
@@ -97,6 +91,7 @@ export const actionType = {
     WEB_SUBMIT: 'web_submit',
     WEB_SWITCH_TO: 'web_switchTo',
     WEB_SWITCH_TO_FRAME: 'web_switchToFrame',
+    WEB_UPLOAD_FILE: 'web_uploadFile',
     WEB_PRESS_KEY: 'web_pressKey',
     WAIT_FOR_NODE: 'web_waitForNode',
     WAIT_FOR_NODE_ATTRIBUTE: 'web_waitForNodeAttribute',

@@ -22,15 +22,16 @@ import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.data.repositories.SymbolActionRepository;
+import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.testing.entities.TestSuite;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Lazy;
@@ -58,11 +59,6 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker PROJECT_MARKER = MarkerManager.getMarker("PROJECT");
-    private static final Marker DAO_MARKER = MarkerManager.getMarker("DAO");
-    private static final Marker IMPL_MARKER = MarkerManager.getMarker("PROJECT_DAO")
-            .setParents(DAO_MARKER, PROJECT_MARKER);
-
     /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
 
@@ -71,6 +67,15 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     /** The repository for test reports. */
     private TestReportRepository testReportRepository;
+
+    /** The repository for parameterized symbols. */
+    private ParameterizedSymbolRepository parameterizedSymbolRepository;
+
+    /** The repository for symbol steps. */
+    private SymbolStepRepository symbolStepRepository;
+
+    /** The repository for actions. */
+    private SymbolActionRepository symbolActionRepository;
 
     /** The FileDAO to use. Will be injected. */
     private FileDAO fileDAO;
@@ -91,15 +96,26 @@ public class ProjectDAOImpl implements ProjectDAO {
      *         The ProjectUrlDAO to use.
      * @param testReportRepository
      *         The repository for test reports.
+     * @param parameterizedSymbolRepository
+     *         The repository for parameterized symbols.
+     * @param symbolStepRepository
+     *         The repository for symbol steps.
+     * @param symbolActionRepository
+     *         The repository for actions.
      */
     @Inject
     public ProjectDAOImpl(ProjectRepository projectRepository, LearnerResultRepository learnerResultRepository,
-            TestReportRepository testReportRepository, @Lazy FileDAO fileDAO, @Lazy ProjectUrlDAO projectUrlDAO) {
+            TestReportRepository testReportRepository, @Lazy FileDAO fileDAO, @Lazy ProjectUrlDAO projectUrlDAO,
+            ParameterizedSymbolRepository parameterizedSymbolRepository,
+            SymbolStepRepository symbolStepRepository, SymbolActionRepository symbolActionRepository) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
         this.projectUrlDAO = projectUrlDAO;
         this.testReportRepository = testReportRepository;
+        this.parameterizedSymbolRepository = parameterizedSymbolRepository;
+        this.symbolStepRepository = symbolStepRepository;
+        this.symbolActionRepository = symbolActionRepository;
     }
 
     @Override
@@ -131,12 +147,12 @@ public class ProjectDAOImpl implements ProjectDAO {
             LOGGER.traceExit(createdProject);
             return createdProject;
         } catch (DataIntegrityViolationException e) {
-            LOGGER.info(IMPL_MARKER, "Project creation failed: ", e);
+            LOGGER.info("Project creation failed: ", e);
             e.printStackTrace();
             LOGGER.traceExit(e);
             throw new javax.validation.ValidationException("Project could not be created.", e);
         } catch (TransactionSystemException e) {
-            LOGGER.info(IMPL_MARKER, "Project creation failed:", e);
+            LOGGER.info("Project creation failed:", e);
             LOGGER.traceExit(e);
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Project was not created:", cve);
@@ -182,7 +198,6 @@ public class ProjectDAOImpl implements ProjectDAO {
         try {
             project.setUser(user);
             project.setGroups(projectInDb.getGroups());
-            project.setNextSymbolId(projectInDb.getNextSymbolId());
             project.getUrls().forEach(url -> url.setProject(project));
 
             final List<ProjectUrl> urlsToRemove = projectInDb.getUrls().stream()
@@ -198,10 +213,10 @@ public class ProjectDAOImpl implements ProjectDAO {
             LOGGER.traceExit(project);
             return updatedProject;
         } catch (DataIntegrityViolationException e) {
-            LOGGER.info(IMPL_MARKER, "Project update failed:", e);
+            LOGGER.info("Project update failed:", e);
             throw new javax.validation.ValidationException("Project could not be updated.", e);
         } catch (TransactionSystemException e) {
-            LOGGER.info(IMPL_MARKER, "Project update failed:", e);
+            LOGGER.info("Project update failed:", e);
             ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
             throw ValidationExceptionHelper.createValidationException("Project was not updated.", cve);
         }
@@ -219,6 +234,9 @@ public class ProjectDAOImpl implements ProjectDAO {
         final Project project = projectRepository.findOne(projectId);
         checkAccess(user, project);
 
+        symbolActionRepository.deleteAllBySymbol_Project_Id(projectId);
+        symbolStepRepository.deleteAllBySymbol_Project_Id(projectId);
+        parameterizedSymbolRepository.deleteAllBySymbol_Project_Id(projectId);
         testReportRepository.deleteAllByProject_Id(projectId);
         learnerResultRepository.deleteAllByProject_Id(projectId);
         projectRepository.delete(project);
@@ -259,6 +277,8 @@ public class ProjectDAOImpl implements ProjectDAO {
             } else {
                 project.setCounters(null);
             }
+
+            Hibernate.initialize(project.getUrls());
         } else {
             project.setGroups(null);
             project.setSymbols(null);

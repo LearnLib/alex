@@ -45,6 +45,7 @@ import java.util.List;
 
 /**
  * Resource to read and delete Counters.
+ *
  * @resourcePath counters
  * @resourceDescription Operations around counters
  */
@@ -55,7 +56,7 @@ public class CounterResource {
 
     /** The CounterDAO to use. */
     @Inject
-    private  CounterDAO counterDAO;
+    private CounterDAO counterDAO;
 
     /** The security context containing the user of the request. */
     @Context
@@ -67,7 +68,8 @@ public class CounterResource {
      * @param projectId
      *         The Project ID.
      * @return A List of the counters within the project. This list can be empty.
-     * @throws NotFoundException If the related User or Project could not be found.
+     * @throws NotFoundException
+     *         If the related User or Project could not be found.
      * @responseType java.util.List<de.learnlib.alex.data.entities.Counter>
      * @successResponse 200 OK
      */
@@ -86,8 +88,10 @@ public class CounterResource {
     /**
      * Creates a new counter.
      *
-     * @param projectId The id of the project.
-     * @param counter The counter to create.
+     * @param projectId
+     *         The id of the project.
+     * @param counter
+     *         The counter to create.
      * @return The created counter.
      */
     @POST
@@ -98,21 +102,30 @@ public class CounterResource {
         LOGGER.traceEntry("createCounter({}, {}) for user {}.", projectId, counter.getName(), user);
 
         try {
+            if (!counter.getProjectId().equals(projectId)) {
+                throw new ValidationException("The ID of the project does not match with the URL.");
+            }
+
             counterDAO.create(user, counter);
             return Response.ok(counter).build();
         } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.updateCounter",
-                                                               Response.Status.NOT_FOUND,
-                                                               e);
+            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.createCounter",
+                    Response.Status.NOT_FOUND, e);
+        } catch (ValidationException e) {
+            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.createCounter",
+                    Response.Status.BAD_REQUEST, e);
         }
     }
 
     /**
      * Update the value of a counter.
      *
-     * @param projectId The id of the project.
-     * @param name The name of the counter.
-     * @param counter The updated counter to update.
+     * @param projectId
+     *         The id of the project.
+     * @param name
+     *         The name of the counter.
+     * @param counter
+     *         The updated counter to update.
      * @return The updated counter.
      */
     @PUT
@@ -120,12 +133,16 @@ public class CounterResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateCounter(@PathParam("project_id") Long projectId,
-                                  @PathParam("counter_name") String name,
-                                  Counter counter) {
+            @PathParam("counter_name") String name,
+            Counter counter) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("updateCounter({}, {}) for user {}.", projectId, name, user);
 
         try {
+            if (!counter.getProjectId().equals(projectId)) {
+                throw new ValidationException("The ID of the project does not match with the URL.");
+            }
+
             if (!name.equals(counter.getName())) {
                 throw new ValidationException("The name of a counter cannot be updated.");
             }
@@ -137,12 +154,12 @@ public class CounterResource {
             return Response.ok(counterInDB).build();
         } catch (ValidationException e) {
             return ResourceErrorHandler.createRESTErrorMessage("CounterResource.updateCounter",
-                                                               Response.Status.BAD_REQUEST,
-                                                               e);
+                    Response.Status.BAD_REQUEST,
+                    e);
         } catch (NotFoundException e) {
             return ResourceErrorHandler.createRESTErrorMessage("CounterResource.updateCounter",
-                                                               Response.Status.NOT_FOUND,
-                                                               e);
+                    Response.Status.NOT_FOUND,
+                    e);
         }
     }
 
@@ -154,7 +171,8 @@ public class CounterResource {
      * @param name
      *         The name of the counter to remove.
      * @return Nothing if everything went OK.
-     * @throws NotFoundException If the given Counter or the related User or Project could not be found.
+     * @throws NotFoundException
+     *         If the given Counter or the related User or Project could not be found.
      * @successResponse 204 OK & no content
      */
     @DELETE
@@ -179,14 +197,15 @@ public class CounterResource {
      * @param names
      *         The names of the counters to remove.
      * @return Nothing if everything went OK.
-     * @throws NotFoundException If the given Counters or the related User or Project could not be found.
+     * @throws NotFoundException
+     *         If the given Counters or the related User or Project could not be found.
      * @successResponse 204 OK & no content
      */
     @DELETE
     @Path("/batch/{counter_names}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCounter(@PathParam("project_id") Long projectId,
-                                  @PathParam("counter_names") StringList names)
+            @PathParam("counter_names") StringList names)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, names, user);

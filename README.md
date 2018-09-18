@@ -18,7 +18,7 @@ Make sure you have Java 8 installed on your system.
 We advise to use a modern web browser like Google Chrome, Mozilla Firefox or Microsoft Edge with JavaScript enabled.
 
 1. [Download](https://github.com/LearnLib/alex/releases/latest) the latest version.
-2. Open a terminal and start ALEX via `java -jar alex-1.5.1.war [--alex.port=XXXX]`.
+2. Open a terminal and start ALEX via `java -jar alex-1.6.0.war [--server.port=XXXX]`.
 3. Wait until the command line prints something like `de.learnlib.alex.App - Started App in XX.XXX seconds`.
 3. Open *http://localhost:8000* in a web browser.
 
@@ -48,7 +48,29 @@ cd alex
 mvn install package [-DskipTests]
 ```
 
-The bundle can then be found at `build/target/alex-build-1.5.1.war`.
+The bundle can then be found at `build/target/alex-build-1.6.0.war`.
+
+## Connecting to a database
+
+Per default, ALEX uses an embedded HSQL database which is stored in the *target/alex-database* directory.
+You can however also connect ALEX to a MySQL 5.7 database.
+Other databases have not been tested yet.
+
+### MySQL
+
+Create a file called *application.properties* and add the following contents (and change the values according to your setup):
+
+```
+# application.properties
+spring.datasource.url=jdbc:mysql://localhost:3306/alex
+spring.datasource.username=root
+spring.datasource.password=root
+spring.jpa.hibernate.ddl-auto=update
+```
+
+Then, start ALEX like this:
+
+`java -jar alex-1.6.0.war "--spring.config.location=/path/to/your/application.properties"`
 
 ## Further reading
 

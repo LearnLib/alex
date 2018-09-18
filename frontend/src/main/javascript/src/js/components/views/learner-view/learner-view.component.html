@@ -77,10 +77,11 @@
 
   <div class="learn-start-wrapper flex-row" ng-if="vm.finished">
     <learner-result-panel class="w-100" result="vm.finalResult" ng-if="vm.finalResult != null">
-      <button class="btn btn-sm btn-success ml-1" ng-click="vm.resumeLearning()">Resume</button>
+      <button class="btn btn-sm btn-success" ng-click="vm.resumeLearning()">Resume</button>
     </learner-result-panel>
 
-    <div class="panel-sidebar show" ng-if="vm.resumeConfig != null && vm.symbols.length > 0 && vm.finalResult != null">
+    <div class="panel-sidebar show" style="min-width: 280px"
+         ng-if="vm.resumeConfig != null && vm.symbols.length > 0 && vm.finalResult != null">
       <learn-resume-settings-widget
         configuration="vm.resumeConfig"
         result="vm.finalResult"

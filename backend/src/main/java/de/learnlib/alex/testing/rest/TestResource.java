@@ -24,6 +24,7 @@ import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.testing.dao.TestDAO;
+import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
@@ -33,7 +34,13 @@ import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.testing.events.TestEvent;
 import de.learnlib.alex.testing.services.TestService;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -66,6 +73,8 @@ import java.util.Map;
 @RolesAllowed({"REGISTERED"})
 public class TestResource {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
     /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
@@ -81,6 +90,10 @@ public class TestResource {
     /** The {@link WebhookService} to use. */
     @Inject
     private WebhookService webhookService;
+
+    /** The {@link TestReportDAO} to use. */
+    @Inject
+    private TestReportDAO testReportDAO;
 
     /** The {@link ProjectDAO} to use. */
     @Inject
@@ -192,13 +205,17 @@ public class TestResource {
     public Response getAll(@PathParam("project_id") Long projectId, @QueryParam("type") String type)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("getAll(projectId: {}, type: {}) with user {}", projectId, type, user);
 
         try {
             final List<Test> tests = testDAO.getByType(user, projectId, type);
+            LOGGER.traceExit("getAll() with status {}", Response.Status.OK);
             return Response.ok(tests).build();
         } catch (UnauthorizedException e) {
+            LOGGER.traceExit("getAll() with status {}", Response.Status.UNAUTHORIZED);
             return ResourceErrorHandler.createRESTErrorMessage("Tests.get", Response.Status.UNAUTHORIZED, e);
         } catch (IllegalArgumentException e) {
+            LOGGER.traceExit("getAll() with status {}", Response.Status.BAD_REQUEST);
             return ResourceErrorHandler.createRESTErrorMessage("Tests.get", Response.Status.BAD_REQUEST, e);
         }
     }
@@ -240,8 +257,9 @@ public class TestResource {
     public Response execute(@PathParam("project_id") Long projectId, @PathParam("id") Long id,
             TestExecutionConfig testConfig) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        final Test test = testDAO.get(user, projectId, id);
+        ThreadContext.put("userId", String.valueOf(user.getId()));
 
+        final Test test = testDAO.get(user, projectId, id);
         if (!(test instanceof TestCase)) {
             final Exception e = new Exception("The test is not a test case.");
             return ResourceErrorHandler.createRESTErrorMessage("TestResource.execute", Response.Status.BAD_REQUEST, e);
@@ -253,6 +271,12 @@ public class TestResource {
         final TestReport report = new TestReport();
         report.setTestResults(new ArrayList<>(results.values()));
 
+        if (testConfig.isCreateReport()) {
+            testReportDAO.create(user, projectId, report);
+            webhookService.fireEvent(user, new TestEvent.ExecutionFinished(report));
+        }
+
+        ThreadContext.remove("userId");
         return Response.ok(report).build();
     }
 
@@ -275,14 +299,8 @@ public class TestResource {
             throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Project project = projectDAO.getByID(user.getId(), projectId);
-
-        if (testService.isActive(user, projectId)) {
-            return ResourceErrorHandler.createRESTErrorMessage("TestResource.execute",
-                    Response.Status.BAD_REQUEST, "There is already a testing process running for this project.");
-        } else {
-            final TestStatus status = testService.start(user, project, testConfig);
-            return Response.ok(status).build();
-        }
+        final TestStatus status = testService.start(user, project, testConfig);
+        return Response.ok(status).build();
     }
 
     /**
@@ -299,9 +317,34 @@ public class TestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response status(@PathParam("project_id") Long projectId) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("status(projectId: {}) with user {}", projectId, user);
         final Project project = projectDAO.getByID(user.getId(), projectId);
         final TestStatus status = testService.getStatus(user, project);
+        LOGGER.traceExit("status() with status {}", status);
         return Response.ok(status).build();
+    }
+
+    /**
+     * Abort the testing process.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @return 200 if the process could be aborted.
+     */
+    @POST
+    @Path("/abort")
+    public Response abort(@PathParam("project_id") Long projectId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("abort(projectId: {}) with user {}", projectId, user);
+
+        try {
+            testService.abort(user, projectId);
+            LOGGER.traceExit("abort() with status {}", Response.Status.OK.getStatusCode());
+            return Response.ok().build();
+        } catch (NotFoundException e) {
+            LOGGER.traceExit("abort() with status {}", HttpStatus.NOT_FOUND.value());
+            return ResourceErrorHandler.createRESTErrorMessage("TestResource.abort", Response.Status.NOT_FOUND, e.getMessage());
+        }
     }
 
     /**
@@ -419,8 +462,8 @@ public class TestResource {
     @DELETE
     @Path("/batch/{ids}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId,
-            @PathParam("ids") IdsList ids) throws NotFoundException {
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("ids") IdsList ids)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         try {
@@ -433,5 +476,30 @@ public class TestResource {
 
         webhookService.fireEvent(user, new TestEvent.DeletedMany(ids));
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    /**
+     * Get all test results of a test.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param testId
+     *         The ID of the test.
+     * @param page
+     *         The page number.
+     * @param size
+     *         The number of items in the page.
+     * @return All test results of a test.
+     * @throws NotFoundException
+     *         If the project or test could not be found.
+     */
+    @GET
+    @Path("/{testId}/results")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getResults(@PathParam("project_id") Long projectId, @PathParam("testId") Long testId,
+            @QueryParam("page") int page, @QueryParam("size") int size) throws NotFoundException {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final Page<TestResult> results = testDAO.getResults(user, projectId, testId, new PageRequest(page, size));
+        return Response.ok(results).build();
     }
 }

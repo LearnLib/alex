@@ -1,0 +1,23 @@
+<div class="expected-result cursor-pointer" ng-if="!vm.edit" ng-click="vm.setEditMode()">
+  <div ng-if="vm.step.expectedResult === ''">
+    <p class="mb-0 text-muted" ng-if="vm.step.pSymbol.symbol.expectedResult !== ''">
+      <span style="white-space:pre-wrap;">{{vm.step.pSymbol.symbol.expectedResult}}</span>
+    </p>
+    <p class="mb-0 text-muted" ng-if="vm.step.pSymbol.symbol.expectedResult === ''">
+      <em style="white-space:pre-wrap;">none</em>
+    </p>
+  </div>
+  <div ng-if="vm.step.expectedResult !== ''">
+    <p class="mb-0 text-muted" style="white-space:pre-wrap;">{{vm.step.expectedResult}}</p>
+  </div>
+</div>
+<div ng-if="vm.edit">
+  <div class="form-group" style="margin-bottom: 6px">
+    <textarea class="form-control" ng-model="vm.expectedResult"></textarea>
+  </div>
+  <p class="text-right mb-0">
+    <button class="btn btn-xs btn-default" ng-click="vm.save()">Save</button>
+    <button class="btn btn-xs btn-default" ng-click="vm.setToDefault()">Default</button>
+    <button class="btn btn-xs btn-default" ng-click="vm.cancel()">Cancel</button>
+  </p>
+</div>

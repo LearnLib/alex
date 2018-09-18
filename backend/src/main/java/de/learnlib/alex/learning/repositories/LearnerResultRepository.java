@@ -24,13 +24,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Repository to persist LearnerResults.
  */
 @Repository
-public interface LearnerResultRepository extends JpaRepository<LearnerResult, UUID> {
+public interface LearnerResultRepository extends JpaRepository<LearnerResult, Long> {
 
     /**
      * Find all LearnerResults in a Project.
@@ -54,7 +53,7 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, UU
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    List<LearnerResult> findByProject_IdAndTestNoIn(Long projectId, Long... testNos);
+    List<LearnerResult> findByProject_IdAndTestNoIn(Long projectId, List<Long> testNos);
 
     /**
      * Find a single learner result.
@@ -114,7 +113,7 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, UU
      */
     @Transactional
     @SuppressWarnings("checkstyle:methodname")
-    Long deleteByProject_IdAndTestNoIn(Long projectId, Long... testNos);
+    Long deleteByProject_IdAndTestNoIn(Long projectId, List<Long> testNos);
 
     /**
      * Delete all learner results in a project.

@@ -36,13 +36,15 @@ class LearnerResultPanelComponent {
      * @param {DownloadService} DownloadService
      * @param {EventBus} EventBus
      * @param {PromptService} PromptService
+     * @param {Object} $uibModal
      */
     // @ngInject
-    constructor($scope, DownloadService, EventBus, PromptService) {
+    constructor($scope, DownloadService, EventBus, PromptService, $uibModal) {
         this.$scope = $scope;
         this.EventBus = EventBus;
         this.DownloadService = DownloadService;
         this.PromptService = PromptService;
+        this.$uibModal = $uibModal;
 
         /**
          * The enum for what is displayed in the panel.
@@ -71,6 +73,9 @@ class LearnerResultPanelComponent {
          * @type {number}
          */
         this.mode = this.modes.HYPOTHESIS;
+
+        this.view = 'DEFAULT';
+
     }
 
     $onInit() {

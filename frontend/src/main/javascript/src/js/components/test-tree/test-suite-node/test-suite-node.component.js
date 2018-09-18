@@ -18,7 +18,6 @@ export const testSuiteNodeComponent = {
     template: require('./test-suite-node.component.html'),
     bindings: {
         suite: '=',
-        parent: '=',
         results: '='
     },
     controllerAs: 'vm',
@@ -29,7 +28,6 @@ export const testSuiteNodeComponent = {
          */
         constructor() {
             this.suite = null;
-            this.collapsed = true;
             this.results = null;
         }
 

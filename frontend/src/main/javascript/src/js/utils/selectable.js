@@ -95,5 +95,4 @@ export class Selectable {
     getSelected() {
         return Object.values(this.selectedItems);
     }
-
 }

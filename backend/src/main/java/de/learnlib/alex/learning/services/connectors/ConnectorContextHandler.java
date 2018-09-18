@@ -17,7 +17,7 @@
 package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.mapper.ContextExecutableInputSUL;
@@ -34,7 +34,10 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
     private BlockingQueue<ConnectorManager> pool;
 
     /** The symbol used to reset the SUL. */
-    private Symbol resetSymbol;
+    private ParameterizedSymbol resetSymbol;
+
+    /** The symbol used after a membership query. */
+    private ParameterizedSymbol postSymbol;
 
     /**
      * Default constructor.
@@ -64,55 +67,83 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
      * @param resetSymbol
      *         The new reset symbol.
      */
-    public void setResetSymbol(Symbol resetSymbol) {
+    public void setResetSymbol(ParameterizedSymbol resetSymbol) {
         this.resetSymbol = resetSymbol;
+    }
+
+    public void setPostSymbol(ParameterizedSymbol postSymbol) {
+        this.postSymbol = postSymbol;
     }
 
     @Override
     public ConnectorManager createContext() throws LearnerException {
-        ConnectorManager connectorManager;
-        try {
-            connectorManager = pool.take();
-        } catch (InterruptedException e) {
-            throw new LearnerException("An error occurred while creating a new context.", e);
-        }
+        ConnectorManager connectorManager = null;
 
-        try {
-            for (Connector connector : connectorManager) {
-                connector.reset();
+        int retries = 0;
+        Exception exception = null;
+        while (retries < 2) {
+            try {
+                try {
+                    connectorManager = pool.take();
+                } catch (InterruptedException e) {
+                    throw new LearnerException("An error occurred while creating a new context.", e);
+                }
+
+                try {
+                    for (Connector connector : connectorManager) {
+                        connector.reset();
+                    }
+                } catch (Exception e) {
+                    throw new LearnerException("An error occurred while resetting a connector.", e);
+                }
+
+                ExecuteResult resetResult;
+                try {
+                    // initialize counters defined in the reset symbol as input
+                    final CounterStoreConnector counterStore = connectorManager.getConnector(CounterStoreConnector.class);
+
+                    resetSymbol.getSymbol().getInputs().stream()
+                            .filter(in -> in.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
+                            .forEach(in -> {
+                                try {
+                                    counterStore.get(in.getName());
+                                } catch (IllegalStateException e) {
+                                    counterStore.set(resetSymbol.getSymbol().getProjectId(), in.getName(), 0);
+                                }
+                            });
+                    resetResult = resetSymbol.execute(connectorManager);
+                } catch (Exception e) {
+                    throw new LearnerException("An error occurred while executing the reset symbol.", e);
+                }
+
+                if (!resetResult.isSuccess()) {
+                    throw new LearnerException("The execution of the reset symbol failed: "
+                            + resetResult.toString() + ".");
+                }
+
+                return connectorManager;
+            } catch (Exception e) {
+                if (connectorManager != null) {
+                    disposeContext(connectorManager);
+                }
+                exception = e;
+                retries++;
             }
-        } catch (Exception e) {
-            throw new LearnerException("An error occurred while resetting a connector.", e);
         }
 
-        ExecuteResult resetResult;
-        try {
-            // initialize counters defined in the reset symbol as input
-            final CounterStoreConnector counterStore = connectorManager.getConnector(CounterStoreConnector.class);
-            resetSymbol.getInputs().stream()
-                    .filter(in -> in.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
-                    .forEach(in -> {
-                        try {
-                            counterStore.get(in.getName());
-                        } catch (IllegalStateException e) {
-                            counterStore.set(resetSymbol.getProjectId(), in.getName(), 0);
-                        }
-                    });
-            resetResult = resetSymbol.execute(connectorManager);
-        } catch (Exception e) {
-            throw new LearnerException("An error occurred while executing the reset symbol.", e);
-        }
-
-        if (!resetResult.isSuccess()) {
-            throw new LearnerException("The execution of the reset symbol failed: "
-                    + resetResult.toString() + ".");
-        }
-
-        return connectorManager;
+        throw new LearnerException("Failed to create a context. " + exception.getMessage(), exception);
     }
 
     @Override
     public void disposeContext(ConnectorManager connectorManager) {
+
+        try {
+            if (this.postSymbol != null) {
+                this.postSymbol.execute(connectorManager);
+            }
+        } catch (Exception e) {
+        }
+
         try {
             pool.put(connectorManager);
             connectorManager.dispose();

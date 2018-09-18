@@ -17,16 +17,16 @@
 package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -43,51 +43,37 @@ public class SetVariableAction extends SymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /** The name of the variable to set a new value to. */
     @NotBlank
     protected String name;
 
     /** The new value. */
     @NotNull
+    @Column(name = "\"value\"")
     protected String value;
-
-    /**
-     * @return The name of the variable to set.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name The new name of the variable to set.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return The value to set the variable to.
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * @param value The new value to set the variable to.
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
 
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
         storeConnector.set(name, insertVariableValues(value));
 
-        LOGGER.info(LEARNER_MARKER, "Set the variable '{}' to the value '{}' (ignoreFailure: {}, negated: {}).",
-                    name, value, ignoreFailure, negated);
+        LOGGER.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}'.", name, value);
         return getSuccessOutput();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

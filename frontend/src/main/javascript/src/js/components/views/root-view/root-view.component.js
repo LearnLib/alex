@@ -23,23 +23,14 @@ class RootViewComponent {
      * Constructor.
      *
      * @param $state
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
+     * @param {UserService} UserService
      */
     // @ngInject
-    constructor($state, SessionService) {
+    constructor($state, ProjectService, UserService) {
         this.$state = $state;
-
-        /**
-         * The current user.
-         * @type {User}
-         */
-        this.user = SessionService.getUser();
-
-        /**
-         * The current project.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.projectService = ProjectService;
+        this.userService = UserService;
 
         if (this.user !== null) {
             if (this.project !== null) {
@@ -52,6 +43,14 @@ class RootViewComponent {
 
     handleLoggedIn() {
         this.$state.go('projects');
+    }
+
+    get user() {
+        return this.userService.store.currentUser;
+    }
+
+    get project() {
+        return this.projectService.store.currentProject;
     }
 }
 

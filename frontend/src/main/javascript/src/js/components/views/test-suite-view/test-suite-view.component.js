@@ -31,14 +31,14 @@ export const testSuiteViewComponent = {
     /**
      * The controller of the view.
      */
-    controller: class {
+    controller: class TestSuiteViewComponent {
 
         /**
          * Constructor.
          *
          * @param {$state} $state
          * @param {SymbolGroupResource} SymbolGroupResource
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          * @param {LearnerResource} LearnerResource
          * @param {ToastService} ToastService
          * @param {TestResource} TestResource
@@ -53,7 +53,7 @@ export const testSuiteViewComponent = {
          * @param {TestConfigResource} TestConfigResource
          */
         // @ngInject
-        constructor($state, SymbolGroupResource, SessionService, LearnerResource, ToastService, TestResource,
+        constructor($state, SymbolGroupResource, ProjectService, LearnerResource, ToastService, TestResource,
                     PromptService, $uibModal, SettingsResource, DownloadService, TestService, ClipboardService,
                     TestReportResource, NotificationService, TestConfigResource) {
             this.$state = $state;
@@ -69,12 +69,7 @@ export const testSuiteViewComponent = {
             this.NotificationService = NotificationService;
             this.$uibModal = $uibModal;
             this.TestConfigResource = TestConfigResource;
-
-            /**
-             * The current project.
-             * @type {Project}
-             */
-            this.project = SessionService.getProject();
+            this.ProjectService = ProjectService;
 
             /**
              * The test suite.
@@ -94,11 +89,9 @@ export const testSuiteViewComponent = {
              */
             this.report = null;
 
-            /**
-             * If tests are being executed.
-             * @type {boolean}
-             */
-            this.active = false;
+            this.status = {
+                active: false
+            };
 
             this.testConfigs = [];
 
@@ -130,6 +123,7 @@ export const testSuiteViewComponent = {
             // check if a test process is active
             this.TestResource.getStatus(this.project.id)
                 .then(data => {
+                    this.status = data;
                     if (data.active) {
                         this._pollStatus();
                     }
@@ -192,15 +186,15 @@ export const testSuiteViewComponent = {
                         delete testToUpdate.tests;
                     } else {
                         testToUpdate.steps = test.steps.map((step) => {
-                            step.symbol = step.symbol.id;
+                            step.pSymbol.symbol = step.pSymbol.symbol.id;
                             return step;
                         });
                         testToUpdate.preSteps = testToUpdate.preSteps.map((step) => {
-                            step.symbol = step.symbol.id;
+                            step.pSymbol.symbol = step.pSymbol.symbol.id;
                             return step;
                         });
                         testToUpdate.postSteps = testToUpdate.postSteps.map((step) => {
-                            step.symbol = step.symbol.id;
+                            step.pSymbol.symbol = step.pSymbol.symbol.id;
                             return step;
                         });
                     }
@@ -260,7 +254,7 @@ export const testSuiteViewComponent = {
                 resolve: {
                     tests: () => JSON.parse(JSON.stringify(selectedTests))
                 }
-            }).result.then(tests => {
+            }).result.then(() => {
                 this.TestResource.get(this.project.id, this.testSuite.id)
                     .then(testSuite => {
                         this.testSuite = testSuite;
@@ -285,7 +279,9 @@ export const testSuiteViewComponent = {
             this.TestResource.executeMany(this.project.id, config)
                 .then(() => {
                     this.ToastService.success(`The test execution has been started.`);
-                    this._pollStatus();
+                    if (!this.status.active) {
+                        this._pollStatus();
+                    }
                 })
                 .catch((err) => {
                     this.ToastService.danger(`The test execution failed. ${err.data.message}`);
@@ -293,20 +289,20 @@ export const testSuiteViewComponent = {
         }
 
         _pollStatus() {
-            this.active = true;
+            this.status.active = true;
             this.report = null;
 
             const poll = (wait) => {
                 window.setTimeout(() => {
                     this.TestResource.getStatus(this.project.id)
                         .then(data => {
+                            this.status = data;
                             if (data.report != null) {
                                 data.report.testResults.forEach((result) => {
                                     this.results[result.test.id] = result;
                                 });
                                 this.report = data.report;
                             }
-                            this.active = data.active;
                             if (!data.active) {
 
                                 this.ToastService.success('The test process finished');
@@ -328,6 +324,12 @@ export const testSuiteViewComponent = {
             };
 
             poll(100);
+        }
+
+        abortTesting() {
+            this.TestResource.abort(this.project.id)
+                .then(() => this.ToastService.success('The testing process has been aborted.'))
+                .catch(err => this.ToastService.danger(`Could not abort the testing process. ${err.data.message}`));
         }
 
         openTestConfigModal() {
@@ -384,7 +386,7 @@ export const testSuiteViewComponent = {
             if (tests.length > 0) {
                 tests = JSON.parse(JSON.stringify(tests));
                 tests = this.TestService.exportTests(tests);
-                this.ClipboardService.copy('tests', tests);
+                this.ClipboardService.copy(this.project.id, 'tests', tests);
                 this.ToastService.info('Tests copied to clipboard.');
             } else {
                 this.ToastService.info('You have to select at least one test');
@@ -392,7 +394,7 @@ export const testSuiteViewComponent = {
         }
 
         pasteTests() {
-            const tests = this.ClipboardService.paste('tests');
+            const tests = this.ClipboardService.paste(this.project.id, 'tests');
             if (tests != null) {
                 this.TestService.importTests(this.project.id, tests, this.testSuite.id)
                     .then((importedTests) => {
@@ -443,6 +445,10 @@ export const testSuiteViewComponent = {
                     }
                 });
             }
+        }
+
+        get project() {
+            return this.ProjectService.store.currentProject;
         }
     }
 };

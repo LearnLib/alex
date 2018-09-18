@@ -20,60 +20,38 @@ import de.learnlib.alex.data.entities.Symbol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Repository to persist Symbols.
  */
 @Repository
-public interface SymbolRepository extends JpaRepository<Symbol, UUID> {
-
-    /**
-     * Find a symbol with a given id.
-     *
-     * @param projectId
-     *         The ID the Project the Symbol belong to.
-     * @param id
-     *         The ID of the Symbol.
-     * @return The requested Symbol.
-     */
-    @Query("SELECT s "
-            + "FROM  Symbol s "
-            + "WHERE s.project.id = ?1"
-            + "      AND s.id = ?2")
-    Symbol findOne(Long projectId, Long id);
+public interface SymbolRepository extends JpaRepository<Symbol, Long> {
 
     /**
      * Find all Symbol with given IDs.
      *
-     * @param projectId
-     *         The ID the Project the Symbol belong to.
      * @param ids
      *         The ID to look for.
      * @return The Symbols.
      */
-    @Query("SELECT s "
-            + "FROM  Symbol s "
-            + "WHERE s.project.id = ?1"
-            + "      AND s.id IN ?2 "
-            + "ORDER BY s.id ASC")
-    List<Symbol> findByIds(Long projectId, List<Long> ids);
+    @Transactional(readOnly = true)
+    List<Symbol> findAllByIdIn(List<Long> ids);
 
     /**
-     * Get symbols of a user and project with a specific name.
+     * Find a symbol by a specific name in a project.
      *
      * @param projectId
-     *      The ID of the project the symbol belongs to.
+     *         The ID of the project.
      * @param name
-     *      The name of the symbol.
-     * @return The symbols.
+     *         The name of the symbol.
+     * @return The symbol with that name.
      */
-    @Query("SELECT s FROM Symbol s "
-            + "WHERE s.project.id = ?1"
-            + "      AND s.name = ?2")
-    Symbol getSymbolByName(Long projectId, String name);
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    Symbol findOneByProject_IdAndName(Long projectId, String name);
 
     /**
      * Find all symbols.
@@ -88,7 +66,19 @@ public interface SymbolRepository extends JpaRepository<Symbol, UUID> {
             + "FROM  Symbol s "
             + "WHERE s.project.id = ?1"
             + "      AND s.hidden IN ?2")
+    @Transactional(readOnly = true)
     List<Symbol> findAll(Long projectId, Boolean[] hidden);
+
+    /**
+     * Final all symbols in a project.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @return The symbols in the project.
+     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<Symbol> findAllByProject_Id(Long projectId);
 
     /**
      * Find all symbols in a symbol group.
@@ -106,6 +96,7 @@ public interface SymbolRepository extends JpaRepository<Symbol, UUID> {
             + "WHERE s.project.id = ?1"
             + "      AND s.group.id = ?2"
             + "      AND s.hidden IN ?3")
+    @Transactional(readOnly = true)
     List<Symbol> findAll(Long projectId, Long groupId, Boolean[] hidden);
 
 }

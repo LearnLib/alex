@@ -28,34 +28,16 @@ export class Action {
     constructor(type, obj) {
 
         /**
+         * The ID of the action in the DB:
+         * @type {?number}
+         */
+        this.id = obj.id == null ? null : obj.id;
+
+        /**
          * The unique action type.
          * @type {String}
          */
         this.type = type || '';
-
-        /**
-         * Whether the outcome is negated.
-         * @type {boolean}
-         */
-        this.negated = obj.negated || false;
-
-        /**
-         * Whether the learner continues despite failure.
-         * @type {boolean}
-         */
-        this.ignoreFailure = obj.ignoreFailure || false;
-
-        /**
-         * Whether the execution of the action should be skipped.
-         * @type {boolean}
-         */
-        this.disabled = obj.disabled || false;
-
-        /**
-         * The custom output of the action on failure.
-         * @type {null}
-         */
-        this.errorOutput = obj.errorOutput || null;
     }
 
     /**

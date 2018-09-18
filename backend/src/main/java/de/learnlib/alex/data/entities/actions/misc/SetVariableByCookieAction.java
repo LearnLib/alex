@@ -18,6 +18,7 @@ package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
@@ -25,8 +26,6 @@ import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -46,8 +45,6 @@ import java.util.Map;
 public class SetVariableByCookieAction extends SetVariableAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /**
      * Enum to differentiate web & REST cookies.
@@ -89,20 +86,6 @@ public class SetVariableByCookieAction extends SetVariableAction {
     @NotNull
     private CookieType cookieType;
 
-    /**
-     * @return The type of the cookie.
-     */
-    public CookieType getCookieType() {
-        return cookieType;
-    }
-
-    /**
-     * @param type The new type of the cookie.
-     */
-    public void setCookieType(CookieType type) {
-        cookieType = type;
-    }
-
     @Override
     public ExecuteResult execute(ConnectorManager connector) {
         VariableStoreConnector storeConnector = connector.getConnector(VariableStoreConnector.class);
@@ -126,29 +109,34 @@ public class SetVariableByCookieAction extends SetVariableAction {
                     cookieValue = cookie.getValue();
                 }
             } else {
-                LOGGER.warn(LEARNER_MARKER, "Could not set the variable '{}' to the cookie '{}' "
-                                    + "because the type '{}' is not supported (ignoreFailure: {}, negated: {})!",
-                            name, value, cookieType, ignoreFailure, negated);
+                LOGGER.warn(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the cookie '{}' because the type '{}' is not supported!",
+                        name, value, cookieType);
                 return getFailedOutput();
             }
 
             if (cookieValue != null) {
                 storeConnector.set(name, cookieValue);
-                LOGGER.info(LEARNER_MARKER, "Set the variable '{}' to the value '{}' of the cookie '{}:{}' "
-                                                + "(ignoreFailure: {}, negated: {}).",
-                            name, cookieValue, cookieType, value, ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Set the variable '{}' to the value '{}' of the cookie '{}:{}' ",
+                        name, cookieValue, cookieType, value);
                 return getSuccessOutput();
             } else {
-                LOGGER.info(LEARNER_MARKER, "Could not set the variable '{}' to the cookie '{}:{}' "
-                                                + "because the cookie was not found (ignoreFailure: {}, negated: {})!",
-                            name, cookieType, value, ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the cookie '{}:{}' because the cookie was not found!",
+                        name, cookieType, value);
                 return getFailedOutput();
             }
         } catch (IllegalStateException | NoSuchElementException e) {
-            LOGGER.warn(LEARNER_MARKER, "Could not set the variable '{}' to the cookie '{}' because of an error "
-                                            + "(ignoreFailure: {}, negated: {})!",
-                        name, value, ignoreFailure, negated, e);
+            LOGGER.warn(LoggerMarkers.LEARNER, "Could not set the variable '{}' to the cookie '{}' because of an error.",
+                    name, value, e);
             return getFailedOutput();
         }
     }
+
+    public CookieType getCookieType() {
+        return cookieType;
+    }
+
+    public void setCookieType(CookieType type) {
+        cookieType = type;
+    }
+
 }

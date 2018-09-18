@@ -19,12 +19,11 @@ package de.learnlib.alex.testing.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.ExecuteResult;
-import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.data.entities.SymbolParameterValue;
-import de.learnlib.alex.data.entities.SymbolRepresentation;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -32,12 +31,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /** The step of a test case. */
 @Entity
@@ -66,28 +62,23 @@ public class TestCaseStep implements Serializable {
 
     /** The symbol to execute. */
     @OneToOne(
-            fetch = FetchType.EAGER
-    )
-    @JsonIgnore
-    private Symbol symbol;
-
-    /** The values for the parameters defined in {@link #symbol}. */
-    @OneToMany(
-            mappedBy = "step",
-            cascade = CascadeType.MERGE,
             fetch = FetchType.EAGER,
-            orphanRemoval = true
+            cascade = CascadeType.REMOVE
     )
-    private List<SymbolParameterValue> parameterValues;
+    private ParameterizedSymbol pSymbol;
 
     /** If the step should fail. This eliminates the need to create a separate symbol. */
     @NotNull
     private boolean shouldFail;
 
+    /** The expected result of the step in a natural language. */
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String expectedResult;
+
     /** Constructor. */
     public TestCaseStep() {
         this.shouldFail = false;
-        this.parameterValues = new ArrayList<>();
+        this.expectedResult = "";
     }
 
     /**
@@ -98,7 +89,7 @@ public class TestCaseStep implements Serializable {
      * @return The result of the step.
      */
     public ExecuteResult execute(ConnectorManager connectors) {
-        return symbol.execute(connectors);
+        return pSymbol.execute(connectors);
     }
 
     public Long getId() {
@@ -125,37 +116,14 @@ public class TestCaseStep implements Serializable {
         this.number = number;
     }
 
-    public Symbol getSymbol() {
-        return symbol;
+    @JsonProperty("pSymbol")
+    public ParameterizedSymbol getPSymbol() {
+        return pSymbol;
     }
 
-    public void setSymbol(Symbol symbol) {
-        this.symbol = symbol;
-    }
-
-    @JsonProperty("symbol")
-    public SymbolRepresentation getSymbolId() {
-        return new SymbolRepresentation(symbol);
-    }
-
-    /**
-     * Set the symbol by a symbol ID.
-     *
-     * @param symbolId
-     *         The ID of the symbol.
-     */
-    @JsonProperty("symbol")
-    public void setSymbolId(Long symbolId) {
-        symbol = new Symbol();
-        symbol.setId(symbolId);
-    }
-
-    public List<SymbolParameterValue> getParameterValues() {
-        return parameterValues;
-    }
-
-    public void setParameterValues(List<SymbolParameterValue> parameterValues) {
-        this.parameterValues = parameterValues;
+    @JsonProperty("pSymbol")
+    public void setPSymbol(ParameterizedSymbol pSymbol) {
+        this.pSymbol = pSymbol;
     }
 
     public boolean isShouldFail() {
@@ -164,5 +132,13 @@ public class TestCaseStep implements Serializable {
 
     public void setShouldFail(boolean shouldFail) {
         this.shouldFail = shouldFail;
+    }
+
+    public String getExpectedResult() {
+        return expectedResult;
+    }
+
+    public void setExpectedResult(String expectedResult) {
+        this.expectedResult = expectedResult == null ? "" : expectedResult;
     }
 }

@@ -29,38 +29,18 @@ export const prePostTestCaseStepComponent = {
     controllerAs: 'vm',
     controller: class PrePostTestCaseSymbol {
 
-        /** Constructor. */
-        constructor() {
-
-            /**
-             * If the symbols are displayed.
-             * @type {boolean}
-             */
-            this.showSymbolGroupTree = false;
-        }
-
         /**
          * Select a symbol from the symbol group tree.
          *
          * @param {AlphabetSymbol} symbol The symbol to use for the step.
          */
         selectSymbol(symbol) {
-            if (this.steps.length === 0) {
-                this.steps = [TestCaseStep.fromSymbol(symbol)];
-            } else {
-                if (this.steps[0].symbolId === symbol.id) {
-                    this.steps = [];
-                } else {
-                    this.steps[0].symbol = symbol;
-                }
-            }
-            this.showSymbolGroupTree = false;
+            this.steps = [TestCaseStep.fromSymbol(symbol)];
         }
 
         /** Removes the pre or post step. */
         removeStep() {
             this.steps = [];
-            this.showSymbolGroupTree = false;
         }
     }
 };

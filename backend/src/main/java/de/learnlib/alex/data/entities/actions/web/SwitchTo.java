@@ -18,12 +18,11 @@
 package de.learnlib.alex.data.entities.actions.web;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -41,8 +40,6 @@ public class SwitchTo extends WebSymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
-
     /**
      * The target to switch to.
      */
@@ -52,7 +49,10 @@ public class SwitchTo extends WebSymbolAction {
         PARENT_FRAME,
 
         /** The default browser frame. */
-        DEFAULT_CONTENT
+        DEFAULT_CONTENT,
+
+        /** The last frame that has been visited. */
+        LAST_FRAME
     }
 
     /**
@@ -71,13 +71,16 @@ public class SwitchTo extends WebSymbolAction {
                 case DEFAULT_CONTENT:
                     connector.getDriver().switchTo().defaultContent();
                     break;
+                case LAST_FRAME:
+                    connector.getDriver().switchTo().frame(connector.getLastFrame());
+                    break;
                 default:
                     throw new Exception("Undefined target type.");
             }
-            LOGGER.info(LEARNER_MARKER, "Switch to '{}'", target);
+            LOGGER.info(LoggerMarkers.LEARNER, "Switch to '{}'", target);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LEARNER_MARKER, "Could not switch to '{}'", target);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not switch to '{}'", target, e);
             return getFailedOutput();
         }
     }

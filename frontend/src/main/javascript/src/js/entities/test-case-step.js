@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {ParametrizedSymbol} from './parametrized-symbol';
+
 export class TestCaseStep {
 
     /**
@@ -30,16 +32,16 @@ export class TestCaseStep {
         this.shouldFail = obj.shouldFail != null ? obj.shouldFail : false;
 
         /**
-         * The symbol to execute in the step.
-         * @type {?AlphabetSymbol}
+         * The expected result of the test step.
+         * @type {string}
          */
-        this.symbol = obj.symbol || null;
+        this.expectedResult = obj.expectedResult || '';
 
         /**
-         * The values of the parameters for the symbol.
-         * @type {Object[]}
+         * The symbol to execute in the step.
+         * @type {?ParametrizedSymbol}
          */
-        this.parameterValues = obj.parameterValues || [];
+        this.pSymbol = obj.pSymbol == null ? null : new ParametrizedSymbol(obj.pSymbol);
     }
 
     /**
@@ -51,13 +53,8 @@ export class TestCaseStep {
     static fromSymbol(symbol) {
         return new TestCaseStep({
             shouldFail: false,
-            symbol: {
-                id: symbol.id,
-                name: symbol.name
-            },
-            parameterValues: symbol.inputs
-                .filter(input => input.parameterType === 'STRING')
-                .map(input => ({parameter: input, value: null}))
+            expectedResult: symbol.expectedResult,
+            pSymbol: ParametrizedSymbol.fromSymbol(symbol)
         });
     }
 }

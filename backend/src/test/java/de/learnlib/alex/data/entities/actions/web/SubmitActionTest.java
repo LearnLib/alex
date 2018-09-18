@@ -91,7 +91,7 @@ public class SubmitActionTest extends WebActionTest {
     }
 
     @Test
-    public void shouldReturnFaliedIfNodeCouldNotBeSubmited() {
+    public void shouldReturnFailedIfNodeCouldNotBeSubmited() {
         when(webSiteConnector.getElement(node)).thenThrow(new NoSuchElementException(""));
 
         assertFalse(s.executeAction(connectors).isSuccess());

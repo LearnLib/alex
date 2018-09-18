@@ -21,7 +21,10 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.data.repositories.SymbolActionRepository;
+import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.hamcrest.MatcherAssert;
@@ -51,7 +54,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectDAOImplTest {
 
-    private static final long USER_ID    = 21L;
+    private static final long USER_ID = 21L;
     private static final long PROJECT_ID = 42L;
     private static final int TEST_PROJECT_COUNT = 3;
 
@@ -70,12 +73,21 @@ public class ProjectDAOImplTest {
     @Mock
     private TestReportRepository testReportRepository;
 
+    @Mock
+    private SymbolStepRepository symbolStepRepository;
+
+    @Mock
+    private ParameterizedSymbolRepository parameterizedSymbolRepository;
+
+    @Mock
+    private SymbolActionRepository symbolActionRepository;
+
     private ProjectDAO projectDAO;
 
     @Before
     public void setUp() {
         projectDAO = new ProjectDAOImpl(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
-                projectUrlDAO);
+                projectUrlDAO, parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository);
     }
 
     @Test
@@ -168,7 +180,7 @@ public class ProjectDAOImplTest {
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
         TransactionSystemException transactionSystemException;
         transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
-                                                                    rollbackException);
+                rollbackException);
         given(projectRepository.save(project)).willThrow(transactionSystemException);
 
         projectDAO.create(project); // should fail
@@ -292,7 +304,7 @@ public class ProjectDAOImplTest {
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
         TransactionSystemException transactionSystemException;
         transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
-                                                                    rollbackException);
+                rollbackException);
         given(projectRepository.save(project)).willThrow(transactionSystemException);
         given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
 
@@ -324,7 +336,7 @@ public class ProjectDAOImplTest {
 
     private List<Project> createProjectList() {
         List<Project> projects = new LinkedList<>();
-        for (int i = 0; i  < TEST_PROJECT_COUNT; i++) {
+        for (int i = 0; i < TEST_PROJECT_COUNT; i++) {
             Project p = new Project();
             projects.add(p);
         }

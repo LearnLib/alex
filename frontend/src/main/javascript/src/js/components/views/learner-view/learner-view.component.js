@@ -27,7 +27,7 @@ class LearnerViewComponentComponent {
      *
      * @param $state
      * @param $interval
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      * @param {LearnerResource} LearnerResource
      * @param {LearnResultResource} LearnResultResource
      * @param {ToastService} ToastService
@@ -35,7 +35,7 @@ class LearnerViewComponentComponent {
      * @param {NotificationService} NotificationService
      */
     // @ngInject
-    constructor($state, $interval, SessionService, LearnerResource, LearnResultResource, ToastService, SymbolResource,
+    constructor($state, $interval, ProjectService, LearnerResource, LearnResultResource, ToastService, SymbolResource,
                 NotificationService) {
         this.$interval = $interval;
         this.$state = $state;
@@ -44,12 +44,7 @@ class LearnerViewComponentComponent {
         this.ToastService = ToastService;
         this.SymbolResource = SymbolResource;
         this.NotificationService = NotificationService;
-
-        /**
-         * The project that is in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.ProjectService = ProjectService;
 
         /**
          * The interval that is used for polling.
@@ -184,6 +179,7 @@ class LearnerViewComponentComponent {
     resumeLearning() {
         const config = JSON.parse(JSON.stringify(this.resumeConfig));
         config.urls = this.resumeConfig.urls.map(u => u.id);
+        config.symbolsToAdd.forEach(ps => ps.symbol = ps.symbol.id);
 
         this.LearnerResource.resume(this.project.id, this.finalResult.testNo, config)
             .then(() => {
@@ -205,6 +201,10 @@ class LearnerViewComponentComponent {
             this.ToastService.info('The learner will stop after executing the current query batch');
             this.LearnerResource.stop(this.project.id);
         }
+    }
+
+    get project() {
+        return this.ProjectService.store.currentProject;
     }
 }
 

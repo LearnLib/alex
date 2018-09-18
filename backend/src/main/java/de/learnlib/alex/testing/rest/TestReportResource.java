@@ -27,6 +27,8 @@ import de.learnlib.alex.testing.services.reporters.JUnitTestResultReporter;
 import de.learnlib.alex.testing.services.reporters.TestResultReporter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -41,7 +43,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.List;
 
 /** The resource for test reports. */
 @Path("/projects/{project_id}/tests/reports")
@@ -60,7 +61,8 @@ public class TestReportResource {
     /**
      * Constructor.
      *
-     * @param testReportDAO {@link #testReportDAO}
+     * @param testReportDAO
+     *         {@link #testReportDAO}
      */
     @Inject
     public TestReportResource(TestReportDAO testReportDAO) {
@@ -70,36 +72,48 @@ public class TestReportResource {
     /**
      * Get all test reports.
      *
-     * @param projectId The id of the project.
+     * @param projectId
+     *         The id of the project.
+     * @param page
+     *         The page to get.
+     * @param size
+     *         The number of items in a page.
      * @return All test reports.
-     * @throws NotFoundException If the project could not be found.
+     * @throws NotFoundException
+     *         If the project could not be found.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") Long projectId) throws NotFoundException {
+    public Response get(@PathParam("project_id") Long projectId, @QueryParam("page") int page,
+            @QueryParam("size") int size)
+            throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
 
-        final List<TestReport> testReports = testReportDAO.get(user, projectId);
+        final Page<TestReport> testReports = testReportDAO.getAll(user, projectId, new PageRequest(page, size));
 
-        LOGGER.traceExit(testReports);
+        LOGGER.traceExit(testReports.getContent());
         return Response.ok(testReports).build();
     }
 
     /**
      * Get a test report by ids id.
      *
-     * @param projectId The id of the project.
-     * @param reportId  The id of the report in the project.
-     * @param format    The format to export the report to.
+     * @param projectId
+     *         The id of the project.
+     * @param reportId
+     *         The id of the report in the project.
+     * @param format
+     *         The format to export the report to.
      * @return The report.
-     * @throws NotFoundException If the project could not be found.
+     * @throws NotFoundException
+     *         If the project could not be found.
      */
     @GET
     @Path("/{report_id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") Long projectId, @PathParam("report_id") Long reportId,
-                        @QueryParam("format") String format) throws NotFoundException {
+            @QueryParam("format") String format) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {}) for user {}.", projectId, reportId, user);
 
@@ -131,7 +145,8 @@ public class TestReportResource {
     /**
      * Get the latest test report.
      *
-     * @param projectId The id of the project.
+     * @param projectId
+     *         The id of the project.
      * @return 200 if a report is available, 204 otherwise.
      */
     @GET
@@ -155,10 +170,13 @@ public class TestReportResource {
     /**
      * Deletes a single test report.
      *
-     * @param projectId The id of the project.
-     * @param reportId  The id of the report to delete.
+     * @param projectId
+     *         The id of the project.
+     * @param reportId
+     *         The id of the report to delete.
      * @return Status 204 - no content on success.
-     * @throws NotFoundException If the project or the report could not be found.
+     * @throws NotFoundException
+     *         If the project or the report could not be found.
      */
     @DELETE
     @Path("/{report_id}")
@@ -177,10 +195,13 @@ public class TestReportResource {
     /**
      * Deletes multiple test reports at once.
      *
-     * @param projectId The id of the project.
-     * @param reportIds The ids of the reports to delete.
+     * @param projectId
+     *         The id of the project.
+     * @param reportIds
+     *         The ids of the reports to delete.
      * @return Status 204 - no content on success.
-     * @throws NotFoundException If the project or a report could not be found.
+     * @throws NotFoundException
+     *         If the project or a report could not be found.
      */
     @DELETE
     @Path("/batch/{report_ids}")

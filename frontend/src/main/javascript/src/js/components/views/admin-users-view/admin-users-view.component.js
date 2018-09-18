@@ -28,21 +28,16 @@ class AdminUsersViewComponent {
      *
      * @param $scope
      * @param {UserResource} UserResource
-     * @param {SessionService} SessionService
      * @param {ToastService} ToastService
      * @param $uibModal
+     * @param {UserService} UserService
      */
     // @ngInject
-    constructor($scope, UserResource, SessionService, ToastService, $uibModal) {
+    constructor($scope, UserResource, ToastService, $uibModal, UserService) {
         this.UserResource = UserResource;
         this.ToastService = ToastService;
         this.$uibModal = $uibModal;
-
-        /**
-         * The user that is logged in.
-         * @type {null|User}
-         */
-        this.user = SessionService.getUser();
+        this.UserService = UserService;
 
         /**
          * All registered users.
@@ -99,7 +94,7 @@ class AdminUsersViewComponent {
                 onUpdated: () => (u) => this.updateUser(u),
                 onDeleted: () => (u) => this.removeUser(u)
             }
-        })
+        });
     }
 
     /**
@@ -121,6 +116,10 @@ class AdminUsersViewComponent {
             .catch(err => {
                 this.ToastService.danger(`Deleting failed! ${err.data.message}`);
             });
+    }
+
+    get user() {
+        return this.UserService.store.currentUser;
     }
 }
 

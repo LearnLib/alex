@@ -64,6 +64,24 @@ public interface TestExecutionConfigDAO {
             throws NotFoundException, UnauthorizedException;
 
     /**
+     * Get a single test config.
+     *
+     * @param user
+     *         The user.
+     * @param projectId
+     *         The ID of the project.
+     * @param configId
+     *         The ID of the config.
+     * @return The config.
+     * @throws NotFoundException
+     *         If one of the entities could not be found.
+     * @throws UnauthorizedException
+     *         If the user has not access to one of the entities.
+     */
+    TestExecutionConfig get(User user, Long projectId, Long configId)
+            throws NotFoundException, UnauthorizedException;
+
+    /**
      * Delete a test config.
      *
      * @param user

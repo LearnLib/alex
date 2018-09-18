@@ -4,7 +4,6 @@
 @import "font-awesome";
 @import "hypothesis";
 @import "html-element-picker";
-@import "action-recorder";
 @import "search-form";
 @import "test-tree";
 @import "sidebar";
@@ -25,9 +24,8 @@
 body {
   overflow-x: hidden;
 
-  &.layout-collapsed {
-
-    #alex {
+  #alex {
+    &.layout-collapsed {
       .sidebar-wrapper {
         min-width: $sidebar-width-collapsed;
         max-width: $sidebar-width-collapsed;
@@ -36,10 +34,27 @@ body {
   }
 }
 
+.fa-drag-handle:before {
+  content: "\f142 \f142";
+  letter-spacing: 0.1em;
+}
+
+.text-black {
+  color: #000;
+
+  &:hover {
+    color: #000;
+  }
+}
+
 report-charts {
   svg {
     margin: 0 2rem;
   }
+}
+
+.hr-small {
+  margin: 10px 0;
 }
 
 .table.table-hollow {
@@ -96,12 +111,22 @@ report-charts {
   }
 }
 
+.cursor-grabbing {
+  &:hover {
+    cursor: grabbing;
+  }
+}
+
 .d-flex {
   display: flex;
 }
 
 .align-items-center {
   align-items: center;
+}
+
+.d-inline-block {
+  display: inline-block;
 }
 
 .d-block {
@@ -114,6 +139,10 @@ report-charts {
 
 .mr-1 {
   margin-right: 1rem;
+}
+
+.mr-0 {
+  margin-right: 0 !important;
 }
 
 .mt-0 {
@@ -308,6 +337,7 @@ report-charts {
     border: 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0);
     outline: none;
+    background: none;
 
     &:active, &:focus, &:hover {
       box-shadow: none;
@@ -531,8 +561,6 @@ report-charts {
     @include selection-list-item();
     user-select: none;
     -webkit-user-select: none;
-    display: flex;
-    flex-direction: row;
     align-items: baseline;
     padding: 6px 10px;
 
@@ -543,13 +571,6 @@ report-charts {
     &.gu-transit {
       opacity: .5;
       border: 1px dashed #244061;
-    }
-
-    .flex-item {
-      &:nth-child(2) {
-        flex: 1 0 0;
-        padding: 0 10px;
-      }
     }
 
     .action-output {
@@ -563,11 +584,34 @@ report-charts {
     }
 
     &.disabled {
-      .action-description {
+      .action-description,
+      .symbol-description,
+      .step-output {
         text-decoration: line-through;
         opacity: 0.5;
       }
     }
+  }
+
+  .step-output {
+    border-top: 1px dashed #ddd;
+    padding-top: 6px;
+  }
+
+  .step-labels {
+    margin-bottom: 6px;
+  }
+}
+
+test-case-view {
+  .output {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    display: inline-block;
+    padding: .25rem 1rem;
+    background: #f5f5f5;
+    border-radius: 4px;
+    border: 1px solid #9e9e9e;
+    font-size: 1rem;
   }
 }
 
@@ -755,5 +799,22 @@ project-details-widget {
   table tr > td:nth-of-type(2) {
     max-width: 200px;
     @include text-overflow-ellipsis();
+  }
+}
+
+learn-resume-settings-widget {
+  .panel-group {
+    margin-bottom: 0;
+  }
+
+  .panel-title {
+    font-size: 12px;
+
+  }
+
+  project-list {
+    .list-group {
+      margin-bottom: 0;
+    }
   }
 }

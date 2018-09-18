@@ -17,6 +17,7 @@
 import {webBrowser} from '../../../constants';
 import {TestCaseStep} from '../../../entities/test-case-step';
 import {DriverConfigService} from '../../../services/driver-config.service';
+import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
 
 export const testCaseViewComponent = {
     template: require('./test-case-view.component.html'),
@@ -28,7 +29,7 @@ export const testCaseViewComponent = {
     /**
      * The controller of the view.
      */
-    controller: class {
+    controller: class TestCaseViewComponent {
 
         /**
          * Constructor.
@@ -37,7 +38,7 @@ export const testCaseViewComponent = {
          * @param $state
          * @param dragulaService
          * @param {SymbolGroupResource} SymbolGroupResource
-         * @param {SessionService} SessionService
+         * @param {ProjectService} ProjectService
          * @param {ToastService} ToastService
          * @param {TestResource} TestResource
          * @param {LearnerResource} LearnerResource
@@ -46,7 +47,7 @@ export const testCaseViewComponent = {
          * @param {ActionService} ActionService
          */
         // @ngInject
-        constructor($scope, $state, dragulaService, SymbolGroupResource, SessionService, ToastService, TestResource,
+        constructor($scope, $state, dragulaService, SymbolGroupResource, ProjectService, ToastService, TestResource,
                     LearnerResource, $uibModal, SettingsResource, ActionService) {
             this.$state = $state;
             this.ToastService = ToastService;
@@ -54,12 +55,7 @@ export const testCaseViewComponent = {
             this.LearnerResource = LearnerResource;
             this.$uibModal = $uibModal;
             this.ActionService = ActionService;
-
-            /**
-             * The current project.
-             * @type {Project}
-             */
-            this.project = SessionService.getProject();
+            this.ProjectService = ProjectService;
 
             /**
              * The current test
@@ -73,29 +69,52 @@ export const testCaseViewComponent = {
              */
             this.result = null;
 
+            this.report = null;
+
+            /**
+             * Map id -> symbol.
+             * @type {Object}
+             */
+            this.symbolMap = {};
+
+            /**
+             * If testing is in progress.
+             * @type {boolean}
+             */
+            this.active = false;
+
+            this.options = {
+                showSymbolOutputs: false
+            };
+
             /**
              * The browser configuration.
-             * @type {object}
+             * @type {Object}
              */
             this.testConfig = {
                 tests: [],
                 url: this.project.getDefaultUrl(),
                 driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
+                createReport: true,
             };
 
             SymbolGroupResource.getAll(this.project.id, true)
-                .then((groups) => this.groups = groups)
-                .catch(console.log);
+                .then((groups) => {
+                    this.groups = groups;
+                    SymbolGroupUtils.getSymbols(this.groups).forEach(s => this.symbolMap[s.id] = s);
+                })
+                .catch(console.error);
 
             SettingsResource.getSupportedWebDrivers()
-                .then((data) => {
-                    this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver);
-                })
-                .catch(console.log);
+                .then((data) => this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver))
+                .catch(console.error);
 
             dragulaService.options($scope, 'testSymbols', {
                 removeOnSpill: false,
-                mirrorContainer: document.createElement('div')
+                mirrorContainer: document.createElement('div'),
+                moves: (el, container, handle) => {
+                    return handle.classList.contains('handle');
+                }
             });
 
             const keyDownHandler = (e) => {
@@ -126,15 +145,15 @@ export const testCaseViewComponent = {
         save() {
             const test = JSON.parse(JSON.stringify(this.testCase));
             test.steps = test.steps.map((step) => {
-                step.symbol = step.symbol.id;
+                step.pSymbol.symbol = step.pSymbol.symbol.id;
                 return step;
             });
             test.preSteps = test.preSteps.map((step) => {
-                step.symbol = step.symbol.id;
+                step.pSymbol.symbol = step.pSymbol.symbol.id;
                 return step;
             });
             test.postSteps = test.postSteps.map((step) => {
-                step.symbol = step.symbol.id;
+                step.pSymbol.symbol = step.pSymbol.symbol.id;
                 return step;
             });
             this.TestResource.update(test)
@@ -159,9 +178,17 @@ export const testCaseViewComponent = {
             config.url = config.url.id;
 
             this.result = null;
+            this.active = true;
             this.TestResource.execute(this.testCase, config)
-                .then((data) => this.result = data.testResults[0])
-                .catch((err) => this.ToastService.info('The test case could not be executed. ' + err.data.message));
+                .then(data => {
+                    this.report = data;
+                    this.result = data.testResults[0];
+                    this.active = false;
+                })
+                .catch((err) => {
+                    this.ToastService.info('The test case could not be executed. ' + err.data.message);
+                    this.active = false;
+                });
         }
 
         openTestConfigModal() {
@@ -179,6 +206,10 @@ export const testCaseViewComponent = {
 
         addSymbolStep(symbol) {
             this.testCase.steps.push(TestCaseStep.fromSymbol(symbol));
+        }
+
+        get project() {
+            return this.ProjectService.store.currentProject;
         }
     }
 };

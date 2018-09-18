@@ -17,6 +17,7 @@
 package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -24,8 +25,6 @@ import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.DiscriminatorValue;
@@ -36,8 +35,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Action that, given a regular expression, searches in the page source for matches.
- * If a match is found, it extracts the nth group, e.g. (.*?) in the regex, and saves the value into a variable.
+ * Action that, given a regular expression, searches in the page source for matches. If a match is found, it extracts
+ * the nth group, e.g. (.*?) in the regex, and saves the value into a variable.
  */
 @Entity
 @DiscriminatorValue("setVariableByRegexGroup")
@@ -47,8 +46,6 @@ public class SetVariableByRegexGroup extends SymbolAction {
     private static final long serialVersionUID = -5562530206394874225L;
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Marker LEARNER_MARKER = MarkerManager.getMarker("LEARNER");
 
     /** The name of the variable. */
     @NotBlank
@@ -93,56 +90,47 @@ public class SetVariableByRegexGroup extends SymbolAction {
             }
 
             if (!matchFound) {
-                LOGGER.info(LEARNER_MARKER, "Could not find a string that matches regex '{}' "
-                        + "(ignoreFailure: {}, negated: {})", regex, ignoreFailure, negated);
+                LOGGER.info(LoggerMarkers.LEARNER, "Could not find a string that matches regex '{}' ", regex);
                 return getFailedOutput();
             }
         } catch (IndexOutOfBoundsException e) {
-            LOGGER.info(LEARNER_MARKER, "Could not find group {} in regex '{}' "
-                    + "(ignoreFailure: {}, negated: {})", mthGroup, regex, ignoreFailure, negated);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not find group {} in regex '{}' ", mthGroup, regex);
             return getFailedOutput();
         }
 
         return getSuccessOutput();
     }
 
-    /** @return {@link #name}. */
     public String getName() {
         return name;
     }
 
-    /** @param name {@link #name}. */
     public void setName(String name) {
         this.name = name;
     }
 
-    /** @return {@link #regex}. */
     public String getRegex() {
         return regex;
     }
 
-    /** @param regex {@link #regex}. */
     public void setRegex(String regex) {
         this.regex = regex;
     }
 
-    /** @return {@link #nthMatch}. */
     public int getNthMatch() {
         return nthMatch;
     }
 
-    /** @param nthMatch {@link #nthMatch}. */
     public void setNthMatch(int nthMatch) {
         this.nthMatch = nthMatch;
     }
 
-    /** @return {@link #mthGroup}. */
     public int getMthGroup() {
         return mthGroup;
     }
 
-    /** @param mthGroup {@link #mthGroup}. */
     public void setMthGroup(int mthGroup) {
         this.mthGroup = mthGroup;
     }
+
 }

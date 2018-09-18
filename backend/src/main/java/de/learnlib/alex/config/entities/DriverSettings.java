@@ -46,6 +46,9 @@ public class DriverSettings implements Serializable {
     /** The URL path to the Remote Selenium Server. */
     private String remote;
 
+    /** The path to the internet explorer driver. */
+    private String ie;
+
     /** The default driver to use. */
     private String defaultDriver;
 
@@ -65,8 +68,10 @@ public class DriverSettings implements Serializable {
      *         {@link DriverSettings#edge}
      * @param remote
      *         {@link DriverSettings#remote}
+     * @param ie
+     * {@link DriverSettings#ie}
      */
-    public DriverSettings(String chrome, String firefox, String edge, String remote) {
+    public DriverSettings(String chrome, String firefox, String edge, String remote, String ie) {
         this();
         this.chrome = chrome;
         this.firefox = firefox;
@@ -106,6 +111,14 @@ public class DriverSettings implements Serializable {
         this.remote = remote;
     }
 
+    public String getIe() {
+        return ie == null ? "" : ie;
+    }
+
+    public void setIe(String ie) {
+        this.ie = ie;
+    }
+
     public String getDefaultDriver() {
         return defaultDriver;
     }
@@ -124,6 +137,7 @@ public class DriverSettings implements Serializable {
         checkDriver(firefox, "geckodriver", WebDrivers.FIREFOX);
         checkDriver(chrome, "chromedriver", WebDrivers.CHROME);
         checkDriver(edge, "edgedriver", WebDrivers.EDGE);
+        checkDriver(ie, "iedriver", WebDrivers.IE);
 
         if (!WebDrivers.asList().contains(defaultDriver)) {
             throw new ValidationException("You specified an invalid default driver.");

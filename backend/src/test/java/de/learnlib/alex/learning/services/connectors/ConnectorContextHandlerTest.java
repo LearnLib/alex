@@ -17,6 +17,7 @@
 package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import org.junit.Before;
@@ -37,10 +38,14 @@ public class ConnectorContextHandlerTest {
     private ConnectorContextHandler handler;
 
     @Mock
-    private Symbol resetSymbol;
+    private ParameterizedSymbol resetSymbol;
 
     @Before
     public void setUp() {
+        Symbol symbol = new Symbol();
+        symbol.setId(1L);
+        given(resetSymbol.getSymbol()).willReturn(symbol);
+
         handler = new ConnectorContextHandler();
         handler.setResetSymbol(resetSymbol);
     }
@@ -50,10 +55,11 @@ public class ConnectorContextHandlerTest {
         given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(new ExecuteResult(true));
 
         ConnectorManager connectorManager = new ConnectorManager();
-        Connector connector1 = mock(VariableStoreConnector.class);
-        Connector connector2 = mock(CounterStoreConnector.class);
+        VariableStoreConnector connector1 = mock(VariableStoreConnector.class);
+        CounterStoreConnector connector2 = mock(CounterStoreConnector.class);
         connectorManager.addConnector(connector1);
         connectorManager.addConnector(connector2);
+
         handler.addConnectorManager(connectorManager);
         ConnectorManager context = handler.createContext();
 
@@ -71,13 +77,6 @@ public class ConnectorContextHandlerTest {
         handler.addConnectorManager(createConnectorManager());
         handler.createContext(); // should fail
     }
-
-//    @Test(expected = LearnerException.class)
-//    public void shouldThrowAnExceptionIfTheResetSymbolExecutionCrashed() {
-//        given(resetSymbol.execute(any(ConnectorManager.class))).willThrow(Exception.class);
-//
-//        handler.createContext(); // should fail
-//    }
 
     @Test
     public void shouldHaveTheCorrectAmountOfMaxConcurrentQueries() {

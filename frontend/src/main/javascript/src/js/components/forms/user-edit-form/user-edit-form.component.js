@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {events} from '../../../constants';
+import {User} from '../../../entities/user';
 
 /**
  * The component for the form to edit the password and the email of a user or to delete the user.
@@ -25,20 +25,20 @@ class UserEditFormComponent {
      * Constructor.
      *
      * @param $state
-     * @param {SessionService} SessionService
      * @param {ToastService} ToastService
      * @param {UserResource} UserResource
      * @param {PromptService} PromptService
-     * @param {EventBus} EventBus
+     * @param {ProjectService} ProjectService
+     * @param {UserService} UserService
      */
     // @ngInject
-    constructor($state, SessionService, ToastService, UserResource, PromptService, EventBus) {
+    constructor($state, ToastService, UserResource, PromptService, ProjectService, UserService) {
         this.$state = $state;
-        this.SessionService = SessionService;
         this.ToastService = ToastService;
         this.UserResource = UserResource;
         this.PromptService = PromptService;
-        this.EventBus = EventBus;
+        this.ProjectService = ProjectService;
+        this.UserService = UserService;
 
         /**
          * The model for the input of the old password.
@@ -73,9 +73,9 @@ class UserEditFormComponent {
                     this.ToastService.success('The email has been changed');
 
                     // update the jwt correspondingly
-                    const user = this.SessionService.getUser();
+                    const user = new User(JSON.parse(JSON.stringify(this.currentUser)));
                     user.email = this.email;
-                    this.SessionService.saveUser(user);
+                    this.UserService.login(user);
                 })
                 .catch(response => {
                     this.ToastService.danger('The email could not be changed. ' + response.data.message);
@@ -117,17 +117,18 @@ class UserEditFormComponent {
                 this.UserResource.remove(this.user)
                     .then(() => {
                         this.ToastService.success('The profile has been deleted');
-
-                        // remove the users jwt so that he cannot do anything after being deleted
-                        this.SessionService.removeUser();
-                        this.EventBus.emit(events.USER_LOGGED_IN, {user: null});
-                        this.EventBus.emit(events.PROJECT_OPENED, {project: null});
+                        this.ProjectService.close();
+                        this.UserService.logout();
                         this.$state.go('root');
                     })
                     .catch(response => {
                         this.ToastService.danger('The profile could not be deleted. ' + response.data.message);
                     });
             });
+    }
+
+    get currentUser() {
+        return this.UserService.store.currentUser;
     }
 }
 

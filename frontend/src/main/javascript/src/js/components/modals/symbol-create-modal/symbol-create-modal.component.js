@@ -26,18 +26,13 @@ export class SymbolCreateModalComponent {
      *
      * @param {SymbolResource} SymbolResource
      * @param {ToastService} ToastService
-     * @param {SessionService} SessionService
+     * @param {ProjectService} ProjectService
      */
     // @ngInject
-    constructor(SymbolResource, ToastService, SessionService) {
+    constructor(SymbolResource, ToastService, ProjectService) {
         this.SymbolResource = SymbolResource;
         this.ToastService = ToastService;
-
-        /**
-         * The project that is in the session.
-         * @type {Project}
-         */
-        this.project = SessionService.getProject();
+        this.ProjectService = ProjectService;
 
         /**
          * The model of the symbol that will be created.
@@ -119,6 +114,9 @@ export class SymbolCreateModalComponent {
         }
     }
 
+    get project() {
+        return this.ProjectService.store.currentProject;
+    }
 }
 
 export const symbolCreateModalComponent = {

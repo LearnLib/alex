@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +38,7 @@ public class CounterStoreConnector implements Connector {
     private static final Logger LOGGER = LogManager.getLogger();
 
     /**
-     * The map that keeps track of all counters used by different urls.
-     * url -> (counterName -> counterValue).
+     * The map that keeps track of all counters used by different urls. url -> (counterName -> counterValue).
      */
     private Map<String, Integer> countersMap;
 
@@ -54,10 +54,14 @@ public class CounterStoreConnector implements Connector {
     /**
      * Constructor.
      *
-     * @param counterDAO  An instance of the counterDAO.
-     * @param user        The current user.
-     * @param project     The current project.
-     * @param counterList The list of counters in the database to initialize the map with.
+     * @param counterDAO
+     *         An instance of the counterDAO.
+     * @param user
+     *         The current user.
+     * @param project
+     *         The current project.
+     * @param counterList
+     *         The list of counters in the database to initialize the map with.
      */
     public CounterStoreConnector(CounterDAO counterDAO, User user, Project project, List<Counter> counterList) {
         this.counterDAO = counterDAO;
@@ -112,26 +116,32 @@ public class CounterStoreConnector implements Connector {
     }
 
     /**
-     * Set the value of an existing counter.
-     * Creates a new counter implicitly with the specified name and value if it does not exist yet.
+     * Set the value of an existing counter. Creates a new counter implicitly with the specified name and value if it
+     * does not exist yet.
      *
-     * @param projectId The id of the project.
-     * @param name      The name of the counter.
-     * @param value     The value of the counter.
+     * @param projectId
+     *         The id of the project.
+     * @param name
+     *         The name of the counter.
+     * @param value
+     *         The value of the counter.
      */
     public void set(Long projectId, String name, Integer value) {
         countersMap.put(name, value);
-
         LOGGER.debug("Set the counter '{}' in the project <{}> to '{}'.", name, projectId, value);
     }
 
     /**
      * Increment a counter by a positive or negative value.
      *
-     * @param projectId   The id of the project.
-     * @param name        The name of the counter.
-     * @param incrementBy The value to increment or decrement the counter by.
-     * @throws IllegalStateException If the counter 'name' has not been set yet.
+     * @param projectId
+     *         The id of the project.
+     * @param name
+     *         The name of the counter.
+     * @param incrementBy
+     *         The value to increment or decrement the counter by.
+     * @throws IllegalStateException
+     *         If the counter 'name' has not been set yet.
      */
     public void incrementBy(Long projectId, String name, int incrementBy) {
         if (!countersMap.containsKey(name)) {
@@ -141,21 +151,47 @@ public class CounterStoreConnector implements Connector {
         countersMap.put(name, countersMap.get(name) + incrementBy);
 
         LOGGER.debug("Incremented the counter '{}' in the project <{}> of user <{}> to '{}'.", name, projectId,
-                     countersMap.get(name));
+                countersMap.get(name));
     }
 
     /**
      * Get the value of an existing counter.
      *
-     * @param name The name of the counter.
+     * @param name
+     *         The name of the counter.
      * @return The positive value of the counter.
-     * @throws IllegalStateException If the counter 'name' has not been set yet.
+     * @throws IllegalStateException
+     *         If the counter 'name' has not been set yet.
      */
     public Integer get(String name) throws IllegalStateException {
         if (!countersMap.containsKey(name)) {
             throw new IllegalStateException("Undefined counter: " + name);
         }
         return countersMap.get(name);
+    }
+
+    /**
+     * Updates the current store by variables in another store.
+     *
+     * @param storeToMerge
+     *         The store with updated variables.
+     * @param namesToMerge
+     *         The names of the variables that should be transferred to this one.
+     */
+    public void merge(CounterStoreConnector storeToMerge, List<String> namesToMerge) {
+        namesToMerge.forEach(name -> {
+            if (storeToMerge.countersMap.containsKey(name)) {
+                countersMap.put(name, storeToMerge.countersMap.get(name));
+            }
+        });
+    }
+
+    /**
+     * Get the store as read only map.
+     * @return The store.
+     */
+    public Map<String, Integer> getStore() {
+        return Collections.unmodifiableMap(countersMap);
     }
 
     /**

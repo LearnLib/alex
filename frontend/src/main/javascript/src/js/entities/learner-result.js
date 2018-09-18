@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import {ParametrizedSymbol} from './parametrized-symbol';
+
 /**
  * The model for a learner result.
  */
@@ -52,15 +54,15 @@ export class LearnResult {
 
         /**
          * The id of the reset symbol.
-         * @type {*}
+         * @type {ParametrizedSymbol}
          */
-        this.resetSymbol = obj.resetSymbol;
+        this.resetSymbol = new ParametrizedSymbol(obj.resetSymbol);
 
         /**
-         * The alphabet the process has been learned with.
-         * @type {number[]}
+         * The id of the post symbol.
+         * @type {?ParametrizedSymbol}
          */
-        this.sigma = obj.sigma;
+        this.postSymbol = obj.postSymbol != null ? new ParametrizedSymbol(obj.postSymbol) : null;
 
         /**
          * The cumulated statistics.
@@ -75,10 +77,10 @@ export class LearnResult {
         this.steps = obj.steps;
 
         /**
-         * Sigma.
+         * The input alphabet.
          * @type {*}
          */
-        this.symbols = obj.symbols;
+        this.symbols = obj.symbols.map(s => new ParametrizedSymbol(s));
 
         /**
          * The test number.

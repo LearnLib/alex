@@ -98,14 +98,14 @@ export function config($stateProvider, $urlRouterProvider) {
             data: {title: 'Project'},
 
             // @ngInject
-            onEnter: function ($state, SessionService, ProjectResource, $stateParams) {
+            onEnter: function ($state, ProjectService, ProjectResource, $stateParams) {
                 const projectId = $stateParams.projectId;
+                const project = ProjectService.store.currentProject;
 
-                const project = SessionService.getProject();
-                if (project != null || project.id !== projectId) {
+                if (project == null || project.id !== projectId) {
                     return ProjectResource.get(projectId)
                         .then(project => {
-                            SessionService.saveProject(project);
+                            ProjectService.open(project);
                         })
                         .catch(() => {
                             $state.go('error', {message: `The project with the id ${projectId} could not be found`});
@@ -193,6 +193,14 @@ export function config($stateProvider, $urlRouterProvider) {
                 '@': {template: '<test-report-view></test-report-view>'}
             },
             data: {title: 'Tests > Reports'}
+        })
+        .state('testResults', {
+            parent: 'test',
+            url: '/results',
+            views: {
+                '@': {template: '<test-case-results-view></test-case-results-view>'}
+            },
+            data: {title: 'Tests > Results'},
         })
 
         // learning related routes
@@ -285,19 +293,20 @@ export function config($stateProvider, $urlRouterProvider) {
  * Validate routes on state change.
  *
  * @param {TransitionService} $transitions
- * @param {SessionService} SessionService
+ * @param {ProjectService} ProjectService
+ * @param {UserService} UserService
  * @param {ToastService} ToastService
  */
 // @ngInject
-export function run($transitions, SessionService, ToastService) {
+export function run($transitions, ProjectService, UserService, ToastService) {
 
     // route validation
     $transitions.onBefore({}, onBefore, {});
     $transitions.onSuccess({}, onSuccess, {});
 
     function onBefore(transition) {
-        const user = SessionService.getUser();
-        const project = SessionService.getProject();
+        const user = UserService.store.currentUser;
+        const project = ProjectService.store.currentProject;
 
         const data = transition.to().data;
         if ((data.roles && (user === null || data.roles.indexOf(user.role) === -1))

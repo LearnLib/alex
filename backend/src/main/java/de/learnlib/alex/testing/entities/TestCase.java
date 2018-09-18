@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.testing.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.persistence.DiscriminatorValue;
@@ -25,6 +26,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,19 @@ import java.util.List;
 public class TestCase extends Test {
 
     private static final long serialVersionUID = 5961810799472877062L;
+
+    /** The status of the test. */
+    public enum Status {
+
+        /** If it does not contain any steps. */
+        EMPTY,
+
+        /** If if contains at least one unimplemented symbol. */
+        WORK_IN_PROGRESS,
+
+        /** If not empty and there are no unimplemented symbols. */
+        DONE
+    }
 
     /**
      * Steps that are executed before the actual test. All steps have to pass in order for the test steps to be
@@ -111,5 +126,24 @@ public class TestCase extends Test {
 
     public void setPostSteps(List<TestCaseStep> postSteps) {
         this.postSteps = postSteps;
+    }
+
+    @Transient
+    @JsonProperty("status")
+    public Status getStatus() {
+        if (this.steps.isEmpty()) {
+            return Status.EMPTY;
+        } else {
+            for (TestCaseStep step : steps) {
+                if (step.getPSymbol().getSymbol().getSteps().isEmpty()) {
+                    return Status.WORK_IN_PROGRESS;
+                }
+            }
+            return Status.DONE;
+        }
+    }
+
+    @JsonProperty("status")
+    public void setStatus(Status status) {
     }
 }

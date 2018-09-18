@@ -9,9 +9,6 @@ describe('Action', () => {
         const action = new Action(type, {});
         const expectedAction = {
             type: type,
-            negated: false,
-            ignoreFailure: false,
-            disabled: false
         };
 
         expect(angular.toJson(action)).toEqual(angular.toJson(expectedAction));
@@ -21,15 +18,9 @@ describe('Action', () => {
 
     it('should correctly create an action from given data', () => {
         const action = new Action(type, {
-            negated: true,
-            ignoreFailure: true,
-            disabled: true
         });
         const expectedAction = {
             type: type,
-            negated: true,
-            ignoreFailure: true,
-            disabled: true
         };
 
         expect(angular.toJson(action)).toEqual(angular.toJson(expectedAction));

@@ -62,9 +62,13 @@ class HypothesisComponent {
         this.renderer = new Renderer();
         this.graph = null;
 
-        this.svg = d3.select($element.find('svg')[0]);
+        // from -> (to -> edge)
+        // needed so that we get the correct input output on edge label click
+        this.edgeData = {};
+
+        this.svg = d3.select(this.$element.find('svg')[0]);
         this.svgGroup = this.svg.select('g');
-        this.svgContainer = $element.find('svg')[0].parentNode;
+        this.svgContainer = this.$element.find('svg')[0].parentNode;
 
         this.resizeHandler = this.fitSize.bind(this);
 
@@ -148,6 +152,14 @@ class HypothesisComponent {
         // build data structure for the alternative representation by
         // pushing some data
         this.data.edges.forEach(edge => {
+            if (this.edgeData[edge.from] == null) {
+                this.edgeData[edge.from] = {};
+            }
+            if (this.edgeData[edge.from][edge.to] == null) {
+                this.edgeData[edge.from][edge.to] = [];
+            }
+            this.edgeData[edge.from][edge.to].push(edge);
+
             if (!graph[edge.from]) {
                 graph[edge.from] = {};
                 graph[edge.from][edge.to] = [edge.input + ' / ' + edge.output];
@@ -164,6 +176,7 @@ class HypothesisComponent {
         forEach(graph, (k, from) => {
             forEach(k, (labels, to) => {
                 this.graph.setEdge(from, to, {
+                    id: 'edge-' + from + '' + to,
                     label: labels.join('\n'),
                     labeloffset: 5,
                     style: STYLE.edge,
@@ -220,14 +233,35 @@ class HypothesisComponent {
 
         // attach click events for the selection of counter examples to the edge labels
         // only if counterexamples is defined
+        const self = this;
         if (this.isSelectable) {
-            this.svg.selectAll('.edgeLabel tspan').on('click', function () {
-                const label = this.innerHTML.split('/'); // separate name from output
+            this.svg.selectAll('.edgeLabel tspan').on('click', function (d) {
+
+                // const edgeEl = self.svg.select(`.edgePath[id="edge-${d.name}"]`);
+                //
+                // let refs = edgeEl.attr('data-refs');
+                // refs = refs == null ? [] : JSON.parse(refs);
+                //
+                // const i = refs.findIndex(s => s === this.textContent);
+                // if (i > -1) {
+                //     refs.splice(i, 1);
+                // } else {
+                //     refs.push(this.textContent);
+                // }
+                //
+                // if (this.classList.contains('selected')) {
+                //     this.classList.remove('selected');
+                // } else {
+                //     this.classList.add('selected');
+                // }
+                //
+                // edgeEl.classed('selected', refs.length > 0);
+                // edgeEl.attr('data-refs', JSON.stringify(refs));
+
+                const edges = self.edgeData[d.v][d.w];
+                const edge = edges.filter(e => (e.input + ' / ' + e.output) === this.textContent)[0];
                 $scope.$apply(() => {
-                    EventBus.emit(events.HYPOTHESIS_LABEL_SELECTED, {
-                        input: label[0].trim(),
-                        output: label[1].trim()
-                    });
+                    EventBus.emit(events.HYPOTHESIS_LABEL_SELECTED, {input: edge.input, output: edge.output});
                 });
             });
         }
