@@ -27,7 +27,7 @@ before_cache:
 install: true # skip mvn install, because we essentially run the same command in the script routine
 
 script:
-  - mvn clean package -Pbootstrap
+  - mvn clean install -Pbootstrap,code-analysis,integration-tests
 
 branches:
   only:
