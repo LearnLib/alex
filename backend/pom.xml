@@ -60,6 +60,7 @@
         <powermock.version>1.7.3</powermock.version>
         <json-schema-validator.version>2.2.8</json-schema-validator.version>
         <mysql-connector.version>8.0.11</mysql-connector.version>
+        <jaxb.version>2.3.0</jaxb.version>
     </properties>
 
     <!--===== dependencies ======-->
@@ -153,6 +154,13 @@
             <artifactId>hsqldb</artifactId>
             <version>${hsqldb.version}</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- include this dependency so that ALEX is compatible with Java > 8 -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>${jaxb.version}</version>
         </dependency>
 
         <!-- jose4j for jwt -->
