@@ -25,3 +25,8 @@ frontend/src/main/javascript/npm-debug\.log
 frontend/src/main/javascript/package-lock\.json
 
 backend/debug.log
+
+# genereated user documentation
+documentation/src/main/docs/.vuepress/dist
+documentation/src/main/docs/node_modules
+documentation/src/main/docs/package-lock\.json

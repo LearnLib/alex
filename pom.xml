@@ -89,6 +89,7 @@
     <modules>
         <module>backend</module>
         <module>build</module>
+        <module>documentation</module>
         <module>frontend</module>
     </modules>
 
@@ -115,7 +116,7 @@
         <war-plugin.version>2.6</war-plugin.version>
         <clean-plugin.version>3.0.0</clean-plugin.version>
         <failsafe-plugin.version>2.19.1</failsafe-plugin.version>
-
+        <exec-plugin.version>1.4.0</exec-plugin.version>
         <checkstyle.version>2.17</checkstyle.version>
         <cobertura.version>2.7</cobertura.version>
         <findbugs.version>3.0.4</findbugs.version>

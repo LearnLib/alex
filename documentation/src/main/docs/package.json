@@ -1,0 +1,16 @@
+{
+  "name": "alex-docs",
+  "version": "1.6.1-SNAPSHOT",
+  "description": "Documentation for ALEX.",
+  "licence": {
+    "type": "Apache-2.0",
+    "url": "http://www.apache.org/licenses/LICENSE-2.0"
+  },
+  "scripts": {
+    "dev": "vuepress dev",
+    "build": "vuepress build"
+  },
+  "devDependencies": {
+    "vuepress": "^0.14.4"
+  }
+}
