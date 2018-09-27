@@ -4,8 +4,10 @@ dist: trusty
 sudo: false
 
 jdk:
-  - oraclejdk8
   - openjdk8
+  - openjdk11
+  - oraclejdk8
+  - oraclejdk11
 
 addons:
   apt:
@@ -27,9 +29,10 @@ before_cache:
 install: true # skip mvn install, because we essentially run the same command in the script routine
 
 script:
-  - mvn clean install -Pbootstrap,code-analysis,integration-tests
+  - mvn clean install -Pbootstrap,code-analysis,documentation,integration-tests
 
 branches:
   only:
   - master
   - developer
+
