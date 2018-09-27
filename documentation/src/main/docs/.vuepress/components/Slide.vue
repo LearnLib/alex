@@ -11,7 +11,13 @@
 
 <script>
     export default {
-        name: 'Slide'
+        name: 'Slide',
+        mounted() {
+            const img = this.$el.querySelector('img');
+            const src = img.src;
+            img.src = '';
+            img.setAttribute('data-src', src);
+        }
     };
 </script>
 

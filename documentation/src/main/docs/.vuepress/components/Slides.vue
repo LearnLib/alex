@@ -6,8 +6,13 @@
     </div>
     <div class="slide-content" v-html="slides[currentSlide].content" v-if="slides.length > 0"></div>
     <div class="slide-navigation">
-      <button class="action-button" @click="previousSlide" v-if="currentSlide > 0">&laquo; Previous</button>
-      <button class="button" @click="nextSlide" v-if="currentSlide < slides.length - 1">Next &raquo;</button>
+      <div class="indicator">
+        <span>{{currentSlide + 1}} / {{slides.length}}</span>
+      </div>
+      <div class="buttons">
+        <button @click="previousSlide" v-if="currentSlide > 0">&laquo; Previous</button>
+        <button @click="nextSlide" v-if="currentSlide < slides.length - 1">Next &raquo;</button>
+      </div>
     </div>
   </div>
 </template>
@@ -26,7 +31,7 @@
                 const slides = this.$el.querySelectorAll('.slide');
                 slides.forEach(slide => {
                     this.slides.push({
-                        src: slide.querySelector('.image img').src,
+                        src: slide.querySelector('.image img').getAttribute('data-src'),
                         content: slide.querySelector('.text').innerHTML
                     });
                 });
@@ -48,6 +53,7 @@
     background: #fff
     border: 1px solid #dedede
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05)
+    margin: 1rem 0
 
     .slide-image
       img
@@ -61,9 +67,18 @@
       border-top: 1px solid #dedede
 
     .slide-navigation
-      text-align: right
+      display: flex
+      align-items: baseline
       padding: 0 .5rem
       background: #fbfbfb
+
+      .indicator
+        width: 100%
+        margin-left: .5rem
+        color: #8a8a8a
+
+      .buttons
+        flex-shrink: 0
 
       button
         display: inline-block
