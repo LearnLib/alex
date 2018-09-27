@@ -22,19 +22,33 @@ module.exports = {
             {
                 title: 'User manual',
                 collapsable: true,
-                children: []
+                children: [
+                    ['/contents/user-manual/introduction/', 'Introduction'],
+                    ['/contents/user-manual/user-management/', 'User management'],
+                    ['/contents/user-manual/project-management/', 'Project management'],
+                    ['/contents/user-manual/symbol-management/', 'Symbol management'],
+                    ['/contents/user-manual/testing/', 'Testing'],
+                    ['/contents/user-manual/learning/', 'Learning'],
+                    ['/contents/user-manual/integrations/', 'Integrations'],
+                    ['/contents/user-manual/best-practices/', 'Best practices']
+                ]
             },
             {
                 title: 'Examples',
                 collapsable: true,
                 children: [
-                    ['/contents/examples/todomvc/', 'TodoMVC']
+                    ['/contents/examples/todomvc/', 'TodoMVC'],
+                    ['/contents/examples/wordpress/', 'Wordpress']
                 ]
             },
             {
                 title: 'Developer docs',
                 collapsable: true,
-                children: []
+                children: [
+                    ['/contents/dev-docs/development/', 'Develop'],
+                    ['/contents/dev-docs/rest-api/', 'REST API'],
+                    ['/contents/dev-docs/extend-alex/', 'Extend ALEX']
+                ]
             }
         ],
         nav: [
