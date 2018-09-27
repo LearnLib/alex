@@ -30,9 +30,9 @@ install: true # skip mvn install, because we essentially run the same command in
 
 script:
   - mvn clean install -Pbootstrap,code-analysis,documentation,integration-tests
+  - mvn coveralls:report
 
 branches:
   only:
   - master
   - developer
-

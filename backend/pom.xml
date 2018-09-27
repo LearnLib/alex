@@ -40,6 +40,14 @@
         <!-- general -->
         <start-class>de.learnlib.alex.App</start-class>
 
+        <!-- plugin versions -->
+        <javadoc-plugin.version>2.10.4</javadoc-plugin.version>
+        <failsafe-plugin.version>2.19.1</failsafe-plugin.version>
+        <jacoco-plugin.version>0.8.2</jacoco-plugin.version>
+        <checkstyle.version>2.17</checkstyle.version>
+        <findbugs.version>3.0.4</findbugs.version>
+        <pmd.version>3.6</pmd.version>
+
         <!-- dependencies versions -->
         <spring.version>4.3.12.RELEASE</spring.version>
         <log4j.version>2.6.2</log4j.version>
@@ -444,6 +452,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>integration-tests</id>
             <build>
@@ -476,6 +485,108 @@
                                 <goals>
                                     <goal>verify</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>code-analysis</id>
+            <build>
+                <plugins>
+                    <!-- JoCoCo - Coverage -->
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>pre-unit-test</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>post-unit-test</id>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+
+                    </plugin>
+
+                    <!-- Checkstyle -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>${checkstyle.version}</version>
+                        <configuration>
+                            <configLocation>src/main/resources/checkstyle.xml</configLocation>
+                            <suppressionsLocation>src/main/resources/checkstyle-suppressions.xml</suppressionsLocation>
+                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                            <linkXRef>false</linkXRef>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>verify</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <failOnViolation>false</failOnViolation>
+                                    <maxAllowedViolations>50</maxAllowedViolations>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- PMD -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <version>${pmd.version}</version>
+                        <configuration>
+                            <minimumTokens>75</minimumTokens>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>verify</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <failOnViolation>false</failOnViolation>
+                                    <printFailingErrors>true</printFailingErrors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Findbugs -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>${findbugs.version}</version>
+                        <configuration>
+                            <effort>max</effort>
+                            <threshold>medium</threshold>
+                            <includeTests>true</includeTests>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>verify</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <failOnError>false</failOnError>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
