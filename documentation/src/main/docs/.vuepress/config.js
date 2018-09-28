@@ -6,6 +6,7 @@ module.exports = {
         lineNumbers: true
     },
     themeConfig: {
+        lastUpdated: 'Last Updated',
         sidebarDepth: 2,
         sidebar: [
             ['/', 'Home'],
@@ -48,7 +49,8 @@ module.exports = {
                 children: [
                     ['/contents/dev-docs/development/', 'Develop'],
                     ['/contents/dev-docs/rest-api/', 'REST API'],
-                    ['/contents/dev-docs/extend-alex/', 'Extend ALEX']
+                    ['/contents/dev-docs/extend-alex/', 'Extend ALEX'],
+                    ['/contents/dev-docs/cli/', 'CLI']
                 ]
             }
         ],

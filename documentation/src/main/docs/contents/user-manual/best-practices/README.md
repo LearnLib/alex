@@ -36,28 +36,38 @@ Each point can be modeled as an input symbol and the learned model will tell you
 
 ## Modeling authentication systems
 
-### Basic HTTP Auth
-
-![Auth](./assets/auth-1.jpg)
-
-The *Make request* action and the *Open URL* action both support the specification of credentials, consisting of a login and a password, in order to use basic HTTP auth.
-
-### JSON Web Tokens (JWT)
-
-![Auth](./assets/auth-2.jpg)
-
-JWTs are usually used to authenticate against REST APIs by sending an encoded token in the *Authorization* header, like `Authorization: Bearer <TOKEN>`. 
-In ALEX, you can specify HTTP headers in the *Make request* action.
-It usually makes sense to store the JWT in a variable and let ALEX insert it dynamically, like in the image above.
-
-### Cookie-based authentication
-
-In the *Make request* and in the *Open URL* action you can specify both, cookies and additional HTTP header fields, if necessary.
-
-A common method to use cookies is to authenticate via the web interface and use the cookie for REST requests.
-In order to model this, first model the login behavior via the web interface.
-Then, use the *Set variable by cookie* action with the *Browser cookie* option to save the cookie.
-After that, the cookie is stored in a available and can be used in the *Make request* action.
+<slides>
+    <slide title="HTTP Basic Auth">
+        <template slot="image">
+            <img src="./assets/auth-1.jpg">
+        </template>
+        <template slot="text">
+            The <em>Make request</em> action and the <em>Open URL</em> action both support the specification of credentials, consisting of a login and a password, in order to use basic HTTP auth.
+        </template>
+    </slide>
+    <slide title="JSON Web Tokens (JWT)">
+        <template slot="image">
+            <img src="./assets/auth-2.jpg">
+        </template>
+        <template slot="text">
+            JWTs are usually used to authenticate against REST APIs by sending an encoded token in the <em>Authorization</em> header, like <code>Authorization: Bearer TOKEN</code>. 
+            In ALEX, you can specify HTTP headers in the <em>Make request</em> action.
+            It usually makes sense to store the JWT in a variable and let ALEX insert it dynamically, like in the image above.
+        </template>
+    </slide>
+    <slide title="Cookies">
+        <template slot="image">
+            <img src="./assets/auth-2.jpg">
+        </template>
+        <template slot="text">
+            In the <em>Make request</em> and in the <em>Open URL</em> action you can specify both, cookies and additional HTTP header fields, if necessary.
+            A common method to use cookies is to authenticate via the web interface and use the cookie for REST requests.
+            In order to model this, first model the login behavior via the web interface.
+            Then, use the <em>Set variable by cookie</em> action with the <em>Browser cookie</em> option to save the cookie.
+            After that, the cookie is stored in a available and can be used in the <em>Make request</em> action.
+        </template>
+    </slide>
+</slides>
 
 
 ## Resetting an application

@@ -1,6 +1,6 @@
 # Wordpress
 
-In this section, we learn the REST API of [Wordpress][wordpress] v4.9.8.
+In this section, we learn the [REST API][rest] of the content management system [Wordpress][wordpress] v4.9.8.
 
 ## Preparation
 
@@ -14,13 +14,14 @@ In this section, we learn the REST API of [Wordpress][wordpress] v4.9.8.
 
 Sign in using the admin account and create the following user accounts:
 
-| email                       | username    | password    | role        | base64 encoded username:password     |
-|-----------------------------|-------------|-------------|-------------|--------------------------------------|
-| admin@localhost.com         | admin       | admin       | admin       | YWRtaW46YWRtaW4=                     |
-| author@localhost.com        | author      | author      | author      | YXV0aG9yOmF1dGhvcg==                 |
-| contributor@localhost.com   | contributor | contributor | contributor | Y29udHJpYnV0b3I6Y29udHJpYnV0b3I=     |
-| editor@localhost.com        | editor      | editor      | editor      | ZWRpdG9yOmVkaXRvcg==                 |
-| subscriber@localhost.com    | subscriber  | subscriber  | subscriber  | c3Vic2NyaWJlcjpzdWJzY3JpYmVy         |
+| email                       | username    | password    | role        |
+|-----------------------------|-------------|-------------|-------------|
+| admin@localhost.com         | admin       | admin       | admin       |
+| author@localhost.com        | author      | author      | author      |
+| contributor@localhost.com   | contributor | contributor | contributor |
+| editor@localhost.com        | editor      | editor      | editor      |
+| subscriber@localhost.com    | subscriber  | subscriber  | subscriber  |
 
+[rest]: https://developer.wordpress.org/rest-api/
 [wordpress]: https://wordpress.org
 [basic-auth]: https://github.com/WP-API/Basic-Auth
