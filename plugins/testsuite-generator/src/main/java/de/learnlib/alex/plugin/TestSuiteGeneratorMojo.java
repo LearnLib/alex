@@ -53,6 +53,12 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}/generated-test-sources", required = true)
     private File targetDirectory;
 
+    @Parameter(required = true)
+    private String projectURL;
+
+    @Parameter(defaultValue = "true")
+    private boolean headless;
+
     @Override
     public void execute() throws MojoExecutionException {
 
@@ -82,7 +88,8 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
 
         template.add("driverPath", this.driverPath);
         template.add("exportFileName", this.sourceFile.getName());
-        template.add("projectUrl", "http://google.de");
+        template.add("projectUrl", projectURL);
+        template.add("headless", headless);
 
         writeToFile(template.render(), toFileWithPackage("AbstractExportedTest.java"));
     }

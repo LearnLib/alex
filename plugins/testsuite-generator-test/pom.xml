@@ -74,6 +74,7 @@
                 <configuration>
                     <sourceFile>${project.basedir}/src/test/resources/example.json</sourceFile>
                     <driverPath>/usr/bin/chromedriver</driverPath>
+                    <projectURL>http://google.de</projectURL>
                 </configuration>
                 <executions>
                     <execution>

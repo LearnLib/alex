@@ -43,7 +43,7 @@ public class AbstractExportedTest {
         final VariableStoreConnector vsc = new VariableStoreConnector();
         final CounterStoreConnector csc = new CounterStoreConnector(null, null, null, new ArrayList\<>());
 
-        cdc.setHeadless(false);
+        cdc.setHeadless(<headless>);
 
         wsc.reset();
         wsc.getDriver().get(wsc.getBaseUrl());
