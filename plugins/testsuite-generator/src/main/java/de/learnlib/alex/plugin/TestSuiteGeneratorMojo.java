@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,6 @@ import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.entities.TestSuite;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -86,7 +84,7 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
         template.add("exportFileName", this.sourceFile.getName());
         template.add("projectUrl", "http://google.de");
 
-        writeToFile(template.render(), fileWithPackage("AbstractExportedTest.java"));
+        writeToFile(template.render(), toFileWithPackage("AbstractExportedTest.java"));
     }
 
     private void writeTestCase(TestCase export, int idx) throws MojoExecutionException {
@@ -104,7 +102,7 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
 
         template.add("testCases", testMethodBuilder.toString());
 
-        writeToFile(template.render(), fileWithPackage(escape(export.getName()) + ".java"));
+        writeToFile(template.render(), toFileWithPackage(escape(export.getName()) + ".java"));
     }
 
     private void writeTestSuiteConfiguration(TestSuite export) throws MojoExecutionException {
@@ -120,7 +118,7 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
 
         template.add("testCaseNames", testCaseNames);
 
-        writeToFile(template.render(), new File(escape(export.getName()) + ".xml"));
+        writeToFile(template.render(), toFile(escape(export.getName()) + ".xml"));
     }
 
     private String generateTestCaseMethod(TestCase export, int idx) throws MojoExecutionException {
@@ -151,8 +149,12 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
         }
     }
 
-    private File fileWithPackage(final String fileName) {
+    private File toFileWithPackage(final String fileName) {
         return this.targetDirectory.toPath().resolve("de/learnlib/alex/plugin/generated").resolve(fileName).toFile();
+    }
+
+    private File toFile(final String fileName) {
+        return this.targetDirectory.toPath().resolve(fileName).toFile();
     }
 
     private void writeToFile(final String content, final File dest) throws MojoExecutionException {
