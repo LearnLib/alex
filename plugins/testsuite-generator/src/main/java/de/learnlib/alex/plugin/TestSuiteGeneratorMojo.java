@@ -19,16 +19,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
-import de.learnlib.alex.testing.export.TestCaseExport;
-import de.learnlib.alex.testing.export.TestSuiteExport;
+import de.learnlib.alex.testing.entities.TestCase;
+import de.learnlib.alex.testing.entities.TestCaseStep;
+import de.learnlib.alex.testing.entities.TestSuite;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -58,37 +61,35 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-        final TestSuiteExport export;
+        final TestSuite export;
 
         try {
-            export = mapper.readValue(sourceFile, TestSuiteExport.class);
+            export = mapper.readValue(sourceFile, TestSuite.class);
         } catch (IOException e) {
             throw new MojoExecutionException("Error reading export file", e);
         }
 
-        final List<TestCaseExport> testCases = export.getTestCases();
-
         writeAbstractSuperClass(export);
 
+        final List<TestCase> testCases = export.getTestCases();
         for (int i = 0; i < testCases.size(); i++) {
-            final TestCaseExport testCase = testCases.get(i);
-            writeTestCase(testCase, i);
+            writeTestCase(testCases.get(i), i);
         }
 
         writeTestSuiteConfiguration(export);
     }
 
-    private void writeAbstractSuperClass(TestSuiteExport export) throws MojoExecutionException {
+    private void writeAbstractSuperClass(TestSuite export) throws MojoExecutionException {
         final ST template = getTemplate("/abstractTest.st");
 
         template.add("driverPath", this.driverPath);
         template.add("exportFileName", this.sourceFile.getName());
-        template.add("projectUrl", export.getProjectURL());
+        template.add("projectUrl", "http://google.de");
 
         writeToFile(template.render(), fileWithPackage("AbstractExportedTest.java"));
     }
 
-    private void writeTestCase(TestCaseExport export, int idx) throws MojoExecutionException {
+    private void writeTestCase(TestCase export, int idx) throws MojoExecutionException {
         final ST template = getTemplate("/testCase.st");
 
         template.add("testName", export.getName());
@@ -97,8 +98,8 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
 
         final StringBuilder testMethodBuilder = new StringBuilder();
 
-        for (int i = 0; i < export.getSymbols().size(); i++) {
-            testMethodBuilder.append(generateTestCaseMethod(export, 0));
+        for (int i = 0; i < export.getSteps().size(); i++) {
+            testMethodBuilder.append(generateTestCaseMethod(export, i));
         }
 
         template.add("testCases", testMethodBuilder.toString());
@@ -106,14 +107,14 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
         writeToFile(template.render(), fileWithPackage(escape(export.getName()) + ".java"));
     }
 
-    private void writeTestSuiteConfiguration(TestSuiteExport export) throws MojoExecutionException {
+    private void writeTestSuiteConfiguration(TestSuite export) throws MojoExecutionException {
         final ST template = getTemplate("/testSuiteConfiguration.st");
 
         template.add("testSuiteName", export.getName());
 
         final List<String> testCaseNames = export.getTestCases()
                                                  .stream()
-                                                 .map(TestCaseExport::getName)
+                                                 .map(TestCase::getName)
                                                  .map(TestSuiteGeneratorMojo::escape)
                                                  .collect(Collectors.toList());
 
@@ -122,11 +123,12 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
         writeToFile(template.render(), new File(escape(export.getName()) + ".xml"));
     }
 
-    private String generateTestCaseMethod(TestCaseExport export, int idx) throws MojoExecutionException {
+    private String generateTestCaseMethod(TestCase export, int idx) throws MojoExecutionException {
         final ST template = getTemplate("/testCaseMethod.st");
 
-        final ParameterizedSymbol input = export.getSymbols().get(idx);
-        final String output = export.getOutputs().get(idx);
+        final TestCaseStep step = export.getSteps().get(idx);
+        final ParameterizedSymbol input = step.getPSymbol();
+        final String output = step.getExpectedResult();
 
         template.add("testName", input.getSymbol().getName());
         template.add("output", output);
@@ -134,7 +136,8 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
         template.add("testMethodIndex", idx);
 
         if (idx > 0) {
-            template.add("previousTestMethodName", escape(export.getSymbols().get(idx - 1).getSymbol().getName()));
+            final String previousName = export.getSteps().get(idx - 1).getPSymbol().getSymbol().getName();
+            template.add("previousTestMethodName", previousName);
         }
 
         return template.render();
@@ -149,7 +152,7 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
     }
 
     private File fileWithPackage(final String fileName) {
-        return this.targetDirectory.toPath().resolve("/de/learnlib/alex/plugin/generated").resolve(fileName).toFile();
+        return this.targetDirectory.toPath().resolve("de/learnlib/alex/plugin/generated").resolve(fileName).toFile();
     }
 
     private void writeToFile(final String content, final File dest) throws MojoExecutionException {

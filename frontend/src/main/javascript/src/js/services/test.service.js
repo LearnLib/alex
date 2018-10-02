@@ -57,8 +57,9 @@ export class TestService {
                 return steps.map((step) => {
                     delete step.id;
                     delete step.pSymbol.id;
-                    step.pSymbol.symbolFromName = step.pSymbol.symbol.name;
-                    delete step.pSymbol.symbol;
+                    step.pSymbol.symbol = {
+                        name: step.pSymbol.symbol.name
+                    };
                     step.pSymbol.parameterValues.forEach(value => {
                         delete value.id;
                         delete value.parameter.id;
@@ -134,9 +135,11 @@ export class TestService {
                 function mapTestCaseSymbols(testCase) {
                     const s = (steps) => {
                         return steps.map((step) => {
-                            const sym = symbols.find(s => s.name === step.pSymbol.symbolFromName);
+                            const sym = symbols.find(s => s.name === step.pSymbol.symbol.name);
                             if (sym) {
-                                step.pSymbol.symbol = sym.id;
+                                step.pSymbol.symbol = {
+                                    id: sym.id
+                                };
                             }
                             return step;
                         });

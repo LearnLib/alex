@@ -134,5 +134,17 @@ public class TestSuite extends Test {
 
         return false;
     }
+
+    @Transient
+    @JsonIgnore
+    public List<TestSuite> getTestSuites() {
+        return tests.stream().filter(t -> t instanceof TestSuite).map(t -> (TestSuite) t).collect(Collectors.toList());
+    }
+
+    @Transient
+    @JsonIgnore
+    public List<TestCase> getTestCases() {
+        return tests.stream().filter(t -> t instanceof TestCase).map(t -> (TestCase) t).collect(Collectors.toList());
+    }
 }
 

@@ -1,5 +1,6 @@
 package de.learnlib.alex.plugin.generated;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -10,17 +11,18 @@ import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.learning.entities.webdrivers.ChromeDriverConfig;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
+import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebServiceConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
-import de.learnlib.alex.testsuites.dao.TestCaseExport;
-import de.learnlib.alex.testsuites.dao.TestSuiteExport;
+import de.learnlib.alex.testing.entities.TestSuite;
+import de.learnlib.alex.testing.entities.TestCase;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 public class AbstractExportedTest {
 
     protected ConnectorManager cm;
-    private List<TestCaseExport> testCases;
+    private List\<TestCase> testCases;
 
     @BeforeSuite
     public void setupSuite() throws Exception {
@@ -31,8 +33,7 @@ public class AbstractExportedTest {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-        final TestSuiteExport export = mapper.readValue(AbstractExportedTest.class.getResourceAsStream("/<exportFileName>"),
-                                                        TestSuiteExport.class);
+        final TestSuite export = mapper.readValue(AbstractExportedTest.class.getResourceAsStream("/<exportFileName>"), TestSuite.class);
 
         testCases = export.getTestCases();
 
@@ -40,6 +41,7 @@ public class AbstractExportedTest {
         final WebSiteConnector wsc = new WebSiteConnector("<projectUrl>", cdc);
         final WebServiceConnector wService = new WebServiceConnector(wsc.getBaseUrl());
         final VariableStoreConnector vsc = new VariableStoreConnector();
+        final CounterStoreConnector csc = new CounterStoreConnector(null, null, null, new ArrayList\<>());
 
         cdc.setHeadless(false);
 
@@ -50,15 +52,16 @@ public class AbstractExportedTest {
         cm.addConnector(wsc);
         cm.addConnector(wService);
         cm.addConnector(vsc);
-
+        cm.addConnector(csc);
     }
 
-    protected TestCaseExport getTestCase(int idx) {
+    protected TestCase getTestCase(int idx) {
         return this.testCases.get(idx);
     }
 
     @AfterSuite
     public void tearDownSuite() {
         cm.dispose();
+        cm.post();
     }
 }

@@ -1,0 +1,164 @@
+{
+  "type": "suite",
+  "id": 1,
+  "name": "Root",
+  "tests": [
+    {
+      "type": "case",
+      "id": 2,
+      "name": "sdfsdf",
+      "preSteps": [],
+      "steps": [
+        {
+          "id": 1,
+          "shouldFail": false,
+          "expectedResult": "",
+          "pSymbol": {
+            "id": 1,
+            "symbol": {
+              "description": "",
+              "expectedResult": "",
+              "group": 2,
+              "hidden": false,
+              "id": 1,
+              "inputs": [],
+              "name": "reset",
+              "outputs": [],
+              "project": 1,
+              "steps": [
+                {
+                  "type": "action",
+                  "id": 1,
+                  "disabled": false,
+                  "ignoreFailure": false,
+                  "negated": false,
+                  "errorOutput": null,
+                  "symbol": 1,
+                  "action": {
+                    "type": "web_goto",
+                    "id": 1,
+                    "url": "/",
+                    "credentials": {
+                      "name": "",
+                      "password": ""
+                    }
+                  },
+                  "position": 0
+                },
+                {
+                  "type": "action",
+                  "id": 2,
+                  "disabled": false,
+                  "ignoreFailure": false,
+                  "negated": false,
+                  "errorOutput": null,
+                  "symbol": 1,
+                  "action": {
+                    "type": "web_waitForNode",
+                    "id": 2,
+                    "node": {
+                      "selector": "input[name=\"q\"]",
+                      "type": "CSS"
+                    },
+                    "waitCriterion": "CLICKABLE",
+                    "maxWaitTime": 10
+                  },
+                  "position": 1
+                }
+              ],
+              "successOutput": null
+            },
+            "parameterValues": []
+          }
+        },
+        {
+          "id": 2,
+          "shouldFail": false,
+          "expectedResult": "",
+          "pSymbol": {
+            "id": 2,
+            "symbol": {
+              "description": "",
+              "expectedResult": "",
+              "group": 2,
+              "hidden": false,
+              "id": 2,
+              "inputs": [
+                {
+                  "type": "input",
+                  "id": 1,
+                  "name": "term",
+                  "parameterType": "STRING",
+                  "private": false
+                }
+              ],
+              "name": "search",
+              "outputs": [],
+              "project": 1,
+              "steps": [
+                {
+                  "type": "action",
+                  "id": 3,
+                  "disabled": false,
+                  "ignoreFailure": false,
+                  "negated": false,
+                  "errorOutput": null,
+                  "symbol": 2,
+                  "action": {
+                    "type": "web_fill",
+                    "id": 3,
+                    "node": {
+                      "selector": "input[name=\"q\"]",
+                      "type": "CSS"
+                    },
+                    "value": "{{$term}}"
+                  },
+                  "position": 0
+                },
+                {
+                  "type": "action",
+                  "id": 4,
+                  "disabled": false,
+                  "ignoreFailure": false,
+                  "negated": false,
+                  "errorOutput": null,
+                  "symbol": 2,
+                  "action": {
+                    "type": "web_pressKey",
+                    "id": 4,
+                    "node": {
+                      "selector": "input[name=\"q\"]",
+                      "type": "CSS"
+                    },
+                    "key": "\\ue007"
+                  },
+                  "position": 1
+                }
+              ],
+              "successOutput": null
+            },
+            "parameterValues": [
+              {
+                "id": 1,
+                "parameter": {
+                  "type": "input",
+                  "id": 1,
+                  "name": "term",
+                  "parameterType": "STRING",
+                  "private": false
+                },
+                "value": "potato"
+              }
+            ]
+          }
+        }
+      ],
+      "postSteps": [],
+      "status": "DONE",
+      "parent": 1,
+      "project": 1
+    }
+  ],
+  "parent": null,
+  "project": 1
+}

@@ -168,8 +168,6 @@ public abstract class SymbolAction implements Serializable {
     @JsonIgnore
     protected Symbol symbol;
 
-
-
     /** The connections that the action can use. */
     @Transient
     @JsonIgnore

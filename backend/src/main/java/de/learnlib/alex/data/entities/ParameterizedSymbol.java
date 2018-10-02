@@ -124,18 +124,6 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
         this.symbol = symbol;
     }
 
-    @JsonProperty("symbol")
-    public void setSymbolId(Long id) {
-        this.symbol = new Symbol();
-        this.symbol.setId(id);
-    }
-
-    @JsonProperty("symbolFromName")
-    public void setSymbolFromName(String symbolName) {
-        symbol = new Symbol();
-        symbol.setName(symbolName);
-    }
-
     public List<SymbolParameterValue> getParameterValues() {
         return parameterValues;
     }

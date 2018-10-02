@@ -22,7 +22,7 @@
     <parent>
         <groupId>de.learnlib.alex</groupId>
         <artifactId>plugins-parent</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -72,7 +72,7 @@
                 <artifactId>testsuite-generator-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <sourceFile>${project.build.testSourceDirectory}/example.json</sourceFile>
+                    <sourceFile>${project.basedir}/src/test/resources/example.json</sourceFile>
                     <driverPath>/usr/bin/chromedriver</driverPath>
                 </configuration>
                 <executions>
@@ -81,6 +81,26 @@
                         <goals>
                             <goal>generate</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>add-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-test-sources</source>
+                            </sources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

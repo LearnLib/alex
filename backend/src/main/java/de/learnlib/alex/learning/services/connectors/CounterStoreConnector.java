@@ -37,9 +37,7 @@ public class CounterStoreConnector implements Connector {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /**
-     * The map that keeps track of all counters used by different urls. url -> (counterName -> counterValue).
-     */
+    /** The map that keeps track of all counters used by different urls. url -> (counterName -> counterValue). */
     private Map<String, Integer> countersMap;
 
     /** An instance of the counterDAO. */
@@ -77,6 +75,9 @@ public class CounterStoreConnector implements Connector {
 
     @Override
     public void dispose() {
+        if (countersMap.isEmpty()) {
+            return;
+        }
 
         // get all counters from the db
         Map<String, Counter> counters = new HashMap<>();

@@ -370,6 +370,21 @@ export const testSuiteViewComponent = {
             }
         }
 
+        exportForSelenium() {
+            let tests = this.selectedTests.getSelected();
+            if (!tests.length) {
+                this.ToastService.info('You have to select at least one test.');
+            } else {
+                const ts = JSON.parse(JSON.stringify(this.testSuite));
+                ts.tests = tests;
+                const name = `tests-selenium-${this.testSuite.name}-${DateUtils.YYYYMMDD()}`;
+                this.PromptService.prompt('Enter a name for the file', name).then(name => {
+                    this.DownloadService.downloadObject(ts, name);
+                    this.ToastService.success('The tests have been exported.');
+                });
+            }
+        }
+
         importTests() {
             this.TestService.openImportModal(this.testSuite)
                 .then((tests) => {

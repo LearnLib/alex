@@ -33,7 +33,7 @@ import javax.persistence.ManyToOne;
  * A step that is executed when a symbol is executed.
  */
 @Entity
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(name = "action", value = SymbolActionStep.class),
         @JsonSubTypes.Type(name = "symbol", value = SymbolPSymbolStep.class),

@@ -117,8 +117,9 @@ export class AlphabetSymbol {
         symbol.steps = symbol.steps.map(step => {
             const s = AlphabetSymbol.stepsToJson(step);
             if (s.type === 'symbol') {
-                s.pSymbol.symbolFromName = s.pSymbol.symbol.name;
-                delete s.pSymbol.symbol;
+                s.pSymbol.symbol = {
+                    name: s.pSymbol.symbol.name
+                };
             }
             return s;
         });
