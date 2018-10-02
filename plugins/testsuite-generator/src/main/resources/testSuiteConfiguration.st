@@ -1,10 +1,8 @@
 \<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 \<suite name ="<testSuiteName>">
-	\<test>
+	\<test name="<testSuiteName>">
 		\<classes>
-			<testClassNames:{ tcn |
-			\<class name="<tcn>"/>
-			}>
+			<testCaseNames:{ tcn | \<class name="de.learnlib.alex.plugin.generated.<tcn>"/> }>
 		\</classes>
 	\</test>
 \</suite>
