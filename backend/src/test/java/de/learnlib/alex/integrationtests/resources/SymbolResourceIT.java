@@ -341,8 +341,8 @@ public class SymbolResourceIT extends AbstractResourceIT {
                 + ",\"project\": " + projectId
                 + ",\"group\": " + groupId
                 + ",\"steps\": ["
-                + "{\"type\":\"symbol\", \"negated\": false, \"errorOutput\": null, \"ignoreFailure\": false, \"disabled\": false, \"pSymbol\": {\"symbolFromName\": \"s2\", \"parameterValues\": []}}"
-                + ",{\"type\":\"symbol\", \"negated\": false, \"errorOutput\": null, \"ignoreFailure\": false, \"disabled\": false, \"pSymbol\": {\"symbolFromName\": \"s3\", \"parameterValues\": []}}"
+                + "{\"type\":\"symbol\", \"negated\": false, \"errorOutput\": null, \"ignoreFailure\": false, \"disabled\": false, \"pSymbol\": {\"symbol\": {\"name\": \"s2\"}, \"parameterValues\": []}}"
+                + ",{\"type\":\"symbol\", \"negated\": false, \"errorOutput\": null, \"ignoreFailure\": false, \"disabled\": false, \"pSymbol\": {\"symbol\": {\"name\": \"s3\"}, \"parameterValues\": []}}"
                 + "]"
                 + "}";
     }
