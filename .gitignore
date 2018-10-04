@@ -24,8 +24,6 @@ frontend/src/main/javascript/package-lock\.json
 main/src/main/webapp/restdocs
 main/uploads
 
-plugins/testsuite-generator-test/logs
-
 # genereated user documentation
 documentation/src/main/docs/.vuepress/dist
 documentation/src/main/docs/node_modules
