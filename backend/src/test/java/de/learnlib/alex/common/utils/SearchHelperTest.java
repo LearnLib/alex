@@ -43,7 +43,6 @@ public class SearchHelperTest {
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
         FileStoreConnector fileStoreConnector = mock(FileStoreConnector.class);
         given(fileStoreConnector.getAbsoluteFileLocation(PROJECT_ID, "file.txt")).willReturn("/dir/file.text");
-        given(webSiteConnector.getBaseUrl()).willReturn(PROJECT_URL);
         given(connector.getConnector(VariableStoreConnector.class)).willReturn(variables);
         given(connector.getConnector(CounterStoreConnector.class)).willReturn(counter);
         given(connector.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);

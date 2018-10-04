@@ -83,7 +83,7 @@ public class CheckTextWebAction extends WebSymbolAction {
         try {
             final String source;
             if (nodeWithVariables.getSelector().equals("document")) {
-                source = connector.getPageSource();
+                source = connector.getDriver().getPageSource();
             } else {
                 source = connector.getElement(nodeWithVariables).getAttribute("innerHTML");
             }

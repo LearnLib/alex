@@ -37,16 +37,17 @@ public class AbstractExportedTest {
 
         testCases = export.getTestCases();
 
+        final String url = "<projectUrl>";
         final ChromeDriverConfig cdc = new ChromeDriverConfig();
-        final WebSiteConnector wsc = new WebSiteConnector("<projectUrl>", cdc);
-        final WebServiceConnector wService = new WebServiceConnector(wsc.getBaseUrl());
+        final WebSiteConnector wsc = new WebSiteConnector(url, cdc);
+        final WebServiceConnector wService = new WebServiceConnector(url);
         final VariableStoreConnector vsc = new VariableStoreConnector();
         final CounterStoreConnector csc = new CounterStoreConnector(null, null, null, new ArrayList\<>());
 
         cdc.setHeadless(<headless>);
 
         wsc.reset();
-        wsc.getDriver().get(wsc.getBaseUrl());
+        wsc.getDriver().get(url);
 
         cm = new ConnectorManager();
         cm.addConnector(wsc);

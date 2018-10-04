@@ -97,8 +97,6 @@ public class SetVariableActionTest {
         given(counters.get("counter")).willReturn(2);
 
         WebSiteConnector webSiteConnector = mock(WebSiteConnector.class);
-        given(webSiteConnector.getBaseUrl()).willReturn(PROJECT_URL);
-
         VariableStoreConnector variables = mock(VariableStoreConnector.class);
 
         ConnectorManager connector = mock(ConnectorManager.class);

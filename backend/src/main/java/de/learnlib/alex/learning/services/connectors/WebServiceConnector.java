@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.learning.services.connectors;
 
-import de.learnlib.alex.learning.services.BaseUrlManager;
 import org.glassfish.jersey.client.ClientProperties;
 
 import javax.ws.rs.client.Client;
@@ -38,9 +37,6 @@ public class WebServiceConnector implements Connector {
 
     /** The target behind the connector. */
     private WebTarget target;
-
-    /** A managed base url to use. */
-    private BaseUrlManager baseUrl;
 
     /** Internal field to determine if the target called at least once (-> other fields have a value). */
     private boolean init;
@@ -67,26 +63,8 @@ public class WebServiceConnector implements Connector {
      *         The base url used by the connector. All other paths will treated as suffix to this.
      */
     public WebServiceConnector(String baseUrl) {
-        this.baseUrl = new BaseUrlManager(baseUrl);
-        this.target = ClientBuilder.newClient().property(ClientProperties.FOLLOW_REDIRECTS, false)
-                .target(baseUrl);
+        this.target = ClientBuilder.newClient().property(ClientProperties.FOLLOW_REDIRECTS, false).target(baseUrl);
         this.client = ClientBuilder.newClient().property(ClientProperties.FOLLOW_REDIRECTS, false);
-    }
-
-    /**
-     * Constructor for testing purpose which sets the WebTarget to use.
-     *
-     * @param target
-     *         The WebTarget the connection will use.
-     * @param baseUrl
-     *         The base URL used by the connector. All other paths will treated as suffix to this.
-     * @param resetUrl
-     *         The url to reset the SUL. This URL is relative to the base URL.
-     */
-    public WebServiceConnector(WebTarget target, String baseUrl, String resetUrl) {
-        this.baseUrl = new BaseUrlManager(baseUrl);
-        this.target = target;
-        reset(resetUrl);
     }
 
     @Override
@@ -285,16 +263,6 @@ public class WebServiceConnector implements Connector {
                 cookies = response.getCookies();
             }
         }
-    }
-
-    /**
-     * Get the base url of the API to call. All requests will be based on this!
-     *
-     * @return The base url for all the requests.
-     * @see BaseUrlManager#getBaseUrl()
-     */
-    public String getBaseUrl() {
-        return baseUrl.getBaseUrl();
     }
 
     /**

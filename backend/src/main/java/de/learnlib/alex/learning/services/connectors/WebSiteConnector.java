@@ -69,10 +69,7 @@ public class WebSiteConnector implements Connector {
     }
 
     @Override
-    public void reset() throws Exception {
-        if (this.driver == null) {
-            this.driver = driverConfig.createDriver();
-        }
+    public void reset() {
     }
 
     @Override
@@ -125,7 +122,11 @@ public class WebSiteConnector implements Connector {
      *         If the application could not connect to the web driver.
      */
     public void get(String path, Credentials credentials) throws Exception {
-        String url = getAbsoluteUrl(path, credentials);
+        if (this.driver == null) {
+            this.driver = driverConfig.createDriver();
+        }
+
+        final String url = baseUrl.getAbsoluteUrl(path, credentials);
         int numRetries = 0;
         while (numRetries < MAX_RETRIES) {
             try {
@@ -187,60 +188,22 @@ public class WebSiteConnector implements Connector {
      *         If no element was found.
      */
     public List<WebElement> getElements(WebElementLocator locator) throws NoSuchElementException {
-        if (locator.getType().equals(WebElementLocator.Type.CSS)) {
-            return driver.findElements(By.cssSelector(CSSUtils.escapeSelector(locator.getSelector())));
-        } else {
-            return driver.findElements(By.xpath(locator.getSelector()));
+        switch(locator.getType()) {
+            case XPATH:
+                return driver.findElements(By.xpath(locator.getSelector()));
+            case CSS:
+                return driver.findElements(By.cssSelector(CSSUtils.escapeSelector(locator.getSelector())));
+            case JS:
+                if (driver instanceof JavascriptExecutor) {
+                    try {
+                        return (List<WebElement>) ((JavascriptExecutor) driver).executeScript(locator.getSelector());
+                    } catch (ClassCastException e) {
+                        throw new NoSuchElementException("Return result is not a WebElement");
+                    }
+                }
+            default:
+                throw new NoSuchElementException("Invalid selector type");
         }
-    }
-
-    /**
-     * Get a Get a {@link WebElement} of a link by its visible text.
-     *
-     * @param text
-     *         The visible text of the link to look for.
-     * @return The link with the text.
-     * @throws NoSuchElementException
-     *         If no Element was found.
-     */
-    public WebElement getLinkByText(String text) throws NoSuchElementException {
-        return driver.findElement(By.linkText(text));
-    }
-
-    /**
-     * Get the source code of the current page.
-     *
-     * @return The code of the page.
-     */
-    public String getPageSource() {
-        return driver.getPageSource();
-    }
-
-    /**
-     * Get the base url of the API to call. All requests will be based on this!
-     *
-     * @return The base url for all the requests.
-     * @see BaseUrlManager#getBaseUrl()
-     */
-    public String getBaseUrl() {
-        return baseUrl.getBaseUrl();
-    }
-
-    /**
-     * @param path
-     *         The path to append on the base url.
-     * @param credentials
-     *         The credentials to use for HTTP Basic Auth. Can be null.
-     * @return An absolute URL as String
-     * @see BaseUrlManager#getAbsoluteUrl(String)
-     */
-    private String getAbsoluteUrl(String path, Credentials credentials) {
-        return baseUrl.getAbsoluteUrl(path, credentials);
-    }
-
-    /** @return The browser config. */
-    public AbstractWebDriverConfig getBrowser() {
-        return driverConfig;
     }
 
     /**

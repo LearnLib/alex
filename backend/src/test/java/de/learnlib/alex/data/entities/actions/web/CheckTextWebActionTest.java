@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.io.File;
@@ -62,6 +63,7 @@ public class CheckTextWebActionTest extends WebActionTest {
 
         given(connectors.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
         given(connectors.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
+        given(webSiteConnector.getDriver()).willReturn(mock(WebDriver.class));
     }
 
     @Test
@@ -84,7 +86,7 @@ public class CheckTextWebActionTest extends WebActionTest {
 
     @Test
     public void shouldEncodeHtmlCharsInValue() {
-        given(webSiteConnector.getPageSource()).willReturn(createHtmlDoc("<div>this is a $&amp; test</div>"));
+        given(webSiteConnector.getDriver().getPageSource()).willReturn(createHtmlDoc("<div>this is a $&amp; test</div>"));
         checkText.setValue("this is a $& test");
 
         assertTrue(checkText.executeAction(connectors).isSuccess());
@@ -92,14 +94,14 @@ public class CheckTextWebActionTest extends WebActionTest {
 
     @Test
     public void shouldReturnOKIfTextWasFoundWithoutRegexp() {
-        given(webSiteConnector.getPageSource()).willReturn(checkText.getValue());
+        given(webSiteConnector.getDriver().getPageSource()).willReturn(checkText.getValue());
 
         assertTrue(checkText.executeAction(connectors).isSuccess());
     }
 
     @Test
     public void shouldReturnFailedIfTextWasNotFoundWithoutRegexp() {
-        given(webSiteConnector.getPageSource()).willReturn("");
+        given(webSiteConnector.getDriver().getPageSource()).willReturn("");
 
         assertFalse(checkText.executeAction(connectors).isSuccess());
     }
@@ -109,7 +111,7 @@ public class CheckTextWebActionTest extends WebActionTest {
         checkText.setValue("F[oO]+ B[a]+r");
         checkText.setRegexp(true);
 
-        given(webSiteConnector.getPageSource()).willReturn("FoO Baaaaar");
+        given(webSiteConnector.getDriver().getPageSource()).willReturn("FoO Baaaaar");
 
         assertTrue(checkText.executeAction(connectors).isSuccess());
     }
@@ -119,7 +121,7 @@ public class CheckTextWebActionTest extends WebActionTest {
         checkText.setValue("F[oO]+ B[a]+r");
         checkText.setRegexp(true);
 
-        given(webSiteConnector.getPageSource()).willReturn("F BAr");
+        given(webSiteConnector.getDriver().getPageSource()).willReturn("F BAr");
 
         assertFalse(checkText.executeAction(connectors).isSuccess());
     }
