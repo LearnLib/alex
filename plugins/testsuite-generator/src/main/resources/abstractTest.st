@@ -25,7 +25,7 @@ public class AbstractExportedTest {
     private List\<TestCase> testCases;
 
     @BeforeSuite
-    public void setupSuite() throws Exception {
+    public void intern_setupSuite() throws Exception {
 
         final String driverPath = "<driverPath>";
         System.setProperty("webdriver.chrome.driver", driverPath);
@@ -55,12 +55,12 @@ public class AbstractExportedTest {
         cm.addConnector(csc);
     }
 
-    protected TestCase getTestCase(int idx) {
+    protected TestCase intern_getTestCase(int idx) {
         return this.testCases.get(idx);
     }
 
     @AfterSuite(alwaysRun = true)
-    public void tearDownSuite() {
+    public void intern_tearDownSuite() {
         try {
             cm.dispose();
         } finally {

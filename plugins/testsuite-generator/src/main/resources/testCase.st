@@ -22,8 +22,8 @@ public class <testClassName> extends AbstractExportedTest {
     private List\<TestCaseStep> testCase;
 
     @BeforeClass
-    public void setup() {
-        this.testCaseExport = super.getTestCase(<testCaseIndex>);
+    public void intern_setup() {
+        this.testCaseExport = super.intern_getTestCase(<testCaseIndex>);
         this.testCase = testCaseExport.getSteps();
         this.testCase.forEach(testStep -> {
                     final Symbol s = testStep.getPSymbol().getSymbol();
@@ -42,7 +42,7 @@ public class <testClassName> extends AbstractExportedTest {
     <testCases>
 
     @AfterClass
-    public void destroy() {
+    public void intern_destroy() {
         testCaseExport.getPostSteps().forEach(step -> step.execute(super.cm));
     }
 }

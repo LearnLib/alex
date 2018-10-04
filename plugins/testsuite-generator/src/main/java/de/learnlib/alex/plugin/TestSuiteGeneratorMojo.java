@@ -136,7 +136,7 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
 
         template.add("testName", input.getSymbol().getName());
         template.add("shouldFail", step.isShouldFail());
-        template.add("testMethodMethod", escape(input.getSymbol().getName()));
+        template.add("testMethodName", escape(input.getSymbol().getName()));
         template.add("testMethodIndex", idx);
 
         if (idx > 0) {
