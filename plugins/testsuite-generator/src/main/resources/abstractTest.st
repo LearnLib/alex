@@ -59,9 +59,12 @@ public class AbstractExportedTest {
         return this.testCases.get(idx);
     }
 
-    @AfterSuite
+    @AfterSuite(alwaysRun = true)
     public void tearDownSuite() {
-        cm.dispose();
-        cm.post();
+        try {
+            cm.dispose();
+        } finally {
+            cm.post();
+        }
     }
 }

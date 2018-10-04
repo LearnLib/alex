@@ -136,7 +136,6 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
 
     @Override
     public void disposeContext(ConnectorManager connectorManager) {
-
         try {
             if (this.postSymbol != null) {
                 this.postSymbol.execute(connectorManager);
@@ -147,7 +146,7 @@ public class ConnectorContextHandler implements ContextExecutableInputSUL.Contex
         try {
             pool.put(connectorManager);
             connectorManager.dispose();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             throw new LearnerException(e.getMessage(), e);
         }
     }

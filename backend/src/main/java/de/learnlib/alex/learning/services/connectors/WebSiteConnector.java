@@ -77,11 +77,13 @@ public class WebSiteConnector implements Connector {
 
     @Override
     public void dispose() {
-        driver.manage().deleteAllCookies();
-        if (driver instanceof JavascriptExecutor) {
-            final JavascriptExecutor js = (JavascriptExecutor) driver;
-            js.executeScript("window.localStorage.clear();");
-            js.executeScript("window.sessionStorage.clear();");
+        if (driver != null) {
+            driver.manage().deleteAllCookies();
+            if (driver instanceof JavascriptExecutor) {
+                final JavascriptExecutor js = (JavascriptExecutor) driver;
+                js.executeScript("window.localStorage.clear();");
+                js.executeScript("window.sessionStorage.clear();");
+            }
         }
     }
 
