@@ -116,6 +116,7 @@ export const actionType = {
     GENERAL_SET_COUNTER: 'setCounter',
     GENERAL_SET_VARIABLE_BY_COOKIE: 'setVariableByCookie',
     GENERAL_SET_VARIABLE_BY_JSON: 'setVariableByJSON',
+    GENERAL_SET_VARIABLE_BY_HTTP_STATUS: 'setVariableByHttpStatus',
     GENERAL_SET_VARIABLE_BY_HTTP_RESPONSE: 'setVariableByHttpResponse',
     GENERAL_SET_VARIABLE_BY_HTML: 'setVariableByHTML',
     GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE: 'setVariableByNodeAttribute',

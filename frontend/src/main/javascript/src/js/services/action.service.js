@@ -63,6 +63,7 @@ import {WaitForNodeAction} from '../entities/actions/web/wait-for-node-action';
 import {WaitForTextAction} from '../entities/actions/web/wait-for-text-action';
 import {WaitForTitleAction} from '../entities/actions/web/wait-for-title-action';
 import {WaitForNodeAttributeAction} from '../entities/actions/web/wiat-for-node-attribute-action';
+import {SetVariableByHttpStatusAction} from "../entities/actions/misc/set-variable-by-http-status";
 
 /**
  * The service that is used to create new actions.
@@ -161,6 +162,8 @@ export class ActionService {
                 return new SetVariableByNodeGeneralAction(data);
             case actionType.GENERAL_SET_VARIABLE_BY_HTTP_RESPONSE:
                 return new SetVariableByHttpResponseAction(data);
+            case actionType.GENERAL_SET_VARIABLE_BY_HTTP_STATUS:
+                return new SetVariableByHttpStatusAction(data);
             case actionType.GENERAL_SET_VARIABLE:
                 return new SetVariableGeneralAction(data);
             case actionType.GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE:

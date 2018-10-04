@@ -95,6 +95,7 @@ export class ActionCreateModalComponent {
                 {type: actionType.GENERAL_SET_VARIABLE, text: 'Set variable'},
                 {type: actionType.GENERAL_SET_VARIABLE_BY_COOKIE, text: 'Set variable by cookie'},
                 {type: actionType.GENERAL_SET_VARIABLE_BY_HTTP_RESPONSE, text: 'Set variable by HTTP response'},
+                {type: actionType.GENERAL_SET_VARIABLE_BY_HTTP_STATUS, text: 'Set variable by HTTP status'},
                 {type: actionType.GENERAL_SET_VARIABLE_BY_HTML, text: 'Set variable by HTML'},
                 {type: actionType.GENERAL_SET_VARIABLE_BY_JSON, text: 'Set variable by JSON'},
                 {type: actionType.GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE, text: 'Set variable by node attribute'},

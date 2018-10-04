@@ -248,6 +248,7 @@ import {TestService} from './services/test.service';
 import {ToastService} from './services/toast.service';
 import {UiService} from './services/ui.service';
 import {UserService} from './services/user.service';
+import {setVariableByHttpStatusActionFormComponent} from "./components/forms/actions/misc/set-variable-by-http-status-action-form/set-variable-by-http-status-action-form.component";
 
 angular
     .module('ALEX', [
@@ -479,6 +480,7 @@ angular
     .component('setVariableByNodeAttributeActionForm', setVariableByNodeAttributeActionFormComponent)
     .component('setVariableByNodeCountActionForm', setVariableByNodeCountActionFormComponent)
     .component('setVariableByRegexGroupActionForm', setVariableByRegexGroupActionFormComponent)
+    .component('setVariableByHttpStatusActionForm', setVariableByHttpStatusActionFormComponent)
     .component('waitActionForm', waitActionFormComponent)
 
     // misc components

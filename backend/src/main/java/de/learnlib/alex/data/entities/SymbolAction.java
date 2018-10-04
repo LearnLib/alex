@@ -28,6 +28,7 @@ import de.learnlib.alex.data.entities.actions.misc.SetVariableAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByCookieAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByHTMLElementAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByHttpResponse;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableByHttpStatus;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByJSONAttributeAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByNodeAttributeAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByNodeCountAction;
@@ -115,6 +116,7 @@ import java.util.Objects;
         @JsonSubTypes.Type(name = "setVariableByNodeAttribute", value = SetVariableByNodeAttributeAction.class),
         @JsonSubTypes.Type(name = "setVariableByNodeCount", value = SetVariableByNodeCountAction.class),
         @JsonSubTypes.Type(name = "setVariableByRegexGroup", value = SetVariableByRegexGroup.class),
+        @JsonSubTypes.Type(name = "setVariableByHttpStatus", value = SetVariableByHttpStatus.class),
         // Web Actions
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
         @JsonSubTypes.Type(name = "web_alertAcceptDismiss", value = AlertAcceptDismissAction.class),
