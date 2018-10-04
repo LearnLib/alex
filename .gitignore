@@ -7,7 +7,9 @@ main/logs
 target
 *.class
 hs_err_pid*
+
 backend/logs
+backend/debug.log
 
 # JavaScript
 cli/src/main/javascript/node_modules
@@ -15,16 +17,14 @@ frontend/src/main/javascript/node_modules
 frontend/src/main/javascript/dist
 frontend/src/main/javascript/test/coverage
 frontend/src/main/javascript/assets/fonts
-
-# Auto Generated Swagger Doc
-main/src/main/webapp/restdocs
-
-main/uploads
-
 frontend/src/main/javascript/npm-debug\.log
 frontend/src/main/javascript/package-lock\.json
 
-backend/debug.log
+# Auto Generated Swagger Doc
+main/src/main/webapp/restdocs
+main/uploads
+
+plugins/testsuite-generator-test/logs
 
 # genereated user documentation
 documentation/src/main/docs/.vuepress/dist

@@ -91,7 +91,7 @@ public class AbstractLearnerConfigurationTest {
 
     @Test
     public void shouldReadJSONCorrectly() throws IOException, URISyntaxException {
-        String json = "{\"symbols\": [{\"symbol\":1, \"parameterValues\":[]},{\"symbol\":2, \"parameterValues\":[]}],\"algorithm\":{\"name\":\"DHC\"}, "
+        String json = "{\"symbols\": [{\"symbol\":{\"id\":1}, \"parameterValues\":[]},{\"symbol\":{\"id\":2}, \"parameterValues\":[]}],\"algorithm\":{\"name\":\"DHC\"}, "
                 + "\"driverConfig\":" + driverConfig + ","
                 + "\"eqOracle\":{\"type\": \"complete\"}}";
 

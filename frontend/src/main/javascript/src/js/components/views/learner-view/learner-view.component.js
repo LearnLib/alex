@@ -179,7 +179,7 @@ class LearnerViewComponentComponent {
     resumeLearning() {
         const config = JSON.parse(JSON.stringify(this.resumeConfig));
         config.urls = this.resumeConfig.urls.map(u => u.id);
-        config.symbolsToAdd.forEach(ps => ps.symbol = ps.symbol.id);
+        config.symbolsToAdd.forEach(ps => ps.symbol = {id: ps.symbol.id});
 
         this.LearnerResource.resume(this.project.id, this.finalResult.testNo, config)
             .then(() => {

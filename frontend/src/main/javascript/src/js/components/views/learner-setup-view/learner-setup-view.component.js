@@ -142,12 +142,12 @@ class LearnerSetupViewComponent {
             if (this.pSymbols.length > 0) {
                 const config = JSON.parse(JSON.stringify(this.learnConfiguration));
                 config.symbols = JSON.parse(JSON.stringify(this.pSymbols));
-                config.symbols.forEach(ps => ps.symbol = ps.symbol.id);
+                config.symbols.forEach(ps => ps.symbol = {id: ps.symbol.id});
                 config.resetSymbol = JSON.parse(JSON.stringify(this.pResetSymbol));
-                config.resetSymbol.symbol = config.resetSymbol.symbol.id;
+                config.resetSymbol.symbol = {id: config.resetSymbol.symbol.id};
                 if (this.pPostSymbol != null) {
                     config.postSymbol = JSON.parse(JSON.stringify(this.pPostSymbol));
-                    config.postSymbol.symbol = config.postSymbol.symbol.id;
+                    config.postSymbol.symbol = {id: config.postSymbol.symbol.id};
                 }
                 config.urls = this.learnConfiguration.urls.map(u => u.id);
 

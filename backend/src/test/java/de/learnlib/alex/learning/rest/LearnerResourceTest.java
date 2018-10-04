@@ -75,8 +75,8 @@ public class LearnerResourceTest extends JerseyTest {
     private static final long TEST_NO = 2;
     private static final long RESET_SYMBOL_TEST_ID = 3;
     private static final String START_JSON =
-            "{\"symbols\": [{\"symbol\":" + 1 + ",\"parameterValues\":[]},{\"symbol\":" + 1 + ",\"parameterValues\":[]}]"
-                    + ",\"resetSymbol\":{\"symbol\": " + RESET_SYMBOL_TEST_ID + ", \"parameterValues\":[]}"
+            "{\"symbols\": [{\"symbol\":{\"id\":1},\"parameterValues\":[]},{\"symbol\":{\"id\":1},\"parameterValues\":[]}]"
+                    + ",\"resetSymbol\":{\"symbol\": {\"id\":" + RESET_SYMBOL_TEST_ID + "}, \"parameterValues\":[]}"
                     + ",\"algorithm\":{\"name\":\"TTT\"}"
                     + ",\"eqOracle\": {\"type\": \"complete\"}"
                     + ",\"driverConfig\": " + DRIVER_CONFIG + "}";
@@ -349,7 +349,8 @@ public class LearnerResourceTest extends JerseyTest {
     @Test
     public void shouldReadTheCorrectOutput() {
         String json =
-                "{\"symbols\": {\"resetSymbol\": {\"symbol\":" + RESET_SYMBOL_TEST_ID + ",\"parameterValues\":[]}, \"symbols\": [{\"symbol\":1,\"parameterValues\":[]},{\"symbol\":2,\"parameterValues\":[]}]}, \"driverConfig\": " + DRIVER_CONFIG + "}";
+                "{\"symbols\": {\"resetSymbol\": {\"symbol\":{\"id\":" + RESET_SYMBOL_TEST_ID + "},\"parameterValues\":[]}, "
+                        + "\"symbols\": [{\"symbol\":{\"id\":1},\"parameterValues\":[]},{\"symbol\":{\"id\":2},\"parameterValues\":[]}]}, \"driverConfig\": " + DRIVER_CONFIG + "}";
 
         Response response = target("/learner/" + PROJECT_TEST_ID + "/outputs")
                 .request()
@@ -391,7 +392,8 @@ public class LearnerResourceTest extends JerseyTest {
         given(projectDAO.getByID(USER_TEST_ID, PROJECT_TEST_ID)).willThrow(NotFoundException.class);
 
         String json =
-                "{\"symbols\": {\"resetSymbol\": {\"symbol\":" + RESET_SYMBOL_TEST_ID + ",\"parameterValues\":[]}, \"symbols\": [{\"symbol\":1,\"parameterValues\":[]},{\"symbol\":2,\"parameterValues\":[]}]}, \"driverConfig\": " + DRIVER_CONFIG + "}";
+                "{\"symbols\": {\"resetSymbol\": {\"symbol\":{\"id\":" + RESET_SYMBOL_TEST_ID + "},\"parameterValues\":[]}, "
+                        + "\"symbols\": [{\"symbol\":{\"id\":1},\"parameterValues\":[]},{\"symbol\":{\"id\":2},\"parameterValues\":[]}]}, \"driverConfig\": " + DRIVER_CONFIG + "}";
         Response response =
                 target("/learner/" + PROJECT_TEST_ID + "/outputs").request().header("Authorization", adminToken)
                         .post(Entity.json(json));
@@ -407,7 +409,8 @@ public class LearnerResourceTest extends JerseyTest {
                 .willThrow(NotFoundException.class);
 
         String json =
-                "{\"symbols\": {\"resetSymbol\": {\"symbol\":" + RESET_SYMBOL_TEST_ID + ",\"parameterValues\":[]}, \"symbols\": [{\"symbol\":1,\"parameterValues\":[]},{\"symbol\":2,\"parameterValues\":[]}]}, \"driverConfig\": " + DRIVER_CONFIG + "}";
+                "{\"symbols\": {\"resetSymbol\": {\"symbol\":{\"id\":" + RESET_SYMBOL_TEST_ID + "},\"parameterValues\":[]}, "
+                        + "\"symbols\": [{\"symbol\":{\"id\":1},\"parameterValues\":[]},{\"symbol\":{\"id\":2},\"parameterValues\":[]}]}, \"driverConfig\": " + DRIVER_CONFIG + "}";
 
         Response response =
                 target("/learner/" + PROJECT_TEST_ID + "/outputs").request().header("Authorization", adminToken)
@@ -421,7 +424,7 @@ public class LearnerResourceTest extends JerseyTest {
     @Test
     public void shouldReturn404IfOutputShouldBeCreatedWithoutAnyResetSymbol() throws NotFoundException {
         String json =
-                "{\"symbols\": {\"symbols\": [{\"symbol\":1,\"parameterValues\":[]},{\"symbol\":2,\"parameterValues\":[]}]}, \"driverConfig\": " + DRIVER_CONFIG + "}";
+                "{\"symbols\": {\"symbols\": [{\"symbol\":{\"id\":1},\"parameterValues\":[]},{\"symbol\":{\"id\":2},\"parameterValues\":[]}]}, \"driverConfig\": " + DRIVER_CONFIG + "}";
 
         Response response =
                 target("/learner/" + PROJECT_TEST_ID + "/outputs").request().header("Authorization", adminToken)
@@ -437,10 +440,10 @@ public class LearnerResourceTest extends JerseyTest {
         given(symbolDAO.get(admin, PROJECT_TEST_ID, 2L)).willThrow(NotFoundException.class);
 
         String json = "{\"symbols\":{"
-                + "\"resetSymbol\":{\"symbol\":" + RESET_SYMBOL_TEST_ID + ", \"parameterValues\":[]}"
+                + "\"resetSymbol\":{\"symbol\": {\"id\": " + RESET_SYMBOL_TEST_ID + "}, \"parameterValues\":[]}"
                 + ",\"symbols\":["
-                + "{\"symbol\":" + 1 + ", \"parameterValues\":[]}"
-                + ",{\"symbol\":" + 2 + ", \"parameterValues\":[]}"
+                + "{\"symbol\":{\"id\": " + 1 + "}, \"parameterValues\":[]}"
+                + ",{\"symbol\":{\"id\": " + 2 + "}, \"parameterValues\":[]}"
                 + "]},\"driverConfig\":" + DRIVER_CONFIG + "}";
 
         Response response = target("/learner/" + PROJECT_TEST_ID + "/outputs").request()
