@@ -35,14 +35,12 @@
         <dependency>
             <groupId>de.learnlib.alex</groupId>
             <artifactId>alex-backend</artifactId>
-            <scope>test</scope>
             <classifier>classes</classifier>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>de.learnlib.alex</groupId>
             <artifactId>alex-backend</artifactId>
-            <scope>test</scope>
             <type>war</type>
             <version>${project.version}</version>
         </dependency>
@@ -78,6 +76,7 @@
             </build>
         </profile>
     </profiles>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -100,17 +99,38 @@
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>add-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>de.learnlib.alex.plugin.test.TestGenerator</mainClass>
+                            <arguments>
+                                <argument>${project.build.directory}/generated-test-resources/test-suite.json</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>de.learnlib.alex</groupId>
                 <artifactId>testsuite-generator-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <sourceFile>${project.basedir}/src/test/resources/test-suite.json</sourceFile>
+                    <sourceFile>${project.build.directory}/generated-test-resources/test-suite.json</sourceFile>
                     <driverPath>/usr/bin/chromedriver</driverPath>
                     <projectURL>http://google.de</projectURL>
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <phase>generate-test-sources</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -133,6 +153,20 @@
                             <sources>
                                 <source>${project.build.directory}/generated-test-sources</source>
                             </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-test-resources</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>add-test-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/generated-test-resources</directory>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>

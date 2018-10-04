@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package de.learnlib.alex.plugin.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
@@ -29,6 +30,7 @@ import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.entities.TestSuite;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class TestGenerator {
@@ -39,8 +41,6 @@ public class TestGenerator {
         if (args.length != 1) {
             throw new IllegalAccessException("The argument for the path of the json file has to be specified.");
         }
-
-        final String path = args[0];
 
         final TestCaseStep s1 = new TestCaseStep();
         s1.setPSymbol(createResetSymbol());
@@ -62,7 +62,9 @@ public class TestGenerator {
         final ObjectMapper om = new ObjectMapper();
         final String ts = om.writeValueAsString(testSuite);
 
-        Files.write(Paths.get(path), ts.getBytes());
+        final Path path = Paths.get(args[0]);
+        path.toFile().getParentFile().mkdirs();
+        Files.write(path, ts.getBytes());
     }
 
     private static ParameterizedSymbol createResetSymbol() {
