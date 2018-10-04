@@ -70,7 +70,7 @@
                         <configuration>
                             <skip>false</skip>
                             <suiteXmlFiles>
-                                <suiteXmlFile>${project.build.directory}/generated-test-sources/Root.xml</suiteXmlFile>
+                                <suiteXmlFile>${project.build.directory}/generated-test-sources/GoogleTestSuite.xml</suiteXmlFile>
                             </suiteXmlFiles>
                         </configuration>
                     </plugin>
@@ -104,7 +104,7 @@
                 <artifactId>testsuite-generator-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <sourceFile>${project.basedir}/src/test/resources/example.json</sourceFile>
+                    <sourceFile>${project.basedir}/src/test/resources/test-suite.json</sourceFile>
                     <driverPath>/usr/bin/chromedriver</driverPath>
                     <projectURL>http://google.de</projectURL>
                 </configuration>
