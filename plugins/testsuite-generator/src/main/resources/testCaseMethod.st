@@ -1,6 +1,6 @@
 
     // Test: <testName>
-    // Expected Output: <output>
+    // Expected Output: should <if(!shouldFail)>not <endif>fail
     @Test<if(previousTestMethodName)>(dependsOnMethods = "<previousTestMethodName>")<endif>
     public void <testName>() {
         TestCaseStep step = testCase.get(<testMethodIndex>);
