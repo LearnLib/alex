@@ -107,36 +107,26 @@ import {testSuiteGenerationWidgetComponent} from './components/widgets/test-suit
 import {learnerResultListItemComponent} from './components/views/learner-results-view/learner-result-list-item/learner-result-list-item.component';
 import {learnerResultPanelComponent} from './components/learner-result-panel/learner-result-panel.component';
 import {loadScreenComponent} from './components/load-screen/load-screen.component';
-import {actionCreateModalHandleDirective} from './components/modals/action-create-modal/action-create-modal-handle.directive';
 import {actionCreateModalComponent} from './components/modals/action-create-modal/action-create-modal.component';
 import {actionSearchFormComponent} from './components/modals/action-create-modal/action-search-form/action-search-form.component';
-import {actionEditModalHandleDirective} from './components/modals/action-edit-modal/action-edit-modal-handle.directive';
 import {actionEditModalComponent} from './components/modals/action-edit-modal/action-edit-modal.component';
 import {confirmModalComponent} from './components/modals/confirm-modal/confirm-modal.component';
 import {counterCreateModalComponent} from './components/modals/counter-create-modal/counter-create-modal.component';
-import {hypothesisLayoutSettingsModalHandleDirective} from './components/modals/hypothesis-layout-settings-modal/hypothesis-layout-settings-modal-handle.directive';
 import {hypothesisLayoutSettingsModalComponent} from './components/modals/hypothesis-layout-settings-modal/hypothesis-layout-settings-modal.component';
-import {learnerResultDetailsModalHandleDirective} from './components/modals/learner-result-details-modal/learner-result-details-modal-handle.directive';
 import {learnerResultDetailsModalComponent} from './components/modals/learner-result-details-modal/learner-result-details-modal.component';
-import {resultListModalHandleDirective} from './components/modals/learner-result-list-modal/learner-result-list-modal-handle.directive';
 import {resultListModalComponent} from './components/modals/learner-result-list-modal/learner-result-list-modal.component';
-import {learnerSetupSettingsModalHandleDirective} from './components/modals/learner-setup-settings-modal/learner-setup-settings-modal-handle.directive';
 import {learnerSetupSettingsModalComponent} from './components/modals/learner-setup-settings-modal/learner-setup-settings-modal.component';
 import {projectEditModalComponent} from './components/modals/project-edit-modal/project-edit-modal.component';
 import {promptModalComponent} from './components/modals/prompt-modal/prompt-modal.component';
 import {separatingWordModalComponent} from './components/modals/separating-word-modal/separating-word-modal.component';
-import {symbolCreateModalHandleDirective} from './components/modals/symbol-create-modal/symbol-create-modal-handle.directive';
 import {symbolCreateModalComponent} from './components/modals/symbol-create-modal/symbol-create-modal.component';
-import {symbolEditModalHandleDirective} from './components/modals/symbol-edit-modal/symbol-edit-modal-handle.directive';
 import {symbolEditModalComponent} from './components/modals/symbol-edit-modal/symbol-edit-modal.component';
-import {symbolGroupCreateModalHandleDirective} from './components/modals/symbol-group-create-modal/symbol-group-create-modal-handle.directive';
 import {symbolGroupCreateModalComponent} from './components/modals/symbol-group-create-modal/symbol-group-create-modal.component';
 import {symbolGroupEditModalComponent} from './components/modals/symbol-group-edit-modal/symbol-group-edit-modal.component';
 import {symbolGroupMoveModalComponent} from './components/modals/symbol-group-move-modal/symbol-group-move-modal.component';
 import {symbolParameterCreateModalComponent} from './components/modals/symbol-parameter-create-modal/symbol-parameter-create-modal.component';
 import {symbolParameterEditModalComponent} from './components/modals/symbol-parameter-edit-modal/symbol-parameter-edit-modal.component';
 import {symbolsImportModalComponent} from './components/modals/symbols-import-modal/symbols-import-modal.component';
-import {symbolMoveModalHandleDirective} from './components/modals/symbols-move-modal/symbols-move-modal-handle.directive';
 import {symbolMoveModalComponent} from './components/modals/symbols-move-modal/symbols-move-modal.component';
 import {testConfigModalComponent} from './components/modals/test-config-modal/test-config-modal.component';
 import {testsImportModalComponent} from './components/modals/tests-import-modal/tests-import-modal.component';
@@ -321,18 +311,6 @@ angular
     .service('ProjectService', ProjectService)
     .service('UserService', UserService)
     .service('UiService', UiService)
-
-    // modal handles
-    .directive('actionCreateModalHandle', actionCreateModalHandleDirective)
-    .directive('actionEditModalHandle', actionEditModalHandleDirective)
-    .directive('hypothesisLayoutSettingsModalHandle', hypothesisLayoutSettingsModalHandleDirective)
-    .directive('learnerResultDetailsModalHandle', learnerResultDetailsModalHandleDirective)
-    .directive('learnerSetupSettingsModalHandle', learnerSetupSettingsModalHandleDirective)
-    .directive('symbolCreateModalHandle', symbolCreateModalHandleDirective)
-    .directive('symbolEditModalHandle', symbolEditModalHandleDirective)
-    .directive('symbolGroupCreateModalHandle', symbolGroupCreateModalHandleDirective)
-    .directive('symbolMoveModalHandle', symbolMoveModalHandleDirective)
-    .directive('resultListModalHandle', resultListModalHandleDirective)
 
     // modals
     .component('actionCreateModal', actionCreateModalComponent)

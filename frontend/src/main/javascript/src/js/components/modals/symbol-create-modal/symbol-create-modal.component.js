@@ -60,7 +60,7 @@ export class SymbolCreateModalComponent {
     }
 
     $onInit() {
-        this.groups = this.resolve.modalData.groups;
+        this.groups = this.resolve.groups;
         this.selectedSymbolGroup = this._getDefaultGroup();
         this.symbol.group = this.selectedSymbolGroup.id;
     }
@@ -75,7 +75,7 @@ export class SymbolCreateModalComponent {
         return this.SymbolResource.create(this.project.id, this.symbol)
             .then(symbol => {
                 this.ToastService.success(`Created symbol "${symbol.name}"`);
-                this.resolve.modalData.onCreated({symbol});
+                this.resolve.onCreated(symbol);
                 this.symbol = new AlphabetSymbol();
                 this.symbol.group = this._getDefaultGroup().id;
 

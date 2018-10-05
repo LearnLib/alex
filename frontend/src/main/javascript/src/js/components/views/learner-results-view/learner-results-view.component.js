@@ -31,11 +31,13 @@ class ResultsViewComponent {
      * @param {PromptService} PromptService
      * @param {ToastService} ToastService
      * @param {LearnerResultDownloadService} LearnerResultDownloadService
+     * @param $uibModal
      */
     // @ngInject
     constructor($state, ProjectService, LearnResultResource, PromptService, ToastService,
-                LearnerResultDownloadService) {
+                LearnerResultDownloadService, $uibModal) {
         this.$state = $state;
+        this.$uibModal = $uibModal;
         this.PromptService = PromptService;
         this.ToastService = ToastService;
         this.LearnResultResource = LearnResultResource;
@@ -160,6 +162,16 @@ class ResultsViewComponent {
             .catch(err => {
                 this.ToastService.danger(`The result could not be cloned. ${err.data.message}`);
             });
+    }
+
+    openResultDetailsModal(result) {
+        this.$uibModal.open({
+            component: 'learnerResultDetailsModal',
+            resolve: {
+                result: () => result,
+                current: () => null
+            }
+        })
     }
 
     get project() {

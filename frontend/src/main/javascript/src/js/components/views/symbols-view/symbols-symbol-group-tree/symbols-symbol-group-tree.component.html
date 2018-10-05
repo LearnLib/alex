@@ -48,7 +48,7 @@
                     </button>
                     <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
                         <li>
-                            <a href="" symbol-edit-modal-handle symbol="symbol">
+                            <a href="" ng-click="vm.openSymbolEditModal(symbol)">
                                 <i class="fa fa-edit fa-fw"></i> Edit
                             </a>
                         </li>
@@ -58,7 +58,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="" symbol-move-modal-handle symbols="[symbol]">
+                            <a href="" ng-click="vm.openSymbolsMoveModal([symbol])">
                                 <i class="fa fa-exchange fa-fw"></i> Move
                             </a>
                         </li>

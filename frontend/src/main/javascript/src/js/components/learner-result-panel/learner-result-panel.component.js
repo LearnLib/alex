@@ -34,14 +34,12 @@ class LearnerResultPanelComponent {
      *
      * @param $scope
      * @param {DownloadService} DownloadService
-     * @param {EventBus} EventBus
      * @param {PromptService} PromptService
      * @param {Object} $uibModal
      */
     // @ngInject
-    constructor($scope, DownloadService, EventBus, PromptService, $uibModal) {
+    constructor($scope, DownloadService, PromptService, $uibModal) {
         this.$scope = $scope;
-        this.EventBus = EventBus;
         this.DownloadService = DownloadService;
         this.PromptService = PromptService;
         this.$uibModal = $uibModal;
@@ -90,11 +88,6 @@ class LearnerResultPanelComponent {
         this.$scope.$watch(() => this.result, () => {
             if (this.result) this.pointer = this.result.steps.length - 1;
         });
-
-        // wait for hypothesis layout settings to change
-        this.EventBus.on(events.HYPOTHESIS_LAYOUT_UPDATED, (evt, data) => {
-            this.layoutSettings = data.settings;
-        }, this.$scope);
     }
 
     /**
@@ -251,6 +244,25 @@ class LearnerResultPanelComponent {
     lastStep() {
         this.pointer = this.result.steps.length - 1;
         this.emitStep();
+    }
+
+    openResultDetailsModal() {
+        this.$uibModal.open({
+            component: 'learnerResultDetailsModal',
+            resolve: {
+                result: () => this.result,
+                current: () => this.pointer
+            }
+        });
+    }
+
+    openHypothesisLayoutSettingsModal() {
+        this.$uibModal.open({
+            component: 'hypothesisLayoutSettingsModal',
+            resolve: {
+                layoutSettings: () => JSON.parse(JSON.stringify(this.layoutSettings))
+            }
+        }).result.then(settings => this.layoutSettings = settings);
     }
 }
 

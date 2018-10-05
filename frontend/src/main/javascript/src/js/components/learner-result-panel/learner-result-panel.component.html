@@ -16,12 +16,12 @@
               role="menu"
               ng-if="vm.result.steps[vm.pointer].hypothesis">
             <li>
-              <a href="" learner-result-details-modal-handle result="vm.result" current="vm.pointer">
+              <a href="" ng-click="vm.openResultDetailsModal()">
                 <i class="fa fa-info fa-fw"></i> Details
               </a>
             </li>
             <li>
-              <a href="" hypothesis-layout-settings-modal-handle layout-settings="vm.layoutSettings">
+              <a href="" ng-click="vm.openHypothesisLayoutSettingsModal()">
                 <i class="fa fa-sliders fa-fw"></i> Layout
               </a>
             </li>
@@ -43,7 +43,7 @@
               role="menu"
               ng-if="!vm.result.steps[vm.pointer].hypothesis">
             <li>
-              <a href="" learner-result-details-modal-handle result="vm.result" current="vm.pointer">
+              <a href="" ng-click="vm.openResultDetailsModal()">
                 <i class="fa fa-info fa-fw"></i> Details
               </a>
             </li>

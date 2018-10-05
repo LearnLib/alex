@@ -132,5 +132,23 @@ export const symbolsSymbolGroupTreeComponent = {
                     this.toastService.danger(`The symbol could not be deleted. ${err.data.message}`);
                 });
         }
+
+        openSymbolEditModal(symbol) {
+            this.$uibModal.open({
+                component: 'symbolEditModal',
+                resolve: {
+                    symbol: () => new AlphabetSymbol(JSON.parse(JSON.stringify(symbol)))
+                }
+            });
+        }
+
+        openSymbolsMoveModal(symbols) {
+            this.$uibModal.open({
+                component: 'symbolMoveModal',
+                resolve: {
+                    symbols: () => symbols
+                }
+            });
+        }
     }
 };

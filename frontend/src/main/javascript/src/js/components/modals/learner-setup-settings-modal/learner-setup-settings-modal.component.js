@@ -54,7 +54,7 @@ export class LearnerSetupSettingsModalComponent {
     }
 
     $onInit() {
-        this.learnConfiguration = this.resolve.modalData.learnConfiguration;
+        this.learnConfiguration = this.resolve.learnConfiguration;
         this.selectedLearningAlgorithm = this.learnConfiguration.algorithm.name;
     }
 

@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-import {events} from '../../../constants';
-
 /**
  * The controller that handles the modal dialog for changing the layout settings of a hypothesis.
  */
 export class HypothesisLayoutSettingsModalComponent {
 
-    /**
-     * Constructor.
-     *
-     * @param EventBus
-     */
+    /** Constructor.*/
     // @ngInject
-    constructor(EventBus) {
-        this.EventBus = EventBus;
+    constructor() {
 
         /**
          * The default layout settings for a hypothesis.
@@ -44,16 +37,15 @@ export class HypothesisLayoutSettingsModalComponent {
     }
 
     $onInit() {
-        const properties = this.resolve.modalData.layoutSettings;
-        this.layoutSettings = properties !== null ? properties : this.defaultLayoutProperties;
+        const settings = this.resolve.layoutSettings;
+        this.layoutSettings = settings != null ? settings : this.defaultLayoutProperties;
     }
 
     /**
      * Closes the modal window and passes the updated layout settings.
      */
     update() {
-        this.EventBus.emit(events.HYPOTHESIS_LAYOUT_UPDATED, {settings: this.layoutSettings});
-        this.dismiss();
+        this.close({$value: this.layoutSettings});
     }
 
     /**
@@ -68,6 +60,7 @@ export const hypothesisLayoutSettingsModalComponent = {
     template: require('./hypothesis-layout-settings-modal.component.html'),
     bindings: {
         dismiss: '&',
+        close: '&',
         resolve: '='
     },
     controller: HypothesisLayoutSettingsModalComponent,

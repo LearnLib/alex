@@ -42,7 +42,7 @@ export class ResultListModalComponent {
     }
 
     $onInit() {
-        this.results = this.resolve.modalData.results;
+        this.results = this.resolve.results;
     }
 
     /** Switches the view. */

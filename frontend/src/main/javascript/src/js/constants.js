@@ -61,7 +61,6 @@ export const events = {
 
     // hypothesis related events
     HYPOTHESIS_LABEL_SELECTED: 'hypothesis:labelSelected',
-    HYPOTHESIS_LAYOUT_UPDATED: 'hypothesis:layoutUpdated',
 
     // symbol related events
     SYMBOL_UPDATED: 'symbol:updated',

@@ -124,7 +124,7 @@ export class ActionCreateModalComponent {
      * Closes the modal dialog an passes the created action back to the handle that called the modal.
      */
     createAction() {
-        this.resolve.modalData.onCreated({action: this.action});
+        this.resolve.onCreated(this.action);
         this.dismiss();
     }
 
@@ -132,7 +132,7 @@ export class ActionCreateModalComponent {
      * Creates a new action in the background without closing the dialog.
      */
     createActionAndContinue() {
-        this.resolve.modalData.onCreated({action: this.action});
+        this.resolve.onCreated(this.action);
         this.action = null;
     }
 }

@@ -316,6 +316,15 @@ class SymbolViewComponent {
         });
     }
 
+    openActionCreateModal() {
+        this.$uibModal.open({
+            component: 'actionCreateModal',
+            resolve: {
+                onCreated: () => (a) => this.addAction(a)
+            }
+        });
+    }
+
     get project() {
         return this.ProjectService.store.currentProject;
     }

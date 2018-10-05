@@ -44,13 +44,13 @@ export class LearnerResultDetailsModalComponent {
     }
 
     $onInit() {
-        this.result = this.resolve.modalData.result;
-        this.current = this.resolve.modalData.current;
+        this.result = this.resolve.result;
+        this.current = this.resolve.current;
         this.tabs.push({heading: 'Cumulated', result: this.result});
 
         // add a tab with details for the current step only if it is defined
         // otherwise display the tab with the cumulated results only
-        if (typeof this.current !== 'undefined') {
+        if (this.current != null) {
             this.tabs.unshift({heading: 'Current', result: this.result.steps[this.current]});
         }
     }

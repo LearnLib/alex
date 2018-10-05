@@ -33,14 +33,16 @@ class LearnerSetupViewComponent {
      * @param {ToastService} ToastService
      * @param {LearnResultResource} LearnResultResource
      * @param {SettingsResource} SettingsResource
+     * @param $uibModal
      */
     // @ngInject
     constructor($state, SymbolGroupResource, ProjectService, LearnerResource, ToastService, LearnResultResource,
-                SettingsResource) {
+                SettingsResource, $uibModal) {
         this.$state = $state;
         this.LearnerResource = LearnerResource;
         this.ToastService = ToastService;
         this.ProjectService = ProjectService;
+        this.$uibModal = $uibModal;
 
         /**
          * All symbol groups that belong the the sessions project.
@@ -194,6 +196,15 @@ class LearnerSetupViewComponent {
         this.pSymbols = this.learnConfiguration.symbols;
         this.pResetSymbol = this.learnConfiguration.resetSymbol;
         this.pPostSymbol = this.learnConfiguration.postSymbol;
+    }
+
+    openLearnerConfigurationModal() {
+        this.$uibModal.open({
+            component: 'learnerSetupSettingsModal',
+            resolve: {
+                learnConfiguration: () => new LearnConfiguration(this.learnConfiguration)
+            }
+        }).result.then(config => this.learnConfiguration = config);
     }
 
     get project() {

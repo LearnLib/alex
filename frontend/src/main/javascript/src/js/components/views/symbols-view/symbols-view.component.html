@@ -11,17 +11,12 @@
                 </button>
                 <ul uib-dropdown-menu class="dropdown-menu" role="menu">
                     <li>
-                        <a
-                            href=""
-                            symbol-create-modal-handle
-                            groups="vm.groups"
-                            on-created="vm.addSymbol(symbol)"
-                        >
+                        <a href="" ng-click="vm.openSymbolCreateModal()">
                             Symbol
                         </a>
                     </li>
                     <li>
-                        <a href="" symbol-group-create-modal-handle on-created="vm.addGroup(group)">Group</a>
+                        <a href="" ng-click="vm.openSymbolGroupCreateModal()">Group</a>
                     </li>
                 </ul>
             </div>

@@ -6,10 +6,7 @@
             <button class="btn btn-primary" ng-click="vm.startLearning()">
                 Start learning
             </button>
-            <button class="btn btn-primary"
-                    learner-setup-settings-modal-handle
-                    learn-configuration="vm.learnConfiguration"
-                    on-update="vm.setLearnConfiguration(config)">
+            <button class="btn btn-primary" ng-click="vm.openLearnerConfigurationModal()">
                 <i class="fa fa-gear"></i>
             </button>
         </div>

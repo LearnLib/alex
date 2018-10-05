@@ -312,6 +312,22 @@ class SymbolsViewComponent {
         }
     }
 
+    openSymbolCreateModal() {
+        this.$uibModal.open({
+            component: 'symbolCreateModal',
+            resolve: {
+                groups: () => this.groups,
+                onCreated: () => (s) => this.addSymbol(s)
+            }
+        });
+    }
+
+    openSymbolGroupCreateModal() {
+        this.$uibModal.open({
+            component: 'symbolGroupCreateModal'
+        }).result.then(group => this.addGroup(group));
+    }
+
     get project() {
         return this.ProjectService.store.currentProject;
     }

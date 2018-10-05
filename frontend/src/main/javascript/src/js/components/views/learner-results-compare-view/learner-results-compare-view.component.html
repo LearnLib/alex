@@ -14,8 +14,7 @@
 
         <button class="btn btn-sm btn-success pull-right"
                 ng-if="vm.panels.length < 3"
-                result-list-modal-handle results="vm.results"
-                on-selected="vm.panels.push(result)">
+                ng-click="vm.openResultListModal()">
             <i class="fa fa-fw fa-plus"></i> Add hypothesis
         </button>
     </action-bar>
@@ -24,7 +23,7 @@
 
         <div class="container" ng-if="vm.panels.length === 0">
             <p></p>
-            <div class="alert alert-info" result-list-modal-handle results="vm.results" on-selected="vm.panels.push(result)">
+            <div class="alert alert-info" ng-click="vm.openResultListModal()">
                 <i class="fa fa-plus-square fa-fw"></i>
                 <strong>Click to add a hypothesis</strong> or click on the green button on the top right
             </div>

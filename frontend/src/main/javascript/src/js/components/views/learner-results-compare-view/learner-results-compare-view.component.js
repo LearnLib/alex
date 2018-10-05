@@ -155,6 +155,15 @@ class ResultsCompareViewComponent {
             .catch(err => this.ToastService.danger(err.data.message));
     }
 
+    openResultListModal() {
+        this.$uibModal.open({
+            component: 'resultListModal',
+            resolve: {
+                results: () => this.results
+            }
+        }).result.then(result => this.panels.push(result));
+    }
+
     get project() {
         return this.ProjectService.store.currentProject;
     }
