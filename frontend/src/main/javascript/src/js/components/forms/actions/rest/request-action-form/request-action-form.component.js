@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+const presets = {
+    JSON: 'JSON',
+    GRAPH_QL: 'GRAPH_QL'
+};
+
 /**
  * @type {{templateUrl: string, bindings: {action: string}, controllerAs: string, controller(*, *, *): void}}
  */
@@ -25,25 +30,45 @@ export const requestActionFormComponent = {
     controllerAs: 'vm',
 
     /** Constructor. */
-    controller() {
-        this.cookie = {name: null, value: null};
-        this.header = {name: null, value: null};
+    controller: class RequestActionFormComponent {
+        constructor() {
+            this.preset = presets.JSON;
+            this.cookie = {name: null, value: null};
+            this.header = {name: null, value: null};
 
-        this.aceOptions = {
-            useWrapMode: true,
-            showGutter: true
-        };
+            this.aceOptions = {
+                useWrapMode: true,
+                showGutter: true
+            };
+        }
 
-        this.addHeader = function () {
+        $onInit() {
+            this.setPreset();
+        }
+
+        addHeader () {
             this.action.addHeader(this.header.name, this.header.value);
             this.cookie.name = null;
             this.cookie.value = null;
-        };
+        }
 
-        this.addCookie = function () {
+        addCookie () {
             this.action.addCookie(this.cookie.name, this.cookie.value);
             this.header.name = null;
             this.header.value = null;
-        };
+        }
+
+        setPreset() {
+            switch (this.preset) {
+                case presets.JSON:
+                    this.action.data = '{}';
+                    break;
+                case presets.GRAPH_QL:
+                    this.action.data = `{\n  "query": "",\n  "variables": {}\n}`;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 };

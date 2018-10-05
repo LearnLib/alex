@@ -17,7 +17,17 @@
 </div>
 
 <div class="form-group">
-    <label>Data</label>
+    <div class="d-flex">
+        <div class="w-100">
+            <label>Data</label>
+        </div>
+        <div>
+            <select class="form-control" ng-change="vm.setPreset()" ng-model="vm.preset" style="padding: 0; height: auto; width: 80px">
+                <option value="JSON" selected>JSON</option>
+                <option value="GRAPH_QL">GraphQL</option>
+            </select>
+        </div>
+    </div>
     <div ng-model="vm.action.data" ui-ace="vm.aceOptions"></div>
 </div>
 
