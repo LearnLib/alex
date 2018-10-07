@@ -1,0 +1,716 @@
+{
+  "version": "1.6.1-SNAPSHOT",
+  "type": "symbols",
+  "symbols": [
+    {
+      "name": "Login Admin",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "output",
+          "name": "username",
+          "parameterType": "STRING"
+        }
+      ],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "setVariable",
+            "name": "username",
+            "value": "admin"
+          },
+          "position": 0
+        }
+      ]
+    },
+    {
+      "name": "Create Post",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [
+        {
+          "type": "input",
+          "name": "postCreated",
+          "parameterType": "STRING",
+          "private": true
+        },
+        {
+          "type": "input",
+          "name": "username",
+          "parameterType": "STRING",
+          "private": true
+        }
+      ],
+      "outputs": [
+        {
+          "type": "output",
+          "name": "postCreated",
+          "parameterType": "STRING"
+        },
+        {
+          "type": "output",
+          "name": "postId",
+          "parameterType": "STRING"
+        }
+      ],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "assertVariable",
+            "name": "postCreated",
+            "value": "false",
+            "regexp": false
+          },
+          "position": 0
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_call",
+            "method": "POST",
+            "url": "/posts",
+            "data": "{\"title\": \"test\", \"status\": \"draft\"}",
+            "cookies": {},
+            "headers": {},
+            "credentials": {
+              "name": "{{$username}}",
+              "password": "{{$username}}"
+            },
+            "timeout": 0
+          },
+          "position": 1
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_checkStatus",
+            "status": 201
+          },
+          "position": 2
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "setVariableByJSON",
+            "name": "postId",
+            "value": "id"
+          },
+          "position": 3
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "setVariable",
+            "name": "postCreated",
+            "value": "true"
+          },
+          "position": 4
+        }
+      ]
+    },
+    {
+      "name": "Set Post Draft",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [
+        {
+          "type": "input",
+          "name": "postId",
+          "parameterType": "STRING",
+          "private": true
+        },
+        {
+          "type": "input",
+          "name": "username",
+          "parameterType": "STRING",
+          "private": true
+        }
+      ],
+      "outputs": [],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_call",
+            "method": "PUT",
+            "url": "/posts/{{$postId}}",
+            "data": "{\"status\": \"draft\"}",
+            "cookies": {},
+            "headers": {},
+            "credentials": {
+              "name": "{{$username}}",
+              "password": "{{$username}}"
+            },
+            "timeout": 0
+          },
+          "position": 0
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_checkStatus",
+            "status": 200
+          },
+          "position": 1
+        }
+      ]
+    },
+    {
+      "name": "Set Post Publish",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [
+        {
+          "type": "input",
+          "name": "postId",
+          "parameterType": "STRING",
+          "private": true
+        },
+        {
+          "type": "input",
+          "name": "username",
+          "parameterType": "STRING",
+          "private": true
+        }
+      ],
+      "outputs": [],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_call",
+            "method": "PUT",
+            "url": "/posts/{{$postId}}",
+            "data": "{\"status\": \"publish\"}",
+            "cookies": {},
+            "headers": {},
+            "credentials": {
+              "name": "{{$username}}",
+              "password": "{{$username}}"
+            },
+            "timeout": 0
+          },
+          "position": 0
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_checkStatus",
+            "status": 200
+          },
+          "position": 1
+        }
+      ]
+    },
+    {
+      "name": "Set Post Future",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [
+        {
+          "type": "input",
+          "name": "postId",
+          "parameterType": "STRING",
+          "private": true
+        },
+        {
+          "type": "input",
+          "name": "username",
+          "parameterType": "STRING",
+          "private": true
+        }
+      ],
+      "outputs": [],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_call",
+            "method": "PUT",
+            "url": "/posts/{{$postId}}",
+            "data": "{\"status\": \"future\"}",
+            "cookies": {},
+            "headers": {},
+            "credentials": {
+              "name": "{{$username}}",
+              "password": "{{$username}}"
+            },
+            "timeout": 0
+          },
+          "position": 0
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_checkStatus",
+            "status": 200
+          },
+          "position": 1
+        }
+      ]
+    },
+    {
+      "name": "Set Post Pending",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [
+        {
+          "type": "input",
+          "name": "postId",
+          "parameterType": "STRING",
+          "private": true
+        },
+        {
+          "type": "input",
+          "name": "username",
+          "parameterType": "STRING",
+          "private": true
+        }
+      ],
+      "outputs": [],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_call",
+            "method": "PUT",
+            "url": "/posts/{{$postId}}",
+            "data": "{\"status\": \"pending\"}",
+            "cookies": {},
+            "headers": {},
+            "credentials": {
+              "name": "{{$username}}",
+              "password": "{{$username}}"
+            },
+            "timeout": 0
+          },
+          "position": 0
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_checkStatus",
+            "status": 200
+          },
+          "position": 1
+        }
+      ]
+    },
+    {
+      "name": "Set Post Private",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [
+        {
+          "type": "input",
+          "name": "postId",
+          "parameterType": "STRING",
+          "private": true
+        },
+        {
+          "type": "input",
+          "name": "username",
+          "parameterType": "STRING",
+          "private": true
+        }
+      ],
+      "outputs": [],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_call",
+            "method": "PUT",
+            "url": "/posts/{{$postId}}",
+            "data": "{\"status\": \"private\"}",
+            "cookies": {},
+            "headers": {},
+            "credentials": {
+              "name": "{{$username}}",
+              "password": "{{$username}}"
+            },
+            "timeout": 0
+          },
+          "position": 0
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_checkStatus",
+            "status": 200
+          },
+          "position": 1
+        }
+      ]
+    },
+    {
+      "name": "Login Editor",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "output",
+          "name": "username",
+          "parameterType": "STRING"
+        }
+      ],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "setVariable",
+            "name": "username",
+            "value": "author"
+          },
+          "position": 0
+        }
+      ]
+    },
+    {
+      "name": "Login Subscriber",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "output",
+          "name": "username",
+          "parameterType": "STRING"
+        }
+      ],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "setVariable",
+            "name": "username",
+            "value": "subscriber"
+          },
+          "position": 0
+        }
+      ]
+    },
+    {
+      "name": "Login Author",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "output",
+          "name": "username",
+          "parameterType": "STRING"
+        }
+      ],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "setVariable",
+            "name": "username",
+            "value": "author"
+          },
+          "position": 0
+        }
+      ]
+    },
+    {
+      "name": "Login Employee",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "output",
+          "name": "username",
+          "parameterType": "STRING"
+        }
+      ],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "setVariable",
+            "name": "username",
+            "value": "employee"
+          },
+          "position": 0
+        }
+      ]
+    },
+    {
+      "name": "Reset",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "output",
+          "name": "postCreated",
+          "parameterType": "STRING"
+        },
+        {
+          "type": "output",
+          "name": "postId",
+          "parameterType": "STRING"
+        },
+        {
+          "type": "output",
+          "name": "username",
+          "parameterType": "STRING"
+        }
+      ],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "setVariable",
+            "name": "postCreated",
+            "value": "false"
+          },
+          "position": 0
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "setVariable",
+            "name": "postId",
+            "value": "-1"
+          },
+          "position": 1
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "setVariable",
+            "name": "username",
+            "value": "guest"
+          },
+          "position": 2
+        }
+      ]
+    },
+    {
+      "name": "Delete Post",
+      "description": "",
+      "expectedResult": "",
+      "successOutput": null,
+      "inputs": [
+        {
+          "type": "input",
+          "name": "postCreated",
+          "parameterType": "STRING",
+          "private": true
+        },
+        {
+          "type": "input",
+          "name": "postId",
+          "parameterType": "STRING",
+          "private": true
+        },
+        {
+          "type": "input",
+          "name": "username",
+          "parameterType": "STRING",
+          "private": true
+        }
+      ],
+      "outputs": [
+        {
+          "type": "output",
+          "name": "postCreated",
+          "parameterType": "STRING"
+        },
+        {
+          "type": "output",
+          "name": "postId",
+          "parameterType": "STRING"
+        }
+      ],
+      "steps": [
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "assertVariable",
+            "name": "postCreated",
+            "value": "true",
+            "regexp": false
+          },
+          "position": 0
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_call",
+            "method": "DELETE",
+            "url": "/posts/{{$postId}}",
+            "data": null,
+            "cookies": {},
+            "headers": {},
+            "credentials": {
+              "name": "{{$username}}",
+              "password": "{{$username}}"
+            },
+            "timeout": 0
+          },
+          "position": 1
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "rest_checkStatus",
+            "status": 200
+          },
+          "position": 2
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "setVariable",
+            "name": "postCreated",
+            "value": "false"
+          },
+          "position": 3
+        },
+        {
+          "type": "action",
+          "disabled": false,
+          "ignoreFailure": false,
+          "negated": false,
+          "errorOutput": null,
+          "action": {
+            "type": "setVariable",
+            "name": "postId",
+            "value": "-1"
+          },
+          "position": 4
+        }
+      ]
+    }
+  ]
+}
