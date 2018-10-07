@@ -132,14 +132,14 @@ class CounterexamplesWidgetComponent {
             }
 
             const resetSymbol = JSON.parse(JSON.stringify(this.result.resetSymbol));
-            resetSymbol.symbol = resetSymbol.symbol.id;
+            resetSymbol.symbol = {id: resetSymbol.symbol.id};
 
             const symbols = JSON.parse(JSON.stringify(testSymbols));
-            symbols.forEach(s => s.symbol = s.symbol.id);
+            symbols.forEach(s => s.symbol = {id: s.symbol.id});
 
             const postSymbol = JSON.parse(JSON.stringify(this.result.postSymbol));
             if (postSymbol != null) {
-                postSymbol.symbol = postSymbol.symbol.id;
+                postSymbol.symbol = {id: postSymbol.symbol.id};
             }
 
             this.LearnerResource.readOutputs(this.result.project, {

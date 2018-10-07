@@ -319,6 +319,7 @@ class SymbolViewComponent {
     openActionCreateModal() {
         this.$uibModal.open({
             component: 'actionCreateModal',
+            size: 'lg',
             resolve: {
                 onCreated: () => (a) => this.addAction(a)
             }

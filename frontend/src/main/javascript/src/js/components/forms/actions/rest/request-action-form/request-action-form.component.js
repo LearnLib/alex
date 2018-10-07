@@ -43,7 +43,9 @@ export const requestActionFormComponent = {
         }
 
         $onInit() {
-            this.setPreset();
+            if (this.action.data == null) {
+                this.setPreset();
+            }
         }
 
         addHeader () {
