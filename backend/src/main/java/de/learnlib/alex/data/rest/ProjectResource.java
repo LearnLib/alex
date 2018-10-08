@@ -52,7 +52,6 @@ import java.util.Objects;
 
 /**
  * REST API to manage the projects.
- * @resourceDescription Operations about projects
  */
 @Path("/projects")
 @RolesAllowed({"REGISTERED"})
@@ -82,9 +81,6 @@ public class ProjectResource {
      * @param project
      *            The project to create.
      * @return On success the added project (enhanced with information from the DB); an error message on failure.
-     * @responseType    de.learnlib.alex.data.entities.Project
-     * @successResponse 201 created
-     * @errorResponse   400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -123,8 +119,6 @@ public class ProjectResource {
      *         this parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'.
      *         You can request multiple by just put a ',' between them.
      * @return All projects in a list. This list can be empty.
-     * @responseType java.util.List<de.learnlib.alex.data.entities.Project>
-     * @successResponse 200 OK
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -157,9 +151,6 @@ public class ProjectResource {
      *         You can request multiple by just put a ',' between them.
      * @return The project or an error message.
      * @throws NotFoundException If the requested Project could not be found.
-     * @responseType de.learnlib.alex.data.entities.Project
-     * @successResponse 200 OK
-     * @errorResponse   404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/{id}")
@@ -197,10 +188,6 @@ public class ProjectResource {
      *            The new values
      * @return On success the updated project (enhanced with information from the DB); an error message on failure.
      * @throws NotFoundException If the given Project could not be found.
-     * @responseType de.learnlib.alex.data.entities.Project
-     * @successResponse 200 OK
-     * @errorResponse   400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse   404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @PUT
     @Path("/{id}")
@@ -236,8 +223,6 @@ public class ProjectResource {
      *            The ID of the project.
      * @return On success no content will be returned; an error message on failure.
      * @throws NotFoundException If the given Project could not be found.
-     * @successResponse 204 OK & no content
-     * @errorResponse   404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("/{id}")

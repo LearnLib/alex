@@ -45,9 +45,6 @@ import java.util.List;
 
 /**
  * Resource to read and delete Counters.
- *
- * @resourcePath counters
- * @resourceDescription Operations around counters
  */
 @Path("/projects/{project_id}/counters")
 public class CounterResource {
@@ -70,8 +67,6 @@ public class CounterResource {
      * @return A List of the counters within the project. This list can be empty.
      * @throws NotFoundException
      *         If the related User or Project could not be found.
-     * @responseType java.util.List<de.learnlib.alex.data.entities.Counter>
-     * @successResponse 200 OK
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -173,7 +168,6 @@ public class CounterResource {
      * @return Nothing if everything went OK.
      * @throws NotFoundException
      *         If the given Counter or the related User or Project could not be found.
-     * @successResponse 204 OK & no content
      */
     @DELETE
     @Path("/{counter_name}")
@@ -199,7 +193,6 @@ public class CounterResource {
      * @return Nothing if everything went OK.
      * @throws NotFoundException
      *         If the given Counters or the related User or Project could not be found.
-     * @successResponse 204 OK & no content
      */
     @DELETE
     @Path("/batch/{counter_names}")

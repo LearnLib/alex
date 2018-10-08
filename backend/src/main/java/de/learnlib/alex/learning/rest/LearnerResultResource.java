@@ -48,9 +48,6 @@ import java.util.List;
 
 /**
  * REST API to fetch the test results.
- *
- * @resourcePath results
- * @resourceDescription Operations around the test results / hypotheses
  */
 @Path("/projects/{project_id}/results")
 public class LearnerResultResource {
@@ -83,10 +80,6 @@ public class LearnerResultResource {
      * @return A List of all learn results within one project.
      * @throws NotFoundException
      *         If the related Project could not be found.
-     * @successResponse 200 OK
-     * @responseType java.util.List<de.learnlib.alex.learning.entities.LearnerResult>
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -147,10 +140,6 @@ public class LearnerResultResource {
      * @return A List of all step of possible multiple test runs.
      * @throws NotFoundException
      *         If the requested results or the related Project could not be found.
-     * @successResponse 200 OK
-     * @responseType java.util.List<de.learnlib.alex.learning.entities.LearnerResult>
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("{test_nos}")
@@ -246,9 +235,6 @@ public class LearnerResultResource {
      * @return On success no content will be returned.
      * @throws NotFoundException
      *         If the given results or the related Project could not be found.
-     * @successResponse 204 OK & no content
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("{test_numbers}")

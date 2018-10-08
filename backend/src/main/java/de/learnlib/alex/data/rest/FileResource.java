@@ -47,9 +47,6 @@ import java.util.List;
 
 /**
  * REST API to manage files.
- *
- * @resourcePath files
- * @resourceDescription Operations about files
  */
 @Path("/projects/{project_id}/files")
 @RolesAllowed({"REGISTERED"})

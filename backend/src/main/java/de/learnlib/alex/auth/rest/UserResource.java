@@ -57,9 +57,6 @@ import java.util.List;
 
 /**
  * REST resource to handle users.
- *
- * @resourcePath users
- * @resourceDescription Operations around users.
  */
 @Path("/users")
 public class UserResource {
@@ -88,9 +85,6 @@ public class UserResource {
      * @param newUser
      *         The user to create
      * @return The created user (enhanced with information form the DB); an error message on failure.
-     * @responseType de.learnlib.alex.auth.entities.User
-     * @successResponse 201 created
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -146,10 +140,6 @@ public class UserResource {
      * @return Detailed information about the user.
      * @throws NotFoundException
      *         If the requested User could not be found.
-     * @responseType de.learnlib.alex.auth.entities.User
-     * @successResponse 200 Ok
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 403 forbidden   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/{id}")
@@ -174,8 +164,6 @@ public class UserResource {
      * Get all users. This is only allowed for admins.
      *
      * @return A list of all users. This list can be empty.
-     * @responseType java.util.List<de.learnlib.alex.auth.entities.User>
-     * @successResponse 200 Ok
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -200,11 +188,6 @@ public class UserResource {
      * @return The updated user.
      * @throws NotFoundException
      *         If the requested User could not be found.
-     * @responseType de.learnlib.alex.auth.entities.User
-     * @successResponse 200 Ok
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 403 forbidden   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @PUT
     @Path("/{id}/password")
@@ -256,11 +239,6 @@ public class UserResource {
      * @return The updated user.
      * @throws NotFoundException
      *         If the requested User could not be found.
-     * @responseType de.learnlib.alex.auth.entities.User
-     * @successResponse 200 Ok
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 403 forbidden   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @PUT
     @Path("/{id}/email")
@@ -322,9 +300,6 @@ public class UserResource {
      * @return The account information of the new administrator.
      * @throws NotFoundException
      *         If the given User could not be found.
-     * @responseType de.learnlib.alex.auth.entities.User
-     * @successResponse 200 Ok
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @PUT
     @Path("/{id}/promote")
@@ -354,10 +329,6 @@ public class UserResource {
      * @return The account information of the formally administrator.
      * @throws NotFoundException
      *         If the given User could not be found.
-     * @responseType de.learnlib.alex.auth.entities.User
-     * @successResponse 200 Ok
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @PUT
     @Path("/{id}/demote")
@@ -399,9 +370,6 @@ public class UserResource {
      * @return Nothing if the user was deleted.
      * @throws NotFoundException
      *         If the given User could not be found.
-     * @successResponse 204 No Content
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("/{id}")
@@ -435,9 +403,6 @@ public class UserResource {
      * @return Nothing if the users have been deleted.
      * @throws NotFoundException
      *         If the given Users could not be found.
-     * @successResponse 204 No Content
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("/batch/{ids}")
@@ -468,9 +433,6 @@ public class UserResource {
      * @return If the user was successfully logged in: a JSON Object with the authentication token as only field.
      * @throws NotFoundException
      *         If the given User could not be found.
-     * @successResponse 200 Ok
-     * @errorResponse 401 unauthorized `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found    `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

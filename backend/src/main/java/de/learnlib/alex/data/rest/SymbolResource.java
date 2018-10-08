@@ -60,9 +60,6 @@ import java.util.Set;
 
 /**
  * REST API to manage the symbols.
- *
- * @resourcePath symbols
- * @resourceDescription Operations about symbols
  */
 @Path("/projects/{project_id}/symbols")
 @RolesAllowed({"REGISTERED"})
@@ -100,9 +97,6 @@ public class SymbolResource {
      * @return On success the added symbol (enhanced with information from the DB); An error message on failure.
      * @throws NotFoundException
      *         If the related Project or Group could not be found.
-     * @responseType de.learnlib.alex.data.entities.Symbol
-     * @successResponse 201 created
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -135,9 +129,6 @@ public class SymbolResource {
      * @return On success the added symbols (enhanced with information from the DB); An error message on failure.
      * @throws NotFoundException
      *         If the related Projects or Groups could not be found.
-     * @responseType java.util.List<de.learnlib.alex.data.entities.Symbol>
-     * @successResponse 201 created
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/batch")
@@ -174,8 +165,6 @@ public class SymbolResource {
      *         Specify the visibility level of the symbols you want to get. Valid values are: 'all'/ 'unknown',
      *         'visible', 'hidden'. Optional.
      * @return A list of all Symbols belonging to the project. This list can be empty.
-     * @responseType java.util.List<de.learnlib.alex.data.entities.Symbol>
-     * @successResponse 200 OK
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -205,9 +194,6 @@ public class SymbolResource {
      * @return A list of the symbols whose ids were given
      * @throws NotFoundException
      *         If the requested Symbols or the related Projects or Groups could not be found.
-     * @responseType java.util.List<de.learnlib.alex.data.entities.Symbol>
-     * @successResponse 200 OK
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/batch/{ids}")
@@ -234,9 +220,6 @@ public class SymbolResource {
      * @return A Symbol matching the projectID & ID or a not found response.
      * @throws NotFoundException
      *         If the requested Symbol or the related Project or Group could not be found.
-     * @responseType de.learnlib.alex.data.entities.Symbol
-     * @successResponse 200 OK
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/{id}")
@@ -263,10 +246,6 @@ public class SymbolResource {
      * @return On success the updated symbol (maybe enhanced with information from the DB); An error message on failure.
      * @throws NotFoundException
      *         If the given Symbol or the related Project or Groups could not be found.
-     * @responseType de.learnlib.alex.data.entities.Symbol
-     * @successResponse 200 OK
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @PUT
     @Path("/{id}")
@@ -277,7 +256,7 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, symbol, user);
 
-        if (symbolDoesntMatchURLParameter(symbol, projectId, id)) {
+        if (symbolDoesNotMatchURLParameter(symbol, projectId, id)) {
             LOGGER.traceExit();
             return Response.status(Status.BAD_REQUEST).build();
         }
@@ -310,10 +289,6 @@ public class SymbolResource {
      * @return On success the updated symbol (maybe enhanced with information from the DB); An error message on failure.
      * @throws NotFoundException
      *         If the given Symbols or the related Projects or Groups could not be found.
-     * @responseType de.learnlib.alex.data.entities.Symbol
-     * @successResponse 200 OK
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @PUT
     @Path("/batch/{ids}")
@@ -377,7 +352,7 @@ public class SymbolResource {
         return Response.ok(movedSymbol).build();
     }
 
-    private boolean symbolDoesntMatchURLParameter(Symbol symbol, Long projectId, Long id) {
+    private boolean symbolDoesNotMatchURLParameter(Symbol symbol, Long projectId, Long id) {
         if (symbol.getId() != null
                 && symbol.getId() != 0
                 && !Objects.equals(id, symbol.getId())) {
@@ -434,8 +409,6 @@ public class SymbolResource {
      * @return On success no content will be returned; an error message on failure.
      * @throws NotFoundException
      *         If the requested Symbol or the related Project or Group could not be found.
-     * @successResponse 204 OK & no content
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/{id}/hide")
@@ -495,8 +468,6 @@ public class SymbolResource {
      * @return On success no content will be returned; an error message on failure.
      * @throws NotFoundException
      *         If the requested Symbols or the related Project or Groups could not be found.
-     * @successResponse 204 OK & no content
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/batch/{ids}/hide")
@@ -523,8 +494,6 @@ public class SymbolResource {
      * @return On success no content will be returned; an error message on failure.
      * @throws NotFoundException
      *         If the requested Symbol or the related Project or Group could not be found.
-     * @successResponse 204 OK & no content
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/{id}/show")
@@ -552,8 +521,6 @@ public class SymbolResource {
      * @return On success no content will be returned; an error message on failure.
      * @throws NotFoundException
      *         If the requested Symbols or the related Project or Groups could not be found.
-     * @successResponse 204 OK & no content
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/batch/{ids}/show")

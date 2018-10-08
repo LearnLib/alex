@@ -34,8 +34,6 @@ import javax.ws.rs.core.Response;
 
 /**
  * REST API to manage the settings.
- *
- * @resourceDescription Operations about settings
  */
 @Path("/settings")
 public class SettingsResource {

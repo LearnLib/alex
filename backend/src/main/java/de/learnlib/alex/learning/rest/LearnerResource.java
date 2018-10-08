@@ -68,9 +68,6 @@ import java.util.Map;
 
 /**
  * REST API to manage the learning.
- *
- * @resourcePath learner
- * @resourceDescription Operations about the learning
  */
 @Path("/learner")
 @RolesAllowed({"REGISTERED"})
@@ -120,11 +117,6 @@ public class LearnerResource {
      * @return The status of the current learn process.
      * @throws NotFoundException
      *         If the related Project could not be found.
-     * @successResponse 200 OK
-     * @responseType de.learnlib.alex.learning.entities.LearnerStatus
-     * @errorResponse 302 not modified `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 400 bad request  `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found    `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/{project_id}/start")
@@ -178,11 +170,6 @@ public class LearnerResource {
      * @return The status of the current learn process.
      * @throws NotFoundException
      *         If the previous learn job or the related Project could not be found.
-     * @successResponse 200 OK
-     * @responseType de.learnlib.alex.learning.entities.LearnerStatus
-     * @errorResponse 302 not modified `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 400 bad request  `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found    `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/{project_id}/resume/{test_no}")
@@ -269,8 +256,6 @@ public class LearnerResource {
      * @param projectId
      *         The project to stop.
      * @return The status of the current learn process.
-     * @successResponse 200 OK
-     * @responseType de.learnlib.alex.learning.entities.LearnerStatus
      */
     @GET
     @Path("/{project_id}/stop")
@@ -302,9 +287,6 @@ public class LearnerResource {
      * @param projectId
      *         The project to get the Status of.
      * @return The information of the learning
-     * @successResponse 200 OK
-     * @responseType de.learnlib.alex.learning.entities.LearnerResult
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/{project_id}/status")
@@ -329,10 +311,6 @@ public class LearnerResource {
      * @return The observed output of the given input set.
      * @throws NotFoundException
      *         If the related Project could not be found.
-     * @successResponse 200 OK
-     * @responseType java.util.List<String>
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/{project_id}/outputs")

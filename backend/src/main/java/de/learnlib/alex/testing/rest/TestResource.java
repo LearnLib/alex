@@ -65,9 +65,6 @@ import java.util.Map;
 
 /**
  * REST endpoints for working with tests.
- *
- * @resourcePath tests
- * @resourceDescription Endpoints for working with tests.
  */
 @Path("/projects/{project_id}/tests")
 @RolesAllowed({"REGISTERED"})

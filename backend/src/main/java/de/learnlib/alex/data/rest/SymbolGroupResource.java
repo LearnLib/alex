@@ -50,9 +50,6 @@ import java.util.List;
 
 /**
  * REST API to manage groups.
- *
- * @resourcePath groups
- * @resourceDescription Operations for groups
  */
 @Path("/projects/{project_id}/groups")
 @RolesAllowed("REGISTERED")
@@ -86,9 +83,6 @@ public class SymbolGroupResource {
      * @return On success the added group (enhanced with information from the DB); an error message on failure.
      * @throws NotFoundException
      *         If the related Project could not be found.
-     * @responseType de.learnlib.alex.data.entities.SymbolGroup
-     * @successResponse 201 created
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -154,10 +148,6 @@ public class SymbolGroupResource {
      * @return All groups in a list. If the project contains no groups the list will be empty.
      * @throws NotFoundException
      *         If the related Project could not be found.
-     * @responseType java.util.List<de.learnlib.alex.data.entities.SymbolGroup>
-     * @successResponse 200 OK
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -191,10 +181,6 @@ public class SymbolGroupResource {
      * @return The requested group.
      * @throws NotFoundException
      *         If the related Project could not be found.
-     * @responseType de.learnlib.alex.data.entities.SymbolGroup
-     * @successResponse 200 OK
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/{id}")
@@ -231,10 +217,6 @@ public class SymbolGroupResource {
      * @return On success the updated group (enhanced with information from the DB).
      * @throws NotFoundException
      *         If the related Project could not be found.
-     * @responseType de.learnlib.alex.data.entities.SymbolGroup
-     * @successResponse 200 OK
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @PUT
     @Path("/{id}")
@@ -312,8 +294,6 @@ public class SymbolGroupResource {
      * @return On success no content will be returned.
      * @throws NotFoundException
      *         If the related Project could not be found.
-     * @successResponse 204 OK & no content
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("/{id}")
