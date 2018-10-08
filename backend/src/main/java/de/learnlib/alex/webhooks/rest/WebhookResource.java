@@ -156,7 +156,7 @@ public class WebhookResource {
             return Response.noContent().build();
         } catch (NotFoundException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("Webhook.delete", Response.Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("Webhook.delete", Response.Status.NOT_FOUND, e);
         }
     }
 

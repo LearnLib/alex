@@ -16,12 +16,13 @@
 
 package de.learnlib.alex.common.utils;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Helper class to allow batch paths to have a csv-list of Strings.
  */
-public class StringList extends LinkedList<String> {
+public class StringList extends ArrayList<String> {
 
     /**
      * Constructor
@@ -31,14 +32,16 @@ public class StringList extends LinkedList<String> {
      *         The strings as comma separated list.
      */
     public StringList(String value) {
-        String[] parts = value.split(",");
-        if (parts.length == 0) {
-            throw new IllegalArgumentException("No parts found!");
+        if (value == null || value.trim().equals("")) {
+            throw new IllegalArgumentException("You cannot pass null or an empty string.");
         }
 
-        for (String s : parts) {
-            add(s);
+        final String[] parts = value.split(",");
+        if (parts.length == 0) {
+            throw new IllegalArgumentException("There are no values specified.");
         }
+
+        Collections.addAll(this, parts);
     }
 
 }

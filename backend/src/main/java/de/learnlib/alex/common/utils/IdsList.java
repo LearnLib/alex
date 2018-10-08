@@ -31,9 +31,13 @@ public class IdsList extends LinkedList<Long> {
      *         The ids as comma separated list.
      */
     public IdsList(String value) {
-        String[] parts = value.split(",");
+        if (value == null || value.trim().equals("")) {
+            throw new IllegalArgumentException("You cannot pass null or an empty string.");
+        }
+
+        final String[] parts = value.split(",");
         if (parts.length == 0) {
-            throw new IllegalArgumentException("No IDs found!");
+            throw new IllegalArgumentException("There are no values specified.");
         }
 
         for (String number : parts) {
