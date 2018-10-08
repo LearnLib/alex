@@ -1,10 +1,10 @@
 # ToDo
 
-<div class="alert alert-info">
-    The following guide has been created with an older version of ALEX.
-    The provided symbols cannot be imported directly and the interface of ALEX has changed quite a bit.
-    However, this examples still serves the purpose of demonstrating the general workflow with ALEX and you can still download the demo application.
-</div>
+::: warning Deprecated
+The following guide has been created with an older version of ALEX.
+The provided symbols cannot be imported directly and the interface of ALEX has changed quite a bit.
+However, this example still serves the purpose of demonstrating the general workflow with ALEX and you can still download the demo application.
+:::
 
 The application is called *ToDo* and is pretty much destined to do what it sounds like. 
 With ToDo, you can manage simple tasks, give them a termination date, a priority and create categories to group them. 

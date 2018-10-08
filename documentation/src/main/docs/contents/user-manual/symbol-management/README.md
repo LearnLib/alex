@@ -43,14 +43,14 @@ A click on a result redirects you to the symbol page.
 
 ### Restoring archived symbols
 
-Once you archived a symbol, it is not really removed from the database, instead, they are put into the symbol archived.
-Symbols cannot be deleted permanently, because they still might be referenced by e.g. learner results or test cases you have created.
+Once you archived a symbol, it is not really removed from the database, instead, they are put into the symbol archive.
 
 ![Symbols trash bin](./assets/symbols-archive.jpg)
 
-You can see all archived symbols in the archive overview which can be accessed via the item *Archive* in the sidebar.
-Here you can do here is to recover symbols or edit their name.
-A recovered symbol is then moved into the default group.
+You can see all archived symbols in the overview which can be accessed via the item *Archive* in the sidebar.
+Here, you can recover symbols, edit their names and permanently delete them.
+Note that it is only possible to delete a symbol permanently if the symbol is not still in use, for example in test reports or learning results.
+Further, recovered symbol is then moved into the default group.
 
 ### Export & import
 
@@ -81,6 +81,15 @@ Symbols have input and output parameters for variables and counters (see next se
 Variables and counters are read from and written into and a global store during a membership query, see the image above.
 Before a variable or counter can be used in a symbol, it has to be defined in as input parameter for the symbol.
 Local modifications of variables and counters do not affect the global context unless they are written back as output.
+
+<figure>
+    <img src="./assets/symbol-parameters-3.png">
+</figure>
+
+In addition, we differentiate between **private** and **public** input parameters.
+If an input parameter is defined as public (displayed with an open lock), its value can be set by the user in test cases and learning processes manually.
+This is not the case if the parameter is set to private (displayed with closed lock).
+Then, the value for the parameter is fetched automatically from the global data context.
 
 If you use a variable or a counter that has not been defined, the execution of the symbols fails and the output is: *Undefined variable: Name*, or *Undefined counter: Name* respectively.
 
@@ -203,6 +212,7 @@ Actions of this group allow the interaction between different symbols and action
 | Set Variable by Cookie         | Set a variable to the value of a cookie                             |
 | Set Variable by HTML Element   | Set a variable to a value form a website element.                   |
 | Set Variable by HTTP Response  | Set a variable to the body of a HTTP response.                      |
+| Set Variable by HTTP Status    | Set a variable to the status of the last HTTP response              |
 | Set Variable by JSON Attribute | Set a variable to a value form a JSON response.                     |
 | Set Variable by Node Attribute | Set a variable to the value of an attribute of an element.          |
 | Set Variable by Node Count     | Set a variable to the number of elements matching a selector.       |
@@ -214,24 +224,14 @@ Actions of this group allow the interaction between different symbols and action
 Many web applications handle dynamic data and allow file uploads. 
 In order to model and learn such behaviors and to pass data between symbols, actions and learn processes, *variables*, *counters* and *files* can be used.
 
-<dl>
-    <dt>Variables</dt>
-    <dd>
-        Variables contain (also empty) String values and are kept alive for a single membership query.
-    </dd>
-    <dt>Counters</dt>
-    <dd>
-        Counters are positive integer values that are persisted in the database per project. 
-        They can be incremented and modified at will using corresponding actions. 
-        Usually, they are used to create multiple objects of the same kind, e.g. user1, user2, ... and so on. 
-        Further, counters can help to model a system reset and thereby allow a consecutive execution of multiple learn processes without having to manually reset the application in between every test.
-    </dd>
-    <dt>Files</dt>
-    <dd>
-        In order to learn websites that allow its users to upload files, this feature can be used as well.
-        See <a href="file-upload">this page</a> for a more detailed description and their usage.
-    </dd>
-</dl>
+<definition term="Variable">
+    A variable is a string value that is kept in the scope of a membership query.
+</definition>
+
+<definition term=Counter>
+    A counter is a positive or negative integer value that are persisted in the database per project.
+    Usually, they are used to create multiple objects of the same kind, e.g. user1, user2, ... and so on. 
+</definition>
 
 In order to make use of those in actions, there is a template language that has to be used in action fields:
 
@@ -240,15 +240,13 @@ In order to make use of those in actions, there is a template language that has 
 |--------------------|-----------------------------------------------------------------------|
 | {{#counterName}}   | The value of the counter with the name *counterName* is inserted      |
 | {{$variableName}}  | The value of the variable with the name *variableName* is inserted    |
-| {{\\filename.ext}} | The absolute path of the file *filename.ext* is inserted              |
 :::
 
-The following example demonstrates the usage of variables.
-The process can be transferred easily for counters and files.
+The following example demonstrates the usage of variables, but counters can be used in a similar way.
 
 ![Variables 1](./assets/variables-1.jpg)
 
-Assume we have an application that manages todo items and the element with the selector `#new-todo` is the input field that allows a user to create a new item.
+Assume that we have an application that manages todo items and the element with the selector `#new-todo` is the input field that allows a user to create a new item.
 We now want to insert the content of the item dynamically via a variable.
 First, create an action that sets the value of the variable.
 As you can see in the picture above, there are some choices for how to do this.
@@ -373,6 +371,8 @@ The progress indicator indicates how much of a file has already been uploaded.
 ![Files 3](./assets/file-upload-3.jpg)
 
 Once the upload is completed, the files are displayed in a list.
+Then, use the **Upload File** action and specify a file to upload and an `input[type="file""]` element.
+Currently, it is not possible to upload multiple files at once.
 
 ### Download
 

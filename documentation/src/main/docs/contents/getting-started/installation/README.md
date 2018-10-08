@@ -59,6 +59,9 @@ In order to run tests and learning processes, specify the display port **99** in
     <img src="./assets/xvfb-config.jpg">
 </figure>
 
+Note that currently, only the HtmlUnit and the Firefox browser can be used in the Docker container.
+When HtmlUnit is used, the Xvfb parameter can be omitted.
+
 [download]: https://github.com/LearnLib/alex/releases/download/v1.6.0/alex-1.6.0.war
 [docker]: https://github.com/scce/docker-images/tree/master/alex-server
 [xvfb]: https://packages.debian.org/en/sid/xvfb

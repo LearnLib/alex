@@ -113,7 +113,7 @@ Edge labels have the following pattern:
 where &lt;symbolName&gt; is the name of the symbol and the text after the "/" displays the output of the system.
 In ALEX, the output of the system is interpreted as *"Ok"*, if all actions of a symbol have been executed successfully.
 On the other hand *"Failed (n)"* means that the execution failed on the *n*-th action of the symbol.
-As you may remember, in [this section](../symbol-modeling/actions.md) we introduced the possibility to define custom outputs.
+As you may remember, in a previous section we introduced the possibility to define custom outputs.
 Custom success or error outputs for a symbol have a higher priority over the default ones. 
 
 ![Learning](./assets/learning-2.jpg)

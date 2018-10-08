@@ -42,7 +42,7 @@ Further, we learn the *AngularJS* implementation.
 3. Mark the symbol *Reset* as reset symbol
 4. In the top right corner, click on the settings button
 5. As equivalence oracle, select *Random Word*. We executed all experiments with the parameters (min=30, max=80, words=60, seed=42)
-6. In the dialog, select the webdriver you have set up previously
+6. In the dialog, select the web driver that you have set up previously
 7. Click on *Save*
 8. Start the learning process and wait ...
 
