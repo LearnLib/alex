@@ -69,13 +69,15 @@ public interface ProjectDAO {
     /**
      * Save the given project.
      *
+     * @param user
+     *         The user that creates the project.
      * @param project
      *         The project to be saved.
      * @return The created project.
      * @throws ValidationException
      *         If the Project was not valid.
      */
-    Project create(Project project) throws ValidationException;
+    Project create(User user, Project project) throws ValidationException;
 
     /**
      * Get a list of all the projects.

@@ -120,16 +120,18 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     @Override
     @Transactional
-    public Project create(final Project project) throws ValidationException {
+    public Project create(final User user, final Project project) throws ValidationException {
         LOGGER.traceEntry("create({})", project);
 
         try {
-            SymbolGroup defaultGroup = new SymbolGroup();
+            project.setUser(user);
+
+            final SymbolGroup defaultGroup = new SymbolGroup();
             defaultGroup.setName("Default group");
             defaultGroup.setProject(project);
             project.addGroup(defaultGroup);
 
-            TestSuite testSuite = new TestSuite();
+            final TestSuite testSuite = new TestSuite();
             testSuite.setName("Root");
             testSuite.setProject(project);
             project.getTests().add(testSuite);

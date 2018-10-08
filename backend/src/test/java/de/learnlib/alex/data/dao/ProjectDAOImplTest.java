@@ -84,10 +84,15 @@ public class ProjectDAOImplTest {
 
     private ProjectDAO projectDAO;
 
+    private User user;
+
     @Before
     public void setUp() {
         projectDAO = new ProjectDAOImpl(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
                 projectUrlDAO, parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository);
+
+        user = new User();
+        user.setId(USER_ID);
     }
 
     @Test
@@ -103,7 +108,7 @@ public class ProjectDAOImplTest {
 
         given(projectRepository.save(project)).willReturn(createdProject);
 
-        final Project p = projectDAO.create(project);
+        final Project p = projectDAO.create(user, project);
 
         verify(projectRepository).save(project);
         assertThat(p.getId(), is(equalTo(1L)));
@@ -111,19 +116,15 @@ public class ProjectDAOImplTest {
 
     @Test(expected = ValidationException.class)
     public void shouldNotCreateAProjectIfUrlsAreEmpty() throws NotFoundException {
-        User user = new User(USER_ID);
-
         Project project = new Project();
         project.setId(PROJECT_ID);
         project.setUser(user);
 
-        projectDAO.create(project);
+        projectDAO.create(user, project);
     }
 
     @Test(expected = ValidationException.class)
     public void shouldNotUpdateAProjectIfUrlsAreEmpty() throws NotFoundException {
-        User user = new User(USER_ID);
-
         Project project = new Project();
         project.setId(PROJECT_ID);
         project.setUser(user);
@@ -145,7 +146,7 @@ public class ProjectDAOImplTest {
 
         given(projectRepository.save(project)).willReturn(project);
 
-        projectDAO.create(project);
+        projectDAO.create(user, project);
 
         verify(projectRepository).save(project);
     }
@@ -157,7 +158,7 @@ public class ProjectDAOImplTest {
         //
         given(projectRepository.save(project)).willThrow(ConstraintViolationException.class);
 
-        projectDAO.create(project); // should fail
+        projectDAO.create(user, project); // should fail
     }
 
     @Test(expected = ValidationException.class)
@@ -167,7 +168,7 @@ public class ProjectDAOImplTest {
         //
         given(projectRepository.save(project)).willThrow(DataIntegrityViolationException.class);
 
-        projectDAO.create(project); // should fail
+        projectDAO.create(user, project); // should fail
     }
 
     @Test(expected = ValidationException.class)
@@ -183,7 +184,7 @@ public class ProjectDAOImplTest {
                 rollbackException);
         given(projectRepository.save(project)).willThrow(transactionSystemException);
 
-        projectDAO.create(project); // should fail
+        projectDAO.create(user, project); // should fail
     }
 
     @Test

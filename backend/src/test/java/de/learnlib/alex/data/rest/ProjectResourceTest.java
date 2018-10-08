@@ -110,12 +110,12 @@ public class ProjectResourceTest extends JerseyTest {
         Response response = target("/projects").request().header("Authorization", adminToken).post(Entity.json(json));
 
         assertEquals(Status.CREATED.getStatusCode(), response.getStatus());
-        verify(projectDAO).create(project);
+        verify(projectDAO).create(admin, project);
     }
 
     @Test
     public void shouldReturn400IfProjectCouldNotBeCreated() {
-        willThrow(new ValidationException("Test Message")).given(projectDAO).create(project);
+        willThrow(new ValidationException("Test Message")).given(projectDAO).create(admin, project);
 
         Response response = target("/projects").request().header("Authorization", adminToken)
                                 .post(Entity.json(project));
@@ -129,7 +129,7 @@ public class ProjectResourceTest extends JerseyTest {
         p.setUser(admin);
         p.setName("Test Project");
 
-        willThrow(new ValidationException("Test Message")).given(projectDAO).create(p);
+        willThrow(new ValidationException("Test Message")).given(projectDAO).create(admin, p);
 
         Response response = target("/projects").request().header("Authorization", adminToken)
                                 .post(Entity.json(p));

@@ -87,27 +87,16 @@ public class ProjectResource {
     public Response create(Project project) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("create({}) for user {}.", project, user);
-        Response response;
-
-        // make sure that if an user for a project is given, it the correct user id.
-        if (project.getUser() != null && !user.equals(project.getUser())) {
-            ValidationException e = new ValidationException("The given user id does not belong to the current user!");
-            LOGGER.catching(e);
-            response = ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.FORBIDDEN, e);
-            return LOGGER.traceExit(response);
-        }
-
-        project.setUser(user);
 
         try {
-            final Project createdProject = projectDAO.create(project);
+            final Project createdProject = projectDAO.create(user, project);
             webhookService.fireEvent(user, new ProjectEvent.Created(createdProject));
-            response = Response.status(Status.CREATED).entity(createdProject).build();
+            LOGGER.traceExit(createdProject);
+            return Response.status(Status.CREATED).entity(createdProject).build();
         } catch (ValidationException e) {
-            LOGGER.catching(e);
-            response = ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.BAD_REQUEST, e);
+            LOGGER.traceExit(e);
+            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.BAD_REQUEST, e);
         }
-        return LOGGER.traceExit(response);
     }
 
     /**
