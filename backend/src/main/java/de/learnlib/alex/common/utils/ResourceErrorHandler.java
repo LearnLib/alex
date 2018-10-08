@@ -101,7 +101,6 @@ public final class ResourceErrorHandler {
      * Deactivated constructor because this is a helper class.
      */
     private ResourceErrorHandler() {
-        // nothing to do here
     }
 
     /**
@@ -120,20 +119,5 @@ public final class ResourceErrorHandler {
         LOGGER.info(context + " send an error:", e);
         RESTError error = new RESTError(status, e);
         return Response.status(status).entity(error).build();
-    }
-
-    /**
-     * {@link #createRESTErrorMessage}.
-     *
-     * @param context
-     *          The context this method was called in. Recommended: 'Class.method'.
-     * @param status
-     *          The HTTP status this error belong to.
-     * @param message
-     *          The error message to send.
-     * @return A Response object containing a JSON error message and the proper status code.
-     */
-    public static Response createRESTErrorMessage(String context, Status status, String message) {
-        return createRESTErrorMessage(context, status, new Exception(message));
     }
 }

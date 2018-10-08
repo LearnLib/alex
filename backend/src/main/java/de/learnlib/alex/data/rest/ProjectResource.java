@@ -20,7 +20,6 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
-import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.events.ProjectEvent;
@@ -137,7 +136,7 @@ public class ProjectResource {
         List<Project> projects = projectDAO.getAll(user, embeddableFields);
 
         LOGGER.traceExit(projects);
-        return ResponseHelper.renderList(projects, Status.OK);
+        return Response.ok(projects).build();
     }
 
     /**

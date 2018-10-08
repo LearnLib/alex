@@ -20,7 +20,6 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
-import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.data.dao.SymbolGroupDAO;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.events.SymbolGroupEvent;
@@ -161,7 +160,7 @@ public class SymbolGroupResource {
             List<SymbolGroup> groups = symbolGroupDAO.getAll(user, projectId, embeddableFields);
 
             LOGGER.traceExit(groups);
-            return ResponseHelper.renderList(groups, Response.Status.OK);
+            return Response.ok(groups).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",

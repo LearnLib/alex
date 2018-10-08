@@ -106,7 +106,6 @@ public class CounterResourceTest extends JerseyTest {
                                     + "\"value\":" + COUNTER_VALUE + "}"
                           + "]";
         assertEquals(expectJSON, json);
-        assertEquals(String.valueOf(counters.length), response.getHeaderString("X-Total-Count"));
     }
 
     @Test

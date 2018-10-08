@@ -340,7 +340,7 @@ public class TestResource {
             return Response.ok().build();
         } catch (NotFoundException e) {
             LOGGER.traceExit("abort() with status {}", HttpStatus.NOT_FOUND.value());
-            return ResourceErrorHandler.createRESTErrorMessage("TestResource.abort", Response.Status.NOT_FOUND, e.getMessage());
+            return ResourceErrorHandler.createRESTErrorMessage("TestResource.abort", Response.Status.NOT_FOUND, e);
         }
     }
 

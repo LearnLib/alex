@@ -21,7 +21,6 @@ import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
-import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.TestSuiteGenerationConfig;
@@ -92,7 +91,7 @@ public class LearnerResultResource {
             boolean includeSteps = parseEmbeddableFields(embed);
 
             List<LearnerResult> results = learnerResultDAO.getAll(user, projectId, includeSteps);
-            return ResponseHelper.renderList(results, Response.Status.OK);
+            return Response.ok(results).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
@@ -158,8 +157,8 @@ public class LearnerResultResource {
                 LearnerResult result = learnerResultDAO.get(user, projectId, testNos.get(0), includeSteps);
                 return Response.ok(result).build();
             } else {
-                List<LearnerResult> result = learnerResultDAO.getAll(user, projectId, testNos, includeSteps);
-                return ResponseHelper.renderList(result, Response.Status.OK);
+                List<LearnerResult> results = learnerResultDAO.getAll(user, projectId, testNos, includeSteps);
+                return Response.ok(results).build();
             }
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);

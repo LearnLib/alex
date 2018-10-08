@@ -260,7 +260,6 @@ public class SymbolResourceTest extends JerseyTest {
                 + "\"hidden\":false,\"id\":1,\"inputs\":[],\"name\":\"Symbol Resource Test Symbol\","
                 + "\"outputs\":[],\"project\":10,\"successOutput\":null}]";
         JSONAssert.assertEquals(expectedJSON, response.readEntity(String.class), true);
-        assertEquals("1", response.getHeaderString("X-Total-Count"));
         verify(symbolDAO).getAll(admin, project.getId(), SymbolVisibilityLevel.VISIBLE);
     }
 
@@ -280,7 +279,6 @@ public class SymbolResourceTest extends JerseyTest {
                 + "\"hidden\":false,\"id\":1,\"inputs\":[],\"name\":\"Symbol Resource Test Symbol\","
                 + "\"outputs\":[],\"project\":10,\"successOutput\":null}]";
         JSONAssert.assertEquals(expectedJSON, response.readEntity(String.class), true);
-        assertEquals("1", response.getHeaderString("X-Total-Count"));
         verify(symbolDAO).getAll(admin, project.getId(), SymbolVisibilityLevel.ALL);
     }
 

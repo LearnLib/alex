@@ -50,7 +50,7 @@ public final class JSONHelpers {
      */
     public static String getAttributeValue(String json, String attribute) {
         try {
-            String value = String.valueOf(getParsedAttributeValue(json, attribute));
+            String value = JsonPath.read(json, attribute).toString();
             LOGGER.info("The attribute '{}' has the value '{}' in the body '{}'.", attribute, value, json);
             return value;
         } catch (InvalidJsonException e) {
@@ -58,6 +58,9 @@ public final class JSONHelpers {
             return null;
         } catch (InvalidPathException e) {
             LOGGER.info("Could not parse the JSON to get the value of an attribute.", e);
+            return null;
+        } catch (IllegalArgumentException e) {
+            LOGGER.info("Wrong arguments passed.", e);
             return null;
         }
     }
@@ -73,7 +76,7 @@ public final class JSONHelpers {
      */
     public static JsonType getAttributeType(String json, String attribute) {
         try {
-            Object o = getParsedAttributeValue(json, attribute);
+            Object o = JsonPath.read(json, attribute);
             if (o == null) {
                 return JsonType.NULL;
             } else if (o instanceof String) {
@@ -96,17 +99,9 @@ public final class JSONHelpers {
         } catch (InvalidPathException e) {
             LOGGER.info("Could not parse the JSON to get the type of an attribute.", e);
             return null;
-        }
-    }
-
-    private static Object getParsedAttributeValue(String json, String attribute)
-            throws InvalidJsonException, InvalidPathException {
-        if (json.startsWith("[")) {
-            return JsonPath.read(json, "$" + attribute);
-        } else if (json.startsWith("{")) {
-            return JsonPath.read(json, "$." + attribute);
-        } else {
-            throw new InvalidJsonException();
+        } catch (IllegalArgumentException e) {
+            LOGGER.info("Wrong arguments passed.", e);
+            return null;
         }
     }
 }

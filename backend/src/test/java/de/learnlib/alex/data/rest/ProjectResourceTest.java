@@ -145,7 +145,6 @@ public class ProjectResourceTest extends JerseyTest {
         Response response = target("/projects").request().header("Authorization", adminToken).get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("1", response.getHeaderString("X-Total-Count"));
         verify(projectDAO).getAll(admin);
     }
 
@@ -160,7 +159,6 @@ public class ProjectResourceTest extends JerseyTest {
                                 .header("Authorization", adminToken).get();
 
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("1", response.getHeaderString("X-Total-Count"));
         verify(projectDAO).getAll(admin, ProjectDAO.EmbeddableFields.SYMBOLS);
     }
 

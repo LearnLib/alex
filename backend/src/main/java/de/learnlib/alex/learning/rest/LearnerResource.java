@@ -21,7 +21,6 @@ import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
-import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
@@ -346,7 +345,7 @@ public class LearnerResource {
             List<ExecuteResult> outputs = learner.readOutputs(user, project, outputConfig);
 
             LOGGER.traceExit(outputs);
-            return ResponseHelper.renderList(outputs, Status.OK);
+            return Response.ok(outputs).build();
         } catch (LearnerException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);

@@ -31,7 +31,7 @@
         },
         created() {
             this.$nextTick(() => {
-                setTimeout(() => this.loadSlides(), 0);
+                window.setTimeout(() => this.loadSlides(), 0);
             });
         },
         methods: {

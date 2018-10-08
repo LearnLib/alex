@@ -105,7 +105,6 @@ public class LearnerResultResourceTest extends JerseyTest {
         Response response = target("/projects/" + PROJECT_ID + "/results").request()
                 .header("Authorization", adminToken).get();
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(String.valueOf(TEST_RESULT_AMOUNT), response.getHeaderString("X-Total-Count"));
 
         ObjectMapper mapper = new ObjectMapper();
         String expectedJSON = mapper.writeValueAsString(results);
@@ -121,7 +120,6 @@ public class LearnerResultResourceTest extends JerseyTest {
                 .header("Authorization", adminToken).get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(String.valueOf(TEST_RESULT_AMOUNT), response.getHeaderString("X-Total-Count"));
     }
 
     @Test
@@ -194,7 +192,6 @@ public class LearnerResultResourceTest extends JerseyTest {
 
         // then
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(String.valueOf(TEST_RESULT_AMOUNT), response.getHeaderString("X-Total-Count"));
         assertEquals(objectMapper.writeValueAsString(results), response.readEntity(String.class));
     }
 
@@ -208,7 +205,6 @@ public class LearnerResultResourceTest extends JerseyTest {
                 .header("Authorization", adminToken).get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals(String.valueOf(TEST_RESULT_AMOUNT), response.getHeaderString("X-Total-Count"));
     }
 
     @Test
