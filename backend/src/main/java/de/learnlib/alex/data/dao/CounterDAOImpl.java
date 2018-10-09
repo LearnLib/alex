@@ -18,7 +18,6 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.CounterRepository;
@@ -32,7 +31,6 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.List;
 
@@ -83,13 +81,9 @@ public class CounterDAOImpl implements CounterDAO {
 
             counter.setProject(project);
             counterRepository.save(counter);
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
             LOGGER.info("Counter creation failed:", e);
             throw new ValidationException("Counter could not be created.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("Counter creation failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("Counter was not created:", cve);
         }
     }
 
@@ -125,15 +119,9 @@ public class CounterDAOImpl implements CounterDAO {
         try {
             doGet(user, counter.getProjectId(), counter.getName()); // check if the counter exists
             counterRepository.save(counter);
-        } catch (DataIntegrityViolationException e) {
-            LOGGER.info("Counter update failed:", e);
-            throw new javax.validation.ValidationException("Counter could not be updated.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("Counter update failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("Counter was not created.", cve);
-        } catch (NotFoundException e) {
-            throw e;
+        } catch (DataIntegrityViolationException| TransactionSystemException e) {
+            LOGGER.error("Counter update failed:", e);
+            throw new ValidationException("Counter could not be updated.", e);
         }
     }
 

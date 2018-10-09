@@ -18,7 +18,6 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolActionStep;
@@ -181,14 +180,8 @@ public class SymbolDAOImpl implements SymbolDAO {
         } catch (DataIntegrityViolationException e) {
             LOGGER.info("Symbol creation failed:", e);
             throw new ValidationException("Symbol could not be created.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("Symbol creation failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("Symbol was not created:", cve);
-        } catch (javax.validation.ConstraintViolationException e) {
-            throw ValidationExceptionHelper.createValidationException("Symbol was not created:", e);
-        } catch (org.hibernate.exception.ConstraintViolationException e) {
-            throw new ValidationException("Symbol was not created: " + e.getMessage(), e);
+        } catch (TransactionSystemException | org.hibernate.exception.ConstraintViolationException | javax.validation.ConstraintViolationException e) {
+            throw new ValidationException("Symbol could not be created created: ", e);
         } catch (IllegalStateException e) {
             throw new ValidationException("Could not create symbol because it was invalid.", e);
         } finally {
@@ -212,14 +205,12 @@ public class SymbolDAOImpl implements SymbolDAO {
             saveSymbolSteps(projectId, createdSymbols, symbolStepMap);
             return createdSymbols;
         } catch (DataIntegrityViolationException e) {
-            LOGGER.info("Symbol creation failed:", e);
-            throw new ValidationException("Symbol could not be created.", e);
-        } catch (javax.validation.ConstraintViolationException e) {
-            throw ValidationExceptionHelper.createValidationException("Symbols were not created:", e);
-        } catch (org.hibernate.exception.ConstraintViolationException e) {
-            throw new ValidationException("Symbols were not created: " + e.getMessage(), e);
+            LOGGER.info("Symbols creation failed:", e);
+            throw new ValidationException("Symbols could not be created.", e);
+        } catch (javax.validation.ConstraintViolationException | org.hibernate.exception.ConstraintViolationException e) {
+            throw new ValidationException("Symbols were not created: ", e);
         } catch (IllegalStateException e) {
-            throw new ValidationException("Could not create symbol because it was invalid.", e);
+            throw new ValidationException("Could not create symbols because at least one was invalid.", e);
         }
     }
 
@@ -405,12 +396,10 @@ public class SymbolDAOImpl implements SymbolDAO {
         final Symbol symbol = symbolRepository.findOne(id);
 
         if (symbol == null) {
-            throw new NotFoundException("Could not find the Symbol with the id " + id
-                    + " in the Project " + projectId + ".");
+            throw new NotFoundException("Could not find the Symbol with the id " + id + " in the Project " + projectId + ".");
         }
 
         loadLazyRelations(symbol);
-
         return symbol;
     }
 
@@ -420,13 +409,9 @@ public class SymbolDAOImpl implements SymbolDAO {
             throws IllegalArgumentException, NotFoundException, ValidationException {
         try {
             return doUpdate(user, projectId, symbol);
-        } catch (DataIntegrityViolationException e) {
+        } catch (TransactionSystemException | DataIntegrityViolationException e) {
             LOGGER.info("Symbol update failed:", e);
             throw new ValidationException("Symbol could not be updated.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("Symbol update failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("Symbol could not be updated:", cve);
         } catch (IllegalStateException e) {
             throw new ValidationException("Could not update the symbol because it is not valid.", e);
         } catch (NotFoundException e) {
@@ -444,10 +429,8 @@ public class SymbolDAOImpl implements SymbolDAO {
                 updatedSymbols.add(doUpdate(user, projectId, symbol));
             }
             return updatedSymbols;
-        } catch (javax.validation.ConstraintViolationException e) {
-            throw ValidationExceptionHelper.createValidationException("Symbols were not updated:", e);
-        } catch (org.hibernate.exception.ConstraintViolationException e) {
-            throw new ValidationException("Symbols were not updated: " + e.getMessage(), e);
+        } catch (javax.validation.ConstraintViolationException | org.hibernate.exception.ConstraintViolationException e) {
+            throw new ValidationException("Symbols were not updated: ", e);
         } catch (IllegalStateException e) {
             throw new ValidationException("Could not update the Symbols because one is not valid.", e);
         } catch (NotFoundException e) {

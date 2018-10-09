@@ -18,7 +18,6 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
@@ -42,7 +41,6 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,13 +142,9 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             }
 
             symbolGroupRepository.save(group);
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
             LOGGER.info("SymbolGroup creation failed:", e);
             throw new ValidationException("SymbolGroup could not be created.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("SymbolGroup creation failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("SymbolGroup was not created:", cve);
         }
 
         LOGGER.traceExit(group);
@@ -256,13 +250,9 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             groupInDB.setProject(project);
             groupInDB.setName(group.getName());
             symbolGroupRepository.save(groupInDB);
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
             LOGGER.info("SymbolGroup update failed:", e);
             throw new ValidationException("SymbolGroup could not be updated.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("SymbolGroup update failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("SymbolGroup was not updated:", cve);
         }
     }
 

@@ -18,7 +18,6 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
@@ -41,7 +40,6 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.Arrays;
@@ -148,16 +146,11 @@ public class ProjectDAOImpl implements ProjectDAO {
             final Project createdProject = projectRepository.save(project);
             LOGGER.traceExit(createdProject);
             return createdProject;
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
             LOGGER.info("Project creation failed: ", e);
             e.printStackTrace();
             LOGGER.traceExit(e);
-            throw new javax.validation.ValidationException("Project could not be created.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("Project creation failed:", e);
-            LOGGER.traceExit(e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("Project was not created:", cve);
+            throw new ValidationException("Project could not be created.", e);
         }
     }
 
@@ -214,13 +207,9 @@ public class ProjectDAOImpl implements ProjectDAO {
 
             LOGGER.traceExit(project);
             return updatedProject;
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
             LOGGER.info("Project update failed:", e);
             throw new javax.validation.ValidationException("Project could not be updated.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("Project update failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("Project was not updated.", cve);
         }
     }
 

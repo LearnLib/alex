@@ -21,7 +21,6 @@ import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
-import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
@@ -34,7 +33,6 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.List;
@@ -175,12 +173,7 @@ public class UserDAOImpl implements UserDAO {
     private void saveUser(User user) {
         try {
             userRepository.save(user);
-            // error handling
-        } catch (TransactionSystemException e) {
-            LOGGER.info("Saving a user failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("User was not created:", cve);
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
             LOGGER.info("Saving a user failed:", e);
             throw new ValidationException("The User was not created because it did not pass the validation!", e);
         }

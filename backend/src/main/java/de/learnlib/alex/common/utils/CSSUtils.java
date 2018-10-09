@@ -101,7 +101,7 @@ public final class CSSUtils {
                 }
             }
 
-            return result.toString();
+            return result.toString().trim();
         }
     }
 }

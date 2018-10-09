@@ -33,7 +33,7 @@ public class StringListTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailWithEmptyValues() {
-        new IdsList(",,,");
+        new StringList(",,,");
     }
 
     @Test
