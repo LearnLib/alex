@@ -20,6 +20,7 @@ import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.CounterApi;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -84,6 +85,15 @@ public class CounterResourceIT extends AbstractResourceIT {
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), res1.getStatus());
         assertEquals(1, getNumberOfCounters(projectId1, jwtUser1));
+    }
+
+    @Test
+    public void shouldNotCreateCounterIfProjectCannotBeFound() throws Exception {
+        final String counter = createCounterJson("counter", -1, 1);
+        final Response res1 = counterApi.create(-1, counter, jwtUser1);
+
+        Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res1.getStatus());
+        Assert.assertEquals(0, getNumberOfCounters(projectId1, jwtUser1));
     }
 
     @Test

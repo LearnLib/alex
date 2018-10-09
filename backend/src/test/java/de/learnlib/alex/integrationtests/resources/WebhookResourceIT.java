@@ -16,17 +16,22 @@
 
 package de.learnlib.alex.integrationtests.resources;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import de.learnlib.alex.integrationtests.resources.api.WebhookApi;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,7 +61,7 @@ public class WebhookResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldCreateAWebhook() throws Exception {
+    public void shouldCreateAWebhook() {
         final String wh = createWebhookJson("test", "http://test", Arrays.asList("PROJECT_CREATED", "PROJECT_DELETED"));
         final Response res1 = webhookApi.create(wh, jwtUser1);
 
@@ -82,6 +87,48 @@ public class WebhookResourceIT extends AbstractResourceIT {
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), res1.getStatus());
         assertEquals(0, getNumberOfWebhooks(jwtUser1));
+    }
+
+    @Test
+    public void shouldUpdateWebhook() throws Exception {
+        final String wh1 = createWebhookJson("test", "http://test", Collections.singletonList("PROJECT_CREATED"));
+        final Response res1 = webhookApi.create(wh1, jwtUser1);
+
+        final JsonNode whNode = objectMapper.readTree(res1.readEntity(String.class));
+        ((ObjectNode) whNode).put("name", "updatedName");
+        ((ObjectNode) whNode).put("url", "http://test2");
+
+        final Response res2 = webhookApi.update(whNode.toString(), jwtUser1);
+
+        Assert.assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
+        JSONAssert.assertEquals(whNode.toString(), res2.readEntity(String.class), true);
+    }
+
+    @Test
+    public void shouldFailToUpdateWebhookIfEventsAreEmpty() throws Exception {
+        final String wh1 = createWebhookJson("test", "http://test", Collections.singletonList("PROJECT_CREATED"));
+        final Response res1 = webhookApi.create(wh1, jwtUser1);
+        final String wh1String = res1.readEntity(String.class);
+
+        final JsonNode whNode = objectMapper.readTree(wh1String);
+        ((ObjectNode) whNode).putArray("events");
+
+        final Response res2 = webhookApi.update(whNode.toString(), jwtUser1);
+        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res2.getStatus());
+    }
+
+    @Test
+    public void shouldFailToUpdateWebhookIfUrlExists() throws Exception {
+        webhookApi.create(createWebhookJson("test", "http://exists", Collections.singletonList("PROJECT_CREATED")), jwtUser1);
+        final String wh1 = createWebhookJson("test", "http://test", Collections.singletonList("PROJECT_CREATED"));
+        final Response res1 = webhookApi.create(wh1, jwtUser1);
+        final String wh1String = res1.readEntity(String.class);
+
+        final JsonNode whNode = objectMapper.readTree(wh1String);
+        ((ObjectNode) whNode).put("url", "http://exists");
+
+        final Response res2 = webhookApi.update(whNode.toString(), jwtUser1);
+        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res2.getStatus());
     }
 
     @Test
@@ -111,6 +158,17 @@ public class WebhookResourceIT extends AbstractResourceIT {
     }
 
     @Test
+    public void shouldFailToDeleteWebhooksIfOneDoesNotExist() throws Exception {
+        final String wh1 = createWebhookJson("test", "http://test1", Arrays.asList("PROJECT_CREATED", "PROJECT_DELETED"));
+        final Response res1 = webhookApi.create(wh1, jwtUser1);
+        final int id1 = JsonPath.read(res1.readEntity(String.class), "$.id");
+
+        final Response res3 = webhookApi.delete(Arrays.asList(id1, -1), jwtUser1);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res3.getStatus());
+        assertEquals(1, getNumberOfWebhooks(jwtUser1));
+    }
+
+    @Test
     public void shouldNotDeleteAWebhookOfAnotherUser() throws Exception {
         final String wh = createWebhookJson("test", "http://test", Arrays.asList("PROJECT_CREATED", "PROJECT_DELETED"));
         final Response res1 = webhookApi.create(wh, jwtUser2);
@@ -136,7 +194,7 @@ public class WebhookResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldGetAllEvents() throws Exception {
+    public void shouldGetAllEvents() {
         final Response res = webhookApi.getEvents(jwtUser1);
         final List<String> events = res.readEntity(new GenericType<List<String>>(){});
         assertFalse(events.isEmpty());

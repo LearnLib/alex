@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -41,7 +42,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import javax.xml.bind.ValidationException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -122,18 +122,13 @@ public class WebhookResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(Webhook webhook) {
+    public Response update(Webhook webhook) throws Exception {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update webhook '{}' for user '{}'", webhook, user);
 
-        try {
-            final Webhook updatedWebhook = webhookDAO.update(user, webhook);
-            LOGGER.traceExit("Webhook '{}' updated", updatedWebhook);
-            return Response.ok(updatedWebhook).build();
-        } catch (NotFoundException | ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("Webhook.update", Response.Status.BAD_REQUEST, e);
-        }
+        final Webhook updatedWebhook = webhookDAO.update(user, webhook);
+        LOGGER.traceExit("Webhook '{}' updated", updatedWebhook);
+        return Response.ok(updatedWebhook).build();
     }
 
     /**

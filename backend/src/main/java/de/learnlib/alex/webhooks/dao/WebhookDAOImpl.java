@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.xml.bind.ValidationException;
+import javax.validation.ValidationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -91,7 +91,7 @@ public class WebhookDAOImpl implements WebhookDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public void delete(User user, List<Long> ids) throws NotFoundException {
         for (Long id : ids) {
             delete(user, id);

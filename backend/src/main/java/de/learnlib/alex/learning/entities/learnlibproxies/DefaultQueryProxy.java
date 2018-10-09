@@ -144,7 +144,7 @@ public class DefaultQueryProxy implements Serializable {
             return OBJECT_MAPPER.writeValueAsString(this);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return "";
+            return "{}";
         }
     }
 
@@ -171,7 +171,7 @@ public class DefaultQueryProxy implements Serializable {
      *
      * @return The new DefaultQuery.
      */
-    public DefaultQuery<String, Word<String>> createDefaultProxy() {
+    public DefaultQuery<String, Word<String>> createDefaultQuery() {
         Word<String> prefixAsWord = Word.fromList(prefix);
         Word<String> suffixAsWord = Word.fromList(suffix);
         Word<String> outputAsWord = Word.fromList(output);

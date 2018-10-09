@@ -22,7 +22,7 @@ import de.learnlib.alex.webhooks.entities.EventType;
 import de.learnlib.alex.webhooks.entities.Webhook;
 import org.apache.shiro.authz.UnauthorizedException;
 
-import javax.xml.bind.ValidationException;
+import javax.validation.ValidationException;
 import java.util.List;
 
 /**

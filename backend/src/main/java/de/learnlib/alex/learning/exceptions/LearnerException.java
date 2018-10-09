@@ -22,12 +22,6 @@ package de.learnlib.alex.learning.exceptions;
 public class LearnerException extends RuntimeException {
 
     /**
-     * Default constructor.
-     */
-    public LearnerException() {
-    }
-
-    /**
      * Calls the constructor of the super Exception class.
      *
      * @param message

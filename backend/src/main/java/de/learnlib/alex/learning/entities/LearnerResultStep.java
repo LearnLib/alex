@@ -241,7 +241,6 @@ public class LearnerResultStep implements Serializable {
      * @return The latest counterexample or null.
      */
     @Embedded
-    @JsonIgnore
     public DefaultQueryProxy getCounterExample() {
         return counterExample;
     }
@@ -254,21 +253,6 @@ public class LearnerResultStep implements Serializable {
      */
     public void setCounterExample(DefaultQueryProxy counterExample) {
         this.counterExample = counterExample;
-    }
-
-    /**
-     * Get the latest counterexample as string.
-     *
-     * @return The last counterexample or an empty string.
-     */
-    @Transient
-    @JsonProperty("counterExample")
-    public String getCounterExampleAsString() {
-        if (counterExample == null) {
-            return "";
-        } else {
-            return counterExample.createDefaultProxy().toString();
-        }
     }
 
     /**
