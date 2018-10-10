@@ -90,19 +90,13 @@ public class SymbolGroupResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createGroup({}, {}) for user {}.", projectId, group, user);
 
-        try {
-            group.setProjectId(projectId);
-            symbolGroupDAO.create(user, group);
+        group.setProjectId(projectId);
+        symbolGroupDAO.create(user, group);
 
-            LOGGER.traceExit(group);
+        LOGGER.traceExit(group);
 
-            webhookService.fireEvent(user, new SymbolGroupEvent.Created(group));
-            return Response.status(Response.Status.CREATED).entity(group).build();
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.create",
-                    Response.Status.BAD_REQUEST, e);
-        }
+        webhookService.fireEvent(user, new SymbolGroupEvent.Created(group));
+        return Response.status(Response.Status.CREATED).entity(group).build();
     }
 
     /**
@@ -125,16 +119,10 @@ public class SymbolGroupResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createGroups({}, {}) for user {}.", projectId, groups, user);
 
-        try {
-            final List<SymbolGroup> createdGroups = symbolGroupDAO.create(user, projectId, groups);
-            webhookService.fireEvent(user, new SymbolGroupEvent.CreatedMany(createdGroups));
-            LOGGER.traceExit(createdGroups);
-            return Response.status(Response.Status.CREATED).entity(createdGroups).build();
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.create",
-                    Response.Status.BAD_REQUEST, e);
-        }
+        final List<SymbolGroup> createdGroups = symbolGroupDAO.create(user, projectId, groups);
+        webhookService.fireEvent(user, new SymbolGroupEvent.CreatedMany(createdGroups));
+        LOGGER.traceExit(createdGroups);
+        return Response.status(Response.Status.CREATED).entity(createdGroups).build();
     }
 
     /**
@@ -156,15 +144,14 @@ public class SymbolGroupResource {
         LOGGER.traceEntry("getAll({}, {}) for user {}.", projectId, embed, user);
 
         try {
-            SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
-            List<SymbolGroup> groups = symbolGroupDAO.getAll(user, projectId, embeddableFields);
+            final SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
+            final List<SymbolGroup> groups = symbolGroupDAO.getAll(user, projectId, embeddableFields);
 
             LOGGER.traceExit(groups);
             return Response.ok(groups).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
-                    Response.Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll", Response.Status.BAD_REQUEST, e);
         }
     }
 
@@ -185,22 +172,21 @@ public class SymbolGroupResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") long projectId,
-            @PathParam("id") Long id,
-            @QueryParam("embed") String embed)
+                        @PathParam("id") Long id,
+                        @QueryParam("embed") String embed)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {}, {}) for user {}.", projectId, id, embed, user);
 
         try {
-            SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
-            SymbolGroup group = symbolGroupDAO.get(user, projectId, id, embeddableFields);
+            final SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
+            final SymbolGroup group = symbolGroupDAO.get(user, projectId, id, embeddableFields);
 
             LOGGER.traceExit(group);
             return Response.ok(group).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get",
-                    Response.Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get", Response.Status.BAD_REQUEST, e);
         }
     }
 
@@ -226,21 +212,11 @@ public class SymbolGroupResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, group, user);
 
-        try {
-            symbolGroupDAO.update(user, group);
+        symbolGroupDAO.update(user, group);
 
-            LOGGER.traceExit(group);
-            webhookService.fireEvent(user, new SymbolGroupEvent.Updated(group));
-            return Response.ok(group).build();
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                    Response.Status.BAD_REQUEST, e);
-        } catch (UnauthorizedException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                    Response.Status.UNAUTHORIZED, e);
-        }
+        LOGGER.traceExit(group);
+        webhookService.fireEvent(user, new SymbolGroupEvent.Updated(group));
+        return Response.ok(group).build();
     }
 
     /**
@@ -266,21 +242,11 @@ public class SymbolGroupResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("move({}, {}, {}) for user {}.", projectId, groupId, group, user);
 
-        try {
-            final SymbolGroup movedGroup = symbolGroupDAO.move(user, group);
+        final SymbolGroup movedGroup = symbolGroupDAO.move(user, group);
 
-            LOGGER.traceExit(movedGroup);
-            webhookService.fireEvent(user, new SymbolGroupEvent.Moved(movedGroup));
-            return Response.ok(movedGroup).build();
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.move",
-                    Response.Status.BAD_REQUEST, e);
-        } catch (UnauthorizedException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.move",
-                    Response.Status.UNAUTHORIZED, e);
-        }
+        LOGGER.traceExit(movedGroup);
+        webhookService.fireEvent(user, new SymbolGroupEvent.Moved(movedGroup));
+        return Response.ok(movedGroup).build();
     }
 
     /**
@@ -309,12 +275,7 @@ public class SymbolGroupResource {
             return Response.noContent().build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                    Response.Status.BAD_REQUEST, e);
-        } catch (UnauthorizedException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                    Response.Status.UNAUTHORIZED, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update", Response.Status.BAD_REQUEST, e);
         }
     }
 

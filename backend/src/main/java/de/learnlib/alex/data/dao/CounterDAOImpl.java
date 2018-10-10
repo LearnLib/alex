@@ -63,7 +63,7 @@ public class CounterDAOImpl implements CounterDAO {
      */
     @Inject
     public CounterDAOImpl(ProjectDAO projectDAO, CounterRepository counterRepository,
-            ProjectRepository projectRepository) {
+                          ProjectRepository projectRepository) {
         this.projectDAO = projectDAO;
         this.counterRepository = counterRepository;
         this.projectRepository = projectRepository;
@@ -119,18 +119,18 @@ public class CounterDAOImpl implements CounterDAO {
         try {
             doGet(user, counter.getProjectId(), counter.getName()); // check if the counter exists
             counterRepository.save(counter);
-        } catch (DataIntegrityViolationException| TransactionSystemException e) {
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
             LOGGER.error("Counter update failed:", e);
             throw new ValidationException("Counter could not be updated.", e);
         }
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delete(User user, Long projectId, String... names) throws NotFoundException {
         Project project = projectRepository.findOne(projectId);
         List<Counter> counters = counterRepository.findAllByProjectAndNameIn(project, names);
-        for (Counter counter: counters) {
+        for (Counter counter : counters) {
             checkAccess(user, project, counter);
         }
 

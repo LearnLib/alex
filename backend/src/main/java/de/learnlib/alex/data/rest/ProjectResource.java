@@ -78,7 +78,7 @@ public class ProjectResource {
      * Create a new Project.
      *
      * @param project
-     *            The project to create.
+     *         The project to create.
      * @return On success the added project (enhanced with information from the DB); an error message on failure.
      */
     @POST
@@ -88,24 +88,19 @@ public class ProjectResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("create({}) for user {}.", project, user);
 
-        try {
-            final Project createdProject = projectDAO.create(user, project);
-            webhookService.fireEvent(user, new ProjectEvent.Created(createdProject));
-            LOGGER.traceExit(createdProject);
-            return Response.status(Status.CREATED).entity(createdProject).build();
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.create", Status.BAD_REQUEST, e);
-        }
+        final Project createdProject = projectDAO.create(user, project);
+        webhookService.fireEvent(user, new ProjectEvent.Created(createdProject));
+        LOGGER.traceExit(createdProject);
+        return Response.status(Status.CREATED).entity(createdProject).build();
     }
 
     /**
      * Get a list of all the projects owned by the user of the request.
      *
      * @param embed
-     *         By default no related objects are included in the projects. However you can ask to include them with
-     *         this parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'.
-     *         You can request multiple by just put a ',' between them.
+     *         By default no related objects are included in the projects. However you can ask to include them with this
+     *         parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'. You can
+     *         request multiple by just put a ',' between them.
      * @return All projects in a list. This list can be empty.
      */
     @GET
@@ -122,8 +117,7 @@ public class ProjectResource {
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
         }
 
-        List<Project> projects = projectDAO.getAll(user, embeddableFields);
-
+        final List<Project> projects = projectDAO.getAll(user, embeddableFields);
         LOGGER.traceExit(projects);
         return Response.ok(projects).build();
     }
@@ -132,13 +126,14 @@ public class ProjectResource {
      * Get a specific project.
      *
      * @param projectId
-     *            The ID of the project.
+     *         The ID of the project.
      * @param embed
-     *         By default no related objects are included in the project. However you can ask to include them with
-     *         this parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'.
-     *         You can request multiple by just put a ',' between them.
+     *         By default no related objects are included in the project. However you can ask to include them with this
+     *         parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'. You can
+     *         request multiple by just put a ',' between them.
      * @return The project or an error message.
-     * @throws NotFoundException If the requested Project could not be found.
+     * @throws NotFoundException
+     *         If the requested Project could not be found.
      */
     @GET
     @Path("/{id}")
@@ -150,20 +145,12 @@ public class ProjectResource {
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
             embeddableFields = parseEmbeddableFields(embed);
-            Project project = projectDAO.getByID(user.getId(), projectId, embeddableFields);
-
-            if (project.getUser().equals(user)) {
-                LOGGER.traceExit(project);
-                return Response.ok(project).build();
-            } else {
-                throw new UnauthorizedException("You are not allowed to view this project");
-            }
+            final Project project = projectDAO.getByID(user.getId(), projectId, embeddableFields);
+            LOGGER.traceExit(project);
+            return Response.ok(project).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
-        } catch (UnauthorizedException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.UNAUTHORIZED, e);
         }
     }
 
@@ -171,11 +158,12 @@ public class ProjectResource {
      * Update a specific project.
      *
      * @param id
-     *            The ID of the project.
+     *         The ID of the project.
      * @param project
-     *            The new values
+     *         The new values
      * @return On success the updated project (enhanced with information from the DB); an error message on failure.
-     * @throws NotFoundException If the given Project could not be found.
+     * @throws NotFoundException
+     *         If the given Project could not be found.
      */
     @PUT
     @Path("/{id}")
@@ -189,18 +177,10 @@ public class ProjectResource {
             LOGGER.traceExit("Wrong Project ID");
             return Response.status(Status.BAD_REQUEST).build();
         } else {
-            try {
-                final Project updatedProject = projectDAO.update(user, project);
-                webhookService.fireEvent(user, new ProjectEvent.Updated(updatedProject));
-                LOGGER.traceExit(updatedProject);
-                return Response.ok(updatedProject).build();
-            } catch (ValidationException e) {
-                LOGGER.traceExit(e);
-                return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.BAD_REQUEST, e);
-            } catch (UnauthorizedException e) {
-                LOGGER.traceExit(e);
-                return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.update", Status.UNAUTHORIZED, e);
-            }
+            final Project updatedProject = projectDAO.update(user, project);
+            webhookService.fireEvent(user, new ProjectEvent.Updated(updatedProject));
+            LOGGER.traceExit(updatedProject);
+            return Response.ok(updatedProject).build();
         }
     }
 
@@ -208,9 +188,10 @@ public class ProjectResource {
      * Delete a specific project.
      *
      * @param projectId
-     *            The ID of the project.
+     *         The ID of the project.
      * @return On success no content will be returned; an error message on failure.
-     * @throws NotFoundException If the given Project could not be found.
+     * @throws NotFoundException
+     *         If the given Project could not be found.
      */
     @DELETE
     @Path("/{id}")
@@ -219,23 +200,11 @@ public class ProjectResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
 
-        try {
-            Project project = projectDAO.getByID(user.getId(), projectId);
-
-            if ((project.getUser() != null && !user.equals(project.getUser()))
-                    || (project.getUser().getId() != 0 && !Objects.equals(project.getUser().getId(), user.getId()))) {
-                throw new UnauthorizedException("You are not allowed to delete this project");
-            }
-
-            project.setUser(user);
-            projectDAO.delete(user, projectId);
-            webhookService.fireEvent(user, new ProjectEvent.Deleted(project.getId()));
-            LOGGER.traceExit("Project {} deleted", projectId);
-            return Response.status(Status.NO_CONTENT).build();
-        } catch (UnauthorizedException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.delete", Status.UNAUTHORIZED, e);
-        }
+        final Project project = projectDAO.getByID(user.getId(), projectId);
+        projectDAO.delete(user, projectId);
+        webhookService.fireEvent(user, new ProjectEvent.Deleted(project.getId()));
+        LOGGER.traceExit("Project {} deleted", projectId);
+        return Response.status(Status.NO_CONTENT).build();
     }
 
     private ProjectDAO.EmbeddableFields[] parseEmbeddableFields(String embed) throws IllegalArgumentException {

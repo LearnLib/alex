@@ -73,7 +73,7 @@ public class CounterResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAllCounters({}) for user {}.", projectId, user);
 
-        List<Counter> counters = counterDAO.getAll(user, projectId);
+        final List<Counter> counters = counterDAO.getAll(user, projectId);
 
         LOGGER.traceExit(counters);
         return Response.ok(counters).build();
@@ -91,24 +91,16 @@ public class CounterResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createCounter(@PathParam("project_id") Long projectId, Counter counter) {
+    public Response createCounter(@PathParam("project_id") Long projectId, Counter counter) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createCounter({}, {}) for user {}.", projectId, counter.getName(), user);
 
-        try {
-            if (!counter.getProjectId().equals(projectId)) {
-                throw new ValidationException("The ID of the project does not match with the URL.");
-            }
-
-            counterDAO.create(user, counter);
-            return Response.ok(counter).build();
-        } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.createCounter",
-                    Response.Status.NOT_FOUND, e);
-        } catch (ValidationException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.createCounter",
-                    Response.Status.BAD_REQUEST, e);
+        if (!counter.getProjectId().equals(projectId)) {
+            throw new ValidationException("The ID of the project does not match with the URL.");
         }
+
+        counterDAO.create(user, counter);
+        return Response.ok(counter).build();
     }
 
     /**
@@ -126,35 +118,24 @@ public class CounterResource {
     @Path("/{counter_name}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCounter(@PathParam("project_id") Long projectId,
-            @PathParam("counter_name") String name,
-            Counter counter) {
+    public Response updateCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name, Counter counter)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("updateCounter({}, {}) for user {}.", projectId, name, user);
 
-        try {
-            if (!counter.getProjectId().equals(projectId)) {
-                throw new ValidationException("The ID of the project does not match with the URL.");
-            }
-
-            if (!name.equals(counter.getName())) {
-                throw new ValidationException("The name of a counter cannot be updated.");
-            }
-
-            Counter counterInDB = counterDAO.get(user, projectId, name);
-            counterInDB.setValue(counter.getValue());
-
-            counterDAO.update(user, counterInDB);
-            return Response.ok(counterInDB).build();
-        } catch (ValidationException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.updateCounter",
-                    Response.Status.BAD_REQUEST,
-                    e);
-        } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("CounterResource.updateCounter",
-                    Response.Status.NOT_FOUND,
-                    e);
+        if (!counter.getProjectId().equals(projectId)) {
+            throw new ValidationException("The ID of the project does not match with the URL.");
         }
+
+        if (!name.equals(counter.getName())) {
+            throw new ValidationException("The name of a counter cannot be updated.");
+        }
+
+        final Counter counterInDB = counterDAO.get(user, projectId, name);
+        counterInDB.setValue(counter.getValue());
+
+        counterDAO.update(user, counterInDB);
+        return Response.ok(counterInDB).build();
     }
 
     /**
@@ -196,8 +177,7 @@ public class CounterResource {
     @DELETE
     @Path("/batch/{counter_names}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteCounter(@PathParam("project_id") Long projectId,
-            @PathParam("counter_names") StringList names)
+    public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_names") StringList names)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, names, user);
@@ -206,7 +186,6 @@ public class CounterResource {
 
         LOGGER.traceExit("Counter(s) {} deleted.", names);
         return Response.status(Response.Status.NO_CONTENT).build();
-
     }
 
 }

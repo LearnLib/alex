@@ -144,8 +144,8 @@ public class LearnerResultResource {
     @Path("{test_nos}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") Long projectId,
-            @PathParam("test_nos") IdsList testNos,
-            @QueryParam("embed") String embed)
+                           @PathParam("test_nos") IdsList testNos,
+                           @QueryParam("embed") String embed)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.getAllSteps(" + projectId + ", " + testNos + ") for user " + user + ".");
@@ -213,7 +213,7 @@ public class LearnerResultResource {
     @Path("{test_no}/generateTestSuite")
     @Produces(MediaType.APPLICATION_JSON)
     public Response generateTestSuite(@PathParam("project_id") Long projectId, @PathParam("test_no") Long testNo,
-            TestSuiteGenerationConfig config) throws Exception {
+                                      TestSuiteGenerationConfig config) throws Exception {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("generateTestSuite(projectId: {}, testNo: {}, config: {}) for user {}", projectId, testNo, config, user);
 
@@ -238,21 +238,14 @@ public class LearnerResultResource {
     @DELETE
     @Path("{test_numbers}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteResultSet(@PathParam("project_id") Long projectId,
-            @PathParam("test_numbers") IdsList testNumbers) throws NotFoundException {
+    public Response deleteResultSet(@PathParam("project_id") Long projectId, @PathParam("test_numbers") IdsList testNumbers)
+            throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.deleteResultSet(" + projectId + ", " + testNumbers + ") "
                 + "for user " + user + ".");
 
-        try {
-            learnerResultDAO.delete(learner, projectId, testNumbers);
-            return Response.status(Response.Status.NO_CONTENT).build();
-
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.deleteResultSet",
-                    Response.Status.BAD_REQUEST, e);
-        }
+        learnerResultDAO.delete(learner, projectId, testNumbers);
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 
     private boolean parseEmbeddableFields(String embed) throws IllegalArgumentException {

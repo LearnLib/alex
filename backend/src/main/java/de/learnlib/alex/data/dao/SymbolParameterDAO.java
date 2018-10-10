@@ -23,7 +23,7 @@ import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import org.apache.shiro.authz.UnauthorizedException;
 
-import javax.xml.bind.ValidationException;
+import javax.validation.ValidationException;
 import java.util.List;
 
 /**

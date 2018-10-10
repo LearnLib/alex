@@ -87,14 +87,9 @@ public class WebhookResource {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("create '{}' for user '{}'", webhook, user);
 
-        try {
-            final Webhook createdWebhook = webhookDAO.create(user, webhook);
-            LOGGER.traceExit(createdWebhook);
-            return Response.ok(createdWebhook).build();
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("Webhook.create", Response.Status.BAD_REQUEST, e);
-        }
+        final Webhook createdWebhook = webhookDAO.create(user, webhook);
+        LOGGER.traceExit(createdWebhook);
+        return Response.ok(createdWebhook).build();
     }
 
     /**
@@ -141,18 +136,13 @@ public class WebhookResource {
     @DELETE
     @Path("/{webhookId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("webhookId") Long webhookId) {
+    public Response delete(@PathParam("webhookId") Long webhookId) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete webhook '{}' for user '{}'", webhookId, user);
 
-        try {
-            webhookDAO.delete(user, webhookId);
-            LOGGER.traceExit("Webhook {} deleted", webhookId);
-            return Response.noContent().build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("Webhook.delete", Response.Status.NOT_FOUND, e);
-        }
+        webhookDAO.delete(user, webhookId);
+        LOGGER.traceExit("Webhook {} deleted", webhookId);
+        return Response.noContent().build();
     }
 
     /**
@@ -165,18 +155,13 @@ public class WebhookResource {
     @DELETE
     @Path("/batch/{webhookIds}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("webhookIds") IdsList webhookIds) {
+    public Response delete(@PathParam("webhookIds") IdsList webhookIds) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete webhooks '{}' for user '{}'", webhookIds, user);
 
-        try {
-            webhookDAO.delete(user, webhookIds);
-            LOGGER.traceExit("Webhooks {} deleted", webhookIds);
-            return Response.noContent().build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("Webhook.delete", Response.Status.BAD_REQUEST, e);
-        }
+        webhookDAO.delete(user, webhookIds);
+        LOGGER.traceExit("Webhooks {} deleted", webhookIds);
+        return Response.noContent().build();
     }
 
     /**

@@ -92,42 +92,37 @@ public class UserResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("create({}).", newUser);
 
-        try {
-            if (!new EmailValidator().isValid(newUser.getEmail(), null)) {
-                throw new ValidationException("The email is not valid");
+        if (!new EmailValidator().isValid(newUser.getEmail(), null)) {
+            throw new ValidationException("The email is not valid");
+        }
+
+        final Settings settings = settingsDAO.get();
+
+        if (user.getId() == null) { // anonymous registration
+            if (!settings.isAllowUserRegistration()) {
+                return ResourceErrorHandler.createRESTErrorMessage("UserResource.create", Status.FORBIDDEN,
+                        new Exception("Public user registration is not allowed."));
             }
 
-            final Settings settings = settingsDAO.get();
+            newUser.setRole(UserRole.REGISTERED);
+            newUser.setEncryptedPassword(newUser.getPassword());
 
-            if (user.getId() == null) { // anonymous registration
-                if (!settings.isAllowUserRegistration()) {
-                    return ResourceErrorHandler.createRESTErrorMessage("UserResource.create", Status.FORBIDDEN,
-                            new Exception("Public user registration is not allowed."));
-                }
-
-                newUser.setRole(UserRole.REGISTERED);
+            // create user
+            userDAO.create(newUser);
+            LOGGER.traceExit(newUser);
+            return Response.status(Status.CREATED).entity(newUser).build();
+        } else {
+            if (user.getRole().equals(UserRole.REGISTERED)) {
+                return ResourceErrorHandler.createRESTErrorMessage("UserResource.create", Status.UNAUTHORIZED,
+                        new Exception("You are not allowed to create new accounts."));
+            } else {
                 newUser.setEncryptedPassword(newUser.getPassword());
 
                 // create user
                 userDAO.create(newUser);
                 LOGGER.traceExit(newUser);
                 return Response.status(Status.CREATED).entity(newUser).build();
-            } else {
-                if (user.getRole().equals(UserRole.REGISTERED)) {
-                    return ResourceErrorHandler.createRESTErrorMessage("UserResource.create", Status.UNAUTHORIZED,
-                            new Exception("You are not allowed to create new accounts."));
-                } else {
-                    newUser.setEncryptedPassword(newUser.getPassword());
-
-                    // create user
-                    userDAO.create(newUser);
-                    LOGGER.traceExit(newUser);
-                    return Response.status(Status.CREATED).entity(newUser).build();
-                }
             }
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.create", Status.BAD_REQUEST, e);
         }
     }
 
@@ -253,31 +248,26 @@ public class UserResource {
         }
 
         String email = (String) json.get("email");
-        try {
-            User realUser = userDAO.getById(userId);
+        User realUser = userDAO.getById(userId);
 
-            if (!new EmailValidator().isValid(email, null)) {
-                throw new ValidationException("The email is not valid!");
-            }
-            if (email.equals(user.getEmail())) {
-                throw new ValidationException("The email is the same as the current one!");
-            }
-
-            if (emailIsAlreadyTaken(email)) {
-                throw new ValidationException("The email is already taken!");
-            }
-
-            realUser.setEmail(email);
-            userDAO.update(realUser);
-
-            LOGGER.traceExit(realUser);
-
-            webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
-            return Response.ok(realUser).build();
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changeEmail", Status.BAD_REQUEST, e);
+        if (!new EmailValidator().isValid(email, null)) {
+            throw new ValidationException("The email is not valid!");
         }
+        if (email.equals(user.getEmail())) {
+            throw new ValidationException("The email is the same as the current one!");
+        }
+
+        if (emailIsAlreadyTaken(email)) {
+            throw new ValidationException("The email is already taken!");
+        }
+
+        realUser.setEmail(email);
+        userDAO.update(realUser);
+
+        LOGGER.traceExit(realUser);
+
+        webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
+        return Response.ok(realUser).build();
     }
 
     private boolean emailIsAlreadyTaken(String email) {
@@ -336,27 +326,22 @@ public class UserResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("UserResource.demoteUser(" + userId + ") for user " + user + ".");
 
-        try {
-            // if the admin wants to revoke his own rights
-            // -> take care that always one admin is in the system
-            if (user.getId().equals(userId)) {
-                List<User> admins = userDAO.getAllByRole(UserRole.ADMIN);
-                if (admins.size() == 1) {
-                    throw new BadRequestException("The only admin left cannot take away his own admin rights!");
-                }
+        // if the admin wants to revoke his own rights
+        // -> take care that always one admin is in the system
+        if (user.getId().equals(userId)) {
+            List<User> admins = userDAO.getAllByRole(UserRole.ADMIN);
+            if (admins.size() == 1) {
+                throw new ValidationException("The only admin left cannot take away his own admin rights!");
             }
-
-            User userToDemote = userDAO.getById(userId);
-            userToDemote.setRole(UserRole.REGISTERED);
-            userDAO.update(userToDemote);
-
-            LOGGER.traceExit(userToDemote);
-            webhookService.fireEvent(user, new UserEvent.RoleUpdated(userToDemote));
-            return Response.ok(userToDemote).build();
-        } catch (BadRequestException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("UserResource.demoteUser", Status.BAD_REQUEST, e);
         }
+
+        User userToDemote = userDAO.getById(userId);
+        userToDemote.setRole(UserRole.REGISTERED);
+        userDAO.update(userToDemote);
+
+        LOGGER.traceExit(userToDemote);
+        webhookService.fireEvent(user, new UserEvent.RoleUpdated(userToDemote));
+        return Response.ok(userToDemote).build();
     }
 
     /**
@@ -388,7 +373,6 @@ public class UserResource {
         userDAO.delete(userId);
 
         LOGGER.traceExit("User {} deleted.", userId);
-
         return Response.status(Status.NO_CONTENT).build();
     }
 

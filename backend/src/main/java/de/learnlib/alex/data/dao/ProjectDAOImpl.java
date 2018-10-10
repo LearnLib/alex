@@ -103,9 +103,9 @@ public class ProjectDAOImpl implements ProjectDAO {
      */
     @Inject
     public ProjectDAOImpl(ProjectRepository projectRepository, LearnerResultRepository learnerResultRepository,
-            TestReportRepository testReportRepository, @Lazy FileDAO fileDAO, @Lazy ProjectUrlDAO projectUrlDAO,
-            ParameterizedSymbolRepository parameterizedSymbolRepository,
-            SymbolStepRepository symbolStepRepository, SymbolActionRepository symbolActionRepository) {
+                          TestReportRepository testReportRepository, @Lazy FileDAO fileDAO, @Lazy ProjectUrlDAO projectUrlDAO,
+                          ParameterizedSymbolRepository parameterizedSymbolRepository,
+                          SymbolStepRepository symbolStepRepository, SymbolActionRepository symbolActionRepository) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
@@ -169,7 +169,6 @@ public class ProjectDAOImpl implements ProjectDAO {
         checkAccess(new User(userId), project);
 
         initLazyRelations(project, embedFields);
-
         return project;
     }
 
@@ -220,7 +219,7 @@ public class ProjectDAOImpl implements ProjectDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delete(User user, Long projectId) throws NotFoundException {
         final Project project = projectRepository.findOne(projectId);
         checkAccess(user, project);

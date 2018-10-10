@@ -85,7 +85,7 @@ public class TestReportResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") Long projectId, @QueryParam("page") int page,
-            @QueryParam("size") int size)
+                        @QueryParam("size") int size)
             throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
@@ -113,7 +113,7 @@ public class TestReportResource {
     @Path("/{report_id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") Long projectId, @PathParam("report_id") Long reportId,
-            @QueryParam("format") String format) throws NotFoundException {
+                        @QueryParam("format") String format) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {}) for user {}.", projectId, reportId, user);
 
@@ -152,19 +152,13 @@ public class TestReportResource {
     @GET
     @Path("/latest")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLatest(@PathParam("project_id") Long projectId) {
+    public Response getLatest(@PathParam("project_id") Long projectId) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getLatest({}) for user {}.", projectId, user);
 
-        try {
-            final TestReport latestReport = testReportDAO.getLatest(user, projectId);
-            LOGGER.traceExit(latestReport);
-            return latestReport == null ? Response.noContent().build() : Response.ok(latestReport).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.getLatest",
-                    Response.Status.NOT_FOUND, e);
-        }
+        final TestReport latestReport = testReportDAO.getLatest(user, projectId);
+        LOGGER.traceExit(latestReport);
+        return latestReport == null ? Response.noContent().build() : Response.ok(latestReport).build();
     }
 
     /**

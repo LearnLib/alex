@@ -71,7 +71,7 @@ public class UserDAOImpl implements UserDAO {
      */
     @Inject
     public UserDAOImpl(UserRepository userRepository, FileDAO fileDAO, ProjectDAO projectDAO,
-            ProjectRepository projectRepository) {
+                       ProjectRepository projectRepository) {
         this.userRepository = userRepository;
         this.fileDAO = fileDAO;
         this.projectDAO = projectDAO;
@@ -135,7 +135,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delete(IdsList ids) throws NotFoundException {
         final List<User> users = userRepository.findAllByIdIn(ids);
         if (users.size() != ids.size()) {

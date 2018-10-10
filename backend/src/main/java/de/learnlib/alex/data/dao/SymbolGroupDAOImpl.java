@@ -102,12 +102,12 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
      */
     @Inject
     public SymbolGroupDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
-            SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
-            SymbolActionRepository symbolActionRepository,
-            SymbolParameterRepository symbolParameterRepository, ParameterizedSymbolDAO parameterizedSymbolDAO,
-            SymbolStepRepository symbolStepRepository, ParameterizedSymbolRepository parameterizedSymbolRepository,
-            TestCaseStepRepository testCaseStepRepository, TestExecutionResultRepository testExecutionResultRepository,
-            SymbolSymbolStepRepository symbolSymbolStepRepository) {
+                              SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
+                              SymbolActionRepository symbolActionRepository,
+                              SymbolParameterRepository symbolParameterRepository, ParameterizedSymbolDAO parameterizedSymbolDAO,
+                              SymbolStepRepository symbolStepRepository, ParameterizedSymbolRepository parameterizedSymbolRepository,
+                              TestCaseStepRepository testCaseStepRepository, TestExecutionResultRepository testExecutionResultRepository,
+                              SymbolSymbolStepRepository symbolSymbolStepRepository) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
@@ -151,7 +151,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<SymbolGroup> create(User user, Long projectId, List<SymbolGroup> groups)
             throws NotFoundException, ValidationException {
         LOGGER.traceEntry("create({})", groups);

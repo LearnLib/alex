@@ -175,8 +175,8 @@ public class LearnerResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response resume(@PathParam("project_id") long projectId,
-            @PathParam("test_no") long testNo,
-            LearnerResumeConfiguration configuration)
+                           @PathParam("test_no") long testNo,
+                           LearnerResumeConfiguration configuration)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
@@ -259,15 +259,11 @@ public class LearnerResource {
     @GET
     @Path("/{project_id}/stop")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response stop(@PathParam("project_id") long projectId) {
+    public Response stop(@PathParam("project_id") long projectId) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("stop() for user {}.", user);
 
-        try {
-            projectDAO.getByID(user.getId(), projectId);
-        } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.stop", Status.NOT_FOUND, e);
-        }
+        projectDAO.getByID(user.getId(), projectId); // access check
 
         if (learner.isActive(projectId)) {
             learner.stop(projectId);

@@ -232,7 +232,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public LearnerResult clone(User user, Long projectId, Long testNo) throws NotFoundException, UnauthorizedException {
         final Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
         final LearnerResult result = learnerResultRepository.findOneByProject_IdAndTestNo(projectId, testNo);

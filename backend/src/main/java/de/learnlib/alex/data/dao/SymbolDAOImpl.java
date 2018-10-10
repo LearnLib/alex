@@ -144,14 +144,14 @@ public class SymbolDAOImpl implements SymbolDAO {
      */
     @Inject
     public SymbolDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
-            SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
-            SymbolActionRepository symbolActionRepository, SymbolGroupDAO symbolGroupDAO,
-            SymbolParameterRepository symbolParameterRepository, SymbolStepRepository symbolStepRepository,
-            ParameterizedSymbolDAO parameterizedSymbolDAO,
-            ParameterizedSymbolRepository parameterizedSymbolRepository,
-            SymbolSymbolStepRepository symbolSymbolStepRepository,
-            TestCaseStepRepository testCaseStepRepository,
-            TestExecutionResultRepository testExecutionResultRepository) {
+                         SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
+                         SymbolActionRepository symbolActionRepository, SymbolGroupDAO symbolGroupDAO,
+                         SymbolParameterRepository symbolParameterRepository, SymbolStepRepository symbolStepRepository,
+                         ParameterizedSymbolDAO parameterizedSymbolDAO,
+                         ParameterizedSymbolRepository parameterizedSymbolRepository,
+                         SymbolSymbolStepRepository symbolSymbolStepRepository,
+                         TestCaseStepRepository testCaseStepRepository,
+                         TestExecutionResultRepository testExecutionResultRepository) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
@@ -190,7 +190,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<Symbol> create(User user, Long projectId, List<Symbol> symbols)
             throws NotFoundException, ValidationException {
         try {
@@ -354,7 +354,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Override
     @Transactional(readOnly = true)
     public List<Symbol> getAll(User user, Long projectId, Long groupId,
-            SymbolVisibilityLevel visibilityLevel)
+                               SymbolVisibilityLevel visibilityLevel)
             throws NotFoundException {
         projectDAO.getByID(user.getId(), projectId); // access check
 
@@ -369,7 +369,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Override
     @Transactional(readOnly = true)
     public List<Symbol> getByIds(User user, Long projectId, SymbolVisibilityLevel visibilityLevel,
-            List<Long> ids) throws NotFoundException {
+                                 List<Long> ids) throws NotFoundException {
         projectDAO.getByID(user.getId(), projectId); // access check
 
         List<Symbol> result = symbolRepository.findAllByIdIn(ids);
@@ -420,7 +420,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<Symbol> update(User user, Long projectId, List<Symbol> symbols)
             throws IllegalArgumentException, NotFoundException, ValidationException {
         try {
@@ -506,7 +506,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<Symbol> move(User user, Long projectId, List<Long> symbolIds, Long newGroupId)
             throws NotFoundException {
 
@@ -580,7 +580,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<Symbol> hide(User user, Long projectId, List<Long> ids) throws NotFoundException {
         final Project project = projectRepository.findOne(projectId);
         final List<Symbol> symbols = symbolRepository.findAllByIdIn(ids);
@@ -603,7 +603,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void show(User user, Long projectId, List<Long> ids) throws NotFoundException {
         Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL); // access check
 
@@ -617,7 +617,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delete(User user, Long projectId, Long symbolId) throws NotFoundException {
         final Symbol symbol = get(user, projectId, symbolId);
 

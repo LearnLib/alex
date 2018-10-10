@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.xml.bind.ValidationException;
+import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,11 +64,11 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
 
     @Inject
     public SymbolParameterDAOImpl(ProjectRepository projectRepository,
-            SymbolRepository symbolRepository,
-            SymbolParameterRepository symbolParameterRepository,
-            SymbolParameterValueRepository symbolParameterValueRepository,
-            ParameterizedSymbolRepository parameterizedSymbolRepository,
-            SymbolDAO symbolDAO) {
+                                  SymbolRepository symbolRepository,
+                                  SymbolParameterRepository symbolParameterRepository,
+                                  SymbolParameterValueRepository symbolParameterValueRepository,
+                                  ParameterizedSymbolRepository parameterizedSymbolRepository,
+                                  SymbolDAO symbolDAO) {
         this.projectRepository = projectRepository;
         this.symbolRepository = symbolRepository;
         this.symbolParameterRepository = symbolParameterRepository;
@@ -88,7 +88,7 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public List<SymbolParameter> create(User user, Long projectId, Long symbolId, List<SymbolParameter> parameters)
             throws NotFoundException, UnauthorizedException, ValidationException {
         final Project project = projectRepository.findOne(projectId);

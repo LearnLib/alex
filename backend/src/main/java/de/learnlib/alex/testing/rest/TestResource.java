@@ -116,13 +116,9 @@ public class TestResource {
 
         test.setProjectId(projectId);
 
-        try {
-            testDAO.create(user, test);
-            webhookService.fireEvent(user, new TestEvent.Created(test));
-            return Response.ok(test).status(Response.Status.CREATED).build();
-        } catch (ValidationException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("TestCase.create", Response.Status.BAD_REQUEST, e);
-        }
+        testDAO.create(user, test);
+        webhookService.fireEvent(user, new TestEvent.Created(test));
+        return Response.ok(test).status(Response.Status.CREATED).build();
     }
 
     /**
@@ -146,19 +142,15 @@ public class TestResource {
 
         tests.forEach(test -> test.setProjectId(projectId));
 
-        try {
-            testDAO.create(user, tests);
+        testDAO.create(user, tests);
 
-            final List<Test> createdTests = new ArrayList<>();
-            for (final Test t : tests) {
-                createdTests.add(testDAO.get(user, projectId, t.getId()));
-            }
-
-            webhookService.fireEvent(user, new TestEvent.CreatedMany(createdTests));
-            return Response.ok(createdTests).status(Response.Status.CREATED).build();
-        } catch (ValidationException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("TestCase.create", Response.Status.BAD_REQUEST, e);
+        final List<Test> createdTests = new ArrayList<>();
+        for (final Test t : tests) {
+            createdTests.add(testDAO.get(user, projectId, t.getId()));
         }
+
+        webhookService.fireEvent(user, new TestEvent.CreatedMany(createdTests));
+        return Response.ok(createdTests).status(Response.Status.CREATED).build();
     }
 
     /**
@@ -178,12 +170,8 @@ public class TestResource {
     public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-        try {
-            final Test test = testDAO.get(user, projectId, id);
-            return Response.ok(test).build();
-        } catch (UnauthorizedException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("TestCase.get", Response.Status.UNAUTHORIZED, e);
-        }
+        final Test test = testDAO.get(user, projectId, id);
+        return Response.ok(test).build();
     }
 
     /**
@@ -208,9 +196,6 @@ public class TestResource {
             final List<Test> tests = testDAO.getByType(user, projectId, type);
             LOGGER.traceExit("getAll() with status {}", Response.Status.OK);
             return Response.ok(tests).build();
-        } catch (UnauthorizedException e) {
-            LOGGER.traceExit("getAll() with status {}", Response.Status.UNAUTHORIZED);
-            return ResourceErrorHandler.createRESTErrorMessage("Tests.get", Response.Status.UNAUTHORIZED, e);
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit("getAll() with status {}", Response.Status.BAD_REQUEST);
             return ResourceErrorHandler.createRESTErrorMessage("Tests.get", Response.Status.BAD_REQUEST, e);
@@ -252,7 +237,7 @@ public class TestResource {
     @Path("/{id}/execute")
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("project_id") Long projectId, @PathParam("id") Long id,
-            TestExecutionConfig testConfig) throws NotFoundException {
+                            TestExecutionConfig testConfig) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         ThreadContext.put("userId", String.valueOf(user.getId()));
 
@@ -292,7 +277,7 @@ public class TestResource {
     @Path("/execute")
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("project_id") Long projectId,
-            TestExecutionConfig testConfig)
+                            TestExecutionConfig testConfig)
             throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Project project = projectDAO.getByID(user.getId(), projectId);
@@ -330,18 +315,13 @@ public class TestResource {
      */
     @POST
     @Path("/abort")
-    public Response abort(@PathParam("project_id") Long projectId) {
+    public Response abort(@PathParam("project_id") Long projectId) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("abort(projectId: {}) with user {}", projectId, user);
 
-        try {
-            testService.abort(user, projectId);
-            LOGGER.traceExit("abort() with status {}", Response.Status.OK.getStatusCode());
-            return Response.ok().build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit("abort() with status {}", HttpStatus.NOT_FOUND.value());
-            return ResourceErrorHandler.createRESTErrorMessage("TestResource.abort", Response.Status.NOT_FOUND, e);
-        }
+        testService.abort(user, projectId);
+        LOGGER.traceExit("abort() with status {}", Response.Status.OK.getStatusCode());
+        return Response.ok().build();
     }
 
     /**
@@ -362,8 +342,8 @@ public class TestResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("project_id") Long projectId,
-            @PathParam("id") Long id,
-            Test test) throws NotFoundException {
+                           @PathParam("id") Long id,
+                           Test test) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         if (test.getId() == null) {
@@ -376,14 +356,10 @@ public class TestResource {
 
         test.setProjectId(projectId);
 
-        try {
-            testDAO.update(user, test);
+        testDAO.update(user, test);
 
-            webhookService.fireEvent(user, new TestEvent.Updated(test));
-            return Response.ok(test).build();
-        } catch (ValidationException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("TestCase.update", Response.Status.BAD_REQUEST, e);
-        }
+        webhookService.fireEvent(user, new TestEvent.Updated(test));
+        return Response.ok(test).build();
     }
 
     /**
@@ -404,16 +380,12 @@ public class TestResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response move(@PathParam("project_id") Long projectId, @PathParam("testIds") IdsList testIds,
-            @PathParam("targetId") Long targetId) throws NotFoundException {
+                         @PathParam("targetId") Long targetId) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-        try {
-            final List<Test> movedTests = testDAO.move(user, projectId, testIds, targetId);
-            webhookService.fireEvent(user, new TestEvent.MovedMany(movedTests));
-            return Response.ok(movedTests).build();
-        } catch (ValidationException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("TestResource.move", Response.Status.BAD_REQUEST, e);
-        }
+        final List<Test> movedTests = testDAO.move(user, projectId, testIds, targetId);
+        webhookService.fireEvent(user, new TestEvent.MovedMany(movedTests));
+        return Response.ok(movedTests).build();
     }
 
     /**
@@ -433,13 +405,7 @@ public class TestResource {
     public Response delete(@PathParam("project_id") Long projectId, @PathParam("id") Long id) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-        try {
-            testDAO.delete(user, projectId, id);
-        } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("TestCase.delete", Response.Status.NOT_FOUND, e);
-        } catch (ValidationException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("TestCase.delete", Response.Status.BAD_REQUEST, e);
-        }
+        testDAO.delete(user, projectId, id);
 
         webhookService.fireEvent(user, new TestEvent.Deleted(id));
         return Response.status(Response.Status.NO_CONTENT).build();
@@ -463,13 +429,7 @@ public class TestResource {
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-        try {
-            testDAO.delete(user, projectId, ids);
-        } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("TestCase.delete", Response.Status.NOT_FOUND, e);
-        } catch (ValidationException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("TestCase.delete", Response.Status.BAD_REQUEST, e);
-        }
+        testDAO.delete(user, projectId, ids);
 
         webhookService.fireEvent(user, new TestEvent.DeletedMany(ids));
         return Response.status(Response.Status.NO_CONTENT).build();
@@ -494,7 +454,7 @@ public class TestResource {
     @Path("/{testId}/results")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getResults(@PathParam("project_id") Long projectId, @PathParam("testId") Long testId,
-            @QueryParam("page") int page, @QueryParam("size") int size) throws NotFoundException {
+                               @QueryParam("page") int page, @QueryParam("size") int size) throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Page<TestResult> results = testDAO.getResults(user, projectId, testId, new PageRequest(page, size));
         return Response.ok(results).build();

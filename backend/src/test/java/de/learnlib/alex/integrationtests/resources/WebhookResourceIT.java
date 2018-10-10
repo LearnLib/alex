@@ -164,7 +164,7 @@ public class WebhookResourceIT extends AbstractResourceIT {
         final int id1 = JsonPath.read(res1.readEntity(String.class), "$.id");
 
         final Response res3 = webhookApi.delete(Arrays.asList(id1, -1), jwtUser1);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res3.getStatus());
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), res3.getStatus());
         assertEquals(1, getNumberOfWebhooks(jwtUser1));
     }
 
@@ -196,7 +196,8 @@ public class WebhookResourceIT extends AbstractResourceIT {
     @Test
     public void shouldGetAllEvents() {
         final Response res = webhookApi.getEvents(jwtUser1);
-        final List<String> events = res.readEntity(new GenericType<List<String>>(){});
+        final List<String> events = res.readEntity(new GenericType<List<String>>() {
+        });
         assertFalse(events.isEmpty());
     }
 
