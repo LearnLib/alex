@@ -30,7 +30,7 @@ import java.io.Serializable;
  * Base class for Proxies around a the different EquivalenceOracles from the LearnLib. The Proxy is needed to make it
  * easier to (de-)serialize the EQ oracles into/ from JSON.
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(name = "random_word", value = MealyRandomWordsEQOracleProxy.class),
         @JsonSubTypes.Type(name = "complete", value = CompleteExplorationEQOracleProxy.class),

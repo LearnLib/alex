@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "name", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("SUPER")
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "name")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "name")
 @JsonSubTypes({
         @JsonSubTypes.Type(name = WebDrivers.CHROME, value = ChromeDriverConfig.class),
         @JsonSubTypes.Type(name = WebDrivers.EDGE, value = EdgeDriverConfig.class),

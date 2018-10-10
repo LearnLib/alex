@@ -33,7 +33,7 @@ import java.util.Objects;
  * Symbol parameter class.
  */
 @Entity
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(name = "input", value = SymbolInputParameter.class),
         @JsonSubTypes.Type(name = "output", value = SymbolOutputParameter.class),

@@ -37,7 +37,7 @@ import java.io.Serializable;
  * @param <O>
  *         The output type.
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "name")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "name")
 @JsonSubTypes({
         @JsonSubTypes.Type(name = "DHC", value = DHC.class),
         @JsonSubTypes.Type(name = "DT", value = DiscriminationTree.class),
