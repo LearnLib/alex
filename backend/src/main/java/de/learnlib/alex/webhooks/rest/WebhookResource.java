@@ -20,7 +20,6 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import de.learnlib.alex.webhooks.entities.EventType;
 import de.learnlib.alex.webhooks.entities.Webhook;
@@ -29,7 +28,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;

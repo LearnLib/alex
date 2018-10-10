@@ -26,7 +26,6 @@ import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolInputParameter;
-import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
@@ -84,9 +83,6 @@ public class TestDAOImpl implements TestDAO {
     /** The {@link TestResultRepository} to use. */
     private TestResultRepository testResultRepository;
 
-    /** The {@link ParameterizedSymbolRepository} to use. */
-    private ParameterizedSymbolRepository parameterizedSymbolRepository;
-
     /**
      * Constructor.
      *
@@ -104,14 +100,11 @@ public class TestDAOImpl implements TestDAO {
      *         The injected DAO for parameterized symbols.
      * @param testResultRepository
      *         The injected repository for test results.
-     * @param parameterizedSymbolRepository
-     *         {@link #parameterizedSymbolRepository}
      */
     @Inject
     public TestDAOImpl(ProjectDAO projectDAO, TestRepository testRepository, SymbolDAO symbolDAO,
             TestCaseStepRepository testCaseStepRepository, ProjectRepository projectRepository,
-            ParameterizedSymbolDAO parameterizedSymbolDAO, TestResultRepository testResultRepository,
-            ParameterizedSymbolRepository parameterizedSymbolRepository) {
+            ParameterizedSymbolDAO parameterizedSymbolDAO, TestResultRepository testResultRepository) {
         this.projectDAO = projectDAO;
         this.testRepository = testRepository;
         this.symbolDAO = symbolDAO;
@@ -119,81 +112,77 @@ public class TestDAOImpl implements TestDAO {
         this.projectRepository = projectRepository;
         this.parameterizedSymbolDAO = parameterizedSymbolDAO;
         this.testResultRepository = testResultRepository;
-        this.parameterizedSymbolRepository = parameterizedSymbolRepository;
     }
 
     @Override
     @Transactional
     public void create(User user, Test test) throws NotFoundException, ValidationException {
         LOGGER.traceEntry("create({})", test);
-        try {
-            // new Test Cases should have a project and no id
-            if (test.getId() != null) {
-                throw new ValidationException("To create a test case it must not haven an ID.");
+
+        // new Test Cases should have a project and no id
+        if (test.getId() != null) {
+            throw new ValidationException("To create a test case it must not haven an ID.");
+        }
+
+        final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(test.getProjectId());
+        if (test.getParent() == null) {
+            test.setParent(root);
+        }
+
+        // make sure the name of the test case is unique
+        String name = test.getName();
+        int i = 1;
+        while (testRepository.findOneByParent_IdAndName(test.getParentId(), name) != null) {
+            name = test.getName() + " - " + String.valueOf(i);
+            i++;
+        }
+        test.setName(name);
+
+        Long projectId = test.getProjectId();
+        Project project = projectDAO.getByID(user.getId(), projectId);
+
+        test.setId(null);
+        test.setProject(project);
+
+        if (test.getParentId() != null) {
+            Test parent = get(user, projectId, test.getParentId());
+
+            if (parent instanceof TestCase) {
+                throw new ValidationException("The parent can only be a Test Suite.");
             }
 
-            final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(test.getProjectId());
-            if (test.getParent() == null) {
-                test.setParent(root);
-            }
+            test.setParent(parent);
+        }
 
-            // make sure the name of the test case is unique
-            String name = test.getName();
-            int i = 1;
-            while (testRepository.findOneByParent_IdAndName(test.getParentId(), name) != null) {
-                name = test.getName() + " - " + String.valueOf(i);
-                i++;
-            }
-            test.setName(name);
+        beforeSaving(user, test);
+        if (test instanceof TestCase) {
+            final TestCase testCase = (TestCase) test;
 
-            Long projectId = test.getProjectId();
-            Project project = projectDAO.getByID(user.getId(), projectId);
+            final List<TestCaseStep> steps = testCase.getSteps();
+            final List<TestCaseStep> preSteps = testCase.getPreSteps();
+            final List<TestCaseStep> postSteps = testCase.getPostSteps();
 
-            test.setId(null);
-            test.setProject(project);
-
-            if (test.getParentId() != null) {
-                Test parent = get(user, projectId, test.getParentId());
-
-                if (parent instanceof TestCase) {
-                    throw new ValidationException("The parent can only be a Test Suite.");
-                }
-
-                test.setParent(parent);
-            }
-
-            beforeSaving(user, test);
-            if (test instanceof TestCase) {
-                final TestCase testCase = (TestCase) test;
-
-                final List<TestCaseStep> steps = testCase.getSteps();
-                final List<TestCaseStep> preSteps = testCase.getPreSteps();
-                final List<TestCaseStep> postSteps = testCase.getPostSteps();
-
-                testCase.setSteps(new ArrayList<>());
-                testCase.setPreSteps(new ArrayList<>());
-                testCase.setPostSteps(new ArrayList<>());
-
-                testRepository.save(test);
-
-                testCase.setSteps(steps);
-                testCase.setPreSteps(preSteps);
-                testCase.setPostSteps(postSteps);
-
-                saveTestCaseSteps(projectId, testCase.getPreSteps());
-                saveTestCaseSteps(projectId, testCase.getSteps());
-                saveTestCaseSteps(projectId, testCase.getPostSteps());
-            }
+            testCase.setSteps(new ArrayList<>());
+            testCase.setPreSteps(new ArrayList<>());
+            testCase.setPostSteps(new ArrayList<>());
 
             testRepository.save(test);
-        } catch (Exception e) {
-            throw new ValidationException(e);
+
+            testCase.setSteps(steps);
+            testCase.setPreSteps(preSteps);
+            testCase.setPostSteps(postSteps);
+
+            saveTestCaseSteps(projectId, testCase.getPreSteps());
+            saveTestCaseSteps(projectId, testCase.getSteps());
+            saveTestCaseSteps(projectId, testCase.getPostSteps());
         }
+
+        testRepository.save(test);
         LOGGER.traceExit(test);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void create(User user, List<Test> tests) throws NotFoundException, ValidationException {
         create(user, new HashSet<>(tests), null);
     }
@@ -386,7 +375,7 @@ public class TestDAOImpl implements TestDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delete(User user, Long projectId, IdsList ids) throws NotFoundException, ValidationException {
         for (long id : ids) {
             delete(user, projectId, id);
@@ -394,12 +383,13 @@ public class TestDAOImpl implements TestDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<Test> move(User user, Long projectId, List<Long> testIds, Long targetId)
             throws NotFoundException, ValidationException {
         final Project project = projectRepository.findOne(projectId);
         final List<Test> tests = testRepository.findAll(testIds);
         final Test targetTest = testRepository.findOne(targetId);
+        final Test rootTestSuite = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
 
         // validation
         checkAccess(user, project, targetTest);
@@ -411,6 +401,11 @@ public class TestDAOImpl implements TestDAO {
 
         for (Test test : tests) {
             checkAccess(user, project, test);
+
+            if (test.getId().equals(rootTestSuite.getId())) {
+                throw new ValidationException("Cannot move the root test suite.");
+            }
+
             if (test.getId().equals(target.getId())) {
                 throw new ValidationException("A test cannot be a parent of itself.");
             }

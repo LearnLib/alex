@@ -31,6 +31,7 @@ import org.springframework.http.HttpStatus;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -260,9 +261,18 @@ public class SymbolResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.CREATED.value(), resS1.getStatus());
 
         final JsonNode groupsNode = objectMapper.readTree(symbolGroupApi.getAll(projectId1, jwtUser1).readEntity(String.class));
-        final JsonNode symbolNode = groupsNode.get(1).get("symbols").get(2);
+        final JsonNode symbolsNode = groupsNode.get(1).get("symbols");
 
-        assertEquals(2, symbolNode.get("steps").size());
+        final Iterator<JsonNode> it = symbolsNode.iterator();
+        while (it.hasNext()) {
+            final JsonNode symbolNode = it.next();
+            if (symbolNode.get("name").asText().equals("s1")) {
+                assertEquals(2, symbolNode.get("steps").size());
+                return;
+            }
+        }
+
+        throw new Exception("symbol not found");
     }
 
     @Test

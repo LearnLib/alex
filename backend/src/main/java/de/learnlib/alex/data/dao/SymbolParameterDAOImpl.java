@@ -169,8 +169,6 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
 
         checkAccess(user, project, symbol, parameter);
 
-        // we do not need to explicitly remove the parameter since the parameters in the symbol are
-        // annotated with orphanRemoval = true
         symbol.removeParameter(parameter);
         symbolRepository.save(symbol);
 
@@ -184,6 +182,7 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
 
         // also delete all values for the parameter
         symbolParameterValueRepository.removeAllByParameter_Id(parameterId);
+        symbolParameterRepository.delete(parameter);
     }
 
     @Override

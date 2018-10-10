@@ -18,6 +18,7 @@ package de.learnlib.alex.integrationtests.resources;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolApi;
@@ -26,6 +27,7 @@ import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.ws.rs.core.Response;
 
@@ -171,48 +173,84 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldUpdateInputParameter() {
-        // TODO
+    public void shouldUpdateInputParameter() throws Exception {
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test", false), jwtUser1);
+        final JsonNode paramNode = objectMapper.readTree(res1.readEntity(String.class));
+
+        ((ObjectNode) paramNode).put("name", "newName");
+        ((ObjectNode) paramNode).put("private", true);
+
+        final Response res2 = symbolParameterApi.update(projectId, symbolId, paramNode.get("id").asInt(), paramNode.toString(), jwtUser1);
+        Assert.assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
+        Assert.assertEquals(paramNode.toString(), res2.readEntity(String.class));
     }
 
     @Test
-    public void shouldUpdateOutputParameter() {
-        // TODO
+    public void shouldUpdateOutputParameter() throws Exception {
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createOutputStringParam(symbolId, "test"), jwtUser1);
+        final JsonNode paramNode = objectMapper.readTree(res1.readEntity(String.class));
+
+        ((ObjectNode) paramNode).put("name", "newName");
+
+        final Response res2 = symbolParameterApi.update(projectId, symbolId, paramNode.get("id").asInt(), paramNode.toString(), jwtUser1);
+        Assert.assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
+        Assert.assertEquals(paramNode.toString(), res2.readEntity(String.class));
     }
 
     @Test
-    public void shouldNotUpdateInputParameterIfNameIsTaken() {
-        // TODO
+    public void shouldNotUpdateInputParameterIfNameIsTaken() throws Exception {
+        symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test", false), jwtUser1);
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test2", false), jwtUser1);
+        final JsonNode paramNode = objectMapper.readTree(res1.readEntity(String.class));
+        ((ObjectNode) paramNode).put("name", "test");
+
+        final String symbolPre = symbolApi.getAll(projectId, jwtUser1).readEntity(String.class);
+
+        final Response res2 = symbolParameterApi.update(projectId, symbolId, paramNode.get("id").asInt(), paramNode.toString(), jwtUser1);
+        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res2.getStatus());
+
+        final String symbolPost = symbolApi.getAll(projectId, jwtUser1).readEntity(String.class);
+        JSONAssert.assertEquals(symbolPre, symbolPost, true);
     }
 
     @Test
-    public void shouldNotUpdateOutputParameterIfNameIsTaken() {
-        // TODO
+    public void shouldNotUpdateOutputParameterIfNameIsTaken() throws Exception {
+        symbolParameterApi.create(projectId, symbolId, createOutputStringParam(symbolId, "test"), jwtUser1);
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createOutputStringParam(symbolId, "test2"), jwtUser1);
+        final JsonNode paramNode = objectMapper.readTree(res1.readEntity(String.class));
+        ((ObjectNode) paramNode).put("name", "test");
+
+        final String symbolPre = symbolApi.getAll(projectId, jwtUser1).readEntity(String.class);
+
+        final Response res2 = symbolParameterApi.update(projectId, symbolId, paramNode.get("id").asInt(), paramNode.toString(), jwtUser1);
+        Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), res2.getStatus());
+
+        final String symbolPost = symbolApi.getAll(projectId, jwtUser1).readEntity(String.class);
+        JSONAssert.assertEquals(symbolPre, symbolPost, true);
     }
 
     @Test
-    public void shouldDeleteInputParameter() {
-        // TODO
+    public void shouldDeleteInputParameter() throws Exception {
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createInputStringParam(symbolId, "test", false), jwtUser1);
+        final int id = JsonPath.read(res1.readEntity(String.class), "$.id");
+
+        final Response res2 = symbolParameterApi.delete(projectId, symbolId, id, jwtUser1);
+        Assert.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), res2.getStatus());
+
+        final JsonNode symbols = objectMapper.readTree(symbolApi.getAll(projectId, jwtUser1).readEntity(String.class));
+        Assert.assertEquals("[]", symbols.get(0).get("inputs").toString());
     }
 
     @Test
-    public void shouldDeleteOutputParameter() {
-        // TODO
-    }
+    public void shouldDeleteOutputParameter() throws Exception {
+        final Response res1 = symbolParameterApi.create(projectId, symbolId, createOutputStringParam(symbolId, "test"), jwtUser1);
+        final int id = JsonPath.read(res1.readEntity(String.class), "$.id");
 
-    @Test
-    public void shouldDeleteReferencesToParameterInTestsIfParameterIsDeleted() {
-        // TODO
-    }
+        final Response res2 = symbolParameterApi.delete(projectId, symbolId, id, jwtUser1);
+        Assert.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), res2.getStatus());
 
-    @Test
-    public void shouldDeleteReferencesToParameterInLearnerResultsIfParameterIsDeleted() {
-        // TODO
-    }
-
-    @Test
-    public void shouldDeleteReferencesToParameterInSymbolStepsIfParameterIsDeleted() {
-        // TODO
+        final JsonNode symbols = objectMapper.readTree(symbolApi.getAll(projectId, jwtUser1).readEntity(String.class));
+        Assert.assertEquals("[]", symbols.get(0).get("outputs").toString());
     }
 
     private JsonNode getSymbol() throws Exception {

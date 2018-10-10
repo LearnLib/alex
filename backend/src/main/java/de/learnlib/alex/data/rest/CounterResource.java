@@ -19,7 +19,6 @@ package de.learnlib.alex.data.rest;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.common.utils.StringList;
 import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.entities.Counter;
