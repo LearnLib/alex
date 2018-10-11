@@ -20,7 +20,6 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Symbol;
@@ -101,15 +100,10 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createSymbol({}, {}) for user {}.", projectId, symbol, user);
 
-        try {
-            final Symbol createdSymbol = symbolDAO.create(user, projectId, symbol);
-            LOGGER.traceExit(createdSymbol);
-            webhookService.fireEvent(user, new SymbolEvent.Created(createdSymbol));
-            return Response.status(Status.CREATED).entity(createdSymbol).build();
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbol", Status.BAD_REQUEST, e);
-        }
+        final Symbol createdSymbol = symbolDAO.create(user, projectId, symbol);
+        LOGGER.traceExit(createdSymbol);
+        webhookService.fireEvent(user, new SymbolEvent.Created(createdSymbol));
+        return Response.status(Status.CREATED).entity(createdSymbol).build();
     }
 
     /**
@@ -132,15 +126,10 @@ public class SymbolResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createSymbols({}, {}) for user {}.", projectId, symbols, user);
 
-        try {
-            final List<Symbol> createdSymbols = symbolDAO.create(user, projectId, symbols);
-            LOGGER.traceExit(createdSymbols);
-            webhookService.fireEvent(user, new SymbolEvent.CreatedMany(createdSymbols));
-            return Response.status(Status.CREATED).entity(createdSymbols).build();
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolResource.createSymbols", Status.BAD_REQUEST, e);
-        }
+        final List<Symbol> createdSymbols = symbolDAO.create(user, projectId, symbols);
+        LOGGER.traceExit(createdSymbols);
+        webhookService.fireEvent(user, new SymbolEvent.CreatedMany(createdSymbols));
+        return Response.status(Status.CREATED).entity(createdSymbols).build();
     }
 
     /**
@@ -181,10 +170,10 @@ public class SymbolResource {
     @GET
     @Path("/batch/{ids}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getByIdRevisionPairs(@PathParam("project_id") Long projectId, @PathParam("ids") IdsList ids)
+    public Response getByIds(@PathParam("project_id") Long projectId, @PathParam("ids") IdsList ids)
             throws NotFoundException {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("getByIdRevisionPairs({}, {}) for user {}.", projectId, ids, user);
+        LOGGER.traceEntry("getByIds({}, {}) for user {}.", projectId, ids, user);
 
         final List<Symbol> symbols = symbolDAO.getByIds(user, projectId, ids);
 

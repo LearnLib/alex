@@ -34,7 +34,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("setVariableByHttpStatus")
 @JsonTypeName("setVariableByHttpStatus")
-public class SetVariableByHttpStatus extends SymbolAction {
+public class SetVariableByHttpStatusAction extends SymbolAction {
 
     private static final long serialVersionUID = 7175288271151692417L;
 

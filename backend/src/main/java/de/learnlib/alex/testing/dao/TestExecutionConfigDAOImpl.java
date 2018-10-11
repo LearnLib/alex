@@ -76,6 +76,10 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
         projectDAO.checkAccess(user, project);
 
         final List<Test> tests = testRepository.findAll(config.getTestIds());
+        if (tests.isEmpty()) {
+            throw new NotFoundException("At least one test could not be found.");
+        }
+
         for (Test test: tests) {
             testDAO.checkAccess(user, project, test);
         }

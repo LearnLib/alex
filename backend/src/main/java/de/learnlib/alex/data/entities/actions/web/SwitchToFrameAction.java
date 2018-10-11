@@ -20,11 +20,14 @@ package de.learnlib.alex.data.entities.actions.web;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
+import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebElement;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
@@ -32,64 +35,43 @@ import javax.validation.constraints.NotNull;
  * Action to submit a specific element.
  */
 @Entity
-@DiscriminatorValue("web_switchTo")
-@JsonTypeName("web_switchTo")
-public class SwitchTo extends WebSymbolAction {
+@DiscriminatorValue("web_switchToFrame")
+@JsonTypeName("web_switchToFrame")
+public class SwitchToFrameAction extends WebSymbolAction {
 
-    private static final long serialVersionUID = 5072169613597915144L;
+    private static final long serialVersionUID = -6501583266031427394L;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     /**
-     * The target to switch to.
-     */
-    private enum TargetType {
-
-        /** The parent frame. */
-        PARENT_FRAME,
-
-        /** The default browser frame. */
-        DEFAULT_CONTENT,
-
-        /** The last frame that has been visited. */
-        LAST_FRAME
-    }
-
-    /**
-     * The target type.
+     * The element to switch to.
      */
     @NotNull
-    private TargetType target;
+    @Embedded
+    private WebElementLocator node;
 
     @Override
     protected ExecuteResult execute(WebSiteConnector connector) {
+        final WebElementLocator nodeWithVariables =
+                new WebElementLocator(insertVariableValues(node.getSelector()), node.getType());
+
         try {
-            switch (target) {
-                case PARENT_FRAME:
-                    connector.getDriver().switchTo().parentFrame();
-                    break;
-                case DEFAULT_CONTENT:
-                    connector.getDriver().switchTo().defaultContent();
-                    break;
-                case LAST_FRAME:
-                    connector.getDriver().switchTo().frame(connector.getLastFrame());
-                    break;
-                default:
-                    throw new Exception("Undefined target type.");
-            }
-            LOGGER.info(LoggerMarkers.LEARNER, "Switch to '{}'", target);
+            final WebElement element = connector.getElement(nodeWithVariables);
+            connector.getDriver().switchTo().frame(element);
+            connector.setLastFrame(element);
+            LOGGER.info(LoggerMarkers.LEARNER, "Switch to frame with selector '{}'", nodeWithVariables);
             return getSuccessOutput();
         } catch (Exception e) {
-            LOGGER.info(LoggerMarkers.LEARNER, "Could not switch to '{}'", target, e);
+            LOGGER.info(LoggerMarkers.LEARNER, "Could not switch to frame with selector '{}'", nodeWithVariables);
             return getFailedOutput();
         }
     }
 
-    public TargetType getTarget() {
-        return target;
+    public WebElementLocator getNode() {
+        return node;
     }
 
-    public void setTarget(TargetType target) {
-        this.target = target;
+    public void setNode(WebElementLocator node) {
+        this.node = node;
     }
 }

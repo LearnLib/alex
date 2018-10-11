@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 @Entity
 @DiscriminatorValue("setVariableByRegexGroup")
 @JsonTypeName("setVariableByRegexGroup")
-public class SetVariableByRegexGroup extends SymbolAction {
+public class SetVariableByRegexGroupAction extends SymbolAction {
 
     private static final long serialVersionUID = -5562530206394874225L;
 

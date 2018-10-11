@@ -27,7 +27,6 @@ import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.testing.services.TestService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -75,12 +74,10 @@ public class TestExecutionConfigResource {
      * @return 200 and the created project on success.
      * @throws NotFoundException
      *         If one of the entities could not be found.
-     * @throws UnauthorizedException
-     *         If the user has not access to one of the entities.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("projectId") Long projectId) throws NotFoundException, UnauthorizedException {
+    public Response getAll(@PathParam("projectId") Long projectId) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
 
@@ -100,14 +97,12 @@ public class TestExecutionConfigResource {
      * @return 201 and the created test config on success.
      * @throws NotFoundException
      *         If one of the entities could not be found.
-     * @throws UnauthorizedException
-     *         If the user has not access to one of the entities.
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(@PathParam("projectId") Long projectId, TestExecutionConfig config)
-            throws NotFoundException, UnauthorizedException {
+            throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("create({}) for user {}.", projectId, user);
 
@@ -127,14 +122,12 @@ public class TestExecutionConfigResource {
      * @return 204 on success.
      * @throws NotFoundException
      *         If one of the entities could not be found.
-     * @throws UnauthorizedException
-     *         If the user has not access to one of the entities.
      */
     @DELETE
     @Path("/{configId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("projectId") Long projectId, @PathParam("configId") Long configId)
-            throws NotFoundException, UnauthorizedException {
+            throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
 
@@ -154,14 +147,12 @@ public class TestExecutionConfigResource {
      * @return The test status.
      * @throws NotFoundException
      *         If one of the entities could not be found.
-     * @throws UnauthorizedException
-     *         If the user has no access to one of the entities.
      */
     @POST
     @Path("/{configId}/execute")
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("projectId") Long projectId, @PathParam("configId") Long configId)
-            throws NotFoundException, UnauthorizedException {
+            throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("execute({}) for user {}.", projectId, user);
 

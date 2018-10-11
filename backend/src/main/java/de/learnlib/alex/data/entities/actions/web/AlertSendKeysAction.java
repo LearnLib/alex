@@ -51,6 +51,7 @@ public class AlertSendKeysAction extends WebSymbolAction {
         try {
             final Alert alert = connector.getDriver().switchTo().alert();
             alert.sendKeys(insertVariableValues(text));
+            alert.accept();
 
             LOGGER.info(LoggerMarkers.LEARNER, "Send text '{}' to prompt window.", text);
             return getSuccessOutput();

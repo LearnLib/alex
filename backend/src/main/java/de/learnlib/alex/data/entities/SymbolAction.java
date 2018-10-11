@@ -27,12 +27,12 @@ import de.learnlib.alex.data.entities.actions.misc.SetCounterAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByCookieAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByHTMLElementAction;
-import de.learnlib.alex.data.entities.actions.misc.SetVariableByHttpResponse;
-import de.learnlib.alex.data.entities.actions.misc.SetVariableByHttpStatus;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableByHttpResponseAction;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableByHttpStatusAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByJSONAttributeAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByNodeAttributeAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByNodeCountAction;
-import de.learnlib.alex.data.entities.actions.misc.SetVariableByRegexGroup;
+import de.learnlib.alex.data.entities.actions.misc.SetVariableByRegexGroupAction;
 import de.learnlib.alex.data.entities.actions.misc.WaitAction;
 import de.learnlib.alex.data.entities.actions.rest.CallAction;
 import de.learnlib.alex.data.entities.actions.rest.CheckAttributeExistsAction;
@@ -63,8 +63,8 @@ import de.learnlib.alex.data.entities.actions.web.MoveMouseAction;
 import de.learnlib.alex.data.entities.actions.web.PressKeyAction;
 import de.learnlib.alex.data.entities.actions.web.SelectAction;
 import de.learnlib.alex.data.entities.actions.web.SubmitAction;
-import de.learnlib.alex.data.entities.actions.web.SwitchTo;
-import de.learnlib.alex.data.entities.actions.web.SwitchToFrame;
+import de.learnlib.alex.data.entities.actions.web.SwitchToAction;
+import de.learnlib.alex.data.entities.actions.web.SwitchToFrameAction;
 import de.learnlib.alex.data.entities.actions.web.UploadFileAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForNodeAction;
 import de.learnlib.alex.data.entities.actions.web.WaitForNodeAttributeAction;
@@ -110,13 +110,13 @@ import java.util.Objects;
         @JsonSubTypes.Type(name = "setCounter", value = SetCounterAction.class),
         @JsonSubTypes.Type(name = "setVariable", value = SetVariableAction.class),
         @JsonSubTypes.Type(name = "setVariableByJSON", value = SetVariableByJSONAttributeAction.class),
-        @JsonSubTypes.Type(name = "setVariableByHttpResponse", value = SetVariableByHttpResponse.class),
+        @JsonSubTypes.Type(name = "setVariableByHttpResponse", value = SetVariableByHttpResponseAction.class),
         @JsonSubTypes.Type(name = "setVariableByHTML", value = SetVariableByHTMLElementAction.class),
         @JsonSubTypes.Type(name = "setVariableByCookie", value = SetVariableByCookieAction.class),
         @JsonSubTypes.Type(name = "setVariableByNodeAttribute", value = SetVariableByNodeAttributeAction.class),
         @JsonSubTypes.Type(name = "setVariableByNodeCount", value = SetVariableByNodeCountAction.class),
-        @JsonSubTypes.Type(name = "setVariableByRegexGroup", value = SetVariableByRegexGroup.class),
-        @JsonSubTypes.Type(name = "setVariableByHttpStatus", value = SetVariableByHttpStatus.class),
+        @JsonSubTypes.Type(name = "setVariableByRegexGroup", value = SetVariableByRegexGroupAction.class),
+        @JsonSubTypes.Type(name = "setVariableByHttpStatus", value = SetVariableByHttpStatusAction.class),
         // Web Actions
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
         @JsonSubTypes.Type(name = "web_alertAcceptDismiss", value = AlertAcceptDismissAction.class),
@@ -139,8 +139,8 @@ import java.util.Objects;
         @JsonSubTypes.Type(name = "web_pressKey", value = PressKeyAction.class),
         @JsonSubTypes.Type(name = "web_submit", value = SubmitAction.class),
         @JsonSubTypes.Type(name = "web_select", value = SelectAction.class),
-        @JsonSubTypes.Type(name = "web_switchTo", value = SwitchTo.class),
-        @JsonSubTypes.Type(name = "web_switchToFrame", value = SwitchToFrame.class),
+        @JsonSubTypes.Type(name = "web_switchTo", value = SwitchToAction.class),
+        @JsonSubTypes.Type(name = "web_switchToFrame", value = SwitchToFrameAction.class),
         @JsonSubTypes.Type(name = "web_uploadFile", value = UploadFileAction.class),
         @JsonSubTypes.Type(name = "web_waitForTitle", value = WaitForTitleAction.class),
         @JsonSubTypes.Type(name = "web_waitForNode", value = WaitForNodeAction.class),

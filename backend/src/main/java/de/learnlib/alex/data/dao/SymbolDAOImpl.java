@@ -404,8 +404,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     @Transactional
-    public Symbol update(User user, Long projectId, Symbol symbol)
-            throws IllegalArgumentException, NotFoundException, ValidationException {
+    public Symbol update(User user, Long projectId, Symbol symbol) throws NotFoundException, ValidationException {
         try {
             return doUpdate(user, projectId, symbol);
         } catch (TransactionSystemException | DataIntegrityViolationException e) {
@@ -420,8 +419,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Symbol> update(User user, Long projectId, List<Symbol> symbols)
-            throws IllegalArgumentException, NotFoundException, ValidationException {
+    public List<Symbol> update(User user, Long projectId, List<Symbol> symbols) throws NotFoundException, ValidationException {
         try {
             final List<Symbol> updatedSymbols = new ArrayList<>();
             for (Symbol symbol : symbols) {
@@ -437,8 +435,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
-    private Symbol doUpdate(User user, Long projectId, Symbol symbol)
-            throws IllegalArgumentException, NotFoundException {
+    private Symbol doUpdate(User user, Long projectId, Symbol symbol) throws NotFoundException {
         final Project project = projectRepository.findOne(projectId);
         checkAccess(user, project, symbol);
 

@@ -174,8 +174,6 @@ public interface SymbolDAO {
      * @param projectId
      *         The ID of the project.
      * @return The updated symbol.
-     * @throws IllegalArgumentException
-     *         If an old revision is used.
      * @throws NotFoundException
      *         When the Symbol was not found.
      * @throws ValidationException
@@ -194,8 +192,6 @@ public interface SymbolDAO {
      * @param projectId
      *         The ID of the project.
      * @return The list of updated symbols.
-     * @throws IllegalArgumentException
-     *         If an old revision is used.
      * @throws NotFoundException
      *         When one of the Symbol was not found.
      * @throws ValidationException
