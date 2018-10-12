@@ -173,6 +173,13 @@ class SidebarComponent {
                         click: () => $state.go('learnerResults', {projectId: this.project.id})
                     },
                     {
+                        title: 'Lts Formulas',
+                        icon: 'fa-subscript',
+                        active: () => this.isState('ltsFormulas'),
+                        display: () => true,
+                        click: () => $state.go('ltsFormulas', {projectId: this.project.id})
+                    },
+                    {
                         title: 'Counters',
                         icon: 'fa-list-ol',
                         active: () => this.isState('counters'),

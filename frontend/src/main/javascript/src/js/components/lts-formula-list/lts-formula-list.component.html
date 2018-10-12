@@ -1,0 +1,30 @@
+<div class="list-group">
+    <div class="list-group-item d-flex" ng-repeat="formula in vm.formulas">
+        <div ng-if="vm.selectable != null" class="mr-1">
+            <selectable-checkbox item="formula" selectable="vm.selectable"></selectable-checkbox>
+        </div>
+        <div class="w-100">
+            <h4 class="mb-0 mt-0">{{formula.name}}</h4>
+            <p class="mb-0 mt-0 text-muted">{{formula.formula}}</p>
+        </div>
+        <div class="ml-1">
+            <div class="btn-group btn-group-xs" uib-dropdown>
+                <button type="button" class="btn btn-default btn-icon" uib-dropdown-toggle>
+                    <i class="fa fa-bars"></i>
+                </button>
+                <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
+                    <li>
+                        <a href="" ng-click="vm.ltsFormulaService.openEditModal(formula)">
+                            <i class="fa fa-edit fa-fw"></i> Edit
+                        </a>
+                    </li>
+                    <li>
+                        <a href="" ng-click="vm.deleteFormula(formula)">
+                            <i class="fa fa-trash fa-fw"></i> Delete
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

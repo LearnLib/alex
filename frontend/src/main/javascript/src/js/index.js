@@ -239,6 +239,13 @@ import {ToastService} from './services/toast.service';
 import {UiService} from './services/ui.service';
 import {UserService} from './services/user.service';
 import {setVariableByHttpStatusActionFormComponent} from "./components/forms/actions/misc/set-variable-by-http-status-action-form/set-variable-by-http-status-action-form.component";
+import {LtsFormulaResource} from "./services/resources/lts-formula-resource.service";
+import {LtsFormulaService} from "./services/lts-formula.service";
+import {ltsFormulasViewComponent} from "./components/views/lts-formulas-view/lts-formulas-view.component";
+import {ltsFormulaCreateModalComponent} from "./components/modals/lts-formula-create-modal/lts-formula-create-modal.component";
+import {ltsFormulaListComponent} from "./components/lts-formula-list/lts-formula-list.component";
+import {ltsFormulaFormGroupsComponent} from "./components/forms/lts-formula-form-groups/lts-formula-form-groups.component";
+import {ltsFormulaEditModalComponent} from "./components/modals/lts-formula-edit-modal/lts-formula-edit-modal.component";
 
 angular
     .module('ALEX', [
@@ -292,6 +299,7 @@ angular
     .service('TestResource', TestResource)
     .service('TestReportResource', TestReportResource)
     .service('WebhookResource', WebhookResource)
+    .service('LtsFormulaResource', LtsFormulaResource)
 
     // services
     .service('ActionService', ActionService)
@@ -311,6 +319,7 @@ angular
     .service('ProjectService', ProjectService)
     .service('UserService', UserService)
     .service('UiService', UiService)
+    .service('LtsFormulaService', LtsFormulaService)
 
     // modals
     .component('actionCreateModal', actionCreateModalComponent)
@@ -342,6 +351,8 @@ angular
     .component('separatingWordModal', separatingWordModalComponent)
     .component('testsMoveModal', testsMoveModalComponent)
     .component('symbolSelectModal', symbolSelectModalComponent)
+    .component('ltsFormulaCreateModal', ltsFormulaCreateModalComponent)
+    .component('ltsFormulaEditModal', ltsFormulaEditModalComponent)
 
     // view components
     .component('aboutView', aboutViewComponent)
@@ -370,6 +381,7 @@ angular
     .component('testSuiteView', testSuiteViewComponent)
     .component('webhooksView', webhooksViewComponent)
     .component('redirectView', redirectViewComponent)
+    .component('ltsFormulasView', ltsFormulasViewComponent)
 
     // forms components
     .component('actionForm', actionFormComponent)
@@ -394,6 +406,7 @@ angular
     .component('hypothesisEqOracleForm', hypothesisEqOracleFormComponent)
     .component('testSuiteEqOracleForm', testSuiteEqOracleFormComponent)
     .component('wpMethodEqOracleForm', wpMethodEqOracleFormComponent)
+    .component('ltsFormulaFormGroups', ltsFormulaFormGroupsComponent)
 
     // widgets components
     .component('widget', widgetComponent)
@@ -498,6 +511,7 @@ angular
     .component('symbolSelectDropdown', symbolSelectDropdownComponent)
     .component('testCaseExpectedResult', testCaseExpectedResultComponent)
     .component('pagination', paginationComponent)
-    .component('testSuiteTree', testSuiteTreeComponent);
+    .component('testSuiteTree', testSuiteTreeComponent)
+    .component('ltsFormulaList', ltsFormulaListComponent);
 
 angular.bootstrap(document, ['ALEX']);

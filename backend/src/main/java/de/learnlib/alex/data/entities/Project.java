@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestReport;
@@ -156,6 +157,16 @@ public class Project implements Serializable {
     private Set<Counter> counters;
 
     /**
+     * The lts formulas of the project.
+     */
+    @OneToMany(
+            mappedBy = "project",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @JsonIgnore
+    private List<LtsFormula> ltsFormulas;
+
+    /**
      * Default constructor.
      */
     public Project() {
@@ -175,6 +186,7 @@ public class Project implements Serializable {
         this.testReports = new HashSet<>();
         this.testExecutionConfigs = new ArrayList<>();
         this.urls = new ArrayList<>();
+        this.ltsFormulas = new ArrayList<>();
     }
 
     /**
@@ -355,6 +367,14 @@ public class Project implements Serializable {
     @JsonIgnore
     public void setCounters(Set<Counter> counters) {
         this.counters = counters;
+    }
+
+    public List<LtsFormula> getLtsFormulas() {
+        return ltsFormulas;
+    }
+
+    public void setLtsFormulas(List<LtsFormula> ltsFormulas) {
+        this.ltsFormulas = ltsFormulas;
     }
 
     public List<ProjectUrl> getUrls() {

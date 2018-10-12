@@ -160,6 +160,16 @@ export function config($stateProvider, $urlRouterProvider) {
             data: {title: 'Counters'}
         })
 
+        // lts formulas
+        .state('ltsFormulas', {
+            parent: 'project',
+            url: '/lts-formulas',
+            views: {
+                '@': {template: '<lts-formulas-view></lts-formulas-view>'}
+            },
+            data: {title: 'Lts Formulas'}
+        })
+
         // testing related routes
         .state('tests', {
             parent: 'project',

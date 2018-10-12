@@ -37,6 +37,7 @@ import de.learnlib.alex.data.rest.SymbolParameterResource;
 import de.learnlib.alex.data.rest.SymbolResource;
 import de.learnlib.alex.learning.rest.LearnerResource;
 import de.learnlib.alex.learning.rest.LearnerResultResource;
+import de.learnlib.alex.modelchecking.rest.LtsFormulaResource;
 import de.learnlib.alex.testing.rest.TestExecutionConfigResource;
 import de.learnlib.alex.testing.rest.TestReportResource;
 import de.learnlib.alex.testing.rest.TestResource;
@@ -81,7 +82,7 @@ public class ALEXApplication extends ResourceConfig {
     private Environment env;
 
     /**
-     * The UserDOA to create an admin if needed.
+     * The UserDAO to create an admin if needed.
      */
     @Inject
     private UserDAO userDAO;
@@ -111,6 +112,7 @@ public class ALEXApplication extends ResourceConfig {
         register(TestReportResource.class);
         register(WebhookResource.class);
         register(TestExecutionConfigResource.class);
+        register(LtsFormulaResource.class);
 
         // Exceptions
         register(NotFoundExceptionMapper.class);

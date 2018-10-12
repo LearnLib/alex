@@ -1,0 +1,41 @@
+<div class="view">
+    <view-header title="Lts Formulas"></view-header>
+    <action-bar>
+        <selectable-checkbox-multiple selectable="vm.selectedFormulas" class="pull-left"></selectable-checkbox-multiple>
+
+        <button class="btn btn-sm btn-primary" ng-click="vm.ltsFormulaService.openCreateModal()">
+            Create
+        </button>
+
+        <div class="btn-group btn-group-sm">
+            <button
+                class="btn btn-default"
+                ng-click="vm.editSelectedFormula()"
+                ng-disabled="vm.selectedFormulas.getSelected().length !== 1"
+            >
+                Edit
+            </button>
+            <button
+                class="btn btn-default"
+                ng-click="vm.deleteSelectedFormulas()"
+                ng-disabled="!vm.selectedFormulas.isAnySelected()"
+            >
+                Delete
+            </button>
+        </div>
+    </action-bar>
+
+    <div class="view-body">
+        <div class="alx-container-fluid">
+            <lts-formula-list
+                formulas="vm.formulas"
+                selectable="vm.selectedFormulas"
+                ng-if="vm.formulas.length > 0"
+            ></lts-formula-list>
+
+            <div class="alert alert-info" ng-if="vm.formulas.length === 0">
+                There aren't any lts formulas yet.
+            </div>
+        </div>
+    </div>
+</div>

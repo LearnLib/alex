@@ -1,0 +1,31 @@
+<div class="form-group">
+    <label>Name</label>
+    <input class="form-control"
+           name="name"
+           type="text"
+           placeholder="A descriptive name of the formula"
+           required
+           ng-model="vm.formula.name">
+
+    <div class="help-block" ng-messages="vm.form.name.$error" ng-if="vm.form.name.$touched">
+        <div class="alert alert-danger alert-condensed" ng-message="required">
+            The name is required.
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label>Formula</label>
+    <input class="form-control"
+           name="formula"
+           type="text"
+           placeholder="The LtsMin formula"
+           required
+           ng-model="vm.formula.formula">
+
+    <div class="help-block" ng-messages="vm.form.formula.$error" ng-if="vm.form.formula.$touched">
+        <div class="alert alert-danger alert-condensed" ng-message="required">
+            The formula is required.
+        </div>
+    </div>
+</div>
