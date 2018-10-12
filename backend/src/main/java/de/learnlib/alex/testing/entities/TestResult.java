@@ -118,13 +118,13 @@ public abstract class TestResult implements Serializable {
     /**
      * The the associated test by its ID.
      *
-     * @param id
+     * @param testId
      *         The ID of the test.
      */
     @JsonProperty("test")
-    public void setTestId(Long id) {
+    public void setTestId(Long testId) {
         this.test = new Test();
-        this.test.setId(id);
+        this.test.setId(testId);
     }
 
     public TestReport getTestReport() {
@@ -161,6 +161,12 @@ public abstract class TestResult implements Serializable {
         this.project = new Project(projectId);
     }
 
+    /**
+     * Checks if the executed test case or test suite passed. A suite passed if all test cases and child test suites
+     * passed, too.
+     *
+     * @return If the test passsed.
+     */
     @Transient
     public abstract boolean isPassed();
 

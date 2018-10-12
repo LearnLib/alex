@@ -111,11 +111,13 @@ public class WebhookResource {
      * @param webhook
      *         The updated webhook.
      * @return The updated webhook on success.
+     * @throws NotFoundException
+     *         If the webhook could not be found.
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(Webhook webhook) throws Exception {
+    public Response update(Webhook webhook) throws NotFoundException {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update webhook '{}' for user '{}'", webhook, user);
 
@@ -130,6 +132,8 @@ public class WebhookResource {
      * @param webhookId
      *         The id of the webhook.
      * @return No no content on success.
+     * @throws NotFoundException
+     *         If the webhook could not be found.
      */
     @DELETE
     @Path("/{webhookId}")
@@ -149,6 +153,8 @@ public class WebhookResource {
      * @param webhookIds
      *         The list of ids of the webhooks to delete.
      * @return Not content on success.
+     * @throws NotFoundException
+     *         If the webhook could not be found.
      */
     @DELETE
     @Path("/batch/{webhookIds}")

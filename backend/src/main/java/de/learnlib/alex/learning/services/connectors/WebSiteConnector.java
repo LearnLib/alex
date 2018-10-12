@@ -188,7 +188,7 @@ public class WebSiteConnector implements Connector {
      *         If no element was found.
      */
     public List<WebElement> getElements(WebElementLocator locator) throws NoSuchElementException {
-        switch(locator.getType()) {
+        switch (locator.getType()) {
             case XPATH:
                 return driver.findElements(By.xpath(locator.getSelector()));
             case CSS:

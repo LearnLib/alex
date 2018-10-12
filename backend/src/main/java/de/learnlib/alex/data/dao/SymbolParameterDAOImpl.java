@@ -62,6 +62,22 @@ public class SymbolParameterDAOImpl implements SymbolParameterDAO {
     /** The symbol DAO to use. */
     private SymbolDAO symbolDAO;
 
+    /**
+     * Constructor.
+     *
+     * @param projectRepository
+     *         {@link #projectRepository}
+     * @param symbolRepository
+     *         {@link #symbolRepository}
+     * @param symbolParameterRepository
+     *         {@link #symbolParameterRepository}
+     * @param symbolParameterValueRepository
+     *         {@link #symbolParameterValueRepository}
+     * @param parameterizedSymbolRepository
+     *         {@link #parameterizedSymbolRepository}
+     * @param symbolDAO
+     *         {@link #symbolDAO}
+     */
     @Inject
     public SymbolParameterDAOImpl(ProjectRepository projectRepository,
                                   SymbolRepository symbolRepository,

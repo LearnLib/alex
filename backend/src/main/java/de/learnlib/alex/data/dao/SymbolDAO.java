@@ -179,8 +179,7 @@ public interface SymbolDAO {
      * @throws ValidationException
      *         When the Symbol was not valid.
      */
-    Symbol update(User user, Long projectId, Symbol symbol)
-            throws IllegalArgumentException, NotFoundException, ValidationException;
+    Symbol update(User user, Long projectId, Symbol symbol) throws NotFoundException, ValidationException;
 
     /**
      * Update a list of Symbols.
@@ -197,8 +196,7 @@ public interface SymbolDAO {
      * @throws ValidationException
      *         When one of the Symbol was not valid.
      */
-    List<Symbol> update(User user, Long projectId, List<Symbol> symbols)
-            throws IllegalArgumentException, NotFoundException, ValidationException;
+    List<Symbol> update(User user, Long projectId, List<Symbol> symbols) throws NotFoundException, ValidationException;
 
     /**
      * Move a Symbol to a new Group.

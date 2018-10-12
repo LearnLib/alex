@@ -148,6 +148,8 @@ public class TestReportResource {
      * @param projectId
      *         The id of the project.
      * @return 200 if a report is available, 204 otherwise.
+     * @throws NotFoundException
+     *         If the project could not be found.
      */
     @GET
     @Path("/latest")

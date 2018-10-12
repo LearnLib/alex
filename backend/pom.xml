@@ -44,7 +44,7 @@
         <javadoc-plugin.version>2.10.4</javadoc-plugin.version>
         <failsafe-plugin.version>2.19.1</failsafe-plugin.version>
         <jacoco-plugin.version>0.8.2</jacoco-plugin.version>
-        <checkstyle.version>2.17</checkstyle.version>
+        <checkstyle.version>3.0.0</checkstyle.version>
         <findbugs.version>3.0.4</findbugs.version>
         <pmd.version>3.6</pmd.version>
 
@@ -464,7 +464,6 @@
                                 </goals>
                             </execution>
                         </executions>
-
                     </plugin>
 
                     <!-- Checkstyle -->

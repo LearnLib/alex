@@ -60,6 +60,7 @@ public class LearnerResultResource {
     @Inject
     private Learner learner;
 
+    /** The test generator service. */
     @Inject
     private TestGenerator testGenerator;
 

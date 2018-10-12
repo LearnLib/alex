@@ -309,6 +309,8 @@ public class TestResource {
      * @param projectId
      *         The ID of the project.
      * @return 200 if the process could be aborted.
+     * @throws NotFoundException
+     *         If the project could not be found.
      */
     @POST
     @Path("/abort")

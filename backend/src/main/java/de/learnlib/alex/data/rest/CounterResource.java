@@ -86,6 +86,8 @@ public class CounterResource {
      * @param counter
      *         The counter to create.
      * @return The created counter.
+     * @throws NotFoundException
+     *         If the project or counter could not be found.
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -112,6 +114,8 @@ public class CounterResource {
      * @param counter
      *         The updated counter to update.
      * @return The updated counter.
+     * @throws NotFoundException
+     *         If the project or counter could not be found.
      */
     @PUT
     @Path("/{counter_name}")

@@ -255,6 +255,8 @@ public class LearnerResource {
      * @param projectId
      *         The project to stop.
      * @return The status of the current learn process.
+     * @throws NotFoundException
+     *         If the project could not be found.
      */
     @GET
     @Path("/{project_id}/stop")

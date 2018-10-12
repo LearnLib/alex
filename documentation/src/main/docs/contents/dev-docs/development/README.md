@@ -17,11 +17,11 @@ Make sure you have the following software installed on your development machine:
 
 Make sure that you `mvn install`ed ALEX once before executing any of the following commands.
 
-| Command                   | Description                                                          |
-|---------------------------|----------------------------------------------------------------------|
-| `mvn test`                | Execute all backend unit tests.                                      |
-| `mvn checkstyle:check`    | Check if the code style is according to the specifications.          |
-| `mvn spring-boot:run`     | Start the REST API of ALEX.                                          |
+| Command                                 | Description                                                          |
+|-----------------------------------------|----------------------------------------------------------------------|
+| `mvn test`                              | Execute all backend unit tests.                                      |
+| `mvn checkstyle:check -Pcode-analysis`  | Check if the code style is according to the specifications.          |
+| `mvn spring-boot:run`                   | Start the REST API of ALEX.                                          |
 
 In addition, the following parameters can be used for the build file or the `mvn spring-boot:run` command:
 

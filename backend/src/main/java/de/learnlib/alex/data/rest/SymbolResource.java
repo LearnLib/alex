@@ -141,6 +141,8 @@ public class SymbolResource {
      *         Specify the visibility level of the symbols you want to get. Valid values are: 'all'/ 'unknown',
      *         'visible', 'hidden'. Optional.
      * @return A list of all Symbols belonging to the project. This list can be empty.
+     * @throws NotFoundException
+     *         If the project could not be found.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)

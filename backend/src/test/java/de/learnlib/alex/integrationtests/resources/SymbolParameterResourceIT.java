@@ -259,34 +259,34 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
         return om.readTree(symbols).get(0);
     }
 
-    private String createInputParam(int symbolId, String name, boolean isPrivate, String parameterType) {
-        return "{\"symbol\":\"" + symbolId + "\""
+    private String createInputParam(int symId, String name, boolean isPrivate, String parameterType) {
+        return "{\"symbol\":\"" + symId + "\""
                 + ",\"name\":\"" + name + "\""
-                + ",\"private\":" + (isPrivate ? "true": "false")
+                + ",\"private\":" + (isPrivate ? "true" : "false")
                 + ",\"type\":\"input\""
                 + ",\"parameterType\": \"" + parameterType + "\"}";
     }
 
-    private String createOutputParam(int symbolId, String name, String parameterType) {
-        return "{\"symbol\":\"" + symbolId + "\""
+    private String createOutputParam(int symId, String name, String parameterType) {
+        return "{\"symbol\":\"" + symId + "\""
                 + ",\"name\":\"" + name + "\""
                 + ",\"type\":\"output\""
                 + ",\"parameterType\": \"" + parameterType + "\"}";
     }
 
-    private String createInputStringParam(int symbolId, String name, boolean isPrivate) {
-        return createInputParam(symbolId, name, isPrivate, "STRING");
+    private String createInputStringParam(int symId, String name, boolean isPrivate) {
+        return createInputParam(symId, name, isPrivate, "STRING");
     }
 
-    private String createInputCounterParam(int symbolId, String name, boolean isPrivate) {
-        return createInputParam(symbolId, name, isPrivate, "COUNTER");
+    private String createInputCounterParam(int symId, String name, boolean isPrivate) {
+        return createInputParam(symId, name, isPrivate, "COUNTER");
     }
 
-    private String createOutputStringParam(int symbolId, String name) {
-        return createOutputParam(symbolId, name, "STRING");
+    private String createOutputStringParam(int symId, String name) {
+        return createOutputParam(symId, name, "STRING");
     }
 
-    private String createOutputCounterParam(int symbolId, String name) {
-        return createOutputParam(symbolId, name, "COUNTER");
+    private String createOutputCounterParam(int symId, String name) {
+        return createOutputParam(symId, name, "COUNTER");
     }
 }

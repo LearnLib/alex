@@ -67,8 +67,8 @@ public class ProjectUrl {
         return defaultUrl;
     }
 
-    public void setDefault(boolean defaultUrl) {
-        this.defaultUrl = defaultUrl;
+    public void setDefault(boolean isDefault) {
+        this.defaultUrl = isDefault;
     }
 
     public Project getProject() {

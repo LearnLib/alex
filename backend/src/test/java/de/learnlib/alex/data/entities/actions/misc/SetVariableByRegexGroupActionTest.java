@@ -29,8 +29,8 @@ import org.mockito.Mockito;
 import org.openqa.selenium.WebDriver;
 
 public class SetVariableByRegexGroupActionTest {
-    
-    private final String VARIABLE_NAME = "var";
+
+    private static final String VARIABLE_NAME = "var";
 
     private SetVariableByRegexGroupAction action;
 

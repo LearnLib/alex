@@ -105,20 +105,12 @@ public class TestSuiteResult extends TestResult {
         this.testCasesPassed = testCasesPassed;
     }
 
-    public void addTestCasesPassed(long amount) {
-        this.testCasesPassed += amount;
-    }
-
     public long getTestCasesFailed() {
         return testCasesFailed;
     }
 
     public void setTestCasesFailed(long testCasesFailed) {
         this.testCasesFailed = testCasesFailed;
-    }
-
-    public void addTestCasesFailed(long amount) {
-        this.testCasesFailed += amount;
     }
 
     /**

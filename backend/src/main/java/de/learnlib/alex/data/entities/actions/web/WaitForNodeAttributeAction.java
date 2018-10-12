@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.data.entities.actions.web;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
@@ -25,7 +24,6 @@ import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.constraints.NotBlank;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -55,17 +53,7 @@ public class WaitForNodeAttributeAction extends WebSymbolAction {
         IS,
 
         /** If the title should contain the value. */
-        CONTAINS;
-
-        @JsonCreator
-        public static WaitCriterion fromString(String name) throws IllegalArgumentException {
-            return WaitCriterion.valueOf(name.toUpperCase());
-        }
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
+        CONTAINS
     }
 
     /** The value the attribute should match / contain. */
