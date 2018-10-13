@@ -75,18 +75,8 @@ class ResultsCompareViewComponent {
                         return testNos.indexOf('' + r.testNo.toString()) > -1;
                     });
                 })
-                .catch(err => console.log(err));
+                .catch(console.error);
         }
-    }
-
-    /**
-     * Loads a complete learn result set from a learn result in the panel with a given index.
-     *
-     * @param {LearnResult} result - The learn result whose complete set should be loaded in a panel.
-     * @param {number} index - The index of the panel the complete set should be displayed in.
-     */
-    fillPanel(result, index) {
-        this.panels[index] = result;
     }
 
     /**

@@ -20,7 +20,9 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
+import de.learnlib.alex.modelchecking.services.LtsCheckingService;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
+import de.learnlib.alex.modelchecking.entities.LtsCheckingConfig;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,6 +57,9 @@ public class LtsFormulaResource {
     /** The DAO for lts formulas. */
     @Inject
     private LtsFormulaDAO ltsFormulaDAO;
+
+    @Inject
+    private LtsCheckingService ltsCheckingService;
 
     /**
      * Get all lts formulas in a project.
@@ -160,4 +165,13 @@ public class LtsFormulaResource {
         return Response.noContent().build();
     }
 
+    @Path("/check")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response check(@PathParam("projectId") Long projectId, LtsCheckingConfig config) throws NotFoundException {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        ltsCheckingService.check(user, projectId, config);
+        return Response.ok().build();
+    }
 }

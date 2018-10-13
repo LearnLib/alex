@@ -73,6 +73,16 @@ public class LtsFormulaDAOImpl implements LtsFormulaDAO {
 
     @Override
     @Transactional
+    public List<LtsFormula> getByIds(User user, Long projectId, List<Long> formulaIds) throws NotFoundException {
+        final List<LtsFormula> formulas = ltsFormulaRepository.findAll(formulaIds);
+        for (final LtsFormula formula : formulas) {
+            checkAccess(user, formula.getProject(), formula);
+        }
+        return formulas;
+    }
+
+    @Override
+    @Transactional
     public LtsFormula create(User user, Long projectId, LtsFormula formula) throws NotFoundException {
         final Project project = projectRepository.findOne(projectId);
         projectDAO.checkAccess(user, project);
