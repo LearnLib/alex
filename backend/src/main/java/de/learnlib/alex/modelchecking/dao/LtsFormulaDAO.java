@@ -40,20 +40,6 @@ public interface LtsFormulaDAO {
     List<LtsFormula> getAll(User user, Long projectId) throws NotFoundException;
 
     /**
-     * Get formulas by ids.
-     *
-     * @param user
-     *         The user.
-     * @param projectId The ID of the project.
-     * @param formulaIds
-     *         The IDs of the formulas.
-     * @return All formulas in the project.
-     * @throws NotFoundException
-     *         If the project could not be found.
-     */
-    List<LtsFormula> getByIds(User user, Long projectId, List<Long> formulaIds) throws NotFoundException;
-
-    /**
      * Constructor.
      *
      * @param user

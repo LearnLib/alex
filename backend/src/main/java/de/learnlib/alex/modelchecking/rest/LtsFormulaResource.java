@@ -20,10 +20,11 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
-import de.learnlib.alex.modelchecking.services.LtsCheckingService;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingConfig;
+import de.learnlib.alex.modelchecking.entities.LtsCheckingResult;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import de.learnlib.alex.modelchecking.services.LtsCheckingService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,6 +43,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
+import java.util.Map;
 
 /** The lts formula endpoints for the REST API. */
 @Path("/projects/{projectId}/ltsFormulas")
@@ -73,8 +75,11 @@ public class LtsFormulaResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("projectId") Long projectId) throws NotFoundException {
+        LOGGER.traceEntry("enter getAll(projectId: {})", projectId);
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final List<LtsFormula> formulas = ltsFormulaDAO.getAll(user, projectId);
+
+        LOGGER.traceExit("leave getAll() with formulas: {}", formulas);
         return Response.ok(formulas).build();
     }
 
@@ -93,8 +98,11 @@ public class LtsFormulaResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(@PathParam("projectId") Long projectId, LtsFormula formula) throws NotFoundException {
+        LOGGER.traceEntry("enter create(projectId: {}, formula: {})", projectId, formula);
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final LtsFormula createdFormula = ltsFormulaDAO.create(user, projectId, formula);
+
+        LOGGER.traceExit("create create() with formula: {}", createdFormula);
         return Response.status(Response.Status.CREATED).entity(createdFormula).build();
     }
 
@@ -118,8 +126,11 @@ public class LtsFormulaResource {
     public Response update(@PathParam("projectId") Long projectId,
                            @PathParam("formulaId") Long formulaId,
                            LtsFormula formula) throws NotFoundException {
+        LOGGER.traceEntry("enter update(projectId: {}, formulaId: {})", projectId, formulaId);
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final LtsFormula updatedFormula = ltsFormulaDAO.update(user, projectId, formula);
+
+        LOGGER.traceExit("leave update() with formula: {}", updatedFormula);
         return Response.ok(updatedFormula).build();
     }
 
@@ -139,8 +150,11 @@ public class LtsFormulaResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("projectId") Long projectId, @PathParam("formulaId") Long formulaId)
             throws NotFoundException {
+        LOGGER.traceEntry("enter delete(projectId: {}, formulaId: {})", projectId, formulaId);
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         ltsFormulaDAO.delete(user, projectId, formulaId);
+
+        LOGGER.traceExit("leave delete()");
         return Response.noContent().build();
     }
 
@@ -160,18 +174,38 @@ public class LtsFormulaResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("projectId") Long projectId, @PathParam("formulaIds") IdsList formulaIds)
             throws NotFoundException {
+        LOGGER.traceEntry("enter delete(projectId: {}, formulaIds: {})", projectId, formulaIds);
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         ltsFormulaDAO.delete(user, projectId, formulaIds);
+
+        LOGGER.traceExit("leave delete()");
         return Response.noContent().build();
     }
 
+    /**
+     * Check formulas against a learned model.
+     *
+     * @param projectId
+     *         The ID of the project.
+     * @param config
+     *         The configuration.
+     * @return A map of counterexamples.
+     * @throws NotFoundException
+     *         If the project of a formula could not be found.
+     */
     @Path("/check")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response check(@PathParam("projectId") Long projectId, LtsCheckingConfig config) throws NotFoundException {
+        LOGGER.traceEntry("enter check(projectId: {}, formulaIds: {})", projectId, config.getFormulaIds());
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        ltsCheckingService.check(user, projectId, config);
-        return Response.ok().build();
+
+        config.validate();
+        final Map<Long, LtsCheckingResult> results = ltsCheckingService.check(user, projectId, config);
+
+        LOGGER.traceExit("leave check() with {}", results);
+        return Response.ok(results).build();
     }
+
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm} from '../../constants';
+import {learnAlgorithm} from '../../../constants';
 
 export const learnerResultPanelDefaultViewComponent = {
     template: require('./learner-result-panel-default-view.component.html'),

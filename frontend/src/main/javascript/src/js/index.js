@@ -96,9 +96,9 @@ import {userLoginFormComponent} from './components/forms/user-login-form/user-lo
 import {webhookFormComponent} from './components/forms/webhook-form/webhook-form.component';
 import {htmlElementPickerComponent} from './components/html-element-picker/html-element-picker.component';
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
-import {learnerResultPanelCheckingViewComponent} from './components/learner-result-panel/learner-result-panel-checking-view.component';
-import {learnerResultPanelDefaultViewComponent} from './components/learner-result-panel/learner-result-panel-default-view.component';
-import {learnerResultPanelTestingViewComponent} from './components/learner-result-panel/learner-result-panel-testing-view.component';
+import {learnerResultPanelCheckingViewComponent} from './components/learner-result-panel/learner-result-panel-checking-view/learner-result-panel-checking-view.component';
+import {learnerResultPanelDefaultViewComponent} from './components/learner-result-panel/learner-result-panel-default-view/learner-result-panel-default-view.component';
+import {learnerResultPanelTestingViewComponent} from './components/learner-result-panel/learner-result-panel-testing-view/learner-result-panel-testing-view.component';
 import {symbolSelectModalComponent} from './components/modals/symbol-select-modal/symbol-select-modal.component';
 import {symbolsExportModalComponent} from './components/modals/symbols-export-modal/symbols-export-modal.component';
 import {userCreateModalComponent} from './components/modals/user-create-modal/user-create-modal.component';

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Selectable} from '../../utils/selectable';
+import {Selectable} from '../../../utils/selectable';
 
 /** Panel view for model checking. */
 export const learnerResultPanelCheckingViewComponent = {
@@ -64,8 +64,10 @@ export const learnerResultPanelCheckingViewComponent = {
         }
 
         check() {
+            this.results = {};
+
             this.config.learnerResultId = this.result.testNo;
-            this.config.stepNo = this.pointer;
+            this.config.stepNo = this.pointer + 1;
             this.config.formulaIds = this.selectedFormulas.getSelected().map(f => f.id);
 
             if (this.config.formulaIds.length === 0) {
@@ -76,6 +78,20 @@ export const learnerResultPanelCheckingViewComponent = {
             this.ltsFormulaResource.check(this.project.id, this.config)
                 .then(res => this.results = res.data)
                 .catch(err => this.toastService.danger(`Could not check formulas. ${err.data.message}`));
+        }
+
+        getItemClass(formula) {
+            if (this.results[formula.id] == null) {
+                return {};
+            } else {
+                const passed = this.results[formula.id].passed;
+                return {'list-group-item-danger': !passed, 'list-group-item-success': passed};
+            }
+        }
+
+        hasCounterexample(formula) {
+            const result = this.results[formula.id];
+            return result != null && ((result.prefix.length + result.loop.length) > 0);
         }
 
         get project() {

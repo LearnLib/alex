@@ -30,7 +30,7 @@ import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 /**
- * Entity for a LtsMin formula.
+ * Entity for a LtsMin LTL formula.
  */
 @Entity
 public class LtsFormula implements Serializable {
@@ -48,7 +48,6 @@ public class LtsFormula implements Serializable {
     private Project project;
 
     /** The formula. */
-    @NotBlank
     @Column(columnDefinition = "MEDIUMTEXT")
     private String name;
 
@@ -97,6 +96,14 @@ public class LtsFormula implements Serializable {
 
     public void setFormula(String formula) {
         this.formula = formula;
+    }
+
+    @Override
+    public String toString() {
+        return "LtsFormula{"
+                + "name='" + name + '\''
+                + ", formula='" + formula + '\''
+                + '}';
     }
 
 }

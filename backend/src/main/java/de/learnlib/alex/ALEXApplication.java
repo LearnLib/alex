@@ -57,6 +57,8 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import javax.ws.rs.ApplicationPath;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Main class of the REST API. Implements the Jersey {@link ResourceConfig} and does some configuration and stuff.
@@ -92,6 +94,12 @@ public class ALEXApplication extends ResourceConfig {
      */
     @Inject
     private SettingsDAO settingsDAO;
+
+    /**
+     * Access to environment variables.
+     */
+    @Inject
+    private Environment environment;
 
     /**
      * Constructor where the magic happens.
@@ -140,6 +148,19 @@ public class ALEXApplication extends ResourceConfig {
             admin.setEncryptedPassword(DEFAULT_ADMIN_PASSWORD);
 
             userDAO.create(admin);
+        }
+    }
+
+    @PostConstruct
+    public void handleProperties() {
+        final String ltsminBinDir = environment.getProperty("ltsminBinDir");
+        if (ltsminBinDir != null && !ltsminBinDir.trim().equals("")) {
+            if (!Files.isDirectory(Paths.get(ltsminBinDir))) {
+                System.err.println("Cannot find directory for ltsmin binaries.");
+                System.exit(0);
+            } else {
+                System.setProperty("automatalib.ltsmin.path", ltsminBinDir);
+            }
         }
     }
 
