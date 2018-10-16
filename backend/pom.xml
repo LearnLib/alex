@@ -95,13 +95,6 @@
             <version>${spring-boot.version}</version>
         </dependency>
 
-        <!-- needed to force JBoss Logging 3.3.0.Final in all dependencies. This can eventually be removed. -->
-        <dependency>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging</artifactId>
-            <version>3.3.1.Final</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jersey</artifactId>
