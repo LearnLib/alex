@@ -18,7 +18,6 @@ package de.learnlib.alex.learning.entities.learnlibproxies;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
-import net.automatalib.automata.transout.impl.compact.CompactMealyTransition;
 import net.automatalib.util.automata.Automata;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.Alphabets;
@@ -72,23 +71,10 @@ public class CompactMealyMachineProxyTest {
         final int s0 = mealy.addState();
         final int s1 = mealy.addState();
         mealy.setInitialState(s0);
-
-        // 0 -> 0
-        final CompactMealyTransition<String> t0 = new CompactMealyTransition<>(s0, "1");
-        mealy.addTransition(s0, "a", t0);
-
-        // 0 -> 1
-        final CompactMealyTransition<String> t1 = new CompactMealyTransition<>(s1, "2");
-        mealy.addTransition(s0, "b", t1);
-
-        // 1 -> 1
-        final CompactMealyTransition<String> t2 = new CompactMealyTransition<>(s1, "1");
-        mealy.addTransition(s1, "a", t2);
-
-        // 1 -> 0
-        final CompactMealyTransition<String> t3 = new CompactMealyTransition<>(s0, "2");
-        mealy.addTransition(s1, "b", t3);
-
+        mealy.setTransition(s0, "a", s0, "1");
+        mealy.setTransition(s1, "b", s0, "2");
+        mealy.setTransition(s1, "a", s1, "1");
+        mealy.setTransition(s0, "b", s1, "2");
         return mealy;
     }
 }

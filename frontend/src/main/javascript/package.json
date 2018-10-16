@@ -11,8 +11,8 @@
     "url": "http://www.apache.org/licenses/LICENSE-2.0"
   },
   "scripts": {
-    "build": "grunt",
-    "dev": "grunt && grunt -- watch",
+    "build": "grunt -- build",
+    "dev": "grunt -- dev",
     "test": "grunt -- jshint && grunt -- test",
     "lint": "grunt -- lint",
     "serve": "http-server ../../../target/classes"
@@ -57,6 +57,7 @@
     "browserify-ngannotate": "^2.0.0",
     "grunt": "^1.0.3",
     "grunt-browserify": "^5.3.0",
+    "grunt-concurrent": "^2.3.1",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-cssmin": "^2.2.1",

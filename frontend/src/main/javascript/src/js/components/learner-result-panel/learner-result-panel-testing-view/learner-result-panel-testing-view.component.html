@@ -1,0 +1,17 @@
+<div class="d-flex h-100">
+  <div class="w-100" style="position: relative">
+    <div ng-if="!vm.result.steps[vm.pointer].error && vm.result.steps[vm.pointer].hypothesis">
+      <hypothesis
+        data="vm.result.steps[vm.pointer].hypothesis"
+        layout-settings="vm.layoutSettings"
+        is-selectable="true">
+      </hypothesis>
+    </div>
+  </div>
+  <div style="background: #f2f2f2; min-width: 340px; padding: 1rem; overflow: auto; border-left: 1px solid #ddd">
+    <test-case-generation-widget result="vm.result">
+    </test-case-generation-widget>
+    <test-suite-generation-widget result="vm.result" step-no="vm.pointer">
+    </test-suite-generation-widget>
+  </div>
+</div>

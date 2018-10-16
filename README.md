@@ -73,6 +73,18 @@ Then, start ALEX like this:
 
 `java -jar alex-1.6.0.war "--spring.config.location=/path/to/your/application.properties"`
 
+
+## Using LTSMin
+
+ALEX uses the external [LTSMin][ltsmin] library for model checking.
+If you want to use its capabilities, append the `ltsminBinDir` argument to the ALEX binary on start.
+The value for the argument should be the *bin* directory where the compiled binaries of LTSMin are located.
+Example:
+
+`java -jar alex-1.6.0.war --ltsminBinDir="/path/to/ltsmin/bin"`
+
+
+
 ## Further reading
 
 * [User manual](http://learnlib.github.io/alex/book/1.5.0/contents/user-manual/index.html)
@@ -85,3 +97,4 @@ Then, start ALEX like this:
 [learnlib]: https://github.com/LearnLib/learnlib
 [mealy]: https://en.wikipedia.org/wiki/Mealy_machine
 [selenium]: https://www.seleniumhq.org/
+[ltsmin]: http://ltsmin.utwente.nl/

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {events, learnAlgorithm} from '../../constants';
-
 /**
  * The directive that displays a browsable list of learn results. For each result, it can display the observation
  * table, if L* was used, or the Discrimination Tree from the corresponding algorithm.
@@ -45,35 +43,14 @@ class LearnerResultPanelComponent {
         this.$uibModal = $uibModal;
 
         /**
-         * The enum for what is displayed in the panel.
-         * @type {{HYPOTHESIS: number, OBSERVATION_TABLE: number, DISCRIMINATION_TREE: number}}
-         */
-        this.modes = {
-            HYPOTHESIS: 0,
-            OBSERVATION_TABLE: 1,
-            DISCRIMINATION_TREE: 2
-        };
-
-        /**
-         * Available learn algorithms. Needed for access in the template.
-         * @type {Object}
-         */
-        this.learnAlgorithms = learnAlgorithm;
-
-        /**
          * The layout settings for the displayed hypothesis.
          * @type {null|Object}
          */
         this.layoutSettings = null;
 
-        /**
-         * The mode that is used.
-         * @type {number}
-         */
-        this.mode = this.modes.HYPOTHESIS;
-
         this.view = 'DEFAULT';
 
+        this.menu = [];
     }
 
     $onInit() {
@@ -90,111 +67,8 @@ class LearnerResultPanelComponent {
         });
     }
 
-    /**
-     * Checks if the property 'algorithmInformation' is define which holds the internal data structure
-     * for the algorithm of a learn result.
-     *
-     * @returns {boolean|*}
-     */
-    hasInternalDataStructure() {
-        return [learnAlgorithm.DT, learnAlgorithm.LSTAR, learnAlgorithm.TTT]
-            .indexOf(this.result.algorithm.name) > -1;
-    }
-
-    /**
-     * Switches the mode to the one to display the internal data structure.
-     */
-    showInternalDataStructure() {
-        switch (this.result.algorithm.name) {
-            case learnAlgorithm.LSTAR:
-                this.mode = this.modes.OBSERVATION_TABLE;
-                break;
-            case learnAlgorithm.DT:
-                this.mode = this.modes.DISCRIMINATION_TREE;
-                break;
-            case learnAlgorithm.TTT:
-                this.mode = this.modes.DISCRIMINATION_TREE;
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * Downloads the visible hypothesis as json.
-     */
-    exportHypothesisAsJson() {
-        this.PromptService.prompt('Enter a name for the json file')
-            .then(filename => {
-                this.DownloadService.downloadObject(this.result.steps[this.pointer].hypothesis, filename);
-            });
-    }
-
-    /**
-     * Downloads the visible hypothesis as dot file.
-     */
-    exportHypothesisAsDot() {
-        const hypothesis = this.result.steps[this.pointer].hypothesis;
-
-        const edges = {};
-        hypothesis.edges.forEach(edge => {
-            if (!edges[edge.from]) {
-                edges[edge.from] = {};
-            }
-            if (!edges[edge.from][edge.to]) {
-                edges[edge.from][edge.to] = '';
-            }
-            edges[edge.from][edge.to] += `${edge.input} / ${edge.output}\\n`;
-        });
-
-        let dot = 'digraph g {\n';
-        dot += '  __start0 [label="" shape="none"];\n\n';
-        hypothesis.nodes.forEach(node => {
-            dot += `  ${node} [shape="circle" label="${node}"];\n`;
-        });
-        dot += '\n';
-        for (let from in edges) {
-            for (let to in edges[from]) {
-                dot += `  ${from} -> ${to} [label="${edges[from][to]}"];\n`;
-            }
-        }
-        dot += '\n';
-        dot += '  __start0 -> 0;\n';
-        dot += '}';
-
-        this.PromptService.prompt('Enter a name for the dot file')
-            .then(filename => this.DownloadService.downloadText(filename, 'dot', dot));
-    }
-
-    /**
-     * Switches the mode to the one to display the hypothesis.
-     */
-    showHypothesis() {
-        this.mode = this.modes.HYPOTHESIS;
-    }
-
-    /**
-     * Downloads an observation table.
-     *
-     * @param {string} selector - The selector of the observation table.
-     */
-    downloadObservationTable(selector) {
-        this.PromptService.prompt('Enter a name for the csv file')
-            .then(filename => {
-                this.DownloadService.downloadTable(selector, filename);
-            });
-    }
-
-    /**
-     * Downloads the discrimination tree or the hypothesis.
-     *
-     * @param {string} selector - The selector of the dt pr hypothesis.
-     */
-    downloadSvg(selector) {
-        this.PromptService.prompt('Enter a name for the svg file')
-            .then(filename => {
-                this.DownloadService.downloadSvg(selector, true, filename);
-            });
+    registerMenu(menu) {
+        this.menu = menu;
     }
 
     /**
@@ -244,25 +118,6 @@ class LearnerResultPanelComponent {
     lastStep() {
         this.pointer = this.result.steps.length - 1;
         this.emitStep();
-    }
-
-    openResultDetailsModal() {
-        this.$uibModal.open({
-            component: 'learnerResultDetailsModal',
-            resolve: {
-                result: () => this.result,
-                current: () => this.pointer
-            }
-        });
-    }
-
-    openHypothesisLayoutSettingsModal() {
-        this.$uibModal.open({
-            component: 'hypothesisLayoutSettingsModal',
-            resolve: {
-                layoutSettings: () => JSON.parse(JSON.stringify(this.layoutSettings))
-            }
-        }).result.then(settings => this.layoutSettings = settings);
     }
 }
 

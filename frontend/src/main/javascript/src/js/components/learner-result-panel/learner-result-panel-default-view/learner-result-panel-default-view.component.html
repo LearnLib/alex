@@ -1,0 +1,36 @@
+<div class="d-flex">
+  <div ng-if="!vm.result.steps[vm.pointer].error && vm.result.steps[vm.pointer].hypothesis">
+    <hypothesis
+      data="vm.result.steps[vm.pointer].hypothesis"
+      layout-settings="vm.layoutSettings"
+      is-selectable="true"
+      ng-if="vm.mode === vm.modes.HYPOTHESIS"
+    >
+    </hypothesis>
+
+    <observation-table
+      data="vm.result.steps[vm.pointer].algorithmInformation"
+      ng-if="vm.mode === vm.modes.OBSERVATION_TABLE"
+    >
+    </observation-table>
+
+    <discrimination-tree
+      data="vm.result.steps[vm.pointer].algorithmInformation"
+      ng-if="vm.mode === vm.modes.DISCRIMINATION_TREE"
+    >
+    </discrimination-tree>
+  </div>
+
+  <div class="alx-container" ng-if="!vm.result.steps[vm.pointer].hypothesis">
+    <div class="alert alert-info">
+      <strong>No hypothesis has been saved in this step</strong>
+    </div>
+  </div>
+
+  <div class="alx-container" ng-if="vm.result.steps[vm.pointer].error">
+    <div class="alert alert-danger">
+      <p><strong>There has been an error while learning</strong></p>
+      <p ng-bind="vm.result.steps[vm.pointer].errorText"></p>
+    </div>
+  </div>
+</div>

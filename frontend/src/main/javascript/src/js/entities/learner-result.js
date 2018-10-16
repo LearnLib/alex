@@ -29,6 +29,12 @@ export class LearnResult {
     constructor(obj) {
 
         /**
+         * The ID of the learner result.
+         * @type {number}
+         */
+        this.id = obj.id;
+
+        /**
          * The algorithm that is used.
          * @type {object}
          */

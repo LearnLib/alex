@@ -65,7 +65,7 @@ class StatisticsCompareViewComponent {
          * The list of test result nos that are used for the chart.
          * @type{number[]}
          */
-        this.testNos = $stateParams.testNos.split(',').map(t => Number.parseInt(t));
+        this.testNos = this.$stateParams.testNos.split(',').map(t => Number.parseInt(t));
 
         /**
          * Make the chart mode dictionary available in the view.
@@ -174,10 +174,9 @@ class StatisticsCompareViewComponent {
      * @param {string} selector - The selector of the svg.
      */
     downloadChart(selector) {
+        const el = document.querySelector(selector + ' svg');
         this.PromptService.prompt('Enter a name for the svg file')
-            .then(filename => {
-                this.DownloadService.downloadSvg(selector, false, filename);
-            });
+            .then(filename => this.DownloadService.downloadSvgEl(el, false, filename));
     }
 
     get project() {

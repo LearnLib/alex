@@ -45,7 +45,6 @@ import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
-import net.automatalib.automata.transout.impl.compact.CompactMealyTransition;
 import net.automatalib.util.automata.Automata;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -583,8 +582,7 @@ public class Learner {
                         out += " vs. " + diff.getOutput1().getSymbol(k);
                     }
 
-                    final CompactMealyTransition<String> t = new CompactMealyTransition<>(newState, out);
-                    diffTree.addTransition(currentState, sym, t);
+                    diffTree.addTransition(currentState, sym, newState, out);
 
                     // update the current state of the tree to the newly created one
                     currentState = newState;

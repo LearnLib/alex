@@ -33,6 +33,7 @@ In addition, the following parameters can be used for the build file or the `mvn
 | `edgeDriver`      | The absolute path to the Edge driver executable on your system                                        |
 | `firefoxDriver`   | The absolute path to the Gecko driver executable on your system                                       |
 | `remoteDriver`    | The URI to the remote Selenium server                                                                 |
+| `ltsminBinDir`    | The path to the compiles binaries of the LTSMin library                                               |
 
 
 ## Frontend development

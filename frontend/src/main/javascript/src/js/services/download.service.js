@@ -59,22 +59,12 @@ export class DownloadService {
     }
 
     /**
-     * Downloads the table given by the selector. The selector can also be a parent element of the table.
-     * It is then searched for child elements that are table elements.
+     * Downloads the table.
      *
-     * @param {string} selector - The selector of a table or a parent of a table.
-     * @param {string} filename - The name of the file to download.
+     * @param {Element} table The table to download.
+     * @param {string} filename The name of the file to download.
      */
-    downloadTable(selector, filename) {
-        let table = null;
-        const tableCandidate = document.querySelector(selector);
-        if (tableCandidate.nodeName.toLowerCase() !== 'table') {
-            table = tableCandidate.querySelector('table');
-            if (table === null) return;
-        } else {
-            table = tableCandidate;
-        }
-
+    downloadTableEl(table, filename) {
         const head = table.querySelectorAll('thead th');
         const rows = table.querySelectorAll('tbody tr');
         let csv = '';
@@ -124,23 +114,13 @@ export class DownloadService {
     }
 
     /**
-     * Downloads the svg given as the selector. The selector can also be a parent element of the svg.
-     * It is then searched for child elements that are svg elements.
+     * Downloads the svg.
      *
-     * @param {string} selector - The selector of the svg or an parent of the svg.
-     * @param {boolean} adjustSize - If the svg content should be resized to the svg element dimensions.
-     * @param {string} filename - The name of the file to download.
+     * @param {Element} svg The svg element to download.
+     * @param {boolean} adjustSize If the svg content should be resized to the svg element dimensions.
+     * @param {string} filename The name of the file to download.
      */
-    downloadSvg(selector, adjustSize, filename) {
-        let svg = null;
-        const svgCandidate = document.querySelector(selector);
-        if (svgCandidate.nodeName.toLowerCase() !== 'svg') {
-            svg = svgCandidate.querySelector('svg');
-            if (svg === null) return;
-        } else {
-            svg = svgCandidate;
-        }
-
+    downloadSvgEl(svg, adjustSize, filename) {
         // copy svg to prevent the svg being clipped due to the window size
         const svgCopy = svg.cloneNode(true);
         const g = svg.querySelector('g');
