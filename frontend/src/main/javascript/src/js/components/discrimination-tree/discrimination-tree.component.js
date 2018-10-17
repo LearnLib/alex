@@ -96,7 +96,7 @@ class DiscriminationTreeComponent {
                 width: 25,
                 style: STYLE.node,
                 labelStyle: STYLE.nodeLabel
-            }
+            };
         }
 
         const self = this;

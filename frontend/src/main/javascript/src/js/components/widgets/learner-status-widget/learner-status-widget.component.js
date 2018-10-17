@@ -53,7 +53,7 @@ class LearnerStatusWidgetComponent {
 
     $onInit() {
         this.getStatus();
-        this.intervalHandle = this.$interval(() => this.getStatus(), 5000)
+        this.intervalHandle = this.$interval(() => this.getStatus(), 5000);
     }
 
     $onDestroy() {

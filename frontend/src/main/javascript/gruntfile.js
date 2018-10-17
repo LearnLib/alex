@@ -12,11 +12,17 @@ module.exports = function (grunt) {
             '<%= buildLocation %>/js/alex.bundle.js': ['src/js/index.js']
         },
         options: {
+            plugin: [
+                ['tsify']
+            ],
             transform: [
                 ['babelify', {
                     sourceMap: false,
                     presets: ['es2015'],
                     compact: false
+                }],
+                ['stringify', {
+                    appliesTo: { includeExtensions: ['.html']}
                 }],
                 ['browserify-ngannotate'],
                 ['html2js-browserify', {

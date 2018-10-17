@@ -171,7 +171,7 @@ class ResultsViewComponent {
                 result: () => result,
                 current: () => null
             }
-        })
+        });
     }
 
     get project() {

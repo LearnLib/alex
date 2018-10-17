@@ -15,15 +15,15 @@
  */
 
 import uiRouter from '@uirouter/angularjs';
-import angular from 'angular';
-import ngAnimate from 'angular-animate';
-import angularDragula from 'angular-dragula';
-import angularJwt from 'angular-jwt';
-import ngMessages from 'angular-messages';
-import toastr from 'angular-toastr';
-import uiBootstrap from 'angular-ui-bootstrap';
-import ngFileUpload from 'ng-file-upload';
-import {actionBarComponent} from './components/action-bar/action-bar.component';
+import * as angular from 'angular';
+import * as ngAnimate from 'angular-animate';
+import * as ngMessages from 'angular-messages';
+import * as angularDragula from 'angular-dragula';
+import * as angularJwt from 'angular-jwt';
+import * as toastr from 'angular-toastr';
+import * as uiBootstrap from 'angular-ui-bootstrap';
+import * as ngFileUpload from 'ng-file-upload';
+import {actionBarComponent} from "./components/action-bar/action-bar.component";
 import {alexComponent} from './components/alex/alex.component';
 import {discriminationTreeComponent} from './components/discrimination-tree/discrimination-tree.component';
 import {fileDropzoneComponent} from './components/file-dropzone/file-dropzone.component';
