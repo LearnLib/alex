@@ -30,7 +30,15 @@ cache:
 
 before_cache:
   # do not cache our local archives
+  - rm -rf $HOME/.m2/repository/net/automatalib/
   - rm -rf $HOME/.m2/repository/de/learnlib/alex/
+
+before_install:
+  # install snapshot of automatalib
+  - git clone -b develop --single-branch https://github.com/LearnLib/automatalib.git /tmp/automatalib-develop
+  - pushd /tmp/automatalib-develop
+  - mvn install -DskipTests
+  - popd
 
 install: true # skip mvn install, because we essentially run the same command in the script routine
 
