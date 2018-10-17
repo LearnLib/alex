@@ -15,7 +15,7 @@
  */
 
 import {AlphabetSymbol} from '../entities/alphabet-symbol';
-import {SymbolGroup} from "../entities/symbol-group";
+import {SymbolGroup} from '../entities/symbol-group';
 
 /**
  * Utilities for symbol groups.

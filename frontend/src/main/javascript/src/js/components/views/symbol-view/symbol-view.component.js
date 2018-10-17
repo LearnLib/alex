@@ -19,6 +19,7 @@ import uniqueId from 'lodash/uniqueId';
 import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
 import {ParametrizedSymbol} from '../../../entities/parametrized-symbol';
 import {ClipboardService} from '../../../services/clipboard.service';
+import {ClipboardMode} from "../../../services/clipboard.service";
 import {Selectable} from '../../../utils/selectable';
 
 /**
@@ -244,7 +245,7 @@ class SymbolViewComponent {
             cpy.forEach(step => {
                 delete step._id;
             });
-            this.ClipboardService.copy(this.project.id, 'symbolSteps', cpy, ClipboardService.Mode.CUT);
+            this.ClipboardService.copy(this.project.id, 'symbolSteps', cpy, ClipboardMode.CUT);
             this.deleteSteps(steps);
             this.ToastService.info(steps.length + ' steps cut to clipboard');
         }
@@ -254,7 +255,7 @@ class SymbolViewComponent {
         const s = AlphabetSymbol.stepsToJson(step);
         delete s._id;
 
-        this.ClipboardService.copy(this.project.id, 'symbolSteps', [s], ClipboardService.Mode.CUT);
+        this.ClipboardService.copy(this.project.id, 'symbolSteps', [s], ClipboardMode.CUT);
         this.deleteSteps([step]);
         this.ToastService.info('The action has been copied to the clipboard.');
     }

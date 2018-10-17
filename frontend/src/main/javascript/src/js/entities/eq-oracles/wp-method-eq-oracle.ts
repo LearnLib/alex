@@ -15,11 +15,12 @@
  */
 
 import {eqOracleType} from '../../constants';
+import {EqOracle} from './eq-oracle';
 
 /**
  * The model for the wmethod eq oracle.
  */
-export class WpMethodEqOracle {
+export class WpMethodEqOracle implements EqOracle {
 
   public type = eqOracleType.WP_METHOD;
 

@@ -17,7 +17,7 @@
 import {webBrowser} from '../constants';
 import {DriverConfigService} from '../services/driver-config.service';
 import {RandomEqOracle} from './eq-oracles/random-eq-oracle';
-import {AlphabetSymbol} from "./alphabet-symbol";
+import {AlphabetSymbol} from './alphabet-symbol';
 
 /**
  * The model for a learn configuration.

@@ -15,11 +15,12 @@
  */
 
 import {eqOracleType} from '../../constants';
+import {EqOracle} from './eq-oracle';
 
 /**
  * The model for the random eq oracle.
  */
-export class RandomEqOracle {
+export class RandomEqOracle implements EqOracle {
 
   public type: string = eqOracleType.RANDOM;
 

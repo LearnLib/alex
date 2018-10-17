@@ -14,26 +14,20 @@
  * limitations under the License.
  */
 
-/** The model for user api results. */
-export class User {
-
-  /** The id of the user. */
-  public id;
-
-  /** The role of the user. */
-  public role;
-
-  /** The email of the user. */
-  public email;
+/** Service for notifications. */
+export class NotificationService {
 
   /**
-   * Constructor.
+   * Creates a native notification.
    *
-   * @param obj The object to create a user from.
+   * @param message The message to display.
+   * @param duration How long the notification is displayed.
    */
-  constructor(obj: any = {}) {
-    this.id = obj.id;
-    this.role = obj.role;
-    this.email = obj.email;
+  notify(message: string, duration: number = 5000): void {
+    // notify the user that the learning process has finished
+    if (('Notification' in window) && Notification.permission === 'granted') {
+      const notification = new Notification(message);
+      setTimeout(notification.close.bind(notification), duration);
+    }
   }
 }

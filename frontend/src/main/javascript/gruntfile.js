@@ -21,7 +21,7 @@ module.exports = function (grunt) {
                     presets: ['es2015'],
                     compact: false
                 }],
-                ['stringify', {
+                ['stringify', { // load component templates
                     appliesTo: { includeExtensions: ['.html']}
                 }],
                 ['browserify-ngannotate'],

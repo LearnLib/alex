@@ -15,11 +15,12 @@
  */
 
 import {eqOracleType} from '../../constants';
+import {EqOracle} from './eq-oracle';
 
 /**
  * The model for the Hypothesis eq oracle.
  */
-export class HypothesisEqOracle {
+export class HypothesisEqOracle implements EqOracle {
 
   public type: string = eqOracleType.HYPOTHESIS;
 

@@ -15,11 +15,12 @@
  */
 
 import {eqOracleType} from '../../constants';
+import {EqOracle} from './eq-oracle';
 
 /**
  * The model for the test suite eq oracle.
  */
-export class TestSuiteEqOracle {
+export class TestSuiteEqOracle implements EqOracle {
 
   public type: string = eqOracleType.TEST_SUITE;
 

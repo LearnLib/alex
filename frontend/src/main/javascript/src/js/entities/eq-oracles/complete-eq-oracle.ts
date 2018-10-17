@@ -15,11 +15,12 @@
  */
 
 import {eqOracleType} from '../../constants';
+import {EqOracle} from './eq-oracle';
 
 /**
  * The model for the complete eq oracle.
  */
-export class CompleteEqOracle {
+export class CompleteEqOracle implements EqOracle {
 
   public type: string = eqOracleType.COMPLETE;
 

@@ -14,26 +14,8 @@
  * limitations under the License.
  */
 
-/** The model for user api results. */
-export class User {
+export interface EqOracle {
 
-  /** The id of the user. */
-  public id;
-
-  /** The role of the user. */
-  public role;
-
-  /** The email of the user. */
-  public email;
-
-  /**
-   * Constructor.
-   *
-   * @param obj The object to create a user from.
-   */
-  constructor(obj: any = {}) {
-    this.id = obj.id;
-    this.role = obj.role;
-    this.email = obj.email;
-  }
+  /** The JSON type of the oracle. */
+  type: string;
 }

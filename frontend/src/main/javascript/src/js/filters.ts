@@ -165,7 +165,7 @@ export function formatMilliseconds(): (number) => string {
       return minutes + 'min ' + Math.floor((ms % 60000) / 1000) + 's';
     } else {
       seconds = Math.floor(ms / 1000);
-      return seconds + 's ' + (ms % 1000) + "ms";
+      return seconds + 's ' + (ms % 1000) + 'ms';
     }
   };
 }
