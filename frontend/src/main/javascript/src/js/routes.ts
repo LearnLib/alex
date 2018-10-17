@@ -98,14 +98,14 @@ export function config($stateProvider, $urlRouterProvider) {
       data: {title: 'Project'},
 
       // @ngInject
-      onEnter: function ($state, ProjectService, ProjectResource, $stateParams) {
+      onEnter: function ($state, projectService, projectResource, $stateParams) {
         const projectId = $stateParams.projectId;
-        const project = ProjectService.store.currentProject;
+        const project = projectService.store.currentProject;
 
         if (project == null || project.id !== projectId) {
-          return ProjectResource.get(projectId)
+          return projectResource.get(projectId)
             .then(project => {
-              ProjectService.open(project);
+              projectService.open(project);
             })
             .catch(() => {
               $state.go('error', {message: `The project with the id ${projectId} could not be found`});
@@ -302,27 +302,27 @@ export function config($stateProvider, $urlRouterProvider) {
 /**
  * Validate routes on state change.
  *
- * @param {TransitionService} $transitions
- * @param {ProjectService} ProjectService
- * @param {UserService} UserService
- * @param {ToastService} ToastService
+ * @param $transitions
+ * @param projectService
+ * @param userService
+ * @param toastService
  */
 // @ngInject
-export function run($transitions, ProjectService, UserService, ToastService) {
+export function run($transitions, projectService, userService, toastService) {
 
   // route validation
   $transitions.onBefore({}, onBefore, {});
   $transitions.onSuccess({}, onSuccess, {});
 
   function onBefore(transition) {
-    const user = UserService.store.currentUser;
-    const project = ProjectService.store.currentProject;
+    const user = userService.store.currentUser;
+    const project = projectService.store.currentProject;
 
     const data = transition.to().data;
     if ((data.roles && (user === null || data.roles.indexOf(user.role) === -1))
       || (data.requiresProject && project === null)) {
 
-      ToastService.danger('You cannot access this page!');
+      toastService.danger('You cannot access this page!');
       return transition.router.stateService.target('root');
     }
   }

@@ -26,13 +26,13 @@ class HtmlElementPickerComponent {
 
     /**
      * Constructor.
-     * @param {ProjectService} ProjectService
+     * @param projectService
      * @param $element
      * @param $scope
      */
     // @ngInject
-    constructor(ProjectService, $element, $scope) {
-        this.ProjectService = ProjectService;
+    constructor(projectService, $element, $scope) {
+        this.projectService = projectService;
         this.iframe = $element.find('iframe');
         this.$scope = $scope;
 
@@ -242,7 +242,7 @@ class HtmlElementPickerComponent {
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

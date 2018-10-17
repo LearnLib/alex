@@ -25,13 +25,13 @@ export const uploadFileActionFormComponent = {
         /**
          * Constructor.
          *
-         * @param {FileResource} FileResource
-         * @param {ProjectService} ProjectService
+         * @param fileResource
+         * @param projectService
          */
         // @ngInject
-        constructor(FileResource, ProjectService) {
-            this.fileResource = FileResource;
-            this.projectService = ProjectService;
+        constructor(fileResource, projectService) {
+            this.fileResource = fileResource;
+            this.projectService = projectService;
 
             this.files = [];
 

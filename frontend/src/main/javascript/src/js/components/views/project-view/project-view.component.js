@@ -22,11 +22,11 @@ class ProjectViewComponent {
     /**
      * Constructor.
      *
-     * @param {ProjectService} ProjectService
+     * @param projectService
      */
     // @ngInject
-    constructor(ProjectService) {
-        this.projectService = ProjectService;
+    constructor(projectService) {
+        this.projectService = projectService;
     }
 
     get project() {

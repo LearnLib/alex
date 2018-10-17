@@ -27,21 +27,21 @@ class LearnerSetupViewComponent {
      * Constructor.
      *
      * @param $state
-     * @param {SymbolGroupResource} SymbolGroupResource
-     * @param {ProjectService} ProjectService
-     * @param {LearnerResource} LearnerResource
-     * @param {ToastService} ToastService
-     * @param {LearnResultResource} LearnResultResource
-     * @param {SettingsResource} SettingsResource
+     * @param symbolGroupResource
+     * @param projectService
+     * @param learnerResource
+     * @param toastService
+     * @param learnResultResource
+     * @param settingsResource
      * @param $uibModal
      */
     // @ngInject
-    constructor($state, SymbolGroupResource, ProjectService, LearnerResource, ToastService, LearnResultResource,
-                SettingsResource, $uibModal) {
+    constructor($state, symbolGroupResource, projectService, learnerResource, toastService, learnResultResource,
+                settingsResource, $uibModal) {
         this.$state = $state;
-        this.LearnerResource = LearnerResource;
-        this.ToastService = ToastService;
-        this.ProjectService = ProjectService;
+        this.learnerResource = learnerResource;
+        this.toastService = toastService;
+        this.projectService = projectService;
         this.$uibModal = $uibModal;
 
         /**
@@ -75,34 +75,34 @@ class LearnerSetupViewComponent {
 
         this.pPostSymbol = null;
 
-        SettingsResource.getSupportedWebDrivers()
+        settingsResource.getSupportedWebDrivers()
             .then(data => this.learnConfiguration.driverConfig.name = data.defaultWebDriver)
             .catch(console.error);
 
         // make sure that there isn't any other learn process active
         // redirect to the load screen in case there is an active one
-        this.LearnerResource.getStatus(this.project.id)
+        this.learnerResource.getStatus(this.project.id)
             .then(data => {
                 if (data.active) {
                     if (data.project === this.project.id) {
-                        this.ToastService.info('There is an active learning process for this project.');
+                        this.toastService.info('There is an active learning process for this project.');
                         this.$state.go('learnerStart', {projectId: this.project.id});
                     } else {
-                        this.ToastService.info('There is an active learning process for another project.');
+                        this.toastService.info('There is an active learning process for another project.');
                     }
                 } else {
 
                     // load all symbols in case there isn't any active learning process
-                    SymbolGroupResource.getAll(this.project.id, true)
+                    symbolGroupResource.getAll(this.project.id, true)
                         .then(groups => this.groups = groups)
                         .catch(console.error);
 
                     // load learn results so that their configuration can be reused
-                    LearnResultResource.getAll(this.project.id)
+                    learnResultResource.getAll(this.project.id)
                         .then(learnResults => this.learnResults = learnResults)
                         .catch(console.error);
 
-                    LearnResultResource.getLatest(this.project.id)
+                    learnResultResource.getLatest(this.project.id)
                         .then(latestLearnerResult => this.latestLearnerResult = latestLearnerResult)
                         .catch(console.error);
                 }
@@ -138,7 +138,7 @@ class LearnerSetupViewComponent {
      */
     startLearning() {
         if (this.pResetSymbol === null) {
-            this.ToastService.danger('You <strong>must</strong> selected a reset symbol in order to start learning!');
+            this.toastService.danger('You <strong>must</strong> selected a reset symbol in order to start learning!');
         } else {
 
             if (this.pSymbols.length > 0) {
@@ -154,16 +154,16 @@ class LearnerSetupViewComponent {
                 config.urls = this.learnConfiguration.urls.map(u => u.id);
 
                 // start learning
-                this.LearnerResource.start(this.project.id, config)
+                this.learnerResource.start(this.project.id, config)
                     .then(() => {
-                        this.ToastService.success('Learn process started successfully.');
+                        this.toastService.success('Learn process started successfully.');
                         this.$state.go('learnerStart', {projectId: this.project.id});
                     })
                     .catch(error => {
-                        this.ToastService.danger('<p><strong>Start learning failed</strong></p>' + error.data.message);
+                        this.toastService.danger('<p><strong>Start learning failed</strong></p>' + error.data.message);
                     });
             } else {
-                this.ToastService.danger('You <strong>must</strong> at least select one symbol to start learning');
+                this.toastService.danger('You <strong>must</strong> at least select one symbol to start learning');
             }
         }
     }
@@ -208,7 +208,7 @@ class LearnerSetupViewComponent {
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

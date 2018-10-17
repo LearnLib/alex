@@ -27,15 +27,15 @@ export const testsMoveModalComponent = {
         /**
          * Constructor.
          *
-         * @param {TestResource} TestResource
-         * @param {ToastService} ToastService
-         * @param {ProjectService} ProjectService
+         * @param testResource
+         * @param toastService
+         * @param projectService
          */
         // @ngInject
-        constructor(TestResource, ToastService, ProjectService) {
-            this.testResource = TestResource;
-            this.toastService = ToastService;
-            this.projectService = ProjectService;
+        constructor(testResource, toastService, projectService) {
+            this.testResource = testResource;
+            this.toastService = toastService;
+            this.projectService = projectService;
 
             /**
              * The root test suite.

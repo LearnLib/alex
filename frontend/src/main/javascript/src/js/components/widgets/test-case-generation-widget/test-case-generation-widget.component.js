@@ -15,17 +15,17 @@ export const testCaseGenerationWidgetComponent = {
          * Constructor.
          *
          * @param $scope
-         * @param {EventBus} EventBus
-         * @param {ProjectService} ProjectService
-         * @param {TestResource} TestResource
-         * @param {ToastService} ToastService
+         * @param eventBus
+         * @param projectService
+         * @param testResource
+         * @param toastService
          */
         // @ngInject
-        constructor($scope, EventBus, ProjectService, TestResource, ToastService) {
-            this.eventBus = EventBus;
-            this.projectService = ProjectService;
-            this.testResource = TestResource;
-            this.toastService = ToastService;
+        constructor($scope, eventBus, projectService, testResource, toastService) {
+            this.eventBus = eventBus;
+            this.projectService = projectService;
+            this.testResource = testResource;
+            this.toastService = toastService;
 
             /**
              * Map computed name -> parameterized symbol.

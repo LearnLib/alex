@@ -29,13 +29,13 @@ export const ltsFormulaListComponent = {
         /**
          * Constructor.
          *
-         * @param {ToastService} ToastService
-         * @param {LtsFormulaService} LtsFormulaService
+         * @param toastService
+         * @param ltsFormulaService
          */
         // @ngInject
-        constructor(ToastService, LtsFormulaService) {
-            this.toastService = ToastService;
-            this.ltsFormulaService = LtsFormulaService;
+        constructor(toastService, ltsFormulaService) {
+            this.toastService = toastService;
+            this.ltsFormulaService = ltsFormulaService;
         }
 
         /**

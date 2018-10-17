@@ -27,17 +27,17 @@ class SymbolsArchiveViewComponent {
     /**
      * Constructor.
      *
-     * @param {ProjectService} ProjectService
-     * @param {SymbolResource} SymbolResource
-     * @param {ToastService} ToastService
+     * @param projectService
+     * @param symbolResource
+     * @param toastService
      * @param $uibModal
      */
     // @ngInject
-    constructor(ProjectService, SymbolResource, ToastService, $uibModal) {
-        this.SymbolResource = SymbolResource;
-        this.ToastService = ToastService;
+    constructor(projectService, symbolResource, toastService, $uibModal) {
+        this.symbolResource = symbolResource;
+        this.toastService = toastService;
         this.$uibModal = $uibModal;
-        this.ProjectService = ProjectService;
+        this.projectService = projectService;
 
         /**
          * The list of deleted symbols.
@@ -52,12 +52,12 @@ class SymbolsArchiveViewComponent {
         this.selectedSymbols = new Selectable(this.symbols, 'id');
 
         // fetch all deleted symbols and save them in scope
-        this.SymbolResource.getAll(this.project.id, true)
+        this.symbolResource.getAll(this.project.id, true)
             .then(symbols => {
                 this.symbols = symbols;
                 this.selectedSymbols = new Selectable(this.symbols, 'id');
             })
-            .catch(err => this.ToastService.danger(`Could not get symbols. ${err.data.message}`));
+            .catch(err => this.toastService.danger(`Could not get symbols. ${err.data.message}`));
     }
 
     /**
@@ -66,14 +66,14 @@ class SymbolsArchiveViewComponent {
      * @param {AlphabetSymbol} symbol - The symbol that should be recovered from the trash.
      */
     recoverSymbol(symbol) {
-        this.SymbolResource.recover(symbol)
+        this.symbolResource.recover(symbol)
             .then(() => {
-                this.ToastService.success('Symbol ' + symbol.name + ' recovered');
+                this.toastService.success('Symbol ' + symbol.name + ' recovered');
                 this.selectedSymbols.unselect(symbol);
                 remove(this.symbols, {id: symbol.id});
             })
             .catch(err => {
-                this.ToastService.danger('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + err.data.message);
+                this.toastService.danger('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + err.data.message);
             });
     }
 
@@ -83,18 +83,18 @@ class SymbolsArchiveViewComponent {
     recoverSelectedSymbols() {
         const selectedSymbols = this.selectedSymbols.getSelected();
         if (selectedSymbols.length === 0) {
-            this.ToastService.info('You have to select at least one symbol.');
+            this.toastService.info('You have to select at least one symbol.');
             return;
         }
 
-        this.SymbolResource.recoverMany(selectedSymbols)
+        this.symbolResource.recoverMany(selectedSymbols)
             .then(() => {
-                this.ToastService.success('Symbols recovered');
+                this.toastService.success('Symbols recovered');
                 selectedSymbols.forEach(symbol => remove(this.symbols, {id: symbol.id}));
                 this.selectedSymbols.unselectAll();
             })
             .catch(err => {
-                this.ToastService.danger('<p><strong>Error recovering symbols!</strong></p>' + err.data.message);
+                this.toastService.danger('<p><strong>Error recovering symbols!</strong></p>' + err.data.message);
             });
     }
 
@@ -116,17 +116,17 @@ class SymbolsArchiveViewComponent {
     }
 
     deleteSymbol(symbol) {
-        this.SymbolResource.delete(symbol)
+        this.symbolResource.delete(symbol)
             .then(() => {
-                this.ToastService.success('The symbol has been deleted permanently.');
+                this.toastService.success('The symbol has been deleted permanently.');
                 this.selectedSymbols.unselect(symbol);
                 remove(this.symbols, {id: symbol.id});
             })
-            .catch(err => this.ToastService.danger(`The symbol could be deleted permanently. ${err.data.message}`));
+            .catch(err => this.toastService.danger(`The symbol could be deleted permanently. ${err.data.message}`));
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

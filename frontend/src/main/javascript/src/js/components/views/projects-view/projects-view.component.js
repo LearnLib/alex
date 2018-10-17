@@ -23,13 +23,13 @@ class ProjectsViewComponent {
      * Constructor.
      *
      * @param $state
-     * @param {ProjectService} ProjectService
-     * @param {ProjectResource} ProjectResource
-     * @param {ToastService} ToastService
+     * @param projectService
+     * @param toastService
      */
     // @ngInject
-    constructor($state, ProjectService, ProjectResource, ToastService) {
-        this.projectService = ProjectService;
+    constructor($state, projectService, toastService) {
+        this.projectService = projectService;
+        this.toastService = toastService;
 
         // go to the dashboard if there is a project in the session
         const project = this.projectService.store.currentProject;
@@ -39,8 +39,8 @@ class ProjectsViewComponent {
         }
 
         //get all projects from the server
-        ProjectService.load()
-            .catch(err => ToastService.danger(`Loading project failed. ${err.data.message}`));
+        this.projectService.load()
+            .catch(err => this.toastService.danger(`Loading project failed. ${err.data.message}`));
     }
 
     get projects() {

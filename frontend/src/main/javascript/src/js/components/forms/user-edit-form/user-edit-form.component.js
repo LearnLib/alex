@@ -25,20 +25,20 @@ class UserEditFormComponent {
      * Constructor.
      *
      * @param $state
-     * @param {ToastService} ToastService
-     * @param {UserResource} UserResource
-     * @param {PromptService} PromptService
-     * @param {ProjectService} ProjectService
-     * @param {UserService} UserService
+     * @param toastService
+     * @param userResource
+     * @param promptService
+     * @param projectService
+     * @param userService
      */
     // @ngInject
-    constructor($state, ToastService, UserResource, PromptService, ProjectService, UserService) {
+    constructor($state, toastService, userResource, promptService, projectService, userService) {
         this.$state = $state;
-        this.ToastService = ToastService;
-        this.UserResource = UserResource;
-        this.PromptService = PromptService;
-        this.ProjectService = ProjectService;
-        this.UserService = UserService;
+        this.toastService = toastService;
+        this.userResource = userResource;
+        this.promptService = promptService;
+        this.projectService = projectService;
+        this.userService = userService;
 
         /**
          * The model for the input of the old password.
@@ -68,17 +68,17 @@ class UserEditFormComponent {
      */
     changeEmail() {
         if (this.email !== '') {
-            this.UserResource.changeEmail(this.user, this.email)
+            this.userResource.changeEmail(this.user, this.email)
                 .then(() => {
-                    this.ToastService.success('The email has been changed');
+                    this.toastService.success('The email has been changed');
 
                     // update the jwt correspondingly
                     const user = new User(JSON.parse(JSON.stringify(this.currentUser)));
                     user.email = this.email;
-                    this.UserService.login(user);
+                    this.userService.login(user);
                 })
                 .catch(response => {
-                    this.ToastService.danger('The email could not be changed. ' + response.data.message);
+                    this.toastService.danger('The email could not be changed. ' + response.data.message);
                 });
         }
     }
@@ -88,23 +88,23 @@ class UserEditFormComponent {
      */
     changePassword() {
         if (this.oldPassword === '' || this.newPassword === '') {
-            this.ToastService.info('Both passwords have to be entered');
+            this.toastService.info('Both passwords have to be entered');
             return;
         }
 
         if (this.oldPassword === this.newPassword) {
-            this.ToastService.info('The new password should be different from the old one');
+            this.toastService.info('The new password should be different from the old one');
             return;
         }
 
-        this.UserResource.changePassword(this.user, this.oldPassword, this.newPassword)
+        this.userResource.changePassword(this.user, this.oldPassword, this.newPassword)
             .then(() => {
-                this.ToastService.success('The password has been changed');
+                this.toastService.success('The password has been changed');
                 this.oldPassword = '';
                 this.newPassword = '';
             })
             .catch(response => {
-                this.ToastService.danger('There has been an error. ' + response.data.message);
+                this.toastService.danger('There has been an error. ' + response.data.message);
             });
     }
 
@@ -112,23 +112,23 @@ class UserEditFormComponent {
      * Deletes the user, removes the jwt on success and redirects to the index page.
      */
     deleteUser() {
-        this.PromptService.confirm('Do you really want to delete this profile? All data will be permanently deleted.')
+        this.promptService.confirm('Do you really want to delete this profile? All data will be permanently deleted.')
             .then(() => {
-                this.UserResource.remove(this.user)
+                this.userResource.remove(this.user)
                     .then(() => {
-                        this.ToastService.success('The profile has been deleted');
-                        this.ProjectService.close();
-                        this.UserService.logout();
+                        this.toastService.success('The profile has been deleted');
+                        this.projectService.close();
+                        this.userService.logout();
                         this.$state.go('root');
                     })
                     .catch(response => {
-                        this.ToastService.danger('The profile could not be deleted. ' + response.data.message);
+                        this.toastService.danger('The profile could not be deleted. ' + response.data.message);
                     });
             });
     }
 
     get currentUser() {
-        return this.UserService.store.currentUser;
+        return this.userService.store.currentUser;
     }
 }
 

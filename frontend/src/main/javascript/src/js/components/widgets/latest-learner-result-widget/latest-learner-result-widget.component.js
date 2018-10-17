@@ -22,11 +22,11 @@ class LatestLearnerResultWidgetComponent {
     /**
      * Constructor.
      *
-     * @param {LearnResultResource} LearnResultResource
+     * @param learnResultResource
      */
     // @ngInject
-    constructor(LearnResultResource) {
-        this.learnResultResource = LearnResultResource;
+    constructor(learnResultResource) {
+        this.learnResultResource = learnResultResource;
 
         /**
          * The latest learning result.

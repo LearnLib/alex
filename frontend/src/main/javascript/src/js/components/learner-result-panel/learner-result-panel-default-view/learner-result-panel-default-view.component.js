@@ -32,15 +32,15 @@ export const learnerResultPanelDefaultViewComponent = {
          *
          * @param $element
          * @param $uibModal
-         * @param {PromptService} PromptService
-         * @param {DownloadService} DownloadService
+         * @param promptService
+         * @param downloadService
          */
         // @ngInject
-        constructor($element, $uibModal, PromptService, DownloadService) {
+        constructor($element, $uibModal, promptService, downloadService) {
             this.$element = $element;
             this.$uibModal = $uibModal;
-            this.PromptService = PromptService;
-            this.DownloadService = DownloadService;
+            this.promptService = promptService;
+            this.downloadService = downloadService;
 
             /**
              * Available learn algorithms. Needed for access in the template.
@@ -121,7 +121,6 @@ export const learnerResultPanelDefaultViewComponent = {
 
         /** Switches the mode to the one to display the internal data structure. */
         showInternalDataStructure() {
-            console.log(this.result.algorithm.name);
             switch (this.result.algorithm.name) {
                 case learnAlgorithm.LSTAR:
                     this.mode = this.modes.OBSERVATION_TABLE;
@@ -143,22 +142,22 @@ export const learnerResultPanelDefaultViewComponent = {
         /** Downloads the currently displayed discrimination tree as svg. */
         exportDiscriminationTree() {
             const svg = this.$element[0].querySelector('.discrimination-tree');
-            this.PromptService.prompt('Enter a name for the svg file')
-                .then(filename => this.DownloadService.downloadSvgEl(svg, true, filename));
+            this.promptService.prompt('Enter a name for the svg file')
+                .then(filename => this.downloadService.downloadSvgEl(svg, true, filename));
         }
 
         /** Downloads the currently displayed hypothesis as svg. */
         exportHypothesisAsSvg() {
             const svg = this.$element[0].querySelector('.hypothesis');
-            this.PromptService.prompt('Enter a name for the svg file')
-                .then(filename => this.DownloadService.downloadSvgEl(svg, true, filename));
+            this.promptService.prompt('Enter a name for the svg file')
+                .then(filename => this.downloadService.downloadSvgEl(svg, true, filename));
         }
 
         /** Downloads the currently displayed hypothesis as json. */
         exportHypothesisAsJson() {
-            this.PromptService.prompt('Enter a name for the json file')
+            this.promptService.prompt('Enter a name for the json file')
                 .then(filename => {
-                    this.DownloadService.downloadObject(this.result.steps[this.pointer].hypothesis, filename);
+                    this.downloadService.downloadObject(this.result.steps[this.pointer].hypothesis, filename);
                 });
         }
 
@@ -192,8 +191,8 @@ export const learnerResultPanelDefaultViewComponent = {
             dot += '  __start0 -> 0;\n';
             dot += '}';
 
-            this.PromptService.prompt('Enter a name for the dot file')
-                .then(filename => this.DownloadService.downloadText(filename, 'dot', dot));
+            this.promptService.prompt('Enter a name for the dot file')
+                .then(filename => this.downloadService.downloadText(filename, 'dot', dot));
         }
 
         /** Switches the mode to the one to display the hypothesis. */
@@ -205,8 +204,8 @@ export const learnerResultPanelDefaultViewComponent = {
         /** Downloads the currently displayed observation table. */
         exportObservationTable() {
             const table = this.$element[0].querySelector('.observation-table');
-            this.PromptService.prompt('Enter a name for the csv file')
-                .then(filename => this.DownloadService.downloadTableEl(table, filename));
+            this.promptService.prompt('Enter a name for the csv file')
+                .then(filename => this.downloadService.downloadTableEl(table, filename));
         }
 
         openResultDetailsModal() {

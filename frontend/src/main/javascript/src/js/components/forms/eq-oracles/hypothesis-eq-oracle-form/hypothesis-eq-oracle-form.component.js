@@ -26,11 +26,11 @@ export const hypothesisEqOracleFormComponent = {
         /**
          * Constructor.
          *
-         * @param {ToastService} ToastService
+         * @param toastService
          */
         // @ngInject
-        constructor(ToastService) {
-            this.toastService = ToastService;
+        constructor(toastService) {
+            this.toastService = toastService;
         }
 
         /**

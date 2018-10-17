@@ -29,11 +29,11 @@ export const eqOracleFormComponent = {
         /**
          * Constructor.
          *
-         * @param {EqOracleService} EqOracleService
+         * @param eqOracleService
          */
         // @ngInject
-        constructor(EqOracleService) {
-            this.eqOracleService = EqOracleService;
+        constructor(eqOracleService) {
+            this.eqOracleService = eqOracleService;
 
             /**
              * The eq oracle types.

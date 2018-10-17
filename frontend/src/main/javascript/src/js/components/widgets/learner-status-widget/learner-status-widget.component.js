@@ -23,14 +23,14 @@ class LearnerStatusWidgetComponent {
      * Constructor.
      *
      * @param $interval
-     * @param {LearnerResource} LearnerResource
-     * @param {ToastService} ToastService
+     * @param learnerResource
+     * @param toastService
      */
     // @ngInject
-    constructor($interval, LearnerResource, ToastService) {
+    constructor($interval, learnerResource, toastService) {
         this.$interval = $interval;
-        this.LearnerResource = LearnerResource;
-        this.ToastService = ToastService;
+        this.learnerResource = learnerResource;
+        this.toastService = toastService;
 
         /**
          * The status of the learner.
@@ -61,7 +61,7 @@ class LearnerStatusWidgetComponent {
     }
 
     getStatus() {
-        this.LearnerResource.getStatus(this.project.id)
+        this.learnerResource.getStatus(this.project.id)
             .then(status => this.status = status)
             .catch(console.error);
     }
@@ -70,9 +70,9 @@ class LearnerStatusWidgetComponent {
      * Induces the Learner to stop learning after the current hypothesis model.
      */
     abort() {
-        this.LearnerResource.stop(this.project.id)
+        this.learnerResource.stop(this.project.id)
             .then(() => {
-                this.ToastService.info('The learner stops as soon as possible.');
+                this.toastService.info('The learner stops as soon as possible.');
             })
             .catch(console.error);
     }

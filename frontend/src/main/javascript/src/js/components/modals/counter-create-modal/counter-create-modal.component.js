@@ -33,15 +33,15 @@ export const counterCreateModalComponent = {
         /**
          * Constructor.
          *
-         * @param {ProjectService} ProjectService
-         * @param {CounterResource} CounterResource
-         * @param {ToastService} ToastService
+         * @param projectService
+         * @param counterResource
+         * @param toastService
          */
         // @ngInject
-        constructor(ProjectService, CounterResource, ToastService) {
-            this.CounterResource = CounterResource;
-            this.ToastService = ToastService;
-            this.ProjectService = ProjectService;
+        constructor(projectService, counterResource, toastService) {
+            this.counterResource = counterResource;
+            this.toastService = toastService;
+            this.projectService = projectService;
 
             /**
              * The new counter.
@@ -67,9 +67,9 @@ export const counterCreateModalComponent = {
                 return;
             }
 
-            this.CounterResource.create(this.project.id, this.counter)
+            this.counterResource.create(this.project.id, this.counter)
                 .then(counter => {
-                    this.ToastService.success(`The counter <strong>${counter.name}</strong> has been created.`);
+                    this.toastService.success(`The counter <strong>${counter.name}</strong> has been created.`);
                     this.close({$value: counter});
                 })
                 .catch(response => {
@@ -78,7 +78,7 @@ export const counterCreateModalComponent = {
         }
 
         get project() {
-            return this.ProjectService.store.currentProject;
+            return this.projectService.store.currentProject;
         }
     },
 };

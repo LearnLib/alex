@@ -26,13 +26,13 @@ export const testSuiteEqOracleFormComponent = {
         /**
          * Constructor.
          *
-         * @param {ProjectService} ProjectService
-         * @param {TestResource} TestResource
+         * @param projectService
+         * @param testResource
          */
         // @ngInject
-        constructor(ProjectService, TestResource) {
-            this.projectService = ProjectService;
-            this.testResource = TestResource;
+        constructor(projectService, testResource) {
+            this.projectService = projectService;
+            this.testResource = testResource;
 
             /**
              * The root test suite.

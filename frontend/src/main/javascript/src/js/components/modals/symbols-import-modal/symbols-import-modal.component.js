@@ -24,17 +24,17 @@ export class SymbolsImportModalComponent {
     /**
      * Constructor.
      *
-     * @param {SymbolResource} SymbolResource
-     * @param {ProjectService} ProjectService
-     * @param {ToastService} ToastService
-     * @param {SymbolGroupResource} SymbolGroupResource
+     * @param symbolResource
+     * @param projectService
+     * @param toastService
+     * @param symbolGroupResource
      */
     // @ngInject
-    constructor(SymbolResource, ProjectService, ToastService, SymbolGroupResource) {
-        this.SymbolResource = SymbolResource;
-        this.ToastService = ToastService;
-        this.SymbolGroupResource = SymbolGroupResource;
-        this.ProjectService = ProjectService;
+    constructor(symbolResource, projectService, toastService, symbolGroupResource) {
+        this.symbolResource = symbolResource;
+        this.toastService = toastService;
+        this.symbolGroupResource = symbolGroupResource;
+        this.projectService = projectService;
 
         /**
          * The error message.
@@ -87,18 +87,18 @@ export class SymbolsImportModalComponent {
                 symbol.group = this.selectedGroup == null ? defaultGroup.id : this.selectedGroup.id;
             });
 
-            this.SymbolResource.createMany(this.project.id, this.importData.symbols)
+            this.symbolResource.createMany(this.project.id, this.importData.symbols)
                 .then(createdSymbols => {
-                    this.ToastService.success('The symbols have been imported');
+                    this.toastService.success('The symbols have been imported');
                     this.close({$value: {type: 'symbols', symbols: createdSymbols}});
                 })
                 .catch(err => {
                     this.errorMessage = `The symbols could not be imported. ${err.data.message}`;
                 });
         } else {
-            this.SymbolGroupResource.createMany(this.project.id, this.importData.symbolGroups)
+            this.symbolGroupResource.createMany(this.project.id, this.importData.symbolGroups)
                 .then(createdGroups => {
-                    this.ToastService.success('The symbols have been imported');
+                    this.toastService.success('The symbols have been imported');
                     this.close({$value: {type: 'symbolGroups', groups: createdGroups}});
                 })
                 .catch(err => {
@@ -112,7 +112,7 @@ export class SymbolsImportModalComponent {
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

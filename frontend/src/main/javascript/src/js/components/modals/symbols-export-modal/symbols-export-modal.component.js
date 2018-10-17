@@ -31,13 +31,13 @@ export const symbolsExportModalComponent = {
         /**
          * Constructor.
          *
-         * @param {DownloadService} DownloadService
-         * @param {ToastService} ToastService
+         * @param downloadService
+         * @param toastService
          */
         // @ngInject
-        constructor(DownloadService, ToastService) {
-            this.downloadService = DownloadService;
-            this.toastService = ToastService;
+        constructor(downloadService, toastService) {
+            this.downloadService = downloadService;
+            this.toastService = toastService;
 
             /**
              * If only symbols and not symbol groups are exported.

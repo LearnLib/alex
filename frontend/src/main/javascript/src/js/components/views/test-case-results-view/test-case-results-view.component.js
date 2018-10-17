@@ -22,14 +22,14 @@ export const testCaseResultsViewComponent = {
         /**
          * Constructor.
          *
-         * @param {ProjectService} ProjectService
-         * @param {TestResource} TestResource
-         * @param {Object} $stateParams
+         * @param projectService
+         * @param testResource
+         * @param $stateParams
          */
         // @ngInject
-        constructor(ProjectService, TestResource, $stateParams) {
-            this.projectService = ProjectService;
-            this.testResource = TestResource;
+        constructor(projectService, testResource, $stateParams) {
+            this.projectService = projectService;
+            this.testResource = testResource;
 
             /**
              * The test.

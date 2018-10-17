@@ -37,39 +37,39 @@ export const testSuiteViewComponent = {
          * Constructor.
          *
          * @param {$state} $state
-         * @param {SymbolGroupResource} SymbolGroupResource
-         * @param {ProjectService} ProjectService
-         * @param {LearnerResource} LearnerResource
-         * @param {ToastService} ToastService
-         * @param {TestResource} TestResource
-         * @param {PromptService} PromptService
+         * @param symbolGroupResource
+         * @param projectService
+         * @param learnerResource
+         * @param toastService
+         * @param testResource
+         * @param promptService
          * @param $uibModal
-         * @param {SettingsResource} SettingsResource
-         * @param {DownloadService} DownloadService
-         * @param {TestService} TestService
-         * @param {ClipboardService} ClipboardService
-         * @param {TestReportResource} TestReportResource
-         * @param {NotificationService} NotificationService
-         * @param {TestConfigResource} TestConfigResource
+         * @param settingsResource
+         * @param downloadService
+         * @param testService
+         * @param clipboardService
+         * @param testReportResource
+         * @param notificationService
+         * @param testConfigResource
          */
         // @ngInject
-        constructor($state, SymbolGroupResource, ProjectService, LearnerResource, ToastService, TestResource,
-                    PromptService, $uibModal, SettingsResource, DownloadService, TestService, ClipboardService,
-                    TestReportResource, NotificationService, TestConfigResource) {
+        constructor($state, symbolGroupResource, projectService, learnerResource, toastService, testResource,
+                    promptService, $uibModal, settingsResource, downloadService, testService, clipboardService,
+                    testReportResource, notificationService, testConfigResource) {
             this.$state = $state;
-            this.LearnerResource = LearnerResource;
-            this.ToastService = ToastService;
-            this.TestResource = TestResource;
-            this.PromptService = PromptService;
+            this.lLearnerResource = learnerResource;
+            this.toastService = toastService;
+            this.testResource = testResource;
+            this.promptService = promptService;
             this.$uibModal = $uibModal;
-            this.DownloadService = DownloadService;
-            this.TestService = TestService;
-            this.ClipboardService = ClipboardService;
-            this.TestReportResource = TestReportResource;
-            this.NotificationService = NotificationService;
+            this.downloadService = downloadService;
+            this.testService = testService;
+            this.clipboardService = clipboardService;
+            this.testReportResource = testReportResource;
+            this.notificationService = notificationService;
             this.$uibModal = $uibModal;
-            this.TestConfigResource = TestConfigResource;
-            this.ProjectService = ProjectService;
+            this.testConfigResource = testConfigResource;
+            this.projectService = projectService;
 
             /**
              * The test suite.
@@ -108,20 +108,20 @@ export const testSuiteViewComponent = {
                 createReport: true
             };
 
-            SettingsResource.getSupportedWebDrivers()
+            settingsResource.getSupportedWebDrivers()
                 .then(data => this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver))
                 .catch(console.error);
 
-            SymbolGroupResource.getAll(this.project.id, true)
+            symbolGroupResource.getAll(this.project.id, true)
                 .then((groups) => this.groups = groups)
                 .catch(console.error);
 
-            this.TestConfigResource.getAll(this.project.id)
+            this.testConfigResource.getAll(this.project.id)
                 .then(testConfigs => this.testConfigs = testConfigs)
                 .catch(console.error);
 
             // check if a test process is active
-            this.TestResource.getStatus(this.project.id)
+            this.testResource.getStatus(this.project.id)
                 .then(data => {
                     this.status = data;
                     if (data.active) {
@@ -135,7 +135,7 @@ export const testSuiteViewComponent = {
         }
 
         createTestSuite() {
-            this.PromptService.prompt('Enter a name for the test suite.')
+            this.promptService.prompt('Enter a name for the test suite.')
                 .then((name) => {
                     const testSuite = {
                         type: 'suite',
@@ -144,17 +144,17 @@ export const testSuiteViewComponent = {
                         parent: this.testSuite.id,
                         tests: []
                     };
-                    this.TestResource.create(testSuite)
+                    this.testResource.create(testSuite)
                         .then(data => {
-                            this.ToastService.success(`The test suite "${testSuite.name}" has been created.`);
+                            this.toastService.success(`The test suite "${testSuite.name}" has been created.`);
                             this.testSuite.tests.push(data);
                         })
-                        .catch(err => this.ToastService.danger('The test suite could not be created. ' + err.data.message));
+                        .catch(err => this.toastService.danger('The test suite could not be created. ' + err.data.message));
                 });
         }
 
         createTestCase() {
-            this.PromptService.prompt('Enter a name for the test case.')
+            this.promptService.prompt('Enter a name for the test case.')
                 .then((name) => {
                     const testCase = {
                         type: 'case',
@@ -163,17 +163,17 @@ export const testSuiteViewComponent = {
                         parent: this.testSuite.id,
                         steps: []
                     };
-                    this.TestResource.create(testCase)
+                    this.testResource.create(testCase)
                         .then((data) => {
-                            this.ToastService.success(`The test case "${testCase.name}" has been created.`);
+                            this.toastService.success(`The test case "${testCase.name}" has been created.`);
                             this.testSuite.tests.push(data);
                         })
-                        .catch((err) => this.ToastService.danger('The test suite could not be created. ' + err.data.message));
+                        .catch((err) => this.toastService.danger('The test suite could not be created. ' + err.data.message));
                 });
         }
 
         editTest(test) {
-            this.PromptService.prompt(`Update the name for the test.`, test.name)
+            this.promptService.prompt(`Update the name for the test.`, test.name)
                 .then((name) => {
                     if (name === test.name) {
                         return;
@@ -199,12 +199,12 @@ export const testSuiteViewComponent = {
                         });
                     }
 
-                    this.TestResource.update(testToUpdate)
+                    this.testResource.update(testToUpdate)
                         .then(() => {
-                            this.ToastService.success('The name has been updated.');
+                            this.toastService.success('The name has been updated.');
                             test.name = name;
                         })
-                        .catch((err) => this.ToastService.danger(`The test ${test.type} could not be updated. ${err.data.message}`));
+                        .catch((err) => this.toastService.danger(`The test ${test.type} could not be updated. ${err.data.message}`));
                 });
         }
 
@@ -215,37 +215,37 @@ export const testSuiteViewComponent = {
         deleteTest(test) {
             this.reset();
 
-            this.TestResource.remove(test)
+            this.testResource.remove(test)
                 .then(() => {
-                    this.ToastService.success(`The test ${test.type} has been deleted.`);
+                    this.toastService.success(`The test ${test.type} has been deleted.`);
                     remove(this.testSuite.tests, {id: test.id});
                     this.selectedTests.unselect(test);
                 })
-                .catch((err) => this.ToastService.danger(`The test ${test.type} could not be deleted. ${err.data.message}`));
+                .catch((err) => this.toastService.danger(`The test ${test.type} could not be deleted. ${err.data.message}`));
         }
 
         deleteSelected() {
             const selectedTests = this.selectedTests.getSelected();
             if (selectedTests.length === 0) {
-                this.ToastService.info('You have to select at least one test case or test suite.');
+                this.toastService.info('You have to select at least one test case or test suite.');
                 return;
             }
 
             this.reset();
 
-            this.TestResource.removeMany(this.project.id, selectedTests)
+            this.testResource.removeMany(this.project.id, selectedTests)
                 .then(() => {
-                    this.ToastService.success('The tests have been deleted.');
+                    this.toastService.success('The tests have been deleted.');
                     selectedTests.forEach(test => remove(this.testSuite.tests, {id: test.id}));
                     this.selectedTests.unselectAll();
                 })
-                .catch((err) => this.ToastService.danger(`Deleting the tests failed. ${err.data.message}`));
+                .catch((err) => this.toastService.danger(`Deleting the tests failed. ${err.data.message}`));
         }
 
         moveSelected() {
             const selectedTests = this.selectedTests.getSelected();
             if (selectedTests.length === 0) {
-                this.ToastService.info('You have to select at least one test.');
+                this.toastService.info('You have to select at least one test.');
                 return;
             }
 
@@ -255,7 +255,7 @@ export const testSuiteViewComponent = {
                     tests: () => JSON.parse(JSON.stringify(selectedTests))
                 }
             }).result.then(() => {
-                this.TestResource.get(this.project.id, this.testSuite.id)
+                this.testResource.get(this.project.id, this.testSuite.id)
                     .then(testSuite => {
                         this.testSuite = testSuite;
                         this.selectedTests.updateAll(this.testSuite.tests);
@@ -266,7 +266,7 @@ export const testSuiteViewComponent = {
         executeSelected() {
             const selectedTests = this.selectedTests.getSelected();
             if (selectedTests.length === 0) {
-                this.ToastService.info('You have to select at least one test case or test suite.');
+                this.toastService.info('You have to select at least one test case or test suite.');
                 return;
             }
 
@@ -276,15 +276,15 @@ export const testSuiteViewComponent = {
             config.tests = selectedTests.map(t => t.id);
             config.url = config.url.id;
 
-            this.TestResource.executeMany(this.project.id, config)
+            this.testResource.executeMany(this.project.id, config)
                 .then(() => {
-                    this.ToastService.success(`The test execution has been started.`);
+                    this.toastService.success(`The test execution has been started.`);
                     if (!this.status.active) {
                         this._pollStatus();
                     }
                 })
                 .catch((err) => {
-                    this.ToastService.danger(`The test execution failed. ${err.data.message}`);
+                    this.toastService.danger(`The test execution failed. ${err.data.message}`);
                 });
         }
 
@@ -294,7 +294,7 @@ export const testSuiteViewComponent = {
 
             const poll = (wait) => {
                 window.setTimeout(() => {
-                    this.TestResource.getStatus(this.project.id)
+                    this.testResource.getStatus(this.project.id)
                         .then(data => {
                             this.status = data;
                             if (data.report != null) {
@@ -305,10 +305,10 @@ export const testSuiteViewComponent = {
                             }
                             if (!data.active) {
 
-                                this.ToastService.success('The test process finished');
-                                this.NotificationService.notify('ALEX has finished executing the tests.');
+                                this.toastService.success('The test process finished');
+                                this.notificationService.notify('ALEX has finished executing the tests.');
 
-                                this.TestReportResource.getLatest(this.project.id)
+                                this.testReportResource.getLatest(this.project.id)
                                     .then(data => {
                                         data.testResults.forEach((result) => {
                                             this.results[result.test.id] = result;
@@ -327,9 +327,9 @@ export const testSuiteViewComponent = {
         }
 
         abortTesting() {
-            this.TestResource.abort(this.project.id)
-                .then(() => this.ToastService.success('The testing process has been aborted.'))
-                .catch(err => this.ToastService.danger(`Could not abort the testing process. ${err.data.message}`));
+            this.testResource.abort(this.project.id)
+                .then(() => this.toastService.success('The testing process has been aborted.'))
+                .catch(err => this.toastService.danger(`Could not abort the testing process. ${err.data.message}`));
         }
 
         openTestConfigModal() {
@@ -340,7 +340,7 @@ export const testSuiteViewComponent = {
                     project: () => this.project
                 }
             }).result.then(data => {
-                this.ToastService.success('The settings have been updated.');
+                this.toastService.success('The settings have been updated.');
                 this.testConfig = data;
             });
         }
@@ -351,10 +351,10 @@ export const testSuiteViewComponent = {
         exportSelectedTests() {
             let tests = this.selectedTests.getSelected();
             if (!tests.length) {
-                this.ToastService.info('You have to select at least one test.');
+                this.toastService.info('You have to select at least one test.');
             } else {
                 tests = JSON.parse(JSON.stringify(tests));
-                tests = this.TestService.exportTests(tests);
+                tests = this.testService.exportTests(tests);
 
                 const data = {
                     version,
@@ -363,9 +363,9 @@ export const testSuiteViewComponent = {
                 };
 
                 const name = `tests-${this.testSuite.name}-${DateUtils.YYYYMMDD()}`;
-                this.PromptService.prompt('Enter a name for the file', name).then(name => {
-                    this.DownloadService.downloadObject(data, name);
-                    this.ToastService.success('The tests have been exported.');
+                this.promptService.prompt('Enter a name for the file', name).then(name => {
+                    this.downloadService.downloadObject(data, name);
+                    this.toastService.success('The tests have been exported.');
                 });
             }
         }
@@ -373,22 +373,22 @@ export const testSuiteViewComponent = {
         exportForSelenium() {
             let tests = this.selectedTests.getSelected();
             if (!tests.length) {
-                this.ToastService.info('You have to select at least one test.');
+                this.toastService.info('You have to select at least one test.');
             } else {
                 const ts = JSON.parse(JSON.stringify(this.testSuite));
                 ts.tests = tests;
                 const name = `tests-selenium-${this.testSuite.name}-${DateUtils.YYYYMMDD()}`;
-                this.PromptService.prompt('Enter a name for the file', name).then(name => {
-                    this.DownloadService.downloadObject(ts, name);
-                    this.ToastService.success('The tests have been exported.');
+                this.promptService.prompt('Enter a name for the file', name).then(name => {
+                    this.downloadService.downloadObject(ts, name);
+                    this.toastService.success('The tests have been exported.');
                 });
             }
         }
 
         importTests() {
-            this.TestService.openImportModal(this.testSuite)
+            this.testService.openImportModal(this.testSuite)
                 .then((tests) => {
-                    this.ToastService.success('Tests have been imported.');
+                    this.toastService.success('Tests have been imported.');
                     tests.forEach(t => {
                         t.type = t.tests ? 'suite' : 'case';
                         this.testSuite.tests.push(t);
@@ -400,37 +400,37 @@ export const testSuiteViewComponent = {
             let tests = this.selectedTests.getSelected();
             if (tests.length > 0) {
                 tests = JSON.parse(JSON.stringify(tests));
-                tests = this.TestService.exportTests(tests);
-                this.ClipboardService.copy(this.project.id, 'tests', tests);
-                this.ToastService.info('Tests copied to clipboard.');
+                tests = this.testService.exportTests(tests);
+                this.clipboardService.copy(this.project.id, 'tests', tests);
+                this.toastService.info('Tests copied to clipboard.');
             } else {
-                this.ToastService.info('You have to select at least one test');
+                this.toastService.info('You have to select at least one test');
             }
         }
 
         pasteTests() {
-            const tests = this.ClipboardService.paste(this.project.id, 'tests');
+            const tests = this.clipboardService.paste(this.project.id, 'tests');
             if (tests != null) {
-                this.TestService.importTests(this.project.id, tests, this.testSuite.id)
+                this.testService.importTests(this.project.id, tests, this.testSuite.id)
                     .then((importedTests) => {
                         importedTests.forEach((t) => {
                             t.type = t.tests ? 'suite' : 'case';
                             this.testSuite.tests.push(t);
                         });
-                        this.ToastService.success(`Pasted tests from clipboard.`);
+                        this.toastService.success(`Pasted tests from clipboard.`);
                     })
                     .catch((err) => {
-                        this.ToastService.danger(`Could not paste tests in this suite. ${err.data.message}`);
+                        this.toastService.danger(`Could not paste tests in this suite. ${err.data.message}`);
                     });
             } else {
-                this.ToastService.info('There are not tests in the clipboard.');
+                this.toastService.info('There are not tests in the clipboard.');
             }
         }
 
         saveTestConfig() {
             let selectedTests = this.selectedTests.getSelected();
             if (!selectedTests.length) {
-                this.ToastService.info('You have to select at least one test.');
+                this.toastService.info('You have to select at least one test.');
                 return;
             }
 
@@ -441,13 +441,13 @@ export const testSuiteViewComponent = {
             config.project = this.project.id;
             config.url = config.url.id;
 
-            this.TestConfigResource.create(this.project.id, config)
+            this.testConfigResource.create(this.project.id, config)
                 .then(createdConfig => {
                     this.testConfigs.push(createdConfig);
-                    this.ToastService.success('Config has been saved');
+                    this.toastService.success('Config has been saved');
                 })
                 .catch(err => {
-                    this.ToastService.danger(`The config could not be saved. ${err.data.message}`);
+                    this.toastService.danger(`The config could not be saved. ${err.data.message}`);
                 });
         }
 
@@ -463,7 +463,7 @@ export const testSuiteViewComponent = {
         }
 
         get project() {
-            return this.ProjectService.store.currentProject;
+            return this.projectService.store.currentProject;
         }
     }
 };

@@ -27,19 +27,19 @@ class ResultsCompareViewComponent {
      * @param $uibModal
      * @param $state
      * @param $stateParams
-     * @param {ProjectService} ProjectService
-     * @param {LearnResultResource} LearnResultResource
-     * @param {LearnerResource} LearnerResource
-     * @param {ToastService} ToastService
+     * @param projectService
+     * @param learnResultResource
+     * @param learnerResource
+     * @param toastService
      */
     // @ngInject
-    constructor($uibModal, $state, $stateParams, ProjectService, LearnResultResource, LearnerResource,
-                ToastService) {
+    constructor($uibModal, $state, $stateParams, projectService, learnResultResource, learnerResource,
+                toastService) {
         this.$uibModal = $uibModal;
-        this.LearnResultResource = LearnResultResource;
-        this.LearnerResource = LearnerResource;
-        this.ToastService = ToastService;
-        this.ProjectService = ProjectService;
+        this.learnResultResource = learnResultResource;
+        this.learnerResource = learnerResource;
+        this.toastService = toastService;
+        this.projectService = projectService;
 
         /**
          * All final learn results from all tests that were made for a project.
@@ -68,7 +68,7 @@ class ResultsCompareViewComponent {
             $state.go('error', {message: 'There are no test numbers defined in the URL'});
         } else {
             const testNos = $stateParams.testNos.split(',');
-            this.LearnResultResource.getAll(this.project.id)
+            this.learnResultResource.getAll(this.project.id)
                 .then(results => {
                     this.results = results;
                     this.panels = results.filter((r) => {
@@ -109,10 +109,10 @@ class ResultsCompareViewComponent {
         const hypA = this.panels[0].steps[this.panelPointers[0]].hypothesis;
         const hypB = this.panels[1].steps[this.panelPointers[1]].hypothesis;
 
-        this.LearnerResource.getSeparatingWord(hypA, hypB)
+        this.learnerResource.getSeparatingWord(hypA, hypB)
             .then(diff => {
                 if (diff.input.length === 0) {
-                    this.ToastService.info('The two hypotheses are identical.');
+                    this.toastService.info('The two hypotheses are identical.');
                 } else {
                     this.$uibModal.open({
                         component: 'separatingWordModal',
@@ -122,7 +122,7 @@ class ResultsCompareViewComponent {
                     });
                 }
             })
-            .catch(err => this.ToastService.danger(err.data.message));
+            .catch(err => this.toastService.danger(err.data.message));
     }
 
     /**
@@ -134,15 +134,15 @@ class ResultsCompareViewComponent {
         let hypLeft = this.panels[0].steps[this.panelPointers[0]].hypothesis;
         let hypRight = this.panels[1].steps[this.panelPointers[1]].hypothesis;
 
-        this.LearnerResource.getDifferenceTree(hypLeft, hypRight)
+        this.learnerResource.getDifferenceTree(hypLeft, hypRight)
             .then(data => {
                 if (data.edges.length === 0) {
-                    this.ToastService.info('Cannot find a difference.');
+                    this.toastService.info('Cannot find a difference.');
                 } else {
                     this.panels.push({hypothesis: data, steps: [{hypothesis: data}]});
                 }
             })
-            .catch(err => this.ToastService.danger(err.data.message));
+            .catch(err => this.toastService.danger(err.data.message));
     }
 
     openResultListModal() {
@@ -155,7 +155,7 @@ class ResultsCompareViewComponent {
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

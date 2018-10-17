@@ -25,17 +25,17 @@ export class SymbolMoveModalComponent {
     /**
      * Constructor.
      *
-     * @param {SymbolResource} SymbolResource
-     * @param {SymbolGroupResource} SymbolGroupResource
-     * @param {ProjectService} ProjectService
-     * @param {ToastService} ToastService
-     * @param {EventBus} EventBus
+     * @param symbolResource
+     * @param symbolGroupResource
+     * @param projectService
+     * @param toastService
+     * @param eventBus
      */
     // @ngInject
-    constructor(SymbolResource, SymbolGroupResource, ProjectService, ToastService, EventBus) {
-        this.SymbolResource = SymbolResource;
-        this.ToastService = ToastService;
-        this.EventBus = EventBus;
+    constructor(symbolResource, symbolGroupResource, projectService, toastService, eventBus) {
+        this.symbolResource = symbolResource;
+        this.toastService = toastService;
+        this.eventBus = eventBus;
 
         /**
          * The list of symbols that should be moved.
@@ -55,8 +55,8 @@ export class SymbolMoveModalComponent {
          */
         this.selectedGroup = null;
 
-        const project = ProjectService.store.currentProject;
-        SymbolGroupResource.getAll(project.id).then(groups => {
+        const project = projectService.store.currentProject;
+        symbolGroupResource.getAll(project.id).then(groups => {
             this.groups = groups;
         });
     }
@@ -77,17 +77,17 @@ export class SymbolMoveModalComponent {
                 s.group = this.selectedGroup.id;
             });
 
-            this.SymbolResource.moveMany(symbolsToMove, this.selectedGroup)
+            this.symbolResource.moveMany(symbolsToMove, this.selectedGroup)
                 .then(() => {
-                    this.ToastService.success('Symbols move to group <strong>' + this.selectedGroup.name + '</strong>');
-                    this.EventBus.emit(events.SYMBOLS_MOVED, {
+                    this.toastService.success('Symbols move to group <strong>' + this.selectedGroup.name + '</strong>');
+                    this.eventBus.emit(events.SYMBOLS_MOVED, {
                         symbols: this.symbols,
                         group: this.selectedGroup
                     });
                     this.dismiss();
                 })
                 .catch(response => {
-                    this.ToastService.danger('<p><strong>Moving symbols failed</strong></p>' + response.data.message);
+                    this.toastService.danger('<p><strong>Moving symbols failed</strong></p>' + response.data.message);
                 });
         }
     }

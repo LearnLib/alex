@@ -28,13 +28,13 @@ export const testConfigListComponent = {
         /**
          * Constructor.
          *
-         * @param {TestConfigResource} TestConfigResource
-         * @param {ToastService} ToastService
+         * @param testConfigResource
+         * @param toastService
          */
         // @ngInject
-        constructor(TestConfigResource, ToastService) {
-            this.testConfigResource = TestConfigResource;
-            this.toastService = ToastService;
+        constructor(testConfigResource, toastService) {
+            this.testConfigResource = testConfigResource;
+            this.toastService = toastService;
 
             this.configs = [];
 

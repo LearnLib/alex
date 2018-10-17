@@ -26,13 +26,13 @@ export const testSuiteGenerationWidgetComponent = {
         /**
          * Constructor.
          *
-         * @param {LearnResultResource} LearnResultResource
-         * @param {ToastService} ToastService
+         * @param learnResultResource
+         * @param toastService
          */
         // @ngInject
-        constructor(LearnResultResource, ToastService) {
-            this.learnResultResource = LearnResultResource;
-            this.toastService = ToastService;
+        constructor(learnResultResource, toastService) {
+            this.learnResultResource = learnResultResource;
+            this.toastService = toastService;
 
             /**
              * The current learner result.

@@ -23,14 +23,14 @@ class RootViewComponent {
      * Constructor.
      *
      * @param $state
-     * @param {ProjectService} ProjectService
-     * @param {UserService} UserService
+     * @param projectService
+     * @param userService
      */
     // @ngInject
-    constructor($state, ProjectService, UserService) {
+    constructor($state, projectService, userService) {
         this.$state = $state;
-        this.projectService = ProjectService;
-        this.userService = UserService;
+        this.projectService = projectService;
+        this.userService = userService;
 
         if (this.user !== null) {
             if (this.project !== null) {

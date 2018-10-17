@@ -31,17 +31,17 @@ export const learnerResultPanelCheckingViewComponent = {
         /**
          * Constructor.
          *
-         * @param {ToastService} ToastService
-         * @param {ProjectService} ProjectService
-         * @param {LtsFormulaService} LtsFormulaService
-         * @param {LtsFormulaResource} LtsFormulaResource
+         * @param toastService
+         * @param projectService
+         * @param ltsFormulaService
+         * @param ltsFormulaResource
          */
         // @ngInject
-        constructor(ToastService, ProjectService, LtsFormulaService, LtsFormulaResource) {
-            this.toastService = ToastService;
-            this.projectService = ProjectService;
-            this.ltsFormulaService = LtsFormulaService;
-            this.ltsFormulaResource = LtsFormulaResource;
+        constructor(toastService, projectService, ltsFormulaService, ltsFormulaResource) {
+            this.toastService = toastService;
+            this.projectService = projectService;
+            this.ltsFormulaService = ltsFormulaService;
+            this.ltsFormulaResource = ltsFormulaResource;
 
             this.selectedFormulas = new Selectable([], 'id');
 

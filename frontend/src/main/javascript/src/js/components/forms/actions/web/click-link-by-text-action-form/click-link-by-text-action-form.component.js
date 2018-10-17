@@ -27,16 +27,17 @@ export const clickLinkByTextActionFormComponent = {
 
         /**
          * Constructor.
-         * @param {HtmlElementPickerService} HtmlElementPickerService
+         *
+         * @param htmlElementPickerService
          */
         // @ngInject
-        constructor(HtmlElementPickerService) {
-            this.HtmlElementPickerService = HtmlElementPickerService;
+        constructor(htmlElementPickerService) {
+            this.htmlElementPickerService = htmlElementPickerService;
         }
 
         /** Opens the element picker. */
         openPicker() {
-            this.HtmlElementPickerService.open()
+            this.htmlElementPickerService.open()
                 .then(data => {
                     this.action.value = data.textContent;
                 });

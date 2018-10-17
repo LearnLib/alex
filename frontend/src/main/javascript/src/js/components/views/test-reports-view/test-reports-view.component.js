@@ -29,18 +29,18 @@ export const testReportsViewComponent = {
         /**
          * Constructor.
          *
-         * @param {TestReportResource} TestReportResource
-         * @param {ProjectService} ProjectService
-         * @param {ToastService} ToastService
-         * @param {TestReportService} TestReportService
+         * @param testReportResource
+         * @param projectService
+         * @param toastService
+         * @param testReportService
          * @param $state
          */
         // @ngInject
-        constructor(TestReportResource, ProjectService, ToastService, TestReportService, $state) {
-            this.testReportResource = TestReportResource;
-            this.projectService = ProjectService;
-            this.toastService = ToastService;
-            this.testReportService = TestReportService;
+        constructor(testReportResource, projectService, toastService, testReportService, $state) {
+            this.testReportResource = testReportResource;
+            this.projectService = projectService;
+            this.toastService = toastService;
+            this.testReportService = testReportService;
             this.$state = $state;
 
             /**

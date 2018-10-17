@@ -27,24 +27,24 @@ class LearnerViewComponentComponent {
      *
      * @param $state
      * @param $interval
-     * @param {ProjectService} ProjectService
-     * @param {LearnerResource} LearnerResource
-     * @param {LearnResultResource} LearnResultResource
-     * @param {ToastService} ToastService
-     * @param {SymbolResource} SymbolResource
-     * @param {NotificationService} NotificationService
+     * @param projectService
+     * @param learnerResource
+     * @param learnResultResource
+     * @param toastService
+     * @param symbolResource
+     * @param notificationService
      */
     // @ngInject
-    constructor($state, $interval, ProjectService, LearnerResource, LearnResultResource, ToastService, SymbolResource,
-                NotificationService) {
+    constructor($state, $interval, projectService, learnerResource, learnResultResource, toastService, symbolResource,
+                notificationService) {
         this.$interval = $interval;
         this.$state = $state;
-        this.LearnerResource = LearnerResource;
-        this.LearnResultResource = LearnResultResource;
-        this.ToastService = ToastService;
-        this.SymbolResource = SymbolResource;
-        this.NotificationService = NotificationService;
-        this.ProjectService = ProjectService;
+        this.learnerResource = learnerResource;
+        this.learnResultResource = learnResultResource;
+        this.toastService = toastService;
+        this.symbolResource = symbolResource;
+        this.notificationService = notificationService;
+        this.projectService = projectService;
 
         /**
          * The interval that is used for polling.
@@ -94,7 +94,7 @@ class LearnerViewComponentComponent {
          */
         this.finished = false;
 
-        this.SymbolResource.getAll(this.project.id)
+        this.symbolResource.getAll(this.project.id)
             .then(symbols => this.symbols = symbols)
             .catch(console.error);
 
@@ -132,7 +132,7 @@ class LearnerViewComponentComponent {
     }
 
     getStatus() {
-        this.LearnerResource.getStatus(this.project.id)
+        this.learnerResource.getStatus(this.project.id)
             .then(status => {
                 this.status = status;
                 if (this.status.result != null) {
@@ -144,7 +144,7 @@ class LearnerViewComponentComponent {
                 if (!this.status.active) {
                     this.finished = true;
 
-                    this.LearnResultResource.getLatest(this.project.id)
+                    this.learnResultResource.getLatest(this.project.id)
                         .then(latestResult => {
                             if (latestResult.error) {
                                 this.$state.go('error', {message: latestResult.errorText});
@@ -162,8 +162,8 @@ class LearnerViewComponentComponent {
                                 };
                             }
 
-                            this.ToastService.success('The learning process finished');
-                            this.NotificationService.notify('ALEX has finished learning the application.');
+                            this.toastService.success('The learning process finished');
+                            this.notificationService.notify('ALEX has finished learning the application.');
                         })
                         .catch(console.error);
 
@@ -181,7 +181,7 @@ class LearnerViewComponentComponent {
         config.urls = this.resumeConfig.urls.map(u => u.id);
         config.symbolsToAdd.forEach(ps => ps.symbol = {id: ps.symbol.id});
 
-        this.LearnerResource.resume(this.project.id, this.finalResult.testNo, config)
+        this.learnerResource.resume(this.project.id, this.finalResult.testNo, config)
             .then(() => {
                 this.finalResult = null;
                 this.stepNo = this.resumeConfig.stepNo;
@@ -189,7 +189,7 @@ class LearnerViewComponentComponent {
                 this.poll();
             })
             .catch(err => {
-                this.ToastService.danger('<p><strong>Resume learning failed!</strong></p>' + err.data.message);
+                this.toastService.danger('<p><strong>Resume learning failed!</strong></p>' + err.data.message);
             });
     }
 
@@ -198,13 +198,13 @@ class LearnerViewComponentComponent {
      */
     abort() {
         if (this.status.active) {
-            this.ToastService.info('The learner will stop after executing the current query batch');
-            this.LearnerResource.stop(this.project.id);
+            this.toastService.info('The learner will stop after executing the current query batch');
+            this.learnerResource.stop(this.project.id);
         }
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

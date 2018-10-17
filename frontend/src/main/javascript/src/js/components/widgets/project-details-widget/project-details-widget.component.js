@@ -24,13 +24,13 @@ class ProjectDetailsWidgetComponent {
     /**
      * Constructor.
      *
-     * @param {SymbolGroupResource} SymbolGroupResource
-     * @param {LearnResultResource} LearnResultResource
+     * @param symbolGroupResource
+     * @param learnResultResource
      */
     // @ngInject
-    constructor(SymbolGroupResource, LearnResultResource) {
-        this.SymbolGroupResource = SymbolGroupResource;
-        this.LearnResultResource = LearnResultResource;
+    constructor(symbolGroupResource, learnResultResource) {
+        this.symbolGroupResource = symbolGroupResource;
+        this.learnResultResource = learnResultResource;
 
         /**
          * The number of symbol groups of the project.
@@ -52,14 +52,14 @@ class ProjectDetailsWidgetComponent {
     }
 
     $onInit() {
-        this.SymbolGroupResource.getAll(this.project.id, true)
+        this.symbolGroupResource.getAll(this.project.id, true)
             .then(groups => {
                 this.numberOfGroups = groups.length;
                 this.numberOfSymbols = SymbolGroupUtils.getSymbols(groups).length;
             })
             .catch(err => console.log(err));
 
-        this.LearnResultResource.getAll(this.project.id)
+        this.learnResultResource.getAll(this.project.id)
             .then(results => {
                 this.numberOfTests = results.length;
             })

@@ -23,16 +23,16 @@ class ProjectListComponent {
      * Constructor.
      *
      * @param $state
-     * @param {ToastService} ToastService
-     * @param {PromptService} PromptService
-     * @param {ProjectService} ProjectService
+     * @param toastService
+     * @param promptService
+     * @param projectService
      */
     // @ngInject
-    constructor($state, ToastService, PromptService, ProjectService) {
+    constructor($state, toastService, promptService, projectService) {
         this.$state = $state;
-        this.ToastService = ToastService;
-        this.PromptService = PromptService;
-        this.ProjectService = ProjectService;
+        this.toastService = toastService;
+        this.promptService = promptService;
+        this.projectService = projectService;
     }
 
     /**
@@ -41,7 +41,7 @@ class ProjectListComponent {
      * @param {Project} project - The project to work on.
      */
     openProject(project) {
-        this.ProjectService.open(project);
+        this.projectService.open(project);
         this.$state.go('project', {projectId: project.id});
     }
 
@@ -51,14 +51,14 @@ class ProjectListComponent {
      * @param {Project} project The project to delete.
      */
     deleteProject(project) {
-        this.PromptService.confirm('Do you really want to delete this project? All related data will be lost.')
+        this.promptService.confirm('Do you really want to delete this project? All related data will be lost.')
             .then(() => {
-                this.ProjectService.delete(project)
+                this.projectService.delete(project)
                     .then(() => {
-                        this.ToastService.success(`The project '${project.name}' has been deleted.`);
+                        this.toastService.success(`The project '${project.name}' has been deleted.`);
                     })
                     .catch(response => {
-                        this.ToastService.danger(`The project could not be deleted. ${response.data.message}`);
+                        this.toastService.danger(`The project could not be deleted. ${response.data.message}`);
                     });
             });
     }
@@ -69,8 +69,8 @@ class ProjectListComponent {
      * @param {Project} project The project to edit.
      */
     editProject(project) {
-        this.ProjectService.update(project)
-            .catch(err => this.ToastService.danger(`The project could not be update. ${err.data.message}`));
+        this.projectService.update(project)
+            .catch(err => this.toastService.danger(`The project could not be update. ${err.data.message}`));
     }
 }
 

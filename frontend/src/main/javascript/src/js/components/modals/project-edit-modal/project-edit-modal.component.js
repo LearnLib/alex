@@ -24,15 +24,15 @@ export class ProjectEditModalComponent {
     /**
      * Constructor.
      *
-     * @param {ProjectResource} ProjectResource
-     * @param {ToastService} ToastService
-     * @param {ProjectService} ProjectService
+     * @param projectResource
+     * @param toastService
+     * @param projectService
      */
     // @ngInject
-    constructor(ProjectResource, ToastService, ProjectService) {
-        this.ProjectResource = ProjectResource;
-        this.ToastService = ToastService;
-        this.ProjectService = ProjectService;
+    constructor(projectResource, toastService, projectService) {
+        this.projectResource = projectResource;
+        this.toastService = toastService;
+        this.projectService = projectService;
 
         /**
          * The form object.
@@ -62,10 +62,10 @@ export class ProjectEditModalComponent {
     updateProject() {
         this.errorMessage = null;
 
-        this.ProjectResource.update(this.project)
+        this.projectResource.update(this.project)
             .then(updatedProject => {
-                this.ToastService.success('Project updated');
-                this.ProjectService.open(updatedProject);
+                this.toastService.success('Project updated');
+                this.projectService.open(updatedProject);
                 this.close({$value: updatedProject});
 
                 // set the form to its original state

@@ -37,25 +37,25 @@ export const testCaseViewComponent = {
          * @param $scope
          * @param $state
          * @param dragulaService
-         * @param {SymbolGroupResource} SymbolGroupResource
-         * @param {ProjectService} ProjectService
-         * @param {ToastService} ToastService
-         * @param {TestResource} TestResource
-         * @param {LearnerResource} LearnerResource
+         * @param symbolGroupResource
+         * @param projectService
+         * @param toastService
+         * @param testResource
+         * @param learnerResource
          * @param $uibModal
-         * @param {SettingsResource} SettingsResource
-         * @param {ActionService} ActionService
+         * @param settingsResource
+         * @param actionService
          */
         // @ngInject
-        constructor($scope, $state, dragulaService, SymbolGroupResource, ProjectService, ToastService, TestResource,
-                    LearnerResource, $uibModal, SettingsResource, ActionService) {
+        constructor($scope, $state, dragulaService, symbolGroupResource, projectService, toastService, testResource,
+                    learnerResource, $uibModal, settingsResource, actionService) {
             this.$state = $state;
-            this.ToastService = ToastService;
-            this.TestResource = TestResource;
-            this.LearnerResource = LearnerResource;
+            this.toastService = toastService;
+            this.testResource = testResource;
+            this.learnerResource = learnerResource;
             this.$uibModal = $uibModal;
-            this.ActionService = ActionService;
-            this.ProjectService = ProjectService;
+            this.actionService = actionService;
+            this.projectService = projectService;
 
             /**
              * The current test
@@ -98,14 +98,14 @@ export const testCaseViewComponent = {
                 createReport: true,
             };
 
-            SymbolGroupResource.getAll(this.project.id, true)
+            symbolGroupResource.getAll(this.project.id, true)
                 .then((groups) => {
                     this.groups = groups;
                     SymbolGroupUtils.getSymbols(this.groups).forEach(s => this.symbolMap[s.id] = s);
                 })
                 .catch(console.error);
 
-            SettingsResource.getSupportedWebDrivers()
+            settingsResource.getSupportedWebDrivers()
                 .then((data) => this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver))
                 .catch(console.error);
 
@@ -144,12 +144,12 @@ export const testCaseViewComponent = {
          */
         save() {
             const test = JSON.parse(JSON.stringify(this.testCase));
-            this.TestResource.update(test)
+            this.testResource.update(test)
                 .then(updatedTestCase => {
-                    this.ToastService.success('The test case has been updated.');
+                    this.toastService.success('The test case has been updated.');
                     this.testCase = updatedTestCase;
                 })
-                .catch((err) => this.ToastService.danger('The test case could not be updated. ' + err.data.message));
+                .catch((err) => this.toastService.danger('The test case could not be updated. ' + err.data.message));
         }
 
         /**
@@ -157,7 +157,7 @@ export const testCaseViewComponent = {
          */
         execute() {
             if (!this.testCase.steps.length) {
-                this.ToastService.info('You have to create at least one symbol.');
+                this.toastService.info('You have to create at least one symbol.');
                 return;
             }
 
@@ -167,14 +167,14 @@ export const testCaseViewComponent = {
 
             this.result = null;
             this.active = true;
-            this.TestResource.execute(this.testCase, config)
+            this.testResource.execute(this.testCase, config)
                 .then(data => {
                     this.report = data;
                     this.result = data.testResults[0];
                     this.active = false;
                 })
                 .catch((err) => {
-                    this.ToastService.info('The test case could not be executed. ' + err.data.message);
+                    this.toastService.info('The test case could not be executed. ' + err.data.message);
                     this.active = false;
                 });
         }
@@ -187,7 +187,7 @@ export const testCaseViewComponent = {
                     project: () => this.project
                 }
             }).result.then(data => {
-                this.ToastService.success('The settings have been updated.');
+                this.toastService.success('The settings have been updated.');
                 this.testConfig = data;
             });
         }
@@ -197,7 +197,7 @@ export const testCaseViewComponent = {
         }
 
         get project() {
-            return this.ProjectService.store.currentProject;
+            return this.projectService.store.currentProject;
         }
     }
 };

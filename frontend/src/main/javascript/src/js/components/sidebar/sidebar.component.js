@@ -23,16 +23,16 @@ class SidebarComponent {
      * Constructor.
      *
      * @param $state
-     * @param {ProjectService} ProjectService
-     * @param {UserService} UserService
-     * @param {UiService} UiService
+     * @param projectService
+     * @param userService
+     * @param uiService
      */
     // @ngInject
-    constructor($state, ProjectService, UserService, UiService) {
+    constructor($state, projectService, userService, uiService) {
         this.$state = $state;
-        this.ProjectService = ProjectService;
-        this.UserService = UserService;
-        this.UiService = UiService;
+        this.projectService = projectService;
+        this.userService = userService;
+        this.uiService = uiService;
 
         /**
          * The item groups
@@ -206,20 +206,20 @@ class SidebarComponent {
 
     /** Removes the project object from the session and redirect to the start page. */
     closeProject() {
-        this.ProjectService.close();
+        this.projectService.close();
         this.$state.go('projects');
     }
 
     /** Remove project & user from the session. */
     logout() {
-        this.ProjectService.close();
-        this.UserService.logout();
+        this.projectService.close();
+        this.userService.logout();
         this.$state.go('root');
     }
 
     /** Toggles the collapsed state. */
     toggleCollapse() {
-        this.UiService.toggleSidebar();
+        this.uiService.toggleSidebar();
     }
 
     /**
@@ -237,15 +237,15 @@ class SidebarComponent {
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 
     get user() {
-        return this.UserService.store.currentUser;
+        return this.userService.store.currentUser;
     }
 
     get collapsed() {
-        return this.UiService.store.sidebar.collapsed;
+        return this.uiService.store.sidebar.collapsed;
     }
 }
 

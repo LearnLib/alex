@@ -27,11 +27,12 @@ export const latestTestReportWidgetComponent = {
 
         /**
          * Constructor.
-         * @param {TestReportResource} TestReportResource
+         *
+         * @param testReportResource
          */
         // @ngInject
-        constructor(TestReportResource) {
-            this.testReportResource = TestReportResource;
+        constructor(testReportResource) {
+            this.testReportResource = testReportResource;
             this.report = null;
         }
 

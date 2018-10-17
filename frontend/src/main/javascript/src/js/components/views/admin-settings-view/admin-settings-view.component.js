@@ -24,18 +24,18 @@ class AdminSettingsViewComponent {
     /**
      * Constructor.
      *
-     * @param {SettingsResource} SettingsResource
-     * @param {ToastService} ToastService
+     * @param settingsResource
+     * @param toastService
      */
     // @ngInject
-    constructor(SettingsResource, ToastService) {
-        this.SettingsResource = SettingsResource;
-        this.ToastService = ToastService;
+    constructor(settingsResource, toastService) {
+        this.settingsResource = settingsResource;
+        this.toastService = toastService;
 
         this.settings = null;
         this.webBrowsers = webBrowser;
 
-        this.SettingsResource.get()
+        this.settingsResource.get()
             .then(settings => this.settings = settings)
             .catch(err => console.log(err));
     }
@@ -44,12 +44,12 @@ class AdminSettingsViewComponent {
      * Updates the settings.
      */
     updateSettings() {
-        this.SettingsResource.update(this.settings)
+        this.settingsResource.update(this.settings)
             .then(() => {
-                this.ToastService.success('The settings have been updated.');
+                this.toastService.success('The settings have been updated.');
             })
             .catch(res => {
-                this.ToastService.danger('<strong>Update failed!</strong> ' + res.data.message);
+                this.toastService.danger('<strong>Update failed!</strong> ' + res.data.message);
             });
     }
 }

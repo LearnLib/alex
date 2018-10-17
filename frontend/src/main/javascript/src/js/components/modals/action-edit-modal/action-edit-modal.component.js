@@ -22,13 +22,13 @@ export class ActionEditModalComponent {
     /**
      * Constructor.
      *
-     * @param {ActionService} ActionService
-     * @param {SymbolResource} SymbolResource
-     * @param {ProjectService} ProjectService
+     * @param actionService
+     * @param symbolResource
+     * @param projectService
      */
     // @ngInject
-    constructor(ActionService, SymbolResource, ProjectService) {
-        this.ActionService = ActionService;
+    constructor(actionService, symbolResource, projectService) {
+        this.actionService = actionService;
 
         /**
          * The copy of the action that should be edited.
@@ -43,8 +43,8 @@ export class ActionEditModalComponent {
         this.symbols = [];
 
         // fetch all symbols so that symbols have access to it
-        const project = ProjectService.store.currentProject;
-        SymbolResource.getAll(project.id).then(symbols => {
+        const project = projectService.store.currentProject;
+        symbolResource.getAll(project.id).then(symbols => {
             this.symbols = symbols;
         });
     }

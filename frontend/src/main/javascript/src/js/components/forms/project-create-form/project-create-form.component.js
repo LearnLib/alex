@@ -24,13 +24,13 @@ class ProjectCreateFormComponent {
     /**
      * Constructor.
      *
-     * @param {ProjectService} ProjectService
-     * @param {ToastService} ToastService
+     * @param projectService
+     * @param toastService
      */
     // @ngInject
-    constructor(ProjectService, ToastService) {
-        this.projectService = ProjectService;
-        this.toastService = ToastService;
+    constructor(projectService, toastService) {
+        this.projectService = projectService;
+        this.toastService = toastService;
 
         /**
          * The empty project model that is used for the form.

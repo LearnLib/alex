@@ -22,30 +22,30 @@ class StatisticsCompareViewComponent {
     /**
      * Constructor.
      *
-     * @param {ProjectService} ProjectService
-     * @param {LearnResultResource} LearnResultResource
-     * @param {LearnerResultChartService} LearnerResultChartService
-     * @param {ToastService} ToastService
+     * @param projectService
+     * @param learnResultResource
+     * @param learnerResultChartService
+     * @param toastService
      * @param $stateParams
      * @param $state
-     * @param {DownloadService} DownloadService
-     * @param {PromptService} PromptService
+     * @param downloadService
+     * @param promptService
      */
     // @ngInject
-    constructor(ProjectService, LearnResultResource, LearnerResultChartService, ToastService, $stateParams, $state,
-                DownloadService, PromptService) {
-        this.LearnResultResource = LearnResultResource;
-        this.LearnerResultChartService = LearnerResultChartService;
-        this.ToastService = ToastService;
+    constructor(projectService, learnResultResource, learnerResultChartService, toastService, $stateParams, $state,
+                downloadService, promptService) {
+        this.learnResultResource = learnResultResource;
+        this.learnerResultChartService = learnerResultChartService;
+        this.toastService = toastService;
         this.$stateParams = $stateParams;
         this.$state = $state;
-        this.DownloadService = DownloadService;
-        this.PromptService = PromptService;
-        this.ProjectService = ProjectService;
+        this.downloadService = downloadService;
+        this.promptService = promptService;
+        this.projectService = projectService;
 
         // make sure there is at least one test number given in the URL
         if (!$stateParams.testNos || $stateParams.testNos === '') {
-            this.ToastService.danger('You have to select at least one result');
+            this.toastService.danger('You have to select at least one result');
             this.$state.go('statistics');
             return;
         }
@@ -96,31 +96,31 @@ class StatisticsCompareViewComponent {
     createChartData() {
         switch (this.chartMode) {
             case this.chartModes.SINGLE_FINAL:
-                this.LearnResultResource.get(this.project.id, this.testNos[0])
+                this.learnResultResource.get(this.project.id, this.testNos[0])
                     .then(result => {
-                        this.chartData = this.LearnerResultChartService.createDataSingleFinal(result);
+                        this.chartData = this.learnerResultChartService.createDataSingleFinal(result);
                     });
                 break;
             case this.chartModes.SINGLE_COMPLETE:
-                this.LearnResultResource.get(this.project.id, this.testNos[0])
+                this.learnResultResource.get(this.project.id, this.testNos[0])
                     .then(result => {
-                        this.chartData = this.LearnerResultChartService.createDataSingleComplete(result);
+                        this.chartData = this.learnerResultChartService.createDataSingleComplete(result);
                     });
                 break;
             case this.chartModes.MULTIPLE_FINAL:
-                this.LearnResultResource.getAll(this.project.id).then(results => {
+                this.learnResultResource.getAll(this.project.id).then(results => {
 
                     // get all results and filter because there is still no other api endpoint
                     const resultsFromTestNos = results.filter(r => this.testNos.indexOf(r.testNo) > -1);
-                    this.chartData = this.LearnerResultChartService.createDataMultipleFinal(resultsFromTestNos);
+                    this.chartData = this.learnerResultChartService.createDataMultipleFinal(resultsFromTestNos);
                 });
                 break;
             case this.chartModes.MULTIPLE_COMPLETE:
-                this.LearnResultResource.getAll(this.project.id).then(results => {
+                this.learnResultResource.getAll(this.project.id).then(results => {
 
                     // get all results and filter because there is still no other api endpoint
                     const resultsFromTestNos = results.filter(r => this.testNos.indexOf(r.testNo) > -1);
-                    this.chartData = this.LearnerResultChartService.createDataMultipleComplete(resultsFromTestNos);
+                    this.chartData = this.learnerResultChartService.createDataMultipleComplete(resultsFromTestNos);
                 });
                 break;
             default:
@@ -175,12 +175,12 @@ class StatisticsCompareViewComponent {
      */
     downloadChart(selector) {
         const el = document.querySelector(selector + ' svg');
-        this.PromptService.prompt('Enter a name for the svg file')
-            .then(filename => this.DownloadService.downloadSvgEl(el, false, filename));
+        this.promptService.prompt('Enter a name for the svg file')
+            .then(filename => this.downloadService.downloadSvgEl(el, false, filename));
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

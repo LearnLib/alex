@@ -24,15 +24,15 @@ export const ltsFormulasViewComponent = {
         /**
          * Constructor.
          *
-         * @param {ToastService} ToastService
-         * @param {ProjectService} ProjectService
-         * @param {LtsFormulaService} LtsFormulaService
+         * @param toastService
+         * @param projectService
+         * @param ltsFormulaService
          */
         // @ngInject
-        constructor(ToastService, ProjectService, LtsFormulaService) {
-            this.toastService = ToastService;
-            this.projectService = ProjectService;
-            this.ltsFormulaService = LtsFormulaService;
+        constructor(toastService, projectService, ltsFormulaService) {
+            this.toastService = toastService;
+            this.projectService = projectService;
+            this.ltsFormulaService = ltsFormulaService;
 
             this.selectedFormulas = new Selectable(null, 'id');
         }

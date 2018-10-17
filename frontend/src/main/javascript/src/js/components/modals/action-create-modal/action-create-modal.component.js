@@ -24,13 +24,13 @@ export class ActionCreateModalComponent {
     /**
      * Constructor.
      *
-     * @param {ActionService} ActionService
-     * @param {SymbolResource} SymbolResource
-     * @param {ProjectService} ProjectService
+     * @param actionService
+     * @param symbolResource
+     * @param projectService
      */
     // @ngInject
-    constructor(ActionService, SymbolResource, ProjectService) {
-        this.ActionService = ActionService;
+    constructor(actionService, symbolResource, projectService) {
+        this.actionService = actionService;
 
         /**
          * The model for the new action.
@@ -106,8 +106,8 @@ export class ActionCreateModalComponent {
         };
 
         // get all symbols
-        const project = ProjectService.store.currentProject;
-        SymbolResource.getAll(project.id).then(symbols => {
+        const project = projectService.store.currentProject;
+        symbolResource.getAll(project.id).then(symbols => {
             this.symbols = symbols;
         });
     }
@@ -117,7 +117,7 @@ export class ActionCreateModalComponent {
      * @param {string} type The action that should be created.
      */
     selectNewActionType(type) {
-        this.action = this.ActionService.createFromType(type);
+        this.action = this.actionService.createFromType(type);
     }
 
     /**

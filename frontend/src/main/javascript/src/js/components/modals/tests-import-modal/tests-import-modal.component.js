@@ -27,17 +27,15 @@ export const testsImportModalComponent = {
         /**
          * Constructor.
          *
-         * @param {ProjectService} ProjectService
-         * @param {SymbolResource} SymbolResource
-         * @param {TestResource} TestResource
-         * @param {TestService} TestService
+         * @param projectService
+         * @param symbolResource
+         * @param testService
          */
         // @ngInject
-        constructor(ProjectService, SymbolResource, TestResource, TestService) {
-            this.SymbolResource = SymbolResource;
-            this.TestResource = TestResource;
-            this.TestService = TestService;
-            this.ProjectService = ProjectService;
+        constructor(projectService, symbolResource, testService) {
+            this.symbolResource = symbolResource;
+            this.testService = testService;
+            this.projectService = projectService;
 
             this.errorMessage = null;
             this.importData = null;
@@ -70,7 +68,7 @@ export const testsImportModalComponent = {
             if (this.importData.tests.length) {
                 const parentId = this.resolve.parent.id;
 
-                this.TestService.importTests(this.project.id, this.importData.tests, parentId)
+                this.testService.importTests(this.project.id, this.importData.tests, parentId)
                     .then(tests => this.close({$value: tests}))
                     .catch(err => this.errorMessage = err.data.message);
             } else {
@@ -79,7 +77,7 @@ export const testsImportModalComponent = {
         }
 
         get project() {
-            return this.ProjectService.store.currentProject;
+            return this.projectService.store.currentProject;
         }
     }
 };

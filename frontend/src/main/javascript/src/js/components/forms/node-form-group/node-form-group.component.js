@@ -30,11 +30,12 @@ export const nodeFormGroupComponent = {
 
         /**
          * Constructor.
-         * @param {HtmlElementPickerService} HtmlElementPickerService
+         *
+         * @param htmlElementPickerService
          */
         // @ngInject
-        constructor(HtmlElementPickerService) {
-            this.HtmlElementPickerService = HtmlElementPickerService;
+        constructor(htmlElementPickerService) {
+            this.htmlElementPickerService = htmlElementPickerService;
         }
 
         $onInit() {

@@ -27,17 +27,17 @@ class AdminUsersViewComponent {
      * Constructor.
      *
      * @param $scope
-     * @param {UserResource} UserResource
-     * @param {ToastService} ToastService
+     * @param userResource
+     * @param toastService
      * @param $uibModal
-     * @param {UserService} UserService
+     * @param userService
      */
     // @ngInject
-    constructor($scope, UserResource, ToastService, $uibModal, UserService) {
-        this.UserResource = UserResource;
-        this.ToastService = ToastService;
+    constructor($scope, userResource, toastService, $uibModal, userService) {
+        this.userResource = userResource;
+        this.toastService = toastService;
         this.$uibModal = $uibModal;
-        this.UserService = UserService;
+        this.userService = userService;
 
         /**
          * All registered users.
@@ -52,13 +52,13 @@ class AdminUsersViewComponent {
         this.selectedUsers = new Selectable(this.users, 'id');
 
         // fetch all users from the server
-        UserResource.getAll()
+        this.userResource.getAll()
             .then(users => {
                 this.users = users;
                 this.selectedUsers = new Selectable(this.users, 'id');
             })
             .catch(err => {
-                ToastService.danger(`Loading users failed! ${err.data.message}`);
+                this.toastService.danger(`Loading users failed! ${err.data.message}`);
             });
     }
 
@@ -103,23 +103,23 @@ class AdminUsersViewComponent {
     deleteSelectedUsers() {
         const users = this.selectedUsers.getSelected().filter(u => u.id !== this.user.id);
         if (users.length === 0) {
-            this.ToastService.info('You have to select at least one user.');
+            this.toastService.info('You have to select at least one user.');
             return;
         }
 
         const ids = users.map(u => u.id);
-        this.UserResource.removeManyUsers(ids)
+        this.userResource.removeManyUsers(ids)
             .then(() => {
-                this.ToastService.success('The users have been deleted');
+                this.toastService.success('The users have been deleted');
                 users.forEach(user => this.removeUser(user));
             })
             .catch(err => {
-                this.ToastService.danger(`Deleting failed! ${err.data.message}`);
+                this.toastService.danger(`Deleting failed! ${err.data.message}`);
             });
     }
 
     get user() {
-        return this.UserService.store.currentUser;
+        return this.userService.store.currentUser;
     }
 }
 

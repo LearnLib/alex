@@ -26,23 +26,23 @@ class ResultsViewComponent {
      * Constructor.
      *
      * @param $state
-     * @param {ProjectService} ProjectService
-     * @param {LearnResultResource} LearnResultResource
-     * @param {PromptService} PromptService
-     * @param {ToastService} ToastService
-     * @param {LearnerResultDownloadService} LearnerResultDownloadService
+     * @param projectService
+     * @param learnResultResource
+     * @param promptService
+     * @param toastService
+     * @param learnerResultDownloadService
      * @param $uibModal
      */
     // @ngInject
-    constructor($state, ProjectService, LearnResultResource, PromptService, ToastService,
-                LearnerResultDownloadService, $uibModal) {
+    constructor($state, projectService, learnResultResource, promptService, toastService,
+                learnerResultDownloadService, $uibModal) {
         this.$state = $state;
         this.$uibModal = $uibModal;
-        this.PromptService = PromptService;
-        this.ToastService = ToastService;
-        this.LearnResultResource = LearnResultResource;
-        this.LearnerResultDownloadService = LearnerResultDownloadService;
-        this.ProjectService = ProjectService;
+        this.promptService = promptService;
+        this.toastService = toastService;
+        this.learnResultResource = learnResultResource;
+        this.learnerResultDownloadService = learnerResultDownloadService;
+        this.projectService = projectService;
 
         /**
          * All final test results of a project.
@@ -57,7 +57,7 @@ class ResultsViewComponent {
         this.selectedResults = new Selectable(this.results, 'testNo');
 
         // get all final test results
-        this.LearnResultResource.getAll(this.project.id)
+        this.learnResultResource.getAll(this.project.id)
             .then(results => {
                 this.results = results;
                 this.selectedResults = new Selectable(this.results, 'testNo');
@@ -71,16 +71,16 @@ class ResultsViewComponent {
      * @param {LearnResult} result - The test result that should be deleted.
      */
     deleteResult(result) {
-        this.PromptService.confirm('Do you want to permanently delete this result? Changes cannot be undone.')
+        this.promptService.confirm('Do you want to permanently delete this result? Changes cannot be undone.')
             .then(() => {
-                this.LearnResultResource.remove(result)
+                this.learnResultResource.remove(result)
                     .then(() => {
-                        this.ToastService.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
+                        this.toastService.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
                         remove(this.results, {testNo: result.testNo});
                         this.selectedResults.unselect(result);
                     })
                     .catch(err => {
-                        this.ToastService.danger('<p><strong>Result deletion failed</strong></p>' + err.data.message);
+                        this.toastService.danger('<p><strong>Result deletion failed</strong></p>' + err.data.message);
                     });
             });
     }
@@ -91,20 +91,20 @@ class ResultsViewComponent {
     deleteResults() {
         const selectedResults = this.selectedResults.getSelected();
         if (selectedResults.length > 0) {
-            this.PromptService.confirm('Do you want to permanently delete theses results? Changes cannot be undone.')
+            this.promptService.confirm('Do you want to permanently delete theses results? Changes cannot be undone.')
                 .then(() => {
-                    this.LearnResultResource.removeMany(selectedResults)
+                    this.learnResultResource.removeMany(selectedResults)
                         .then(() => {
-                            this.ToastService.success('Learn results deleted');
+                            this.toastService.success('Learn results deleted');
                             selectedResults.forEach(result => remove(this.results, {testNo: result.testNo}));
                             this.selectedResults.unselectAll();
                         })
                         .catch(err => {
-                            this.ToastService.danger('<p><strong>Result deletion failed</strong></p>' + err.data.message);
+                            this.toastService.danger('<p><strong>Result deletion failed</strong></p>' + err.data.message);
                         });
                 });
         } else {
-            this.ToastService.info('You have to select a least one result');
+            this.toastService.info('You have to select a least one result');
         }
     }
 
@@ -138,8 +138,8 @@ class ResultsViewComponent {
      * @param {LearnResult} result - The learn result to download as csv.
      */
     exportAsCSV(result) {
-        this.LearnerResultDownloadService.download([result])
-            .then(() => this.ToastService.success('The result has been exported.'));
+        this.learnerResultDownloadService.download([result])
+            .then(() => this.toastService.success('The result has been exported.'));
     }
 
     /**
@@ -148,19 +148,19 @@ class ResultsViewComponent {
     exportSelectedAsCSV() {
         const selectedResults = this.selectedResults.getSelected();
         if (selectedResults.length > 0) {
-            this.LearnerResultDownloadService.download(selectedResults)
-                .then(() => this.ToastService.success('The results have been exported.'));
+            this.learnerResultDownloadService.download(selectedResults)
+                .then(() => this.toastService.success('The results have been exported.'));
         }
     }
 
     cloneResult(result) {
-        this.LearnResultResource.clone(result)
+        this.learnResultResource.clone(result)
             .then(clonedResult => {
-                this.ToastService.success('The result has been cloned.');
+                this.toastService.success('The result has been cloned.');
                 this.results.push(clonedResult);
             })
             .catch(err => {
-                this.ToastService.danger(`The result could not be cloned. ${err.data.message}`);
+                this.toastService.danger(`The result could not be cloned. ${err.data.message}`);
             });
     }
 
@@ -175,7 +175,7 @@ class ResultsViewComponent {
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

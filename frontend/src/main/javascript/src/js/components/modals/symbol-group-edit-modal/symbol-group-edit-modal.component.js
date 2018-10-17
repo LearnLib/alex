@@ -26,17 +26,17 @@ export class SymbolGroupEditModalComponent {
     /**
      * Constructor.
      *
-     * @param {SymbolGroupResource} SymbolGroupResource
-     * @param {ToastService} ToastService
-     * @param {EventBus} EventBus
-     * @param {PromptService} PromptService
+     * @param symbolGroupResource
+     * @param toastService
+     * @param eventBus
+     * @param promptService
      */
     // @ngInject
-    constructor(SymbolGroupResource, ToastService, EventBus, PromptService) {
-        this.SymbolGroupResource = SymbolGroupResource;
-        this.ToastService = ToastService;
-        this.EventBus = EventBus;
-        this.PromptService = PromptService;
+    constructor(symbolGroupResource, toastService, eventBus, promptService) {
+        this.symbolGroupResource = symbolGroupResource;
+        this.toastService = toastService;
+        this.eventBus = eventBus;
+        this.promptService = promptService;
 
         /**
          * The symbol group that should be edited.
@@ -62,10 +62,10 @@ export class SymbolGroupEditModalComponent {
         this.errorMessage = null;
 
         this.group.symbols = [];
-        this.SymbolGroupResource.update(this.group)
+        this.symbolGroupResource.update(this.group)
             .then(updatedGroup => {
-                this.ToastService.success('Group updated');
-                this.EventBus.emit(events.GROUP_UPDATED, {
+                this.toastService.success('Group updated');
+                this.eventBus.emit(events.GROUP_UPDATED, {
                     group: updatedGroup
                 });
                 this.dismiss();

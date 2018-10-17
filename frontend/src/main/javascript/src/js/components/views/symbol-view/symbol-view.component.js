@@ -33,26 +33,26 @@ class SymbolViewComponent {
      *
      * @param $scope
      * @param $stateParams
-     * @param {SymbolResource} SymbolResource
-     * @param {ProjectService} ProjectService
-     * @param {ToastService} ToastService
-     * @param {ActionService} ActionService
-     * @param {ClipboardService} ClipboardService
+     * @param symbolResource
+     * @param projectService
+     * @param toastService
+     * @param actionService
+     * @param clipboardService
      * @param $state
      * @param dragulaService
      * @param $uibModal
-     * @param {SymbolGroupResource} SymbolGroupResource
+     * @param symbolGroupResource
      */
     // @ngInject
-    constructor($scope, $stateParams, SymbolResource, ProjectService, ToastService, ActionService, ClipboardService,
-                $state, dragulaService, $uibModal, SymbolGroupResource) {
-        this.SymbolResource = SymbolResource;
-        this.ToastService = ToastService;
-        this.ActionService = ActionService;
-        this.ClipboardService = ClipboardService;
+    constructor($scope, $stateParams, symbolResource, projectService, toastService, actionService, clipboardService,
+                $state, dragulaService, $uibModal, symbolGroupResource) {
+        this.symbolResource = symbolResource;
+        this.toastService = toastService;
+        this.actionService = actionService;
+        this.clipboardService = clipboardService;
         this.$uibModal = $uibModal;
-        this.SymbolGroupResource = SymbolGroupResource;
-        this.ProjectService = ProjectService;
+        this.symbolGroupResource = symbolGroupResource;
+        this.projectService = projectService;
 
         /**
          * The symbol whose actions are managed.
@@ -74,7 +74,7 @@ class SymbolViewComponent {
 
         // load all actions from the symbol
         // redirect to an error page when the symbol from the url id cannot be found
-        this.SymbolResource.get(this.project.id, $stateParams.symbolId)
+        this.symbolResource.get(this.project.id, $stateParams.symbolId)
             .then(symbol => {
                 this.symbol = symbol;
                 this.symbol.steps.forEach(step => step._id = uniqueId());
@@ -84,7 +84,7 @@ class SymbolViewComponent {
                 $state.go('error', {message: `The symbol with the ID "${$stateParams.symbolId}" could not be found`});
             });
 
-        this.SymbolGroupResource.getAll(this.project.id, true)
+        this.symbolGroupResource.getAll(this.project.id, true)
             .then(groups => this.groups = groups);
 
         const keyDownHandler = (e) => {
@@ -148,7 +148,7 @@ class SymbolViewComponent {
             errorOutput: null,
             negated: false,
             ignoreFailure: false,
-            action: this.ActionService.create(JSON.parse(JSON.stringify(action)))
+            action: this.actionService.create(JSON.parse(JSON.stringify(action)))
         });
     }
 
@@ -163,7 +163,7 @@ class SymbolViewComponent {
             }
         }).result.then(symbol => {
             if (symbol.id === this.symbol.id) {
-                this.ToastService.info('A symbol cannot execute itself');
+                this.toastService.info('A symbol cannot execute itself');
                 return;
             }
 
@@ -204,15 +204,15 @@ class SymbolViewComponent {
         symbolToUpdate.steps.forEach(step => delete step._id);
 
         // update the symbol
-        return this.SymbolResource.update(symbolToUpdate)
+        return this.symbolResource.update(symbolToUpdate)
             .then(updatedSymbol => {
-                this.ToastService.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
+                this.toastService.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
                 this.symbol = updatedSymbol;
                 this.symbol.steps.forEach(step => step._id = uniqueId());
                 this.selectedSteps = new Selectable(this.symbol.steps, '_id');
             })
             .catch(response => {
-                this.ToastService.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
+                this.toastService.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
             });
     }
 
@@ -224,8 +224,8 @@ class SymbolViewComponent {
             steps.forEach(step => {
                 delete step._id;
             });
-            this.ClipboardService.copy(this.project.id, 'symbolSteps', steps);
-            this.ToastService.info(steps.length + ' steps copied to clipboard');
+            this.clipboardService.copy(this.project.id, 'symbolSteps', steps);
+            this.toastService.info(steps.length + ' steps copied to clipboard');
         }
     }
 
@@ -233,8 +233,8 @@ class SymbolViewComponent {
         const s = AlphabetSymbol.stepsToJson(step);
         delete s._id;
 
-        this.ClipboardService.copy(this.project.id, 'symbolSteps', [s]);
-        this.ToastService.info('The action has been copied to the clipboard.');
+        this.clipboardService.copy(this.project.id, 'symbolSteps', [s]);
+        this.toastService.info('The action has been copied to the clipboard.');
     }
 
     /** Copies actions to the clipboard and removes them from the scope. */
@@ -245,9 +245,9 @@ class SymbolViewComponent {
             cpy.forEach(step => {
                 delete step._id;
             });
-            this.ClipboardService.copy(this.project.id, 'symbolSteps', cpy, ClipboardMode.CUT);
+            this.clipboardService.copy(this.project.id, 'symbolSteps', cpy, ClipboardMode.CUT);
             this.deleteSteps(steps);
-            this.ToastService.info(steps.length + ' steps cut to clipboard');
+            this.toastService.info(steps.length + ' steps cut to clipboard');
         }
     }
 
@@ -255,27 +255,27 @@ class SymbolViewComponent {
         const s = AlphabetSymbol.stepsToJson(step);
         delete s._id;
 
-        this.ClipboardService.copy(this.project.id, 'symbolSteps', [s], ClipboardMode.CUT);
+        this.clipboardService.copy(this.project.id, 'symbolSteps', [s], ClipboardMode.CUT);
         this.deleteSteps([step]);
-        this.ToastService.info('The action has been copied to the clipboard.');
+        this.toastService.info('The action has been copied to the clipboard.');
     }
 
     /**
      * Pastes the actions from the clipboard to the end of of the action list.
      */
     pasteSteps() {
-        let steps = this.ClipboardService.paste(this.project.id, 'symbolSteps');
+        let steps = this.clipboardService.paste(this.project.id, 'symbolSteps');
         if (steps != null) {
             steps.forEach(step => {
                 step._id = uniqueId();
                 if (step.type === 'symbol') {
                     step.pSymbol = new ParametrizedSymbol(step.pSymbol);
                 } else if (step.type === 'action') {
-                    step.action = this.ActionService.create(step.action);
+                    step.action = this.actionService.create(step.action);
                 }
                 this.symbol.steps.push(step);
             });
-            this.ToastService.info(steps.length + ' step[s] pasted from clipboard');
+            this.toastService.info(steps.length + ' step[s] pasted from clipboard');
         }
     }
 
@@ -293,7 +293,7 @@ class SymbolViewComponent {
             component: 'actionEditModal',
             resolve: {
                 modalData: () => ({
-                    action: this.ActionService.create(JSON.parse(JSON.stringify(step.action)))
+                    action: this.actionService.create(JSON.parse(JSON.stringify(step.action)))
                 })
             }
         }).result.then(updatedAction => {
@@ -309,7 +309,7 @@ class SymbolViewComponent {
             }
         }).result.then(selectedSymbol => {
             if (selectedSymbol.id === this.symbol.id) {
-                this.ToastService.info('A symbol cannot execute itself');
+                this.toastService.info('A symbol cannot execute itself');
                 return;
             }
 
@@ -328,7 +328,7 @@ class SymbolViewComponent {
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

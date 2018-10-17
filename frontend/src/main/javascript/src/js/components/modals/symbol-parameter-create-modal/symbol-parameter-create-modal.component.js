@@ -27,11 +27,12 @@ export const symbolParameterCreateModalComponent = {
 
         /**
          * Constructor.
-         * @param {SymbolParameterResource} SymbolParameterResource
+         *
+         * @param symbolParameterResource
          */
         // @ngInject
-        constructor(SymbolParameterResource) {
-            this.symbolParameterResource = SymbolParameterResource;
+        constructor(symbolParameterResource) {
+            this.symbolParameterResource = symbolParameterResource;
 
             /**
              * The error message to display.

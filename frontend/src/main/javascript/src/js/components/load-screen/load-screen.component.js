@@ -24,11 +24,11 @@ class LoadScreenComponent {
     /**
      * Constructor.
      *
-     * @param {UiService} UiService
+     * @param uiService
      */
     // @ngInject
-    constructor(UiService) {
-        this.uiService = UiService;
+    constructor(uiService) {
+        this.uiService = uiService;
     }
 
     get visible() {

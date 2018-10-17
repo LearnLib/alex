@@ -27,16 +27,16 @@ class FilesViewComponent {
      * Constructor.
      *
      * @param Upload
-     * @param {ToastService} ToastService
-     * @param {FileResource} FileResource
-     * @param {ProjectService} ProjectService
+     * @param toastService
+     * @param fileResource
+     * @param projectService
      */
     // @ngInject
-    constructor(Upload, ToastService, FileResource, ProjectService) {
+    constructor(Upload, toastService, fileResource, projectService) {
         this.Upload = Upload;
-        this.ToastService = ToastService;
-        this.FileResource = FileResource;
-        this.ProjectService = ProjectService;
+        this.toastService = toastService;
+        this.fileResource = fileResource;
+        this.projectService = projectService;
 
         /**
          * All project related files.
@@ -63,13 +63,13 @@ class FilesViewComponent {
         this.filesToUpload = null;
 
         // load all files
-        FileResource.getAll(this.project.id)
+        this.fileResource.getAll(this.project.id)
             .then(files => {
                 this.files = files;
                 this.selectedFiles = new Selectable(this.files, 'name');
             })
             .catch(err => {
-                this.ToastService.danger(`Fetching all files failed! ${err.data.message}`);
+                this.toastService.danger(`Fetching all files failed! ${err.data.message}`);
             });
     }
 
@@ -79,14 +79,14 @@ class FilesViewComponent {
      * @param {string} file - The name of the file to delete.
      */
     deleteFile(file) {
-        this.FileResource.remove(this.project.id, file)
+        this.fileResource.remove(this.project.id, file)
             .then(() => {
-                this.ToastService.success(`File "${file.name}" has been deleted.`);
+                this.toastService.success(`File "${file.name}" has been deleted.`);
                 remove(this.files, {name: file.name});
                 this.selectedFiles.unselect(file);
             })
             .catch(err => {
-                this.ToastService.danger(`The file could not be deleted. ${err.data.message}`);
+                this.toastService.danger(`The file could not be deleted. ${err.data.message}`);
             });
     }
 
@@ -118,12 +118,12 @@ class FilesViewComponent {
                 });
             } else {
                 if (this.files.length === countFiles) {
-                    this.ToastService.danger('<strong>Upload failed</strong><p>No file could be uploaded</p>');
+                    this.toastService.danger('<strong>Upload failed</strong><p>No file could be uploaded</p>');
                 } else {
                     if (error) {
-                        this.ToastService.info('Some files could not be uploaded');
+                        this.toastService.info('Some files could not be uploaded');
                     } else {
-                        this.ToastService.success('All files uploaded successfully');
+                        this.toastService.success('All files uploaded successfully');
                     }
                 }
             }
@@ -138,7 +138,7 @@ class FilesViewComponent {
     deleteSelectedFiles() {
         const selectedFiles = this.selectedFiles.getSelected();
         if (selectedFiles.length === 0) {
-            this.ToastService.info('You have to select at least one file');
+            this.toastService.info('You have to select at least one file');
         } else {
             selectedFiles.forEach(file => this.deleteFile(file));
         }
@@ -149,7 +149,7 @@ class FilesViewComponent {
      * @param {object} file The file to download.
      */
     downloadFile(file) {
-        this.FileResource.download(this.project.id, file.name)
+        this.fileResource.download(this.project.id, file.name)
             .then(response => {
                 const blob = response.data;
                 const objectUrl = URL.createObjectURL(blob);
@@ -164,7 +164,7 @@ class FilesViewComponent {
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

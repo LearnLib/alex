@@ -24,15 +24,15 @@ export class SymbolGroupCreateModalComponent {
     /**
      * Constructor.
      *
-     * @param {ProjectService} ProjectService
-     * @param {SymbolGroupResource} SymbolGroupResource
-     * @param {ToastService} ToastService
+     * @param projectService
+     * @param symbolGroupResource
+     * @param toastService
      */
     // @ngInject
-    constructor(ProjectService, SymbolGroupResource, ToastService) {
-        this.SymbolGroupResource = SymbolGroupResource;
-        this.ToastService = ToastService;
-        this.ProjectService = ProjectService;
+    constructor(projectService, symbolGroupResource, toastService) {
+        this.symbolGroupResource = symbolGroupResource;
+        this.toastService = toastService;
+        this.projectService = projectService;
 
         /**
          * The new symbol group.
@@ -58,7 +58,7 @@ export class SymbolGroupCreateModalComponent {
          */
         this.errorMsg = null;
 
-        this.SymbolGroupResource.getAll(this.project.id, true)
+        this.symbolGroupResource.getAll(this.project.id, true)
             .then(groups => this.groups = groups);
     }
 
@@ -69,9 +69,9 @@ export class SymbolGroupCreateModalComponent {
         this.errorMsg = null;
         this.group.parent = this.selectedSymbolGroup == null ? null : this.selectedSymbolGroup.id;
 
-        this.SymbolGroupResource.create(this.project.id, this.group)
+        this.symbolGroupResource.create(this.project.id, this.group)
             .then(createdGroup => {
-                this.ToastService.success('Symbol group <strong>' + createdGroup.name + '</strong> created');
+                this.toastService.success('Symbol group <strong>' + createdGroup.name + '</strong> created');
                 this.close({$value: createdGroup});
                 this.dismiss();
             })
@@ -89,7 +89,7 @@ export class SymbolGroupCreateModalComponent {
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

@@ -31,15 +31,11 @@ class LearnerResultPanelComponent {
      * Constructor.
      *
      * @param $scope
-     * @param {DownloadService} DownloadService
-     * @param {PromptService} PromptService
-     * @param {Object} $uibModal
+     * @param $uibModal
      */
     // @ngInject
-    constructor($scope, DownloadService, PromptService, $uibModal) {
+    constructor($scope, $uibModal) {
         this.$scope = $scope;
-        this.DownloadService = DownloadService;
-        this.PromptService = PromptService;
         this.$uibModal = $uibModal;
 
         /**

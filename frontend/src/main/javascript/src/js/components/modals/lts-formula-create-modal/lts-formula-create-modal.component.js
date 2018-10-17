@@ -30,15 +30,15 @@ export const ltsFormulaCreateModalComponent = {
         /**
          * Constructor.
          *
-         * @param {ProjectService} ProjectService
-         * @param {ToastService} ToastService
-         * @param {LtsFormulaService} LtsFormulaService
+         * @param projectService
+         * @param toastService
+         * @param ltsFormulaService
          */
         // @ngInject
-        constructor(ProjectService, ToastService, LtsFormulaService) {
-            this.projectService = ProjectService;
-            this.toastService = ToastService;
-            this.ltsFormulaService = LtsFormulaService;
+        constructor(projectService, toastService, ltsFormulaService) {
+            this.projectService = projectService;
+            this.toastService = toastService;
+            this.ltsFormulaService = ltsFormulaService;
 
             /**
              * The new formula.

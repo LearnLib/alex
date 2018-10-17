@@ -25,14 +25,14 @@ export const webhooksViewComponent = {
         /**
          * Constructor.
          *
-         * @param {WebhookResource} WebhookResource
-         * @param {ToastService} ToastService
+         * @param webhookResource
+         * @param toastService
          * @param $uibModal
          */
         // @ngInject
-        constructor(WebhookResource, ToastService, $uibModal) {
-            this.webhookResource = WebhookResource;
-            this.toastService = ToastService;
+        constructor(webhookResource, toastService, $uibModal) {
+            this.webhookResource = webhookResource;
+            this.toastService = toastService;
             this.$uibModal = $uibModal;
 
             /**

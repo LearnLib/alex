@@ -30,26 +30,26 @@ class SymbolsViewComponent {
      * Constructor.
      *
      * @param $scope
-     * @param {ProjectService} ProjectService
-     * @param {SymbolResource} SymbolResource
-     * @param {SymbolGroupResource} SymbolGroupResource
-     * @param {ToastService} ToastService
-     * @param {DownloadService} DownloadService
-     * @param {EventBus} EventBus
-     * @param {PromptService} PromptService
+     * @param projectService
+     * @param symbolResource
+     * @param symbolGroupResource
+     * @param toastService
+     * @param downloadService
+     * @param eventBus
+     * @param promptService
      * @param $state
      * @param $uibModal
      */
     // @ngInject
-    constructor($scope, ProjectService, SymbolResource, SymbolGroupResource, ToastService, DownloadService,
-                EventBus, PromptService, $state, $uibModal) {
-        this.SymbolResource = SymbolResource;
-        this.ToastService = ToastService;
-        this.DownloadService = DownloadService;
-        this.PromptService = PromptService;
+    constructor($scope, projectService, symbolResource, symbolGroupResource, toastService, downloadService,
+                eventBus, promptService, $state, $uibModal) {
+        this.symbolResource = symbolResource;
+        this.toastService = toastService;
+        this.downloadService = downloadService;
+        this.promptService = promptService;
         this.$state = $state;
         this.$uibModal = $uibModal;
-        this.ProjectService = ProjectService;
+        this.projectService = projectService;
 
         /**
          * The model for selected symbols.
@@ -65,7 +65,7 @@ class SymbolsViewComponent {
 
         this.symbols = [];
 
-        SymbolGroupResource.getAll(this.project.id, true)
+        symbolGroupResource.getAll(this.project.id, true)
             .then(groups => {
                 this.groups = groups;
                 this.symbols = SymbolGroupUtils.getSymbols(this.groups);
@@ -73,23 +73,23 @@ class SymbolsViewComponent {
             })
             .catch(err => console.log(err));
 
-        EventBus.on(events.GROUP_UPDATED, (evt, data) => {
+        eventBus.on(events.GROUP_UPDATED, (evt, data) => {
             this.updateGroup(data.group);
         }, $scope);
 
-        EventBus.on(events.GROUP_DELETED, (evt, data) => {
+        eventBus.on(events.GROUP_DELETED, (evt, data) => {
             this.deleteGroup(data.group);
         }, $scope);
 
-        EventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
+        eventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
             this.updateSymbol(data.symbol);
         }, $scope);
 
-        EventBus.on(events.SYMBOLS_MOVED, (evt, data) => {
+        eventBus.on(events.SYMBOLS_MOVED, (evt, data) => {
             this.moveSymbolsToGroup(data.symbols, data.group);
         }, $scope);
 
-        EventBus.on(events.GROUP_MOVED, (evt, data) => {
+        eventBus.on(events.GROUP_MOVED, (evt, data) => {
             this.moveGroup(data.from, data.group);
         });
     }
@@ -192,13 +192,13 @@ class SymbolsViewComponent {
     deleteSelectedSymbols() {
         const selectedSymbols = this.selectedSymbols.getSelected();
         if (selectedSymbols.length > 0) {
-            this.SymbolResource.removeMany(selectedSymbols)
+            this.symbolResource.removeMany(selectedSymbols)
                 .then(() => {
-                    this.ToastService.success('Symbols deleted');
+                    this.toastService.success('Symbols deleted');
                     this.removeSymbols(selectedSymbols);
                 })
                 .catch(err => {
-                    this.ToastService.danger('<p><strong>Deleting symbols failed</strong></p>' + err.data.message);
+                    this.toastService.danger('<p><strong>Deleting symbols failed</strong></p>' + err.data.message);
                 });
         }
     }
@@ -308,7 +308,7 @@ class SymbolsViewComponent {
                 }
             });
         } else {
-            this.ToastService.info('You have to select at least one symbol.');
+            this.toastService.info('You have to select at least one symbol.');
         }
     }
 
@@ -329,7 +329,7 @@ class SymbolsViewComponent {
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

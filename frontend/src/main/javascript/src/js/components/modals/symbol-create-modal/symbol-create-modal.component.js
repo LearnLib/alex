@@ -24,15 +24,15 @@ export class SymbolCreateModalComponent {
     /**
      * Constructor.
      *
-     * @param {SymbolResource} SymbolResource
-     * @param {ToastService} ToastService
-     * @param {ProjectService} ProjectService
+     * @param symbolResource
+     * @param toastService
+     * @param projectService
      */
     // @ngInject
-    constructor(SymbolResource, ToastService, ProjectService) {
-        this.SymbolResource = SymbolResource;
-        this.ToastService = ToastService;
-        this.ProjectService = ProjectService;
+    constructor(symbolResource, toastService, projectService) {
+        this.symbolResource = symbolResource;
+        this.toastService = toastService;
+        this.projectService = projectService;
 
         /**
          * The model of the symbol that will be created.
@@ -72,9 +72,9 @@ export class SymbolCreateModalComponent {
     _createSymbol() {
         this.symbol.group = this.selectedSymbolGroup.id;
 
-        return this.SymbolResource.create(this.project.id, this.symbol)
+        return this.symbolResource.create(this.project.id, this.symbol)
             .then(symbol => {
-                this.ToastService.success(`Created symbol "${symbol.name}"`);
+                this.toastService.success(`Created symbol "${symbol.name}"`);
                 this.resolve.onCreated(symbol);
                 this.symbol = new AlphabetSymbol();
                 this.symbol.group = this._getDefaultGroup().id;
@@ -115,7 +115,7 @@ export class SymbolCreateModalComponent {
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

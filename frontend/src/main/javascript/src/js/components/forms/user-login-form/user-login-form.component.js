@@ -25,20 +25,20 @@ class UserLoginFormComponent {
      * Constructor.
      *
      * @param $state
-     * @param {UserResource} UserResource
+     * @param userResource
      * @param jwtHelper
-     * @param {ToastService} ToastService
-     * @param {SettingsResource} SettingsResource
-     * @param {UserService} UserService
+     * @param toastService
+     * @param settingsResource
+     * @param userService
      */
     // @ngInject
-    constructor($state, UserResource, jwtHelper, ToastService, SettingsResource, UserService) {
+    constructor($state, userResource, jwtHelper, toastService, settingsResource, userService) {
         this.$state = $state;
-        this.UserResource = UserResource;
+        this.userResource = userResource;
         this.jwtHelper = jwtHelper;
-        this.ToastService = ToastService;
-        this.SettingsResource = SettingsResource;
-        this.UserService = UserService;
+        this.toastService = toastService;
+        this.settingsResource = settingsResource;
+        this.userService = userService;
 
         /**
          * The email of the user.
@@ -54,9 +54,9 @@ class UserLoginFormComponent {
 
         this.settings = null;
 
-        this.SettingsResource.get()
+        this.settingsResource.get()
             .then(settings => this.settings = settings)
-            .catch(err => this.ToastService.danger(`Could not get settings. ${err.data.message}`));
+            .catch(err => this.toastService.danger(`Could not get settings. ${err.data.message}`));
     }
 
     /**
@@ -64,9 +64,9 @@ class UserLoginFormComponent {
      */
     login() {
         if (this.email && this.password) {
-            this.UserResource.login(this.email, this.password)
+            this.userResource.login(this.email, this.password)
                 .then(response => {
-                    this.ToastService.info('You have logged in!');
+                    this.toastService.info('You have logged in!');
 
                     // decode the token and create a user from it
                     const token = response.data.token;
@@ -77,16 +77,16 @@ class UserLoginFormComponent {
                         email: tokenPayload.email
                     });
 
-                    this.UserService.login(user, token);
+                    this.userService.login(user, token);
                     if (this.onLoggedIn != null) {
                         this.onLoggedIn();
                     }
                 })
                 .catch(() => {
-                    this.ToastService.danger('Login failed');
+                    this.toastService.danger('Login failed');
                 });
         } else {
-            this.ToastService.info('Make sure your inputs are valid.');
+            this.toastService.info('Make sure your inputs are valid.');
         }
     }
 
@@ -95,15 +95,15 @@ class UserLoginFormComponent {
      */
     signUp() {
         if (this.email && this.password) {
-            this.UserResource.create({email: this.email, password: this.password})
+            this.userResource.create({email: this.email, password: this.password})
                 .then(() => {
-                    this.ToastService.success('Registration successful. You can now use the credentials to login.');
+                    this.toastService.success('Registration successful. You can now use the credentials to login.');
                 })
                 .catch(response => {
-                    this.ToastService.danger(`Registration failed. ${response.data.message}`);
+                    this.toastService.danger(`Registration failed. ${response.data.message}`);
                 });
         } else {
-            this.ToastService.info('Make sure your inputs are valid.');
+            this.toastService.info('Make sure your inputs are valid.');
         }
     }
 }

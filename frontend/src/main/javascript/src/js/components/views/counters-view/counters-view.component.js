@@ -25,17 +25,17 @@ class CountersViewComponent {
     /**
      * Constructor.
      *
-     * @param {ProjectService} ProjectService
-     * @param {CounterResource} CounterResource
-     * @param {ToastService} ToastService
+     * @param projectService
+     * @param counterResource
+     * @param toastService
      * @param $uibModal
      */
     // @ngInject
-    constructor(ProjectService, CounterResource, ToastService, $uibModal) {
-        this.CounterResource = CounterResource;
-        this.ToastService = ToastService;
+    constructor(projectService, counterResource, toastService, $uibModal) {
+        this.counterResource = counterResource;
+        this.toastService = toastService;
         this.$uibModal = $uibModal;
-        this.ProjectService = ProjectService;
+        this.projectService = projectService;
 
         /**
          * The counters of the project.
@@ -56,7 +56,7 @@ class CountersViewComponent {
         this.counterUnderEdit = null;
 
         // load all existing counters from the server
-        this.CounterResource.getAll(this.project.id)
+        this.counterResource.getAll(this.project.id)
             .then(counters => {
                 this.counters = counters;
                 this.selectedCounters = new Selectable(this.counters, 'name');
@@ -70,13 +70,13 @@ class CountersViewComponent {
      * @param {Counter} counter - The counter that should be deleted.
      */
     deleteCounter(counter) {
-        this.CounterResource.remove(this.project.id, counter)
+        this.counterResource.remove(this.project.id, counter)
             .then(() => {
-                this.ToastService.success('Counter "' + counter.name + '" deleted');
+                this.toastService.success('Counter "' + counter.name + '" deleted');
                 this._deleteCounter(counter);
             })
             .catch(err => {
-                this.ToastService.danger('<p><strong>Deleting counter "' + counter.name + '" failed</strong></p>' + err.data.message);
+                this.toastService.danger('<p><strong>Deleting counter "' + counter.name + '" failed</strong></p>' + err.data.message);
             });
     }
 
@@ -86,16 +86,16 @@ class CountersViewComponent {
     deleteSelectedCounters() {
         const selectedCounters = this.selectedCounters.getSelected();
         if (selectedCounters.length > 0) {
-            this.CounterResource.removeMany(this.project.id, selectedCounters)
+            this.counterResource.removeMany(this.project.id, selectedCounters)
                 .then(() => {
-                    this.ToastService.success('Counters deleted');
+                    this.toastService.success('Counters deleted');
                     selectedCounters.forEach(counter => this._deleteCounter(counter));
                 })
                 .catch(err => {
-                    this.ToastService.danger('<p><strong>Deleting counters failed</strong></p>' + err.data.message);
+                    this.toastService.danger('<p><strong>Deleting counters failed</strong></p>' + err.data.message);
                 });
         } else {
-            this.ToastService.info('You have to select at least one counter.');
+            this.toastService.info('You have to select at least one counter.');
         }
     }
 
@@ -124,13 +124,13 @@ class CountersViewComponent {
      * Update the counter.
      */
     updateCounter() {
-        this.CounterResource.update(this.project.id, this.counterUnderEdit)
+        this.counterResource.update(this.project.id, this.counterUnderEdit)
             .then(() => {
                 this.counters.find(c => c.name === this.counterUnderEdit.name).value = this.counterUnderEdit.value;
-                this.ToastService.success('The counter has been updated.');
+                this.toastService.success('The counter has been updated.');
                 this.counterUnderEdit = null;
             })
-            .catch(err => this.ToastService.danger(`The counter could not be updated. ${err.data.message}`));
+            .catch(err => this.toastService.danger(`The counter could not be updated. ${err.data.message}`));
     }
 
     _deleteCounter(counter) {
@@ -139,7 +139,7 @@ class CountersViewComponent {
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

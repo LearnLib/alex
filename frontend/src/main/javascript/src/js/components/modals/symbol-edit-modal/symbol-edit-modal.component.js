@@ -25,15 +25,15 @@ export class SymbolEditModalComponent {
     /**
      * Constructor.
      *
-     * @param {SymbolResource} SymbolResource
-     * @param {ToastService} ToastService
-     * @param {EventBus} EventBus
+     * @param symbolResource
+     * @param toastService
+     * @param eventBus
      */
     // @ngInject
-    constructor(SymbolResource, ToastService, EventBus) {
-        this.SymbolResource = SymbolResource;
-        this.ToastService = ToastService;
-        this.EventBus = EventBus;
+    constructor(symbolResource, toastService, eventBus) {
+        this.symbolResource = symbolResource;
+        this.toastService = toastService;
+        this.eventBus = eventBus;
 
         /**
          * The symbol to edit.
@@ -59,10 +59,10 @@ export class SymbolEditModalComponent {
         this.errorMsg = null;
 
         // update the symbol and close the modal dialog on success with the updated symbol
-        this.SymbolResource.update(this.symbol.toJson())
+        this.symbolResource.update(this.symbol.toJson())
             .then(updatedSymbol => {
-                this.ToastService.success('Symbol updated');
-                this.EventBus.emit(events.SYMBOL_UPDATED, {symbol: updatedSymbol});
+                this.toastService.success('Symbol updated');
+                this.eventBus.emit(events.SYMBOL_UPDATED, {symbol: updatedSymbol});
                 this.close({$value: updatedSymbol});
             })
             .catch(err => {

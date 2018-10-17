@@ -27,13 +27,13 @@ export const webhookEditModalComponent = {
         /**
          * Constructor.
          *
-         * @param {WebhookResource} WebhookResource
-         * @param {ToastService} ToastService
+         * @param webhookResource
+         * @param toastService
          */
         // @ngInject
-        constructor(WebhookResource, ToastService) {
-            this.webhookResource = WebhookResource;
-            this.toastService = ToastService;
+        constructor(webhookResource, toastService) {
+            this.webhookResource = webhookResource;
+            this.toastService = toastService;
 
             /**
              * The error message

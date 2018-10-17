@@ -22,12 +22,15 @@ class ProfileViewComponent {
     /**
      * Constructor.
      *
-     * @param {UserResource} UserResource
-     * @param {UserService} UserService
-     * @param {ToastService} ToastService
+     * @param userResource
+     * @param userService
+     * @param toastService
      */
     // @ngInject
-    constructor(UserResource, UserService, ToastService) {
+    constructor(userResource, userService, toastService) {
+        this.userResource = userResource;
+        this.userService = userService;
+        this.toastService = toastService;
 
         /**
          * The user to edit.
@@ -36,9 +39,9 @@ class ProfileViewComponent {
         this.user = null;
 
         // fetch the user from the api
-        UserResource.get(UserService.store.currentUser.id)
+        this.userResource.get(this.userService.store.currentUser.id)
             .then(user => this.user = user)
-            .catch(err => ToastService.danger(`Loading the user failed. ${err.data.message}`));
+            .catch(err => this.toastService.danger(`Loading the user failed. ${err.data.message}`));
     }
 }
 

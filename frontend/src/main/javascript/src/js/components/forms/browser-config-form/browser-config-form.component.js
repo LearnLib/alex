@@ -32,11 +32,11 @@ export const browserConfigFormComponent = {
         /**
          * Constructor.
          *
-         * @param {SettingsResource} SettingsResource
+         * @param settingsResource
          */
         // @ngInject
-        constructor(SettingsResource) {
-            this.SettingsResource = SettingsResource;
+        constructor(settingsResource) {
+            this.settingsResource = settingsResource;
 
             /**
              * The list of locally installed web drivers.
@@ -97,7 +97,7 @@ export const browserConfigFormComponent = {
         }
 
         $onInit() {
-            this.SettingsResource.getSupportedWebDrivers()
+            this.settingsResource.getSupportedWebDrivers()
                 .then(data => this.supportedWebDrivers = data.supportedWebDrivers)
                 .catch(console.log);
 

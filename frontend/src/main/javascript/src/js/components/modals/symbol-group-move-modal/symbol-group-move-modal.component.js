@@ -30,15 +30,15 @@ export const symbolGroupMoveModalComponent = {
         /**
          * Constructor.
          *
-         * @param {SymbolGroupResource} SymbolGroupResource
-         * @param {ToastService} ToastService
-         * @param {EventBus} EventBus
+         * @param symbolGroupResource
+         * @param toastService
+         * @param eventBus
          */
         // @ngInject
-        constructor(SymbolGroupResource, ToastService, EventBus) {
-            this.symbolGroupResource = SymbolGroupResource;
-            this.toastService = ToastService;
-            this.eventBus = EventBus;
+        constructor(symbolGroupResource, toastService, eventBus) {
+            this.symbolGroupResource = symbolGroupResource;
+            this.toastService = toastService;
+            this.eventBus = eventBus;
 
             /**
              * The error message to display.

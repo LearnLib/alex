@@ -29,13 +29,13 @@ export const testResultReportComponent = {
         /**
          * Constructor.
          *
-         * @param {ProjectService} ProjectService
-         * @param {TestReportService} TestReportService
+         * @param projectService
+         * @param testReportService
          */
         // @ngInject
-        constructor(ProjectService, TestReportService) {
-            this.ProjectService = ProjectService;
-            this.TestReportService = TestReportService;
+        constructor(projectService, testReportService) {
+            this.projectService = projectService;
+            this.testReportService = testReportService;
 
             /**
              * The report.
@@ -46,11 +46,11 @@ export const testResultReportComponent = {
 
         /** Saves the report as JUnit XML. */
         exportReport() {
-            this.TestReportService.download(this.project.id, this.report.id);
+            this.testReportService.download(this.project.id, this.report.id);
         }
 
         get project() {
-            return this.ProjectService.store.currentProject;
+            return this.projectService.store.currentProject;
         }
     }
 };

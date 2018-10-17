@@ -25,16 +25,17 @@ export const symbolParametersPanelComponent = {
 
         /**
          * Constructor.
-         * @param {PromptService} PromptService
-         * @param {SymbolParameterResource} SymbolParameterResource
-         * @param {ToastService} ToastService
+         *
+         * @param promptService
+         * @param symbolParameterResource
+         * @param toastService
          * @param {$uibModal} $uibModal
          */
         // @ngInject
-        constructor(PromptService, SymbolParameterResource, ToastService, $uibModal) {
-            this.promptService = PromptService;
-            this.symbolParameterResource = SymbolParameterResource;
-            this.toastService = ToastService;
+        constructor(promptService, symbolParameterResource, toastService, $uibModal) {
+            this.promptService = promptService;
+            this.symbolParameterResource = symbolParameterResource;
+            this.toastService = toastService;
             this.$uibModal = $uibModal;
         }
 

@@ -26,15 +26,15 @@ export class LearnerSetupSettingsModalComponent {
     /**
      * Constructor.
      *
-     * @param {ToastService} ToastService
-     * @param {ProjectService} ProjectService
-     * @param {LearningAlgorithmService} LearningAlgorithmService
+     * @param toastService
+     * @param projectService
+     * @param learningAlgorithmService
      */
     // @ngInject
-    constructor(ToastService, ProjectService, LearningAlgorithmService) {
-        this.ToastService = ToastService;
-        this.LearningAlgorithmService = LearningAlgorithmService;
-        this.ProjectService = ProjectService;
+    constructor(toastService, projectService, learningAlgorithmService) {
+        this.toastService = toastService;
+        this.learningAlgorithmService = learningAlgorithmService;
+        this.projectService = projectService;
 
         /**
          * The LearnConfiguration to be edited.
@@ -69,19 +69,19 @@ export class LearnerSetupSettingsModalComponent {
      * Sets the algorithm of the learn configuration depending on the selected value.
      */
     setLearningAlgorithm() {
-        this.learnConfiguration.algorithm = this.LearningAlgorithmService.createFromType(this.selectedLearningAlgorithm);
+        this.learnConfiguration.algorithm = this.learningAlgorithmService.createFromType(this.selectedLearningAlgorithm);
     }
 
     /**
      * Close the modal dialog and pass the edited learn configuration instance.
      */
     ok() {
-        this.ToastService.success('Learn configuration updated');
+        this.toastService.success('Learn configuration updated');
         this.close({$value: this.learnConfiguration});
     }
 
     get project() {
-        return this.ProjectService.store.currentProject;
+        return this.projectService.store.currentProject;
     }
 }
 

@@ -22,15 +22,15 @@ export class ResultListModalComponent {
     /**
      * Constructor.
      *
-     * @param {ProjectService} ProjectService
-     * @param {LearnResultResource} LearnResultResource
-     * @param {ToastService} ToastService
+     * @param projectService
+     * @param learnResultResource
+     * @param toastService
      */
     // @ngInject
-    constructor(ProjectService, LearnResultResource, ToastService) {
-        this.LearnResultResource = LearnResultResource;
-        this.ToastService = ToastService;
-        this.ProjectService = ProjectService;
+    constructor(projectService, learnResultResource, toastService) {
+        this.learnResultResource = learnResultResource;
+        this.toastService = toastService;
+        this.projectService = projectService;
 
         /**
          * The results of the current project.
@@ -38,7 +38,7 @@ export class ResultListModalComponent {
          */
         this.results = null;
 
-        ProjectService.load();
+        projectService.load();
     }
 
     $onInit() {
@@ -55,7 +55,7 @@ export class ResultListModalComponent {
      * @param {Project} project
      */
     selectProject(project) {
-        this.LearnResultResource.getAll(project.id)
+        this.learnResultResource.getAll(project.id)
             .then(results => this.results = results)
             .catch(err => console.log(err));
     }
@@ -76,12 +76,12 @@ export class ResultListModalComponent {
         try {
             this.close({$value: {steps: [{hypothesis: JSON.parse(hypothesis)}]}});
         } catch (e) {
-            this.ToastService.danger('Could not parse the file.');
+            this.toastService.danger('Could not parse the file.');
         }
     }
 
     get projects() {
-        return this.ProjectService.store.projects;
+        return this.projectService.store.projects;
     }
 }
 

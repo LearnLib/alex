@@ -29,13 +29,13 @@ export const userCreateModalComponent = {
         /**
          * Constructor.
          *
-         * @param {UserResource} UserResource
-         * @param {ToastService} ToastService
+         * @param userResource
+         * @param toastService
          */
         // @ngInject
-        constructor(UserResource, ToastService) {
-            this.userResource = UserResource;
-            this.toastService = ToastService;
+        constructor(userResource, toastService) {
+            this.userResource = userResource;
+            this.toastService = toastService;
 
             /**
              * The user to create.

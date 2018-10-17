@@ -17,20 +17,20 @@ export const symbolsSymbolGroupTreeComponent = {
         /**
          * Constructor.
          *
-         * @param {PromptService} PromptService
-         * @param {SymbolGroupResource} SymbolGroupResource
-         * @param {ToastService} ToastService
-         * @param {SymbolResource} SymbolResource
-         * @param {EventBus} EventBus
+         * @param promptService
+         * @param symbolGroupResource
+         * @param toastService
+         * @param symbolResource
+         * @param eventBus
          * @param $uibModal
          */
         // @ngInject
-        constructor(PromptService, SymbolGroupResource, ToastService, SymbolResource, EventBus, $uibModal) {
-            this.promptService = PromptService;
-            this.symbolGroupResource = SymbolGroupResource;
-            this.toastService = ToastService;
-            this.symbolResource = SymbolResource;
-            this.eventBus = EventBus;
+        constructor(promptService, symbolGroupResource, toastService, symbolResource, eventBus, $uibModal) {
+            this.promptService = promptService;
+            this.symbolGroupResource = symbolGroupResource;
+            this.toastService = toastService;
+            this.symbolResource = symbolResource;
+            this.eventBus = eventBus;
             this.$uibModal = $uibModal;
 
             /**

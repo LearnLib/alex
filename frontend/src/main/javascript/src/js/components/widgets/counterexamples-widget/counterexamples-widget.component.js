@@ -28,18 +28,18 @@ class CounterexamplesWidgetComponent {
      * Constructor.
      *
      * @param $scope
-     * @param {LearnerResource} LearnerResource
-     * @param {ToastService} ToastService
-     * @param {SymbolResource} SymbolResource
+     * @param learnerResource
+     * @param toastService
+     * @param symbolResource
      * @param $q
-     * @param {EventBus} EventBus
+     * @param eventBus
      * @param dragulaService
      */
     // @ngInject
-    constructor($scope, LearnerResource, ToastService, SymbolResource, $q, EventBus, dragulaService) {
-        this.LearnerResource = LearnerResource;
-        this.ToastService = ToastService;
-        this.SymbolResource = SymbolResource;
+    constructor($scope, learnerResource, toastService, symbolResource, $q, eventBus, dragulaService) {
+        this.learnerResource = learnerResource;
+        this.toastService = toastService;
+        this.symbolResource = symbolResource;
         this.$q = $q;
 
         /**
@@ -55,7 +55,7 @@ class CounterexamplesWidgetComponent {
         this.tmpCounterExamples = [];
 
         // wait for a click on the hypothesis and add the io pair to the counterexample
-        EventBus.on(events.HYPOTHESIS_LABEL_SELECTED, (evt, data) => {
+        eventBus.on(events.HYPOTHESIS_LABEL_SELECTED, (evt, data) => {
             this.counterExample.push({
                 input: data.input,
                 output: data.output
@@ -91,7 +91,7 @@ class CounterexamplesWidgetComponent {
     testAndAddCounterExample() {
         this.testCounterExample()
             .then(counterexample => {
-                this.ToastService.success('The selected word is a counterexample');
+                this.toastService.success('The selected word is a counterexample');
                 for (let i = 0; i < counterexample.length; i++) {
                     this.counterExample[i].output = counterexample[i].output;
                 }
@@ -99,7 +99,7 @@ class CounterexamplesWidgetComponent {
                 this.renewCounterexamples();
             })
             .catch(() => {
-                this.ToastService.danger('The word is not a counterexample');
+                this.toastService.danger('The word is not a counterexample');
             });
     }
 
@@ -142,7 +142,7 @@ class CounterexamplesWidgetComponent {
                 postSymbol.symbol = {id: postSymbol.symbol.id};
             }
 
-            this.LearnerResource.readOutputs(this.result.project, {
+            this.learnerResource.readOutputs(this.result.project, {
                 symbols: {resetSymbol, symbols, postSymbol},
                 driverConfig: this.result.driverConfig
             }).then(ce => {

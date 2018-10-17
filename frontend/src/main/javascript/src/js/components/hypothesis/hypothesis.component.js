@@ -51,13 +51,13 @@ class HypothesisComponent {
      *
      * @param $scope
      * @param $element
-     * @param {EventBus} EventBus
+     * @param eventBus
      */
     // @ngInject
-    constructor($scope, $element, EventBus) {
+    constructor($scope, $element, eventBus) {
         this.$scope = $scope;
         this.$element = $element;
-        this.EventBus = EventBus;
+        this.eventBus = eventBus;
 
         this.renderer = new Renderer();
         this.graph = null;
@@ -218,7 +218,7 @@ class HypothesisComponent {
      */
     handleEvents() {
         const $scope = this.$scope;
-        const EventBus = this.EventBus;
+        const eventBus = this.eventBus;
 
         // zoom support
         const zoom = d3.zoom().on('zoom', () => {
@@ -261,7 +261,7 @@ class HypothesisComponent {
                 const edges = self.edgeData[d.v][d.w];
                 const edge = edges.filter(e => (e.input + ' / ' + e.output) === this.textContent)[0];
                 $scope.$apply(() => {
-                    EventBus.emit(events.HYPOTHESIS_LABEL_SELECTED, {input: edge.input, output: edge.output});
+                    eventBus.emit(events.HYPOTHESIS_LABEL_SELECTED, {input: edge.input, output: edge.output});
                 });
             });
         }

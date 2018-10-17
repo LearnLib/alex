@@ -29,11 +29,11 @@ export const testsViewComponent = {
          * Constructor.
          *
          * @param $state
-         * @param {ProjectService} ProjectService
-         * @param {TestResource} TestResource
+         * @param projectService
+         * @param testResource
          */
         // @ngInject
-        constructor($state, ProjectService, TestResource) {
+        constructor($state, projectService, testResource) {
 
             /**
              * The test case or test suite.
@@ -41,14 +41,14 @@ export const testsViewComponent = {
              */
             this.test = null;
 
-            const project = ProjectService.store.currentProject;
+            const project = projectService.store.currentProject;
             const testId = $state.params.testId;
             if (testId === 0) {
-                TestResource.getRoot(project.id)
+                testResource.getRoot(project.id)
                     .then(data => this.test = data)
                     .catch(err => $state.go('error', {message: err.data.message}));
             } else {
-                TestResource.get(project.id, testId)
+                testResource.get(project.id, testId)
                     .then(data => this.test = data)
                     .catch(err => $state.go('error', {message: err.data.message}));
             }

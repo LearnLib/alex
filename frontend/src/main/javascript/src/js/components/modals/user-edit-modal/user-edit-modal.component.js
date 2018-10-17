@@ -27,20 +27,20 @@ export class UserEditModalComponent {
      * Constructor.
      *
      * @param $state
-     * @param {UserResource} UserResource
-     * @param {ToastService} ToastService
-     * @param {PromptService} PromptService
-     * @param {ProjectService} ProjectService
-     * @param {UserService} UserService
+     * @param userResource
+     * @param toastService
+     * @param promptService
+     * @param projectService
+     * @param userService
      */
     // @ngInject
-    constructor($state, UserResource, ToastService, PromptService, ProjectService, UserService) {
+    constructor($state, userResource, toastService, promptService, projectService, userService) {
         this.$state = $state;
-        this.UserResource = UserResource;
-        this.ToastService = ToastService;
-        this.PromptService = PromptService;
-        this.ProjectService = ProjectService;
-        this.UserService = UserService;
+        this.userResource = userResource;
+        this.toastService = toastService;
+        this.promptService = promptService;
+        this.projectService = projectService;
+        this.userService = userService;
 
         /**
          * The error message in case the update goes wrong.
@@ -77,15 +77,15 @@ export class UserEditModalComponent {
      */
     changeEmail() {
         this.error = null;
-        this.UserResource.changeEmail(this.user, this.email)
+        this.userResource.changeEmail(this.user, this.email)
             .then((user) => {
                 if (this.currentUser.id === this.user.id) {
-                    this.UserService.login(user);
+                    this.userService.login(user);
                 }
 
                 this.resolve.onUpdated(user);
                 this.dismiss();
-                this.ToastService.success('The email has been changed.');
+                this.toastService.success('The email has been changed.');
             })
             .catch(response => {
                 this.error = response.data.message;
@@ -97,9 +97,9 @@ export class UserEditModalComponent {
      */
     promoteUser() {
         this.error = null;
-        this.UserResource.promote(this.user)
+        this.userResource.promote(this.user)
             .then((user) => {
-                this.ToastService.success('The user now has admin rights.');
+                this.toastService.success('The user now has admin rights.');
                 this.resolve.onUpdated(user);
                 this.dismiss();
             })
@@ -114,17 +114,17 @@ export class UserEditModalComponent {
      */
     demoteUser() {
         this.error = null;
-        this.UserResource.demote(this.user)
+        this.userResource.demote(this.user)
             .then((user) => {
                 if (this.currentUser.id === this.user.id) {
-                    this.ProjectService.close();
-                    this.UserService.logout();
+                    this.projectService.close();
+                    this.userService.logout();
                     this.$state.go('root');
                 } else {
                     this.resolve.onUpdated(user);
                 }
                 this.dismiss();
-                this.ToastService.success('The user now has default user rights.');
+                this.toastService.success('The user now has default user rights.');
             })
             .catch(response => {
                 this.error = response.data.message;
@@ -136,11 +136,11 @@ export class UserEditModalComponent {
      */
     deleteUser() {
         this.error = null;
-        this.PromptService.confirm('Do you want to delete this user permanently?')
+        this.promptService.confirm('Do you want to delete this user permanently?')
             .then(() => {
-                this.UserResource.remove(this.user)
+                this.userResource.remove(this.user)
                     .then(() => {
-                        this.ToastService.success('The user has been deleted');
+                        this.toastService.success('The user has been deleted');
                         this.resolve.onDeleted(this.user);
                         this.dismiss();
                     })
@@ -151,7 +151,7 @@ export class UserEditModalComponent {
     }
 
     get currentUser() {
-        return this.UserService.store.currentUser;
+        return this.userService.store.currentUser;
     }
 }
 
