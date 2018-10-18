@@ -90,7 +90,7 @@ export class AlphabetSymbol {
    *
    * @returns The exportable symbol.
    */
-  getExportableSymbol(): Object {
+  getExportableSymbol(): any {
     const symbol = JSON.parse(JSON.stringify(this));
     symbol.inputs.forEach(input => delete input.id);
     symbol.outputs.forEach(output => delete output.id);

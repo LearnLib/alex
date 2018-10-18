@@ -1,23 +1,23 @@
 <div class="modal-header">
-    <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
-        <i class="fa fa-close fa-fw"></i>
-    </a>
-    <h3 class="modal-title">Edit symbol: {{::vm.symbol.name}}</h3>
+  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+    <i class="fa fa-close fa-fw"></i>
+  </a>
+  <h3 class="modal-title">Edit symbol: {{::vm.symbol.name}}</h3>
 </div>
 
 <form name="vm.form" ng-submit="vm.updateSymbol()">
 
-    <div class="modal-body">
+  <div class="modal-body">
 
-        <symbol-form-groups symbol="vm.symbol" form="vm.form"></symbol-form-groups>
+    <symbol-form-groups symbol="vm.symbol" form="vm.form"></symbol-form-groups>
 
-        <div class="alert alert-danger alert-condensed" ng-if="vm.errorMsg" ng-bind="vm.errorMsg"></div>
+    <div class="alert alert-danger alert-condensed" ng-if="vm.errorMsg" ng-bind="vm.errorMsg"></div>
 
-    </div>
+  </div>
 
-    <div class="modal-footer">
-        <button class="btn btn-primary btn-sm" type="submit">Update</button>
-        <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
-    </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="submit">Update</button>
+    <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
+  </div>
 
 </form>

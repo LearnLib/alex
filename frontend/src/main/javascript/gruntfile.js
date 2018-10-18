@@ -9,7 +9,7 @@ module.exports = function (grunt) {
 
     const browserifyOptionsDist = {
         files: {
-            '<%= buildLocation %>/js/alex.bundle.js': ['src/js/index.js']
+            '<%= buildLocation %>/js/alex.bundle.js': ['src/js/index.ts']
         },
         options: {
             plugin: [
@@ -37,7 +37,7 @@ module.exports = function (grunt) {
         watch: true,
         keepAlive: true,
         watchifyOptions: {
-            entries: ['src/js/index.js'],
+            entries: ['src/js/index.ts'],
             ignoreWatch: ['**/node_modules/**'],
             cache: {},
             packageCache: {},

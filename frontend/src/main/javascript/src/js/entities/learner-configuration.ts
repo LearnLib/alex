@@ -18,6 +18,8 @@ import {webBrowser} from '../constants';
 import {DriverConfigService} from '../services/driver-config.service';
 import {RandomEqOracle} from './eq-oracles/random-eq-oracle';
 import {AlphabetSymbol} from './alphabet-symbol';
+import {ParametrizedSymbol} from './parametrized-symbol';
+import {ProjectUrl} from './project';
 
 /**
  * The model for a learn configuration.
@@ -25,10 +27,10 @@ import {AlphabetSymbol} from './alphabet-symbol';
 export class LearnConfiguration {
 
   /** The list of ids of symbols to learn. */
-  public symbols: number[];
+  public symbols: ParametrizedSymbol[];
 
   /** The URLs to use for learning. */
-  public urls: number[];
+  public urls: ProjectUrl[];
 
   /** The max amount of hypotheses to generate. */
   public maxAmountOfStepsToLearn: number;
@@ -40,7 +42,7 @@ export class LearnConfiguration {
   public algorithm: any;
 
   /** The id of the reset symbol. */
-  public resetSymbol: number;
+  public resetSymbol: ParametrizedSymbol;
 
   /** A comment. */
   public comment: string;
@@ -50,6 +52,8 @@ export class LearnConfiguration {
 
   /** If membership queries should be cached. */
   public useMQCache: boolean;
+
+  public postSymbol: ParametrizedSymbol;
 
   /**
    * Constructor.
@@ -66,23 +70,6 @@ export class LearnConfiguration {
     this.comment = obj.comment || null;
     this.driverConfig = obj.driverConfig || DriverConfigService.createFromName(webBrowser.HTML_UNIT);
     this.useMQCache = obj.useMQCache !== undefined ? obj.useMQCache : true;
-  }
-
-  /**
-   * Adds a symbol to the configuration.
-   *
-   * @param symbol The symbol to add to the config.
-   */
-  addSymbol(symbol: AlphabetSymbol) {
-    this.symbols.push(symbol.id);
-  }
-
-  /**
-   * Sets the reset symbols for the configuration.
-   *
-   * @param symbol The reset symbol to use.
-   */
-  setResetSymbol(symbol: AlphabetSymbol) {
-    this.resetSymbol = symbol.id;
+    this.postSymbol = obj.postSymbol || null;
   }
 }

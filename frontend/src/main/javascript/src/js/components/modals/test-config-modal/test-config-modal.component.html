@@ -1,47 +1,47 @@
 <div class="modal-header">
-    <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
-        <i class="fa fa-close fa-fw"></i>
-    </a>
+  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+    <i class="fa fa-close fa-fw"></i>
+  </a>
 
-    <h3 class="modal-title">Configure the test configuration</h3>
+  <h3 class="modal-title">Configure the test configuration</h3>
 </div>
 
 <div class="modal-body">
 
-    <uib-tabset>
-        <uib-tab heading="Test">
-            <br>
+  <uib-tabset>
+    <uib-tab heading="Test">
+      <br>
 
-            <strong>Test report</strong>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" ng-model="vm.configuration.createReport"> Create report
-                </label>
-            </div>
-        </uib-tab>
-        <uib-tab heading="WebDriver">
-            <br>
+      <strong>Test report</strong>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" ng-model="vm.configuration.createReport"> Create report
+        </label>
+      </div>
+    </uib-tab>
+    <uib-tab heading="WebDriver">
+      <br>
 
-            <browser-config-form
-                config="vm.configuration.driverConfig"
-                use-config-driver="true"
-                ng-if="vm.configuration.driverConfig !== null"
-            >
-            </browser-config-form>
-        </uib-tab>
-        <uib-tab heading="Targets">
-            <br>
+      <browser-config-form
+          config="vm.configuration.driverConfig"
+          use-config-driver="true"
+          ng-if="vm.configuration.driverConfig !== null"
+      >
+      </browser-config-form>
+    </uib-tab>
+    <uib-tab heading="Targets">
+      <br>
 
-            <p class="text-muted">
-                Specify which URL should be used for testing.
-            </p>
-            <project-url-list project="vm.project" list-model="vm.selectedUrls" multiple="false"></project-url-list>
-        </uib-tab>
-    </uib-tabset>
+      <p class="text-muted">
+        Specify which URL should be used for testing.
+      </p>
+      <project-url-list project="vm.project" list-model="vm.selectedUrls" multiple="false"></project-url-list>
+    </uib-tab>
+  </uib-tabset>
 
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-primary btn-sm" ng-click="vm.update()">Update</button>
-    <button class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</button>
+  <button class="btn btn-primary btn-sm" ng-click="vm.update()">Update</button>
+  <button class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</button>
 </div>

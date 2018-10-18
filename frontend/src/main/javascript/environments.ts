@@ -28,5 +28,5 @@ export const version = '1.6.1-SNAPSHOT';
  *
  * @type {string}
  */
-// export const apiUrl = '/rest';
-export const apiUrl = 'http://localhost:8000/rest';
+export const apiUrl = '/rest';
+// export const apiUrl = 'http://localhost:8000/rest';

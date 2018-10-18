@@ -19,9 +19,9 @@
  * current view.
  */
 export const actionBarComponent = {
-  controller: class ActionBarComponent {
-  },
-  controllerAs: 'vm',
+  template: require('./action-bar.component.html'),
   transclude: true,
-  template: require('./action-bar.component.html')
+  controllerAs: 'vm',
+  controller: class ActionBarComponent {
+  }
 };

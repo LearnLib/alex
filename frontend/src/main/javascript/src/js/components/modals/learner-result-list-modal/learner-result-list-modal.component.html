@@ -1,48 +1,49 @@
 <div class="modal-header">
-    <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
-        <i class="fa fa-close fa-fw"></i>
-    </a>
-    <h4>
-        <strong ng-if="vm.results">Select a result</strong>
-        <strong ng-if="!vm.results">Select a project</strong>
-    </h4>
+  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+    <i class="fa fa-close fa-fw"></i>
+  </a>
+  <h4>
+    <strong ng-if="vm.results">Select a result</strong>
+    <strong ng-if="!vm.results">Select a project</strong>
+  </h4>
 </div>
 <div class="modal-body">
-    <uib-tabset>
-        <uib-tab heading="From project">
+  <uib-tabset>
+    <uib-tab heading="From project">
+      <br>
+      <div ng-if="vm.results">
+        <button class="btn btn-sm btn-primary" ng-click="vm.switchProject()">
+          <i class="fa fa-fw fa-exchange"></i> Change project
+        </button>
+        <hr class="separator-small">
+        <div class="list-group">
+          <a class="list-group-item" ng-repeat="result in vm.results | orderBy:'-testNo':false"
+             ng-click="vm.selectResult(result)">
+            <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
+            <strong>Test No <span ng-bind="result.testNo"></span></strong>,
+            [<span ng-bind="(result.algorithm.name|formatAlgorithm)"></span>]
             <br>
-            <div ng-if="vm.results">
-                <button class="btn btn-sm btn-primary" ng-click="vm.switchProject()">
-                    <i class="fa fa-fw fa-exchange"></i> Change project
-                </button>
-                <hr class="separator-small">
-                <div class="list-group">
-                    <a class="list-group-item" ng-repeat="result in vm.results | orderBy:'-testNo':false" ng-click="vm.selectResult(result)">
-                        <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
-                        <strong>Test No <span ng-bind="result.testNo"></span></strong>,
-                        [<span ng-bind="(result.algorithm.name|formatAlgorithm)"></span>]
-                        <br>
-                        <p class="text-muted" style="margin-bottom: 0">
-                            Started: <span ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
-                        </p>
-                    </a>
-                </div>
-            </div>
-            <div class="list-group" ng-if="!vm.results">
-                <a class="list-group-item" ng-repeat="project in vm.projects" ng-click="vm.selectProject(project)">
-                    <strong ng-bind="project.name"></strong><br>
-                    <span class="text-muted" ng-bind="project.getDefaultUrl().url"></span>
-                </a>
-            </div>
-        </uib-tab>
-        <uib-tab heading="From file">
-            <br>
-            <file-dropzone on-loaded="vm.loadResultFromFile.bind(vm)">
-                Drag and drop *.json file here or click to upload.
-            </file-dropzone>
-        </uib-tab>
-    </uib-tabset>
+            <p class="text-muted" style="margin-bottom: 0">
+              Started: <span ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
+            </p>
+          </a>
+        </div>
+      </div>
+      <div class="list-group" ng-if="!vm.results">
+        <a class="list-group-item" ng-repeat="project in vm.projects" ng-click="vm.selectProject(project)">
+          <strong ng-bind="project.name"></strong><br>
+          <span class="text-muted" ng-bind="project.getDefaultUrl().url"></span>
+        </a>
+      </div>
+    </uib-tab>
+    <uib-tab heading="From file">
+      <br>
+      <file-dropzone on-loaded="vm.loadResultFromFile.bind(vm)">
+        Drag and drop *.json file here or click to upload.
+      </file-dropzone>
+    </uib-tab>
+  </uib-tabset>
 </div>
 <div class="modal-footer">
-    <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
+  <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
 </div>

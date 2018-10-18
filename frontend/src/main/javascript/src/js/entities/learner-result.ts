@@ -15,6 +15,7 @@
  */
 
 import {ParametrizedSymbol} from './parametrized-symbol';
+import {ProjectUrl} from './project';
 
 /**
  * The model for a learner result.
@@ -64,10 +65,12 @@ export class LearnResult {
   public comment: string;
 
   /** The list of URLs. */
-  public urls: number[];
+  public urls: ProjectUrl[];
 
   /** If membership queries should be cached. */
   public useMQCache: boolean;
+
+  public maxAmountOfStepsToLearn: number;
 
   /**
    * Constructor.
@@ -91,6 +94,7 @@ export class LearnResult {
     this.comment = obj.comment;
     this.urls = obj.urls || [];
     this.useMQCache = obj.useMQCache;
+    this.maxAmountOfStepsToLearn = obj.maxAmountOfStepsToLearn == null ? -1 : obj.maxAmountOfStepsToLearn;
 
     // convert ns to ms
     LearnResult.convertNsToMs(this.statistics.duration);
