@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import remove from 'lodash/remove';
+import * as remove from 'lodash/remove';
 import {Project} from '../entities/project';
 import {LearnerResource} from './resources/learner-resource.service';
 import {ToastService} from './toast.service';

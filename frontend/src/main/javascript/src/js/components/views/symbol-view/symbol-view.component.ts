@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import remove from 'lodash/remove';
-import uniqueId from 'lodash/uniqueId';
+import * as remove from 'lodash/remove';
+import * as uniqueId from 'lodash/uniqueId';
 import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
 import {ParametrizedSymbol} from '../../../entities/parametrized-symbol';
 import {ClipboardMode, ClipboardService} from '../../../services/clipboard.service';

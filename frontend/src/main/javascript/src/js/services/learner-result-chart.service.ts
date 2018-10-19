@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import zip from 'lodash/zip';
+import * as zip from 'lodash/zip';
 import {LearnResult} from '../entities/learner-result';
 
 const MARGIN_OPTIONS = {

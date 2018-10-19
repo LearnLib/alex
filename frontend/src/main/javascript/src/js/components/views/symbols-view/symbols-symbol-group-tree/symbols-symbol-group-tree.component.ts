@@ -1,4 +1,4 @@
-import remove from 'lodash/remove';
+import * as remove from 'lodash/remove';
 import {events} from '../../../../constants';
 import {AlphabetSymbol} from '../../../../entities/alphabet-symbol';
 import {SymbolGroup} from '../../../../entities/symbol-group';

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import remove from 'lodash/remove';
+import * as remove from 'lodash/remove';
 import {Selectable} from '../../../utils/selectable';
 import {WebhookResource} from '../../../services/resources/webhook-resource.service';
 import {ToastService} from '../../../services/toast.service';

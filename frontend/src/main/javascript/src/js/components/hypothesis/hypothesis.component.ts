@@ -16,7 +16,7 @@
 
 import * as d3 from 'd3';
 import {dagre, graphlib, render as Renderer} from 'dagre-d3';
-import forEach from 'lodash/forEach';
+import * as forEach from 'lodash/forEach';
 import {events} from '../../constants';
 import {IRootElementService, IScope} from 'angular';
 import {EventBus} from '../../services/eventbus.service';

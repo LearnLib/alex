@@ -23,7 +23,7 @@ import * as angularJwt from 'angular-jwt';
 import * as toastr from 'angular-toastr';
 import * as uiBootstrap from 'angular-ui-bootstrap';
 import * as ngFileUpload from 'ng-file-upload';
-import {actionBarComponent} from "./components/action-bar/action-bar.component";
+import {actionBarComponent} from './components/action-bar/action-bar.component';
 import {alexComponent} from './components/alex/alex.component';
 import {discriminationTreeComponent} from './components/discrimination-tree/discrimination-tree.component';
 import {fileDropzoneComponent} from './components/file-dropzone/file-dropzone.component';
@@ -199,14 +199,14 @@ import {widgetComponent} from './components/widgets/widget/widget.component';
 import * as config from './config';
 import * as constant from './constants';
 import {
-    formatAlgorithm,
-    formatEqOracle,
-    formatMilliseconds,
-    formatParameterType,
-    formatUserRole,
-    formatWebBrowser,
-    normalizeUpperCase,
-    sortTests
+  formatAlgorithm,
+  formatEqOracle,
+  formatMilliseconds,
+  formatParameterType,
+  formatUserRole,
+  formatWebBrowser,
+  normalizeUpperCase,
+  sortTests
 } from './filters';
 import * as routes from './routes';
 import {ActionService} from './services/action.service';
@@ -240,282 +240,284 @@ import {TestService} from './services/test.service';
 import {ToastService} from './services/toast.service';
 import {UiService} from './services/ui.service';
 import {UserService} from './services/user.service';
-import {setVariableByHttpStatusActionFormComponent} from "./components/forms/actions/misc/set-variable-by-http-status-action-form/set-variable-by-http-status-action-form.component";
-import {LtsFormulaResource} from "./services/resources/lts-formula-resource.service";
-import {LtsFormulaService} from "./services/lts-formula.service";
-import {ltsFormulasViewComponent} from "./components/views/lts-formulas-view/lts-formulas-view.component";
-import {ltsFormulaCreateModalComponent} from "./components/modals/lts-formula-create-modal/lts-formula-create-modal.component";
-import {ltsFormulaListComponent} from "./components/lts-formula-list/lts-formula-list.component";
-import {ltsFormulaFormGroupsComponent} from "./components/forms/lts-formula-form-groups/lts-formula-form-groups.component";
-import {ltsFormulaEditModalComponent} from "./components/modals/lts-formula-edit-modal/lts-formula-edit-modal.component";
+import {setVariableByHttpStatusActionFormComponent} from './components/forms/actions/misc/set-variable-by-http-status-action-form/set-variable-by-http-status-action-form.component';
+import {LtsFormulaResource} from './services/resources/lts-formula-resource.service';
+import {LtsFormulaService} from './services/lts-formula.service';
+import {ltsFormulasViewComponent} from './components/views/lts-formulas-view/lts-formulas-view.component';
+import {ltsFormulaCreateModalComponent} from './components/modals/lts-formula-create-modal/lts-formula-create-modal.component';
+import {ltsFormulaListComponent} from './components/lts-formula-list/lts-formula-list.component';
+import {ltsFormulaFormGroupsComponent} from './components/forms/lts-formula-form-groups/lts-formula-form-groups.component';
+import {ltsFormulaEditModalComponent} from './components/modals/lts-formula-edit-modal/lts-formula-edit-modal.component';
+import {symbolSelectDropdownComponent} from './components/symbol-select-dropdown/symbol-select-dropdown.component';
 
 angular
-    .module('ALEX', [
+  .module('ALEX', [
 
-        // modules from external libraries
-        ngAnimate,
-        ngMessages,
-        uiBootstrap,
-        uiRouter,
-        'ui.ace',
-        'n3-line-chart',
-        toastr,
-        angularJwt,
-        ngFileUpload,
-        angularDragula(angular)
-    ])
+    // modules from external libraries
+    ngAnimate,
+    ngMessages,
+    uiBootstrap,
+    uiRouter,
+    'ui.ace',
+    'n3-line-chart',
+    toastr,
+    angularJwt,
+    ngFileUpload,
+    angularDragula(angular)
+  ])
 
-    .config(config.config)
-    .config(routes.config)
-    .run(routes.run)
+  .config(config.config)
+  .config(routes.config)
+  .run(routes.run)
 
-    // constants
-    .constant('learnAlgorithm', constant.learnAlgorithm)
-    .constant('webBrowser', constant.webBrowser)
-    .constant('eqOracleType', constant.eqOracleType)
-    .constant('events', constant.events)
-    .constant('actionType', constant.actionType)
+  // constants
+  .constant('learnAlgorithm', constant.learnAlgorithm)
+  .constant('webBrowser', constant.webBrowser)
+  .constant('eqOracleType', constant.eqOracleType)
+  .constant('events', constant.events)
+  .constant('actionType', constant.actionType)
 
-    // filters
-    .filter('formatEqOracle', formatEqOracle)
-    .filter('formatAlgorithm', formatAlgorithm)
-    .filter('formatMilliseconds', formatMilliseconds)
-    .filter('formatUserRole', formatUserRole)
-    .filter('formatWebBrowser', formatWebBrowser)
-    .filter('sortTests', sortTests)
-    .filter('formatParameterType', formatParameterType)
-    .filter('normalizeUpperCase', normalizeUpperCase)
+  // filters
+  .filter('formatEqOracle', formatEqOracle)
+  .filter('formatAlgorithm', formatAlgorithm)
+  .filter('formatMilliseconds', formatMilliseconds)
+  .filter('formatUserRole', formatUserRole)
+  .filter('formatWebBrowser', formatWebBrowser)
+  .filter('sortTests', sortTests)
+  .filter('formatParameterType', formatParameterType)
+  .filter('normalizeUpperCase', normalizeUpperCase)
 
-    // resources
-    .service('counterResource', CounterResource)
-    .service('fileResource', FileResource)
-    .service('learnerResource', LearnerResource)
-    .service('learnResultResource', LearnResultResource)
-    .service('projectResource', ProjectResource)
-    .service('settingsResource', SettingsResource)
-    .service('symbolGroupResource', SymbolGroupResource)
-    .service('symbolParameterResource', SymbolParameterResource)
-    .service('symbolResource', SymbolResource)
-    .service('userResource', UserResource)
-    .service('testConfigResource', TestConfigResource)
-    .service('testResource', TestResource)
-    .service('testReportResource', TestReportResource)
-    .service('webhookResource', WebhookResource)
-    .service('ltsFormulaResource', LtsFormulaResource)
+  // resources
+  .service('counterResource', CounterResource)
+  .service('fileResource', FileResource)
+  .service('learnerResource', LearnerResource)
+  .service('learnResultResource', LearnResultResource)
+  .service('projectResource', ProjectResource)
+  .service('settingsResource', SettingsResource)
+  .service('symbolGroupResource', SymbolGroupResource)
+  .service('symbolParameterResource', SymbolParameterResource)
+  .service('symbolResource', SymbolResource)
+  .service('userResource', UserResource)
+  .service('testConfigResource', TestConfigResource)
+  .service('testResource', TestResource)
+  .service('testReportResource', TestReportResource)
+  .service('webhookResource', WebhookResource)
+  .service('ltsFormulaResource', LtsFormulaResource)
 
-    // services
-    .service('actionService', ActionService)
-    .service('clipboardService', ClipboardService)
-    .service('eventBus', EventBus)
-    .service('eqOracleService', EqOracleService)
-    .service('learningAlgorithmService', LearningAlgorithmService)
-    .service('downloadService', DownloadService)
-    .service('learnerResultChartService', LearnerResultChartService)
-    .service('promptService', PromptService)
-    .service('toastService', ToastService)
-    .service('learnerResultDownloadService', LearnerResultDownloadService)
-    .service('htmlElementPickerService', HtmlElementPickerService)
-    .service('testService', TestService)
-    .service('testReportService', TestReportService)
-    .service('notificationService', NotificationService)
-    .service('projectService', ProjectService)
-    .service('userService', UserService)
-    .service('uiService', UiService)
-    .service('ltsFormulaService', LtsFormulaService)
+  // services
+  .service('actionService', ActionService)
+  .service('clipboardService', ClipboardService)
+  .service('eventBus', EventBus)
+  .service('eqOracleService', EqOracleService)
+  .service('learningAlgorithmService', LearningAlgorithmService)
+  .service('downloadService', DownloadService)
+  .service('learnerResultChartService', LearnerResultChartService)
+  .service('promptService', PromptService)
+  .service('toastService', ToastService)
+  .service('learnerResultDownloadService', LearnerResultDownloadService)
+  .service('htmlElementPickerService', HtmlElementPickerService)
+  .service('testService', TestService)
+  .service('testReportService', TestReportService)
+  .service('notificationService', NotificationService)
+  .service('projectService', ProjectService)
+  .service('userService', UserService)
+  .service('uiService', UiService)
+  .service('ltsFormulaService', LtsFormulaService)
 
-    // modals
-    .component('actionCreateModal', actionCreateModalComponent)
-    .component('actionEditModal', actionEditModalComponent)
-    .component('counterCreateModal', counterCreateModalComponent)
-    .component('hypothesisLayoutSettingsModal', hypothesisLayoutSettingsModalComponent)
-    .component('learnerResultDetailsModal', learnerResultDetailsModalComponent)
-    .component('learnerSetupSettingsModal', learnerSetupSettingsModalComponent)
-    .component('projectEditModal', projectEditModalComponent)
-    .component('symbolCreateModal', symbolCreateModalComponent)
-    .component('symbolEditModal', symbolEditModalComponent)
-    .component('symbolGroupCreateModal', symbolGroupCreateModalComponent)
-    .component('symbolGroupEditModal', symbolGroupEditModalComponent)
-    .component('symbolMoveModal', symbolMoveModalComponent)
-    .component('symbolsExportModal', symbolsExportModalComponent)
-    .component('userCreateModal', userCreateModalComponent)
-    .component('userEditModal', userEditModalComponent)
-    .component('resultListModal', resultListModalComponent)
-    .component('symbolsImportModal', symbolsImportModalComponent)
-    .component('promptModal', promptModalComponent)
-    .component('confirmModal', confirmModalComponent)
-    .component('testConfigModal', testConfigModalComponent)
-    .component('testsImportModal', testsImportModalComponent)
-    .component('webhookCreateModal', webhookCreateModalComponent)
-    .component('webhookEditModal', webhookEditModalComponent)
-    .component('symbolParameterCreateModal', symbolParameterCreateModalComponent)
-    .component('symbolParameterEditModal', symbolParameterEditModalComponent)
-    .component('symbolGroupMoveModal', symbolGroupMoveModalComponent)
-    .component('separatingWordModal', separatingWordModalComponent)
-    .component('testsMoveModal', testsMoveModalComponent)
-    .component('symbolSelectModal', symbolSelectModalComponent)
-    .component('ltsFormulaCreateModal', ltsFormulaCreateModalComponent)
-    .component('ltsFormulaEditModal', ltsFormulaEditModalComponent)
+  // modals
+  .component('actionCreateModal', actionCreateModalComponent)
+  .component('actionEditModal', actionEditModalComponent)
+  .component('counterCreateModal', counterCreateModalComponent)
+  .component('hypothesisLayoutSettingsModal', hypothesisLayoutSettingsModalComponent)
+  .component('learnerResultDetailsModal', learnerResultDetailsModalComponent)
+  .component('learnerSetupSettingsModal', learnerSetupSettingsModalComponent)
+  .component('projectEditModal', projectEditModalComponent)
+  .component('symbolCreateModal', symbolCreateModalComponent)
+  .component('symbolEditModal', symbolEditModalComponent)
+  .component('symbolGroupCreateModal', symbolGroupCreateModalComponent)
+  .component('symbolGroupEditModal', symbolGroupEditModalComponent)
+  .component('symbolMoveModal', symbolMoveModalComponent)
+  .component('symbolsExportModal', symbolsExportModalComponent)
+  .component('userCreateModal', userCreateModalComponent)
+  .component('userEditModal', userEditModalComponent)
+  .component('resultListModal', resultListModalComponent)
+  .component('symbolsImportModal', symbolsImportModalComponent)
+  .component('promptModal', promptModalComponent)
+  .component('confirmModal', confirmModalComponent)
+  .component('testConfigModal', testConfigModalComponent)
+  .component('testsImportModal', testsImportModalComponent)
+  .component('webhookCreateModal', webhookCreateModalComponent)
+  .component('webhookEditModal', webhookEditModalComponent)
+  .component('symbolParameterCreateModal', symbolParameterCreateModalComponent)
+  .component('symbolParameterEditModal', symbolParameterEditModalComponent)
+  .component('symbolGroupMoveModal', symbolGroupMoveModalComponent)
+  .component('separatingWordModal', separatingWordModalComponent)
+  .component('testsMoveModal', testsMoveModalComponent)
+  .component('symbolSelectModal', symbolSelectModalComponent)
+  .component('ltsFormulaCreateModal', ltsFormulaCreateModalComponent)
+  .component('ltsFormulaEditModal', ltsFormulaEditModalComponent)
 
-    // view components
-    .component('aboutView', aboutViewComponent)
-    .component('adminSettingsView', adminSettingsViewComponent)
-    .component('adminUsersView', adminUsersViewComponent)
-    .component('countersView', countersViewComponent)
-    .component('errorView', errorViewComponent)
-    .component('filesView', filesViewComponent)
-    .component('rootView', rootViewComponent)
-    .component('learnerSetupView', learnerSetupViewComponent)
-    .component('learnerView', learnerViewComponent)
-    .component('projectsView', projectsViewComponent)
-    .component('projectView', projectViewComponent)
-    .component('resultsCompareView', resultsCompareViewComponent)
-    .component('resultsView', resultsViewComponent)
-    .component('statisticsCompareView', statisticsCompareViewComponent)
-    .component('symbolView', symbolViewComponent)
-    .component('symbolsView', symbolsViewComponent)
-    .component('testsView', testsViewComponent)
-    .component('testCaseResultsView', testCaseResultsViewComponent)
-    .component('symbolsArchiveView', symbolsArchiveViewComponent)
-    .component('profileView', profileViewComponent)
-    .component('testCaseView', testCaseViewComponent)
-    .component('testReportsView', testReportsViewComponent)
-    .component('testReportView', testReportViewComponent)
-    .component('testSuiteView', testSuiteViewComponent)
-    .component('webhooksView', webhooksViewComponent)
-    .component('redirectView', redirectViewComponent)
-    .component('ltsFormulasView', ltsFormulasViewComponent)
+  // view components
+  .component('aboutView', aboutViewComponent)
+  .component('adminSettingsView', adminSettingsViewComponent)
+  .component('adminUsersView', adminUsersViewComponent)
+  .component('countersView', countersViewComponent)
+  .component('errorView', errorViewComponent)
+  .component('filesView', filesViewComponent)
+  .component('rootView', rootViewComponent)
+  .component('learnerSetupView', learnerSetupViewComponent)
+  .component('learnerView', learnerViewComponent)
+  .component('projectsView', projectsViewComponent)
+  .component('projectView', projectViewComponent)
+  .component('resultsCompareView', resultsCompareViewComponent)
+  .component('resultsView', resultsViewComponent)
+  .component('statisticsCompareView', statisticsCompareViewComponent)
+  .component('symbolView', symbolViewComponent)
+  .component('symbolsView', symbolsViewComponent)
+  .component('testsView', testsViewComponent)
+  .component('testCaseResultsView', testCaseResultsViewComponent)
+  .component('symbolsArchiveView', symbolsArchiveViewComponent)
+  .component('profileView', profileViewComponent)
+  .component('testCaseView', testCaseViewComponent)
+  .component('testReportsView', testReportsViewComponent)
+  .component('testReportView', testReportViewComponent)
+  .component('testSuiteView', testSuiteViewComponent)
+  .component('webhooksView', webhooksViewComponent)
+  .component('redirectView', redirectViewComponent)
+  .component('ltsFormulasView', ltsFormulasViewComponent)
 
-    // forms components
-    .component('actionForm', actionFormComponent)
-    .component('projectCreateForm', projectCreateFormComponent)
-    .component('projectFormGroups', projectFormGroupsComponent)
-    .component('projectFormUrlGroups', projectFormUrlGroupsComponent)
-    .component('userEditForm', userEditFormComponent)
-    .component('userLoginForm', userLoginFormComponent)
-    .component('nodeFormGroup', nodeFormGroupComponent)
-    .component('browserConfigForm', browserConfigFormComponent)
-    .component('symbolEditForm', symbolEditFormComponent)
-    .component('symbolFormGroups', symbolFormGroupsComponent)
-    .component('searchForm', searchFormComponent)
-    .component('actionSearchForm', actionSearchFormComponent)
-    .component('symbolSearchForm', symbolSearchFormComponent)
-    .component('webhookForm', webhookFormComponent)
-    .component('symbolParameterFormGroups', symbolParameterFormGroupsComponent)
-    .component('eqOracleForm', eqOracleFormComponent)
-    .component('completeEqOracleForm', completeEqOracleFormComponent)
-    .component('randomEqOracleForm', randomEqOracleFormComponent)
-    .component('wMethodEqOracleForm', wMethodEqOracleFormComponent)
-    .component('hypothesisEqOracleForm', hypothesisEqOracleFormComponent)
-    .component('testSuiteEqOracleForm', testSuiteEqOracleFormComponent)
-    .component('wpMethodEqOracleForm', wpMethodEqOracleFormComponent)
-    .component('ltsFormulaFormGroups', ltsFormulaFormGroupsComponent)
+  // forms components
+  .component('actionForm', actionFormComponent)
+  .component('projectCreateForm', projectCreateFormComponent)
+  .component('projectFormGroups', projectFormGroupsComponent)
+  .component('projectFormUrlGroups', projectFormUrlGroupsComponent)
+  .component('userEditForm', userEditFormComponent)
+  .component('userLoginForm', userLoginFormComponent)
+  .component('nodeFormGroup', nodeFormGroupComponent)
+  .component('browserConfigForm', browserConfigFormComponent)
+  .component('symbolEditForm', symbolEditFormComponent)
+  .component('symbolFormGroups', symbolFormGroupsComponent)
+  .component('searchForm', searchFormComponent)
+  .component('actionSearchForm', actionSearchFormComponent)
+  .component('symbolSearchForm', symbolSearchFormComponent)
+  .component('webhookForm', webhookFormComponent)
+  .component('symbolParameterFormGroups', symbolParameterFormGroupsComponent)
+  .component('eqOracleForm', eqOracleFormComponent)
+  .component('completeEqOracleForm', completeEqOracleFormComponent)
+  .component('randomEqOracleForm', randomEqOracleFormComponent)
+  .component('wMethodEqOracleForm', wMethodEqOracleFormComponent)
+  .component('hypothesisEqOracleForm', hypothesisEqOracleFormComponent)
+  .component('testSuiteEqOracleForm', testSuiteEqOracleFormComponent)
+  .component('wpMethodEqOracleForm', wpMethodEqOracleFormComponent)
+  .component('ltsFormulaFormGroups', ltsFormulaFormGroupsComponent)
 
-    // widgets components
-    .component('widget', widgetComponent)
-    .component('counterexamplesWidget', counterexamplesWidgetComponent)
-    .component('learnResumeSettingsWidget', learnerResumeSettingsWidgetComponent)
-    .component('learnerStatusWidget', learnerStatusWidgetComponent)
-    .component('latestLearnResultWidget', latestLearnerResultWidgetComponent)
-    .component('projectDetailsWidget', projectDetailsWidgetComponent)
-    .component('latestTestReportWidget', latestTestReportWidgetComponent)
-    .component('testCaseGenerationWidget', testCaseGenerationWidgetComponent)
-    .component('testSuiteGenerationWidget', testSuiteGenerationWidgetComponent)
+  // widgets components
+  .component('widget', widgetComponent)
+  .component('counterexamplesWidget', counterexamplesWidgetComponent)
+  .component('learnResumeSettingsWidget', learnerResumeSettingsWidgetComponent)
+  .component('learnerStatusWidget', learnerStatusWidgetComponent)
+  .component('latestLearnResultWidget', latestLearnerResultWidgetComponent)
+  .component('projectDetailsWidget', projectDetailsWidgetComponent)
+  .component('latestTestReportWidget', latestTestReportWidgetComponent)
+  .component('testCaseGenerationWidget', testCaseGenerationWidgetComponent)
+  .component('testSuiteGenerationWidget', testSuiteGenerationWidgetComponent)
 
-    // web action forms
-    .component('alertAcceptDismissActionForm', alertAcceptDismissActionFormComponent)
-    .component('alertGetTextActionForm', alertGetTextActionFormComponent)
-    .component('alertSendKeysActionForm', alertSendKeysActionFormComponent)
-    .component('browserActionForm', browserActionFormComponent)
-    .component('checkNodeAttributeValueActionForm', checkNodeAttributeValueActionFormComponent)
-    .component('checkForNodeActionForm', checkForNodeActionFormComponent)
-    .component('checkForTextActionForm', checkForTextActionFormComponent)
-    .component('checkPageTitleActionForm', checkPageTitleActionFormComponent)
-    .component('checkNodeSelectedActionForm', checkNodeSelectedActionFormComponent)
-    .component('clearInputActionForm', clearInputActionFormComponent)
-    .component('clickActionForm', clickActionFormComponent)
-    .component('clickElementByTextActionForm', clickElementByTextActionFormComponent)
-    .component('clickLinkByTextActionForm', clickLinkByTextActionFormComponent)
-    .component('executeScriptActionForm', executeScriptActionFormComponent)
-    .component('moveMouseActionForm', moveMouseActionFormComponent)
-    .component('openActionForm', openActionFormComponent)
-    .component('selectActionForm', selectActionFormComponent)
-    .component('sendKeysActionForm', sendKeysActionFormComponent)
-    .component('submitActionForm', submitActionFormComponent)
-    .component('switchToActionForm', switchToActionFormComponent)
-    .component('switchToFrameActionForm', switchToFrameActionFormComponent)
-    .component('waitForNodeActionForm', waitForNodeActionFormComponent)
-    .component('waitForTitleActionForm', waitForTitleActionFormComponent)
-    .component('waitForTextActionForm', waitForTextActionFormComponent)
-    .component('pressKeyActionForm', pressKeyActionFormComponent)
-    .component('waitForNodeAttributeActionForm', waitForNodeAttributeActionFormComponent)
-    .component('uploadFileActionForm', uploadFileActionFormComponent)
+  // web action forms
+  .component('alertAcceptDismissActionForm', alertAcceptDismissActionFormComponent)
+  .component('alertGetTextActionForm', alertGetTextActionFormComponent)
+  .component('alertSendKeysActionForm', alertSendKeysActionFormComponent)
+  .component('browserActionForm', browserActionFormComponent)
+  .component('checkNodeAttributeValueActionForm', checkNodeAttributeValueActionFormComponent)
+  .component('checkForNodeActionForm', checkForNodeActionFormComponent)
+  .component('checkForTextActionForm', checkForTextActionFormComponent)
+  .component('checkPageTitleActionForm', checkPageTitleActionFormComponent)
+  .component('checkNodeSelectedActionForm', checkNodeSelectedActionFormComponent)
+  .component('clearInputActionForm', clearInputActionFormComponent)
+  .component('clickActionForm', clickActionFormComponent)
+  .component('clickElementByTextActionForm', clickElementByTextActionFormComponent)
+  .component('clickLinkByTextActionForm', clickLinkByTextActionFormComponent)
+  .component('executeScriptActionForm', executeScriptActionFormComponent)
+  .component('moveMouseActionForm', moveMouseActionFormComponent)
+  .component('openActionForm', openActionFormComponent)
+  .component('selectActionForm', selectActionFormComponent)
+  .component('sendKeysActionForm', sendKeysActionFormComponent)
+  .component('submitActionForm', submitActionFormComponent)
+  .component('switchToActionForm', switchToActionFormComponent)
+  .component('switchToFrameActionForm', switchToFrameActionFormComponent)
+  .component('waitForNodeActionForm', waitForNodeActionFormComponent)
+  .component('waitForTitleActionForm', waitForTitleActionFormComponent)
+  .component('waitForTextActionForm', waitForTextActionFormComponent)
+  .component('pressKeyActionForm', pressKeyActionFormComponent)
+  .component('waitForNodeAttributeActionForm', waitForNodeAttributeActionFormComponent)
+  .component('uploadFileActionForm', uploadFileActionFormComponent)
 
-    // rest action forms
-    .component('requestActionForm', requestActionFormComponent)
-    .component('checkAttributeExistsActionForm', checkAttributeExistsActionFormComponent)
-    .component('checkAttributeTypeActionForm', checkAttributeTypeActionFormComponent)
-    .component('checkAttributeValueActionForm', checkAttributeValueActionFormComponent)
-    .component('checkHeaderFieldActionForm', checkHeaderFieldActionFormComponent)
-    .component('checkHttpBodyActionForm', checkHttpBodyActionFormComponent)
-    .component('checkStatusActionForm', checkStatusActionFormComponent)
-    .component('validateJsonActionForm', validateJsonActionFormComponent)
+  // rest action forms
+  .component('requestActionForm', requestActionFormComponent)
+  .component('checkAttributeExistsActionForm', checkAttributeExistsActionFormComponent)
+  .component('checkAttributeTypeActionForm', checkAttributeTypeActionFormComponent)
+  .component('checkAttributeValueActionForm', checkAttributeValueActionFormComponent)
+  .component('checkHeaderFieldActionForm', checkHeaderFieldActionFormComponent)
+  .component('checkHttpBodyActionForm', checkHttpBodyActionFormComponent)
+  .component('checkStatusActionForm', checkStatusActionFormComponent)
+  .component('validateJsonActionForm', validateJsonActionFormComponent)
 
-    // misc action forms
-    .component('assertCounterActionForm', assertCounterActionFormComponent)
-    .component('assertVariableActionForm', assertVariableActionFormComponent)
-    .component('incrementCounterActionForm', incrementCounterActionFormComponent)
-    .component('setCounterActionForm', setCounterActionFormComponent)
-    .component('setVariableActionForm', setVariableActionFormComponent)
-    .component('setVariableByCookieActionForm', setVariableByCookieActionFormComponent)
-    .component('setVariableByHttpResponseActionForm', setVariableByHttpResponseActionFormComponent)
-    .component('setVariableByHtmlActionForm', setVariableByHtmlActionFormComponent)
-    .component('setVariableByJsonActionForm', setVariableByJsonActionFormComponent)
-    .component('setVariableByNodeAttributeActionForm', setVariableByNodeAttributeActionFormComponent)
-    .component('setVariableByNodeCountActionForm', setVariableByNodeCountActionFormComponent)
-    .component('setVariableByRegexGroupActionForm', setVariableByRegexGroupActionFormComponent)
-    .component('setVariableByHttpStatusActionForm', setVariableByHttpStatusActionFormComponent)
-    .component('waitActionForm', waitActionFormComponent)
+  // misc action forms
+  .component('assertCounterActionForm', assertCounterActionFormComponent)
+  .component('assertVariableActionForm', assertVariableActionFormComponent)
+  .component('incrementCounterActionForm', incrementCounterActionFormComponent)
+  .component('setCounterActionForm', setCounterActionFormComponent)
+  .component('setVariableActionForm', setVariableActionFormComponent)
+  .component('setVariableByCookieActionForm', setVariableByCookieActionFormComponent)
+  .component('setVariableByHttpResponseActionForm', setVariableByHttpResponseActionFormComponent)
+  .component('setVariableByHtmlActionForm', setVariableByHtmlActionFormComponent)
+  .component('setVariableByJsonActionForm', setVariableByJsonActionFormComponent)
+  .component('setVariableByNodeAttributeActionForm', setVariableByNodeAttributeActionFormComponent)
+  .component('setVariableByNodeCountActionForm', setVariableByNodeCountActionFormComponent)
+  .component('setVariableByRegexGroupActionForm', setVariableByRegexGroupActionFormComponent)
+  .component('setVariableByHttpStatusActionForm', setVariableByHttpStatusActionFormComponent)
+  .component('waitActionForm', waitActionFormComponent)
 
-    // misc components
-    .component('alex', alexComponent)
-    .component('actionBar', actionBarComponent)
-    .component('hypothesis', hypothesisComponent)
-    .component('discriminationTree', discriminationTreeComponent)
-    .component('fileDropzone', fileDropzoneComponent)
-    .component('loadScreen', loadScreenComponent)
-    .component('projectList', projectListComponent)
-    .component('sidebar', sidebarComponent)
-    .component('responsiveIframe', responsiveIframeComponent)
-    .component('viewHeader', viewHeaderComponent)
-    .component('htmlElementPicker', htmlElementPickerComponent)
-    .component('learnerResultPanel', learnerResultPanelComponent)
-    .component('learnerResultPanelTestingView', learnerResultPanelTestingViewComponent)
-    .component('learnerResultPanelDefaultView', learnerResultPanelDefaultViewComponent)
-    .component('learnerResultPanelCheckingView', learnerResultPanelCheckingViewComponent)
-    .component('observationTable', observationTableComponent)
-    .component('symbolListItem', symbolListItemComponent)
-    .component('learnerResultListItem', learnerResultListItemComponent)
-    .component('testResultReport', testResultReportComponent)
-    .component('testTree', testTreeComponent)
-    .component('testCaseNode', testCaseNodeComponent)
-    .component('symbolParametersPanel', symbolParametersPanelComponent)
-    .component('testSuiteNode', testSuiteNodeComponent)
-    .component('projectUrlList', projectUrlListComponent)
-    .component('simpleSymbolGroupTree', simpleSymbolGroupTreeComponent)
-    .component('simpleSymbolGroupTreeItem', simpleSymbolGroupTreeItemComponent)
-    .component('symbolGroupHeader', symbolGroupHeaderComponent)
-    .component('symbolItem', symbolItemComponent)
-    .component('symbolsSymbolGroupTree', symbolsSymbolGroupTreeComponent)
-    .component('reportOutputsColumn', reportOutputsColumnComponent)
-    .component('reportCharts', reportChartsComponent)
-    .component('testConfigList', testConfigListComponent)
-    .component('selectableCheckbox', selectableCheckboxComponent)
-    .component('selectableCheckboxMultiple', selectableCheckboxMultipleComponent)
-    .component('prePostTestCaseStep', prePostTestCaseStepComponent)
-    .component('symbolParameters', symbolParametersComponent)
-    .component('testCaseExpectedResult', testCaseExpectedResultComponent)
-    .component('pagination', paginationComponent)
-    .component('testSuiteTree', testSuiteTreeComponent)
-    .component('ltsFormulaList', ltsFormulaListComponent);
+  // misc components
+  .component('alex', alexComponent)
+  .component('actionBar', actionBarComponent)
+  .component('hypothesis', hypothesisComponent)
+  .component('discriminationTree', discriminationTreeComponent)
+  .component('fileDropzone', fileDropzoneComponent)
+  .component('loadScreen', loadScreenComponent)
+  .component('projectList', projectListComponent)
+  .component('sidebar', sidebarComponent)
+  .component('responsiveIframe', responsiveIframeComponent)
+  .component('viewHeader', viewHeaderComponent)
+  .component('htmlElementPicker', htmlElementPickerComponent)
+  .component('learnerResultPanel', learnerResultPanelComponent)
+  .component('learnerResultPanelTestingView', learnerResultPanelTestingViewComponent)
+  .component('learnerResultPanelDefaultView', learnerResultPanelDefaultViewComponent)
+  .component('learnerResultPanelCheckingView', learnerResultPanelCheckingViewComponent)
+  .component('observationTable', observationTableComponent)
+  .component('symbolListItem', symbolListItemComponent)
+  .component('learnerResultListItem', learnerResultListItemComponent)
+  .component('testResultReport', testResultReportComponent)
+  .component('testTree', testTreeComponent)
+  .component('testCaseNode', testCaseNodeComponent)
+  .component('symbolParametersPanel', symbolParametersPanelComponent)
+  .component('testSuiteNode', testSuiteNodeComponent)
+  .component('projectUrlList', projectUrlListComponent)
+  .component('simpleSymbolGroupTree', simpleSymbolGroupTreeComponent)
+  .component('simpleSymbolGroupTreeItem', simpleSymbolGroupTreeItemComponent)
+  .component('symbolGroupHeader', symbolGroupHeaderComponent)
+  .component('symbolItem', symbolItemComponent)
+  .component('symbolsSymbolGroupTree', symbolsSymbolGroupTreeComponent)
+  .component('symbolSelectDropdown', symbolSelectDropdownComponent)
+  .component('reportOutputsColumn', reportOutputsColumnComponent)
+  .component('reportCharts', reportChartsComponent)
+  .component('testConfigList', testConfigListComponent)
+  .component('selectableCheckbox', selectableCheckboxComponent)
+  .component('selectableCheckboxMultiple', selectableCheckboxMultipleComponent)
+  .component('prePostTestCaseStep', prePostTestCaseStepComponent)
+  .component('symbolParameters', symbolParametersComponent)
+  .component('testCaseExpectedResult', testCaseExpectedResultComponent)
+  .component('pagination', paginationComponent)
+  .component('testSuiteTree', testSuiteTreeComponent)
+  .component('ltsFormulaList', ltsFormulaListComponent);
 
 angular.bootstrap(document, ['ALEX']);

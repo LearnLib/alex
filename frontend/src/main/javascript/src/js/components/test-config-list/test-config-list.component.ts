@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import remove from 'lodash/remove';
+import * as remove from 'lodash/remove';
 import {TestConfigResource} from '../../services/resources/test-config-resource.service';
 import {ToastService} from '../../services/toast.service';
 

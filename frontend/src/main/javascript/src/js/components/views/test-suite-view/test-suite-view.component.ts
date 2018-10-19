@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import remove from 'lodash/remove';
+import * as remove from 'lodash/remove';
 import {version} from '../../../../../environments';
 import {webBrowser} from '../../../constants';
 import {DriverConfigService} from '../../../services/driver-config.service';

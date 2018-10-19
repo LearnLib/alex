@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import remove from 'lodash/remove';
+import * as remove from 'lodash/remove';
 import {LtsFormulaResource} from './resources/lts-formula-resource.service';
 import {IPromise} from 'angular';
 

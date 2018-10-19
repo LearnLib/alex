@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import remove from 'lodash/remove';
+import * as remove from 'lodash/remove';
 import {Selectable} from '../../../utils/selectable';
 import {TestReportResource} from '../../../services/resources/test-report-resource.service';
 import {ProjectService} from '../../../services/project.service';

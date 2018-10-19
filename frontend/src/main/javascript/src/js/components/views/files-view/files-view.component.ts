@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import remove from 'lodash/remove';
+import * as remove from 'lodash/remove';
 import {apiUrl} from '../../../../../environments';
 import {Selectable} from '../../../utils/selectable';
 import {ToastService} from '../../../services/toast.service';
