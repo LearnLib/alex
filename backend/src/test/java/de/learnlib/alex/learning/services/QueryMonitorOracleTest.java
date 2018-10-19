@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.learning.services;
 
+import de.learnlib.alex.learning.services.oracles.QueryMonitorOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.DefaultQuery;
 import net.automatalib.words.Word;

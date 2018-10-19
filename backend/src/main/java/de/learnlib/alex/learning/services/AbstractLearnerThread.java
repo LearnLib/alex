@@ -31,6 +31,10 @@ import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.TestSuiteEQO
 import de.learnlib.alex.learning.events.LearnerEvent;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.oracles.DelegationOracle;
+import de.learnlib.alex.learning.services.oracles.InterruptibleOracle;
+import de.learnlib.alex.learning.services.oracles.MultiSULOracle;
+import de.learnlib.alex.learning.services.oracles.QueryMonitorOracle;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import de.learnlib.api.SUL;
@@ -105,6 +109,9 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /** The oracle that monitors which queries are being posed. */
     protected final QueryMonitorOracle<String, String> monitorOracle;
 
+    /** The oracle that can be interrupted. */
+    protected final InterruptibleOracle<String, String> interruptOracle;
+
     /** The test DAO. */
     protected final TestDAO testDAO;
 
@@ -176,12 +183,14 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
             this.currentQueries = currentQueries;
         });
 
+        interruptOracle = new InterruptibleOracle<>(monitorOracle);
+
         // create the concrete membership oracle.
         this.mqOracle = new DelegationOracle<>();
         if (result.isUseMQCache()) {
-            this.mqOracle.setDelegate(MealyCacheOracle.createDAGCacheOracle(this.abstractAlphabet, monitorOracle));
+            this.mqOracle.setDelegate(MealyCacheOracle.createDAGCacheOracle(this.abstractAlphabet, interruptOracle));
         } else {
-            this.mqOracle.setDelegate(monitorOracle);
+            this.mqOracle.setDelegate(interruptOracle);
         }
 
         // create the learner.
@@ -368,7 +377,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     }
 
     public void stopLearning() {
-        this.multiSULOracle.interrupt();
+        this.interruptOracle.interrupt();
     }
 
     public Learner.LearnerPhase getLearnerPhase() {

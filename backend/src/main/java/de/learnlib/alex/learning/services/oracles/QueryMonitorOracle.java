@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.learning.services;
+package de.learnlib.alex.learning.services.oracles;
 
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.Query;

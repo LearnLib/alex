@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.learning.services;
+package de.learnlib.alex.learning.services.oracles;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.learning.exceptions.LearnerException;
@@ -47,9 +47,6 @@ public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
     /** The current user. Is used for logging purposes. */
     private User user;
 
-    /** If the learning experiment has been interrupted by the user. */
-    private boolean isInterrupted = false;
-
     /**
      * Constructor.
      *
@@ -65,17 +62,6 @@ public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
 
     @Override
     public void processQueries(Collection<? extends Query<I, Word<O>>> queries) {
-        if (queries.size() > 0) {
-            if (isInterrupted) {
-                // force a null pointer exception so the learner stops
-                queries.forEach(q -> q.answer(null));
-            } else {
-                processQueries(sul, queries);
-            }
-        }
-    }
-
-    private void processQueries(SUL<I, O> sul, Collection<? extends Query<I, Word<O>>> queries) {
         ExecutorService executor = Executors.newFixedThreadPool(queries.size());
 
         for (Query<I, Word<O>> q : queries) {
@@ -129,9 +115,5 @@ public class MultiSULOracle<I, O> implements MembershipOracle<I, Word<O>> {
         executor.shutdown();
         while (!executor.isTerminated()) { // wait for all futures to finish
         }
-    }
-
-    public void interrupt() {
-        this.isInterrupted = true;
     }
 }

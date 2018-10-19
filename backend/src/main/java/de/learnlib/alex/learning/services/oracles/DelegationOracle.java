@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.learning.services;
+package de.learnlib.alex.learning.services.oracles;
 
+import de.learnlib.alex.common.exceptions.LearnerInterruptedException;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.api.oracle.MembershipOracle;
@@ -71,6 +72,8 @@ public class DelegationOracle<I, O> implements MembershipOracle<I, Word<O>> {
             try {
                 delegate.processQueries(queries);
                 break;
+            } catch (LearnerInterruptedException e) {
+                throw new LearnerException(e.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
                 lastException = e;
