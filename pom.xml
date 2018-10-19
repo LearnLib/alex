@@ -13,7 +13,9 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.learnlib.alex</groupId>
@@ -23,7 +25,8 @@
 
     <name>Automata Learning Experience (ALEX)</name>
     <description>
-        A web application for interring Mealy machines of web applications and RESTful web services via active automata learning.
+        A web application for interring Mealy machines of web applications and RESTful web services via active automata
+        learning.
     </description>
 
     <licenses>
@@ -88,7 +91,7 @@
         <module>documentation</module>
         <module>frontend</module>
         <module>plugins</module>
-  </modules>
+    </modules>
 
     <!--===== properties ======-->
     <prerequisites>
@@ -116,6 +119,30 @@
         <!-- dependencies versions -->
         <spring-boot.version>1.5.10.RELEASE</spring-boot.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>http://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <!--===== build ======-->
     <build>
