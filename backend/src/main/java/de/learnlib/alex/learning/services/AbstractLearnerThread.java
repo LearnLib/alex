@@ -45,6 +45,9 @@ import de.learnlib.filter.cache.mealy.MealyCacheOracle;
 import de.learnlib.mapper.ContextExecutableInputSUL;
 import de.learnlib.mapper.SULMappers;
 import de.learnlib.mapper.api.ContextExecutableInput;
+import de.learnlib.oracle.membership.SULOracle;
+import de.learnlib.oracle.parallelism.DynamicParallelOracle;
+import de.learnlib.oracle.parallelism.DynamicParallelOracleBuilder;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -173,10 +176,20 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         final SUL<String, String> mappedSUL = SULMappers.apply(symbolMapper, ceiSUL);
         this.sul = new AlexSUL<>(mappedSUL);
 
-        this.multiSULOracle = new MultiSULOracle<>(sul, user);
+
+        final DynamicParallelOracle<String, Word<String>> parallelOracle =
+                new DynamicParallelOracleBuilder<>(() -> new SULOracle<>(this.sul))
+                        .withBatchSize(1)
+                        .withPoolSize(configuration.getUrls().size())
+                        .create();
+
+
+//        this.multiSULOracle = new MultiSULOracle<>(sul, user);
 
         // monitor which queries are being processed.
-        monitorOracle = new QueryMonitorOracle<>(multiSULOracle);
+//        monitorOracle = new QueryMonitorOracle<>(multiSULOracle);
+        monitorOracle = new QueryMonitorOracle<>(parallelOracle);
+
         monitorOracle.addPostProcessingListener(queries -> {
             List<DefaultQueryProxy> currentQueries = new ArrayList<>();
             queries.forEach(query -> currentQueries.add(DefaultQueryProxy.createFrom(new DefaultQuery<>(query))));
