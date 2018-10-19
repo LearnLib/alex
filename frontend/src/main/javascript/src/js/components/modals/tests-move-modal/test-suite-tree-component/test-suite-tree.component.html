@@ -1,29 +1,29 @@
 <div class="test-suite-tree">
-    <div class="d-flex flex-row">
-        <div>
-            <i
-                class="fa fa-fw cursor-pointer"
-                ng-class="{'fa-minus-square-o': !vm.collapse, 'fa-plus-square-o': vm.collapse, 'invisible': vm.getTestSuites().length === 0}"
-                ng-click="vm.collapse = !vm.collapse"
-            >
-            </i>
-        </div>
-        <div
-            class="header w-100 cursor-pointer"
-            ng-click="vm.selectTestSuite(vm.testSuite)"
-            ng-class="{'selected': vm.testSuite === vm.selectedTestSuite}"
-        >
-            <i class="fa fa-folder fa-fw"></i> <strong>{{vm.testSuite.name}}</strong>
-        </div>
+  <div class="d-flex flex-row">
+    <div>
+      <i
+          class="fa fa-fw cursor-pointer"
+          ng-class="{'fa-minus-square-o': !vm.collapse, 'fa-plus-square-o': vm.collapse, 'invisible': vm.getTestSuites().length === 0}"
+          ng-click="vm.collapse = !vm.collapse"
+      >
+      </i>
     </div>
-    <div class="children" style="padding-left: 1.5rem" uib-collapse="vm.collapse">
-        <test-suite-tree
-            ng-repeat="testSuite in vm.getTestSuites() | orderBy:'-name':true"
-            test-suite="testSuite"
-            selected-test-suite="vm.selectedTestSuite"
-            on-selected="vm.selectTestSuite(testSuite)"
-            level="{{vm.level + 1}}"
-        >
-        </test-suite-tree>
+    <div
+        class="header w-100 cursor-pointer"
+        ng-click="vm.selectTestSuite(vm.testSuite)"
+        ng-class="{'selected': vm.testSuite === vm.selectedTestSuite}"
+    >
+      <i class="fa fa-folder fa-fw"></i> <strong>{{vm.testSuite.name}}</strong>
     </div>
+  </div>
+  <div class="children" style="padding-left: 1.5rem" uib-collapse="vm.collapse">
+    <test-suite-tree
+        ng-repeat="testSuite in vm.getTestSuites() | orderBy:'-name':true"
+        test-suite="testSuite"
+        selected-test-suite="vm.selectedTestSuite"
+        on-selected="vm.selectTestSuite(testSuite)"
+        level="{{vm.level + 1}}"
+    >
+    </test-suite-tree>
+  </div>
 </div>

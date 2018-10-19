@@ -1,0 +1,63 @@
+/*
+ * Copyright 2018 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import {HtmlElementPickerService} from '../../../services/html-element-picker.service';
+
+/**
+ * The node form group component.
+ */
+export const nodeFormGroupComponent = {
+  template: require('./node-form-group.component.html'),
+  bindings: {
+    node: '=',
+    label: '@',
+    onSelected: '&'
+  },
+  controllerAs: 'vm',
+  controller: class NodeFormGroupComponent {
+
+    public node: any;
+
+    public label: string;
+
+    public onSelected: (any) => void;
+
+    /**
+     * Constructor.
+     *
+     * @param htmlElementPickerService
+     */
+    /* @ngInject */
+    constructor(private htmlElementPickerService: HtmlElementPickerService) {
+    }
+
+    $onInit(): void {
+      this.label = this.label != null ? this.label : 'Selector';
+    }
+
+    /** Opens the element picker. */
+    openPicker(): void {
+      this.htmlElementPickerService.open()
+        .then(data => {
+          this.node.selector = data.node.selector;
+          this.node.type = data.node.type;
+          if (this.onSelected) {
+            this.onSelected({data});
+          }
+        });
+    }
+  }
+};

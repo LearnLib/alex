@@ -9,18 +9,15 @@ module.exports = function (grunt) {
 
     const browserifyOptionsDist = {
         files: {
-            '<%= buildLocation %>/js/alex.bundle.js': ['src/js/index.js']
+            '<%= buildLocation %>/js/alex.bundle.js': ['src/js/index.ts']
         },
         options: {
+            plugin: [
+                ['tsify']
+            ],
             transform: [
-                ['babelify', {
-                    sourceMap: false,
-                    presets: ['es2015'],
-                    compact: false
-                }],
-                ['browserify-ngannotate'],
-                ['html2js-browserify', {
-                    minify: true
+                ['stringify', { // load component templates
+                    appliesTo: { includeExtensions: ['.html']}
                 }]
             ]
         }
@@ -31,7 +28,7 @@ module.exports = function (grunt) {
         watch: true,
         keepAlive: true,
         watchifyOptions: {
-            entries: ['src/js/index.js'],
+            entries: ['src/js/index.ts'],
             ignoreWatch: ['**/node_modules/**'],
             cache: {},
             packageCache: {},
@@ -111,25 +108,9 @@ module.exports = function (grunt) {
                 dist: browserifyOptionsDist
             },
 
-            karma: {
-                unit: {
-                    configFile: 'test/karma.conf.unit.js'
-                }
-            },
-
-            jshint: {
-                dist: {
-                    src: ['src/js/**/*.js']
-                },
-                options: {
-                    'esnext': true,
-                    'laxbreak': true,
-                    '-W053': true
-                }
-            },
-
             exec: {
-                'build_css': 'node-sass src/scss/style.scss -o <%= buildLocation %>/css'
+                'build_css': 'node-sass src/scss/style.scss -o <%= buildLocation %>/css',
+                'ng_annotate': 'ng-annotate -a -o <%= buildLocation %>/js/alex.bundle.js <%= buildLocation %>/js/alex.bundle.js'
             },
 
             copy: {
@@ -168,22 +149,18 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-postcss');
     grunt.loadNpmTasks('grunt-browserify');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-concurrent');
 
     const build = ['concat:libs', 'uglify:libs', 'copy:fonts', 'bundle-css', 'copy:images', 'copy:index'];
 
-    grunt.registerTask('bundle-js:dist', ['browserify:dist', 'uglify:app']);
+    grunt.registerTask('bundle-js:dist', ['browserify:dist', 'exec:ng_annotate', 'uglify:app']);
     grunt.registerTask('bundle-js:dev', ['browserify:dev']);
     grunt.registerTask('bundle-css', ['exec:build_css', 'postcss', 'cssmin']);
     grunt.registerTask('build:dev', build.concat(['bundle-js:dev']));
     grunt.registerTask('build:dist', build.concat(['bundle-js:dist']));
     grunt.registerTask('dev', 'concurrent:dev');
     grunt.registerTask('build', 'build:dist');
-    grunt.registerTask('lint', 'jshint');
-    grunt.registerTask('test', ['karma:unit']);
 };

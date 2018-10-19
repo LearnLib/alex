@@ -1,23 +1,23 @@
 <div class="modal-header">
-    <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
-        <i class="fa fa-close fa-fw"></i>
-    </a>
-    <h3 class="modal-title">Create Lts Formula</h3>
+  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+    <i class="fa fa-close fa-fw"></i>
+  </a>
+  <h3 class="modal-title">Create Lts Formula</h3>
 </div>
 
 <form name="vm.form" ng-submit="vm.createFormula()">
 
-    <div class="modal-body">
+  <div class="modal-body">
 
-        <lts-formula-form-groups formula="vm.formula" form="vm.form"></lts-formula-form-groups>
+    <lts-formula-form-groups formula="vm.formula" form="vm.form"></lts-formula-form-groups>
 
-        <div class="alert alert-danger alert-condensed" ng-if="vm.errorMessage" ng-bind="vm.errorMessage"></div>
+    <div class="alert alert-danger alert-condensed" ng-if="vm.errorMessage" ng-bind="vm.errorMessage"></div>
 
-    </div>
+  </div>
 
-    <div class="modal-footer">
-        <button class="btn btn-sm btn-primary" type="submit">Create</button>
-        <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
-    </div>
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-primary" type="submit">Create</button>
+    <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
+  </div>
 
 </form>
