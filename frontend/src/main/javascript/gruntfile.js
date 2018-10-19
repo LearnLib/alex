@@ -24,10 +24,7 @@ module.exports = function (grunt) {
                 ['stringify', { // load component templates
                     appliesTo: { includeExtensions: ['.html']}
                 }],
-                ['browserify-ngannotate'],
-                ['html2js-browserify', {
-                    minify: true
-                }]
+                ['browserify-ngannotate']
             ]
         }
     };
@@ -117,23 +114,6 @@ module.exports = function (grunt) {
                 dist: browserifyOptionsDist
             },
 
-            karma: {
-                unit: {
-                    configFile: 'test/karma.conf.unit.js'
-                }
-            },
-
-            jshint: {
-                dist: {
-                    src: ['src/js/**/*.js']
-                },
-                options: {
-                    'esnext': true,
-                    'laxbreak': true,
-                    '-W053': true
-                }
-            },
-
             exec: {
                 'build_css': 'node-sass src/scss/style.scss -o <%= buildLocation %>/css'
             },
@@ -174,10 +154,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-postcss');
     grunt.loadNpmTasks('grunt-browserify');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-concurrent');
 
@@ -190,6 +168,4 @@ module.exports = function (grunt) {
     grunt.registerTask('build:dist', build.concat(['bundle-js:dist']));
     grunt.registerTask('dev', 'concurrent:dev');
     grunt.registerTask('build', 'build:dist');
-    grunt.registerTask('lint', 'jshint');
-    grunt.registerTask('test', ['karma:unit']);
 };
