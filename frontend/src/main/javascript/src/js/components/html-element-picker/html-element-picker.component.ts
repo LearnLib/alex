@@ -58,7 +58,7 @@ class HtmlElementPickerComponent {
    * @param $element
    * @param $scope
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private projectService: ProjectService,
               private $element: IRootElementService,
               private $scope: IScope) {

@@ -44,7 +44,7 @@ export const testSuiteGenerationWidgetComponent = {
      * @param learnResultResource
      * @param toastService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private learnResultResource: LearnResultResource,
                 private toastService: ToastService) {
 

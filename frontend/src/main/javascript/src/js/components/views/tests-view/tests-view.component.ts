@@ -37,7 +37,7 @@ export const testsViewComponent = {
      * @param projectService
      * @param testResource
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $state: any,
                 private projectService: ProjectService,
                 private testResource: TestResource) {

@@ -56,7 +56,7 @@ export const counterexamplesWidgetComponent = {
      * @param eventBus
      * @param dragulaService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $scope: IScope,
                 private learnerResource: LearnerResource,
                 private toastService: ToastService,

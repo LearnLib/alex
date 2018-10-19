@@ -30,7 +30,7 @@ export const projectViewComponent = {
      *
      * @param projectService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private projectService: ProjectService) {
     }
 

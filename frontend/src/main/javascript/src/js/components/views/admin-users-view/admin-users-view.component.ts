@@ -45,7 +45,7 @@ export const adminUsersViewComponent = {
      * @param $uibModal
      * @param userService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $scope: IScope,
                 private userResource: UserResource,
                 private toastService: ToastService,

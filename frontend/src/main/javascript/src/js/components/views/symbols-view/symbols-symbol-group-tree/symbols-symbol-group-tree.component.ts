@@ -42,7 +42,7 @@ export const symbolsSymbolGroupTreeComponent = {
      * @param eventBus
      * @param $uibModal
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private promptService: PromptService,
                 private symbolGroupResource: SymbolGroupResource,
                 private toastService: ToastService,

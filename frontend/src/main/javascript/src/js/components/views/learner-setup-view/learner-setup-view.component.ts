@@ -62,7 +62,7 @@ class LearnerSetupViewComponent {
    * @param settingsResource
    * @param $uibModal
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $state: any,
               private symbolGroupResource: SymbolGroupResource,
               private projectService: ProjectService,

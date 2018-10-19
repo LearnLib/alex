@@ -37,7 +37,7 @@ export const profileViewComponent = {
      * @param userService
      * @param toastService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private userResource: UserResource,
                 private userService: UserService,
                 private toastService: ToastService) {

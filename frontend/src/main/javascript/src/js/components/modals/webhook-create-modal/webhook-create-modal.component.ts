@@ -48,7 +48,7 @@ export const webhookCreateModalComponent = {
      * @param webhookResource
      * @param toastService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private webhookResource: WebhookResource,
                 private toastService: ToastService) {
       super();

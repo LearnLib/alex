@@ -40,7 +40,7 @@ class LearnerStatusWidgetComponent {
    * @param learnerResource
    * @param toastService
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $interval: IIntervalService,
               private learnerResource: LearnerResource,
               private toastService: ToastService) {

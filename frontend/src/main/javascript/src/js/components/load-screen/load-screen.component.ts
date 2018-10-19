@@ -26,7 +26,7 @@ export const loadScreenComponent = {
      *
      * @param uiService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private uiService: UiService) {
     }
 

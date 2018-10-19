@@ -58,7 +58,7 @@ export const userEditModalComponent = {
      * @param projectService
      * @param userService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $state: any,
                 private userResource: UserResource,
                 private toastService: ToastService,

@@ -51,7 +51,7 @@ export const symbolsExportModalComponent = {
      * @param downloadService
      * @param toastService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private downloadService: DownloadService,
                 private toastService: ToastService) {
       super();

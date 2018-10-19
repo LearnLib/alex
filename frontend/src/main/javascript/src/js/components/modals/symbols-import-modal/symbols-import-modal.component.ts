@@ -56,7 +56,7 @@ export const symbolsImportModalComponent = {
      * @param toastService
      * @param symbolGroupResource
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private symbolResource: SymbolResource,
                 private projectService: ProjectService,
                 private toastService: ToastService,

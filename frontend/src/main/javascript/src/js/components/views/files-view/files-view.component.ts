@@ -47,7 +47,7 @@ class FilesViewComponent {
    * @param fileResource
    * @param projectService
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private Upload: any,
               private toastService: ToastService,
               private fileResource: FileResource,

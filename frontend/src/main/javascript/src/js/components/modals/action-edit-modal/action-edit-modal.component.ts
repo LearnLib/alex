@@ -48,7 +48,7 @@ export const actionEditModalComponent = {
      * @param symbolResource
      * @param projectService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private actionService: ActionService,
                 private symbolResource: SymbolResource,
                 private projectService: ProjectService) {

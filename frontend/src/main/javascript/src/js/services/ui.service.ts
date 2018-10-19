@@ -34,7 +34,7 @@ export class UiService {
    * @param $rootScope
    * @param $http
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $rootScope: IRootScopeService,
               private $http: IHttpService) {
 

@@ -41,7 +41,7 @@ export const userCreateModalComponent = {
      * @param userResource
      * @param toastService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private userResource: UserResource,
                 private toastService: ToastService) {
       super();

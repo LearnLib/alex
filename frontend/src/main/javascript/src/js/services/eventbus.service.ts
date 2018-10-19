@@ -26,7 +26,7 @@ export class EventBus {
    *
    * @param $rootScope
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $rootScope: IRootScopeService) {
   }
 

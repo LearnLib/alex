@@ -27,7 +27,7 @@ export class HtmlElementPickerService {
   /**
    * Constructor.
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $q: IQService,
               private $rootScope: IRootScopeService,
               private $compile: ICompileService,

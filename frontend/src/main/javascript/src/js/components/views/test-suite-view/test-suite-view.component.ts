@@ -85,7 +85,7 @@ export const testSuiteViewComponent = {
      * @param notificationService
      * @param testConfigResource
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $state: any,
                 private symbolGroupResource: SymbolGroupResource,
                 private projectService: ProjectService,

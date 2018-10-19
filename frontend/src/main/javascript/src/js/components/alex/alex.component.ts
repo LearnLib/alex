@@ -30,7 +30,7 @@ export const alexComponent = {
      *
      * @param uiService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private uiService: UiService) {
     }
 

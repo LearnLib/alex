@@ -39,7 +39,7 @@ export const testConfigListComponent = {
      * @param testConfigResource
      * @param toastService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private testConfigResource: TestConfigResource,
                 private toastService: ToastService) {
     }

@@ -67,7 +67,7 @@ class LearnerViewComponentComponent {
    * @param symbolResource
    * @param notificationService
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $state: any,
               private $interval: any,
               private projectService: ProjectService,

@@ -42,7 +42,7 @@ export const symbolParameterEditModalComponent = {
      *
      * @param symbolParameterResource
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private symbolParameterResource: SymbolParameterResource) {
       super();
     }

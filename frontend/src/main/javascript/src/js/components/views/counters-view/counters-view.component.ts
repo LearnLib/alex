@@ -47,7 +47,7 @@ export const countersViewComponent = {
      * @param toastService
      * @param $uibModal
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private projectService: ProjectService,
                 private counterResource: CounterResource,
                 private toastService: ToastService,

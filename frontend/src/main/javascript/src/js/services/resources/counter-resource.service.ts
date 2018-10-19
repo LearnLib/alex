@@ -28,7 +28,7 @@ export class CounterResource {
    *
    * @param $http
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $http: IHttpService) {
   }
 

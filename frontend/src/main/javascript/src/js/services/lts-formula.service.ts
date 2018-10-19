@@ -33,7 +33,7 @@ export class LtsFormulaService {
    * @param $uibModal
    * @param ltsFormulaResource
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $uibModal: any,
               private ltsFormulaResource: LtsFormulaResource) {
 

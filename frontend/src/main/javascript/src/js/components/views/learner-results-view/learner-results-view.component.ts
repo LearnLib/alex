@@ -46,7 +46,7 @@ class ResultsViewComponent {
    * @param learnerResultDownloadService
    * @param $uibModal
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $state: any,
               private projectService: ProjectService,
               private learnResultResource: LearnResultResource,

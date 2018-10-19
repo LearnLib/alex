@@ -36,7 +36,7 @@ export const adminSettingsViewComponent = {
      * @param settingsResource
      * @param toastService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private settingsResource: SettingsResource,
                 private toastService: ToastService) {
 

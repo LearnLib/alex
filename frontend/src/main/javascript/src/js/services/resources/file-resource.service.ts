@@ -27,7 +27,7 @@ export class FileResource {
    *
    * @param $http
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $http: IHttpService) {
 
   }

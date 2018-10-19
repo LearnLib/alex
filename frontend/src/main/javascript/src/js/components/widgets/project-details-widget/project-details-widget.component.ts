@@ -41,7 +41,7 @@ class ProjectDetailsWidgetComponent {
    * @param symbolGroupResource
    * @param learnResultResource
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private symbolGroupResource: SymbolGroupResource,
               private learnResultResource: LearnResultResource) {
   }

@@ -28,7 +28,7 @@ export class UserResource {
    *
    * @param $http The angular http service.
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $http: IHttpService) {
   }
 

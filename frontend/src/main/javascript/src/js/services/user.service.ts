@@ -34,7 +34,7 @@ export class UserService {
    * @param projectService
    * @param clipboardService
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private projectService: ProjectService,
               private clipboardService: ClipboardService) {
 

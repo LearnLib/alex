@@ -25,7 +25,7 @@ declare const Notification: any;
  * @param jwtOptionsProvider
  * @param $httpProvider
  */
-// @ngInject
+/* @ngInject */
 export function config(jwtInterceptorProvider, jwtOptionsProvider, $httpProvider, toastrConfig) {
 
   // configure the toaster

@@ -49,7 +49,7 @@ export const browserConfigFormComponent = {
      *
      * @param settingsResource
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private settingsResource: SettingsResource) {
       this.supportedWebDrivers = [];
       this.timeoutsCollapsed = true;

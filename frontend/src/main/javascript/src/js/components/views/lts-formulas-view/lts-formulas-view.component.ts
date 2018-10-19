@@ -34,7 +34,7 @@ export const ltsFormulasViewComponent = {
      * @param projectService
      * @param ltsFormulaService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private toastService: ToastService,
                 private projectService: ProjectService,
                 private ltsFormulaService: LtsFormulaService) {

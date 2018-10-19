@@ -57,7 +57,7 @@ export const learnerResultPanelDefaultViewComponent = {
      * @param promptService
      * @param downloadService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $element: IRootElementService,
                 private $uibModal: any,
                 private promptService: PromptService,

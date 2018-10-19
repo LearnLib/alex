@@ -30,7 +30,7 @@ export class TestService {
    * @param symbolResource
    * @param testResource
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $uibModal: any,
               private symbolResource: SymbolResource,
               private testResource: TestResource) {

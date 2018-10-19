@@ -60,7 +60,7 @@ class HypothesisComponent {
    * @param $element
    * @param eventBus
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $scope: IScope,
               private $element: IRootElementService,
               private eventBus: EventBus) {

@@ -36,7 +36,7 @@ export const webhooksViewComponent = {
      * @param toastService
      * @param $uibModal
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private webhookResource: WebhookResource,
                 private toastService: ToastService,
                 private $uibModal: any) {

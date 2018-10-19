@@ -17,7 +17,7 @@
 /**
  * Define application routes.
  */
-// @ngInject
+/* @ngInject */
 export function config($stateProvider, $urlRouterProvider) {
 
   // redirect to the start page when no other route fits
@@ -97,7 +97,7 @@ export function config($stateProvider, $urlRouterProvider) {
       },
       data: {title: 'Project'},
 
-      // @ngInject
+      /* @ngInject */
       onEnter: function ($state, projectService, projectResource, $stateParams) {
         const projectId = $stateParams.projectId;
         const project = projectService.store.currentProject;
@@ -307,7 +307,7 @@ export function config($stateProvider, $urlRouterProvider) {
  * @param userService
  * @param toastService
  */
-// @ngInject
+/* @ngInject */
 export function run($transitions, projectService, userService, toastService) {
 
   // route validation

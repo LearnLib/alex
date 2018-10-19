@@ -44,7 +44,7 @@ export const resultListModalComponent = {
      * @param learnResultResource
      * @param toastService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private projectService: ProjectService,
                 private learnResultResource: LearnResultResource,
                 private toastService: ToastService) {

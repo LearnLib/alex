@@ -47,7 +47,7 @@ export const counterCreateModalComponent = {
      * @param counterResource
      * @param toastService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private projectService: ProjectService,
                 private counterResource: CounterResource,
                 private toastService: ToastService) {

@@ -49,7 +49,7 @@ export const symbolGroupEditModalComponent = {
      * @param eventBus
      * @param promptService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private symbolGroupResource: SymbolGroupResource,
                 private toastService: ToastService,
                 private eventBus: EventBus,

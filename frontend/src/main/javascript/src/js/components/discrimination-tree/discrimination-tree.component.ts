@@ -47,7 +47,7 @@ class DiscriminationTreeComponent {
    * @param $scope
    * @param $element
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $scope: IScope,
               private $element: IRootElementService) {
 

@@ -38,7 +38,7 @@ export const testResultReportComponent = {
      * @param projectService
      * @param testReportService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private projectService: ProjectService,
                 private testReportService: TestReportService) {
     }

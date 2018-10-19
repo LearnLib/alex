@@ -58,7 +58,7 @@ export const searchFormComponent = {
      * @param $scope
      * @param $element
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $element: IRootElementService,
                 private $scope: IScope) {
 

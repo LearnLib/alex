@@ -27,7 +27,7 @@ export class TestConfigResource {
    *
    * @param $http
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $http: IHttpService) {
   }
 

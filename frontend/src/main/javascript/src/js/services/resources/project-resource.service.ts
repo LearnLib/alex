@@ -28,7 +28,7 @@ export class ProjectResource {
    *
    * @param $http
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $http: IHttpService) {
 
   }

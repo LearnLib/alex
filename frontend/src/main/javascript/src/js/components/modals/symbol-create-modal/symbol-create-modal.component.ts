@@ -57,7 +57,7 @@ export const symbolCreateModalComponent = {
      * @param toastService
      * @param projectService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private symbolResource: SymbolResource,
                 private toastService: ToastService,
                 private projectService: ProjectService) {

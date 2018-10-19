@@ -28,7 +28,7 @@ export class LearnResultResource {
    *
    * @param $http
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $http: IHttpService) {
   }
 

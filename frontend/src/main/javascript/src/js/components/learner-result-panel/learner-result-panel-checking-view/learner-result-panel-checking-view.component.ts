@@ -51,7 +51,7 @@ export const learnerResultPanelCheckingViewComponent = {
      * @param ltsFormulaService
      * @param ltsFormulaResource
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private toastService: ToastService,
                 private projectService: ProjectService,
                 private ltsFormulaService: LtsFormulaService,

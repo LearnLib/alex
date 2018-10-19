@@ -38,7 +38,7 @@ export const latestTestReportWidgetComponent = {
      *
      * @param testReportResource
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private testReportResource: TestReportResource) {
     }
 

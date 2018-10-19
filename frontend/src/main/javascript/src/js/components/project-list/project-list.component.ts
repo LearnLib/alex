@@ -40,7 +40,7 @@ export const projectListComponent = {
      * @param promptService
      * @param projectService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $state: any,
                 private toastService: ToastService,
                 private promptService: PromptService,

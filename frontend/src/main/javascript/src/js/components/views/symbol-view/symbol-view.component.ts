@@ -60,7 +60,7 @@ class SymbolViewComponent {
    * @param $uibModal
    * @param symbolGroupResource
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $scope: IScope,
               private $stateParams: any,
               private symbolResource: SymbolResource,

@@ -76,7 +76,7 @@ export const testCaseViewComponent = {
      * @param $uibModal
      * @param settingsResource
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $scope: IScope,
                 private $state: any,
                 private dragulaService: any,

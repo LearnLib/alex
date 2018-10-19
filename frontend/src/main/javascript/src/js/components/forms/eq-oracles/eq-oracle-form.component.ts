@@ -47,7 +47,7 @@ export const eqOracleFormComponent = {
      *
      * @param eqOracleService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private eqOracleService: EqOracleService) {
     }
 

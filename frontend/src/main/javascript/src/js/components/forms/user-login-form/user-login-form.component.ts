@@ -45,7 +45,7 @@ class UserLoginFormComponent {
    * @param settingsResource
    * @param userService
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $state: any,
               private userResource: UserResource,
               private jwtHelper: any,

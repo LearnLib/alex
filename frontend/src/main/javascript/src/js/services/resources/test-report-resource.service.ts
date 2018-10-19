@@ -24,7 +24,7 @@ export class TestReportResource {
    * Constructor.
    * @param $http
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $http: IHttpService) {
   }
 

@@ -41,7 +41,7 @@ class SymbolsArchiveViewComponent {
    * @param toastService
    * @param $uibModal
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private projectService: ProjectService,
               private symbolResource: SymbolResource,
               private toastService: ToastService,

@@ -35,7 +35,7 @@ class ProjectCreateFormComponent {
    * @param projectService
    * @param toastService
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private projectService: ProjectService,
               private toastService: ToastService) {
     this.project = new Project();

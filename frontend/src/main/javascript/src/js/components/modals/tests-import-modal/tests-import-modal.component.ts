@@ -43,7 +43,7 @@ export const testsImportModalComponent = {
      * @param symbolResource
      * @param testService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private projectService: ProjectService,
                 private symbolResource: SymbolResource,
                 private testService: TestService) {

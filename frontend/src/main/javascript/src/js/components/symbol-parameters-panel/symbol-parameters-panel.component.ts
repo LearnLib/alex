@@ -40,7 +40,7 @@ export const symbolParametersPanelComponent = {
      * @param toastService
      * @param $uibModal
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private promptService: PromptService,
                 private symbolParameterResource: SymbolParameterResource,
                 private toastService: ToastService,

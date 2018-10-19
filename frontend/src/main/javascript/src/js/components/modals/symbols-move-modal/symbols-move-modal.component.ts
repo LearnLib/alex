@@ -55,7 +55,7 @@ export const symbolMoveModalComponent = {
      * @param toastService
      * @param eventBus
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private symbolResource: SymbolResource,
                 private symbolGroupResource: SymbolGroupResource,
                 private projectService: ProjectService,

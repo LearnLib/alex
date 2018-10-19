@@ -30,7 +30,7 @@ export const errorViewComponent = {
      *
      * @param $stateParams
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $stateParams: any) {
       this.message = null;
     }

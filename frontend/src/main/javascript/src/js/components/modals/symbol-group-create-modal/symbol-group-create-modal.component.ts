@@ -53,7 +53,7 @@ export const symbolGroupCreateModalComponent = {
      * @param symbolGroupResource
      * @param toastService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private projectService: ProjectService,
                 private symbolGroupResource: SymbolGroupResource,
                 private toastService: ToastService) {

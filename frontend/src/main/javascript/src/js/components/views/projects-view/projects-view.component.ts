@@ -33,7 +33,7 @@ export const projectsViewComponent = {
      * @param projectService
      * @param toastService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $state: any,
                 private projectService: ProjectService,
                 private toastService: ToastService) {

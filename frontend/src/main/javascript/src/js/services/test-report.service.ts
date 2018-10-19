@@ -33,7 +33,7 @@ export class TestReportService {
    * @param downloadService
    * @param toastService
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private testReportResource: TestReportResource,
               private promptService: PromptService,
               private downloadService: DownloadService,

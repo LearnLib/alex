@@ -26,7 +26,7 @@ export class PromptService {
    *
    * @param $uibModal
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $uibModal: any) {
   }
 

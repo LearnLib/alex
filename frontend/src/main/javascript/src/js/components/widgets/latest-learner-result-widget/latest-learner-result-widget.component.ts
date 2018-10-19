@@ -33,7 +33,7 @@ class LatestLearnerResultWidgetComponent {
    *
    * @param learnResultResource
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private learnResultResource: LearnResultResource) {
   }
 

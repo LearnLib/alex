@@ -30,7 +30,7 @@ export class LearnerResultDownloadService {
    * @param downloadService
    * @param promptService
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private downloadService: DownloadService,
               private promptService: PromptService) {
   }

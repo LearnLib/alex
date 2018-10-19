@@ -42,7 +42,7 @@ export const responsiveIframeComponent = {
      * @param $element
      * @param $scope
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $window: IWindowService,
                 private $scope: IScope,
                 private $element: any) {

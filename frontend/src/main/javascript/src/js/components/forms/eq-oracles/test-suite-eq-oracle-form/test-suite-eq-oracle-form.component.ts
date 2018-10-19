@@ -44,7 +44,7 @@ export const testSuiteEqOracleFormComponent = {
      * @param projectService
      * @param testResource
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private projectService: ProjectService,
                 private testResource: TestResource) {
 

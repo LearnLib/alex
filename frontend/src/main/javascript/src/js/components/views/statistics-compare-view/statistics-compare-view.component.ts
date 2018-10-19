@@ -62,7 +62,7 @@ class StatisticsCompareViewComponent {
    * @param downloadService
    * @param promptService
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private projectService: ProjectService,
               private learnResultResource: LearnResultResource,
               private learnerResultChartService: LearnerResultChartService,

@@ -42,7 +42,7 @@ export const testReportViewComponent = {
      * @param $state
      * @param $stateParams
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private testReportResource: TestReportResource,
                 private projectService: ProjectService,
                 private toastService: ToastService,

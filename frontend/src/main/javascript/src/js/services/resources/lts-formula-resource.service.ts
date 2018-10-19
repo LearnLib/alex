@@ -9,7 +9,7 @@ export class LtsFormulaResource {
    *
    * @param $http
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $http: IHttpService) {
 
   }

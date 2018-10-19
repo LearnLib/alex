@@ -28,7 +28,7 @@ export class SymbolGroupResource {
    *
    * @param $http
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $http: IHttpService) {
   }
 

@@ -47,7 +47,7 @@ class UserEditFormComponent {
    * @param projectService
    * @param userService
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $state: any,
               private toastService: ToastService,
               private userResource: UserResource,

@@ -33,7 +33,7 @@ export const reportChartsComponent = {
      *
      * @param $element
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $element: IRootElementService) {
       this.report = null;
     }

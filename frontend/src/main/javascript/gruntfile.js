@@ -16,15 +16,9 @@ module.exports = function (grunt) {
                 ['tsify']
             ],
             transform: [
-                ['babelify', {
-                    sourceMap: false,
-                    presets: ['es2015'],
-                    compact: false
-                }],
                 ['stringify', { // load component templates
                     appliesTo: { includeExtensions: ['.html']}
-                }],
-                ['browserify-ngannotate']
+                }]
             ]
         }
     };
@@ -115,7 +109,8 @@ module.exports = function (grunt) {
             },
 
             exec: {
-                'build_css': 'node-sass src/scss/style.scss -o <%= buildLocation %>/css'
+                'build_css': 'node-sass src/scss/style.scss -o <%= buildLocation %>/css',
+                'ng_annotate': 'ng-annotate -a -o <%= buildLocation %>/js/alex.bundle.js <%= buildLocation %>/js/alex.bundle.js'
             },
 
             copy: {
@@ -161,7 +156,7 @@ module.exports = function (grunt) {
 
     const build = ['concat:libs', 'uglify:libs', 'copy:fonts', 'bundle-css', 'copy:images', 'copy:index'];
 
-    grunt.registerTask('bundle-js:dist', ['browserify:dist', 'uglify:app']);
+    grunt.registerTask('bundle-js:dist', ['browserify:dist', 'exec:ng_annotate', 'uglify:app']);
     grunt.registerTask('bundle-js:dev', ['browserify:dev']);
     grunt.registerTask('bundle-css', ['exec:build_css', 'postcss', 'cssmin']);
     grunt.registerTask('build:dev', build.concat(['bundle-js:dev']));

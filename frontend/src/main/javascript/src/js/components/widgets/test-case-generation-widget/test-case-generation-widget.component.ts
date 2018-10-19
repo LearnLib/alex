@@ -40,7 +40,7 @@ export const testCaseGenerationWidgetComponent = {
      * @param testResource
      * @param toastService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $scope: IScope,
                 private eventBus: EventBus,
                 private projectService: ProjectService,

@@ -56,7 +56,7 @@ class SymbolsViewComponent {
    * @param $state
    * @param $uibModal
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $scope: IScope,
               private projectService: ProjectService,
               private symbolResource: SymbolResource,

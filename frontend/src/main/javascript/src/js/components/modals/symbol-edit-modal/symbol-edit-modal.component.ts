@@ -47,7 +47,7 @@ export const symbolEditModalComponent = {
      * @param toastService
      * @param eventBus
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private symbolResource: SymbolResource,
                 private toastService: ToastService,
                 private eventBus: EventBus) {

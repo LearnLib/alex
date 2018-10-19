@@ -24,7 +24,7 @@ export class ToastService {
    *
    * @param toastr The toastr service.
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private toastr: any) {
   }
 

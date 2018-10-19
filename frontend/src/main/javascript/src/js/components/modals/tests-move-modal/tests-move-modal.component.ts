@@ -49,7 +49,7 @@ export const testsMoveModalComponent = {
      * @param toastService
      * @param projectService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private testResource: TestResource,
                 private toastService: ToastService,
                 private projectService: ProjectService) {

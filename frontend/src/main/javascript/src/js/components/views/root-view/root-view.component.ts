@@ -34,7 +34,7 @@ export const rootViewComponent = {
      * @param projectService
      * @param userService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $state: any,
                 private projectService: ProjectService,
                 private userService: UserService) {

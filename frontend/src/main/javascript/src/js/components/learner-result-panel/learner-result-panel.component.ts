@@ -45,7 +45,7 @@ class LearnerResultPanelComponent {
    * @param $scope
    * @param $uibModal
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $scope: IScope,
               private $uibModal: any) {
 

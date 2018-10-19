@@ -39,7 +39,7 @@ export class ProjectService {
    * @param toastService
    * @param projectResource
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $uibModal: any,
               private learnerResource: LearnerResource,
               private toastService: ToastService,

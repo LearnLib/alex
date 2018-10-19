@@ -32,7 +32,7 @@ export const clickLinkByTextActionFormComponent = {
      *
      * @param htmlElementPickerService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private htmlElementPickerService: HtmlElementPickerService) {
     }
 

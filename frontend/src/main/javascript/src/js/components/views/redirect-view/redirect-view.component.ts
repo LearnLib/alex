@@ -33,7 +33,7 @@ export const redirectViewComponent = {
      * @param $location
      * @param userService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private $state: any,
                 private $stateParams: any,
                 private $location: ILocationService,

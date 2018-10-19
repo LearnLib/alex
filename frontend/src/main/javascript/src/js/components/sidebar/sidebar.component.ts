@@ -36,7 +36,7 @@ class SidebarComponent {
    * @param userService
    * @param uiService
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $state: any,
               private projectService: ProjectService,
               private userService: UserService,

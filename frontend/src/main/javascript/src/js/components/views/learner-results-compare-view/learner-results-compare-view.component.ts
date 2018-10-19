@@ -49,7 +49,7 @@ class ResultsCompareViewComponent {
    * @param learnerResource
    * @param toastService
    */
-  // @ngInject
+  /* @ngInject */
   constructor(private $uibModal: any,
               private $state: any,
               private $stateParams: any,

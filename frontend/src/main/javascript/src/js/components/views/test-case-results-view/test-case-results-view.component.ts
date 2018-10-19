@@ -40,7 +40,7 @@ export const testCaseResultsViewComponent = {
      * @param testResource
      * @param $stateParams
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private projectService: ProjectService,
                 private testResource: TestResource,
                 private $stateParams: any) {

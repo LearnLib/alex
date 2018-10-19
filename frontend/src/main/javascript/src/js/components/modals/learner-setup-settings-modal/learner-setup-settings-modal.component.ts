@@ -52,7 +52,7 @@ export const learnerSetupSettingsModalComponent = {
      * @param projectService
      * @param learningAlgorithmService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private toastService: ToastService,
                 private projectService: ProjectService,
                 private learningAlgorithmService: LearningAlgorithmService) {

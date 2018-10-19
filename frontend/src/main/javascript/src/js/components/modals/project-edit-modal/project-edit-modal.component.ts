@@ -50,7 +50,7 @@ export const projectEditModalComponent = {
      * @param toastService
      * @param projectService
      */
-    // @ngInject
+    /* @ngInject */
     constructor(private projectResource: ProjectResource,
                 private toastService: ToastService,
                 private projectService: ProjectService) {
