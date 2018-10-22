@@ -34,6 +34,7 @@ import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.oracles.DelegationOracle;
 import de.learnlib.alex.learning.services.oracles.InterruptibleOracle;
 import de.learnlib.alex.learning.services.oracles.QueryMonitorOracle;
+import de.learnlib.alex.learning.services.oracles.StatisticsOracle;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import de.learnlib.api.SUL;
@@ -80,7 +81,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     protected boolean finished;
 
     /** The system under learning. */
-    protected final AlexSUL<String, String> sul;
+    protected final SUL<String, String> sul;
 
     /** The DAO to remember the learn results. */
     protected final LearnerResultDAO learnerResultDAO;
@@ -127,6 +128,8 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /** The current connector context. */
     protected ConnectorContextHandler context;
 
+    protected final StatisticsOracle<String, Word<String>> counterOracle;
+
     /**
      * Constructor.
      *
@@ -167,16 +170,15 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         this.currentQueries = new ArrayList<>();
 
         // prepare the mapped sul.
-        symbolMapper = new SymbolMapper(result.getSymbols());
+        this.symbolMapper = new SymbolMapper(result.getSymbols());
         final ContextExecutableInputSUL<ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult, ConnectorManager>
                 ceiSUL = new ContextExecutableInputSUL<>(context);
-        final SUL<String, String> mappedSUL = SULMappers.apply(symbolMapper, ceiSUL);
-        this.sul = new AlexSUL<>(mappedSUL);
+        this.sul = SULMappers.apply(symbolMapper, ceiSUL);
 
         final int numUrls = configuration.getUrls().size();
         if (numUrls > 1) {
             final DynamicParallelOracle<String, Word<String>> parallelOracle =
-                    new DynamicParallelOracleBuilder<>(() -> new SULOracle<>(sul))
+                    new DynamicParallelOracleBuilder<>(() -> new SULOracle<>(this.sul))
                             .withPoolPolicy(ParallelOracle.PoolPolicy.CACHED)
                             .withBatchSize(numUrls)
                             .withPoolSize(numUrls)
@@ -194,13 +196,14 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         });
 
         interruptOracle = new InterruptibleOracle<>(monitorOracle);
+        counterOracle = new StatisticsOracle<>(interruptOracle);
 
         // create the concrete membership oracle.
         this.mqOracle = new DelegationOracle<>();
         if (result.isUseMQCache()) {
-            this.mqOracle.setDelegate(MealyCacheOracle.createDAGCacheOracle(this.abstractAlphabet, interruptOracle));
+            this.mqOracle.setDelegate(MealyCacheOracle.createDAGCacheOracle(this.abstractAlphabet, counterOracle));
         } else {
-            this.mqOracle.setDelegate(interruptOracle);
+            this.mqOracle.setDelegate(counterOracle);
         }
 
         // create the learner.
@@ -229,8 +232,8 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         final Statistics statistics = new Statistics();
         statistics.setStartTime(start);
         statistics.getDuration().setLearner(end - start);
-        statistics.getMqsUsed().setLearner(sul.getResetCount());
-        statistics.getSymbolsUsed().setLearner(sul.getSymbolUsedCount());
+        statistics.getMqsUsed().setLearner(counterOracle.getQueryCount());
+        statistics.getSymbolsUsed().setLearner(counterOracle.getSymbolCount());
         statistics.setEqsUsed(eqs);
 
         final LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
@@ -251,7 +254,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
             e.printStackTrace();
         }
 
-        sul.resetCounter();
+        counterOracle.reset();
 
         return step;
     }
@@ -290,14 +293,14 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
 
     private void updateStatisticsWithEqOracle(long start, long end, LearnerResultStep step) {
         step.getStatistics().getDuration().setEqOracle(end - start);
-        step.getStatistics().getMqsUsed().setEqOracle(sul.getResetCount());
-        step.getStatistics().getSymbolsUsed().setEqOracle(sul.getSymbolUsedCount());
+        step.getStatistics().getMqsUsed().setEqOracle(counterOracle.getQueryCount());
+        step.getStatistics().getSymbolsUsed().setEqOracle(counterOracle.getSymbolCount());
         try {
             learnerResultDAO.saveStep(result, step);
         } catch (de.learnlib.alex.common.exceptions.NotFoundException e) {
             e.printStackTrace();
         }
-        sul.resetCounter();
+        counterOracle.reset();
     }
 
     /**

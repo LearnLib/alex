@@ -109,9 +109,9 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
 
                 final Statistics statistics = new Statistics();
                 statistics.getDuration().setLearner(end - start);
-                statistics.getMqsUsed().setLearner(sul.getResetCount());
-                statistics.getSymbolsUsed().setLearner(sul.getSymbolUsedCount());
-                sul.resetCounter();
+                statistics.getMqsUsed().setLearner(counterOracle.getQueryCount());
+                statistics.getSymbolsUsed().setLearner(counterOracle.getSymbolCount());
+                counterOracle.reset();
 
                 final LearnerResultStep step = learnerResultDAO.createStep(result);
 
