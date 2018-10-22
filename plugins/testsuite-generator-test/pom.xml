@@ -31,6 +31,11 @@
 
     <name>ALEX :: Plugin :: Testsuite Generator Maven Plugin Test</name>
 
+    <properties>
+        <alex.chromedriver.path>/usr/bin/chromedriver</alex.chromedriver.path>
+        <surefire-plugin.skip>true</surefire-plugin.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>de.learnlib.alex</groupId>
@@ -54,26 +59,30 @@
 
     <profiles>
         <profile>
+            <id>chromedriver-env</id>
+            <activation>
+                <property>
+                    <name>env.ALEX_CHROMEDRIVER_PATH</name>
+                </property>
+                <file>
+                    <exists>${env.ALEX_CHROMEDRIVER_PATH}</exists>
+                </file>
+            </activation>
+            <properties>
+                <alex.chromedriver.path>${env.ALEX_CHROMEDRIVER_PATH}</alex.chromedriver.path>
+                <surefire-plugin.skip>false</surefire-plugin.skip>
+            </properties>
+        </profile>
+        <profile>
             <id>chromedriver-it</id>
             <activation>
                 <file>
-                    <exists>/usr/bin/chromedriver</exists>
+                    <exists>${alex.chromedriver.path}</exists>
                 </file>
             </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skip>false</skip>
-                            <suiteXmlFiles>
-                                <suiteXmlFile>${project.build.directory}/generated-test-sources/GoogleTestSuite.xml</suiteXmlFile>
-                            </suiteXmlFiles>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <surefire-plugin.skip>false</surefire-plugin.skip>
+            </properties>
         </profile>
     </profiles>
 
@@ -91,8 +100,10 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
-                        <!-- skip by default -->
-                        <skip>true</skip>
+                        <skip>${surefire-plugin.skip}</skip>
+                        <suiteXmlFiles>
+                            <suiteXmlFile>${project.build.directory}/generated-test-sources/GoogleTestSuite.xml</suiteXmlFile>
+                        </suiteXmlFiles>
                     </configuration>
                 </plugin>
             </plugins>
@@ -125,7 +136,7 @@
                 <version>${project.version}</version>
                 <configuration>
                     <sourceFile>${project.build.directory}/generated-test-resources/test-suite.json</sourceFile>
-                    <driverPath>/usr/bin/chromedriver</driverPath>
+                    <driverPath>${alex.chromedriver.path}</driverPath>
                     <projectURL>http://google.de</projectURL>
                 </configuration>
                 <executions>
