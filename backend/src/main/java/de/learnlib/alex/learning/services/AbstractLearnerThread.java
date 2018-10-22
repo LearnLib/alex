@@ -33,7 +33,6 @@ import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.oracles.DelegationOracle;
 import de.learnlib.alex.learning.services.oracles.InterruptibleOracle;
-import de.learnlib.alex.learning.services.oracles.MultiSULOracle;
 import de.learnlib.alex.learning.services.oracles.QueryMonitorOracle;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
@@ -48,6 +47,7 @@ import de.learnlib.mapper.api.ContextExecutableInput;
 import de.learnlib.oracle.membership.SULOracle;
 import de.learnlib.oracle.parallelism.DynamicParallelOracle;
 import de.learnlib.oracle.parallelism.DynamicParallelOracleBuilder;
+import de.learnlib.oracle.parallelism.ParallelOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -124,9 +124,6 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /** The queries that are executed at the moment. */
     private List<DefaultQueryProxy> currentQueries;
 
-    /** The oracle where all queries are posed to. */
-    private MultiSULOracle<String, String> multiSULOracle;
-
     /** The current connector context. */
     protected ConnectorContextHandler context;
 
@@ -149,7 +146,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
      *         {@link #configuration}.
      */
     public AbstractLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-            TestDAO testDAO, ConnectorContextHandler context, LearnerResult result, T configuration) {
+                                 TestDAO testDAO, ConnectorContextHandler context, LearnerResult result, T configuration) {
         this.user = user;
         this.learnerResultDAO = learnerResultDAO;
         this.webhookService = webhookService;
@@ -176,24 +173,24 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         final SUL<String, String> mappedSUL = SULMappers.apply(symbolMapper, ceiSUL);
         this.sul = new AlexSUL<>(mappedSUL);
 
+        final int numUrls = configuration.getUrls().size();
+        if (numUrls > 1) {
+            final DynamicParallelOracle<String, Word<String>> parallelOracle =
+                    new DynamicParallelOracleBuilder<>(() -> new SULOracle<>(sul))
+                            .withPoolPolicy(ParallelOracle.PoolPolicy.CACHED)
+                            .withBatchSize(numUrls)
+                            .withPoolSize(numUrls)
+                            .create();
 
-        final DynamicParallelOracle<String, Word<String>> parallelOracle =
-                new DynamicParallelOracleBuilder<>(() -> new SULOracle<>(this.sul))
-                        .withBatchSize(1)
-                        .withPoolSize(configuration.getUrls().size())
-                        .create();
-
-
-//        this.multiSULOracle = new MultiSULOracle<>(sul, user);
-
-        // monitor which queries are being processed.
-//        monitorOracle = new QueryMonitorOracle<>(multiSULOracle);
-        monitorOracle = new QueryMonitorOracle<>(parallelOracle);
+            monitorOracle = new QueryMonitorOracle<>(parallelOracle);
+        } else {
+            monitorOracle = new QueryMonitorOracle<>(new SULOracle<>(sul));
+        }
 
         monitorOracle.addPostProcessingListener(queries -> {
-            List<DefaultQueryProxy> currentQueries = new ArrayList<>();
-            queries.forEach(query -> currentQueries.add(DefaultQueryProxy.createFrom(new DefaultQuery<>(query))));
-            this.currentQueries = currentQueries;
+            this.currentQueries = queries.stream()
+                    .map(q -> DefaultQueryProxy.createFrom(new DefaultQuery<>(q)))
+                    .collect(Collectors.toList());
         });
 
         interruptOracle = new InterruptibleOracle<>(monitorOracle);
@@ -228,7 +225,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
      * @return The persisted step.
      */
     protected LearnerResultStep createStep(long start, long end, long eqs,
-            DefaultQuery<String, Word<String>> counterexample) {
+                                           DefaultQuery<String, Word<String>> counterexample) {
         final Statistics statistics = new Statistics();
         statistics.setStartTime(start);
         statistics.getDuration().setLearner(end - start);
