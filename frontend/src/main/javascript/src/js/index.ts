@@ -249,6 +249,7 @@ import {ltsFormulaListComponent} from './components/lts-formula-list/lts-formula
 import {ltsFormulaFormGroupsComponent} from './components/forms/lts-formula-form-groups/lts-formula-form-groups.component';
 import {ltsFormulaEditModalComponent} from './components/modals/lts-formula-edit-modal/lts-formula-edit-modal.component';
 import {symbolSelectDropdownComponent} from './components/symbol-select-dropdown/symbol-select-dropdown.component';
+import {unauthorizedHttpInterceptor} from './utils/unauthorized-http-interceptor';
 
 angular
   .module('ALEX', [
@@ -286,6 +287,9 @@ angular
   .filter('sortTests', sortTests)
   .filter('formatParameterType', formatParameterType)
   .filter('normalizeUpperCase', normalizeUpperCase)
+
+  // factories
+  .factory('unauthorizedHttpInterceptor', unauthorizedHttpInterceptor)
 
   // resources
   .service('counterResource', CounterResource)
