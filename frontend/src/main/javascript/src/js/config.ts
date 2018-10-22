@@ -48,6 +48,8 @@ export function config(jwtInterceptorProvider, jwtOptionsProvider, $httpProvider
   }];
   $httpProvider.interceptors.push('jwtInterceptor');
 
+  $httpProvider.interceptors.push('unauthorizedHttpInterceptor');
+
   jwtOptionsProvider.config({whiteListedDomains: ['localhost']});
 
   // request the permission to send notifications only once
