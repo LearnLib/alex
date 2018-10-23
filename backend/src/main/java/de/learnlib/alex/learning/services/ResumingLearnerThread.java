@@ -26,6 +26,7 @@ import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
+import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import de.learnlib.api.algorithm.feature.SupportsGrowingAlphabet;
@@ -46,7 +47,7 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
      *         {@link AbstractLearnerThread#learnerResultDAO}.
      * @param webhookService
      *         {@link AbstractLearnerThread#webhookService}.
-     * @param context
+     * @param contextHandler
      *         The context to use.
      * @param result
      *         {@link AbstractLearnerThread#result}.
@@ -56,9 +57,9 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
      *         The DAO for tests that is passed to the eq oracle.
      */
     public ResumingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-            TestDAO testDAO, ConnectorContextHandler context, LearnerResult result,
-            LearnerResumeConfiguration configuration) {
-        super(user, learnerResultDAO, webhookService, testDAO, context, result, configuration);
+                                 TestDAO testDAO, PreparedContextHandler contextHandler, LearnerResult result,
+                                 LearnerResumeConfiguration configuration) {
+        super(user, learnerResultDAO, webhookService, testDAO, contextHandler, result, configuration);
     }
 
     @Override
@@ -74,9 +75,7 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
             e.printStackTrace();
             updateOnError(e);
         } finally {
-            context.post();
-            finished = true;
-
+            shutdown();
             LOGGER.info(LoggerMarkers.LEARNER, "The learner finished resuming the experiment.");
             LOGGER.traceExit();
             ThreadContext.remove("userId");
@@ -114,7 +113,6 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
                 counterOracle.reset();
 
                 final LearnerResultStep step = learnerResultDAO.createStep(result);
-
                 step.setHypothesis(CompactMealyMachineProxy.createFrom(learner.getHypothesisModel(), abstractAlphabet));
                 step.setState(result.getAlgorithm().suspend(learner));
                 step.setAlgorithmInformation(result.getAlgorithm().getInternalData(learner));

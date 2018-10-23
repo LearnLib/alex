@@ -40,7 +40,8 @@ public class ConnectorManager implements Iterable<Connector> {
     /**
      * Adds a new connector to the manager.
      *
-     * @param connector The instance of the connector to add.
+     * @param connector
+     *         The instance of the connector to add.
      */
     public void addConnector(Connector connector) {
         this.connectors.put(connector.getClass(), connector);
@@ -49,8 +50,10 @@ public class ConnectorManager implements Iterable<Connector> {
     /**
      * Get the connector specified by a connector class.
      *
-     * @param type The class of the connector.
-     * @param <T>  The type of the connector.
+     * @param type
+     *         The class of the connector.
+     * @param <T>
+     *         The type of the connector.
      * @return The connector that matches the specified class.
      */
     public <T> T getConnector(Class<T> type) {
@@ -62,16 +65,12 @@ public class ConnectorManager implements Iterable<Connector> {
         return connectors.values().iterator();
     }
 
-    /**
-     * Disposes all connectors.
-     */
+    /** Disposes all connectors. */
     public void dispose() {
         connectors.values().forEach(Connector::dispose);
     }
 
-    /**
-     * Clean up all connectors after the learner finished.
-     */
+    /** Clean up all connectors after the learner finished. */
     public void post() {
         connectors.values().forEach(Connector::post);
     }

@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Class to map the Symbols and their result to the values used in the learning process.
@@ -52,8 +54,8 @@ public class SymbolMapper implements SULMapper<
      *         The symbols for the learning process.
      */
     public SymbolMapper(List<ParameterizedSymbol> symbols) {
-        this.symbolMap = new HashMap<>();
-        symbols.forEach(s -> this.symbolMap.put(s.getComputedName(), s));
+        this.symbolMap = symbols.stream()
+                .collect(Collectors.toMap(ParameterizedSymbol::getComputedName, Function.identity()));
     }
 
     /**
@@ -94,15 +96,6 @@ public class SymbolMapper implements SULMapper<
 
     @Override
     public void pre() {
-    }
-
-    /**
-     * Get the list of symbols.
-     *
-     * @return The list of symbols.
-     */
-    public List<ParameterizedSymbol> getSymbols() {
-        return new ArrayList<>(symbolMap.values());
     }
 
     @Override

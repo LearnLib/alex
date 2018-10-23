@@ -17,7 +17,6 @@
 package de.learnlib.alex.learning.services;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.AbstractLearnerConfiguration;
@@ -26,29 +25,22 @@ import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
-import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.TestSuiteEQOracleProxy;
 import de.learnlib.alex.learning.events.LearnerEvent;
-import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
-import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
+import de.learnlib.alex.learning.services.oracles.ContextAwareSulOracle;
 import de.learnlib.alex.learning.services.oracles.DelegationOracle;
 import de.learnlib.alex.learning.services.oracles.InterruptibleOracle;
 import de.learnlib.alex.learning.services.oracles.QueryMonitorOracle;
 import de.learnlib.alex.learning.services.oracles.StatisticsOracle;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
-import de.learnlib.api.SUL;
 import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.query.DefaultQuery;
 import de.learnlib.filter.cache.mealy.MealyCacheOracle;
-import de.learnlib.mapper.ContextExecutableInputSUL;
-import de.learnlib.mapper.SULMappers;
-import de.learnlib.mapper.api.ContextExecutableInput;
-import de.learnlib.oracle.membership.SULOracle;
 import de.learnlib.oracle.parallelism.DynamicParallelOracle;
 import de.learnlib.oracle.parallelism.DynamicParallelOracleBuilder;
-import de.learnlib.oracle.parallelism.ParallelOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -60,7 +52,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -74,20 +65,20 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
 
     protected static final Logger LOGGER = LogManager.getLogger();
 
+    /** The webhook service to user. */
+    private final WebhookService webhookService;
+
+    /** The queries that are executed at the moment. */
+    private List<DefaultQueryProxy> currentQueries;
+
     /** The user who is stating the Learning Thread. */
     protected User user;
 
     /** Is the thread still running? */
     protected boolean finished;
 
-    /** The system under learning. */
-    protected final SUL<String, String> sul;
-
     /** The DAO to remember the learn results. */
     protected final LearnerResultDAO learnerResultDAO;
-
-    /** The webhook service to user. */
-    private final WebhookService webhookService;
 
     /** The learner to use during the learning. */
     protected final LearningAlgorithm.MealyLearner<String, String> learner;
@@ -104,7 +95,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /** The configuration that is used. */
     protected T configuration;
 
-    /** The membership oracle. */
+    /** The membership oracle on the upmost level that all queries are posed to. */
     protected final DelegationOracle<String, String> mqOracle;
 
     /** Maps an abstract alphabet to a concrete one. */
@@ -119,16 +110,11 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /** The test DAO. */
     protected final TestDAO testDAO;
 
-    /** The number of mqs executed in parallel. */
-    private int maxConcurrentQueries;
-
-    /** The queries that are executed at the moment. */
-    private List<DefaultQueryProxy> currentQueries;
-
-    /** The current connector context. */
-    protected ConnectorContextHandler context;
-
     protected final StatisticsOracle<String, Word<String>> counterOracle;
+
+    protected final PreparedContextHandler preparedContextHandler;
+
+    protected final List<ContextAwareSulOracle> sulOracles;
 
     /**
      * Constructor.
@@ -149,7 +135,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
      *         {@link #configuration}.
      */
     public AbstractLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-                                 TestDAO testDAO, ConnectorContextHandler context, LearnerResult result, T configuration) {
+                                 TestDAO testDAO, PreparedContextHandler context, LearnerResult result, T configuration) {
         this.user = user;
         this.learnerResultDAO = learnerResultDAO;
         this.webhookService = webhookService;
@@ -164,29 +150,27 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
                         .collect(Collectors.toList())
         ));
 
-        this.context = context;
+        this.preparedContextHandler = context;
         this.finished = false;
-        this.maxConcurrentQueries = context.getMaxConcurrentQueries();
         this.currentQueries = new ArrayList<>();
-
-        // prepare the mapped sul.
         this.symbolMapper = new SymbolMapper(result.getSymbols());
-        final ContextExecutableInputSUL<ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult, ConnectorManager>
-                ceiSUL = new ContextExecutableInputSUL<>(context);
-        this.sul = SULMappers.apply(symbolMapper, ceiSUL);
+
+        // create a sul oracle for each url
+        this.sulOracles = configuration.getUrls().stream()
+                .map(url -> new ContextAwareSulOracle(symbolMapper, preparedContextHandler.create(url.getUrl())))
+                .collect(Collectors.toList());
 
         final int numUrls = configuration.getUrls().size();
         if (numUrls > 1) {
             final DynamicParallelOracle<String, Word<String>> parallelOracle =
-                    new DynamicParallelOracleBuilder<>(() -> new SULOracle<>(this.sul))
-                            .withPoolPolicy(ParallelOracle.PoolPolicy.CACHED)
+                    new DynamicParallelOracleBuilder<>(sulOracles)
                             .withBatchSize(numUrls)
                             .withPoolSize(numUrls)
                             .create();
 
             monitorOracle = new QueryMonitorOracle<>(parallelOracle);
         } else {
-            monitorOracle = new QueryMonitorOracle<>(new SULOracle<>(sul));
+            monitorOracle = new QueryMonitorOracle<>(sulOracles.get(0));
         }
 
         monitorOracle.addPostProcessingListener(queries -> {
@@ -287,8 +271,6 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
             }
             createStep(0, 0, 0, null);
         }
-
-        sul.post();
     }
 
     private void updateStatisticsWithEqOracle(long start, long end, LearnerResultStep step) {
@@ -311,12 +293,12 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
      */
     protected void doLearn(LearnerResultStep currentStep) {
 
+        final int batchSize = result.getUrls().size();
         final EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
         if (configuration.getEqOracle() instanceof TestSuiteEQOracleProxy) {
-            eqOracle =
-                    ((TestSuiteEQOracleProxy) configuration.getEqOracle()).createEqOracle(mqOracle, maxConcurrentQueries, testDAO, user, result);
+            eqOracle = ((TestSuiteEQOracleProxy) configuration.getEqOracle()).createEqOracle(mqOracle, batchSize, testDAO, user, result);
         } else {
-            eqOracle = configuration.getEqOracle().createEqOracle(mqOracle, maxConcurrentQueries);
+            eqOracle = configuration.getEqOracle().createEqOracle(mqOracle, batchSize);
         }
 
         long start, end;
@@ -336,11 +318,6 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
             updateStatisticsWithEqOracle(start, end, currentStep);
 
             if (counterexample != null) {
-                // for long randomly generated words, check if there is a shorter prefix that is also a counterexample
-                if (configuration.getEqOracle() instanceof MealyRandomWordsEQOracleProxy) {
-                    counterexample = findShortestPrefix(counterexample);
-                }
-
                 // refine the hypothesis
                 learnerPhase = Learner.LearnerPhase.LEARNING;
                 start = System.nanoTime();
@@ -360,33 +337,6 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
 
     private boolean continueLearning(final LearnerResultStep step, final long rounds) {
         return step.getStepsToLearn() == -1 || step.getStepsToLearn() == rounds || isInterrupted();
-    }
-
-    /**
-     * Given a counterexample, test if there is a shorter prefix that is also a counterexample.
-     *
-     * @param ce
-     *         The counterexample.
-     * @return The prefix.
-     */
-    private DefaultQuery<String, Word<String>> findShortestPrefix(DefaultQuery<String, Word<String>> ce) {
-        Word<String> input = ce.getInput();
-        Word<String> output = ce.getOutput();
-
-        int i;
-        for (i = 0; i <= input.size(); i++) {
-            Word<String> prefix = input.subWord(0, i);
-            Word<String> sulOutput = output.subWord(0, i);
-            Word<String> hypOutput = learner.getHypothesisModel().computeOutput(prefix);
-            if (!Objects.equals(sulOutput, hypOutput)) {
-                break;
-            }
-        }
-
-        DefaultQuery<String, Word<String>> prefix = new DefaultQuery<>(input.subWord(0, i));
-        prefix.answer(output.subWord(0, i));
-
-        return prefix;
     }
 
     public void stopLearning() {
@@ -409,4 +359,8 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         return result;
     }
 
+    protected void shutdown() {
+        sulOracles.forEach(ContextAwareSulOracle::shutdown);
+        finished = true;
+    }
 }
