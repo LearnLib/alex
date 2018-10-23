@@ -36,7 +36,7 @@ install:
   # override any "sane" defaults of Travis VMs
   - cp ${TRAVIS_BUILD_DIR}/.travis/settings.xml ${HOME}/.m2/settings.xml
   # setup our own chromedriver binary that disables sandboxing (required by Travis containers)
-  - echo "/usr/lib/chromium-browser/chromedriver --no-sandbox \$@" > ${HOME}/chromedriver
+  - echo "/usr/lib/chromium-browser/chromedriver --headless --no-sandbox --disable-gpu --disable-dev-shm-usage \$@" > ${HOME}/chromedriver
   - chmod +x ${HOME}/chromedriver
 
 script:
