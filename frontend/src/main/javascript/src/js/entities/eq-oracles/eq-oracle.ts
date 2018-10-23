@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-export interface EqOracle {
+export abstract class EqOracle {
 
   /** The JSON type of the oracle. */
-  type: string;
+  abstract type: string;
+
+  /**
+   * Constructor.
+   *
+   * @param batchSize How many membership queries can be posed at once.
+   */
+  protected constructor(public batchSize: number = 20) {
+  }
 }

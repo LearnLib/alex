@@ -26,8 +26,8 @@ import net.automatalib.words.Word;
 import java.io.Serializable;
 
 /**
- * Proxy around a WMethodEQOracle.
- * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
+ * Proxy around a WMethodEQOracle. The Proxy is needed to make it easier to (de-)serialize the Transition into/ from
+ * JSON.
  *
  * @see de.learnlib.oracle.equivalence.WMethodEQOracle
  */
@@ -75,7 +75,7 @@ public class WMethodEQOracleProxy extends AbstractEquivalenceOracleProxy impleme
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
+            MembershipOracle<String, Word<String>> membershipOracle) {
         return new WMethodEQOracle.MealyWMethodEQOracle<>(membershipOracle, this.maxDepth, batchSize);
     }
 }

@@ -36,8 +36,6 @@ public class SymbolMapperTest {
 
     private ParameterizedSymbol ps2;
 
-    private List<ParameterizedSymbol> pSymbols;
-
     private SymbolMapper sm;
 
     @Before
@@ -65,13 +63,7 @@ public class SymbolMapperTest {
         value.setValue("test");
         ps2.setParameterValues(Collections.singletonList(value));
 
-        this.pSymbols = Arrays.asList(ps1, ps2);
-        this.sm = new SymbolMapper(pSymbols);
-    }
-
-    @Test
-    public void shouldContainAllSymbols() {
-        Assert.assertTrue(pSymbols.containsAll(sm.getSymbols()));
+        this.sm = new SymbolMapper(Arrays.asList(ps1, ps2));
     }
 
     @Test

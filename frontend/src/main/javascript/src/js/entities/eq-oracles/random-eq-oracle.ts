@@ -20,7 +20,7 @@ import {EqOracle} from './eq-oracle';
 /**
  * The model for the random eq oracle.
  */
-export class RandomEqOracle implements EqOracle {
+export class RandomEqOracle extends EqOracle {
 
   public type: string = eqOracleType.RANDOM;
 
@@ -36,5 +36,6 @@ export class RandomEqOracle implements EqOracle {
               public maxLength = 20,
               public maxNoOfTests = 50,
               public seed = 42) {
+    super();
   }
 }

@@ -39,9 +39,9 @@ import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.exceptions.LearnerException;
-import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
-import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
+import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
+import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import net.automatalib.automata.transout.impl.compact.CompactMealy;
@@ -102,7 +102,7 @@ public class Learner {
 
     /** Factory to create a new ContextHandler. */
     @Inject
-    private ConnectorContextHandlerFactory contextHandlerFactory;
+    private PreparedConnectorContextHandlerFactory contextHandlerFactory;
 
     /** The repository for project URLs. */
     @Inject
@@ -137,7 +137,7 @@ public class Learner {
      *         The factory that will be used to create new context handler.
      */
     public Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO,
-            ConnectorContextHandlerFactory contextHandlerFactory) {
+                   PreparedConnectorContextHandlerFactory contextHandlerFactory) {
         this();
         this.symbolDAO = symbolDAO;
         this.learnerResultDAO = learnerResultDAO;
@@ -174,17 +174,15 @@ public class Learner {
             throw new IllegalStateException("You can not start more than one experiment at the same time.");
         }
 
-        final List<ProjectUrl> urls = projectUrlRepository.findAll(configuration.getUrlIds());
-
         final LearnerResult result = createLearnerResult(user, project, configuration);
+        configuration.setUrls(projectUrlRepository.findAll(configuration.getUrlIds()));
 
-        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, urls,
-                configuration.getDriverConfig());
-        contextHandler.setResetSymbol(result.getResetSymbol());
-        contextHandler.setPostSymbol(result.getPostSymbol());
+        final PreparedContextHandler contextHandler = contextHandlerFactory
+                .createPreparedContextHandler(user, project, configuration.getDriverConfig(), result.getResetSymbol(), result.getPostSymbol());
 
         final AbstractLearnerThread learnThread = new StartingLearnerThread(user, learnerResultDAO, webhookService,
                 testDAO, contextHandler, result, configuration);
+
         startThread(project.getId(), learnThread);
     }
 
@@ -233,16 +231,15 @@ public class Learner {
 
         final List<ProjectUrl> urls = projectUrlRepository.findAll(configuration.getUrlIds());
         result.setUrls(urls);
-
-        final ConnectorContextHandler contextHandler = contextHandlerFactory.createContext(user, project, urls,
-                result.getDriverConfig());
-        contextHandler.setResetSymbol(result.getResetSymbol());
+        configuration.setUrls(urls);
 
         if (result.getPostSymbol() != null) {
             final Symbol postSymbol = symbolDAO.get(user, project.getId(), result.getPostSymbol().getSymbol().getId());
             result.getPostSymbol().setSymbol(postSymbol);
-            contextHandler.setPostSymbol(result.getPostSymbol());
         }
+
+        final PreparedContextHandler contextHandler = contextHandlerFactory.createPreparedContextHandler(user, project,
+                result.getDriverConfig(), result.getResetSymbol(), result.getPostSymbol());
 
         final AbstractLearnerThread learnThread = new ResumingLearnerThread(user, learnerResultDAO, webhookService,
                 testDAO, contextHandler, result, configuration);
@@ -453,7 +450,7 @@ public class Learner {
      *         If something went wrong while testing the symbols.
      */
     public List<ExecuteResult> readOutputs(User user, Project project, ParameterizedSymbol resetSymbol,
-            List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, AbstractWebDriverConfig driverConfig)
+                                           List<ParameterizedSymbol> symbols, ParameterizedSymbol postSymbol, AbstractWebDriverConfig driverConfig)
             throws LearnerException {
         LOGGER.traceEntry();
         LOGGER.info(LoggerMarkers.LEARNER, "Learner.readOutputs({}, {}, {}, {}, {})", user, project, resetSymbol, symbols, driverConfig);
@@ -477,13 +474,8 @@ public class Learner {
      * @return The outputs of the SUL.
      */
     public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {
-        ConnectorContextHandler ctxHandler =
-                contextHandlerFactory.createContext(user, project, readOutputConfig.getDriverConfig());
-        ctxHandler.setResetSymbol(readOutputConfig.getSymbols().getResetSymbol());
-        if (readOutputConfig.getSymbols().getPostSymbol() != null) {
-            ctxHandler.setPostSymbol(readOutputConfig.getSymbols().getPostSymbol());
-        }
-        ConnectorManager connectors = ctxHandler.createContext();
+        PreparedContextHandler ctxHandler = contextHandlerFactory.createPreparedContextHandler(user, project, readOutputConfig.getDriverConfig(), readOutputConfig.getSymbols().getResetSymbol(), readOutputConfig.getSymbols().getPostSymbol());
+        ConnectorManager connectors = ctxHandler.create(project.getDefaultUrl().getUrl()).createContext();
 
         try {
             List<ExecuteResult> outputs = readOutputConfig.getSymbols().getSymbols().stream()

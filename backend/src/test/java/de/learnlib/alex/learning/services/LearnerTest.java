@@ -31,7 +31,7 @@ import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
-import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
+import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -59,7 +59,7 @@ public class LearnerTest {
     private static final int    SYMBOL_AMOUNT = 5;
 
     @Mock
-    private ConnectorContextHandlerFactory contextHandlerFactory;
+    private PreparedConnectorContextHandlerFactory contextHandlerFactory;
 
     @Mock
     private ConnectorContextHandler contextHandler;
@@ -90,8 +90,8 @@ public class LearnerTest {
         AbstractWebDriverConfig driverConfig = new HtmlUnitDriverConfig();
 
         given(learnerConfiguration.getDriverConfig()).willReturn(driverConfig);
-        given(contextHandlerFactory.createContext(user, project, driverConfig))
-                .willReturn(contextHandler);
+//        given(contextHandlerFactory.create(user, project, driverConfig))
+//                .willReturn(contextHandler);
 //        given(learnerThreadFactory.createThread(any(LearnerResult.class), any(ConnectorContextHandler.class)))
 //                .willReturn(learnerThread);
 //

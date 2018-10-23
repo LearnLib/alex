@@ -264,6 +264,12 @@
             <artifactId>learnlib-datastructure-ot</artifactId>
             <version>${learnlib.version}</version>
         </dependency>
+        <dependency>
+            <groupId>de.learnlib</groupId>
+            <artifactId>learnlib-parallelism</artifactId>
+            <version>${learnlib.version}</version>
+        </dependency>
+
 
         <!-- selenium testing -->
         <dependency>

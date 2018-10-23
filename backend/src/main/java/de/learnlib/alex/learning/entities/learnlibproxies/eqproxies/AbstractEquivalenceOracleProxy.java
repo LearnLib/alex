@@ -44,6 +44,17 @@ public abstract class AbstractEquivalenceOracleProxy implements Serializable {
 
     private static final long serialVersionUID = 6270462192160289890L;
 
+    /** How many membership queries are in a batch by default. */
+    private static final int DEFAULT_BATCH_SIZE = 20;
+
+    /** How many membership queries are posed together. */
+    protected int batchSize;
+
+    /** Constructor. */
+    public AbstractEquivalenceOracleProxy() {
+        this.batchSize = DEFAULT_BATCH_SIZE;
+    }
+
     /**
      * Check if the parameter of the proxy are valid, i.e. it is possible to create a functional EQ oracle out of the
      * proxy. If everything is OK nothing will happen. If there are errors an exception will be thrown. This exception
@@ -59,11 +70,16 @@ public abstract class AbstractEquivalenceOracleProxy implements Serializable {
      *
      * @param membershipOracle
      *         The MQ oracle to test against a hypothesis.
-     * @param batchSize
-     *         The size of the MQ batch.
      * @return An EquivalenceOracle from the LearnLib based on the proxy.
      */
     public abstract EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle<String, Word<String>> membershipOracle, int batchSize);
+            MembershipOracle<String, Word<String>> membershipOracle);
 
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchSize(Integer batchSize) {
+        this.batchSize = (batchSize == null || batchSize < 1) ? DEFAULT_BATCH_SIZE : batchSize;
+    }
 }

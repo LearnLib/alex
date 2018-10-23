@@ -20,7 +20,7 @@ import {EqOracle} from './eq-oracle';
 /**
  * The model for the test suite eq oracle.
  */
-export class TestSuiteEqOracle implements EqOracle {
+export class TestSuiteEqOracle extends EqOracle {
 
   public type: string = eqOracleType.TEST_SUITE;
 
@@ -32,5 +32,6 @@ export class TestSuiteEqOracle implements EqOracle {
    */
   constructor(public testSuiteId: number = null,
               public includeChildTestSuites = false) {
+    super();
   }
 }

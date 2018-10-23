@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -46,17 +47,17 @@ public class SampleEQOracleProxyTest {
     }
 
     @Test
-    public void shouldCreateCorrectJSON() throws JsonProcessingException {
+    public void shouldCreateCorrectJSON() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         String actualJSON = mapper.writeValueAsString(eqOracle);
 
-        String expectedJSON  = "{\"type\":\"sample\",\"counterExamples\":["
+        String expectedJSON  = "{\"batchSize\":20,\"type\":\"sample\",\"counterExamples\":["
                                     + "[{\"input\":\"input1\",\"output\":\"output1\"},"
                                         + "{\"input\":\"input2\",\"output\":\"output2\"}],"
                                     + "[{\"input\":\"input3\",\"output\":\"output3\"}"
                                         + ",{\"input\":\"input4\",\"output\":\"output4\"}]"
                                 + "]}";
-        assertEquals(expectedJSON, actualJSON);
+        JSONAssert.assertEquals(expectedJSON, actualJSON, true);
     }
 
     @Test

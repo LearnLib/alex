@@ -23,6 +23,7 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
+import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.ThreadContext;
@@ -39,7 +40,7 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
      *         {@link AbstractLearnerThread#learnerResultDAO}.
      * @param webhookService
      *         {@link AbstractLearnerThread#webhookService}.
-     * @param context
+     * @param contextHandler
      *         The context to use.
      * @param result
      *         {@link AbstractLearnerThread#result}.
@@ -49,9 +50,9 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
      *         The DAO for tests that is passed to the eq oracle.
      */
     public StartingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-            TestDAO testDAO, ConnectorContextHandler context, LearnerResult result,
-            LearnerStartConfiguration configuration) {
-        super(user, learnerResultDAO, webhookService, testDAO, context, result, configuration);
+                                 TestDAO testDAO, PreparedContextHandler contextHandler, LearnerResult result,
+                                 LearnerStartConfiguration configuration) {
+        super(user, learnerResultDAO, webhookService, testDAO, contextHandler, result, configuration);
     }
 
     @Override
@@ -67,9 +68,7 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
             e.printStackTrace();
             updateOnError(e);
         } finally {
-            context.post();
-            finished = true;
-
+            shutdown();
             LOGGER.info(LoggerMarkers.LEARNER, "The learner thread has finished.");
             LOGGER.traceExit();
             ThreadContext.remove("userId");

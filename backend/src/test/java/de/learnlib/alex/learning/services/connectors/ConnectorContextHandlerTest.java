@@ -45,13 +45,10 @@ public class ConnectorContextHandlerTest {
         Symbol symbol = new Symbol();
         symbol.setId(1L);
         given(resetSymbol.getSymbol()).willReturn(symbol);
-
-        handler = new ConnectorContextHandler();
-        handler.setResetSymbol(resetSymbol);
     }
 
     @Test
-    public void shouldCreateTheContextCorrectly() throws Exception {
+    public void shouldCreateTheContextCorrectly() {
         given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(new ExecuteResult(true));
 
         ConnectorManager connectorManager = new ConnectorManager();
@@ -60,11 +57,12 @@ public class ConnectorContextHandlerTest {
         connectorManager.addConnector(connector1);
         connectorManager.addConnector(connector2);
 
-        handler.addConnectorManager(connectorManager);
-        ConnectorManager context = handler.createContext();
+        handler = new ConnectorContextHandler(connectorManager, resetSymbol, null);
 
-        assertEquals(connector1, context.getConnector(connector1.getClass()));
-        assertEquals(connector2, context.getConnector(connector2.getClass()));
+        assertEquals(connector1, connectorManager.getConnector(connector1.getClass()));
+        assertEquals(connector2, connectorManager.getConnector(connector2.getClass()));
+
+        handler.createContext();
         verify(connector1).reset();
         verify(connector2).reset();
         verify(resetSymbol).execute(any(ConnectorManager.class));
@@ -74,15 +72,8 @@ public class ConnectorContextHandlerTest {
     public void shouldThrowAnExceptionIfTheResetSymbolExecutionFailed() {
         given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(new ExecuteResult(false));
 
-        handler.addConnectorManager(createConnectorManager());
+        handler = new ConnectorContextHandler(createConnectorManager(), resetSymbol, null);
         handler.createContext(); // should fail
-    }
-
-    @Test
-    public void shouldHaveTheCorrectAmountOfMaxConcurrentQueries() {
-        handler.addConnectorManager(createConnectorManager());
-        handler.addConnectorManager(createConnectorManager());
-        assertEquals(handler.getMaxConcurrentQueries(), 2);
     }
 
     private ConnectorManager createConnectorManager() {
@@ -91,6 +82,6 @@ public class ConnectorContextHandlerTest {
         Connector connector2 = mock(CounterStoreConnector.class);
         connectorManager.addConnector(connector1);
         connectorManager.addConnector(connector2);
-        return  connectorManager;
+        return connectorManager;
     }
 }
