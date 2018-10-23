@@ -38,6 +38,8 @@ install:
   - cp ${TRAVIS_BUILD_DIR}/.travis/settings.xml ${HOME}/.m2/settings.xml
   # setup chromedriver
   - ln -s /usr/lib/chromium-browser/chromedriver ${HOME}/bin/chromedriver
+  - echo "${HOME}/bin/chromedriver --headless --no-sandbox --disable-gpu --disable-dev-shm-usage \$@" > ${HOME}/chromedriver
+  - chmod +x ${HOME}/chromedriver
 
 before_script:
   - google-chrome-stable --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --remote-debugging-port=9222 http://localhost &
