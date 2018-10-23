@@ -15,6 +15,7 @@ matrix:
   - jdk: oraclejdk11
 
 addons:
+  chrome: stable
   apt:
     sources:
       - sourceline: "deb https://deb.nodesource.com/node_10.x trusty main"
@@ -35,9 +36,12 @@ before_cache:
 install:
   # override any "sane" defaults of Travis VMs
   - cp ${TRAVIS_BUILD_DIR}/.travis/settings.xml ${HOME}/.m2/settings.xml
-  # setup our own chromedriver binary that disables sandboxing (required by Travis containers)
-  - echo "/usr/lib/chromium-browser/chromedriver --headless --no-sandbox --disable-gpu --disable-dev-shm-usage \$@" > ${HOME}/chromedriver
-  - chmod +x ${HOME}/chromedriver
+  # setup chromedriver
+  - mkdir ${HOME}/bin/
+  - ln -s /usr/lib/chromium-browser/chromedriver ${HOME}/bin/chromedriver
+
+before_script:
+  - google-chrome-stable --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --remote-debugging-port=9222 http://localhost &
 
 script:
   - mvn clean install -Pbootstrap,code-analysis,documentation,integration-tests
