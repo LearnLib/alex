@@ -164,7 +164,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         if (numUrls > 1) {
             final DynamicParallelOracle<String, Word<String>> parallelOracle =
                     new DynamicParallelOracleBuilder<>(sulOracles)
-                            .withBatchSize(numUrls)
+                            .withBatchSize(1)
                             .withPoolSize(numUrls)
                             .create();
 
@@ -293,12 +293,11 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
      */
     protected void doLearn(LearnerResultStep currentStep) {
 
-        final int batchSize = result.getUrls().size();
         final EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> eqOracle;
         if (configuration.getEqOracle() instanceof TestSuiteEQOracleProxy) {
-            eqOracle = ((TestSuiteEQOracleProxy) configuration.getEqOracle()).createEqOracle(mqOracle, batchSize, testDAO, user, result);
+            eqOracle = ((TestSuiteEQOracleProxy) configuration.getEqOracle()).createEqOracle(mqOracle, testDAO, user, result);
         } else {
-            eqOracle = configuration.getEqOracle().createEqOracle(mqOracle, batchSize);
+            eqOracle = configuration.getEqOracle().createEqOracle(mqOracle);
         }
 
         long start, end;

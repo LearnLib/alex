@@ -55,7 +55,7 @@ public class WpMethodEQOracleProxy extends AbstractEquivalenceOracleProxy implem
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
+            MembershipOracle<String, Word<String>> membershipOracle) {
         return new WpMethodEQOracle.MealyWpMethodEQOracle<>(membershipOracle, maxDepth, batchSize);
     }
 

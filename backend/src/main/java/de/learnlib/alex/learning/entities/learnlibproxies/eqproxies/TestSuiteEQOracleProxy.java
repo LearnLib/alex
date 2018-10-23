@@ -108,7 +108,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
+            MembershipOracle<String, Word<String>> membershipOracle) {
         throw new UnsupportedOperationException("Cannot call this method on this class.");
     }
 
@@ -118,8 +118,6 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
      *
      * @param membershipOracle
      *         The membership oracle.
-     * @param batchSize
-     *         How many membership queries can be posed together.
      * @param testDAO
      *         The test DAO.
      * @param user
@@ -129,7 +127,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
      * @return An instance of the equivalence oracle.
      */
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle<String, Word<String>> membershipOracle, int batchSize, TestDAO testDAO, User user,
+            MembershipOracle<String, Word<String>> membershipOracle, TestDAO testDAO, User user,
             LearnerResult result) {
         return new TestSuiteEQOracleProxy(testSuiteId, testDAO, user, result, membershipOracle, batchSize);
     }

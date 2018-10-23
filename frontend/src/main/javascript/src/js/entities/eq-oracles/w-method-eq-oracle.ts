@@ -20,9 +20,9 @@ import {EqOracle} from './eq-oracle';
 /**
  * The model for the wmethod eq oracle.
  */
-export class WMethodEqOracle implements EqOracle {
+export class WMethodEqOracle extends EqOracle {
 
-  public type = eqOracleType.WMETHOD;
+  public type: string = eqOracleType.WMETHOD;
 
   /**
    * Constructor.
@@ -30,5 +30,6 @@ export class WMethodEqOracle implements EqOracle {
    * @param maxDepth
    */
   constructor(public maxDepth = 0) {
+    super();
   }
 }

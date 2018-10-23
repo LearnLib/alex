@@ -20,7 +20,7 @@ import {EqOracle} from './eq-oracle';
 /**
  * The model for the complete eq oracle.
  */
-export class CompleteEqOracle implements EqOracle {
+export class CompleteEqOracle extends EqOracle {
 
   public type: string = eqOracleType.COMPLETE;
 
@@ -32,5 +32,6 @@ export class CompleteEqOracle implements EqOracle {
    */
   constructor(public minDepth = 1,
               public maxDepth = 10) {
+    super();
   }
 }

@@ -141,7 +141,7 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
     @Override
     public void checkParameters() throws IllegalArgumentException {
         if (counterExamples.isEmpty()) {
-            throw new IllegalArgumentException("You need to specify at least one counter example!");
+            throw new IllegalArgumentException("You need to specify at least one counterexample!");
         }
     }
 
@@ -157,7 +157,7 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
+            MembershipOracle<String, Word<String>> membershipOracle) {
         SampleSetEQOracle newEQ = new SampleSetEQOracle(false);
 
         for (List<InputOutputPair> counterExample : counterExamples) {

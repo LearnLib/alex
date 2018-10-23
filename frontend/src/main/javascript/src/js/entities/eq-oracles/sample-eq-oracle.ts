@@ -20,7 +20,7 @@ import {EqOracle} from './eq-oracle';
 /**
  * The model for the sample eq oracle.
  */
-export class SampleEqOracle implements EqOracle {
+export class SampleEqOracle extends EqOracle {
 
   public type: string = eqOracleType.SAMPLE;
 
@@ -30,5 +30,6 @@ export class SampleEqOracle implements EqOracle {
    * @param counterExamples
    */
   constructor(public counterExamples: any[] = []) {
+    super();
   }
 }

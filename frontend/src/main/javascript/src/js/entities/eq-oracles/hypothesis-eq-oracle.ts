@@ -20,7 +20,7 @@ import {EqOracle} from './eq-oracle';
 /**
  * The model for the Hypothesis eq oracle.
  */
-export class HypothesisEqOracle implements EqOracle {
+export class HypothesisEqOracle extends EqOracle {
 
   public type: string = eqOracleType.HYPOTHESIS;
 
@@ -30,5 +30,6 @@ export class HypothesisEqOracle implements EqOracle {
    * @param hypothesis
    */
   constructor(public hypothesis = {}) {
+    super();
   }
 }

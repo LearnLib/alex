@@ -112,8 +112,8 @@ public class CompleteExplorationEQOracleProxy extends AbstractEquivalenceOracleP
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
-        return new CompleteExplorationEQOracle(membershipOracle, minDepth, maxDepth, batchSize);
+            MembershipOracle<String, Word<String>> membershipOracle) {
+        return new CompleteExplorationEQOracle<>(membershipOracle, minDepth, maxDepth, batchSize);
     }
 
 }
