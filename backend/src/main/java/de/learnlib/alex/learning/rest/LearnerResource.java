@@ -114,15 +114,12 @@ public class LearnerResource {
      * @param configuration
      *         The configuration to customize the learning.
      * @return The status of the current learn process.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
      */
     @POST
     @Path("/{project_id}/start")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response start(@PathParam("project_id") long projectId, LearnerStartConfiguration configuration)
-            throws NotFoundException {
+    public Response start(@PathParam("project_id") long projectId, LearnerStartConfiguration configuration) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("start({}, {}) for user {}.", projectId, configuration, user);
 
@@ -167,8 +164,6 @@ public class LearnerResource {
      * @param configuration
      *         The configuration to specify the settings for the next learning steps.
      * @return The status of the current learn process.
-     * @throws NotFoundException
-     *         If the previous learn job or the related Project could not be found.
      */
     @POST
     @Path("/{project_id}/resume/{test_no}")
@@ -176,8 +171,7 @@ public class LearnerResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response resume(@PathParam("project_id") long projectId,
                            @PathParam("test_no") long testNo,
-                           LearnerResumeConfiguration configuration)
-            throws NotFoundException {
+                           LearnerResumeConfiguration configuration) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
 
@@ -255,13 +249,11 @@ public class LearnerResource {
      * @param projectId
      *         The project to stop.
      * @return The status of the current learn process.
-     * @throws NotFoundException
-     *         If the project could not be found.
      */
     @GET
     @Path("/{project_id}/stop")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response stop(@PathParam("project_id") long projectId) throws NotFoundException {
+    public Response stop(@PathParam("project_id") long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("stop() for user {}.", user);
 
@@ -306,16 +298,12 @@ public class LearnerResource {
      * @param outputConfig
      *         The output config.
      * @return The observed output of the given input set.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
      */
     @POST
     @Path("/{project_id}/outputs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response readOutput(@PathParam("project_id") Long projectId, ReadOutputConfig outputConfig)
-            throws NotFoundException {
-
+    public Response readOutput(@PathParam("project_id") Long projectId, ReadOutputConfig outputConfig) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("readOutput({}, {}) for user {}.", projectId, outputConfig, user);
 

@@ -19,7 +19,7 @@ package de.learnlib.alex.common.exceptions;
 /**
  * An alternative to the default NotFoundException.
  */
-public class NotFoundException extends Exception {
+public class NotFoundException extends RuntimeException {
 
     /** Constructor. */
     public NotFoundException() {

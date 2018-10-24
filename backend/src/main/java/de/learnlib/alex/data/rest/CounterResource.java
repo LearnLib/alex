@@ -18,7 +18,6 @@ package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.StringList;
 import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.entities.Counter;
@@ -63,12 +62,10 @@ public class CounterResource {
      * @param projectId
      *         The Project ID.
      * @return A List of the counters within the project. This list can be empty.
-     * @throws NotFoundException
-     *         If the related User or Project could not be found.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllCounters(@PathParam("project_id") Long projectId) throws NotFoundException {
+    public Response getAllCounters(@PathParam("project_id") Long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAllCounters({}) for user {}.", projectId, user);
 
@@ -86,13 +83,11 @@ public class CounterResource {
      * @param counter
      *         The counter to create.
      * @return The created counter.
-     * @throws NotFoundException
-     *         If the project or counter could not be found.
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createCounter(@PathParam("project_id") Long projectId, Counter counter) throws NotFoundException {
+    public Response createCounter(@PathParam("project_id") Long projectId, Counter counter) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createCounter({}, {}) for user {}.", projectId, counter.getName(), user);
 
@@ -114,15 +109,12 @@ public class CounterResource {
      * @param counter
      *         The updated counter to update.
      * @return The updated counter.
-     * @throws NotFoundException
-     *         If the project or counter could not be found.
      */
     @PUT
     @Path("/{counter_name}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name, Counter counter)
-            throws NotFoundException {
+    public Response updateCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name, Counter counter) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("updateCounter({}, {}) for user {}.", projectId, name, user);
 
@@ -149,14 +141,11 @@ public class CounterResource {
      * @param name
      *         The name of the counter to remove.
      * @return Nothing if everything went OK.
-     * @throws NotFoundException
-     *         If the given Counter or the related User or Project could not be found.
      */
     @DELETE
     @Path("/{counter_name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name)
-            throws NotFoundException {
+    public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, name, user);
 
@@ -174,14 +163,11 @@ public class CounterResource {
      * @param names
      *         The names of the counters to remove.
      * @return Nothing if everything went OK.
-     * @throws NotFoundException
-     *         If the given Counters or the related User or Project could not be found.
      */
     @DELETE
     @Path("/batch/{counter_names}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_names") StringList names)
-            throws NotFoundException {
+    public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_names") StringList names) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, names, user);
 

@@ -18,9 +18,7 @@ package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
-import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
@@ -74,10 +72,6 @@ public class SymbolResource {
     @Context
     private SecurityContext securityContext;
 
-    /** The {@link ProjectDAO} to use. */
-    @Inject
-    private ProjectDAO projectDAO;
-
     /** The {@link WebhookService} to use. */
     @Inject
     private WebhookService webhookService;
@@ -90,13 +84,11 @@ public class SymbolResource {
      * @param symbol
      *         The symbol to add.
      * @return On success the added symbol (enhanced with information from the DB); An error message on failure.
-     * @throws NotFoundException
-     *         If the related Project or Group could not be found.
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createSymbol(@PathParam("project_id") Long projectId, Symbol symbol) throws NotFoundException {
+    public Response createSymbol(@PathParam("project_id") Long projectId, Symbol symbol) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createSymbol({}, {}) for user {}.", projectId, symbol, user);
 
@@ -114,15 +106,12 @@ public class SymbolResource {
      * @param symbols
      *         The symbols to add.
      * @return On success the added symbols (enhanced with information from the DB); An error message on failure.
-     * @throws NotFoundException
-     *         If the related Projects or Groups could not be found.
      */
     @POST
     @Path("/batch")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createSymbols(@PathParam("project_id") Long projectId, List<Symbol> symbols)
-            throws NotFoundException {
+    public Response createSymbols(@PathParam("project_id") Long projectId, List<Symbol> symbols) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createSymbols({}, {}) for user {}.", projectId, symbols, user);
 
@@ -141,14 +130,11 @@ public class SymbolResource {
      *         Specify the visibility level of the symbols you want to get. Valid values are: 'all'/ 'unknown',
      *         'visible', 'hidden'. Optional.
      * @return A list of all Symbols belonging to the project. This list can be empty.
-     * @throws NotFoundException
-     *         If the project could not be found.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") Long projectId,
-                           @QueryParam("visibility") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel)
-            throws NotFoundException {
+                           @QueryParam("visibility") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}, {}) for user {}.", projectId, visibilityLevel, user);
 
@@ -166,14 +152,11 @@ public class SymbolResource {
      * @param ids
      *         The non empty list of ids.
      * @return A list of the symbols whose ids were given
-     * @throws NotFoundException
-     *         If the requested Symbols or the related Projects or Groups could not be found.
      */
     @GET
     @Path("/batch/{ids}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getByIds(@PathParam("project_id") Long projectId, @PathParam("ids") IdsList ids)
-            throws NotFoundException {
+    public Response getByIds(@PathParam("project_id") Long projectId, @PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getByIds({}, {}) for user {}.", projectId, ids, user);
 
@@ -191,13 +174,11 @@ public class SymbolResource {
      * @param id
      *         The ID of the symbol.
      * @return A Symbol matching the projectID & ID or a not found response.
-     * @throws NotFoundException
-     *         If the requested Symbol or the related Project or Group could not be found.
      */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) throws NotFoundException {
+    public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {})  for user {}.", projectId, id, user);
 
@@ -217,15 +198,12 @@ public class SymbolResource {
      * @param symbol
      *         The new symbol data.
      * @return On success the updated symbol (maybe enhanced with information from the DB); An error message on failure.
-     * @throws NotFoundException
-     *         If the given Symbol or the related Project or Groups could not be found.
      */
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("project_id") Long projectId, @PathParam("id") Long id, Symbol symbol)
-            throws NotFoundException {
+    public Response update(@PathParam("project_id") Long projectId, @PathParam("id") Long id, Symbol symbol) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, symbol, user);
 
@@ -254,8 +232,6 @@ public class SymbolResource {
      * @param symbols
      *         The new symbol data.
      * @return On success the updated symbol (maybe enhanced with information from the DB); An error message on failure.
-     * @throws NotFoundException
-     *         If the given Symbols or the related Projects or Groups could not be found.
      */
     @PUT
     @Path("/batch/{ids}")
@@ -263,7 +239,7 @@ public class SymbolResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response batchUpdate(@PathParam("project_id") Long projectId,
                                 @PathParam("ids") IdsList ids,
-                                List<Symbol> symbols) throws NotFoundException {
+                                List<Symbol> symbols) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("batchUpdate({}, {}, {}) for user {}.", projectId, ids, symbols, user);
 
@@ -293,16 +269,13 @@ public class SymbolResource {
      * @param groupId
      *         The ID of the new group.
      * @return On success the moved symbol (enhanced with information from the DB); An error message on failure.
-     * @throws NotFoundException
-     *         If the requested Symbols or the related Project or Groups could not be found.
      */
     @PUT
     @Path("/{symbol_id}/moveTo/{group_id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response moveSymbolToAnotherGroup(@PathParam("project_id") Long projectId,
                                              @PathParam("symbol_id") Long symbolId,
-                                             @PathParam("group_id") Long groupId)
-            throws NotFoundException {
+                                             @PathParam("group_id") Long groupId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolId, groupId, user);
 
@@ -339,16 +312,13 @@ public class SymbolResource {
      * @param groupId
      *         The ID of the new group.
      * @return On success the moved symbols (enhanced with information from the DB); An error message on failure.
-     * @throws NotFoundException
-     *         If the requested Symbols or the related Project or Groups could not be found.
      */
     @PUT
     @Path("/batch/{symbol_ids}/moveTo/{group_id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response moveSymbolToAnotherGroup(@PathParam("project_id") Long projectId,
                                              @PathParam("symbol_ids") IdsList symbolIds,
-                                             @PathParam("group_id") Long groupId)
-            throws NotFoundException {
+                                             @PathParam("group_id") Long groupId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolIds, groupId, user);
 
@@ -368,13 +338,11 @@ public class SymbolResource {
      * @param id
      *         The ID of the symbol to hide.
      * @return On success no content will be returned; an error message on failure.
-     * @throws NotFoundException
-     *         If the requested Symbol or the related Project or Group could not be found.
      */
     @POST
     @Path("/{id}/hide")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response hide(@PathParam("project_id") Long projectId, @PathParam("id") Long id) throws NotFoundException {
+    public Response hide(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, id, user);
 
@@ -393,14 +361,11 @@ public class SymbolResource {
      * @param symbolId
      *         The ID of the symbol.
      * @return 204 No content if the symbol could be deleted.
-     * @throws NotFoundException
-     *         If the symbol or the project could not be found.
      */
     @DELETE
     @Path("/{symbol_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("symbol_id") Long symbolId)
-            throws NotFoundException {
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("symbol_id") Long symbolId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete symbol ({}, {}) for user {}.", projectId, symbolId, user);
 
@@ -416,15 +381,12 @@ public class SymbolResource {
      *         The ID of the project.
      * @param ids
      *         The IDs of the symbols to hide.
-     * @return On success no content will be returned; an error message on failure.
-     * @throws NotFoundException
-     *         If the requested Symbols or the related Project or Groups could not be found.
+     * @return On success no content will be returned; an error message on failure..
      */
     @POST
     @Path("/batch/{ids}/hide")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response hide(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids)
-            throws NotFoundException {
+    public Response hide(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, ids, user);
 
@@ -443,13 +405,11 @@ public class SymbolResource {
      * @param id
      *         The ID of the symbol to show.
      * @return On success no content will be returned; an error message on failure.
-     * @throws NotFoundException
-     *         If the requested Symbol or the related Project or Group could not be found.
      */
     @POST
     @Path("/{id}/show")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response show(@PathParam("project_id") long projectId, @PathParam("id") Long id) throws NotFoundException {
+    public Response show(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("show({}, {}) for user {}.", projectId, id, user);
 
@@ -470,14 +430,11 @@ public class SymbolResource {
      * @param ids
      *         The IDs of the symbols to show.
      * @return On success no content will be returned; an error message on failure.
-     * @throws NotFoundException
-     *         If the requested Symbols or the related Project or Groups could not be found.
      */
     @POST
     @Path("/batch/{ids}/show")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response show(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids)
-            throws NotFoundException {
+    public Response show(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("show({}, {}) for user {}.", projectId, ids, user);
 

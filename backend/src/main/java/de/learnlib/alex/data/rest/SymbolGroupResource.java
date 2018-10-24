@@ -18,7 +18,6 @@ package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.SymbolGroupDAO;
 import de.learnlib.alex.data.entities.SymbolGroup;
@@ -78,13 +77,11 @@ public class SymbolGroupResource {
      * @param group
      *         The group to create.
      * @return On success the added group (enhanced with information from the DB); an error message on failure.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group) throws NotFoundException {
+    public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group){
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createGroup({}, {}) for user {}.", projectId, group, user);
 
@@ -105,15 +102,12 @@ public class SymbolGroupResource {
      * @param groups
      *         The groups to create.
      * @return The created groups.
-     * @throws NotFoundException
-     *         If one of the entities could not be found.
      */
     @POST
     @Path("/batch")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createGroups(@PathParam("project_id") Long projectId, List<SymbolGroup> groups)
-            throws NotFoundException {
+    public Response createGroups(@PathParam("project_id") Long projectId, List<SymbolGroup> groups) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createGroups({}, {}) for user {}.", projectId, groups, user);
 
@@ -131,13 +125,10 @@ public class SymbolGroupResource {
      * @param embed
      *         The properties to embed in the response.
      * @return All groups in a list. If the project contains no groups the list will be empty.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed)
-            throws NotFoundException {
+    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}, {}) for user {}.", projectId, embed, user);
 
@@ -163,16 +154,13 @@ public class SymbolGroupResource {
      * @param embed
      *         The properties to embed in the response.
      * @return The requested group.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
      */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") long projectId,
                         @PathParam("id") Long id,
-                        @QueryParam("embed") String embed)
-            throws NotFoundException {
+                        @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {}, {}) for user {}.", projectId, id, embed, user);
 
@@ -198,15 +186,12 @@ public class SymbolGroupResource {
      * @param group
      *         The new values
      * @return On success the updated group (enhanced with information from the DB).
-     * @throws NotFoundException
-     *         If the related Project could not be found.
      */
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("project_id") long projectId, @PathParam("id") Long id, SymbolGroup group)
-            throws NotFoundException {
+    public Response update(@PathParam("project_id") long projectId, @PathParam("id") Long id, SymbolGroup group) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, group, user);
 
@@ -228,15 +213,12 @@ public class SymbolGroupResource {
      *         The group to move with the updated {@link SymbolGroup#parent} property. The parent property may be null
      *         to indicate that the group is moved to the upmost level.
      * @return 200 with the updated group.
-     * @throws NotFoundException
-     *         If the group or the project or new parent could not be found.
      */
     @PUT
     @Path("/{groupId}/move")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response move(@PathParam("project_id") Long projectId, @PathParam("groupId") Long groupId, SymbolGroup group)
-            throws NotFoundException {
+    public Response move(@PathParam("project_id") Long projectId, @PathParam("groupId") Long groupId, SymbolGroup group) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("move({}, {}, {}) for user {}.", projectId, groupId, group, user);
 
@@ -255,14 +237,11 @@ public class SymbolGroupResource {
      * @param id
      *         The ID of the group within the project.
      * @return On success no content will be returned.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
      */
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") long projectId, @PathParam("id") Long id)
-            throws NotFoundException {
+    public Response delete(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, id, user);
 

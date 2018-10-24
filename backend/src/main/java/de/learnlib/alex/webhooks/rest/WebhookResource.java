@@ -18,7 +18,6 @@ package de.learnlib.alex.webhooks.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import de.learnlib.alex.webhooks.entities.EventType;
@@ -111,13 +110,11 @@ public class WebhookResource {
      * @param webhook
      *         The updated webhook.
      * @return The updated webhook on success.
-     * @throws NotFoundException
-     *         If the webhook could not be found.
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(Webhook webhook) throws NotFoundException {
+    public Response update(Webhook webhook) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update webhook '{}' for user '{}'", webhook, user);
 
@@ -132,13 +129,11 @@ public class WebhookResource {
      * @param webhookId
      *         The id of the webhook.
      * @return No no content on success.
-     * @throws NotFoundException
-     *         If the webhook could not be found.
      */
     @DELETE
     @Path("/{webhookId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("webhookId") Long webhookId) throws NotFoundException {
+    public Response delete(@PathParam("webhookId") Long webhookId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete webhook '{}' for user '{}'", webhookId, user);
 
@@ -153,13 +148,11 @@ public class WebhookResource {
      * @param webhookIds
      *         The list of ids of the webhooks to delete.
      * @return Not content on success.
-     * @throws NotFoundException
-     *         If the webhook could not be found.
      */
     @DELETE
     @Path("/batch/{webhookIds}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("webhookIds") IdsList webhookIds) throws NotFoundException {
+    public Response delete(@PathParam("webhookIds") IdsList webhookIds) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete webhooks '{}' for user '{}'", webhookIds, user);
 

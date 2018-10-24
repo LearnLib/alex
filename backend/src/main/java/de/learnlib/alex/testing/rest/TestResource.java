@@ -18,7 +18,6 @@ package de.learnlib.alex.testing.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
@@ -101,13 +100,11 @@ public class TestResource {
      * @param test
      *         The test to create.
      * @return The created test.
-     * @throws NotFoundException
-     *         If the project with the given id could not be found.
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createTest(@PathParam("project_id") Long projectId, Test test) throws NotFoundException {
+    public Response createTest(@PathParam("project_id") Long projectId, Test test) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         projectDAO.getByID(user.getId(), projectId);
 
@@ -126,14 +123,12 @@ public class TestResource {
      * @param tests
      *         The tests to create.
      * @return The created tests.
-     * @throws NotFoundException
-     *         If the project with the given id could not be found.
      */
     @POST
     @Path("/batch")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createTests(@PathParam("project_id") Long projectId, List<Test> tests) throws NotFoundException {
+    public Response createTests(@PathParam("project_id") Long projectId, List<Test> tests) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         projectDAO.getByID(user.getId(), projectId);
 
@@ -158,13 +153,11 @@ public class TestResource {
      * @param id
      *         The id of the tests.
      * @return The test.
-     * @throws NotFoundException
-     *         If the project or the test could not be found.
      */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) throws NotFoundException {
+    public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         final Test test = testDAO.get(user, projectId, id);
@@ -179,13 +172,10 @@ public class TestResource {
      * @param type
      *         The type of the test.
      * @return The list of projects.
-     * @throws NotFoundException
-     *         If an entity was not found.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") Long projectId, @QueryParam("type") String type)
-            throws NotFoundException {
+    public Response getAll(@PathParam("project_id") Long projectId, @QueryParam("type") String type) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll(projectId: {}, type: {}) with user {}", projectId, type, user);
 
@@ -205,13 +195,11 @@ public class TestResource {
      * @param projectId
      *         The id of the project.
      * @return The test.
-     * @throws NotFoundException
-     *         If the project or the test could not be found.
      */
     @GET
     @Path("/root")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") Long projectId) throws NotFoundException {
+    public Response get(@PathParam("project_id") Long projectId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Test root = testDAO.getRoot(user, projectId);
         return Response.ok(root).build();
@@ -227,14 +215,12 @@ public class TestResource {
      * @param testConfig
      *         The configuration to run the test with.
      * @return The result of the test execution.
-     * @throws NotFoundException
-     *         If the project or the test could not be found.
      */
     @POST
     @Path("/{id}/execute")
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("project_id") Long projectId, @PathParam("id") Long id,
-                            TestExecutionConfig testConfig) throws NotFoundException {
+                            TestExecutionConfig testConfig) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         ThreadContext.put("userId", String.valueOf(user.getId()));
 
@@ -267,15 +253,12 @@ public class TestResource {
      * @param testConfig
      *         The configuration for the test
      * @return A {@link TestReport}.
-     * @throws NotFoundException
-     *         If the project or a test could not be found.
      */
     @POST
     @Path("/execute")
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("project_id") Long projectId,
-                            TestExecutionConfig testConfig)
-            throws NotFoundException {
+                            TestExecutionConfig testConfig) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Project project = projectDAO.getByID(user.getId(), projectId);
         final TestStatus status = testService.start(user, project, testConfig);
@@ -288,13 +271,11 @@ public class TestResource {
      * @param projectId
      *         The id of the project.
      * @return Status 200 with a {@link TestStatus}.
-     * @throws NotFoundException
-     *         If the project could not be found.
      */
     @GET
     @Path("/status")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response status(@PathParam("project_id") Long projectId) throws NotFoundException {
+    public Response status(@PathParam("project_id") Long projectId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("status(projectId: {}) with user {}", projectId, user);
         final Project project = projectDAO.getByID(user.getId(), projectId);
@@ -309,12 +290,10 @@ public class TestResource {
      * @param projectId
      *         The ID of the project.
      * @return 200 if the process could be aborted.
-     * @throws NotFoundException
-     *         If the project could not be found.
      */
     @POST
     @Path("/abort")
-    public Response abort(@PathParam("project_id") Long projectId) throws NotFoundException {
+    public Response abort(@PathParam("project_id") Long projectId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("abort(projectId: {}) with user {}", projectId, user);
 
@@ -333,8 +312,6 @@ public class TestResource {
      * @param test
      *         The updated test.
      * @return The updated test.
-     * @throws NotFoundException
-     *         If the project or the test could not be found.
      */
     @PUT
     @Path("/{id}")
@@ -342,7 +319,7 @@ public class TestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("project_id") Long projectId,
                            @PathParam("id") Long id,
-                           Test test) throws NotFoundException {
+                           Test test) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         if (test.getId() == null) {
@@ -371,15 +348,14 @@ public class TestResource {
      * @param targetId
      *         The id of the target test suite.
      * @return 200 If the tests have been moved successfully.
-     * @throws NotFoundException
-     *         If one of the entities could not be found.
      */
     @PUT
     @Path("/batch/{testIds}/moveTo/{targetId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response move(@PathParam("project_id") Long projectId, @PathParam("testIds") IdsList testIds,
-                         @PathParam("targetId") Long targetId) throws NotFoundException {
+    public Response move(@PathParam("project_id") Long projectId,
+                         @PathParam("testIds") IdsList testIds,
+                         @PathParam("targetId") Long targetId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         final List<Test> movedTests = testDAO.move(user, projectId, testIds, targetId);
@@ -395,13 +371,11 @@ public class TestResource {
      * @param id
      *         The id of the test.
      * @return An empty body if the test has been deleted.
-     * @throws NotFoundException
-     *         If the project or the test could not be found.
      */
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("id") Long id) throws NotFoundException {
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         testDAO.delete(user, projectId, id);
@@ -418,14 +392,11 @@ public class TestResource {
      * @param ids
      *         The ids of the tests to delete.
      * @return An empty body if the project has been deleted.
-     * @throws NotFoundException
-     *         If the project or a test could not be found.
      */
     @DELETE
     @Path("/batch/{ids}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("ids") IdsList ids)
-            throws NotFoundException {
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         testDAO.delete(user, projectId, ids);
@@ -446,14 +417,12 @@ public class TestResource {
      * @param size
      *         The number of items in the page.
      * @return All test results of a test.
-     * @throws NotFoundException
-     *         If the project or test could not be found.
      */
     @GET
     @Path("/{testId}/results")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getResults(@PathParam("project_id") Long projectId, @PathParam("testId") Long testId,
-                               @QueryParam("page") int page, @QueryParam("size") int size) throws NotFoundException {
+                               @QueryParam("page") int page, @QueryParam("size") int size) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Page<TestResult> results = testDAO.getResults(user, projectId, testId, new PageRequest(page, size));
         return Response.ok(results).build();

@@ -131,14 +131,12 @@ public class UserResource {
      * @param userId
      *         The ID of the user.
      * @return Detailed information about the user.
-     * @throws NotFoundException
-     *         If the requested User could not be found.
      */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"REGISTERED"})
-    public Response get(@PathParam("id") Long userId) throws NotFoundException {
+    public Response get(@PathParam("id") Long userId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}) for user {}.", userId, user);
 
@@ -178,15 +176,13 @@ public class UserResource {
      * @param json
      *         The pair of oldPassword and newPassword as json
      * @return The updated user.
-     * @throws NotFoundException
-     *         If the requested User could not be found.
      */
     @PUT
     @Path("/{id}/password")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"REGISTERED"})
-    public Response changePassword(@PathParam("id") Long userId, JSONObject json) throws NotFoundException {
+    public Response changePassword(@PathParam("id") Long userId, JSONObject json) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("changePassword({}, {}) for user {}.", userId, json, user);
 
@@ -228,15 +224,13 @@ public class UserResource {
      * @param json
      *         the json with a property 'email'
      * @return The updated user.
-     * @throws NotFoundException
-     *         If the requested User could not be found.
      */
     @PUT
     @Path("/{id}/email")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"REGISTERED"})
-    public Response changeEmail(@PathParam("id") Long userId, JSONObject json) throws NotFoundException {
+    public Response changeEmail(@PathParam("id") Long userId, JSONObject json) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("changeEmail({}, {}) for user {}.", userId, json, user);
 
@@ -284,15 +278,13 @@ public class UserResource {
      * @param userId
      *         The ID of the user to promote.
      * @return The account information of the new administrator.
-     * @throws NotFoundException
-     *         If the given User could not be found.
      */
     @PUT
     @Path("/{id}/promote")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"ADMIN"})
-    public Response promoteUser(@PathParam("id") Long userId) throws NotFoundException {
+    public Response promoteUser(@PathParam("id") Long userId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("promoteUser({}) for user {}.", userId, user);
 
@@ -313,15 +305,13 @@ public class UserResource {
      * @param userId
      *         The ID of the user to demote.
      * @return The account information of the formally administrator.
-     * @throws NotFoundException
-     *         If the given User could not be found.
      */
     @PUT
     @Path("/{id}/demote")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"ADMIN"})
-    public Response demoteUser(@PathParam("id") Long userId) throws NotFoundException {
+    public Response demoteUser(@PathParam("id") Long userId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("UserResource.demoteUser(" + userId + ") for user " + user + ".");
 
@@ -349,14 +339,12 @@ public class UserResource {
      * @param userId
      *         The ID of the user to delete.
      * @return Nothing if the user was deleted.
-     * @throws NotFoundException
-     *         If the given User could not be found.
      */
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"REGISTERED"})
-    public Response delete(@PathParam("id") long userId) throws NotFoundException {
+    public Response delete(@PathParam("id") long userId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}) for user {}.", userId, user);
 
@@ -381,14 +369,12 @@ public class UserResource {
      * @param ids
      *         The ids of the user to delete.
      * @return Nothing if the users have been deleted.
-     * @throws NotFoundException
-     *         If the given Users could not be found.
      */
     @DELETE
     @Path("/batch/{ids}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"ADMIN"})
-    public Response delete(@PathParam("ids") IdsList ids) throws NotFoundException {
+    public Response delete(@PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}) for user {}.", ids, user);
 
@@ -411,14 +397,12 @@ public class UserResource {
      * @param user
      *         The user to login
      * @return If the user was successfully logged in: a JSON Object with the authentication token as only field.
-     * @throws NotFoundException
-     *         If the given User could not be found.
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/login")
-    public Response login(User user) throws NotFoundException {
+    public Response login(User user) {
         LOGGER.traceEntry("login({}).", user);
 
         try {
@@ -446,14 +430,12 @@ public class UserResource {
      * Get the current logged in user.
      *
      * @return The user.
-     * @throws NotFoundException
-     *         If the user could not be found.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/myself")
     @RolesAllowed({"ADMIN", "REGISTERED"})
-    public Response myself() throws NotFoundException {
+    public Response myself() {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         final User myself = userDAO.getById(user.getId());

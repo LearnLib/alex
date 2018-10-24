@@ -18,7 +18,6 @@ package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
@@ -129,13 +128,11 @@ public class ProjectResource {
      *         parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'. You can
      *         request multiple by just put a ',' between them.
      * @return The project or an error message.
-     * @throws NotFoundException
-     *         If the requested Project could not be found.
      */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("id") long projectId, @QueryParam("embed") String embed) throws NotFoundException {
+    public Response get(@PathParam("id") long projectId, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {}) for user {}.", projectId, embed, user);
 
@@ -159,14 +156,12 @@ public class ProjectResource {
      * @param project
      *         The new values
      * @return On success the updated project (enhanced with information from the DB); an error message on failure.
-     * @throws NotFoundException
-     *         If the given Project could not be found.
      */
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") long id, Project project) throws NotFoundException {
+    public Response update(@PathParam("id") long id, Project project) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}) for user {}.", id, project, user);
 
@@ -187,13 +182,11 @@ public class ProjectResource {
      * @param projectId
      *         The ID of the project.
      * @return On success no content will be returned; an error message on failure.
-     * @throws NotFoundException
-     *         If the given Project could not be found.
      */
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") long projectId) throws NotFoundException {
+    public Response delete(@PathParam("id") long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
 

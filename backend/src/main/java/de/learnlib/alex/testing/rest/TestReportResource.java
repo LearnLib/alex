@@ -18,7 +18,6 @@ package de.learnlib.alex.testing.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.testing.dao.TestReportDAO;
@@ -79,14 +78,11 @@ public class TestReportResource {
      * @param size
      *         The number of items in a page.
      * @return All test reports.
-     * @throws NotFoundException
-     *         If the project could not be found.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") Long projectId, @QueryParam("page") int page,
-                        @QueryParam("size") int size)
-            throws NotFoundException {
+                        @QueryParam("size") int size) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
 
@@ -106,14 +102,13 @@ public class TestReportResource {
      * @param format
      *         The format to export the report to.
      * @return The report.
-     * @throws NotFoundException
-     *         If the project could not be found.
      */
     @GET
     @Path("/{report_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") Long projectId, @PathParam("report_id") Long reportId,
-                        @QueryParam("format") String format) throws NotFoundException {
+    public Response get(@PathParam("project_id") Long projectId,
+                        @PathParam("report_id") Long reportId,
+                        @QueryParam("format") String format) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {}) for user {}.", projectId, reportId, user);
 
@@ -148,13 +143,11 @@ public class TestReportResource {
      * @param projectId
      *         The id of the project.
      * @return 200 if a report is available, 204 otherwise.
-     * @throws NotFoundException
-     *         If the project could not be found.
      */
     @GET
     @Path("/latest")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLatest(@PathParam("project_id") Long projectId) throws NotFoundException {
+    public Response getLatest(@PathParam("project_id") Long projectId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getLatest({}) for user {}.", projectId, user);
 
@@ -171,14 +164,11 @@ public class TestReportResource {
      * @param reportId
      *         The id of the report to delete.
      * @return Status 204 - no content on success.
-     * @throws NotFoundException
-     *         If the project or the report could not be found.
      */
     @DELETE
     @Path("/{report_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_id") Long reportId)
-            throws NotFoundException {
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_id") Long reportId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, reportId, user);
 
@@ -196,14 +186,11 @@ public class TestReportResource {
      * @param reportIds
      *         The ids of the reports to delete.
      * @return Status 204 - no content on success.
-     * @throws NotFoundException
-     *         If the project or a report could not be found.
      */
     @DELETE
     @Path("/batch/{report_ids}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_ids") IdsList reportIds)
-            throws NotFoundException {
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_ids") IdsList reportIds) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, reportIds, user);
 

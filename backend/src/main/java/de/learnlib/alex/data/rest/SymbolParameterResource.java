@@ -18,7 +18,6 @@ package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.SymbolParameterDAO;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import org.apache.logging.log4j.LogManager;
@@ -66,15 +65,13 @@ public class SymbolParameterResource {
      * @param parameter
      *         The parameter to create.
      * @return 201 on success.
-     * @throws NotFoundException
-     *         If the project or the symbol could not be found.
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(@PathParam("projectId") Long projectId,
                            @PathParam("symbolId") Long symbolId,
-                           SymbolParameter parameter) throws NotFoundException {
+                           SymbolParameter parameter) {
 
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("create({}, {}, {}) for user {}.", projectId, symbolId, parameter, user);
@@ -94,15 +91,13 @@ public class SymbolParameterResource {
      * @param parameterId
      *         The id of the parameter to delete.
      * @return 204 on success.
-     * @throws NotFoundException
-     *         If the project, the symbol or the parameter could not be found.
      */
     @DELETE
     @Path("/{parameterId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("projectId") Long projectId,
                            @PathParam("symbolId") Long symbolId,
-                           @PathParam("parameterId") Long parameterId) throws NotFoundException {
+                           @PathParam("parameterId") Long parameterId) {
 
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}, {}, {}) for user {}.", projectId, symbolId, parameterId, user);
@@ -124,8 +119,6 @@ public class SymbolParameterResource {
      * @param parameter
      *         The parameter to update.
      * @return 200 on success.
-     * @throws NotFoundException
-     *         If the project, the symbol or the parameter could not be found.
      */
     @PUT
     @Path("/{parameterId}")
@@ -134,7 +127,7 @@ public class SymbolParameterResource {
     public Response update(@PathParam("projectId") Long projectId,
                            @PathParam("symbolId") Long symbolId,
                            @PathParam("parameterId") Long parameterId,
-                           SymbolParameter parameter) throws NotFoundException {
+                           SymbolParameter parameter) {
 
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}, {}, {}) for user {}.", projectId, symbolId, parameterId, parameter, user);

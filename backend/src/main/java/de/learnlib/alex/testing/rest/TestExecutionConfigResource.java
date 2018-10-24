@@ -18,7 +18,6 @@ package de.learnlib.alex.testing.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.testing.dao.TestExecutionConfigDAO;
@@ -72,12 +71,10 @@ public class TestExecutionConfigResource {
      * @param projectId
      *         The id of the project.
      * @return 200 and the created project on success.
-     * @throws NotFoundException
-     *         If one of the entities could not be found.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("projectId") Long projectId) throws NotFoundException {
+    public Response getAll(@PathParam("projectId") Long projectId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
 
@@ -95,14 +92,11 @@ public class TestExecutionConfigResource {
      * @param config
      *         The config to create
      * @return 201 and the created test config on success.
-     * @throws NotFoundException
-     *         If one of the entities could not be found.
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(@PathParam("projectId") Long projectId, TestExecutionConfig config)
-            throws NotFoundException {
+    public Response create(@PathParam("projectId") Long projectId, TestExecutionConfig config) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("create({}) for user {}.", projectId, user);
 
@@ -120,14 +114,11 @@ public class TestExecutionConfigResource {
      * @param configId
      *         The id of the test config to delete.
      * @return 204 on success.
-     * @throws NotFoundException
-     *         If one of the entities could not be found.
      */
     @DELETE
     @Path("/{configId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") Long projectId, @PathParam("configId") Long configId)
-            throws NotFoundException {
+    public Response delete(@PathParam("projectId") Long projectId, @PathParam("configId") Long configId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
 
@@ -145,14 +136,11 @@ public class TestExecutionConfigResource {
      * @param configId
      *         The ID of the config.
      * @return The test status.
-     * @throws NotFoundException
-     *         If one of the entities could not be found.
      */
     @POST
     @Path("/{configId}/execute")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response execute(@PathParam("projectId") Long projectId, @PathParam("configId") Long configId)
-            throws NotFoundException {
+    public Response execute(@PathParam("projectId") Long projectId, @PathParam("configId") Long configId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("execute({}) for user {}.", projectId, user);
 
