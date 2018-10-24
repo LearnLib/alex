@@ -41,8 +41,8 @@ import org.springframework.transaction.TransactionSystemException;
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -372,7 +372,7 @@ public class SymbolGroupDAOImplTest {
 
 
     private List<SymbolGroup> createGroupsList() {
-        List<SymbolGroup> groups = new LinkedList<>();
+        List<SymbolGroup> groups = new ArrayList<>();
         for (int i = 0; i < TEST_GROUP_COUNT; i++) {
             SymbolGroup g = new SymbolGroup();
             groups.add(g);

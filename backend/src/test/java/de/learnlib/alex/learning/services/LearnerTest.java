@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -135,7 +135,7 @@ public class LearnerTest {
 
     @Test(expected = IllegalStateException.class)
     public void shouldOnlyStartTheThreadOnce() throws NotFoundException {
-        given(symbolDAO.getByIds(any(User.class), any(Long.class), any(List.class))).willReturn(new LinkedList<>());
+        given(symbolDAO.getByIds(any(User.class), any(Long.class), any(List.class))).willReturn(new ArrayList());
         given(learnerResultDAO.createStep(any(LearnerResult.class), any(LearnerStartConfiguration.class)))
                 .willReturn(new LearnerResultStep());
         given(learnerThread.isFinished()).willReturn(false);
@@ -150,7 +150,7 @@ public class LearnerTest {
         ParameterizedSymbol resetSymbol = mock(ParameterizedSymbol.class);
         ParameterizedSymbol postSymbol = mock(ParameterizedSymbol.class);
         //
-        List<ParameterizedSymbol> symbols = new LinkedList<>();
+        List<ParameterizedSymbol> symbols = new ArrayList<>();
         for (int i = 0; i < SYMBOL_AMOUNT; i++) {
             ParameterizedSymbol symbol = mock(ParameterizedSymbol.class);
             given(symbol.execute(any(ConnectorManager.class))).willReturn(new ExecuteResult(true));

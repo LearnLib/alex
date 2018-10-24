@@ -48,9 +48,9 @@ import org.springframework.transaction.TransactionSystemException;
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -244,7 +244,7 @@ public class SymbolDAOImplTest {
         //
         List<Symbol> symbols = createWebSymbolTestList(user, project, group);
         //
-        List<Long> ids = new LinkedList<>();
+        List<Long> ids = new ArrayList<>();
         ids.add(symbols.get(0).getId());
         ids.add(symbols.get(2).getId());
         ids.add(symbols.get(3).getId());
@@ -651,7 +651,7 @@ public class SymbolDAOImplTest {
     }
 
     private List<Symbol> createTestSymbolLists(User user, Project project, SymbolGroup group) throws NotFoundException {
-        List<Symbol> symbols = new LinkedList<>();
+        List<Symbol> symbols = new ArrayList<>();
         symbols.addAll(createWebSymbolTestList(user, project, group));
         symbols.addAll(createRESTSymbolTestList(user, project, group));
 
@@ -666,7 +666,7 @@ public class SymbolDAOImplTest {
 
     private List<Symbol> createWebSymbolTestList(User user, Project project, SymbolGroup group)
             throws NotFoundException {
-        List<Symbol> returnList = new LinkedList<>();
+        List<Symbol> returnList = new ArrayList<>();
         for (int i = 0; i < SYMBOL_LIST_SIZE; i++) {
             Symbol s = new Symbol();
             s.setProject(project);
@@ -699,7 +699,7 @@ public class SymbolDAOImplTest {
 
     private List<Symbol> createRESTSymbolTestList(User user, Project project, SymbolGroup group)
             throws NotFoundException {
-        List<Symbol> returnList = new LinkedList<>();
+        List<Symbol> returnList = new ArrayList<>();
         for (int i = 0; i < SYMBOL_LIST_SIZE; i++) {
             Symbol s = new Symbol();
             s.setProject(project);

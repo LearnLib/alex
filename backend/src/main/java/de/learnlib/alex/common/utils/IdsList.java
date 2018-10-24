@@ -16,12 +16,12 @@
 
 package de.learnlib.alex.common.utils;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Helper class to allow batch paths to have a csv-list of IDs.
  */
-public class IdsList extends LinkedList<Long> {
+public class IdsList extends ArrayList<Long> {
 
     /**
      * Constructor

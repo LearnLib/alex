@@ -38,9 +38,9 @@ import org.mockito.MockitoAnnotations;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -289,7 +289,7 @@ public class LearnerResultResourceTest extends JerseyTest {
     }
 
     private List<LearnerResult> createTestLearnResults() {
-        List<LearnerResult> results = new LinkedList<>();
+        List<LearnerResult> results = new ArrayList<>();
         for (long i = 0; i < TEST_RESULT_AMOUNT; i++) {
             Alphabet<String> sigma = new SimpleAlphabet<>();
             sigma.add("0");

@@ -43,7 +43,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -156,7 +156,7 @@ public class SymbolGroupResourceTest extends JerseyTest {
 
     @Test
     public void shouldGetAllGroupsOfAProject() throws NotFoundException {
-        List<SymbolGroup> groups = new LinkedList<>();
+        List<SymbolGroup> groups = new ArrayList<>();
         groups.add(group1);
         groups.add(group2);
         given(symbolGroupDAO.getAll(admin, PROJECT_TEST_ID)).willReturn(groups);
@@ -165,9 +165,6 @@ public class SymbolGroupResourceTest extends JerseyTest {
                 .request().header("Authorization", adminToken).get();
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-//        List<Object> groupsInResponse = response.readEntity(new GenericType<List<Object>>() { });
-//        assertEquals(2, groupsInResponse.size());
-//        verify(symbolGroupDAO).getAll(PROJECT_TEST_ID);
     }
 
     @Test

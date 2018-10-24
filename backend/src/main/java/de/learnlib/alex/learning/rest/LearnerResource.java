@@ -60,8 +60,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -340,7 +340,7 @@ public class LearnerResource {
 
     // load all from SymbolDAO always orders the Symbols by ID
     private List<Symbol> loadSymbols(User user, Long projectId, List<Long> ids) throws NotFoundException {
-        List<Symbol> symbols = new LinkedList<>();
+        List<Symbol> symbols = new ArrayList<>();
         for (Long id : ids) {
             Symbol symbol = symbolDAO.get(user, projectId, id);
             symbols.add(symbol);

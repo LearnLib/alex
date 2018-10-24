@@ -34,9 +34,9 @@ import org.springframework.transaction.TransactionSystemException;
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -299,7 +299,7 @@ public class CounterDAOImplTest {
 
 
     private List<Counter> createCounterList() {
-        List<Counter> counters = new LinkedList<>();
+        List<Counter> counters = new ArrayList<>();
         for (int i = 0; i  < AMOUNT_OF_COUNTERS; i++) {
             Counter c = new Counter();
             counters.add(c);

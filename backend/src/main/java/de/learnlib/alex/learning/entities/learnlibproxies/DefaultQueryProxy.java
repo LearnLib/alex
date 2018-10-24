@@ -28,7 +28,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,12 +54,12 @@ public class DefaultQueryProxy implements Serializable {
     private List<String> output;
 
     /**
-     * Default constructor that creates a new LinkedList for the prefix, the suffix and the output.
+     * Default constructor that creates a new list for the prefix, the suffix and the output.
      */
     public DefaultQueryProxy() {
-        this.prefix = new LinkedList<>();
-        this.suffix = new LinkedList<>();
-        this.output = new LinkedList<>();
+        this.prefix = new ArrayList<>();
+        this.suffix = new ArrayList<>();
+        this.output = new ArrayList<>();
     }
 
     /**

@@ -16,17 +16,13 @@
 
 package de.learnlib.alex.learning.entities.learnlibproxies.eqproxies;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-
 
 public class SampleEQOracleProxyTest {
 
@@ -34,10 +30,10 @@ public class SampleEQOracleProxyTest {
 
     @Before
     public void setUp() {
-        List<SampleEQOracleProxy.InputOutputPair> counterExample1 = new LinkedList<>();
+        List<SampleEQOracleProxy.InputOutputPair> counterExample1 = new ArrayList<>();
         counterExample1.add(new SampleEQOracleProxy.InputOutputPair("input1", "output1"));
         counterExample1.add(new SampleEQOracleProxy.InputOutputPair("input2", "output2"));
-        List<SampleEQOracleProxy.InputOutputPair> counterExample2 = new LinkedList<>();
+        List<SampleEQOracleProxy.InputOutputPair> counterExample2 = new ArrayList<>();
         counterExample2.add(new SampleEQOracleProxy.InputOutputPair("input3", "output3"));
         counterExample2.add(new SampleEQOracleProxy.InputOutputPair("input4", "output4"));
 

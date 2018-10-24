@@ -25,7 +25,7 @@ import net.automatalib.words.Word;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -114,7 +114,7 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
      * Default constructor.
      */
     public SampleEQOracleProxy() {
-        this.counterExamples = new LinkedList<>();
+        this.counterExamples = new ArrayList<>();
     }
 
     /**

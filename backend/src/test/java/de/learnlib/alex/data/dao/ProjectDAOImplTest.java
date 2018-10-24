@@ -39,9 +39,9 @@ import org.springframework.transaction.TransactionSystemException;
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -336,7 +336,7 @@ public class ProjectDAOImplTest {
 
 
     private List<Project> createProjectList() {
-        List<Project> projects = new LinkedList<>();
+        List<Project> projects = new ArrayList<>();
         for (int i = 0; i < TEST_PROJECT_COUNT; i++) {
             Project p = new Project();
             projects.add(p);
