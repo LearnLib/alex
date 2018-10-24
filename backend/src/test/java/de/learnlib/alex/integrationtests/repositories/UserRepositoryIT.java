@@ -18,14 +18,11 @@ package de.learnlib.alex.integrationtests.repositories;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
-import de.learnlib.alex.auth.repositories.UserRepository;
-import org.junit.After;
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 
@@ -33,28 +30,18 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
-@Ignore
 public class UserRepositoryIT extends AbstractRepositoryIT {
-
-    @Inject
-    private UserRepository userRepository;
-
-    @After
-    public void tearDown() {
-        userRepository.deleteAll();
-    }
 
     @Test
     public void shouldSaveAValidUser() {
         User user = createUser("test_user@test.example");
-
         userRepository.save(user);
 
-        assertTrue(user.getId() > 0);
+        Assert.assertTrue(user.getId() > 1);
     }
 
     @Test(expected = ConstraintViolationException.class)
@@ -62,7 +49,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         User user = new User();
         user.setPassword("password");
 
-        userRepository.save(user); // should fail
+        userRepository.save(user);
     }
 
 
@@ -72,24 +59,23 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         user.setEmail("test");
         user.setPassword("password");
 
-        userRepository.save(user); // should fail
+        userRepository.save(user);
     }
 
     @Test(expected = ConstraintViolationException.class)
-    public void shouldFailWhenSavingAnUserWithoutAnPassword() {
+    public void shouldFailWhenSavingAnUserWithoutPassword() {
         User user = new User();
         user.setEmail("test_user@test.example");
 
-        userRepository.save(user); // should fail
+        userRepository.save(user);
     }
 
     @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailOnUserSavingIfTheEMailIsAlreadyUsed() {
         User user1 = createUser("test_user@test.example");
-        user1 = userRepository.save(user1);
-        assertNotNull(user1.getId());
-        User user2 = createUser("test_user@test.example");
+        userRepository.save(user1);
 
+        User user2 = createUser("test_user@test.example");
         userRepository.save(user2); // should fail
     }
 
@@ -102,7 +88,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
         List<User> allUsersFromDB = userRepository.findAll();
 
-        assertThat(allUsersFromDB.size(), is(equalTo(2)));
+        assertEquals(3, allUsersFromDB.size()); // 3 because of the default admin
         assertThat(allUsersFromDB, hasItem(equalTo(user1)));
         assertThat(allUsersFromDB, hasItem(equalTo(user2)));
     }
@@ -111,7 +97,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     public void shouldReturnAnEmptyListWhenFetchingAllUsersButNoneExists() {
         List<User> users = userRepository.findAll();
 
-        assertTrue(users.isEmpty());
+        assertEquals(1, users.size());
     }
 
     @Test
@@ -136,7 +122,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         userRepository.save(user2);
 
         List<User> allUsersFromDB = userRepository.findByRole(UserRole.ADMIN);
-        assertThat(allUsersFromDB.size(), is(equalTo(1)));
+        assertThat(allUsersFromDB.size(), is(equalTo(2)));
         assertThat(allUsersFromDB, hasItem(equalTo(user1)));
     }
 
@@ -154,7 +140,6 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     @Test
     public void shouldReturnNullWhenFetchingANonExistingUsersByTheID() {
         User userFromDB = userRepository.findOne(-1L);
-
         assertNull(userFromDB);
     }
 
@@ -165,7 +150,6 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
         User userFromDB = userRepository.findOneByEmail(user.getEmail());
 
-        assertNotNull(userFromDB);
         assertThat(userFromDB, is(equalTo(user)));
     }
 
@@ -183,7 +167,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
         userRepository.delete(user.getId());
 
-        assertThat(userRepository.count(), is(equalTo(0L)));
+        assertEquals(1, userRepository.count());
     }
 
     @Test(expected = EmptyResultDataAccessException.class)

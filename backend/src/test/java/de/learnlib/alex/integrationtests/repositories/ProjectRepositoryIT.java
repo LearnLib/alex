@@ -17,13 +17,10 @@
 package de.learnlib.alex.integrationtests.repositories;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
-import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
-import org.junit.After;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -40,31 +37,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-@Ignore
 public class ProjectRepositoryIT extends AbstractRepositoryIT {
-
-    @Inject
-    private UserRepository userRepository;
-
-    @Inject
-    private ProjectRepository projectRepository;
 
     @Inject
     private SymbolGroupRepository symbolGroupRepository;
 
-    @After
-    public void tearDown() {
-        // deleting the user should (!) also deleteMany all projects, groups, symbols, ... related to that user.
-        userRepository.deleteAll();
+    private User user;
+
+    @Before
+    public void before() {
+        User user = createUser("alex@test.example");
+        this.user = userRepository.save(user);
     }
 
     @Test
     public void shouldSaveAValidProject() {
-        User user = createUser("alex@test.example");
-        userRepository.save(user);
-
         Project project = createProject(user, "Test Project");
-
         project = projectRepository.save(project);
 
         assertTrue(project.getId() > 0L);
@@ -85,9 +73,6 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
     @Test(expected = ConstraintViolationException.class)
     public void shouldFailToSaveAProjectWithoutAName() {
-        User user = createUser("alex@test.example");
-        userRepository.save(user);
-
         ProjectUrl url = new ProjectUrl();
         url.setUrl("http://localhost");
         url.setDefault(true);
@@ -99,37 +84,19 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         projectRepository.save(project); // should fail
     }
 
-    @Test(expected = ConstraintViolationException.class)
-    public void shouldFailToSaveAProjectWithoutABaseURL() {
-        User user = createUser("alex@test.example");
-        userRepository.save(user);
-        //
-        Project project = new Project();
-        project.setUser(user);
-        project.setName("Test Project");
-
-        projectRepository.save(project); // should fail
-    }
-
     @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveAProjectsWithADuplicateNamesForOneUser() {
-        User user = createUser("alex@test.example");
-        userRepository.save(user);
-        //
         Project project1 = createProject(user, "Test Project");
         projectRepository.save(project1);
         Project project2 = createProject(user, "Test Project");
-
         projectRepository.save(project2); // should fail
     }
 
     @Test
     public void shouldSaveAProjectsWithADuplicateNameForMultipleUsers() {
-        User user = createUser("alex@test.example");
-        userRepository.save(user);
         User otherUser = createUser("foo@test.example");
         otherUser = userRepository.save(otherUser);
-        //
+
         Project project = createProject(user, "Test Project");
         projectRepository.save(project);
         Project otherProject = createProject(otherUser, "Test Project");
@@ -141,11 +108,9 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldFetchAllProjectsOfAUser() {
-        User user = createUser("alex@test.example");
-        userRepository.save(user);
         User otherUser = createUser("foo2@test.example");
         otherUser = userRepository.save(otherUser);
-        //
+
         Project project1 = createProject(user, "Test Project 1");
         project1 = projectRepository.save(project1);
         Project project2 = createProject(user, "Test Project 2");
@@ -162,19 +127,13 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldReturnEmptyListWhenFetchingAllProjectsOfAUserWhoHasNone() {
-        User user = createUser("alex@test.example");
-        userRepository.save(user);
-
         List<Project> projects = projectRepository.findAllByUser_Id(user.getId());
 
         assertThat(projects, is(equalTo(Collections.EMPTY_LIST)));
     }
 
     @Test
-    public void shouldFetchAProjectsOfAUserByItsID() {
-        User user = createUser("alex@test.example");
-        userRepository.save(user);
-        //
+    public void shouldFetchAProjectOfAUserByItsID() {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
 
@@ -185,9 +144,6 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldReturnNullWhenFetchingANonExistingProjectOfAUserByItsID() {
-        User user = createUser("alex@test.example");
-        userRepository.save(user);
-
         Project projectFromDB = projectRepository.findOne(-1L);
 
         assertNull(projectFromDB);
@@ -195,9 +151,6 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldReturnNullWhenFetchingANonExistingProjectsOfAUserByItsName() {
-        User user = createUser("alex@test.example");
-        userRepository.save(user);
-
         Project projectFromDB = projectRepository.findOne(-1L);
 
         assertNull(projectFromDB);
@@ -205,9 +158,6 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldDeleteAProject() {
-        User user = createUser("alex@test.example");
-        userRepository.save(user);
-
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
 

@@ -136,9 +136,9 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void delete(IdsList ids) throws NotFoundException {
-        final List<User> users = userRepository.findAllByIdIn(ids);
-        if (users.size() != ids.size()) {
+    public void delete(List<Long> userIds) throws NotFoundException {
+        final List<User> users = userRepository.findAllByIdIn(userIds);
+        if (users.size() != userIds.size()) {
             throw new NotFoundException("At least one user could not be found.");
         }
 

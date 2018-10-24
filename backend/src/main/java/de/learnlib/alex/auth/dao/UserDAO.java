@@ -107,5 +107,5 @@ public interface UserDAO {
      * @throws NotFoundException
      *          If the user to delete was not found (and thus not deleted).
      */
-    void delete(IdsList ids) throws NotFoundException;
+    void delete(List<Long> ids) throws NotFoundException;
 }
