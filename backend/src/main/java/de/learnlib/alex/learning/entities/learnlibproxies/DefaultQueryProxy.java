@@ -33,10 +33,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Proxy around a DefaultQuery.
+ * Proxy around a {@link DefaultQuery}.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
- *
- * @see de.learnlib.api.query.DefaultQuery
  */
 @Embeddable
 public class DefaultQueryProxy implements Serializable {

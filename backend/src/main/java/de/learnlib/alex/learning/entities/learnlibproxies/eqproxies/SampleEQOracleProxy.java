@@ -30,10 +30,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Proxy around a SampleSetEQOracle.
+ * Proxy around a {@link de.learnlib.oracle.equivalence.SampleSetEQOracle}.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
- *
- * @see de.learnlib.oracle.equivalence.SampleSetEQOracle
  */
 @JsonTypeName("sample")
 public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {

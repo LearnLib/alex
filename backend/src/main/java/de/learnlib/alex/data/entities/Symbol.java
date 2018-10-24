@@ -137,7 +137,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * Get the {@link Project} the Symbol belongs to.
      *
      * @return The parent Project.
-     * @requiredField
      */
     @Transient
     @JsonProperty("project")
@@ -206,7 +205,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * Get the ID of the symbol.
      *
      * @return The ID.
-     * @requiredField
      */
     @Id
     @GeneratedValue

@@ -37,10 +37,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Proxy around a {@link MealyMachine} from the LearnLib. The Proxy is needed to make it easier to (de-)serialize the
+ * Proxy around a {@link CompactMealy} from the LearnLib. The Proxy is needed to make it easier to (de-)serialize the
  * MealyMachine into/ from JSON.
- *
- * @see net.automatalib.automata.transout.impl.compact.CompactMealy
  */
 @Embeddable
 public class CompactMealyMachineProxy implements Serializable {

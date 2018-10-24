@@ -26,10 +26,8 @@ import net.automatalib.words.Word;
 import java.io.Serializable;
 
 /**
- * Proxy around a WpMethodEQOracle.
+ * Proxy around a {@link de.learnlib.oracle.equivalence.WMethodEQOracle}.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
- *
- * @see de.learnlib.oracle.equivalence.WMethodEQOracle
  */
 @JsonTypeName("wp_method")
 public class WpMethodEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {

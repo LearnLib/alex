@@ -29,10 +29,8 @@ import net.automatalib.words.Word;
 import java.io.Serializable;
 
 /**
- * Proxy around a MealySimulatorEQOracle.
+ * Proxy around a {@link de.learnlib.oracle.equivalence.SimulatorEQOracle}.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
- *
- * @see de.learnlib.oracle.equivalence.SimulatorEQOracle
  */
 @JsonTypeName("hypothesis")
 public class HypothesisEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {

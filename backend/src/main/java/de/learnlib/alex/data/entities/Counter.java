@@ -91,7 +91,6 @@ public class Counter implements Serializable {
      * Get the ID of {@link Project} the Symbol belongs to.
      *
      * @return The parent Project.
-     * @requiredField
      */
     @JsonProperty("project")
     public Long getProjectId() {

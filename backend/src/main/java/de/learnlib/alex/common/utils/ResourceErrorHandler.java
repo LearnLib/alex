@@ -36,13 +36,11 @@ public final class ResourceErrorHandler {
 
         /**
          * Status of the error.
-         * @exclude
          */
         private Status status;
 
         /**
          * The cause of the error.
-         * @exclude
          */
         private Exception exception;
 

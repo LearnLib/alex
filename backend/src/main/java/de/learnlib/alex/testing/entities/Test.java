@@ -213,7 +213,6 @@ public class Test implements Serializable {
      * Get the ID of the Test Case (within the project).
      *
      * @return The ID.
-     * @requiredField
      */
     @Id
     @GeneratedValue

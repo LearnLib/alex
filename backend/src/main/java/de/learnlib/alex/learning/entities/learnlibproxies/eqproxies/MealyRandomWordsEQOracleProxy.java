@@ -27,10 +27,8 @@ import java.io.Serializable;
 import java.util.Random;
 
 /**
- * Proxy around a MealyRandomWordsEQOracle.
+ * Proxy around a {@link de.learnlib.oracle.equivalence.RandomWordsEQOracle.MealyRandomWordsEQOracle}.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
- *
- * @see de.learnlib.oracle.equivalence.RandomWordsEQOracle.MealyRandomWordsEQOracle
  */
 @JsonTypeName("random_word")
 public class MealyRandomWordsEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
