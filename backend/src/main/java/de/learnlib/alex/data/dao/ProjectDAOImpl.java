@@ -138,6 +138,11 @@ public class ProjectDAOImpl implements ProjectDAO {
                 throw new ValidationException("The project has to have at least one URL.");
             }
 
+            final Project projectWithSameName = projectRepository.findByUser_IdAndName(user.getId(), project.getName());
+            if (projectWithSameName != null && !projectWithSameName.getId().equals(project.getId())) {
+                throw new ValidationException("A project with that name already exists.");
+            }
+
             project.getUrls().forEach(url -> {
                 url.setId(null);
                 url.setProject(project);
@@ -165,7 +170,7 @@ public class ProjectDAOImpl implements ProjectDAO {
     @Override
     @Transactional(readOnly = true)
     public Project getByID(Long userId, Long projectId, EmbeddableFields... embedFields) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(new User(userId), project);
 
         initLazyRelations(project, embedFields);
@@ -177,7 +182,7 @@ public class ProjectDAOImpl implements ProjectDAO {
     public Project update(User user, Project project) throws NotFoundException, ValidationException {
         LOGGER.traceEntry("update({})", project);
 
-        final Project projectInDb = projectRepository.findOne(project.getId());
+        final Project projectInDb = projectRepository.findById(project.getId()).orElse(null);
         checkAccess(user, projectInDb);
 
         final List<ProjectUrl> urls = project.getUrls().stream()
@@ -215,13 +220,13 @@ public class ProjectDAOImpl implements ProjectDAO {
     private void removeUrlsFromLearnerResults(List<ProjectUrl> urlsToRemove) {
         final List<LearnerResult> learnerResults = learnerResultRepository.findAllByUrlsIn(urlsToRemove);
         learnerResults.forEach(result -> result.getUrls().removeAll(urlsToRemove));
-        learnerResultRepository.save(learnerResults);
+        learnerResultRepository.saveAll(learnerResults);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delete(User user, Long projectId) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project);
 
         symbolActionRepository.deleteAllBySymbol_Project_Id(projectId);

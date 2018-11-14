@@ -24,9 +24,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.transaction.TransactionSystemException;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -72,7 +72,7 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         symbolGroupRepository.save(group); // should fail
     }
 
-    @Test(expected = ConstraintViolationException.class)
+    @Test(expected = TransactionSystemException.class)
     public void shouldFailToSaveAGroupWithoutAName() {
         SymbolGroup group = new SymbolGroup();
         group.setProject(project);
@@ -139,7 +139,7 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         SymbolGroup group = createGroup(project, null, "Test Group 1");
         group = symbolGroupRepository.save(group);
 
-        SymbolGroup groupFromDB = symbolGroupRepository.findOne(group.getId());
+        SymbolGroup groupFromDB = symbolGroupRepository.findById(group.getId()).orElse(null);
 
         assertThat(groupFromDB.getProject(), is(equalTo(project)));
         assertThat(groupFromDB.getId(), is(equalTo(group.getId())));
@@ -157,7 +157,7 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
     @Test(expected = EmptyResultDataAccessException.class)
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingGroup() {
-        symbolGroupRepository.delete(55L); // random uuid
+        symbolGroupRepository.deleteById(55L); // random uuid
     }
 
     static SymbolGroup createGroup(Project project, Long id, String name) {

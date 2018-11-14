@@ -17,7 +17,6 @@
 package de.learnlib.alex.learning.entities.webdrivers;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -25,6 +24,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.net.URL;

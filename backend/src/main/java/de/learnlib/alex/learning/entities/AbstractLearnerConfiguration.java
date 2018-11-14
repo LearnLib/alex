@@ -21,10 +21,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Transient;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;

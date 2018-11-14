@@ -124,7 +124,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     public void create(User user, SymbolGroup group) throws NotFoundException, ValidationException {
         LOGGER.traceEntry("create({})", group);
 
-        final Project project = projectRepository.findOne(group.getProjectId());
+        final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
         projectDAO.checkAccess(user, project);
 
         try {
@@ -133,7 +133,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             beforePersistGroup(group);
 
             if (group.getParentId() != null) {
-                final SymbolGroup parent = symbolGroupRepository.findOne(group.getParentId());
+                final SymbolGroup parent = symbolGroupRepository.findById(group.getParentId()).orElse(null);
                 checkAccess(user, project, parent);
 
                 group.setParent(parent);
@@ -156,7 +156,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             throws NotFoundException, ValidationException {
         LOGGER.traceEntry("create({})", groups);
 
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         List<SymbolGroup> createdGroups = create(user, project, groups, null);
@@ -202,7 +202,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Transactional(readOnly = true)
     public List<SymbolGroup> getAll(User user, long projectId, EmbeddableFields... embedFields)
             throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
@@ -217,8 +217,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Transactional(readOnly = true)
     public SymbolGroup get(User user, long projectId, Long groupId, EmbeddableFields... embedFields)
             throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
-        final SymbolGroup group = symbolGroupRepository.findOne(groupId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final SymbolGroup group = symbolGroupRepository.findById(groupId).orElse(null);
         checkAccess(user, project, group);
 
         initLazyRelations(user, group, embedFields);
@@ -229,8 +229,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Override
     @Transactional
     public void update(User user, SymbolGroup group) throws NotFoundException, ValidationException {
-        final Project project = projectRepository.findOne(group.getProjectId());
-        final SymbolGroup groupInDB = symbolGroupRepository.findOne(group.getId());
+        final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
+        final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
         checkAccess(user, project, groupInDB);
 
         if (!group.getName().equals(groupInDB.getName())) {
@@ -259,8 +259,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Override
     @Transactional
     public SymbolGroup move(User user, SymbolGroup group) throws NotFoundException, ValidationException {
-        final Project project = projectRepository.findOne(group.getProjectId());
-        final SymbolGroup groupInDB = symbolGroupRepository.findOne(group.getId());
+        final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
+        final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
         checkAccess(user, project, groupInDB);
 
         final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(project.getId());
@@ -279,7 +279,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             symbolGroupRepository.save(groupInDB.getParent());
             movedGroup = symbolGroupRepository.save(group);
         } else {
-            final SymbolGroup newParent = symbolGroupRepository.findOne(group.getParentId());
+            final SymbolGroup newParent = symbolGroupRepository.findById(group.getParentId()).orElse(null);
             checkAccess(user, project, newParent);
 
             // remove group from old parent
@@ -305,8 +305,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Override
     @Transactional
     public void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
-        final SymbolGroup group = symbolGroupRepository.findOne(groupId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final SymbolGroup group = symbolGroupRepository.findById(groupId).orElse(null);
         checkAccess(user, project, group);
 
         final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(projectId);

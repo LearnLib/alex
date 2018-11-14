@@ -85,7 +85,7 @@ public class WebhookDAOImpl implements WebhookDAO {
     @Override
     @Transactional
     public void delete(User user, Long id) throws NotFoundException {
-        final Webhook webhook = webhookRepository.findOne(id);
+        final Webhook webhook = webhookRepository.findById(id).orElse(null);
         checkAccess(user, webhook);
         webhookRepository.delete(webhook);
     }
@@ -101,7 +101,7 @@ public class WebhookDAOImpl implements WebhookDAO {
     @Override
     @Transactional
     public Webhook update(User user, Webhook webhook) throws NotFoundException, ValidationException {
-        final Webhook webhookInDb = webhookRepository.findOne(webhook.getId());
+        final Webhook webhookInDb = webhookRepository.findById(webhook.getId()).orElse(null);
         checkAccess(user, webhookInDb);
 
         // check if there is another webhook registered to the new URL.

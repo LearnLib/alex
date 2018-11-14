@@ -65,10 +65,10 @@ public class ParameterizedSymbolDAOImpl implements ParameterizedSymbolDAO {
     @Override
     @Transactional
     public ParameterizedSymbol create(Long projectId, ParameterizedSymbol pSymbol) {
-        final Symbol symbol = symbolRepository.findOne(pSymbol.getSymbol().getId());
+        final Symbol symbol = symbolRepository.findById(pSymbol.getSymbol().getId()).orElse(null);
         pSymbol.setSymbol(symbol);
 
-        pSymbol.setParameterValues(symbolParameterValueRepository.save(pSymbol.getParameterValues()));
+        pSymbol.setParameterValues(symbolParameterValueRepository.saveAll(pSymbol.getParameterValues()));
         return parameterizedSymbolRepository.save(pSymbol);
     }
 

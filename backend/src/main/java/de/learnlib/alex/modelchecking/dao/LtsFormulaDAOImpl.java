@@ -65,7 +65,7 @@ public class LtsFormulaDAOImpl implements LtsFormulaDAO {
     @Override
     @Transactional
     public List<LtsFormula> getAll(User user, Long projectId) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         return ltsFormulaRepository.findAllByProject_Id(projectId);
@@ -74,7 +74,7 @@ public class LtsFormulaDAOImpl implements LtsFormulaDAO {
     @Override
     @Transactional
     public LtsFormula create(User user, Long projectId, LtsFormula formula) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         formula.setProject(project);
@@ -86,8 +86,8 @@ public class LtsFormulaDAOImpl implements LtsFormulaDAO {
     @Override
     @Transactional
     public LtsFormula update(User user, Long projectId, LtsFormula formula) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
-        final LtsFormula formulaInDb = ltsFormulaRepository.findOne(formula.getId());
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final LtsFormula formulaInDb = ltsFormulaRepository.findById(formula.getId()).orElse(null);
         checkAccess(user, project, formulaInDb);
 
         formulaInDb.setName(formula.getName());
@@ -99,11 +99,11 @@ public class LtsFormulaDAOImpl implements LtsFormulaDAO {
     @Override
     @Transactional
     public void delete(User user, Long projectId, Long formulaId) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
-        final LtsFormula formula = ltsFormulaRepository.findOne(formulaId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final LtsFormula formula = ltsFormulaRepository.findById(formulaId).orElse(null);
         checkAccess(user, project, formula);
 
-        ltsFormulaRepository.delete(formulaId);
+        ltsFormulaRepository.deleteById(formulaId);
     }
 
     @Override

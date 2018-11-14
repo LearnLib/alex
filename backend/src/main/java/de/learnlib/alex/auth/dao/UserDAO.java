@@ -19,7 +19,6 @@ package de.learnlib.alex.auth.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.IdsList;
 
 import javax.validation.ValidationException;
 import java.util.List;

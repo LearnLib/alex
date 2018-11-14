@@ -31,11 +31,11 @@ import static org.mockito.Mockito.mock;
 
 public class LStarTest {
 
-    private static final String TEST_TABLE = "+==+\n"
-                                           + "|  |\n"
-                                           + "+==+\n"
-                                           + "+==+\n"
-                                           + "+==+\n";
+    private static final String TEST_TABLE = "+==+" + System.lineSeparator()
+                                           + "|  |" + System.lineSeparator()
+                                           + "+==+" + System.lineSeparator()
+                                           + "+==+" + System.lineSeparator()
+                                           + "+==+" + System.lineSeparator();
 
     private LStar algorithm;
 

@@ -151,6 +151,9 @@ public class ALEXApplication extends ResourceConfig {
         }
     }
 
+    /**
+     * Set properties for ltsmin.
+     */
     @PostConstruct
     public void handleProperties() {
         final String ltsminBinDir = environment.getProperty("ltsminBinDir");

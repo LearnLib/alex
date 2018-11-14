@@ -22,8 +22,8 @@ import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.oracle.equivalence.SampleSetEQOracle;
 import net.automatalib.automata.transout.MealyMachine;
 import net.automatalib.words.Word;
-import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

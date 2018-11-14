@@ -106,18 +106,19 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <!-- plugin versions -->
-        <compiler-plugin.version>3.5.1</compiler-plugin.version>
-        <dependency-plugin.version>2.10</dependency-plugin.version>
-        <surefire-plugin.version>2.19.1</surefire-plugin.version>
-        <surefire-report.version>2.19.1</surefire-report.version>
+        <compiler-plugin.version>3.8.0</compiler-plugin.version>
+        <dependency-plugin.version>3.1.1</dependency-plugin.version>
+        <surefire-plugin.version>3.0.0-M1</surefire-plugin.version>
+        <surefire-report.version>3.0.0-M1</surefire-report.version>
         <war-plugin.version>3.2.2</war-plugin.version>
         <clean-plugin.version>3.0.0</clean-plugin.version>
-        <exec-plugin.version>1.4.0</exec-plugin.version>
-        <versions-plugin.version>2.2</versions-plugin.version>
+        <exec-plugin.version>1.6.0</exec-plugin.version>
+        <versions-plugin.version>2.7</versions-plugin.version>
         <coveralls-plugin.version>4.3.0</coveralls-plugin.version>
+        <assembly-plugin.version>3.1.0</assembly-plugin.version>
 
         <!-- dependencies versions -->
-        <spring-boot.version>1.5.10.RELEASE</spring-boot.version>
+        <spring-boot.version>2.1.0.RELEASE</spring-boot.version>
     </properties>
 
     <repositories>
@@ -168,7 +169,7 @@
 
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>${assembly-plugin.version}</version>
                     <configuration>
                         <descriptors>
                             <descriptor>src/assembly/bin.xml</descriptor>
