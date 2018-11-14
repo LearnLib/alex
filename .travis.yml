@@ -9,11 +9,6 @@ jdk:
   - oraclejdk8
   - oraclejdk11
 
-matrix:
-  allow_failures:
-  - jdk: openjdk11
-  - jdk: oraclejdk11
-
 addons:
   apt:
     sources:

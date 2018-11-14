@@ -34,10 +34,12 @@ import org.springframework.transaction.TransactionSystemException;
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -147,7 +149,7 @@ public class CounterDAOImplTest {
 
         List<Counter> counters = createCounterList();
 
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(counterRepository.findAllByProject(project)).willReturn(counters);
 
         List<Counter> allCounters = counterDAO.getAll(user, PROJECT_ID);
@@ -282,12 +284,12 @@ public class CounterDAOImplTest {
         counter.setProject(project);
         List<Counter> counterAsList = Collections.singletonList(counter);
 
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(counterRepository.findAllByProjectAndNameIn(project, COUNTER_NAME)).willReturn(counterAsList);
 
         counterDAO.delete(user, PROJECT_ID, COUNTER_NAME);
 
-        verify(counterRepository).delete(counterAsList);
+        verify(counterRepository).deleteAll(counterAsList);
     }
 
     @Test(expected = NotFoundException.class)

@@ -24,9 +24,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.transaction.TransactionSystemException;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import java.util.Collections;
 import java.util.List;
 
@@ -71,7 +71,7 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         projectRepository.save(project); // should fail
     }
 
-    @Test(expected = ConstraintViolationException.class)
+    @Test(expected = TransactionSystemException.class)
     public void shouldFailToSaveAProjectWithoutAName() {
         ProjectUrl url = new ProjectUrl();
         url.setUrl("http://localhost");
@@ -137,21 +137,21 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
         Project project = createProject(user, "Test Project");
         project = projectRepository.save(project);
 
-        Project projectFromDB = projectRepository.findOne(project.getId());
+        Project projectFromDB = projectRepository.findById(project.getId()).orElse(null);
 
         assertThat(projectFromDB, is(equalTo(project)));
     }
 
     @Test
     public void shouldReturnNullWhenFetchingANonExistingProjectOfAUserByItsID() {
-        Project projectFromDB = projectRepository.findOne(-1L);
+        Project projectFromDB = projectRepository.findById(-1L).orElse(null);
 
         assertNull(projectFromDB);
     }
 
     @Test
     public void shouldReturnNullWhenFetchingANonExistingProjectsOfAUserByItsName() {
-        Project projectFromDB = projectRepository.findOne(-1L);
+        Project projectFromDB = projectRepository.findById(-1L).orElse(null);
 
         assertNull(projectFromDB);
     }
@@ -171,6 +171,6 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
     @Test(expected = EmptyResultDataAccessException.class)
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingProject() {
-        projectRepository.delete(-1L);
+        projectRepository.deleteById(-1L);
     }
 }

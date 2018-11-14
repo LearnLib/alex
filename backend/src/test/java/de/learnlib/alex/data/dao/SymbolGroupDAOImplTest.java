@@ -44,6 +44,7 @@ import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -121,7 +122,7 @@ public class SymbolGroupDAOImplTest {
         SymbolGroup group = new SymbolGroup();
         group.setProject(project);
 
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolGroupRepository.save(group)).willReturn(group);
 
         symbolGroupDAO.create(user, group);
@@ -141,7 +142,7 @@ public class SymbolGroupDAOImplTest {
         SymbolGroup group = new SymbolGroup();
         group.setProject(project);
 
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolGroupRepository.save(group)).willThrow(DataIntegrityViolationException.class);
 
         symbolGroupDAO.create(user, group); // should fail
@@ -166,7 +167,7 @@ public class SymbolGroupDAOImplTest {
         transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
                 rollbackException);
 
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolGroupRepository.save(group)).willThrow(transactionSystemException);
 
         symbolGroupDAO.create(user, group); // should fail
@@ -183,7 +184,7 @@ public class SymbolGroupDAOImplTest {
         List<SymbolGroup> groups = createGroupsList();
         groups.forEach(g -> g.setProject(project));
 
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolGroupRepository.findAllByProject_IdAndParent_id(PROJECT_ID, null)).willReturn(groups);
 
         List<SymbolGroup> allGroups = symbolGroupDAO.getAll(user, PROJECT_ID);
@@ -199,7 +200,7 @@ public class SymbolGroupDAOImplTest {
         User user = new User();
         user.setId(USER_ID);
 
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(null);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.empty());
         doThrow(NotFoundException.class).when(projectDAO).checkAccess(user, null);
 
         symbolGroupDAO.getAll(user, PROJECT_ID);
@@ -217,8 +218,8 @@ public class SymbolGroupDAOImplTest {
         group.setId(GROUP_ID);
         group.setProject(project);
 
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
-        given(symbolGroupRepository.findOne(GROUP_ID)).willReturn(group);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
+        given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
 
         SymbolGroup g = symbolGroupDAO.get(user, PROJECT_ID, group.getId());
 
@@ -250,8 +251,8 @@ public class SymbolGroupDAOImplTest {
         SymbolGroup defaultGroup = new SymbolGroup();
         defaultGroup.setId(GROUP_ID + 1);
 
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
-        given(symbolGroupRepository.findOne(GROUP_ID)).willReturn(group);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
+        given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
         given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(defaultGroup);
 
         symbolGroupDAO.update(user, group);
@@ -276,8 +277,8 @@ public class SymbolGroupDAOImplTest {
         SymbolGroup defaultGroup = new SymbolGroup();
         defaultGroup.setId(GROUP_ID - 1L);
 
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
-        given(symbolGroupRepository.findOne(GROUP_ID)).willReturn(group);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
+        given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
         given(symbolGroupRepository.save(group)).willThrow(DataIntegrityViolationException.class);
         given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(defaultGroup);
 
@@ -308,8 +309,8 @@ public class SymbolGroupDAOImplTest {
         transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
                 rollbackException);
 
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
-        given(symbolGroupRepository.findOne(GROUP_ID)).willReturn(group);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
+        given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
         given(symbolGroupRepository.save(group)).willThrow(transactionSystemException);
         given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(defaultGroup);
 
@@ -332,9 +333,9 @@ public class SymbolGroupDAOImplTest {
         SymbolGroup defaultGroup = new SymbolGroup();
         defaultGroup.setId(GROUP_ID - 1L);
 
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(defaultGroup);
-        given(symbolGroupRepository.findOne(GROUP_ID)).willReturn(group);
+        given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
 
         symbolGroupDAO.delete(user, PROJECT_ID, GROUP_ID);
 
@@ -355,9 +356,9 @@ public class SymbolGroupDAOImplTest {
         group.setProject(project);
         project.getGroups().add(group);
 
-        given(projectRepository.findOne(PROJECT_ID)).willReturn(project);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(group);
-        given(symbolGroupRepository.findOne(DEFAULT_GROUP_ID)).willReturn(group);
+        given(symbolGroupRepository.findById(DEFAULT_GROUP_ID)).willReturn(Optional.of(group));
 
         symbolGroupDAO.delete(user, PROJECT_ID, DEFAULT_GROUP_ID); // should fail
     }

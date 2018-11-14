@@ -175,7 +175,7 @@ public class Learner {
         }
 
         final LearnerResult result = createLearnerResult(user, project, configuration);
-        configuration.setUrls(projectUrlRepository.findAll(configuration.getUrlIds()));
+        configuration.setUrls(projectUrlRepository.findAllById(configuration.getUrlIds()));
 
         final PreparedContextHandler contextHandler = contextHandlerFactory
                 .createPreparedContextHandler(user, project, configuration.getDriverConfig(), result.getResetSymbol(), result.getPostSymbol());
@@ -229,7 +229,7 @@ public class Learner {
         symbols.forEach(s -> symbolMap.put(s.getId(), s));
         result.getSymbols().forEach(ps -> ps.setSymbol(symbolMap.get(ps.getSymbol().getId())));
 
-        final List<ProjectUrl> urls = projectUrlRepository.findAll(configuration.getUrlIds());
+        final List<ProjectUrl> urls = projectUrlRepository.findAllById(configuration.getUrlIds());
         result.setUrls(urls);
         configuration.setUrls(urls);
 
@@ -294,7 +294,7 @@ public class Learner {
         learnerResult.setComment(configuration.getComment());
         learnerResult.setUseMQCache(configuration.isUseMQCache());
 
-        final List<ProjectUrl> urls = projectUrlRepository.findAll(configuration.getUrlIds());
+        final List<ProjectUrl> urls = projectUrlRepository.findAllById(configuration.getUrlIds());
         learnerResult.setUrls(urls);
 
         return learnerResult;

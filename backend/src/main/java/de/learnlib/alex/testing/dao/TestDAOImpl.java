@@ -209,8 +209,8 @@ public class TestDAOImpl implements TestDAO {
     @Override
     @Transactional(readOnly = true)
     public Test get(User user, Long projectId, Long testId) throws NotFoundException, UnauthorizedException {
-        final Project project = projectRepository.findOne(projectId);
-        final Test test = testRepository.findOne(testId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final Test test = testRepository.findById(testId).orElse(null);
         checkAccess(user, project, test);
 
         if (test == null) {
@@ -238,7 +238,7 @@ public class TestDAOImpl implements TestDAO {
     public List<Test> getByType(User user, Long projectId, String type)
             throws NotFoundException, UnauthorizedException, IllegalArgumentException {
 
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         final List<Test> tests = testRepository.findAllByProject_Id(projectId);
@@ -265,7 +265,7 @@ public class TestDAOImpl implements TestDAO {
     @Override
     @Transactional(readOnly = true)
     public Test getRoot(User user, Long projectId) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
@@ -277,7 +277,7 @@ public class TestDAOImpl implements TestDAO {
     @Override
     @Transactional
     public void update(User user, Test test) throws NotFoundException {
-        final Project project = projectRepository.findOne(test.getProjectId());
+        final Project project = projectRepository.findById(test.getProjectId()).orElse(null);
         checkAccess(user, project, test);
 
         // make sure the name of the Test Case is unique
@@ -356,8 +356,8 @@ public class TestDAOImpl implements TestDAO {
     @Override
     @Transactional
     public void delete(User user, Long projectId, Long testId) throws NotFoundException, ValidationException {
-        final Project project = projectRepository.findOne(projectId);
-        final Test test = testRepository.findOne(testId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final Test test = testRepository.findById(testId).orElse(null);
         checkAccess(user, project, test);
 
         final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
@@ -386,9 +386,9 @@ public class TestDAOImpl implements TestDAO {
     @Transactional(rollbackFor = Exception.class)
     public List<Test> move(User user, Long projectId, List<Long> testIds, Long targetId)
             throws NotFoundException, ValidationException {
-        final Project project = projectRepository.findOne(projectId);
-        final List<Test> tests = testRepository.findAll(testIds);
-        final Test targetTest = testRepository.findOne(targetId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final List<Test> tests = testRepository.findAllById(testIds);
+        final Test targetTest = testRepository.findById(targetId).orElse(null);
         final Test rootTestSuite = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
 
         // validation
@@ -426,7 +426,7 @@ public class TestDAOImpl implements TestDAO {
         target.getTests().addAll(tests);
         testRepository.save(target);
 
-        final List<Test> movedTests = testRepository.save(tests);
+        final List<Test> movedTests = testRepository.saveAll(tests);
         movedTests.forEach(this::loadLazyRelations);
 
         return movedTests;
@@ -436,8 +436,8 @@ public class TestDAOImpl implements TestDAO {
     @Transactional
     public List<TestCase> getTestCases(User user, Long projectId, Long testSuiteId, boolean includeChildTestSuites)
             throws NotFoundException, ValidationException {
-        final Project project = projectRepository.findOne(projectId);
-        final Test test = testRepository.findOne(testSuiteId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final Test test = testRepository.findById(testSuiteId).orElse(null);
         checkAccess(user, project, test);
 
         if (!(test instanceof TestSuite)) {
@@ -494,7 +494,7 @@ public class TestDAOImpl implements TestDAO {
             steps.get(i).setNumber(i);
         }
 
-        testCaseStepRepository.save(steps);
+        testCaseStepRepository.saveAll(steps);
 
         // save the parameter values after the test case step is saved so that
         // we won't get an entity detached exception.

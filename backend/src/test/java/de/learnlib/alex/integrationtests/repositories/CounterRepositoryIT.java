@@ -26,7 +26,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -66,12 +65,6 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
     @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveACounterWithoutAProject() {
         Counter counter = createCounter(null, "TestCounter");
-        counterRepository.save(counter); // should fail
-    }
-
-    @Test(expected = ConstraintViolationException.class)
-    public void shouldFailToSaveACounterWithoutAName() {
-        Counter counter = createCounter(project, "");
         counterRepository.save(counter); // should fail
     }
 
@@ -144,14 +137,14 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
         Counter counter = createCounter(project, "TestCounter");
         counter = counterRepository.save(counter);
 
-        counterRepository.delete(counter.getId());
+        counterRepository.deleteById(counter.getId());
 
         assertThat(counterRepository.count(), is(equalTo(0L)));
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingCounter() {
-        counterRepository.delete(-1L);
+        counterRepository.deleteById(-1L);
     }
 
 

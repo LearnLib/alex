@@ -287,7 +287,7 @@ public class TestService {
         });
         final ParameterizedSymbol dummyPSymbol = new ParameterizedSymbol(dummySymbol);
 
-        final ProjectUrl projectUrl = projectUrlRepository.findOne(testConfig.getUrlId());
+        final ProjectUrl projectUrl = projectUrlRepository.findById(testConfig.getUrlId()).orElse(null);
 
         final ConnectorContextHandler ctxHandler = contextHandlerFactory
                 .createPreparedContextHandler(user, testCase.getProject(), testConfig.getDriverConfig(), dummyPSymbol, null)

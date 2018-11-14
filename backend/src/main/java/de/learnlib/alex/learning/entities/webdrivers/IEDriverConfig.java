@@ -19,7 +19,6 @@ package de.learnlib.alex.learning.entities.webdrivers;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.ie.InternetExplorerDriverEngine;
 import org.openqa.selenium.ie.InternetExplorerDriverService;
 import org.openqa.selenium.ie.InternetExplorerOptions;
 
@@ -46,7 +45,6 @@ public class IEDriverConfig extends AbstractWebDriverConfig implements Serializa
                 .introduceFlakinessByIgnoringSecurityDomains();
 
         final InternetExplorerDriverService service = new InternetExplorerDriverService.Builder()
-                .withEngineImplementation(InternetExplorerDriverEngine.AUTODETECT)
                 .usingAnyFreePort()
                 .build();
 

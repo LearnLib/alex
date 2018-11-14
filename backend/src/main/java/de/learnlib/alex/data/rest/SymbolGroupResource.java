@@ -81,7 +81,7 @@ public class SymbolGroupResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group){
+    public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createGroup({}, {}) for user {}.", projectId, group, user);
 

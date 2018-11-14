@@ -22,8 +22,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.transaction.TransactionSystemException;
 
-import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -44,7 +44,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         Assert.assertTrue(user.getId() > 1);
     }
 
-    @Test(expected = ConstraintViolationException.class)
+    @Test(expected = TransactionSystemException.class)
     public void shouldFailWhenSavingAnUserWithoutAnEmail() {
         User user = new User();
         user.setPassword("password");
@@ -53,7 +53,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
     }
 
 
-    @Test(expected = ConstraintViolationException.class)
+    @Test(expected = TransactionSystemException.class)
     public void shouldFailWhenSavingAnUserWithAnInvalidEmail() {
         User user = new User();
         user.setEmail("test");
@@ -62,7 +62,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         userRepository.save(user);
     }
 
-    @Test(expected = ConstraintViolationException.class)
+    @Test(expected = TransactionSystemException.class)
     public void shouldFailWhenSavingAnUserWithoutPassword() {
         User user = new User();
         user.setEmail("test_user@test.example");
@@ -131,7 +131,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         User user = createUser("test_user@test.example");
         user = userRepository.save(user);
 
-        User userFromDB = userRepository.findOne(user.getId());
+        User userFromDB = userRepository.findById(user.getId()).orElse(null);
 
         assertNotNull(userFromDB);
         assertThat(userFromDB, is(equalTo(user)));
@@ -139,7 +139,7 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldReturnNullWhenFetchingANonExistingUsersByTheID() {
-        User userFromDB = userRepository.findOne(-1L);
+        User userFromDB = userRepository.findById(-1L).orElse(null);
         assertNull(userFromDB);
     }
 
@@ -165,14 +165,14 @@ public class UserRepositoryIT extends AbstractRepositoryIT {
         User user = createUser("test_user@test.example");
         user = userRepository.save(user);
 
-        userRepository.delete(user.getId());
+        userRepository.deleteById(user.getId());
 
         assertEquals(1, userRepository.count());
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingUser() {
-        userRepository.delete(-1L);
+        userRepository.deleteById(-1L);
     }
 
 }

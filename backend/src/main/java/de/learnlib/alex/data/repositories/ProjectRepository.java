@@ -40,4 +40,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @SuppressWarnings("checkstyle:methodname")
     List<Project> findAllByUser_Id(Long userId);
 
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    Project findByUser_IdAndName(Long userId, String name);
 }

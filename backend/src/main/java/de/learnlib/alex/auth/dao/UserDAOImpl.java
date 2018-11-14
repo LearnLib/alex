@@ -20,7 +20,6 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
@@ -103,7 +102,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     @Transactional(readOnly = true)
     public User getById(Long id) throws NotFoundException {
-        User user = userRepository.findOne(id);
+        User user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
             throw new NotFoundException("Could not find the user with the ID " + id + ".");

@@ -90,7 +90,7 @@ public class CounterDAOImpl implements CounterDAO {
     @Override
     @Transactional(readOnly = true)
     public List<Counter> getAll(User user, Long projectId) throws NotFoundException {
-        Project project = projectRepository.findOne(projectId);
+        Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
         return counterRepository.findAllByProject(project);
     }
@@ -128,14 +128,14 @@ public class CounterDAOImpl implements CounterDAO {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delete(User user, Long projectId, String... names) throws NotFoundException {
-        Project project = projectRepository.findOne(projectId);
+        Project project = projectRepository.findById(projectId).orElse(null);
         List<Counter> counters = counterRepository.findAllByProjectAndNameIn(project, names);
         for (Counter counter : counters) {
             checkAccess(user, project, counter);
         }
 
         if (names.length == counters.size()) { // all counters found -> delete them & success
-            counterRepository.delete(counters);
+            counterRepository.deleteAll(counters);
         } else {
             throw new NotFoundException("Could not delete the counter(s), because at least one does not exists!");
         }

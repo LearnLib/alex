@@ -44,6 +44,7 @@ public interface LtsFormulaRepository extends JpaRepository<LtsFormula, Long> {
      * @param projectId
      *         The ID of the project.
      * @param formulaIds
+     *         The IDs of the formulas.
      * @return The formulas stored in the project.
      */
     @Transactional(readOnly = true)

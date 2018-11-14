@@ -25,9 +25,9 @@ import de.learnlib.alex.data.repositories.SymbolRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.TransactionSystemException;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -83,7 +83,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         symbolRepository.save(symbol); // should fail
     }
 
-    @Test(expected = ConstraintViolationException.class)
+    @Test(expected = TransactionSystemException.class)
     public void shouldFailToSaveASymbolWithoutAName() {
         SymbolGroup group = createGroup(project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
@@ -117,7 +117,7 @@ public class SymbolRepositoryIT extends AbstractRepositoryIT {
         Symbol s2 = createSymbol(project, group, null, "Test Symbol 2");
         symbolRepository.save(s2);
 
-        Symbol symbolFromDB = symbolRepository.findOne(s1.getId());
+        Symbol symbolFromDB = symbolRepository.findById(s1.getId()).orElse(null);
 
         assertThat(symbolFromDB, is(equalTo(s1)));
     }
