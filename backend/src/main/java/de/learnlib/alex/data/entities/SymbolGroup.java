@@ -28,9 +28,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -43,11 +41,6 @@ import java.util.Set;
  * Entity to organize symbols.
  */
 @Entity
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"projectId", "name"})
-        }
-)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SymbolGroup implements Serializable {
 

@@ -128,7 +128,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         projectDAO.checkAccess(user, project);
 
         try {
-            group.setName(createGroupName(project, group.getName()));
+            group.setName(createGroupName(project, group));
             project.addGroup(group);
             beforePersistGroup(group);
 
@@ -182,7 +182,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         group.setSymbols(new HashSet<>());
         group.setProject(project);
         group.setParent(parent);
-        group.setName(createGroupName(project, group.getName()));
+        group.setName(createGroupName(project, group));
 
         beforePersistGroup(group);
         final SymbolGroup createdGroup = symbolGroupRepository.save(group);
@@ -234,7 +234,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         checkAccess(user, project, groupInDB);
 
         if (!group.getName().equals(groupInDB.getName())) {
-            group.setName(createGroupName(project, group.getName()));
+            group.setName(createGroupName(project, group));
         }
 
         if (group.getParentId() != null && group.getParentId().equals(groupInDB.getId())) {
@@ -257,7 +257,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public SymbolGroup move(User user, SymbolGroup group) throws NotFoundException, ValidationException {
         final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
         final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
@@ -277,6 +277,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             // move group to the upmost level
             groupInDB.getParent().getGroups().remove(groupInDB);
             symbolGroupRepository.save(groupInDB.getParent());
+            group.setName(createGroupName(project, group));
             movedGroup = symbolGroupRepository.save(group);
         } else {
             final SymbolGroup newParent = symbolGroupRepository.findById(group.getParentId()).orElse(null);
@@ -295,6 +296,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             newParent.getGroups().add(groupInDB);
             groupInDB.setParent(newParent);
             symbolGroupRepository.save(newParent);
+            group.setName(createGroupName(project, group));
             movedGroup = symbolGroupRepository.save(groupInDB);
         }
 
@@ -350,9 +352,10 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         }
     }
 
-    private String createGroupName(Project project, String name) {
+    private String createGroupName(Project project, SymbolGroup group) {
         int i = 1;
-        while (symbolGroupRepository.findOneByProject_IdAndName(project.getId(), name) != null) {
+        String name = group.getName();
+        while (symbolGroupRepository.findOneByProject_IdAndParent_IdAndName(project.getId(), group.getParentId(), name) != null) {
             name = name + " (" + i + ")";
             i++;
         }

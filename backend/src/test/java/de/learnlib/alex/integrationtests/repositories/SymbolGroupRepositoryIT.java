@@ -95,17 +95,6 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         assertTrue(group2.getId() > 0L);
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void shouldFailToSaveAGroupsWithADuplicateNames() {
-        SymbolGroup group1 = createGroup(project, 1L, "Test Group");
-        symbolGroupRepository.save(group1);
-        SymbolGroup group2 = createGroup(project, 2L, "Test Group");
-
-        symbolGroupRepository.save(group2); // should fail
-
-        System.out.println(symbolGroupRepository.findAll());
-    }
-
     @Test
     public void shouldSaveGroupsWithADuplicateNamesInDifferentProjects() {
         Project project2 = createProject(user, "Test Project 2");
