@@ -250,6 +250,7 @@ import {ltsFormulaFormGroupsComponent} from './components/forms/lts-formula-form
 import {ltsFormulaEditModalComponent} from './components/modals/lts-formula-edit-modal/lts-formula-edit-modal.component';
 import {symbolSelectDropdownComponent} from './components/symbol-select-dropdown/symbol-select-dropdown.component';
 import {unauthorizedHttpInterceptor} from './utils/unauthorized-http-interceptor';
+import {logoutViewComponent} from './components/views/logout-view/logout-view.component';
 
 angular
   .module('ALEX', [
@@ -389,6 +390,7 @@ angular
   .component('webhooksView', webhooksViewComponent)
   .component('redirectView', redirectViewComponent)
   .component('ltsFormulasView', ltsFormulasViewComponent)
+  .component('logoutView', logoutViewComponent)
 
   // forms components
   .component('actionForm', actionFormComponent)

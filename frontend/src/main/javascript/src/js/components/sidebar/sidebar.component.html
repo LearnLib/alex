@@ -19,9 +19,8 @@
                 <div class="sidebar-group-title">
                     <strong>{{group.title()}}</strong>
                 </div>
-                <a href class="sidebar-group-item" uib-tooltip="{{item.title}}" tooltip-placement="right"
-                   ng-class="{'active':item.active()}" ng-repeat="item in group.items" ng-click="item.click()"
-                   ng-if="item.display()">
+                <a ui-sref="{{item.sref()}}" class="sidebar-group-item" uib-tooltip="{{item.title}}" tooltip-placement="right"
+                   ng-class="{'active':item.active()}" ng-repeat="item in group.items" ng-click="item.click()" ng-if="item.display()">
                     <div class="sidebar-group-item-icon">
                         <i class="fa fa-fw {{item.icon}}"></i>
                     </div>

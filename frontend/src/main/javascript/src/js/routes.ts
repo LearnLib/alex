@@ -45,6 +45,15 @@ export function config($stateProvider, $urlRouterProvider) {
       data: {title: 'Redirect'}
     })
 
+    .state('logout', {
+      parent: 'root',
+      url: '/logout',
+      views: {
+        '@': {template: '<logout-view></logout-view>'}
+      },
+      data: {requiresProject: false, roles: ['REGISTERED', 'ADMIN'], title: 'Logout'}
+    })
+
     // user profile
     .state('profile', {
       parent: 'root',
