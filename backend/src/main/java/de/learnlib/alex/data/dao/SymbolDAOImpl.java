@@ -638,6 +638,14 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(User user, Long projectId, List<Long> symbolIds) throws NotFoundException {
+        for (Long id: symbolIds) {
+            delete(user, projectId, id);
+        }
+    }
+
     /**
      * Sets references to related entities to all actions of a symbol.
      *

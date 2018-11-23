@@ -16,7 +16,7 @@
 
 import {apiUrl} from '../../../../environments';
 import {AlphabetSymbol} from '../../entities/alphabet-symbol';
-import {IHttpService} from 'angular';
+import {IHttpPromise, IHttpService} from 'angular';
 import {SymbolGroup} from '../../entities/symbol-group';
 
 /**
@@ -128,6 +128,17 @@ export class SymbolResource {
    */
   delete(symbol: AlphabetSymbol) {
     return this.$http.delete(`${apiUrl}/projects/${symbol.project}/symbols/${symbol.id}`);
+  }
+
+  /**
+   * Permanently delete multiple symbols at once.
+   *
+   * @param projectId The ID of the project.
+   * @param symbols The symbols to delete.
+   */
+  deleteMany(projectId: number, symbols: AlphabetSymbol[]): IHttpPromise<any> {
+    const symbolIds = symbols.map(s => s.id).join(',');
+    return this.$http.delete(`${apiUrl}/projects/${projectId}/symbols/batch/${symbolIds}`);
   }
 
   /**

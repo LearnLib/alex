@@ -375,6 +375,27 @@ public class SymbolResource {
     }
 
     /**
+     * Permanently delete multiple symbols at once.
+     *
+     * @param projectId
+     *          The ID of the project.
+     * @param symbolIds
+     *          The IDs of the symbols to delete.
+     * @return 204 on success.
+     */
+    @DELETE
+    @Path("/batch/{symbolIds}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("symbolIds") IdsList symbolIds) {
+        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("delete symbols ({}, {}) for user {}.", projectId, symbolIds, user);
+
+        symbolDAO.delete(user, projectId, symbolIds);
+        LOGGER.traceExit("deleted symbols {}", symbolIds);
+        return Response.noContent().build();
+    }
+
+    /**
      * Mark a bunch of symbols as hidden.
      *
      * @param projectId

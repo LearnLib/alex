@@ -31,6 +31,7 @@ class SymbolsArchiveViewComponent {
   /** The list of archived symbols. */
   public symbols: AlphabetSymbol[];
 
+  /** The selected symbols. */
   public selectedSymbols: Selectable<AlphabetSymbol>;
 
   /**
@@ -122,6 +123,24 @@ class SymbolsArchiveViewComponent {
         remove(this.symbols, {id: symbol.id});
       })
       .catch(err => this.toastService.danger(`The symbol could be deleted permanently. ${err.data.message}`));
+  }
+
+  deleteSelectedSymbols(): void {
+    const symbols = this.selectedSymbols.getSelected();
+    if (this.selectedSymbols.getSelected().length === 0) {
+      this.toastService.info('You have to select at least one symbol.');
+      return;
+    }
+
+    this.symbolResource.deleteMany(this.project.id, symbols)
+      .then(() => {
+        this.toastService.success('The symbols have been deleted.');
+        this.selectedSymbols.unselectAll();
+        symbols.forEach(s1 => remove(this.symbols, s2 => s2.id === s1.id));
+      })
+      .catch(err => {
+        this.toastService.danger(`The symbols could not be deleted. ${err.data.message}`)
+      });
   }
 
   get project(): Project {
