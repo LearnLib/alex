@@ -104,7 +104,7 @@ export const symbolsSymbolGroupTreeComponent = {
     /**
      * Copy a symbol.
      *
-     * @param symbol
+     * @param symbol The symbol to copy.
      */
     copySymbol(symbol: AlphabetSymbol): void {
       const newName = symbol.name + ' - Copy';
@@ -112,6 +112,7 @@ export const symbolsSymbolGroupTreeComponent = {
         .then(name => {
           const symbolToCreate = symbol.getExportableSymbol();
           symbolToCreate.name = name;
+          symbolToCreate.group = symbol.group;
 
           // first create the symbol without actions
           this.symbolResource.create(symbol.project, symbolToCreate)
