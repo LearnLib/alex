@@ -190,6 +190,8 @@ class SymbolsViewComponent {
       symbol.group = group.id;
       toGroup.symbols.push(symbol);
     });
+
+    this.selectedSymbols.unselectAll();
   }
 
   /**
