@@ -39,7 +39,7 @@ import de.learnlib.datastructure.discriminationtree.MultiDTree;
 import de.learnlib.datastructure.discriminationtree.model.AbstractDTNode;
 import de.learnlib.datastructure.discriminationtree.model.AbstractDiscriminationTree;
 import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDiscriminationTree;
-import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.util.automata.conformance.WMethodTestsIterator;
 import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
 import net.automatalib.words.Alphabet;
@@ -158,8 +158,8 @@ public class TestGenerator {
     }
 
     private void computeTestCasesWMethod(MealyMachine<?, String, ?, String> hypothesis, User user, long projectId,
-            TestSuite testSuite, LearnerResult lr, TestSuiteGenerationConfig config,
-            Iterator<Word<String>> testsIterator) throws NotFoundException {
+                                         TestSuite testSuite, LearnerResult lr, TestSuiteGenerationConfig config,
+                                         Iterator<Word<String>> testsIterator) throws NotFoundException {
         int testNum = 0;
         while (testsIterator.hasNext()) {
             final Word<String> word = testsIterator.next();

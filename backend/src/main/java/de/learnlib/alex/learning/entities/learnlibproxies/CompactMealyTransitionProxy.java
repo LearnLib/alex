@@ -19,7 +19,7 @@ package de.learnlib.alex.learning.entities.learnlibproxies;
 import java.io.Serializable;
 
 /**
- * Proxy around a {@link net.automatalib.automata.transout.impl.compact.CompactMealyTransition}
+ * Proxy around a {@link net.automatalib.automata.transducers.impl.compact.CompactMealyTransition}
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
  */
 public class CompactMealyTransitionProxy implements Serializable {

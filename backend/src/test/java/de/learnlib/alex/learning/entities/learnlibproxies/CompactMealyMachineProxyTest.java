@@ -17,7 +17,7 @@
 package de.learnlib.alex.learning.entities.learnlibproxies;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.automatalib.automata.transout.impl.compact.CompactMealy;
+import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.util.automata.Automata;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.Alphabets;
