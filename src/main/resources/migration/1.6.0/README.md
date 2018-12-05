@@ -1,4 +1,4 @@
-# Migration to ALEX 1.6.0
+# Migration to ALEX 1.6.*
 
 A migration of the database is not foreseen for this version, but is planned for future versions.
 Instead, export and import symbols and tests that you want to use in the new version.
