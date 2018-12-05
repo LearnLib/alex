@@ -1,9 +1,9 @@
 <div id="html-element-picker-wrapper">
     <div id="html-element-picker">
-        <div class="header">
+        <div class="header d-flex flex-row">
 
-            <div ng-if="vm.corsDisabled !== null && !vm.corsDisabled" style="flex: 1 0; display: flex">
-                <div class="header-element" style="flex: 0 0 320px">
+            <div ng-if="vm.corsDisabled !== null && !vm.corsDisabled" class="d-flex flex-row w-100">
+                <div class="header-element" style="min-width: 320px; max-width: 320px">
                     <form ng-submit="vm.loadUrl()">
                         <div class="form-group">
                             <div class="input-group">
@@ -19,7 +19,7 @@
                     </form>
                 </div>
 
-                <div class="header-element" style="flex: 0 0">
+                <div class="header-element">
                     <div class="btn-group d-flex">
                         <button class="btn btn-default" ng-click="vm.toggleSelection()"
                                 tooltip-placement="right"
@@ -32,44 +32,52 @@
                     </div>
                 </div>
 
-                <div class="header-element" style="flex: 1 0; overflow: hidden">
-                    <div class="btn btn-block btn-default disabled"
-                         style="overflow: hidden; text-overflow: ellipsis; word-wrap: break-word; text-align: left">
+                <div class="header-element w-100" style="overflow: hidden">
+                    <div class="btn btn-block btn-default disabled" style="overflow: hidden; text-overflow: ellipsis; word-wrap: break-word; text-align: left">
                         <span ng-if="vm.node.selector" ng-bind="vm.node.selector"></span>
                         <span ng-if="!vm.node.selector">Enable the selection mode</span>
                     </div>
                 </div>
 
-                <div class="header-element" style="flex: 0 0" ng-if="!vm.isSelectable && vm.node.selector">
+                <div class="header-element" ng-if="!vm.isSelectable && vm.node.selector">
                     <button class="btn btn-success" ng-click="vm.ok()">
                         <i class="fa fa-check"></i>
                     </button>
                 </div>
+
+                <div class="header-element">
+                    <button class="btn btn-default" ng-click="vm.closePicker()">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
             </div>
 
-            <div ng-if="vm.corsDisabled !== null && vm.corsDisabled" style="flex: 1 0; display: flex">
-                <div class="header-element" style="flex: 1 0">
+            <div ng-if="vm.corsDisabled !== null && vm.corsDisabled" class="d-flex flex-row w-100">
+                <div class="header-element w-100">
                     <div class="alert alert-warning alert-condensed">
                         Your browser has an active <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS" target="_blank" rel="nofollow">CORS</a> rule for iframes.
                         Please disable this feature to use the Element Picker.
                     </div>
                 </div>
+                <div class="header-element">
+                    <button class="btn btn-default" ng-click="vm.closePicker()">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
             </div>
 
-            <div ng-if="vm.corsDisabled === null" style="flex: 1 0; display: flex">
-                <div class="header-element" style="flex: 1 0">
+            <div ng-if="vm.corsDisabled === null" class="d-flex flex-row w-100">
+                <div class="header-element w-100">
                     <div class="alert alert-info alert-condensed">
                         <i class="fa fa-spin fa-circle-o-notch"></i> Loading...
                     </div>
                 </div>
+                <div class="header-element">
+                    <button class="btn btn-default" ng-click="vm.closePicker()">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
             </div>
-
-            <div class="header-element" style="flex: 0 0">
-                <button class="btn btn-default" ng-click="vm.closePicker()">
-                    <i class="fa fa-close"></i>
-                </button>
-            </div>
-
         </div>
         <div class="body">
 
