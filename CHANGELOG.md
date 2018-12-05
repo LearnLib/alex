@@ -1,3 +1,9 @@
+# ALEX 1.6.1
+
+## Fixes
+
+* Fix issues with HTML Element Picker
+
 # ALEX 1.6.0
 
 ## Breaking Changes

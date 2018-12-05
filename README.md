@@ -18,7 +18,7 @@ Make sure you have Java 8 installed on your system.
 We advise to use a modern web browser like Google Chrome, Mozilla Firefox or Microsoft Edge with JavaScript enabled.
 
 1. [Download](https://github.com/LearnLib/alex/releases/latest) the latest version.
-2. Open a terminal and start ALEX via `java -jar alex-1.6.0.war [--server.port=XXXX]`.
+2. Open a terminal and start ALEX via `java -jar alex-1.6.1.war [--server.port=XXXX]`.
 3. Wait until the command line prints something like `de.learnlib.alex.App - Started App in XX.XXX seconds`.
 3. Open *http://localhost:8000* in a web browser.
 
@@ -48,7 +48,7 @@ cd alex
 mvn install package [-DskipTests]
 ```
 
-The bundle can then be found at `build/target/alex-build-1.6.0.war`.
+The bundle can then be found at `build/target/alex-build-1.6.1.war`.
 
 ## Connecting to a database
 
@@ -70,7 +70,7 @@ spring.jpa.hibernate.ddl-auto=update
 
 Then, start ALEX like this:
 
-`java -jar alex-1.6.0.war "--spring.config.location=/path/to/your/application.properties"`
+`java -jar alex-1.6.1.war "--spring.config.location=/path/to/your/application.properties"`
 
 ## Further reading
 

@@ -68,12 +68,6 @@ class HtmlElementPickerComponent {
         this.url = null;
 
         /**
-         * The project in the session
-         * @type {null|Project}
-         */
-        this.project = null;
-
-        /**
          * If cors rules are disabled in the browser.
          * @type {null}
          */

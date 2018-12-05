@@ -18,7 +18,7 @@
  * The version of ALEX.
  * @type {string}
  */
-export const version = '1.6.0';
+export const version = '1.6.1';
 
 /**
  * API URL
