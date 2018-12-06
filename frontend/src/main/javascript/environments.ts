@@ -16,7 +16,6 @@
 
 /**
  * The version of ALEX.
- * @type {string}
  */
 export const version = '1.7.0-SNAPSHOT';
 
@@ -25,8 +24,6 @@ export const version = '1.7.0-SNAPSHOT';
  *
  * Change it to '/rest' before ALEX is packaged.
  * Otherwise change it to the URL where the API is currently running.
- *
- * @type {string}
  */
 export const apiUrl = '/rest';
 // export const apiUrl = 'http://localhost:8000/rest';

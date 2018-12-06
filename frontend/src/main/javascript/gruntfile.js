@@ -29,7 +29,7 @@ module.exports = function (grunt) {
         keepAlive: true,
         watchifyOptions: {
             entries: ['src/js/index.ts'],
-            ignoreWatch: ['**/node_modules/**'],
+            ignoreWatch: ['**/node_modules/**', '**/dist/**'],
             cache: {},
             packageCache: {},
             poll: true,
@@ -39,7 +39,7 @@ module.exports = function (grunt) {
 
     grunt
         .initConfig({
-            buildLocation: '../../../target/classes',
+            buildLocation: './dist',
 
             pkg: grunt.file.readJSON('package.json'),
 

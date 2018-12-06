@@ -8,6 +8,7 @@ target
 *.class
 hs_err_pid*
 
+# log files
 backend/logs
 backend/debug.log
 
@@ -16,12 +17,11 @@ cli/src/main/javascript/node_modules
 frontend/src/main/javascript/node_modules
 frontend/src/main/javascript/dist
 frontend/src/main/javascript/test/coverage
-frontend/src/main/javascript/assets/fonts
 frontend/src/main/javascript/npm-debug\.log
 frontend/src/main/javascript/package-lock\.json
+frontend/src/main/javascript/dist
 
-# Auto Generated Swagger Doc
-main/src/main/webapp/restdocs
+# uploaded files
 main/uploads
 
 # genereated user documentation

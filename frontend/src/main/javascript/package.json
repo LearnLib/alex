@@ -1,7 +1,7 @@
 {
   "name": "alex",
   "version": "1.7.0-SNAPSHOT",
-  "description": "A web application for interring Mealy machines of web applications and RESTful web services via active automata learning.",
+  "description": "A web application for inferring Mealy machines of web applications and RESTful web services via active automata learning.",
   "repository": {
     "type": "git",
     "url": "https://github.com/LearnLib/alex.git"
@@ -14,7 +14,7 @@
     "build": "grunt -- build",
     "dev": "grunt -- dev",
     "test": "",
-    "serve": "http-server ../../../target/classes",
+    "serve": "http-server ./dist",
     "grunt": "grunt"
   },
   "contributors": [
