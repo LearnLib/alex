@@ -424,7 +424,8 @@ public class TestResource {
     public Response getResults(@PathParam("project_id") Long projectId, @PathParam("testId") Long testId,
                                @QueryParam("page") int page, @QueryParam("size") int size) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        final Page<TestResult> results = testDAO.getResults(user, projectId, testId, new PageRequest(page, size));
+        final PageRequest pr = PageRequest.of(page, size);
+        final Page<TestResult> results = testDAO.getResults(user, projectId, testId, pr);
         return Response.ok(results).build();
     }
 }

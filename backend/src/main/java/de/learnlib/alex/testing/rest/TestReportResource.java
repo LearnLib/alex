@@ -28,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -86,7 +87,8 @@ public class TestReportResource {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
 
-        final Page<TestReport> testReports = testReportDAO.getAll(user, projectId, new PageRequest(page, size));
+        final PageRequest pr = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "startDate"));
+        final Page<TestReport> testReports = testReportDAO.getAll(user, projectId, pr);
 
         LOGGER.traceExit(testReports.getContent());
         return Response.ok(testReports).build();
