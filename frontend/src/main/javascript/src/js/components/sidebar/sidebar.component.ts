@@ -56,7 +56,7 @@ class SidebarComponent {
           },
           {
             title: 'Logout',
-            icon: 'fa-sign-out',
+            icon: 'fa-sign-out-alt',
             active: () => false,
             display: () => true,
             sref: () => 'logout'
@@ -69,7 +69,7 @@ class SidebarComponent {
         items: [
           {
             title: 'Settings',
-            icon: 'fa-gears',
+            icon: 'fa-cogs',
             active: () => this.isState('adminSettings'),
             display: () => true,
             sref: () => 'adminSettings'
@@ -96,7 +96,7 @@ class SidebarComponent {
           },
           {
             title: 'Dashboard',
-            icon: 'fa-dashboard',
+            icon: 'fa-columns',
             active: () => this.isState('project'),
             display: () => this.project,
             sref: () => `project({projectId: ${this.project.id}})`
@@ -111,7 +111,7 @@ class SidebarComponent {
 
           {
             title: 'Close',
-            icon: 'fa-sign-out',
+            icon: 'fa-sign-out-alt',
             active: () => false,
             display: () => this.project,
             click: () => this.closeProject(),

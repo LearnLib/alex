@@ -17,17 +17,17 @@
             <div class="btn-group btn-group-sm" uib-dropdown style="margin-left: 3px;">
                 <button class="btn btn-default btn-dropdown" uib-dropdown-toggle
                         ng-class="{'disabled': vm.selectedResults.length === 0}">
-                    Statistics <i class="fa fa-fw fa-caret-down"></i>
+                    Statistics <i class="fas fa-fw fa-caret-down"></i>
                 </button>
                 <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
                     <li>
                         <a href="" ng-click="vm.showSelectedStatistics()">
-                            <i class="fa fa-fw fa-bar-chart"></i> Show statistics
+                            <i class="fas fa-fw fa-bar-chart"></i> Show statistics
                         </a>
                     </li>
                     <li>
                         <a href="" ng-click="vm.exportSelectedAsCSV()">
-                            <i class="fa fa-fw fa-download"></i> Export statistics
+                            <i class="fas fa-fw fa-download"></i> Export statistics
                         </a>
                     </li>
                 </ul>
@@ -43,44 +43,44 @@
                     <learner-result-list-item result="result" selectable="vm.selectedResults">
                         <div class="btn-group btn-group-xs" uib-dropdown>
                             <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
-                                <i class="fa fa-bars"></i>
+                                <i class="fas fa-bars"></i>
                             </button>
                             <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
                                 <li>
                                     <a ui-sref="learnerStart({projectId: vm.project.id, result: result})">
-                                        <i class="fa fa-play fa-fw"></i> Continue learning
+                                        <i class="fas fa-play fa-fw"></i> Continue learning
                                     </a>
                                 </li>
                                 <li class="divider"></li>
                                 <li>
                                     <a href="" ng-click="vm.openResultDetailsModal(result)">
-                                        <i class="fa fa-info fa-fw"></i> Details
+                                        <i class="fas fa-info fa-fw"></i> Details
                                     </a>
                                 </li>
                                 <li>
                                     <a ui-sref="learnerResultsCompare({testNos: [result.testNo], projectId: result.project})">
-                                        <i class="fa fa-code-fork fa-fw"></i> Hypotheses
+                                        <i class="fas fa-code-fork fa-fw"></i> Hypotheses
                                     </a>
                                 </li>
                                 <li>
                                     <a href="" ng-click="vm.cloneResult(result)">
-                                        <i class="fa fa-clone fa-fw"></i> Clone
+                                        <i class="fas fa-clone fa-fw"></i> Clone
                                     </a>
                                 </li>
                                 <li>
                                     <a href="" ng-click="vm.deleteResult(result)">
-                                        <i class="fa fa-trash fa-fw"></i> Delete
+                                        <i class="fas fa-trash fa-fw"></i> Delete
                                     </a>
                                 </li>
                                 <li class="divider"></li>
                                 <li>
                                     <a href="" ng-click="vm.showStatistics(result)">
-                                        <i class="fa fa-fw fa-bar-chart"></i> Show statistics
+                                        <i class="fas fa-fw fa-bar-chart"></i> Show statistics
                                     </a>
                                 </li>
                                 <li>
                                     <a href="" ng-click="vm.exportAsCSV(result)">
-                                        <i class="fa fa-fw fa-download"></i> Export statistics
+                                        <i class="fas fa-fw fa-download"></i> Export statistics
                                     </a>
                                 </li>
                             </ul>

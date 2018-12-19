@@ -2,7 +2,7 @@
     <view-header title="{{vm.symbol.name}}" ng-if="vm.symbol">
         <a ui-sref="symbols({projectId: vm.project.id})" class="btn btn-sm btn-default btn-icon"
            uib-tooltip="Back to symbols" tooltip-placement="right">
-            <i class="fa fa-reply"></i>
+            <i class="fas fa-reply"></i>
         </a>
     </view-header>
 
@@ -45,7 +45,7 @@
 
                         <div class="btn-group btn-group-sm" uib-dropdown>
                             <button class="btn btn-primary btn-dropdown" uib-dropdown-toggle>
-                                Add <i class="fa fa-fw fa-caret-down"></i>
+                                Add <i class="fas fa-fw fa-caret-down"></i>
                             </button>
                             <ul uib-dropdown-menu class="dropdown-menu" role="menu">
                                 <li>
@@ -82,13 +82,13 @@
                         <div class="btn-group btn-group-sm" uib-dropdown>
                             <button class="btn btn-default" uib-tooltip="Copy" tooltip-placement="bottom"
                                     ng-click="vm.copySelectedSteps()">
-                                <i class="fa fa-copy fa-fw"></i>
+                                <i class="fas fa-copy fa-fw"></i>
                             </button>
                             <button class="btn btn-default" uib-tooltip="Cut" tooltip-placement="bottom" ng-click="vm.cutSelectedSteps()">
-                                <i class="fa fa-cut fa-fw"></i>
+                                <i class="fas fa-cut fa-fw"></i>
                             </button>
                             <button class="btn btn-default" uib-tooltip="Paste" tooltip-placement="bottom" ng-click="vm.pasteSteps()">
-                                <i class="fa fa-paste fa-fw"></i>
+                                <i class="fas fa-paste fa-fw"></i>
                             </button>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                                             <em>Output on error:&nbsp;</em>
                                         </div>
                                         <div class="w-100 input-parameter-value" style="position: relative">
-                                            <i class="fa fa-fw fa-close cursor-pointer"
+                                            <i class="fas fa-fw fa-times cursor-pointer"
                                                ng-click="step.errorOutput = null"></i>
                                             <em>
                                                 <input
@@ -150,10 +150,10 @@
                                 <div>
                                     <span class="btn btn-sm" ng-click="vm.toggleDisableAction(step)">
                                         <span ng-show="!step.disabled" tooltip-placement="left" uib-tooltip="Disable">
-                                            <i class="fa fa-toggle-on fa-fw text-success"></i>
+                                            <i class="fas fa-toggle-on fa-fw text-success"></i>
                                         </span>
                                         <span ng-show="step.disabled" tooltip-placement="left" uib-tooltip="Enable">
-                                            <i class="fa fa-toggle-off fa-fw text-danger"></i>
+                                            <i class="fas fa-toggle-off fa-fw text-danger"></i>
                                         </span>
                                     </span>
                                 </div>
@@ -161,43 +161,43 @@
                                 <div>
                                     <div class="btn-group btn-group-sm" uib-dropdown>
                                         <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
-                                            <i class="fa fa-bars"></i>
+                                            <i class="fas fa-bars"></i>
                                         </button>
                                         <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
                                             <li>
                                                 <a href="" ng-click="vm.editActionStep(step)" ng-if="step.type === 'action'">
-                                                    <i class="fa fa-edit fa-fw"></i> Edit
+                                                    <i class="fas fa-edit fa-fw"></i> Edit
                                                 </a>
                                                 <a href="" ng-click="vm.editSymbolStep(step)" ng-if="step.type === 'symbol'">
-                                                    <i class="fa fa-edit fa-fw"></i> Edit
+                                                    <i class="fas fa-edit fa-fw"></i> Edit
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="" ng-click="vm.deleteStep($index)">
-                                                    <i class="fa fa-trash fa-fw"></i> Delete
+                                                    <i class="fas fa-trash fa-fw"></i> Delete
                                                 </a>
                                             </li>
                                             <li class="divider"></li>
                                             <li>
                                                 <a href="" ng-click="vm.cutStep($index)">
-                                                    <i class="fa fa-cut fa-fw"></i> Cut
+                                                    <i class="fas fa-cut fa-fw"></i> Cut
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="" ng-click="vm.copyStep($index)">
-                                                    <i class="fa fa-copy fa-fw"></i> Copy
+                                                    <i class="fas fa-copy fa-fw"></i> Copy
                                                 </a>
                                             </li>
                                             <li class="divider"></li>
                                             <li>
                                                 <a href="" ng-click="step.negated = !step.negated">
-                                                    <i class="fa fa-fw" ng-class="{'fa-check': step.negated}"></i>
+                                                    <i class="fas fa-fw" ng-class="{'fa-check': step.negated}"></i>
                                                     Negate result
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="" ng-click="step.ignoreFailure = !step.ignoreFailure">
-                                                    <i class="fa fa-fw" ng-class="{'fa-check': step.ignoreFailure}"></i>
+                                                    <i class="fas fa-fw" ng-class="{'fa-check': step.ignoreFailure}"></i>
                                                     Ignore failure
                                                 </a>
                                             </li>

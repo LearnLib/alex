@@ -24,7 +24,7 @@
                         <button class="btn btn-default" ng-click="vm.toggleSelection()"
                                 tooltip-placement="right"
                                 uib-tooltip="{{vm.isSelectable ? 'Disable selection' : 'Enable selection'}}">
-                            <i class="fa fa-fw" ng-class="vm.isSelectable ? 'fa-toggle-on' : 'fa-toggle-off'"></i>
+                            <i class="fas fa-fw" ng-class="vm.isSelectable ? 'fa-toggle-on' : 'fa-toggle-off'"></i>
                         </button>
                         <button class="btn btn-default" ng-click="vm.toggleSelectorType()">
                             {{vm.node.type === 'CSS' ? 'CSS' : 'XPath'}}
@@ -41,13 +41,13 @@
 
                 <div class="header-element" ng-if="!vm.isSelectable && vm.node.selector">
                     <button class="btn btn-success" ng-click="vm.ok()">
-                        <i class="fa fa-check"></i>
+                        <i class="fas fa-check"></i>
                     </button>
                 </div>
 
                 <div class="header-element">
                     <button class="btn btn-default" ng-click="vm.closePicker()">
-                        <i class="fa fa-close"></i>
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="header-element">
                     <button class="btn btn-default" ng-click="vm.closePicker()">
-                        <i class="fa fa-close"></i>
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>
@@ -69,12 +69,12 @@
             <div ng-if="vm.corsDisabled === null" class="d-flex flex-row w-100">
                 <div class="header-element w-100">
                     <div class="alert alert-info alert-condensed">
-                        <i class="fa fa-spin fa-circle-o-notch"></i> Loading...
+                        <i class="fas fa-spin fa-circle-notch"></i> Loading...
                     </div>
                 </div>
                 <div class="header-element">
                     <button class="btn btn-default" ng-click="vm.closePicker()">
-                        <i class="fa fa-close"></i>
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
             </div>

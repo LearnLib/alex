@@ -7,7 +7,7 @@
                 Start learning
             </button>
             <button class="btn btn-primary" ng-click="vm.openLearnerConfigurationModal()">
-                <i class="fa fa-gear"></i>
+                <i class="fas fa-cog"></i>
             </button>
         </div>
 
@@ -26,7 +26,7 @@
         <div class="alx-container-fluid">
 
             <div class="alert alert-info alert-condensed clearfix">
-                <i class="fa fa-fw fa-info-circle"></i>
+                <i class="fas fa-fw fa-info-circle"></i>
 
                 Use the <strong ng-bind="(vm.learnConfiguration.algorithm.name | formatAlgorithm)"></strong> algorithm
                 with the <strong ng-bind="(vm.learnConfiguration.eqOracle.type | formatEqOracle)"></strong> equivalence oracle
@@ -101,7 +101,7 @@
                                 <symbol-parameters parameter-values="pSymbol.parameterValues"></symbol-parameters>
                             </div>
                             <div style="flex-shrink: 0">
-                                <i class="fa fa-fw fa-close text-muted cursor-pointer"
+                                <i class="fas fa-fw fa-times text-muted cursor-pointer"
                                    ng-click="vm.pSymbols.splice($index, 1)"></i>
                             </div>
                         </div>
@@ -144,7 +144,7 @@
                                 >
                                 </symbol-select-dropdown>
                                 <button class="btn btn-xs btn-default" ng-click="vm.pPostSymbol = null">
-                                    <i class="fa fa-fw fa-close"></i>
+                                    <i class="fas fa-fw fa-times"></i>
                                 </button>
                             </div>
                         </div>

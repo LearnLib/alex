@@ -5,7 +5,7 @@
         <input class="form-control mr-1" style="width: 100px" type="text" placeholder="Name" ng-model="vm.url.name">
         <input class="form-control mr-1 w-100" type="text" placeholder="The URL of the application" ng-model="vm.url.url">
         <a ng-click="vm.addUrl()" class="btn btn-default btn-sm">
-            <i class="fa fa-plus fa-fw"></i>
+            <i class="fas fa-plus fa-fw"></i>
         </a>
     </div>
 
@@ -21,17 +21,17 @@
                 <div>
                     <div class="btn-group btn-group-xs" uib-dropdown>
                         <button type="button" class="btn btn-default btn-icon" uib-dropdown-toggle>
-                            <i class="fa fa-bars"></i>
+                            <i class="fas fa-bars"></i>
                         </button>
                         <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
                             <li>
                                 <a href="" ng-click="vm.setUrlUnderEdit($index)">
-                                    <i class="fa fa-edit fa-fw"></i> Edit
+                                    <i class="fas fa-edit fa-fw"></i> Edit
                                 </a>
                             </li>
                             <li>
                                 <a href="" ng-click="vm.removeUrl($index)">
-                                    <i class="fa fa-trash fa-fw"></i> Delete
+                                    <i class="fas fa-trash fa-fw"></i> Delete
                                 </a>
                             </li>
                         </ul>

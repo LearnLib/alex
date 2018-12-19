@@ -20,7 +20,7 @@
         >
           <li ng-repeat="item in menu.children" ng-class="{'divider': item.divider}">
             <a href="" ng-click="item.click()">
-              <i class="fa fa-fw {{item.icon}}"></i> {{item.text}}
+              <i class="fas fa-fw {{item.icon}}"></i> {{item.text}}
             </a>
           </li>
         </ul>
@@ -32,19 +32,19 @@
       <!-- browser -->
       <div class="btn-group btn-group-sm pull-right">
         <button class="btn btn-default" ng-click="vm.firstStep()">
-          <i class="fa fa-angle-double-left fa-fw"></i>
+          <i class="fas fa-angle-double-left fa-fw"></i>
         </button>
         <button class="btn btn-default" ng-click="vm.previousStep()">
-          <i class="fa fa-angle-left fa-fw"></i>
+          <i class="fas fa-angle-left fa-fw"></i>
         </button>
         <button class="btn btn-default disabled">
           Step <span ng-bind="vm.pointer + 1"></span>/<span ng-bind="vm.result.steps.length"></span>
         </button>
         <button class="btn btn-default" ng-click="vm.nextStep()">
-          <i class="fa fa-angle-right fa-fw"></i>
+          <i class="fas fa-angle-right fa-fw"></i>
         </button>
         <button class="btn btn-default" ng-click="vm.lastStep()">
-          <i class="fa fa-angle-double-right fa-fw"></i>
+          <i class="fas fa-angle-double-right fa-fw"></i>
         </button>
       </div>
     </div>

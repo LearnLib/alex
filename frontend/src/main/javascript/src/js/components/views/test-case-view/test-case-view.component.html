@@ -2,18 +2,18 @@
     <view-header title="Test Management"></view-header>
     <action-bar>
         <button class="btn btn-sm btn-success" ng-disabled="vm.active" ng-click="vm.save()">
-            <i class="fa fa-fw fa-save"></i> Save
+            <i class="fas fa-fw fa-save"></i> Save
         </button>
         <button class="btn btn-sm btn-default" ng-disabled="vm.active"
                 ui-sref="test({projectId: vm.testCase.project, testId: vm.testCase.parent})">
-            <i class="fa fa-fw fa-close"></i> Cancel
+            <i class="fas fa-fw fa-times"></i> Cancel
         </button>
         <div class="btn-group btn-group-sm pull-right mr-0">
             <button class="btn btn-primary" ng-click="vm.execute()" ng-disabled="vm.active">
                 Execute
             </button>
             <button class="btn btn-primary" ng-click="vm.openTestConfigModal()" ng-disabled="vm.active">
-                <i class="fa fa-fm fa-gear"></i>
+                <i class="fas fa-fm fa-cog"></i>
             </button>
         </div>
     </action-bar>
@@ -22,21 +22,21 @@
 
             <div ng-if="vm.result">
                 <div class="alert alert-danger" ng-if="!vm.result.passed">
-                    <i class="fa fa-fw fa-close pull-right" ng-click="vm.result = null"></i>
-                    <i class="fa fa-fw fa-warning"></i> <strong>The test case failed.</strong>
+                    <i class="fas fa-fw fa-times pull-right" ng-click="vm.result = null"></i>
+                    <i class="fas fa-fw fa-warning"></i> <strong>The test case failed.</strong>
                     <a ng-if="vm.testConfig.createReport"
                        ui-sref="testReport({projectId: vm.project.id, reportId: vm.report.id})">(Show report)</a>
                 </div>
                 <div class="alert alert-success" ng-if="vm.result.passed">
-                    <i class="fa fa-fw fa-close pull-right" ng-click="vm.result = null"></i>
-                    <i class="fa fa-fw fa-check"></i> <strong>The test case passed.</strong>
+                    <i class="fas fa-fw fa-times pull-right" ng-click="vm.result = null"></i>
+                    <i class="fas fa-fw fa-check"></i> <strong>The test case passed.</strong>
                     <a ng-if="vm.testConfig.createReport"
                        ui-sref="testReport({projectId: vm.project.id, reportId: vm.report.id})">(Show report)</a>
                 </div>
             </div>
 
             <div class="alert alert-info" ng-if="vm.active">
-                <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp;
+                <i class="fas fa-circle-notch fa-spin"></i>&nbsp;
                 The test is being executed.
             </div>
 
@@ -44,23 +44,23 @@
                 <div class="mr-1">
                   <button class="btn btn-sm btn-default"
                           ui-sref="test({projectId: vm.testCase.project, testId: vm.testCase.parent})">
-                    <i class="fa fa-fw fa-level-up"></i>
+                    <i class="fas fa-fw fa-level-up-alt"></i>
                   </button>
                 </div>
                 <h4 class="w-100" style="margin: 0;">
                   <strong>
-                    <i class="fa fa-fw fa-file-o"></i> {{vm.testCase.name}}
+                    <i class="fas fa-fw fa-file"></i> {{vm.testCase.name}}
                   </strong>
                 </h4>
                 <div>
                   <div class="btn-group btn-group-sm" uib-dropdown>
                     <button type="button" class="btn btn-default" uib-dropdown-toggle>
-                      <i class="fa fa-gears"></i>
+                      <i class="fas fa-cogs"></i>
                     </button>
                     <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
                       <li>
                         <a href="" ng-click="vm.options.showSymbolOutputs = !vm.options.showSymbolOutputs">
-                          <i class="fa fa-fw" ng-class="{'fa-check': vm.options.showSymbolOutputs}"></i> Show symbol outputs
+                          <i class="fas fa-fw" ng-class="{'fa-check': vm.options.showSymbolOutputs}"></i> Show symbol outputs
                         </a>
                       </li>
                     </ul>
@@ -104,7 +104,7 @@
                       <tbody dragula='"testSymbols"' dragula-model="vm.testCase.steps">
                         <tr ng-repeat="step in vm.testCase.steps track by $index">
                           <td>
-                            <i class="fa fa-drag-handle handle text-muted cursor-grabbing"></i>
+                            <i class="fas fa-grip-vertical handle text-muted cursor-grabbing"></i>
                           </td>
                           <td>
                             <div>
@@ -126,7 +126,7 @@
                               <div ng-if="vm.options.showSymbolOutputs && step.pSymbol.symbol.outputs.length > 0"
                                    style="margin-top: .25rem">
                                 <div ng-repeat="output in step.pSymbol.symbol.outputs" style="margin-bottom: 4px">
-                                  <i class="fa fa-fw fa-level-up fa-rotate-90"></i>
+                                  <i class="fas fa-fw fa-level-up-alt fa-rotate-90"></i>
                                   <span class="output">
                                     <strong>{{output.name}}</strong>: <em>{{output.parameterType}}</em>
                                   </span>
@@ -149,7 +149,7 @@
                             </span>
                           </td>
                           <td>
-                            <i class="fa fa-close cursor-pointer" ng-click="vm.testCase.steps.splice($index, 1)"></i>
+                            <i class="fas fa-times cursor-pointer" ng-click="vm.testCase.steps.splice($index, 1)"></i>
                           </td>
                         </tr>
                       </tbody>

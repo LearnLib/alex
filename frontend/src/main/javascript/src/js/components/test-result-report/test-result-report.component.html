@@ -1,18 +1,18 @@
 <div class="test-result-report">
     <div ng-if="vm.report.id != null">
         <h4>
-            <i class="fa fa-fw fa-file-text-o"></i> <strong>Report</strong> (<a ui-sref="testReport({projectId: vm.report.project, reportId: vm.report.id})">Details</a>)
+            <i class="fas fa-fw fa-file-alt"></i> <strong>Report</strong> (<a ui-sref="testReport({projectId: vm.report.project, reportId: vm.report.id})">Details</a>)
         </h4>
         <hr>
         <p>
             <button class="btn btn-default btn-sm" ng-click="vm.exportReport()">
-                <i class="fa fa-fw fa-download"></i> Download
+                <i class="fas fa-fw fa-download"></i> Download
             </button>
         </p>
     </div>
     <div ng-if="vm.report.id == null">
         <h4>
-            <i class="fa fa-fw fa-file-text-o"></i> <strong>Report</strong>
+            <i class="fas fa-fw fa-file-alt"></i> <strong>Report</strong>
         </h4>
     </div>
 

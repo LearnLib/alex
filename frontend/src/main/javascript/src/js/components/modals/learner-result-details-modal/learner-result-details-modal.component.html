@@ -1,7 +1,7 @@
 <div class="modal-header">
 
   <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
-    <i class="fa fa-close fa-fw"></i>
+    <i class="fas fa-times fa-fw"></i>
   </a>
 
   <h3 class="modal-title">Test details</h3>
@@ -42,7 +42,7 @@
     <uib-tab ng-repeat="tab in vm.tabs" heading="{{tab.heading}}">
 
       <div class="alert alert-condensed alert-danger" ng-show="tab.result.error">
-        <i class="fa fa-fw fa-warning"></i> <strong>This step failed:</strong>
+        <i class="fas fa-fw fa-warning"></i> <strong>This step failed:</strong>
         <span ng-bind="tab.result.errorText"></span>
       </div>
 

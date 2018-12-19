@@ -11,16 +11,16 @@
   </file-dropzone>
 
   <div class="alert alert-info" ng-if="vm.importData != null">
-    <i class="fa fa-fw fa-close pull-right cursor-pointer" ng-click="vm.importData = null"></i>
+    <i class="fas fa-fw fa-times pull-right cursor-pointer" ng-click="vm.importData = null"></i>
     <span class="label label-primary">Tests</span> <br>
     <span class="label label-default">{{vm.importData.version}}</span>
   </div>
 
   <div class="list-group" ng-if="vm.importData != null && vm.importData.tests.length">
     <div class="list-group-item d-flex" ng-repeat="test in vm.importData.tests">
-      <i class="fa fa-fw" ng-class="{'fa-file-o': test.type === 'case', 'fa-folder-o': test.type === 'suite'}"></i>
+      <i class="fas fa-fw" ng-class="{'fa-file': test.type === 'case', 'fa-folder': test.type === 'suite'}"></i>
       <strong class="d-block flex-grow-1 ml-1 mr-1">{{test.name}}</strong>
-      <i class="fa fa-fw fa-close pull-right" ng-click="vm.importData.tests.splice($index, 1)"></i>
+      <i class="fas fa-fw fa-times pull-right" ng-click="vm.importData.tests.splice($index, 1)"></i>
     </div>
   </div>
 </div>

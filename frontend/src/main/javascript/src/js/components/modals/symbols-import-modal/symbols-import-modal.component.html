@@ -1,6 +1,6 @@
 <div class="modal-header">
   <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
-    <i class="fa fa-close fa-fw"></i>
+    <i class="fas fa-times fa-fw"></i>
   </a>
   <h3 class="modal-title">Import symbols</h3>
 </div>
@@ -17,7 +17,7 @@
   </file-dropzone>
 
   <div class="alert alert-info" ng-if="vm.importData != null">
-    <i class="fa fa-fw fa-close pull-right cursor-pointer" ng-click="vm.importData = null"></i>
+    <i class="fas fa-fw fa-times pull-right cursor-pointer" ng-click="vm.importData = null"></i>
     <span class="label label-primary" ng-if="vm.importData.type === 'symbols'">Symbols only</span>
     <span class="label label-primary" ng-if="vm.importData.type === 'symbolGroups'">Groups and symbols</span> <br>
     <span class="label label-default">{{vm.importData.version}}</span>

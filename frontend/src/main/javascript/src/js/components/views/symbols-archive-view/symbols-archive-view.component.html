@@ -7,11 +7,11 @@
 
             <div class="pull-left">
                 <button class="btn btn-sm btn-primary" ng-click="vm.recoverSelectedSymbols()">
-                    <i class="fa fa-rotate-left fa-fw"></i> Recover
+                    <i class="fas fa-undo fa-fw"></i> Recover
                 </button>
 
                 <button class="btn btn-sm btn-default" ng-click="vm.deleteSelectedSymbols()">
-                    <i class="fa fa-trash fa-fw"></i> Delete
+                    <i class="fas fa-trash fa-fw"></i> Delete
                 </button>
             </div>
         </div>
@@ -30,23 +30,23 @@
                     <symbol-list-item symbol="symbol" selectable="vm.selectedSymbols">
                         <div class="btn-group btn-group-xs" uib-dropdown>
                             <button type="button" class="btn btn-default btn-icon" uib-dropdown-toggle>
-                                <i class="fa fa-bars"></i>
+                                <i class="fas fa-bars"></i>
                             </button>
                             <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
                                 <li>
                                     <a href="" ng-click="vm.editSymbol(symbol)">
-                                        <i class="fa fa-edit fa-fw"></i> Edit
+                                        <i class="fas fa-edit fa-fw"></i> Edit
                                     </a>
                                 </li>
                                 <li>
                                     <a href="" ng-click="vm.recoverSymbol(symbol)">
-                                        <i class="fa fa-rotate-left fa-fw"></i> Recover
+                                        <i class="fas fa-undo fa-fw"></i> Recover
                                     </a>
                                 </li>
                                 <li class="divider"></li>
                                 <li>
                                     <a href="" ng-click="vm.deleteSymbol(symbol)">
-                                        <i class="fa fa-trash fa-fw"></i> Delete
+                                        <i class="fas fa-trash fa-fw"></i> Delete
                                     </a>
                                 </li>
                             </ul>

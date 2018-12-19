@@ -2,8 +2,8 @@
     <div style="padding: .25rem" class="d-flex flex-row">
         <div>
             <i
-                class="fa fa-fw cursor-pointer"
-                ng-class="{'fa-minus-square-o': !vm.collapse, 'fa-plus-square-o': vm.collapse}"
+                class="far fa-fw cursor-pointer"
+                ng-class="{'fa-minus-square': !vm.collapse, 'fa-plus-square': vm.collapse}"
                 ng-click="vm.collapse = !vm.collapse"
             >
             </i>
@@ -13,7 +13,7 @@
             ng-class="{'selected': vm.selectedSymbolGroup != null && vm.selectedSymbolGroup.id === vm.group.id}"
             ng-click="vm.selectSymbolGroup()"
         >
-            <i class="fa fa-fw fa-folder-o" style="margin-left: .5rem"></i>
+            <i class="fas fa-fw fa-folder" style="margin-left: .5rem"></i>
             <strong style="padding-left: .25rem">
                 {{vm.group.name}}
             </strong>
@@ -38,7 +38,7 @@
                     ng-class="{'selected': vm.selectedSymbol != null && vm.selectedSymbol.id === symbol.id}"
                     ng-click="vm.selectSymbol(symbol)"
                 >
-                    <i class="fa fa-fw fa-file-code-o" style="margin-left: .5rem"></i>
+                    <i class="fas fa-fw fa-file-code" style="margin-left: .5rem"></i>
                     <span style="padding-left: .25rem">
                         {{symbol.name}}
                     </span>

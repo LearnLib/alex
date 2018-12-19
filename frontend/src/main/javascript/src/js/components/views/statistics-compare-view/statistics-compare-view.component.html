@@ -2,7 +2,7 @@
     <view-header title="Statistics Compare">
         <a ui-sref="learnerResults({projectId: vm.project.id})" class="btn btn-sm btn-default btn-icon"
            uib-tooltip="Back to the list" tooltip-placement="right">
-            <i class="fa fa-reply"></i>
+            <i class="fas fa-reply"></i>
         </a>
     </view-header>
 
@@ -10,17 +10,17 @@
         <div class="btn-group btn-group-sm">
             <button class="btn btn-default" ng-click="vm.switchToFinal()"
                     ng-class="{'active': [vm.chartModes.SINGLE_FINAL,vm.chartModes.MULTIPLE_FINAL].indexOf(vm.chartMode) > -1}">
-                <i class="fa fa-fw fa-bar-chart"></i> Cumulated
+                <i class="fas fa-fw fa-bar-chart"></i> Cumulated
             </button>
             <button class="btn btn-default" ng-click="vm.switchToComplete()"
                     ng-class="{'active': [vm.chartModes.SINGLE_COMPLETE,vm.chartModes.MULTIPLE_COMPLETE].indexOf(vm.chartMode) > -1}">
-                <i class="fa fa-fw fa-area-chart"></i> Complete
+                <i class="fas fa-fw fa-area-chart"></i> Complete
             </button>
         </div>
 
         <button style="margin-left: 4px" class="btn btn-sm btn-default" ng-class="{'active':vm.showInColumns}"
                 ng-click="vm.toggleShowInColumns()">
-            <i class="fa fa-fw fa-columns"></i>
+            <i class="fas fa-fw fa-columns"></i>
         </button>
     </action-bar>
 
@@ -72,7 +72,7 @@
                         </div>
                         <hr>
                         <button class="btn btn-xs btn-default pull-right" ng-click="vm.downloadChart('#chart-eqs')">
-                            <i class="fa fa-fw fa-download"></i> Download SVG
+                            <i class="fas fa-fw fa-download"></i> Download SVG
                         </button>
                     </widget>
 
@@ -83,7 +83,7 @@
                         <hr>
                         <button class="btn btn-xs btn-default pull-right"
                                 ng-click="vm.downloadChart('#chart-duration')">
-                            <i class="fa fa-fw fa-download"></i> Download SVG
+                            <i class="fas fa-fw fa-download"></i> Download SVG
                         </button>
                     </widget>
 
@@ -97,7 +97,7 @@
                         <hr>
                         <button class="btn btn-xs btn-default pull-right"
                                 ng-click="vm.downloadChart('#chart-symbols')">
-                            <i class="fa fa-fw fa-download"></i> Download SVG
+                            <i class="fas fa-fw fa-download"></i> Download SVG
                         </button>
                     </widget>
 

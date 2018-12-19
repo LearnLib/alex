@@ -50,14 +50,14 @@
                 </div>
                 <div class="col-xs-2">
                     <a class="btn btn-default btn-block btn-sm" ng-click="vm.addHeader()">
-                        <i class="fa fa-plus"></i>
+                        <i class="fas fa-plus"></i>
                     </a>
                 </div>
             </div>
             <br>
             <ul class="list-group list-group-condensed">
                 <li class="list-group-item" ng-repeat="(key, value) in vm.action.headers">
-                    <i class="fa fa-trash fa-fw pull-right" ng-click="vm.action.removeHeader(key)"></i>
+                    <i class="fas fa-trash fa-fw pull-right" ng-click="vm.action.removeHeader(key)"></i>
                     <strong ng-bind="key"></strong>: <span ng-bind="vm.action.headers[key]"></span>
                 </li>
             </ul>
@@ -90,14 +90,14 @@
                 </div>
                 <div class="col-xs-2">
                     <a class="btn btn-default btn-block btn-sm" ng-click="vm.addCookie()">
-                        <i class="fa fa-plus"></i>
+                        <i class="fas fa-plus"></i>
                     </a>
                 </div>
             </div>
             <br>
             <ul class="list-group list-group-condensed">
                 <li class="list-group-item" ng-repeat="(key, value) in vm.action.cookies">
-                    <i class="fa fa-trash fa-fw pull-right" ng-click="vm.action.removeCookie(key)"></i>
+                    <i class="fas fa-trash fa-fw pull-right" ng-click="vm.action.removeCookie(key)"></i>
                     <strong ng-bind="key"></strong>: <span ng-bind="vm.action.cookies[key]"></span>
                 </li>
             </ul>

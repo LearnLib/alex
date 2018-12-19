@@ -8,7 +8,7 @@
             <i class="fa" ng-class="vm.collapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
         </a>
         <a ui-sref="about" class="sidebar-header-button about-button">
-            <i class="fa fa-question-circle"></i>
+            <i class="fas fa-question-circle"></i>
         </a>
     </header>
 
@@ -22,7 +22,7 @@
                 <a ui-sref="{{item.sref()}}" class="sidebar-group-item" uib-tooltip="{{item.title}}" tooltip-placement="right"
                    ng-class="{'active':item.active()}" ng-repeat="item in group.items" ng-click="item.click()" ng-if="item.display()">
                     <div class="sidebar-group-item-icon">
-                        <i class="fa fa-fw {{item.icon}}"></i>
+                        <i class="fas fa-fw {{item.icon}}"></i>
                     </div>
                     <div class="sidebar-group-item-label">{{item.title}}</div>
                 </a>
