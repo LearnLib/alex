@@ -28,8 +28,8 @@ import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachinePro
 import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
-import de.learnlib.api.algorithm.feature.SupportsGrowingAlphabet;
 import de.learnlib.filter.cache.mealy.MealyCacheOracle;
+import net.automatalib.SupportsGrowingAlphabet;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.ThreadContext;
