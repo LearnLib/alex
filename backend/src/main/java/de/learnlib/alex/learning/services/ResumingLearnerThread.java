@@ -28,10 +28,7 @@ import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachinePro
 import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
-import de.learnlib.filter.cache.mealy.MealyCacheOracle;
 import net.automatalib.SupportsGrowingAlphabet;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.impl.SimpleAlphabet;
 import org.apache.logging.log4j.ThreadContext;
 
 /** The learner thread that is used for resuming an old experiment from a given step. */
@@ -45,7 +42,7 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
      * @param learnerResultDAO
      *         {@link AbstractLearnerThread#learnerResultDAO}.
      * @param webhookService
-     *         {@link AbstractLearnerThread#webhookService}.
+     *         {@link AbstractLearnerThread#}.
      * @param contextHandler
      *         The context to use.
      * @param result
@@ -91,13 +88,8 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
                 symbolMapper.addSymbol(symbol);
 
                 // if the cache is not reinitialized with the new alphabet, we will get cache errors later
-                if (result.isUseMQCache()) {
-
-                    // make new alphabet for the cache because it cannot handle a shared growing alphabet instance
-                    final Alphabet<String> alphabet = new SimpleAlphabet<>(abstractAlphabet);
-                    alphabet.add(symbol.getComputedName());
-
-                    this.mqOracle.setDelegate(MealyCacheOracle.createDAGCacheOracle(alphabet, monitorOracle));
+                if (result.isUseMQCache() && cacheOracle != null) {
+                   cacheOracle.addAlphabetSymbol(symbol.getComputedName());
                 }
 
                 // measure how much time and membership queries it takes to add the symbol

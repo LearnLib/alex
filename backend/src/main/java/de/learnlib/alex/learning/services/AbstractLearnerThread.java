@@ -116,6 +116,8 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
 
     protected final List<ContextAwareSulOracle> sulOracles;
 
+    protected MealyCacheOracle<String, String> cacheOracle = null;
+
     /**
      * Constructor.
      *
@@ -185,7 +187,8 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         // create the concrete membership oracle.
         this.mqOracle = new DelegationOracle<>();
         if (result.isUseMQCache()) {
-            this.mqOracle.setDelegate(MealyCacheOracle.createDAGCacheOracle(this.abstractAlphabet, counterOracle));
+            this.cacheOracle = MealyCacheOracle.createDAGCacheOracle(this.abstractAlphabet, counterOracle);
+            this.mqOracle.setDelegate(cacheOracle);
         } else {
             this.mqOracle.setDelegate(counterOracle);
         }
