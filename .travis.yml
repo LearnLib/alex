@@ -3,12 +3,6 @@ language: java
 dist: trusty
 sudo: true
 
-jdk:
-  - openjdk8
-  - openjdk11
-  - oraclejdk8
-  - oraclejdk11
-
 addons:
   apt:
     sources:
@@ -33,9 +27,20 @@ install:
 
 script:
   - mvn clean install -Pbootstrap,code-analysis,documentation,integration-tests
-  - mvn coveralls:report
 
 branches:
   only:
   - master
   - developer
+
+jobs:
+  include:
+  - jdk: openjdk8
+  - jdk: openjdk11
+  - jdk: oraclejdk8
+  - jdk: oraclejdk11
+  - stage: "Coverage"
+    jdk: openjdk8
+    script:
+    - mvn install Pbootstrap,code-analysis,integration-tests # code-analysis currently includes JaCoCo
+    - mvn coveralls:report
