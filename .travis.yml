@@ -42,5 +42,5 @@ jobs:
   - stage: "Coverage"
     jdk: openjdk8
     script:
-    - mvn install Pbootstrap,code-analysis,integration-tests # code-analysis currently includes JaCoCo
+    - mvn install -Pbootstrap,code-analysis,integration-tests # code-analysis currently includes JaCoCo
     - mvn coveralls:report
