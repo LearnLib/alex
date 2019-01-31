@@ -26,7 +26,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -55,6 +54,19 @@ public class SymbolMapper implements SULMapper<
     public SymbolMapper(List<ParameterizedSymbol> symbols) {
         this.symbolMap = symbols.stream()
                 .collect(Collectors.toMap(ParameterizedSymbol::getComputedName, Function.identity()));
+    }
+
+    /**
+     * Private constructor for the {@link #fork()} method. Ensures that an existing symbol map is passed by reference
+     * and therefore shared across multiple threads. This allows to use a single (global) symbol map across multiple
+     * forked SULs, which only access the data in a read-only manner. Currently there exists no possibility to modify
+     * the symbol map concurrently, so we should be safe.
+     *
+     * @param symbolMap
+     *         Reference of the original symbolMap.
+     */
+    private SymbolMapper(Map<String, ParameterizedSymbol> symbolMap) {
+        this.symbolMap = symbolMap;
     }
 
     /**
@@ -106,6 +118,6 @@ public class SymbolMapper implements SULMapper<
     @Override
     public SULMapper<String, String, ContextExecutableInput<ExecuteResult, ConnectorManager>, ExecuteResult> fork()
             throws UnsupportedOperationException {
-        return new SymbolMapper(new ArrayList<>(symbolMap.values()));
+        return new SymbolMapper(symbolMap);
     }
 }
