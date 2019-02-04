@@ -94,7 +94,6 @@ import {symbolParameterFormGroupsComponent} from './components/forms/symbol-para
 import {userEditFormComponent} from './components/forms/user-edit-form/user-edit-form.component';
 import {userLoginFormComponent} from './components/forms/user-login-form/user-login-form.component';
 import {webhookFormComponent} from './components/forms/webhook-form/webhook-form.component';
-import {htmlElementPickerComponent} from './components/html-element-picker/html-element-picker.component';
 import {hypothesisComponent} from './components/hypothesis/hypothesis.component';
 import {learnerResultPanelCheckingViewComponent} from './components/learner-result-panel/learner-result-panel-checking-view/learner-result-panel-checking-view.component';
 import {learnerResultPanelDefaultViewComponent} from './components/learner-result-panel/learner-result-panel-default-view/learner-result-panel-default-view.component';
@@ -214,7 +213,6 @@ import {ClipboardService} from './services/clipboard.service';
 import {DownloadService} from './services/download.service';
 import {EqOracleService} from './services/eq-oracle.service';
 import {EventBus} from './services/eventbus.service';
-import {HtmlElementPickerService} from './services/html-element-picker.service';
 import {LearnerResultChartService} from './services/learner-result-chart.service';
 import {LearnerResultDownloadService} from './services/learner-result-download.service';
 import {LearningAlgorithmService} from './services/learning-algorithm.service';
@@ -320,7 +318,6 @@ angular
   .service('promptService', PromptService)
   .service('toastService', ToastService)
   .service('learnerResultDownloadService', LearnerResultDownloadService)
-  .service('htmlElementPickerService', HtmlElementPickerService)
   .service('testService', TestService)
   .service('testReportService', TestReportService)
   .service('notificationService', NotificationService)
@@ -494,7 +491,6 @@ angular
   .component('sidebar', sidebarComponent)
   .component('responsiveIframe', responsiveIframeComponent)
   .component('viewHeader', viewHeaderComponent)
-  .component('htmlElementPicker', htmlElementPickerComponent)
   .component('learnerResultPanel', learnerResultPanelComponent)
   .component('learnerResultPanelTestingView', learnerResultPanelTestingViewComponent)
   .component('learnerResultPanelDefaultView', learnerResultPanelDefaultViewComponent)

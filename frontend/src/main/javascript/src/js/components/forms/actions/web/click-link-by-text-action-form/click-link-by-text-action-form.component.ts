@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {HtmlElementPickerService} from '../../../../../services/html-element-picker.service';
 import {ClickLinkByTextWebAction} from '../../../../../entities/actions/web/click-link-by-text-action';
 
 export const clickLinkByTextActionFormComponent = {
@@ -29,19 +28,9 @@ export const clickLinkByTextActionFormComponent = {
 
     /**
      * Constructor.
-     *
-     * @param htmlElementPickerService
      */
     /* @ngInject */
-    constructor(private htmlElementPickerService: HtmlElementPickerService) {
-    }
-
-    /** Opens the element picker. */
-    openPicker(): void {
-      this.htmlElementPickerService.open()
-        .then(data => {
-          this.action.value = data.textContent;
-        });
+    constructor() {
     }
   }
 };

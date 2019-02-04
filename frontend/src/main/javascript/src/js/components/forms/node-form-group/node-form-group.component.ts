@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import {HtmlElementPickerService} from '../../../services/html-element-picker.service';
-
 /**
  * The node form group component.
  */
@@ -37,27 +35,13 @@ export const nodeFormGroupComponent = {
 
     /**
      * Constructor.
-     *
-     * @param htmlElementPickerService
      */
     /* @ngInject */
-    constructor(private htmlElementPickerService: HtmlElementPickerService) {
+    constructor() {
     }
 
     $onInit(): void {
       this.label = this.label != null ? this.label : 'Selector';
-    }
-
-    /** Opens the element picker. */
-    openPicker(): void {
-      this.htmlElementPickerService.open()
-        .then(data => {
-          this.node.selector = data.node.selector;
-          this.node.type = data.node.type;
-          if (this.onSelected) {
-            this.onSelected({data});
-          }
-        });
     }
   }
 };
