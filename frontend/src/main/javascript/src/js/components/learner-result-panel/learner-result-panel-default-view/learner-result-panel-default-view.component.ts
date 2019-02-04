@@ -75,7 +75,7 @@ export const learnerResultPanelDefaultViewComponent = {
           {
             text: 'Actions', children: [
               {text: 'Details', icon: 'fa-info', click: () => this.openResultDetailsModal()},
-              {text: 'Layout', icon: 'fa-sliders', click: () => this.openHypothesisLayoutSettingsModal()},
+              {text: 'Layout', icon: 'fa-sliders-h', click: () => this.openHypothesisLayoutSettingsModal()},
               {divider: true},
               {text: 'Save as *.svg', icon: 'fa-save', click: () => this.exportHypothesisAsSvg()},
               {text: 'Save as *.json', icon: 'fa-save', click: () => this.exportHypothesisAsJson()},

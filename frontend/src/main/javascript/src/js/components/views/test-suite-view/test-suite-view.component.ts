@@ -197,15 +197,15 @@ export const testSuiteViewComponent = {
             delete testToUpdate.tests;
           } else {
             testToUpdate.steps = test.steps.map((step) => {
-              step.pSymbol.symbol = step.pSymbol.symbol.id;
+              step.pSymbol.symbol = {id: step.pSymbol.symbol.id};
               return step;
             });
             testToUpdate.preSteps = testToUpdate.preSteps.map((step) => {
-              step.pSymbol.symbol = step.pSymbol.symbol.id;
+              step.pSymbol.symbol = {id: step.pSymbol.symbol.id};
               return step;
             });
             testToUpdate.postSteps = testToUpdate.postSteps.map((step) => {
-              step.pSymbol.symbol = step.pSymbol.symbol.id;
+              step.pSymbol.symbol = {id: step.pSymbol.symbol.id};
               return step;
             });
           }
