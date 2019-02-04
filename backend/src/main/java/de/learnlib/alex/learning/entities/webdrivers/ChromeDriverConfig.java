@@ -41,16 +41,12 @@ public class ChromeDriverConfig extends AbstractWebDriverConfig implements Seria
     /** If chrome should run headless. */
     private boolean headless;
 
-    /** The xvfb display port. */
-    private Integer xvfbPort;
-
     /**
      * Constructor.
      */
     public ChromeDriverConfig() {
         super();
         this.headless = false;
-        this.xvfbPort = null;
     }
 
     @Override
@@ -61,10 +57,6 @@ public class ChromeDriverConfig extends AbstractWebDriverConfig implements Seria
         }
 
         final Map<String, String> environmentVariables = new HashMap<>();
-        if (!headless && xvfbPort != null) {
-            environmentVariables.put("DISPLAY", ":" + String.valueOf(xvfbPort));
-        }
-
         final ChromeDriverService service = new ChromeDriverService.Builder()
                 .usingAnyFreePort()
                 .withEnvironment(environmentVariables)
@@ -84,11 +76,4 @@ public class ChromeDriverConfig extends AbstractWebDriverConfig implements Seria
         this.headless = headless;
     }
 
-    public Integer getXvfbPort() {
-        return xvfbPort;
-    }
-
-    public void setXvfbPort(Integer xvfbPort) {
-        this.xvfbPort = xvfbPort;
-    }
 }

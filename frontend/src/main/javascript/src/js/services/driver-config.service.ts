@@ -40,8 +40,7 @@ export class DriverConfigService {
       case webBrowser.CHROME:
         return Object.assign(config, {
           name: webBrowser.CHROME,
-          headless: false,
-          xvfbPort: null
+          headless: false
         });
       case webBrowser.EDGE:
         return Object.assign(config, {
@@ -50,8 +49,7 @@ export class DriverConfigService {
       case webBrowser.FIREFOX:
         return Object.assign(config, {
           name: webBrowser.FIREFOX,
-          headless: false,
-          xvfbPort: null
+          headless: false
         });
       case webBrowser.HTML_UNIT:
         return Object.assign(config, {

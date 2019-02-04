@@ -52,16 +52,7 @@ We also offer a Docker image that contains a Linux environment with the followin
 
 The image can be found [here](docker).
 The Docker container exposes the **port 8000** under which ALEX is available after the start.
-Additionally, tests and learning processes are executed in a virtual [Xvfb](xvfb) display with a Full HD resolution **(1920x1080)**.
-In order to run tests and learning processes, specify the display port **99** in ALEX in the configuration menu:
-
-<figure class="bordered">
-    <img src="./assets/xvfb-config.jpg">
-</figure>
-
 Note that currently, only the HtmlUnit and the Firefox browser can be used in the Docker container.
-When HtmlUnit is used, the Xvfb parameter can be omitted.
 
 [download]: https://github.com/LearnLib/alex/releases/download/v1.6.0/alex-1.6.0.war
 [docker]: https://github.com/scce/docker-images/tree/master/alex-server
-[xvfb]: https://packages.debian.org/en/sid/xvfb

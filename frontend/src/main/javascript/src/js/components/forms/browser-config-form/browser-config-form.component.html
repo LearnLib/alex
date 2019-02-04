@@ -64,17 +64,6 @@
     </div>
 </div>
 
-<div class="form-group" ng-if="['chrome', 'firefox'].indexOf(vm.config.name) > -1">
-    <label>Xvfb display port</label>
-    <input class="form-control" type="number" min="0" ng-model="vm.config.xvfbPort">
-    <p class="help-block">
-        For running Chrome and Firefox in a virtual display when the headless mode is not supported.
-        Make sure Xvfb is running under this port.
-        E.g. <kbd>Xvfb :51 -screen 0 1280x720x16 & export DISPLAY=:51</kbd>.
-        Only works with Linux.
-    </p>
-</div>
-
 <hr>
 <p>
     <a class="btn btn-xs btn-default" href ng-click="vm.timeoutsCollapsed = !vm.timeoutsCollapsed">
