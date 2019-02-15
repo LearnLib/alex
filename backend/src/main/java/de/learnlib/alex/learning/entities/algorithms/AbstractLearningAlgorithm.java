@@ -18,8 +18,8 @@ package de.learnlib.alex.learning.entities.algorithms;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import de.learnlib.api.Resumable;
 import de.learnlib.api.algorithm.LearningAlgorithm;
-import de.learnlib.api.algorithm.feature.ResumableLearner;
 import de.learnlib.api.oracle.MembershipOracle;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
@@ -95,10 +95,10 @@ public abstract class AbstractLearningAlgorithm<I, O> implements Serializable {
      *         If something with the output streams goes wrong.
      */
     public byte[] suspend(LearningAlgorithm.MealyLearner<I, O> learner) throws IOException {
-        if (learner instanceof ResumableLearner) {
+        if (learner instanceof Resumable) {
             final ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
             try (final ObjectOutputStream objectOut = new ObjectOutputStream(byteOut)) {
-                objectOut.writeObject(((ResumableLearner) learner).suspend());
+                objectOut.writeObject(((Resumable) learner).suspend());
                 objectOut.flush();
                 return byteOut.toByteArray();
             }
