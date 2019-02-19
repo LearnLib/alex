@@ -90,7 +90,6 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true
     )
@@ -102,7 +101,6 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     @JsonIgnore
@@ -113,7 +111,6 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     @JsonIgnore
@@ -124,7 +121,6 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private Set<Symbol> symbols;
@@ -132,7 +128,6 @@ public class Project implements Serializable {
     /** The tests of this project. */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private Set<Test> tests;
@@ -140,7 +135,6 @@ public class Project implements Serializable {
     /** The test configurations of this project. */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     @JsonIgnore
@@ -151,7 +145,6 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private Set<Counter> counters;
@@ -161,7 +154,6 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private List<LtsFormula> ltsFormulas;

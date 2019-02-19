@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ public class SymbolInputParameter extends SymbolParameter {
 
     /** The values for the parameter. */
     @OneToMany(
-            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             mappedBy = "parameter"
     )

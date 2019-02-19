@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.util.ArrayList;
@@ -57,7 +56,6 @@ public class TestSuite extends Test {
 
     @OneToMany(
             mappedBy = "parent",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     @JsonProperty("tests")

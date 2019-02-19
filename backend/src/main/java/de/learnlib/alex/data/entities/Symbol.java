@@ -300,7 +300,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     @OneToMany(
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.REMOVE},
             orphanRemoval = true
     )
@@ -316,7 +315,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     @OneToMany(
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.REMOVE},
             orphanRemoval = true
     )
@@ -332,7 +330,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     @OneToMany(
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.REMOVE, CascadeType.MERGE},
             mappedBy = "symbol"
     )

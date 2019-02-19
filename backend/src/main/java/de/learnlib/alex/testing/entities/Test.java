@@ -250,7 +250,6 @@ public class Test implements Serializable {
 
     @OneToMany(
             mappedBy = "test",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     @JsonIgnore

@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.util.ArrayList;
@@ -42,7 +41,6 @@ public class TestCaseResult extends TestResult {
     /** The outputs of the system. */
     @OneToMany(
             mappedBy = "result",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.ALL}
     )
     private List<TestExecutionResult> outputs;

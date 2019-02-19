@@ -61,7 +61,6 @@ public class TestReport implements Serializable {
     /** The results of the tests that have been executed in the test run. */
     @OneToMany(
             mappedBy = "testReport",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.ALL}
     )
     private List<TestResult> testResults;

@@ -26,7 +26,6 @@ import org.hibernate.annotations.Cascade;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -73,13 +72,13 @@ public class User implements Serializable {
     private UserRole role;
 
     /** The projects of the user. */
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     @JsonIgnore
     private Set<Project> projects;
 
     /** The list of webhooks. */
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.REMOVE})
     @JsonIgnore
     private List<Webhook> webhooks;

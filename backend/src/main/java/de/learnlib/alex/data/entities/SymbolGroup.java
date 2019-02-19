@@ -69,7 +69,6 @@ public class SymbolGroup implements Serializable {
     /** The Symbols manged by this group. */
     @OneToMany(
             mappedBy = "group",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     private Set<Symbol> symbols;
@@ -77,7 +76,6 @@ public class SymbolGroup implements Serializable {
     /** The child groups. */
     @OneToMany(
             mappedBy = "parent",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     private List<SymbolGroup> groups;
