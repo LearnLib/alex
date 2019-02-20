@@ -1,6 +1,6 @@
 <div class="view results-compare-view">
     <action-bar>
-        <div class="pull-left" ng-if="vm.panels.length === 2">
+        <div class="float-left" ng-if="vm.panels.length === 2">
             <button class="btn btn-sm btn-default"
                     ng-click="vm.showSeparatingWord()">
                 <i class="fas fa-fw fa-bolt"></i> Separating word
@@ -12,7 +12,7 @@
             </button>
         </div>
 
-        <button class="btn btn-sm btn-success pull-right"
+        <button class="btn btn-sm btn-success float-right"
                 ng-if="vm.panels.length < 3"
                 ng-click="vm.openResultListModal()">
             <i class="fas fa-fw fa-plus"></i> Add hypothesis

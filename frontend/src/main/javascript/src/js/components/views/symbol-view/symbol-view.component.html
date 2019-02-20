@@ -7,19 +7,19 @@
     </view-header>
 
     <action-bar>
-        <button class="btn btn-success btn-sm pull-right" ng-click="vm.saveChanges()">
+        <button class="btn btn-success btn-sm float-right" ng-click="vm.saveChanges()">
             Save
         </button>
     </action-bar>
 
     <div class="view-body has-sub-nav">
-        <div class="alx-container-fluid">
+        <div class="container-fluid">
 
-            <div class="panel panel-default" ng-if="vm.symbol.description != null && vm.symbol.description !== ''">
-                <div class="panel-heading">
+            <div class="card mb-4" ng-if="vm.symbol.description != null && vm.symbol.description !== ''">
+                <div class="card-header">
                     <strong>Description</strong>
                 </div>
-                <div class="panel-body">
+                <div class="card-body">
                     <strong>Description</strong>
                     <p class="text-muted" style="white-space:pre-wrap;">{{vm.symbol.description}}</p>
                     <strong>Expected result</strong>
@@ -27,38 +27,34 @@
                 </div>
             </div>
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
+            <div class="card mb-4">
+                <div class="card-header">
                     <strong>Actions</strong>
                 </div>
-                <div class="p-1 border-bottom d-flex flex-row">
+                <div class="px-3 py-2 border-bottom d-flex flex-row align-items-center">
                     <div>
                         <selectable-checkbox-multiple
                             selectable="vm.selectedSteps"
-                            class="pull-left"
+                            class="float-left"
                             style="margin-top: 7px"
                             ng-if="vm.selectedSteps != null"
                         >
                         </selectable-checkbox-multiple>
                     </div>
-                    <div class="w-100 ml-1">
+                    <div class="w-100 ml-3">
 
                         <div class="btn-group btn-group-sm" uib-dropdown>
                             <button class="btn btn-primary btn-dropdown" uib-dropdown-toggle>
-                                Add <i class="fas fa-fw fa-caret-down"></i>
+                                Add
                             </button>
-                            <ul uib-dropdown-menu class="dropdown-menu" role="menu">
-                                <li>
-                                    <a href="" ng-click="vm.openActionCreateModal()">
-                                        Action
-                                    </a>
-                                </li>
-                                <li>
-                                  <a href="" ng-click="vm.addSymbolStep()">
-                                    Symbol
-                                  </a>
-                                </li>
-                            </ul>
+                            <div uib-dropdown-menu class="dropdown-menu" role="menu">
+                                <a class="dropdown-item" href="" ng-click="vm.openActionCreateModal()">
+                                  Action
+                                </a>
+                                <a class="dropdown-item" href="" ng-click="vm.addSymbolStep()">
+                                  Symbol
+                                </a>
+                            </div>
                         </div>
 
                         <div class="btn-group btn-group-sm">
@@ -93,7 +89,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel-body" style="padding: 0">
+                <div class="card-body" style="padding: 0">
                     <div class="action-list" dragula='"actionList"' dragula-model="vm.symbol.steps" ng-if="vm.symbol.steps.length > 0">
                         <div class="action-list-item" ng-repeat="step in vm.symbol.steps track by $index"
                              ng-class="{'disabled': step.disabled}">
@@ -125,8 +121,8 @@
                                     </div>
 
                                     <div class="step-labels">
-                                        <span class="label label-info" ng-show="step.negated">Negate</span>
-                                        <span class="label label-danger" ng-show="step.ignoreFailure">Ignore Failure</span>
+                                        <span class="badge badge-info" ng-show="step.negated">Negate</span>
+                                        <span class="badge badge-danger" ng-show="step.ignoreFailure">Ignore Failure</span>
                                     </div>
                                     <div class="step-output text-muted d-flex">
                                         <div style="flex-shrink: 0">
@@ -160,48 +156,36 @@
 
                                 <div>
                                     <div class="btn-group btn-group-sm" uib-dropdown>
-                                        <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
+                                        <button type="button" class="btn btn-default btn-icon dropdown-toggle no-caret" uib-dropdown-toggle>
                                             <i class="fas fa-bars"></i>
                                         </button>
-                                        <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
-                                            <li>
-                                                <a href="" ng-click="vm.editActionStep(step)" ng-if="step.type === 'action'">
-                                                    <i class="fas fa-edit fa-fw"></i> Edit
-                                                </a>
-                                                <a href="" ng-click="vm.editSymbolStep(step)" ng-if="step.type === 'symbol'">
-                                                    <i class="fas fa-edit fa-fw"></i> Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="vm.deleteStep($index)">
-                                                    <i class="fas fa-trash fa-fw"></i> Delete
-                                                </a>
-                                            </li>
-                                            <li class="divider"></li>
-                                            <li>
-                                                <a href="" ng-click="vm.cutStep($index)">
-                                                    <i class="fas fa-cut fa-fw"></i> Cut
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="vm.copyStep($index)">
-                                                    <i class="fas fa-copy fa-fw"></i> Copy
-                                                </a>
-                                            </li>
-                                            <li class="divider"></li>
-                                            <li>
-                                                <a href="" ng-click="step.negated = !step.negated">
-                                                    <i class="fas fa-fw" ng-class="{'fa-check': step.negated}"></i>
-                                                    Negate result
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="step.ignoreFailure = !step.ignoreFailure">
-                                                    <i class="fas fa-fw" ng-class="{'fa-check': step.ignoreFailure}"></i>
-                                                    Ignore failure
-                                                </a>
-                                            </li>
-                                        </ul>
+                                        <div uib-dropdown-menu class="dropdown-menu dropdown-menu-right" role="menu">
+                                            <a class="dropdown-item" href="" ng-click="vm.editActionStep(step)" ng-if="step.type === 'action'">
+                                                <i class="fas fa-edit fa-fw"></i> Edit
+                                            </a>
+                                            <a class="dropdown-item" href="" ng-click="vm.editSymbolStep(step)" ng-if="step.type === 'symbol'">
+                                                <i class="fas fa-edit fa-fw"></i> Edit
+                                            </a>
+                                            <a class="dropdown-item" href="" ng-click="vm.deleteStep($index)">
+                                                <i class="fas fa-trash fa-fw"></i> Delete
+                                            </a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="" ng-click="vm.cutStep($index)">
+                                                <i class="fas fa-cut fa-fw"></i> Cut
+                                            </a>
+                                            <a class="dropdown-item" href="" ng-click="vm.copyStep($index)">
+                                                <i class="fas fa-copy fa-fw"></i> Copy
+                                            </a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="" ng-click="step.negated = !step.negated">
+                                                <i class="fas fa-fw" ng-class="{'fa-check': step.negated}"></i>
+                                                Negate result
+                                            </a>
+                                            <a class="dropdown-item" href="" ng-click="step.ignoreFailure = !step.ignoreFailure">
+                                                <i class="fas fa-fw" ng-class="{'fa-check': step.ignoreFailure}"></i>
+                                                Ignore failure
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -216,13 +200,13 @@
                 </div>
             </div>
 
-            <symbol-parameters-panel symbol="vm.symbol" on-change="vm.setChanged(true)"></symbol-parameters-panel>
+            <symbol-parameters-panel symbol="vm.symbol" on-change="vm.setChanged(true)" class="d-block mb-4"></symbol-parameters-panel>
 
-            <div class="panel panel-default">
-                <div class="panel-heading">
+            <div class="card">
+                <div class="card-header">
                     <strong>Output on success</strong>
                 </div>
-                <div class="panel-body" style="padding-bottom: 0">
+                <div class="card-body" style="padding-bottom: 0">
                     <div class="form-group">
                         <input class="form-control" type="text" ng-model="vm.symbol.successOutput" placeholder="Ok"
                                ng-change="vm.hasChanged = true">

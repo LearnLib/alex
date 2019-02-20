@@ -1,16 +1,16 @@
-<div class="panel panel-default">
-    <div class="panel-body">
+<div class="card">
+    <div class="card-body">
         <form class="form form-condensed" ng-submit="vm.testAndAddCounterExample()">
             <div class="text-muted">
                 <em>Click on the labels of the hypothesis to create a counterexample.</em>
             </div>
             <div ng-if="vm.counterExample.length > 0">
                 <br>
-                <div class="list-group list-group-condensed" dragula='"ceList"' dragula-model="vm.counterExample">
+                <div class="list-group list-group-condensed mb-3" dragula='"ceList"' dragula-model="vm.counterExample">
                     <div class="list-group-item counterexample-list-item" ng-repeat="io in vm.counterExample">
-                        <i class="fas fa-fw fa-times pull-right" ng-click="vm.removeInputOutputAt($index)"></i>
-                        <span class="label label-primary">{{io.input}}</span>
-                        <span class="label label-default">{{io.output}}</span>
+                        <i class="fas fa-fw fa-times float-right" ng-click="vm.removeInputOutputAt($index)"></i>
+                        <span class="badge badge-primary">{{io.input}}</span>
+                        <span class="badge badge-default">{{io.output}}</span>
                     </div>
                 </div>
                 <button class="btn btn-default btn-sm btn-block">Add counterexample</button>
@@ -20,11 +20,11 @@
             <hr>
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="ce in vm.tmpCounterExamples track by $index">
-                    <span class="pull-right" ng-click="vm.removeCounterExampleAt($index)">
+                    <span class="float-right" ng-click="vm.removeCounterExampleAt($index)">
                         <i class="fas fa-trash"></i>
                     </span>
                     <div class="clearfix" style="margin-right: 32px;">
-                        <span class="label label-primary pull-left" style="margin: 0 3px 3px 0" ng-repeat="c in ce"
+                        <span class="badge badge-primary float-left" style="margin: 0 3px 3px 0" ng-repeat="c in ce"
                               ng-bind="c.input">
                         </span>
                     </div>

@@ -17,7 +17,7 @@
 
     </action-bar>
     <div class="view-body">
-        <div class="alx-container-fluid">
+        <div class="container-fluid">
 
             <h4>
                 <strong>{{vm.report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</strong>
@@ -44,8 +44,8 @@
                 <tbody>
                 <tr ng-repeat="result in vm.report.testResults" ng-if="result.test.type === 'case'">
                     <td width="1%">
-                        <span class="label label-success" ng-if="result.passed">Passed</span>
-                        <span class="label label-danger" ng-if="!result.passed">Failed</span>
+                        <span class="badge badge-success" ng-if="result.passed">Passed</span>
+                        <span class="badge badge-danger" ng-if="!result.passed">Failed</span>
                     </td>
                     <td>
                         <a ui-sref="test({projectId: result.project, testId: result.test.id})">{{result.test.name}}</a>

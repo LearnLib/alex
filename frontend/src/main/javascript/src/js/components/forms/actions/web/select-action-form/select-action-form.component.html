@@ -1,4 +1,4 @@
-<h4><strong>Select value</strong></h4>
+<h5><strong>Select value</strong></h5>
 
 <p class="text-muted">
     Select a value from a select input.
@@ -12,18 +12,18 @@
     <input class="form-control" type="text" placeholder="Selected value" ng-model="vm.action.value">
 </div>
 
-<div class="checkbox">
-    <label>
-        <input type="radio" name="selectBy" ng-model="vm.action.selectBy" value="TEXT"> By visible text
+<div class="form-group form-check">
+    <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="selectBy" ng-model="vm.action.selectBy" value="TEXT"> By visible text
     </label>
 </div>
-<div class="checkbox">
-    <label>
-        <input type="radio" name="selectBy" ng-model="vm.action.selectBy" value="VALUE"> By "value" attribute
+<div class="form-group form-check">
+    <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="selectBy" ng-model="vm.action.selectBy" value="VALUE"> By "value" attribute
     </label>
 </div>
-<div class="checkbox">
-    <label>
-        <input type="radio" name="selectBy" ng-model="vm.action.selectBy" value="INDEX"> By index
+<div class="form-group form-check">
+    <label class="form-check-label">
+        <input type="radio" class="form-check-input" name="selectBy" ng-model="vm.action.selectBy" value="INDEX"> By index
     </label>
 </div>

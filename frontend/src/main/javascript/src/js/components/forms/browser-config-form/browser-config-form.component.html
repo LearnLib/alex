@@ -6,11 +6,11 @@
     </select>
 </div>
 
-<div class="checkbox" ng-if="['chrome', 'firefox'].indexOf(vm.config.name) > -1">
-    <label>
-        <input type="checkbox" ng-model="vm.config.headless">
+<div class="form-group form-check" ng-if="['chrome', 'firefox'].indexOf(vm.config.name) > -1">
+    <label class="form-check-label">
+        <input class="form-check-input" type="checkbox" ng-model="vm.config.headless">
         <strong>Use headless mode</strong>
-        <p class="help-block">Make sure your browser version supports running in headless mode</p>
+        <p class="form-text text-muted">Make sure your browser version supports running in headless mode</p>
     </label>
 </div>
 
@@ -48,14 +48,14 @@
 </div>
 
 <div class="row">
-    <div class="col-xs-6">
+    <div class="col-6">
         <div class="form-group">
             <label class="control-label">Width</label>
             <input class="form-control" type="number" required placeholder="Browser width in px"
                    ng-model="vm.config.width">
         </div>
     </div>
-    <div class="col-xs-6">
+    <div class="col-6">
         <div class="form-group">
             <label class="control-label">Height</label>
             <input class="form-control" type="number" required placeholder="Browser height in px"

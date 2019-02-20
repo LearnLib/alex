@@ -1,85 +1,80 @@
 <div class="view">
     <view-header title="Test Management"></view-header>
     <action-bar>
-        <selectable-checkbox-multiple selectable="vm.selectedTests" class="pull-left"></selectable-checkbox-multiple>
-        <div class="btn-group btn-group-sm" uib-dropdown>
-            <button class="btn btn-primary" uib-dropdown-toggle>
-                Create <i class="fas fa-fw fa-caret-down"></i>
-            </button>
-            <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
-                <li>
-                    <a href="" ng-click="vm.createTestSuite()">
-                        Test suite
-                    </a>
-                </li>
-                <li>
-                    <a href="" ng-click="vm.createTestCase()">
-                        Test case
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="btn-group btn-group-sm">
-            <button class="btn btn-default" ng-click="vm.moveSelected()">
-                Move
-            </button>
-            <button class="btn btn-default" ng-click="vm.deleteSelected()">
-                Delete
-            </button>
-        </div>
-
-        <div class="btn-group btn-group-sm">
-            <button class="btn btn-default" uib-tooltip="Import" tooltip-placement="bottom" ng-click="vm.importTests()">
-                <i class="fas fa-fw fa-upload"></i>
-            </button>
-            <div class="btn-group btn-group-sm mr-0" uib-dropdown>
-                <button class="btn btn-default" uib-dropdown-toggle uib-tooltip="Export" tooltip-placement="bottom">
-                    <i class="fas fa-fw fa-download"></i>
-                </button>
-                <ul uib-dropdown-menu class="dropdown-menu" role="menu">
-                    <li>
-                        <a href="" ng-click="vm.exportSelectedTests()">
-                            Export for ALEX
+        <div class="d-flex flex-row align-items-center">
+            <selectable-checkbox-multiple selectable="vm.selectedTests"></selectable-checkbox-multiple>
+            <div class="w-100 ml-3">
+                <div class="btn-group btn-group-sm" uib-dropdown>
+                    <button class="btn btn-primary" uib-dropdown-toggle>
+                        Create
+                    </button>
+                    <div uib-dropdown-menu class="dropdown-menu dropdown-menu-left" role="menu">
+                        <a class="dropdown-item" href="" ng-click="vm.createTestSuite()">
+                            Test suite
                         </a>
-                    </li>
-                    <li>
-                        <a href="" ng-click="vm.exportForSelenium()">
-                            Export for Selenium
+                        <a class="dropdown-item" href="" ng-click="vm.createTestCase()">
+                            Test case
                         </a>
-                    </li>
-                </ul>
+                    </div>
+                </div>
+
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-default" ng-click="vm.moveSelected()">
+                        Move
+                    </button>
+                    <button class="btn btn-default" ng-click="vm.deleteSelected()">
+                        Delete
+                    </button>
+                </div>
+
+                <div class="btn-group btn-group-sm">
+                    <button class="btn btn-default" uib-tooltip="Import" tooltip-placement="bottom" ng-click="vm.importTests()">
+                        <i class="fas fa-fw fa-upload"></i>
+                    </button>
+                    <div class="btn-group btn-group-sm mr-0" uib-dropdown>
+                        <button class="btn btn-default" uib-dropdown-toggle uib-tooltip="Export" tooltip-placement="bottom">
+                            <i class="fas fa-fw fa-download"></i>
+                        </button>
+                        <div uib-dropdown-menu class="dropdown-menu" role="menu">
+                            <a class="dropdown-item" href="" ng-click="vm.exportSelectedTests()">
+                                Export for ALEX
+                            </a>
+                            <a class="dropdown-item" href="" ng-click="vm.exportForSelenium()">
+                                Export for Selenium
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group btn-group-sm" uib-dropdown>
+                    <button class="btn btn-default" uib-tooltip="Copy" tooltip-placement="bottom" ng-click="vm.copyTests()">
+                        <i class="fas fa-fw fa-copy"></i>
+                    </button>
+                    <button class="btn btn-default" uib-tooltip="Paste" tooltip-placement="bottom" ng-click="vm.pasteTests()">
+                        <i class="fas fa-fw fa-paste"></i>
+                    </button>
+                </div>
+
+                <div class="btn-group btn-group-sm float-right">
+                    <button class="btn btn-success" uib-tooltip="Save configuration" tooltip-placement="left" ng-click="vm.saveTestConfig()">
+                        <i class="fas fa-fw fa-save"></i>
+                    </button>
+                </div>
+
+                <div class="btn-group btn-group-sm float-right">
+                    <button class="btn btn-primary" ng-click="vm.executeSelected()">
+                        <span ng-if="!vm.status.active">Execute</span>
+                        <span ng-if="vm.status.active">Enqueue</span>
+                    </button>
+                    <button class="btn btn-primary" ng-click="vm.openTestConfigModal()">
+                        <i class="fas fa-fw fa-cog"></i>
+                    </button>
+                </div>
             </div>
         </div>
-
-        <div class="btn-group btn-group-sm" uib-dropdown>
-            <button class="btn btn-default" uib-tooltip="Copy" tooltip-placement="bottom" ng-click="vm.copyTests()">
-                <i class="fas fa-fw fa-copy"></i>
-            </button>
-            <button class="btn btn-default" uib-tooltip="Paste" tooltip-placement="bottom" ng-click="vm.pasteTests()">
-                <i class="fas fa-fw fa-paste"></i>
-            </button>
-        </div>
-
-        <div class="btn-group btn-group-sm pull-right">
-            <button class="btn btn-success" uib-tooltip="Save configuration" tooltip-placement="left" ng-click="vm.saveTestConfig()">
-                <i class="fas fa-fw fa-save"></i>
-            </button>
-        </div>
-
-        <div class="btn-group btn-group-sm pull-right">
-            <button class="btn btn-primary" ng-click="vm.executeSelected()">
-                <span ng-if="!vm.status.active">Execute</span>
-                <span ng-if="vm.status.active">Enqueue</span>
-            </button>
-            <button class="btn btn-primary" ng-click="vm.openTestConfigModal()">
-                <i class="fas fa-fw fa-cog"></i>
-            </button>
-        </div>
-
     </action-bar>
     <div class="view-body">
-        <div class="alx-container-fluid">
+        <div class="container-fluid">
 
             <div class="alert alert-info d-flex flex-row" ng-if="vm.status.active">
                 <div class="w-100">
@@ -106,7 +101,7 @@
             <hr>
 
             <div class="row" ng-if="vm.testSuite.tests.length > 0">
-                <div class="col-xs-12 col-sm-9">
+                <div class="col-sm-12 col-md-9 mb-4">
 
                     <div class="list-group test-list" >
                         <div class="list-group-item test-list-item" ng-repeat="test in vm.testSuite.tests | sortTests">
@@ -120,27 +115,21 @@
                                 </div>
                                 <div style="padding-left: 6px">
                                     <div class="btn-group btn-group-xs" uib-dropdown>
-                                        <button class="btn btn-icon btn-dropdown" uib-dropdown-toggle>
+                                        <button class="btn btn-icon btn-dropdown no-caret" uib-dropdown-toggle>
                                             <i class="fas fa-fw fa-bars"></i>
                                         </button>
-                                        <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
-                                            <li>
-                                                <a href="" ng-click="vm.editTest(test)">
-                                                    <i class="fas fa-fw fa-edit"></i> Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="" ng-click="vm.deleteTest(test)">
-                                                    <i class="fas fa-fw fa-trash"></i> Delete
-                                                </a>
-                                            </li>
-                                            <li class="divider" ng-if="test.type === 'case'"></li>
-                                            <li ng-if="test.type === 'case'">
-                                                <a ui-sref="testResults({projectId: vm.project.id, testId: test.id})">
-                                                    <i class="fas fa-fw fa-history"></i> Results
-                                                </a>
-                                            </li>
-                                        </ul>
+                                        <div uib-dropdown-menu class="dropdown-menu dropdown-menu-right" role="menu">
+                                            <a class="dropdown-item" href="" ng-click="vm.editTest(test)">
+                                                <i class="fas fa-fw fa-edit"></i> Edit
+                                            </a>
+                                            <a class="dropdown-item" href="" ng-click="vm.deleteTest(test)">
+                                                <i class="fas fa-fw fa-trash"></i> Delete
+                                            </a>
+                                            <div class="dropdown-divider" ng-if="test.type === 'case'"></div>
+                                            <a class="dropdown-item" ui-sref="testResults({projectId: vm.project.id, testId: test.id})" ng-if="test.type === 'case'">
+                                                <i class="fas fa-fw fa-history"></i> Results
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -153,7 +142,7 @@
                     </div>
 
                 </div>
-                <div class="col-xs-12 col-sm-3">
+                <div class="col-sm-12 col-md-3">
                     <test-config-list
                         configs="vm.testConfigs"
                         on-selected="vm.selectTestConfig(config)"

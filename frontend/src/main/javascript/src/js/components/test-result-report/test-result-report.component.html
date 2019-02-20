@@ -16,7 +16,7 @@
         </h4>
     </div>
 
-    <table class="table table-condensed" style="margin-bottom: 0; border: 1px solid #dddddd; margin-top: 8px">
+    <table class="table" style="margin-bottom: 0; border: 1px solid #dddddd; margin-top: 8px">
         <thead style="background: #f7f7f7">
         <tr>
             <th style="width: 80px">Status</th>
@@ -28,9 +28,9 @@
         <tbody>
         <tr>
             <td>
-                <span ng-if="vm.report.passed" class="label label-success">Success</span>
-                <span ng-if="!vm.report.passed && vm.report.numTestsPassed > 0" class="label label-warning">Failed</span>
-                <span ng-if="!vm.report.passed && vm.report.numTestsPassed === 0" class="label label-danger">Failed</span>
+                <span ng-if="vm.report.passed" class="badge badge-success">Success</span>
+                <span ng-if="!vm.report.passed && vm.report.numTestsPassed > 0" class="badge badge-warning">Failed</span>
+                <span ng-if="!vm.report.passed && vm.report.numTestsPassed === 0" class="badge badge-danger">Failed</span>
             </td>
             <td><strong>{{vm.report.numTests}}</strong></td>
             <td><strong>{{vm.report.numTestsPassed}}</strong></td>

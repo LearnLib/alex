@@ -2,7 +2,7 @@
     <view-header title="Learner Process Setup"></view-header>
 
     <action-bar>
-        <div class="btn-group btn-group-sm pull-right">
+        <div class="btn-group btn-group-sm float-right">
             <button class="btn btn-primary" ng-click="vm.startLearning()">
                 Start learning
             </button>
@@ -11,7 +11,7 @@
             </button>
         </div>
 
-        <div class="pull-right" style="margin-right: 6px">
+        <div class="float-right mr-1">
             <a
               ui-sref="learnerStart({projectId: vm.project.id, result: vm.latestLearnerResult})"
               class="btn btn-info btn-sm"
@@ -23,7 +23,7 @@
     </action-bar>
 
     <div class="view-body has-sub-nav">
-        <div class="alx-container-fluid">
+        <div class="container-fluid">
 
             <div class="alert alert-info alert-condensed clearfix">
                 <i class="fas fa-fw fa-info-circle"></i>
@@ -37,11 +37,11 @@
 
             <div class="row" ng-if="vm.groups.length > 0">
                 <div class="col-md-4 col-lg-3">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
+                    <div class="card mb-4">
+                        <div class="card-header">
                             <strong class="text-muted">Symbols</strong>
                         </div>
-                        <div class="panel-body">
+                        <div class="card-body">
                             <simple-symbol-group-tree
                               groups="vm.groups"
                               on-symbol-selected="vm.handleSymbolSelected(symbol)"
@@ -56,15 +56,17 @@
 
                     <h5><strong>Pre</strong></h5>
                     <hr class="hr-small">
-                    <div class="alert alert-info" ng-if="vm.pResetSymbol == null">
+                    <div class="alert alert-info d-flex flex-row" ng-if="vm.pResetSymbol == null">
+                        <div class="w-100">
+                            Select a reset symbol <em>(required)</em>
+                        </div>
                         <symbol-select-dropdown
-                          groups="vm.groups"
-                          on-symbol-selected="vm.setResetSymbol(symbol)"
-                          variant="btn-xs btn-info"
-                          class="pull-right"
+                                groups="vm.groups"
+                                on-symbol-selected="vm.setResetSymbol(symbol)"
+                                variant="btn-xs btn-info"
+                                class="float-right flex-shrink-0"
                         >
                         </symbol-select-dropdown>
-                        Select a reset symbol <em>(required)</em>
                     </div>
 
                     <div class="list-group" ng-if="vm.pResetSymbol != null">
@@ -113,15 +115,17 @@
 
                     <h5 style="margin-top: 3rem"><strong>Post</strong></h5>
                     <hr class="hr-small">
-                    <div class="alert alert-info" ng-if="vm.pPostSymbol == null">
+                    <div class="alert alert-info d-flex flex-row" ng-if="vm.pPostSymbol == null">
+                        <div class="w-100">
+                            Select a post symbol <em>(optional)</em>
+                        </div>
                         <symbol-select-dropdown
                           groups="vm.groups"
                           on-symbol-selected="vm.setPostSymbol(symbol)"
                           variant="btn-xs btn-info"
-                          class="pull-right"
+                          class="float-right flex-shrink-0"
                         >
                         </symbol-select-dropdown>
-                        Select a post symbol <em>(optional)</em>
                     </div>
 
                     <div class="list-group" ng-if="vm.pPostSymbol != null">
@@ -152,26 +156,29 @@
                 </div>
 
                 <div class="col-md-4 col-lg-3">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
+                    <div class="card">
+                        <div class="card-header">
                             <strong class="text-muted">Reuse a previous configuration</strong>
                         </div>
-                        <div class="panel-body panel-body-list">
-                            <div class="list-group">
-                                <a
-                                    href=""
-                                    class="list-group-item"
-                                    ng-repeat="result in vm.learnResults | orderBy:'-testNo':false | limitTo:5"
-                                    ng-click="vm.reuseConfigurationFromResult(result)"
-                                >
-                                    <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
-                                    TestNo <span ng-bind="result.testNo"></span>
+                        <div class="list-group list-group-flush" ng-if="vm.learnResults.length > 0">
+                            <a
+                                href=""
+                                class="list-group-item"
+                                ng-repeat="result in vm.learnResults | orderBy:'-testNo':false | limitTo:5"
+                                ng-click="vm.reuseConfigurationFromResult(result)"
+                            >
+                                <span class="badge badge-danger float-right" ng-show="result.error">Failed</span>
+                                TestNo <span ng-bind="result.testNo"></span>
 
-                                    <div>
-                                        <i class="text-muted"
-                                           ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></i>
-                                    </div>
-                                </a>
+                                <div>
+                                    <i class="text-muted"
+                                       ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></i>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="card-body p-0" ng-if="vm.learnResults.length === 0">
+                            <div class="alert alert-info mb-0">
+                                There are no learner results yet.
                             </div>
                         </div>
                     </div>

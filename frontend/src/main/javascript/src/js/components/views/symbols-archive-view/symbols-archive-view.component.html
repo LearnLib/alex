@@ -2,10 +2,10 @@
     <view-header title="Symbol Archive"></view-header>
 
     <action-bar>
-        <div ng-if="vm.symbols.length > 0">
-            <selectable-checkbox-multiple selectable="vm.selectedSymbols" class="pull-left"></selectable-checkbox-multiple>
+        <div ng-if="vm.symbols.length > 0" class="d-flex flex-row align-items-center">
+            <selectable-checkbox-multiple selectable="vm.selectedSymbols"></selectable-checkbox-multiple>
 
-            <div class="pull-left">
+            <div class="w-100 ml-3">
                 <button class="btn btn-sm btn-primary" ng-click="vm.recoverSelectedSymbols()">
                     <i class="fas fa-undo fa-fw"></i> Recover
                 </button>
@@ -18,7 +18,7 @@
     </action-bar>
 
     <div class="view-body has-sub-nav">
-        <div class="alx-container-fluid">
+        <div class="container-fluid">
 
             <div class="alert alert-info" ng-if="vm.symbols.length === 0">
                 There aren't any deleted symbols.
@@ -29,27 +29,21 @@
 
                     <symbol-list-item symbol="symbol" selectable="vm.selectedSymbols">
                         <div class="btn-group btn-group-xs" uib-dropdown>
-                            <button type="button" class="btn btn-default btn-icon" uib-dropdown-toggle>
+                            <button type="button" class="btn btn-default btn-icon no-caret" uib-dropdown-toggle>
                                 <i class="fas fa-bars"></i>
                             </button>
-                            <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
-                                <li>
-                                    <a href="" ng-click="vm.editSymbol(symbol)">
-                                        <i class="fas fa-edit fa-fw"></i> Edit
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="" ng-click="vm.recoverSymbol(symbol)">
-                                        <i class="fas fa-undo fa-fw"></i> Recover
-                                    </a>
-                                </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <a href="" ng-click="vm.deleteSymbol(symbol)">
-                                        <i class="fas fa-trash fa-fw"></i> Delete
-                                    </a>
-                                </li>
-                            </ul>
+                            <div uib-dropdown-menu class="dropdown-menu dropdown-menu-right" role="menu">
+                                <a class="dropdown-item" href="" ng-click="vm.editSymbol(symbol)">
+                                    <i class="fas fa-edit fa-fw"></i> Edit
+                                </a>
+                                <a class="dropdown-item" href="" ng-click="vm.recoverSymbol(symbol)">
+                                    <i class="fas fa-undo fa-fw"></i> Recover
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="" ng-click="vm.deleteSymbol(symbol)">
+                                    <i class="fas fa-trash fa-fw"></i> Delete
+                                </a>
+                            </div>
                         </div>
 
                     </symbol-list-item>

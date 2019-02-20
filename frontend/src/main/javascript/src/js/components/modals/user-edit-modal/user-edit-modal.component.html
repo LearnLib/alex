@@ -1,8 +1,8 @@
 <div class="modal-header">
-  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+  <h4 class="modal-title">Edit the user</h4>
+  <a class="btn btn-default btn-icon float-right" ng-click="vm.dismiss()">
     <i class="fas fa-times fa-fw"></i>
   </a>
-  <h3 class="modal-title">Edit the user</h3>
 </div>
 
 <div class="modal-body">
@@ -15,7 +15,7 @@
     <hr>
   </div>
 
-  <h4><strong>Email</strong></h4>
+  <h5><strong>Email</strong></h5>
   <form name="vm.mailForm" ng-submit="vm.changeEmail()">
     <div class="form-group">
       <input type="email" class="form-control" name="mail" ng-model="vm.email" placeholder="Enter an email address"
@@ -33,7 +33,7 @@
   </form>
 
   <hr>
-  <h4><strong>Role</strong></h4>
+  <h5><strong>Role</strong></h5>
   <div ng-if="vm.user.role === vm.userRole.ADMIN">
     <p class="text-muted">
       <em>Note: if you take your own admin rights, you will be logged out automatically.</em>
@@ -51,7 +51,7 @@
   </div>
 
   <hr>
-  <h4><strong>Account</strong></h4>
+  <h5><strong>Account</strong></h5>
   <button class="btn btn-danger btn-sm" ng-click="vm.deleteUser()">
     Delete profile
   </button>

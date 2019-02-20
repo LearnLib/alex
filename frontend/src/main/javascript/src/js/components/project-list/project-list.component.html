@@ -1,37 +1,35 @@
 <div class="list-group">
-    <div class="list-group-item" ng-if="vm.projects.length > 0" ng-repeat="project in vm.projects | orderBy:'-name':true">
-        <div class="btn-group btn-group-xs pull-right" uib-dropdown>
-            <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
-                <i class="fas fa-bars"></i>
-            </button>
-            <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
-                <li>
-                    <a href="" ng-click="vm.openProject(project)">
+    <div class="list-group-item d-flex flex-row" ng-if="vm.projects.length > 0" ng-repeat="project in vm.projects | orderBy:'-name':true">
+        <div class="w-100">
+            <h4 class="list-group-item-heading">
+                <strong>
+                    <a href="" ng-bind="project.name" ng-click="vm.openProject(project)"></a>
+                </strong>
+            </h4>
+            <p class="list-group-item-text mb-0">
+                <span ng-bind="project.getDefaultUrl().url"></span> <br>
+                <span class="text-muted" ng-if="project.description" ng-bind="project.description"></span>
+            </p>
+        </div>
+        <div>
+            <div class="btn-group btn-group-xs" uib-dropdown>
+                <button type="button" class="btn btn-default btn-icon dropdown-toggle no-caret" uib-dropdown-toggle>
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div uib-dropdown-menu class="dropdown-menu dropdown-menu-right" role="menu">
+                    <a class="dropdown-item" href="" ng-click="vm.openProject(project)">
                         <i class="fas fa-fw fa-external-link-alt"></i> Open
                     </a>
-                </li>
-                <li class="divider"></li>
-                <li>
-                    <a href="" ng-click="vm.editProject(project)">
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="" ng-click="vm.editProject(project)">
                         <i class="fas fa-edit fa-fw"></i> Edit
                     </a>
-                </li>
-                <li>
-                    <a href="" ng-click="vm.deleteProject(project)">
+                    <a class="dropdown-item" href="" ng-click="vm.deleteProject(project)">
                         <i class="fas fa-trash fa-fw"></i> Delete
                     </a>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
-        <h4 class="list-group-item-heading">
-            <strong>
-                <a href="" ng-bind="project.name" ng-click="vm.openProject(project)"></a>
-            </strong>
-        </h4>
-        <p class="list-group-item-text">
-            <span ng-bind="project.getDefaultUrl().url"></span> <br>
-            <span class="text-muted" ng-if="project.description" ng-bind="project.description"></span>
-        </p>
     </div>
     <div class="alert alert-info" ng-if="vm.projects.length == 0">
         You haven't created a project yet.

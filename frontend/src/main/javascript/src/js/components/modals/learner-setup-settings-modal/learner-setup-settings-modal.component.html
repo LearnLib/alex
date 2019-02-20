@@ -1,9 +1,8 @@
 <div class="modal-header">
-  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+  <h4 class="modal-title">Experiment settings</h4>
+  <a class="btn btn-default btn-icon float-right" ng-click="vm.dismiss()">
     <i class="fas fa-times fa-fw"></i>
   </a>
-
-  <h3 class="modal-title">Experiment settings</h3>
 </div>
 
 <form name="vm.form" ng-submit="vm.ok()">
@@ -30,9 +29,9 @@
 
         <hr>
 
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" ng-model="vm.learnConfiguration.useMQCache"> Cache membership queries
+        <div class="form-group form-check">
+          <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" ng-model="vm.learnConfiguration.useMQCache"> Cache membership queries
           </label>
         </div>
 

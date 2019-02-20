@@ -13,11 +13,11 @@
     <div style="padding-left: .75rem">
         <selectable-checkbox-multiple items="vm.group.symbols" selectable="vm.selectedSymbols"></selectable-checkbox-multiple>
     </div>
-    <div class="w-100" style="padding: 0 .75rem">
+    <div class="w-100 pl-3 py-0">
         <span class="symbol-group-name">{{vm.group.name}}</span>
     </div>
     <div ng-if="vm.group.symbols.length === 0 && vm.group.groups.length === 0" style="margin-right: .75rem">
-        <span class="label label-default">Empty</span>
+        <span class="badge badge-default">Empty</span>
     </div>
     <div ng-transclude>
     </div>
