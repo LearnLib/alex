@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,5 +25,5 @@ export const version = '1.7.0-SNAPSHOT';
  * Change it to '/rest' before ALEX is packaged.
  * Otherwise change it to the URL where the API is currently running.
  */
-// export const apiUrl = '/rest';
-export const apiUrl = 'http://localhost:8000/rest';
+export const apiUrl = '/rest';
+// export const apiUrl = 'http://localhost:8000/rest';
