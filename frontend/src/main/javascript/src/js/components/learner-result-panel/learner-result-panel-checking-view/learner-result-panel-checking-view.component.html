@@ -11,11 +11,11 @@
   <div style="background: #f2f2f2; min-width: 340px; padding: 1rem; overflow: auto; border-left: 1px solid #ddd; position: relative">
 
     <div ng-if="vm.formulas.length > 0">
-      <div class="panel panel-default">
-        <div class="panel-heading">
+      <div class="card">
+        <div class="card-header">
           <strong>Configuration</strong>
         </div>
-        <div class="panel-body">
+        <div class="card-body">
           <div class="list-group mb-0">
             <div class="list-group-item" ng-repeat="formula in vm.formulas" ng-class="vm.getItemClass(formula)">
               <div class="d-flex">
@@ -29,8 +29,8 @@
                       <span>{{formula.formula}}</span>
                     </div>
                     <div ng-if="vm.results[formula.id] != null">
-                      <span class="label label-success" ng-if="vm.results[formula.id].passed">passed</span>
-                      <span class="label label-danger" ng-if="!vm.results[formula.id].passed">failed</span>
+                      <span class="badge badge-success" ng-if="vm.results[formula.id].passed">passed</span>
+                      <span class="badge badge-danger" ng-if="!vm.results[formula.id].passed">failed</span>
                     </div>
                   </div>
                   <div ng-if="vm.hasCounterexample(formula)" style="border-top: 1px solid rgba(0,0,0,.3); margin-top: 4px; padding-top: 4px">
@@ -61,7 +61,7 @@
             <input class="form-control" type="number" min="0" ng-model="vm.config.multiplier">
           </div>
         </div>
-        <div class="panel-footer text-right">
+        <div class="card-footer text-right">
           <button class="btn btn-sm btn-primary" ng-click="vm.check()">Run checks</button>
         </div>
       </div>

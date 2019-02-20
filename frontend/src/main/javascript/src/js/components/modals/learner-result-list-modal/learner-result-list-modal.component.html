@@ -1,11 +1,11 @@
 <div class="modal-header">
-  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
-    <i class="fas fa-times fa-fw"></i>
-  </a>
   <h4>
     <strong ng-if="vm.results">Select a result</strong>
     <strong ng-if="!vm.results">Select a project</strong>
   </h4>
+  <a class="btn btn-default btn-icon float-right" ng-click="vm.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
 </div>
 <div class="modal-body">
   <uib-tabset>
@@ -19,7 +19,7 @@
         <div class="list-group">
           <a class="list-group-item" ng-repeat="result in vm.results | orderBy:'-testNo':false"
              ng-click="vm.selectResult(result)">
-            <span class="label label-danger pull-right" ng-show="result.error">Failed</span>
+            <span class="badge badge-danger float-right" ng-show="result.error">Failed</span>
             <strong>Test No <span ng-bind="result.testNo"></span></strong>,
             [<span ng-bind="(result.algorithm.name|formatAlgorithm)"></span>]
             <br>

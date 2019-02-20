@@ -25,9 +25,9 @@
     </action-bar>
 
     <div class="view-body has-sub-nav">
-        <div class="alx-container-fluid">
+        <div class="container-fluid">
 
-            <table class="table table-condensed table-striped">
+            <table class="table table-striped">
                 <thead>
                 <tr>
                     <th>&nbsp;</th>
@@ -64,14 +64,14 @@
             <hr>
 
             <div class="row" ng-if="vm.chartData.options">
-                <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
+                <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-sm-12'">
 
-                    <widget title="Membership queries" id="chart-eqs">
+                    <widget title="Membership queries" id="chart-eqs" class="d-block mb-3">
                         <div style="width: 100%; height: 450px">
                             <linechart data="vm.chartData.data.mqs" options="vm.chartData.options"></linechart>
                         </div>
                         <hr>
-                        <button class="btn btn-xs btn-default pull-right" ng-click="vm.downloadChart('#chart-eqs')">
+                        <button class="btn btn-xs btn-default float-right" ng-click="vm.downloadChart('#chart-eqs')">
                             <i class="fas fa-fw fa-download"></i> Download SVG
                         </button>
                     </widget>
@@ -81,21 +81,21 @@
                             <linechart data="vm.chartData.data.duration" options="vm.chartData.options"></linechart>
                         </div>
                         <hr>
-                        <button class="btn btn-xs btn-default pull-right"
+                        <button class="btn btn-xs btn-default float-right"
                                 ng-click="vm.downloadChart('#chart-duration')">
                             <i class="fas fa-fw fa-download"></i> Download SVG
                         </button>
                     </widget>
 
                 </div>
-                <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-xs-12'">
+                <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-sm-12'">
 
-                    <widget title="Symbol calls" id="chart-symbols">
+                    <widget title="Symbol calls" id="chart-symbols" class="d-block mb-3">
                         <div style="width: 100%; height: 450px">
                             <linechart data="vm.chartData.data.symbols" options="vm.chartData.options"></linechart>
                         </div>
                         <hr>
-                        <button class="btn btn-xs btn-default pull-right"
+                        <button class="btn btn-xs btn-default float-right"
                                 ng-click="vm.downloadChart('#chart-symbols')">
                             <i class="fas fa-fw fa-download"></i> Download SVG
                         </button>

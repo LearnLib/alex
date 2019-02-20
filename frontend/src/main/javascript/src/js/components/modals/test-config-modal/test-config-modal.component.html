@@ -1,9 +1,8 @@
 <div class="modal-header">
-  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+  <h4 class="modal-title">Configure the test configuration</h4>
+  <a class="btn btn-default btn-icon float-right" ng-click="vm.dismiss()">
     <i class="fas fa-times fa-fw"></i>
   </a>
-
-  <h3 class="modal-title">Configure the test configuration</h3>
 </div>
 
 <div class="modal-body">
@@ -13,9 +12,9 @@
       <br>
 
       <strong>Test report</strong>
-      <div class="checkbox">
-        <label>
-          <input type="checkbox" ng-model="vm.configuration.createReport"> Create report
+      <div class="form-group form-check">
+        <label class="form-check-label">
+          <input class="form-check-input" type="checkbox" ng-model="vm.configuration.createReport"> Create report
         </label>
       </div>
     </uib-tab>

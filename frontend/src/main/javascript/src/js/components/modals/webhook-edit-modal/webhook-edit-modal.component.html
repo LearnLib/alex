@@ -1,9 +1,8 @@
 <div class="modal-header">
-  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
+  <h4 class="modal-title">Update webhook <em>{{::vm.webhook.name}}</em></h4>
+  <a class="btn btn-default btn-icon float-right" ng-click="vm.dismiss()">
     <i class="fas fa-times fa-fw"></i>
   </a>
-  <h3 class="modal-title">Update webhook <em>{{::vm.webhook.name}}</em></h3>
-  <p class="text-muted mb-0">{{::vm.webhook.url}}</p>
 </div>
 
 <div class="modal-body">

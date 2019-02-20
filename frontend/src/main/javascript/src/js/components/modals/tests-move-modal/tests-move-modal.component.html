@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h3 class="modal-title">Move tests</h3>
+  <h4 class="modal-title">Move tests</h4>
 </div>
 
 <div class="modal-body pb-0">
@@ -12,8 +12,8 @@
   </div>
 
   <label>Target test suite</label>
-  <div class="panel panel-default" ng-if="vm.root != null">
-    <div class="panel-body" style="overflow: auto; max-height: 420px">
+  <div class="card" ng-if="vm.root != null">
+    <div class="card-body" style="overflow: auto; max-height: 420px">
       <test-suite-tree
           test-suite="vm.root"
           selected-test-suite="vm.selectedTestSuite"

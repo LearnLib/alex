@@ -2,7 +2,7 @@
     <div ng-class="{'visibility-hidden': !vm.selectable}">
         <selectable-checkbox item="vm.symbol" selectable="vm.selectedSymbols"></selectable-checkbox>
     </div>
-    <div class="w-100" style="padding: 0 .75rem">
+    <div class="w-100 pl-3">
         <div>
             <a ui-sref="symbol({projectId: vm.symbol.project, symbolId: vm.symbol.id})">
                 <strong>{{vm.symbol.name}}</strong>
@@ -10,7 +10,7 @@
             <i class="text-muted fa fa-cubes fa-fw" ng-if="vm.symbol.containsSymbolSteps()"></i>
         </div>
         <div ng-if="vm.symbol.steps.length === 0">
-            <span class="label label-info">Not implemented</span>
+            <span class="badge badge-info">Not implemented</span>
         </div>
     </div>
     <div ng-transclude>

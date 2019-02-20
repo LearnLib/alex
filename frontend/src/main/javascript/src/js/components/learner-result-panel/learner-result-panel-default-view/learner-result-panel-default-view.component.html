@@ -21,14 +21,14 @@
     </discrimination-tree>
   </div>
 
-  <div class="alx-container" ng-if="!vm.result.steps[vm.pointer].hypothesis">
-    <div class="alert alert-info">
+  <div class="container" ng-if="!vm.result.steps[vm.pointer].hypothesis">
+    <div class="alert alert-info mt-3">
       <strong>No hypothesis has been saved in this step</strong>
     </div>
   </div>
 
-  <div class="alx-container" ng-if="vm.result.steps[vm.pointer].error">
-    <div class="alert alert-danger">
+  <div class="container" ng-if="vm.result.steps[vm.pointer].error">
+    <div class="alert alert-danger mt-3">
       <p><strong>There has been an error while learning</strong></p>
       <p ng-bind="vm.result.steps[vm.pointer].errorText"></p>
     </div>

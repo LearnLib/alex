@@ -11,14 +11,14 @@
         <strong>{{vm.suite.name}}</strong>
       </div>
       <div>
-        <span class="pull-right" ng-if="vm.result">
-          <span class="label label-success" ng-if="vm.result.passed">
+        <span class="float-right" ng-if="vm.result">
+          <span class="badge badge-success" ng-if="vm.result.passed">
             Passed
           </span>
-          <span class="label label-danger" ng-if="!vm.result.passed && vm.result.testCasesPassed === 0">
+          <span class="badge badge-danger" ng-if="!vm.result.passed && vm.result.testCasesPassed === 0">
             Failed
           </span>
-          <span class="label label-warning" ng-if="!vm.result.passed && vm.result.testCasesPassed > 0">
+          <span class="badge badge-warning" ng-if="!vm.result.passed && vm.result.testCasesPassed > 0">
             {{vm.result.testCasesFailed}}/{{vm.result.testCasesRun}} Failed
           </span>
         </span>
