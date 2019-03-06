@@ -30,7 +30,7 @@ public class LtsCheckingConfig {
     private Integer stepNo;
 
     /** The IDs of the formulas to check. */
-    private List<Long> formulaIds;
+    private List<String> formulas;
 
     /** How many unfolds are used for checking. */
     private Integer minUnfolds;
@@ -40,7 +40,7 @@ public class LtsCheckingConfig {
 
     /** Constructor. */
     public LtsCheckingConfig() {
-        this.formulaIds = new ArrayList<>();
+        this.formulas = new ArrayList<>();
         this.minUnfolds = 0;
         this.multiplier = 1.0;
     }
@@ -61,12 +61,12 @@ public class LtsCheckingConfig {
         this.stepNo = stepNo;
     }
 
-    public List<Long> getFormulaIds() {
-        return formulaIds;
+    public List<String> getFormulas() {
+        return formulas;
     }
 
-    public void setFormulaIds(List<Long> formulaIds) {
-        this.formulaIds = formulaIds;
+    public void setFormulas(List<String> formulas) {
+        this.formulas = formulas;
     }
 
     public Integer getMinUnfolds() {
@@ -92,11 +92,11 @@ public class LtsCheckingConfig {
      *         If the config is not valid.
      */
     public void validate() throws ValidationException {
-        if (learnerResultId == null || learnerResultId < 1) {
+        if (learnerResultId == null || learnerResultId < 0) {
             throw new ValidationException("The ID of the learner result has to be > 0.");
         } else if (stepNo == null || stepNo < 1) {
             throw new ValidationException("The step number has to be > 0.");
-        } else if (formulaIds.isEmpty()) {
+        } else if (formulas.isEmpty()) {
             throw new ValidationException("There has to be at least one formula ID.");
         } else if (minUnfolds < 0) {
             throw new ValidationException("minUnfolds has to be >= 0.");

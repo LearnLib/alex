@@ -58,12 +58,12 @@ export const learnerResultPanelCheckingViewComponent = {
                 private ltsFormulaResource: LtsFormulaResource) {
 
       this.selectedFormulas = new Selectable([], 'id');
-      this.results = {};
+      this.results = [];
 
       this.config = {
         minUnfolds: 3,
         multiplier: 1.0,
-        formulaIds: [],
+        formulas: [],
         learnerResultId: null,
         stepNo: null
       };
@@ -81,9 +81,9 @@ export const learnerResultPanelCheckingViewComponent = {
 
       this.config.learnerResultId = this.result.testNo;
       this.config.stepNo = this.pointer + 1;
-      this.config.formulaIds = this.selectedFormulas.getSelected().map(f => f.id);
+      this.config.formulas = this.selectedFormulas.getSelected().map(f => f.formula);
 
-      if (this.config.formulaIds.length === 0) {
+      if (this.config.formulas.length === 0) {
         this.toastService.info('You have to specify at least one formula.');
         return;
       }
@@ -93,17 +93,17 @@ export const learnerResultPanelCheckingViewComponent = {
         .catch(err => this.toastService.danger(`Could not check formulas. ${err.data.message}`));
     }
 
-    getItemClass(formula: any): any {
-      if (this.results[formula.id] == null) {
+    getItemClass(i: number): any {
+      if (this.results[i] == null) {
         return {};
       } else {
-        const passed = this.results[formula.id].passed;
+        const passed = this.results[i].passed;
         return {'list-group-item-danger': !passed, 'list-group-item-success': passed};
       }
     }
 
-    hasCounterexample(formula: any): boolean {
-      const result = this.results[formula.id];
+    hasCounterexample(i: number): boolean {
+      const result = this.results[i];
       return result != null && ((result.prefix.length + result.loop.length) > 0);
     }
 

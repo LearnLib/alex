@@ -19,11 +19,13 @@ package de.learnlib.alex.modelchecking.rest;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.utils.IdsList;
+import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingConfig;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingResult;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.modelchecking.services.LtsCheckingService;
+import net.automatalib.exception.ModelCheckingException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -183,14 +185,19 @@ public class LtsFormulaResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response check(@PathParam("projectId") Long projectId, LtsCheckingConfig config) {
-        LOGGER.traceEntry("enter check(projectId: {}, formulaIds: {})", projectId, config.getFormulaIds());
+        LOGGER.traceEntry("enter check(projectId: {})", projectId);
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         config.validate();
-        final Map<Long, LtsCheckingResult> results = ltsCheckingService.check(user, projectId, config);
-
-        LOGGER.traceExit("leave check() with {}", results);
-        return Response.ok(results).build();
+        try {
+            final List<LtsCheckingResult> results = ltsCheckingService.check(user, projectId, config);
+            LOGGER.traceExit("leave check() with {}", results);
+            return Response.ok(results).build();
+        } catch (ModelCheckingException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ResourceErrorHandler.RESTError(Response.Status.BAD_REQUEST, e))
+                    .build();
+        }
     }
 
 }

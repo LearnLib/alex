@@ -17,33 +17,33 @@
         </div>
         <div class="card-body">
           <div class="list-group mb-0">
-            <div class="list-group-item" ng-repeat="formula in vm.formulas" ng-class="vm.getItemClass(formula)">
+            <div class="list-group-item" ng-repeat="formula in vm.formulas" ng-class="vm.getItemClass($index)">
               <div class="d-flex">
                 <div>
                   <selectable-checkbox item="formula" selectable="vm.selectedFormulas"></selectable-checkbox>
                 </div>
-                <div class="pl-1 w-100">
+                <div class="pl-3 w-100">
                   <div class="d-flex">
                     <div class="w-100">
                       <strong ng-if="formula.name != null" class="d-block">{{formula.name}}</strong>
                       <span>{{formula.formula}}</span>
                     </div>
-                    <div ng-if="vm.results[formula.id] != null">
-                      <span class="badge badge-success" ng-if="vm.results[formula.id].passed">passed</span>
-                      <span class="badge badge-danger" ng-if="!vm.results[formula.id].passed">failed</span>
+                    <div ng-if="vm.results[$index] != null">
+                      <span class="badge badge-success" ng-if="vm.results[$index].passed">passed</span>
+                      <span class="badge badge-danger" ng-if="!vm.results[$index].passed">failed</span>
                     </div>
                   </div>
-                  <div ng-if="vm.hasCounterexample(formula)" style="border-top: 1px solid rgba(0,0,0,.3); margin-top: 4px; padding-top: 4px">
+                  <div ng-if="vm.hasCounterexample($index)" style="border-top: 1px solid rgba(0,0,0,.3); margin-top: 4px; padding-top: 4px">
                     <div class="d-flex flex-row">
                       <div style="width: 50px;">Prefix:</div>
                       <div class="w-100">
-                        <span ng-repeat="s in vm.results[formula.id].prefix">{{s}}<span ng-if="!$last">, </span></span>
+                        <span ng-repeat="s in vm.results[$index].prefix">{{s}}<span ng-if="!$last">, </span></span>
                       </div>
                     </div>
                     <div class="d-flex flex-row">
                       <div style="width: 50px;">Loop:</div>
                       <div class="w-100">
-                        <span ng-repeat="s in vm.results[formula.id].loop">{{s}}<span ng-if="!$last">, </span></span>
+                        <span ng-repeat="s in vm.results[$index].loop">{{s}}<span ng-if="!$last">, </span></span>
                       </div>
                     </div>
                   </div>

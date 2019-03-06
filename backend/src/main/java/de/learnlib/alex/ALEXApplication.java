@@ -70,12 +70,12 @@ public class ALEXApplication extends ResourceConfig {
     /**
      * The E-Mail for the default admin, i.e. the admin that will be auto created if no other admin exists.
      */
-    public static final String DEFAULT_ADMIN_EMAIL = "admin@alex.example";
+    private static final String DEFAULT_ADMIN_EMAIL = "admin@alex.example";
 
     /**
      * The Password for the default admin, i.e. the admin that will be auto created if no other admin exists.
      */
-    public static final String DEFAULT_ADMIN_PASSWORD = "admin";
+    private static final String DEFAULT_ADMIN_PASSWORD = "admin";
 
     /**
      * The spring boot environment.
@@ -146,7 +146,6 @@ public class ALEXApplication extends ResourceConfig {
             admin.setEmail(DEFAULT_ADMIN_EMAIL);
             admin.setRole(UserRole.ADMIN);
             admin.setEncryptedPassword(DEFAULT_ADMIN_PASSWORD);
-
             userDAO.create(admin);
         }
     }

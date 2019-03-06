@@ -37,17 +37,4 @@ public interface LtsFormulaRepository extends JpaRepository<LtsFormula, Long> {
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     List<LtsFormula> findAllByProject_Id(Long projectId);
-
-    /**
-     * Get all formulas in a project.
-     *
-     * @param projectId
-     *         The ID of the project.
-     * @param formulaIds
-     *         The IDs of the formulas.
-     * @return The formulas stored in the project.
-     */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
-    List<LtsFormula> findAllByProject_IdAndIdIn(Long projectId, List<Long> formulaIds);
 }
