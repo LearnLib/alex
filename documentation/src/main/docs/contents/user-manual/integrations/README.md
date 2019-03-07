@@ -9,14 +9,15 @@ These application have to register a webhook by specifying a URL.
 When an event occurs, e.g. a learning process finished, ALEX sends a HTTP request to the registered URL.
 If a body is send along the HTTP request, it is formatted as JSON object.
 
-*Currently, if the target server cannot be reached within 3 seconds, the request is cancelled.
- We also do not provide any retry mechanism at the moment.*
+<div class="alert alert-info">
+    Currently, if the target server cannot be reached within 3 seconds, the request is cancelled.
+    ALES also does not provide a retry mechanism at the moment.
+</div>
 
 ![Webhooks](./assets/webhooks-1.jpg)
 
 You can manage webhooks under the **Webhooks** item in the sidebar.
 On the page a list of registered webhooks is displayed.
-
 
 ![Webhooks](./assets/webhooks-2.jpg)
 

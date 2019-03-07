@@ -1,5 +1,5 @@
 module.exports = {
-    title: 'ALEX Docs (v1.6.0)',
+    title: 'ALEX Docs (v1.7.0)',
     description: 'User documentation for ALEX',
     dest: './.vuepress/dist',
     markdown: {
@@ -30,6 +30,7 @@ module.exports = {
                     ['/contents/user-manual/symbol-management/', 'Symbol management'],
                     ['/contents/user-manual/testing/', 'Testing'],
                     ['/contents/user-manual/learning/', 'Learning'],
+                    ['/contents/user-manual/model-checking/', 'Model Checking'],
                     ['/contents/user-manual/integrations/', 'Integrations'],
                     ['/contents/user-manual/best-practices/', 'Best practices']
                 ]
@@ -49,7 +50,6 @@ module.exports = {
                 children: [
                     ['/contents/dev-docs/development/', 'Develop'],
                     ['/contents/dev-docs/rest-api/', 'REST API'],
-                    ['/contents/dev-docs/extend-alex/', 'Extend ALEX'],
                     ['/contents/dev-docs/cli/', 'CLI']
                 ]
             }

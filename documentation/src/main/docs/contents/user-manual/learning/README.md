@@ -10,6 +10,7 @@ Such a process always consists of the following components:
 * A learning algorithm
 * A parametrized equivalence oracle
 * A maximum amount of steps to learn
+* A list of target URLs for parallelization
 * A specification of a web browser
 
 ![Setup](./assets/learning-setup-1.jpg)
@@ -161,6 +162,11 @@ Finally, click on <span class="label">3</span> to resume the learning process.
 ![Resuming 3](./assets/resuming-3.jpg)
 
 You can even add additional input symbols that should be included in the next iteration of the learning process by selecting them in <span class="label">4</span>.
+
+
+## Test generation
+
+TODO
 
 
 ## Result analysis

@@ -33,7 +33,7 @@ In addition, the following parameters can be used for the build file or the `mvn
 | `edgeDriver`      | The absolute path to the Edge driver executable on your system                                        |
 | `firefoxDriver`   | The absolute path to the Gecko driver executable on your system                                       |
 | `remoteDriver`    | The URI to the remote Selenium server                                                                 |
-| `ltsminBinDir`    | The path to the compiles binaries of the LTSMin library                                               |
+| `ltsminBinDir`    | The path to the compiles binaries of the LTSmin library                                               |
 
 
 ## Frontend development
@@ -78,24 +78,21 @@ If you want to build ALEX later, the variable has to point to */rest* again.
 
 ### GitHub release
 
-From the developer branch, perform the following steps:
+In the developer branch, perform the following steps:
 
 1. Update the version, in the *pom.xml* files of all Maven modules and in the following files 
     * *src/main/javascript/package.json*
     * *src/main/javascript/environments.json*
 2. In *environments.json* file, make sure that the `apiUrl` constant points to the relative URL as described above.
-3. Execute `mvn clean install package`.
+3. Execute `mvn clean install package` in the root directory of the repository.
    This will generate the executable war file in the *build/target* directory.
 4. Commit and push the changes to the developer branch.
 5. Merge the developer branch in the master branch.
 6. In the master branch, create a new tag with the new version and perform a GitHub release.
    Here, append the binary file generated from step 4.
 7. In the developer branch, increment the version in all files from 1. and append the *-SNAPSHOT* suffix.
-   
-### Update the homepage
-
-\[TODO\]
-
+  
+  
 
 [angular]: https://angularjs.org/
 [bootstrap]: https://getbootstrap.com/docs/3.3/

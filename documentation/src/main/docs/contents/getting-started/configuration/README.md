@@ -9,13 +9,14 @@ The following arguments can be passed to the bundled version of ALEX:
 
 | Argument          | Description                                                                                   |
 |-------------------|-----------------------------------------------------------------------------------------------|
-| `server.port`     | The port under which ALEX is available <br> `java -jar alex-1.6.0.war --server.port=8000`     |
-| `alex.dbpath`     | The path where the HSQLDB is stored. <br> `java -jar alex-1.6.0.war --alex.dbpath=mem:testdb` |
+| `server.port`     | The port under which ALEX is available <br> `java -jar alex-1.7.0.war --server.port=8000`     |
+| `alex.dbpath`     | The path where the HSQLDB is stored. <br> `java -jar alex-1.7.0.war --alex.dbpath=mem:testdb` |
 | `chromeDriver`    | The absolute path to the Chrome driver executable on your system                              |
 | `edgeDriver`      | The absolute path to the Edge driver executable on your system                                |
 | `firefoxDriver`   | The absolute path to the Gecko driver executable on your system                               |
 | `remoteDriver`    | The URI to the remote Selenium server                                                         |
-| `ltsminBinDir`    | The path to the compiles binaries of the LTSMin library                                       |
+| `ltsminBinDir`    | The path to the compiles binaries of the LTSmin library                                       |
+
 
 ## Using MySQL
 
@@ -32,9 +33,15 @@ spring.datasource.password=root
 spring.jpa.hibernate.ddl-auto=update
 ```
 
+Here, we assume that a MySQL server is running under port *3306* and a database called *alex* has been created.
 Then, start ALEX and include the *application.properties* file as command line argument:
 
-`java -jar alex-1.6.0.war "--spring.config.location=/path/to/your/application.properties"`
+`java -jar alex-1.7.0.war "--spring.config.location=/path/to/your/application.properties"`
+
+<div class="alert alert-info">
+    Note that there is no automated migration to a MySQL database if the file-based HSQLDB has been used before.
+    However, we found that [RazorSQL](razorsql) can help in the migration process.
+</div>
 
 
 ## WebDrivers
@@ -66,3 +73,4 @@ However, accounts that have already been created can still be used to login.
 [hsqldb]: http://hsqldb.org/
 [mysql57]: https://dev.mysql.com/downloads/mysql/5.7.html
 [html-unit]: http://htmlunit.sourceforge.net/
+[razorsql]: https://razorsql.com/
