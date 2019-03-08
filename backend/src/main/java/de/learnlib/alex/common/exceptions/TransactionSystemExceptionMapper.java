@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.common.exceptions;
 
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
+import de.learnlib.alex.common.utils.RESTError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.NestedExceptionUtils;
@@ -52,8 +52,8 @@ public class TransactionSystemExceptionMapper implements ExceptionMapper<Transac
             message = e.getMessage();
         }
 
-        final ResourceErrorHandler.RESTError error
-                = new ResourceErrorHandler.RESTError(Response.Status.BAD_REQUEST, new Exception(message));
+        final RESTError error
+                = new RESTError(Response.Status.BAD_REQUEST, new Exception(message));
         return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
     }
 }

@@ -19,7 +19,7 @@ package de.learnlib.alex.modelchecking.rest;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.utils.IdsList;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
+import de.learnlib.alex.common.utils.RESTError;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingConfig;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingResult;
@@ -44,7 +44,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
-import java.util.Map;
 
 /** The lts formula endpoints for the REST API. */
 @Path("/projects/{projectId}/ltsFormulas")
@@ -195,7 +194,7 @@ public class LtsFormulaResource {
             return Response.ok(results).build();
         } catch (ModelCheckingException e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ResourceErrorHandler.RESTError(Response.Status.BAD_REQUEST, e))
+                    .entity(new RESTError(Response.Status.BAD_REQUEST, e))
                     .build();
         }
     }

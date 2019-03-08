@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.common.utils;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,70 +27,6 @@ import javax.ws.rs.core.Response.Status;
  * It makes a entry in the log and creates a response with the proper status and a nice JSON error message.
  */
 public final class ResourceErrorHandler {
-
-    /**
-     * Entity class for the JSON error messages.
-     */
-    public static class RESTError {
-
-        /**
-         * Status of the error.
-         */
-        private Status status;
-
-        /**
-         * The cause of the error.
-         */
-        private Exception exception;
-
-        /**
-         * Constructor.
-         *
-         * @param status
-         *            The status of the error.
-         * @param exception
-         *            The exception that caused the error, could be null.
-         */
-        public RESTError(Status status, Exception exception) {
-            this.status = status;
-            this.exception = exception;
-        }
-
-        /**
-         * Returns the proper status code for this error.
-         *
-         * @return The HTTP status code.
-         */
-        @JsonGetter
-        public int getStatusCode() {
-            return status.getStatusCode();
-        }
-
-        /**
-         * Returns a short description of the status (like the short HTTP error messages).
-         *
-         * @return A short string to describe the status.
-         */
-        @JsonGetter
-        public String getStatusText() {
-            return status.getReasonPhrase();
-        }
-
-        /**
-         * Get the message of the exception that cause this error.
-         *
-         * @return The message of the error.
-         */
-        @JsonGetter
-        public String getMessage() {
-            if (exception != null) {
-                return exception.getMessage();
-            } else {
-                return "";
-            }
-        }
-
-    }
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -115,7 +50,6 @@ public final class ResourceErrorHandler {
      */
     public static Response createRESTErrorMessage(String context, Status status, Exception e) {
         LOGGER.info(context + " send an error:", e);
-        RESTError error = new RESTError(status, e);
-        return Response.status(status).entity(error).build();
+        return Response.status(status).entity(new RESTError(status, e)).build();
     }
 }

@@ -1,37 +1,46 @@
-<h4>Password</h4>
-<form ng-submit="vm.changePassword()">
-    <div class="form-group">
+<form class="mb-4" ng-submit="vm.changePassword()">
+  <div class="card">
+    <div class="card-header">
+      <h5>Password</h5>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
         <label>Old password</label>
-        <input class="form-control" type="password" ng-model="vm.oldPassword" placeholder="Enter your old password">
-    </div>
-    <div class="form-group">
+        <input class="form-control" type="password" ng-model="vm.oldPassword" required placeholder="Enter your old password">
+      </div>
+      <div class="form-group">
         <label>New password</label>
-        <input class="form-control" type="password" ng-model="vm.newPassword" placeholder="Enter your new password">
+        <input class="form-control" type="password" ng-model="vm.newPassword" required placeholder="Enter your new password">
+      </div>
     </div>
-    <button class="btn btn-primary btn-sm">Change Password</button>
+    <div class="card-footer">
+      <button class="btn btn-primary btn-sm">Change Password</button>
+    </div>
+  </div>
 </form>
-<hr>
 
-<h4>Email</h4>
 <form name="vm.mailForm" ng-submit="vm.changeEmail()">
-    <div class="form-group">
-        <label>Email</label>
-        <input class="form-control" name="mail" type="email" ng-model="vm.email" placeholder="Enter an email address" required />
+  <div class="card">
+    <div class="card-header">
+      <h5>Email</h5>
     </div>
-    <div class="help-block" ng-messages="vm.mailForm.mail.$error" ng-if="vm.mailForm.mail.$touched">
+    <div class="card-body">
+      <div class="form-group">
+        <label>Email</label>
+        <input class="form-control" name="mail" type="email" ng-model="vm.email" placeholder="Enter an email address"
+               required/>
+      </div>
+      <div class="help-block" ng-messages="vm.mailForm.mail.$error" ng-if="vm.mailForm.mail.$touched">
         <div class="alert alert-danger alert-condensed" ng-message="required">
-            The email is required
+          The email is required
         </div>
         <div class="alert alert-danger alert-condensed" ng-message="email">
-            You have to enter a valid email address
+          You have to enter a valid email address
         </div>
+      </div>
     </div>
-    <button class="btn btn-primary btn-sm">Change Email</button>
+    <div class="card-footer">
+      <button class="btn btn-primary btn-sm">Change Email</button>
+    </div>
+  </div>
 </form>
-<hr>
-
-<div class="text-right">
-    <button class="btn btn-sm btn-default" ng-click="vm.deleteUser()">
-        <i class="fas fa-fw fa-trash"></i> Delete Profile
-    </button>
-</div>

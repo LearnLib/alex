@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.common.exceptions;
 
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
+import de.learnlib.alex.common.utils.RESTError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,7 +37,7 @@ public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundExceptio
     public Response toResponse(NotFoundException e) {
         LOGGER.info("NotFoundException caught.", e);
 
-        final ResourceErrorHandler.RESTError error = new ResourceErrorHandler.RESTError(Status.NOT_FOUND, e);
+        final RESTError error = new RESTError(Status.NOT_FOUND, e);
         return Response.status(Status.NOT_FOUND).entity(error).build();
     }
 

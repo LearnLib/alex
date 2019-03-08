@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {eqOracleType, learnAlgorithm, userRole, webBrowser} from './constants';
+import {eqOracleType, learnAlgorithm, webBrowser} from './constants';
 
 /**
  * The filter to format a EQ type constant to something more readable.
@@ -42,19 +42,6 @@ export function formatEqOracle(): (string) => string {
   };
 }
 
-export function formatParameterType(): (string) => string {
-  return type => {
-    switch (type) {
-      case 'STRING':
-        return 'String';
-      case 'COUNTER':
-        return 'Counter';
-      default:
-        return type;
-    }
-  };
-}
-
 /**
  * Sort tests. First all test suites, then all test cases. Both alphabetically.
  */
@@ -69,22 +56,6 @@ export function sortTests() {
     testCases.sort(compare);
 
     return testSuites.concat(testCases);
-  };
-}
-
-/**
- * The filter to format a user role.
- */
-export function formatUserRole(): (string) => string {
-  return role => {
-    switch (role) {
-      case userRole.ADMIN:
-        return 'Administrator';
-      case userRole.REGISTERED:
-        return 'Registered';
-      default:
-        return role;
-    }
   };
 }
 

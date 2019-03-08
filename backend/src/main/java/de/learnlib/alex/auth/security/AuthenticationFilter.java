@@ -21,6 +21,8 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.MalformedClaimException;
+import org.jose4j.jwt.NumericDate;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
@@ -92,6 +94,10 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 // if no exception was throws up to here you can be sure that the jwt has not been modified
                 // and that the user that send the jwt is the one he seems to be
                 JwtClaims claims = jwtConsumer.processToClaims(jwt);
+                if (NumericDate.now().isAfter(claims.getExpirationTime())) {
+                    requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+                }
+
                 Long id = (Long) claims.getClaimsMap().get("id");
 
                 // get user from the db
@@ -110,8 +116,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             // create injectable security context with user here
             requestContext.setSecurityContext(new AuthContext(user));
 
-        } catch (InvalidJwtException e) {
-            e.printStackTrace();
+        } catch (InvalidJwtException | MalformedClaimException e) {
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
         }
     }

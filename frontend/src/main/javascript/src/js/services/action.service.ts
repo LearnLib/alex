@@ -14,62 +14,118 @@
  * limitations under the License.
  */
 
-import {actionType} from '../constants';
-import {AssertCounterAction} from '../entities/actions/misc/assert-counter-action';
-import {AssertVariableAction} from '../entities/actions/misc/assert-variable-action';
-import {IncrementCounterGeneralAction} from '../entities/actions/misc/increment-counter-action';
-import {SetCounterGeneralAction} from '../entities/actions/misc/set-counter-action';
-import {SetVariableGeneralAction} from '../entities/actions/misc/set-variable-action';
-import {SetVariableByCookieAction} from '../entities/actions/misc/set-variable-by-cookie-action';
-import {SetVariableByHttpResponseAction} from '../entities/actions/misc/set-variable-by-http-response';
-import {SetVariableByJsonAttributeGeneralAction} from '../entities/actions/misc/set-variable-by-json-attribute-action';
-import {SetVariableByNodeGeneralAction} from '../entities/actions/misc/set-variable-by-node-action';
-import {SetVariableByNodeAttributeGeneralAction} from '../entities/actions/misc/set-variable-by-node-attribute-action';
-import {SetVariableByNodeCountAction} from '../entities/actions/misc/set-variable-by-node-count-action';
-import {SetVariableByRegexGroup} from '../entities/actions/misc/set-variable-by-regex-group-action';
-import {WaitGeneralAction} from '../entities/actions/misc/wait-action';
-import {CheckAttributeExistsRestAction} from '../entities/actions/rest/check-attribute-exists-action';
-import {CheckAttributeTypeRestAction} from '../entities/actions/rest/check-attribute-type-action';
-import {CheckAttributeValueRestAction} from '../entities/actions/rest/check-attribute-value-action';
-import {CheckHeaderFieldRestAction} from '../entities/actions/rest/check-header-field-action';
-import {CheckHTTPBodyTextRestAction} from '../entities/actions/rest/check-http-body-action';
-import {CheckStatusRestAction} from '../entities/actions/rest/check-status-action';
-import {CallRestAction} from '../entities/actions/rest/request-action';
-import {ValidateJsonAction} from '../entities/actions/rest/validate-json-action';
-import {AlertAcceptDismissAction} from '../entities/actions/web/alert-accept-dismiss-action';
-import {AlertGetTextAction} from '../entities/actions/web/alert-get-text-action';
-import {AlertSendKeysAction} from '../entities/actions/web/alert-send-keys-action';
-import {BrowserAction} from '../entities/actions/web/browser-action';
-import {CheckNodeAttributeValueAction} from '../entities/actions/web/check-attribute-value-action';
-import {CheckForNodeWebAction} from '../entities/actions/web/check-for-node-action';
-import {CheckForTextWebAction} from '../entities/actions/web/check-for-text-action';
-import {CheckNodeSelectedAction} from '../entities/actions/web/check-node-selected-action';
-import {CheckPageTitleAction} from '../entities/actions/web/check-page-title-action';
-import {ClearWebAction} from '../entities/actions/web/clear-action';
-import {ClickWebAction} from '../entities/actions/web/click-action';
-import {ClickElementByTextAction} from '../entities/actions/web/click-element-by-text';
-import {ClickLinkByTextWebAction} from '../entities/actions/web/click-link-by-text-action';
-import {ExecuteScriptAction} from '../entities/actions/web/execute-script-action';
-import {MoveMouseAction} from '../entities/actions/web/move-mouse-action';
-import {GoToWebAction} from '../entities/actions/web/open-url-action';
-import {PressKeyAction} from '../entities/actions/web/press-key-action';
-import {SelectWebAction} from '../entities/actions/web/select-action';
-import {FillWebAction} from '../entities/actions/web/send-keys-action';
-import {SubmitWebAction} from '../entities/actions/web/submit-action';
-import {SwitchToAction} from '../entities/actions/web/switch-to-action';
-import {SwitchToFrameAction} from '../entities/actions/web/switch-to-frame';
-import {UploadFileAction} from '../entities/actions/web/upload-file-action';
-import {WaitForNodeAction} from '../entities/actions/web/wait-for-node-action';
-import {WaitForTextAction} from '../entities/actions/web/wait-for-text-action';
-import {WaitForTitleAction} from '../entities/actions/web/wait-for-title-action';
-import {WaitForNodeAttributeAction} from '../entities/actions/web/wiat-for-node-attribute-action';
-import {SetVariableByHttpStatusAction} from '../entities/actions/misc/set-variable-by-http-status';
-import {Action} from '../entities/actions/action';
+import { actionType } from '../constants';
+import { AssertCounterAction } from '../entities/actions/misc/assert-counter-action';
+import { AssertVariableAction } from '../entities/actions/misc/assert-variable-action';
+import { IncrementCounterGeneralAction } from '../entities/actions/misc/increment-counter-action';
+import { SetCounterGeneralAction } from '../entities/actions/misc/set-counter-action';
+import { SetVariableGeneralAction } from '../entities/actions/misc/set-variable-action';
+import { SetVariableByCookieAction } from '../entities/actions/misc/set-variable-by-cookie-action';
+import { SetVariableByHttpResponseAction } from '../entities/actions/misc/set-variable-by-http-response';
+import { SetVariableByJsonAttributeGeneralAction } from '../entities/actions/misc/set-variable-by-json-attribute-action';
+import { SetVariableByNodeGeneralAction } from '../entities/actions/misc/set-variable-by-node-action';
+import { SetVariableByNodeAttributeGeneralAction } from '../entities/actions/misc/set-variable-by-node-attribute-action';
+import { SetVariableByNodeCountAction } from '../entities/actions/misc/set-variable-by-node-count-action';
+import { SetVariableByRegexGroup } from '../entities/actions/misc/set-variable-by-regex-group-action';
+import { WaitGeneralAction } from '../entities/actions/misc/wait-action';
+import { CheckAttributeExistsRestAction } from '../entities/actions/rest/check-attribute-exists-action';
+import { CheckAttributeTypeRestAction } from '../entities/actions/rest/check-attribute-type-action';
+import { CheckAttributeValueRestAction } from '../entities/actions/rest/check-attribute-value-action';
+import { CheckHeaderFieldRestAction } from '../entities/actions/rest/check-header-field-action';
+import { CheckHTTPBodyTextRestAction } from '../entities/actions/rest/check-http-body-action';
+import { CheckStatusRestAction } from '../entities/actions/rest/check-status-action';
+import { CallRestAction } from '../entities/actions/rest/request-action';
+import { ValidateJsonAction } from '../entities/actions/rest/validate-json-action';
+import { AlertAcceptDismissAction } from '../entities/actions/web/alert-accept-dismiss-action';
+import { AlertGetTextAction } from '../entities/actions/web/alert-get-text-action';
+import { AlertSendKeysAction } from '../entities/actions/web/alert-send-keys-action';
+import { BrowserAction } from '../entities/actions/web/browser-action';
+import { CheckNodeAttributeValueAction } from '../entities/actions/web/check-attribute-value-action';
+import { CheckForNodeWebAction } from '../entities/actions/web/check-for-node-action';
+import { CheckForTextWebAction } from '../entities/actions/web/check-for-text-action';
+import { CheckNodeSelectedAction } from '../entities/actions/web/check-node-selected-action';
+import { CheckPageTitleAction } from '../entities/actions/web/check-page-title-action';
+import { ClearWebAction } from '../entities/actions/web/clear-action';
+import { ClickWebAction } from '../entities/actions/web/click-action';
+import { ClickElementByTextAction } from '../entities/actions/web/click-element-by-text';
+import { ClickLinkByTextWebAction } from '../entities/actions/web/click-link-by-text-action';
+import { ExecuteScriptAction } from '../entities/actions/web/execute-script-action';
+import { MoveMouseAction } from '../entities/actions/web/move-mouse-action';
+import { GoToWebAction } from '../entities/actions/web/open-url-action';
+import { PressKeyAction } from '../entities/actions/web/press-key-action';
+import { SelectWebAction } from '../entities/actions/web/select-action';
+import { FillWebAction } from '../entities/actions/web/send-keys-action';
+import { SubmitWebAction } from '../entities/actions/web/submit-action';
+import { SwitchToAction } from '../entities/actions/web/switch-to-action';
+import { SwitchToFrameAction } from '../entities/actions/web/switch-to-frame';
+import { UploadFileAction } from '../entities/actions/web/upload-file-action';
+import { WaitForNodeAction } from '../entities/actions/web/wait-for-node-action';
+import { WaitForTextAction } from '../entities/actions/web/wait-for-text-action';
+import { WaitForTitleAction } from '../entities/actions/web/wait-for-title-action';
+import { WaitForNodeAttributeAction } from '../entities/actions/web/wiat-for-node-attribute-action';
+import { SetVariableByHttpStatusAction } from '../entities/actions/misc/set-variable-by-http-status';
+import { Action } from '../entities/actions/action';
 
 /**
  * The service that is used to create new actions.
  */
 export class ActionService {
+  private registry = {
+    // web actions
+    [actionType.WEB_ALERT_ACCEPT_DISMISS]: (data) => new AlertAcceptDismissAction(data),
+    [actionType.WEB_ALERT_GET_TEXT]: (data) => new AlertGetTextAction(data),
+    [actionType.WEB_ALERT_SEND_KEYS]: (data) => new AlertSendKeysAction(data),
+    [actionType.WEB_BROWSER]: (data) => new BrowserAction(data),
+    [actionType.WEB_SELECT]: (data) => new SelectWebAction(data),
+    [actionType.WEB_SUBMIT]: (data) => new SubmitWebAction(data),
+    [actionType.WEB_GO_TO]: (data) => new GoToWebAction(data),
+    [actionType.WEB_FILL]: (data) => new FillWebAction(data),
+    [actionType.WEB_EXECUTE_SCRIPT]: (data) => new ExecuteScriptAction(data),
+    [actionType.WEB_CLICK]: (data) => new ClickWebAction(data),
+    [actionType.WEB_MOUSE_MOVE]: (data) => new MoveMouseAction(data),
+    [actionType.WEB_CLICK_ELEMENT_BY_TEXT]: (data) => new ClickElementByTextAction(data),
+    [actionType.WEB_CLICK_LINK_BY_TEXT]: (data) => new ClickLinkByTextWebAction(data),
+    [actionType.WEB_CLEAR]: (data) => new ClearWebAction(data),
+    [actionType.WEB_CHECK_PAGE_TITLE]: (data) => new CheckPageTitleAction(data),
+    [actionType.WEB_CHECK_TEXT]: (data) => new CheckForTextWebAction(data),
+    [actionType.WEB_CHECK_NODE]: (data) => new CheckForNodeWebAction(data),
+    [actionType.WEB_CHECK_NODE_SELECTED]: (data) => new CheckNodeSelectedAction(data),
+    [actionType.WEB_PRESS_KEY]: (data) => new PressKeyAction(data),
+    [actionType.WEB_CHECK_ATTRIBUTE_VALUE]: (data) => new CheckNodeAttributeValueAction(data),
+    [actionType.WEB_SWITCH_TO]: (data) => new SwitchToAction(data),
+    [actionType.WEB_SWITCH_TO_FRAME]: (data) => new SwitchToFrameAction(data),
+    [actionType.WEB_UPLOAD_FILE]: (data) => new UploadFileAction(data),
+
+    // rest actions
+    [actionType.REST_CALL]: (data) => new CallRestAction(data),
+    [actionType.REST_CHECK_ATTRIBUTE_EXISTS]: (data) => new CheckAttributeExistsRestAction(data),
+    [actionType.REST_CHECK_ATTRIBUTE_TYPE]: (data) => new CheckAttributeTypeRestAction(data),
+    [actionType.REST_CHECK_ATTRIBUTE_VALUE]: (data) => new CheckAttributeValueRestAction(data),
+    [actionType.REST_CHECK_HEADER_FIELD]: (data) => new CheckHeaderFieldRestAction(data),
+    [actionType.REST_CHECK_FOR_TEXT]: (data) => new CheckHTTPBodyTextRestAction(data),
+    [actionType.REST_CHECK_STATUS]: (data) => new CheckStatusRestAction(data),
+    [actionType.REST_VALIDATE_JSON]: (data) => new ValidateJsonAction(data),
+
+    // general actions
+    [actionType.GENERAL_ASSERT_COUNTER]: (data) => new AssertCounterAction(data),
+    [actionType.GENERAL_ASSERT_VARIABLE]: (data) => new AssertVariableAction(data),
+    [actionType.GENERAL_INCREMENT_COUNTER]: (data) => new IncrementCounterGeneralAction(data),
+    [actionType.GENERAL_SET_COUNTER]: (data) => new SetCounterGeneralAction(data),
+    [actionType.GENERAL_SET_VARIABLE_BY_COOKIE]: (data) => new SetVariableByCookieAction(data),
+    [actionType.GENERAL_SET_VARIABLE_BY_JSON]: (data) => new SetVariableByJsonAttributeGeneralAction(data),
+    [actionType.GENERAL_SET_VARIABLE_BY_HTML]: (data) => new SetVariableByNodeGeneralAction(data),
+    [actionType.GENERAL_SET_VARIABLE_BY_HTTP_RESPONSE]: (data) => new SetVariableByHttpResponseAction(data),
+    [actionType.GENERAL_SET_VARIABLE_BY_HTTP_STATUS]: (data) => new SetVariableByHttpStatusAction(data),
+    [actionType.GENERAL_SET_VARIABLE]: (data) => new SetVariableGeneralAction(data),
+    [actionType.GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE]: (data) => new SetVariableByNodeAttributeGeneralAction(data),
+    [actionType.GENERAL_SET_VARIABLE_BY_NODE_COUNT]: (data) => new SetVariableByNodeCountAction(data),
+    [actionType.GENERAL_SET_VARIABLE_BY_REGEX_GROUP]: (data) => new SetVariableByRegexGroup(data),
+    [actionType.WAIT]: (data) => new WaitGeneralAction(data),
+    [actionType.WAIT_FOR_TITLE]: (data) => new WaitForTitleAction(data),
+    [actionType.WAIT_FOR_NODE]: (data) => new WaitForNodeAction(data),
+    [actionType.WAIT_FOR_TEXT]: (data) => new WaitForTextAction(data),
+    [actionType.WAIT_FOR_NODE_ATTRIBUTE]: (data) => new WaitForNodeAttributeAction(data),
+  };
 
   /**
    * Creates an action from a given object.
@@ -78,112 +134,7 @@ export class ActionService {
    * @returns The created action.
    */
   create(data: any): Action {
-    switch (data.type) {
-
-      // web actions
-      case actionType.WEB_ALERT_ACCEPT_DISMISS:
-        return new AlertAcceptDismissAction(data);
-      case actionType.WEB_ALERT_GET_TEXT:
-        return new AlertGetTextAction(data);
-      case actionType.WEB_ALERT_SEND_KEYS:
-        return new AlertSendKeysAction(data);
-      case actionType.WEB_BROWSER:
-        return new BrowserAction(data);
-      case actionType.WEB_SELECT:
-        return new SelectWebAction(data);
-      case actionType.WEB_SUBMIT:
-        return new SubmitWebAction(data);
-      case actionType.WEB_GO_TO:
-        return new GoToWebAction(data);
-      case actionType.WEB_FILL:
-        return new FillWebAction(data);
-      case actionType.WEB_EXECUTE_SCRIPT:
-        return new ExecuteScriptAction(data);
-      case actionType.WEB_CLICK:
-        return new ClickWebAction(data);
-      case actionType.WEB_MOUSE_MOVE:
-        return new MoveMouseAction(data);
-      case actionType.WEB_CLICK_ELEMENT_BY_TEXT:
-        return new ClickElementByTextAction(data);
-      case actionType.WEB_CLICK_LINK_BY_TEXT:
-        return new ClickLinkByTextWebAction(data);
-      case actionType.WEB_CLEAR:
-        return new ClearWebAction(data);
-      case actionType.WEB_CHECK_PAGE_TITLE:
-        return new CheckPageTitleAction(data);
-      case actionType.WEB_CHECK_TEXT:
-        return new CheckForTextWebAction(data);
-      case actionType.WEB_CHECK_NODE:
-        return new CheckForNodeWebAction(data);
-      case actionType.WEB_CHECK_NODE_SELECTED:
-        return new CheckNodeSelectedAction(data);
-      case actionType.WEB_PRESS_KEY:
-        return new PressKeyAction(data);
-      case actionType.WEB_CHECK_ATTRIBUTE_VALUE:
-        return new CheckNodeAttributeValueAction(data);
-      case actionType.WEB_SWITCH_TO:
-        return new SwitchToAction(data);
-      case actionType.WEB_SWITCH_TO_FRAME:
-        return new SwitchToFrameAction(data);
-      case actionType.WEB_UPLOAD_FILE:
-        return new UploadFileAction(data);
-
-      // rest actions
-      case actionType.REST_CALL:
-        return new CallRestAction(data);
-      case actionType.REST_CHECK_ATTRIBUTE_EXISTS:
-        return new CheckAttributeExistsRestAction(data);
-      case actionType.REST_CHECK_ATTRIBUTE_TYPE:
-        return new CheckAttributeTypeRestAction(data);
-      case actionType.REST_CHECK_ATTRIBUTE_VALUE:
-        return new CheckAttributeValueRestAction(data);
-      case actionType.REST_CHECK_HEADER_FIELD:
-        return new CheckHeaderFieldRestAction(data);
-      case actionType.REST_CHECK_FOR_TEXT:
-        return new CheckHTTPBodyTextRestAction(data);
-      case actionType.REST_CHECK_STATUS:
-        return new CheckStatusRestAction(data);
-      case actionType.REST_VALIDATE_JSON:
-        return new ValidateJsonAction(data);
-
-      // general actions
-      case actionType.GENERAL_ASSERT_COUNTER:
-        return new AssertCounterAction(data);
-      case actionType.GENERAL_ASSERT_VARIABLE:
-        return new AssertVariableAction(data);
-      case actionType.GENERAL_INCREMENT_COUNTER:
-        return new IncrementCounterGeneralAction(data);
-      case actionType.GENERAL_SET_COUNTER:
-        return new SetCounterGeneralAction(data);
-      case actionType.GENERAL_SET_VARIABLE_BY_COOKIE:
-        return new SetVariableByCookieAction(data);
-      case actionType.GENERAL_SET_VARIABLE_BY_JSON:
-        return new SetVariableByJsonAttributeGeneralAction(data);
-      case actionType.GENERAL_SET_VARIABLE_BY_HTML:
-        return new SetVariableByNodeGeneralAction(data);
-      case actionType.GENERAL_SET_VARIABLE_BY_HTTP_RESPONSE:
-        return new SetVariableByHttpResponseAction(data);
-      case actionType.GENERAL_SET_VARIABLE_BY_HTTP_STATUS:
-        return new SetVariableByHttpStatusAction(data);
-      case actionType.GENERAL_SET_VARIABLE:
-        return new SetVariableGeneralAction(data);
-      case actionType.GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE:
-        return new SetVariableByNodeAttributeGeneralAction(data);
-      case actionType.GENERAL_SET_VARIABLE_BY_NODE_COUNT:
-        return new SetVariableByNodeCountAction(data);
-      case actionType.GENERAL_SET_VARIABLE_BY_REGEX_GROUP:
-        return new SetVariableByRegexGroup(data);
-      case actionType.WAIT:
-        return new WaitGeneralAction(data);
-      case actionType.WAIT_FOR_TITLE:
-        return new WaitForTitleAction(data);
-      case actionType.WAIT_FOR_NODE:
-        return new WaitForNodeAction(data);
-      case actionType.WAIT_FOR_TEXT:
-        return new WaitForTextAction(data);
-      case actionType.WAIT_FOR_NODE_ATTRIBUTE:
-        return new WaitForNodeAttributeAction(data);
-    }
+    return this.registry[data.type](data);
   }
 
   /**

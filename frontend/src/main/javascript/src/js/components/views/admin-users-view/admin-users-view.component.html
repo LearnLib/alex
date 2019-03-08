@@ -48,7 +48,7 @@
                         <span
                             class="badge"
                             ng-class="user.role === 'ADMIN' ? 'badge-danger' : 'badge-primary'"
-                            ng-bind="user.role | formatUserRole"
+                            ng-bind="user.role | normalizeUpperCase"
                         >
                         </span>
                     </td>

@@ -139,7 +139,6 @@ import {webhookEditModalComponent} from './components/modals/webhook-edit-modal/
 import {observationTableComponent} from './components/observation-table/observation-table.component';
 import {projectListComponent} from './components/project-list/project-list.component';
 import {projectUrlListComponent} from './components/project-url-list/project-url-list.component';
-import {responsiveIframeComponent} from './components/responsive-iframe/responsive-iframe.component';
 import {searchFormComponent} from './components/search-form/search-form.component';
 import {selectableCheckboxMultipleComponent} from './components/selectable-checkbox-multiple/selectable-checkbox-multiple.component';
 import {selectableCheckboxComponent} from './components/selectable-checkbox/selectable-checkbox.component';
@@ -201,8 +200,6 @@ import {
   formatAlgorithm,
   formatEqOracle,
   formatMilliseconds,
-  formatParameterType,
-  formatUserRole,
   formatWebBrowser,
   normalizeUpperCase,
   sortTests
@@ -249,6 +246,7 @@ import {ltsFormulaEditModalComponent} from './components/modals/lts-formula-edit
 import {symbolSelectDropdownComponent} from './components/symbol-select-dropdown/symbol-select-dropdown.component';
 import {unauthorizedHttpInterceptor} from './utils/unauthorized-http-interceptor';
 import {logoutViewComponent} from './components/views/logout-view/logout-view.component';
+import { defaultWebdriverButtonComponent } from './components/views/admin-settings-view/default-webdriver-button/default-webdriver-button.component';
 
 angular
   .module('ALEX', [
@@ -281,10 +279,8 @@ angular
   .filter('formatEqOracle', formatEqOracle)
   .filter('formatAlgorithm', formatAlgorithm)
   .filter('formatMilliseconds', formatMilliseconds)
-  .filter('formatUserRole', formatUserRole)
   .filter('formatWebBrowser', formatWebBrowser)
   .filter('sortTests', sortTests)
-  .filter('formatParameterType', formatParameterType)
   .filter('normalizeUpperCase', normalizeUpperCase)
 
   // factories
@@ -489,7 +485,6 @@ angular
   .component('loadScreen', loadScreenComponent)
   .component('projectList', projectListComponent)
   .component('sidebar', sidebarComponent)
-  .component('responsiveIframe', responsiveIframeComponent)
   .component('viewHeader', viewHeaderComponent)
   .component('learnerResultPanel', learnerResultPanelComponent)
   .component('learnerResultPanelTestingView', learnerResultPanelTestingViewComponent)
@@ -520,6 +515,7 @@ angular
   .component('testCaseExpectedResult', testCaseExpectedResultComponent)
   .component('pagination', paginationComponent)
   .component('testSuiteTree', testSuiteTreeComponent)
-  .component('ltsFormulaList', ltsFormulaListComponent);
+  .component('ltsFormulaList', ltsFormulaListComponent)
+  .component('defaultWebdriverButton', defaultWebdriverButtonComponent);
 
 angular.bootstrap(document, ['ALEX']);

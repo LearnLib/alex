@@ -43,11 +43,17 @@ public enum EventType {
     /** Fired when a symbol is updated, moved or hidden. */
     SYMBOL_UPDATED,
 
+    /** Fired when a symbol is deleted permanently. */
+    SYMBOL_DELETED,
+
     /** Fired when multiple symbols are created. */
     SYMBOLS_CREATED,
 
     /** Fired when multiple symbols are updated, moved or hidden. */
     SYMBOLS_UPDATED,
+
+    /** Fired when multiple symbols are deleted. */
+    SYMBOLS_DELETED,
 
     /** Fired when a symbol group is created. */
     SYMBOL_GROUP_CREATED,

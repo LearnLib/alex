@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.common.exceptions;
 
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
+import de.learnlib.alex.common.utils.RESTError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,7 +37,7 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
     public Response toResponse(ValidationException e) {
         LOGGER.info("ValidationException caught.", e);
 
-        final ResourceErrorHandler.RESTError error = new ResourceErrorHandler.RESTError(Response.Status.BAD_REQUEST, e);
+        final RESTError error = new RESTError(Response.Status.BAD_REQUEST, e);
         return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
     }
 }

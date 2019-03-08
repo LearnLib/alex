@@ -14,34 +14,28 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm} from '../constants';
+import { learnAlgorithm } from '../constants';
 
 /**
  * The service to create new eq oracles.
  */
 export class LearningAlgorithmService {
+  private registry = {
+    [learnAlgorithm.DHC]: () => ({name: learnAlgorithm.DHC}),
+    [learnAlgorithm.DT]: () => ({name: learnAlgorithm.DT}),
+    [learnAlgorithm.LSTAR]: () => ({name: learnAlgorithm.LSTAR}),
+    [learnAlgorithm.KEARNS_VAZIRANI]: () => ({name: learnAlgorithm.KEARNS_VAZIRANI}),
+    [learnAlgorithm.TTT]: () => ({name: learnAlgorithm.TTT}),
+  };
 
   /**
    * Creates an eqOracle from a given type.
    *
-   * @param obj The object to create the algorithm from.
+   * @param data The data to create the algorithm from.
    * @returns The created learning algorithm config object.
    */
-  create(obj: any): any {
-    switch (obj.type) {
-      case learnAlgorithm.DHC:
-        return {name: learnAlgorithm.DHC};
-      case learnAlgorithm.DT:
-        return {name: learnAlgorithm.DT};
-      case learnAlgorithm.LSTAR:
-        return {name: learnAlgorithm.LSTAR};
-      case learnAlgorithm.KEARNS_VAZIRANI:
-        return {name: learnAlgorithm.KEARNS_VAZIRANI};
-      case learnAlgorithm.TTT:
-        return {name: learnAlgorithm.TTT};
-      default:
-        return null;
-    }
+  create(data: any): any {
+    return this.registry[data.type]();
   }
 
   /**

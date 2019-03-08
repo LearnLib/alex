@@ -6,11 +6,9 @@
 
       <div>
         <h4 class="m-0">
-          <i class="fas fa-fw fa-file-alt"></i> {{vm.test.name}}
+          <i class="fas fa-fw fa-file-alt"></i>
+          <a ui-sref="test({projectId: vm.project.id, testId: vm.test.id})">{{vm.test.name}}</a>
         </h4>
-        <a style="margin-left: 2.2rem" ui-sref="test({projectId: vm.project.id, testId: vm.test.id})">
-          (<i class="fas fa-fw fa-edit"></i> Edit)
-        </a>
       </div>
       <hr>
 

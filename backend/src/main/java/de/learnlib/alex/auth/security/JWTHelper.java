@@ -22,6 +22,7 @@ import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.NumericDate;
 import org.jose4j.lang.JoseException;
 
 /**
@@ -76,15 +77,20 @@ public final class JWTHelper {
      */
     public static String generateJWT(User user) throws JoseException {
         // generate claims with user data
-        JwtClaims claims = new JwtClaims();
+        final JwtClaims claims = new JwtClaims();
         claims.setIssuer("ALEX");
         claims.setGeneratedJwtId();
         claims.setClaim("id", user.getId());
         claims.setClaim("role", user.getRole());
         claims.setClaim("email", user.getEmail());
+        claims.setIssuedAt(NumericDate.now());
+
+        final NumericDate expirationDate = NumericDate.now();
+        expirationDate.addSeconds(604800);
+        claims.setExpirationTime(expirationDate);
 
         // create signature
-        JsonWebSignature jws = new JsonWebSignature();
+        final JsonWebSignature jws = new JsonWebSignature();
         jws.setPayload(claims.toJson());
         jws.setKey(getKey().getPrivateKey());
         jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);

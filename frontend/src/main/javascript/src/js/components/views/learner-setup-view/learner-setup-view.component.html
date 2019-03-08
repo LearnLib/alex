@@ -60,13 +60,15 @@
                         <div class="w-100">
                             Select a reset symbol <em>(required)</em>
                         </div>
-                        <symbol-select-dropdown
+                        <div class="flex-shrink-0">
+                            <symbol-select-dropdown
                                 groups="vm.groups"
                                 on-symbol-selected="vm.setResetSymbol(symbol)"
                                 variant="btn-xs btn-info"
                                 class="float-right flex-shrink-0"
-                        >
-                        </symbol-select-dropdown>
+                            >
+                            </symbol-select-dropdown>
+                        </div>
                     </div>
 
                     <div class="list-group" ng-if="vm.pResetSymbol != null">
@@ -80,7 +82,7 @@
                                 >
                                 </symbol-parameters>
                             </div>
-                            <div>
+                            <div class="flex-shrink-0">
                                 <symbol-select-dropdown
                                   groups="vm.groups"
                                   on-symbol-selected="vm.setResetSymbol(symbol)"
@@ -119,13 +121,15 @@
                         <div class="w-100">
                             Select a post symbol <em>(optional)</em>
                         </div>
-                        <symbol-select-dropdown
-                          groups="vm.groups"
-                          on-symbol-selected="vm.setPostSymbol(symbol)"
-                          variant="btn-xs btn-info"
-                          class="float-right flex-shrink-0"
-                        >
-                        </symbol-select-dropdown>
+                        <div class="flex-shrink-0">
+                            <symbol-select-dropdown
+                                groups="vm.groups"
+                                on-symbol-selected="vm.setPostSymbol(symbol)"
+                                variant="btn-xs btn-info"
+                                class="float-right flex-shrink-0"
+                            >
+                            </symbol-select-dropdown>
+                        </div>
                     </div>
 
                     <div class="list-group" ng-if="vm.pPostSymbol != null">
@@ -139,7 +143,7 @@
                                 >
                                 </symbol-parameters>
                             </div>
-                            <div style="flex-shrink: 0">
+                            <div class="flex-shrink-0">
                                 <symbol-select-dropdown
                                   groups="vm.groups"
                                   on-symbol-selected="vm.setResetSymbol(symbol)"

@@ -43,16 +43,12 @@ class UserEditFormComponent {
    * @param $state
    * @param toastService
    * @param userResource
-   * @param promptService
-   * @param projectService
    * @param userService
    */
   /* @ngInject */
   constructor(private $state: any,
               private toastService: ToastService,
               private userResource: UserResource,
-              private promptService: PromptService,
-              private projectService: ProjectService,
               private userService: UserService) {
   }
 
@@ -102,25 +98,6 @@ class UserEditFormComponent {
       })
       .catch(response => {
         this.toastService.danger('There has been an error. ' + response.data.message);
-      });
-  }
-
-  /**
-   * Deletes the user, removes the jwt on success and redirects to the index page.
-   */
-  deleteUser(): void {
-    this.promptService.confirm('Do you really want to delete this profile? All data will be permanently deleted.')
-      .then(() => {
-        this.userResource.remove(this.user)
-          .then(() => {
-            this.toastService.success('The profile has been deleted');
-            this.projectService.close();
-            this.userService.logout();
-            this.$state.go('root');
-          })
-          .catch(response => {
-            this.toastService.danger('The profile could not be deleted. ' + response.data.message);
-          });
       });
   }
 

@@ -14,46 +14,38 @@
  * limitations under the License.
  */
 
-import {eqOracleType} from '../constants';
-import {CompleteEqOracle} from '../entities/eq-oracles/complete-eq-oracle';
-import {HypothesisEqOracle} from '../entities/eq-oracles/hypothesis-eq-oracle';
-import {RandomEqOracle} from '../entities/eq-oracles/random-eq-oracle';
-import {SampleEqOracle} from '../entities/eq-oracles/sample-eq-oracle';
-import {TestSuiteEqOracle} from '../entities/eq-oracles/test-suite-eq-oracle';
-import {WMethodEqOracle} from '../entities/eq-oracles/w-method-eq-oracle';
-import {WpMethodEqOracle} from '../entities/eq-oracles/wp-method-eq-oracle';
-import {EqOracle} from '../entities/eq-oracles/eq-oracle';
+import { eqOracleType } from '../constants';
+import { CompleteEqOracle } from '../entities/eq-oracles/complete-eq-oracle';
+import { HypothesisEqOracle } from '../entities/eq-oracles/hypothesis-eq-oracle';
+import { RandomEqOracle } from '../entities/eq-oracles/random-eq-oracle';
+import { SampleEqOracle } from '../entities/eq-oracles/sample-eq-oracle';
+import { TestSuiteEqOracle } from '../entities/eq-oracles/test-suite-eq-oracle';
+import { WMethodEqOracle } from '../entities/eq-oracles/w-method-eq-oracle';
+import { WpMethodEqOracle } from '../entities/eq-oracles/wp-method-eq-oracle';
+import { EqOracle } from '../entities/eq-oracles/eq-oracle';
 
 /**
  * The service to create new eq oracles.
  */
 export class EqOracleService {
+  private registry = {
+    [eqOracleType.RANDOM]: (data) => new RandomEqOracle(data.minLength, data.maxLength, data.maxNoOfTests, data.seed),
+    [eqOracleType.COMPLETE]: (data) => new CompleteEqOracle(data.minDepth, data.maxDepth),
+    [eqOracleType.SAMPLE]: (data) => new SampleEqOracle(data.counterExamples),
+    [eqOracleType.WMETHOD]: (data) => new WMethodEqOracle(data.maxDepth),
+    [eqOracleType.HYPOTHESIS]: (data) => new HypothesisEqOracle(data.hypothesis),
+    [eqOracleType.TEST_SUITE]: (data) => new TestSuiteEqOracle(data.testSuiteId, data.includeChildTestSuites),
+    [eqOracleType.WP_METHOD]: (data) => new WpMethodEqOracle(data.maxDepth),
+  };
 
   /**
    * Creates an eqOracle from a given type.
    *
-   * @param obj The object to create the eq oracle from.
+   * @param data The data to create the eq oracle from.
    * @returns The create equivalence oracle.
    */
-  create(obj: any): EqOracle {
-    switch (obj.type) {
-      case eqOracleType.RANDOM:
-        return new RandomEqOracle(obj.minLength, obj.maxLength, obj.maxNoOfTests, obj.seed);
-      case eqOracleType.COMPLETE:
-        return new CompleteEqOracle(obj.minDepth, obj.maxDepth);
-      case eqOracleType.SAMPLE:
-        return new SampleEqOracle(obj.counterExamples);
-      case eqOracleType.WMETHOD:
-        return new WMethodEqOracle(obj.maxDepth);
-      case eqOracleType.HYPOTHESIS:
-        return new HypothesisEqOracle(obj.hypothesis);
-      case eqOracleType.TEST_SUITE:
-        return new TestSuiteEqOracle(obj.testSuiteId, obj.includeChildTestSuites);
-      case eqOracleType.WP_METHOD:
-        return new WpMethodEqOracle(obj.maxDepth);
-      default:
-        return null;
-    }
+  create(data: any): EqOracle {
+    return this.registry[data.type](data);
   }
 
   /**

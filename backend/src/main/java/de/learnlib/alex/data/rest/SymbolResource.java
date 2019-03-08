@@ -371,6 +371,7 @@ public class SymbolResource {
 
         symbolDAO.delete(user, projectId, symbolId);
         LOGGER.traceExit("deleted symbol {}", symbolId);
+        webhookService.fireEvent(user, new SymbolEvent.Deleted(symbolId));
         return Response.noContent().build();
     }
 
@@ -392,6 +393,7 @@ public class SymbolResource {
 
         symbolDAO.delete(user, projectId, symbolIds);
         LOGGER.traceExit("deleted symbols {}", symbolIds);
+        webhookService.fireEvent(user, new SymbolEvent.DeletedMany(symbolIds));
         return Response.noContent().build();
     }
 

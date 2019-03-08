@@ -30,7 +30,7 @@ public class LtsCheckingConfigTest {
     @Before
     public void before() {
         config = new LtsCheckingConfig();
-        config.setFormulaIds(Arrays.asList(1L, 2L));
+        config.setFormulas(Arrays.asList("true", "false"));
         config.setLearnerResultId(1L);
         config.setStepNo(1);
     }
@@ -42,8 +42,8 @@ public class LtsCheckingConfigTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldThrowExceptionIfResultIdIsLessThanOne() {
-        config.setLearnerResultId(0L);
+    public void shouldThrowExceptionIfResultIdIsLessThanZero() {
+        config.setLearnerResultId(-1L);
         config.validate();
     }
 
@@ -60,8 +60,8 @@ public class LtsCheckingConfigTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void shouldThrowExceptionIsFormulaIdsAreEmpty() {
-        config.setFormulaIds(Collections.emptyList());
+    public void shouldThrowExceptionIsFormulasAreEmpty() {
+        config.setFormulas(Collections.emptyList());
         config.validate();
     }
 

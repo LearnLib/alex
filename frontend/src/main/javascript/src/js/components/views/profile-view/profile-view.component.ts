@@ -18,6 +18,8 @@ import {UserResource} from '../../../services/resources/user-resource.service';
 import {UserService} from '../../../services/user.service';
 import {ToastService} from '../../../services/toast.service';
 import {User} from '../../../entities/user';
+import { PromptService } from '../../../services/prompt.service';
+import { ProjectService } from '../../../services/project.service';
 
 /**
  * The component of the user settings page.
@@ -40,7 +42,10 @@ export const profileViewComponent = {
     /* @ngInject */
     constructor(private userResource: UserResource,
                 private userService: UserService,
-                private toastService: ToastService) {
+                private toastService: ToastService,
+                private promptService: PromptService,
+                private $state: any,
+                private projectService: ProjectService) {
 
       this.user = null;
 
@@ -48,6 +53,25 @@ export const profileViewComponent = {
       this.userResource.get(this.userService.store.currentUser.id)
         .then(user => this.user = user)
         .catch(err => this.toastService.danger(`Loading the user failed. ${err.data.message}`));
+    }
+
+    /**
+     * Deletes the user, removes the jwt on success and redirects to the index page.
+     */
+    deleteProfile(): void {
+      this.promptService.confirm('Do you really want to delete this profile? All data will be permanently deleted.')
+        .then(() => {
+          this.userResource.remove(this.user)
+            .then(() => {
+              this.toastService.success('Your account has been deleted');
+              this.projectService.close();
+              this.userService.logout();
+              this.$state.go('root');
+            })
+            .catch(err => {
+              this.toastService.danger('The profile could not be deleted. ' + err.data.message);
+            });
+        });
     }
   }
 };

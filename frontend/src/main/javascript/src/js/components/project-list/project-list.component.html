@@ -1,11 +1,11 @@
 <div class="list-group">
     <div class="list-group-item d-flex flex-row" ng-if="vm.projects.length > 0" ng-repeat="project in vm.projects | orderBy:'-name':true">
         <div class="w-100">
-            <h4 class="list-group-item-heading">
+            <h5 class="list-group-item-heading">
                 <strong>
                     <a href="" ng-bind="project.name" ng-click="vm.openProject(project)"></a>
                 </strong>
-            </h4>
+            </h5>
             <p class="list-group-item-text mb-0">
                 <span ng-bind="project.getDefaultUrl().url"></span> <br>
                 <span class="text-muted" ng-if="project.description" ng-bind="project.description"></span>
