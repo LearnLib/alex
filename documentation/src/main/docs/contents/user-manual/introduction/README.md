@@ -53,7 +53,7 @@ This document contains some terms related to automata learning which are listed 
 </definition>
 
 <definition term="Word">
-    A sequence of symbols, e.g. *Authenticate, Create Entity, Read Entity, Delete Entity, Logout*.
+    A sequence of symbols, e.g. <em>Authenticate, Create Entity, Read Entity, Delete Entity, Logout</em>.
 </definition>
 
 <definition term="Learner">

@@ -11,7 +11,6 @@ module.exports = {
         sidebar: [
             ['/', 'Home'],
             ['/contents/about/', 'About'],
-            ['/contents/faq/', 'FAQ'],
             {
                 title: 'Getting started',
                 collapsable: true,
@@ -52,7 +51,8 @@ module.exports = {
                     ['/contents/dev-docs/rest-api/', 'REST API'],
                     ['/contents/dev-docs/cli/', 'CLI']
                 ]
-            }
+            },
+            ['/contents/faq/', 'FAQ'],
         ],
         nav: [
             {text: 'Homepage', link: 'https://learnlib.github.io/alex/'},

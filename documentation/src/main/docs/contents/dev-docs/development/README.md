@@ -38,8 +38,8 @@ In addition, the following parameters can be used for the build file or the `mvn
 
 ## Frontend development
 
-The frontend is developed with [AngularJS][angular] and uses ES6 features using the Babel transpiler.
-Styling in ALEX is done with [Bootstrap v3][bootstrap] and custom SASS stylesheets.
+The frontend is developed with [AngularJS][angular] and uses Typescript.
+Styling in ALEX is done with [Bootstrap v4][bootstrap] and custom SASS stylesheets.
 All frontend files can be found in *frontend/src/main/javascript*.
 
 ### NPM commands
@@ -52,8 +52,6 @@ In the *frontend/src/main/javascript* directory, use the following commands:
 | `npm run build`  | Build all the application files                                                          |
 | `npm run serve`  | Serves the frontend at *http://localhost:8080*. <br> For a custom port, add `-- -p XXXX` |
 | `npm run dev`    | Compile sass, html and js files every time their content changes                         |
-| `npm run lint`   | Check JavaScript code formatting                                                         | 
-| `npm test`       | Execute all unit tests                                                                   |
 
 ### Running the frontend
 
@@ -95,5 +93,5 @@ In the developer branch, perform the following steps:
   
 
 [angular]: https://angularjs.org/
-[bootstrap]: https://getbootstrap.com/docs/3.3/
+[bootstrap]: https://getbootstrap.com/docs/4.3/
 [docker]: https://www.docker.com

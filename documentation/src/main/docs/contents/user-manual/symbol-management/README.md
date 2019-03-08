@@ -219,7 +219,7 @@ Actions of this group allow the interaction between different symbols and action
 | Set Variable by Regex Group    | Set a variable to a group in a regex match.                         |
 | Wait                           | Wait for a specific amount of time.                                 |
 
-## Variables, counters and files
+## Variables and counters
 
 Many web applications handle dynamic data and allow file uploads. 
 In order to model and learn such behaviors and to pass data between symbols, actions and learn processes, *variables*, *counters* and *files* can be used.
