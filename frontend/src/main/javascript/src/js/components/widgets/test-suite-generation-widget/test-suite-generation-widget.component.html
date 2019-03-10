@@ -6,52 +6,43 @@
     <div class="form-group">
       <label>Name</label>
       <input
-        type="text"
-        required
-        minlength="1"
-        ng-model="vm.config.name"
-        class="form-control"
-        placeholder="The name of the generated test suite"
+          type="text"
+          required
+          minlength="1"
+          ng-model="vm.config.name"
+          class="form-control"
+          placeholder="The name of the generated test suite"
       >
     </div>
     <div class="form-group">
       <label>Step No</label>
       <input
-        type="number"
-        required
-        min="1"
-        max="{{vm.result.steps.length}}"
-        ng-model="vm.config.stepNo"
-        class="form-control"
+          type="number"
+          required
+          min="1"
+          max="{{vm.result.steps.length}}"
+          ng-model="vm.config.stepNo"
+          class="form-control"
       >
     </div>
 
-    <p>
-      <div class="form-group form-check">
-        <label class="form-check-label">
-          <input class="form-check-input" type="checkbox" ng-model="vm.config.includeParameterValues"> Include parameter values
-        </label>
-      </div>
-    </p>
+    <div class="form-group">
+      <label>Strategy</label>
+      <select class="form-control" ng-model="vm.config.method">
+        <option ng-value="'DT'">Discrimination tree</option>
+        <option ng-value="'W_METHOD'">W-Method</option>
+        <option ng-value="'WP_METHOD'">Wp-Method</option>
+      </select>
+    </div>
 
-    <p>
-      <strong>Test generation based on</strong>
-    <div class="form-group form-check mt-0">
-      <label class="form-check-label">
-        <input class="form-check-input" type="radio" ng-model="vm.config.method" name="method" ng-value="'DT'"> Discrimination tree
-      </label>
-    </div>
     <div class="form-group form-check">
       <label class="form-check-label">
-        <input class="form-check-input" type="radio" ng-model="vm.config.method" name="method" ng-value="'W_METHOD'"> W-Method
-      </label>
-    </div>
-    <div class="form-group form-check">
-      <label class="form-check-label">
-        <input class="form-check-input" type="radio" ng-model="vm.config.method" name="method" ng-value="'WP_METHOD'"> Wp-Method
+        <input class="form-check-input" type="checkbox" ng-model="vm.config.includeParameterValues"> Include parameter
+        values
       </label>
     </div>
   </div>
+
   <div class="card-footer text-right">
     <button class="btn btn-primary btn-sm" ng-click="vm.generateTestSuite()">Generate</button>
   </div>

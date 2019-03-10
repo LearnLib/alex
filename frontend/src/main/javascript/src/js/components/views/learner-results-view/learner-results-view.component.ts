@@ -126,8 +126,10 @@ class ResultsViewComponent {
    */
   showSelectedStatistics(): void {
     const selectedResults = this.selectedResults.getSelected();
-    const testNos = selectedResults.map(r => r.testNo).join(',');
-    this.$state.go('learnerResultsStatistics', {testNos, projectId: this.project.id});
+    if (selectedResults.length > 0) {
+      const testNos = selectedResults.map(r => r.testNo).join(',');
+      this.$state.go('learnerResultsStatistics', {testNos, projectId: this.project.id});
+    }
   }
 
   showStatistics(result: LearnResult): void {

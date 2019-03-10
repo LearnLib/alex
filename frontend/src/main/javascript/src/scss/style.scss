@@ -4,7 +4,6 @@
 @import "compat";
 @import "font-awesome";
 @import "hypothesis";
-@import "html-element-picker";
 @import "search-form";
 @import "test-tree";
 @import "sidebar";
@@ -36,6 +35,30 @@ body {
         max-width: $sidebar-width-collapsed;
       }
     }
+  }
+}
+
+.resize {
+  background: rgba(0,0,0,0);
+  transition: background .4s;
+  position: absolute;
+
+  &:hover {
+    background: rgba(0,0,0,.5);
+  }
+
+  &.resize-x {
+    cursor: ew-resize;
+    width: 4px;
+    top: 0;
+    bottom: 0;
+  }
+
+  &.resize-y {
+    cursor: nw-resize;
+    height: 4px;
+    left: 0;
+    right: 0;
   }
 }
 
@@ -389,11 +412,11 @@ report-charts {
   -webkit-user-select: none;
 
   .action-list-item {
-    @include selection-list-item();
+    padding: .75rem 1rem;
     user-select: none;
     -webkit-user-select: none;
     align-items: baseline;
-    padding: 6px 10px;
+    border-bottom: 1px solid #e2e2e2;
 
     &:last-of-type {
       border-bottom: 0;
@@ -485,10 +508,6 @@ test-case-view {
   }
 }
 
-.alert-container {
-  margin-top: 25px;
-}
-
 .learn-results-compare-wrapper {
   display: flex;
 }
@@ -534,14 +553,6 @@ learn-result-panel {
       display: block;
     }
   }
-}
-
-.flex-column {
-  flex-direction: column;
-}
-
-.flex-row {
-  flex-direction: row;
 }
 
 .learn-loading-indicator {
@@ -634,7 +645,6 @@ learn-resume-settings-widget {
 
   .panel-title {
     font-size: 12px;
-
   }
 
   project-list {

@@ -20,27 +20,6 @@
 }
 
 /*
- * Mixin for model lists
- */
-@mixin selection-list-item() {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  transition: background 200ms;
-
-  &:hover, &.selected {
-    background: #f2f2f2
-  }
-
-  &.ng-enter {
-    animation: fadeIn 0.2s both ease-in;
-  }
-
-  &.ng-leave {
-    animation: fadeOut 0.2s both ease-in;
-  }
-}
-
-/*
  * Mixin for ... text overflow.
  * Element should have display: block|inline-block.
  */

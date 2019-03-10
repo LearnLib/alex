@@ -15,6 +15,7 @@
  */
 
 import {LearnResult} from '../../../entities/learner-result';
+import {Resizer} from '../../../utils/resizer';
 
 /** Component for the testing view. */
 export const learnerResultPanelTestingViewComponent = {
@@ -33,8 +34,11 @@ export const learnerResultPanelTestingViewComponent = {
     public result: LearnResult;
     public pointer: number;
 
+    constructor(private $element: any) {}
+
     $onInit(): void {
       this.registerMenu({menu: []});
+      new Resizer(this.$element[0], '.resize', '.right-sidebar');
     }
   }
 };

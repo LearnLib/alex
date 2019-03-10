@@ -21,6 +21,7 @@ import {ProjectService} from '../../../services/project.service';
 import {LtsFormulaService} from '../../../services/lts-formula.service';
 import {LtsFormulaResource} from '../../../services/resources/lts-formula-resource.service';
 import {Project} from '../../../entities/project';
+import {Resizer} from '../../../utils/resizer';
 
 /** Panel view for model checking. */
 export const learnerResultPanelCheckingViewComponent = {
@@ -55,7 +56,8 @@ export const learnerResultPanelCheckingViewComponent = {
     constructor(private toastService: ToastService,
                 private projectService: ProjectService,
                 private ltsFormulaService: LtsFormulaService,
-                private ltsFormulaResource: LtsFormulaResource) {
+                private ltsFormulaResource: LtsFormulaResource,
+                private $element: any) {
 
       this.selectedFormulas = new Selectable([], 'id');
       this.results = [];
@@ -74,6 +76,8 @@ export const learnerResultPanelCheckingViewComponent = {
 
       this.ltsFormulaService.load(this.project.id)
         .then(formulas => this.selectedFormulas = new Selectable(formulas, 'id'));
+
+      new Resizer(this.$element[0], '.resize', '.right-sidebar');
     }
 
     check(): void {
