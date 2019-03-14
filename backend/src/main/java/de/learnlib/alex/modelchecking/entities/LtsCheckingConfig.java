@@ -30,7 +30,7 @@ public class LtsCheckingConfig {
     private Integer stepNo;
 
     /** The IDs of the formulas to check. */
-    private List<String> formulas;
+    private List<LtsFormula> formulas;
 
     /** How many unfolds are used for checking. */
     private Integer minUnfolds;
@@ -61,11 +61,11 @@ public class LtsCheckingConfig {
         this.stepNo = stepNo;
     }
 
-    public List<String> getFormulas() {
+    public List<LtsFormula> getFormulas() {
         return formulas;
     }
 
-    public void setFormulas(List<String> formulas) {
+    public void setFormulas(List<LtsFormula> formulas) {
         this.formulas = formulas;
     }
 

@@ -25,6 +25,9 @@ import java.util.List;
 /** The counterexample of a model check. */
 public class LtsCheckingResult {
 
+    /** The forumla that has been checked. */
+    private LtsFormula formula;
+
     /** The prefix of the counterexample. */
     private List<String> prefix;
 
@@ -32,7 +35,8 @@ public class LtsCheckingResult {
     private List<String> loop;
 
     /** Constructor. */
-    public LtsCheckingResult() {
+    public LtsCheckingResult(LtsFormula formula) {
+        this.formula = formula;
         this.prefix = new ArrayList<>();
         this.loop = new ArrayList<>();
     }
@@ -45,7 +49,8 @@ public class LtsCheckingResult {
      * @param loop
      *         {@link #loop}
      */
-    public LtsCheckingResult(Word<String> prefix, Word<String> loop) {
+    public LtsCheckingResult(LtsFormula formula, Word<String> prefix, Word<String> loop) {
+        this.formula = formula;
         this.prefix = prefix.asList();
         this.loop = loop.asList();
     }
@@ -64,6 +69,14 @@ public class LtsCheckingResult {
 
     public void setLoop(List<String> loop) {
         this.loop = loop;
+    }
+
+    public LtsFormula getFormula() {
+        return formula;
+    }
+
+    public void setFormula(LtsFormula formula) {
+        this.formula = formula;
     }
 
     /**

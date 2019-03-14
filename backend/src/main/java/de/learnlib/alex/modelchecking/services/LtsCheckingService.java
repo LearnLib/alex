@@ -23,6 +23,7 @@ import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingConfig;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingResult;
+import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.modelcheckers.ltsmin.ltl.LTSminLTLIO;
 import net.automatalib.modelcheckers.ltsmin.ltl.LTSminLTLIOBuilder;
@@ -83,12 +84,12 @@ public class LtsCheckingService {
 
         final List<LtsCheckingResult> results = new ArrayList<>();
 
-        for (String formula : config.getFormulas()) {
-            final Lasso.MealyLasso<String, String> ce = ltsmin.findCounterExample(hypothesis, alphabet, formula);
+        for (LtsFormula formula : config.getFormulas()) {
+            final Lasso.MealyLasso<String, String> ce = ltsmin.findCounterExample(hypothesis, alphabet, formula.getFormula());
             if (ce != null) {
-                results.add(new LtsCheckingResult(ce.getPrefix(), ce.getLoop()));
+                results.add(new LtsCheckingResult(formula, ce.getPrefix(), ce.getLoop()));
             } else {
-                results.add(new LtsCheckingResult());
+                results.add(new LtsCheckingResult(formula));
             }
         }
 

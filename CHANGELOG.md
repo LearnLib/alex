@@ -11,7 +11,7 @@
 
 ## Features
 
-* LTL-based model checking using [LTSmin](https://ltsmin.utwente.nl/).
+* Basic LTL-based model checking using [LTSmin](https://ltsmin.utwente.nl/).
 * Compatibility with Java > 8.
 * Add action to set a variable by HTTP status.
 * Improved parallelisation support for learning processes.
@@ -19,6 +19,7 @@
   This only works if a symbol is not referenced by some other entity.
 * Symbol groups can have the same name when they don't share the parent group.
 * New events for when symbols are deleted permanently.
+* The JWT expires after 7 days.
 
 ## Fixes
 

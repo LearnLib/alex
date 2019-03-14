@@ -22,6 +22,7 @@ import {LtsFormulaService} from '../../../services/lts-formula.service';
 import {LtsFormulaResource} from '../../../services/resources/lts-formula-resource.service';
 import {Project} from '../../../entities/project';
 import {Resizer} from '../../../utils/resizer';
+import * as _ from 'lodash';
 
 /** Panel view for model checking. */
 export const learnerResultPanelCheckingViewComponent = {
@@ -43,6 +44,7 @@ export const learnerResultPanelCheckingViewComponent = {
     public selectedFormulas: Selectable<any>;
     public config: any;
     public results: any;
+    public manualFormula: string;
 
     /**
      * Constructor.
@@ -60,7 +62,7 @@ export const learnerResultPanelCheckingViewComponent = {
                 private $element: any) {
 
       this.selectedFormulas = new Selectable([], 'id');
-      this.results = [];
+      this.results = {};
 
       this.config = {
         minUnfolds: 3,
@@ -80,12 +82,24 @@ export const learnerResultPanelCheckingViewComponent = {
       new Resizer(this.$element[0], '.resize', '.right-sidebar');
     }
 
+    addManualFormula() {
+      if (this.manualFormula != null && this.manualFormula.trim() !== '') {
+        const formula = {
+          formula: this.manualFormula,
+          id: -1 * _.uniqueId()
+        };
+        this.formulas.unshift(formula);
+        this.selectedFormulas.select(formula);
+        this.manualFormula = '';
+      }
+    }
+
     check(): void {
       this.results = {};
 
       this.config.learnerResultId = this.result.testNo;
       this.config.stepNo = this.pointer + 1;
-      this.config.formulas = this.selectedFormulas.getSelected().map(f => f.formula);
+      this.config.formulas = this.selectedFormulas.getSelected();
 
       if (this.config.formulas.length === 0) {
         this.toastService.info('You have to specify at least one formula.');
@@ -93,21 +107,23 @@ export const learnerResultPanelCheckingViewComponent = {
       }
 
       this.ltsFormulaResource.check(this.project.id, this.config)
-        .then(res => this.results = res.data)
+        .then(res => {
+          res.data.forEach(f => this.results[f.formula.id] = f);
+        })
         .catch(err => this.toastService.danger(`Could not check formulas. ${err.data.message}`));
     }
 
-    getItemClass(i: number): any {
-      if (this.results[i] == null) {
+    getItemClass(id: number): any {
+      if (this.results[id] == null) {
         return {};
       } else {
-        const passed = this.results[i].passed;
+        const passed = this.results[id].passed;
         return {'list-group-item-danger': !passed, 'list-group-item-success': passed};
       }
     }
 
-    hasCounterexample(i: number): boolean {
-      const result = this.results[i];
+    hasCounterexample(id: number): boolean {
+      const result = this.results[id];
       return result != null && ((result.prefix.length + result.loop.length) > 0);
     }
 
