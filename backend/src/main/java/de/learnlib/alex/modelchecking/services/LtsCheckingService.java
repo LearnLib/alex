@@ -87,9 +87,9 @@ public class LtsCheckingService {
         for (LtsFormula formula : config.getFormulas()) {
             final Lasso.MealyLasso<String, String> ce = ltsmin.findCounterExample(hypothesis, alphabet, formula.getFormula());
             if (ce != null) {
-                results.add(new LtsCheckingResult(formula, ce.getPrefix(), ce.getLoop()));
+                results.add(new LtsCheckingResult(formula, learnerResult.getId(), step.getStepNo(), ce.getPrefix(), ce.getLoop()));
             } else {
-                results.add(new LtsCheckingResult(formula));
+                results.add(new LtsCheckingResult(formula, learnerResult.getId(), step.getStepNo()));
             }
         }
 

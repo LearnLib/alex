@@ -37,6 +37,21 @@ public enum EventType {
     /** Fired when a project is updated. */
     PROJECT_UPDATED,
 
+    /** Fired when a LTS formula is created. */
+    LTS_FORMULA_CREATED,
+
+    /** Fired when a LTS formula is updated. */
+    LTS_FORMULA_UPDATED,
+
+    /** Fired when a LTS formula is deleted. */
+    LTS_FORMULA_DELETED,
+
+    /** Fired when LTS formulas are deleted at once. */
+    LTS_FORMULAS_DELETED,
+
+    /** Fired when LTS formulas have been checked. */
+    LTS_FORMULAS_CHECKED,
+
     /** Fired when a symbol is created. */
     SYMBOL_CREATED,
 

@@ -24,7 +24,9 @@ import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingConfig;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingResult;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
+import de.learnlib.alex.modelchecking.events.ModelCheckerEvent;
 import de.learnlib.alex.modelchecking.services.LtsCheckingService;
+import de.learnlib.alex.webhooks.services.WebhookService;
 import net.automatalib.exception.ModelCheckingException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,12 +58,18 @@ public class LtsFormulaResource {
     @Context
     private SecurityContext securityContext;
 
-    /** The DAO for lts formulas. */
-    @Inject
     private LtsFormulaDAO ltsFormulaDAO;
+    private LtsCheckingService ltsCheckingService;
+    private WebhookService webhookService;
 
     @Inject
-    private LtsCheckingService ltsCheckingService;
+    public LtsFormulaResource(LtsFormulaDAO ltsFormulaDAO,
+                              LtsCheckingService ltsCheckingService,
+                              WebhookService webhookService) {
+        this.ltsFormulaDAO = ltsFormulaDAO;
+        this.ltsCheckingService = ltsCheckingService;
+        this.webhookService = webhookService;
+    }
 
     /**
      * Get all lts formulas in a project.
@@ -98,6 +106,7 @@ public class LtsFormulaResource {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final LtsFormula createdFormula = ltsFormulaDAO.create(user, projectId, formula);
 
+        webhookService.fireEvent(user, new ModelCheckerEvent.Created(createdFormula));
         LOGGER.traceExit("create create() with formula: {}", createdFormula);
         return Response.status(Response.Status.CREATED).entity(createdFormula).build();
     }
@@ -124,6 +133,7 @@ public class LtsFormulaResource {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final LtsFormula updatedFormula = ltsFormulaDAO.update(user, projectId, formula);
 
+        webhookService.fireEvent(user, new ModelCheckerEvent.Updated(updatedFormula));
         LOGGER.traceExit("leave update() with formula: {}", updatedFormula);
         return Response.ok(updatedFormula).build();
     }
@@ -145,6 +155,7 @@ public class LtsFormulaResource {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         ltsFormulaDAO.delete(user, projectId, formulaId);
 
+        webhookService.fireEvent(user, new ModelCheckerEvent.Deleted(formulaId));
         LOGGER.traceExit("leave delete()");
         return Response.noContent().build();
     }
@@ -166,6 +177,7 @@ public class LtsFormulaResource {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         ltsFormulaDAO.delete(user, projectId, formulaIds);
 
+        webhookService.fireEvent(user, new ModelCheckerEvent.DeletedMany(formulaIds));
         LOGGER.traceExit("leave delete()");
         return Response.noContent().build();
     }
@@ -190,6 +202,7 @@ public class LtsFormulaResource {
         config.validate();
         try {
             final List<LtsCheckingResult> results = ltsCheckingService.check(user, projectId, config);
+            webhookService.fireEvent(user, new ModelCheckerEvent.CheckedMany(results));
             LOGGER.traceExit("leave check() with {}", results);
             return Response.ok(results).build();
         } catch (ModelCheckingException e) {

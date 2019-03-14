@@ -19,6 +19,7 @@
   This only works if a symbol is not referenced by some other entity.
 * Symbol groups can have the same name when they don't share the parent group.
 * New events for when symbols are deleted permanently.
+* New model checker related events.
 * The JWT expires after 7 days.
 
 ## Fixes
