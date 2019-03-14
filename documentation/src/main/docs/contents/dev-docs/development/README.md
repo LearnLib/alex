@@ -32,8 +32,9 @@ In addition, the following parameters can be used for the build file or the `mvn
 | `chromeDriver`    | The absolute path to the Chrome driver executable on your system                                      |
 | `edgeDriver`      | The absolute path to the Edge driver executable on your system                                        |
 | `firefoxDriver`   | The absolute path to the Gecko driver executable on your system                                       |
+| `ieDriver`        | The absolute path to the Internet Explorer executable                                                 |
 | `remoteDriver`    | The URI to the remote Selenium server                                                                 |
-| `ltsmin.path`    | The path to the compiles binaries of the LTSmin library                                               |
+| `ltsmin.path`     | The path to the compiles binaries of the LTSmin library                                               |
 
 
 ## Frontend development
@@ -55,7 +56,7 @@ In the *frontend/src/main/javascript* directory, use the following commands:
 
 ### Running the frontend
 
-Since the frontend and the backend are decoupled from each other, we have to configure the address of the backend, so that all HTTP requests go to the correct server. 
+Since the frontend and the backend are decoupled from each other, you have to configure the address of the backend, so that all HTTP requests go to the correct server. 
 Edit the file *environments.js* accordingly:
 
 ```javascript

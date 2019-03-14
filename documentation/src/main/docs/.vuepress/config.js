@@ -10,7 +10,6 @@ module.exports = {
         sidebarDepth: 2,
         sidebar: [
             ['/', 'Home'],
-            ['/contents/about/', 'About'],
             {
                 title: 'Getting started',
                 collapsable: true,
@@ -53,6 +52,7 @@ module.exports = {
                 ]
             },
             ['/contents/faq/', 'FAQ'],
+            ['/contents/about/', 'About']
         ],
         nav: [
             {text: 'Homepage', link: 'https://learnlib.github.io/alex/'},

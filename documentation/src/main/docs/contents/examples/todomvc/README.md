@@ -4,7 +4,7 @@
 
 In this section, we present all the necessary files and steps in order to learn the majority of all stable implementation of the [TodoMVC](http://todomvc.com/) project.
 The symbol sets that we used to learn implementation of TodoMVC can be downloaded from here: [todomvc-symbols.zip](./assets/todomvc-symbols.zip).
-In the archive, there is directory *"single"* and a directory *"multiple""*.
+In the archive, there is directory *"single"* and a directory *"multiple"*.
 The first one contains symbol sets for learning TodoMVC with only one todo at a time.
 The latter directory contains symbol sets for learning TodoMVC with two todos at a time.
 

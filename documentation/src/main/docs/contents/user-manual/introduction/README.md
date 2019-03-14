@@ -85,15 +85,13 @@ The following graphic illustrates the general learning process and thus the rela
 
 <img src="./assets/aal.jpg" style="display: block; width: 70%; margin: auto">
 
+
 ## Workflow
 
-Roughly speaking, the functionality of ALEX can be separated in two aspects: *testing* and *learning*.
-The following diagram illustrates the basic workflow.
+ALEX covers all aspects of *learning-based testing*.
+The following diagram illustrates how the tool supports learning, testing and model checking of web applications.
 
-<img src="./assets/workflow.png" style="display: block; width: 70%; margin: auto">
-
-As you can see, the difference between testing and learning is that while tests either pass or fail to execute, a behavioral model is generated while learning.
-In this user manual, we will go deeper into the single steps listed in the diagram.
+<img src="./assets/workflow.png" style="display: block; width: 100%; margin: auto">
 
 [learnlib]: https://learnlib.de/
 [learnlibStudio]: http://ls5-www.cs.tu-dortmund.de/projects/learnlib/download.php

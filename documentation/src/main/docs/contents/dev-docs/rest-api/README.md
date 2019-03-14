@@ -9,7 +9,15 @@ The REST API of ALEX supports authentication via [JSON Web Tokens (JWT)][jwt].
    Save it somewhere and send it with each HTTP request to the API in the HTTP-Authorization header as follows: `Authorization: Bearer THEBASE64ENCODEDTOKEN`.
 
 The token provides information about the user as a base64 encoded JSON object as payload.
-It looks like `{"email": "<EMAIL>", "id": <ID> "role": "<ROLE>"}` where the role is either *ADMIN* or *REGISTERED*.
+The payload looks like:
+
+```JSON
+{
+  "email": "<EMAIL>", 
+  "id": <ID>, 
+  "role": "<ROLE>"
+}
+```
 
 
 [jwt]: http://jwt.io/

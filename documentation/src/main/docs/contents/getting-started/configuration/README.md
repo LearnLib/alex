@@ -14,8 +14,9 @@ The following arguments can be passed to the bundled version of ALEX:
 | `chromeDriver`    | The absolute path to the Chrome driver executable on your system                              |
 | `edgeDriver`      | The absolute path to the Edge driver executable on your system                                |
 | `firefoxDriver`   | The absolute path to the Gecko driver executable on your system                               |
+| `ieDriver`        | The absolute path to the Internet Explorer executable                                         |
 | `remoteDriver`    | The URI to the remote Selenium server                                                         |
-| `ltsmin.path`    | The path to the compiles binaries of the LTSmin library                                       |
+| `ltsmin.path`     | The path to the compiles binaries of the LTSmin library                                       |
 
 
 ## Using MySQL
