@@ -30,7 +30,13 @@ public class LtsCheckingConfigTest {
     @Before
     public void before() {
         config = new LtsCheckingConfig();
-        config.setFormulas(Arrays.asList("true", "false"));
+
+        final LtsFormula f1 = new LtsFormula();
+        f1.setFormula("true");
+        final LtsFormula f2 = new LtsFormula();
+        f2.setFormula("true");
+
+        config.setFormulas(Arrays.asList(f1, f2));
         config.setLearnerResultId(1L);
         config.setStepNo(1);
     }

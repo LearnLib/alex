@@ -24,16 +24,16 @@ public class LtsCheckingResultTest {
 
     @Test
     public void shouldOnlyPassIfPrefixAndLoopAreEmpty() {
-        LtsCheckingResult result = new LtsCheckingResult();
+        LtsCheckingResult result = new LtsCheckingResult(new LtsFormula(), 1L, 1L);
         Assert.assertTrue(result.isPassed());
 
-        result = new LtsCheckingResult(Word.fromSymbols("a"), Word.epsilon());
+        result = new LtsCheckingResult(new LtsFormula(), 1L, 1L, Word.fromSymbols("a"), Word.epsilon());
         Assert.assertFalse(result.isPassed());
 
-        result = new LtsCheckingResult(Word.epsilon(), Word.fromSymbols("a"));
+        result = new LtsCheckingResult(new LtsFormula(), 1L, 1L, Word.epsilon(), Word.fromSymbols("a"));
         Assert.assertFalse(result.isPassed());
 
-        result = new LtsCheckingResult(Word.fromSymbols("b"), Word.fromSymbols("a"));
+        result = new LtsCheckingResult(new LtsFormula(), 1L, 1L, Word.fromSymbols("b"), Word.fromSymbols("a"));
         Assert.assertFalse(result.isPassed());
     }
 }
