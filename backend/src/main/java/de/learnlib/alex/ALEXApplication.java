@@ -155,7 +155,7 @@ public class ALEXApplication extends ResourceConfig {
      */
     @PostConstruct
     public void handleProperties() {
-        final String ltsminBinDir = environment.getProperty("ltsminBinDir");
+        final String ltsminBinDir = environment.getProperty("ltsmin.path");
         if (ltsminBinDir != null && !ltsminBinDir.trim().equals("")) {
             if (!Files.isDirectory(Paths.get(ltsminBinDir))) {
                 System.err.println("Cannot find directory for ltsmin binaries.");

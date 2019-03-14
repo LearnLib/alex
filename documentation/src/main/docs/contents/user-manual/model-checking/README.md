@@ -11,7 +11,7 @@ The library has to be downloaded from the homepage and extracted to a place of y
 Inside the folder, there is a *bin* directory that contains all the binaries.
 When starting ALEX, specify the path to the bin directory as an additional argument:
 
-`java -jar alex.war --ltsminBinDir=/path/to/ltsmin/bin`
+`java -jar alex.war --ltsmin.path=/path/to/ltsmin/bin`
 
 
 ## Define LTL formulas

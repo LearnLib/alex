@@ -86,7 +86,8 @@ export const learnerResultPanelCheckingViewComponent = {
       if (this.manualFormula != null && this.manualFormula.trim() !== '') {
         const formula = {
           formula: this.manualFormula,
-          id: -1 * _.uniqueId()
+          id: -1 * _.uniqueId(),
+          projectId: this.project.id
         };
         this.formulas.unshift(formula);
         this.selectedFormulas.select(formula);

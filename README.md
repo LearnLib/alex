@@ -77,11 +77,11 @@ Then, start ALEX like this:
 ## Using LTSMin
 
 ALEX uses the external [LTSMin][ltsmin] library for model checking.
-If you want to use its capabilities, download version **3.0.2** and append the `ltsminBinDir` argument to the ALEX binary on start.
+If you want to use its capabilities, download version **3.0.2** and append the `ltsmin.path` argument to the ALEX binary on start.
 The value for the argument should be the *bin* directory where the compiled binaries of LTSMin are located.
 Example:
 
-`java -jar alex-1.6.0.war --ltsminBinDir="/path/to/ltsmin/bin"`
+`java -jar alex-1.7.0.war --ltsmin.path="/path/to/ltsmin/bin"`
 
 
 
