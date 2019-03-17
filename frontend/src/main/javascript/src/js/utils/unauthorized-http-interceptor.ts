@@ -39,10 +39,8 @@ export function unauthorizedHttpInterceptor($q: IQService, $injector: IInjectorS
         userService.logout();
 
         $state.go('root');
-        return $q.reject(rejection);
-      } else {
-        return rejection;
       }
+      return $q.reject(rejection);
     }
   };
 }

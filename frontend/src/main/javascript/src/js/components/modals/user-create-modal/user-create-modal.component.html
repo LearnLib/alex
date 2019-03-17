@@ -7,11 +7,8 @@
 
 <div class="modal-body">
 
-  <div ng-if="vm.errorMessage != null">
-    <div class="alert alert-danger mb-0">
-      {{vm.errorMessage}}
-    </div>
-    <hr>
+  <div class="alert alert-danger" ng-if="vm.errorMessage != null">
+    {{vm.errorMessage}}
   </div>
 
   <form name="vm.form">

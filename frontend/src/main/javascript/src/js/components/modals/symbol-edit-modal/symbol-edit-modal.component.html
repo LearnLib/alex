@@ -9,9 +9,11 @@
 
   <div class="modal-body">
 
-    <symbol-form-groups symbol="vm.symbol" form="vm.form"></symbol-form-groups>
+    <div class="alert alert-danger" ng-if="vm.errorMsg">
+      {{vm.errorMsg}}
+    </div>
 
-    <div class="alert alert-danger alert-condensed" ng-if="vm.errorMsg" ng-bind="vm.errorMsg"></div>
+    <symbol-form-groups symbol="vm.symbol" form="vm.form"></symbol-form-groups>
 
   </div>
 

@@ -7,12 +7,9 @@
 
 <div class="modal-body">
 
-  <div ng-if="vm.error !== null">
-    <div class="alert alert-condensed alert-danger mb-0">
-      <strong>Updating the user went wrong!</strong> <br/>
-      <span ng-bind="vm.error"></span>
-    </div>
-    <hr>
+  <div class="alert alert-danger" ng-if="vm.error !== null">
+    <strong class="d-block">Could not update the user!</strong>
+    <span>{{vm.error}}</span>
   </div>
 
   <h5><strong>Email</strong></h5>

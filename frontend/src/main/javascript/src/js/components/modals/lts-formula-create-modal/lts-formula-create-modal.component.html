@@ -11,7 +11,9 @@
 
     <lts-formula-form-groups formula="vm.formula" form="vm.form"></lts-formula-form-groups>
 
-    <div class="alert alert-danger alert-condensed" ng-if="vm.errorMessage" ng-bind="vm.errorMessage"></div>
+    <div class="alert alert-danger" ng-if="vm.errorMessage">
+      {{vm.errorMessage}}
+    </div>
 
   </div>
 

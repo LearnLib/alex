@@ -7,10 +7,7 @@
 
 <div class="modal-body">
 
-  <div ng-if="vm.errorMessage != null">
-    <div class="alert alert-danger">{{vm.errorMessage}}</div>
-    <hr>
-  </div>
+  <div class="alert alert-danger" ng-if="vm.errorMessage != null">{{vm.errorMessage}}</div>
 
   <file-dropzone on-loaded="vm.fileLoaded.bind(vm)" ng-if="vm.importData == null">
     Drag and drop *.json file here or click to upload

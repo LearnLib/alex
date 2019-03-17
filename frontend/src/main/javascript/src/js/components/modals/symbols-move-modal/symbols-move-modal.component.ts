@@ -46,6 +46,8 @@ export const symbolMoveModalComponent = {
     /** The symbol group the symbols should be moved into. */
     public selectedGroup: SymbolGroup;
 
+    public errorMessage: string;
+
     /**
      * Constructor.
      *
@@ -66,6 +68,7 @@ export const symbolMoveModalComponent = {
       this.symbols = null;
       this.groups = [];
       this.selectedGroup = null;
+      this.errorMessage = null;
 
       const project: Project = projectService.store.currentProject;
       symbolGroupResource.getAll(project.id).then(groups => {
@@ -83,6 +86,7 @@ export const symbolMoveModalComponent = {
      */
     moveSymbols(): void {
       if (this.selectedGroup !== null) {
+        this.errorMessage = null;
 
         const symbolsToMove = this.symbols.map(s => new AlphabetSymbol(s));
         symbolsToMove.forEach(s => {
@@ -98,8 +102,8 @@ export const symbolMoveModalComponent = {
             });
             this.dismiss();
           })
-          .catch(response => {
-            this.toastService.danger('<p><strong>Moving symbols failed</strong></p>' + response.data.message);
+          .catch(err => {
+            this.errorMessage = "Failed to move symbols: " + err.data.message;
           });
       }
     }

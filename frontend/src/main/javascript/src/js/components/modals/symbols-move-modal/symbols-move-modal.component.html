@@ -7,6 +7,10 @@
 
 <div class="modal-body">
 
+  <div class="alert alert-danger" ng-if="vm.errorMessage != null">
+    {{vm.errorMessage}}
+  </div>
+
   <div class="alert alert-info alert-condensed">
     <span ng-bind="vm.symbols.length"></span> symbols selected
   </div>

@@ -6,15 +6,12 @@
 </div>
 
 <div class="modal-body">
-  <webhook-form webhook="vm.webhook" events="vm.events"></webhook-form>
-
-  <div ng-if="vm.errorMessage != null">
-    <hr/>
-    <div class="alert alert-condensed alert-danger mb-0">
-      <strong class="d-block">The webhook could not be created.</strong>
-      <span ng-bind="vm.errorMessage"></span>
-    </div>
+  <div class="alert alert-danger" ng-if="vm.errorMessage != null">
+    <strong class="d-block">The webhook could not be created.</strong>
+    <span>{{vm.errorMessage}}</span>
   </div>
+
+  <webhook-form webhook="vm.webhook" events="vm.events"></webhook-form>
 </div>
 
 <div class="modal-footer">

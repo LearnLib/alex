@@ -9,6 +9,10 @@
 
   <div class="modal-body">
 
+    <div class="alert alert-danger" ng-if="vm.errorMessage">
+      {{vm.errorMessage}}
+    </div>
+
     <symbol-form-groups symbol="vm.symbol" form="vm.form"></symbol-form-groups>
 
     <label>Group</label>
@@ -22,8 +26,6 @@
         </simple-symbol-group-tree>
       </div>
     </div>
-
-    <div class="alert alert-danger" ng-if="vm.errorMessage" ng-bind="vm.errorMessage"></div>
 
   </div>
 
