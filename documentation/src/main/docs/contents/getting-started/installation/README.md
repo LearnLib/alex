@@ -47,8 +47,8 @@ Run it using the instructions for running the bundled version from above.
 We also offer a Docker image that contains a Linux environment with the following software:
 
 * ALEX v1.7.0
-* Chrome v69
-* Firefox v63
+* Chrome v73
+* Firefox v66
 
 The image can be found [here](docker).
 The Docker container exposes the **port 8000** under which ALEX is available after the start.

@@ -4,7 +4,7 @@
 
 In this section, we present all the necessary files and steps in order to learn the majority of all stable implementation of the [TodoMVC](http://todomvc.com/) project.
 The symbol sets that we used to learn implementation of TodoMVC can be downloaded from here: [todomvc-symbols.zip](./assets/todomvc-symbols.zip).
-In the archive, there is directory *"single"* and a directory *"multiple"*.
+In the archive, there is directory *"single"* and a directory *"stack"*.
 The first one contains symbol sets for learning TodoMVC with only one todo at a time.
 The latter directory contains symbol sets for learning TodoMVC with two todos at a time.
 
@@ -33,7 +33,7 @@ Further, we learn the *AngularJS* implementation.
 
 3. In the sidebar, click on **Symbols > Manage**
 4. In the action bar, click on the *Import* button
-4. Drop the *angular-symbols.json* from the *single* or *multiple* directory in the provided field and click on *Import*
+4. Drop the *angular-symbols.json* from the *single* or *stack* directory in the provided field and click on *Import*
 
 ### Learn TodoMVC
 
@@ -55,7 +55,7 @@ The final hypothesis should, in most cases, look like the following:
 
 ### Increasing the number of parallel todos
 
-![increase-todos](./assets/todomvc-increase-todos.jpg)
+![increase-todos](./assets/todomvc-increase-todos.png)
 
-All symbol sets in the *multiple* directory are designed to learn TodoMVC with a maximum of two parallel todo items.
+All symbol sets in the *stack* directory are designed to learn TodoMVC with a maximum of two parallel todo items.
 If you want to lean TodoMVC with *n* parallel todo items, open the *Create ToDo* symbol and edit the first action accordingly (see image above for *n = 5*).

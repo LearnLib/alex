@@ -19,7 +19,7 @@ Make sure that you `mvn install`ed ALEX once before executing any of the followi
 
 | Command                                 | Description                                                          |
 |-----------------------------------------|----------------------------------------------------------------------|
-| `mvn test`                              | Execute all backend unit tests.                                      |
+| `mvn test`                              | Execute all backend tests.                                           |
 | `mvn checkstyle:check -Pcode-analysis`  | Check if the code style is according to the specifications.          |
 | `mvn spring-boot:run`                   | Start the REST API of ALEX.                                          |
 
@@ -39,8 +39,8 @@ In addition, the following parameters can be used for the build file or the `mvn
 
 ## Frontend development
 
-The frontend is developed with [AngularJS][angular] and uses Typescript.
-Styling in ALEX is done with [Bootstrap v4][bootstrap] and custom SASS stylesheets.
+The frontend is developed with [AngularJS][angular] and written in Typescript.
+Styling in ALEX is done with [Bootstrap v4][bootstrap] and SASS stylesheets.
 All frontend files can be found in *frontend/src/main/javascript*.
 
 ### NPM commands
@@ -48,11 +48,11 @@ All frontend files can be found in *frontend/src/main/javascript*.
 There are several NPM commands to automate the development workflow.
 In the *frontend/src/main/javascript* directory, use the following commands:
 
-| Command          | Description                                                                              |
-|------------------|------------------------------------------------------------------------------------------|
-| `npm run build`  | Build all the application files                                                          |
-| `npm run serve`  | Serves the frontend at *http://localhost:8080*. <br> For a custom port, add `-- -p XXXX` |
-| `npm run dev`    | Compile sass, html and js files every time their content changes                         |
+| Command          | Description                                                                         |
+|------------------|-------------------------------------------------------------------------------------|
+| `npm run build`  | Build all the application files                                                     |
+| `npm run serve`  | Serves the frontend at *http://localhost:8080*. For a custom port, add `-- -p XXXX` |
+| `npm run dev`    | Compile sass, html and js files every time their content changes                    |
 
 ### Running the frontend
 
@@ -69,7 +69,7 @@ export const apiUrl = '/rest';
 // export const apiUrl = 'http://localhost:8000/rest';
 ```
 
-For the local development, uncomment the second line and adjust the port where the backend is running on.
+For local development, uncomment the second line and adjust the port where the backend is running on.
 If you want to build ALEX later, the variable has to point to */rest* again.
 
 
