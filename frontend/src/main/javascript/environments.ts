@@ -14,16 +14,8 @@
  * limitations under the License.
  */
 
-/**
- * The version of ALEX.
- */
+/** The version of ALEX. */
 export const version = '1.7.0-SNAPSHOT';
 
-/**
- * API URL
- *
- * Change it to '/rest' before ALEX is packaged.
- * Otherwise change it to the URL where the API is currently running.
- */
-export const apiUrl = '/rest';
-// export const apiUrl = 'http://localhost:8000/rest';
+/** API URL */
+export const apiUrl = process.env.API_URL;

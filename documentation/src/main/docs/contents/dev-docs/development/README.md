@@ -50,27 +50,9 @@ In the *frontend/src/main/javascript* directory, use the following commands:
 
 | Command          | Description                                                                         |
 |------------------|-------------------------------------------------------------------------------------|
-| `npm run build`  | Build all the application files                                                     |
-| `npm run serve`  | Serves the frontend at *http://localhost:8080*. For a custom port, add `-- -p XXXX` |
+| `npm run build`  | Build all the application files for production use                                  |
 | `npm run dev`    | Compile sass, html and js files every time their content changes                    |
-
-### Running the frontend
-
-Since the frontend and the backend are decoupled from each other, you have to configure the address of the backend, so that all HTTP requests go to the correct server. 
-Edit the file *environments.js* accordingly:
-
-```javascript
-// environments.js
-
-// use this before packaging ALEX using 'mvn package'
-export const apiUrl = '/rest';
-
-// use this for local development when frontend and backend run separately
-// export const apiUrl = 'http://localhost:8000/rest';
-```
-
-For local development, uncomment the second line and adjust the port where the backend is running on.
-If you want to build ALEX later, the variable has to point to */rest* again.
+| `npm run serve`  | Serves the frontend at *http://localhost:8080*. For a custom port, add `-- -p XXXX` |
 
 
 ## Performing a release
@@ -82,14 +64,13 @@ In the developer branch, perform the following steps:
 1. Update the version, in the *pom.xml* files of all Maven modules and in the following files 
     * *src/main/javascript/package.json*
     * *src/main/javascript/environments.json*
-2. In *environments.json* file, make sure that the `apiUrl` constant points to the relative URL as described above.
-3. Execute `mvn clean install package` in the root directory of the repository.
+2. Execute `mvn clean install package` in the root directory of the repository.
    This will generate the executable war file in the *build/target* directory.
-4. Commit and push the changes to the developer branch.
-5. Merge the developer branch in the master branch.
-6. In the master branch, create a new tag with the new version and perform a GitHub release.
+3. Commit and push the changes to the developer branch.
+4. Merge the developer branch in the master branch.
+5. In the master branch, create a new tag with the new version and perform a GitHub release.
    Here, append the binary file generated from step 4.
-7. In the developer branch, increment the version in all files from 1. and append the *-SNAPSHOT* suffix.
+6. In the developer branch, increment the version in all files from 1. and append the *-SNAPSHOT* suffix.
   
   
 

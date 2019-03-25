@@ -7,6 +7,16 @@ module.exports = function (grunt) {
         'node_modules/n3-charts/build/LineChart.js'
     ];
 
+    const envifyDev = ['envify', {
+        API_URL: 'http://localhost:8000/rest',
+        global: true
+    }];
+
+    const envifyDist = ['envify', {
+        API_URL: '/rest',
+        global: true
+    }];
+
     const browserifyOptionsDist = {
         files: {
             '<%= buildLocation %>/js/alex.bundle.js': ['src/js/index.ts']
@@ -34,8 +44,11 @@ module.exports = function (grunt) {
             packageCache: {},
             poll: true,
             delay: 500
-        },
+        }
     }, browserifyOptionsDev.options);
+
+    browserifyOptionsDev.options.transform.push(envifyDev);
+    browserifyOptionsDist.options.transform.push(envifyDist);
 
     grunt
         .initConfig({
