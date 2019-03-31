@@ -53,6 +53,12 @@ Then, configure the equivalence approximation strategy:
     Note that the input alphabets should be the same.
 </definition>
 
+<definition term="Test Suite">
+    Uses all tests in a test suite for the counterexample search.
+    Tests that do not use the same symbols from the model's input alphabet are skipped.
+    This oracle is especially useful when having generated a test suite from a previously learned model.
+</definition>
+
 The input field for the maximum amount of steps to learn indicates how many intermediate hypotheses the learner has to generate before the learning process is stopped.
 The value *-1* means that the learner stops if no more counterexample is found.
 Another value, for example 3, would stop the learner after having generated three hypotheses, although this might not be the final one.
@@ -61,11 +67,6 @@ This way, it is possible to e.g. learn the first three steps with a randomized e
 
 In the *WebDriver* tab (right) you can configure which web browser is used for accessing the target web application during the learning process.
 Each web driver has individual options which are displayed once you select a web browser from the select input.
-
-<div class="alert alert-info">
-    Xvfb is used for Linux enviroments where no phyiscal screen is present.
-    Thus, this option can not be used if ALEX runs on a Windows machine.
-</div>
 
 Save the configuration with a click on the *Save* button.
 Finally, click on the *Start learning* button in the button group <span class="label">2</span> to start the learning process.
@@ -166,8 +167,22 @@ You can even add additional input symbols that should be included in the next it
 
 ## Test generation
 
-TODO
+1. Open any learned model
+2. Switch to the testing view by selecting the **Tests** item form the select menu on the top right
 
+Then, one option is select sequences to generate a test case from manually:
+
+3. Click the labels on the model in the corresponding order.
+   The sequence appears in the **Generate test case** widget.
+4. Give the test case a name and click on the **Generate**-button.
+   As a result, the test case will be created in the root test suite.
+
+There is also the possibility to generate a test suite from the model automatically using certain strategies.
+
+3. In the **Generate test suite** widget, select a corresponding strategy. 
+   Note that the *Discrimination tree* strategy only provides state coverage, but results in a much smaller test suite than the other methods.
+   The *W-Method* and the *Wp-Method* both provide state and transition coverage, but result in bigger test suites and the generation process might take longer.
+4. Click on the **Generate**-button to generate the test suite
 
 ## Result analysis
 

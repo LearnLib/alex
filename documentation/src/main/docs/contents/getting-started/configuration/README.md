@@ -41,7 +41,7 @@ Then, start ALEX and include the *application.properties* file as command line a
 
 <div class="alert alert-info">
     Note that there is no automated migration to a MySQL database if the file-based HSQLDB has been used before.
-    However, we found that [RazorSQL](razorsql) can help in the migration process.
+    However, we found that <a href="https://razorsql.com/" target="_blank">RazorSQL</a> can help in the migration process.
 </div>
 
 
@@ -50,12 +50,10 @@ Then, start ALEX and include the *application.properties* file as command line a
 By default, ALEX allows to execute tests in the headless [HtmlUnit](html-unit) browser.
 When logged in as a user with **admin** rights, you can also configure all other common web browsers.
 
-![webdriver1](./assets/webdrivers-1.jpg)
+![webdriver1](./assets/webdrivers.png)
 
 On the settings page, various web browsers can be configured.
 For each browser, download the corresponding driver executable (as described in the UI) and specify the *absolute path* to the executable in the corresponding field.
-
-![webdriver2](./assets/webdrivers-2.jpg)
 
 There is also the possibility to set a default web driver for executing tests.
 Therefor, select the corresponding browser from a dropdown list on the same page.
@@ -64,7 +62,7 @@ Ensure that the driver executable is setup before selecting a browser.
 
 ## User registration
 
-![user registration](./assets/user-registration.jpg)
+![user registration](./assets/user-registration.png)
 
 On the bottom of the settings page, there is the option to enable/disable the user registration.
 When disabled, it is not possible for new users to create an account, not via the UI and the REST API.
@@ -74,4 +72,3 @@ However, accounts that have already been created can still be used to login.
 [hsqldb]: http://hsqldb.org/
 [mysql57]: https://dev.mysql.com/downloads/mysql/5.7.html
 [html-unit]: http://htmlunit.sourceforge.net/
-[razorsql]: https://razorsql.com/

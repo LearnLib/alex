@@ -5,9 +5,6 @@
 
 **Alexander Bainczyk** <br> 
 [alexander.bainczyk@tu-dortmund.de](mailto:alexander.bainczyk@tu-dortmund.de)
-
-**Alexander Schieweck** <br>
-[alexander.schieweck@tu-dortmund.de](mailto:alexander.schieweck@tu-dortmund.de)
   
   
 ## Copyright

@@ -22,10 +22,12 @@ Once a group has been created, you can edit and delete it, by clicking on the *g
 
 When creating a new symbol (see <span class="label">2</span>), you have to specify two properties:
 
-| Name          | Description                                                                             |
-|---------------|-----------------------------------------------------------------------------------------|
-| Name          | A unique name of the symbol                                                             |
-| Symbol group  | The group the symbol belongs to. Per default, the default group of the project is used. |
+| Name            | Description                                                                             |
+|-----------------|-----------------------------------------------------------------------------------------|
+| Name            | A unique name of the symbol                                                             |
+| Description     | A textual description of the symbol (optional)                                          |
+| Expected result | A textual description of the expected result (optional)                                 |
+| Symbol group    | The group the symbol belongs to. Per default, the default group of the project is used. |
 
 Once the symbol has been created successfully, it appears in the specified group.
 For each symbol, there is a list of operations that are accessible by clicking on the menu <span class="label">3</span> of which most are self explanatory.
@@ -51,6 +53,16 @@ You can see all archived symbols in the overview which can be accessed via the i
 Here, you can recover symbols, edit their names and permanently delete them.
 Note that it is only possible to delete a symbol permanently if the symbol is not still in use, for example in test reports or learning results.
 Further, recovered symbol is then moved into the default group.
+
+### Permanently delete symbols
+
+Symbols can be deleted permanently from the archive if there are no references to the symbol anymore, be it for example in models, tests or other symbols.
+
+1. In the sidebar, click on **Symbols > Archive**
+2. Select the symbols you want to have deleted permanently
+3. In the action bar, click on the **Delete**-button
+4. If there is a reference to one of the selected symbols, a notification will appear.
+   Otherwise the symbols are removed.
 
 ### Export & import
 
@@ -285,7 +297,7 @@ The progress indicator indicates how much of a file has already been uploaded.
 
 Once the upload is completed, the files are displayed in a list.
 Then, use the **Upload File** action and specify a file to upload and an `input[type="file""]` element.
-Currently, it is not possible to upload multiple files at once.
+Note that currently, it is not possible to upload multiple files at once.
 
 ### Download
 
