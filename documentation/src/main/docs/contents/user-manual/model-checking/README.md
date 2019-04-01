@@ -16,11 +16,18 @@ When starting ALEX, specify the path to the bin directory as an additional argum
 
 ## Define LTL formulas
 
+Currently, ALEX only supports model checking using LTL formulas.
+To define formulas that you want to have checked later on:
+
 1. In the sidebar, click on **Learning > Lts Formulas**
 2. Click on the **Create**-button in the action bar
 3. In the dialog, define a property using [this syntax](ltl-syntax) and give the formula an optional name.
-   Additionally, use the keywords *input* and *output* to query edge labels of the automaton, e.g. `[](input == "Delete" -> output == "Ok")`
+   Additionally, use the keywords *input* and *output* to query edge labels of the automaton, e.g. 
+   
+   `[](input == "Delete" -> output == "Ok")`
+   
 4. Click on **Create**
+
 
 ## Verifying properties
 

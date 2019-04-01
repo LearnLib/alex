@@ -60,4 +60,20 @@ A yellow label indicates that some, but not all test cases inside the test suite
 Below the list, The result over all tests is displayed in a table <span class="label">2</span>.
 The results of the test execution are not saved in the database in the current version of ALEX, but you can export the results as a *[JUnit XML Report][junit]*.
 
+
+## Test reports
+
+For each executed test case or test suite, a test report is created. 
+All reports of all tests can be found under **Testing > Reports** in the sidebar in descending order.
+To get details of a report, click on the **Details** link in the corresponding column of a test run.
+
+For test results of an individual test:
+
+1. Navigate to **Testing > Manage** in the sidebar
+2. Navigate to the test suite that contains the test of interest
+3. In the dropdown menu of the corresponding test, click on **Results**
+
+There, all individual test reports for a single test case are listed in descending order.
+
+
 [junit]: https://www.ibm.com/support/knowledgecenter/en/SSQ2R2_9.5.0/com.ibm.rsar.analysis.codereview.cobol.doc/topics/cac_useresults_junit.html

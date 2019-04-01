@@ -11,17 +11,18 @@ If a body is send along the HTTP request, it is formatted as JSON object.
 
 <div class="alert alert-info">
     Currently, if the target server cannot be reached within 3 seconds, the request is cancelled.
-    ALES also does not provide a retry mechanism at the moment.
+    ALEX also does not provide a retry mechanism at the moment.
 </div>
 
 ![Webhooks](./assets/webhooks-1.jpg)
 
-You can manage webhooks under the **Webhooks** item in the sidebar.
+You can manage webhooks under the **Integrations > Webhooks** item in the sidebar.
 On the page a list of registered webhooks is displayed.
 
 ![Webhooks](./assets/webhooks-2.jpg)
 
-To create a new webhook, specify the following properties in the modal dialog.
+To create a new webhook, click on the **Create**-button.
+In the dialog, specify the following properties in the modal dialog:
 
 | Property | Description                                            | Required |
 |----------|--------------------------------------------------------|----------|
@@ -29,5 +30,9 @@ To create a new webhook, specify the following properties in the modal dialog.
 | URL      | The URL where events are send to.                      | yes      |
 | Events   | The list of subscribed events.                         | yes      |
 
+There are numerous events for all kind of actions that are performed in ALEX internally.
+The names of the events should be self explaining. 
+For almost all events, the corresponding entity that the event deals with is send as a JSON object to the registered endpoint.
+Only for *... deleted* events, the ID of the entity is send to the client.
 
 [webhooks]: https://en.wikipedia.org/wiki/Webhook

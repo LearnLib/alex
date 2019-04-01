@@ -1,8 +1,8 @@
 # Learning
 
-## Configuration
+## Configuration of a learning process
 
-In order to start learning an application, a learn process has to be modeled. 
+In order to start learning an application, a learning process has to be configured. 
 Such a process always consists of the following components:
 
 * An input alphabet (set of symbols)
@@ -10,22 +10,23 @@ Such a process always consists of the following components:
 * A learning algorithm
 * A parametrized equivalence oracle
 * A maximum amount of steps to learn
-* A list of target URLs for parallelization
-* A specification of a web browser
+* A list of target URLs
+* A web browser
 
-![Setup](./assets/learning-setup-1.jpg)
+In the setup view (**Learning > Setup**), the list of symbols is displayed from which you have to select the symbols that should be used for the input alphabet.
 
-In the setup view, the list of symbols is displayed from which you have to select the symbols that should be used for the input alphabet.
-Furthermore, a special symbol that resets the application has to be selected.
-Mark the corresponding symbol by clicking on the button <span class="label">1</span>.
-Once selected, the reset symbol can not be included in the input alphabet.
+1. Select a symbol that works as a system reset in the **Pre**-section
+2. Select all symbols that should be included in the input alphabet from the tree view in the left column
+3. Optionally, select a symbol in the **Post**-section.
+   This symbol will be executed after each membership query.
 
-The next step is the configuration of the learning process.
-A click on the button with the gear icon at <span class="label">2</span> opens the modal window that is displayed below.
+You can start the learning process with the default configuration by clicking on **Start learning**.
+You can, however also adjust certain settings such as the equivalence test strategy or the target web browser.
+Therefore, click on the button with the gear icon at <span class="label">2</span> which opens the dialog displayed below.
 
 ![Setup](./assets/learning-setup-2.jpg)
 
-Here, in the tab *"Learner"* (left), select a learning algorithm first.
+Here, in the tab **Learner**, select a learning algorithm first.
 Per default, the *TTT* algorithm is preselected because it usually performs better than the other available options.
 
 Then, configure the equivalence approximation strategy:
@@ -65,33 +66,15 @@ Another value, for example 3, would stop the learner after having generated thre
 Of cause, if the final hypothesis is learned before those three steps, the learner stops beforehand.
 This way, it is possible to e.g. learn the first three steps with a randomized equivalence oracle and then continue learning with another one.
 
-In the *WebDriver* tab (right) you can configure which web browser is used for accessing the target web application during the learning process.
+In the **WebDriver** tab you can configure which web browser is used for accessing the target web application during the learning process.
 Each web driver has individual options which are displayed once you select a web browser from the select input.
 
-Save the configuration with a click on the *Save* button.
+Under the **Target** tab, all URLs that are registered to the project are listed.
+Select the ones where membership queries should be posed to.
+If more than one URL is selected, membership query batches will be parallelized automatically.
+
+Save the configuration with a click on the **Save**-button.
 Finally, click on the *Start learning* button in the button group <span class="label">2</span> to start the learning process.
-
-
-## Counters
-
-As you may recall, counters are integer values that are created, modified and used during a learning process and persisted in the database over multiple learning processes.
-
-![Counters 1](./assets/counters-1.jpg)
-
-On the counters page, which you can access by clicking on the item *Counters* <span class="label">1</span> in the sidebar, the values of existing counters can be edited and new counters can be created.
-
-For creating a new counter with a preset start value, click on <span class="label">2</span> which opens a modal window.
-
-![Counters 2](./assets/counters-2.jpg)
-
-Here, insert a unique name and the value in the input fields and click on *Create* <span class="label">3</span>.
-If the counter has been created successfully, the modal dialog is closed and it appears in the list.
-
-![Counters 3](./assets/counters-3.jpg)
-
-![Counters 4](./assets/counters-4.jpg)
-
-For editing the value of an existing counter, click on <span class="label">4</span> in the dropdown menu, update the value in the form and finally, click on *Update*.
 
 
 ## Learning
@@ -123,6 +106,14 @@ Custom success or error outputs for a symbol have a higher priority over the def
 After some time, when no more counterexamples can be found, the learner finishes and the final hypothesis is presented like above.
 From here on, you can, if you find it necessary, configure how the learning process should be continued.
 You can also select the equivalence oracle *Sample* and search for counterexamples by yourself, which is explained in the following.
+
+
+### Stopping a learning process
+
+At each point of time during a learning process, you can abort it by clicking on the **Abort**-button beside the loading indicator.
+After clicking on the button, the current membership query (batch) is still executed, but after that, the process terminates gracefully.
+Models that have been inferred up to the point of termination are still available in the learning result.
+
 
 ### Finding counterexamples manually
 
@@ -162,15 +153,30 @@ Finally, click on <span class="label">3</span> to resume the learning process.
 
 ![Resuming 3](./assets/resuming-3.jpg)
 
-You can even add additional input symbols that should be included in the next iteration of the learning process by selecting them in <span class="label">4</span>.
+#### Adding new input symbols
+
+You can add additional input symbols that should be included in the next iteration of a learning process.
+This allows an incremental model construction.
+In order to do so
+
+1. Resume a learning process
+2. In the right sidebar, open the tab **Symbols**
+3. Select the symbols that you want to add.
+   Symbols that are already included in the model are ignored
+4. Click the **Resume**-button.
+   For each new symbol, a new step is generated and finally, an equivalence test is performed.
 
 
 ## Test generation
 
+ALEX allows you to generate test suites from a learned model automatically according to certain strategies, since each path of the model corresponds to a test case.
+For that purpose:
+
 1. Open any learned model
 2. Switch to the testing view by selecting the **Tests** item form the select menu on the top right
 
-Then, one option is select sequences to generate a test case from manually:
+We differentiate between automated and manual test generation strategies.
+One option is select sequences to generate a test case from manually:
 
 3. Click the labels on the model in the corresponding order.
    The sequence appears in the **Generate test case** widget.
@@ -183,6 +189,17 @@ There is also the possibility to generate a test suite from the model automatica
    Note that the *Discrimination tree* strategy only provides state coverage, but results in a much smaller test suite than the other methods.
    The *W-Method* and the *Wp-Method* both provide state and transition coverage, but result in bigger test suites and the generation process might take longer.
 4. Click on the **Generate**-button to generate the test suite
+
+
+## Cloning learning experiments
+
+Sometimes it may be useful to copy existing learning experiments, e.g. for the purpose of testing other equivalence strategies from a previously learned step.
+Therefore
+
+1. Navigate to **Learning > Results** in the sidebar
+2. Open the menu for the corresponding learning experiment
+3. Click on **Clone**
+
 
 ## Result analysis
 
@@ -253,3 +270,26 @@ A line chart then displays the values that are listed above for each step.
 There is also the possibility to compare the statistics of multiple learning processes.
 In this case, select all relevant results in the overview and click on <span class="label">3</span>.
 The only difference here is that the displayed values are not separated by oracle.
+
+
+
+## Counters
+
+As you may recall, counters are integer values that are created, modified and used during a learning process and persisted in the database over multiple learning processes.
+
+![Counters 1](./assets/counters-1.jpg)
+
+On the counters page, which you can access by clicking on the item *Counters* <span class="label">1</span> in the sidebar, the values of existing counters can be edited and new counters can be created.
+
+For creating a new counter with a preset start value, click on <span class="label">2</span> which opens a modal window.
+
+![Counters 2](./assets/counters-2.jpg)
+
+Here, insert a unique name and the value in the input fields and click on *Create* <span class="label">3</span>.
+If the counter has been created successfully, the modal dialog is closed and it appears in the list.
+
+![Counters 3](./assets/counters-3.jpg)
+
+![Counters 4](./assets/counters-4.jpg)
+
+For editing the value of an existing counter, click on <span class="label">4</span> in the dropdown menu, update the value in the form and finally, click on *Update*.
