@@ -183,10 +183,15 @@ They are based on Selenium and ALEX offers a subset of the Selenium functionalit
 
 More detailed information about the parameters of each web action is omitted here, since the forms in the frontend should be labeled sufficiently.
 
-If you play around a little with the action editor, you may realize that most web actions require you to enter a CSS or an XPath expression to an element. 
-This may be not that easy to find out in case you are not very familiar with HTML, CSS or XPath. 
-So, there is a button that is labeled with *"Element Picker"*. 
-This is a special feature of ALEX for extracting selectors elements from your website directly without having to know HTML.
+Most web actions require that you define a locator to the element to interact with. 
+There are three possible options how to define such a locator:
+
+| Type  | Description                                                                                     |
+|-------|-------------------------------------------------------------------------------------------------|
+| CSS   | A valid CSS3 locator                                                                            |
+| XPath | An XPath expression to an element in the DOM tree                                               |
+| JS    | A JavaScript snippet that returns an element, e.g. `return document.querySelector('#new-todo')` |
+
 
 ### REST actions
 
@@ -209,6 +214,7 @@ Normally, you make a request and analyze the results.
 The order of your REST actions should also look like that. 
 Start with a *Make Request* action and use other actions to work with the response.
 The context of the *Make Request* action, namely the HTTP response, is passed to the following actions until the next *Make Request* action is made.
+
 
 ### General actions
 
