@@ -43,11 +43,6 @@
             <name>Alexander Bainczyk</name>
             <email>alexander.bainczyk@tu-dortmund.de</email>
         </developer>
-        <developer>
-            <id>alex.s</id>
-            <name>Alexander Schieweck</name>
-            <email>alexander.schieweck@tu-dortmund.de</email>
-        </developer>
     </developers>
     <contributors>
         <contributor>
@@ -69,6 +64,10 @@
         <contributor>
             <name>Philipp Koch</name>
             <email>philipp.koch@tu-dortmund.de</email>
+        </contributor>
+        <contributor>
+            <name>Alexander Schieweck</name>
+            <email>alexander.schieweck@tu-dortmund.de</email>
         </contributor>
     </contributors>
     <organization>
