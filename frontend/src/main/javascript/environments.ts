@@ -15,7 +15,7 @@
  */
 
 /** The version of ALEX. */
-export const version = '1.7.0-SNAPSHOT';
+export const version = '1.7.0';
 
 /** API URL */
 export const apiUrl = process.env.API_URL;

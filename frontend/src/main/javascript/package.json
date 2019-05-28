@@ -1,6 +1,6 @@
 {
   "name": "alex",
-  "version": "1.7.0-SNAPSHOT",
+  "version": "1.7.0",
   "description": "A web application for inferring Mealy machines of web applications and RESTful web services via active automata learning.",
   "repository": {
     "type": "git",
