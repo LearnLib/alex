@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -174,15 +174,12 @@ public interface SymbolDAO {
      * @param projectId
      *         The ID of the project.
      * @return The updated symbol.
-     * @throws IllegalArgumentException
-     *         If an old revision is used.
      * @throws NotFoundException
      *         When the Symbol was not found.
      * @throws ValidationException
      *         When the Symbol was not valid.
      */
-    Symbol update(User user, Long projectId, Symbol symbol)
-            throws IllegalArgumentException, NotFoundException, ValidationException;
+    Symbol update(User user, Long projectId, Symbol symbol) throws NotFoundException, ValidationException;
 
     /**
      * Update a list of Symbols.
@@ -194,15 +191,12 @@ public interface SymbolDAO {
      * @param projectId
      *         The ID of the project.
      * @return The list of updated symbols.
-     * @throws IllegalArgumentException
-     *         If an old revision is used.
      * @throws NotFoundException
      *         When one of the Symbol was not found.
      * @throws ValidationException
      *         When one of the Symbol was not valid.
      */
-    List<Symbol> update(User user, Long projectId, List<Symbol> symbols)
-            throws IllegalArgumentException, NotFoundException, ValidationException;
+    List<Symbol> update(User user, Long projectId, List<Symbol> symbols) throws NotFoundException, ValidationException;
 
     /**
      * Move a Symbol to a new Group.
@@ -280,6 +274,20 @@ public interface SymbolDAO {
      *         If the project or symbol could not be found.
      */
     void delete(User user, Long projectId, Long symbolId) throws NotFoundException;
+
+    /**
+     * Permanently delete multiple symbols at once.
+     *
+     * @param user
+     *          The user.
+     * @param projectId
+     *          The ID of the project.
+     * @param symbolIds
+     *          The IDs of the symbols to delete.
+     * @throws NotFoundException
+     *          If the project or a symbol could not be found.
+     */
+    void delete(User user, Long projectId, List<Long> symbolIds) throws NotFoundException;
 
     /**
      * Check if the user can access or modify a symbol.

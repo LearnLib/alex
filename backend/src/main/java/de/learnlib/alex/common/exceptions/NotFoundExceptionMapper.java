@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.common.exceptions;
 
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
+import de.learnlib.alex.common.utils.RESTError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,7 +37,7 @@ public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundExceptio
     public Response toResponse(NotFoundException e) {
         LOGGER.info("NotFoundException caught.", e);
 
-        final ResourceErrorHandler.RESTError error = new ResourceErrorHandler.RESTError(Status.NOT_FOUND, e);
+        final RESTError error = new RESTError(Status.NOT_FOUND, e);
         return Response.status(Status.NOT_FOUND).entity(error).build();
     }
 

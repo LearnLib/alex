@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,15 +72,19 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
     @Transactional
     public TestExecutionConfig create(User user, Long projectId, TestExecutionConfig config)
             throws NotFoundException, UnauthorizedException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
-        final List<Test> tests = testRepository.findAll(config.getTestIds());
+        final List<Test> tests = testRepository.findAllById(config.getTestIds());
+        if (tests.isEmpty()) {
+            throw new NotFoundException("At least one test could not be found.");
+        }
+
         for (Test test: tests) {
             testDAO.checkAccess(user, project, test);
         }
 
-        final ProjectUrl projectUrl = projectUrlRepository.findOne(config.getUrlId());
+        final ProjectUrl projectUrl = projectUrlRepository.findById(config.getUrlId()).orElse(null);
         projectUrlDAO.checkAccess(user, project, projectUrl);
 
         config.setProject(project);
@@ -96,7 +100,7 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
     @Override
     @Transactional
     public List<TestExecutionConfig> getAll(User user, Long projectId) throws NotFoundException, UnauthorizedException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         final List<TestExecutionConfig> configs = testExecutionConfigRepository.findAllByProject_Id(projectId);
@@ -109,8 +113,8 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
     @Transactional
     public TestExecutionConfig get(User user, Long projectId, Long configId)
             throws NotFoundException, UnauthorizedException {
-        final Project project = projectRepository.findOne(projectId);
-        final TestExecutionConfig config = testExecutionConfigRepository.findOne(configId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final TestExecutionConfig config = testExecutionConfigRepository.findById(configId).orElse(null);
         checkAccess(user, project, config);
 
         loadLazyRelations(config);
@@ -121,11 +125,11 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
     @Transactional
     public void delete(User user, Long projectId, Long configId)
             throws NotFoundException, UnauthorizedException {
-        final Project project = projectRepository.findOne(projectId);
-        final TestExecutionConfig config = testExecutionConfigRepository.findOne(configId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final TestExecutionConfig config = testExecutionConfigRepository.findById(configId).orElse(null);
         checkAccess(user, project, config);
 
-        testExecutionConfigRepository.delete(configId);
+        testExecutionConfigRepository.deleteById(configId);
     }
 
     @Override

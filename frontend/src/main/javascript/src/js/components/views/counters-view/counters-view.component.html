@@ -2,73 +2,70 @@
     <view-header title="Counters"></view-header>
 
     <action-bar>
-        <selectable-checkbox-multiple selectable="vm.selectedCounters" class="pull-left"></selectable-checkbox-multiple>
+        <div class="d-flex flex-row align-items-center">
+            <selectable-checkbox-multiple selectable="vm.selectedCounters"></selectable-checkbox-multiple>
 
-        <div class="pull-left">
-            <button class="btn btn-sm btn-primary" ng-click="vm.createCounter()">
-                Create
-            </button>
+            <div class="w-100 ml-3">
+                <button class="btn btn-sm btn-primary" ng-click="vm.createCounter()">
+                    Create
+                </button>
 
-            <button class="btn btn-sm btn-default" ng-click="vm.deleteSelectedCounters()">
-                Delete
-            </button>
+                <button class="btn btn-sm btn-default" ng-click="vm.deleteSelectedCounters()">
+                    Delete
+                </button>
+            </div>
         </div>
     </action-bar>
 
     <div class="view-body">
-        <div class="alx-container-fluid">
+        <div class="container-fluid">
 
             <div class="alert alert-info alert-condensed" ng-show="vm.counters.length">
-                <i class="fa fa-info fa-fw"></i>
+                <i class="fas fa-info fa-fw"></i>
                 Deleted counters will be created as soon as they are used in a learning process, starting with value 0.
             </div>
 
             <div class="list-group" ng-if="vm.counters.length">
                 <div class="list-group-item" ng-repeat="counter in vm.counters">
                     <div class="d-flex" ng-if="counter.name !== vm.counterUnderEdit.name">
-
                         <selectable-checkbox item="counter" selectable="vm.selectedCounters"></selectable-checkbox>
-                        <div class="flex-grow-1 mr-1 ml-1">
+                        <div class="flex-grow-1 mx-3">
                             <strong ng-bind="counter.name"></strong><br>
                             <span class="text-muted">Value: <span ng-bind="counter.value"></span></span>
                         </div>
                         <div>
                             <div class="btn-group btn-group-sm" uib-dropdown>
-                                <button class="btn btn-icon btn-dropdown" uib-dropdown-toggle>
-                                    <i class="fa fa-fw fa-bars"></i>
+                                <button class="btn btn-icon btn-dropdown no-caret" uib-dropdown-toggle>
+                                    <i class="fas fa-fw fa-bars"></i>
                                 </button>
-                                <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
-                                    <li>
-                                        <a href="" ng-click="vm.setCounterUnderEdit(counter)">
-                                            <i class="fa fa-fw fa-edit"></i> Edit
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="" ng-click="vm.deleteCounter(counter)">
-                                            <i class="fa fa-fw fa-trash"></i> Delete
-                                        </a>
-                                    </li>
-                                </ul>
+                                <div uib-dropdown-menu class="dropdown-menu dropdown-menu-right" role="menu">
+                                    <a class="dropdown-item" href="" ng-click="vm.setCounterUnderEdit(counter)">
+                                        <i class="fas fa-fw fa-edit"></i> Edit
+                                    </a>
+                                    <a class="dropdown-item" href="" ng-click="vm.deleteCounter(counter)">
+                                        <i class="fas fa-fw fa-trash"></i> Delete
+                                    </a>
+                                </div>
                             </div>
                         </div>
 
                     </div>
                     <div ng-if="counter.name === vm.counterUnderEdit.name">
 
-                        <div class="panel panel-default no-margin-bottom">
-                            <div class="panel-heading">
+                        <div class="card">
+                            <div class="card-header">
                                 <strong>Edit counter: {{counter.name}}</strong>
                             </div>
-                            <div class="panel-body">
+                            <div class="card-body">
                                 <form ng-submit="vm.updateCounter()" class="d-flex">
-                                    <div class="form-group flex-grow-1 no-margin-bottom" style="margin-right: 8px">
+                                    <div class="form-group flex-grow-1 mb-0" style="margin-right: 8px">
                                         <input class="form-control" type="number" min="0" placeholder="The value of the counter"
                                                ng-model="vm.counterUnderEdit.value">
                                     </div>
-                                    <div class="form-group no-margin-bottom" style="margin-right: 8px">
+                                    <div class="form-group mb-0" style="margin-right: 8px">
                                         <input class="btn btn-primary" type="submit" value="Update">
                                     </div>
-                                    <div class="form-group no-margin-bottom">
+                                    <div class="form-group mb-0">
                                         <a href="" class="btn btn-default" ng-click="vm.counterUnderEdit = null">Cancel</a>
                                     </div>
                                 </form>

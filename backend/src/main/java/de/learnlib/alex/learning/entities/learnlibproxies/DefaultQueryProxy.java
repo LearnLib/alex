@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,15 +28,13 @@ import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 /**
- * Proxy around a DefaultQuery.
+ * Proxy around a {@link DefaultQuery}.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
- *
- * @see de.learnlib.api.query.DefaultQuery
  */
 @Embeddable
 public class DefaultQueryProxy implements Serializable {
@@ -56,12 +54,12 @@ public class DefaultQueryProxy implements Serializable {
     private List<String> output;
 
     /**
-     * Default constructor that creates a new LinkedList for the prefix, the suffix and the output.
+     * Default constructor that creates a new list for the prefix, the suffix and the output.
      */
     public DefaultQueryProxy() {
-        this.prefix = new LinkedList<>();
-        this.suffix = new LinkedList<>();
-        this.output = new LinkedList<>();
+        this.prefix = new ArrayList<>();
+        this.suffix = new ArrayList<>();
+        this.output = new ArrayList<>();
     }
 
     /**
@@ -144,7 +142,7 @@ public class DefaultQueryProxy implements Serializable {
             return OBJECT_MAPPER.writeValueAsString(this);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return "";
+            return "{}";
         }
     }
 
@@ -171,7 +169,7 @@ public class DefaultQueryProxy implements Serializable {
      *
      * @return The new DefaultQuery.
      */
-    public DefaultQuery<String, Word<String>> createDefaultProxy() {
+    public DefaultQuery<String, Word<String>> createDefaultQuery() {
         Word<String> prefixAsWord = Word.fromList(prefix);
         Word<String> suffixAsWord = Word.fromList(suffix);
         Word<String> outputAsWord = Word.fromList(output);

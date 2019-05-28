@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,10 @@ import de.learnlib.alex.webhooks.entities.Event;
 import java.util.List;
 
 import static de.learnlib.alex.webhooks.entities.EventType.SYMBOLS_CREATED;
+import static de.learnlib.alex.webhooks.entities.EventType.SYMBOLS_DELETED;
 import static de.learnlib.alex.webhooks.entities.EventType.SYMBOLS_UPDATED;
 import static de.learnlib.alex.webhooks.entities.EventType.SYMBOL_CREATED;
+import static de.learnlib.alex.webhooks.entities.EventType.SYMBOL_DELETED;
 import static de.learnlib.alex.webhooks.entities.EventType.SYMBOL_UPDATED;
 
 /** Symbol related events. */
@@ -78,6 +80,18 @@ public class SymbolEvent {
          */
         public UpdatedMany(List<Symbol> symbols) {
             super(symbols, SYMBOLS_UPDATED);
+        }
+    }
+
+    public static class Deleted extends Event<Long> {
+        public Deleted(Long id) {
+            super(id, SYMBOL_DELETED);
+        }
+    }
+
+    public static class DeletedMany extends Event<List<Long>> {
+        public DeletedMany(List<Long> ids) {
+            super(ids, SYMBOLS_DELETED);
         }
     }
 }

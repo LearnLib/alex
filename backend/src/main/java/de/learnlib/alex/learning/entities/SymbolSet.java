@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,21 +92,6 @@ public class SymbolSet {
     @JsonIgnore
     public List<Long> getSymbolIds() {
         return symbols.stream().map(ps -> ps.getSymbol().getId()).collect(Collectors.toList());
-    }
-
-    /**
-     * Get all symbols in the set.
-     *
-     * @return The list with the reset symbol and all others.
-     */
-    public List<ParameterizedSymbol> getAllSymbols() {
-        List<ParameterizedSymbol> resultList = new LinkedList<>();
-        resultList.add(resetSymbol);
-        resultList.addAll(symbols);
-        if (postSymbol != null) {
-            resultList.add(postSymbol);
-        }
-        return resultList;
     }
 
 }

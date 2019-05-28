@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.CounterRepository;
@@ -32,7 +31,6 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.List;
 
@@ -65,7 +63,7 @@ public class CounterDAOImpl implements CounterDAO {
      */
     @Inject
     public CounterDAOImpl(ProjectDAO projectDAO, CounterRepository counterRepository,
-            ProjectRepository projectRepository) {
+                          ProjectRepository projectRepository) {
         this.projectDAO = projectDAO;
         this.counterRepository = counterRepository;
         this.projectRepository = projectRepository;
@@ -83,20 +81,16 @@ public class CounterDAOImpl implements CounterDAO {
 
             counter.setProject(project);
             counterRepository.save(counter);
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
             LOGGER.info("Counter creation failed:", e);
             throw new ValidationException("Counter could not be created.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("Counter creation failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("Counter was not created:", cve);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Counter> getAll(User user, Long projectId) throws NotFoundException {
-        Project project = projectRepository.findOne(projectId);
+        Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
         return counterRepository.findAllByProject(project);
     }
@@ -125,29 +119,23 @@ public class CounterDAOImpl implements CounterDAO {
         try {
             doGet(user, counter.getProjectId(), counter.getName()); // check if the counter exists
             counterRepository.save(counter);
-        } catch (DataIntegrityViolationException e) {
-            LOGGER.info("Counter update failed:", e);
-            throw new javax.validation.ValidationException("Counter could not be updated.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("Counter update failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("Counter was not created.", cve);
-        } catch (NotFoundException e) {
-            throw e;
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
+            LOGGER.error("Counter update failed:", e);
+            throw new ValidationException("Counter could not be updated.", e);
         }
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delete(User user, Long projectId, String... names) throws NotFoundException {
-        Project project = projectRepository.findOne(projectId);
+        Project project = projectRepository.findById(projectId).orElse(null);
         List<Counter> counters = counterRepository.findAllByProjectAndNameIn(project, names);
-        for (Counter counter: counters) {
+        for (Counter counter : counters) {
             checkAccess(user, project, counter);
         }
 
         if (names.length == counters.size()) { // all counters found -> delete them & success
-            counterRepository.delete(counters);
+            counterRepository.deleteAll(counters);
         } else {
             throw new NotFoundException("Could not delete the counter(s), because at least one does not exists!");
         }

@@ -1,7 +1,7 @@
 <div class="test-case-node">
   <div class="header d-flex flex-row">
     <div class="test-icon">
-      <i class="fa fa-fw fa-file"></i>
+      <i class="fas fa-fw fa-file"></i>
     </div>
     <a class="test-name w-100 d-flex flex-row" ui-sref="test({projectId: vm.case.project, testId: vm.case.id})">
       <div class="w-100">
@@ -9,14 +9,14 @@
           <strong>{{vm.case.name}}</strong>
         </div>
         <span ng-switch="vm.case.status">
-          <span class="label label-warning" ng-switch-when="EMPTY">Empty</span>
-          <span class="label label-info" ng-switch-when="WORK_IN_PROGRESS">Work in progress</span>
+          <span class="badge badge-warning" ng-switch-when="EMPTY">Empty</span>
+          <span class="badge badge-info" ng-switch-when="WORK_IN_PROGRESS">Work in progress</span>
         </span>
       </div>
       <div>
         <span ng-if="vm.result">
-          <span class="label label-success" ng-if="vm.result.passed">Passed</span>
-          <span class="label label-danger" ng-if="!vm.result.passed">Failed</span>
+          <span class="badge badge-success" ng-if="vm.result.passed">Passed</span>
+          <span class="badge badge-danger" ng-if="!vm.result.passed">Failed</span>
         </span>
       </div>
     </a>

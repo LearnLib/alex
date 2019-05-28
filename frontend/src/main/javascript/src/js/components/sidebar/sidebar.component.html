@@ -1,34 +1,44 @@
 <aside id="sidebar">
 
-    <header id="sidebar-header">
-        <a ui-sref="root" class="sidebar-header-button logo-button d-flex align-items-center">
-            <img src="images/favicon.png" height="18" width="18"> <strong>LEX</strong>
-        </a>
-        <a href="" class="sidebar-header-button toggle-button" ng-click="vm.toggleCollapse()">
-            <i class="fa" ng-class="vm.collapsed ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
-        </a>
-        <a ui-sref="about" class="sidebar-header-button about-button">
-            <i class="fa fa-question-circle"></i>
-        </a>
-    </header>
+  <header id="sidebar-header">
+    <a class="logo-button" ui-sref="root">
+      <img src="images/favicon.png" height="18" width="18">
+      <strong class="ml-1" style="margin-bottom: -2px">LEX</strong>
+    </a>
+    <a class="toggle-button" href="" ng-click="vm.toggleCollapse()">
+      <i class="fa" ng-class="vm.collapsed ? 'fa-bars' : 'fa-chevron-left'"></i>
+    </a>
+  </header>
 
-    <div id="sidebar-body">
+  <div id="sidebar-body">
 
-        <div class="sidebar-group" ng-repeat="group in vm.groups">
-            <div ng-if="group.display()">
-                <div class="sidebar-group-title">
-                    <strong>{{group.title()}}</strong>
-                </div>
-                <a href class="sidebar-group-item" uib-tooltip="{{item.title}}" tooltip-placement="right"
-                   ng-class="{'active':item.active()}" ng-repeat="item in group.items" ng-click="item.click()"
-                   ng-if="item.display()">
-                    <div class="sidebar-group-item-icon">
-                        <i class="fa fa-fw {{item.icon}}"></i>
-                    </div>
-                    <div class="sidebar-group-item-label">{{item.title}}</div>
-                </a>
-            </div>
+    <div class="sidebar-group" ng-repeat="group in vm.groups">
+      <div ng-if="group.display()">
+        <div class="sidebar-group-title">
+          <strong>{{group.title()}}</strong>
         </div>
-
+        <a
+            ui-sref="{{item.sref()}}"
+            class="sidebar-group-item"
+            ng-class="{'active':item.active()}"
+            ng-repeat="item in group.items"
+            ng-click="item.click()"
+            ng-if="item.display()"
+        >
+          <div class="sidebar-group-item-icon">
+            <i class="fas fa-fw {{item.icon}}"></i>
+          </div>
+          <div class="sidebar-group-item-label">{{item.title}}</div>
+        </a>
+      </div>
     </div>
+
+  </div>
+
+  <div id="sidebar-footer">
+    <a ui-sref="about">
+      <i class="fas fa-info-circle"></i>
+      <span>About</span>
+    </a>
+  </div>
 </aside>

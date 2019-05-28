@@ -1,15 +1,15 @@
 <widget title="Learner status">
-    <div class="alert alert-info no-margin-bottom" ng-if="!vm.status.active">
+    <div class="alert alert-info mb-0" ng-if="!vm.status.active">
         The learner is not active. <a ui-sref="learnerSetup({projectId: vm.project.id})">Start learning</a> your application!
     </div>
-    <div class="alert alert-warning no-margin-bottom clearfix" ng-if="vm.status.active">
+    <div class="alert alert-warning mb-0 clearfix" ng-if="vm.status.active">
         The learner is currently learning an application. <hr>
         <div>
             <a class="btn btn-xs btn-warning" ui-sref="learnerStart({projectId: vm.project.id})">
-                <i class="fa fa-eye fa-fw"></i> Show progress
+                <i class="fas fa-eye fa-fw"></i> Show progress
             </a>
             <button class="btn btn-xs btn-warning" ng-click="vm.abort()">
-                <i class="fa fa-times fa-fw"></i> Abort
+                <i class="fas fa-times fa-fw"></i> Abort
             </button>
         </div>
     </div>

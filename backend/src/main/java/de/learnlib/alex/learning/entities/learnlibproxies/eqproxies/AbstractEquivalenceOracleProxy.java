@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
-import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Word;
 
 import java.io.Serializable;
@@ -30,7 +30,7 @@ import java.io.Serializable;
  * Base class for Proxies around a the different EquivalenceOracles from the LearnLib. The Proxy is needed to make it
  * easier to (de-)serialize the EQ oracles into/ from JSON.
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(name = "random_word", value = MealyRandomWordsEQOracleProxy.class),
         @JsonSubTypes.Type(name = "complete", value = CompleteExplorationEQOracleProxy.class),
@@ -43,6 +43,17 @@ import java.io.Serializable;
 public abstract class AbstractEquivalenceOracleProxy implements Serializable {
 
     private static final long serialVersionUID = 6270462192160289890L;
+
+    /** How many membership queries are in a batch by default. */
+    private static final int DEFAULT_BATCH_SIZE = 20;
+
+    /** How many membership queries are posed together. */
+    protected int batchSize;
+
+    /** Constructor. */
+    public AbstractEquivalenceOracleProxy() {
+        this.batchSize = DEFAULT_BATCH_SIZE;
+    }
 
     /**
      * Check if the parameter of the proxy are valid, i.e. it is possible to create a functional EQ oracle out of the
@@ -59,11 +70,16 @@ public abstract class AbstractEquivalenceOracleProxy implements Serializable {
      *
      * @param membershipOracle
      *         The MQ oracle to test against a hypothesis.
-     * @param batchSize
-     *         The size of the MQ batch.
      * @return An EquivalenceOracle from the LearnLib based on the proxy.
      */
     public abstract EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle<String, Word<String>> membershipOracle, int batchSize);
+            MembershipOracle<String, Word<String>> membershipOracle);
 
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchSize(Integer batchSize) {
+        this.batchSize = (batchSize == null || batchSize < 1) ? DEFAULT_BATCH_SIZE : batchSize;
+    }
 }

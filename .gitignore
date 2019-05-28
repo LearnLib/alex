@@ -7,21 +7,24 @@ main/logs
 target
 *.class
 hs_err_pid*
+
+# log files
 backend/logs
+backend/debug.log
 
 # JavaScript
 cli/src/main/javascript/node_modules
 frontend/src/main/javascript/node_modules
 frontend/src/main/javascript/dist
 frontend/src/main/javascript/test/coverage
-frontend/src/main/javascript/assets/fonts
-
-# Auto Generated Swagger Doc
-main/src/main/webapp/restdocs
-
-main/uploads
-
 frontend/src/main/javascript/npm-debug\.log
 frontend/src/main/javascript/package-lock\.json
+frontend/src/main/javascript/dist
 
-backend/debug.log
+# uploaded files
+main/uploads
+
+# genereated user documentation
+documentation/src/main/docs/.vuepress/dist
+documentation/src/main/docs/node_modules
+documentation/src/main/docs/package-lock\.json

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
@@ -42,7 +41,6 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,12 +102,12 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
      */
     @Inject
     public SymbolGroupDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
-            SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
-            SymbolActionRepository symbolActionRepository,
-            SymbolParameterRepository symbolParameterRepository, ParameterizedSymbolDAO parameterizedSymbolDAO,
-            SymbolStepRepository symbolStepRepository, ParameterizedSymbolRepository parameterizedSymbolRepository,
-            TestCaseStepRepository testCaseStepRepository, TestExecutionResultRepository testExecutionResultRepository,
-            SymbolSymbolStepRepository symbolSymbolStepRepository) {
+                              SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
+                              SymbolActionRepository symbolActionRepository,
+                              SymbolParameterRepository symbolParameterRepository, ParameterizedSymbolDAO parameterizedSymbolDAO,
+                              SymbolStepRepository symbolStepRepository, ParameterizedSymbolRepository parameterizedSymbolRepository,
+                              TestCaseStepRepository testCaseStepRepository, TestExecutionResultRepository testExecutionResultRepository,
+                              SymbolSymbolStepRepository symbolSymbolStepRepository) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
@@ -126,16 +124,16 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     public void create(User user, SymbolGroup group) throws NotFoundException, ValidationException {
         LOGGER.traceEntry("create({})", group);
 
-        final Project project = projectRepository.findOne(group.getProjectId());
+        final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
         projectDAO.checkAccess(user, project);
 
         try {
-            group.setName(createGroupName(project, group.getName()));
+            group.setName(createGroupName(project, group));
             project.addGroup(group);
             beforePersistGroup(group);
 
             if (group.getParentId() != null) {
-                final SymbolGroup parent = symbolGroupRepository.findOne(group.getParentId());
+                final SymbolGroup parent = symbolGroupRepository.findById(group.getParentId()).orElse(null);
                 checkAccess(user, project, parent);
 
                 group.setParent(parent);
@@ -144,25 +142,21 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             }
 
             symbolGroupRepository.save(group);
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
             LOGGER.info("SymbolGroup creation failed:", e);
             throw new ValidationException("SymbolGroup could not be created.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("SymbolGroup creation failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("SymbolGroup was not created:", cve);
         }
 
         LOGGER.traceExit(group);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public List<SymbolGroup> create(User user, Long projectId, List<SymbolGroup> groups)
             throws NotFoundException, ValidationException {
         LOGGER.traceEntry("create({})", groups);
 
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         List<SymbolGroup> createdGroups = create(user, project, groups, null);
@@ -188,7 +182,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         group.setSymbols(new HashSet<>());
         group.setProject(project);
         group.setParent(parent);
-        group.setName(createGroupName(project, group.getName()));
+        group.setName(createGroupName(project, group));
 
         beforePersistGroup(group);
         final SymbolGroup createdGroup = symbolGroupRepository.save(group);
@@ -208,7 +202,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Transactional(readOnly = true)
     public List<SymbolGroup> getAll(User user, long projectId, EmbeddableFields... embedFields)
             throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
@@ -223,8 +217,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Transactional(readOnly = true)
     public SymbolGroup get(User user, long projectId, Long groupId, EmbeddableFields... embedFields)
             throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
-        final SymbolGroup group = symbolGroupRepository.findOne(groupId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final SymbolGroup group = symbolGroupRepository.findById(groupId).orElse(null);
         checkAccess(user, project, group);
 
         initLazyRelations(user, group, embedFields);
@@ -235,12 +229,12 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Override
     @Transactional
     public void update(User user, SymbolGroup group) throws NotFoundException, ValidationException {
-        final Project project = projectRepository.findOne(group.getProjectId());
-        final SymbolGroup groupInDB = symbolGroupRepository.findOne(group.getId());
+        final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
+        final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
         checkAccess(user, project, groupInDB);
 
         if (!group.getName().equals(groupInDB.getName())) {
-            group.setName(createGroupName(project, group.getName()));
+            group.setName(createGroupName(project, group));
         }
 
         if (group.getParentId() != null && group.getParentId().equals(groupInDB.getId())) {
@@ -256,21 +250,17 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             groupInDB.setProject(project);
             groupInDB.setName(group.getName());
             symbolGroupRepository.save(groupInDB);
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
             LOGGER.info("SymbolGroup update failed:", e);
             throw new ValidationException("SymbolGroup could not be updated.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("SymbolGroup update failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("SymbolGroup was not updated:", cve);
         }
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public SymbolGroup move(User user, SymbolGroup group) throws NotFoundException, ValidationException {
-        final Project project = projectRepository.findOne(group.getProjectId());
-        final SymbolGroup groupInDB = symbolGroupRepository.findOne(group.getId());
+        final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
+        final SymbolGroup groupInDB = symbolGroupRepository.findById(group.getId()).orElse(null);
         checkAccess(user, project, groupInDB);
 
         final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(project.getId());
@@ -287,9 +277,10 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             // move group to the upmost level
             groupInDB.getParent().getGroups().remove(groupInDB);
             symbolGroupRepository.save(groupInDB.getParent());
+            group.setName(createGroupName(project, group));
             movedGroup = symbolGroupRepository.save(group);
         } else {
-            final SymbolGroup newParent = symbolGroupRepository.findOne(group.getParentId());
+            final SymbolGroup newParent = symbolGroupRepository.findById(group.getParentId()).orElse(null);
             checkAccess(user, project, newParent);
 
             // remove group from old parent
@@ -305,6 +296,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             newParent.getGroups().add(groupInDB);
             groupInDB.setParent(newParent);
             symbolGroupRepository.save(newParent);
+            group.setName(createGroupName(project, group));
             movedGroup = symbolGroupRepository.save(groupInDB);
         }
 
@@ -315,8 +307,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     @Override
     @Transactional
     public void delete(User user, long projectId, Long groupId) throws IllegalArgumentException, NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
-        final SymbolGroup group = symbolGroupRepository.findOne(groupId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final SymbolGroup group = symbolGroupRepository.findById(groupId).orElse(null);
         checkAccess(user, project, group);
 
         final SymbolGroup defaultGroup = symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(projectId);
@@ -360,9 +352,10 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         }
     }
 
-    private String createGroupName(Project project, String name) {
+    private String createGroupName(Project project, SymbolGroup group) {
         int i = 1;
-        while (symbolGroupRepository.findOneByProject_IdAndName(project.getId(), name) != null) {
+        String name = group.getName();
+        while (symbolGroupRepository.findOneByProject_IdAndParent_IdAndName(project.getId(), group.getParentId(), name) != null) {
             name = name + " (" + i + ")";
             i++;
         }

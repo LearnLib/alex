@@ -1,23 +1,20 @@
 <div class="modal-header">
-    <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
-        <i class="fa fa-close fa-fw"></i>
-    </a>
-    <h3 class="modal-title">Register a webhook</h3>
+  <h4 class="modal-title">Register a webhook</h4>
+  <a class="btn btn-default btn-icon float-right" ng-click="vm.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
 </div>
 
 <div class="modal-body">
-    <webhook-form webhook="vm.webhook" events="vm.events"></webhook-form>
+  <div class="alert alert-danger" ng-if="vm.errorMessage != null">
+    <strong class="d-block">The webhook could not be created.</strong>
+    <span>{{vm.errorMessage}}</span>
+  </div>
 
-    <div ng-if="vm.errorMessage != null">
-        <hr/>
-        <div class="alert alert-condensed alert-danger mb-0">
-            <strong class="d-block">The webhook could not be created.</strong>
-            <span ng-bind="vm.errorMessage"></span>
-        </div>
-    </div>
+  <webhook-form webhook="vm.webhook" events="vm.events"></webhook-form>
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-primary btn-sm" ng-click="vm.createWebhook()">Register</button>
-    <button class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</button>
+  <button class="btn btn-primary btn-sm" ng-click="vm.createWebhook()">Register</button>
+  <button class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</button>
 </div>

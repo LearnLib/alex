@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import de.learnlib.api.algorithm.LearningAlgorithm;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.datastructure.observationtable.ObservationTable;
 import de.learnlib.datastructure.observationtable.writer.ObservationTableASCIIWriter;
-import net.automatalib.automata.transout.impl.compact.CompactMealy;
+import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 

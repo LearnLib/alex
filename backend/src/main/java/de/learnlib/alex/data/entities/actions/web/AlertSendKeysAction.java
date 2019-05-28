@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,7 @@ public class AlertSendKeysAction extends WebSymbolAction {
         try {
             final Alert alert = connector.getDriver().switchTo().alert();
             alert.sendKeys(insertVariableValues(text));
+            alert.accept();
 
             LOGGER.info(LoggerMarkers.LEARNER, "Send text '{}' to prompt window.", text);
             return getSuccessOutput();

@@ -1,9 +1,9 @@
 @import "variables";
 @import "mixins";
 @import "bootstrap";
+@import "compat";
 @import "font-awesome";
 @import "hypothesis";
-@import "html-element-picker";
 @import "search-form";
 @import "test-tree";
 @import "sidebar";
@@ -21,6 +21,10 @@
   margin-bottom: 40px;
 }
 
+html {
+  font-size: .75rem; // 12 px
+}
+
 body {
   overflow-x: hidden;
 
@@ -34,9 +38,28 @@ body {
   }
 }
 
-.fa-drag-handle:before {
-  content: "\f142 \f142";
-  letter-spacing: 0.1em;
+.resize {
+  background: rgba(0,0,0,0);
+  transition: background .4s;
+  position: absolute;
+
+  &:hover {
+    background: rgba(0,0,0,.5);
+  }
+
+  &.resize-x {
+    cursor: ew-resize;
+    width: 4px;
+    top: 0;
+    bottom: 0;
+  }
+
+  &.resize-y {
+    cursor: nw-resize;
+    height: 4px;
+    left: 0;
+    right: 0;
+  }
 }
 
 .text-black {
@@ -78,33 +101,6 @@ report-charts {
   word-wrap: break-word;
 }
 
-.justify-end {
-  justify-content: flex-end;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.list-group-flush {
-  margin: 0;
-  padding: 0;
-
-  .list-group-item {
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-
-    &:first-of-type {
-      border-top: none;
-    }
-
-    &:last-of-type {
-      border-bottom: none;
-    }
-  }
-}
-
 .cursor-pointer {
   &:hover {
     cursor: pointer;
@@ -115,121 +111,6 @@ report-charts {
   &:hover {
     cursor: grabbing;
   }
-}
-
-.d-flex {
-  display: flex;
-}
-
-.align-items-center {
-  align-items: center;
-}
-
-.d-inline-block {
-  display: inline-block;
-}
-
-.d-block {
-  display: block;
-}
-
-.ml-1 {
-  margin-left: 1rem;
-}
-
-.mr-1 {
-  margin-right: 1rem;
-}
-
-.mr-0 {
-  margin-right: 0 !important;
-}
-
-.mt-0 {
-  margin-top: 0;
-}
-
-.mt-1 {
-  margin-top: 1rem;
-}
-
-.mb-0 {
-  margin-bottom: 0;
-}
-
-.mb-1 {
-  margin-bottom: 1rem;
-}
-
-.p-1 {
-  padding: 1rem;
-}
-
-.pl-1 {
-  padding-left: 1rem;
-}
-
-.py-1 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
-
-.pb-0 {
-  padding-bottom: 0;
-}
-
-.border-bottom {
-  border-bottom: 1px solid #ddd;
-}
-
-.border-top {
-  border-top: 1px solid #ddd;
-}
-
-.rounded-0 {
-  border-radius: 0;
-}
-
-.flex-grow-1 {
-  flex-grow: 1;
-}
-
-.align-items-center {
-  align-items: center;
-}
-
-.align-items-end {
-  align-items: flex-end;
-}
-
-.align-items-start {
-  align-items: flex-start;
-}
-
-.label-outline-default {
-  box-sizing: border-box;
-  border: 1px solid #777;
-  color: #777;
-}
-
-.label-outline-success {
-  box-sizing: border-box;
-  border: 1px solid $brand-success;
-  color: $brand-success;
-}
-
-.label-outline-danger {
-  box-sizing: border-box;
-  border: 1px solid $brand-danger;
-  color: $brand-danger;
-}
-
-.h-100 {
-  height: 100%;
-}
-
-.w-100 {
-  width: 100%;
 }
 
 .modal-zindex {
@@ -267,17 +148,6 @@ report-charts {
   }
 }
 
-.alx-container {
-  margin: auto;
-  padding: 0 15px;
-  max-width: 1280px;
-}
-
-.alx-container-fluid {
-  @extend .alx-container;
-  max-width: 100%;
-}
-
 .view {
   @include position(absolute, 0, 0, 0, 0);
 
@@ -293,19 +163,19 @@ report-charts {
 
   &.view-about {
     .section {
-      margin-bottom: 36px;
+      margin-bottom: 2rem;
     }
   }
 
   &.view-test-case {
     .toggle-button-success {
-      border-color: $brand-success;
-      color: $brand-success;
+      border-color: $success;
+      color: $success;
     }
 
     .toggle-button-danger {
-      border-color: $brand-danger;
-      color: $brand-danger;
+      border-color: $danger;
+      color: $danger;
     }
   }
 }
@@ -373,7 +243,7 @@ report-charts {
     font-weight: 700;
     color: rgba(0, 0, 0, 0.5);
 
-    @media all and (max-width: $screen-sm) {
+    @media all and (max-width: map_get($grid-breakpoints, 'sm')) {
       @include text-overflow-ellipsis();
       max-width: 240px;
     }
@@ -391,8 +261,8 @@ report-charts {
   .sidebar-wrapper {
     flex-grow: 1;
     flex-shrink: 1;
-    min-width: 240px;
-    max-width: 240px;
+    min-width: 200px;
+    max-width: 200px;
   }
 
   .view-wrapper {
@@ -413,9 +283,8 @@ report-charts {
 }
 
 .action-bar {
-  height: 42px;
+  min-height: 37px;
   background: #fff;
-  padding-top: 7px;
   border-bottom: 1px solid #ddd;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
@@ -425,38 +294,23 @@ report-charts {
     z-index: 1010; // that is 10 higher than the drop down menus in the view
   }
 
-  .alx-checkbox {
-    margin-top: 6px;
-    margin-right: 12px;
-  }
-
   .btn-group {
     margin-right: 6px
+  }
+}
+
+.no-caret {
+  &::after {
+    display: none;
   }
 }
 
 /* Helper classes
 ============================================================================= */
 
-.inline-block {
-  display: inline-block;
-}
-
-.no-margin-bottom {
-  margin-bottom: 0;
-}
-
-.no-padding-right {
-  padding-right: 0 !important;
-}
-
-.no-padding-left {
-  padding-left: 0;
-}
-
 .panel#alert-list {
   border: 1px solid rgba(0, 0, 0, 0.3);
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   position: absolute;
   z-index: 2000;
   height: auto;
@@ -558,11 +412,11 @@ report-charts {
   -webkit-user-select: none;
 
   .action-list-item {
-    @include selection-list-item();
+    padding: .75rem 1rem;
     user-select: none;
     -webkit-user-select: none;
     align-items: baseline;
-    padding: 6px 10px;
+    border-bottom: 1px solid #e2e2e2;
 
     &:last-of-type {
       border-bottom: 0;
@@ -579,7 +433,7 @@ report-charts {
       margin-top: 7px;
 
       strong {
-        color: $brand-danger;
+        color: $danger;
       }
     }
 
@@ -654,10 +508,6 @@ test-case-view {
   }
 }
 
-.alert-container {
-  margin-top: 25px;
-}
-
 .learn-results-compare-wrapper {
   display: flex;
 }
@@ -673,10 +523,9 @@ learn-result-panel {
   flex-direction: column;
 
   .learn-result-panel-header {
-    height: 42px;
     background: #f9f9f9;
     border-bottom: 1px solid #ddd;
-    padding: 7px 15px;
+    padding: .5rem 1rem;
 
     .learn-result-panel-close-button,
     .learn-result-panel-resume-button {
@@ -686,11 +535,6 @@ learn-result-panel {
   .learn-result-panel-body {
     position: relative;
     flex: 1;
-
-    .alx-container {
-      padding-top: 15px;
-      padding-bottom: 15px;
-    }
   }
 }
 
@@ -709,14 +553,6 @@ learn-result-panel {
       display: block;
     }
   }
-}
-
-.flex-column {
-  flex-direction: column;
-}
-
-.flex-row {
-  flex-direction: row;
 }
 
 .learn-loading-indicator {
@@ -809,7 +645,6 @@ learn-resume-settings-widget {
 
   .panel-title {
     font-size: 12px;
-
   }
 
   project-list {
@@ -817,4 +652,9 @@ learn-resume-settings-widget {
       margin-bottom: 0;
     }
   }
+}
+
+
+.chart-legend {
+  display: none;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,8 @@ package de.learnlib.alex.learning.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
-import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.TestSuiteGenerationConfig;
@@ -32,7 +30,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
-import javax.validation.ValidationException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -44,13 +41,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.io.IOException;
 import java.util.List;
 
 /**
  * REST API to fetch the test results.
- *
- * @resourcePath results
- * @resourceDescription Operations around the test results / hypotheses
  */
 @Path("/projects/{project_id}/results")
 public class LearnerResultResource {
@@ -65,6 +60,7 @@ public class LearnerResultResource {
     @Inject
     private Learner learner;
 
+    /** The test generator service. */
     @Inject
     private TestGenerator testGenerator;
 
@@ -81,17 +77,10 @@ public class LearnerResultResource {
      *         By default no steps are included in the response. However you can ask to include them with this parameter
      *         set to 'steps'.
      * @return A List of all learn results within one project.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
-     * @successResponse 200 OK
-     * @responseType java.util.List<de.learnlib.alex.learning.entities.LearnerResult>
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed)
-            throws NotFoundException {
+    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.getAllFinalResults(" + projectId + ") for user " + user + ".");
 
@@ -99,7 +88,7 @@ public class LearnerResultResource {
             boolean includeSteps = parseEmbeddableFields(embed);
 
             List<LearnerResult> results = learnerResultDAO.getAll(user, projectId, includeSteps);
-            return ResponseHelper.renderList(results, Response.Status.OK);
+            return Response.ok(results).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.getAllSteps",
@@ -113,14 +102,11 @@ public class LearnerResultResource {
      * @param projectId
      *         The id of the project.
      * @return 200 with The latest learner result. 204 If there is not result.
-     * @throws NotFoundException
-     *         If the project could not be found.
      */
     @GET
     @Path("/latest")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLatest(@PathParam("project_id") long projectId)
-            throws NotFoundException {
+    public Response getLatest(@PathParam("project_id") long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.getLatest(" + projectId + ") for user " + user + ".");
 
@@ -145,20 +131,13 @@ public class LearnerResultResource {
      *         By default no steps are included in the response. However you can ask to include them with this parameter
      *         set to 'steps'.
      * @return A List of all step of possible multiple test runs.
-     * @throws NotFoundException
-     *         If the requested results or the related Project could not be found.
-     * @successResponse 200 OK
-     * @responseType java.util.List<de.learnlib.alex.learning.entities.LearnerResult>
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("{test_nos}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("project_id") Long projectId,
-            @PathParam("test_nos") IdsList testNos,
-            @QueryParam("embed") String embed)
-            throws NotFoundException {
+                           @PathParam("test_nos") IdsList testNos,
+                           @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.getAllSteps(" + projectId + ", " + testNos + ") for user " + user + ".");
 
@@ -169,8 +148,8 @@ public class LearnerResultResource {
                 LearnerResult result = learnerResultDAO.get(user, projectId, testNos.get(0), includeSteps);
                 return Response.ok(result).build();
             } else {
-                List<LearnerResult> result = learnerResultDAO.getAll(user, projectId, testNos, includeSteps);
-                return ResponseHelper.renderList(result, Response.Status.OK);
+                List<LearnerResult> results = learnerResultDAO.getAll(user, projectId, testNos, includeSteps);
+                return Response.ok(results).build();
             }
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
@@ -187,14 +166,11 @@ public class LearnerResultResource {
      * @param testNo
      *         The test no of the learner result to clone.
      * @return The cloned learner result.
-     * @throws NotFoundException
-     *         If one of the entities could not be found.
      */
     @POST
     @Path("{test_no}/clone")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response clone(@PathParam("project_id") Long projectId, @PathParam("test_no") Long testNo)
-            throws NotFoundException {
+    public Response clone(@PathParam("project_id") Long projectId, @PathParam("test_no") Long testNo) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("LearnerResultResource.clone(" + projectId + ", " + testNo + ") for user " + user + ".");
 
@@ -218,22 +194,24 @@ public class LearnerResultResource {
      * @param config
      *         The configuration object.
      * @return The generated test suite.
-     * @throws Exception
-     *         If something goes wrong.
      */
     @POST
     @Path("{test_no}/generateTestSuite")
     @Produces(MediaType.APPLICATION_JSON)
     public Response generateTestSuite(@PathParam("project_id") Long projectId, @PathParam("test_no") Long testNo,
-            TestSuiteGenerationConfig config) throws Exception {
+                                      TestSuiteGenerationConfig config) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("generateTestSuite(projectId: {}, testNo: {}, config: {}) for user {}", projectId, testNo, config, user);
 
         config.validate();
-        final TestSuite testSuite = testGenerator.generate(user, projectId, testNo, config);
-
-        LOGGER.traceEntry("generateTestSuite() with status {}", Response.Status.CREATED);
-        return Response.status(Response.Status.CREATED).entity(testSuite).build();
+        try {
+            final TestSuite testSuite = testGenerator.generate(user, projectId, testNo, config);
+            LOGGER.traceExit("generateTestSuite() with status {}", Response.Status.CREATED);
+            return Response.status(Response.Status.CREATED).entity(testSuite).build();
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.traceExit("failed to generate test suite", e);
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
 
     /**
@@ -244,30 +222,18 @@ public class LearnerResultResource {
      * @param testNumbers
      *         The test numbers of the results to delete as a comma (',') separated list. E.g. 1,2,3
      * @return On success no content will be returned.
-     * @throws NotFoundException
-     *         If the given results or the related Project could not be found.
-     * @successResponse 204 OK & no content
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("{test_numbers}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteResultSet(@PathParam("project_id") Long projectId,
-            @PathParam("test_numbers") IdsList testNumbers) throws NotFoundException {
+                                    @PathParam("test_numbers") IdsList testNumbers) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.deleteResultSet(" + projectId + ", " + testNumbers + ") "
                 + "for user " + user + ".");
 
-        try {
-            learnerResultDAO.delete(learner, projectId, testNumbers);
-            return Response.status(Response.Status.NO_CONTENT).build();
-
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.deleteResultSet",
-                    Response.Status.BAD_REQUEST, e);
-        }
+        learnerResultDAO.delete(learner, projectId, testNumbers);
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 
     private boolean parseEmbeddableFields(String embed) throws IllegalArgumentException {

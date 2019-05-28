@@ -1,4 +1,4 @@
-<h4><strong>Set variable by cookie</strong></h4>
+<h5><strong>Set variable by cookie</strong></h5>
 
 <p class="text-muted">
     Set the value of a variable to the value of a cookie.
@@ -16,13 +16,13 @@
     <input class="form-control" ng-model="vm.action.value" placeholder="The name of the cookie">
 </div>
 
-<div class="checkbox">
-    <label>
-        <input type="radio" name="cookieType" ng-model="vm.action.cookieType" value="WEB"> Browser Cookie
+<div class="form-group form-check">
+    <label class="form-check-label">
+        <input class="form-check-input" type="radio" name="cookieType" ng-model="vm.action.cookieType" value="WEB"> Browser Cookie
     </label>
 </div>
-<div class="checkbox">
-    <label>
-        <input type="radio" name="cookieType" ng-model="vm.action.cookieType" value="REST"> Request Cookie
+<div class="form-group form-check">
+    <label class="form-check-label">
+        <input class="form-check-input" type="radio" name="cookieType" ng-model="vm.action.cookieType" value="REST"> Request Cookie
     </label>
 </div>

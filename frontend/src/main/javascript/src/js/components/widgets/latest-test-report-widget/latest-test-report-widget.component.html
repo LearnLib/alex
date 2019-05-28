@@ -4,7 +4,7 @@
     </div>
 
     <div class="" ng-if="vm.report != null && vm.report !== ''">
-        <table class="table table-condensed">
+        <table class="table">
             <tbody>
             <tr>
                 <td><strong>Date</strong></td>
@@ -13,8 +13,8 @@
             <tr>
                 <td><strong>Status</strong></td>
                 <td>
-                    <span class="label label-success" ng-if="vm.report.passed">Passed</span>
-                    <span class="label label-danger" ng-if="!vm.report.passed">Failed</span>
+                    <span class="badge badge-success" ng-if="vm.report.passed">Passed</span>
+                    <span class="badge badge-danger" ng-if="!vm.report.passed">Failed</span>
                 </td>
             </tr>
             <tr>
@@ -29,7 +29,7 @@
         </table>
 
         <button class="btn btn-xs btn-default" ui-sref="testReport({projectId: vm.report.project, reportId: vm.report.id})">
-            <i class="fa fa-fw fa-eye"></i> View details
+            <i class="fas fa-fw fa-eye"></i> View details
         </button>
     </div>
 </widget>

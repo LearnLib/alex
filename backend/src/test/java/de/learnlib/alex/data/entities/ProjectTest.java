@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -44,7 +44,7 @@ public class ProjectTest {
     }
 
     public static List<Project> readProjectList(String json) throws IOException {
-        List<Project> projects = new LinkedList<>();
+        List<Project> projects = new ArrayList<>();
 
         json = json.substring(1, json.length() - 1);
         json = json.replace("},{", "};{");

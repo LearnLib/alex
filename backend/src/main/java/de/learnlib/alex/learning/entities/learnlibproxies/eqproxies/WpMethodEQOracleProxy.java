@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,14 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.oracle.equivalence.WpMethodEQOracle;
-import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Word;
 
 import java.io.Serializable;
 
 /**
- * Proxy around a WpMethodEQOracle.
+ * Proxy around a {@link de.learnlib.oracle.equivalence.WMethodEQOracle}.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
- *
- * @see de.learnlib.oracle.equivalence.WMethodEQOracle
  */
 @JsonTypeName("wp_method")
 public class WpMethodEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
@@ -55,7 +53,7 @@ public class WpMethodEQOracleProxy extends AbstractEquivalenceOracleProxy implem
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
+            MembershipOracle<String, Word<String>> membershipOracle) {
         return new WpMethodEQOracle.MealyWpMethodEQOracle<>(membershipOracle, maxDepth, batchSize);
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,20 +20,18 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.oracle.equivalence.SampleSetEQOracle;
-import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Word;
-import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Proxy around a SampleSetEQOracle.
+ * Proxy around a {@link de.learnlib.oracle.equivalence.SampleSetEQOracle}.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
- *
- * @see de.learnlib.oracle.equivalence.SampleSetEQOracle
  */
 @JsonTypeName("sample")
 public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
@@ -116,7 +114,7 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
      * Default constructor.
      */
     public SampleEQOracleProxy() {
-        this.counterExamples = new LinkedList<>();
+        this.counterExamples = new ArrayList<>();
     }
 
     /**
@@ -141,7 +139,7 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
     @Override
     public void checkParameters() throws IllegalArgumentException {
         if (counterExamples.isEmpty()) {
-            throw new IllegalArgumentException("You need to specify at least one counter example!");
+            throw new IllegalArgumentException("You need to specify at least one counterexample!");
         }
     }
 
@@ -157,7 +155,7 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
+            MembershipOracle<String, Word<String>> membershipOracle) {
         SampleSetEQOracle newEQ = new SampleSetEQOracle(false);
 
         for (List<InputOutputPair> counterExample : counterExamples) {

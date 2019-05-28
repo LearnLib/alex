@@ -1,26 +1,20 @@
 <div class="symbol-group-tree">
     <symbol-group-header group="vm.group" selected-symbols="vm.selectedSymbols" collapse="vm.collapse">
-        <div class="btn-group btn-group-xs pull-right" uib-dropdown>
-            <button type="button" class="btn btn-default btn-icon" uib-dropdown-toggle>
-                <i class="fa fa-bars"></i>
+        <div class="btn-group btn-group-xs float-right" uib-dropdown>
+            <button type="button" class="btn btn-default btn-icon no-caret" uib-dropdown-toggle>
+                <i class="fas fa-bars"></i>
             </button>
-            <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
-                <li>
-                    <a href="" ng-click="vm.editGroup()">
-                        <i class="fa fa-edit fa-fw"></i> Edit
-                    </a>
-                </li>
-                <li>
-                    <a href="" ng-click="vm.moveGroup()">
-                        <i class="fa fa-exchange fa-fw"></i> Move
-                    </a>
-                </li>
-                <li>
-                    <a href="" ng-click="vm.deleteGroup()">
-                        <i class="fa fa-trash fa-fw"></i> Delete
-                    </a>
-                </li>
-            </ul>
+            <div uib-dropdown-menu class="dropdown-menu dropdown-menu-right" role="menu">
+                <a class="dropdown-item" href="" ng-click="vm.editGroup()">
+                    <i class="fas fa-edit fa-fw"></i> Edit
+                </a>
+                <a class="dropdown-item" href="" ng-click="vm.moveGroup()">
+                    <i class="fas fa-exchange-alt fa-fw"></i> Move
+                </a>
+                <a class="dropdown-item" href="" ng-click="vm.deleteGroup()">
+                    <i class="fas fa-trash fa-fw"></i> Delete
+                </a>
+            </div>
         </div>
     </symbol-group-header>
     <div uib-collapse="vm.collapse">
@@ -42,32 +36,24 @@
                 selected-symbols="vm.selectedSymbols"
             >
 
-                <div class="btn-group btn-group-xs pull-right" uib-dropdown>
-                    <button type="button" class="btn btn-default btn-icon dropdown-toggle" uib-dropdown-toggle>
-                        <i class="fa fa-bars"></i>
+                <div class="btn-group btn-group-xs float-right" uib-dropdown>
+                    <button type="button" class="btn btn-default btn-icon dropdown-toggle no-caret" uib-dropdown-toggle>
+                        <i class="fas fa-bars"></i>
                     </button>
-                    <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
-                        <li>
-                            <a href="" symbol-edit-modal-handle symbol="symbol">
-                                <i class="fa fa-edit fa-fw"></i> Edit
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" ng-click="vm.copySymbol(symbol)">
-                                <i class="fa fa-copy fa-fw"></i> Copy
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" symbol-move-modal-handle symbols="[symbol]">
-                                <i class="fa fa-exchange fa-fw"></i> Move
-                            </a>
-                        </li>
-                        <li>
-                            <a href="" ng-click="vm.deleteSymbol(symbol)">
-                                <i class="fa fa-trash fa-fw"></i> Delete
-                            </a>
-                        </li>
-                    </ul>
+                    <div uib-dropdown-menu class="dropdown-menu dropdown-menu-right" role="menu">
+                        <a class="dropdown-item" href="" ng-click="vm.openSymbolEditModal(symbol)">
+                            <i class="fas fa-edit fa-fw"></i> Edit
+                        </a>
+                        <a class="dropdown-item" href="" ng-click="vm.copySymbol(symbol)">
+                            <i class="fas fa-copy fa-fw"></i> Copy
+                        </a>
+                        <a class="dropdown-item" href="" ng-click="vm.openSymbolsMoveModal([symbol])">
+                            <i class="fas fa-exchange-alt fa-fw"></i> Move
+                        </a>
+                        <a class="dropdown-item" href="" ng-click="vm.deleteSymbol(symbol)">
+                            <i class="fas fa-trash fa-fw"></i> Delete
+                        </a>
+                    </div>
                 </div>
 
             </symbol-item>

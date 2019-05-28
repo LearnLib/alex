@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,16 +41,12 @@ public class FirefoxDriverConfig extends AbstractWebDriverConfig implements Seri
     /** If firefox should run in headless mode. */
     private boolean headless;
 
-    /** The xvfb display port. */
-    private Integer xvfbPort;
-
     /**
      * Constructor.
      */
     public FirefoxDriverConfig() {
         super();
         this.headless = false;
-        this.xvfbPort = null;
     }
 
     @Override
@@ -61,10 +57,6 @@ public class FirefoxDriverConfig extends AbstractWebDriverConfig implements Seri
         }
 
         final Map<String, String> environmentVariables = new HashMap<>();
-        if (!headless && xvfbPort != null) {
-            environmentVariables.put("DISPLAY", ":" + String.valueOf(xvfbPort));
-        }
-
         final WebDriver driver = new FirefoxDriver(
                 new GeckoDriverService.Builder()
                         .usingFirefoxBinary(binary)
@@ -84,11 +76,4 @@ public class FirefoxDriverConfig extends AbstractWebDriverConfig implements Seri
         this.headless = headless;
     }
 
-    public Integer getXvfbPort() {
-        return xvfbPort;
-    }
-
-    public void setXvfbPort(Integer xvfbPort) {
-        this.xvfbPort = xvfbPort;
-    }
 }

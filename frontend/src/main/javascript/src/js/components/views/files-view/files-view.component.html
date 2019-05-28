@@ -2,14 +2,16 @@
     <view-header title="Files"></view-header>
 
     <action-bar>
-        <div ng-if="vm.files.length > 0">
-            <selectable-checkbox-multiple class="pull-left" selectable="vm.selectedFiles"></selectable-checkbox-multiple>
-            <button class="btn btn-default btn-sm" ng-click="vm.deleteSelectedFiles()">Delete</button>
+        <div class="d-flex flex-row align-items-center" ng-if="vm.files.length > 0">
+            <selectable-checkbox-multiple selectable="vm.selectedFiles"></selectable-checkbox-multiple>
+            <div class="w-100 ml-3">
+                <button class="btn btn-default btn-sm" ng-click="vm.deleteSelectedFiles()">Delete</button>
+            </div>
         </div>
     </action-bar>
 
     <div class="view-body">
-        <div class="alx-container-fluid">
+        <div class="container-fluid">
 
             <div ngf-drop ngf-select class="alert alert-info" ng-model="vm.filesToUpload" ng-if="!vm.filesToUpload.length"
                  ngf-drag-over-class="dragover" ngf-multiple="true" ngf-allow-dir="false">
@@ -19,49 +21,44 @@
             <div ng-show="vm.filesToUpload.length">
                 <div class="btn-group btn-group-sm">
                     <button class="btn btn-primary" ng-click="vm.upload()">
-                        <span class="label label-info" ng-bind="vm.filesToUpload.length"></span>&nbsp; Upload Files
+                        <span class="badge badge-info" ng-bind="vm.filesToUpload.length"></span>&nbsp; Upload Files
                     </button>
                     <button class="btn btn-primary">
                         <span ng-bind="vm.progress"></span>%
                     </button>
                 </div>
 
-                <button class="btn btn-default btn-sm pull-right"
+                <button class="btn btn-default btn-sm float-right"
                         ng-click="vm.filesToUpload = null">
-                    <i class="fa fa-fw fa-close"></i> Cancel
+                    <i class="fas fa-fw fa-times"></i> Cancel
                 </button>
             </div>
 
             <hr>
 
             <div class="list-group" ng-if="vm.files.length > 0">
-                <div class="list-group-item d-flex flew-row"
-                     ng-repeat="file in vm.files">
+                <div class="list-group-item d-flex flex-row" ng-repeat="file in vm.files">
 
                     <div>
-                        <selectable-checkbox item="file" selectable="vm.selectedFiles" class="pull-left"></selectable-checkbox>
+                        <selectable-checkbox item="file" selectable="vm.selectedFiles"></selectable-checkbox>
                     </div>
-                    <div class="w-100 ml-1 mr-1">
+                    <div class="w-100 ml-3 mr-3">
                         <span ng-bind="file.name"></span>
                     </div>
                     <div>
                         <div class="btn-group btn-group-xs" uib-dropdown>
-                            <button type="button" class="btn btn-default btn-icon" uib-dropdown-toggle>
-                                <i class="fa fa-bars"></i>
+                            <button type="button" class="btn btn-default btn-icon no-caret" uib-dropdown-toggle>
+                                <i class="fas fa-bars"></i>
                             </button>
-                            <ul uib-dropdown-menu class="dropdown-menu pull-right" role="menu">
-                                <li>
-                                    <a href="" ng-click="vm.deleteFile(file)">
-                                        <i class="fa fa-fw fa-trash"></i> Delete
-                                    </a>
-                                </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <a href="" ng-click="vm.downloadFile(file)">
-                                        <i class="fa fa-download fa-fw"></i> Download
-                                    </a>
-                                </li>
-                            </ul>
+                            <div uib-dropdown-menu class="dropdown-menu dropdown-menu-right" role="menu">
+                                <a class="dropdown-item" href="" ng-click="vm.deleteFile(file)">
+                                    <i class="fas fa-fw fa-trash"></i> Delete
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="" ng-click="vm.downloadFile(file)">
+                                    <i class="fas fa-download fa-fw"></i> Download
+                                </a>
+                            </div>
                         </div>
                     </div>
 

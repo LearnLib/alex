@@ -1,8 +1,8 @@
-<div class="symbol-io-panel panel panel-default">
-    <div class="panel-heading">
+<div class="symbol-io-panel card">
+    <div class="card-header">
         <strong>Input & output parameters</strong>
     </div>
-    <div class="p-1 border-bottom">
+    <div class="px-3 py-2 border-bottom">
         <button type="button" class="btn btn-default btn-sm" ng-click="vm.addInput()">
             Add input
         </button>
@@ -10,7 +10,7 @@
             Add output
         </button>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
 
         <div class="d-flex">
             <div class="d-flex" style="margin: auto">
@@ -19,12 +19,12 @@
                     <div ng-repeat="input in vm.symbol.inputs" ng-if="vm.symbol.inputs.length > 0">
                         <div class="d-flex" style="padding: .5rem 0">
                             <div class="input w-100">
-                                <span class="btn-close pull-right ml-1" ng-click="vm.removeInput($index)">
-                                    <i class="fa fa-close"></i>
+                                <span class="btn-close float-right ml-1" ng-click="vm.removeInput($index)">
+                                    <i class="fas fa-times"></i>
                                 </span>
 
-                                <i class="fa fa-fw fa-lock" ng-class="{'fa-lock': input.private, 'fa-unlock': !input.private}"></i>
-                                <strong class="cursor-pointer" ng-click="vm.editInput(input, $index)">{{input.name}}</strong>: <em>{{input.parameterType | formatParameterType}}</em>
+                                <i class="fas fa-fw fa-lock" ng-class="{'fa-lock': input.private, 'fa-unlock': !input.private}"></i>
+                                <strong class="cursor-pointer" ng-click="vm.editInput(input, $index)">{{input.name}}</strong>: <em>{{input.parameterType | normalizeUpperCase}}</em>
                             </div>
                             <div class="d-flex align-items-center">
                                 <svg width="68px" height="14px" xmlns="http://www.w3.org/2000/svg">
@@ -57,11 +57,11 @@
                                 </svg>
                             </div>
                             <div class="output w-100">
-                                <span class="btn-close pull-right ml-1" ng-click="vm.removeOutput($index)">
-                                    <i class="fa fa-close"></i>
+                                <span class="btn-close float-right ml-1" ng-click="vm.removeOutput($index)">
+                                    <i class="fas fa-times"></i>
                                 </span>
 
-                                <strong class="cursor-pointer" ng-click="vm.editOutput(output, $index)">{{output.name}}</strong>: <em>{{output.parameterType | formatParameterType}}</em>
+                                <strong class="cursor-pointer" ng-click="vm.editOutput(output, $index)">{{output.name}}</strong>: <em>{{output.parameterType | normalizeUpperCase}}</em>
                             </div>
                         </div>
                     </div>

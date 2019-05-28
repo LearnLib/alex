@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package de.learnlib.alex.common.exceptions;
 
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
+import de.learnlib.alex.common.utils.RESTError;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -37,7 +37,7 @@ public class UnauthorizedExceptionMapper implements ExceptionMapper<Unauthorized
     public Response toResponse(UnauthorizedException e) {
         LOGGER.info("UnauthorizedException caught.", e);
 
-        ResourceErrorHandler.RESTError error = new ResourceErrorHandler.RESTError(Response.Status.UNAUTHORIZED, e);
+        RESTError error = new RESTError(Response.Status.UNAUTHORIZED, e);
         return Response.status(Response.Status.UNAUTHORIZED).entity(error).build();
     }
 

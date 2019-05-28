@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.rest.UserResource;
 import de.learnlib.alex.auth.security.AuthenticationFilter;
 import de.learnlib.alex.common.exceptions.NotFoundExceptionMapper;
+import de.learnlib.alex.common.exceptions.TransactionSystemExceptionMapper;
 import de.learnlib.alex.common.exceptions.UnauthorizedExceptionMapper;
 import de.learnlib.alex.common.exceptions.ValidationExceptionMapper;
 import de.learnlib.alex.config.dao.SettingsDAO;
@@ -36,6 +37,7 @@ import de.learnlib.alex.data.rest.SymbolParameterResource;
 import de.learnlib.alex.data.rest.SymbolResource;
 import de.learnlib.alex.learning.rest.LearnerResource;
 import de.learnlib.alex.learning.rest.LearnerResultResource;
+import de.learnlib.alex.modelchecking.rest.LtsFormulaResource;
 import de.learnlib.alex.testing.rest.TestExecutionConfigResource;
 import de.learnlib.alex.testing.rest.TestReportResource;
 import de.learnlib.alex.testing.rest.TestResource;
@@ -55,6 +57,8 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 import javax.ws.rs.ApplicationPath;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Main class of the REST API. Implements the Jersey {@link ResourceConfig} and does some configuration and stuff.
@@ -66,12 +70,12 @@ public class ALEXApplication extends ResourceConfig {
     /**
      * The E-Mail for the default admin, i.e. the admin that will be auto created if no other admin exists.
      */
-    public static final String DEFAULT_ADMIN_EMAIL = "admin@alex.example";
+    private static final String DEFAULT_ADMIN_EMAIL = "admin@alex.example";
 
     /**
      * The Password for the default admin, i.e. the admin that will be auto created if no other admin exists.
      */
-    public static final String DEFAULT_ADMIN_PASSWORD = "admin";
+    private static final String DEFAULT_ADMIN_PASSWORD = "admin";
 
     /**
      * The spring boot environment.
@@ -80,7 +84,7 @@ public class ALEXApplication extends ResourceConfig {
     private Environment env;
 
     /**
-     * The UserDOA to create an admin if needed.
+     * The UserDAO to create an admin if needed.
      */
     @Inject
     private UserDAO userDAO;
@@ -90,6 +94,12 @@ public class ALEXApplication extends ResourceConfig {
      */
     @Inject
     private SettingsDAO settingsDAO;
+
+    /**
+     * Access to environment variables.
+     */
+    @Inject
+    private Environment environment;
 
     /**
      * Constructor where the magic happens.
@@ -110,11 +120,13 @@ public class ALEXApplication extends ResourceConfig {
         register(TestReportResource.class);
         register(WebhookResource.class);
         register(TestExecutionConfigResource.class);
+        register(LtsFormulaResource.class);
 
         // Exceptions
         register(NotFoundExceptionMapper.class);
         register(UnauthorizedExceptionMapper.class);
         register(ValidationExceptionMapper.class);
+        register(TransactionSystemExceptionMapper.class);
 
         // Other
         register(MultiPartFeature.class);
@@ -134,8 +146,23 @@ public class ALEXApplication extends ResourceConfig {
             admin.setEmail(DEFAULT_ADMIN_EMAIL);
             admin.setRole(UserRole.ADMIN);
             admin.setEncryptedPassword(DEFAULT_ADMIN_PASSWORD);
-
             userDAO.create(admin);
+        }
+    }
+
+    /**
+     * Set properties for ltsmin.
+     */
+    @PostConstruct
+    public void handleProperties() {
+        final String ltsminBinDir = environment.getProperty("ltsmin.path");
+        if (ltsminBinDir != null && !ltsminBinDir.trim().equals("")) {
+            if (!Files.isDirectory(Paths.get(ltsminBinDir))) {
+                System.err.println("Cannot find directory for ltsmin binaries.");
+                System.exit(0);
+            } else {
+                System.setProperty("automatalib.ltsmin.path", ltsminBinDir);
+            }
         }
     }
 

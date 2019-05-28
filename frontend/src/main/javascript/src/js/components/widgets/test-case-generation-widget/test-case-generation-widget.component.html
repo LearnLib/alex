@@ -1,8 +1,8 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
+<div class="card">
+  <div class="card-header">
     <strong>Generate test case</strong>
   </div>
-  <div class="panel-body">
+  <div class="card-body">
     <div class="form-group">
       <label>Name of the test</label>
       <input type="text" class="form-control" placeholder="Test 1" ng-model="vm.testCase.name">
@@ -18,11 +18,11 @@
           {{step.pSymbol.symbol.name}}
         </div>
         <div class="mr-1">
-          <span class="label label-outline-success" ng-if="!step.shouldFail">Should pass</span>
-          <span class="label label-outline-danger" ng-if="step.shouldFail">Should fail</span>
+          <span class="badge badge-success" ng-if="!step.shouldFail">Should pass</span>
+          <span class="badge badge-danger" ng-if="step.shouldFail">Should fail</span>
         </div>
         <div>
-          <i class="fa fa-fw fa-close text-muted cursor-pointer" ng-click="vm.testCase.steps.splice($index, 1)"></i>
+          <i class="fas fa-fw fa-times text-muted cursor-pointer" ng-click="vm.testCase.steps.splice($index, 1)"></i>
         </div>
       </div>
     </div>
@@ -31,7 +31,7 @@
       Select the labels of the model to create a test.
     </div>
   </div>
-  <div class="panel-footer text-right">
+  <div class="card-footer text-right">
     <button class="btn btn-sm btn-primary" ng-click="vm.generateTestCase()">Generate</button>
     <button class="btn btn-sm btn-default" ng-click="vm.cancel()">Cancel</button>
   </div>

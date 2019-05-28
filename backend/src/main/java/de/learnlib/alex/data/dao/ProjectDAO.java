@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,13 +69,15 @@ public interface ProjectDAO {
     /**
      * Save the given project.
      *
+     * @param user
+     *         The user that creates the project.
      * @param project
      *         The project to be saved.
      * @return The created project.
      * @throws ValidationException
      *         If the Project was not valid.
      */
-    Project create(Project project) throws ValidationException;
+    Project create(User user, Project project) throws ValidationException;
 
     /**
      * Get a list of all the projects.

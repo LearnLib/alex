@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -29,9 +28,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -43,11 +41,6 @@ import java.util.Set;
  * Entity to organize symbols.
  */
 @Entity
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"projectId", "name"})
-        }
-)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SymbolGroup implements Serializable {
 
@@ -76,7 +69,6 @@ public class SymbolGroup implements Serializable {
     /** The Symbols manged by this group. */
     @OneToMany(
             mappedBy = "group",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     private Set<Symbol> symbols;
@@ -84,7 +76,6 @@ public class SymbolGroup implements Serializable {
     /** The child groups. */
     @OneToMany(
             mappedBy = "parent",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     private List<SymbolGroup> groups;

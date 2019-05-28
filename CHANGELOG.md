@@ -1,8 +1,39 @@
+# ALEX 1.7.0
+
+## Breaking Changes
+
+* Removed the HTML Element Picker.
+  The picker only really worked in Chrome and then only in some selected use cases, i.e. static pages.
+  Due to these restrictions we decided to remove it completely.
+* Removed xvfb option.
+  The option was introduced when major browsers did not have a headless mode.
+  Since the option only worked on Linux systems and all major browsers have such a mode, the option has been removed.
+
+## Features
+
+* Basic LTL-based model checking using [LTSmin](https://ltsmin.utwente.nl/).
+* Compatibility with Java > 8.
+* Add action to set a variable by HTTP status.
+* Improved parallelisation support for learning processes.
+* Permanently delete symbols instead of just hiding them.
+  This only works if a symbol is not referenced by some other entity.
+* Symbol groups can have the same name when they don't share the parent group.
+* New events for when symbols are deleted permanently.
+* New model checker related events.
+* The JWT expires after 7 days.
+
+## Fixes
+
+* Test results are ordered properly.
+* Fix resuming learning processes with new input symbols.
+
+
 # ALEX 1.6.1
 
 ## Fixes
 
 * Fix issues with HTML Element Picker
+
 
 # ALEX 1.6.0
 
@@ -11,12 +42,12 @@
 * Symbols have to be migrated to the new version.
   Please use the migration script `src/main/resources/migration/1.6.0/migrate-symbols-1.5.0-to-1.6.0.js` via:
   
-  `node migrate-symbols-1.5.0-to-1.6.0.js -i ./symbols-from-1.5.0.json -o ./symbols-for-1.6.0.json`
+  `node migrate-symbols-1.5.0-to-1.6.0.js ./symbols-from-1.5.0.json ./symbols-for-1.6.0.json`
   
 * Tests have to be migrated to the new version.
   Please use the migration script `src/main/resources/migration/1.6.0/migrate-tests-1.5.0-to-1.6.0.js` via:
      
-  `node migrate-tests-1.5.0-to-1.6.0.js -i ./tests-from-1.5.0.json -o ./tests-for-1.6.0.json`
+  `node migrate-tests-1.5.0-to-1.6.0.js ./tests-from-1.5.0.json ./tests-for-1.6.0.json`
      
 ## Features
 

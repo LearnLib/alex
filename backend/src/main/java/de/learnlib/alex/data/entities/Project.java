@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestReport;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -36,6 +36,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -89,7 +90,6 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true
     )
@@ -101,7 +101,6 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     @JsonIgnore
@@ -112,7 +111,6 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     @JsonIgnore
@@ -123,7 +121,6 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private Set<Symbol> symbols;
@@ -131,7 +128,6 @@ public class Project implements Serializable {
     /** The tests of this project. */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private Set<Test> tests;
@@ -139,7 +135,6 @@ public class Project implements Serializable {
     /** The test configurations of this project. */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     @JsonIgnore
@@ -150,10 +145,18 @@ public class Project implements Serializable {
      */
     @OneToMany(
             mappedBy = "project",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     private Set<Counter> counters;
+
+    /**
+     * The lts formulas of the project.
+     */
+    @OneToMany(
+            mappedBy = "project",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @JsonIgnore
+    private List<LtsFormula> ltsFormulas;
 
     /**
      * Default constructor.
@@ -175,6 +178,7 @@ public class Project implements Serializable {
         this.testReports = new HashSet<>();
         this.testExecutionConfigs = new ArrayList<>();
         this.urls = new ArrayList<>();
+        this.ltsFormulas = new ArrayList<>();
     }
 
     /**
@@ -355,6 +359,14 @@ public class Project implements Serializable {
     @JsonIgnore
     public void setCounters(Set<Counter> counters) {
         this.counters = counters;
+    }
+
+    public List<LtsFormula> getLtsFormulas() {
+        return ltsFormulas;
+    }
+
+    public void setLtsFormulas(List<LtsFormula> ltsFormulas) {
+        this.ltsFormulas = ltsFormulas;
     }
 
     public List<ProjectUrl> getUrls() {

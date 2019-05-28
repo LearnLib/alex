@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.openqa.selenium.WebDriver;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -82,11 +83,12 @@ public class SymbolTest {
         given(connectorManager.getConnector(WebSiteConnector.class)).willReturn(webSiteConnector);
         given(connectorManager.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
         given(connectorManager.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
+        given(webSiteConnector.getDriver()).willReturn(mock(WebDriver.class));
     }
 
     @Test
     public void itShouldReturnOkOnSuccessAndNoCustomOutput() {
-        given(webSiteConnector.getPageSource()).willReturn("test");
+        given(webSiteConnector.getDriver().getPageSource()).willReturn("test");
 
         ExecuteResult result = symbol.execute(connectorManager);
 
@@ -96,7 +98,7 @@ public class SymbolTest {
 
     @Test
     public void itShouldReturnACustomOutputOnSuccess() {
-        given(webSiteConnector.getPageSource()).willReturn("test");
+        given(webSiteConnector.getDriver().getPageSource()).willReturn("test");
 
         symbol.setSuccessOutput("success");
         ExecuteResult result = symbol.execute(connectorManager);
@@ -108,7 +110,7 @@ public class SymbolTest {
     @Test
     public void itShouldReturnFailedOnErrorAndNoCustomOutput() {
         // let the first action fail
-        given(webSiteConnector.getPageSource()).willReturn("something");
+        given(webSiteConnector.getDriver().getPageSource()).willReturn("something");
 
         ExecuteResult result = symbol.execute(connectorManager);
 
@@ -120,7 +122,7 @@ public class SymbolTest {
     public void itShouldReturnFailedOnErrorAndCustomOutput() {
         actionStep.setErrorOutput("not found");
         // let the first action fail
-        given(webSiteConnector.getPageSource()).willReturn("something");
+        given(webSiteConnector.getDriver().getPageSource()).willReturn("something");
 
         ExecuteResult result = symbol.execute(connectorManager);
 

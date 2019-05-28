@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.IdsList;
-import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
@@ -34,7 +32,6 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.List;
@@ -73,7 +70,7 @@ public class UserDAOImpl implements UserDAO {
      */
     @Inject
     public UserDAOImpl(UserRepository userRepository, FileDAO fileDAO, ProjectDAO projectDAO,
-            ProjectRepository projectRepository) {
+                       ProjectRepository projectRepository) {
         this.userRepository = userRepository;
         this.fileDAO = fileDAO;
         this.projectDAO = projectDAO;
@@ -105,7 +102,7 @@ public class UserDAOImpl implements UserDAO {
     @Override
     @Transactional(readOnly = true)
     public User getById(Long id) throws NotFoundException {
-        User user = userRepository.findOne(id);
+        User user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
             throw new NotFoundException("Could not find the user with the ID " + id + ".");
@@ -137,10 +134,10 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    @Transactional
-    public void delete(IdsList ids) throws NotFoundException {
-        final List<User> users = userRepository.findAllByIdIn(ids);
-        if (users.size() != ids.size()) {
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(List<Long> userIds) throws NotFoundException {
+        final List<User> users = userRepository.findAllByIdIn(userIds);
+        if (users.size() != userIds.size()) {
             throw new NotFoundException("At least one user could not be found.");
         }
 
@@ -175,12 +172,7 @@ public class UserDAOImpl implements UserDAO {
     private void saveUser(User user) {
         try {
             userRepository.save(user);
-            // error handling
-        } catch (TransactionSystemException e) {
-            LOGGER.info("Saving a user failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("User was not created:", cve);
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
             LOGGER.info("Saving a user failed:", e);
             throw new ValidationException("The User was not created because it did not pass the validation!", e);
         }

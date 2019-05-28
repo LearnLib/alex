@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,6 @@ package de.learnlib.alex.learning.exceptions;
  * Exception to indicate error during the learn process.
  */
 public class LearnerException extends RuntimeException {
-
-    /**
-     * Default constructor.
-     */
-    public LearnerException() {
-    }
 
     /**
      * Calls the constructor of the super Exception class.

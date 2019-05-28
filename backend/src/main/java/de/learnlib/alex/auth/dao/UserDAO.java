@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package de.learnlib.alex.auth.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.IdsList;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -107,5 +106,5 @@ public interface UserDAO {
      * @throws NotFoundException
      *          If the user to delete was not found (and thus not deleted).
      */
-    void delete(IdsList ids) throws NotFoundException;
+    void delete(List<Long> ids) throws NotFoundException;
 }

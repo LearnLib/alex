@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,18 +21,16 @@ import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachinePro
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.oracle.equivalence.SimulatorEQOracle;
-import net.automatalib.automata.transout.MealyMachine;
-import net.automatalib.automata.transout.impl.compact.CompactMealy;
+import net.automatalib.automata.transducers.MealyMachine;
+import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 
 import java.io.Serializable;
 
 /**
- * Proxy around a MealySimulatorEQOracle.
+ * Proxy around a {@link de.learnlib.oracle.equivalence.SimulatorEQOracle}.
  * The Proxy is needed to make it easier to (de-)serialize the Transition into/ from JSON.
- *
- * @see de.learnlib.oracle.equivalence.SimulatorEQOracle
  */
 @JsonTypeName("hypothesis")
 public class HypothesisEQOracleProxy extends AbstractEquivalenceOracleProxy implements Serializable {
@@ -65,7 +63,7 @@ public class HypothesisEQOracleProxy extends AbstractEquivalenceOracleProxy impl
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
+            MembershipOracle<String, Word<String>> membershipOracle) {
         Alphabet<String> alphabet = hypothesis.createAlphabet();
         CompactMealy<String, String> compactMealy = hypothesis.createMealyMachine(alphabet);
         return new SimulatorEQOracle.MealySimulatorEQOracle<>(compactMealy);

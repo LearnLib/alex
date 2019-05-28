@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import de.learnlib.api.exception.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -43,6 +42,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,7 +137,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * Get the {@link Project} the Symbol belongs to.
      *
      * @return The parent Project.
-     * @requiredField
      */
     @Transient
     @JsonProperty("project")
@@ -206,7 +205,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * Get the ID of the symbol.
      *
      * @return The ID.
-     * @requiredField
      */
     @Id
     @GeneratedValue
@@ -302,7 +300,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     @OneToMany(
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.REMOVE},
             orphanRemoval = true
     )
@@ -318,7 +315,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     @OneToMany(
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.REMOVE},
             orphanRemoval = true
     )
@@ -334,7 +330,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     @OneToMany(
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.REMOVE, CascadeType.MERGE},
             mappedBy = "symbol"
     )

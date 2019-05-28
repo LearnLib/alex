@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.entities.UploadableFile;
@@ -47,9 +46,6 @@ import java.util.List;
 
 /**
  * REST API to manage files.
- *
- * @resourcePath files
- * @resourceDescription Operations about files
  */
 @Path("/projects/{project_id}/files")
 @RolesAllowed({"REGISTERED"})
@@ -75,16 +71,13 @@ public class FileResource {
      * @param fileDetail
      *         The form data of the file.
      * @return The HTTP response with the file object on success.
-     * @throws NotFoundException
-     *         If one of the resources could not be found.
      */
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response uploadFile(@PathParam("project_id") Long projectId,
                                @FormDataParam("file") InputStream uploadedInputStream,
-                               @FormDataParam("file") FormDataContentDisposition fileDetail)
-            throws NotFoundException {
+                               @FormDataParam("file") FormDataContentDisposition fileDetail) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("uploadFile({}, {}, {}) for user {}.", projectId, uploadedInputStream, fileDetail, user);
 
@@ -119,14 +112,11 @@ public class FileResource {
      * @param filename
      *         The name of the file.
      * @return The file as blob.
-     * @throws NotFoundException
-     *         If the file could not be found.
      */
     @GET
     @Path("/{file_name}/download")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response downloadFile(@PathParam("project_id") Long projectId, @PathParam("file_name") String filename)
-            throws NotFoundException {
+    public Response downloadFile(@PathParam("project_id") Long projectId, @PathParam("file_name") String filename) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("downloadFile({}, {}) for user {}.", projectId, filename, user);
 
@@ -144,12 +134,10 @@ public class FileResource {
      * @param projectId
      *         The id of the project.
      * @return The list of all files of the project.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllFiles(@PathParam("project_id") Long projectId) throws NotFoundException {
+    public Response getAllFiles(@PathParam("project_id") Long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAllFiles({}) for user {}.", projectId, user);
 
@@ -167,14 +155,11 @@ public class FileResource {
      * @param fileName
      *         The name of the file.
      * @return Status 204 No Content on success.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
      */
     @DELETE
     @Path("/{file_name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteOneFile(@PathParam("project_id") Long projectId, @PathParam("file_name") String fileName)
-            throws NotFoundException {
+    public Response deleteOneFile(@PathParam("project_id") Long projectId, @PathParam("file_name") String fileName) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteOneFile({}, {}) for user {}.", projectId, fileName, user);
 

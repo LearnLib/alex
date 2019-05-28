@@ -1,54 +1,56 @@
 <div class="modal-header">
-    <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
-        <i class="fa fa-close fa-fw"></i>
-    </a>
-    <h3 class="modal-title">Create a new symbol group</h3>
+  <h4 class="modal-title">Create a new symbol group</h4>
+  <a class="btn btn-default btn-icon float-right" ng-click="vm.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
 </div>
 
 <form name="vm.form" ng-submit="vm.createGroup()">
 
-    <div class="modal-body">
+  <div class="modal-body">
 
-        <div class="form-group">
-            <label>Name</label>
-            <input class="form-control"
-                   name="name"
-                   type="text"
-                   placeholder="The name of the group"
-                   required
-                   ng-maxlength="100"
-                   ng-model="vm.group.name"
-                   autofocus>
-
-            <div class="help-block" ng-messages="vm.form.name.$error" ng-if="vm.form.name.$touched">
-                <div class="alert alert-danger alert-condensed" ng-message="required">
-                    The name is required
-                </div>
-                <div class="alert alert-danger alert-condensed" ng-message="maxlength">
-                    The name can not be more than 100 characters long
-                </div>
-            </div>
-        </div>
-
-        <label>Parent group</label>
-        <div class="panel panel-default">
-            <div class="panel-body" style="padding: .5rem; max-height: 240px; overflow: auto">
-                <simple-symbol-group-tree
-                    groups="vm.groups"
-                    selected-symbol-group="vm.selectedSymbolGroup"
-                    on-symbol-group-selected="vm.selectSymbolGroup(group)"
-                >
-                </simple-symbol-group-tree>
-            </div>
-        </div>
-
-        <div class="alert alert-danger alert-condensed" ng-if="vm.errorMsg" ng-bind="vm.errorMsg"></div>
-
+    <div class="alert alert-danger" ng-if="vm.errorMsg">
+      {{vm.errorMsg}}
     </div>
 
-    <div class="modal-footer">
-        <button class="btn btn-sm btn-primary" type="submit">Create</button>
-        <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
+    <div class="form-group">
+      <label>Name</label>
+      <input class="form-control"
+             name="name"
+             type="text"
+             placeholder="The name of the group"
+             required
+             ng-maxlength="100"
+             ng-model="vm.group.name"
+             autofocus>
+
+      <div class="help-block" ng-messages="vm.form.name.$error" ng-if="vm.form.name.$touched">
+        <div class="alert alert-danger alert-condensed" ng-message="required">
+          The name is required
+        </div>
+        <div class="alert alert-danger alert-condensed" ng-message="maxlength">
+          The name can not be more than 100 characters long
+        </div>
+      </div>
     </div>
+
+    <label>Parent group</label>
+    <div class="card">
+      <div class="card-body p-2" style="max-height: 240px; overflow: auto">
+        <simple-symbol-group-tree
+            groups="vm.groups"
+            selected-symbol-group="vm.selectedSymbolGroup"
+            on-symbol-group-selected="vm.selectSymbolGroup(group)"
+        >
+        </simple-symbol-group-tree>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-primary" type="submit">Create</button>
+    <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
+  </div>
 
 </form>

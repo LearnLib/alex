@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ import java.io.Serializable;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("SUPER")
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(name = "case", value = TestCaseResult.class),
         @JsonSubTypes.Type(name = "suite", value = TestSuiteResult.class),
@@ -118,13 +118,13 @@ public abstract class TestResult implements Serializable {
     /**
      * The the associated test by its ID.
      *
-     * @param id
+     * @param testId
      *         The ID of the test.
      */
     @JsonProperty("test")
-    public void setTestId(Long id) {
+    public void setTestId(Long testId) {
         this.test = new Test();
-        this.test.setId(id);
+        this.test.setId(testId);
     }
 
     public TestReport getTestReport() {
@@ -161,6 +161,12 @@ public abstract class TestResult implements Serializable {
         this.project = new Project(projectId);
     }
 
+    /**
+     * Checks if the executed test case or test suite passed. A suite passed if all test cases and child test suites
+     * passed, too.
+     *
+     * @return If the test passsed.
+     */
     @Transient
     public abstract boolean isPassed();
 

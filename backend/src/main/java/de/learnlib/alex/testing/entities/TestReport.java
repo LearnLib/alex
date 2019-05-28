@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,6 @@ public class TestReport implements Serializable {
     /** The results of the tests that have been executed in the test run. */
     @OneToMany(
             mappedBy = "testReport",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.ALL}
     )
     private List<TestResult> testResults;

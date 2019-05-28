@@ -1,11 +1,7 @@
 language: java
 
 dist: trusty
-sudo: false
-
-jdk:
-  - oraclejdk8
-  - openjdk8
+sudo: true
 
 addons:
   apt:
@@ -14,6 +10,7 @@ addons:
         key_url:    "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
     packages:
       - nodejs
+      - chromium-chromedriver
 
 cache:
   directories:
@@ -24,12 +21,26 @@ before_cache:
   # do not cache our local archives
   - rm -rf $HOME/.m2/repository/de/learnlib/alex/
 
-install: true # skip mvn install, because we essentially run the same command in the script routine
+install:
+  # override any "sane" defaults of Travis VMs
+  - cp ${TRAVIS_BUILD_DIR}/.travis/settings.xml ${HOME}/.m2/settings.xml
 
 script:
-  - mvn clean package -Pbootstrap
+  - mvn clean install -Pbootstrap,code-analysis,documentation,integration-tests
 
 branches:
   only:
   - master
   - developer
+
+jobs:
+  include:
+  - jdk: openjdk8
+  - jdk: openjdk11
+  - jdk: oraclejdk8
+  - jdk: oraclejdk11
+  - stage: "Coverage"
+    jdk: openjdk8
+    script:
+    - mvn install -Pbootstrap,code-analysis,integration-tests # code-analysis currently includes JaCoCo
+    - mvn coveralls:report

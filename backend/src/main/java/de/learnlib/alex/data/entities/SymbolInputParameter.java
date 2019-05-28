@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -37,7 +36,6 @@ public class SymbolInputParameter extends SymbolParameter {
 
     /** The values for the parameter. */
     @OneToMany(
-            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             mappedBy = "parameter"
     )

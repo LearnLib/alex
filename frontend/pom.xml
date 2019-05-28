@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2018 TU Dortmund
+  ~ Copyright 2015 - 2019 TU Dortmund
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -20,11 +20,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-
     <parent>
         <artifactId>alex-parent</artifactId>
         <groupId>de.learnlib.alex</groupId>
-        <version>1.6.1</version>
+        <version>1.7.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -36,11 +35,7 @@
     </description>
 
     <properties>
-        <!-- general -->
         <javascript.rootDirectory>src/main/javascript</javascript.rootDirectory>
-
-        <!-- plugin versions -->
-        <exec-plugin.version>1.4.0</exec-plugin.version>
     </properties>
 
     <!--===== build ======-->
@@ -64,6 +59,28 @@
                                 <argument>build</argument>
                             </arguments>
                             <workingDirectory>${javascript.rootDirectory}</workingDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-frontend</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/classes</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/javascript/dist</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>

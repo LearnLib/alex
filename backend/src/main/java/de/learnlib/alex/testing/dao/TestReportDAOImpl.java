@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public class TestReportDAOImpl implements TestReportDAO {
     @Override
     @Transactional
     public void create(User user, Long projectId, TestReport testReport) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         testReport.setId(null);
@@ -84,7 +84,7 @@ public class TestReportDAOImpl implements TestReportDAO {
     @Override
     @Transactional
     public Page<TestReport> getAll(User user, Long projectId, Pageable pageable) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         final Page<TestReport> testReports = testReportRepository.findAllByProject_Id(projectId, pageable);
@@ -95,8 +95,8 @@ public class TestReportDAOImpl implements TestReportDAO {
     @Override
     @Transactional
     public TestReport get(User user, Long projectId, Long testReportId) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
-        final TestReport testReport = testReportRepository.findOne(testReportId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
         checkAccess(user, project, testReport);
 
         loadLazyRelations(testReport);
@@ -106,7 +106,7 @@ public class TestReportDAOImpl implements TestReportDAO {
     @Override
     @Transactional
     public TestReport getLatest(User user, Long projectId) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         final TestReport latestReport = testReportRepository.findFirstByProject_IdOrderByIdDesc(projectId);
@@ -121,8 +121,8 @@ public class TestReportDAOImpl implements TestReportDAO {
     @Override
     @Transactional
     public void delete(User user, Long projectId, Long testReportId) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
-        final TestReport testReport = testReportRepository.findOne(testReportId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final TestReport testReport = testReportRepository.findById(testReportId).orElse(null);
         checkAccess(user, project, testReport);
 
         testReportRepository.delete(testReport);

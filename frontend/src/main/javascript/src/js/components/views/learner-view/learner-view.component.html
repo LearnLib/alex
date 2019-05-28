@@ -2,26 +2,30 @@
   <view-header title="ALEX is learning"></view-header>
 
   <div class="learn-start-wrapper flex-column" ng-if="vm.status != null && !vm.finished">
-    <div class="alx-container-fluid learn-loading-indicator">
+    <div class="container-fluid learn-loading-indicator">
       <div>
-        <div class="alert alert-info">
-          <button class="btn btn-info btn-xs pull-right" ng-click="vm.abort()">
-            <i class="fa fa-close fa-fw"></i> Abort
-          </button>
-          <i class="fa fa-circle-o-notch fa-spin"></i>&nbsp; Application is
-          <strong ng-if="vm.status.learnerPhase === 'LEARNING'">learning</strong>
-          <strong ng-if="vm.status.learnerPhase=== 'EQUIVALENCE_TESTING'">testing for equivalence</strong>
+        <div class="alert alert-info d-flex flex-row">
+          <div class="w-100">
+            <i class="fas fa-circle-notch fa-spin"></i>&nbsp; Application is
+            <strong ng-if="vm.status.learnerPhase === 'LEARNING'">learning</strong>
+            <strong ng-if="vm.status.learnerPhase=== 'EQUIVALENCE_TESTING'">testing for equivalence</strong>
+          </div>
+          <div class="flex-shrink-0">
+            <button class="btn btn-info btn-xs" ng-click="vm.abort()">
+              <i class="fas fa-times fa-fw"></i> Abort
+            </button>
+          </div>
         </div>
       </div>
 
       <div class="row">
-        <div class="col-sm-6 col-xs-12">
-          <div class="panel panel-info">
-            <div class="panel-heading">
+        <div class="col-md-6 col-sm-12 mb-3">
+          <div class="card">
+            <div class="card-header">
               <strong>Statistics</strong>
             </div>
-            <div class="panel-body pb-0">
-              <table class="table table-condensed table-striped">
+            <div class="card-body pb-0">
+              <table class="table table-striped">
                 <thead>
                 <tr>
                   <th width="140">&nbsp;</th>
@@ -54,12 +58,12 @@
             </div>
           </div>
         </div>
-        <div class="col-sm-6 col-xs-12">
-          <div class="panel panel-info">
-            <div class="panel-heading">
+        <div class="col-md-6 col-sm-12">
+          <div class="card">
+            <div class="card-header">
               <strong>Queries being processed: {{vm.status.currentQueries.length}}</strong>
             </div>
-            <div class="panel-body" style="max-height: 120px; overflow: auto; padding-bottom: 6px">
+            <div class="card-body" style="max-height: 120px; overflow: auto; padding-bottom: 6px">
               <p ng-repeat="query in vm.status.currentQueries">
                 {{query.suffix.join(', ')}}
               </p>
@@ -77,11 +81,13 @@
 
   <div class="learn-start-wrapper flex-row" ng-if="vm.finished">
     <learner-result-panel class="w-100" result="vm.finalResult" ng-if="vm.finalResult != null">
-      <button class="btn btn-sm btn-success" ng-click="vm.resumeLearning()">Resume</button>
     </learner-result-panel>
 
     <div class="panel-sidebar show" style="min-width: 280px"
-         ng-if="vm.resumeConfig != null && vm.symbols.length > 0 && vm.finalResult != null">
+         ng-if="vm.resumeConfig != null && vm.finalResult != null">
+
+      <button class="btn btn-sm btn-block btn-success mb-3" ng-click="vm.resumeLearning()">Resume</button>
+
       <learn-resume-settings-widget
         configuration="vm.resumeConfig"
         result="vm.finalResult"

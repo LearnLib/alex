@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,10 @@ import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.Statistics;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
-import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
+import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
-import de.learnlib.api.algorithm.feature.SupportsGrowingAlphabet;
-import de.learnlib.filter.cache.mealy.MealyCacheOracle;
-import net.automatalib.words.Alphabet;
-import net.automatalib.words.impl.SimpleAlphabet;
+import net.automatalib.SupportsGrowingAlphabet;
 import org.apache.logging.log4j.ThreadContext;
 
 /** The learner thread that is used for resuming an old experiment from a given step. */
@@ -45,8 +42,8 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
      * @param learnerResultDAO
      *         {@link AbstractLearnerThread#learnerResultDAO}.
      * @param webhookService
-     *         {@link AbstractLearnerThread#webhookService}.
-     * @param context
+     *         {@link AbstractLearnerThread#}.
+     * @param contextHandler
      *         The context to use.
      * @param result
      *         {@link AbstractLearnerThread#result}.
@@ -56,9 +53,9 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
      *         The DAO for tests that is passed to the eq oracle.
      */
     public ResumingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-            TestDAO testDAO, ConnectorContextHandler context, LearnerResult result,
-            LearnerResumeConfiguration configuration) {
-        super(user, learnerResultDAO, webhookService, testDAO, context, result, configuration);
+                                 TestDAO testDAO, PreparedContextHandler contextHandler, LearnerResult result,
+                                 LearnerResumeConfiguration configuration) {
+        super(user, learnerResultDAO, webhookService, testDAO, contextHandler, result, configuration);
     }
 
     @Override
@@ -74,9 +71,7 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
             e.printStackTrace();
             updateOnError(e);
         } finally {
-            context.post();
-            finished = true;
-
+            shutdown();
             LOGGER.info(LoggerMarkers.LEARNER, "The learner finished resuming the experiment.");
             LOGGER.traceExit();
             ThreadContext.remove("userId");
@@ -93,13 +88,8 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
                 symbolMapper.addSymbol(symbol);
 
                 // if the cache is not reinitialized with the new alphabet, we will get cache errors later
-                if (result.isUseMQCache()) {
-
-                    // make new alphabet for the cache because it cannot handle a shared growing alphabet instance
-                    final Alphabet<String> alphabet = new SimpleAlphabet<>(abstractAlphabet);
-                    alphabet.add(symbol.getComputedName());
-
-                    this.mqOracle.setDelegate(MealyCacheOracle.createDAGCacheOracle(alphabet, monitorOracle));
+                if (result.isUseMQCache() && cacheOracle != null) {
+                   cacheOracle.addAlphabetSymbol(symbol.getComputedName());
                 }
 
                 // measure how much time and membership queries it takes to add the symbol
@@ -109,12 +99,11 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
 
                 final Statistics statistics = new Statistics();
                 statistics.getDuration().setLearner(end - start);
-                statistics.getMqsUsed().setLearner(sul.getResetCount());
-                statistics.getSymbolsUsed().setLearner(sul.getSymbolUsedCount());
-                sul.resetCounter();
+                statistics.getMqsUsed().setLearner(counterOracle.getQueryCount());
+                statistics.getSymbolsUsed().setLearner(counterOracle.getSymbolCount());
+                counterOracle.reset();
 
                 final LearnerResultStep step = learnerResultDAO.createStep(result);
-
                 step.setHypothesis(CompactMealyMachineProxy.createFrom(learner.getHypothesisModel(), abstractAlphabet));
                 step.setState(result.getAlgorithm().suspend(learner));
                 step.setAlgorithmInformation(result.getAlgorithm().getInternalData(learner));

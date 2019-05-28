@@ -13,7 +13,7 @@
     <label>Type</label>
     <select class="form-control" ng-model="vm.parameter.parameterType" required name="type">
         <option disabled>Select a type</option>
-        <option ng-repeat="type in vm.types" value="{{type}}">{{type | formatParameterType}}</option>
+        <option ng-repeat="type in vm.types" value="{{type}}">{{type | normalizeUpperCase}}</option>
     </select>
 
     <div class="help-block" ng-messages="vm.form.name.$error" ng-if="vm.form.name.$touched">

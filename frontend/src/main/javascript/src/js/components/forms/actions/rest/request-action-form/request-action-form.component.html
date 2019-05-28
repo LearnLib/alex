@@ -1,4 +1,4 @@
-<h4><strong>Make request</strong></h4>
+<h5><strong>Make request</strong></h5>
 
 <p class="text-muted">Make a HTTP request to a URL (relative to your projects default URL).</p>
 <hr>
@@ -17,7 +17,17 @@
 </div>
 
 <div class="form-group">
-    <label>Data</label>
+    <div class="d-flex">
+        <div class="w-100">
+            <label>Data</label>
+        </div>
+        <div>
+            <select class="form-control" ng-change="vm.setPreset()" ng-model="vm.preset" style="padding: 0; height: auto; width: 80px">
+                <option value="JSON" selected>JSON</option>
+                <option value="GRAPH_QL">GraphQL</option>
+            </select>
+        </div>
+    </div>
     <div ng-model="vm.action.data" ui-ace="vm.aceOptions"></div>
 </div>
 
@@ -32,22 +42,22 @@
 
         <div class="form-group">
             <div class="row">
-                <div class="col-xs-5 no-padding-right">
+                <div class="col-sm-5 pr-0">
                     <input class="form-control" type="text" ng-model="vm.header.name" placeholder="Header Name">
                 </div>
-                <div class="col-xs-5 no-padding-right">
+                <div class="col-sm-5 pr-0">
                     <input class="form-control" type="text" ng-model="vm.header.value" placeholder="Header Value">
                 </div>
-                <div class="col-xs-2">
-                    <a class="btn btn-default btn-block btn-sm" ng-click="vm.addHeader()">
-                        <i class="fa fa-plus"></i>
+                <div class="col-sm-2">
+                    <a class="btn btn-default btn-block" ng-click="vm.addHeader()">
+                        <i class="fas fa-plus"></i>
                     </a>
                 </div>
             </div>
             <br>
             <ul class="list-group list-group-condensed">
                 <li class="list-group-item" ng-repeat="(key, value) in vm.action.headers">
-                    <i class="fa fa-trash fa-fw pull-right" ng-click="vm.action.removeHeader(key)"></i>
+                    <i class="fas fa-trash fa-fw float-right" ng-click="vm.action.removeHeader(key)"></i>
                     <strong ng-bind="key"></strong>: <span ng-bind="vm.action.headers[key]"></span>
                 </li>
             </ul>
@@ -72,22 +82,22 @@
 
         <div class="form-group">
             <div class="row">
-                <div class="col-xs-5 no-padding-right">
+                <div class="col-sm-5 pr-0">
                     <input class="form-control" type="text" ng-model="vm.cookie.name" placeholder="Cookie Name">
                 </div>
-                <div class="col-xs-5 no-padding-right">
+                <div class="col-sm-5 pr-0">
                     <input class="form-control" type="text" ng-model="vm.cookie.value" placeholder="Cookie Value">
                 </div>
-                <div class="col-xs-2">
-                    <a class="btn btn-default btn-block btn-sm" ng-click="vm.addCookie()">
-                        <i class="fa fa-plus"></i>
+                <div class="col-sm-2">
+                    <a class="btn btn-default btn-block ng-click="vm.addCookie()">
+                        <i class="fas fa-plus"></i>
                     </a>
                 </div>
             </div>
             <br>
             <ul class="list-group list-group-condensed">
                 <li class="list-group-item" ng-repeat="(key, value) in vm.action.cookies">
-                    <i class="fa fa-trash fa-fw pull-right" ng-click="vm.action.removeCookie(key)"></i>
+                    <i class="fas fa-trash fa-fw float-right" ng-click="vm.action.removeCookie(key)"></i>
                     <strong ng-bind="key"></strong>: <span ng-bind="vm.action.cookies[key]"></span>
                 </li>
             </ul>

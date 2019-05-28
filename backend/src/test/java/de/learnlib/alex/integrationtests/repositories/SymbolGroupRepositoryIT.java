@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,10 @@
 package de.learnlib.alex.integrationtests.repositories;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolGroup;
-import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
-import org.junit.After;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -36,99 +33,47 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-@Ignore
 public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
-
-    @Inject
-    private UserRepository userRepository;
-
-    @Inject
-    private ProjectRepository projectRepository;
 
     @Inject
     private SymbolGroupRepository symbolGroupRepository;
 
-    @After
-    public void tearDown() {
-        // deleting the user should (!) also deleteMany all projects, groups, symbols, ... related to that user.
-        userRepository.deleteAll();
+    private User user;
+
+    private Project project;
+
+    @Before
+    public void before() {
+        User user = createUser("alex@test.example");
+        this.user = userRepository.save(user);
+
+        Project project = createProject(user, "Test Project 1");
+        this.project = projectRepository.save(project);
     }
 
     @Test
     public void shouldSaveAValidGroup() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        SymbolGroup group = createGroup(user, project, 1L, "Test Group");
-
+        SymbolGroup group = createGroup(project, 1L, "Test Group");
         group = symbolGroupRepository.save(group);
 
         assertTrue(group.getId() > 0L);
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void shouldFailToSaveAGroupWithoutAnUser() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        SymbolGroup group = new SymbolGroup();
-        group.setProject(project);
-        project.getGroups().add(group);
-        group.setId(1L);
-        group.setName("Test Group");
-
-        symbolGroupRepository.save(group); // should fail
-    }
-
-    @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveAGroupWithoutAProject() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
         SymbolGroup group = new SymbolGroup();
-        project.getGroups().add(group);
         group.setId(1L);
         group.setName("Test Group");
 
-        symbolGroupRepository.save(group); // should fail
-    }
-
-    @Test(expected = DataIntegrityViolationException.class)
-    public void shouldFailToSaveAGroupWithoutAnID() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        SymbolGroup group = new SymbolGroup();
-        group.setProject(project);
         project.getGroups().add(group);
-        group.setName("Test Group");
 
         symbolGroupRepository.save(group); // should fail
     }
 
     @Test(expected = TransactionSystemException.class)
     public void shouldFailToSaveAGroupWithoutAName() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
         SymbolGroup group = new SymbolGroup();
         group.setProject(project);
         project.getGroups().add(group);
@@ -137,70 +82,27 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
         symbolGroupRepository.save(group); // should fail
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void shouldFailToSaveAGroupsWithADuplicateIDs() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        // 0L will be already used by the default group
-        SymbolGroup group1 = createGroup(user, project, 0L, "Test Group");
-        System.out.println(project.getGroups().size());
-
-        symbolGroupRepository.save(group1); // should fail
-    }
-
     @Test
     public void shouldSaveGroupsWithADuplicateIDsInDifferentProjects() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project1 = createProject(user, "Test Project 1");
-        project1 = projectRepository.save(project1);
         Project project2 = createProject(user, "Test Project 2");
         project2 = projectRepository.save(project2);
-        //
-        SymbolGroup group1 = createGroup(user, project1, 1L, "Test Group 1");
-        symbolGroupRepository.save(group1);
-        SymbolGroup group2 = createGroup(user, project2, 1L, "Test Group 2");
 
+        SymbolGroup group1 = createGroup(project, 1L, "Test Group 1");
+        symbolGroupRepository.save(group1);
+        SymbolGroup group2 = createGroup(project2, 1L, "Test Group 2");
         group2 = symbolGroupRepository.save(group2);
 
         assertTrue(group2.getId() > 0L);
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void shouldFailToSaveAGroupsWithADuplicateNames() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        SymbolGroup group1 = createGroup(user, project, 1L, "Test Group");
-        symbolGroupRepository.save(group1);
-        SymbolGroup group2 = createGroup(user, project, 2L, "Test Group");
-
-        symbolGroupRepository.save(group2); // should fail
-
-        System.out.println(symbolGroupRepository.findAll());
-    }
-
     @Test
     public void shouldSaveGroupsWithADuplicateNamesInDifferentProjects() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project1 = createProject(user, "Test Project 1");
-        project1 = projectRepository.save(project1);
         Project project2 = createProject(user, "Test Project 2");
         project2 = projectRepository.save(project2);
-        //
-        SymbolGroup group1 = createGroup(user, project1, 1L, "Test Group");
+
+        SymbolGroup group1 = createGroup(project, 1L, "Test Group");
         symbolGroupRepository.save(group1);
-        SymbolGroup group2 = createGroup(user, project2, 1L, "Test Group");
+        SymbolGroup group2 = createGroup(project2, 1L, "Test Group");
 
         group2 = symbolGroupRepository.save(group2);
 
@@ -209,16 +111,10 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldFetchAllGroupsOfAProject() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        SymbolGroup group1 = createGroup(user, project, 1L, "Test Group 1");
-        symbolGroupRepository.save(group1);
-        SymbolGroup group2 = createGroup(user, project, 2L, "Test Group 2");
-        symbolGroupRepository.save(group2);
+        SymbolGroup group1 = createGroup(project, null, "Test Group 1");
+        group1 = symbolGroupRepository.save(group1);
+        SymbolGroup group2 = createGroup(project, null, "Test Group 2");
+        group2 = symbolGroupRepository.save(group2);
 
         List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_Id(project.getId());
 
@@ -229,42 +125,18 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldFetchAGroupOfAProjectByItsID() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        SymbolGroup group = createGroup(user, project, 1L, "Test Group 1");
-        symbolGroupRepository.save(group);
+        SymbolGroup group = createGroup(project, null, "Test Group 1");
+        group = symbolGroupRepository.save(group);
 
-        SymbolGroup groupFromDB = symbolGroupRepository.findOne(group.getId());
+        SymbolGroup groupFromDB = symbolGroupRepository.findById(group.getId()).orElse(null);
 
         assertThat(groupFromDB.getProject(), is(equalTo(project)));
-        assertThat(groupFromDB.getId(), is(equalTo(1L)));
-    }
-
-    @Test
-    public void shouldReturnNullWhenFetchingANonExistingGroupOfAProjectByItsID() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-
-        SymbolGroup groupFromDB = symbolGroupRepository.findOne(-1L);
-
-        assertNull(groupFromDB);
+        assertThat(groupFromDB.getId(), is(equalTo(group.getId())));
     }
 
     @Test
     public void shouldDeleteAGroup() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        SymbolGroup group = createGroup(user, project, 1L, "Test Group 1");
+        SymbolGroup group = createGroup(project, 1L, "Test Group 1");
         group = symbolGroupRepository.save(group);
 
         symbolGroupRepository.delete(group);
@@ -274,10 +146,10 @@ public class SymbolGroupRepositoryIT extends AbstractRepositoryIT {
 
     @Test(expected = EmptyResultDataAccessException.class)
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingGroup() {
-        symbolGroupRepository.delete(55L); // random uuid
+        symbolGroupRepository.deleteById(55L); // random uuid
     }
 
-    static SymbolGroup createGroup(User user, Project project, Long id, String name) {
+    static SymbolGroup createGroup(Project project, Long id, String name) {
         SymbolGroup group = new SymbolGroup();
         group.setProject(project);
         project.getGroups().add(group);

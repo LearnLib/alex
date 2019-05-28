@@ -43,4 +43,20 @@
     eq-oracle="vm.eqOracle"
   >
   </test-suite-eq-oracle-form>
+
+  <div class="form-horizontal form-condensed">
+    <div class="form-group row" ng-if="vm.eqOracle != null">
+      <label class="col-sm-3 col-form-label">Batch size</label>
+      <div class="col-sm-9">
+        <input
+            class="form-control"
+            name="eq_oracle_batch_size"
+            ng-model="vm.eqOracle.batchSize"
+            type="number"
+            min="0"
+            placeholder="Enter a batch size"
+        >
+      </div>
+    </div>
+  </div>
 </div>

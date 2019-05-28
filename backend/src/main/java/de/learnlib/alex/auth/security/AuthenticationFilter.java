@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.MalformedClaimException;
+import org.jose4j.jwt.NumericDate;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
@@ -44,13 +46,26 @@ import java.util.regex.Pattern;
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter {
 
-    /** The RegExp to describe a proper formatted 'Authorization' header field. */
+    /**
+     * The RegExp to describe a proper formatted 'Authorization' header field.
+     */
     private static final Pattern PATTERN = Pattern.compile("bearer [a-z0-9-_]+\\.[a-z0-9-_]+\\.[a-z0-9-_]+",
-                                                           Pattern.CASE_INSENSITIVE);
+            Pattern.CASE_INSENSITIVE);
 
-    /** The UserDAO to use. */
-    @Inject
+    /**
+     * The UserDAO to use.
+     */
     private UserDAO userDAO;
+
+    /**
+     * Constructor.
+     *
+     * @param userDAO The DAO for users.
+     */
+    @Inject
+    public AuthenticationFilter(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
 
     /**
      * checks for the availability of a JWT and puts the corresponding user into a SecurityContext that can be injected
@@ -79,6 +94,10 @@ public class AuthenticationFilter implements ContainerRequestFilter {
                 // if no exception was throws up to here you can be sure that the jwt has not been modified
                 // and that the user that send the jwt is the one he seems to be
                 JwtClaims claims = jwtConsumer.processToClaims(jwt);
+                if (NumericDate.now().isAfter(claims.getExpirationTime())) {
+                    requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+                }
+
                 Long id = (Long) claims.getClaimsMap().get("id");
 
                 // get user from the db
@@ -97,8 +116,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             // create injectable security context with user here
             requestContext.setSecurityContext(new AuthContext(user));
 
-        } catch (InvalidJwtException e) {
-            e.printStackTrace();
+        } catch (InvalidJwtException | MalformedClaimException e) {
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
         }
     }
@@ -108,7 +126,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
      */
     private static class AuthContext implements SecurityContext {
 
-        /** The authenticated user or a new dummy one. */
+        /**
+         * The authenticated user or a new dummy one.
+         */
         private User user;
 
         /**
@@ -130,8 +150,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
          * Checks for the role of the user.
          * Allow an admin to do everything a registered one can also do
          *
-         * @param role
-         *         - The role to check
+         * @param role - The role to check
          * @return true, if the user is in the role; false otherwise.
          */
         @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,6 @@ import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -395,7 +394,7 @@ public class LearnerResultDAOImplTest {
     }
 
     private List<LearnerResult> createLearnerResultsList() throws NotFoundException {
-        List<LearnerResult> results = new LinkedList<>();
+        List<LearnerResult> results = new ArrayList<>();
         for (int i = 0; i < RESULTS_AMOUNT; i++) {
             LearnerResult r = new LearnerResult();
             Project project = new Project(1L);

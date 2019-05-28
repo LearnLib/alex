@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.ValidationExceptionHelper;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
@@ -41,7 +40,6 @@ import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.io.IOException;
 import java.util.Arrays;
@@ -105,9 +103,9 @@ public class ProjectDAOImpl implements ProjectDAO {
      */
     @Inject
     public ProjectDAOImpl(ProjectRepository projectRepository, LearnerResultRepository learnerResultRepository,
-            TestReportRepository testReportRepository, @Lazy FileDAO fileDAO, @Lazy ProjectUrlDAO projectUrlDAO,
-            ParameterizedSymbolRepository parameterizedSymbolRepository,
-            SymbolStepRepository symbolStepRepository, SymbolActionRepository symbolActionRepository) {
+                          TestReportRepository testReportRepository, @Lazy FileDAO fileDAO, @Lazy ProjectUrlDAO projectUrlDAO,
+                          ParameterizedSymbolRepository parameterizedSymbolRepository,
+                          SymbolStepRepository symbolStepRepository, SymbolActionRepository symbolActionRepository) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
@@ -120,22 +118,29 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     @Override
     @Transactional
-    public Project create(final Project project) throws ValidationException {
+    public Project create(final User user, final Project project) throws ValidationException {
         LOGGER.traceEntry("create({})", project);
 
         try {
-            SymbolGroup defaultGroup = new SymbolGroup();
+            project.setUser(user);
+
+            final SymbolGroup defaultGroup = new SymbolGroup();
             defaultGroup.setName("Default group");
             defaultGroup.setProject(project);
             project.addGroup(defaultGroup);
 
-            TestSuite testSuite = new TestSuite();
+            final TestSuite testSuite = new TestSuite();
             testSuite.setName("Root");
             testSuite.setProject(project);
             project.getTests().add(testSuite);
 
             if (project.getUrls().isEmpty()) {
                 throw new ValidationException("The project has to have at least one URL.");
+            }
+
+            final Project projectWithSameName = projectRepository.findByUser_IdAndName(user.getId(), project.getName());
+            if (projectWithSameName != null && !projectWithSameName.getId().equals(project.getId())) {
+                throw new ValidationException("A project with that name already exists.");
             }
 
             project.getUrls().forEach(url -> {
@@ -146,16 +151,11 @@ public class ProjectDAOImpl implements ProjectDAO {
             final Project createdProject = projectRepository.save(project);
             LOGGER.traceExit(createdProject);
             return createdProject;
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
             LOGGER.info("Project creation failed: ", e);
             e.printStackTrace();
             LOGGER.traceExit(e);
-            throw new javax.validation.ValidationException("Project could not be created.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("Project creation failed:", e);
-            LOGGER.traceExit(e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("Project was not created:", cve);
+            throw new ValidationException("Project could not be created.", e);
         }
     }
 
@@ -170,11 +170,10 @@ public class ProjectDAOImpl implements ProjectDAO {
     @Override
     @Transactional(readOnly = true)
     public Project getByID(Long userId, Long projectId, EmbeddableFields... embedFields) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(new User(userId), project);
 
         initLazyRelations(project, embedFields);
-
         return project;
     }
 
@@ -183,7 +182,7 @@ public class ProjectDAOImpl implements ProjectDAO {
     public Project update(User user, Project project) throws NotFoundException, ValidationException {
         LOGGER.traceEntry("update({})", project);
 
-        final Project projectInDb = projectRepository.findOne(project.getId());
+        final Project projectInDb = projectRepository.findById(project.getId()).orElse(null);
         checkAccess(user, projectInDb);
 
         final List<ProjectUrl> urls = project.getUrls().stream()
@@ -212,26 +211,22 @@ public class ProjectDAOImpl implements ProjectDAO {
 
             LOGGER.traceExit(project);
             return updatedProject;
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | TransactionSystemException e) {
             LOGGER.info("Project update failed:", e);
             throw new javax.validation.ValidationException("Project could not be updated.", e);
-        } catch (TransactionSystemException e) {
-            LOGGER.info("Project update failed:", e);
-            ConstraintViolationException cve = (ConstraintViolationException) e.getCause().getCause();
-            throw ValidationExceptionHelper.createValidationException("Project was not updated.", cve);
         }
     }
 
     private void removeUrlsFromLearnerResults(List<ProjectUrl> urlsToRemove) {
         final List<LearnerResult> learnerResults = learnerResultRepository.findAllByUrlsIn(urlsToRemove);
         learnerResults.forEach(result -> result.getUrls().removeAll(urlsToRemove));
-        learnerResultRepository.save(learnerResults);
+        learnerResultRepository.saveAll(learnerResults);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void delete(User user, Long projectId) throws NotFoundException {
-        final Project project = projectRepository.findOne(projectId);
+        final Project project = projectRepository.findById(projectId).orElse(null);
         checkAccess(user, project);
 
         symbolActionRepository.deleteAllBySymbol_Project_Id(projectId);

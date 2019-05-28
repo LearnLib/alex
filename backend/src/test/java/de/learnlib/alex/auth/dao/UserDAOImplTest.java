@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,11 +38,13 @@ import org.springframework.transaction.TransactionSystemException;
 import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -153,7 +155,7 @@ public class UserDAOImplTest {
     @Test
     public void shouldGetByID() throws NotFoundException {
         User user = createUser();
-        BDDMockito.given(userRepository.findOne(user.getId())).willReturn(user);
+        BDDMockito.given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         User userFromDB = userDAO.getById(user.getId());
 
@@ -225,7 +227,7 @@ public class UserDAOImplTest {
     @Test
     public void shouldDeleteARegisteredUser() throws NotFoundException {
         User user = createUser();
-        BDDMockito.given(userRepository.findOne(user.getId())).willReturn(user);
+        BDDMockito.given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         userDAO.delete(user.getId());
 
@@ -237,7 +239,7 @@ public class UserDAOImplTest {
         List<User> admins = createUsersList();
         admins.forEach(u -> u.setRole(UserRole.ADMIN));
         User adminToDelete = admins.get(0);
-        BDDMockito.given(userRepository.findOne(adminToDelete.getId())).willReturn(adminToDelete);
+        BDDMockito.given(userRepository.findById(adminToDelete.getId())).willReturn(Optional.of(adminToDelete));
         BDDMockito.given(userRepository.findByRole(UserRole.ADMIN)).willReturn(admins);
 
         userDAO.delete(adminToDelete.getId());
@@ -248,7 +250,7 @@ public class UserDAOImplTest {
     @Test(expected = NotFoundException.class)
     public void shouldNotDeleteTheLastAdmin() throws NotFoundException {
         User admin = createAdmin();
-        BDDMockito.given(userRepository.findOne(admin.getId())).willReturn(admin);
+        BDDMockito.given(userRepository.findById(admin.getId())).willReturn(Optional.of(admin));
         BDDMockito.given(userRepository.findByRole(UserRole.ADMIN)).willReturn(Collections.singletonList(admin));
 
         userDAO.delete(admin.getId());

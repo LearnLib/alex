@@ -1,22 +1,21 @@
 <div class="view results-compare-view">
     <action-bar>
-        <div class="pull-left" ng-if="vm.panels.length === 2">
+        <div class="float-left" ng-if="vm.panels.length === 2">
             <button class="btn btn-sm btn-default"
                     ng-click="vm.showSeparatingWord()">
-                <i class="fa fa-fw fa-bolt"></i> Separating word
+                <i class="fas fa-fw fa-bolt"></i> Separating word
             </button>
 
             <button class="btn btn-sm btn-default"
                     ng-click="vm.showDifferenceTree()">
-                <i class="fa fa-fw fa-sitemap"></i> Differences
+                <i class="fas fa-fw fa-sitemap"></i> Differences
             </button>
         </div>
 
-        <button class="btn btn-sm btn-success pull-right"
+        <button class="btn btn-sm btn-success float-right"
                 ng-if="vm.panels.length < 3"
-                result-list-modal-handle results="vm.results"
-                on-selected="vm.panels.push(result)">
-            <i class="fa fa-fw fa-plus"></i> Add hypothesis
+                ng-click="vm.openResultListModal()">
+            <i class="fas fa-fw fa-plus"></i> Add hypothesis
         </button>
     </action-bar>
 
@@ -24,15 +23,15 @@
 
         <div class="container" ng-if="vm.panels.length === 0">
             <p></p>
-            <div class="alert alert-info" result-list-modal-handle results="vm.results" on-selected="vm.panels.push(result)">
-                <i class="fa fa-plus-square fa-fw"></i>
+            <div class="alert alert-info" ng-click="vm.openResultListModal()">
+                <i class="fas fa-plus-square fa-fw"></i>
                 <strong>Click to add a hypothesis</strong> or click on the green button on the top right
             </div>
         </div>
 
         <learner-result-panel class="w-100" ng-if="vm.panels.length > 0" ng-repeat="result in vm.panels track by $index" result="result" index="$index" on-step="vm.onStep.bind(vm)">
             <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="vm.closePanel($index)">
-                <i class="fa fa-close"></i>
+                <i class="fas fa-times"></i>
             </button>
         </learner-result-panel>
 

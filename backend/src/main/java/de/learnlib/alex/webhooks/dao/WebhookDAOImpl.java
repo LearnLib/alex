@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.xml.bind.ValidationException;
+import javax.validation.ValidationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,13 +85,13 @@ public class WebhookDAOImpl implements WebhookDAO {
     @Override
     @Transactional
     public void delete(User user, Long id) throws NotFoundException {
-        final Webhook webhook = webhookRepository.findOne(id);
+        final Webhook webhook = webhookRepository.findById(id).orElse(null);
         checkAccess(user, webhook);
         webhookRepository.delete(webhook);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public void delete(User user, List<Long> ids) throws NotFoundException {
         for (Long id : ids) {
             delete(user, id);
@@ -101,7 +101,7 @@ public class WebhookDAOImpl implements WebhookDAO {
     @Override
     @Transactional
     public Webhook update(User user, Webhook webhook) throws NotFoundException, ValidationException {
-        final Webhook webhookInDb = webhookRepository.findOne(webhook.getId());
+        final Webhook webhookInDb = webhookRepository.findById(webhook.getId()).orElse(null);
         checkAccess(user, webhookInDb);
 
         // check if there is another webhook registered to the new URL.

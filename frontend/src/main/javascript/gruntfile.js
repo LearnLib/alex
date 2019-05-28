@@ -7,21 +7,64 @@ module.exports = function (grunt) {
         'node_modules/n3-charts/build/LineChart.js'
     ];
 
+    const envifyDev = ['envify', {
+        API_URL: 'http://localhost:8000/rest',
+        global: true
+    }];
+
+    const envifyDist = ['envify', {
+        API_URL: '/rest',
+        global: true
+    }];
+
+    const browserifyOptionsDist = {
+        files: {
+            '<%= buildLocation %>/js/alex.bundle.js': ['src/js/index.ts']
+        },
+        options: {
+            plugin: [
+                ['tsify']
+            ],
+            transform: [
+                ['stringify', { // load component templates
+                    appliesTo: { includeExtensions: ['.html']}
+                }]
+            ]
+        }
+    };
+
+    const browserifyOptionsDev = JSON.parse(JSON.stringify(browserifyOptionsDist));
+    browserifyOptionsDev.options = Object.assign({
+        watch: true,
+        keepAlive: true,
+        watchifyOptions: {
+            entries: ['src/js/index.ts'],
+            ignoreWatch: ['**/node_modules/**', '**/dist/**'],
+            cache: {},
+            packageCache: {},
+            poll: true,
+            delay: 500
+        }
+    }, browserifyOptionsDev.options);
+
+    browserifyOptionsDev.options.transform.push(envifyDev);
+    browserifyOptionsDist.options.transform.push(envifyDist);
+
     grunt
         .initConfig({
-            buildLocation: '../../../target/classes',
+            buildLocation: './dist',
 
             pkg: grunt.file.readJSON('package.json'),
 
             uglify: {
                 app: {
                     files: {
-                        '<%= buildLocation %>/js/alex.min.js': ['<%= buildLocation %>/js/alex.js']
+                        '<%= buildLocation %>/js/alex.bundle.js': ['<%= buildLocation %>/js/alex.bundle.js']
                     }
                 },
                 libs: {
                     files: {
-                        '<%= buildLocation %>/js/libs.min.js': ['<%= buildLocation %>/js/libs.js']
+                        '<%= buildLocation %>/js/libs.bundle.js': ['<%= buildLocation %>/js/libs.bundle.js']
                     }
                 }
             },
@@ -32,21 +75,14 @@ module.exports = function (grunt) {
                 },
                 libs: {
                     src: libraries,
-                    dest: '<%= buildLocation %>/js/libs.js'
+                    dest: '<%= buildLocation %>/js/libs.bundle.js'
                 }
             },
 
             watch: {
-                scripts: {
-                    files: ['src/js/**/*.js', './environments.js', 'src/js/**/*.html'],
-                    tasks: ['build-js'],
-                    options: {
-                        spawn: false
-                    }
-                },
                 sass: {
                     files: ['src/scss/**/*.scss'],
-                    tasks: ['build-css'],
+                    tasks: ['bundle-css'],
                     options: {
                         spawn: false
                     }
@@ -56,7 +92,7 @@ module.exports = function (grunt) {
             cssmin: {
                 target: {
                     files: {
-                        '<%= buildLocation %>/css/style.min.css': [
+                        '<%= buildLocation %>/css/style.css': [
                             'node_modules/n3-charts/build/LineChart.css',
                             'node_modules/angular-dragula/dist/dragula.min.css',
                             'node_modules/angular-toastr/dist/angular-toastr.min.css',
@@ -81,51 +117,19 @@ module.exports = function (grunt) {
             },
 
             browserify: {
-                dist: {
-                    files: {
-                        '<%= buildLocation %>/js/alex.js': ['src/js/index.js']
-                    },
-                    options: {
-                        transform: [
-                            ['babelify', {
-                                sourceMap: false,
-                                presets: ['es2015'],
-                                compact: false
-                            }],
-                            ['browserify-ngannotate'],
-                            ['html2js-browserify', {
-                                minify: true
-                            }]
-                        ]
-                    }
-                }
-            },
-
-            karma: {
-                unit: {
-                    configFile: 'test/karma.conf.unit.js'
-                }
-            },
-
-            jshint: {
-                dist: {
-                    src: ['src/js/**/*.js']
-                },
-                options: {
-                    'esnext': true,
-                    'laxbreak': true,
-                    '-W053': true
-                }
+                dev: browserifyOptionsDev,
+                dist: browserifyOptionsDist
             },
 
             exec: {
-                'build_css': 'node-sass src/scss/style.scss -o <%= buildLocation %>/css'
+                'build_css': 'node-sass src/scss/style.scss -o <%= buildLocation %>/css',
+                'ng_annotate': 'ng-annotate -a -o <%= buildLocation %>/js/alex.bundle.js <%= buildLocation %>/js/alex.bundle.js'
             },
 
             copy: {
                 fonts: {
                     expand: true,
-                    cwd: 'node_modules/font-awesome/fonts',
+                    cwd: 'node_modules/@fortawesome/fontawesome-free/webfonts',
                     src: '*',
                     dest: '<%= buildLocation %>/fonts',
                     filter: 'isFile'
@@ -141,6 +145,15 @@ module.exports = function (grunt) {
                     src: 'index.html',
                     dest: '<%= buildLocation %>/index.html'
                 }
+            },
+
+            concurrent: {
+                dev: {
+                    tasks: ['build:dev', 'watch:sass'],
+                    options: {
+                        logConcurrentOutput: true
+                    }
+                }
             }
         });
 
@@ -149,15 +162,18 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-postcss');
     grunt.loadNpmTasks('grunt-browserify');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-exec');
+    grunt.loadNpmTasks('grunt-concurrent');
 
-    grunt.registerTask('build-js', ['browserify', 'uglify:app']);
-    grunt.registerTask('build-css', ['exec:build_css', 'postcss', 'cssmin']);
-    grunt.registerTask('default', ['concat:libs', 'uglify:libs', 'build-js', 'copy:fonts', 'build-css', 'copy:images', 'copy:index']);
-    grunt.registerTask('lint', 'jshint');
-    grunt.registerTask('test', ['karma:unit']);
+    const build = ['concat:libs', 'uglify:libs', 'copy:fonts', 'bundle-css', 'copy:images', 'copy:index'];
+
+    grunt.registerTask('bundle-js:dist', ['browserify:dist', 'exec:ng_annotate', 'uglify:app']);
+    grunt.registerTask('bundle-js:dev', ['browserify:dev']);
+    grunt.registerTask('bundle-css', ['exec:build_css', 'postcss', 'cssmin']);
+    grunt.registerTask('build:dev', build.concat(['bundle-js:dev']));
+    grunt.registerTask('build:dist', build.concat(['bundle-js:dist']));
+    grunt.registerTask('dev', 'concurrent:dev');
+    grunt.registerTask('build', 'build:dist');
 };

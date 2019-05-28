@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package de.learnlib.alex.common.utils;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * Helper class to allow batch paths to have a csv-list of IDs.
  */
-public class IdsList extends LinkedList<Long> {
+public class IdsList extends ArrayList<Long> {
 
     /**
      * Constructor
@@ -31,9 +31,13 @@ public class IdsList extends LinkedList<Long> {
      *         The ids as comma separated list.
      */
     public IdsList(String value) {
-        String[] parts = value.split(",");
+        if (value == null || value.trim().equals("")) {
+            throw new IllegalArgumentException("You cannot pass null or an empty string.");
+        }
+
+        final String[] parts = value.split(",");
         if (parts.length == 0) {
-            throw new IllegalArgumentException("No IDs found!");
+            throw new IllegalArgumentException("There are no values specified.");
         }
 
         for (String number : parts) {

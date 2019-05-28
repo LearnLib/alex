@@ -5,6 +5,7 @@
 # ALEX
 
 [![Travis CI](https://travis-ci.org/LearnLib/alex.svg?branch=developer)](https://travis-ci.org/LearnLib/alex)
+[![Coverage Status](https://coveralls.io/repos/github/LearnLib/alex/badge.svg?branch=developer)](https://coveralls.io/github/LearnLib/alex?branch=master)
 
 Automata Learning EXperience (ALEX) is an extension of [LearnLib][learnlib] that allows you run automated tests on web 
 applications and JSON-based REST APIs using active automata learning.
@@ -18,7 +19,7 @@ Make sure you have Java 8 installed on your system.
 We advise to use a modern web browser like Google Chrome, Mozilla Firefox or Microsoft Edge with JavaScript enabled.
 
 1. [Download](https://github.com/LearnLib/alex/releases/latest) the latest version.
-2. Open a terminal and start ALEX via `java -jar alex-1.6.1.war [--server.port=XXXX]`.
+2. Open a terminal and start ALEX via `java -jar alex-1.7.0-SNAPSHOT.war [--server.port=XXXX]`.
 3. Wait until the command line prints something like `de.learnlib.alex.App - Started App in XX.XXX seconds`.
 3. Open *http://localhost:8000* in a web browser.
 
@@ -48,7 +49,7 @@ cd alex
 mvn install package [-DskipTests]
 ```
 
-The bundle can then be found at `build/target/alex-build-1.6.1.war`.
+The bundle can then be found at `build/target/alex-build-1.7.0-SNAPSHOT.war`.
 
 ## Connecting to a database
 
@@ -70,7 +71,19 @@ spring.jpa.hibernate.ddl-auto=update
 
 Then, start ALEX like this:
 
-`java -jar alex-1.6.1.war "--spring.config.location=/path/to/your/application.properties"`
+`java -jar alex-buid-1.7.0-SNAPSHOT.war "--spring.config.location=/path/to/your/application.properties"`
+
+
+## Using LTSMin
+
+ALEX uses the external [LTSMin][ltsmin] library for model checking.
+If you want to use its capabilities, download version **3.0.2** and append the `ltsmin.path` argument to the ALEX binary on start.
+The value for the argument should be the *bin* directory where the compiled binaries of LTSMin are located.
+Example:
+
+`java -jar alex-1.7.0.war --ltsmin.path="/path/to/ltsmin/bin"`
+
+
 
 ## Further reading
 
@@ -84,3 +97,4 @@ Then, start ALEX like this:
 [learnlib]: https://github.com/LearnLib/learnlib
 [mealy]: https://en.wikipedia.org/wiki/Mealy_machine
 [selenium]: https://www.seleniumhq.org/
+[ltsmin]: http://ltsmin.utwente.nl/

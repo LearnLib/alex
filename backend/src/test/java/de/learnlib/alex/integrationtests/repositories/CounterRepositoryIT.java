@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@
 package de.learnlib.alex.integrationtests.repositories;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.CounterRepository;
-import de.learnlib.alex.data.repositories.ProjectRepository;
-import org.junit.After;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -39,34 +35,27 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-@Ignore
 public class CounterRepositoryIT extends AbstractRepositoryIT {
-
-    @Inject
-    private UserRepository userRepository;
-
-    @Inject
-    private ProjectRepository projectRepository;
 
     @Inject
     private CounterRepository counterRepository;
 
-    @After
-    public void tearDown() {
-        // deleting the user should (!) also deleteMany all projects, groups, symbols, ... related to that user.
-        userRepository.deleteAll();
+    private User user;
+
+    private Project project;
+
+    @Before
+    public void before() {
+        User user = createUser("alex@test.example");
+        this.user = userRepository.save(user);
+
+        Project project = createProject(user, "Test Project 1");
+        this.project = projectRepository.save(project);
     }
 
     @Test
-    public void shouldCreateAValidGroup() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
+    public void shouldCreateAValidCounter() {
         Counter counter = createCounter(project, "TestCounter");
-
         counter = counterRepository.save(counter);
 
         assertNotNull(counter.getId());
@@ -74,51 +63,13 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void shouldFailToSaveACounterWithoutAnUser() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        Counter counter = createCounter(project, "TestCounter");
-
-        counterRepository.save(counter); // should fail
-    }
-
-    @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveACounterWithoutAProject() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        createProject(user, "Test Project");
-        //
         Counter counter = createCounter(null, "TestCounter");
-
-        counterRepository.save(counter); // should fail
-    }
-
-    @Test(expected = ConstraintViolationException.class)
-    public void shouldFailToSaveACounterWithoutAName() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        Counter counter = createCounter(project, "");
-
         counterRepository.save(counter); // should fail
     }
 
     @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveACounterWithADuplicateNames() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
         Counter counter1 = createCounter(project, "TestCounter");
         counterRepository.save(counter1);
         Counter counter2 = createCounter(project, "TestCounter");
@@ -128,18 +79,12 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldSaveCountersWithADuplicateNamesInDifferentProjects() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project1 = createProject(user, "Test Project 1");
-        project1 = projectRepository.save(project1);
         Project project2 = createProject(user, "Test Project 2");
         project2 = projectRepository.save(project2);
-        //
-        Counter counter1 = createCounter(project1, "TestCounter");
+
+        Counter counter1 = createCounter(project, "TestCounter");
         counterRepository.save(counter1);
         Counter counter2 = createCounter(project2, "TestCounter");
-
         counter2 = counterRepository.save(counter2);
 
         assertNotNull(counter2.getId());
@@ -147,12 +92,6 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldFetchAllCountersOfAProject() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project 1");
-        project = projectRepository.save(project);
-        //
         Counter counter1 = createCounter(project, "TestCounter1");
         counter1 = counterRepository.save(counter1);
         Counter counter2 = createCounter(project, "TestCounter2");
@@ -167,12 +106,6 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldFetchCountersOfAProjectByTheirNames() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project 1");
-        project = projectRepository.save(project);
-        //
         Counter counter1 = createCounter(project, "TestCounter1");
         counter1 = counterRepository.save(counter1);
         Counter counter2 = createCounter(project, "TestCounter2");
@@ -191,12 +124,6 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldFetchOntCountersOfAProjectByItsName() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project 1");
-        project = projectRepository.save(project);
-        //
         Counter counter = createCounter(project, "TestCounter1");
         counter = counterRepository.save(counter);
 
@@ -207,23 +134,17 @@ public class CounterRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldDeleteACounter() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project 1");
-        project = projectRepository.save(project);
-        //
         Counter counter = createCounter(project, "TestCounter");
         counter = counterRepository.save(counter);
 
-        counterRepository.delete(counter.getId());
+        counterRepository.deleteById(counter.getId());
 
         assertThat(counterRepository.count(), is(equalTo(0L)));
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
     public void shouldThrowAnExceptionWhenDeletingAnNonExistingCounter() {
-        counterRepository.delete(-1L);
+        counterRepository.deleteById(-1L);
     }
 
 

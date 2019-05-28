@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import org.openqa.selenium.WebElement;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -103,7 +103,7 @@ public class SelectActionTest extends WebActionTest {
         given(webSiteConnector.getElement(node)).willReturn(selectElement);
         given(selectElement.getTagName()).willReturn("select");
         WebElement itemElement = mock(WebElement.class);
-        List<WebElement> itemElements = new LinkedList<>();
+        List<WebElement> itemElements = new ArrayList<>();
         itemElements.add(itemElement);
         given(selectElement.findElements(By.xpath(".//option[@value = \"Lorem Ipsum\"]")))
                 .willReturn(itemElements);
@@ -121,7 +121,7 @@ public class SelectActionTest extends WebActionTest {
         given(webSiteConnector.getElement(node)).willReturn(selectElement);
         given(selectElement.getTagName()).willReturn("select");
         WebElement itemElement = mock(WebElement.class);
-        List<WebElement> itemElements = new LinkedList<>();
+        List<WebElement> itemElements = new ArrayList<>();
         itemElements.add(itemElement);
         given(selectElement.findElements(By.xpath(".//option[normalize-space(.) = \"Lorem Ipsum\"]")))
                 .willReturn(itemElements);
@@ -138,7 +138,7 @@ public class SelectActionTest extends WebActionTest {
         WebElement selectElement = mock(WebElement.class);
         given(webSiteConnector.getElement(node)).willReturn(selectElement);
         given(selectElement.getTagName()).willReturn("select");
-        List<WebElement> itemElements = new LinkedList<>();
+        List<WebElement> itemElements = new ArrayList<>();
         given(selectElement.findElements(By.tagName("option"))).willReturn(itemElements);
         WebElement itemElement = mock(WebElement.class);
         itemElements.add(itemElement);

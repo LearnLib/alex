@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
@@ -88,9 +87,7 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
 
         parameterValues.forEach(v -> {
             if (v.getValue() != null) {
-                final String value = v.getValue() == null ?
-                        null :
-                        SearchHelper.insertVariableValues(connectors, symbol.getProjectId(), v.getValue());
+                final String value = SearchHelper.insertVariableValues(connectors, symbol.getProjectId(), v.getValue());
                 localVariableStore.set(v.getParameter().getName(), value);
             }
         });
@@ -122,18 +119,6 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
 
     public void setSymbol(Symbol symbol) {
         this.symbol = symbol;
-    }
-
-    @JsonProperty("symbol")
-    public void setSymbolId(Long id) {
-        this.symbol = new Symbol();
-        this.symbol.setId(id);
-    }
-
-    @JsonProperty("symbolFromName")
-    public void setSymbolFromName(String symbolName) {
-        symbol = new Symbol();
-        symbol.setName(symbolName);
     }
 
     public List<SymbolParameterValue> getParameterValues() {

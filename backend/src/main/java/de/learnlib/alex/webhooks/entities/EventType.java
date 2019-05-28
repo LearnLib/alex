@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,17 +37,38 @@ public enum EventType {
     /** Fired when a project is updated. */
     PROJECT_UPDATED,
 
+    /** Fired when a LTS formula is created. */
+    LTS_FORMULA_CREATED,
+
+    /** Fired when a LTS formula is updated. */
+    LTS_FORMULA_UPDATED,
+
+    /** Fired when a LTS formula is deleted. */
+    LTS_FORMULA_DELETED,
+
+    /** Fired when LTS formulas are deleted at once. */
+    LTS_FORMULAS_DELETED,
+
+    /** Fired when LTS formulas have been checked. */
+    LTS_FORMULAS_CHECKED,
+
     /** Fired when a symbol is created. */
     SYMBOL_CREATED,
 
     /** Fired when a symbol is updated, moved or hidden. */
     SYMBOL_UPDATED,
 
+    /** Fired when a symbol is deleted permanently. */
+    SYMBOL_DELETED,
+
     /** Fired when multiple symbols are created. */
     SYMBOLS_CREATED,
 
     /** Fired when multiple symbols are updated, moved or hidden. */
     SYMBOLS_UPDATED,
+
+    /** Fired when multiple symbols are deleted. */
+    SYMBOLS_DELETED,
 
     /** Fired when a symbol group is created. */
     SYMBOL_GROUP_CREATED,

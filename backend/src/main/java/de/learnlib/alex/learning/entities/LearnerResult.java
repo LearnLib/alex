@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
-import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;

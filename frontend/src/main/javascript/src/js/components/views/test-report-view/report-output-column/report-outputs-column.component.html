@@ -1,30 +1,30 @@
 <div class="d-flex flex-row">
     <div class="w-100" ng-if="vm.collapse">
         <span
-            class="label d-inline-block"
+            class="badge d-inline-block"
             style="margin-left: 3px"
             ng-repeat="output in vm.outputs track by $index"
-            ng-class="{'label-success': output.success,'label-danger':!output.success}"
+            ng-class="{'badge-success': output.success,'badge-danger':!output.success}"
         >
             {{output.output}}
         </span>
     </div>
     <div class="w-100" ng-if="!vm.collapse">
-        <table class="table table-condensed table-hollow">
+        <table class="table table-hollow">
             <tbody>
             <tr ng-repeat="output in vm.outputs track by $index">
                 <td style="width: 1px" class="text-right">
                     <a
                         ui-sref="symbol({projectId: vm.project.id, symbolId: output.symbol.id})"
-                        class="label label-default cursor-pointer"
+                        class="badge badge-default cursor-pointer"
                     >
                         {{output.symbol.name}}
                     </a>
                 </td>
                 <td>
                     <span
-                        class="label"
-                        ng-class="{'label-success': output.success,'label-danger':!output.success}"
+                        class="badge"
+                        ng-class="{'badge-success': output.success,'badge-danger':!output.success}"
                     >
                         {{output.output}}
                     </span>
@@ -35,8 +35,8 @@
     </div>
     <div>
         <i
-            class="fa fa-fw cursor-pointer"
-            ng-class="{'fa-caret-square-o-down': !vm.collapse, 'fa-caret-square-o-right': vm.collapse}"
+            class="fas fa-fw cursor-pointer"
+            ng-class="{'fa-caret-square-down': !vm.collapse, 'fa-caret-square-right': vm.collapse}"
             ng-click="vm.toggleCollapse()"
             uib-tooltip="Show details" tooltip-placement="left"
         >

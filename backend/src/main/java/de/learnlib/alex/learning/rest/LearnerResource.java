@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
-import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
@@ -43,7 +42,7 @@ import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.learning.services.Learner;
 import de.learnlib.alex.webhooks.services.WebhookService;
-import net.automatalib.automata.transout.impl.compact.CompactMealy;
+import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,16 +60,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 /**
  * REST API to manage the learning.
- *
- * @resourcePath learner
- * @resourceDescription Operations about the learning
  */
 @Path("/learner")
 @RolesAllowed({"REGISTERED"})
@@ -118,20 +114,12 @@ public class LearnerResource {
      * @param configuration
      *         The configuration to customize the learning.
      * @return The status of the current learn process.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
-     * @successResponse 200 OK
-     * @responseType de.learnlib.alex.learning.entities.LearnerStatus
-     * @errorResponse 302 not modified `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 400 bad request  `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found    `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/{project_id}/start")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response start(@PathParam("project_id") long projectId, LearnerStartConfiguration configuration)
-            throws NotFoundException {
+    public Response start(@PathParam("project_id") long projectId, LearnerStartConfiguration configuration) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("start({}, {}) for user {}.", projectId, configuration, user);
 
@@ -176,22 +164,14 @@ public class LearnerResource {
      * @param configuration
      *         The configuration to specify the settings for the next learning steps.
      * @return The status of the current learn process.
-     * @throws NotFoundException
-     *         If the previous learn job or the related Project could not be found.
-     * @successResponse 200 OK
-     * @responseType de.learnlib.alex.learning.entities.LearnerStatus
-     * @errorResponse 302 not modified `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 400 bad request  `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found    `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/{project_id}/resume/{test_no}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response resume(@PathParam("project_id") long projectId,
-            @PathParam("test_no") long testNo,
-            LearnerResumeConfiguration configuration)
-            throws NotFoundException {
+                           @PathParam("test_no") long testNo,
+                           LearnerResumeConfiguration configuration) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
 
@@ -269,8 +249,6 @@ public class LearnerResource {
      * @param projectId
      *         The project to stop.
      * @return The status of the current learn process.
-     * @successResponse 200 OK
-     * @responseType de.learnlib.alex.learning.entities.LearnerStatus
      */
     @GET
     @Path("/{project_id}/stop")
@@ -279,11 +257,7 @@ public class LearnerResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("stop() for user {}.", user);
 
-        try {
-            projectDAO.getByID(user.getId(), projectId);
-        } catch (NotFoundException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.stop", Status.NOT_FOUND, e);
-        }
+        projectDAO.getByID(user.getId(), projectId); // access check
 
         if (learner.isActive(projectId)) {
             learner.stop(projectId);
@@ -302,9 +276,6 @@ public class LearnerResource {
      * @param projectId
      *         The project to get the Status of.
      * @return The information of the learning
-     * @successResponse 200 OK
-     * @responseType de.learnlib.alex.learning.entities.LearnerResult
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/{project_id}/status")
@@ -327,20 +298,12 @@ public class LearnerResource {
      * @param outputConfig
      *         The output config.
      * @return The observed output of the given input set.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
-     * @successResponse 200 OK
-     * @responseType java.util.List<String>
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Path("/{project_id}/outputs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response readOutput(@PathParam("project_id") Long projectId, ReadOutputConfig outputConfig)
-            throws NotFoundException {
-
+    public Response readOutput(@PathParam("project_id") Long projectId, ReadOutputConfig outputConfig) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("readOutput({}, {}) for user {}.", projectId, outputConfig, user);
 
@@ -368,7 +331,7 @@ public class LearnerResource {
             List<ExecuteResult> outputs = learner.readOutputs(user, project, outputConfig);
 
             LOGGER.traceExit(outputs);
-            return ResponseHelper.renderList(outputs, Status.OK);
+            return Response.ok(outputs).build();
         } catch (LearnerException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
@@ -377,7 +340,7 @@ public class LearnerResource {
 
     // load all from SymbolDAO always orders the Symbols by ID
     private List<Symbol> loadSymbols(User user, Long projectId, List<Long> ids) throws NotFoundException {
-        List<Symbol> symbols = new LinkedList<>();
+        List<Symbol> symbols = new ArrayList<>();
         for (Long id : ids) {
             Symbol symbol = symbolDAO.get(user, projectId, id);
             symbols.add(symbol);

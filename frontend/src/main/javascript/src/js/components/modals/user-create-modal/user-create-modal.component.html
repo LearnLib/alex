@@ -1,17 +1,14 @@
 <div class="modal-header">
-  <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
-    <i class="fa fa-close fa-fw"></i>
+  <h4 class="modal-title">Create a new user</h4>
+  <a class="btn btn-default btn-icon float-right" ng-click="vm.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
   </a>
-  <h3 class="modal-title">Create a new user</h3>
 </div>
 
 <div class="modal-body">
 
-  <div ng-if="vm.errorMessage != null">
-    <div class="alert alert-danger mb-0">
-      {{vm.errorMessage}}
-    </div>
-    <hr>
+  <div class="alert alert-danger" ng-if="vm.errorMessage != null">
+    {{vm.errorMessage}}
   </div>
 
   <form name="vm.form">

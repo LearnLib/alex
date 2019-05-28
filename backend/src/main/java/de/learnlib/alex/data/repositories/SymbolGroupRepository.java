@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,17 +54,19 @@ public interface SymbolGroupRepository extends JpaRepository<SymbolGroup, Long> 
     List<SymbolGroup> findAllByProject_IdAndParent_id(Long projectId, Long parentId);
 
     /**
-     * Find a symbol group by its name.
+     * Find a symbol group by its name and parent ID.
      *
      * @param projectId
      *         The ID the project the symbol group belongs to.
+     * @param parentId
+     *         The ID of the parent group.
      * @param name
      *         The name of the symbol group in the project.
      * @return The SymbolGroup or null.
      */
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
-    SymbolGroup findOneByProject_IdAndName(Long projectId, String name);
+    SymbolGroup findOneByProject_IdAndParent_IdAndName(Long projectId, Long parentId, String name);
 
     /**
      * Get the default group of the project which is the one that is created during the project creation.

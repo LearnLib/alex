@@ -6,11 +6,11 @@
     </select>
 </div>
 
-<div class="checkbox" ng-if="['chrome', 'firefox'].indexOf(vm.config.name) > -1">
-    <label>
-        <input type="checkbox" ng-model="vm.config.headless">
+<div class="form-group form-check" ng-if="['chrome', 'firefox', 'remote'].indexOf(vm.config.name) > -1">
+    <label class="form-check-label">
+        <input class="form-check-input" type="checkbox" ng-model="vm.config.headless">
         <strong>Use headless mode</strong>
-        <p class="help-block">Make sure your browser version supports running in headless mode</p>
+        <p class="form-text text-muted">Make sure your browser version supports running in headless mode</p>
     </label>
 </div>
 
@@ -48,14 +48,14 @@
 </div>
 
 <div class="row">
-    <div class="col-xs-6">
+    <div class="col-6">
         <div class="form-group">
             <label class="control-label">Width</label>
             <input class="form-control" type="number" required placeholder="Browser width in px"
                    ng-model="vm.config.width">
         </div>
     </div>
-    <div class="col-xs-6">
+    <div class="col-6">
         <div class="form-group">
             <label class="control-label">Height</label>
             <input class="form-control" type="number" required placeholder="Browser height in px"
@@ -64,21 +64,10 @@
     </div>
 </div>
 
-<div class="form-group" ng-if="['chrome', 'firefox'].indexOf(vm.config.name) > -1">
-    <label>Xvfb display port</label>
-    <input class="form-control" type="number" min="0" ng-model="vm.config.xvfbPort">
-    <p class="help-block">
-        For running Chrome and Firefox in a virtual display when the headless mode is not supported.
-        Make sure Xvfb is running under this port.
-        E.g. <kbd>Xvfb :51 -screen 0 1280x720x16 & export DISPLAY=:51</kbd>.
-        Only works with Linux.
-    </p>
-</div>
-
 <hr>
 <p>
     <a class="btn btn-xs btn-default" href ng-click="vm.timeoutsCollapsed = !vm.timeoutsCollapsed">
-        Timeouts <i class="fa fa-fw"
+        Timeouts <i class="fas fa-fw"
                     ng-class="{'fa-caret-right' : vm.timeoutsCollapsed, 'fa-caret-down': !vm.timeoutsCollapsed}"></i>
     </a>
 </p>

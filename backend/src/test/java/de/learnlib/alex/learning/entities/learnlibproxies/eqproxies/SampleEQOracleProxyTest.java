@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,13 @@
 
 package de.learnlib.alex.learning.entities.learnlibproxies.eqproxies;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-
 
 public class SampleEQOracleProxyTest {
 
@@ -33,10 +30,10 @@ public class SampleEQOracleProxyTest {
 
     @Before
     public void setUp() {
-        List<SampleEQOracleProxy.InputOutputPair> counterExample1 = new LinkedList<>();
+        List<SampleEQOracleProxy.InputOutputPair> counterExample1 = new ArrayList<>();
         counterExample1.add(new SampleEQOracleProxy.InputOutputPair("input1", "output1"));
         counterExample1.add(new SampleEQOracleProxy.InputOutputPair("input2", "output2"));
-        List<SampleEQOracleProxy.InputOutputPair> counterExample2 = new LinkedList<>();
+        List<SampleEQOracleProxy.InputOutputPair> counterExample2 = new ArrayList<>();
         counterExample2.add(new SampleEQOracleProxy.InputOutputPair("input3", "output3"));
         counterExample2.add(new SampleEQOracleProxy.InputOutputPair("input4", "output4"));
 
@@ -46,17 +43,17 @@ public class SampleEQOracleProxyTest {
     }
 
     @Test
-    public void shouldCreateCorrectJSON() throws JsonProcessingException {
+    public void shouldCreateCorrectJSON() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         String actualJSON = mapper.writeValueAsString(eqOracle);
 
-        String expectedJSON  = "{\"type\":\"sample\",\"counterExamples\":["
+        String expectedJSON  = "{\"batchSize\":20,\"type\":\"sample\",\"counterExamples\":["
                                     + "[{\"input\":\"input1\",\"output\":\"output1\"},"
                                         + "{\"input\":\"input2\",\"output\":\"output2\"}],"
                                     + "[{\"input\":\"input3\",\"output\":\"output3\"}"
                                         + ",{\"input\":\"input4\",\"output\":\"output4\"}]"
                                 + "]}";
-        assertEquals(expectedJSON, actualJSON);
+        JSONAssert.assertEquals(expectedJSON, actualJSON, true);
     }
 
     @Test

@@ -2,16 +2,20 @@
     <view-header title="Projects"></view-header>
 
     <div class="view-body">
-        <div class="alx-container">
+        <div class="container">
 
             <div class="row">
                 <div class="col-md-4 col-sm-5">
-                    <h3>Create a new project</h3>
+                    <h4>Create a new project</h4>
                     <hr>
-                    <project-create-form></project-create-form>
+                    <div class="card">
+                        <div class="card-body">
+                            <project-create-form></project-create-form>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-8 col-sm-7">
-                    <h3>All projects</h3>
+                    <h4>All projects</h4>
                     <hr>
                     <project-list projects="vm.projects">
                     </project-list>

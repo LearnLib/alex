@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.algorithms.TTT;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
-import net.automatalib.automata.transout.impl.compact.CompactMealy;
+import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.junit.Ignore;

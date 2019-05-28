@@ -1,227 +1,93 @@
-<div class="learn-result-panel h-100" ng-if="vm.view === 'DEFAULT'">
-  <div class="learn-result-panel-header d-flex">
+<div class="learn-result-panel h-100">
+  <div class="learn-result-panel-header d-flex flex-shrink-0">
 
     <div class="w-100 mr-1">
 
-      <!-- header for hypothesis -->
-      <div ng-if="vm.mode === vm.modes.HYPOTHESIS" >
-
-        <!-- menu -->
-        <div class="btn-group btn-group-sm" uib-dropdown>
-          <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle>
-            <i class="fa fa-bars"></i>
-          </button>
-          <ul uib-dropdown-menu
-              class="dropdown-menu pull-left"
-              role="menu"
-              ng-if="vm.result.steps[vm.pointer].hypothesis">
-            <li>
-              <a href="" learner-result-details-modal-handle result="vm.result" current="vm.pointer">
-                <i class="fa fa-info fa-fw"></i> Details
-              </a>
-            </li>
-            <li>
-              <a href="" hypothesis-layout-settings-modal-handle layout-settings="vm.layoutSettings">
-                <i class="fa fa-sliders fa-fw"></i> Layout
-              </a>
-            </li>
-            <li class="divider"></li>
-            <li>
-              <a href="" ng-click="vm.downloadSvg('#hypothesis-' + vm.index)">
-                <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.svg
-              </a>
-              <a href="" ng-click="vm.exportHypothesisAsJson()">
-                <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.json
-              </a>
-              <a href="" ng-click="vm.exportHypothesisAsDot()">
-                <i class="fa fa-save fa-fw"></i>&nbsp; Save as *.dot
-              </a>
-            </li>
-          </ul>
-          <ul uib-dropdown-menu
-              class="dropdown-menu pull-left"
-              role="menu"
-              ng-if="!vm.result.steps[vm.pointer].hypothesis">
-            <li>
-              <a href="" learner-result-details-modal-handle result="vm.result" current="vm.pointer">
-                <i class="fa fa-info fa-fw"></i> Details
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <button class="btn btn-sm btn-default"
-                ng-click="vm.showInternalDataStructure()"
-                ng-if="vm.hasInternalDataStructure()">
-          Data structure
+      <div
+        class="btn-group btn-group-sm"
+        ng-repeat="menu in vm.menu"
+        uib-dropdown
+        style="margin-right: .5rem"
+        ng-click="menu.click()"
+      >
+        <button class="btn btn-default dropdown-toggle" uib-dropdown-toggle>
+          {{menu.text}} <span class="caret" ng-if="menu.children.length > 0"></span>
         </button>
-      </div>
-
-      <!-- header for observation table -->
-      <div ng-if="vm.mode === vm.modes.OBSERVATION_TABLE">
-        <div class="btn-group btn-group-sm" uib-dropdown>
-          <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle>
-            <i class="fa fa-bars"></i>
-          </button>
-          <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
-            <li>
-              <a href ng-click="vm.downloadObservationTable('#observation-table-' + vm.index)">
-                Download CSV
-              </a>
-            </li>
-          </ul>
+        <div
+          uib-dropdown-menu
+          class="dropdown-menu dropdown-menu-left"
+          ng-if="menu.children.length > 0"
+        >
+            <a class="dropdown-item" href="" ng-click="item.click()" ng-repeat="item in menu.children" ng-if="!item.divider">
+              <i class="fas fa-fw {{item.icon}}"></i> {{item.text}}
+            </a>
         </div>
-
-        <button class="btn btn-default btn-sm" ng-click="vm.showHypothesis()">
-          Hypothesis
-        </button>
-      </div>
-
-      <!-- header for discrimination tree -->
-      <div ng-if="vm.mode === vm.modes.DISCRIMINATION_TREE">
-        <div class="btn-group btn-group-sm" uib-dropdown>
-          <button type="button" class="btn btn-default" uib-dropdown-toggle>
-            <i class="fa fa-bars"></i>
-          </button>
-          <ul uib-dropdown-menu class="dropdown-menu pull-left" role="menu">
-            <li>
-              <a href ng-click="vm.downloadSvg('#discrimination-tree-' + vm.index)">
-                Download SVG
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <button class="btn btn-default btn-sm" ng-click="vm.showHypothesis()">
-          Hypothesis
-        </button>
       </div>
 
     </div>
 
     <div style="flex-shrink: 0" class="mr-1">
       <!-- browser -->
-      <div class="btn-group btn-group-sm pull-right">
+      <div class="btn-group btn-group-sm float-right">
         <button class="btn btn-default" ng-click="vm.firstStep()">
-          <i class="fa fa-angle-double-left fa-fw"></i>
+          <i class="fas fa-angle-double-left fa-fw"></i>
         </button>
         <button class="btn btn-default" ng-click="vm.previousStep()">
-          <i class="fa fa-angle-left fa-fw"></i>
+          <i class="fas fa-angle-left fa-fw"></i>
         </button>
         <button class="btn btn-default disabled">
           Step <span ng-bind="vm.pointer + 1"></span>/<span ng-bind="vm.result.steps.length"></span>
         </button>
         <button class="btn btn-default" ng-click="vm.nextStep()">
-          <i class="fa fa-angle-right fa-fw"></i>
+          <i class="fas fa-angle-right fa-fw"></i>
         </button>
         <button class="btn btn-default" ng-click="vm.lastStep()">
-          <i class="fa fa-angle-double-right fa-fw"></i>
+          <i class="fas fa-angle-double-right fa-fw"></i>
         </button>
       </div>
     </div>
 
-    <div class="form-group mr-1">
-      <select class="form-control" style="width: 90px; height: 28px" ng-model="vm.view">
+    <div class="form-group mb-0">
+      <select class="form-control" style="width: 90px; height: 23px" ng-model="vm.view">
         <option ng-value="'DEFAULT'">Default</option>
         <option ng-value="'TEST'">Tests</option>
+        <option ng-value="'MODEL_CHECKING'">Checking</option>
       </select>
     </div>
 
-    <div>
-      <div ng-transclude></div>
-    </div>
-
-  </div>
-  <div class="learn-result-panel-body">
-    <div ng-if="!vm.result.steps[vm.pointer].error && vm.result.steps[vm.pointer].hypothesis">
-      <hypothesis id="hypothesis-{{vm.index}}"
-                  data="vm.result.steps[vm.pointer].hypothesis"
-                  layout-settings="vm.layoutSettings"
-                  is-selectable="true"
-                  ng-if="vm.mode === vm.modes.HYPOTHESIS">
-      </hypothesis>
-
-      <observation-table id="observation-table-{{vm.index}}"
-                         data="vm.result.steps[vm.pointer].algorithmInformation"
-                         ng-if="vm.mode === vm.modes.OBSERVATION_TABLE">
-      </observation-table>
-
-      <discrimination-tree id="discrimination-tree-{{vm.index}}"
-                           data="vm.result.steps[vm.pointer].algorithmInformation"
-                           ng-if="vm.mode === vm.modes.DISCRIMINATION_TREE">
-      </discrimination-tree>
-    </div>
-
-    <div class="alx-container" ng-if="!vm.result.steps[vm.pointer].hypothesis">
-      <div class="alert alert-info">
-        <strong>No hypothesis has been saved in this step</strong>
-      </div>
-    </div>
-
-    <div class="alx-container" ng-if="vm.result.steps[vm.pointer].error">
-      <div class="alert alert-danger">
-        <p><strong>There has been an error while learning</strong></p>
-        <p ng-bind="vm.result.steps[vm.pointer].errorText"></p>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div class="learn-result-panel h-100" ng-if="vm.view === 'TEST'">
-  <div class="learn-result-panel-header d-flex">
-    <div class="w-100 mr-1"></div>
-
-    <div style="flex-shrink: 0" class="mr-1">
-      <!-- browser -->
-      <div class="btn-group btn-group-sm pull-right">
-        <button class="btn btn-default" ng-click="vm.firstStep()">
-          <i class="fa fa-angle-double-left fa-fw"></i>
-        </button>
-        <button class="btn btn-default" ng-click="vm.previousStep()">
-          <i class="fa fa-angle-left fa-fw"></i>
-        </button>
-        <button class="btn btn-default disabled">
-          Step <span ng-bind="vm.pointer + 1"></span>/<span ng-bind="vm.result.steps.length"></span>
-        </button>
-        <button class="btn btn-default" ng-click="vm.nextStep()">
-          <i class="fa fa-angle-right fa-fw"></i>
-        </button>
-        <button class="btn btn-default" ng-click="vm.lastStep()">
-          <i class="fa fa-angle-double-right fa-fw"></i>
-        </button>
-      </div>
-    </div>
-
-    <div class="mr-1">
-      <div class="form-group">
-        <select class="form-control" style="width: 90px; height: 28px" ng-model="vm.view">
-          <option ng-value="'DEFAULT'">Default</option>
-          <option ng-value="'TEST'">Tests</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- additional space for buttons -->
     <div ng-transclude></div>
+
   </div>
-  <div class="learn-result-panel-body d-flex">
-    <div class="w-100" style="position: relative">
-      <div ng-if="!vm.result.steps[vm.pointer].error && vm.result.steps[vm.pointer].hypothesis">
-        <hypothesis data="vm.result.steps[vm.pointer].hypothesis" layout-settings="vm.layoutSettings"
-                    is-selectable="true">
-        </hypothesis>
-      </div>
-    </div>
-    <div style="background: #f2f2f2; min-width: 340px; padding: 1rem; overflow: auto; border-left: 1px solid #ddd">
-      <test-case-generation-widget result="vm.result">
-      </test-case-generation-widget>
-      <test-suite-generation-widget result="vm.result" step-no="vm.pointer">
-      </test-suite-generation-widget>
-    </div>
+  <div class="learn-result-panel-body overflow-auto">
+
+    <learner-result-panel-default-view
+      layout-settings="vm.layoutSettings"
+      register-menu="vm.registerMenu(menu)"
+      result="vm.result"
+      pointer="vm.pointer"
+      ng-if="vm.view === 'DEFAULT'"
+    >
+    </learner-result-panel-default-view>
+
+    <learner-result-panel-testing-view
+      layout-settings="vm.layoutSettings"
+      register-menu="vm.registerMenu(menu)"
+      result="vm.result"
+      pointer="vm.pointer"
+      ng-if="vm.view === 'TEST'"
+    >
+    </learner-result-panel-testing-view>
+
+    <learner-result-panel-checking-view
+      layout-settings="vm.layoutSettings"
+      register-menu="vm.registerMenu(menu)"
+      result="vm.result"
+      pointer="vm.pointer"
+      ng-if="vm.view === 'MODEL_CHECKING'"
+    >
+    </learner-result-panel-checking-view>
+
   </div>
 </div>
-
-
 
 

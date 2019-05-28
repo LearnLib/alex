@@ -1,45 +1,42 @@
 <div class="modal-header">
-    <a class="btn btn-default btn-icon pull-right" ng-click="vm.dismiss()">
-        <i class="fa fa-close fa-fw"></i>
-    </a>
-    <h3 class="modal-title">Import symbols</h3>
+  <h4 class="modal-title">Import symbols</h4>
+  <a class="btn btn-default btn-icon float-right" ng-click="vm.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
 </div>
 
 <div class="modal-body">
 
-    <div ng-if="vm.errorMessage != null">
-        <div class="alert alert-danger">{{vm.errorMessage}}</div>
-        <hr>
-    </div>
+  <div class="alert alert-danger" ng-if="vm.errorMessage != null">{{vm.errorMessage}}</div>
 
-    <file-dropzone on-loaded="vm.fileLoaded.bind(vm)" ng-if="vm.importData == null">
-        Drag and drop *.json file here or click to upload
-    </file-dropzone>
+  <file-dropzone on-loaded="vm.fileLoaded.bind(vm)" ng-if="vm.importData == null">
+    Drag and drop *.json file here or click to upload
+  </file-dropzone>
 
-    <div class="alert alert-info" ng-if="vm.importData != null">
-        <i class="fa fa-fw fa-close pull-right cursor-pointer" ng-click="vm.importData = null"></i>
-        <span class="label label-primary" ng-if="vm.importData.type === 'symbols'">Symbols only</span>
-        <span class="label label-primary" ng-if="vm.importData.type === 'symbolGroups'">Groups and symbols</span> <br>
-        <span class="label label-default">{{vm.importData.version}}</span>
-    </div>
+  <div class="alert alert-info" ng-if="vm.importData != null">
+    <i class="fas fa-fw fa-times float-right cursor-pointer" ng-click="vm.importData = null"></i>
+    <span class="badge badge-primary" ng-if="vm.importData.type === 'symbols'">Symbols only</span>
+    <span class="badge badge-primary" ng-if="vm.importData.type === 'symbolGroups'">Groups and symbols</span> <br>
+    <span class="badge badge-default">{{vm.importData.version}}</span>
+  </div>
 
-    <div ng-if="vm.importData != null && vm.importData.type === 'symbols'">
-        <label>Select a target group</label>
-        <div class="panel panel-default">
-            <div class="panel-body" style="padding: .5rem; max-height: 240px; overflow: auto">
-                <simple-symbol-group-tree
-                    groups="vm.groups"
-                    selected-symbol-group="vm.selectedGroup"
-                    on-symbol-group-selected="vm.selectGroup(group)"
-                >
-                </simple-symbol-group-tree>
-            </div>
-        </div>
+  <div ng-if="vm.importData != null && vm.importData.type === 'symbols'">
+    <label>Select a target group</label>
+    <div class="card">
+      <div class="card-body p-2" style="max-height: 240px; overflow: auto">
+        <simple-symbol-group-tree
+            groups="vm.groups"
+            selected-symbol-group="vm.selectedGroup"
+            on-symbol-group-selected="vm.selectGroup(group)"
+        >
+        </simple-symbol-group-tree>
+      </div>
     </div>
+  </div>
 
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-primary btn-sm" ng-click="vm.importSymbols()">Import</button>
-    <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
+  <button class="btn btn-primary btn-sm" ng-click="vm.importSymbols()">Import</button>
+  <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
 </div>

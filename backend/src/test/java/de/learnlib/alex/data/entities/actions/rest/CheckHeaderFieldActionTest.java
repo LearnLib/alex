@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -134,11 +133,7 @@ public class CheckHeaderFieldActionTest extends RestActionTest {
 
     private MultivaluedHashMap<String, Object> createHeaders(String... data) {
         MultivaluedHashMap<String, Object> headers = mock(MultivaluedHashMap.class);
-        List<Object> values = new LinkedList<>();
-        for (String d : data) {
-            values.add(d);
-        }
-        given(headers.get("Accept")).willReturn(values);
+        given(headers.get("Accept")).willReturn(Arrays.asList(data));
         return headers;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.util.ArrayList;
@@ -57,7 +56,6 @@ public class TestSuite extends Test {
 
     @OneToMany(
             mappedBy = "parent",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
     )
     @JsonProperty("tests")
@@ -133,6 +131,18 @@ public class TestSuite extends Test {
         }
 
         return false;
+    }
+
+    @Transient
+    @JsonIgnore
+    public List<TestSuite> getTestSuites() {
+        return tests.stream().filter(t -> t instanceof TestSuite).map(t -> (TestSuite) t).collect(Collectors.toList());
+    }
+
+    @Transient
+    @JsonIgnore
+    public List<TestCase> getTestCases() {
+        return tests.stream().filter(t -> t instanceof TestCase).map(t -> (TestCase) t).collect(Collectors.toList());
     }
 }
 

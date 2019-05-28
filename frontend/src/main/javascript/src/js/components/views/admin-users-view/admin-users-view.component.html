@@ -2,10 +2,10 @@
     <view-header title="Manage Users"></view-header>
 
     <action-bar>
-        <div ng-if="vm.users.length > 0">
-            <selectable-checkbox-multiple selectable="vm.selectedUsers" class="pull-left"></selectable-checkbox-multiple>
+        <div class="d-flex flex-row align-items-center" ng-if="vm.users.length > 0">
+            <selectable-checkbox-multiple selectable="vm.selectedUsers"></selectable-checkbox-multiple>
 
-            <div class="pull-left">
+            <div class="w-100 ml-3">
                 <button class="btn btn-sm btn-primary" ng-click="vm.createUser()">
                     Create
                 </button>
@@ -18,7 +18,7 @@
     </action-bar>
 
     <div class="view-body">
-        <div class="alx-container-fluid">
+        <div class="container-fluid">
 
             <table class="table">
                 <thead>
@@ -39,7 +39,6 @@
                         <selectable-checkbox
                             item="user"
                             selectable="vm.selectedUsers"
-                            class="pull-left"
                         >
                         </selectable-checkbox>
                     </td>
@@ -47,15 +46,15 @@
                     <td ng-bind="user.email"></td>
                     <td>
                         <span
-                            class="label"
-                            ng-class="user.role === 'ADMIN' ? 'label-danger' : 'label-primary'"
-                            ng-bind="user.role | formatUserRole"
+                            class="badge"
+                            ng-class="user.role === 'ADMIN' ? 'badge-danger' : 'badge-primary'"
+                            ng-bind="user.role | normalizeUpperCase"
                         >
                         </span>
                     </td>
                     <td>
-                        <button class="btn btn-icon btn-xs pull-right" ng-click="vm.editUser(user)">
-                            <i class="fa fa-edit fa-fw"></i> Edit
+                        <button class="btn btn-default btn-xs float-right" ng-click="vm.editUser(user)">
+                            <i class="fas fa-edit fa-fw"></i>
                         </button>
                     </td>
                 </tr>

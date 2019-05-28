@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,16 @@
 package de.learnlib.alex.learning.entities.webdrivers;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.hibernate.validator.constraints.NotBlank;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.net.URL;
@@ -58,12 +60,19 @@ public class RemoteDriverConfig extends AbstractWebDriverConfig implements Seria
     private String version;
 
     /**
+     * If the browser should be executed in headless mode.
+     */
+    @NotNull
+    private boolean headless;
+
+    /**
      * Constructor.
      */
     public RemoteDriverConfig() {
         super();
         this.version = "";
         this.platform = Platform.ANY;
+        this.headless = false;
     }
 
     @Override
@@ -73,6 +82,21 @@ public class RemoteDriverConfig extends AbstractWebDriverConfig implements Seria
         final DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setPlatform(platform);
         capabilities.setBrowserName(browser);
+
+        switch (browser) {
+            case "chrome":
+                final ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.setHeadless(headless);
+                capabilities.merge(chromeOptions);
+                break;
+            case "firefox":
+                final FirefoxOptions firefoxOptions = new FirefoxOptions();
+                firefoxOptions.setHeadless(headless);
+                capabilities.merge(firefoxOptions);
+                break;
+            default:
+                break;
+        }
 
         if (!version.trim().equals("")) {
             capabilities.setVersion(version);
@@ -105,5 +129,13 @@ public class RemoteDriverConfig extends AbstractWebDriverConfig implements Seria
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public boolean isHeadless() {
+        return headless;
+    }
+
+    public void setHeadless(boolean headless) {
+        this.headless = headless;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,10 @@
 package de.learnlib.alex.integrationtests.repositories;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
-import org.junit.After;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 
@@ -40,106 +37,60 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-@Ignore
 public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
-
-    @Inject
-    private UserRepository userRepository;
-
-    @Inject
-    private ProjectRepository projectRepository;
 
     @Inject
     private LearnerResultRepository learnerResultRepository;
 
-    @After
-    public void tearDown() {
-        // deleting the user should (!) also deleteMany all projects, groups, symbols, ... related to that user.
-        userRepository.deleteAll();
+    private User user;
+
+    private Project project;
+
+    @Before
+    public void before() {
+        User user = createUser("alex@test.example");
+        this.user = userRepository.save(user);
+
+        Project project = createProject(user, "Test Project 1");
+        this.project = projectRepository.save(project);
     }
 
     @Test
     public void shouldSaveAValidLearnerResult() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        LearnerResult result = createLearnerResult(user, project, 0L);
-
+        LearnerResult result = createLearnerResult(project, 0L);
         learnerResultRepository.save(result);
 
         assertNotNull(result.getId());
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void shouldFailToSaveALearnerResultWithoutAnUser() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        LearnerResult result = createLearnerResult(null, project, 0L);
-
-        learnerResultRepository.save(result); // should fail
-    }
-
-    @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveALearnerResultWithoutAProject() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        projectRepository.save(project);
-        //
-        LearnerResult result = createLearnerResult(user, null, 0L);
-
+        LearnerResult result = createLearnerResult(null, 0L);
         learnerResultRepository.save(result); // should fail
     }
 
     @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveALearnerResultWithoutATestNo() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        LearnerResult result = createLearnerResult(user, project, null);
-
+        LearnerResult result = createLearnerResult(project, null);
         learnerResultRepository.save(result); // should fail
     }
 
     @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveALearnerResultWithADuplicateTestNo() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        LearnerResult result1 = createLearnerResult(user, project, 0L);
+        LearnerResult result1 = createLearnerResult(project, 0L);
         learnerResultRepository.save(result1);
-        LearnerResult result2 = createLearnerResult(user, project, 0L);
-
+        LearnerResult result2 = createLearnerResult(project, 0L);
         learnerResultRepository.save(result2); // should fail
     }
 
     @Test
     public void shouldSaveLearnerResultsWithADuplicateTestNoInDifferentProjects() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project1 = createProject(user, "Test Project 1");
-        project1 = projectRepository.save(project1);
         Project project2 = createProject(user, "Test Project 2");
         project2 = projectRepository.save(project2);
-        //
-        LearnerResult result1 = createLearnerResult(user, project1, 0L);
+
+        LearnerResult result1 = createLearnerResult(project, 0L);
         learnerResultRepository.save(result1);
-        LearnerResult result2 = createLearnerResult(user, project2, 0L);
+        LearnerResult result2 = createLearnerResult(project2, 0L);
 
         result2 = learnerResultRepository.save(result2);
 
@@ -147,16 +98,9 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
     }
 
     @Test
-    public void shouldFetchAllLearnerResultsOfAProject() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        LearnerResult result1 = createLearnerResult(user, project, 0L);
+    public void shouldFetchAllLearnerResultsOfAProject() { LearnerResult result1 = createLearnerResult(project, 0L);
         learnerResultRepository.save(result1);
-        LearnerResult result2 = createLearnerResult(user, project, 1L);
+        LearnerResult result2 = createLearnerResult(project, 1L);
         learnerResultRepository.save(result2);
 
         List<LearnerResult> results = learnerResultRepository
@@ -169,17 +113,11 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldFetchLearnerResultsOfAProjectByTheirTestNo() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        LearnerResult result1 = createLearnerResult(user, project, 0L);
+        LearnerResult result1 = createLearnerResult(project, 0L);
         learnerResultRepository.save(result1);
-        LearnerResult result2 = createLearnerResult(user, project, 1L);
+        LearnerResult result2 = createLearnerResult(project, 1L);
         learnerResultRepository.save(result2);
-        LearnerResult result3 = createLearnerResult(user, project, 2L);
+        LearnerResult result3 = createLearnerResult(project, 2L);
         learnerResultRepository.save(result3);
 
         List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(project.getId(), Arrays.asList(0L, 2L));
@@ -192,15 +130,9 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldFetchHighestTestNo() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        LearnerResult result1 = createLearnerResult(user, project, 0L);
+        LearnerResult result1 = createLearnerResult(project, 0L);
         learnerResultRepository.save(result1);
-        LearnerResult result2 = createLearnerResult(user, project, 1L);
+        LearnerResult result2 = createLearnerResult(project, 1L);
         learnerResultRepository.save(result2);
 
         Long highestTestNo = learnerResultRepository.findHighestTestNo(project.getId());
@@ -217,13 +149,7 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldDeleteALearnerResult() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-        //
-        LearnerResult result = createLearnerResult(user, project, 0L);
+        LearnerResult result = createLearnerResult(project, 0L);
         learnerResultRepository.save(result);
 
         Long deleteReturnValue = learnerResultRepository.deleteByProject_IdAndTestNoIn(
@@ -235,20 +161,13 @@ public class LearnerResultRepositoryIT extends AbstractRepositoryIT {
 
     @Test
     public void shouldNotDeleteAnNonExistingLearnerResult() {
-        User user = createUser("alex@test.example");
-        user = userRepository.save(user);
-        //
-        Project project = createProject(user, "Test Project");
-        project = projectRepository.save(project);
-
         Long deleteReturnValue = learnerResultRepository.deleteByProject_IdAndTestNoIn(
                 project.getId(), Collections.singletonList(-1L));
 
         assertThat(deleteReturnValue, is(equalTo(0L)));
     }
 
-
-    static LearnerResult createLearnerResult(User user, Project project, Long testNo) {
+    static LearnerResult createLearnerResult(Project project, Long testNo) {
         LearnerResult result = new LearnerResult();
         result.setProject(project);
         result.setTestNo(testNo);

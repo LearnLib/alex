@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,12 +124,12 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         long nextTestNo = maxTestNo + 1;
         learnerResult.setTestNo(nextTestNo);
 
-        symbolParameterValueRepository.save(learnerResult.getResetSymbol().getParameterValues());
-        learnerResult.getSymbols().forEach(s -> symbolParameterValueRepository.save(s.getParameterValues()));
+        symbolParameterValueRepository.saveAll(learnerResult.getResetSymbol().getParameterValues());
+        learnerResult.getSymbols().forEach(s -> symbolParameterValueRepository.saveAll(s.getParameterValues()));
         parameterizedSymbolRepository.save(learnerResult.getResetSymbol());
-        parameterizedSymbolRepository.save(learnerResult.getSymbols());
+        parameterizedSymbolRepository.saveAll(learnerResult.getSymbols());
         if (learnerResult.getPostSymbol() != null) {
-            symbolParameterValueRepository.save(learnerResult.getPostSymbol().getParameterValues());
+            symbolParameterValueRepository.saveAll(learnerResult.getPostSymbol().getParameterValues());
             parameterizedSymbolRepository.save(learnerResult.getPostSymbol());
         }
 
@@ -232,7 +232,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public LearnerResult clone(User user, Long projectId, Long testNo) throws NotFoundException, UnauthorizedException {
         final Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
         final LearnerResult result = learnerResultRepository.findOneByProject_IdAndTestNo(projectId, testNo);
@@ -271,17 +271,17 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
             clonedResult.setPostSymbol(result.getPostSymbol().copy());
         }
 
-        symbolParameterValueRepository.save(clonedResult.getResetSymbol().getParameterValues());
-        clonedResult.getSymbols().forEach(s -> symbolParameterValueRepository.save(s.getParameterValues()));
+        symbolParameterValueRepository.saveAll(clonedResult.getResetSymbol().getParameterValues());
+        clonedResult.getSymbols().forEach(s -> symbolParameterValueRepository.saveAll(s.getParameterValues()));
         parameterizedSymbolRepository.save(clonedResult.getResetSymbol());
-        parameterizedSymbolRepository.save(clonedResult.getSymbols());
-        clonedResult.getSymbols().forEach(ps -> symbolParameterValueRepository.save(ps.getParameterValues()));
+        parameterizedSymbolRepository.saveAll(clonedResult.getSymbols());
+        clonedResult.getSymbols().forEach(ps -> symbolParameterValueRepository.saveAll(ps.getParameterValues()));
         if (clonedResult.getPostSymbol() != null) {
-            symbolParameterValueRepository.save(clonedResult.getPostSymbol().getParameterValues());
+            symbolParameterValueRepository.saveAll(clonedResult.getPostSymbol().getParameterValues());
             parameterizedSymbolRepository.save(clonedResult.getPostSymbol());
         }
 
-        final List<LearnerResultStep> clonedSteps = learnerResultStepRepository.save(steps);
+        final List<LearnerResultStep> clonedSteps = learnerResultStepRepository.saveAll(steps);
         clonedResult.setSteps(clonedSteps);
 
         learnerResultRepository.save(clonedResult);
@@ -321,7 +321,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         final List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
         results.forEach(result -> {
             parameterizedSymbolRepository.delete(result.getResetSymbol());
-            parameterizedSymbolRepository.delete(result.getSymbols());
+            parameterizedSymbolRepository.deleteAll(result.getSymbols());
             if (result.getPostSymbol() != null) {
                 parameterizedSymbolRepository.delete(result.getPostSymbol());
             }

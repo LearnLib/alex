@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 package de.learnlib.alex.common.utils;
-
 
 import de.learnlib.alex.data.entities.actions.rest.CheckAttributeTypeAction.JsonType;
 import org.junit.Test;
@@ -35,16 +34,13 @@ public class JSONHelpersTest {
         String json2 = "[{\"field\": 1}]";
         String json3 = "{\"field\": [{\"sub\": 0}]}";
         String json4 = "{\"field\": {\"sub\": 0}}";
+        String json5 = "{\"field\":true}";
 
-        assertEquals(JSONHelpers.getAttributeValue(JSON, "field"), "2");
-        assertEquals(JSONHelpers.getAttributeValue(json2, "[0].field"), "1");
-        assertEquals(JSONHelpers.getAttributeValue(json3, "field[0].sub"), "0");
-        assertEquals(JSONHelpers.getAttributeValue(json4, "field.sub"), "0");
-    }
-
-    @Test
-    public void shouldReturnCorrectValueIfJSONIsNotStrictJSONOnGetValue() {
-        assertThat(JSONHelpers.getAttributeValue("{field: Test}", "field"), is(equalTo("Test")));
+        assertEquals("2", JSONHelpers.getAttributeValue(JSON, "$.field"));
+        assertEquals("1", JSONHelpers.getAttributeValue(json2, "$[0].field"));
+        assertEquals("0", JSONHelpers.getAttributeValue(json3, "$.field[0].sub"));
+        assertEquals("0", JSONHelpers.getAttributeValue(json4, "$.field.sub"));
+        assertEquals("true", JSONHelpers.getAttributeValue(json5, "$.field"));
     }
 
     @Test
@@ -130,7 +126,7 @@ public class JSONHelpersTest {
 
     @Test
     public void shouldReturnNullIfJSONIsEmptyOnGetType() {
-        assertNull(JSONHelpers.getAttributeType("", "field"));
+        assertNull(JSONHelpers.getAttributeType("", "$.field"));
     }
 
     @Test
@@ -140,7 +136,7 @@ public class JSONHelpersTest {
 
     @Test
     public void shouldReturnNullIfJSONIsInvalidOnGetType() {
-        assertNull(JSONHelpers.getAttributeType("{\"foo\": \"bar\" \"field\": \"Test\"}", "field"));
+        assertNull(JSONHelpers.getAttributeType("{\"foo\": \"bar\" \"field\": \"Test\"}", "$.field"));
     }
 
     @Test

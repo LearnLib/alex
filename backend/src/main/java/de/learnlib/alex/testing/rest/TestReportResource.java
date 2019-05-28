@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.learnlib.alex.testing.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.testing.dao.TestReportDAO;
@@ -29,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -79,18 +79,16 @@ public class TestReportResource {
      * @param size
      *         The number of items in a page.
      * @return All test reports.
-     * @throws NotFoundException
-     *         If the project could not be found.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") Long projectId, @QueryParam("page") int page,
-            @QueryParam("size") int size)
-            throws NotFoundException {
+                        @QueryParam("size") int size) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
 
-        final Page<TestReport> testReports = testReportDAO.getAll(user, projectId, new PageRequest(page, size));
+        final PageRequest pr = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "startDate"));
+        final Page<TestReport> testReports = testReportDAO.getAll(user, projectId, pr);
 
         LOGGER.traceExit(testReports.getContent());
         return Response.ok(testReports).build();
@@ -106,14 +104,13 @@ public class TestReportResource {
      * @param format
      *         The format to export the report to.
      * @return The report.
-     * @throws NotFoundException
-     *         If the project could not be found.
      */
     @GET
     @Path("/{report_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") Long projectId, @PathParam("report_id") Long reportId,
-            @QueryParam("format") String format) throws NotFoundException {
+    public Response get(@PathParam("project_id") Long projectId,
+                        @PathParam("report_id") Long reportId,
+                        @QueryParam("format") String format) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {}) for user {}.", projectId, reportId, user);
 
@@ -156,15 +153,9 @@ public class TestReportResource {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getLatest({}) for user {}.", projectId, user);
 
-        try {
-            final TestReport latestReport = testReportDAO.getLatest(user, projectId);
-            LOGGER.traceExit(latestReport);
-            return latestReport == null ? Response.noContent().build() : Response.ok(latestReport).build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.getLatest",
-                    Response.Status.NOT_FOUND, e);
-        }
+        final TestReport latestReport = testReportDAO.getLatest(user, projectId);
+        LOGGER.traceExit(latestReport);
+        return latestReport == null ? Response.noContent().build() : Response.ok(latestReport).build();
     }
 
     /**
@@ -175,14 +166,11 @@ public class TestReportResource {
      * @param reportId
      *         The id of the report to delete.
      * @return Status 204 - no content on success.
-     * @throws NotFoundException
-     *         If the project or the report could not be found.
      */
     @DELETE
     @Path("/{report_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_id") Long reportId)
-            throws NotFoundException {
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_id") Long reportId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, reportId, user);
 
@@ -200,14 +188,11 @@ public class TestReportResource {
      * @param reportIds
      *         The ids of the reports to delete.
      * @return Status 204 - no content on success.
-     * @throws NotFoundException
-     *         If the project or a report could not be found.
      */
     @DELETE
     @Path("/batch/{report_ids}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_ids") IdsList reportIds)
-            throws NotFoundException {
+    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_ids") IdsList reportIds) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, reportIds, user);
 

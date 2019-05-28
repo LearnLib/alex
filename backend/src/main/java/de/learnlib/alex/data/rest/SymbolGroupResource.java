@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,16 @@ package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
-import de.learnlib.alex.common.utils.ResponseHelper;
 import de.learnlib.alex.data.dao.SymbolGroupDAO;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.events.SymbolGroupEvent;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.validation.ValidationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -50,9 +46,6 @@ import java.util.List;
 
 /**
  * REST API to manage groups.
- *
- * @resourcePath groups
- * @resourceDescription Operations for groups
  */
 @Path("/projects/{project_id}/groups")
 @RolesAllowed("REGISTERED")
@@ -84,32 +77,21 @@ public class SymbolGroupResource {
      * @param group
      *         The group to create.
      * @return On success the added group (enhanced with information from the DB); an error message on failure.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
-     * @responseType de.learnlib.alex.data.entities.SymbolGroup
-     * @successResponse 201 created
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group) throws NotFoundException {
+    public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createGroup({}, {}) for user {}.", projectId, group, user);
 
-        try {
-            group.setProjectId(projectId);
-            symbolGroupDAO.create(user, group);
+        group.setProjectId(projectId);
+        symbolGroupDAO.create(user, group);
 
-            LOGGER.traceExit(group);
+        LOGGER.traceExit(group);
 
-            webhookService.fireEvent(user, new SymbolGroupEvent.Created(group));
-            return Response.status(Response.Status.CREATED).entity(group).build();
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.create",
-                    Response.Status.BAD_REQUEST, e);
-        }
+        webhookService.fireEvent(user, new SymbolGroupEvent.Created(group));
+        return Response.status(Response.Status.CREATED).entity(group).build();
     }
 
     /**
@@ -120,28 +102,19 @@ public class SymbolGroupResource {
      * @param groups
      *         The groups to create.
      * @return The created groups.
-     * @throws NotFoundException
-     *         If one of the entities could not be found.
      */
     @POST
     @Path("/batch")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createGroups(@PathParam("project_id") Long projectId, List<SymbolGroup> groups)
-            throws NotFoundException {
+    public Response createGroups(@PathParam("project_id") Long projectId, List<SymbolGroup> groups) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createGroups({}, {}) for user {}.", projectId, groups, user);
 
-        try {
-            final List<SymbolGroup> createdGroups = symbolGroupDAO.create(user, projectId, groups);
-            webhookService.fireEvent(user, new SymbolGroupEvent.CreatedMany(createdGroups));
-            LOGGER.traceExit(createdGroups);
-            return Response.status(Response.Status.CREATED).entity(createdGroups).build();
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.create",
-                    Response.Status.BAD_REQUEST, e);
-        }
+        final List<SymbolGroup> createdGroups = symbolGroupDAO.create(user, projectId, groups);
+        webhookService.fireEvent(user, new SymbolGroupEvent.CreatedMany(createdGroups));
+        LOGGER.traceExit(createdGroups);
+        return Response.status(Response.Status.CREATED).entity(createdGroups).build();
     }
 
     /**
@@ -152,30 +125,22 @@ public class SymbolGroupResource {
      * @param embed
      *         The properties to embed in the response.
      * @return All groups in a list. If the project contains no groups the list will be empty.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
-     * @responseType java.util.List<de.learnlib.alex.data.entities.SymbolGroup>
-     * @successResponse 200 OK
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed)
-            throws NotFoundException {
+    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}, {}) for user {}.", projectId, embed, user);
 
         try {
-            SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
-            List<SymbolGroup> groups = symbolGroupDAO.getAll(user, projectId, embeddableFields);
+            final SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
+            final List<SymbolGroup> groups = symbolGroupDAO.getAll(user, projectId, embeddableFields);
 
             LOGGER.traceExit(groups);
-            return ResponseHelper.renderList(groups, Response.Status.OK);
+            return Response.ok(groups).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll",
-                    Response.Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll", Response.Status.BAD_REQUEST, e);
         }
     }
 
@@ -189,33 +154,25 @@ public class SymbolGroupResource {
      * @param embed
      *         The properties to embed in the response.
      * @return The requested group.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
-     * @responseType de.learnlib.alex.data.entities.SymbolGroup
-     * @successResponse 200 OK
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("project_id") long projectId,
-            @PathParam("id") Long id,
-            @QueryParam("embed") String embed)
-            throws NotFoundException {
+                        @PathParam("id") Long id,
+                        @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {}, {}) for user {}.", projectId, id, embed, user);
 
         try {
-            SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
-            SymbolGroup group = symbolGroupDAO.get(user, projectId, id, embeddableFields);
+            final SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
+            final SymbolGroup group = symbolGroupDAO.get(user, projectId, id, embeddableFields);
 
             LOGGER.traceExit(group);
             return Response.ok(group).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get",
-                    Response.Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get", Response.Status.BAD_REQUEST, e);
         }
     }
 
@@ -229,37 +186,20 @@ public class SymbolGroupResource {
      * @param group
      *         The new values
      * @return On success the updated group (enhanced with information from the DB).
-     * @throws NotFoundException
-     *         If the related Project could not be found.
-     * @responseType de.learnlib.alex.data.entities.SymbolGroup
-     * @successResponse 200 OK
-     * @errorResponse 400 bad request `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
-     * @errorResponse 404 not found   `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("project_id") long projectId, @PathParam("id") Long id, SymbolGroup group)
-            throws NotFoundException {
+    public Response update(@PathParam("project_id") long projectId, @PathParam("id") Long id, SymbolGroup group) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, group, user);
 
-        try {
-            symbolGroupDAO.update(user, group);
+        symbolGroupDAO.update(user, group);
 
-            LOGGER.traceExit(group);
-            webhookService.fireEvent(user, new SymbolGroupEvent.Updated(group));
-            return Response.ok(group).build();
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                    Response.Status.BAD_REQUEST, e);
-        } catch (UnauthorizedException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                    Response.Status.UNAUTHORIZED, e);
-        }
+        LOGGER.traceExit(group);
+        webhookService.fireEvent(user, new SymbolGroupEvent.Updated(group));
+        return Response.ok(group).build();
     }
 
     /**
@@ -273,33 +213,20 @@ public class SymbolGroupResource {
      *         The group to move with the updated {@link SymbolGroup#parent} property. The parent property may be null
      *         to indicate that the group is moved to the upmost level.
      * @return 200 with the updated group.
-     * @throws NotFoundException
-     *         If the group or the project or new parent could not be found.
      */
     @PUT
     @Path("/{groupId}/move")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response move(@PathParam("project_id") Long projectId, @PathParam("groupId") Long groupId, SymbolGroup group)
-            throws NotFoundException {
+    public Response move(@PathParam("project_id") Long projectId, @PathParam("groupId") Long groupId, SymbolGroup group) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("move({}, {}, {}) for user {}.", projectId, groupId, group, user);
 
-        try {
-            final SymbolGroup movedGroup = symbolGroupDAO.move(user, group);
+        final SymbolGroup movedGroup = symbolGroupDAO.move(user, group);
 
-            LOGGER.traceExit(movedGroup);
-            webhookService.fireEvent(user, new SymbolGroupEvent.Moved(movedGroup));
-            return Response.ok(movedGroup).build();
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.move",
-                    Response.Status.BAD_REQUEST, e);
-        } catch (UnauthorizedException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.move",
-                    Response.Status.UNAUTHORIZED, e);
-        }
+        LOGGER.traceExit(movedGroup);
+        webhookService.fireEvent(user, new SymbolGroupEvent.Moved(movedGroup));
+        return Response.ok(movedGroup).build();
     }
 
     /**
@@ -310,16 +237,11 @@ public class SymbolGroupResource {
      * @param id
      *         The ID of the group within the project.
      * @return On success no content will be returned.
-     * @throws NotFoundException
-     *         If the related Project could not be found.
-     * @successResponse 204 OK & no content
-     * @errorResponse 404 not found `de.learnlib.alex.common.utils.ResourceErrorHandler.RESTError
      */
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") long projectId, @PathParam("id") Long id)
-            throws NotFoundException {
+    public Response delete(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, id, user);
 
@@ -330,12 +252,7 @@ public class SymbolGroupResource {
             return Response.noContent().build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                    Response.Status.BAD_REQUEST, e);
-        } catch (UnauthorizedException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update",
-                    Response.Status.UNAUTHORIZED, e);
+            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update", Response.Status.BAD_REQUEST, e);
         }
     }
 

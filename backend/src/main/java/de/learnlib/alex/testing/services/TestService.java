@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolStep;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
-import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
+import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
@@ -54,7 +54,6 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +66,7 @@ public class TestService {
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** Factory to create a new ContextHandler. */
-    private final ConnectorContextHandlerFactory contextHandlerFactory;
+    private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
 
     /** The running testing threads. userId -> (projectId -> TestThread). */
     private final Map<Long, Map<Long, TestThread>> testingThreads;
@@ -91,7 +90,7 @@ public class TestService {
      * Constructor.
      *
      * @param contextHandlerFactory
-     *         The injected {@link ConnectorContextHandlerFactory}.
+     *         The injected {@link PreparedConnectorContextHandlerFactory}.
      * @param webhookService
      *         The injected {@link WebhookService}.
      * @param testDAO
@@ -104,9 +103,9 @@ public class TestService {
      *         The injected {@link ProjectDAO}.
      */
     @Inject
-    public TestService(ConnectorContextHandlerFactory contextHandlerFactory, WebhookService webhookService,
-            TestDAO testDAO, TestReportDAO testReportDAO, ProjectUrlRepository projectUrlRepository,
-            ProjectDAO projectDAO) {
+    public TestService(PreparedConnectorContextHandlerFactory contextHandlerFactory, WebhookService webhookService,
+                       TestDAO testDAO, TestReportDAO testReportDAO, ProjectUrlRepository projectUrlRepository,
+                       ProjectDAO projectDAO) {
         this.contextHandlerFactory = contextHandlerFactory;
         this.webhookService = webhookService;
         this.testDAO = testDAO;
@@ -211,7 +210,7 @@ public class TestService {
      * @return The updated test result map.
      */
     public Map<Long, TestResult> executeTests(User user, List<Test> tests, TestExecutionConfig testConfig,
-            Map<Long, TestResult> results) {
+                                              Map<Long, TestResult> results) {
         for (Test test : tests) {
             if (test instanceof TestCase) {
                 executeTestCase(user, (TestCase) test, testConfig, results);
@@ -236,7 +235,7 @@ public class TestService {
      * @return The updated test result map.
      */
     public TestSuiteResult executeTestSuite(User user, TestSuite testSuite, TestExecutionConfig testConfig,
-            Map<Long, TestResult> results) {
+                                            Map<Long, TestResult> results) {
         final TestSuiteResult tsResult = new TestSuiteResult(testSuite, 0L, 0L);
 
         final List<Test> testCases = testSuite.getTests().stream()
@@ -275,13 +274,8 @@ public class TestService {
      * @return The updated test result map.
      */
     public TestCaseResult executeTestCase(User user, TestCase testCase, TestExecutionConfig testConfig,
-            Map<Long, TestResult> results) {
+                                          Map<Long, TestResult> results) {
         LOGGER.info(LoggerMarkers.LEARNER, "Execute test[id={}] '{}'", testCase.getId(), testCase.getName());
-
-        final ProjectUrl projectUrl = projectUrlRepository.findOne(testConfig.getUrlId());
-
-        final ConnectorContextHandler ctxHandler = contextHandlerFactory.createContext(user, testCase.getProject(),
-                Collections.singletonList(projectUrl), testConfig.getDriverConfig());
 
         final Symbol dummySymbol = new Symbol();
         dummySymbol.setName("dummy");
@@ -291,8 +285,13 @@ public class TestService {
                 return new ExecuteResult(true);
             }
         });
+        final ParameterizedSymbol dummyPSymbol = new ParameterizedSymbol(dummySymbol);
 
-        ctxHandler.setResetSymbol(new ParameterizedSymbol(dummySymbol));
+        final ProjectUrl projectUrl = projectUrlRepository.findById(testConfig.getUrlId()).orElse(null);
+
+        final ConnectorContextHandler ctxHandler = contextHandlerFactory
+                .createPreparedContextHandler(user, testCase.getProject(), testConfig.getDriverConfig(), dummyPSymbol, null)
+                .create(projectUrl.getUrl());
 
         final long startTime = System.currentTimeMillis();
         final ConnectorManager connectors = ctxHandler.createContext();

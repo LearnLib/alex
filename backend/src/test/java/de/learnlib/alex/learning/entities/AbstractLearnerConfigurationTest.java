@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class AbstractLearnerConfigurationTest {
                 + "\"comment\":\"\","
                 + "\"driverConfig\":" + driverConfig + ","
                 + "\"eqOracle\":"
-                + "{\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
+                + "{\"batchSize\":20,\"type\":\"random_word\",\"minLength\":" + EQ_MIN_VALUE + ","
                 + "\"maxLength\":" + EQ_MAX_VALUE + ",\"seed\":42,\"maxNoOfTests\":1},"
                 + "\"maxAmountOfStepsToLearn\":-1,\"project\":null,\"resetSymbol\":null,\"postSymbol\":null,\"symbols\":[],"
                 + "\"urls\":[],"
@@ -67,7 +67,7 @@ public class AbstractLearnerConfigurationTest {
         String expectedJSON = "{\"algorithm\":{\"name\":\"TTT\"},"
                 + "\"comment\":\"test\","
                 + "\"driverConfig\":" + driverConfig + ","
-                + "\"eqOracle\":{\"type\":\"complete\",\"minDepth\":" + EQ_MIN_VALUE + ",\"maxDepth\":" + EQ_MAX_VALUE + "},"
+                + "\"eqOracle\":{\"batchSize\":20,\"type\":\"complete\",\"minDepth\":" + EQ_MIN_VALUE + ",\"maxDepth\":" + EQ_MAX_VALUE + "},"
                 + "\"maxAmountOfStepsToLearn\":-1,"
                 + "\"project\":null,"
                 + "\"resetSymbol\":null,"
@@ -91,7 +91,7 @@ public class AbstractLearnerConfigurationTest {
 
     @Test
     public void shouldReadJSONCorrectly() throws IOException, URISyntaxException {
-        String json = "{\"symbols\": [{\"symbol\":1, \"parameterValues\":[]},{\"symbol\":2, \"parameterValues\":[]}],\"algorithm\":{\"name\":\"DHC\"}, "
+        String json = "{\"symbols\": [{\"symbol\":{\"id\":1}, \"parameterValues\":[]},{\"symbol\":{\"id\":2}, \"parameterValues\":[]}],\"algorithm\":{\"name\":\"DHC\"}, "
                 + "\"driverConfig\":" + driverConfig + ","
                 + "\"eqOracle\":{\"type\": \"complete\"}}";
 

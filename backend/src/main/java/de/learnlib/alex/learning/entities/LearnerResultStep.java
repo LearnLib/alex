@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
-import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.impl.SimpleAlphabet;
 
 import javax.persistence.Column;
@@ -241,7 +241,6 @@ public class LearnerResultStep implements Serializable {
      * @return The latest counterexample or null.
      */
     @Embedded
-    @JsonIgnore
     public DefaultQueryProxy getCounterExample() {
         return counterExample;
     }
@@ -254,21 +253,6 @@ public class LearnerResultStep implements Serializable {
      */
     public void setCounterExample(DefaultQueryProxy counterExample) {
         this.counterExample = counterExample;
-    }
-
-    /**
-     * Get the latest counterexample as string.
-     *
-     * @return The last counterexample or an empty string.
-     */
-    @Transient
-    @JsonProperty("counterExample")
-    public String getCounterExampleAsString() {
-        if (counterExample == null) {
-            return "";
-        } else {
-            return counterExample.createDefaultProxy().toString();
-        }
     }
 
     /**

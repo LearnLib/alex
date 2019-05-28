@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.util.ArrayList;
@@ -42,7 +41,6 @@ public class TestCaseResult extends TestResult {
     /** The outputs of the system. */
     @OneToMany(
             mappedBy = "result",
-            fetch = FetchType.LAZY,
             cascade = {CascadeType.ALL}
     )
     private List<TestExecutionResult> outputs;

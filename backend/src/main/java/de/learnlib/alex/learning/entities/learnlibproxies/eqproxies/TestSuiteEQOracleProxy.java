@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.api.oracle.EquivalenceOracle;
 import de.learnlib.api.oracle.MembershipOracle;
 import de.learnlib.api.query.DefaultQuery;
-import net.automatalib.automata.transout.MealyMachine;
+import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.Word;
 
 import javax.annotation.Nullable;
@@ -108,7 +108,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
 
     @Override
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle<String, Word<String>> membershipOracle, int batchSize) {
+            MembershipOracle<String, Word<String>> membershipOracle) {
         throw new UnsupportedOperationException("Cannot call this method on this class.");
     }
 
@@ -118,8 +118,6 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
      *
      * @param membershipOracle
      *         The membership oracle.
-     * @param batchSize
-     *         How many membership queries can be posed together.
      * @param testDAO
      *         The test DAO.
      * @param user
@@ -129,7 +127,7 @@ public class TestSuiteEQOracleProxy extends AbstractEquivalenceOracleProxy
      * @return An instance of the equivalence oracle.
      */
     public EquivalenceOracle<MealyMachine<?, String, ?, String>, String, Word<String>> createEqOracle(
-            MembershipOracle<String, Word<String>> membershipOracle, int batchSize, TestDAO testDAO, User user,
+            MembershipOracle<String, Word<String>> membershipOracle, TestDAO testDAO, User user,
             LearnerResult result) {
         return new TestSuiteEQOracleProxy(testSuiteId, testDAO, user, result, membershipOracle, batchSize);
     }

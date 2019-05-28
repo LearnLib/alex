@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import net.automatalib.automata.concepts.StateIDs;
-import net.automatalib.automata.transout.MealyMachine;
-import net.automatalib.automata.transout.impl.compact.CompactMealy;
+import net.automatalib.automata.transducers.MealyMachine;
+import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.impl.SimpleAlphabet;
 
@@ -37,10 +37,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Proxy around a {@link MealyMachine} from the LearnLib. The Proxy is needed to make it easier to (de-)serialize the
- * MealyMachine into/ from JSON.
- *
- * @see net.automatalib.automata.transout.impl.compact.CompactMealy
+ * Proxy around a {@link net.automatalib.automata.transducers.impl.compact.CompactMealy} from the LearnLib.
+ * The Proxy is needed to make it easier to (de-)serialize the MealyMachine into/ from JSON.
  */
 @Embeddable
 public class CompactMealyMachineProxy implements Serializable {
@@ -69,7 +67,7 @@ public class CompactMealyMachineProxy implements Serializable {
      * @return A new Proxy around the given MealyMachine.
      */
     public static CompactMealyMachineProxy createFrom(MealyMachine<?, String, ?, String> machine,
-            Alphabet<String> alphabet) {
+                                                      Alphabet<String> alphabet) {
         return createProxy(machine, alphabet);
     }
 

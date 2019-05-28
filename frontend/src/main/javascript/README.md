@@ -13,8 +13,6 @@ The user interface for ALEX.
 |---------|---------------------------------------------------------|
 | `build` | Build a bundle for production.                          |
 | `dev`   | Watch for file changes and bundle.                      |
-| `test`  | Execute tests.                                          |
-| `lint`  | Lint JavaScript files.                                  |
 | `serve` | Start local HTTP server that serves the frontend files. |
 
 ## Run the frontend

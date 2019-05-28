@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
-import de.learnlib.alex.learning.services.connectors.ConnectorContextHandlerFactory;
+import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -59,7 +59,7 @@ public class LearnerTest {
     private static final int    SYMBOL_AMOUNT = 5;
 
     @Mock
-    private ConnectorContextHandlerFactory contextHandlerFactory;
+    private PreparedConnectorContextHandlerFactory contextHandlerFactory;
 
     @Mock
     private ConnectorContextHandler contextHandler;
@@ -90,8 +90,8 @@ public class LearnerTest {
         AbstractWebDriverConfig driverConfig = new HtmlUnitDriverConfig();
 
         given(learnerConfiguration.getDriverConfig()).willReturn(driverConfig);
-        given(contextHandlerFactory.createContext(user, project, driverConfig))
-                .willReturn(contextHandler);
+//        given(contextHandlerFactory.create(user, project, driverConfig))
+//                .willReturn(contextHandler);
 //        given(learnerThreadFactory.createThread(any(LearnerResult.class), any(ConnectorContextHandler.class)))
 //                .willReturn(learnerThread);
 //
@@ -135,7 +135,7 @@ public class LearnerTest {
 
     @Test(expected = IllegalStateException.class)
     public void shouldOnlyStartTheThreadOnce() throws NotFoundException {
-        given(symbolDAO.getByIds(any(User.class), any(Long.class), any(List.class))).willReturn(new LinkedList<>());
+        given(symbolDAO.getByIds(any(User.class), any(Long.class), any(List.class))).willReturn(new ArrayList());
         given(learnerResultDAO.createStep(any(LearnerResult.class), any(LearnerStartConfiguration.class)))
                 .willReturn(new LearnerResultStep());
         given(learnerThread.isFinished()).willReturn(false);
@@ -150,7 +150,7 @@ public class LearnerTest {
         ParameterizedSymbol resetSymbol = mock(ParameterizedSymbol.class);
         ParameterizedSymbol postSymbol = mock(ParameterizedSymbol.class);
         //
-        List<ParameterizedSymbol> symbols = new LinkedList<>();
+        List<ParameterizedSymbol> symbols = new ArrayList<>();
         for (int i = 0; i < SYMBOL_AMOUNT; i++) {
             ParameterizedSymbol symbol = mock(ParameterizedSymbol.class);
             given(symbol.execute(any(ConnectorManager.class))).willReturn(new ExecuteResult(true));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import de.learnlib.alex.webhooks.entities.EventType;
 import de.learnlib.alex.webhooks.entities.Webhook;
 import org.apache.shiro.authz.UnauthorizedException;
 
-import javax.xml.bind.ValidationException;
+import javax.validation.ValidationException;
 import java.util.List;
 
 /**

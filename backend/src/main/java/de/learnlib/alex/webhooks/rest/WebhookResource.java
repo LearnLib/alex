@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 TU Dortmund
+ * Copyright 2015 - 2019 TU Dortmund
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@ package de.learnlib.alex.webhooks.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.IdsList;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.webhooks.dao.WebhookDAO;
 import de.learnlib.alex.webhooks.entities.EventType;
 import de.learnlib.alex.webhooks.entities.Webhook;
@@ -41,7 +39,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import javax.xml.bind.ValidationException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -87,14 +84,9 @@ public class WebhookResource {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("create '{}' for user '{}'", webhook, user);
 
-        try {
-            final Webhook createdWebhook = webhookDAO.create(user, webhook);
-            LOGGER.traceExit(createdWebhook);
-            return Response.ok(createdWebhook).build();
-        } catch (ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("Webhook.create", Response.Status.BAD_REQUEST, e);
-        }
+        final Webhook createdWebhook = webhookDAO.create(user, webhook);
+        LOGGER.traceExit(createdWebhook);
+        return Response.ok(createdWebhook).build();
     }
 
     /**
@@ -126,14 +118,9 @@ public class WebhookResource {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update webhook '{}' for user '{}'", webhook, user);
 
-        try {
-            final Webhook updatedWebhook = webhookDAO.update(user, webhook);
-            LOGGER.traceExit("Webhook '{}' updated", updatedWebhook);
-            return Response.ok(updatedWebhook).build();
-        } catch (NotFoundException | ValidationException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("Webhook.update", Response.Status.BAD_REQUEST, e);
-        }
+        final Webhook updatedWebhook = webhookDAO.update(user, webhook);
+        LOGGER.traceExit("Webhook '{}' updated", updatedWebhook);
+        return Response.ok(updatedWebhook).build();
     }
 
     /**
@@ -150,14 +137,9 @@ public class WebhookResource {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete webhook '{}' for user '{}'", webhookId, user);
 
-        try {
-            webhookDAO.delete(user, webhookId);
-            LOGGER.traceExit("Webhook {} deleted", webhookId);
-            return Response.noContent().build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("Webhook.delete", Response.Status.BAD_REQUEST, e);
-        }
+        webhookDAO.delete(user, webhookId);
+        LOGGER.traceExit("Webhook {} deleted", webhookId);
+        return Response.noContent().build();
     }
 
     /**
@@ -174,14 +156,9 @@ public class WebhookResource {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete webhooks '{}' for user '{}'", webhookIds, user);
 
-        try {
-            webhookDAO.delete(user, webhookIds);
-            LOGGER.traceExit("Webhooks {} deleted", webhookIds);
-            return Response.noContent().build();
-        } catch (NotFoundException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("Webhook.delete", Response.Status.BAD_REQUEST, e);
-        }
+        webhookDAO.delete(user, webhookIds);
+        LOGGER.traceExit("Webhooks {} deleted", webhookIds);
+        return Response.noContent().build();
     }
 
     /**

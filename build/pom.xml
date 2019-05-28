@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2018 TU Dortmund
+  ~ Copyright 2015 - 2019 TU Dortmund
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
     <parent>
         <artifactId>alex-parent</artifactId>
         <groupId>de.learnlib.alex</groupId>
-        <version>1.6.1</version>
+        <version>1.7.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -34,11 +34,6 @@
     <description>
         TBD
     </description>
-
-    <properties>
-        <!-- plugin versions -->
-        <docker-maven-plugin.version>0.4.13</docker-maven-plugin.version>
-    </properties>
 
     <!--===== dependencies ======-->
     <dependencies>
@@ -111,27 +106,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>${docker-maven-plugin.version}</version>
-                <configuration>
-                    <imageName>alex:${project.version}</imageName>
-                    <imageTags>
-                        <imageTag>${project.version}</imageTag>
-                        <imageTag>latest</imageTag>
-                    </imageTags>
-                    <dockerDirectory>src/docker</dockerDirectory>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.war</include>
-                        </resource>
-                    </resources>
-                </configuration>
             </plugin>
         </plugins>
     </build>
