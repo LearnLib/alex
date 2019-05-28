@@ -1,3 +1,9 @@
+# ALEX 1.7.1
+
+## Fixes
+
+* Fix model not displayed in testing view
+
 # ALEX 1.7.0
 
 ## Breaking Changes
