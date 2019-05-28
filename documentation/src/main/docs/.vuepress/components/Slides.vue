@@ -26,12 +26,12 @@
         data() {
             return {
                 slides: [],
-                currentSlide: 0
+                currentSlide: 0,
             };
         },
-        created() {
+        mounted() {
             this.$nextTick(() => {
-                window.setTimeout(() => this.loadSlides(), 0);
+                setTimeout(() => this.loadSlides(), 0);
             });
         },
         methods: {
