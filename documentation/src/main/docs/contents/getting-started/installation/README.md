@@ -7,7 +7,7 @@ Further, a **modern browser** like Google Chrome, Mozilla Firefox or Microsoft E
 ## Bundled version
 
 1. [Download][download] the latest version.
-2. Open a terminal and start ALEX via `java -jar alex-1.7.0.war`.
+2. Open a terminal and start ALEX via `java -jar alex-1.7.2.war`.
 3. Wait until the command line prints something like `Started App in XX.XXX seconds`.
 3. Open *http://localhost:8000* in a web browser.
 
@@ -38,7 +38,7 @@ cd alex
 mvn install package [-DskipTests]
 ```
 
-The bundle can then be found at `build/target/alex-build-1.7.0.war`.
+The bundle can then be found at `build/target/alex-build-1.7.2.war`.
 Run it using the instructions for running the bundled version from above.
 
 
@@ -46,7 +46,7 @@ Run it using the instructions for running the bundled version from above.
 
 We also offer a Docker image that contains a Linux environment with the following software:
 
-* ALEX v1.7.0
+* ALEX v1.7.2
 * Chrome v73
 * Firefox v66
 
@@ -54,5 +54,5 @@ The image can be found [here](docker).
 The Docker container exposes the **port 8000** under which ALEX is available after the start.
 Note that currently, only the HtmlUnit and the Firefox browser can be used in the Docker container.
 
-[download]: https://github.com/LearnLib/alex/releases/download/v1.7.0/alex-1.7.0.war
+[download]: https://github.com/LearnLib/alex/releases/download/v1.7.2/alex-1.7.2.war
 [docker]: https://github.com/scce/docker-images/tree/master/alex-server

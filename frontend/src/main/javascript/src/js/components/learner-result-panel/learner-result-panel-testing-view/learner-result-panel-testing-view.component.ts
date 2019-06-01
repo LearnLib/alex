@@ -16,6 +16,7 @@
 
 import {LearnResult} from '../../../entities/learner-result';
 import {Resizer} from '../../../utils/resizer';
+import {IRootElementService} from 'angular';
 
 /** Component for the testing view. */
 export const learnerResultPanelTestingViewComponent = {
@@ -34,7 +35,8 @@ export const learnerResultPanelTestingViewComponent = {
     public result: LearnResult;
     public pointer: number;
 
-    constructor(private $element: any) {}
+    /* @ngInject */
+    constructor(private $element: IRootElementService) {}
 
     $onInit(): void {
       this.registerMenu({menu: []});
