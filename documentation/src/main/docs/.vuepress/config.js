@@ -1,6 +1,6 @@
 module.exports = {
     base: '/alex/book/1.7.0/',
-    title: 'ALEX Docs (v1.7.2)',
+    title: 'ALEX Docs (v1.8.0-SNAPSHOT)',
     description: 'User documentation for ALEX',
     dest: './.vuepress/dist',
     markdown: {

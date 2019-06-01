@@ -9,8 +9,8 @@ The following arguments can be passed to the bundled version of ALEX:
 
 | Argument          | Description                                                                                   |
 |-------------------|-----------------------------------------------------------------------------------------------|
-| `server.port`     | The port under which ALEX is available <br> `java -jar alex-1.7.2.war --server.port=8000`     |
-| `alex.dbpath`     | The path where the HSQLDB is stored. <br> `java -jar alex-1.7.2.war --alex.dbpath=mem:testdb` |
+| `server.port`     | The port under which ALEX is available <br> `java -jar alex-1.8.0-SNAPSHOT.war --server.port=8000`     |
+| `alex.dbpath`     | The path where the HSQLDB is stored. <br> `java -jar alex-1.8.0-SNAPSHOT.war --alex.dbpath=mem:testdb` |
 | `chromeDriver`    | The absolute path to the Chrome driver executable on your system                              |
 | `edgeDriver`      | The absolute path to the Edge driver executable on your system                                |
 | `firefoxDriver`   | The absolute path to the Gecko driver executable on your system                               |
@@ -37,7 +37,7 @@ spring.jpa.hibernate.ddl-auto=update
 Here, we assume that a MySQL server is running under port *3306* and a database called *alex* has been created.
 Then, start ALEX and include the *application.properties* file as command line argument:
 
-`java -jar alex-1.7.2.war "--spring.config.location=/path/to/your/application.properties"`
+`java -jar alex-1.8.0-SNAPSHOT.war "--spring.config.location=/path/to/your/application.properties"`
 
 <div class="alert alert-info">
     Note that there is no automated migration to a MySQL database if the file-based HSQLDB has been used before.
