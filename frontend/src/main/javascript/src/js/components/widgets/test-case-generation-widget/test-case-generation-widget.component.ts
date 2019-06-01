@@ -71,7 +71,7 @@ export const testCaseGenerationWidgetComponent = {
       const test = JSON.parse(JSON.stringify(this.testCase));
       test.project = this.project.id;
       test.steps.forEach(step => {
-        step.pSymbol.symbol = step.pSymbol.symbol.id;
+        step.pSymbol.symbol = {id: step.pSymbol.symbol.id};
         step.pSymbol.parameterValues.forEach(v => delete v.id);
       });
 
