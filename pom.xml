@@ -20,7 +20,7 @@
 
     <groupId>de.learnlib.alex</groupId>
     <artifactId>alex-parent</artifactId>
-    <version>1.7.1</version>
+    <version>1.7.2</version>
     <packaging>pom</packaging>
 
     <name>Automata Learning Experience (ALEX)</name>

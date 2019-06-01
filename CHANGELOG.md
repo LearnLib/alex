@@ -1,3 +1,10 @@
+# ALEX 1.7.2
+
+## Fixes
+
+* Generate test case from model
+* Add cookie to request action
+
 # ALEX 1.7.1
 
 ## Fixes
