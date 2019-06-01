@@ -58,14 +58,14 @@ export const requestActionFormComponent = {
 
     addHeader(): void {
       this.action.addHeader(this.header.name, this.header.value);
-      this.cookie.name = null;
-      this.cookie.value = null;
+      this.header.name = null;
+      this.header.value = null;
     }
 
     addCookie(): void {
       this.action.addCookie(this.cookie.name, this.cookie.value);
-      this.header.name = null;
-      this.header.value = null;
+      this.cookie.name = null;
+      this.cookie.value = null;
     }
 
     setPreset(): void {
