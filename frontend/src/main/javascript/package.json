@@ -17,57 +17,62 @@
     "serve": "http-server ./dist",
     "grunt": "grunt"
   },
-  "contributors": [
+  "maintainers": [
     {
       "name": "Alexander Bainczyk",
       "email": "alexander.bainczyk@tu-dortmund.de"
-    },
+    }
+  ],
+  "contributors": [
     {
       "name": "Alexander Schieweck",
       "email": "alexander.bainczyk@tu-dortmund.de"
     }
   ],
+  "browserslist": [
+    "last 2 versions"
+  ],
   "main": "index.html",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.7.2",
+    "@fortawesome/fontawesome-free": "^5.8.2",
     "@uirouter/angularjs": "^1.0.22",
-    "ace-builds": "^1.4.2",
-    "angular": "^1.7.7",
-    "angular-animate": "^1.7.7",
+    "ace-builds": "^1.4.4",
+    "angular": "^1.7.8",
+    "angular-animate": "^1.7.8",
     "angular-dragula": "^1.2.8",
-    "angular-jwt": "0.1.10",
-    "angular-messages": "^1.7.7",
+    "angular-jwt": "0.1.11",
+    "angular-messages": "^1.7.8",
     "angular-toastr": "^2.1.1",
     "angular-ui-ace": "^0.2.3",
     "angular-ui-bootstrap": "^2.5.6",
     "bootstrap": "^4.3.1",
-    "d3": "^5.9.1",
+    "d3": "^5.9.2",
     "dagre-d3": "^0.6.3",
     "lodash": "^4.17.11",
     "n3-charts": "^3.0.0-beta.4",
     "ng-file-upload": "^12.2.13",
-    "popper.js": "^1.14.7"
+    "popper.js": "^1.15.0"
   },
   "devDependencies": {
     "@types/angular": "^1.6.54",
-    "@types/node": "^11.9.4",
-    "autoprefixer": "^9.4.8",
+    "@types/node": "^12.0.4",
+    "autoprefixer": "^9.6.0",
     "envify": "^4.1.0",
-    "grunt": "^1.0.3",
+    "grunt": "^1.0.4",
     "grunt-browserify": "^5.3.0",
     "grunt-concurrent": "^2.3.1",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-cssmin": "^3.0.0",
-    "grunt-contrib-uglify": "^4.0.0",
+    "grunt-contrib-uglify": "^4.0.1",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-exec": "^3.0.0",
     "grunt-postcss": "^0.9.0",
     "http-server": "^0.11.1",
     "ng-annotate": "^1.2.2",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.12.0",
     "stringify": "^5.2.0",
     "tsify": "^4.0.1",
-    "typescript": "^3.3.3"
+    "typescript": "^3.5.1"
   }
 }
