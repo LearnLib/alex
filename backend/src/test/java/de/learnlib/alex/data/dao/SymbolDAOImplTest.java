@@ -353,6 +353,7 @@ public class SymbolDAOImplTest {
         //
         Project project = new Project();
         project.setId(PROJECT_ID);
+        project.setUser(user);
         //
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
@@ -363,6 +364,7 @@ public class SymbolDAOImplTest {
         symbol.setGroup(group);
         //
         given(symbolRepository.findById(SYMBOL_ID)).willReturn(Optional.of(symbol));
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
 
         Symbol symb2 = symbolDAO.get(user, symbol.getProjectId(), symbol.getId());
 
