@@ -302,7 +302,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                     });
 
                     // finally, save the parameterized symbol
-                    parameterizedSymbolDAO.create(projectId, symbolStep.getPSymbol());
+                    parameterizedSymbolDAO.create(symbolStep.getPSymbol());
                 }
             }
 
@@ -385,18 +385,14 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Transactional(readOnly = true)
     public Symbol get(User user, Long projectId, Long id) throws NotFoundException {
         final Project project = projectRepository.findById(projectId).orElse(null);
-        projectDAO.checkAccess(user, project);
-
-        return get(projectId, id);
+        return get(user, project, id);
     }
 
-    private Symbol get(Long projectId, Long id) throws NotFoundException {
-        final Symbol symbol = symbolRepository.findById(id).orElse(null);
-
-        if (symbol == null) {
-            throw new NotFoundException("Could not find the Symbol with the id " + id + " in the Project " + projectId + ".");
-        }
-
+    @Override
+    @Transactional(readOnly = true)
+    public Symbol get(User user, Project project, Long symbolId) throws NotFoundException {
+        final Symbol symbol = symbolRepository.findById(symbolId).orElse(null);
+        checkAccess(user, project, symbol);
         loadLazyRelations(symbol);
         return symbol;
     }
@@ -480,8 +476,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                 symbolActionRepository.save(actionStep.getAction());
             } else if (step instanceof SymbolPSymbolStep) {
                 final SymbolPSymbolStep symbolStep = (SymbolPSymbolStep) step;
-                symbolStep.setPSymbol(parameterizedSymbolDAO.create(symbol.getProject()
-                        .getId(), symbolStep.getPSymbol()));
+                symbolStep.setPSymbol(parameterizedSymbolDAO.create(symbolStep.getPSymbol()));
             }
         }
         symbol.setSteps(symbolStepRepository.saveAll(symbol.getSteps()));
@@ -603,8 +598,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL); // access check
 
         for (Long id : ids) {
-            Symbol symbol = get(projectId, id);
-
+            Symbol symbol = get(user, project, id);
             symbol.setProject(project);
             symbol.setHidden(false);
             symbolRepository.save(symbol);

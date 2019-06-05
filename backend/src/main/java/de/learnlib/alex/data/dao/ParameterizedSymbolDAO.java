@@ -26,11 +26,9 @@ public interface ParameterizedSymbolDAO {
     /**
      * Create a new parameterized symbol.
      *
-     * @param projectId
-     *         The ID of the project.
      * @param pSymbol
      *         The parameterized symbol to create.
      * @return The created parameterized symbol.
      */
-    ParameterizedSymbol create(Long projectId, ParameterizedSymbol pSymbol);
+    ParameterizedSymbol create(ParameterizedSymbol pSymbol);
 }

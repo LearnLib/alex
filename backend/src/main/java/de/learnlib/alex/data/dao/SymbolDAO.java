@@ -164,6 +164,8 @@ public interface SymbolDAO {
      */
     Symbol get(User user, Long projectId, Long id) throws NotFoundException;
 
+    Symbol get(User user, Project project, Long symbolId) throws NotFoundException;
+
     /**
      * Update a symbol.
      *

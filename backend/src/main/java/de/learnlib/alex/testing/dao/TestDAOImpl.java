@@ -116,44 +116,7 @@ public class TestDAOImpl implements TestDAO {
 
     @Override
     @Transactional
-    public void create(User user, Test test) throws NotFoundException, ValidationException {
-        LOGGER.traceEntry("create({})", test);
-
-        // new Test Cases should have a project and no id
-        if (test.getId() != null) {
-            throw new ValidationException("To create a test case it must not haven an ID.");
-        }
-
-        final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(test.getProjectId());
-        if (test.getParent() == null) {
-            test.setParent(root);
-        }
-
-        // make sure the name of the test case is unique
-        String name = test.getName();
-        int i = 1;
-        while (testRepository.findOneByParent_IdAndName(test.getParentId(), name) != null) {
-            name = test.getName() + " - " + String.valueOf(i);
-            i++;
-        }
-        test.setName(name);
-
-        Long projectId = test.getProjectId();
-        Project project = projectDAO.getByID(user.getId(), projectId);
-
-        test.setId(null);
-        test.setProject(project);
-
-        if (test.getParentId() != null) {
-            Test parent = get(user, projectId, test.getParentId());
-
-            if (parent instanceof TestCase) {
-                throw new ValidationException("The parent can only be a Test Suite.");
-            }
-
-            test.setParent(parent);
-        }
-
+    public void createByGenerate(User user, Test test) {
         beforeSaving(user, test);
         if (test instanceof TestCase) {
             final TestCase testCase = (TestCase) test;
@@ -172,12 +135,50 @@ public class TestDAOImpl implements TestDAO {
             testCase.setPreSteps(preSteps);
             testCase.setPostSteps(postSteps);
 
-            saveTestCaseSteps(projectId, testCase.getPreSteps());
-            saveTestCaseSteps(projectId, testCase.getSteps());
-            saveTestCaseSteps(projectId, testCase.getPostSteps());
+            saveTestCaseSteps(testCase.getPreSteps());
+            saveTestCaseSteps(testCase.getSteps());
+            saveTestCaseSteps(testCase.getPostSteps());
         }
 
         testRepository.save(test);
+    }
+
+    @Override
+    @Transactional
+    public void create(User user, Test test) throws NotFoundException, ValidationException {
+        LOGGER.traceEntry("create({})", test);
+
+        test.setId(null);
+
+        final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(test.getProjectId());
+        if (test.getParent() == null) {
+            test.setParent(root);
+        }
+
+        // make sure the name of the test case is unique
+        String name = test.getName();
+        int i = 1;
+        while (testRepository.findOneByParent_IdAndName(test.getParentId(), name) != null) {
+            name = test.getName() + " - " + i;
+            i++;
+        }
+        test.setName(name);
+
+        Long projectId = test.getProjectId();
+        Project project = projectDAO.getByID(user.getId(), projectId);
+        test.setProject(project);
+
+        if (test.getParentId() != null) {
+            Test parent = get(user, projectId, test.getParentId());
+
+            if (parent instanceof TestCase) {
+                throw new ValidationException("The parent can only be a Test Suite.");
+            }
+
+            test.setParent(parent);
+        }
+
+        createByGenerate(user, test);
         LOGGER.traceExit(test);
     }
 
@@ -210,25 +211,16 @@ public class TestDAOImpl implements TestDAO {
     @Transactional(readOnly = true)
     public Test get(User user, Long projectId, Long testId) throws NotFoundException, UnauthorizedException {
         final Project project = projectRepository.findById(projectId).orElse(null);
-        final Test test = testRepository.findById(testId).orElse(null);
-        checkAccess(user, project, test);
-
-        if (test == null) {
-            throw new NotFoundException("Could not find a Test Case with the id " + testId
-                    + " in the project " + projectId + ".");
-        }
-
-        loadLazyRelations(test);
-
-        return test;
+        return get(user, project, testId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Test> get(User user, Long projectId, List<Long> ids) throws NotFoundException, UnauthorizedException {
         final List<Test> tests = new ArrayList<>();
+        final Project project = projectRepository.findById(projectId).orElse(null);
         for (Long id : ids) {
-            tests.add(get(user, projectId, id));
+            tests.add(get(user, project, id));
         }
         return tests;
     }
@@ -328,21 +320,17 @@ public class TestDAOImpl implements TestDAO {
     private void updateTestCase(User user, TestCase testCase) throws NotFoundException {
         beforeSaving(user, testCase);
 
-        final List<Long> stepIds = getStepsWithIds(testCase.getSteps());
-        final List<Long> preStepIds = getStepsWithIds(testCase.getPreSteps());
-        final List<Long> postStepIds = getStepsWithIds(testCase.getPostSteps());
-
         final List<Long> allStepIds = new ArrayList<>(); // all ids that still exist in the db
-        allStepIds.addAll(stepIds);
-        allStepIds.addAll(preStepIds);
-        allStepIds.addAll(postStepIds);
+        allStepIds.addAll(getStepsWithIds(testCase.getPreSteps()));
+        allStepIds.addAll(getStepsWithIds(testCase.getSteps()));
+        allStepIds.addAll(getStepsWithIds(testCase.getPostSteps()));
 
         testCaseStepRepository.deleteAllByTestCase_IdAndIdNotIn(testCase.getId(), allStepIds);
 
         // delete all test case steps that have been removed in the update.
-        saveTestCaseSteps(testCase.getProjectId(), testCase.getPreSteps());
-        saveTestCaseSteps(testCase.getProjectId(), testCase.getSteps());
-        saveTestCaseSteps(testCase.getProjectId(), testCase.getPostSteps());
+        saveTestCaseSteps(testCase.getPreSteps());
+        saveTestCaseSteps(testCase.getSteps());
+        saveTestCaseSteps(testCase.getPostSteps());
 
         testRepository.save(testCase);
     }
@@ -489,7 +477,7 @@ public class TestDAOImpl implements TestDAO {
         }
     }
 
-    private void saveTestCaseSteps(Long projectId, List<TestCaseStep> steps) {
+    private void saveTestCaseSteps(List<TestCaseStep> steps) {
         for (int i = 0; i < steps.size(); i++) {
             steps.get(i).setNumber(i);
         }
@@ -510,8 +498,21 @@ public class TestDAOImpl implements TestDAO {
                     value.setParameter(parameterMap.get(value.getParameter().getName()))
             );
 
-            parameterizedSymbolDAO.create(projectId, step.getPSymbol());
+            parameterizedSymbolDAO.create(step.getPSymbol());
         });
+    }
+
+    private Test get(User user, Project project, Long testId) {
+        final Test test = testRepository.findById(testId).orElse(null);
+        checkAccess(user, project, test);
+
+        if (test == null) {
+            throw new NotFoundException("Could not find a test with the id " + testId);
+        }
+
+        loadLazyRelations(test);
+
+        return test;
     }
 
     private void loadLazyRelations(TestResult testResult) {
@@ -541,32 +542,25 @@ public class TestDAOImpl implements TestDAO {
     }
 
     private void beforeSaving(User user, Test test) throws NotFoundException {
-        long projectId = test.getProjectId();
+        final Project project = projectDAO.getByID(user.getId(), test.getProjectId());
 
         if (test instanceof TestSuite) {
             TestSuite testSuite = (TestSuite) test;
             for (Long testId : testSuite.getTestsAsIds()) {
-                Test otherTest = get(user, projectId, testId);
+                Test otherTest = get(user, project, testId);
                 testSuite.addTest(otherTest);
             }
         } else if (test instanceof TestCase) {
             TestCase testCase = (TestCase) test;
 
-            for (TestCaseStep step : testCase.getPreSteps()) {
-                step.setTestCase(testCase);
-                final Symbol symbol = symbolDAO.get(user, projectId, step.getPSymbol().getSymbol().getId());
-                step.getPSymbol().setSymbol(symbol);
-            }
+            final List<TestCaseStep> steps = new ArrayList<>();
+            steps.addAll(testCase.getPreSteps());
+            steps.addAll(testCase.getSteps());
+            steps.addAll(testCase.getPostSteps());
 
-            for (TestCaseStep step : testCase.getSteps()) {
+            for (TestCaseStep step : steps) {
                 step.setTestCase(testCase);
-                final Symbol symbol = symbolDAO.get(user, projectId, step.getPSymbol().getSymbol().getId());
-                step.getPSymbol().setSymbol(symbol);
-            }
-
-            for (TestCaseStep step : testCase.getPostSteps()) {
-                step.setTestCase(testCase);
-                final Symbol symbol = symbolDAO.get(user, projectId, step.getPSymbol().getSymbol().getId());
+                final Symbol symbol = symbolDAO.get(user, project, step.getPSymbol().getSymbol().getId());
                 step.getPSymbol().setSymbol(symbol);
             }
         }
