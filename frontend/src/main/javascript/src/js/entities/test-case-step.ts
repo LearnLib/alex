@@ -18,14 +18,15 @@ import {ParametrizedSymbol} from './parametrized-symbol';
 
 export class TestCaseStep {
 
-  /** If the step should fail. */
-  private shouldFail;
-
   /** The expected result of the test step. */
-  private expectedResult;
+  expectedResult: string;
 
   /** The symbol to execute in the step. */
-  private pSymbol;
+  pSymbol: ParametrizedSymbol;
+
+  expectedOutputSuccess: boolean;
+
+  expectedOutputMessage: string;
 
   /**
    * Constructor.
@@ -33,8 +34,9 @@ export class TestCaseStep {
    * @param obj The object to create the test case step from.
    */
   constructor(obj: any = {}) {
-    this.shouldFail = obj.shouldFail != null ? obj.shouldFail : false;
     this.expectedResult = obj.expectedResult || '';
+    this.expectedOutputSuccess = obj.expectedOutputSuccess != null ? obj.expectedOutputSuccess : true;
+    this.expectedOutputMessage = obj.expectedOutputMessage || '';
     this.pSymbol = obj.pSymbol == null ? null : new ParametrizedSymbol(obj.pSymbol);
   }
 
@@ -46,9 +48,17 @@ export class TestCaseStep {
    */
   static fromSymbol(symbol: any): TestCaseStep {
     return new TestCaseStep({
-      shouldFail: false,
       expectedResult: symbol.expectedResult,
       pSymbol: ParametrizedSymbol.fromSymbol(symbol)
     });
+  }
+
+  setExpectedOutputMessageFromOutput(output: string) {
+    const match = output.match(/^(Ok |Failed )\((.*?)\)$/);
+    this.expectedOutputMessage = match == null ? '' : match[2];
+  }
+
+  getComputedOutputMessage(): string {
+    return (this.expectedOutputSuccess ? "Ok" : "Failed") + (this.expectedOutputMessage === '' ? '' : ` (${this.expectedOutputMessage})`);
   }
 }

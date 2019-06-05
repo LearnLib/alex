@@ -17,9 +17,8 @@
         <div class="w-100 mr-1">
           {{step.pSymbol.symbol.name}}
         </div>
-        <div class="mr-1">
-          <span class="badge badge-success" ng-if="!step.shouldFail">Should pass</span>
-          <span class="badge badge-danger" ng-if="step.shouldFail">Should fail</span>
+        <div class="mx-2 flex-shrink-0 text-right">
+          {{step.getComputedOutputMessage()}}
         </div>
         <div>
           <i class="fas fa-fw fa-times text-muted cursor-pointer" ng-click="vm.testCase.steps.splice($index, 1)"></i>

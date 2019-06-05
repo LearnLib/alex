@@ -7,6 +7,7 @@ import {ProjectService} from '../../../services/project.service';
 import {TestResource} from '../../../services/resources/test-resource.service';
 import {ToastService} from '../../../services/toast.service';
 import {Project} from '../../../entities/project';
+import { TestCase } from '../../../entities/test-case';
 
 export const testCaseGenerationWidgetComponent = {
   template: require('./test-case-generation-widget.component.html'),
@@ -28,7 +29,7 @@ export const testCaseGenerationWidgetComponent = {
     public symbolMap: any;
 
     /** The test case to create. */
-    public testCase: any;
+    public testCase: TestCase;
 
 
     /**
@@ -48,16 +49,13 @@ export const testCaseGenerationWidgetComponent = {
                 private toastService: ToastService) {
 
       this.symbolMap = {};
-      this.testCase = {
-        type: 'case',
-        name: 'Test case',
-        parent: null,
-        steps: [],
-      };
+      this.testCase = new TestCase();
+      this.testCase.name = 'Test Case';
 
       this.eventBus.on(events.HYPOTHESIS_LABEL_SELECTED, (evt, data) => {
-        const step: any = TestCaseStep.fromSymbol(this.symbolMap[data.input].symbol);
-        step.shouldFail = !data.output.startsWith('Ok');
+        const step = TestCaseStep.fromSymbol(this.symbolMap[data.input].symbol);
+        step.expectedOutputSuccess = data.output.startsWith('Ok');
+        step.setExpectedOutputMessageFromOutput(data.output);
         step.pSymbol.parameterValues = this.symbolMap[data.input].parameterValues;
         this.testCase.steps.push(step);
       }, $scope);
@@ -65,11 +63,22 @@ export const testCaseGenerationWidgetComponent = {
 
     $onInit(): void {
       this.result.symbols.forEach(s => this.symbolMap[s.getComputedName()] = s);
+
+      const preStep = TestCaseStep.fromSymbol(this.result.resetSymbol.symbol);
+      preStep.pSymbol.parameterValues = this.result.resetSymbol.parameterValues;
+      this.testCase.preSteps = [preStep];
+
+      const postStep = this.result.postSymbol == null ? null : TestCaseStep.fromSymbol(this.result.postSymbol.symbol);
+      if (postStep != null) {
+        postStep.pSymbol.parameterValues = this.result.postSymbol.parameterValues;
+        this.testCase.postSteps = [postStep];
+      }
     }
 
     generateTestCase(): void {
       const test = JSON.parse(JSON.stringify(this.testCase));
       test.project = this.project.id;
+
       test.steps.forEach(step => {
         step.pSymbol.symbol = {id: step.pSymbol.symbol.id};
         step.pSymbol.parameterValues.forEach(v => delete v.id);

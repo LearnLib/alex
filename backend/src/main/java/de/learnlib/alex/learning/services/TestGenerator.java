@@ -54,6 +54,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -179,6 +181,8 @@ public class TestGenerator {
             LearnerResult lr, TestSuiteGenerationConfig config, User user, Long projectId, TestSuite testSuite)
             throws NotFoundException {
 
+        int i = 0;
+
         for (N e : tree) {
             if (e.isLeaf()) {
                 Word<String> accessSequence = accessSequenceExtractor.apply(e.getData());
@@ -190,7 +194,6 @@ public class TestGenerator {
                 List<Long> testCaseSymbols = new ArrayList<>();
 
                 N nodeP = e;
-                int testCaseNumber = 0;
 
                 while (!(nodeP.isRoot())) {
                     outcomeList.addAll(convertWordToStringList(accessSequenceOutcome));
@@ -203,18 +206,13 @@ public class TestGenerator {
                     testCaseSymbols.addAll(convertWordToPSymbolIds(dscrExtractor.apply(discriminator), lr.getSymbols()));
 
                     final TestCase testCase = new TestCase();
-                    if (tree instanceof MultiDTree) {
-                        testCase.setName(config.getName() + " " + testCaseNumber);
-                    } else {
-                        testCase.setName(e.getData() + " " + config.getName() + " " + testCaseNumber);
-                    }
+                    testCase.setName(String.valueOf(i++));
 
                     outcomeList.addAll(convertWordToStringList(inEdge));
                     createTestCase(user, testSuite, testCase, projectId, lr, config, testCaseSymbols, Word.fromList(outcomeList));
 
                     outcomeList.clear();
                     testCaseSymbols.clear();
-                    testCaseNumber++;
                 }
 
                 accessSequenceAsIds.clear();
@@ -223,7 +221,7 @@ public class TestGenerator {
                         convertWordToPSymbolIds(accessSequenceExtractor.apply(e.getData()), lr.getSymbols());
 
                 final TestCase testCase = new TestCase();
-                testCase.setName(e.getData() + " " + config.getName());
+                testCase.setName(String.valueOf(i++));
                 testCase.setProjectId(projectId);
                 setSteps(lr.getResetSymbol(), testCase, testCase.getPreSteps(), config.isIncludeParameterValues());
                 setStepsByPSymbolIds(lr, testCase, accessSequenceAsList, config.isIncludeParameterValues());
@@ -247,16 +245,18 @@ public class TestGenerator {
 
         for (int i = 0; i < outputs.size(); i++) {
             final TestCaseStep step = testCase.getSteps().get(i);
-            if (outputs.getSymbol(i).startsWith(ExecuteResult.DEFAULT_SUCCESS_OUTPUT)) {
-                step.setShouldFail(false);
-            } else if (outputs.getSymbol(i).startsWith(ExecuteResult.DEFAULT_ERROR_OUTPUT)) {
-                step.setShouldFail(true);
-            } else {
-                step.setShouldFail(false);
-            }
+            final String sym = outputs.getSymbol(i);
+            step.setExpectedOutputSuccess(sym.startsWith(ExecuteResult.DEFAULT_SUCCESS_OUTPUT));
+            step.setExpectedOutputMessage(getExpectedOutputMessage(sym));
         }
 
         testDAO.create(user, testCase);
+    }
+
+    private String getExpectedOutputMessage(String output) {
+        final Pattern p = Pattern.compile("^(Ok | Failed )\\((.*?)\\)$");
+        final Matcher m = p.matcher(output);
+        return m.matches() ? m.group(2) : "";
     }
 
     private void setSteps(ParameterizedSymbol pSymbol, TestCase testCase, List<TestCaseStep> stepList,

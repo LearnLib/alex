@@ -301,31 +301,31 @@ public class TestService {
         boolean preSuccess = executePreSteps(connectors, testCase, testCase.getPreSteps());
 
         // execute the steps as long as they do not fail
-        int failedStepIndex = 0;
+        long failedStep = -1L;
 
         if (preSuccess) {
             for (int i = 0; i < testCase.getSteps().size(); i++) {
                 final TestCaseStep step = testCase.getSteps().get(i);
-
-                ExecuteResult result = executeStep(connectors, testCase, step);
-                if (!result.isSuccess() && step.isShouldFail()) {
-                    result = new ExecuteResult(true, result.getOutput(), result.getTime());
-                }
-
+                final ExecuteResult result = executeStep(connectors, testCase, step);
                 outputs.add(result);
-                failedStepIndex = i;
-                if (!result.isSuccess()) {
-                    break;
+
+                if (step.getExpectedOutputMessage().equals("")) {
+                    if (result.isSuccess() != step.isExpectedOutputSuccess()) {
+                        failedStep = i;
+                        break;
+                    }
+                } else {
+                    if (!result.getOutput().equals(step.getComputedOutput())) {
+                        failedStep = i;
+                        break;
+                    }
                 }
             }
-        } else {
-            failedStepIndex = -1;
         }
 
         // the remaining steps after the failing step are not executed
-        while (failedStepIndex + 1 < testCase.getSteps().size()) {
+        while (outputs.size() < testCase.getSteps().size()) {
             outputs.add(new ExecuteResult(false, "Not executed"));
-            failedStepIndex++;
         }
 
         executePostSteps(connectors, testCase, testCase.getPostSteps());
@@ -338,19 +338,15 @@ public class TestService {
                 .map(TestExecutionResult::new)
                 .collect(Collectors.toList());
 
-        boolean passed = true;
         for (int i = 0; i < outputs.size(); i++) {
-            final ExecuteResult output = outputs.get(i);
-            passed = passed & output.isSuccess();
-
             final TestCaseStep step = testCase.getSteps().get(i);
             sulOutputs.get(i).setSymbol(step.getPSymbol().getSymbol());
         }
 
-        final TestCaseResult result = new TestCaseResult(testCase, sulOutputs, passed, time);
+        final TestCaseResult result = new TestCaseResult(testCase, sulOutputs, failedStep, time);
         results.put(testCase.getId(), result);
 
-        LOGGER.info(LoggerMarkers.LEARNER, "Finished executing test[id={}], passed=" + String.valueOf(passed), testCase.getId());
+        LOGGER.info(LoggerMarkers.LEARNER, "Finished executing test[id={}], passed=" + result.isPassed(), testCase.getId());
         return result;
     }
 

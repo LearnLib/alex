@@ -32,6 +32,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -67,18 +68,27 @@ public class TestCaseStep implements Serializable {
     )
     private ParameterizedSymbol pSymbol;
 
-    /** If the step should fail. This eliminates the need to create a separate symbol. */
-    @NotNull
-    private boolean shouldFail;
-
     /** The expected result of the step in a natural language. */
     @Column(columnDefinition = "MEDIUMTEXT")
     private String expectedResult;
 
+    @NotNull
+    private boolean expectedOutputSuccess;
+
+    @NotNull
+    private String expectedOutputMessage;
+
     /** Constructor. */
     public TestCaseStep() {
-        this.shouldFail = false;
         this.expectedResult = "";
+        this.expectedOutputSuccess = true;
+        this.expectedOutputMessage = "";
+    }
+
+    @Transient
+    @JsonIgnore
+    public String getComputedOutput() {
+        return new ExecuteResult(expectedOutputSuccess, expectedOutputMessage.equals("") ? null : expectedOutputMessage).getOutput();
     }
 
     /**
@@ -126,19 +136,27 @@ public class TestCaseStep implements Serializable {
         this.pSymbol = pSymbol;
     }
 
-    public boolean isShouldFail() {
-        return shouldFail;
-    }
-
-    public void setShouldFail(boolean shouldFail) {
-        this.shouldFail = shouldFail;
-    }
-
     public String getExpectedResult() {
         return expectedResult;
     }
 
     public void setExpectedResult(String expectedResult) {
         this.expectedResult = expectedResult == null ? "" : expectedResult;
+    }
+
+    public boolean isExpectedOutputSuccess() {
+        return expectedOutputSuccess;
+    }
+
+    public void setExpectedOutputSuccess(boolean expectedOutputSuccess) {
+        this.expectedOutputSuccess = expectedOutputSuccess;
+    }
+
+    public String getExpectedOutputMessage() {
+        return expectedOutputMessage;
+    }
+
+    public void setExpectedOutputMessage(String expectedOutputMessage) {
+        this.expectedOutputMessage = expectedOutputMessage;
     }
 }

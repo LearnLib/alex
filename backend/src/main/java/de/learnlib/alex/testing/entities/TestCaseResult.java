@@ -45,14 +45,14 @@ public class TestCaseResult extends TestResult {
     )
     private List<TestExecutionResult> outputs;
 
-    /** If the test passed. */
-    private boolean passed;
+    private Long failedStep;
 
     /**
      * Constructor.
      */
     public TestCaseResult() {
         this.outputs = new ArrayList<>();
+        this.failedStep = -1L;
     }
 
     /**
@@ -62,16 +62,16 @@ public class TestCaseResult extends TestResult {
      *         The test case that has been executed.
      * @param outputs
      *         The recorded outputs.
-     * @param passed
+     * @param failedStep
      *         If the test passed.
      * @param time
      *         The time it took to execute the test in ms.
      */
-    public TestCaseResult(TestCase testCase, List<TestExecutionResult> outputs, boolean passed, long time) {
+    public TestCaseResult(TestCase testCase, List<TestExecutionResult> outputs, long failedStep, long time) {
         super(testCase);
         this.outputs = outputs;
-        this.passed = passed;
         this.time = time;
+        this.failedStep = failedStep;
 
         this.outputs.forEach(out -> out.setResult(this));
     }
@@ -84,13 +84,23 @@ public class TestCaseResult extends TestResult {
         this.outputs = outputs;
     }
 
-    @Override
-    public boolean isPassed() {
-        return passed;
+    public Long getFailedStep() {
+        return failedStep;
     }
 
+    public void setFailedStep(Long failedStep) {
+        this.failedStep = failedStep;
+    }
+
+    @Transient
+    @JsonProperty("passed")
+    public boolean isPassed() {
+        return this.failedStep.equals(-1L);
+    }
+
+    @JsonIgnore
+    @JsonProperty("passed")
     public void setPassed(boolean passed) {
-        this.passed = passed;
     }
 
     @Transient
