@@ -119,7 +119,9 @@ class ResultsCompareViewComponent {
           this.$uibModal.open({
             component: 'separatingWordModal',
             resolve: {
-              diff: () => diff
+              diff: () => diff,
+              result1: () => this.panels[0],
+              result2: () => this.panels[1]
             }
           });
         }

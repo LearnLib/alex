@@ -34,6 +34,7 @@ import {TestConfigResource} from '../../../services/resources/test-config-resour
 import {TestReportResource} from '../../../services/resources/test-report-resource.service';
 import {Project} from '../../../entities/project';
 import {SymbolGroup} from '../../../entities/symbol-group';
+import { TestCase } from '../../../entities/test-case';
 
 export const testSuiteViewComponent = {
   template: require('./test-suite-view.component.html'),
@@ -167,13 +168,11 @@ export const testSuiteViewComponent = {
     createTestCase(): void {
       this.promptService.prompt('Enter a name for the test case.')
         .then((name) => {
-          const testCase = {
-            type: 'case',
+          const testCase = TestCase.fromData({
             name: name,
             project: this.project.id,
             parent: this.testSuite.id,
-            steps: []
-          };
+          });
           this.testResource.create(testCase)
             .then((data) => {
               this.toastService.success(`The test case "${testCase.name}" has been created.`);

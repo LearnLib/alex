@@ -28,6 +28,12 @@
         <span class="badge badge-default" ng-class="{'badge-info': $last}">{{vm.diff.output2[$index]}}</span>
       </td>
     </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td><button class="btn btn-default btn-sm btn-block" ng-click="vm.generateTestCase(1)">Generate test case</button></td>
+      <td><button class="btn btn-default btn-sm btn-block" ng-click="vm.generateTestCase(2)">Generate test case</button></td>
+    </tr>
     </tbody>
   </table>
 </div>

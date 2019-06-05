@@ -20,6 +20,7 @@ export class TestCase {
   readonly type: string = 'case';
   name: string;
   parent?: number;
+  project: number;
   preSteps: TestCaseStep[];
   steps: TestCaseStep[];
   postSteps: TestCaseStep[];
@@ -32,6 +33,7 @@ export class TestCase {
     const tc = new TestCase();
     tc.name = data.name;
     tc.parent = data.parent;
+    tc.project = data.project;
 
     if (data.preSteps && data.preSteps.length) {
       tc.preSteps = data.preSteps.map(s => new TestCaseStep(s));

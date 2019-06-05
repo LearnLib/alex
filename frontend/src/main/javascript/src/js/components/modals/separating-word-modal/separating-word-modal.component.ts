@@ -15,6 +15,11 @@
  */
 
 import {ModalComponent} from '../modal.component';
+import { LearnResult } from '../../../entities/learner-result';
+import { TestResource } from '../../../services/resources/test-resource.service';
+import { TestCase } from '../../../entities/test-case';
+import { TestCaseStep } from '../../../entities/test-case-step';
+import { ToastService } from '../../../services/toast.service';
 
 export const separatingWordModalComponent = {
   template: require('./separating-word-modal.component.html'),
@@ -28,13 +33,55 @@ export const separatingWordModalComponent = {
     /** The separating word. */
     public diff: any = null;
 
+    public result1: LearnResult;
+    public result2: LearnResult;
+
     /** Constructor. */
-    constructor() {
+    /* @ngInject */
+    constructor(private testResource: TestResource,
+                private toastService: ToastService) {
       super();
     }
 
     $onInit(): void {
       this.diff = this.resolve.diff;
+      this.result1 = this.resolve.result1;
+      this.result2 = this.resolve.result2;
+    }
+
+    generateTestCase(which: number): void {
+      const result = which == 1 ? this.result1 : this.result2;
+      const symbolMap = {};
+      result.symbols.forEach(s => symbolMap[s.getComputedName()] = s);
+
+      const tc = new TestCase();
+      tc.name = 'Test Case';
+      tc.project = result.project;
+
+      const preStep = TestCaseStep.fromSymbol(result.resetSymbol.symbol);
+      preStep.pSymbol.parameterValues = result.resetSymbol.parameterValues;
+      tc.preSteps = [preStep];
+
+      for (let i = 0; i < this.diff.input.length; i++) {
+        const output = which === 1 ? this.diff.output1[i] : this.diff.output2[i];
+
+        const sym = symbolMap[this.diff.input[i]];
+        const step = TestCaseStep.fromSymbol(sym.symbol);
+        step.expectedOutputSuccess = output.startsWith('Ok');
+        step.setExpectedOutputMessageFromOutput(output);
+        step.pSymbol.parameterValues = sym.parameterValues;
+        tc.steps.push(step);
+      }
+
+      const postStep = result.postSymbol == null ? null : TestCaseStep.fromSymbol(result.postSymbol.symbol);
+      if (postStep != null) {
+        postStep.pSymbol.parameterValues = result.postSymbol.parameterValues;
+        tc.postSteps = [postStep];
+      }
+
+      this.testResource.create(tc)
+        .then(() => this.toastService.success('The test case has been created.'))
+        .catch(() => this.toastService.danger('The test case could not be created.'));
     }
   }
 };
