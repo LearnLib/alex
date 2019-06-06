@@ -37,7 +37,6 @@ import de.learnlib.algorithms.ttt.base.BaseTTTDiscriminationTree;
 import de.learnlib.algorithms.ttt.base.TTTState;
 import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
 import de.learnlib.api.algorithm.LearningAlgorithm;
-import de.learnlib.datastructure.discriminationtree.MultiDTree;
 import de.learnlib.datastructure.discriminationtree.model.AbstractDTNode;
 import de.learnlib.datastructure.discriminationtree.model.AbstractDiscriminationTree;
 import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDiscriminationTree;
@@ -69,6 +68,7 @@ public class TestGenerator {
     /** The injected DAO for learner results. */
     private final LearnerResultDAO learnerResultDAO;
 
+    /** The project DAO to use. */
     private final ProjectDAO projectDAO;
 
     /** The injected DAO for symbols. */
@@ -124,7 +124,7 @@ public class TestGenerator {
         final LearningAlgorithm.MealyLearner<String, String> learner = algorithm.createLearner(alphabet, null);
         algorithm.resume(learner, step.getState());
 
-        final Project project = projectDAO.getByID(user.getId(), projectId);
+        final Project project = projectDAO.getByID(user, projectId);
 
         // create the new test suite
         final TestSuite testSuite = new TestSuite();

@@ -139,7 +139,7 @@ public class ProjectResource {
         ProjectDAO.EmbeddableFields[] embeddableFields;
         try {
             embeddableFields = parseEmbeddableFields(embed);
-            final Project project = projectDAO.getByID(user.getId(), projectId, embeddableFields);
+            final Project project = projectDAO.getByID(user, projectId, embeddableFields);
             LOGGER.traceExit(project);
             return Response.ok(project).build();
         } catch (IllegalArgumentException e) {
@@ -190,7 +190,7 @@ public class ProjectResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
 
-        final Project project = projectDAO.getByID(user.getId(), projectId);
+        final Project project = projectDAO.getByID(user, projectId);
         projectDAO.delete(user, projectId);
         webhookService.fireEvent(user, new ProjectEvent.Deleted(project.getId()));
         LOGGER.traceExit("Project {} deleted", projectId);

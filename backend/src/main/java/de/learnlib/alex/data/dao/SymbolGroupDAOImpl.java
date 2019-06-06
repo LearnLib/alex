@@ -35,9 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
@@ -127,25 +125,21 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         final Project project = projectRepository.findById(group.getProjectId()).orElse(null);
         projectDAO.checkAccess(user, project);
 
-        try {
-            group.setName(createGroupName(project, group));
-            project.addGroup(group);
-            beforePersistGroup(group);
+        group.setId(null);
+        group.setName(createGroupName(project, group));
+        project.addGroup(group);
+        beforePersistGroup(group);
 
-            if (group.getParentId() != null) {
-                final SymbolGroup parent = symbolGroupRepository.findById(group.getParentId()).orElse(null);
-                checkAccess(user, project, parent);
+        if (group.getParentId() != null) {
+            final SymbolGroup parent = symbolGroupRepository.findById(group.getParentId()).orElse(null);
+            checkAccess(user, project, parent);
 
-                group.setParent(parent);
-                parent.getGroups().add(parent);
-                symbolGroupRepository.save(parent);
-            }
-
-            symbolGroupRepository.save(group);
-        } catch (DataIntegrityViolationException | TransactionSystemException e) {
-            LOGGER.info("SymbolGroup creation failed:", e);
-            throw new ValidationException("SymbolGroup could not be created.", e);
+            group.setParent(parent);
+            parent.getGroups().add(parent);
+            symbolGroupRepository.save(parent);
         }
+
+        symbolGroupRepository.save(group);
 
         LOGGER.traceExit(group);
     }
@@ -246,14 +240,9 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             throw new ValidationException("The default group cannot be a child of another group.");
         }
 
-        try {
-            groupInDB.setProject(project);
-            groupInDB.setName(group.getName());
-            symbolGroupRepository.save(groupInDB);
-        } catch (DataIntegrityViolationException | TransactionSystemException e) {
-            LOGGER.info("SymbolGroup update failed:", e);
-            throw new ValidationException("SymbolGroup could not be updated.", e);
-        }
+        groupInDB.setProject(project);
+        groupInDB.setName(group.getName());
+        symbolGroupRepository.save(groupInDB);
     }
 
     @Override

@@ -109,7 +109,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         if (user == null || learnerResult.getProject() == null) {
             throw new ValidationException("To create a LearnResult it must have a User and Project.");
         }
-        projectDAO.getByID(user.getId(), learnerResult.getProjectId()); // access check
+        projectDAO.getByID(user, learnerResult.getProjectId()); // access check
 
         if (learnerResult.getTestNo() != null) {
             throw new ValidationException("To create a LearnResult it must not have a test no.");
@@ -146,7 +146,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Override
     @Transactional(readOnly = true)
     public List<LearnerResult> getAll(User user, Long projectId, boolean includeSteps) throws NotFoundException {
-        projectDAO.getByID(user.getId(), projectId); // access check
+        projectDAO.getByID(user, projectId); // access check
 
         List<LearnerResult> results = learnerResultRepository.findByProject_IdOrderByTestNoAsc(projectId);
 
@@ -161,7 +161,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Transactional(readOnly = true)
     public List<LearnerResult> getAll(User user, Long projectId, List<Long> testNos, boolean includeSteps)
             throws NotFoundException {
-        projectDAO.getByID(user.getId(), projectId); // access check
+        projectDAO.getByID(user, projectId); // access check
 
         List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
         if (results.size() != testNos.size()) {
@@ -178,7 +178,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Override
     @Transactional(readOnly = true)
     public LearnerResult getLatest(User user, Long projectId) throws NotFoundException {
-        projectDAO.getByID(user.getId(), projectId);
+        projectDAO.getByID(user, projectId);
 
         final LearnerResult result = learnerResultRepository.findFirstByProject_IdOrderByTestNoDesc(projectId);
         if (result != null) {
@@ -192,7 +192,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Override
     @Transactional(readOnly = true)
     public LearnerResult get(User user, Long projectId, Long testNo, boolean includeSteps) throws NotFoundException {
-        projectDAO.getByID(user.getId(), projectId); // access check
+        projectDAO.getByID(user, projectId); // access check
 
         List<Long> testNos = Collections.singletonList(testNo);
         List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
@@ -234,7 +234,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public LearnerResult clone(User user, Long projectId, Long testNo) throws NotFoundException, UnauthorizedException {
-        final Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
+        final Project project = projectDAO.getByID(user, projectId, ProjectDAO.EmbeddableFields.ALL);
         final LearnerResult result = learnerResultRepository.findOneByProject_IdAndTestNo(projectId, testNo);
         initializeLazyRelations(Collections.singletonList(result), true);
         checkAccess(user, project, result);

@@ -145,7 +145,7 @@ public class TestExecutionConfigResource {
         LOGGER.traceEntry("execute({}) for user {}.", projectId, user);
 
         final TestExecutionConfig config = testExecutionConfigDAO.get(user, projectId, configId);
-        final Project project = projectDAO.getByID(user.getId(), projectId);
+        final Project project = projectDAO.getByID(user, projectId);
         final TestStatus status = testService.start(user, project, config);
 
         LOGGER.traceExit("Config with id " + configId + " deleted.");

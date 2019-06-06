@@ -34,9 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
@@ -121,42 +119,36 @@ public class ProjectDAOImpl implements ProjectDAO {
     public Project create(final User user, final Project project) throws ValidationException {
         LOGGER.traceEntry("create({})", project);
 
-        try {
-            project.setUser(user);
+        project.setUser(user);
+        project.setId(null);
 
-            final SymbolGroup defaultGroup = new SymbolGroup();
-            defaultGroup.setName("Default group");
-            defaultGroup.setProject(project);
-            project.addGroup(defaultGroup);
+        final SymbolGroup defaultGroup = new SymbolGroup();
+        defaultGroup.setName("Default group");
+        defaultGroup.setProject(project);
+        project.addGroup(defaultGroup);
 
-            final TestSuite testSuite = new TestSuite();
-            testSuite.setName("Root");
-            testSuite.setProject(project);
-            project.getTests().add(testSuite);
+        final TestSuite testSuite = new TestSuite();
+        testSuite.setName("Root");
+        testSuite.setProject(project);
+        project.getTests().add(testSuite);
 
-            if (project.getUrls().isEmpty()) {
-                throw new ValidationException("The project has to have at least one URL.");
-            }
-
-            final Project projectWithSameName = projectRepository.findByUser_IdAndName(user.getId(), project.getName());
-            if (projectWithSameName != null && !projectWithSameName.getId().equals(project.getId())) {
-                throw new ValidationException("A project with that name already exists.");
-            }
-
-            project.getUrls().forEach(url -> {
-                url.setId(null);
-                url.setProject(project);
-            });
-
-            final Project createdProject = projectRepository.save(project);
-            LOGGER.traceExit(createdProject);
-            return createdProject;
-        } catch (DataIntegrityViolationException | TransactionSystemException e) {
-            LOGGER.info("Project creation failed: ", e);
-            e.printStackTrace();
-            LOGGER.traceExit(e);
-            throw new ValidationException("Project could not be created.", e);
+        if (project.getUrls().isEmpty()) {
+            throw new ValidationException("The project has to have at least one URL.");
         }
+
+        final Project projectWithSameName = projectRepository.findByUser_IdAndName(user.getId(), project.getName());
+        if (projectWithSameName != null && !projectWithSameName.getId().equals(project.getId())) {
+            throw new ValidationException("A project with that name already exists.");
+        }
+
+        project.getUrls().forEach(url -> {
+            url.setId(null);
+            url.setProject(project);
+        });
+
+        final Project createdProject = projectRepository.save(project);
+        LOGGER.traceExit(createdProject);
+        return createdProject;
     }
 
     @Override
@@ -169,10 +161,9 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public Project getByID(Long userId, Long projectId, EmbeddableFields... embedFields) throws NotFoundException {
+    public Project getByID(User user, Long projectId, EmbeddableFields... embedFields) throws NotFoundException {
         final Project project = projectRepository.findById(projectId).orElse(null);
-        checkAccess(new User(userId), project);
-
+        checkAccess(user, project);
         initLazyRelations(project, embedFields);
         return project;
     }
@@ -194,27 +185,22 @@ public class ProjectDAOImpl implements ProjectDAO {
             throw new ValidationException("The project has to have at least one URL.");
         }
 
-        try {
-            project.setUser(user);
-            project.setGroups(projectInDb.getGroups());
-            project.getUrls().forEach(url -> url.setProject(project));
+        project.setUser(user);
+        project.setGroups(projectInDb.getGroups());
+        project.getUrls().forEach(url -> url.setProject(project));
 
-            final List<ProjectUrl> urlsToRemove = projectInDb.getUrls().stream()
-                    .filter(url -> !project.getUrls().contains(url))
-                    .collect(Collectors.toList());
-            if (!urlsToRemove.isEmpty()) {
-                removeUrlsFromLearnerResults(urlsToRemove);
-            }
-
-            final Project updatedProject = projectRepository.save(project);
-            initLazyRelations(updatedProject);
-
-            LOGGER.traceExit(project);
-            return updatedProject;
-        } catch (DataIntegrityViolationException | TransactionSystemException e) {
-            LOGGER.info("Project update failed:", e);
-            throw new javax.validation.ValidationException("Project could not be updated.", e);
+        final List<ProjectUrl> urlsToRemove = projectInDb.getUrls().stream()
+                .filter(url -> !project.getUrls().contains(url))
+                .collect(Collectors.toList());
+        if (!urlsToRemove.isEmpty()) {
+            removeUrlsFromLearnerResults(urlsToRemove);
         }
+
+        final Project updatedProject = projectRepository.save(project);
+        initLazyRelations(updatedProject);
+
+        LOGGER.traceExit(project);
+        return updatedProject;
     }
 
     private void removeUrlsFromLearnerResults(List<ProjectUrl> urlsToRemove) {

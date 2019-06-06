@@ -28,16 +28,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.transaction.TransactionSystemException;
 
-import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -106,40 +102,6 @@ public class CounterDAOImplTest {
         }
     }
 
-    @Test(expected = ValidationException.class)
-    public void shouldHandleDataIntegrityViolationExceptionOnCounterCreationGracefully() {
-        User user = new User();
-        Counter counter = new Counter();
-
-        given(counterRepository.save(counter)).willThrow(DataIntegrityViolationException.class);
-
-        try {
-            counterDAO.create(user, counter); // should fail
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleTransactionSystemExceptionOnCounterCreationGracefully() {
-        User user = new User();
-        Counter counter = new Counter();
-
-        ConstraintViolationException constraintViolationException;
-        constraintViolationException = new ConstraintViolationException("Counter is not valid!", new HashSet<>());
-        RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException;
-        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
-                                                                    rollbackException);
-        given(counterRepository.save(counter)).willThrow(transactionSystemException);
-
-        try {
-            counterDAO.create(user, counter); // should fail
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Test
     public void shouldGetAllCounterOfAProject() throws NotFoundException {
         User user = new User();
@@ -162,14 +124,12 @@ public class CounterDAOImplTest {
 
     @Test
     public void shouldGetOneCounter() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
+        User user = new User(USER_ID);
         Project project = new Project();
-
         Counter counter = new Counter();
+        counter.setProject(project);
 
-        given(projectDAO.getByID(USER_ID, PROJECT_ID)).willReturn(project);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(counterRepository.findByProjectAndName(project, COUNTER_NAME)).willReturn(counter);
 
         Counter c = counterDAO.get(user, PROJECT_ID, COUNTER_NAME);
@@ -181,11 +141,6 @@ public class CounterDAOImplTest {
     public void shouldThrowAnExceptionIfTheCounterCanNotBeFoundByItsName() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-
-        Project project = new Project();
-
-        given(projectDAO.getByID(USER_ID, PROJECT_ID)).willReturn(project);
-
         counterDAO.get(user, PROJECT_ID, COUNTER_NAME); // should fail
     }
 
@@ -201,76 +156,12 @@ public class CounterDAOImplTest {
         counter.setProject(project);
         counter.setName(COUNTER_NAME);
 
-        given(projectDAO.getByID(USER_ID, PROJECT_ID)).willReturn(project);
+        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(counterRepository.findByProjectAndName(project, COUNTER_NAME)).willReturn(counter);
 
         counterDAO.update(user, counter);
 
         verify(counterRepository).save(counter);
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleConstraintViolationExceptionOnCounterUpdateGracefully() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-
-        Counter counter = new Counter();
-        counter.setProject(project);
-        counter.setName(COUNTER_NAME);
-
-        given(projectDAO.getByID(USER_ID, PROJECT_ID)).willReturn(project);
-        given(counterRepository.findByProjectAndName(project, COUNTER_NAME)).willReturn(counter);
-        given(counterRepository.save(counter)).willThrow(ConstraintViolationException.class);
-
-        counterDAO.update(user, counter); // should fail
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleDataIntegrityViolationExceptionOnCounterUpdateGracefully() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-
-        Counter counter = new Counter();
-        counter.setProject(project);
-        counter.setName(COUNTER_NAME);
-
-        given(projectDAO.getByID(USER_ID, PROJECT_ID)).willReturn(project);
-        given(counterRepository.findByProjectAndName(project, COUNTER_NAME)).willReturn(counter);
-        given(counterRepository.save(counter)).willThrow(DataIntegrityViolationException.class);
-
-        counterDAO.update(user, counter); // should fail
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleTransactionSystemExceptionOnCounterUpdateGracefully() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-
-        Counter counter = new Counter();
-        counter.setProject(project);
-        counter.setName(COUNTER_NAME);
-
-        ConstraintViolationException constraintViolationException;
-        constraintViolationException = new ConstraintViolationException("Counter is not valid!", new HashSet<>());
-        RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException;
-        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
-                                                                    rollbackException);
-
-        given(projectDAO.getByID(USER_ID, PROJECT_ID)).willReturn(project);
-        given(counterRepository.findByProjectAndName(project, COUNTER_NAME)).willReturn(counter);
-        given(counterRepository.save(counter)).willThrow(transactionSystemException);
-
-        counterDAO.update(user, counter); // should fail
     }
 
     @Test

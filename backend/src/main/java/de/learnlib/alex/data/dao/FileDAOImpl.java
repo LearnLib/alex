@@ -82,7 +82,7 @@ public class FileDAOImpl implements FileDAO {
     public void create(User user, Long projectId, InputStream uploadedInputStream,
             FormDataContentDisposition fileDetail)
             throws IllegalStateException, IOException, NotFoundException {
-        projectDAO.getByID(user.getId(), projectId); // access check
+        projectDAO.getByID(user, projectId); // access check
 
         Path uploadedDirectoryLocation = Paths.get(getUploadsDir(user, projectId));
 
@@ -107,7 +107,7 @@ public class FileDAOImpl implements FileDAO {
 
     @Override
     public List<UploadableFile> getAll(User user, Long projectId) throws NotFoundException {
-        projectDAO.getByID(user.getId(), projectId); // access check
+        projectDAO.getByID(user, projectId); // access check
 
         File uploadDirectory = getUploadDirectory(user, projectId);
 
@@ -129,7 +129,7 @@ public class FileDAOImpl implements FileDAO {
 
     @Override
     public String getAbsoluteFilePath(User user, Long projectId, String fileName) throws NotFoundException {
-        projectDAO.getByID(user.getId(), projectId); // access check
+        projectDAO.getByID(user, projectId); // access check
 
         File uploadDirectory = getUploadDirectory(user, projectId);
 
@@ -145,7 +145,7 @@ public class FileDAOImpl implements FileDAO {
 
     @Override
     public void delete(User user, Long projectId, String fileName) throws NotFoundException {
-        projectDAO.getByID(user.getId(), projectId); // access check
+        projectDAO.getByID(user, projectId); // access check
 
         File uploadDirectory = getUploadDirectory(user, projectId);
 

@@ -33,16 +33,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.transaction.TransactionSystemException;
 
-import javax.persistence.RollbackException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -163,32 +158,6 @@ public class ProjectDAOImplTest {
         projectDAO.create(user, project); // should fail
     }
 
-    @Test(expected = ValidationException.class)
-    public void shouldHandleDataIntegrityViolationExceptionOnProjectCreationGracefully() {
-        Project project = new Project();
-        project.setUrls(Collections.singletonList(new ProjectUrl()));
-        //
-        given(projectRepository.save(project)).willThrow(DataIntegrityViolationException.class);
-
-        projectDAO.create(user, project); // should fail
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleTransactionSystemExceptionOnProjectCreationGracefully() {
-        Project project = new Project();
-        project.setUrls(Collections.singletonList(new ProjectUrl()));
-        //
-        ConstraintViolationException constraintViolationException;
-        constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
-        RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException;
-        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
-                rollbackException);
-        given(projectRepository.save(project)).willThrow(transactionSystemException);
-
-        projectDAO.create(user, project); // should fail
-    }
-
     @Test
     public void shouldGetAllProjectsOfAnUser() {
         User user = new User();
@@ -213,7 +182,7 @@ public class ProjectDAOImplTest {
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
 
-        Project p = projectDAO.getByID(USER_ID, PROJECT_ID);
+        Project p = projectDAO.getByID(user, PROJECT_ID);
 
         assertThat(p, is(equalTo(project)));
     }
@@ -222,7 +191,7 @@ public class ProjectDAOImplTest {
     public void shouldThrowAnExceptionIfTheProjectCanNotFoundByID() throws NotFoundException {
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.empty());
 
-        projectDAO.getByID(USER_ID, PROJECT_ID); // should fail
+        projectDAO.getByID(user, PROJECT_ID); // should fail
     }
 
     @Test
@@ -271,44 +240,6 @@ public class ProjectDAOImplTest {
         project.setId(PROJECT_ID);
 
         given(projectRepository.save(project)).willThrow(ConstraintViolationException.class);
-        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-
-        projectDAO.update(user, project); // should fail
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleDataIntegrityViolationExceptionOnProjectUpdateGracefully() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setUser(user);
-        project.setId(PROJECT_ID);
-        project.setUrls(Collections.singletonList(new ProjectUrl()));
-
-        given(projectRepository.save(project)).willThrow(DataIntegrityViolationException.class);
-        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-
-        projectDAO.update(user, project); // should fail
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleTransactionSystemExceptionOnProjectUpdateGracefully() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setUrls(Collections.singletonList(new ProjectUrl()));
-        project.setUser(user);
-        project.setId(PROJECT_ID);
-
-        ConstraintViolationException constraintViolationException;
-        constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
-        RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException;
-        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
-                rollbackException);
-        given(projectRepository.save(project)).willThrow(transactionSystemException);
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
 
         projectDAO.update(user, project); // should fail

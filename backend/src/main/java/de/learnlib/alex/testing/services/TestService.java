@@ -162,7 +162,7 @@ public class TestService {
      *         If the project cannot be found.
      */
     public void abort(User user, Long projectId) throws NotFoundException {
-        final Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.COUNTERS);
+        final Project project = projectDAO.getByID(user, projectId, ProjectDAO.EmbeddableFields.COUNTERS);
         if (testingThreads.containsKey(user.getId()) && testingThreads.get(user.getId()).containsKey(project.getId())) {
             testingThreads.get(user.getId()).get(project.getId()).abort();
         }

@@ -26,7 +26,6 @@ import de.learnlib.alex.testing.entities.TestResult;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ValidationException;
 import java.util.List;

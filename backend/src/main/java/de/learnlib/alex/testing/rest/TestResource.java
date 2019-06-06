@@ -106,8 +106,7 @@ public class TestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createTest(@PathParam("project_id") Long projectId, Test test) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        projectDAO.getByID(user.getId(), projectId);
-
+        projectDAO.getByID(user, projectId);
         test.setProjectId(projectId);
 
         testDAO.create(user, test);
@@ -130,10 +129,8 @@ public class TestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createTests(@PathParam("project_id") Long projectId, List<Test> tests) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        projectDAO.getByID(user.getId(), projectId);
-
+        projectDAO.getByID(user, projectId);
         tests.forEach(test -> test.setProjectId(projectId));
-
         testDAO.create(user, tests);
 
         final List<Test> createdTests = new ArrayList<>();
@@ -260,7 +257,7 @@ public class TestResource {
     public Response execute(@PathParam("project_id") Long projectId,
                             TestExecutionConfig testConfig) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        final Project project = projectDAO.getByID(user.getId(), projectId);
+        final Project project = projectDAO.getByID(user, projectId);
         final TestStatus status = testService.start(user, project, testConfig);
         return Response.ok(status).build();
     }
@@ -278,7 +275,7 @@ public class TestResource {
     public Response status(@PathParam("project_id") Long projectId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("status(projectId: {}) with user {}", projectId, user);
-        final Project project = projectDAO.getByID(user.getId(), projectId);
+        final Project project = projectDAO.getByID(user, projectId);
         final TestStatus status = testService.getStatus(user, project);
         LOGGER.traceExit("status() with status {}", status);
         return Response.ok(status).build();

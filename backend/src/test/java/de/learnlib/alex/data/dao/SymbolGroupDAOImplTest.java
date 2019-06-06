@@ -35,14 +35,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.transaction.TransactionSystemException;
 
-import javax.persistence.RollbackException;
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -130,49 +124,6 @@ public class SymbolGroupDAOImplTest {
         verify(symbolGroupRepository).save(group);
     }
 
-    @Test(expected = ValidationException.class)
-    public void shouldHandleDataIntegrityViolationExceptionOnGroupCreationGracefully() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-        project.setUser(user);
-
-        SymbolGroup group = new SymbolGroup();
-        group.setProject(project);
-
-        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-        given(symbolGroupRepository.save(group)).willThrow(DataIntegrityViolationException.class);
-
-        symbolGroupDAO.create(user, group); // should fail
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleTransactionSystemExceptionOnGroupCreationGracefully() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-        project.setUser(user);
-
-        SymbolGroup group = new SymbolGroup();
-        group.setProject(project);
-
-        ConstraintViolationException constraintViolationException;
-        constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
-        RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException;
-        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
-                rollbackException);
-
-        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-        given(symbolGroupRepository.save(group)).willThrow(transactionSystemException);
-
-        symbolGroupDAO.create(user, group); // should fail
-    }
-
     @Test
     public void shouldGetAllGroupsOfAProject() throws NotFoundException {
         User user = new User();
@@ -258,63 +209,6 @@ public class SymbolGroupDAOImplTest {
         symbolGroupDAO.update(user, group);
 
         verify(symbolGroupRepository).save(group);
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleDataIntegrityViolationExceptionOnGroupUpdateGracefully() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-        project.setUser(user);
-
-        SymbolGroup group = new SymbolGroup();
-        group.setId(GROUP_ID);
-        group.setName(GROUP_NAME);
-        group.setProject(project);
-
-        SymbolGroup defaultGroup = new SymbolGroup();
-        defaultGroup.setId(GROUP_ID - 1L);
-
-        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-        given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
-        given(symbolGroupRepository.save(group)).willThrow(DataIntegrityViolationException.class);
-        given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(defaultGroup);
-
-        symbolGroupDAO.update(user, group); // should fail
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleTransactionSystemExceptionOnGroupUpdateGracefully() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-        project.setUser(user);
-
-        SymbolGroup group = new SymbolGroup();
-        group.setId(GROUP_ID);
-        group.setName(GROUP_NAME);
-        group.setProject(project);
-
-        SymbolGroup defaultGroup = new SymbolGroup();
-        defaultGroup.setId(GROUP_ID - 1L);
-
-        ConstraintViolationException constraintViolationException;
-        constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
-        RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
-        TransactionSystemException transactionSystemException;
-        transactionSystemException = new TransactionSystemException("Spring TransactionSystemException",
-                rollbackException);
-
-        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-        given(symbolGroupRepository.findById(GROUP_ID)).willReturn(Optional.of(group));
-        given(symbolGroupRepository.save(group)).willThrow(transactionSystemException);
-        given(symbolGroupRepository.findFirstByProject_IdOrderByIdAsc(PROJECT_ID)).willReturn(defaultGroup);
-
-        symbolGroupDAO.update(user, group); // should fail
     }
 
     @Test

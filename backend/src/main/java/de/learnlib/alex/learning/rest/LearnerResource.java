@@ -136,7 +136,7 @@ public class LearnerResource {
                 throw new IllegalArgumentException("The reset may not be a part of the input alphabet");
             }
 
-            Project project = projectDAO.getByID(user.getId(), projectId, ProjectDAO.EmbeddableFields.ALL);
+            Project project = projectDAO.getByID(user, projectId, ProjectDAO.EmbeddableFields.ALL);
 
             learner.start(user, project, configuration);
             LearnerStatus status = learner.getStatus(projectId);
@@ -178,7 +178,7 @@ public class LearnerResource {
         try {
             configuration.setTestNo(testNo);
             configuration.checkConfiguration();
-            Project project = projectDAO.getByID(user.getId(), projectId); // check if project exists
+            Project project = projectDAO.getByID(user, projectId); // check if project exists
             LearnerResult result = learnerResultDAO.get(user, projectId, testNo, true);
 
             if (result == null) {
@@ -257,7 +257,7 @@ public class LearnerResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("stop() for user {}.", user);
 
-        projectDAO.getByID(user.getId(), projectId); // access check
+        projectDAO.getByID(user, projectId); // access check
 
         if (learner.isActive(projectId)) {
             learner.stop(projectId);
@@ -313,7 +313,7 @@ public class LearnerResource {
                 return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
             }
 
-            Project project = projectDAO.getByID(user.getId(), projectId);
+            Project project = projectDAO.getByID(user, projectId);
 
             final ParameterizedSymbol pResetSymbol = outputConfig.getSymbols().getResetSymbol();
             if (pResetSymbol == null) {

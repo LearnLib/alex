@@ -93,8 +93,8 @@ public interface ProjectDAO {
     /**
      * Get a specific project by its ID.
      *
-     * @param userId
-     *         The ID of the user.
+     * @param user
+     *         The user.
      * @param projectId
      *         The ID of the project to find.
      * @param embedFields
@@ -103,7 +103,7 @@ public interface ProjectDAO {
      * @throws NotFoundException
      *         If the project could not be found.
      */
-    Project getByID(Long userId, Long projectId, EmbeddableFields... embedFields) throws NotFoundException;
+    Project getByID(User user, Long projectId, EmbeddableFields... embedFields) throws NotFoundException;
 
     /**
      * Update a project.

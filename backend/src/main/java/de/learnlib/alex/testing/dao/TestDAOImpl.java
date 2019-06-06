@@ -165,7 +165,7 @@ public class TestDAOImpl implements TestDAO {
         test.setName(name);
 
         Long projectId = test.getProjectId();
-        Project project = projectDAO.getByID(user.getId(), projectId);
+        Project project = projectDAO.getByID(user, projectId);
         test.setProject(project);
 
         if (test.getParentId() != null) {
@@ -542,7 +542,7 @@ public class TestDAOImpl implements TestDAO {
     }
 
     private void beforeSaving(User user, Test test) throws NotFoundException {
-        final Project project = projectDAO.getByID(user.getId(), test.getProjectId());
+        final Project project = projectDAO.getByID(user, test.getProjectId());
 
         if (test instanceof TestSuite) {
             TestSuite testSuite = (TestSuite) test;

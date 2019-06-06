@@ -182,14 +182,14 @@ public class SymbolDAOImplTest {
     public void shouldHandleDataIntegrityViolationExceptionOnSymbolCreationGracefully() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setUser(user);
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
+
         Symbol symbol = new Symbol();
         symbol.setProject(project);
         symbol.setGroup(group);
@@ -205,18 +205,18 @@ public class SymbolDAOImplTest {
     public void shouldHandleTransactionSystemExceptionOnGroupCreationGracefully() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setUser(user);
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
+
         Symbol symbol = new Symbol();
         symbol.setProject(project);
         symbol.setGroup(group);
-        //
+
         ConstraintViolationException constraintViolationException;
         constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
@@ -235,21 +235,21 @@ public class SymbolDAOImplTest {
     public void shouldGetAllRequestedSymbolsByIdRevPairs() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
         project.setUser(user);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
-        List<Symbol> symbols = createWebSymbolTestList(user, project, group);
-        //
+
+        List<Symbol> symbols = createWebSymbolTestList(project, group);
+
         List<Long> ids = new ArrayList<>();
         ids.add(symbols.get(0).getId());
         ids.add(symbols.get(2).getId());
         ids.add(symbols.get(3).getId());
-        //
+
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(symbolRepository.findAllByIdIn(ids)).willReturn(symbols);
 
@@ -264,9 +264,7 @@ public class SymbolDAOImplTest {
     @Test
     public void shouldGetNoSymbolIfIdRevParisIsEmpty() throws NotFoundException {
         User user = new User();
-        //
         Project project = new Project();
-        //
         List<Long> ids = Collections.emptyList();
 
         List<Symbol> symbolsFromDB = symbolDAO.getByIds(user, project.getId(), ids);
@@ -278,15 +276,15 @@ public class SymbolDAOImplTest {
     public void shouldGetAllVisibleSymbols() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
+
         List<Symbol> symbols = createTestSymbolLists(user, project, group);
-        //
+
         given(symbolRepository.findAll(PROJECT_ID, new Boolean[]{false})).willReturn(symbols);
 
         List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId(),
@@ -302,15 +300,15 @@ public class SymbolDAOImplTest {
     public void shouldGetAllSymbolsIncludingHiddenOnes() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
+
         List<Symbol> symbols = createTestSymbolLists(user, project, group);
-        //
+
         given(symbolRepository.findAll(PROJECT_ID, new Boolean[]{true, false})).willReturn(symbols);
 
         List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId(),
@@ -326,15 +324,15 @@ public class SymbolDAOImplTest {
     public void shouldGetAllSymbolsOfAGroup() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
+
         List<Symbol> symbols = createTestSymbolLists(user, project, group);
-        //
+
         given(symbolRepository.findAll(PROJECT_ID, GROUP_ID, new Boolean[]{true, false})).willReturn(symbols);
 
         List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId(), group.getId(),
@@ -350,19 +348,19 @@ public class SymbolDAOImplTest {
     public void shouldGetTheRightSymbol() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
         project.setUser(user);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
+
         Symbol symbol = new Symbol();
         symbol.setId(SYMBOL_ID);
         symbol.setProject(project);
         symbol.setGroup(group);
-        //
+
         given(symbolRepository.findById(SYMBOL_ID)).willReturn(Optional.of(symbol));
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
 
@@ -375,13 +373,13 @@ public class SymbolDAOImplTest {
     public void shouldThrowAnExceptionIfSymbolNotFound() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
+
         Symbol symbol = new Symbol();
         symbol.setProject(project);
         symbol.setGroup(group);
@@ -471,18 +469,18 @@ public class SymbolDAOImplTest {
     public void shouldHandleTransactionSystemExceptionOnGroupUpdateGracefully() throws NotFoundException {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setUser(user);
         project.setId(PROJECT_ID);
-        //
+
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);
-        //
+
         Symbol symbol = new Symbol();
         symbol.setProject(project);
         symbol.setGroup(group);
-        //
+
         ConstraintViolationException constraintViolationException;
         constraintViolationException = new ConstraintViolationException("Project is not valid!", new HashSet<>());
         RollbackException rollbackException = new RollbackException("RollbackException", constraintViolationException);
@@ -636,7 +634,7 @@ public class SymbolDAOImplTest {
         symbol.setProject(project);
         symbol.setGroup(group);
 
-        given(projectDAO.getByID(USER_ID, PROJECT_ID, ProjectDAO.EmbeddableFields.ALL)).willReturn(project);
+        given(projectDAO.getByID(user, PROJECT_ID, ProjectDAO.EmbeddableFields.ALL)).willReturn(project);
         given(symbolRepository.findById(SYMBOL_ID)).willReturn(Optional.of(symbol));
 
         symbolDAO.hide(user, PROJECT_ID, Collections.singletonList(SYMBOL_ID));
@@ -655,8 +653,8 @@ public class SymbolDAOImplTest {
 
     private List<Symbol> createTestSymbolLists(User user, Project project, SymbolGroup group) throws NotFoundException {
         List<Symbol> symbols = new ArrayList<>();
-        symbols.addAll(createWebSymbolTestList(user, project, group));
-        symbols.addAll(createRESTSymbolTestList(user, project, group));
+        symbols.addAll(createWebSymbolTestList(project, group));
+        symbols.addAll(createRESTSymbolTestList(project, group));
 
         for (int id = 0; id < symbols.size(); id++) {
             Symbol symbol = symbols.get(id);
@@ -667,7 +665,7 @@ public class SymbolDAOImplTest {
         return symbols;
     }
 
-    private List<Symbol> createWebSymbolTestList(User user, Project project, SymbolGroup group)
+    private List<Symbol> createWebSymbolTestList(Project project, SymbolGroup group)
             throws NotFoundException {
         List<Symbol> returnList = new ArrayList<>();
         for (int i = 0; i < SYMBOL_LIST_SIZE; i++) {
@@ -700,7 +698,7 @@ public class SymbolDAOImplTest {
         return returnList;
     }
 
-    private List<Symbol> createRESTSymbolTestList(User user, Project project, SymbolGroup group)
+    private List<Symbol> createRESTSymbolTestList(Project project, SymbolGroup group)
             throws NotFoundException {
         List<Symbol> returnList = new ArrayList<>();
         for (int i = 0; i < SYMBOL_LIST_SIZE; i++) {
