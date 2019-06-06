@@ -43,23 +43,23 @@ public class TestSuite extends Test {
     private static final long serialVersionUID = 3997432889140612741L;
 
     /** The tests that belong to the test suite. */
-    private Set<Test> tests;
+    private List<Test> tests;
 
     /** The IDs of the tests that belong the the test suite. */
-    private Set<Long> testsAsIds;
+    private List<Long> testsAsIds;
 
     /** Constructor. */
     public TestSuite() {
-        this.tests = new HashSet<>();
-        this.testsAsIds = new HashSet<>();
+        this.tests = new ArrayList<>();
+        this.testsAsIds = new ArrayList<>();
     }
 
     @OneToMany(
             mappedBy = "parent",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
     )
     @JsonProperty("tests")
-    public Set<Test> getTests() {
+    public List<Test> getTests() {
         return tests;
     }
 
@@ -68,20 +68,20 @@ public class TestSuite extends Test {
      */
     @Transient
     @JsonIgnore
-    public Set<Long> getTestsAsIds() {
+    public List<Long> getTestsAsIds() {
         if (testsAsIds == null || testsAsIds.isEmpty()) {
-            testsAsIds = new HashSet<>();
+            testsAsIds = new ArrayList<>();
         }
         return testsAsIds;
     }
 
     @JsonIgnore
-    public void setTests(Set<Test> tests) {
+    public void setTests(List<Test> tests) {
         if (tests == null) {
-            this.tests = new HashSet<>();
+            this.tests = new ArrayList<>();
         } else {
             this.tests = tests;
-            this.testsAsIds = tests.stream().map(Test::getId).collect(Collectors.toSet());
+            this.testsAsIds = tests.stream().map(Test::getId).collect(Collectors.toList());
         }
     }
 
@@ -90,13 +90,13 @@ public class TestSuite extends Test {
      */
     @Transient
     @JsonProperty("testIds")
-    public void setTestsAsIds(Set<Long> testsAsIds) {
+    public void setTestsAsIds(List<Long> testsAsIds) {
         this.testsAsIds = testsAsIds;
     }
 
     @Transient
     @JsonProperty("tests")
-    public void setTestsAsTests(Set<Test> tests) {
+    public void setTestsAsTests(List<Test> tests) {
         this.tests = tests;
     }
 

@@ -49,7 +49,7 @@ public interface TestDAO {
      */
     void create(User user, Test test) throws ValidationException, NotFoundException;
 
-    void createByGenerate(User user, Test test) throws ValidationException, NotFoundException;
+    void createByGenerate(User user, Test test, Project project) throws ValidationException, NotFoundException;
 
     /**
      * Creates multiple tests at once.

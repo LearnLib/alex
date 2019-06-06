@@ -132,6 +132,8 @@ public class TestGenerator {
         testSuite.setProject(project);
         testDAO.create(user, testSuite);
 
+        final List<TestCase> generatedTestCases = new ArrayList<>();
+
         switch (config.getMethod()) {
             case DT:
                 if (learner instanceof TTTLearnerMealy) {
@@ -139,43 +141,47 @@ public class TestGenerator {
                     final BaseTTTDiscriminationTree<String, Word<String>> tree = tttLearner.getDiscriminationTree();
                     computeTestCasesDt(tree, TTTState::getAccessSequence, (as) -> tttLearner.getHypothesisModel()
                                     .computeOutput(as),
-                            Function.identity(), Function.identity(), result, config, user, project, testSuite);
+                            Function.identity(), Function.identity(), result, config, project, testSuite, generatedTestCases);
                 } else if (learner instanceof DTLearnerMealy) {
                     final DTLearnerMealy<String, String> dtLearner = (DTLearnerMealy<String, String>) learner;
                     final AbstractWordBasedDiscriminationTree<String, Word<String>, HState<String, Word<String>, Void, String>>
                             dtree = dtLearner.getDiscriminationTree();
                     computeTestCasesDt(dtree, HState::getAccessSequence, (as) -> dtLearner.getHypothesisModel()
                                     .computeOutput(as),
-                            Function.identity(), Function.identity(), result, config, user, project, testSuite);
+                            Function.identity(), Function.identity(), result, config, project, testSuite, generatedTestCases);
                 } else {
                     throw new ValidationException("Can only generate test suites for TTT and DT algorithm.");
                 }
                 break;
             case W_METHOD:
-                computeTestCasesWMethod(learner.getHypothesisModel(), user, project, testSuite, result, config,
-                        new WMethodTestsIterator<>(learner.getHypothesisModel(), result.getSigma(), 0));
+                computeTestCasesWMethod(learner.getHypothesisModel(), project, testSuite, result, config,
+                        new WMethodTestsIterator<>(learner.getHypothesisModel(), result.getSigma(), 0), generatedTestCases);
                 break;
             case WP_METHOD:
-                computeTestCasesWMethod(learner.getHypothesisModel(), user, project, testSuite, result, config,
-                        new WpMethodTestsIterator<>(learner.getHypothesisModel(), result.getSigma(), 0));
+                computeTestCasesWMethod(learner.getHypothesisModel(), project, testSuite, result, config,
+                        new WpMethodTestsIterator<>(learner.getHypothesisModel(), result.getSigma(), 0), generatedTestCases);
                 break;
             default:
                 break;
         }
 
+        for (TestCase tc: testSuite.getTestCases()) {
+            testDAO.createByGenerate(user, tc, project);
+        }
+
         return testSuite;
     }
 
-    private void computeTestCasesWMethod(MealyMachine<?, String, ?, String> hypothesis, User user, Project project,
+    private void computeTestCasesWMethod(MealyMachine<?, String, ?, String> hypothesis, Project project,
                                          TestSuite testSuite, LearnerResult lr, TestSuiteGenerationConfig config,
-                                         Iterator<Word<String>> testsIterator) throws NotFoundException {
+                                         Iterator<Word<String>> testsIterator, List<TestCase> generatedTestCases) throws NotFoundException {
         int testNum = 0;
         while (testsIterator.hasNext()) {
             final Word<String> word = testsIterator.next();
             final List<Long> pSymbolIds = convertWordToPSymbolIds(word, lr.getSymbols());
             final TestCase testCase = new TestCase();
             testCase.setName(String.valueOf(testNum++));
-            createTestCase(user, testSuite, testCase, project, lr, config, pSymbolIds, hypothesis.computeOutput(word));
+            createTestCase(testSuite, testCase, project, lr, config, pSymbolIds, hypothesis.computeOutput(word), generatedTestCases);
         }
     }
 
@@ -185,7 +191,7 @@ public class TestGenerator {
             Function<Word<String>, Word<String>> asTransformer,
             Function<DSCR, Word<String>> dscrExtractor,
             Function<O, Word<String>> outputExtractor,
-            LearnerResult lr, TestSuiteGenerationConfig config, User user, Project project, TestSuite testSuite)
+            LearnerResult lr, TestSuiteGenerationConfig config, Project project, TestSuite testSuite, List<TestCase> generatedTestCases)
             throws NotFoundException {
 
         int i = 0;
@@ -216,7 +222,7 @@ public class TestGenerator {
                     testCase.setName(String.valueOf(i++));
 
                     outcomeList.addAll(convertWordToStringList(inEdge));
-                    createTestCase(user, testSuite, testCase, project, lr, config, testCaseSymbols, Word.fromList(outcomeList));
+                    createTestCase(testSuite, testCase, project, lr, config, testCaseSymbols, Word.fromList(outcomeList), generatedTestCases);
 
                     outcomeList.clear();
                     testCaseSymbols.clear();
@@ -229,20 +235,14 @@ public class TestGenerator {
 
                 final TestCase testCase = new TestCase();
                 testCase.setName(String.valueOf(i++));
-                testCase.setProject(project);
-                setSteps(lr.getResetSymbol(), testCase, testCase.getPreSteps(), config.isIncludeParameterValues());
-                setStepsByPSymbolIds(lr, testCase, accessSequenceAsList, config.isIncludeParameterValues());
-                setSteps(lr.getPostSymbol(), testCase, testCase.getPostSteps(), config.isIncludeParameterValues());
-                testCase.setParent(testSuite);
-                testDAO.create(user, testCase);
-
+                createTestCase(testSuite, testCase, project, lr, config, accessSequenceAsList, Word.epsilon(), generatedTestCases);
                 accessSequenceAsList.clear();
             }
         }
     }
 
-    private void createTestCase(User user, TestSuite testSuite, TestCase testCase, Project project, LearnerResult lr,
-            TestSuiteGenerationConfig config, List<Long> pSymbolIds, Word<String> outputs) throws NotFoundException {
+    private void createTestCase(TestSuite testSuite, TestCase testCase, Project project, LearnerResult lr,
+            TestSuiteGenerationConfig config, List<Long> pSymbolIds, Word<String> outputs, List<TestCase> generatedTestCases) throws NotFoundException {
         setSteps(lr.getResetSymbol(), testCase, testCase.getPreSteps(), config.isIncludeParameterValues());
         setStepsByPSymbolIds(lr, testCase, pSymbolIds, config.isIncludeParameterValues());
         setSteps(lr.getPostSymbol(), testCase, testCase.getPostSteps(), config.isIncludeParameterValues());
@@ -257,7 +257,7 @@ public class TestGenerator {
             step.setExpectedOutputMessage(getExpectedOutputMessage(sym));
         }
 
-        testDAO.createByGenerate(user, testCase);
+        generatedTestCases.add(testCase);
     }
 
     private String getExpectedOutputMessage(String output) {

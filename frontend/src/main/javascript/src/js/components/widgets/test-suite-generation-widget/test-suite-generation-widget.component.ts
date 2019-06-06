@@ -36,8 +36,6 @@ export const testSuiteGenerationWidgetComponent = {
     /** The config to use for the generation. */
     public config: any;
 
-    public errorMessage: string;
-
     /**
      * Constructor.
      *
@@ -47,8 +45,6 @@ export const testSuiteGenerationWidgetComponent = {
     /* @ngInject */
     constructor(private learnResultResource: LearnResultResource,
                 private toastService: ToastService) {
-
-      this.errorMessage = null;
       this.result = null;
       this.config = {
         stepNo: 0,
@@ -64,8 +60,6 @@ export const testSuiteGenerationWidgetComponent = {
     }
 
     generateTestSuite(): void {
-      this.errorMessage = null;
-
       if (this.config.name.trim() === '') {
         this.toastService.danger(`The name may not be empty`);
         return;

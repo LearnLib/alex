@@ -116,8 +116,8 @@ public class TestDAOImpl implements TestDAO {
 
     @Override
     @Transactional
-    public void createByGenerate(User user, Test test) {
-        beforeSaving(user, test);
+    public void createByGenerate(User user, Test test, Project project) {
+        beforeSaving(user, test, project);
         if (test instanceof TestCase) {
             final TestCase testCase = (TestCase) test;
 
@@ -178,17 +178,17 @@ public class TestDAOImpl implements TestDAO {
             test.setParent(parent);
         }
 
-        createByGenerate(user, test);
+        createByGenerate(user, test, project);
         LOGGER.traceExit(test);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void create(User user, List<Test> tests) throws NotFoundException, ValidationException {
-        create(user, new HashSet<>(tests), null);
+        create(user, new ArrayList<>(tests), null);
     }
 
-    private void create(User user, Set<Test> tests, TestSuite parent) throws NotFoundException, ValidationException {
+    private void create(User user, List<Test> tests, TestSuite parent) throws NotFoundException, ValidationException {
         for (final Test test : tests) {
             if (parent != null) {
                 test.setParent(parent);
@@ -198,9 +198,9 @@ public class TestDAOImpl implements TestDAO {
                 create(user, test);
             } else {
                 final TestSuite testSuite = (TestSuite) test;
-                final Set<Test> testsInSuite = testSuite.getTests();
+                final List<Test> testsInSuite = testSuite.getTests();
 
-                testSuite.setTests(new HashSet<>());
+                testSuite.setTests(new ArrayList<>());
                 create(user, testSuite);
                 create(user, testsInSuite, testSuite);
             }
@@ -300,9 +300,9 @@ public class TestDAOImpl implements TestDAO {
             }
 
             if (test instanceof TestSuite) {
-                updateTestSuite(user, (TestSuite) test);
+                updateTestSuite(user, (TestSuite) test, test.getProject());
             } else if (test instanceof TestCase) {
-                updateTestCase(user, (TestCase) test);
+                updateTestCase(user, (TestCase) test, test.getProject());
             }
         } catch (Exception e) {
             throw new NotFoundException("Update failed: Could not find the Test with the id " + test.getId()
@@ -317,8 +317,8 @@ public class TestDAOImpl implements TestDAO {
                 .collect(Collectors.toList());
     }
 
-    private void updateTestCase(User user, TestCase testCase) throws NotFoundException {
-        beforeSaving(user, testCase);
+    private void updateTestCase(User user, TestCase testCase, Project project) throws NotFoundException {
+        beforeSaving(user, testCase, project);
 
         final List<Long> allStepIds = new ArrayList<>(); // all ids that still exist in the db
         allStepIds.addAll(getStepsWithIds(testCase.getPreSteps()));
@@ -335,9 +335,9 @@ public class TestDAOImpl implements TestDAO {
         testRepository.save(testCase);
     }
 
-    private void updateTestSuite(User user, TestSuite testSuite) throws NotFoundException {
+    private void updateTestSuite(User user, TestSuite testSuite, Project project) throws NotFoundException {
         testSuite.getTests().forEach(t -> t.setParent(null));
-        beforeSaving(user, testSuite);
+        beforeSaving(user, testSuite, project);
         testRepository.save(testSuite);
     }
 
@@ -541,9 +541,7 @@ public class TestDAOImpl implements TestDAO {
         }
     }
 
-    private void beforeSaving(User user, Test test) throws NotFoundException {
-        final Project project = projectDAO.getByID(user, test.getProjectId());
-
+    private void beforeSaving(User user, Test test, Project project) throws NotFoundException {
         if (test instanceof TestSuite) {
             TestSuite testSuite = (TestSuite) test;
             for (Long testId : testSuite.getTestsAsIds()) {
