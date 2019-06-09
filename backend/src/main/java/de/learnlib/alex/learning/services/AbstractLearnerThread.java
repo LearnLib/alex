@@ -338,7 +338,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     }
 
     private boolean continueLearning(final LearnerResultStep step, final long rounds) {
-        return step.getStepsToLearn() == -1 || step.getStepsToLearn() == rounds || isInterrupted();
+        return step.getStepsToLearn() == -1 || rounds < step.getStepsToLearn() - 1;
     }
 
     public void stopLearning() {

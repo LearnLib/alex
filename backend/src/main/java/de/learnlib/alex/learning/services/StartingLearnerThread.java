@@ -38,7 +38,6 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
      * @param learnerResultDAO
      *         {@link AbstractLearnerThread#learnerResultDAO}.
      * @param webhookService
-     *         {@link AbstractLearnerThread#webhookService}.
      * @param contextHandler
      *         The context to use.
      * @param result

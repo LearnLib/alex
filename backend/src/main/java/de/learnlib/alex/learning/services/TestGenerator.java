@@ -192,9 +192,9 @@ public class TestGenerator {
 
     private void mergeTestCases(TestSuite target, TestSuite ts) {
         final List<TestCase> testCases = target.getTestCases();
-        for (int i = 0; i < testCases.size(); i++) {
-            if (ts.indexOfTestCaseThatBehavesLike(testCases.get(i)) == -1) {
-                target.getTests().remove(testCases.get(i));
+        for (TestCase tc: testCases) {
+            if (ts.indexOfTestCaseThatBehavesLike(tc) == -1) {
+                target.getTests().remove(tc);
             }
         }
 
