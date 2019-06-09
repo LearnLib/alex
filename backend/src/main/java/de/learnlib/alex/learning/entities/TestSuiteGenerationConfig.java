@@ -43,6 +43,8 @@ public class TestSuiteGenerationConfig {
     /** If concrete parameter values are generated as well. */
     private boolean includeParameterValues;
 
+    private Long testSuiteToUpdateId;
+
     /** which method is used. */
     private GenerationMethod method;
 
@@ -84,6 +86,14 @@ public class TestSuiteGenerationConfig {
 
     public void setMethod(GenerationMethod method) {
         this.method = method;
+    }
+
+    public Long getTestSuiteToUpdateId() {
+        return testSuiteToUpdateId;
+    }
+
+    public void setTestSuiteToUpdateId(Long testSuiteToUpdateId) {
+        this.testSuiteToUpdateId = testSuiteToUpdateId;
     }
 
     /**

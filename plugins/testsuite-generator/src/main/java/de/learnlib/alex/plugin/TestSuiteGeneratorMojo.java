@@ -135,7 +135,6 @@ public class TestSuiteGeneratorMojo extends AbstractMojo {
         final ParameterizedSymbol input = step.getPSymbol();
 
         template.add("testName", input.getSymbol().getName());
-        template.add("shouldFail", step.isShouldFail());
         template.add("testMethodName", escape(input.getSymbol().getName()));
         template.add("testMethodIndex", idx);
 

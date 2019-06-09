@@ -41,6 +41,15 @@
         values
       </label>
     </div>
+
+    <div class="form-group">
+      <label>Test suite to update</label>
+      <div class="card">
+        <div class="card-body">
+          <test-suite-tree test-suite="vm.rootTestSuite" on-selected="vm.handleTestSuiteSelected(testSuite)" selected-test-suite="vm.selectedTestSuite"></test-suite-tree>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="card-footer text-right">

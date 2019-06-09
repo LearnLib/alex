@@ -31,6 +31,7 @@ import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseStep;
 import de.learnlib.alex.testing.entities.TestSuite;
+import de.learnlib.alex.testing.repositories.TestRepository;
 import de.learnlib.algorithms.discriminationtree.hypothesis.HState;
 import de.learnlib.algorithms.discriminationtree.mealy.DTLearnerMealy;
 import de.learnlib.algorithms.ttt.base.BaseTTTDiscriminationTree;
@@ -74,6 +75,8 @@ public class TestGenerator {
     /** The injected DAO for symbols. */
     private final TestDAO testDAO;
 
+    private TestRepository testRepository;
+
     /**
      * Constructor.
      *
@@ -83,10 +86,11 @@ public class TestGenerator {
      *         The injected DAO for tests.
      */
     @Inject
-    public TestGenerator(LearnerResultDAO learnerResultDAO, TestDAO testDAO, ProjectDAO projectDAO) {
+    public TestGenerator(LearnerResultDAO learnerResultDAO, TestDAO testDAO, ProjectDAO projectDAO, TestRepository testRepository) {
         this.learnerResultDAO = learnerResultDAO;
         this.testDAO = testDAO;
         this.projectDAO = projectDAO;
+        this.testRepository = testRepository;
     }
 
     /**
@@ -165,11 +169,40 @@ public class TestGenerator {
                 break;
         }
 
-        for (TestCase tc: testSuite.getTestCases()) {
-            testDAO.createByGenerate(user, tc, project);
+
+
+        if (config.getTestSuiteToUpdateId() != null) {
+            final TestSuite targetTestSuite = (TestSuite) testDAO.get(user, projectId, config.getTestSuiteToUpdateId());
+            mergeTestCases(targetTestSuite, testSuite);
+
+            for (TestCase tc: targetTestSuite.getTestCases()) {
+                if (tc.getId() == null) testDAO.createByGenerate(user, tc, project);
+            }
+
+            testRepository.save(targetTestSuite);
+            testDAO.delete(user, projectId, testSuite.getId());
+        } else {
+            for (TestCase tc: testSuite.getTestCases()) {
+                testDAO.createByGenerate(user, tc, project);
+            }
         }
 
         return testSuite;
+    }
+
+    private void mergeTestCases(TestSuite target, TestSuite ts) {
+        final List<TestCase> testCases = target.getTestCases();
+        for (int i = 0; i < testCases.size(); i++) {
+            if (ts.indexOfTestCaseThatBehavesLike(testCases.get(i)) == -1) {
+                target.getTests().remove(testCases.get(i));
+            }
+        }
+
+        for (TestCase tc: ts.getTestCases()) {
+            if (target.indexOfTestCaseThatBehavesLike(tc) == -1) {
+                target.addTest(tc);
+            }
+        }
     }
 
     private void computeTestCasesWMethod(MealyMachine<?, String, ?, String> hypothesis, Project project,

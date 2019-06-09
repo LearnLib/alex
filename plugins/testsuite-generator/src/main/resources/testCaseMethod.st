@@ -5,5 +5,5 @@
     public void extern_<testMethodName>() {
         TestCaseStep step = testCase.get(<testMethodIndex>);
         ExecuteResult testResult = step.getPSymbol().execute(super.cm);
-        Assert.assertEquals(testResult.isSuccess(), !step.isShouldFail());
+        Assert.assertEquals(testResult.getOutput(), step.getExpectedOutputMessage());
     }

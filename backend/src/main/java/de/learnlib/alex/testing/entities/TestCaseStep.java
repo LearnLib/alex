@@ -159,4 +159,9 @@ public class TestCaseStep implements Serializable {
     public void setExpectedOutputMessage(String expectedOutputMessage) {
         this.expectedOutputMessage = expectedOutputMessage;
     }
+
+    public boolean behavesLike(TestCaseStep step) {
+        return getComputedOutput().equals(step.getComputedOutput())
+                && pSymbol.getComputedName().equals(step.getPSymbol().getComputedName());
+    }
 }

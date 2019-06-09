@@ -26,9 +26,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -143,6 +141,16 @@ public class TestSuite extends Test {
     @JsonIgnore
     public List<TestCase> getTestCases() {
         return tests.stream().filter(t -> t instanceof TestCase).map(t -> (TestCase) t).collect(Collectors.toList());
+    }
+
+    public int indexOfTestCaseThatBehavesLike(TestCase testCase) {
+        for (int i = 0; i < this.tests.size(); i++) {
+            final Test test = this.tests.get(i);
+            if (test instanceof TestCase && ((TestCase) test).behavesLike(testCase)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
 

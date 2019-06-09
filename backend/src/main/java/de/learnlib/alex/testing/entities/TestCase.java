@@ -146,4 +146,20 @@ public class TestCase extends Test {
     @JsonProperty("status")
     public void setStatus(Status status) {
     }
+
+    public boolean behavesLike(TestCase testCase) {
+        return areSameSteps(preSteps, testCase.preSteps)
+                && areSameSteps(postSteps, testCase.postSteps)
+                && areSameSteps(steps, testCase.steps);
+    }
+
+    private boolean areSameSteps(List<TestCaseStep> stepsA, List<TestCaseStep> stepsB) {
+        if (stepsA.size() != stepsB.size()) return false;
+
+        for (int i = 0; i < stepsA.size(); i++) {
+            if (!stepsA.get(i).behavesLike(stepsB.get(i))) return false;
+        }
+
+        return true;
+    }
 }

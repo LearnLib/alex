@@ -17,6 +17,7 @@
 import {LearnResult} from '../../../entities/learner-result';
 import {LearnResultResource} from '../../../services/resources/learner-result-resource.service';
 import {ToastService} from '../../../services/toast.service';
+import { TestResource } from '../../../services/resources/test-resource.service';
 
 export const testSuiteGenerationWidgetComponent = {
   template: require('./test-suite-generation-widget.component.html'),
@@ -36,6 +37,9 @@ export const testSuiteGenerationWidgetComponent = {
     /** The config to use for the generation. */
     public config: any;
 
+    public rootTestSuite: any;
+    public selectedTestSuite: any;
+
     /**
      * Constructor.
      *
@@ -44,7 +48,8 @@ export const testSuiteGenerationWidgetComponent = {
      */
     /* @ngInject */
     constructor(private learnResultResource: LearnResultResource,
-                private toastService: ToastService) {
+                private toastService: ToastService,
+                private testResource: TestResource) {
       this.result = null;
       this.config = {
         stepNo: 0,
@@ -57,6 +62,21 @@ export const testSuiteGenerationWidgetComponent = {
     $onInit(): void {
       this.config.stepNo = this.stepNo + 1;
       this.config.name = `TestNo ${this.result.testNo} (Generated)`;
+      this.loadRootTestSuite();
+    }
+
+    loadRootTestSuite() {
+      this.testResource.getRoot(this.result.project).then(root => this.rootTestSuite = root);
+    }
+
+    handleTestSuiteSelected(testSuite) {
+      if (this.selectedTestSuite == null) {
+        this.selectedTestSuite = testSuite;
+      } else if (this.selectedTestSuite.id === testSuite.id) {
+        this.selectedTestSuite = null;
+      } else {
+        this.selectedTestSuite = testSuite;
+      }
     }
 
     generateTestSuite(): void {
@@ -65,8 +85,13 @@ export const testSuiteGenerationWidgetComponent = {
         return;
       }
 
+      if (this.selectedTestSuite != null) {
+        this.config.testSuiteToUpdateId = this.selectedTestSuite.id;
+      }
+
       this.learnResultResource.generateTestSuite(this.result.project, this.result.testNo, this.config)
         .then(() => {
+          this.loadRootTestSuite();
           this.toastService.success('The test suite has been generated.');
         })
         .catch(err => {
