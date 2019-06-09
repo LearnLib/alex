@@ -42,6 +42,7 @@ import de.learnlib.datastructure.discriminationtree.model.AbstractDTNode;
 import de.learnlib.datastructure.discriminationtree.model.AbstractDiscriminationTree;
 import de.learnlib.datastructure.discriminationtree.model.AbstractWordBasedDiscriminationTree;
 import net.automatalib.automata.transducers.MealyMachine;
+import net.automatalib.util.automata.Automata;
 import net.automatalib.util.automata.conformance.WMethodTestsIterator;
 import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
 import net.automatalib.words.Alphabet;
@@ -165,6 +166,8 @@ public class TestGenerator {
                 computeTestCasesWMethod(learner.getHypothesisModel(), project, testSuite, result, config,
                         new WpMethodTestsIterator<>(learner.getHypothesisModel(), result.getSigma(), 0), generatedTestCases);
                 break;
+            case TRANS_COVER:
+                computeTestCasesTransCover(learner.getHypothesisModel(), project, testSuite, result, config, alphabet, generatedTestCases);
             default:
                 break;
         }
@@ -211,6 +214,19 @@ public class TestGenerator {
         int testNum = 0;
         while (testsIterator.hasNext()) {
             final Word<String> word = testsIterator.next();
+            final List<Long> pSymbolIds = convertWordToPSymbolIds(word, lr.getSymbols());
+            final TestCase testCase = new TestCase();
+            testCase.setName(String.valueOf(testNum++));
+            createTestCase(testSuite, testCase, project, lr, config, pSymbolIds, hypothesis.computeOutput(word), generatedTestCases);
+        }
+    }
+
+    private void computeTestCasesTransCover(MealyMachine<?, String, ?, String> hypothesis, Project project,
+                                         TestSuite testSuite, LearnerResult lr, TestSuiteGenerationConfig config,
+                                            Alphabet<String> alphabet, List<TestCase> generatedTestCases) throws NotFoundException {
+
+        int testNum = 0;
+        for (Word<String> word: Automata.transitionCover(hypothesis, alphabet)) {
             final List<Long> pSymbolIds = convertWordToPSymbolIds(word, lr.getSymbols());
             final TestCase testCase = new TestCase();
             testCase.setName(String.valueOf(testNum++));

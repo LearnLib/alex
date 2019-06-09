@@ -32,6 +32,8 @@ public class TestSuiteGenerationConfig {
 
         /** Use the wp method. */
         WP_METHOD,
+
+        TRANS_COVER,
     }
 
     /** The number of the step. */
