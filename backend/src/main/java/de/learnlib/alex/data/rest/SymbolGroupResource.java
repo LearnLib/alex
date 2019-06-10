@@ -47,7 +47,7 @@ import java.util.List;
 /**
  * REST API to manage groups.
  */
-@Path("/projects/{project_id}/groups")
+@Path("/projects/{projectId}/groups")
 @RolesAllowed("REGISTERED")
 public class SymbolGroupResource {
 
@@ -81,7 +81,7 @@ public class SymbolGroupResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createGroup(@PathParam("project_id") long projectId, SymbolGroup group) {
+    public Response createGroup(@PathParam("projectId") long projectId, SymbolGroup group) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createGroup({}, {}) for user {}.", projectId, group, user);
 
@@ -107,7 +107,7 @@ public class SymbolGroupResource {
     @Path("/batch")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createGroups(@PathParam("project_id") Long projectId, List<SymbolGroup> groups) {
+    public Response createGroups(@PathParam("projectId") Long projectId, List<SymbolGroup> groups) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createGroups({}, {}) for user {}.", projectId, groups, user);
 
@@ -128,7 +128,7 @@ public class SymbolGroupResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
+    public Response getAll(@PathParam("projectId") long projectId, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}, {}) for user {}.", projectId, embed, user);
 
@@ -158,7 +158,7 @@ public class SymbolGroupResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") long projectId,
+    public Response get(@PathParam("projectId") long projectId,
                         @PathParam("id") Long id,
                         @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
@@ -191,7 +191,7 @@ public class SymbolGroupResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("project_id") long projectId, @PathParam("id") Long id, SymbolGroup group) {
+    public Response update(@PathParam("projectId") long projectId, @PathParam("id") Long id, SymbolGroup group) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, group, user);
 
@@ -210,7 +210,7 @@ public class SymbolGroupResource {
      * @param groupId
      *         The id of the group to move.
      * @param group
-     *         The group to move with the updated {@link SymbolGroup#parent} property. The parent property may be null
+     *         The group to move with the updated {@link SymbolGroup#getParent()} property. The parent property may be null
      *         to indicate that the group is moved to the upmost level.
      * @return 200 with the updated group.
      */
@@ -218,7 +218,7 @@ public class SymbolGroupResource {
     @Path("/{groupId}/move")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response move(@PathParam("project_id") Long projectId, @PathParam("groupId") Long groupId, SymbolGroup group) {
+    public Response move(@PathParam("projectId") Long projectId, @PathParam("groupId") Long groupId, SymbolGroup group) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("move({}, {}, {}) for user {}.", projectId, groupId, group, user);
 
@@ -241,7 +241,7 @@ public class SymbolGroupResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
+    public Response delete(@PathParam("projectId") long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, id, user);
 

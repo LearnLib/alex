@@ -45,7 +45,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 /** The resource for test reports. */
-@Path("/projects/{project_id}/tests/reports")
+@Path("/projects/{projectId}/tests/reports")
 @RolesAllowed({"REGISTERED"})
 public class TestReportResource {
 
@@ -82,7 +82,7 @@ public class TestReportResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") Long projectId, @QueryParam("page") int page,
+    public Response get(@PathParam("projectId") Long projectId, @QueryParam("page") int page,
                         @QueryParam("size") int size) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
@@ -106,10 +106,10 @@ public class TestReportResource {
      * @return The report.
      */
     @GET
-    @Path("/{report_id}")
+    @Path("/{reportId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") Long projectId,
-                        @PathParam("report_id") Long reportId,
+    public Response get(@PathParam("projectId") Long projectId,
+                        @PathParam("reportId") Long reportId,
                         @QueryParam("format") String format) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {}) for user {}.", projectId, reportId, user);
@@ -149,7 +149,7 @@ public class TestReportResource {
     @GET
     @Path("/latest")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLatest(@PathParam("project_id") Long projectId) {
+    public Response getLatest(@PathParam("projectId") Long projectId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getLatest({}) for user {}.", projectId, user);
 
@@ -168,9 +168,9 @@ public class TestReportResource {
      * @return Status 204 - no content on success.
      */
     @DELETE
-    @Path("/{report_id}")
+    @Path("/{reportId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_id") Long reportId) {
+    public Response delete(@PathParam("projectId") Long projectId, @PathParam("reportId") Long reportId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, reportId, user);
 
@@ -190,9 +190,9 @@ public class TestReportResource {
      * @return Status 204 - no content on success.
      */
     @DELETE
-    @Path("/batch/{report_ids}")
+    @Path("/batch/{reportIds}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("report_ids") IdsList reportIds) {
+    public Response delete(@PathParam("projectId") Long projectId, @PathParam("reportIds") IdsList reportIds) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, reportIds, user);
 

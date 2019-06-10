@@ -54,7 +54,7 @@ import java.util.Set;
 /**
  * REST API to manage the symbols.
  */
-@Path("/projects/{project_id}/symbols")
+@Path("/projects/{projectId}/symbols")
 @RolesAllowed({"REGISTERED"})
 public class SymbolResource {
 
@@ -88,7 +88,7 @@ public class SymbolResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createSymbol(@PathParam("project_id") Long projectId, Symbol symbol) {
+    public Response createSymbol(@PathParam("projectId") Long projectId, Symbol symbol) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createSymbol({}, {}) for user {}.", projectId, symbol, user);
 
@@ -111,7 +111,7 @@ public class SymbolResource {
     @Path("/batch")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createSymbols(@PathParam("project_id") Long projectId, List<Symbol> symbols) {
+    public Response createSymbols(@PathParam("projectId") Long projectId, List<Symbol> symbols) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createSymbols({}, {}) for user {}.", projectId, symbols, user);
 
@@ -133,7 +133,7 @@ public class SymbolResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") Long projectId,
+    public Response getAll(@PathParam("projectId") Long projectId,
                            @QueryParam("visibility") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}, {}) for user {}.", projectId, visibilityLevel, user);
@@ -156,7 +156,7 @@ public class SymbolResource {
     @GET
     @Path("/batch/{ids}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getByIds(@PathParam("project_id") Long projectId, @PathParam("ids") IdsList ids) {
+    public Response getByIds(@PathParam("projectId") Long projectId, @PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getByIds({}, {}) for user {}.", projectId, ids, user);
 
@@ -178,7 +178,7 @@ public class SymbolResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
+    public Response get(@PathParam("projectId") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("get({}, {})  for user {}.", projectId, id, user);
 
@@ -203,7 +203,7 @@ public class SymbolResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("project_id") Long projectId, @PathParam("id") Long id, Symbol symbol) {
+    public Response update(@PathParam("projectId") Long projectId, @PathParam("id") Long id, Symbol symbol) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, symbol, user);
 
@@ -237,7 +237,7 @@ public class SymbolResource {
     @Path("/batch/{ids}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response batchUpdate(@PathParam("project_id") Long projectId,
+    public Response batchUpdate(@PathParam("projectId") Long projectId,
                                 @PathParam("ids") IdsList ids,
                                 List<Symbol> symbols) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
@@ -271,11 +271,11 @@ public class SymbolResource {
      * @return On success the moved symbol (enhanced with information from the DB); An error message on failure.
      */
     @PUT
-    @Path("/{symbol_id}/moveTo/{group_id}")
+    @Path("/{symbolId}/moveTo/{groupId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response moveSymbolToAnotherGroup(@PathParam("project_id") Long projectId,
-                                             @PathParam("symbol_id") Long symbolId,
-                                             @PathParam("group_id") Long groupId) {
+    public Response moveSymbolToAnotherGroup(@PathParam("projectId") Long projectId,
+                                             @PathParam("symbolId") Long symbolId,
+                                             @PathParam("groupId") Long groupId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolId, groupId, user);
 
@@ -314,11 +314,11 @@ public class SymbolResource {
      * @return On success the moved symbols (enhanced with information from the DB); An error message on failure.
      */
     @PUT
-    @Path("/batch/{symbol_ids}/moveTo/{group_id}")
+    @Path("/batch/{symbolIds}/moveTo/{groupId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response moveSymbolToAnotherGroup(@PathParam("project_id") Long projectId,
-                                             @PathParam("symbol_ids") IdsList symbolIds,
-                                             @PathParam("group_id") Long groupId) {
+    public Response moveSymbolToAnotherGroup(@PathParam("projectId") Long projectId,
+                                             @PathParam("symbolIds") IdsList symbolIds,
+                                             @PathParam("groupId") Long groupId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolIds, groupId, user);
 
@@ -342,7 +342,7 @@ public class SymbolResource {
     @POST
     @Path("/{id}/hide")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response hide(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
+    public Response hide(@PathParam("projectId") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, id, user);
 
@@ -363,9 +363,9 @@ public class SymbolResource {
      * @return 204 No content if the symbol could be deleted.
      */
     @DELETE
-    @Path("/{symbol_id}")
+    @Path("/{symbolId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("symbol_id") Long symbolId) {
+    public Response delete(@PathParam("projectId") Long projectId, @PathParam("symbolId") Long symbolId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete symbol ({}, {}) for user {}.", projectId, symbolId, user);
 
@@ -387,7 +387,7 @@ public class SymbolResource {
     @DELETE
     @Path("/batch/{symbolIds}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("symbolIds") IdsList symbolIds) {
+    public Response delete(@PathParam("projectId") Long projectId, @PathParam("symbolIds") IdsList symbolIds) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete symbols ({}, {}) for user {}.", projectId, symbolIds, user);
 
@@ -409,7 +409,7 @@ public class SymbolResource {
     @POST
     @Path("/batch/{ids}/hide")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response hide(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids) {
+    public Response hide(@PathParam("projectId") long projectId, @PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, ids, user);
 
@@ -432,7 +432,7 @@ public class SymbolResource {
     @POST
     @Path("/{id}/show")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response show(@PathParam("project_id") long projectId, @PathParam("id") Long id) {
+    public Response show(@PathParam("projectId") long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("show({}, {}) for user {}.", projectId, id, user);
 
@@ -457,7 +457,7 @@ public class SymbolResource {
     @POST
     @Path("/batch/{ids}/show")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response show(@PathParam("project_id") long projectId, @PathParam("ids") IdsList ids) {
+    public Response show(@PathParam("projectId") long projectId, @PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("show({}, {}) for user {}.", projectId, ids, user);
 

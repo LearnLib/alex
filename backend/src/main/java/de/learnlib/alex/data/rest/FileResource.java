@@ -47,7 +47,7 @@ import java.util.List;
 /**
  * REST API to manage files.
  */
-@Path("/projects/{project_id}/files")
+@Path("/projects/{projectId}/files")
 @RolesAllowed({"REGISTERED"})
 public class FileResource {
 
@@ -75,7 +75,7 @@ public class FileResource {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response uploadFile(@PathParam("project_id") Long projectId,
+    public Response uploadFile(@PathParam("projectId") Long projectId,
                                @FormDataParam("file") InputStream uploadedInputStream,
                                @FormDataParam("file") FormDataContentDisposition fileDetail) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
@@ -114,9 +114,9 @@ public class FileResource {
      * @return The file as blob.
      */
     @GET
-    @Path("/{file_name}/download")
+    @Path("/{fileName}/download")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response downloadFile(@PathParam("project_id") Long projectId, @PathParam("file_name") String filename) {
+    public Response downloadFile(@PathParam("projectId") Long projectId, @PathParam("fileName") String filename) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("downloadFile({}, {}) for user {}.", projectId, filename, user);
 
@@ -137,7 +137,7 @@ public class FileResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllFiles(@PathParam("project_id") Long projectId) {
+    public Response getAllFiles(@PathParam("projectId") Long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAllFiles({}) for user {}.", projectId, user);
 
@@ -157,9 +157,9 @@ public class FileResource {
      * @return Status 204 No Content on success.
      */
     @DELETE
-    @Path("/{file_name}")
+    @Path("/{fileName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteOneFile(@PathParam("project_id") Long projectId, @PathParam("file_name") String fileName) {
+    public Response deleteOneFile(@PathParam("projectId") Long projectId, @PathParam("fileName") String fileName) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteOneFile({}, {}) for user {}.", projectId, fileName, user);
 

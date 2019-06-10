@@ -62,7 +62,7 @@ import java.util.Map;
 /**
  * REST endpoints for working with tests.
  */
-@Path("/projects/{project_id}/tests")
+@Path("/projects/{projectId}/tests")
 @RolesAllowed({"REGISTERED"})
 public class TestResource {
 
@@ -104,7 +104,7 @@ public class TestResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createTest(@PathParam("project_id") Long projectId, Test test) {
+    public Response createTest(@PathParam("projectId") Long projectId, Test test) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         projectDAO.getByID(user, projectId);
         test.setProjectId(projectId);
@@ -127,7 +127,7 @@ public class TestResource {
     @Path("/batch")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createTests(@PathParam("project_id") Long projectId, List<Test> tests) {
+    public Response createTests(@PathParam("projectId") Long projectId, List<Test> tests) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         projectDAO.getByID(user, projectId);
         tests.forEach(test -> test.setProjectId(projectId));
@@ -154,7 +154,7 @@ public class TestResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
+    public Response get(@PathParam("projectId") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         final Test test = testDAO.get(user, projectId, id);
@@ -172,7 +172,7 @@ public class TestResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") Long projectId, @QueryParam("type") String type) {
+    public Response getAll(@PathParam("projectId") Long projectId, @QueryParam("type") String type) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll(projectId: {}, type: {}) with user {}", projectId, type, user);
 
@@ -196,7 +196,7 @@ public class TestResource {
     @GET
     @Path("/root")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("project_id") Long projectId) {
+    public Response get(@PathParam("projectId") Long projectId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Test root = testDAO.getRoot(user, projectId);
         return Response.ok(root).build();
@@ -216,7 +216,7 @@ public class TestResource {
     @POST
     @Path("/{id}/execute")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response execute(@PathParam("project_id") Long projectId, @PathParam("id") Long id,
+    public Response execute(@PathParam("projectId") Long projectId, @PathParam("id") Long id,
                             TestExecutionConfig testConfig) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         ThreadContext.put("userId", String.valueOf(user.getId()));
@@ -254,7 +254,7 @@ public class TestResource {
     @POST
     @Path("/execute")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response execute(@PathParam("project_id") Long projectId,
+    public Response execute(@PathParam("projectId") Long projectId,
                             TestExecutionConfig testConfig) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Project project = projectDAO.getByID(user, projectId);
@@ -272,7 +272,7 @@ public class TestResource {
     @GET
     @Path("/status")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response status(@PathParam("project_id") Long projectId) {
+    public Response status(@PathParam("projectId") Long projectId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("status(projectId: {}) with user {}", projectId, user);
         final Project project = projectDAO.getByID(user, projectId);
@@ -290,7 +290,7 @@ public class TestResource {
      */
     @POST
     @Path("/abort")
-    public Response abort(@PathParam("project_id") Long projectId) {
+    public Response abort(@PathParam("projectId") Long projectId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("abort(projectId: {}) with user {}", projectId, user);
 
@@ -314,7 +314,7 @@ public class TestResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("project_id") Long projectId,
+    public Response update(@PathParam("projectId") Long projectId,
                            @PathParam("id") Long id,
                            Test test) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
@@ -354,7 +354,7 @@ public class TestResource {
     @Path("/batch/{testIds}/moveTo/{targetId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response move(@PathParam("project_id") Long projectId,
+    public Response move(@PathParam("projectId") Long projectId,
                          @PathParam("testIds") IdsList testIds,
                          @PathParam("targetId") Long targetId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
@@ -376,7 +376,7 @@ public class TestResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("id") Long id) {
+    public Response delete(@PathParam("projectId") Long projectId, @PathParam("id") Long id) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         testDAO.delete(user, projectId, id);
@@ -397,7 +397,7 @@ public class TestResource {
     @DELETE
     @Path("/batch/{ids}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("project_id") Long projectId, @PathParam("ids") IdsList ids) {
+    public Response delete(@PathParam("projectId") Long projectId, @PathParam("ids") IdsList ids) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
         testDAO.delete(user, projectId, ids);
@@ -422,7 +422,7 @@ public class TestResource {
     @GET
     @Path("/{testId}/results")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getResults(@PathParam("project_id") Long projectId, @PathParam("testId") Long testId,
+    public Response getResults(@PathParam("projectId") Long projectId, @PathParam("testId") Long testId,
                                @QueryParam("page") int page, @QueryParam("size") int size) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final PageRequest pr = PageRequest.of(page, size);

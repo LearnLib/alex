@@ -43,7 +43,7 @@ import java.util.List;
 /**
  * Resource to read and delete Counters.
  */
-@Path("/projects/{project_id}/counters")
+@Path("/projects/{projectId}/counters")
 public class CounterResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -65,7 +65,7 @@ public class CounterResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllCounters(@PathParam("project_id") Long projectId) {
+    public Response getAllCounters(@PathParam("projectId") Long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAllCounters({}) for user {}.", projectId, user);
 
@@ -87,7 +87,7 @@ public class CounterResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createCounter(@PathParam("project_id") Long projectId, Counter counter) {
+    public Response createCounter(@PathParam("projectId") Long projectId, Counter counter) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createCounter({}, {}) for user {}.", projectId, counter.getName(), user);
 
@@ -111,10 +111,10 @@ public class CounterResource {
      * @return The updated counter.
      */
     @PUT
-    @Path("/{counter_name}")
+    @Path("/{counterName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name, Counter counter) {
+    public Response updateCounter(@PathParam("projectId") Long projectId, @PathParam("counterName") String name, Counter counter) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("updateCounter({}, {}) for user {}.", projectId, name, user);
 
@@ -143,9 +143,9 @@ public class CounterResource {
      * @return Nothing if everything went OK.
      */
     @DELETE
-    @Path("/{counter_name}")
+    @Path("/{counterName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_name") String name) {
+    public Response deleteCounter(@PathParam("projectId") Long projectId, @PathParam("counterName") String name) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, name, user);
 
@@ -165,9 +165,9 @@ public class CounterResource {
      * @return Nothing if everything went OK.
      */
     @DELETE
-    @Path("/batch/{counter_names}")
+    @Path("/batch/{counterNames}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteCounter(@PathParam("project_id") Long projectId, @PathParam("counter_names") StringList names) {
+    public Response deleteCounter(@PathParam("projectId") Long projectId, @PathParam("counterNames") StringList names) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, names, user);
 

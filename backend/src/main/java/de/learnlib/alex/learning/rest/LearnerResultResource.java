@@ -47,7 +47,7 @@ import java.util.List;
 /**
  * REST API to fetch the test results.
  */
-@Path("/projects/{project_id}/results")
+@Path("/projects/{projectId}/results")
 public class LearnerResultResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -80,7 +80,7 @@ public class LearnerResultResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") long projectId, @QueryParam("embed") String embed) {
+    public Response getAll(@PathParam("projectId") long projectId, @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.getAllFinalResults(" + projectId + ") for user " + user + ".");
 
@@ -106,7 +106,7 @@ public class LearnerResultResource {
     @GET
     @Path("/latest")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLatest(@PathParam("project_id") long projectId) {
+    public Response getLatest(@PathParam("projectId") long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.getLatest(" + projectId + ") for user " + user + ".");
 
@@ -133,10 +133,10 @@ public class LearnerResultResource {
      * @return A List of all step of possible multiple test runs.
      */
     @GET
-    @Path("{test_nos}")
+    @Path("{testNos}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("project_id") Long projectId,
-                           @PathParam("test_nos") IdsList testNos,
+    public Response getAll(@PathParam("projectId") Long projectId,
+                           @PathParam("testNos") IdsList testNos,
                            @QueryParam("embed") String embed) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.getAllSteps(" + projectId + ", " + testNos + ") for user " + user + ".");
@@ -168,9 +168,9 @@ public class LearnerResultResource {
      * @return The cloned learner result.
      */
     @POST
-    @Path("{test_no}/clone")
+    @Path("{testNo}/clone")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response clone(@PathParam("project_id") Long projectId, @PathParam("test_no") Long testNo) {
+    public Response clone(@PathParam("projectId") Long projectId, @PathParam("testNo") Long testNo) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("LearnerResultResource.clone(" + projectId + ", " + testNo + ") for user " + user + ".");
 
@@ -196,9 +196,9 @@ public class LearnerResultResource {
      * @return The generated test suite.
      */
     @POST
-    @Path("{test_no}/generateTestSuite")
+    @Path("{testNo}/generateTestSuite")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response generateTestSuite(@PathParam("project_id") Long projectId, @PathParam("test_no") Long testNo,
+    public Response generateTestSuite(@PathParam("projectId") Long projectId, @PathParam("testNo") Long testNo,
                                       TestSuiteGenerationConfig config) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("generateTestSuite(projectId: {}, testNo: {}, config: {}) for user {}", projectId, testNo, config, user);
@@ -224,10 +224,10 @@ public class LearnerResultResource {
      * @return On success no content will be returned.
      */
     @DELETE
-    @Path("{test_numbers}")
+    @Path("{testNos}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteResultSet(@PathParam("project_id") Long projectId,
-                                    @PathParam("test_numbers") IdsList testNumbers) {
+    public Response deleteResultSet(@PathParam("projectId") Long projectId,
+                                    @PathParam("testNos") IdsList testNumbers) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.trace("LearnerResultResource.deleteResultSet(" + projectId + ", " + testNumbers + ") "
                 + "for user " + user + ".");

@@ -116,10 +116,10 @@ public class LearnerResource {
      * @return The status of the current learn process.
      */
     @POST
-    @Path("/{project_id}/start")
+    @Path("/{projectId}/start")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response start(@PathParam("project_id") long projectId, LearnerStartConfiguration configuration) {
+    public Response start(@PathParam("projectId") long projectId, LearnerStartConfiguration configuration) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("start({}, {}) for user {}.", projectId, configuration, user);
 
@@ -166,11 +166,11 @@ public class LearnerResource {
      * @return The status of the current learn process.
      */
     @POST
-    @Path("/{project_id}/resume/{test_no}")
+    @Path("/{projectId}/resume/{testNo}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response resume(@PathParam("project_id") long projectId,
-                           @PathParam("test_no") long testNo,
+    public Response resume(@PathParam("projectId") long projectId,
+                           @PathParam("testNo") long testNo,
                            LearnerResumeConfiguration configuration) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
@@ -251,9 +251,9 @@ public class LearnerResource {
      * @return The status of the current learn process.
      */
     @GET
-    @Path("/{project_id}/stop")
+    @Path("/{projectId}/stop")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response stop(@PathParam("project_id") long projectId) {
+    public Response stop(@PathParam("projectId") long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("stop() for user {}.", user);
 
@@ -278,9 +278,9 @@ public class LearnerResource {
      * @return The information of the learning
      */
     @GET
-    @Path("/{project_id}/status")
+    @Path("/{projectId}/status")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getStatus(@PathParam("project_id") long projectId) {
+    public Response getStatus(@PathParam("projectId") long projectId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getStatus() for user {}.", user);
 
@@ -300,10 +300,10 @@ public class LearnerResource {
      * @return The observed output of the given input set.
      */
     @POST
-    @Path("/{project_id}/outputs")
+    @Path("/{projectId}/outputs")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response readOutput(@PathParam("project_id") Long projectId, ReadOutputConfig outputConfig) {
+    public Response readOutput(@PathParam("projectId") Long projectId, ReadOutputConfig outputConfig) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("readOutput({}, {}) for user {}.", projectId, outputConfig, user);
 
