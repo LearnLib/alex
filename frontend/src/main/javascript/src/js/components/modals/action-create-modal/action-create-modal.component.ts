@@ -71,6 +71,8 @@ export const actionCreateModalComponent = {
           {type: actionType.WEB_CLICK, text: 'Click element'},
           {type: actionType.WEB_CLICK_ELEMENT_BY_TEXT, text: 'Click element by text'},
           {type: actionType.WEB_CLICK_LINK_BY_TEXT, text: 'Click link by text'},
+          {type: actionType.WEB_DRAG_AND_DROP, text: 'Drag and drop'},
+          {type: actionType.WEB_DRAG_AND_DROP_BY, text: 'Drag and drop by'},
           {type: actionType.WEB_EXECUTE_SCRIPT, text: 'Execute JavaScript'},
           {type: actionType.WEB_FILL, text: 'Fill input'},
           {type: actionType.WEB_MOUSE_MOVE, text: 'Move mouse'},

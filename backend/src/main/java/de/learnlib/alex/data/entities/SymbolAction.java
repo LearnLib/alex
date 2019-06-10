@@ -56,6 +56,8 @@ import de.learnlib.alex.data.entities.actions.web.ClearAction;
 import de.learnlib.alex.data.entities.actions.web.ClickAction;
 import de.learnlib.alex.data.entities.actions.web.ClickElementByTextAction;
 import de.learnlib.alex.data.entities.actions.web.ClickLinkAction;
+import de.learnlib.alex.data.entities.actions.web.DragAndDropAction;
+import de.learnlib.alex.data.entities.actions.web.DragAndDropByAction;
 import de.learnlib.alex.data.entities.actions.web.ExecuteScriptAction;
 import de.learnlib.alex.data.entities.actions.web.FillAction;
 import de.learnlib.alex.data.entities.actions.web.GotoAction;
@@ -132,6 +134,8 @@ import java.util.Objects;
         @JsonSubTypes.Type(name = "web_click", value = ClickAction.class),
         @JsonSubTypes.Type(name = "web_clickElementByText", value = ClickElementByTextAction.class),
         @JsonSubTypes.Type(name = "web_clickLinkByText", value = ClickLinkAction.class),
+        @JsonSubTypes.Type(name = "web_dragAndDrop", value = DragAndDropAction.class),
+        @JsonSubTypes.Type(name = "web_dragAndDropBy", value = DragAndDropByAction.class),
         @JsonSubTypes.Type(name = "web_executeScript", value = ExecuteScriptAction.class),
         @JsonSubTypes.Type(name = "web_fill", value = FillAction.class),
         @JsonSubTypes.Type(name = "web_goto", value = GotoAction.class),

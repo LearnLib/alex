@@ -247,6 +247,8 @@ import {symbolSelectDropdownComponent} from './components/symbol-select-dropdown
 import {unauthorizedHttpInterceptor} from './utils/unauthorized-http-interceptor';
 import {logoutViewComponent} from './components/views/logout-view/logout-view.component';
 import { defaultWebdriverButtonComponent } from './components/views/admin-settings-view/default-webdriver-button/default-webdriver-button.component';
+import { dragAndDropActionFormComponent } from './components/forms/actions/web/drag-and-drop-action-form/drag-and-drop-action-form.component';
+import { dragAndDropByActionFormComponent } from './components/forms/actions/web/drag-and-drop-by-action-form/drag-and-drop-by-action-form.component';
 
 angular
   .module('ALEX', [
@@ -449,6 +451,8 @@ angular
   .component('pressKeyActionForm', pressKeyActionFormComponent)
   .component('waitForNodeAttributeActionForm', waitForNodeAttributeActionFormComponent)
   .component('uploadFileActionForm', uploadFileActionFormComponent)
+  .component('dragAndDropActionForm', dragAndDropActionFormComponent)
+  .component('dragAndDropByActionForm', dragAndDropByActionFormComponent)
 
   // rest action forms
   .component('requestActionForm', requestActionFormComponent)

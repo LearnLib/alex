@@ -82,6 +82,8 @@ export const actionType = {
   WEB_CLICK_ELEMENT_BY_TEXT: 'web_clickElementByText',
   WEB_CLICK_LINK_BY_TEXT: 'web_clickLinkByText',
   WEB_CLICK: 'web_click',
+  WEB_DRAG_AND_DROP: 'web_dragAndDrop',
+  WEB_DRAG_AND_DROP_BY: 'web_dragAndDropBy',
   WEB_EXECUTE_SCRIPT: 'web_executeScript',
   WEB_FILL: 'web_fill',
   WEB_GO_TO: 'web_goto',

@@ -1,5 +1,14 @@
 # ALEX 1.8.0
 
+## Fixes
+
+* Amount of steps to learn is performed correctly
+
+## Features
+
+* Add actions for drag and drop operations
+* Update a test suite during test generation
+
 # ALEX 1.7.2
 
 ## Fixes

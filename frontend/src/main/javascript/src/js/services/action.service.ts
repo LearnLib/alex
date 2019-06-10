@@ -65,6 +65,8 @@ import { WaitForTitleAction } from '../entities/actions/web/wait-for-title-actio
 import { WaitForNodeAttributeAction } from '../entities/actions/web/wiat-for-node-attribute-action';
 import { SetVariableByHttpStatusAction } from '../entities/actions/misc/set-variable-by-http-status';
 import { Action } from '../entities/actions/action';
+import { DragAndDropAction } from '../entities/actions/web/drag-and-drop-action';
+import { DragAndDropByAction } from '../entities/actions/web/drag-and-drop-by-action';
 
 /**
  * The service that is used to create new actions.
@@ -95,6 +97,8 @@ export class ActionService {
     [actionType.WEB_SWITCH_TO]: (data) => new SwitchToAction(data),
     [actionType.WEB_SWITCH_TO_FRAME]: (data) => new SwitchToFrameAction(data),
     [actionType.WEB_UPLOAD_FILE]: (data) => new UploadFileAction(data),
+    [actionType.WEB_DRAG_AND_DROP]: (data) => new DragAndDropAction(data),
+    [actionType.WEB_DRAG_AND_DROP_BY]: (data) => new DragAndDropByAction(data),
 
     // rest actions
     [actionType.REST_CALL]: (data) => new CallRestAction(data),
