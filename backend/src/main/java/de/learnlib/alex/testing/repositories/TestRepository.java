@@ -61,4 +61,8 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     List<Test> findAllByProject_Id(Long projectId);
+
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<Test> findAllByProject_IdAndIdIn(Long projectId, List<Long> testIds);
 }

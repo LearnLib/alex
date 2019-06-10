@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.testing.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -69,12 +70,15 @@ public class TestCase extends Test {
     @OrderColumn(name = "post")
     private List<TestCaseStep> postSteps;
 
+    private boolean generated;
+
     /** Constructor. */
     public TestCase() {
         super();
         this.steps = new ArrayList<>();
         this.preSteps = new ArrayList<>();
         this.postSteps = new ArrayList<>();
+        this.generated = false;
     }
 
     @OneToMany(
@@ -145,6 +149,14 @@ public class TestCase extends Test {
 
     @JsonProperty("status")
     public void setStatus(Status status) {
+    }
+
+    public boolean isGenerated() {
+        return generated;
+    }
+
+    public void setGenerated(boolean generated) {
+        this.generated = generated;
     }
 
     public boolean behavesLike(TestCase testCase) {

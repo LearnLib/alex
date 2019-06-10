@@ -6,7 +6,7 @@
     <a class="test-name w-100 d-flex flex-row" ui-sref="test({projectId: vm.case.project, testId: vm.case.id})">
       <div class="w-100">
         <div>
-          <strong>{{vm.case.name}}</strong>
+          <strong>{{vm.case.name}}</strong> <span class="badge badge-secondary" ng-if="vm.case.generated">Gen.</span>
         </div>
         <span ng-switch="vm.case.status">
           <span class="badge badge-warning" ng-switch-when="EMPTY">Empty</span>

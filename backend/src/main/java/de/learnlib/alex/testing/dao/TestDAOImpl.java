@@ -217,11 +217,10 @@ public class TestDAOImpl implements TestDAO {
     @Override
     @Transactional(readOnly = true)
     public List<Test> get(User user, Long projectId, List<Long> ids) throws NotFoundException, UnauthorizedException {
-        final List<Test> tests = new ArrayList<>();
         final Project project = projectRepository.findById(projectId).orElse(null);
-        for (Long id : ids) {
-            tests.add(get(user, project, id));
-        }
+        projectDAO.checkAccess(user, project);
+        final List<Test> tests = testRepository.findAllByProject_IdAndIdIn(projectId, ids);
+        for (Test t: tests) loadLazyRelations(t);
         return tests;
     }
 
@@ -285,28 +284,23 @@ public class TestDAOImpl implements TestDAO {
 
         testInDB = get(user, test.getProjectId(), test.getId());
 
-        try {
-            test.setId(testInDB.getId());
-            test.setProject(testInDB.getProject());
+        test.setId(testInDB.getId());
+        test.setProject(testInDB.getProject());
 
-            if (test.getParentId() != null) {
-                Test parent = get(user, test.getProjectId(), test.getParentId());
+        if (test.getParentId() != null) {
+            Test parent = get(user, test.getProjectId(), test.getParentId());
 
-                if (parent instanceof TestCase) {
-                    throw new ValidationException("The parent can only be a Test Suite.");
-                }
-
-                test.setParent(parent);
+            if (parent instanceof TestCase) {
+                throw new ValidationException("The parent can only be a Test Suite.");
             }
 
-            if (test instanceof TestSuite) {
-                updateTestSuite(user, (TestSuite) test, test.getProject());
-            } else if (test instanceof TestCase) {
-                updateTestCase(user, (TestCase) test, test.getProject());
-            }
-        } catch (Exception e) {
-            throw new NotFoundException("Update failed: Could not find the Test with the id " + test.getId()
-                    + " in the project " + test.getProjectId() + ".", e);
+            test.setParent(parent);
+        }
+
+        if (test instanceof TestSuite) {
+            updateTestSuite(user, (TestSuite) test, test.getProject());
+        } else if (test instanceof TestCase) {
+            updateTestCase(user, (TestCase) test, test.getProject());
         }
     }
 

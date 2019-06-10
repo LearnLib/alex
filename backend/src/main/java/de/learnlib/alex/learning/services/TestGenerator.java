@@ -172,20 +172,22 @@ public class TestGenerator {
                 break;
         }
 
-
-
         if (config.getTestSuiteToUpdateId() != null) {
             final TestSuite targetTestSuite = (TestSuite) testDAO.get(user, projectId, config.getTestSuiteToUpdateId());
             mergeTestCases(targetTestSuite, testSuite);
 
             for (TestCase tc: targetTestSuite.getTestCases()) {
-                if (tc.getId() == null) testDAO.createByGenerate(user, tc, project);
+                if (tc.getId() == null) {
+                    tc.setGenerated(true);
+                    testDAO.createByGenerate(user, tc, project);
+                }
             }
 
             testRepository.save(targetTestSuite);
             testDAO.delete(user, projectId, testSuite.getId());
         } else {
             for (TestCase tc: testSuite.getTestCases()) {
+                tc.setGenerated(true);
                 testDAO.createByGenerate(user, tc, project);
             }
         }
@@ -196,6 +198,7 @@ public class TestGenerator {
     private void mergeTestCases(TestSuite target, TestSuite ts) {
         final List<TestCase> testCases = target.getTestCases();
         for (TestCase tc: testCases) {
+            if (tc.isGenerated()) continue; // keep non generated test cases in the test suite
             if (ts.indexOfTestCaseThatBehavesLike(tc) == -1) {
                 target.getTests().remove(tc);
             }

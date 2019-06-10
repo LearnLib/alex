@@ -329,6 +329,10 @@ public class TestResource {
 
         test.setProjectId(projectId);
 
+        // if a test case is updated by a user remove generated flag
+        if (test instanceof TestCase) {
+            ((TestCase) test).setGenerated(false);
+        }
         testDAO.update(user, test);
 
         webhookService.fireEvent(user, new TestEvent.Updated(test));

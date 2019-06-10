@@ -24,6 +24,7 @@ export class TestCase {
   preSteps: TestCaseStep[];
   steps: TestCaseStep[];
   postSteps: TestCaseStep[];
+  generated: boolean;
 
   constructor() {
     this.steps = [];
@@ -34,6 +35,7 @@ export class TestCase {
     tc.name = data.name;
     tc.parent = data.parent;
     tc.project = data.project;
+    tc.generated = data.generated;
 
     if (data.preSteps && data.preSteps.length) {
       tc.preSteps = data.preSteps.map(s => new TestCaseStep(s));
