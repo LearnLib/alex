@@ -8,6 +8,7 @@
 
 * Add actions for drag and drop operations
 * Update a test suite during test generation
+* Extend "switch to" action for handling windows
 
 # ALEX 1.7.2
 
