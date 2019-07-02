@@ -197,7 +197,13 @@ class SymbolViewComponent {
   saveChanges() {
     // make a copy of the symbol
     const symbolToUpdate = this.symbol.toJson();
-    symbolToUpdate.steps.forEach(step => delete step._id);
+    symbolToUpdate.steps.forEach(step => {
+      delete step._id;
+      if (step.type === 'symbol') {
+        step.pSymbol.symbol = {id: step.pSymbol.symbol};
+      }
+    });
+    
 
     // update the symbol
     return this.symbolResource.update(symbolToUpdate)
