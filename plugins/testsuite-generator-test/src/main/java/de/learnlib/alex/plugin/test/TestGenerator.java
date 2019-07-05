@@ -37,6 +37,8 @@ public class TestGenerator {
 
     private static final long PROJECT_ID = 1L;
 
+    private static String OUTPUT = "SUCCESS";
+
     public static void main(String[] args) throws Exception {
         if (args.length != 1) {
             throw new IllegalAccessException("The argument for the path of the json file has to be specified.");
@@ -44,15 +46,21 @@ public class TestGenerator {
 
         final TestCaseStep s1 = new TestCaseStep();
         s1.setPSymbol(createResetSymbol());
+        s1.setExpectedOutputMessage(OUTPUT);
 
         final TestCaseStep s2 = new TestCaseStep();
         s2.setPSymbol(createSearchSymbol());
+
+        final TestCaseStep s3 = new TestCaseStep();
+        s3.setPSymbol(createFailingSymbol());
+        s3.setExpectedOutputSuccess(false);
 
         final TestCase testCase = new TestCase();
         testCase.setName("TestGoogleSearch");
         testCase.setProjectId(PROJECT_ID);
         testCase.getSteps().add(s1);
         testCase.getSteps().add(s2);
+        testCase.getSteps().add(s3);
 
         final TestSuite testSuite = new TestSuite();
         testSuite.setName("GoogleTestSuite");
@@ -87,6 +95,7 @@ public class TestGenerator {
         symbol.setName("Reset");
         symbol.getSteps().add(s1);
         symbol.getSteps().add(s2);
+        symbol.setSuccessOutput(OUTPUT);
 
         final ParameterizedSymbol pSymbol = new ParameterizedSymbol();
         pSymbol.setSymbol(symbol);
@@ -121,6 +130,24 @@ public class TestGenerator {
         symbol.getSteps().add(s1);
         symbol.getSteps().add(s2);
         symbol.getSteps().add(s3);
+
+        final ParameterizedSymbol pSymbol = new ParameterizedSymbol();
+        pSymbol.setSymbol(symbol);
+
+        return pSymbol;
+    }
+
+    private static ParameterizedSymbol createFailingSymbol() {
+        final ClearAction a1 = new ClearAction();
+        a1.setNode(new WebElementLocator("input[name='definitely_not_existing']", WebElementLocator.Type.CSS));
+
+        final SymbolActionStep s1 = new SymbolActionStep();
+        s1.setAction(a1);
+
+        final Symbol symbol = new Symbol();
+        symbol.setProjectId(PROJECT_ID);
+        symbol.setName("Failing");
+        symbol.getSteps().add(s1);
 
         final ParameterizedSymbol pSymbol = new ParameterizedSymbol();
         pSymbol.setSymbol(symbol);
