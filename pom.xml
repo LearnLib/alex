@@ -117,7 +117,7 @@
         <assembly-plugin.version>3.1.0</assembly-plugin.version>
 
         <!-- dependencies versions -->
-        <spring-boot.version>2.1.0.RELEASE</spring-boot.version>
+        <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
     </properties>
 
     <repositories>
