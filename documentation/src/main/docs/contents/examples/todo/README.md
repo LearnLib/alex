@@ -19,7 +19,7 @@ All required files to start and learn ToDo can be downloaded here: [ToDo.zip](ht
 ## Setup ToDo
 
 In order to setup ToDo, download the archive and extract it to an arbitrary location. 
-Make sure you have Java JRE or JDK v8 or higher installed. 
+Make sure you have Java JRE or JDK v8 or v11 installed. 
 Open a terminal, navigate to where the extracted files are located and execute `java -jar ./jetty-runner.jar --port 9090 ./Todo-App.war`. 
 Then, open `http://localhost:9090` in a web browser of your choice. 
 You should see the login form of ToDo which looks like this:

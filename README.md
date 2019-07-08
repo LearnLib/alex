@@ -15,7 +15,7 @@ an automaton model (a [Mealy machine][mealy]), which represents the behavior of 
 
 ## Installation
 
-Make sure you have Java 8 installed on your system.
+Make sure you have Java 8 or 11 installed on your system.
 We advise to use a modern web browser like Google Chrome, Mozilla Firefox or Microsoft Edge with JavaScript enabled.
 
 1. [Download](https://github.com/LearnLib/alex/releases/latest) the latest version.
@@ -32,7 +32,7 @@ Password: *admin*
 
 In order to build ALEX from source make sure your system matches the following requirements:
 
-* Java JDK 8
+* Java JDK 8 or 11
 * Maven 3
 * Node.js (v10.0.0) and the NPM (v6.0.0)
 

@@ -1,6 +1,6 @@
 # Installation
 
-In order to use ALEX on your system, make sure that **Java 8** is installed.
+In order to use ALEX on your system, make sure that **Java 8** or **Java 11** is installed.
 Further, a **modern browser** like Google Chrome, Mozilla Firefox or Microsoft Edge with JavaScript enabled is required to use the web interface.
 
 
@@ -21,7 +21,7 @@ Password: *admin*
 
 In order to build ALEX from source, make sure that you have the following software installed:
 
-* Java JDK 8
+* Java JDK 8 or 11
 * Maven 3
 * Node.js (v10.0.0) and the NPM (v6.0.0)
 
