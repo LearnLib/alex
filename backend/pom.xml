@@ -49,7 +49,6 @@
         <pmd.version>3.6</pmd.version>
 
         <!-- dependencies versions -->
-        <spring.version>5.1.2.RELEASE</spring.version>
         <jersey.version>2.27</jersey.version>
         <learnlib.version>0.14.0</learnlib.version>
         <automatalib.version>0.8.0</automatalib.version>
@@ -71,12 +70,6 @@
 
     <!--===== dependencies ======-->
     <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -129,11 +122,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
             <version>${spring-boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
