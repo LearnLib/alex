@@ -31,6 +31,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * Action to navigate to a new URL.
@@ -49,16 +50,27 @@ public class GotoAction extends WebSymbolAction {
     @NotBlank
     private String url;
 
+    @NotNull
+    private boolean absolute;
+
     /**
      * Optional credentials to authenticate via HTTP basic auth.
      */
     @Embedded
     private Credentials credentials;
 
+    public GotoAction() {
+        this.absolute = false;
+    }
+
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            connector.get(getURLWithVariableValues(), getCredentialsWithVariableValues());
+            if (absolute && !url.matches("^(https?)://.*$")) {
+                throw new Exception("Invalid URL format");
+            }
+
+            connector.get(getURLWithVariableValues(), getCredentialsWithVariableValues(), this.absolute);
             LOGGER.info(LoggerMarkers.LEARNER, "Could goto '{}'.", url);
             return getSuccessOutput();
         } catch (Exception e) {
@@ -110,4 +122,11 @@ public class GotoAction extends WebSymbolAction {
         this.credentials = credentials;
     }
 
+    public boolean isAbsolute() {
+        return absolute;
+    }
+
+    public void setAbsolute(boolean absolute) {
+        this.absolute = absolute;
+    }
 }

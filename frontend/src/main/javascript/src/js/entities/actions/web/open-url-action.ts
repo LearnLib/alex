@@ -17,6 +17,11 @@
 import {actionType} from '../../../constants';
 import {Action} from '../action';
 
+export interface Credentials {
+  name: string;
+  password: string;
+}
+
 /**
  * Opens a URL.
  */
@@ -26,7 +31,10 @@ export class GoToWebAction extends Action {
   public url: string;
 
   /** The HTTP Basic auth credentials of the request (optional). */
-  public credentials: any;
+  public credentials: Credentials;
+
+  /** If the URL is absolute and not relative to the projects base URL. */
+  public absolute: boolean;
 
   /**
    * Constructor.
@@ -37,6 +45,7 @@ export class GoToWebAction extends Action {
     super(actionType.WEB_GO_TO, obj);
 
     this.url = obj.url || '';
+    this.absolute = obj.absolute == null ? false : obj.absolute;
     this.credentials = obj.credentials || {};
   }
 

@@ -47,7 +47,7 @@ public class AbstractExportedTest {
         cdc.setHeadless(<headless>);
 
         wsc.reset();
-        wsc.get(url, null);
+        wsc.get(url, null, false);
 
         cm = new ConnectorManager();
         cm.addConnector(wsc);
