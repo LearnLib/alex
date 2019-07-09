@@ -18,7 +18,7 @@ package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.utils.StringList;
+import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.dao.CounterDAO;
 import de.learnlib.alex.data.entities.Counter;
 import org.apache.logging.log4j.LogManager;
@@ -38,6 +38,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -96,7 +97,7 @@ public class CounterResource {
         }
 
         counterDAO.create(user, counter);
-        return Response.ok(counter).build();
+        return Response.status(Response.Status.CREATED).entity(counter).build();
     }
 
     /**
@@ -104,33 +105,26 @@ public class CounterResource {
      *
      * @param projectId
      *         The id of the project.
-     * @param name
-     *         The name of the counter.
+     * @param counterId
+     *         The id of the counter.
      * @param counter
      *         The updated counter to update.
      * @return The updated counter.
      */
     @PUT
-    @Path("/{counterName}")
+    @Path("/{counterId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCounter(@PathParam("projectId") Long projectId, @PathParam("counterName") String name, Counter counter) {
+    public Response updateCounter(@PathParam("projectId") Long projectId, @PathParam("counterId") Long counterId, Counter counter) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("updateCounter({}, {}) for user {}.", projectId, name, user);
+        LOGGER.traceEntry("updateCounter({}, {}) for user {}.", projectId, counterId, user);
 
         if (!counter.getProjectId().equals(projectId)) {
             throw new ValidationException("The ID of the project does not match with the URL.");
         }
 
-        if (!name.equals(counter.getName())) {
-            throw new ValidationException("The name of a counter cannot be updated.");
-        }
-
-        final Counter counterInDB = counterDAO.get(user, projectId, name);
-        counterInDB.setValue(counter.getValue());
-
-        counterDAO.update(user, counterInDB);
-        return Response.ok(counterInDB).build();
+        final Counter updatedCounter = counterDAO.update(user, counter);
+        return Response.ok(updatedCounter).build();
     }
 
     /**
@@ -138,20 +132,20 @@ public class CounterResource {
      *
      * @param projectId
      *         The Project ID.
-     * @param name
-     *         The name of the counter to remove.
+     * @param counterId
+     *         The id of the counter to remove.
      * @return Nothing if everything went OK.
      */
     @DELETE
-    @Path("/{counterName}")
+    @Path("/{counterId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteCounter(@PathParam("projectId") Long projectId, @PathParam("counterName") String name) {
+    public Response deleteCounter(@PathParam("projectId") Long projectId, @PathParam("counterId") Long counterId) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, name, user);
+        LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, counterId, user);
 
-        counterDAO.delete(user, projectId, name);
+        counterDAO.delete(user, projectId, Collections.singletonList(counterId));
 
-        LOGGER.traceExit("Counter {} deleted.", name);
+        LOGGER.traceExit("Counter {} deleted.", counterId);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 
@@ -160,20 +154,20 @@ public class CounterResource {
      *
      * @param projectId
      *         The Project ID.
-     * @param names
-     *         The names of the counters to remove.
+     * @param counterIds
+     *         The ids of the counters to remove.
      * @return Nothing if everything went OK.
      */
     @DELETE
-    @Path("/batch/{counterNames}")
+    @Path("/batch/{counterIds}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteCounter(@PathParam("projectId") Long projectId, @PathParam("counterNames") StringList names) {
+    public Response deleteCounter(@PathParam("projectId") Long projectId, @PathParam("counterIds") IdsList counterIds) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, names, user);
+        LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, counterIds, user);
 
-        counterDAO.delete(user, projectId, names.toArray(new String[names.size()]));
+        counterDAO.delete(user, projectId, counterIds);
 
-        LOGGER.traceExit("Counter(s) {} deleted.", names);
+        LOGGER.traceExit("Counter(s) {} deleted.", counterIds);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 

@@ -53,7 +53,8 @@ export const counterCreateModalComponent = {
                 private toastService: ToastService) {
       super();
 
-      this.counter = new Counter({project: this.project.id, value: 0});
+      this.counter = new Counter();
+      this.counter.project = this.project.id;
       this.errorMessage = null;
     }
 

@@ -37,7 +37,6 @@ public class CounterTest {
     @Before
     public void before() {
         final Project project = new Project(1L);
-
         c = new Counter();
         c.setId(1L);
         c.setName("test");
@@ -46,14 +45,9 @@ public class CounterTest {
     }
 
     @Test
-    public void shouldCloneCounter() {
-        Assert.assertEquals(c, c.clone());
-    }
-
-    @Test
     public void shouldSerializeCounterCorrectly() throws Exception {
         final String counterString = om.writeValueAsString(c);
-        final String expectedCounterString = "{\"name\":\"test\",\"project\":1,\"value\":42}";
+        final String expectedCounterString = "{\"id\":1,\"name\":\"test\",\"project\":1,\"value\":42}";
         JSONAssert.assertEquals(expectedCounterString, counterString, true);
     }
 }

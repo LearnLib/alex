@@ -27,7 +27,7 @@
 
             <div class="list-group" ng-if="vm.counters.length">
                 <div class="list-group-item" ng-repeat="counter in vm.counters">
-                    <div class="d-flex" ng-if="counter.name !== vm.counterUnderEdit.name">
+                    <div class="d-flex" ng-if="counter.id !== vm.counterUnderEdit.id">
                         <selectable-checkbox item="counter" selectable="vm.selectedCounters"></selectable-checkbox>
                         <div class="flex-grow-1 mx-3">
                             <strong ng-bind="counter.name"></strong><br>
@@ -50,7 +50,7 @@
                         </div>
 
                     </div>
-                    <div ng-if="counter.name === vm.counterUnderEdit.name">
+                    <div ng-if="counter.id === vm.counterUnderEdit.id">
 
                         <div class="card">
                             <div class="card-header">

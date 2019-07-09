@@ -40,7 +40,7 @@ export class CounterResource {
    */
   getAll(projectId: number): IPromise<any> {
     return this.$http.get(`${apiUrl}/projects/${projectId}/counters`)
-      .then(response => (<any[]> response.data).map(c => new Counter(c)));
+      .then(response => (<any[]> response.data).map(c => Counter.fromData(c)));
   }
 
   /**
@@ -51,7 +51,7 @@ export class CounterResource {
    */
   create(projectId: number, counter: Counter): IPromise<any> {
     return this.$http.post(`${apiUrl}/projects/${projectId}/counters`, counter)
-      .then(response => new Counter(response.data));
+      .then(response => Counter.fromData(response.data));
   }
 
   /**
@@ -61,8 +61,8 @@ export class CounterResource {
    * @param counter The counter to update.
    */
   update(projectId: number, counter: Counter): IPromise<any> {
-    return this.$http.put(`${apiUrl}/projects/${projectId}/counters/${counter.name}`, counter)
-      .then(response => new Counter(response.data));
+    return this.$http.put(`${apiUrl}/projects/${projectId}/counters/${counter.id}`, counter)
+      .then(response => Counter.fromData(response.data));
   }
 
   /**
@@ -73,7 +73,7 @@ export class CounterResource {
    * @returns angular promise object of the request.
    */
   remove(projectId: number, counter: Counter): IPromise<any> {
-    return this.$http.delete(`${apiUrl}/projects/${projectId}/counters/${counter.name}`);
+    return this.$http.delete(`${apiUrl}/projects/${projectId}/counters/${counter.id}`);
   }
 
   /**
@@ -84,7 +84,7 @@ export class CounterResource {
    * @returns angular promise object of the request.
    */
   removeMany(projectId: number, counters: Counter[]): IPromise<any> {
-    const names = counters.map(c => c.name).join(',');
-    return this.$http.delete(`${apiUrl}/projects/${projectId}/counters/batch/${names}`);
+    const ids = counters.map(c => c.id).join(',');
+    return this.$http.delete(`${apiUrl}/projects/${projectId}/counters/batch/${ids}`);
   }
 }

@@ -54,16 +54,16 @@ export const countersViewComponent = {
                 private $uibModal: any) {
 
       this.counters = [];
-      this.selectedCounters = new Selectable(this.counters, 'name');
+      this.selectedCounters = new Selectable(this.counters, 'id');
       this.counterUnderEdit = null;
 
       // load all existing counters from the server
       this.counterResource.getAll(this.project.id)
         .then(counters => {
           this.counters = counters;
-          this.selectedCounters = new Selectable(this.counters, 'name');
+          this.selectedCounters = new Selectable(this.counters, 'id');
         })
-        .catch(err => console.log(err));
+        .catch(console.error);
     }
 
     /**
@@ -107,7 +107,7 @@ export const countersViewComponent = {
      * @param counter The counter to edit.
      */
     setCounterUnderEdit(counter: Counter): void {
-      this.counterUnderEdit = JSON.parse(JSON.stringify(counter));
+      this.counterUnderEdit = counter.copy();
     }
 
     /**
@@ -128,7 +128,7 @@ export const countersViewComponent = {
     updateCounter(): void {
       this.counterResource.update(this.project.id, this.counterUnderEdit)
         .then(() => {
-          this.counters.find(c => c.name === this.counterUnderEdit.name).value = this.counterUnderEdit.value;
+          this.counters.find(c => c.id === this.counterUnderEdit.id).value = this.counterUnderEdit.value;
           this.toastService.success('The counter has been updated.');
           this.counterUnderEdit = null;
         })
@@ -136,7 +136,7 @@ export const countersViewComponent = {
     }
 
     private _deleteCounter(counter): void {
-      remove(this.counters, {name: counter.name});
+      remove(this.counters, {id: counter.id});
       this.selectedCounters.unselect(counter);
     }
 

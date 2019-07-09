@@ -61,21 +61,6 @@ public interface CounterDAO {
     List<Counter> getAll(User user, Long projectId) throws NotFoundException;
 
     /**
-     * Get a specific counter.
-     *
-     * @param user
-     *         The user who wants to perform this method.
-     * @param projectId
-     *         The project of the counter.
-     * @param name
-     *         The name of the counter.
-     * @return The counter you are looking for.
-     * @throws NotFoundException
-     *         If the counter was not found.
-     */
-    Counter get(User user, Long projectId, String name) throws NotFoundException;
-
-    /**
      * Update a counter.
      *
      * @param user
@@ -87,7 +72,7 @@ public interface CounterDAO {
      * @throws ValidationException
      *         If the counter could not be updated because of not met validation constrains.
      */
-    void update(User user, Counter counter) throws NotFoundException, ValidationException;
+    Counter update(User user, Counter counter) throws NotFoundException, ValidationException;
 
     /**
      * Deletes counters.
@@ -96,12 +81,12 @@ public interface CounterDAO {
      *         The user who wants to perform this method.
      * @param projectId
      *         The project of the counter.
-     * @param names
-     *         The names of the counters.
+     * @param counterIds
+     *         The ids of the counters.
      * @throws NotFoundException
      *         If the project or counter was not found.
      */
-    void delete(User user, Long projectId, String... names) throws NotFoundException;
+    void delete(User user, Long projectId, List<Long> counterIds) throws NotFoundException;
 
     /**
      * Checks if the user can access the counter.

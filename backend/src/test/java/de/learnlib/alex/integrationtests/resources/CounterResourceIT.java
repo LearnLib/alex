@@ -28,6 +28,7 @@ import org.springframework.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -73,7 +74,7 @@ public class CounterResourceIT extends AbstractResourceIT {
         final String counter = createCounterJson("counter", projectId1, 1);
         final Response res1 = counterApi.create(projectId1, counter, jwtUser1);
 
-        assertEquals(HttpStatus.OK.value(), res1.getStatus());
+        assertEquals(HttpStatus.CREATED.value(), res1.getStatus());
         assertEquals(1, getNumberOfCounters(projectId1, jwtUser1));
     }
 
@@ -138,10 +139,10 @@ public class CounterResourceIT extends AbstractResourceIT {
     @Test
     public void shouldUpdateValueOfACounter() throws Exception {
         final String counter = createCounterJson("counter1", projectId1, 1);
-        final String updatedCounter = createCounterJson("counter1", projectId1, 5);
-        counterApi.create(projectId1, counter, jwtUser1);
+        final Long id = getCounterId(counterApi.create(projectId1, counter, jwtUser1));
+        final String updatedCounter = createCounterJson(id, "counter1", projectId1, 5);
 
-        final Response res1 = counterApi.update(projectId1, "counter1", updatedCounter, jwtUser1);
+        final Response res1 = counterApi.update(projectId1, id, updatedCounter, jwtUser1);
         assertEquals(HttpStatus.OK.value(), res1.getStatus());
         JSONAssert.assertEquals(res1.readEntity(String.class), updatedCounter, true);
 
@@ -152,28 +153,28 @@ public class CounterResourceIT extends AbstractResourceIT {
     @Test
     public void shouldNotUpdateNameOfACounter() throws Exception {
         final String counter = createCounterJson("counter1", projectId1, 1);
-        final String updatedCounter = createCounterJson("updatedName", projectId1, 1);
-        counterApi.create(projectId1, counter, jwtUser1);
+        final Long id = getCounterId(counterApi.create(projectId1, counter, jwtUser1));
+        final String updatedCounter = createCounterJson(id, "updatedName", projectId1, 1);
 
-        final Response res1 = counterApi.update(projectId1, "counter1", updatedCounter, jwtUser1);
+        final Response res1 = counterApi.update(projectId1, id, updatedCounter, jwtUser1);
         assertEquals(HttpStatus.BAD_REQUEST.value(), res1.getStatus());
 
         final Response res2 = counterApi.getAll(projectId1, jwtUser1);
-        JSONAssert.assertEquals(res2.readEntity(String.class), "[" + counter + "]", true);
+        JSONAssert.assertEquals(res2.readEntity(String.class), "[" + createCounterJson(id,"counter1", projectId1, 1) + "]", true);
     }
 
     @Test
     public void shouldNotUpdateAnotherUsersCounter() throws Exception {
         final String counter = createCounterJson("counter1", projectId1, 1);
-        counterApi.create(projectId1, counter, jwtUser1);
+        final Long id = getCounterId(counterApi.create(projectId1, counter, jwtUser1));
 
-        final String updatedCounter = createCounterJson("counter1", projectId1, 5);
-        final Response res1 = counterApi.update(projectId1, "counter1", updatedCounter, jwtUser2);
+        final String updatedCounter = createCounterJson(id,"counter1", projectId1, 5);
+        final Response res1 = counterApi.update(projectId1, id, updatedCounter, jwtUser2);
 
         assertEquals(HttpStatus.UNAUTHORIZED.value(), res1.getStatus());
 
         final Response res2 = counterApi.getAll(projectId1, jwtUser1);
-        JSONAssert.assertEquals("[" + counter + "]", res2.readEntity(String.class), true);
+        JSONAssert.assertEquals("[" + createCounterJson(id,"counter1", projectId1, 1) + "]", res2.readEntity(String.class), true);
     }
 
     @Test
@@ -181,10 +182,12 @@ public class CounterResourceIT extends AbstractResourceIT {
         final String counter1 = createCounterJson("counter1", projectId1, 1);
         final String counter2 = createCounterJson("counter2", projectId1, 1);
 
-        counterApi.create(projectId1, counter1, jwtUser1);
+        final Response res1 = counterApi.create(projectId1, counter1, jwtUser1);
         counterApi.create(projectId1, counter2, jwtUser1);
 
-        final Response res = counterApi.delete(projectId1, "counter1", jwtUser1);
+        final Long id = getCounterId(res1);
+
+        final Response res = counterApi.delete(projectId1, id, jwtUser1);
         assertEquals(HttpStatus.NO_CONTENT.value(), res.getStatus());
         assertEquals(1, getNumberOfCounters(projectId1, jwtUser1));
     }
@@ -192,16 +195,17 @@ public class CounterResourceIT extends AbstractResourceIT {
     @Test
     public void shouldNotDeleteAnotherUsersCounter() throws Exception {
         final String counter = createCounterJson("counter1", projectId2, 1);
-        counterApi.create(projectId2, counter, jwtUser2);
+        final Response res = counterApi.create(projectId2, counter, jwtUser2);
+        final Long id = getCounterId(res);
 
-        final Response res = counterApi.delete(projectId2, "counter1", jwtUser1);
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+        final Response res2 = counterApi.delete(projectId2, id, jwtUser1);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
         assertEquals(1, getNumberOfCounters(projectId2, jwtUser2));
     }
 
     @Test
     public void shouldFailToDeleteCounterIfItDoesNotExist() throws Exception {
-        final Response res = counterApi.delete(projectId1, "counter", jwtUser1);
+        final Response res = counterApi.delete(projectId1, -1L, jwtUser1);
         assertEquals(HttpStatus.NOT_FOUND.value(), res.getStatus());
         assertEquals(0, getNumberOfCounters(projectId1, jwtUser1));
     }
@@ -211,10 +215,10 @@ public class CounterResourceIT extends AbstractResourceIT {
         final String counter1 = createCounterJson("counter1", projectId1, 1);
         final String counter2 = createCounterJson("counter2", projectId1, 1);
 
-        counterApi.create(projectId1, counter1, jwtUser1);
-        counterApi.create(projectId1, counter2, jwtUser1);
+        final Long id1 = getCounterId(counterApi.create(projectId1, counter1, jwtUser1));
+        final Long id2 = getCounterId(counterApi.create(projectId1, counter2, jwtUser1));
 
-        final Response res = counterApi.delete(projectId1, Arrays.asList("counter1", "counter2"), jwtUser1);
+        final Response res = counterApi.delete(projectId1, Arrays.asList(id1, id2), jwtUser1);
         assertEquals(HttpStatus.NO_CONTENT.value(), res.getStatus());
         assertEquals(0, getNumberOfCounters(projectId1, jwtUser1));
     }
@@ -224,10 +228,13 @@ public class CounterResourceIT extends AbstractResourceIT {
         final String counter1 = createCounterJson("counter1", projectId1, 1);
         final String counter2 = createCounterJson("counter2", projectId1, 1);
 
-        counterApi.create(projectId1, counter1, jwtUser1);
-        counterApi.create(projectId1, counter2, jwtUser1);
+        final List<Long> ids = Arrays.asList(
+                getCounterId(counterApi.create(projectId1, counter1, jwtUser1)),
+                getCounterId(counterApi.create(projectId1, counter2, jwtUser1)),
+                -1L
+        );
 
-        final Response res = counterApi.delete(projectId1, Arrays.asList("counter1", "counter2", "asdasd"), jwtUser1);
+        final Response res = counterApi.delete(projectId1, ids, jwtUser1);
         assertEquals(HttpStatus.NOT_FOUND.value(), res.getStatus());
         assertEquals(2, getNumberOfCounters(projectId1, jwtUser1));
     }
@@ -237,11 +244,25 @@ public class CounterResourceIT extends AbstractResourceIT {
         return objectMapper.readTree(res2.readEntity(String.class)).size();
     }
 
+    private String createCounterJson(Long id, String name, int projectId, int value) {
+        return "{"
+                + "\"id\":" + id
+                + ",\"name\":\"" + name + "\""
+                + ",\"project\":" + projectId
+                + ",\"value\":" + value
+                + "}";
+    }
+
     private String createCounterJson(String name, int projectId, int value) {
         return "{"
                 + "\"name\":\"" + name + "\""
                 + ",\"project\":" + projectId
                 + ",\"value\":" + value
                 + "}";
+    }
+
+    private Long getCounterId(Response res) {
+        final Integer id = JsonPath.read(res.readEntity(String.class), "id");
+        return id.longValue();
     }
 }

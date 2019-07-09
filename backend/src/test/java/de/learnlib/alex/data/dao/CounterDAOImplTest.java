@@ -123,29 +123,9 @@ public class CounterDAOImplTest {
     }
 
     @Test
-    public void shouldGetOneCounter() throws NotFoundException {
-        User user = new User(USER_ID);
-        Project project = new Project();
-        Counter counter = new Counter();
-        counter.setProject(project);
-
-        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-        given(counterRepository.findByProjectAndName(project, COUNTER_NAME)).willReturn(counter);
-
-        Counter c = counterDAO.get(user, PROJECT_ID, COUNTER_NAME);
-
-        assertThat(c, is(equalTo(counter)));
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void shouldThrowAnExceptionIfTheCounterCanNotBeFoundByItsName() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-        counterDAO.get(user, PROJECT_ID, COUNTER_NAME); // should fail
-    }
-
-    @Test
     public void shouldUpdateACounter() throws NotFoundException {
+        final Long counterId = 1L;
+
         User user = new User();
         user.setId(USER_ID);
 
@@ -155,9 +135,10 @@ public class CounterDAOImplTest {
         Counter counter = new Counter();
         counter.setProject(project);
         counter.setName(COUNTER_NAME);
+        counter.setId(counterId);
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-        given(counterRepository.findByProjectAndName(project, COUNTER_NAME)).willReturn(counter);
+        given(counterRepository.findById(counterId)).willReturn(Optional.of(counter));
 
         counterDAO.update(user, counter);
 
@@ -166,19 +147,23 @@ public class CounterDAOImplTest {
 
     @Test
     public void shouldDeleteACounter() throws NotFoundException {
+        final Long counterId = 1L;
+
         User user = new User();
         user.setId(USER_ID);
 
         Project project = new Project();
+        project.setId(PROJECT_ID);
 
         Counter counter = new Counter();
+        counter.setId(counterId);
         counter.setProject(project);
         List<Counter> counterAsList = Collections.singletonList(counter);
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-        given(counterRepository.findAllByProjectAndNameIn(project, COUNTER_NAME)).willReturn(counterAsList);
+        given(counterRepository.findAllByIdIn(Collections.singletonList(counterId))).willReturn(counterAsList);
 
-        counterDAO.delete(user, PROJECT_ID, COUNTER_NAME);
+        counterDAO.delete(user, PROJECT_ID, Collections.singletonList(counterId));
 
         verify(counterRepository).deleteAll(counterAsList);
     }
@@ -186,8 +171,7 @@ public class CounterDAOImplTest {
     @Test(expected = NotFoundException.class)
     public void shouldFailToDeleteACounterThatDoesNotExist() throws NotFoundException {
         User user = new User();
-
-        counterDAO.delete(user, PROJECT_ID, COUNTER_NAME);
+        counterDAO.delete(user, PROJECT_ID, Collections.singletonList(-1L));
     }
 
 

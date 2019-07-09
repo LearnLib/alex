@@ -87,32 +87,32 @@ public class CounterDAOImpl implements CounterDAO {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Counter get(User user, Long projectId, String name) throws NotFoundException {
-        return doGet(user, projectId, name);
-    }
-
-    @Override
     @Transactional
-    public void update(User user, Counter counter) throws NotFoundException, ValidationException {
-        doGet(user, counter.getProjectId(), counter.getName());
-        counterRepository.save(counter);
+    public Counter update(User user, Counter counter) throws NotFoundException, ValidationException {
+        final Counter counterIdDb = doGet(user, counter.getProjectId(), counter.getId());
+
+        if (!counterIdDb.getName().equals(counter.getName())) {
+            throw new ValidationException("counters cannot be renamed");
+        }
+
+        counterIdDb.setValue(counter.getValue());
+        return counterRepository.save(counterIdDb);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void delete(User user, Long projectId, String... names) throws NotFoundException {
+    public void delete(User user, Long projectId, List<Long> counterIds) throws NotFoundException {
         final Project project = projectRepository.findById(projectId).orElse(null);
-        final List<Counter> counters = counterRepository.findAllByProjectAndNameIn(project, names);
+        final List<Counter> counters = counterRepository.findAllByIdIn(counterIds);
+
+        if (counters.size() != counterIds.size()) {
+            throw new NotFoundException("At least one counter cannot be found");
+        }
+
         for (Counter counter : counters) {
             checkAccess(user, project, counter);
         }
-
-        if (names.length == counters.size()) { // all counters found -> delete them & success
-            counterRepository.deleteAll(counters);
-        } else {
-            throw new NotFoundException("Could not delete the counter(s), because at least one does not exists!");
-        }
+        counterRepository.deleteAll(counters);
     }
 
     @Override
@@ -129,9 +129,9 @@ public class CounterDAOImpl implements CounterDAO {
         }
     }
 
-    private Counter doGet(User user, Long projectId, String name) {
+    private Counter doGet(User user, Long projectId, Long counterId) {
         final Project project = projectRepository.findById(projectId).orElse(null);
-        final Counter counter = counterRepository.findByProjectAndName(project, name);
+        final Counter counter = counterRepository.findById(counterId).orElse(null);
         checkAccess(user, project, counter);
         return counter;
     }

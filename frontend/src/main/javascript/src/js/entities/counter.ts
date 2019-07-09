@@ -17,6 +17,9 @@
 /** The counter model. */
 export class Counter {
 
+  /** The id of the counter. */
+  public id: number;
+
   /** The name of the counter. */
   public name: string;
 
@@ -26,15 +29,20 @@ export class Counter {
   /** The id of the project. */
   public project: number;
 
+  constructor() {
+    this.value = 0;
+  }
 
-  /**
-   * Constructor.
-   *
-   * @param obj The object to create a counter from.
-   */
-  constructor(obj: any = {}) {
-    this.name = obj.name;
-    this.value = obj.value;
-    this.project = obj.project;
+  static fromData(data: any): Counter {
+    const c = new Counter();
+    c.id = data.id;
+    c.name = data.name;
+    c.value = data.value;
+    c.project = data.project;
+    return c;
+  }
+
+  copy(): Counter {
+    return Counter.fromData(JSON.parse(JSON.stringify(this)));
   }
 }

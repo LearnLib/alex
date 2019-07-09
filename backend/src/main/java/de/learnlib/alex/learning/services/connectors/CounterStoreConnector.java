@@ -80,7 +80,7 @@ public class CounterStoreConnector implements Connector {
         }
 
         // get all counters from the db
-        Map<String, Counter> counters = new HashMap<>();
+        final Map<String, Counter> counters = new HashMap<>();
         try {
             counterDAO.getAll(user, project.getId()).forEach(c -> counters.put(c.getName(), c));
         } catch (NotFoundException e) {
@@ -93,7 +93,7 @@ public class CounterStoreConnector implements Connector {
                 boolean counterExists = counters.containsKey(name);
                 if (counterExists) {
                     counters.get(name).setValue(Math.max(counters.get(name).getValue(), countersMap.get(name)));
-                    counterDAO.update(user, counters.get(name));
+                    counters.put(name, counterDAO.update(user, counters.get(name)));
                 } else {
                     Counter counter = createCounter(project.getId(), name, countersMap.get(name));
                     counterDAO.create(user, counter);

@@ -22,6 +22,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CounterApi extends AbstractApi {
 
@@ -42,20 +43,21 @@ public class CounterApi extends AbstractApi {
                 .post(Entity.json(counter));
     }
 
-    public Response update(int projectId, String counterName, String counter, String jwt) {
-        return client.target(url(projectId) + "/" + counterName).request()
+    public Response update(int projectId, Long counterId, String counter, String jwt) {
+        return client.target(url(projectId) + "/" + counterId).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .put(Entity.json(counter));
     }
 
-    public Response delete(int projectId, String counterName, String jwt) {
-        return client.target(url(projectId) + "/" + counterName).request()
+    public Response delete(int projectId, Long counterId, String jwt) {
+        return client.target(url(projectId) + "/" + counterId).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .delete();
     }
 
-    public Response delete(int projectId, List<String> counterNames, String jwt) {
-        return client.target(url(projectId) + "/batch/" + String.join(",", counterNames)).request()
+    public Response delete(int projectId, List<Long> counterNames, String jwt) {
+        final List<String> ids = counterNames.stream().map(String::valueOf).collect(Collectors.toList());
+        return client.target(url(projectId) + "/batch/" + String.join(",", ids)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .delete();
     }
