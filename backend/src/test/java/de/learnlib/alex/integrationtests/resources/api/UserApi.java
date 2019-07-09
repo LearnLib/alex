@@ -44,6 +44,17 @@ public class UserApi extends AbstractApi {
         return "Bearer " + JsonPath.read(res.readEntity(String.class), "token");
     }
 
+    public Response loginRaw(String email, String password) {
+        return client.target(url() + "/login").request()
+                .post(Entity.json("{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}"));
+    }
+
+    public Response getProfile(String jwt) {
+        return client.target(url() + "/myself").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .get();
+    }
+
     public Response create(String user, String jwt) {
         return client.target(url()).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)

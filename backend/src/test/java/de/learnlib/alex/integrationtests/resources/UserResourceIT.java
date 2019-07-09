@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class UserResourceIT extends AbstractResourceIT {
 
@@ -119,12 +121,62 @@ public class UserResourceIT extends AbstractResourceIT {
     }
 
     @Test
+    public void adminShouldMakeOtherUsersAdmin() {
+        final Response res1 = userApi.create(createUserJson("test@test.de", "test"));
+        final int userId = JsonPath.read(res1.readEntity(String.class), "id");
+
+        final String jwtAdmin = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
+        userApi.promote(userId, jwtAdmin);
+
+        final String jwtUser = userApi.login("test@test.de", "test");
+        final Response res2 = userApi.getProfile(jwtUser);
+
+        assertEquals("ADMIN", JsonPath.read(res2.readEntity(String.class), "role"));
+    }
+
+    @Test
+    public void adminShouldMakeOtherAdminsUsers() {
+        final String jwtAdmin = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
+
+        final Response res1 = userApi.create(createUserJson("test@test.de", "test", "ADMIN"), jwtAdmin);
+        final int userId = JsonPath.read(res1.readEntity(String.class), "id");
+
+        userApi.demote(userId, jwtAdmin);
+
+        final String jwtUser = userApi.login("test@test.de", "test");
+        final Response res2 = userApi.getProfile(jwtUser);
+
+        assertEquals("REGISTERED", JsonPath.read(res2.readEntity(String.class), "role"));
+    }
+
+    @Test
+    public void adminShouldNotMakeHimselfUserIfHeIsOnlyAdmin() {
+        final String jwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
+        final Response res1 = userApi.getProfile(jwt);
+        final int userId = JsonPath.read(res1.readEntity(String.class), "id");
+
+        userApi.demote(userId, jwt);
+
+        final Response res2 = userApi.getProfile(jwt);
+        assertEquals("ADMIN", JsonPath.read(res2.readEntity(String.class), "role"));
+    }
+
+    @Test
     public void userShouldNotBeAbleToDemoteAnAdmin() {
         userApi.create(createUserJson("test@test.de", "test"));
         final String jwt = userApi.login("test@test.de", "test");
 
         final Response res = userApi.delete(1, jwt);
         assertEquals(HttpStatus.FORBIDDEN.value(), res.getStatus());
+    }
+
+    @Test
+    public void shouldFailToLoginWithWrongPassword() {
+        userApi.create(createUserJson("test@test.de", "test"));
+        final Response res = userApi.loginRaw("test@test.de", "123");
+
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+        assertFalse(res.readEntity(String.class).contains("Bearer: "));
     }
 
     @Test
@@ -231,6 +283,31 @@ public class UserResourceIT extends AbstractResourceIT {
         final Response res5 = userApi.getAll(jwt);
 
         JSONAssert.assertEquals(res3.readEntity(String.class), res5.readEntity(String.class), true);
+    }
+
+    @Test
+    public void shouldGetTheCurrentProfileAsAdmin() throws Exception {
+        final String jwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
+        final Response res = userApi.getProfile(jwt);
+        final String email = JsonPath.read(res.readEntity(String.class), "email");
+        assertEquals(email, ADMIN_EMAIL);
+    }
+
+    @Test
+    public void shouldFailToDeleteUsersWhenContainingOwnId() throws Exception {
+        final String jwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
+
+        final Response res1 = userApi.create(createUserJson("test1@test.de", "test"));
+        final Response res2 = userApi.create(createUserJson("test2@test.de", "test"));
+        final Response res3 = userApi.getProfile(jwt);
+
+        final int adminId = JsonPath.read(res3.readEntity(String.class), "id");
+        final int userId1 = JsonPath.read(res1.readEntity(String.class), "id");
+        final int userId2 = JsonPath.read(res2.readEntity(String.class), "id");
+        final List<Integer> userIds = Arrays.asList(userId1, userId2, adminId);
+
+        final Response res4 = userApi.delete(userIds, jwt);
+        assertEquals(3, objectMapper.readTree(res4.readEntity(String.class)).size());
     }
 
     private String createUserJson(String email, String password) {
