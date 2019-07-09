@@ -23,6 +23,7 @@ import javax.persistence.Embeddable;
 import javax.validation.ValidationException;
 import java.io.File;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * The entity for web driver settings.
@@ -77,6 +78,7 @@ public class DriverSettings implements Serializable {
         this.firefox = firefox;
         this.edge = edge;
         this.remote = remote;
+        this.ie = ie;
     }
 
     public String getChrome() {
@@ -168,19 +170,18 @@ public class DriverSettings implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         DriverSettings that = (DriverSettings) o;
-
-        if (chrome != null ? !chrome.equals(that.chrome) : that.chrome != null) return false;
-        return firefox != null ? firefox.equals(that.firefox) : that.firefox == null;
-
+        return Objects.equals(chrome, that.chrome) &&
+                Objects.equals(firefox, that.firefox) &&
+                Objects.equals(edge, that.edge) &&
+                Objects.equals(remote, that.remote) &&
+                Objects.equals(ie, that.ie) &&
+                Objects.equals(defaultDriver, that.defaultDriver);
     }
 
     @Override
     public int hashCode() {
-        int result = chrome != null ? chrome.hashCode() : 0;
-        result = 31 * result + (firefox != null ? firefox.hashCode() : 0);
-        return result;
+        return Objects.hash(chrome, firefox, edge, remote, ie, defaultDriver);
     }
     // CHECKSTYLE.OFF: AvoidInlineConditionals|MagicNumber|LineLength|NeedBraces
 }
