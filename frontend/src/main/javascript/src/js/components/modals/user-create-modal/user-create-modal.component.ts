@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {userRole} from '../../../constants';
 import {User} from '../../../entities/user';
 import {ModalComponent} from '../modal.component';
 import {UserResource} from '../../../services/resources/user-resource.service';
@@ -46,7 +45,7 @@ export const userCreateModalComponent = {
                 private toastService: ToastService) {
       super();
 
-      this.user = new User({role: userRole.REGISTERED});
+      this.user = new User();
     }
 
     createUser(): void {
@@ -54,7 +53,7 @@ export const userCreateModalComponent = {
       this.userResource.create(this.user)
         .then(res => {
           this.toastService.success('The user has been created.');
-          this.close({$value: new User(res.data)});
+          this.close({$value: User.fromData(res.data)});
         })
         .catch(err => this.errorMessage = `Could not create the user. ${err.data.message}`);
     }

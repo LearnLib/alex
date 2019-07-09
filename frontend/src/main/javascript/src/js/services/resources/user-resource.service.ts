@@ -53,7 +53,7 @@ export class UserResource {
    */
   changeEmail(user: User, email: string): IPromise<any> {
     return this.$http.put(`${apiUrl}/users/${user.id}/email`, {email})
-      .then(response => new User(response.data));
+      .then(response => User.fromData(response.data));
   }
 
   /**
@@ -64,7 +64,7 @@ export class UserResource {
    */
   get(userId: number): IPromise<any> {
     return this.$http.get(`${apiUrl}/users/${userId}`)
-      .then(response => new User(response.data));
+      .then(response => User.fromData(response.data));
   }
 
   /**
@@ -74,7 +74,7 @@ export class UserResource {
    */
   getAll(): IPromise<any> {
     return this.$http.get(`${apiUrl}/users`)
-      .then(res => (<any[]> res.data).map(u => new User(u)));
+      .then(res => (<any[]> res.data).map(u => User.fromData(u)));
   }
 
   /**
@@ -126,7 +126,7 @@ export class UserResource {
    */
   promote(user: User): IPromise<any> {
     return this.$http.put(`${apiUrl}/users/${user.id}/promote`, {})
-      .then(response => new User(response.data));
+      .then(response => User.fromData(response.data));
   }
 
   /**
@@ -137,6 +137,6 @@ export class UserResource {
    */
   demote(user: User): IPromise<any> {
     return this.$http.put(`${apiUrl}/users/${user.id}/demote`, {})
-      .then(response => new User(response.data));
+      .then(response => User.fromData(response.data));
   }
 }

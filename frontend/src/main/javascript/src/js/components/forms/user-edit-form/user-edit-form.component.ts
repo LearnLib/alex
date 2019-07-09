@@ -66,7 +66,7 @@ class UserEditFormComponent {
           this.toastService.success('The email has been changed');
 
           // update the jwt correspondingly
-          const user = new User(JSON.parse(JSON.stringify(this.currentUser)));
+          const user = this.currentUser.copy();
           user.email = this.email;
           this.userService.login(user);
         })

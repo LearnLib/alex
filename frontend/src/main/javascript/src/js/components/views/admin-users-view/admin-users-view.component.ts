@@ -96,7 +96,7 @@ export const adminUsersViewComponent = {
       this.$uibModal.open({
         component: 'userEditModal',
         resolve: {
-          user: () => new User(user),
+          user: () => user.copy(),
           onUpdated: () => (u) => this.updateUser(u),
           onDeleted: () => (u) => this.removeUser(u)
         }

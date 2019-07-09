@@ -46,7 +46,7 @@ export class UserService {
     // load user from session
     const userInSession = localStorage.getItem('user');
     if (userInSession != null) {
-      this.store.currentUser = new User(JSON.parse(userInSession));
+      this.store.currentUser = User.fromData(JSON.parse(userInSession));
       const jwtInSession = localStorage.getItem('jwt');
       if (jwtInSession != null) {
         this.store.jwt = jwtInSession;

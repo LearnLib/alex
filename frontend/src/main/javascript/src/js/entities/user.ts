@@ -14,26 +14,36 @@
  * limitations under the License.
  */
 
+export enum UserRole {
+  REGISTERED = 'REGISTERED',
+  ADMIN = 'ADMIN'
+}
+
 /** The model for user api results. */
 export class User {
 
   /** The id of the user. */
-  public id;
+  public id: number;
 
   /** The role of the user. */
-  public role;
+  public role: UserRole;
 
   /** The email of the user. */
-  public email;
+  public email: string;
 
-  /**
-   * Constructor.
-   *
-   * @param obj The object to create a user from.
-   */
-  constructor(obj: any = {}) {
-    this.id = obj.id;
-    this.role = obj.role;
-    this.email = obj.email;
+  constructor() {
+    this.role = UserRole.REGISTERED;
+  }
+
+  static fromData(data: any): User {
+    const u = new User();
+    u.id = data.id;
+    u.role = data.role;
+    u.email = data.email;
+    return u;
+  }
+
+  copy(): User {
+    return User.fromData(JSON.parse(JSON.stringify(this)));
   }
 }

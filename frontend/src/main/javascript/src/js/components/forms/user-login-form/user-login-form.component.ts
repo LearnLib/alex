@@ -70,7 +70,7 @@ class UserLoginFormComponent {
           // decode the token and create a user from it
           const token = response.data.token;
           const tokenPayload = this.jwtHelper.decodeToken(token);
-          const user = new User({
+          const user = User.fromData({
             id: tokenPayload.id,
             role: tokenPayload.role,
             email: tokenPayload.email
