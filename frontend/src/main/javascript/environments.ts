@@ -18,4 +18,4 @@
 export const version = '1.8.0-SNAPSHOT';
 
 /** API URL */
-export const apiUrl = process.env.API_URL;
+export const apiUrl = '/rest';
