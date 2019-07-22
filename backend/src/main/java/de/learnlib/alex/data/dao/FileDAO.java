@@ -21,6 +21,7 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.UploadableFile;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -48,7 +49,7 @@ public interface FileDAO {
      * @throws NotFoundException
      *         If one of the required resources could not be found.
      */
-    void create(User user, Long projectId, InputStream uploadedInputStream, FormDataContentDisposition fileDetail)
+    UploadableFile create(User user, Long projectId, InputStream uploadedInputStream, FormDataContentDisposition fileDetail)
             throws IllegalStateException, IOException, NotFoundException;
 
     /**
@@ -71,13 +72,15 @@ public interface FileDAO {
      *         The user that belongs to the project
      * @param projectId
      *         The id of the project that the file belongs to.
-     * @param fileName
-     *         The name of the file.
+     * @param fileId
+     *         The ID of the file.
      * @return The absolute path to the file on the actual machine.
      * @throws NotFoundException
      *         If the file could not be found.
      */
-    String getAbsoluteFilePath(User user, Long projectId, String fileName) throws NotFoundException;
+    File getFile(User user, Long projectId, Long fileId) throws NotFoundException;
+
+    File getFileByName(User user, Long projectId, String filename) throws NotFoundException;
 
     /**
      * Deletes a file.
@@ -86,12 +89,12 @@ public interface FileDAO {
      *         The user that belongs to the project
      * @param projectId
      *         The id of the project that the file belongs to.
-     * @param fileName
-     *         The name of the file to delete.
+     * @param fileId
+     *         The ID of the file to delete.
      * @throws NotFoundException
      *         If the file could not be found.
      */
-    void delete(User user, Long projectId, String fileName) throws NotFoundException;
+    void delete(User user, Long projectId, Long fileId) throws NotFoundException;
 
     /**
      * Deletes the complete project directory.

@@ -16,59 +16,70 @@
 
 package de.learnlib.alex.data.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 
 /**
- * Entity to describe an file which was uploaded.
+ * Entity to describe a file which was uploaded.
  */
+@Entity
+@Table(
+        uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "name"})
+)
 public class UploadableFile {
 
-    /**
-     * The ID of the project the File belongs to.
-     */
-    @JsonProperty("project")
-    private Long projectId;
+    /** The ID of the file reference. */
+    @Id
+    @GeneratedValue
+    private Long id;
 
-    /**
-     * The name of the file.
-     */
+    /** The ID of the project the File belongs to. */
+    @JsonIgnore
+    @OneToOne
+    private Project project;
+
+    /** The name of the file. */
     @NotBlank
     private String name;
 
-    /**
-     * Get the id of the project of the file.
-     *
-     * @return The id of the project.
-     */
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    @JsonProperty("project")
     public Long getProjectId() {
-        return projectId;
+        return project.getId();
     }
 
-    /**
-     * Set the project id of the file.
-     *
-     * @param projectId The id of the project.
-     */
+    @JsonProperty("project")
     public void setProjectId(Long projectId) {
-        this.projectId = projectId;
+        this.project = new Project(projectId);
     }
 
-    /**
-     * Get the name of the file.
-     *
-     * @return The name of the file.
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Set the name of the file.
-     *
-     * @param name The name of the file.
-     */
     public void setName(String name) {
         this.name = name;
     }

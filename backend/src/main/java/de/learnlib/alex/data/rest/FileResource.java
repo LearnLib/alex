@@ -73,23 +73,19 @@ public class FileResource {
      * @return The HTTP response with the file object on success.
      */
     @POST
+    @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response uploadFile(@PathParam("projectId") Long projectId,
                                @FormDataParam("file") InputStream uploadedInputStream,
                                @FormDataParam("file") FormDataContentDisposition fileDetail) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("uploadFile({}, {}, {}) for user {}.", projectId, uploadedInputStream, fileDetail, user);
 
         try {
-            fileDAO.create(user, projectId, uploadedInputStream, fileDetail);
-
-            UploadableFile result = new UploadableFile();
-            result.setName(fileDetail.getFileName());
-            result.setProjectId(projectId);
-
-            LOGGER.traceExit(result);
-            return Response.ok(result).build();
+            final UploadableFile file = fileDAO.create(user, projectId, uploadedInputStream, fileDetail);
+            LOGGER.traceExit(file);
+            return Response.ok(file).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("FileResource.uploadFile", Response.Status.NOT_FOUND, e);
@@ -109,22 +105,19 @@ public class FileResource {
      *
      * @param projectId
      *         The id of the project.
-     * @param filename
-     *         The name of the file.
+     * @param fileId
+     *         The ID of the file.
      * @return The file as blob.
      */
     @GET
-    @Path("/{fileName}/download")
+    @Path("/{fileId}/download")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response downloadFile(@PathParam("projectId") Long projectId, @PathParam("fileName") String filename) {
+    public Response downloadFile(@PathParam("projectId") Long projectId, @PathParam("fileId") Long fileId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("downloadFile({}, {}) for user {}.", projectId, filename, user);
-
-        final String filePath = fileDAO.getAbsoluteFilePath(user, projectId, filename);
-        final File file = new File(filePath);
-
+        LOGGER.traceEntry("downloadFile({}, {}) for user {}.", projectId, fileId, user);
+        final File file = fileDAO.getFile(user, projectId, fileId);
         return Response.ok(file)
-                .header("content-disposition", "attachment; filename = " + filename)
+                .header("content-disposition", "attachment; filename = " + file.getName())
                 .build();
     }
 
@@ -138,13 +131,13 @@ public class FileResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllFiles(@PathParam("projectId") Long projectId) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAllFiles({}) for user {}.", projectId, user);
 
-        List<UploadableFile> allFiles = fileDAO.getAll(user, projectId);
+        final List<UploadableFile> files = fileDAO.getAll(user, projectId);
 
-        LOGGER.traceExit(allFiles);
-        return Response.ok(allFiles).build();
+        LOGGER.traceExit(files);
+        return Response.ok(files).build();
     }
 
     /**
@@ -152,18 +145,18 @@ public class FileResource {
      *
      * @param projectId
      *         The id of the project.
-     * @param fileName
-     *         The name of the file.
+     * @param fileId
+     *         The ID of the file.
      * @return Status 204 No Content on success.
      */
     @DELETE
-    @Path("/{fileName}")
+    @Path("/{fileId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteOneFile(@PathParam("projectId") Long projectId, @PathParam("fileName") String fileName) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("deleteOneFile({}, {}) for user {}.", projectId, fileName, user);
+    public Response deleteFile(@PathParam("projectId") Long projectId, @PathParam("fileId") Long fileId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("deleteFile({}, {}) for user {}.", projectId, fileId, user);
 
-        fileDAO.delete(user, projectId, fileName);
+        fileDAO.delete(user, projectId, fileId);
 
         LOGGER.traceExit("File deleted.");
         return Response.status(Response.Status.NO_CONTENT).build();

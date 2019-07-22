@@ -158,6 +158,11 @@ public class UserDAOImpl implements UserDAO {
 
         for (Project project : projectRepository.findAllByUser_Id(user.getId())) {
             projectDAO.delete(user, project.getId());
+            try {
+                fileDAO.deleteProjectDirectory(user, project.getId());
+            } catch (IOException e) {
+                LOGGER.info("The project has been deleted, the user directory, however, not.");
+            }
         }
         userRepository.delete(user);
 

@@ -15,7 +15,8 @@
  */
 
 import {apiUrl} from '../../../../environments';
-import {IHttpService, IPromise} from 'angular';
+import { IHttpResponse, IHttpService, IPromise } from 'angular';
+import { UploadableFile } from '../../entities/uploadable-file';
 
 /**
  * The resource that handles API calls concerning the management of files.
@@ -29,7 +30,6 @@ export class FileResource {
    */
   /* @ngInject */
   constructor(private $http: IHttpService) {
-
   }
 
   /**
@@ -37,9 +37,9 @@ export class FileResource {
    *
    * @param projectId The id of the project.
    */
-  getAll(projectId: number): IPromise<any> {
+  getAll(projectId: number): IPromise<UploadableFile[]> {
     return this.$http.get(`${apiUrl}/projects/${projectId}/files`)
-      .then(response => response.data);
+      .then((response: IHttpResponse<any[]>) => response.data.map(d => UploadableFile.fromData(d)));
   }
 
   /**
@@ -48,9 +48,8 @@ export class FileResource {
    * @param projectId The id of the project.
    * @param file The file object to be deleted.
    */
-  remove(projectId: number, file: any): IPromise<any> {
-    const encodedFileName = encodeURI(file.name);
-    return this.$http.delete(`${apiUrl}/projects/${projectId}/files/${encodedFileName}`);
+  remove(projectId: number, file: UploadableFile): IPromise<any> {
+    return this.$http.delete(`${apiUrl}/projects/${projectId}/files/${file.id}`);
   }
 
   /**
@@ -59,7 +58,7 @@ export class FileResource {
    * @param projectId The id of the project.
    * @param file The file to download.
    */
-  download(projectId: number, file: any): IPromise<any> {
-    return this.$http.get(`${apiUrl}/projects/${projectId}/files/${file}/download`, {responseType: 'blob'});
+  download(projectId: number, file: UploadableFile): IPromise<any> {
+    return this.$http.get(`${apiUrl}/projects/${projectId}/files/${file.id}/download`, {responseType: 'blob'});
   }
 }

@@ -21,6 +21,7 @@ import {ToastService} from '../../../services/toast.service';
 import {FileResource} from '../../../services/resources/file-resource.service';
 import {ProjectService} from '../../../services/project.service';
 import {Project} from '../../../entities/project';
+import { UploadableFile } from '../../../entities/uploadable-file';
 
 /**
  * The controller of the files page.
@@ -28,10 +29,10 @@ import {Project} from '../../../entities/project';
 class FilesViewComponent {
 
   /** All project related files. */
-  public files: any[];
+  public files: UploadableFile[];
 
   /** The selected files. */
-  public selectedFiles: Selectable<any>;
+  public selectedFiles: Selectable<UploadableFile>;
 
   /** The progress in percent of the current uploading file. */
   public progress: number;
@@ -74,11 +75,11 @@ class FilesViewComponent {
    *
    * @param file The name of the file to delete.
    */
-  deleteFile(file: any): void {
+  deleteFile(file: UploadableFile): void {
     this.fileResource.remove(this.project.id, file)
       .then(() => {
         this.toastService.success(`File "${file.name}" has been deleted.`);
-        remove(this.files, {name: file.name});
+        remove(this.files, {id: file.id});
         this.selectedFiles.unselect(file);
       })
       .catch(err => {
@@ -99,13 +100,13 @@ class FilesViewComponent {
       if (this.filesToUpload.length > 0) {
         const file = this.filesToUpload[0];
         this.Upload.upload({
-          url: `${apiUrl}/projects/${this.project.id}/files`,
+          url: `${apiUrl}/projects/${this.project.id}/files/upload`,
           file: file
         }).progress(evt => {
           this.progress = parseInt('' + (100.0 * evt.loaded / evt.total));
         }).success(data => {
           this.filesToUpload.shift();
-          this.files.push(data);
+          this.files.push(UploadableFile.fromData(data));
           next();
         }).error(() => {
           error = true;
@@ -145,8 +146,8 @@ class FilesViewComponent {
    *
    * @param file The file to download.
    */
-  downloadFile(file: any): void {
-    this.fileResource.download(this.project.id, file.name)
+  downloadFile(file: UploadableFile): void {
+    this.fileResource.download(this.project.id, file)
       .then(response => {
         const blob = response.data;
         const objectUrl = URL.createObjectURL(blob);

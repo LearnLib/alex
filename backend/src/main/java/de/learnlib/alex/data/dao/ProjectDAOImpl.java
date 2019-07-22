@@ -220,11 +220,11 @@ public class ProjectDAOImpl implements ProjectDAO {
         parameterizedSymbolRepository.deleteAllBySymbol_Project_Id(projectId);
         testReportRepository.deleteAllByProject_Id(projectId);
         learnerResultRepository.deleteAllByProject_Id(projectId);
-        projectRepository.delete(project);
 
         // delete the project directory
         try {
             fileDAO.deleteProjectDirectory(user, projectId);
+            projectRepository.delete(project);
         } catch (IOException e) {
             LOGGER.info("The project has been deleted, the directory, however, not.");
         }
