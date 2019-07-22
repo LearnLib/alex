@@ -96,6 +96,8 @@ public interface FileDAO {
      */
     void delete(User user, Long projectId, Long fileId) throws NotFoundException;
 
+    void delete(User user, Long projectId, List<Long> fileIds) throws NotFoundException;
+
     /**
      * Deletes the complete project directory.
      *

@@ -18,6 +18,7 @@ package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
+import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.entities.UploadableFile;
@@ -159,6 +160,19 @@ public class FileResource {
         fileDAO.delete(user, projectId, fileId);
 
         LOGGER.traceExit("File deleted.");
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    @DELETE
+    @Path("/batch/{fileIds}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteFiles(@PathParam("projectId") Long projectId, @PathParam("fileIds") IdsList fileIds) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("deleteFiles({}, {}) for user {}.", projectId, fileIds, user);
+
+        fileDAO.delete(user, projectId, fileIds);
+
+        LOGGER.traceExit("Files deleted.");
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 }

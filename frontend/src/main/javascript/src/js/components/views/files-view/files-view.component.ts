@@ -137,7 +137,15 @@ class FilesViewComponent {
     if (selectedFiles.length === 0) {
       this.toastService.info('You have to select at least one file');
     } else {
-      selectedFiles.forEach(file => this.deleteFile(file));
+      this.fileResource.removeMany(this.project.id, selectedFiles)
+        .then(() => {
+          this.toastService.success(`The files have been deleted.`);
+          selectedFiles.forEach(file => remove(this.files, {id: file.id}));
+          this.selectedFiles.unselectMany(selectedFiles);
+        })
+        .catch(err => {
+          this.toastService.danger(`The files could not be deleted. ${err.data.message}`);
+        });
     }
   }
 

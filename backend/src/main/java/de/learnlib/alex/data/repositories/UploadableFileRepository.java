@@ -34,6 +34,10 @@ public interface UploadableFileRepository extends JpaRepository<UploadableFile, 
     @SuppressWarnings("checkstyle:methodname")
     UploadableFile findByProject_IdAndName(Long projectId, String name);
 
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<UploadableFile> findAllByIdIn(List<Long> fileIds);
+
     @Transactional()
     void deleteAllByProject_Id(Long projectId);
 }

@@ -35,9 +35,10 @@ public class UploadableFileTest {
         final UploadableFile file = new UploadableFile();
         file.setName("test");
         file.setProjectId(1L);
+        file.setId(1L);
 
         final String fileString = om.writeValueAsString(file);
-        final String expectedFileString = "{\"name\":\"test\",\"project\":1}";
+        final String expectedFileString = "{\"id\":1,\"name\":\"test\",\"project\":1}";
         JSONAssert.assertEquals(expectedFileString, fileString, true);
     }
 }

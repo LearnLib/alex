@@ -53,6 +53,17 @@ export class FileResource {
   }
 
   /**
+   * Delete many files at once.
+   *
+   * @param projectId The ID of the project.
+   * @param files The files to delete.
+   */
+  removeMany(projectId: number, files: UploadableFile[]): IPromise<any> {
+    const ids = files.map(f => f.id);
+    return this.$http.delete(`${apiUrl}/projects/${projectId}/files/batch/${ids.join(',')}`);
+  }
+
+  /**
    * Download a file.
    *
    * @param projectId The id of the project.
