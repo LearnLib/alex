@@ -66,6 +66,7 @@
         <json-schema-validator.version>2.2.10</json-schema-validator.version>
         <mysql-connector.version>8.0.13</mysql-connector.version>
         <jaxb.version>2.4.0-b180830.0359</jaxb.version>
+        <flyway.version>5.2.4</flyway.version>
     </properties>
 
     <!--===== dependencies ======-->
@@ -133,6 +134,13 @@
             <groupId>com.github.java-json-tools</groupId>
             <artifactId>json-schema-validator</artifactId>
             <version>${json-schema-validator.version}</version>
+        </dependency>
+
+        <!-- flyway -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>${flyway.version}</version>
         </dependency>
 
         <dependency>
