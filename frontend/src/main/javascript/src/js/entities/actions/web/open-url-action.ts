@@ -33,9 +33,6 @@ export class GoToWebAction extends Action {
   /** The HTTP Basic auth credentials of the request (optional). */
   public credentials: Credentials;
 
-  /** If the URL is absolute and not relative to the projects base URL. */
-  public absolute: boolean;
-
   /**
    * Constructor.
    *
@@ -45,7 +42,6 @@ export class GoToWebAction extends Action {
     super(actionType.WEB_GO_TO, obj);
 
     this.url = obj.url || '';
-    this.absolute = obj.absolute == null ? false : obj.absolute;
     this.credentials = obj.credentials || {};
   }
 

@@ -81,16 +81,6 @@ public class BaseUrlManager {
         return BaseUrlManager.getUrlWithCredentials(url, credentials);
     }
 
-    public static String getUrlWithCredentials(String url, Credentials credentials) {
-        if (credentials != null && credentials.areValid()) {
-            return url.replaceFirst("^(http[s]?://)", "$1"
-                    + credentials.getName() + ":"
-                    + credentials.getPassword() + "@");
-        } else {
-            return url;
-        }
-    }
-
     /**
      * Append apiPath to basePath and make sure that only one '/' is between them.
      *

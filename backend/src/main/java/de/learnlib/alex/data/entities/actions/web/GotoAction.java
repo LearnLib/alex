@@ -53,27 +53,16 @@ public class GotoAction extends WebSymbolAction {
     @NotBlank
     private String url;
 
-    @NotNull
-    private boolean absolute;
-
     /**
      * Optional credentials to authenticate via HTTP basic auth.
      */
     @Embedded
     private Credentials credentials;
 
-    public GotoAction() {
-        this.absolute = false;
-    }
-
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            if (absolute && !url.matches("^(https?)://.*$")) {
-                throw new Exception("Invalid URL format");
-            }
-
-            connector.get(getURLWithVariableValues(), getCredentialsWithVariableValues(), this.absolute);
+            connector.get(getURLWithVariableValues(), getCredentialsWithVariableValues());
             LOGGER.info(LoggerMarkers.LEARNER, "Could goto '{}'.", url);
             return getSuccessOutput();
         } catch (Exception e) {
@@ -123,13 +112,5 @@ public class GotoAction extends WebSymbolAction {
 
     public void setCredentials(Credentials credentials) {
         this.credentials = credentials;
-    }
-
-    public boolean isAbsolute() {
-        return absolute;
-    }
-
-    public void setAbsolute(boolean absolute) {
-        this.absolute = absolute;
     }
 }

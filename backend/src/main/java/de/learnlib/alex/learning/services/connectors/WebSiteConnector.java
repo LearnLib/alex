@@ -120,12 +120,10 @@ public class WebSiteConnector implements Connector {
      *         The path to send the request to.
      * @param credentials
      *         The credential to use. Can be null.
-     * @param absolute
-     *         If the URL is absolute and not relative to the project base URL
      * @throws Exception
      *         If the application could not connect to the web driver.
      */
-    public void get(String path, Credentials credentials, boolean absolute) throws Exception {
+    public void get(String path, Credentials credentials) throws Exception {
         if (this.driver == null) {
             this.driver = driverConfig.createDriver();
         }

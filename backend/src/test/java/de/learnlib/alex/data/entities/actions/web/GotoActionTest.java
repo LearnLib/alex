@@ -78,12 +78,12 @@ public class GotoActionTest extends WebActionTest {
     @Test
     public void shouldReturnOKIfTheUrlCouldBeFound() throws Exception {
         assertTrue(g.executeAction(connectors).isSuccess());
-        verify(webSiteConnector).get(eq(FAKE_URL), any(Credentials.class), eq(false));
+        verify(webSiteConnector).get(eq(FAKE_URL), any(Credentials.class));
     }
 
     @Test
     public void shouldReturnFailedIfTheUrlCouldNotBeFound() throws Exception {
-        willThrow(Exception.class).given(webSiteConnector).get(eq(FAKE_URL), any(Credentials.class), eq(false));
+        willThrow(Exception.class).given(webSiteConnector).get(eq(FAKE_URL), any(Credentials.class));
         assertFalse(g.executeAction(connectors).isSuccess());
     }
 
