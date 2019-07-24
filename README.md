@@ -85,13 +85,24 @@ Example:
 
 
 
-## Further reading
+## Further links
 
-* [User manual](http://learnlib.github.io/alex/book/1.5.0/contents/user-manual/index.html)
-* [Examples](http://learnlib.github.io/alex/book/1.5.0/contents/examples/index.html)
-* [Developer docs](http://learnlib.github.io/alex/book/1.5.0/contents/developer-documents/index.html)
+### Documentation
+
+* [User manual](https://learnlib.github.io/alex/book/1.7.0/)
+* [Examples](https://learnlib.github.io/alex/book/1.7.0/contents/examples/todomvc/)
+* [Developer docs](https://learnlib.github.io/alex/book/1.7.0/contents/dev-docs/development/)
+
+### Downloads
+
+* [Releases](https://ls5download.cs.tu-dortmund.de/alex/builds/releases/)
+* [Nightly builds](https://ls5download.cs.tu-dortmund.de/alex/builds/nightly/)
+
+### Background & related tools
+
 * [Active automata learning](https://scholar.google.de/scholar?hl=de&q=active+automata+learning)
-* [LearnLib](http://learnlib.de/)
+* [LearnLib](https://learnlib.de/)
+* [AutomataLib](https://github.com/Learnlib/automatalib)
 
 
 [learnlib]: https://github.com/LearnLib/learnlib
