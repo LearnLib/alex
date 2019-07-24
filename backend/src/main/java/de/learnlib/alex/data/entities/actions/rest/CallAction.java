@@ -84,7 +84,8 @@ public class CallAction extends RESTSymbolAction {
     private Method method;
 
     /**
-     * The url to call. This is just the suffix which will be appended to the base url.
+     * The url to call.
+     * The URL can either be a path relative to the project's base URL or a absolute URL that starts with https?://
      */
     @NotBlank
     private String url;

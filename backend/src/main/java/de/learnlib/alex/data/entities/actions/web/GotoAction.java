@@ -46,7 +46,10 @@ public class GotoAction extends WebSymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The URL of the site. */
+    /**
+     * The URL of the site.
+     * The URL can either be a path relative to the project's base URL or a absolute URL that starts with https?://
+     */
     @NotBlank
     private String url;
 

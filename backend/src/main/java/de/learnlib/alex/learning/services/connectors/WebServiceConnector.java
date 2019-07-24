@@ -27,6 +27,8 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 import java.util.Set;
 
@@ -281,7 +283,14 @@ public class WebServiceConnector implements Connector {
     private Invocation.Builder getRequestObject(String path, Map<String, String> requestHeaders,
             Set<Cookie> requestCookies, int timeout) {
         final String[] splitPath = path.split("\\?");
-        WebTarget tmpTarget = target.path(splitPath[0]);
+
+        WebTarget tmpTarget;
+        try {
+            new URL(path);
+            tmpTarget = client.target(splitPath[0]);
+        } catch (MalformedURLException e) {
+            tmpTarget = target.path(splitPath[0]);
+        }
 
         if (splitPath.length > 1) {
             for (final String queryParam : splitPath[1].split("&")) {

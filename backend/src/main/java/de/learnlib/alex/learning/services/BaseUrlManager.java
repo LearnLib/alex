@@ -77,8 +77,18 @@ public class BaseUrlManager {
      * @return An absolute URL as String
      */
     public String getAbsoluteUrl(String path, Credentials credentials) {
-        final String url = combineUrls(baseUrl, path);
+        String url = combineUrls(baseUrl, path);
         return BaseUrlManager.getUrlWithCredentials(url, credentials);
+    }
+
+    public static String getUrlWithCredentials(String url, Credentials credentials) {
+        if (credentials != null && credentials.areValid()) {
+            return url.replaceFirst("^(http[s]?://)", "$1"
+                    + credentials.getName() + ":"
+                    + credentials.getPassword() + "@");
+        } else {
+            return url;
+        }
     }
 
     /**
