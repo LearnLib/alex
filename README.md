@@ -49,7 +49,7 @@ cd alex
 mvn install package [-DskipTests]
 ```
 
-The bundle can then be found at `build/target/alex-build-1.8.0-SNAPSHOT.war`.
+The bundle can then be found at `build/target/alex-1.8.0-SNAPSHOT.war`.
 
 ## Connecting to a database
 
