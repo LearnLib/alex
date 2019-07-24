@@ -30,6 +30,8 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -126,7 +128,14 @@ public class WebSiteConnector implements Connector {
             this.driver = driverConfig.createDriver();
         }
 
-        final String url = baseUrl.getAbsoluteUrl(path, credentials);
+        String url;
+        try {
+            new URL(path);
+            url = BaseUrlManager.getUrlWithCredentials(path, credentials);
+        } catch (MalformedURLException e) {
+            url = baseUrl.getAbsoluteUrl(path, credentials);
+        }
+
         int numRetries = 0;
         while (numRetries < MAX_RETRIES) {
             try {
