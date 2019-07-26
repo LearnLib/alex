@@ -32,9 +32,11 @@ export class DownloadService {
 
     // create new link element with downloadable content
     const a = document.createElement('a');
+    document.body.appendChild(a);
     a.setAttribute('href', href);
     a.setAttribute('download', filename + '.' + fileExtension);
     a.click();
+    document.body.removeChild(a);
   }
 
   /**
