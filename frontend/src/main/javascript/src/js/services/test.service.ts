@@ -60,6 +60,7 @@ export class TestService {
         return steps.map((step) => {
           delete step.id;
           delete step.pSymbol.id;
+          delete step.status;
           step.pSymbol.symbol = {
             name: step.pSymbol.symbol.name
           };
