@@ -51,6 +51,8 @@ mvn install package [-DskipTests]
 
 The bundle can then be found at `build/target/alex-1.8.0-SNAPSHOT.war`.
 
+Only build the REST API and skip the frontend with `mvn package -P!build-frontend`
+
 ## Connecting to a database
 
 Per default, ALEX uses an embedded HSQL database which is stored in the *target/alex-database* directory.

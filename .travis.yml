@@ -26,7 +26,7 @@ install:
   - cp ${TRAVIS_BUILD_DIR}/.travis/settings.xml ${HOME}/.m2/settings.xml
 
 script:
-  - mvn clean install -Pbootstrap,code-analysis,documentation,integration-tests
+  - mvn clean install -Pcode-analysis,documentation,integration-tests
 
 branches:
   only:
@@ -42,5 +42,5 @@ jobs:
   - stage: "Coverage"
     jdk: openjdk8
     script:
-    - mvn clean install -Pbootstrap,code-analysis,integration-tests # code-analysis currently includes JaCoCo
+    - mvn clean install -Pcode-analysis,integration-tests
     - mvn coveralls:report
