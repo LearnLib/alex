@@ -107,7 +107,6 @@ import {testCaseGenerationWidgetComponent} from './components/widgets/test-case-
 import {testSuiteGenerationWidgetComponent} from './components/widgets/test-suite-generation-widget/test-suite-generation-widget.component';
 import {learnerResultListItemComponent} from './components/views/learner-results-view/learner-result-list-item/learner-result-list-item.component';
 import {learnerResultPanelComponent} from './components/learner-result-panel/learner-result-panel.component';
-import {loadScreenComponent} from './components/load-screen/load-screen.component';
 import {actionCreateModalComponent} from './components/modals/action-create-modal/action-create-modal.component';
 import {actionSearchFormComponent} from './components/modals/action-create-modal/action-search-form/action-search-form.component';
 import {actionEditModalComponent} from './components/modals/action-edit-modal/action-edit-modal.component';
@@ -486,7 +485,6 @@ angular
   .component('hypothesis', hypothesisComponent)
   .component('discriminationTree', discriminationTreeComponent)
   .component('fileDropzone', fileDropzoneComponent)
-  .component('loadScreen', loadScreenComponent)
   .component('projectList', projectListComponent)
   .component('sidebar', sidebarComponent)
   .component('viewHeader', viewHeaderComponent)
