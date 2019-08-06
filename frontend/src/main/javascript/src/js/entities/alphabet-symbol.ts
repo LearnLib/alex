@@ -148,7 +148,7 @@ export class AlphabetSymbol {
     const symbol = new AlphabetSymbol(JSON.parse(JSON.stringify(this)));
     symbol.steps.forEach(step => {
       if (step.type === 'symbol') {
-        step.pSymbol.symbol = step.pSymbol.symbol.id;
+        step.pSymbol.symbol = {id: step.pSymbol.symbol.id};
       }
     });
     return symbol;
