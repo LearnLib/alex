@@ -103,10 +103,10 @@ export const symbolsImportModalComponent = {
             this.errorMessage = `The symbols could not be imported. ${err.data.message}`;
           });
       } else {
-        this.symbolGroupResource.createMany(this.project.id, this.importData.symbolGroups)
-          .then(createdGroups => {
+        this.symbolGroupResource.importMany(this.project.id, this.importData.symbolGroups)
+          .then(importedGroups => {
             this.toastService.success('The symbols have been imported');
-            this.close({$value: {type: 'symbolGroups', groups: createdGroups}});
+            this.close({$value: {type: 'symbolGroups', groups: importedGroups}});
           })
           .catch(err => {
             this.errorMessage = `The symbols could not be imported. ${err.data.message}`;

@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Entity to organize symbols.
@@ -213,6 +214,12 @@ public class SymbolGroup implements Serializable {
         }
 
         return false;
+    }
+
+    public void walk(Function<SymbolGroup, Void> groupFn, Function<Symbol, Void> symbolFn) {
+        groupFn.apply(this);
+        symbols.forEach(symbolFn::apply);
+        groups.forEach(g -> g.walk(groupFn, symbolFn));
     }
 
     @Override

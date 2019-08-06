@@ -95,6 +95,8 @@ public interface SymbolGroupDAO {
     List<SymbolGroup> create(User user, Long projectId, List<SymbolGroup> groups)
             throws NotFoundException, ValidationException;
 
+    List<SymbolGroup> importGroups(User user, Long projectId, List<SymbolGroup> groups);
+
     /**
      * Get a list of all groups withing one project.
      *

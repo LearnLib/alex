@@ -117,6 +117,20 @@ public class SymbolGroupResource {
         return Response.status(Response.Status.CREATED).entity(createdGroups).build();
     }
 
+    @POST
+    @Path("/import")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response importGroups(@PathParam("projectId") Long projectId, List<SymbolGroup> groups) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("importGroups({}, {}) for user {}.", projectId, groups, user);
+
+        final List<SymbolGroup> importedGroups = symbolGroupDAO.importGroups(user, projectId, groups);
+        webhookService.fireEvent(user, new SymbolGroupEvent.CreatedMany(importedGroups));
+        LOGGER.traceExit(importedGroups);
+        return Response.status(Response.Status.CREATED).entity(importedGroups).build();
+    }
+
     /**
      * Get a list of all groups within on projects.
      *

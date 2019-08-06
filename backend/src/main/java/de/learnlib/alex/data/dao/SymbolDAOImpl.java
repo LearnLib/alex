@@ -166,6 +166,16 @@ public class SymbolDAOImpl implements SymbolDAO {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<Symbol> importSymbols(User user, Project project, List<Symbol> symbols) {
+        final List<Symbol> importedSymbols = new ArrayList<>();
+        for (Symbol symbol : symbols) {
+            importedSymbols.add(createOne(user, project.getId(), symbol));
+        }
+        return importedSymbols;
+    }
+
+    @Override
     @Transactional
     public Symbol create(User user, Long projectId, Symbol symbol) throws NotFoundException, ValidationException {
         LOGGER.traceEntry("create({})", symbol);
@@ -265,7 +275,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         return createdSymbol;
     }
 
-    private void saveSymbolSteps(Long projectId, List<Symbol> createdSymbols, Map<Long, List<SymbolStep>> symbolStepMap)
+    public void saveSymbolSteps(Long projectId, List<Symbol> createdSymbols, Map<Long, List<SymbolStep>> symbolStepMap)
             throws NotFoundException {
 
         final List<Symbol> allSymbols = symbolRepository.findAllByProject_Id(projectId);

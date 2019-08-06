@@ -61,6 +61,11 @@ export class SymbolGroupResource {
       .then(res => (<any[]> res.data).map(g => new SymbolGroup(g)));
   }
 
+  importMany(projectId: number, groups: SymbolGroup[]): IPromise<any[]> {
+    return this.$http.post(`${apiUrl}/projects/${projectId}/groups/import`, groups)
+      .then(res => (<any[]> res.data).map(g => new SymbolGroup(g)));
+  }
+
   /**
    * Updates an existing symbol group.
    *

@@ -21,6 +21,9 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
+import de.learnlib.alex.data.entities.SymbolPSymbolStep;
+import de.learnlib.alex.data.entities.SymbolStep;
+import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
@@ -43,8 +46,10 @@ import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -115,6 +120,63 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                 symbolActionRepository, this, symbolParameterRepository, symbolStepRepository,
                 parameterizedSymbolDAO, parameterizedSymbolRepository, symbolSymbolStepRepository,
                 testCaseStepRepository, testExecutionResultRepository);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<SymbolGroup> importGroups(User user, Long projectId, List<SymbolGroup> groups) {
+        LOGGER.traceEntry("import({})", groups);
+
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        projectDAO.checkAccess(user, project);
+
+        // name -> symbol
+        // save symbols steps
+        final Map<String, Symbol> symbolNameToSymbolMap = new HashMap<>();
+        groups.forEach(group -> group.walk(g -> null, s -> {
+            symbolNameToSymbolMap.put(s.getName(), s);
+            return null;
+        }));
+
+        // create symbol groups and symbols without steps
+        // because one might reference names of symbols in steps that have not yet been created
+        final List<SymbolGroup> importedGroups = importGroups(user, project, groups, null);
+
+        // create symbol steps
+        final Map<Long, List<SymbolStep>> symbolIdToStepsMap = new HashMap<>();
+        final List<Symbol> symbols = symbolDAO.getAll(user, projectId, SymbolVisibilityLevel.ALL);
+        symbols.forEach(s -> symbolIdToStepsMap.put(s.getId(), symbolNameToSymbolMap.get(s.getName()).getSteps()));
+        symbolDAO.saveSymbolSteps(projectId, symbols, symbolIdToStepsMap);
+
+        return importedGroups;
+    }
+
+    private List<SymbolGroup> importGroups(User user, Project project, List<SymbolGroup> groups, SymbolGroup parent) {
+        final List<SymbolGroup> importedGroups = new ArrayList<>();
+        for (SymbolGroup group: groups) {
+            final List<SymbolGroup> children = group.getGroups();
+            final Set<Symbol> symbols = group.getSymbols();
+
+            group.setGroups(new ArrayList<>());
+            group.setSymbols(new HashSet<>());
+            group.setProject(project);
+            group.setParent(parent);
+            group.setName(createGroupName(project, group));
+
+            beforePersistGroup(group);
+            final SymbolGroup createdGroup = symbolGroupRepository.save(group);
+
+            symbols.forEach(symbol -> {
+                symbol.setProject(project);
+                symbol.setGroup(createdGroup);
+            });
+            symbolDAO.importSymbols(user, project, new ArrayList<>(symbols));
+
+            final List<SymbolGroup> createdChildren = importGroups(user, project, children, createdGroup);
+            createdGroup.setGroups(createdChildren);
+            importedGroups.add(createdGroup);
+        }
+        return importedGroups;
     }
 
     @Override

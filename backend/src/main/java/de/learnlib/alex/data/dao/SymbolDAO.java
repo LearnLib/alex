@@ -20,16 +20,20 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolStep;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.validation.ValidationException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface to describe how Symbols are handled.
  */
 public interface SymbolDAO {
+
+    List<Symbol> importSymbols(User user, Project project, List<Symbol> symbols);
 
     /**
      * Save the given symbol.
@@ -47,6 +51,9 @@ public interface SymbolDAO {
      *         If a symbol could not be found.
      */
     Symbol create(User user, Long projectId, Symbol symbol) throws ValidationException, NotFoundException;
+
+    void saveSymbolSteps(Long projectId, List<Symbol> createdSymbols, Map<Long, List<SymbolStep>> symbolStepMap)
+            throws NotFoundException;
 
     /**
      * Save the given symbols.
