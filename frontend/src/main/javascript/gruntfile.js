@@ -1,4 +1,37 @@
+const fs = require('fs-extra');
+
 module.exports = function (grunt) {
+    grunt.registerTask('alex:clean', '', function() {
+        fs.removeSync('./dist');
+    });
+
+    function renderIndex(data) {
+        let content = fs.readFileSync('./index.html');
+        content = grunt.template.process(content, {data});
+        fs.removeSync('./dist/index.html');
+        fs.writeFileSync('./dist/index.html', content);
+    }
+
+    grunt.registerTask('alex:rename-dist', '', function() {
+        const now = new Date().getTime();
+
+        const styles = `style${now}.css`;
+        const libs = `libs${now}.js`;
+        const main = `alex${now}.js`;
+
+        fs.renameSync('./dist/css/style.css', `./dist/css/${styles}`);
+        fs.renameSync('./dist/js/libs.js', `./dist/js/${libs}`);
+        fs.renameSync('./dist/js/alex.js', `./dist/js/${main}`);
+        renderIndex({styles, libs, main});
+    });
+
+    grunt.registerTask('alex:rename-dev', '', function() {
+       renderIndex({
+           styles: 'style.css',
+           libs: 'libs.js',
+           main: 'alex.js'
+       });
+    });
 
     const libraries = [
         'node_modules/ace-builds/src/ace.js',
@@ -9,7 +42,7 @@ module.exports = function (grunt) {
 
     const browserifyOptionsDist = {
         files: {
-            '<%= buildLocation %>/js/alex.bundle.js': ['src/js/index.ts']
+            '<%= buildLocation %>/js/alex.js': ['src/js/index.ts']
         },
         options: {
             plugin: [
@@ -46,12 +79,12 @@ module.exports = function (grunt) {
             uglify: {
                 app: {
                     files: {
-                        '<%= buildLocation %>/js/alex.bundle.js': ['<%= buildLocation %>/js/alex.bundle.js']
+                        '<%= buildLocation %>/js/alex.js': ['<%= buildLocation %>/js/alex.js']
                     }
                 },
                 libs: {
                     files: {
-                        '<%= buildLocation %>/js/libs.bundle.js': ['<%= buildLocation %>/js/libs.bundle.js']
+                        '<%= buildLocation %>/js/libs.js': ['<%= buildLocation %>/js/libs.js']
                     }
                 }
             },
@@ -62,7 +95,7 @@ module.exports = function (grunt) {
                 },
                 libs: {
                     src: libraries,
-                    dest: '<%= buildLocation %>/js/libs.bundle.js'
+                    dest: '<%= buildLocation %>/js/libs.js'
                 }
             },
 
@@ -108,7 +141,7 @@ module.exports = function (grunt) {
 
             exec: {
                 'build_css': 'node-sass src/scss/style.scss -o <%= buildLocation %>/css',
-                'ng_annotate': 'ng-annotate -a -o <%= buildLocation %>/js/alex.bundle.js <%= buildLocation %>/js/alex.bundle.js'
+                'ng_annotate': 'ng-annotate -a -o <%= buildLocation %>/js/alex.js <%= buildLocation %>/js/alex.js'
             },
 
             copy: {
@@ -157,8 +190,8 @@ module.exports = function (grunt) {
     grunt.registerTask('bundle-js:dist', ['browserify:dist', 'exec:ng_annotate', 'uglify:app']);
     grunt.registerTask('bundle-js:dev', ['browserify:dev']);
     grunt.registerTask('bundle-css', ['exec:build_css', 'postcss', 'cssmin']);
-    grunt.registerTask('build:dev', build.concat(['bundle-js:dev']));
-    grunt.registerTask('build:dist', build.concat(['bundle-js:dist']));
-    grunt.registerTask('dev', 'concurrent:dev');
-    grunt.registerTask('build', 'build:dist');
+    grunt.registerTask('build:dev', build.concat(['alex:rename-dev', 'bundle-js:dev']));
+    grunt.registerTask('build:dist', build.concat(['bundle-js:dist', 'alex:rename-dist']));
+    grunt.registerTask('dev', ['alex:clean', 'concurrent:dev']);
+    grunt.registerTask('build', ['alex:clean', 'build:dist']);
 };
