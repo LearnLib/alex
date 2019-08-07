@@ -321,6 +321,8 @@ public class TestService {
                     }
                 }
             }
+        } else {
+            failedStep = -2L;
         }
 
         // the remaining steps after the failing step are not executed
