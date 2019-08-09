@@ -42,7 +42,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 /**
@@ -53,10 +52,6 @@ import java.util.List;
 public class ProjectResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    /** Context information about the URI. */
-    @Context
-    private UriInfo uri;
 
     /** The {@link ProjectDAO} to use. */
     @Inject

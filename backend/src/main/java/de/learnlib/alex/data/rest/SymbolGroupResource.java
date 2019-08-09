@@ -41,7 +41,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 /**
@@ -52,10 +51,6 @@ import java.util.List;
 public class SymbolGroupResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    /** Context information about the URI. */
-    @Context
-    private UriInfo uri;
 
     /** The SymbolGroupDAO to use. */
     @Inject

@@ -44,7 +44,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
-import javax.ws.rs.core.UriInfo;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -59,10 +58,6 @@ import java.util.Set;
 public class SymbolResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
-    /** Context information about the URI. */
-    @Context
-    private UriInfo uri;
 
     /** The {@link SymbolDAO} to use. */
     @Inject

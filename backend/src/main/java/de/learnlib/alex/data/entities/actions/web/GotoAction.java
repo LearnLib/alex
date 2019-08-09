@@ -31,7 +31,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * Action to navigate to a new URL.
