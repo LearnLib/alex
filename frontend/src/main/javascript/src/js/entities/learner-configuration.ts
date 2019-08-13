@@ -17,7 +17,6 @@
 import {webBrowser} from '../constants';
 import {DriverConfigService} from '../services/driver-config.service';
 import {RandomEqOracle} from './eq-oracles/random-eq-oracle';
-import {AlphabetSymbol} from './alphabet-symbol';
 import {ParametrizedSymbol} from './parametrized-symbol';
 import {ProjectUrl} from './project';
 
