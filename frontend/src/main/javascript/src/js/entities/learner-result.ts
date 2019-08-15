@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {ParametrizedSymbol} from './parametrized-symbol';
-import {ProjectUrl} from './project';
+import { ParametrizedSymbol } from './parametrized-symbol';
+import { ProjectEnvironment } from './project-environment';
 
 /**
  * The model for a learner result.
@@ -65,7 +65,7 @@ export class LearnResult {
   public comment: string;
 
   /** The list of URLs. */
-  public urls: ProjectUrl[];
+  public environments: ProjectEnvironment[];
 
   /** If membership queries should be cached. */
   public useMQCache: boolean;
@@ -92,7 +92,7 @@ export class LearnResult {
     this.error = obj.error;
     this.errorText = obj.errorText;
     this.comment = obj.comment;
-    this.urls = obj.urls || [];
+    this.environments = obj.environments || [];
     this.useMQCache = obj.useMQCache;
     this.maxAmountOfStepsToLearn = obj.maxAmountOfStepsToLearn == null ? -1 : obj.maxAmountOfStepsToLearn;
 

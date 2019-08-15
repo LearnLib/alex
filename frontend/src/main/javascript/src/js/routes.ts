@@ -169,6 +169,16 @@ export function config($stateProvider, $urlRouterProvider) {
       data: {title: 'Counters'}
     })
 
+    // project environments
+    .state('environments', {
+      parent: 'project',
+      url: '/environments',
+      views: {
+        '@': {template: '<project-environments-view></project-environments-view>'}
+      },
+      data: {title: 'Environments'}
+    })
+
     // lts formulas
     .state('ltsFormulas', {
       parent: 'project',

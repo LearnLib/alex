@@ -60,27 +60,15 @@ public class ProjectRepositoryIT extends AbstractRepositoryIT {
 
     @Test(expected = DataIntegrityViolationException.class)
     public void shouldFailToSaveAProjectWithoutAnUser() {
-        ProjectUrl url = new ProjectUrl();
-        url.setUrl("http://localhost");
-        url.setDefault(true);
-
         Project project = new Project();
         project.setName("Test Project");
-        project.getUrls().add(url);
-
         projectRepository.save(project); // should fail
     }
 
     @Test(expected = TransactionSystemException.class)
     public void shouldFailToSaveAProjectWithoutAName() {
-        ProjectUrl url = new ProjectUrl();
-        url.setUrl("http://localhost");
-        url.setDefault(true);
-
         Project project = new Project();
         project.setUser(user);
-        project.getUrls().add(url);
-
         projectRepository.save(project); // should fail
     }
 

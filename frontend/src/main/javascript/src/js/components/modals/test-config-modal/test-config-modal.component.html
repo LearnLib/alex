@@ -32,9 +32,18 @@
       <br>
 
       <p class="text-muted">
-        Specify which URL should be used for testing.
+        Select an environment that is used for testing.
       </p>
-      <project-url-list project="vm.project" list-model="vm.selectedUrls" multiple="false"></project-url-list>
+
+      <div class="list-group">
+        <div class="list-group-item"
+             ng-repeat="env in vm.project.environments"
+             ng-class="{'active': env.id === vm.selectedEnvironment.id}"
+             ng-click="vm.selectedEnvironment = env"
+        >
+          {{env.name}}
+        </div>
+      </div>
     </uib-tab>
   </uib-tabset>
 

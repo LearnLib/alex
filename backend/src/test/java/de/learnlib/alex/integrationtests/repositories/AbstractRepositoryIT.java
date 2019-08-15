@@ -21,6 +21,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ProjectRepository;
@@ -69,15 +70,20 @@ public abstract class AbstractRepositoryIT {
     }
 
     Project createProject(User user, String name) {
-        ProjectUrl url = new ProjectUrl();
-        url.setUrl("http://localhost");
-        url.setDefault(true);
+        final ProjectEnvironment env = new ProjectEnvironment();
+        env.setName("Testing");
+        env.setDefault(true);
 
-        Project project = new Project();
+        final ProjectUrl url = new ProjectUrl();
+        url.setUrl("http://localhost");
+        url.setEnvironment(env);
+        env.getUrls().add(url);
+
+        final Project project = new Project();
         project.setUser(user);
         project.setName(name);
-        project.getUrls().add(url);
-        url.setProject(project);
+        project.getEnvironments().add(env);
+        env.setProject(project);
 
         SymbolGroup defaultGroup = new SymbolGroup();
         defaultGroup.setProject(project);

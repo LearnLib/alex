@@ -101,7 +101,7 @@ class LearnerViewComponentComponent {
         stepNo: this.stepNo,
         symbolsToAdd: [],
         project: this.project.id,
-        urls: this.finalResult.urls,
+        environments: this.finalResult.environments,
       };
     } else {
       this.poll();
@@ -150,7 +150,7 @@ class LearnerViewComponentComponent {
                   stepNo: lastStep.stepNo,
                   symbolsToAdd: [],
                   project: this.project.id,
-                  urls: this.finalResult.urls
+                  environments: this.finalResult.environments
                 };
               }
 

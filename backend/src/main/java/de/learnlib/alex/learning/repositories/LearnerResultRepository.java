@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.learning.repositories;
 
-import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -79,17 +78,6 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
     @SuppressWarnings("checkstyle:methodname")
     @Query("SELECT MAX(l.testNo) FROM LearnerResult l WHERE l.project.id = ?1")
     Long findHighestTestNo(Long projectId);
-
-    /**
-     * Get all learner results that contain specific project URLs.
-     *
-     * @param urls
-     *         The URLs the learner result should contain.
-     * @return The learner results.
-     */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
-    List<LearnerResult> findAllByUrlsIn(List<ProjectUrl> urls);
 
     /**
      * Get the latest learner result.

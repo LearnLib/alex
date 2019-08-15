@@ -18,6 +18,7 @@ package de.learnlib.alex.data.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
+import de.learnlib.alex.data.entities.CreateProjectForm;
 import de.learnlib.alex.data.entities.Project;
 import org.apache.shiro.authz.UnauthorizedException;
 
@@ -77,7 +78,7 @@ public interface ProjectDAO {
      * @throws ValidationException
      *         If the Project was not valid.
      */
-    Project create(User user, Project project) throws ValidationException;
+    Project create(User user, CreateProjectForm project) throws ValidationException;
 
     /**
      * Get a list of all the projects.

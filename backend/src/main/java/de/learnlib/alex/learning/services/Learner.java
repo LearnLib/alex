@@ -23,8 +23,9 @@ import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.ProjectUrl;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
@@ -112,6 +113,9 @@ public class Learner {
     @Inject
     private TestDAO testDAO;
 
+    @Inject
+    private ProjectEnvironmentRepository environmentRepository;
+
     /** The last thread of an user, if one exists. */
     private final Map<Long, AbstractLearnerThread> userThreads;
 
@@ -175,7 +179,7 @@ public class Learner {
         }
 
         final LearnerResult result = createLearnerResult(user, project, configuration);
-        configuration.setUrls(projectUrlRepository.findAllById(configuration.getUrlIds()));
+        configuration.setEnvironments(environmentRepository.findAllById(configuration.getEnvironmentIds()));
 
         final PreparedContextHandler contextHandler = contextHandlerFactory
                 .createPreparedContextHandler(user, project, configuration.getDriverConfig(), result.getResetSymbol(), result.getPostSymbol());
@@ -229,9 +233,9 @@ public class Learner {
         symbols.forEach(s -> symbolMap.put(s.getId(), s));
         result.getSymbols().forEach(ps -> ps.setSymbol(symbolMap.get(ps.getSymbol().getId())));
 
-        final List<ProjectUrl> urls = projectUrlRepository.findAllById(configuration.getUrlIds());
-        result.setUrls(urls);
-        configuration.setUrls(urls);
+        final List<ProjectEnvironment> envs = environmentRepository.findAllById(configuration.getEnvironmentIds());
+        result.setEnvironments(envs);
+        configuration.setEnvironments(envs);
 
         if (result.getPostSymbol() != null) {
             final Symbol postSymbol = symbolDAO.get(user, project.getId(), result.getPostSymbol().getSymbol().getId());
@@ -294,8 +298,8 @@ public class Learner {
         learnerResult.setComment(configuration.getComment());
         learnerResult.setUseMQCache(configuration.isUseMQCache());
 
-        final List<ProjectUrl> urls = projectUrlRepository.findAllById(configuration.getUrlIds());
-        learnerResult.setUrls(urls);
+        final List<ProjectEnvironment> environments = environmentRepository.findAllById(configuration.getEnvironmentIds());
+        learnerResult.setEnvironments(environments);
 
         return learnerResult;
     }
@@ -475,7 +479,7 @@ public class Learner {
      */
     public List<ExecuteResult> readOutputs(User user, Project project, ReadOutputConfig readOutputConfig) {
         PreparedContextHandler ctxHandler = contextHandlerFactory.createPreparedContextHandler(user, project, readOutputConfig.getDriverConfig(), readOutputConfig.getSymbols().getResetSymbol(), readOutputConfig.getSymbols().getPostSymbol());
-        ConnectorManager connectors = ctxHandler.create(project.getDefaultUrl().getUrl()).createContext();
+        ConnectorManager connectors = ctxHandler.create(project.getDefaultEnvironment()).createContext();
 
         try {
             List<ExecuteResult> outputs = readOutputConfig.getSymbols().getSymbols().stream()

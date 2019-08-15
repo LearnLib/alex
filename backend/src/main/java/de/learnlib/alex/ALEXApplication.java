@@ -31,6 +31,7 @@ import de.learnlib.alex.config.entities.Settings;
 import de.learnlib.alex.config.rest.SettingsResource;
 import de.learnlib.alex.data.rest.CounterResource;
 import de.learnlib.alex.data.rest.FileResource;
+import de.learnlib.alex.data.rest.ProjectEnvironmentResource;
 import de.learnlib.alex.data.rest.ProjectResource;
 import de.learnlib.alex.data.rest.SymbolGroupResource;
 import de.learnlib.alex.data.rest.SymbolParameterResource;
@@ -121,6 +122,7 @@ public class ALEXApplication extends ResourceConfig {
         register(WebhookResource.class);
         register(TestExecutionConfigResource.class);
         register(LtsFormulaResource.class);
+        register(ProjectEnvironmentResource.class);
 
         // Exceptions
         register(NotFoundExceptionMapper.class);

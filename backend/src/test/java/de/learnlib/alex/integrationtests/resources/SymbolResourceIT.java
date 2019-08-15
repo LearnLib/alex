@@ -68,9 +68,9 @@ public class SymbolResourceIT extends AbstractResourceIT {
         jwtUser2 = userApi.login("test2@test.de", "test");
 
         final Response res1 =
-                projectApi.create("{\"name\":\"test\",\"urls\":[{\"url\":\"http://localhost:8080\"}]}", jwtUser1);
+                projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser1);
         final Response res2 =
-                projectApi.create("{\"name\":\"test\",\"urls\":[{\"url\":\"http://localhost:8080\"}]}", jwtUser2);
+                projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser2);
 
         projectId1 = JsonPath.read(res1.readEntity(String.class), "id");
         projectId2 = JsonPath.read(res2.readEntity(String.class), "id");

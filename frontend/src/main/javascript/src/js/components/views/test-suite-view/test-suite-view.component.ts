@@ -115,7 +115,7 @@ export const testSuiteViewComponent = {
 
       this.testConfig = {
         tests: [],
-        url: this.project.getDefaultUrl(),
+        environment: this.project.getDefaultEnvironment(),
         driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
         createReport: true
       };

@@ -102,13 +102,19 @@ class SidebarComponent {
             sref: () => `project({projectId: ${this.project.id}})`
           },
           {
+            title: 'Environments',
+            icon: 'fa-cloud',
+            active: () => this.isState('environments'),
+            display: () => this.project,
+            sref: () => `environments({projectId: ${this.project.id}})`
+          },
+          {
             title: 'Files',
             icon: 'fa-file',
             active: () => this.isState('files'),
             display: () => this.project,
             sref: () => `files({projectId: ${this.project.id}})`
           },
-
           {
             title: 'Close',
             icon: 'fa-sign-out-alt',

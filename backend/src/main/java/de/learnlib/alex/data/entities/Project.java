@@ -37,7 +37,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,7 +58,7 @@ public class Project implements Serializable {
     private static final long serialVersionUID = -6760395646972200067L;
 
     /** The maximum length for the project description. */
-    private static final int MAX_DESCRIPTION_LENGTH = 250;
+    public static final int MAX_DESCRIPTION_LENGTH = 250;
 
     /**
      * The project ID.
@@ -86,17 +85,6 @@ public class Project implements Serializable {
     private String description;
 
     /**
-     * The URLs where instances of the target system a accessible.
-     */
-    @OneToMany(
-            mappedBy = "project",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true
-    )
-    @NotNull
-    private List<ProjectUrl> urls;
-
-    /**
      * The list of groups in the project.
      */
     @OneToMany(
@@ -105,6 +93,12 @@ public class Project implements Serializable {
     )
     @JsonIgnore
     private Set<SymbolGroup> groups;
+
+    @OneToMany(
+            mappedBy = "project",
+            cascade = {CascadeType.REMOVE}
+    )
+    private List<ProjectEnvironment> environments;
 
     /**
      * The list of test reports in the project.
@@ -177,8 +171,8 @@ public class Project implements Serializable {
         this.tests = new HashSet<>();
         this.testReports = new HashSet<>();
         this.testExecutionConfigs = new ArrayList<>();
-        this.urls = new ArrayList<>();
         this.ltsFormulas = new ArrayList<>();
+        this.environments = new ArrayList<>();
     }
 
     /**
@@ -313,6 +307,14 @@ public class Project implements Serializable {
         this.symbols = symbols;
     }
 
+    public List<ProjectEnvironment> getEnvironments() {
+        return environments;
+    }
+
+    public void setEnvironments(List<ProjectEnvironment> environments) {
+        this.environments = environments;
+    }
+
     /**
      * Add a Symbol to the Project and set the Project in the Symbol.
      * This only establishes the bidirectional relation does nothing else,
@@ -369,29 +371,21 @@ public class Project implements Serializable {
         this.ltsFormulas = ltsFormulas;
     }
 
-    public List<ProjectUrl> getUrls() {
-        return urls;
-    }
-
-    public void setUrls(List<ProjectUrl> urls) {
-        this.urls = urls;
-    }
-
-    @JsonIgnore
-    @Transient
-    public ProjectUrl getDefaultUrl() {
-        return this.urls.stream()
-                .filter(ProjectUrl::isDefault)
-                .findFirst()
-                .orElse(null);
-    }
-
     public List<TestExecutionConfig> getTestExecutionConfigs() {
         return testExecutionConfigs;
     }
 
     public void setTestExecutionConfigs(List<TestExecutionConfig> testExecutionConfigs) {
         this.testExecutionConfigs = testExecutionConfigs;
+    }
+
+    @Transient
+    @JsonIgnore
+    public ProjectEnvironment getDefaultEnvironment() {
+        return this.environments.stream()
+                .filter(ProjectEnvironment::isDefault)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

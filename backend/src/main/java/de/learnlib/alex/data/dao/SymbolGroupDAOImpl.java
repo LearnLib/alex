@@ -416,7 +416,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
         Hibernate.initialize(group.getGroups());
-        Hibernate.initialize(group.getProject().getUrls());
+        Hibernate.initialize(group.getProject().getEnvironments());
 
         if (fieldsToLoad.contains(EmbeddableFields.COMPLETE_SYMBOLS)) {
             group.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);

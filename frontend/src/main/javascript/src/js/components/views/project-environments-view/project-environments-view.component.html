@@ -1,0 +1,76 @@
+<div class="view">
+  <view-header title="Environments"></view-header>
+
+  <action-bar>
+    <div class="d-flex flex-row align-items-center">
+      <div class="w-100 ml-3">
+
+        <div class="btn-group btn-group-sm" uib-dropdown>
+          <button class="btn btn-primary btn-dropdown" uib-dropdown-toggle>
+            Create
+          </button>
+          <div uib-dropdown-menu class="dropdown-menu" role="menu">
+            <div class="dropdown-item cursor-pointer" ng-click="vm.createEnvironment()">Environment</div>
+            <div class="dropdown-item cursor-pointer" ng-click="vm.createUrl()">URL</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <div class="mb-3" ng-repeat="env in vm.environments">
+        <div class="list-group environment-list">
+          <div class="list-group-item d-flex flex-row align-items-center" style="background: #f2f2f2">
+            <div class="w-100 mr-3">
+              <strong>{{env.name}}</strong>
+            </div>
+            <div class="flex-shrink-0">
+              <div class="btn-group btn-group-sm actions">
+                <button class="btn btn-outline-secondary" ng-click="vm.editEnvironment(env)" uib-tooltip="Edit" tooltip-placement="top">
+                  <i class="fas fa-fw fa-edit"></i>
+                </button>
+                <button class="btn btn-outline-secondary" ng-click="vm.deleteEnvironment(env)" uib-tooltip="Delete" tooltip-placement="top">
+                  <i class="fas fa-fw fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            <div class="ml-3">
+              <span
+                  class="badge cursor-pointer"
+                  ng-class="{'badge-secondary': !env.default, 'badge-primary': env.default}"
+                  ng-click="vm.makeEnvironmentDefault(env)"
+              >
+                Default
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="pl-3">
+          <div class="list-group project-url-list">
+            <div class="list-group-item d-flex flex-row align-items-center" ng-repeat="url in env.urls">
+              <div class="w-100 mr-3">
+                <span class="badge badge-secondary mr-3">{{url.name}}</span> {{url.url}}
+              </div>
+              <div class="flex-shrink-0">
+                <div class="btn-group btn-group-sm actions">
+                  <button class="btn btn-outline-secondary" ng-click="vm.editUrl(url)" uib-tooltip="Edit" tooltip-placement="top">
+                    <i class="fas fa-fw fa-edit"></i>
+                  </button>
+                  <button class="btn btn-outline-secondary" ng-click="vm.deleteUrl(url)" uib-tooltip="Delete" tooltip-placement="top">
+                    <i class="fas fa-fw fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

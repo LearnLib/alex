@@ -15,7 +15,7 @@
  */
 
 import {apiUrl} from '../../../../environments';
-import {Project} from '../../entities/project';
+import { CreateProjectForm, Project } from '../../entities/project';
 import {IHttpService, IPromise} from 'angular';
 
 /**
@@ -56,7 +56,7 @@ export class ProjectResource {
    *
    * @param project The project to create.
    */
-  create(project: Project): IPromise<any> {
+  create(project: CreateProjectForm): IPromise<any> {
     return this.$http.post(`${apiUrl}/projects`, project)
       .then(response => new Project(response.data));
   }

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-export interface ProjectUrl {
-  id?: number,
-  name?: string,
-  url: string,
-  default: boolean
+import { ProjectEnvironment } from './project-environment';
+
+export interface CreateProjectForm {
+  name?: string;
+  description?: string;
+  url?: string;
 }
 
 /**
@@ -30,7 +31,7 @@ export class Project {
   public name: string;
 
   /** The registered URLs of the project. */
-  public urls: ProjectUrl[];
+  public environments: ProjectEnvironment[];
 
   /** The description of the project. */
   public description: string;
@@ -48,13 +49,18 @@ export class Project {
    */
   constructor(obj: any = {}) {
     this.name = obj.name || null;
-    this.urls = obj.urls || [];
     this.description = obj.description || null;
     this.id = obj.id;
     this.user = obj.user;
+
+    if (obj.environments != null && obj.environments.length > 0) {
+      this.environments = obj.environments.map(o => ProjectEnvironment.fromData(o))
+    } else {
+      this.environments = [];
+    }
   }
 
-  getDefaultUrl(): ProjectUrl {
-    return this.urls.find(url => url.default);
+  getDefaultEnvironment(): ProjectEnvironment {
+    return this.environments.find(env => env.default);
   }
 }

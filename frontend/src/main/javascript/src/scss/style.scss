@@ -658,3 +658,15 @@ learn-resume-settings-widget {
 .chart-legend {
   display: none;
 }
+
+
+
+.environment-list, .project-url-list {
+  .actions {
+    visibility: hidden;
+  }
+
+  &:hover .actions {
+    visibility: visible;
+  }
+}

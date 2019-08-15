@@ -625,7 +625,6 @@ public class SymbolDAOImplTest {
 
         Project project = new Project();
         project.setId(PROJECT_ID);
-        project.getUrls().add(new ProjectUrl());
 
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);

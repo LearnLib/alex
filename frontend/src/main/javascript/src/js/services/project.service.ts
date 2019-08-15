@@ -15,7 +15,7 @@
  */
 
 import * as remove from 'lodash/remove';
-import {Project} from '../entities/project';
+import { CreateProjectForm, Project } from '../entities/project';
 import {LearnerResource} from './resources/learner-resource.service';
 import {ToastService} from './toast.service';
 import {ProjectResource} from './resources/project-resource.service';
@@ -96,7 +96,7 @@ export class ProjectService {
    *
    * @param project The project to create.
    */
-  create(project: Project): IPromise<any> {
+  create(project: CreateProjectForm): IPromise<any> {
     return this.projectResource.create(project)
       .then(createdProject => {
         this.store.projects.push(createdProject);

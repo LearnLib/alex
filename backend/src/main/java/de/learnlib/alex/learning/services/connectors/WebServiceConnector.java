@@ -16,6 +16,8 @@
 
 package de.learnlib.alex.learning.services.connectors;
 
+import de.learnlib.alex.data.entities.ProjectEnvironment;
+import de.learnlib.alex.learning.services.BaseUrlManager;
 import org.glassfish.jersey.client.ClientProperties;
 
 import javax.ws.rs.client.Client;
@@ -27,8 +29,6 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,9 +36,6 @@ import java.util.Set;
  * A Wrapper around a @{link WebTarget}.
  */
 public class WebServiceConnector implements Connector {
-
-    /** The target behind the connector. */
-    private WebTarget target;
 
     /** Internal field to determine if the target called at least once (-> other fields have a value). */
     private boolean init;
@@ -58,15 +55,14 @@ public class WebServiceConnector implements Connector {
     /** Client for following redirects. */
     private Client client;
 
+    private BaseUrlManager baseUrlManager;
+
     /**
      * Constructor which sets the WebTarget to use.
-     *
-     * @param baseUrl
-     *         The base url used by the connector. All other paths will treated as suffix to this.
      */
-    public WebServiceConnector(String baseUrl) {
-        this.target = ClientBuilder.newClient().property(ClientProperties.FOLLOW_REDIRECTS, false).target(baseUrl);
+    public WebServiceConnector(ProjectEnvironment environment) {
         this.client = ClientBuilder.newClient().property(ClientProperties.FOLLOW_REDIRECTS, false);
+        this.baseUrlManager = new BaseUrlManager(environment);
     }
 
     @Override
@@ -232,7 +228,7 @@ public class WebServiceConnector implements Connector {
      *         The url (based on the base url) to reset the SUL.
      */
     public void reset(String resetUrl) {
-        target.path(resetUrl).request().get();
+        client.target("").path(resetUrl).request().get();
         this.init = false;
     }
 
@@ -284,13 +280,7 @@ public class WebServiceConnector implements Connector {
             Set<Cookie> requestCookies, int timeout) {
         final String[] splitPath = path.split("\\?");
 
-        WebTarget tmpTarget;
-        try {
-            new URL(path);
-            tmpTarget = client.target(splitPath[0]);
-        } catch (MalformedURLException e) {
-            tmpTarget = target.path(splitPath[0]);
-        }
+        WebTarget tmpTarget = client.target(baseUrlManager.getAbsoluteUrl("Base", path)).path(splitPath[0]);
 
         if (splitPath.length > 1) {
             for (final String queryParam : splitPath[1].split("&")) {

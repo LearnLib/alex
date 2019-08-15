@@ -18,7 +18,7 @@ package de.learnlib.alex.learning.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.learnlib.alex.data.entities.ProjectUrl;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 
@@ -46,7 +46,7 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
 
     /** The ids of the URLs to use for learning. */
     @NotEmpty
-    protected List<ProjectUrl> urls;
+    protected List<ProjectEnvironment> environments;
 
     /** The type of EQ oracle to find a counter example. */
     @NotNull
@@ -89,7 +89,7 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
     public AbstractLearnerConfiguration() {
         this.eqOracle = new MealyRandomWordsEQOracleProxy();
         this.maxAmountOfStepsToLearn = -1;
-        this.urls = new ArrayList<>();
+        this.environments = new ArrayList<>();
     }
 
     public Long getUserId() {
@@ -124,29 +124,29 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
         this.maxAmountOfStepsToLearn = maxAmountOfStepsToLearn;
     }
 
-    public List<ProjectUrl> getUrls() {
-        return urls;
+    public List<ProjectEnvironment> getEnvironments() {
+        return environments;
     }
 
-    public void setUrls(List<ProjectUrl> urls) {
-        this.urls = urls;
+    public void setEnvironments(List<ProjectEnvironment> environments) {
+        this.environments = environments;
     }
 
     @Transient
     @JsonIgnore
-    public List<Long> getUrlIds() {
-        return urls.stream()
-                .map(ProjectUrl::getId)
+    public List<Long> getEnvironmentIds() {
+        return environments.stream()
+                .map(ProjectEnvironment::getId)
                 .collect(Collectors.toList());
     }
 
-    @JsonProperty("urls")
-    public void setUrlIds(List<Long> urlIds) {
-        this.urls = urlIds.stream()
+    @JsonProperty("environments")
+    public void setEnvironmentIds(List<Long> environmentIds) {
+        this.environments = environmentIds.stream()
                 .map(id -> {
-                    final ProjectUrl url = new ProjectUrl();
-                    url.setId(id);
-                    return url;
+                    final ProjectEnvironment env = new ProjectEnvironment();
+                    env.setId(id);
+                    return env;
                 })
                 .collect(Collectors.toList());
     }

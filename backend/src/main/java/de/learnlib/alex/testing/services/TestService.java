@@ -24,10 +24,11 @@ import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.ProjectUrl;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolStep;
+import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
@@ -86,6 +87,9 @@ public class TestService {
     /** The {@link ProjectDAO} to use. */
     private final ProjectDAO projectDAO;
 
+    /** The {@link ProjectUrlRepository} to use. */
+    private final ProjectEnvironmentRepository environmentRepository;
+
     /**
      * Constructor.
      *
@@ -105,7 +109,7 @@ public class TestService {
     @Inject
     public TestService(PreparedConnectorContextHandlerFactory contextHandlerFactory, WebhookService webhookService,
                        TestDAO testDAO, TestReportDAO testReportDAO, ProjectUrlRepository projectUrlRepository,
-                       ProjectDAO projectDAO) {
+                       ProjectDAO projectDAO, ProjectEnvironmentRepository environmentRepository) {
         this.contextHandlerFactory = contextHandlerFactory;
         this.webhookService = webhookService;
         this.testDAO = testDAO;
@@ -113,6 +117,7 @@ public class TestService {
         this.testingThreads = new HashMap<>();
         this.projectUrlRepository = projectUrlRepository;
         this.projectDAO = projectDAO;
+        this.environmentRepository = environmentRepository;
     }
 
     /**
@@ -287,11 +292,11 @@ public class TestService {
         });
         final ParameterizedSymbol dummyPSymbol = new ParameterizedSymbol(dummySymbol);
 
-        final ProjectUrl projectUrl = projectUrlRepository.findById(testConfig.getUrlId()).orElse(null);
+        final ProjectEnvironment environment = environmentRepository.findById(testConfig.getEnvironmentId()).orElse(null);
 
         final ConnectorContextHandler ctxHandler = contextHandlerFactory
                 .createPreparedContextHandler(user, testCase.getProject(), testConfig.getDriverConfig(), dummyPSymbol, null)
-                .create(projectUrl.getUrl());
+                .create(environment);
 
         final long startTime = System.currentTimeMillis();
         final ConnectorManager connectors = ctxHandler.createContext();

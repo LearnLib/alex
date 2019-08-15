@@ -516,7 +516,7 @@ public class TestDAOImpl implements TestDAO {
 
     private void loadLazyRelations(Test test) {
         Hibernate.initialize(test.getProject());
-        Hibernate.initialize(test.getProject().getUrls());
+        Hibernate.initialize(test.getProject().getEnvironments());
 
         if (test instanceof TestSuite) {
             TestSuite testSuite = (TestSuite) test;

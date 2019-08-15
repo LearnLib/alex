@@ -18,6 +18,7 @@ package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.common.utils.CSSUtils;
 import de.learnlib.alex.common.utils.LoggerMarkers;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.data.entities.actions.Credentials;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
@@ -30,8 +31,6 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -59,14 +58,9 @@ public class WebSiteConnector implements Connector {
 
     /**
      * Constructor.
-     *
-     * @param baseUrl
-     *         The new base url to use for further request. All request will be based on this!
-     * @param driverConfig
-     *         The driver config to use for further request.
      */
-    public WebSiteConnector(String baseUrl, AbstractWebDriverConfig driverConfig) {
-        this.baseUrl = new BaseUrlManager(baseUrl);
+    public WebSiteConnector(ProjectEnvironment environment, AbstractWebDriverConfig driverConfig) {
+        this.baseUrl = new BaseUrlManager(environment);
         this.driverConfig = driverConfig;
     }
 
@@ -128,13 +122,7 @@ public class WebSiteConnector implements Connector {
             this.driver = driverConfig.createDriver();
         }
 
-        String url;
-        try {
-            new URL(path);
-            url = BaseUrlManager.getUrlWithCredentials(path, credentials);
-        } catch (MalformedURLException e) {
-            url = baseUrl.getAbsoluteUrl(path, credentials);
-        }
+        final String url = baseUrl.getAbsoluteUrl("Base", path, credentials);
 
         int numRetries = 0;
         while (numRetries < MAX_RETRIES) {

@@ -3,6 +3,11 @@
     <project-form-groups project="vm.project" form="vm.form"></project-form-groups>
 
     <div class="form-group">
+        <label>URL*</label>
+        <input required type="url" class="form-control" ng-model="vm.project.url">
+    </div>
+
+    <div class="form-group">
         <button type="submit"
                 class="btn btn-sm btn-primary">
             Create Project

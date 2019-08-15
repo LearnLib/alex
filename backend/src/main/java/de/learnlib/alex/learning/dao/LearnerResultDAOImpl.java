@@ -356,7 +356,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
                 SymbolDAOImpl.loadLazyRelations(s.getSymbol());
             });
 
-            Hibernate.initialize(r.getUrls());
+            Hibernate.initialize(r.getEnvironments());
             Hibernate.initialize(r.getDriverConfig());
 
             if (includeSteps) {

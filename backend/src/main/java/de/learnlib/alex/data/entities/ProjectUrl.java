@@ -24,9 +24,9 @@ public class ProjectUrl {
 
     /** The project the URL belongs to. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "projectId")
+    @JoinColumn(name = "environment_id")
     @JsonIgnore
-    private Project project;
+    private ProjectEnvironment environment;
 
     /** An optional name for the URL. */
     private String name;
@@ -35,9 +35,6 @@ public class ProjectUrl {
     @NotBlank
     @Pattern(regexp = "^https?://.+?")
     private String url;
-
-    /** If the URL should be used by default. */
-    private boolean defaultUrl;
 
     public Long getId() {
         return id;
@@ -63,30 +60,23 @@ public class ProjectUrl {
         this.url = url;
     }
 
-    public boolean isDefault() {
-        return defaultUrl;
+    public ProjectEnvironment getEnvironment() {
+        return environment;
     }
 
-    public void setDefault(boolean isDefault) {
-        this.defaultUrl = isDefault;
+    public void setEnvironment(ProjectEnvironment environment) {
+        this.environment = environment;
     }
 
-    public Project getProject() {
-        return project;
+    @JsonProperty("environment")
+    public Long getEnvironmentId() {
+        return environment.getId();
     }
 
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
-    @JsonProperty("project")
-    public Long getProjectId() {
-        return project == null ? null : project.getId();
-    }
-
-    @JsonProperty("project")
-    public void setProjectId(Long projectId) {
-        this.project = new Project(projectId);
+    @JsonProperty("environment")
+    public void setEnvironmentId(Long environmentId) {
+        this.environment = new ProjectEnvironment();
+        this.environment.setId(environmentId);
     }
 
     @Override
@@ -107,10 +97,8 @@ public class ProjectUrl {
     public String toString() {
         return "ProjectUrl{"
                 + "id=" + id
-                + ", project=" + project.getId()
                 + ", name='" + name + '\''
                 + ", url='" + url + '\''
-                + ", defaultUrl=" + defaultUrl
                 + '}';
     }
 }

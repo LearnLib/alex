@@ -99,7 +99,7 @@ export const testCaseViewComponent = {
 
       this.testConfig = {
         tests: [],
-        url: this.project.getDefaultUrl(),
+        environment: this.project.getDefaultEnvironment(),
         driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
         createReport: true,
       };
@@ -169,7 +169,7 @@ export const testCaseViewComponent = {
 
       const config = JSON.parse(JSON.stringify(this.testConfig));
       config.tests = [this.testCase.id];
-      config.url = config.url.id;
+      config.environment = config.environment.id;
 
       this.result = null;
       this.active = true;

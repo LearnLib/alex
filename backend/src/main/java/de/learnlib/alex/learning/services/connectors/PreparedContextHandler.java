@@ -23,6 +23,7 @@ import de.learnlib.alex.data.dao.FileDAO;
 import de.learnlib.alex.data.entities.Counter;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class PreparedContextHandler {
         this.postSymbol = postSymbol;
     }
 
-    public ConnectorContextHandler create(String url) {
+    public ConnectorContextHandler create(ProjectEnvironment environment) {
         final List<Counter> counters = new ArrayList<>();
         try {
             counters.addAll(counterDAO.getAll(user, project.getId()));
@@ -62,8 +63,8 @@ public class PreparedContextHandler {
         }
 
         final ConnectorManager connectors = new ConnectorManager();
-        connectors.addConnector(new WebSiteConnector(url, driverConfig));
-        connectors.addConnector(new WebServiceConnector(url));
+        connectors.addConnector(new WebSiteConnector(environment, driverConfig));
+        connectors.addConnector(new WebServiceConnector(environment));
         connectors.addConnector(new CounterStoreConnector(counterDAO, user, project, counters));
         connectors.addConnector(new VariableStoreConnector());
         connectors.addConnector(new FileStoreConnector(fileDAO, user));

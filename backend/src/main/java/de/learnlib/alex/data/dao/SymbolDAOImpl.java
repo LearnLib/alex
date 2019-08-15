@@ -669,7 +669,7 @@ public class SymbolDAOImpl implements SymbolDAO {
      */
     public static void loadLazyRelations(Symbol symbol) {
         Hibernate.initialize(symbol.getProject());
-        Hibernate.initialize(symbol.getProject().getUrls());
+        Hibernate.initialize(symbol.getProject().getEnvironments());
         Hibernate.initialize(symbol.getGroup());
         Hibernate.initialize(symbol.getInputs());
         Hibernate.initialize(symbol.getOutputs());

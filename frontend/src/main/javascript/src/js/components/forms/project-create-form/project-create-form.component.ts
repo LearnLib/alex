@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Project} from '../../../entities/project';
+import { CreateProjectForm, Project } from '../../../entities/project';
 import {ProjectService} from '../../../services/project.service';
 import {ToastService} from '../../../services/toast.service';
 import {IFormController} from 'angular';
@@ -25,7 +25,7 @@ import {IFormController} from 'angular';
 class ProjectCreateFormComponent {
 
   /** The project model that is used for the form. */
-  public project: Project;
+  public project: CreateProjectForm;
 
   public form: IFormController;
 
@@ -38,22 +38,17 @@ class ProjectCreateFormComponent {
   /* @ngInject */
   constructor(private projectService: ProjectService,
               private toastService: ToastService) {
-    this.project = new Project();
+    this.project = {url: 'http://'};
   }
 
   /**
    * Creates a new project.
    */
   createProject(): void {
-    if (this.project.urls.length === 0) {
-      this.toastService.danger('You have to specify at least one URL.');
-      return;
-    }
-
     this.projectService.create(this.project)
       .then(createdProject => {
         this.toastService.success(`Project "${createdProject.name}" created`);
-        this.project = new Project();
+        this.project = {url: 'http://'};
 
         // set the form to its original state
         this.form.$setPristine();

@@ -87,7 +87,6 @@ import {wpMethodEqOracleFormComponent} from './components/forms/eq-oracles/wp-me
 import {nodeFormGroupComponent} from './components/forms/node-form-group/node-form-group.component';
 import {projectCreateFormComponent} from './components/forms/project-create-form/project-create-form.component';
 import {projectFormGroupsComponent} from './components/forms/project-form-groups/project-form-groups.component';
-import {projectFormUrlGroupsComponent} from './components/forms/project-form-groups/project-form-url-groups/project-form-url-groups.component';
 import {symbolEditFormComponent} from './components/forms/symbol-edit-form/symbol-edit-form.component';
 import {symbolFormGroupsComponent} from './components/forms/symbol-form-groups/symbol-form-groups.component';
 import {symbolParameterFormGroupsComponent} from './components/forms/symbol-parameter-form-groups/symbol-parameter-form-groups.components';
@@ -137,7 +136,6 @@ import {webhookCreateModalComponent} from './components/modals/webhook-create-mo
 import {webhookEditModalComponent} from './components/modals/webhook-edit-modal/webhook-edit-modal.component';
 import {observationTableComponent} from './components/observation-table/observation-table.component';
 import {projectListComponent} from './components/project-list/project-list.component';
-import {projectUrlListComponent} from './components/project-url-list/project-url-list.component';
 import {searchFormComponent} from './components/search-form/search-form.component';
 import {selectableCheckboxMultipleComponent} from './components/selectable-checkbox-multiple/selectable-checkbox-multiple.component';
 import {selectableCheckboxComponent} from './components/selectable-checkbox/selectable-checkbox.component';
@@ -247,6 +245,11 @@ import {logoutViewComponent} from './components/views/logout-view/logout-view.co
 import { defaultWebdriverButtonComponent } from './components/views/admin-settings-view/default-webdriver-button/default-webdriver-button.component';
 import { dragAndDropActionFormComponent } from './components/forms/actions/web/drag-and-drop-action-form/drag-and-drop-action-form.component';
 import { dragAndDropByActionFormComponent } from './components/forms/actions/web/drag-and-drop-by-action-form/drag-and-drop-by-action-form.component';
+import { ProjectEnvironmentResourceService } from './services/resources/project-environment-resource.service';
+import { projectEnvironmentsViewComponent } from './components/views/project-environments-view/project-environments-view.component';
+import { projectUrlFormGroupsComponent } from './components/forms/project-url-form-groups/project-url-form-groups.component';
+import { projectUrlCreateModalComponent } from './components/modals/project-url-create-modal/project-url-create-modal.component';
+import { projectUrlEditModalComponent } from './components/modals/project-url-edit-modal/project-url-edit-modal.component';
 
 angular
   .module('ALEX', [
@@ -302,6 +305,7 @@ angular
   .service('testReportResource', TestReportResource)
   .service('webhookResource', WebhookResource)
   .service('ltsFormulaResource', LtsFormulaResource)
+  .service('projectEnvironmentResource', ProjectEnvironmentResourceService)
 
   // services
   .service('actionService', ActionService)
@@ -354,6 +358,8 @@ angular
   .component('symbolSelectModal', symbolSelectModalComponent)
   .component('ltsFormulaCreateModal', ltsFormulaCreateModalComponent)
   .component('ltsFormulaEditModal', ltsFormulaEditModalComponent)
+  .component('projectUrlCreateModal', projectUrlCreateModalComponent)
+  .component('projectUrlEditModal', projectUrlEditModalComponent)
 
   // view components
   .component('aboutView', aboutViewComponent)
@@ -384,12 +390,12 @@ angular
   .component('redirectView', redirectViewComponent)
   .component('ltsFormulasView', ltsFormulasViewComponent)
   .component('logoutView', logoutViewComponent)
+  .component('projectEnvironmentsView', projectEnvironmentsViewComponent)
 
   // forms components
   .component('actionForm', actionFormComponent)
   .component('projectCreateForm', projectCreateFormComponent)
   .component('projectFormGroups', projectFormGroupsComponent)
-  .component('projectFormUrlGroups', projectFormUrlGroupsComponent)
   .component('userEditForm', userEditFormComponent)
   .component('userLoginForm', userLoginFormComponent)
   .component('nodeFormGroup', nodeFormGroupComponent)
@@ -409,6 +415,7 @@ angular
   .component('testSuiteEqOracleForm', testSuiteEqOracleFormComponent)
   .component('wpMethodEqOracleForm', wpMethodEqOracleFormComponent)
   .component('ltsFormulaFormGroups', ltsFormulaFormGroupsComponent)
+  .component('projectUrlFormGroups', projectUrlFormGroupsComponent)
 
   // widgets components
   .component('widget', widgetComponent)
@@ -499,7 +506,6 @@ angular
   .component('testCaseNode', testCaseNodeComponent)
   .component('symbolParametersPanel', symbolParametersPanelComponent)
   .component('testSuiteNode', testSuiteNodeComponent)
-  .component('projectUrlList', projectUrlListComponent)
   .component('simpleSymbolGroupTree', simpleSymbolGroupTreeComponent)
   .component('simpleSymbolGroupTreeItem', simpleSymbolGroupTreeItemComponent)
   .component('symbolGroupHeader', symbolGroupHeaderComponent)

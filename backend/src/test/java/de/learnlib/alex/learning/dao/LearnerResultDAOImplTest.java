@@ -398,7 +398,6 @@ public class LearnerResultDAOImplTest {
         for (int i = 0; i < RESULTS_AMOUNT; i++) {
             LearnerResult r = new LearnerResult();
             Project project = new Project(1L);
-            project.setUrls(Collections.singletonList(new ProjectUrl()));
             Symbol s1 = new Symbol();
             s1.setId(1L);
             s1.setProject(project);

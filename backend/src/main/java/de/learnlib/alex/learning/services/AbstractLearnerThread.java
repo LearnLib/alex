@@ -158,11 +158,11 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         this.symbolMapper = new SymbolMapper(result.getSymbols());
 
         // create a sul oracle for each url
-        this.sulOracles = configuration.getUrls().stream()
-                .map(url -> new ContextAwareSulOracle(symbolMapper, preparedContextHandler.create(url.getUrl())))
+        this.sulOracles = configuration.getEnvironments().stream()
+                .map(env -> new ContextAwareSulOracle(symbolMapper, preparedContextHandler.create(env)))
                 .collect(Collectors.toList());
 
-        final int numUrls = configuration.getUrls().size();
+        final int numUrls = configuration.getEnvironments().size();
         if (numUrls > 1) {
             final DynamicParallelOracle<String, Word<String>> parallelOracle =
                     new DynamicParallelOracleBuilder<>(sulOracles)
