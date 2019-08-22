@@ -8,6 +8,7 @@
 
 * Support for Java 11
 * Add actions for drag and drop operations
+* Add action for waiting for a script
 * Update a test suite during test generation
 * Extend "switch to" action for handling windows
 

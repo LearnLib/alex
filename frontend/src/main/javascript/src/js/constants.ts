@@ -99,6 +99,7 @@ export const actionType = {
   WAIT_FOR_TITLE: 'web_waitForTitle',
   WAIT_FOR_TEXT: 'web_waitForText',
   WEB_CHECK_ATTRIBUTE_VALUE: 'web_checkNodeAttributeValue',
+  WEB_WAIT_FOR_SCRIPT: 'web_waitForScript',
 
   // rest actions
   REST_CALL: 'rest_call',

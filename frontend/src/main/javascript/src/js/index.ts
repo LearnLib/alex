@@ -74,6 +74,7 @@ import {switchToActionFormComponent} from './components/forms/actions/web/switch
 import {uploadFileActionFormComponent} from './components/forms/actions/web/upload-file-action-form/upload-file-action-form.component';
 import {waitForNodeActionFormComponent} from './components/forms/actions/web/wait-for-node-action-form/wait-for-node-action-form.component';
 import {waitForNodeAttributeActionFormComponent} from './components/forms/actions/web/wait-for-node-attribute-action-form/wait-for-node-attribute-action-form.component';
+import {waitForScriptActionFormComponent} from './components/forms/actions/web/wait-for-script-action-form/wait-for-script-action-form.component';
 import {waitForTextActionFormComponent} from './components/forms/actions/web/wait-for-text-action-form/wait-for-text-action-form.component';
 import {waitForTitleActionFormComponent} from './components/forms/actions/web/wait-for-title-action-form/wait-for-title-action-form.component';
 import {browserConfigFormComponent} from './components/forms/browser-config-form/browser-config-form.component';
@@ -451,6 +452,7 @@ angular
   .component('uploadFileActionForm', uploadFileActionFormComponent)
   .component('dragAndDropActionForm', dragAndDropActionFormComponent)
   .component('dragAndDropByActionForm', dragAndDropByActionFormComponent)
+  .component('waitForScriptActionForm', waitForScriptActionFormComponent)
 
   // rest action forms
   .component('requestActionForm', requestActionFormComponent)

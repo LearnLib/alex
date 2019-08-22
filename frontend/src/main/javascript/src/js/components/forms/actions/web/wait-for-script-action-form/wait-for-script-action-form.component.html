@@ -1,0 +1,34 @@
+<h5><strong>Wait for script</strong></h5>
+
+<p class="text-muted">
+  Wait until until a script returns <em>true</em>.
+</p>
+<hr>
+
+<div class="form-group">
+  <label>JavaScript</label>
+
+  <div ng-model="vm.action.script" ui-ace="vm.aceOptions"></div>
+</div>
+
+<div class="form-group">
+  <label>Script timeout (seconds)</label>
+  <input
+      class="form-control"
+      type="number"
+      min="0"
+      placeholder="The maximum time to wait for a result"
+      ng-model="vm.action.timeout"
+  >
+</div>
+
+<div class="form-group">
+  <label>Max. wait time (seconds)</label>
+  <input
+      class="form-control"
+      type="number"
+      min="0"
+      placeholder="The maximum time to wait for a change"
+      ng-model="vm.action.maxWaitTime"
+  >
+</div>
