@@ -47,6 +47,11 @@ export const symbolSelectModalComponent = {
       this.selectedSymbol = symbol;
     }
 
+    selectSymbolAndClose(symbol: AlphabetSymbol): void {
+      this.selectSymbol(symbol);
+      this.ok();
+    }
+
     ok(): void {
       if (this.selectedSymbol == null) {
         this.dismiss();

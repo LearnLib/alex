@@ -7,6 +7,15 @@
 
 <form ng-submit="vm.ok()">
   <div class="modal-body">
+
+    <div style="height: 31px; margin-bottom: 1rem">
+      <symbol-search-form
+          groups="vm.groups"
+          on-selected="vm.selectSymbolAndClose(symbol)"
+      >
+      </symbol-search-form>
+    </div>
+
     <div class="card mb-0">
       <div class="card-body p-2">
         <simple-symbol-group-tree
