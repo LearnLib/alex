@@ -164,24 +164,4 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
         );
         return pSymbol;
     }
-
-    /**
-     * Create a parameterized symbol from a symbol.
-     *
-     * @param symbol
-     *         The symbol to use.
-     * @return The parameterized symbol.
-     */
-    public static ParameterizedSymbol fromSymbol(Symbol symbol) {
-        final ParameterizedSymbol pSymbol = new ParameterizedSymbol();
-        pSymbol.setSymbol(symbol);
-        pSymbol.setParameterValues(
-                symbol.getInputs().stream().map(input -> {
-                    final SymbolParameterValue value = new SymbolParameterValue();
-                    value.setParameter(input);
-                    return value;
-                }).collect(Collectors.toList())
-        );
-        return pSymbol;
-    }
 }
