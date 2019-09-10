@@ -149,6 +149,7 @@ class SymbolViewComponent {
    */
   addAction(action: Action): void {
     this.symbol.steps.push({
+      _id: uniqueId(),
       type: 'action',
       errorOutput: null,
       negated: false,
@@ -173,6 +174,7 @@ class SymbolViewComponent {
       }
 
       this.symbol.steps.push({
+        _id: uniqueId(),
         type: 'symbol',
         errorOutput: null,
         negated: false,
