@@ -32,8 +32,8 @@ export const symbolUsagesModalComponent = {
     public symbol: AlphabetSymbol;
     public result: SymbolUsageResult;
 
-    constructor(private symbolResource: SymbolResource,
-                private $state: any) {
+    /* @ngInject */
+    constructor(private symbolResource: SymbolResource) {
       super();
     }
 

@@ -37,6 +37,7 @@ export const symbolSelectModalComponent = {
     public groups: SymbolGroup[] = [];
 
     /** Constructor. */
+    /* @ngInject */
     constructor(private projectService: ProjectService,
                 private symbolGroupResource: SymbolGroupResource) {
       super();
