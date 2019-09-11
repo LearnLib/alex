@@ -50,4 +50,8 @@ public interface TestCaseStepRepository extends JpaRepository<TestCaseStep, Long
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     Long countAllByPSymbol_Symbol_Id(Long symbolId);
+
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<TestCaseStep> findAllByPSymbol_Symbol_Id(Long symbolId);
 }

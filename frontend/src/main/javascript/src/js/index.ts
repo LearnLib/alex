@@ -248,6 +248,7 @@ import {logoutViewComponent} from './components/views/logout-view/logout-view.co
 import { defaultWebdriverButtonComponent } from './components/views/admin-settings-view/default-webdriver-button/default-webdriver-button.component';
 import { dragAndDropActionFormComponent } from './components/forms/actions/web/drag-and-drop-action-form/drag-and-drop-action-form.component';
 import { dragAndDropByActionFormComponent } from './components/forms/actions/web/drag-and-drop-by-action-form/drag-and-drop-by-action-form.component';
+import { symbolUsagesModalComponent } from './components/modals/symbol-usages-modal/symbol-usages-modal.component';
 
 angular
   .module('ALEX', [
@@ -355,6 +356,7 @@ angular
   .component('symbolSelectModal', symbolSelectModalComponent)
   .component('ltsFormulaCreateModal', ltsFormulaCreateModalComponent)
   .component('ltsFormulaEditModal', ltsFormulaEditModalComponent)
+  .component('symbolUsagesModal', symbolUsagesModalComponent)
 
   // view components
   .component('aboutView', aboutViewComponent)

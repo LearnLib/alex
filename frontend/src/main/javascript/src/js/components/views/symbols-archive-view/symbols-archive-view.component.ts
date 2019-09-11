@@ -98,6 +98,15 @@ class SymbolsArchiveViewComponent {
       });
   }
 
+  showUsages(symbol: AlphabetSymbol): void {
+    this.$uibModal.open({
+      component: 'symbolUsagesModal',
+      resolve: {
+        symbol: () => symbol
+      }
+    });
+  }
+
   /**
    * Edits the symbol.
    *

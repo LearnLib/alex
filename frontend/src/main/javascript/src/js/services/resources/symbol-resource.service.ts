@@ -18,6 +18,7 @@ import {apiUrl} from '../../../../environments';
 import {AlphabetSymbol} from '../../entities/alphabet-symbol';
 import {IHttpPromise, IHttpService} from 'angular';
 import {SymbolGroup} from '../../entities/symbol-group';
+import { SymbolUsageResult } from '../../entities/symbol-usage-result';
 
 /**
  * The resource that handles http requests to the API to do CRUD operations on symbols.
@@ -159,5 +160,10 @@ export class SymbolResource {
     const ids = symbols.map(s => s.id).join(',');
     const project = symbols[0].project;
     return this.$http.post(`${apiUrl}/projects/${project}/symbols/batch/${ids}/show`, {});
+  }
+
+  getUsages(projectId: number, symbolId: number) {
+    return this.$http.get(`${apiUrl}/projects/${projectId}/symbols/${symbolId}/usages`)
+      .then(res => SymbolUsageResult.fromData(res.data));
   }
 }

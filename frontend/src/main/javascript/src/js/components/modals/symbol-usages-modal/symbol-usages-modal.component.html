@@ -1,0 +1,73 @@
+<div class="modal-header">
+  <h4 class="modal-title">Usages of symbol <strong>{{vm.symbol.name}}</strong></h4>
+  <a class="btn btn-default btn-icon float-right" ng-click="vm.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div class="modal-body">
+  <div class="alert alert-info mb-0" ng-if="!vm.result.inUse">
+    The symbol is not used anywhere.
+  </div>
+
+  <div ng-if="vm.result.inUse">
+    <p>
+      <strong>In symbols</strong>
+    </p>
+    <div class="alert alert-info" ng-if="vm.result.symbols.length === 0">
+      The symbol is not used in other symbols.
+    </div>
+    <div class="list-group" ng-if="vm.result.symbols.length > 0">
+      <a
+          class="list-group-item list-group-item-action"
+          ui-sref="symbol({projectId: s.project, symbolId: s.id})"
+          ng-repeat="s in vm.result.symbols"
+          ng-click="vm.dismiss()"
+      >
+        {{s.name}}
+      </a>
+    </div>
+
+    <div class="mt-3">
+      <p>
+        <strong>In tests</strong>
+      </p>
+      <div class="alert alert-info" ng-if="vm.result.testCases.length === 0">
+        The symbol is not used in tests.
+      </div>
+      <div class="list-group" ng-if="vm.result.testCases.length > 0">
+        <a
+            class="list-group-item list-group-item-action"
+            ui-sref="test({projectId: t.project, testId: t.id})"
+            ng-repeat="t in vm.result.testCases"
+            ng-click="vm.dismiss()"
+        >
+          {{t.name}}
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <p>
+        <strong>In learner results</strong>
+      </p>
+      <div class="alert alert-info" ng-if="vm.result.learnerResults.length === 0">
+        The symbol has not been used for learning.
+      </div>
+      <div class="list-group" ng-if="vm.result.learnerResults.length > 0">
+        <a
+            ui-sref="learnerResultsCompare({testNos: [r.testNo], projectId: r.project})"
+            class="list-group-item list-group-item-action"
+            ng-repeat="r in vm.result.learnerResults"
+            ng-click="vm.dismiss()"
+        >
+          Test No <span>{{r.testNo}}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-primary btn-sm" ng-click="vm.dismiss()">Ok</button>
+</div>
