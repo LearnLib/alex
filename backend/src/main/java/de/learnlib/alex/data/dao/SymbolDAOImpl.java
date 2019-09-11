@@ -445,58 +445,59 @@ public class SymbolDAOImpl implements SymbolDAO {
         checkAccess(user, project, symbol);
 
         // make sure the name of the symbol is unique
-        final Symbol symbolWithSameName =
-                symbolRepository.findOneByProject_IdAndName(projectId, symbol.getName());
+        final Symbol symbolWithSameName = symbolRepository.findOneByProject_IdAndName(projectId, symbol.getName());
         if (symbolWithSameName != null && !symbolWithSameName.getId().equals(symbol.getId())) {
             throw new ValidationException("To update a symbol its name must be unique.");
         }
 
-        final Symbol symbolInDb = symbolRepository.findById(symbol.getId()).orElse(null);
-        symbol.setId(symbolInDb.getId());
-        symbol.setProject(project);
-        symbol.setGroup(symbolInDb.getGroup());
+        // update meta info
+        Symbol symbolInDb = symbolRepository.findById(symbol.getId()).orElse(null);
+        symbolInDb.setName(symbol.getName());
+        symbolInDb.setDescription(symbol.getDescription());
+        symbolInDb.setExpectedResult(symbol.getExpectedResult());
 
+        // update steps
         if (symbol.getSteps().isEmpty()) {
             symbolActionRepository.deleteAllBySymbol_Id(symbol.getId());
             symbolStepRepository.deleteAllBySymbol_Id(symbol.getId());
+            symbolInDb.getSteps().clear();
+            symbolStepRepository.deleteAllBySymbol_Id(symbolInDb.getId());
         } else {
-            final List<Long> actionIdsToDelete = symbol.getSteps().stream()
-                    .filter(s -> s.getId() != null)
-                    .filter(s -> s instanceof SymbolActionStep)
-                    .map(s -> ((SymbolActionStep) s).getAction().getId())
-                    .collect(Collectors.toList());
-            symbolActionRepository.deleteAllBySymbol_IdAndIdNotIn(symbol.getId(), actionIdsToDelete);
-
-            // delete all steps that have been deleted in the update
-            final List<Long> stepIdsToDelete = symbol.getSteps().stream()
+            final List<Long> idsOfStepsToKeep = symbol.getSteps().stream()
                     .filter(s -> s.getId() != null)
                     .map(SymbolStep::getId)
                     .collect(Collectors.toList());
-            symbolStepRepository.deleteAllBySymbol_IdAndIdNotIn(symbol.getId(), stepIdsToDelete);
-        }
 
-        // update references, save action and parameterized symbols
-        for (int i = 0; i < symbol.getSteps().size(); i++) {
-            final SymbolStep step = symbol.getSteps().get(i);
-            step.setPosition(i);
-            step.setSymbol(symbol);
-            if (step instanceof SymbolActionStep) {
-                final SymbolActionStep actionStep = ((SymbolActionStep) step);
-                actionStep.getAction().setSymbol(symbol);
-                symbolActionRepository.save(actionStep.getAction());
-            } else if (step instanceof SymbolPSymbolStep) {
-                final SymbolPSymbolStep symbolStep = (SymbolPSymbolStep) step;
-                symbolStep.setPSymbol(parameterizedSymbolDAO.create(symbolStep.getPSymbol()));
+            if (idsOfStepsToKeep.isEmpty()) {
+                symbolStepRepository.deleteAllBySymbol_Id(symbolInDb.getId());
+            } else {
+                symbolStepRepository.deleteAllBySymbol_IdAndIdNotIn(symbolInDb.getId(), idsOfStepsToKeep);
             }
+
+            symbolInDb.setSteps(symbol.getSteps());
+
+            // update references, save action and parameterized symbols
+            for (int i = 0; i < symbolInDb.getSteps().size(); i++) {
+                final SymbolStep step = symbolInDb.getSteps().get(i);
+                step.setPosition(i);
+                step.setSymbol(symbolInDb);
+                if (step instanceof SymbolActionStep) {
+                    final SymbolActionStep actionStep = ((SymbolActionStep) step);
+                    actionStep.getAction().setSymbol(symbolInDb);
+                    symbolActionRepository.save(actionStep.getAction());
+                } else if (step instanceof SymbolPSymbolStep) {
+                    final SymbolPSymbolStep symbolStep = (SymbolPSymbolStep) step;
+                    symbolStep.setPSymbol(parameterizedSymbolDAO.create(symbolStep.getPSymbol()));
+                }
+            }
+            symbolStepRepository.saveAll(symbolInDb.getSteps());
         }
-        symbol.setSteps(symbolStepRepository.saveAll(symbol.getSteps()));
 
-        beforeSymbolSave(symbol);
+        beforeSymbolSave(symbolInDb);
+        symbolInDb = symbolRepository.save(symbolInDb);
+        checkForCycles(symbolInDb);
 
-        final Symbol updatedSymbol = symbolRepository.save(symbol);
-        checkForCycles(updatedSymbol);
-
-        return updatedSymbol;
+        return symbolInDb;
     }
 
     @Override

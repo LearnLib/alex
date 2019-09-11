@@ -23,6 +23,8 @@ import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.persistence.Cache;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
@@ -37,7 +39,7 @@ public class SymbolPSymbolStep extends SymbolStep implements Serializable {
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** The symbol to execute. */
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     private ParameterizedSymbol pSymbol;
 
     @Override

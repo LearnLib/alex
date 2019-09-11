@@ -188,27 +188,27 @@ public class SymbolResource {
      *
      * @param projectId
      *         The ID of the project.
-     * @param id
+     * @param symbolId
      *         The ID of the symbol.
      * @param symbol
      *         The new symbol data.
      * @return On success the updated symbol (maybe enhanced with information from the DB); An error message on failure.
      */
     @PUT
-    @Path("/{id}")
+    @Path("/{symbolId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("projectId") Long projectId, @PathParam("id") Long id, Symbol symbol) {
+    public Response update(@PathParam("projectId") Long projectId, @PathParam("symbolId") Long symbolId, Symbol symbol) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, symbol, user);
+        LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, symbolId, symbol, user);
 
-        if (symbolDoesNotMatchURLParameter(symbol, projectId, id)) {
+        if (symbolDoesNotMatchURLParameter(symbol, projectId, symbolId)) {
             LOGGER.traceExit();
             return Response.status(Status.BAD_REQUEST).build();
         }
 
         symbol.setProjectId(projectId);
-        symbol.setId(id);
+        symbol.setId(symbolId);
 
         final Symbol updatedSymbol = symbolDAO.update(user, projectId, symbol);
 
