@@ -48,15 +48,17 @@ public class SymbolParameterTest {
     private static final Integer COUNTER_VALUE_PRE = 5;
     private static final Integer COUNTER_VALUE_POST = 7;
 
-    private Symbol symbol;
-    private Symbol reset;
+    private ParameterizedSymbol symbol;
+    private ParameterizedSymbol reset;
 
     private ConnectorManager connectors;
 
     @Before
     public void setUp() {
-        symbol = new Symbol();
-        symbol.setProject(new Project(PROJECT_ID));
+        symbol = new ParameterizedSymbol();
+        final Symbol s = new Symbol();
+        s.setProject(new Project(PROJECT_ID));
+        symbol.setSymbol(s);
 
         setUpReset();
 
@@ -69,33 +71,35 @@ public class SymbolParameterTest {
     }
 
     private void setUpReset() {
-        reset = new Symbol();
-        reset.setProject(new Project(PROJECT_ID));
+        reset = new ParameterizedSymbol();
+        final Symbol r = new Symbol();
+        r.setProject(new Project(PROJECT_ID));
+        reset.setSymbol(r);
 
         SetVariableAction a1 = new SetVariableAction();
-        a1.setSymbol(reset);
+        a1.setSymbol(r);
         a1.setName(VARIABLE_NAME);
         a1.setValue(VARIABLE_VALUE_PRE);
-        reset.getSteps().add(new SymbolActionStep(a1));
+        r.getSteps().add(new SymbolActionStep(a1));
 
         SetCounterAction a2 = new SetCounterAction();
-        a2.setSymbol(reset);
+        a2.setSymbol(r);
         a2.setName(COUNTER_NAME);
         a2.setValueType(SetCounterAction.ValueType.NUMBER);
         a2.setValue(String.valueOf(COUNTER_VALUE_PRE));
-        reset.getSteps().add(new SymbolActionStep(a2));
+        r.getSteps().add(new SymbolActionStep(a2));
 
         SymbolOutputParameter out1 = new SymbolOutputParameter();
-        out1.setSymbol(reset);
+        out1.setSymbol(r);
         out1.setName(VARIABLE_NAME);
         out1.setParameterType(SymbolParameter.ParameterType.STRING);
-        reset.getOutputs().add(out1);
+        r.getOutputs().add(out1);
 
         SymbolOutputParameter out2 = new SymbolOutputParameter();
-        out2.setSymbol(reset);
+        out2.setSymbol(r);
         out2.setName(COUNTER_NAME);
         out2.setParameterType(SymbolParameter.ParameterType.COUNTER);
-        reset.getOutputs().add(out2);
+        r.getOutputs().add(out2);
     }
 
     @Test
@@ -103,13 +107,13 @@ public class SymbolParameterTest {
         SymbolInputParameter inParam = new SymbolInputParameter();
         inParam.setName(COUNTER_NAME);
         inParam.setParameterType(SymbolParameter.ParameterType.COUNTER);
-        symbol.getInputs().add(inParam);
+        symbol.getSymbol().getInputs().add(inParam);
 
         IncrementCounterAction action = new IncrementCounterAction();
         action.setIncrementBy(2);
         action.setName(COUNTER_NAME);
-        action.setSymbol(symbol);
-        symbol.getSteps().add(new SymbolActionStep(action));
+        action.setSymbol(symbol.getSymbol());
+        symbol.getSymbol().getSteps().add(new SymbolActionStep(action));
 
         reset.execute(connectors);
         symbol.execute(connectors);
@@ -122,18 +126,18 @@ public class SymbolParameterTest {
         SymbolInputParameter inParam = new SymbolInputParameter();
         inParam.setName(COUNTER_NAME);
         inParam.setParameterType(SymbolParameter.ParameterType.COUNTER);
-        symbol.getInputs().add(inParam);
+        symbol.getSymbol().getInputs().add(inParam);
 
         IncrementCounterAction action = new IncrementCounterAction();
         action.setIncrementBy(2);
         action.setName(COUNTER_NAME);
-        action.setSymbol(symbol);
-        symbol.getSteps().add(new SymbolActionStep(action));
+        action.setSymbol(symbol.getSymbol());
+        symbol.getSymbol().getSteps().add(new SymbolActionStep(action));
 
         SymbolOutputParameter outParam = new SymbolOutputParameter();
         outParam.setName(COUNTER_NAME);
         outParam.setParameterType(SymbolParameter.ParameterType.COUNTER);
-        symbol.getOutputs().add(outParam);
+        symbol.getSymbol().getOutputs().add(outParam);
 
         reset.execute(connectors);
         symbol.execute(connectors);
@@ -146,13 +150,13 @@ public class SymbolParameterTest {
         SymbolInputParameter inParam = new SymbolInputParameter();
         inParam.setName(VARIABLE_NAME);
         inParam.setParameterType(SymbolParameter.ParameterType.STRING);
-        symbol.getInputs().add(inParam);
+        symbol.getSymbol().getInputs().add(inParam);
 
         SetVariableAction action = new SetVariableAction();
-        action.setSymbol(symbol);
+        action.setSymbol(symbol.getSymbol());
         action.setName(VARIABLE_NAME);
         action.setValue(VARIABLE_VALUE_POST);
-        symbol.getSteps().add(new SymbolActionStep(action));
+        symbol.getSymbol().getSteps().add(new SymbolActionStep(action));
 
         reset.execute(connectors);
         symbol.execute(connectors);
@@ -165,18 +169,18 @@ public class SymbolParameterTest {
         SymbolInputParameter inParam = new SymbolInputParameter();
         inParam.setName(VARIABLE_NAME);
         inParam.setParameterType(SymbolParameter.ParameterType.STRING);
-        symbol.getInputs().add(inParam);
+        symbol.getSymbol().getInputs().add(inParam);
 
         SymbolOutputParameter outParam = new SymbolOutputParameter();
         outParam.setName(VARIABLE_NAME);
         outParam.setParameterType(SymbolParameter.ParameterType.STRING);
-        symbol.getOutputs().add(outParam);
+        symbol.getSymbol().getOutputs().add(outParam);
 
         SetVariableAction action = new SetVariableAction();
-        action.setSymbol(symbol);
+        action.setSymbol(symbol.getSymbol());
         action.setName(VARIABLE_NAME);
         action.setValue(VARIABLE_VALUE_POST);
-        symbol.getSteps().add(new SymbolActionStep(action));
+        symbol.getSymbol().getSteps().add(new SymbolActionStep(action));
 
         reset.execute(connectors);
         symbol.execute(connectors);
@@ -189,7 +193,7 @@ public class SymbolParameterTest {
         SymbolInputParameter inParam = new SymbolInputParameter();
         inParam.setName("undefined");
         inParam.setParameterType(SymbolParameter.ParameterType.COUNTER);
-        symbol.getInputs().add(inParam);
+        symbol.getSymbol().getInputs().add(inParam);
 
         reset.execute(connectors);
         ExecuteResult result = symbol.execute(connectors);
@@ -202,7 +206,7 @@ public class SymbolParameterTest {
         SymbolInputParameter inParam = new SymbolInputParameter();
         inParam.setName("undefined");
         inParam.setParameterType(SymbolParameter.ParameterType.STRING);
-        symbol.getInputs().add(inParam);
+        symbol.getSymbol().getInputs().add(inParam);
 
         reset.execute(connectors);
         ExecuteResult result = symbol.execute(connectors);
@@ -215,7 +219,7 @@ public class SymbolParameterTest {
         SymbolOutputParameter outParam = new SymbolOutputParameter();
         outParam.setName("undefined");
         outParam.setParameterType(SymbolParameter.ParameterType.COUNTER);
-        symbol.getOutputs().add(outParam);
+        symbol.getSymbol().getOutputs().add(outParam);
 
         reset.execute(connectors);
         ExecuteResult result = symbol.execute(connectors);
@@ -228,7 +232,7 @@ public class SymbolParameterTest {
         SymbolOutputParameter outParam = new SymbolOutputParameter();
         outParam.setName("undefined");
         outParam.setParameterType(SymbolParameter.ParameterType.STRING);
-        symbol.getOutputs().add(outParam);
+        symbol.getSymbol().getOutputs().add(outParam);
 
         reset.execute(connectors);
         ExecuteResult result = symbol.execute(connectors);

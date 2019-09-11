@@ -345,32 +345,11 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     }
 
     @Override
-    public ExecuteResult execute(ConnectorManager connector) throws SULException {
+    public ExecuteResult execute(ConnectorManager connectors) throws SULException {
         LOGGER.info(LoggerMarkers.LEARNER, "Executing Symbol {} ({})...", String.valueOf(id), name);
 
         if (steps.isEmpty()) {
             return new ExecuteResult(false, "Not implemented");
-        }
-
-        final VariableStoreConnector globalVariableStore = connector.getConnector(VariableStoreConnector.class);
-        final VariableStoreConnector localVariableStore = new VariableStoreConnector();
-
-        final CounterStoreConnector globalCounterStore = connector.getConnector(CounterStoreConnector.class);
-        final CounterStoreConnector localCounterStore = globalCounterStore.copy();
-
-        try {
-            // get the input variables from the global context
-            inputs.forEach(in -> {
-                if (in.getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
-                    localVariableStore.set(in.getName(), globalVariableStore.get(in.getName()));
-                } else {
-                    localCounterStore.set(project.getId(), in.getName(), globalCounterStore.get(in.getName()));
-                }
-            });
-            connector.addConnector(localVariableStore);
-            connector.addConnector(localCounterStore);
-        } catch (IllegalStateException e) {
-            return new ExecuteResult(false, e.getMessage());
         }
 
         // assume the output is ok until proven otherwise
@@ -381,24 +360,13 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             final SymbolStep step = steps.get(i);
 
             if (!step.isDisabled()) {
-
-                // save dummy variables in the local context so that outputs of executed symbols are saved
-                if (step instanceof SymbolPSymbolStep) {
-                    ((SymbolPSymbolStep) step).getPSymbol().getSymbol().getOutputs().forEach(out -> {
-                        if (out.getParameterType().equals(SymbolParameter.ParameterType.STRING)
-                                && !localVariableStore.contains(out.getName())) {
-                            localVariableStore.set(out.getName(), "");
-                        }
-                    });
-                }
-
-                final ExecuteResult stepResult = step.execute(i, connector);
+                final ExecuteResult stepResult = step.execute(i, connectors);
 
                 if (!stepResult.isSuccess() && !step.isIgnoreFailure()) {
                     result = stepResult;
 
                     if (step.errorOutput != null && !step.errorOutput.equals("")) {
-                        result.setMessage(SearchHelper.insertVariableValues(connector, getProjectId(), step.errorOutput));
+                        result.setMessage(SearchHelper.insertVariableValues(connectors, getProjectId(), step.errorOutput));
                     } else {
                         result.setMessage(String.valueOf(i + 1));
                     }
@@ -413,31 +381,11 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         // proper values.
         if (result.isSuccess()) {
             if (successOutput != null && !successOutput.trim().equals("")) {
-                result.setMessage(SearchHelper.insertVariableValues(connector, project.getId(), successOutput));
+                result.setMessage(SearchHelper.insertVariableValues(connectors, project.getId(), successOutput));
             }
         }
 
         LOGGER.info(LoggerMarkers.LEARNER, "Executed the Symbol {} ({}) => {}.", String.valueOf(id), name, result);
-
-        // set the values of the outputs to the global context
-        if (result.isSuccess()) {
-            try {
-                globalVariableStore.merge(localVariableStore, outputs.stream()
-                        .filter(out -> out.getParameterType().equals(SymbolParameter.ParameterType.STRING))
-                        .map(SymbolParameter::getName)
-                        .collect(Collectors.toList()));
-
-                globalCounterStore.merge(localCounterStore, outputs.stream()
-                        .filter(out -> out.getParameterType().equals(SymbolParameter.ParameterType.COUNTER))
-                        .map(SymbolParameter::getName)
-                        .collect(Collectors.toList())
-                );
-            } catch (IllegalStateException e) {
-                return new ExecuteResult(false, e.getMessage());
-            }
-        }
-        connector.addConnector(globalVariableStore);
-        connector.addConnector(globalCounterStore);
 
         return result;
     }
