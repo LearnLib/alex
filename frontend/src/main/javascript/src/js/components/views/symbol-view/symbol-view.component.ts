@@ -163,10 +163,7 @@ class SymbolViewComponent {
    */
   addSymbolStep(): void {
     this.$uibModal.open({
-      component: 'symbolSelectModal',
-      resolve: {
-        groups: () => this.groups
-      }
+      component: 'symbolSelectModal'
     }).result.then(symbol => {
       if (symbol.id === this.symbol.id) {
         this.toastService.info('A symbol cannot execute itself');
@@ -299,10 +296,7 @@ class SymbolViewComponent {
 
   editSymbolStep(step: any): void {
     this.$uibModal.open({
-      component: 'symbolSelectModal',
-      resolve: {
-        groups: () => this.groups
-      }
+      component: 'symbolSelectModal'
     }).result.then(selectedSymbol => {
       if (selectedSymbol.id === this.symbol.id) {
         this.toastService.info('A symbol cannot execute itself');
