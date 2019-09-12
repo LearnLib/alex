@@ -33,6 +33,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -99,8 +100,8 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
         final CounterStoreConnector localCounterStore = counterStore.copy();
 
         // user defined values for parameters (name -> value)
-        final Map<String, String> pvMap = parameterValues.stream()
-                .collect(Collectors.toMap(pv -> pv.getParameter().getName(), SymbolParameterValue::getValue));
+        final Map<String, String> pvMap = new HashMap<>();
+        parameterValues.forEach(pv -> pvMap.put(pv.getParameter().getName(), pv.getValue()));
 
         // set values in local scope
         try {
