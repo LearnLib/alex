@@ -68,11 +68,10 @@ public class TestThread extends Thread {
     /** The {@link TestReportDAO} to use. */
     private final TestReportDAO testReportDAO;
 
+    private final TestExecutor testExecutor;
+
     /** The finished listener. */
     private final FinishedListener finishedListener;
-
-    /** The test service. */
-    private final TestService testService;
 
     /** The map where intermediate results are stored. */
     private final Map<Long, TestResult> results;
@@ -98,22 +97,20 @@ public class TestThread extends Thread {
      *         {@link #testDAO}.
      * @param testReportDAO
      *         {@link #testReportDAO}.
-     * @param testService
-     *         {@link #testService}.
      * @param finishedListener
      *         {@link #finishedListener}.
      */
     public TestThread(User user, Project project, TestExecutionConfig config,
             WebhookService webhookService, TestDAO testDAO, TestReportDAO testReportDAO,
-            TestService testService, FinishedListener finishedListener) {
+            TestExecutor testExecutor, FinishedListener finishedListener) {
         this.user = user;
         this.project = project;
         this.webhookService = webhookService;
         this.testDAO = testDAO;
         this.testReportDAO = testReportDAO;
-        this.testService = testService;
         this.finishedListener = finishedListener;
         this.results = new HashMap<>();
+        this.testExecutor = testExecutor;
         this.add(config);
     }
 
@@ -139,7 +136,7 @@ public class TestThread extends Thread {
                     webhookService.fireEvent(user, new TestEvent.ExecutionStarted(data));
                 }
 
-                testService.executeTests(user, tests, config, results);
+                testExecutor.executeTests(user, tests, config, results);
                 final TestReport report = getReport();
 
                 if (config.isCreateReport()) {
@@ -189,6 +186,10 @@ public class TestThread extends Thread {
      */
     public void abort() {
         this.aborted = true;
+    }
+
+    public TestExecutor getTestExecutor() {
+        return testExecutor;
     }
 
     /**

@@ -113,6 +113,11 @@
                                 <div class="test-list-item-content flex-grow-1">
                                     <test-tree root="test" results="vm.results"></test-tree>
                                 </div>
+                                <div class="pl-2" ng-if="vm.status != null && vm.status.currentTest != null && vm.status.currentTest.id === test.id">
+                                    <span class="badge badge-info">
+                                        <i class="fas fa-fw fa-circle-notch fa-spin"></i> In progress
+                                    </span>
+                                </div>
                                 <div style="padding-left: 6px">
                                     <div class="btn-group btn-group-xs" uib-dropdown>
                                         <button class="btn btn-icon btn-dropdown no-caret" uib-dropdown-toggle>
