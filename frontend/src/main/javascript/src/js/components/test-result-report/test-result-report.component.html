@@ -1,10 +1,13 @@
 <div class="test-result-report">
     <div ng-if="vm.report.id != null">
         <h4>
-            <i class="fas fa-fw fa-file-alt"></i> <strong>Report</strong> (<a ui-sref="testReport({projectId: vm.report.project, reportId: vm.report.id})">Details</a>)
+            <i class="fas fa-fw fa-file-alt"></i> <strong>Report</strong>
         </h4>
         <hr>
         <p>
+            <a class="btn btn-default btn-sm mr-2" ui-sref="testReport({projectId: vm.report.project, reportId: vm.report.id})">
+                Details
+            </a>
             <button class="btn btn-default btn-sm" ng-click="vm.exportReport()">
                 <i class="fas fa-fw fa-download"></i> Download
             </button>

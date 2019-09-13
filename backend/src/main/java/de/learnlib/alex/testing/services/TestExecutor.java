@@ -56,16 +56,19 @@ public class TestExecutor {
     private final ProjectUrlRepository projectUrlRepository;
 
     private Test currentTest;
+    private boolean aborted;
 
     public TestExecutor(PreparedConnectorContextHandlerFactory contextHandlerFactory,
                         ProjectUrlRepository projectUrlRepository) {
         this.contextHandlerFactory = contextHandlerFactory;
         this.projectUrlRepository = projectUrlRepository;
+        this.aborted = false;
     }
 
-    public Map<Long, TestResult> executeTests(User user, List<Test> tests, TestExecutionConfig testConfig, Map<Long, TestResult> results) {
+    public void executeTests(User user, List<Test> tests, TestExecutionConfig testConfig, Map<Long, TestResult> results) {
         for (Test test : tests) {
             currentTest = test;
+            if (aborted) break;
 
             if (test instanceof TestCase) {
                 executeTestCase(user, (TestCase) test, testConfig, results);
@@ -73,7 +76,6 @@ public class TestExecutor {
                 executeTestSuite(user, (TestSuite) test, testConfig, results);
             }
         }
-        return results;
     }
 
     /**
@@ -98,6 +100,7 @@ public class TestExecutor {
                 .collect(Collectors.toList());
 
         for (Test test : testCases) {
+            if (aborted) return tsResult;
             final TestCaseResult result = executeTestCase(user, (TestCase) test, testConfig, results);
             tsResult.add(result);
         }
@@ -107,6 +110,7 @@ public class TestExecutor {
                 .collect(Collectors.toList());
 
         for (Test test : testSuites) {
+            if (aborted) return tsResult;
             final TestSuiteResult result = executeTestSuite(user, (TestSuite) test, testConfig, results);
             tsResult.add(result);
         }
@@ -153,15 +157,17 @@ public class TestExecutor {
 
         final List<ExecuteResult> outputs = new ArrayList<>();
 
-        boolean preSuccess = executePreSteps(connectors, testCase, testCase.getPreSteps());
+        boolean preSuccess = executePreSteps(connectors, testCase.getPreSteps());
 
         // execute the steps as long as they do not fail
         long failedStep = -1L;
 
         if (preSuccess) {
             for (int i = 0; i < testCase.getSteps().size(); i++) {
+                if (aborted) break;
+
                 final TestCaseStep step = testCase.getSteps().get(i);
-                final ExecuteResult result = executeStep(connectors, testCase, step);
+                final ExecuteResult result = executeStep(connectors, step);
                 outputs.add(result);
 
                 if (step.getExpectedOutputMessage().equals("")) {
@@ -181,11 +187,14 @@ public class TestExecutor {
         }
 
         // the remaining steps after the failing step are not executed
-        while (outputs.size() < testCase.getSteps().size()) {
-            outputs.add(new ExecuteResult(false, "Not executed"));
+        if (outputs.size() < testCase.getSteps().size()) {
+            failedStep = outputs.size();
+            while (outputs.size() < testCase.getSteps().size()) {
+                outputs.add(new ExecuteResult(false, "Not executed"));
+            }
         }
 
-        executePostSteps(connectors, testCase, testCase.getPostSteps());
+        executePostSteps(connectors, testCase.getPostSteps());
 
         connectors.dispose();
         connectors.post();
@@ -207,9 +216,9 @@ public class TestExecutor {
         return result;
     }
 
-    private boolean executePreSteps(ConnectorManager connectors, TestCase testCase, List<TestCaseStep> preSteps) {
+    private boolean executePreSteps(ConnectorManager connectors, List<TestCaseStep> preSteps) {
         for (TestCaseStep preStep : preSteps) {
-            final ExecuteResult result = executeStep(connectors, testCase, preStep);
+            final ExecuteResult result = executeStep(connectors, preStep);
             if (!result.isSuccess()) {
                 return false;
             }
@@ -217,32 +226,14 @@ public class TestExecutor {
         return true;
     }
 
-    private void executePostSteps(ConnectorManager connectors, TestCase testCase, List<TestCaseStep> postSteps) {
+    private void executePostSteps(ConnectorManager connectors, List<TestCaseStep> postSteps) {
         for (TestCaseStep postStep : postSteps) {
-            executeStep(connectors, testCase, postStep);
+            executeStep(connectors, postStep);
         }
     }
 
-    private ExecuteResult executeStep(ConnectorManager connectors, TestCase testCase, TestCaseStep step) {
-        final VariableStoreConnector variableStore = connectors.getConnector(VariableStoreConnector.class);
-        final CounterStoreConnector counterStore = connectors.getConnector(CounterStoreConnector.class);
-
+    private ExecuteResult executeStep(ConnectorManager connectors, TestCaseStep step) {
         try {
-            // here, the values for the parameters of the symbols are set
-            step.getPSymbol().getParameterValues().stream()
-                    .filter(value -> value.getValue() != null)
-                    .forEach(value -> {
-                        final String valueWithVariables =
-                                SearchHelper.insertVariableValues(connectors, testCase.getProjectId(), value.getValue());
-
-                        if (value.getParameter().getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
-                            variableStore.set(value.getParameter().getName(), valueWithVariables);
-                        } else {
-                            counterStore.set(testCase.getProject().getId(), value.getParameter()
-                                    .getName(), Integer.valueOf(valueWithVariables));
-                        }
-                    });
-
             return step.execute(connectors);
         } catch (Exception e) {
             return new ExecuteResult(false);
@@ -253,5 +244,7 @@ public class TestExecutor {
         return currentTest;
     }
 
-
+    public void abort() {
+        this.aborted = true;
+    }
 }

@@ -181,15 +181,13 @@ public class TestThread extends Thread {
         return testReport;
     }
 
-    /**
-     * Abort the current testing process.
-     */
-    public void abort() {
-        this.aborted = true;
-    }
-
     public TestExecutor getTestExecutor() {
         return testExecutor;
+    }
+
+    public void abort() {
+        aborted = true;
+        testExecutor.abort();
     }
 
     /**
