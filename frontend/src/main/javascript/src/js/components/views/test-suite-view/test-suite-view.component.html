@@ -19,10 +19,18 @@
                 </div>
 
                 <div class="btn-group btn-group-sm">
-                    <button class="btn btn-default" ng-click="vm.moveSelected()">
+                    <button
+                        class="btn btn-default"
+                        ng-click="vm.moveSelected()"
+                        ng-disabled="!vm.selectedTests.isAnySelected()"
+                    >
                         Move
                     </button>
-                    <button class="btn btn-default" ng-click="vm.deleteSelected()">
+                    <button
+                        class="btn btn-default"
+                        ng-click="vm.deleteSelected()"
+                        ng-disabled="!vm.selectedTests.isAnySelected()"
+                    >
                         Delete
                     </button>
                 </div>
@@ -32,7 +40,13 @@
                         <i class="fas fa-fw fa-upload"></i>
                     </button>
                     <div class="btn-group btn-group-sm mr-0" uib-dropdown>
-                        <button class="btn btn-default" uib-dropdown-toggle uib-tooltip="Export" tooltip-placement="bottom">
+                        <button
+                            class="btn btn-default"
+                            uib-dropdown-toggle
+                            uib-tooltip="Export"
+                            tooltip-placement="bottom"
+                            ng-disabled="!vm.selectedTests.isAnySelected()"
+                        >
                             <i class="fas fa-fw fa-download"></i>
                         </button>
                         <div uib-dropdown-menu class="dropdown-menu" role="menu">
@@ -47,7 +61,13 @@
                 </div>
 
                 <div class="btn-group btn-group-sm" uib-dropdown>
-                    <button class="btn btn-default" uib-tooltip="Copy" tooltip-placement="bottom" ng-click="vm.copyTests()">
+                    <button
+                        class="btn btn-default"
+                        uib-tooltip="Copy"
+                        tooltip-placement="bottom"
+                        ng-click="vm.copyTests()"
+                        ng-disabled="!vm.selectedTests.isAnySelected()"
+                    >
                         <i class="fas fa-fw fa-copy"></i>
                     </button>
                     <button class="btn btn-default" uib-tooltip="Paste" tooltip-placement="bottom" ng-click="vm.pasteTests()">
@@ -76,14 +96,17 @@
     <div class="view-body">
         <div class="container-fluid">
 
-            <div class="alert alert-info d-flex flex-row" ng-if="vm.status.active">
-                <div class="w-100">
-                    <i class="fas fa-circle-notch fa-spin"></i>&nbsp;
-                    Tests are being executed. There are <strong>{{vm.status.testsInQueue}}</strong> processes in the queue.
+            <div ng-if="vm.status.active">
+                <div class="alert alert-info d-flex flex-row">
+                    <div class="w-100">
+                        <i class="fas fa-circle-notch fa-spin"></i>&nbsp;
+                        Tests are being executed. There are <strong>{{vm.status.testsInQueue}}</strong> processes in the queue.
+                    </div>
+                    <div>
+                        <button class="btn btn-info btn-xs" ng-click="vm.abortTesting()">Abort</button>
+                    </div>
                 </div>
-                <div>
-                    <button class="btn btn-info btn-xs" ng-click="vm.abortTesting()">Abort</button>
-                </div>
+                <hr>
             </div>
 
             <div class="d-flex" style="align-items: center">

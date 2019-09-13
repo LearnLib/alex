@@ -6,11 +6,15 @@
             <selectable-checkbox-multiple selectable="vm.selectedCounters"></selectable-checkbox-multiple>
 
             <div class="w-100 ml-3">
-                <button class="btn btn-sm btn-primary" ng-click="vm.createCounter()">
+                <button class="btn btn-sm btn-primary mr-2" ng-click="vm.createCounter()">
                     Create
                 </button>
 
-                <button class="btn btn-sm btn-default" ng-click="vm.deleteSelectedCounters()">
+                <button
+                    class="btn btn-sm btn-default"
+                    ng-click="vm.deleteSelectedCounters()"
+                    ng-disabled="!vm.selectedCounters.isAnySelected()"
+                >
                     Delete
                 </button>
             </div>

@@ -6,18 +6,27 @@
             <selectable-checkbox-multiple selectable="vm.selectedResults"></selectable-checkbox-multiple>
 
             <div class="ml-3">
-                <button class="btn btn-sm btn-primary" ng-click="vm.openSelectedResults()"
-                        ng-class="{'disabled': vm.selectedResults.length === 0}">
+                <button
+                    class="btn btn-sm btn-primary mr-2"
+                    ng-click="vm.openSelectedResults()"
+                    ng-disabled="!vm.selectedResults.isAnySelected()"
+                >
                     Compare
                 </button>
-                <button class="btn btn-sm btn-default" ng-click="vm.deleteResults()"
-                        ng-class="{'disabled': vm.selectedResults.length === 0}">
+                <button
+                    class="btn btn-sm btn-default mr-2"
+                    ng-click="vm.deleteResults()"
+                    ng-disabled="!vm.selectedResults.isAnySelected()"
+                >
                     Delete
                 </button>
 
-                <div class="btn-group btn-group-sm" uib-dropdown style="margin-left: 3px;">
-                    <button class="btn btn-default btn-dropdown" uib-dropdown-toggle
-                            ng-class="{'disabled': vm.selectedResults.length === 0}">
+                <div class="btn-group btn-group-sm" uib-dropdown>
+                    <button
+                        class="btn btn-default btn-dropdown"
+                        uib-dropdown-toggle
+                        ng-disabled="!vm.selectedResults.isAnySelected()"
+                    >
                         Statistics
                     </button>
                     <div uib-dropdown-menu class="dropdown-menu dropdown-menu-left" role="menu">

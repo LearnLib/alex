@@ -25,7 +25,13 @@
         style="display: inline-block"
       >
       </symbol-select-dropdown>
-      <button class="btn btn-xs btn-default" ng-click="vm.removeStep()">Remove</button>
+      <button
+          class="btn btn-xs btn-default"
+          ng-if="vm.steps[0] != null"
+          ng-click="vm.removeStep()"
+      >
+        Remove
+      </button>
     </div>
   </div>
 </div>

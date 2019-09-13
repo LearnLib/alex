@@ -6,7 +6,13 @@
 
             <div class="w-100 ml-3">
                 <div class="btn-group btn-group-sm">
-                    <button class="btn btn-default" ng-click="vm.deleteSelectedReports()">Delete</button>
+                    <button
+                        class="btn btn-default"
+                        ng-click="vm.deleteSelectedReports()"
+                        ng-disabled="!vm.selectedReports.isAnySelected()"
+                    >
+                        Delete
+                    </button>
                 </div>
             </div>
         </div>

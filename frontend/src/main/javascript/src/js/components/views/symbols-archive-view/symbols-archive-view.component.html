@@ -6,11 +6,19 @@
             <selectable-checkbox-multiple selectable="vm.selectedSymbols"></selectable-checkbox-multiple>
 
             <div class="w-100 ml-3">
-                <button class="btn btn-sm btn-primary" ng-click="vm.recoverSelectedSymbols()">
+                <button
+                    class="btn btn-sm btn-primary mr-2"
+                    ng-click="vm.recoverSelectedSymbols()"
+                    ng-disabled="!vm.selectedSymbols.isAnySelected()"
+                >
                     <i class="fas fa-undo fa-fw"></i> Recover
                 </button>
 
-                <button class="btn btn-sm btn-default" ng-click="vm.deleteSelectedSymbols()">
+                <button
+                    class="btn btn-sm btn-default"
+                    ng-click="vm.deleteSelectedSymbols()"
+                    ng-disabled="!vm.selectedSymbols.isAnySelected()"
+                >
                     <i class="fas fa-trash fa-fw"></i> Delete
                 </button>
             </div>

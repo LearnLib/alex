@@ -1,7 +1,7 @@
 <div class="view view-test-case">
     <view-header title="Test Management"></view-header>
     <action-bar>
-        <button class="btn btn-sm btn-success" ng-disabled="vm.active" ng-click="vm.save()">
+        <button class="btn btn-sm btn-success mr-2" ng-disabled="vm.active" ng-click="vm.save()">
             <i class="fas fa-fw fa-save"></i> Save
         </button>
         <button class="btn btn-sm btn-default" ng-disabled="vm.active"
@@ -73,15 +73,20 @@
             <hr>
             <div class="row">
                 <div class="col-md-3 col-sm-5">
-                    <div style="height: 31px; position: relative; z-index: 10" class="mb-3">
-                        <symbol-search-form groups="vm.groups" on-selected="vm.addSymbolStep(symbol)"></symbol-search-form>
-                    </div>
 
                     <div class="card">
-                        <div class="card-body p-2" style="overflow: auto">
-                            <simple-symbol-group-tree groups="vm.groups" on-symbol-selected="vm.addSymbolStep(symbol)"></simple-symbol-group-tree>
+                      <div class="card-header">
+                        <strong class="text-muted">Symbols</strong>
+                      </div>
+                      <div class="card-body">
+                        <div style="height: 31px; position: relative; z-index: 10" class="mb-2">
+                          <symbol-search-form groups="vm.groups" on-selected="vm.addSymbolStep(symbol)"></symbol-search-form>
                         </div>
+
+                        <simple-symbol-group-tree groups="vm.groups" on-symbol-selected="vm.addSymbolStep(symbol)"></simple-symbol-group-tree>
+                      </div>
                     </div>
+
                 </div>
                 <div class="col-md-9 col-sm-7">
 
