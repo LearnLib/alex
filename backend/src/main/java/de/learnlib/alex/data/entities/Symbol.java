@@ -370,6 +370,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
                     } else {
                         result.setMessage(String.valueOf(i + 1));
                     }
+                    result.addTrace(this, result);
 
                     break;
                 }

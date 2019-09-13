@@ -56,9 +56,6 @@ public class AbstractLearnerConfigurationTest {
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(configuration);
 
-        System.out.println(expectedJSON);
-        System.out.println(json);
-
         JSONAssert.assertEquals(expectedJSON, json, true);
     }
 

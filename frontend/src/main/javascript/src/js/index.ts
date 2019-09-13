@@ -249,6 +249,7 @@ import { defaultWebdriverButtonComponent } from './components/views/admin-settin
 import { dragAndDropActionFormComponent } from './components/forms/actions/web/drag-and-drop-action-form/drag-and-drop-action-form.component';
 import { dragAndDropByActionFormComponent } from './components/forms/actions/web/drag-and-drop-by-action-form/drag-and-drop-by-action-form.component';
 import { symbolUsagesModalComponent } from './components/modals/symbol-usages-modal/symbol-usages-modal.component';
+import { executionResultModalComponent } from './components/modals/execution-result-modal/execution-result-modal.component';
 
 angular
   .module('ALEX', [
@@ -357,6 +358,7 @@ angular
   .component('ltsFormulaCreateModal', ltsFormulaCreateModalComponent)
   .component('ltsFormulaEditModal', ltsFormulaEditModalComponent)
   .component('symbolUsagesModal', symbolUsagesModalComponent)
+  .component('executionResultModal', executionResultModalComponent)
 
   // view components
   .component('aboutView', aboutViewComponent)

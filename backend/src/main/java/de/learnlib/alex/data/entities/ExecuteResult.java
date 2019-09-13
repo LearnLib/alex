@@ -19,6 +19,7 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -50,6 +51,9 @@ public class ExecuteResult implements Serializable {
     /** The output of the SUL. */
     private String message;
 
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String trace;
+
     /** The time in ms it took to execute the step. */
     private Long time;
 
@@ -58,42 +62,30 @@ public class ExecuteResult implements Serializable {
         this(true);
     }
 
-    /**
-     * Constructor.
-     *
-     * @param success
-     *         {@link #success}.
-     */
     public ExecuteResult(boolean success) {
         this(success, null);
     }
 
-    /**
-     * Constructor.
-     *
-     * @param success
-     *         {@link #success}.
-     * @param message
-     *         {@link #message}.
-     */
     public ExecuteResult(boolean success, String message) {
         this(success, message, 0L);
     }
 
-    /**
-     * Constructor.
-     *
-     * @param success
-     *         {@link #success}.
-     * @param message
-     *         {@link #message}.
-     * @param time
-     *         {@link #time}.
-     */
     public ExecuteResult(boolean success, String message, Long time) {
+        this(success, message, "", time);
+    }
+
+    public ExecuteResult(boolean success, String message, String trace, Long time) {
         this.success = success;
         this.message = message;
         this.time = time;
+        this.trace = trace;
+    }
+
+    public void addTrace(Symbol symbol, ExecuteResult result) {
+        if (!trace.equals("")) {
+            trace = " > " + trace;
+        }
+        trace = "[" + symbol.getName() + " / " + result.getOutput() + "]" + trace;
     }
 
     public boolean isSuccess() {
@@ -136,6 +128,14 @@ public class ExecuteResult implements Serializable {
 
     public void setTime(Long time) {
         this.time = time;
+    }
+
+    public String getTrace() {
+        return trace;
+    }
+
+    public void setTrace(String trace) {
+        this.trace = trace;
     }
 
     /** Negate the result. */

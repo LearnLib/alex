@@ -654,6 +654,18 @@ learn-resume-settings-widget {
   }
 }
 
+report-outputs-column,
+test-case-view table {
+  tr {
+    .result-details-icon {
+      visibility: hidden;
+    }
+
+    &:hover .result-details-icon {
+      visibility: visible;
+    }
+  }
+}
 
 .chart-legend {
   display: none;

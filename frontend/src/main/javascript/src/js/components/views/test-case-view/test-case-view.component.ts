@@ -145,6 +145,15 @@ export const testCaseViewComponent = {
       this.testConfig.tests = [this.testCase];
     }
 
+    showResultDetails(result: any): void {
+      this.$uibModal.open({
+        component: 'executionResultModal',
+        resolve: {
+          result: () => result,
+        }
+      });
+    }
+
     /**
      * Save the state of the test case.
      */

@@ -33,11 +33,16 @@
                     <a ng-if="vm.testConfig.createReport"
                        ui-sref="testReport({projectId: vm.project.id, reportId: vm.report.id})">(Show report)</a>
                 </div>
+                <hr>
             </div>
 
-            <div class="alert alert-info" ng-if="vm.active">
+          <div ng-if="vm.active">
+            <div class="alert alert-info" >
               <i class="fas fa-fw fa-circle-notch fa-spin"></i> The test is being executed.
             </div>
+            <hr>
+          </div>
+
 
             <div class="d-flex align-items-center">
                 <div class="mr-1">
@@ -96,6 +101,7 @@
                           <th>Expected output</th>
                           <th>Actual output</th>
                           <th width="1">&nbsp;</th>
+                          <th width="1">&nbsp;</th>
                         </tr>
                       </thead>
                       <tbody dragula='"testSymbols"' dragula-model="vm.testCase.steps">
@@ -143,6 +149,17 @@
                           <td>
                             <span ng-if="vm.result.outputs[$index]">
                               {{vm.result.outputs[$index].output}}
+                            </span>
+                          </td>
+                          <td>
+                            <span ng-if="vm.result.outputs[$index]">
+                              <i
+                                  class="fa fa-fw fa-search cursor-pointer result-details-icon"
+                                  uib-tooltip="Details"
+                                  tooltip-placement="left"
+                                  ng-click="vm.showResultDetails(vm.result.outputs[$index])"
+                              >
+                              </i>
                             </span>
                           </td>
                           <td>

@@ -21,13 +21,22 @@
                         {{output.symbol.name}}
                     </a>
                 </td>
-                <td>
+                <td class="w-100">
                     <span
                         class="badge"
                         ng-class="{'badge-success': output.success,'badge-danger':!output.success}"
                     >
                         {{output.output}}
                     </span>
+                </td>
+                <td style="width: 1px">
+                    <i
+                        class="fa fa-fw fa-search cursor-pointer result-details-icon"
+                        uib-tooltip="Details"
+                        tooltip-placement="left"
+                        ng-click="vm.showResultDetails(output)"
+                    >
+                    </i>
                 </td>
             </tr>
             </tbody>
