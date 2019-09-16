@@ -5,6 +5,9 @@
                 <strong>
                     <a href="" ng-bind="project.name" ng-click="vm.openProject(project)"></a>
                 </strong>
+                <p class="text-muted mb-0">
+                    <small>{{project.getDefaultEnvironment().urls[0].url}}</small>
+                </p>
             </h5>
         </div>
         <div>

@@ -157,6 +157,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         projectUrl.setUrl(projectForm.getUrl());
         projectUrl.setEnvironment(createdDefaultEnvironment);
         projectUrl.setName("Base");
+        projectUrl.setDefault(true);
         final ProjectUrl createdProjectUrl = projectUrlRepository.save(projectUrl);
         createdDefaultEnvironment.getUrls().add(createdProjectUrl);
         projectEnvironmentDAO.update(user, createdProject.getId(), createdDefaultEnvironment.getId(), createdDefaultEnvironment);

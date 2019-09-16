@@ -35,6 +35,7 @@ export const projectUrlCreateModalComponent = {
     public form: IFormController;
 
     public url: ProjectUrl;
+    public errorMessage: string;
 
     /* @ngInject */
     constructor(private projectEnvironmentResource: ProjectEnvironmentResourceService) {
@@ -50,11 +51,14 @@ export const projectUrlCreateModalComponent = {
      * Updates the project. Closes the modal window on success.
      */
     createUrl(): void {
+      this.errorMessage = null;
       this.projectEnvironmentResource.createUrl(this.environment.project, this.environment.id, this.url)
         .then(urls => {
           this.close({$value: urls});
         })
-        .catch(console.error);
+        .catch(err => {
+          this.errorMessage = `The URL could not be created. ${err.data.message}`;
+        });
     }
   },
 };

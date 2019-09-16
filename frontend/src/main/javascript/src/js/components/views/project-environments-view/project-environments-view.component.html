@@ -65,6 +65,15 @@
                   </button>
                 </div>
               </div>
+              <div class="ml-3">
+                <span
+                    class="badge cursor-pointer"
+                    ng-class="{'badge-secondary': !url.default, 'badge-primary': url.default}"
+                    ng-click="vm.makeUrlDefault(env, url)"
+                >
+                Default
+              </span>
+              </div>
             </div>
           </div>
         </div>

@@ -18,7 +18,6 @@ package de.learnlib.alex.integrationtests.repositories;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
 import org.junit.Before;
 import org.junit.Test;

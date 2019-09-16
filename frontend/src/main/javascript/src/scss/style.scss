@@ -673,7 +673,8 @@ test-case-view table {
 
 
 
-.environment-list, .project-url-list {
+.environment-list,
+.project-url-list .list-group-item {
   .actions {
     visibility: hidden;
   }

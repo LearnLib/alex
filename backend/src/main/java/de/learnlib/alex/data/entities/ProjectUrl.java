@@ -36,6 +36,8 @@ public class ProjectUrl {
     @Pattern(regexp = "^https?://.+?")
     private String url;
 
+    private boolean isDefault;
+
     public Long getId() {
         return id;
     }
@@ -77,6 +79,14 @@ public class ProjectUrl {
     public void setEnvironmentId(Long environmentId) {
         this.environment = new ProjectEnvironment();
         this.environment.setId(environmentId);
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
     }
 
     @Override

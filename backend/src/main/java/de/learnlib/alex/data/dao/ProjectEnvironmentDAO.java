@@ -80,6 +80,7 @@ public class ProjectEnvironmentDAO {
             u.setName(url.getName());
             u.setEnvironment(projectEnvironment);
             u.setUrl(url.getUrl());
+            u.setDefault(url.isDefault());
             createdUrls.add(urlRepository.save(u));
         }
         projectEnvironment.getUrls().addAll(createdUrls);
@@ -179,6 +180,12 @@ public class ProjectEnvironmentDAO {
 
             e.setUrls(e.getUrls().stream().filter(u -> !u.getName().equals(url.getName())).collect(Collectors.toList()));
             urlRepository.deleteByEnvironment_IdAndName(e.getId(), url.getName());
+
+            // make new default url
+            if (url.isDefault()) {
+                e.getUrls().get(0).setDefault(true);
+                urlRepository.save(e.getUrls().get(0));
+            }
         }
 
         environmentRepository.saveAll(envs);
@@ -192,6 +199,17 @@ public class ProjectEnvironmentDAO {
 
         if (urlRepository.findByEnvironment_IdAndNameAndIdNot(envId, url.getName(), urlInDb.getId()) != null) {
             throw new ValidationException("The name of the URL already exists.");
+        }
+
+        // update default url
+        if (url.isDefault() && !urlInDb.isDefault()) {
+            List<ProjectUrl> urls = urlRepository.findByEnvironment_Project_IdAndIsDefault(projectId, true);
+            urls.forEach(u -> u.setDefault(false));
+            urlRepository.saveAll(urls);
+
+            urls = urlRepository.findByEnvironment_Project_IdAndName(projectId, urlInDb.getName());
+            urls.forEach(u -> u.setDefault(true));
+            urlRepository.saveAll(urls);
         }
 
         final List<ProjectUrl> updatedUrls = new ArrayList<>();

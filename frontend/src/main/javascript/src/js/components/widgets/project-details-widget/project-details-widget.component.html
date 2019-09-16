@@ -10,6 +10,10 @@
             <td ng-bind="vm.project.getDefaultEnvironment().name"></td>
         </tr>
         <tr>
+            <td><strong>Default URL</strong></td>
+            <td ng-bind="vm.project.getDefaultEnvironment().getDefaultUrl().url"></td>
+        </tr>
+        <tr>
             <td><strong>Groups</strong></td>
             <td ng-bind="vm.numberOfGroups"></td>
         </tr>

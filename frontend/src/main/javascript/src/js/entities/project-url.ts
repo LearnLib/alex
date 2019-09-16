@@ -3,18 +3,21 @@ export class ProjectUrl {
   environment: number;
   name: string;
   url: string;
+  default: boolean;
 
   constructor() {
     this.url = 'http://';
+    this.default = false;
   }
 
   static fromData(data: any): ProjectUrl {
-    const e = new ProjectUrl();
-    e.id = data.id;
-    e.environment = data.environment;
-    e.name = data.name;
-    e.url = data.url;
-    return e;
+    const u = new ProjectUrl();
+    u.id = data.id;
+    u.environment = data.environment;
+    u.name = data.name;
+    u.url = data.url;
+    u.default = data.default;
+    return u;
   }
 
   copy(): ProjectUrl {

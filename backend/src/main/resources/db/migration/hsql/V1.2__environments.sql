@@ -20,6 +20,7 @@ create table PUBLIC.LEARNER_RESULT_ENVIRONMENTS
 alter table PUBLIC.project_url add column environment_id bigint not null default -1;
 alter table PUBLIC.project_url add constraint FkProjectUrlProjectEnvironment foreign key (environment_id) references PUBLIC.project_environment;
 alter table PUBLIC.project_url drop constraint FK9f02w2m3biqaq2ooy55cusccr;
+alter table PUBLIC.project_url alter column default_url rename to is_default;
 
 alter table PUBLIC.test_execution_config add column environment_id bigint not null default -1;
 alter table PUBLIC.test_execution_config add constraint FkTestExecutionConfigProjectEnvironment foreign key (environment_id) references PUBLIC.project_environment;

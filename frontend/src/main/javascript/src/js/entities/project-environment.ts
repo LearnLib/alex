@@ -39,6 +39,10 @@ export class ProjectEnvironment {
     return e;
   }
 
+  getDefaultUrl(): ProjectUrl {
+    return this.urls.find(u => u.default);
+  }
+
   copy(): ProjectEnvironment {
     return ProjectEnvironment.fromData(JSON.parse(JSON.stringify(this)));
   }

@@ -30,8 +30,6 @@ import de.learnlib.alex.data.entities.SymbolActionStep;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.entities.actions.misc.WaitAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
-import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;

@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 
-public class V1_2__Environments extends BaseJavaMigration {
+public class V1_3__Environments extends BaseJavaMigration {
     public void migrate(Context context) throws Exception {
         final Connection connection = context.getConnection();
 
@@ -20,7 +20,7 @@ public class V1_2__Environments extends BaseJavaMigration {
 
             // create environment for each project url
             long i = 0L;
-            final ResultSet urlRows = connection.createStatement().executeQuery("SELECT ID, NAME, DEFAULT_URL, URL FROM PUBLIC.PROJECT_URL ORDER BY ID");
+            final ResultSet urlRows = connection.createStatement().executeQuery("SELECT ID, NAME, IS_DEFAULT, URL FROM PUBLIC.PROJECT_URL ORDER BY ID");
             while (urlRows.next()) {
                 String name = urlRows.getString(2);
                 name = name == null ? "Production" + (i++) : name;
@@ -42,7 +42,6 @@ public class V1_2__Environments extends BaseJavaMigration {
         }
 
         // remove columns
-        connection.createStatement().executeUpdate("ALTER TABLE PUBLIC.PROJECT_URL DROP COLUMN DEFAULT_URL");
         connection.createStatement().executeUpdate("ALTER TABLE PUBLIC.PROJECT_URL DROP COLUMN PROJECT_ID");
 
         // update test configs

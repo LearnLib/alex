@@ -101,7 +101,17 @@ export const projectEnvironmentsViewComponent = {
       e.default = true;
       this.projectEnvironmentResource.update(env.project, e)
         .then(() => this.init())
-        .catch(err => this.toastService.danger(`Failed to make environment as default. ${err.data.message}`));
+        .catch(err => this.toastService.danger(`Failed to make environment default. ${err.data.message}`));
+    }
+
+    makeUrlDefault(env: ProjectEnvironment, url: ProjectUrl): void {
+      if (url.default) return;
+
+      const u = url.copy();
+      u.default = true;
+      this.projectEnvironmentResource.updateUrl(env.project, env.id, url.id, u)
+        .then(() => this.init())
+        .catch(err => this.toastService.danger(`Failed to make URL default. ${err.data.message}`));
     }
 
     createUrl(): void {

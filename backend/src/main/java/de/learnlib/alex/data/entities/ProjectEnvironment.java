@@ -26,6 +26,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
@@ -61,6 +62,15 @@ public class ProjectEnvironment implements Serializable {
 
     public ProjectEnvironment() {
         this.urls = new ArrayList<>();
+    }
+
+    @Transient
+    @JsonIgnore
+    public ProjectUrl getDefaultUrl() {
+        return this.urls.stream()
+                .filter(ProjectUrl::isDefault)
+                .findFirst()
+                .orElse(null);
     }
 
     public Long getId() {
