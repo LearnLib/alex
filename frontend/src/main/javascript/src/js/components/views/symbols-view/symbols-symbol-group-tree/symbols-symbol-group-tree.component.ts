@@ -101,6 +101,15 @@ export const symbolsSymbolGroupTreeComponent = {
       });
     }
 
+    showUsages(symbol: AlphabetSymbol): void {
+      this.$uibModal.open({
+        component: 'symbolUsagesModal',
+        resolve: {
+          symbol: () => symbol
+        }
+      });
+    }
+
     /**
      * Copy a symbol.
      *

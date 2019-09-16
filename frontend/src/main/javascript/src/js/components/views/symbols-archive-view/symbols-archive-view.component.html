@@ -6,11 +6,19 @@
             <selectable-checkbox-multiple selectable="vm.selectedSymbols"></selectable-checkbox-multiple>
 
             <div class="w-100 ml-3">
-                <button class="btn btn-sm btn-primary" ng-click="vm.recoverSelectedSymbols()">
+                <button
+                    class="btn btn-sm btn-primary mr-2"
+                    ng-click="vm.recoverSelectedSymbols()"
+                    ng-disabled="!vm.selectedSymbols.isAnySelected()"
+                >
                     <i class="fas fa-undo fa-fw"></i> Recover
                 </button>
 
-                <button class="btn btn-sm btn-default" ng-click="vm.deleteSelectedSymbols()">
+                <button
+                    class="btn btn-sm btn-default"
+                    ng-click="vm.deleteSelectedSymbols()"
+                    ng-disabled="!vm.selectedSymbols.isAnySelected()"
+                >
                     <i class="fas fa-trash fa-fw"></i> Delete
                 </button>
             </div>
@@ -38,6 +46,9 @@
                                 </a>
                                 <a class="dropdown-item" href="" ng-click="vm.recoverSymbol(symbol)">
                                     <i class="fas fa-undo fa-fw"></i> Recover
+                                </a>
+                                <a class="dropdown-item" href="" ng-click="vm.showUsages(symbol)">
+                                    <i class="fas fa-search fa-fw"></i> Usages
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="" ng-click="vm.deleteSymbol(symbol)">

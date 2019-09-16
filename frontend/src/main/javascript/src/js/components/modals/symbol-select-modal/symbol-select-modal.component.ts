@@ -17,6 +17,8 @@
 import {ModalComponent} from '../modal.component';
 import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
 import {SymbolGroup} from '../../../entities/symbol-group';
+import { ProjectService } from '../../../services/project.service';
+import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
 
 export const symbolSelectModalComponent = {
   template: require('./symbol-select-modal.component.html'),
@@ -35,16 +37,25 @@ export const symbolSelectModalComponent = {
     public groups: SymbolGroup[] = [];
 
     /** Constructor. */
-    constructor() {
+    /* @ngInject */
+    constructor(private projectService: ProjectService,
+                private symbolGroupResource: SymbolGroupResource) {
       super();
     }
 
     $onInit(): void {
-      this.groups = this.resolve.groups;
+      this.symbolGroupResource.getAll(this.projectService.store.currentProject.id, true).then(
+        groups => this.groups = groups
+      );
     }
 
     selectSymbol(symbol: AlphabetSymbol): void {
       this.selectedSymbol = symbol;
+    }
+
+    selectSymbolAndClose(symbol: AlphabetSymbol): void {
+      this.selectSymbol(symbol);
+      this.ok();
     }
 
     ok(): void {

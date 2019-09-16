@@ -15,20 +15,7 @@
     }
 
     .test-icon {
-      padding: 2px;
       margin-right: .5rem;
-    }
-
-    .collapse-icon {
-      color: #afafaf;
-      padding: 2px;
-      border-radius: 3px;
-
-      &:hover {
-        cursor: pointer;
-        background: #ddd;
-        color: #000;
-      }
     }
   }
 
@@ -43,12 +30,6 @@
   }
 
   .test-suite-node {
-    .children {
-      padding-left: 8px;
-      margin-left: 10px;
-      border-left: 1px dashed #ddd;
-    }
-
     > .header > .test-icon i {
       color: #5a99d0;
     }

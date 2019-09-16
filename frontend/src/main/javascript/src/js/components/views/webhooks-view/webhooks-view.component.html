@@ -6,11 +6,15 @@
             <selectable-checkbox-multiple selectable="vm.selectedWebhooks"></selectable-checkbox-multiple>
 
             <div class="w-100 ml-3">
-                <button class="btn btn-sm btn-primary" ng-click="vm.createWebhook()">
+                <button class="btn btn-sm btn-primary mr-2" ng-click="vm.createWebhook()">
                     Create
                 </button>
 
-                <button class="btn btn-sm btn-default" ng-click="vm.deleteSelectedWebhooks()">
+                <button
+                    class="btn btn-sm btn-default"
+                    ng-click="vm.deleteSelectedWebhooks()"
+                    ng-disabled="!vm.selectedWebhooks.isAnySelected()"
+                >
                     Delete
                 </button>
             </div>

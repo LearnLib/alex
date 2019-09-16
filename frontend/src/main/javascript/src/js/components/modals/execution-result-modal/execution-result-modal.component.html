@@ -1,0 +1,58 @@
+<div class="modal-header">
+  <h4 class="modal-title">Details</h4>
+  <a class="btn btn-default btn-icon float-right" ng-click="vm.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div class="modal-body">
+  <table class="table mb-0">
+    <tbody>
+      <tr>
+        <td style="width: 1px">
+          <strong>Symbol</strong>
+        </td>
+        <td>
+          <a ui-sref="symbol({project: vm.result.symbol.project, symbolId: vm.result.symbol.id})" ng-click="vm.dismiss()">{{vm.result.symbol.name}}</a>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <strong>Status</strong>
+        </td>
+        <td>
+          <span ng-if="vm.result.success" class="badge badge-success">{{vm.result.output}}</span>
+          <span ng-if="!vm.result.success" class="badge badge-danger">{{vm.result.output}}</span>
+        </td>
+      </tr>
+    <tr>
+      <td>
+        <strong>Time</strong>
+      </td>
+      <td>
+        {{vm.result.time | formatMilliseconds}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Trace</strong>
+      </td>
+      <td>
+        <em class="text-muted" ng-if="vm.result.trace === ''">No trace available</em>
+        <div ng-if="vm.result.trace !== ''">
+          <div
+              ng-repeat="t in vm.formattedTrace track by $index"
+              ng-style="{'margin-left': (1 * $index) + 'rem'}"
+          >
+            <i class="fa fa-fw fa-level-up-alt fa-rotate-90" ng-if="$index > 0"></i> {{t.symbol}} / {{t.output}}
+          </div>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-default btn-sm" ng-click="vm.dismiss()">Close</button>
+</div>

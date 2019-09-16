@@ -228,7 +228,7 @@ public class TestResource {
         }
 
         final Map<Long, TestResult> results = new HashMap<>();
-        testService.executeTestCase(user, (TestCase) test, testConfig, results);
+        testService.createTestExecutor().executeTestCase(user, (TestCase) test, testConfig, results);
 
         final TestReport report = new TestReport();
         report.setTestResults(new ArrayList<>(results.values()));

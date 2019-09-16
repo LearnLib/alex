@@ -21,11 +21,14 @@ import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolUsageResult;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.events.SymbolEvent;
+import de.learnlib.alex.data.services.SymbolUsageService;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -59,17 +62,22 @@ public class SymbolResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The {@link SymbolDAO} to use. */
-    @Inject
-    private SymbolDAO symbolDAO;
-
     /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
 
-    /** The {@link WebhookService} to use. */
-    @Inject
     private WebhookService webhookService;
+    private SymbolDAO symbolDAO;
+    private SymbolUsageService symbolUsageService;
+
+    @Inject
+    public SymbolResource(WebhookService webhookService,
+                          SymbolDAO symbolDAO,
+                          SymbolUsageService symbolUsageService) {
+        this.webhookService = webhookService;
+        this.symbolDAO = symbolDAO;
+        this.symbolUsageService = symbolUsageService;
+    }
 
     /**
      * Create a new Symbol.
@@ -183,32 +191,45 @@ public class SymbolResource {
         return Response.ok(symbol).build();
     }
 
+    @GET
+    @Path("/{symbolId}/usages")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUsages(@PathParam("projectId") Long projectId, @PathParam("symbolId") Long symbolId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("getUsages({}, {})  for user {}.", projectId, symbolId, user);
+
+        final SymbolUsageResult result = symbolUsageService.findUsages(user, projectId, symbolId);
+
+        LOGGER.traceExit();
+        return Response.ok(result).build();
+    }
+
     /**
      * Update a Symbol.
      *
      * @param projectId
      *         The ID of the project.
-     * @param id
+     * @param symbolId
      *         The ID of the symbol.
      * @param symbol
      *         The new symbol data.
      * @return On success the updated symbol (maybe enhanced with information from the DB); An error message on failure.
      */
     @PUT
-    @Path("/{id}")
+    @Path("/{symbolId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("projectId") Long projectId, @PathParam("id") Long id, Symbol symbol) {
+    public Response update(@PathParam("projectId") Long projectId, @PathParam("symbolId") Long symbolId, Symbol symbol) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, id, symbol, user);
+        LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, symbolId, symbol, user);
 
-        if (symbolDoesNotMatchURLParameter(symbol, projectId, id)) {
+        if (symbolDoesNotMatchURLParameter(symbol, projectId, symbolId)) {
             LOGGER.traceExit();
             return Response.status(Status.BAD_REQUEST).build();
         }
 
         symbol.setProjectId(projectId);
-        symbol.setId(id);
+        symbol.setId(symbolId);
 
         final Symbol updatedSymbol = symbolDAO.update(user, projectId, symbol);
 

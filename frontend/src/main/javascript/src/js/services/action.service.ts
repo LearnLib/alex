@@ -67,6 +67,7 @@ import { SetVariableByHttpStatusAction } from '../entities/actions/misc/set-vari
 import { Action } from '../entities/actions/action';
 import { DragAndDropAction } from '../entities/actions/web/drag-and-drop-action';
 import { DragAndDropByAction } from '../entities/actions/web/drag-and-drop-by-action';
+import { WaitForScriptAction } from '../entities/actions/web/wait-for-script-action';
 
 /**
  * The service that is used to create new actions.
@@ -99,6 +100,7 @@ export class ActionService {
     [actionType.WEB_UPLOAD_FILE]: (data) => new UploadFileAction(data),
     [actionType.WEB_DRAG_AND_DROP]: (data) => new DragAndDropAction(data),
     [actionType.WEB_DRAG_AND_DROP_BY]: (data) => new DragAndDropByAction(data),
+    [actionType.WEB_WAIT_FOR_SCRIPT]: (data) => new WaitForScriptAction(data),
 
     // rest actions
     [actionType.REST_CALL]: (data) => new CallRestAction(data),

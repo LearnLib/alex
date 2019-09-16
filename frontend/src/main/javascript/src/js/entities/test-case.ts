@@ -18,6 +18,7 @@ import { TestCaseStep } from './test-case-step';
 
 export class TestCase {
   readonly type: string = 'case';
+  id: number;
   name: string;
   parent?: number;
   project: number;
@@ -32,6 +33,7 @@ export class TestCase {
 
   static fromData(data: any = {}): TestCase {
     const tc = new TestCase();
+    tc.id = data.id;
     tc.name = data.name;
     tc.parent = data.parent;
     tc.project = data.project;

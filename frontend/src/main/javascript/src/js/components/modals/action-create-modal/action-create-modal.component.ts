@@ -87,6 +87,7 @@ export const actionCreateModalComponent = {
           {type: actionType.WEB_UPLOAD_FILE, text: 'Upload file'},
           {type: actionType.WAIT_FOR_NODE_ATTRIBUTE, text: 'Wait for an attribute'},
           {type: actionType.WAIT_FOR_NODE, text: 'Wait for an element'},
+          {type: actionType.WEB_WAIT_FOR_SCRIPT, text: 'Wait for JavaScript'},
           {type: actionType.WAIT_FOR_TEXT, text: 'Wait for text'},
           {type: actionType.WAIT_FOR_TITLE, text: 'Wait for page title'}
         ],

@@ -6,11 +6,13 @@
             <selectable-checkbox-multiple selectable="vm.selectedUsers"></selectable-checkbox-multiple>
 
             <div class="w-100 ml-3">
-                <button class="btn btn-sm btn-primary" ng-click="vm.createUser()">
+                <button class="btn btn-sm btn-primary mr-2" ng-click="vm.createUser()">
                     Create
                 </button>
-                <button class="btn btn-sm btn-default" ng-click="vm.deleteSelectedUsers()"
-                        ng-class="{'disabled': vm.selectedUsers.length === 0}">
+
+                <button class="btn btn-sm btn-default"
+                        ng-click="vm.deleteSelectedUsers()"
+                        ng-disabled="!vm.selectedUsers.isAnySelected()">
                     Delete
                 </button>
             </div>

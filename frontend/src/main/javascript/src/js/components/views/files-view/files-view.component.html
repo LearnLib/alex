@@ -4,8 +4,15 @@
     <action-bar>
         <div class="d-flex flex-row align-items-center" ng-if="vm.files.length > 0">
             <selectable-checkbox-multiple selectable="vm.selectedFiles"></selectable-checkbox-multiple>
+
             <div class="w-100 ml-3">
-                <button class="btn btn-default btn-sm" ng-click="vm.deleteSelectedFiles()">Delete</button>
+                <button
+                    class="btn btn-default btn-sm"
+                    ng-click="vm.deleteSelectedFiles()"
+                    ng-disabled="!vm.selectedFiles.isAnySelected()"
+                >
+                    Delete
+                </button>
             </div>
         </div>
     </action-bar>

@@ -170,9 +170,6 @@ public class WebSymbolTest {
         WebSymbolAction action2 = mock(WebSymbolAction.class);
         given(action2.executeAction(connector)).willReturn(new ExecuteResult(true));
 
-        given(connector.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
-        given(connector.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
-
         final SymbolActionStep s1 = new SymbolActionStep(action1);
         final SymbolActionStep s2 = new SymbolActionStep(action2);
 
@@ -188,9 +185,6 @@ public class WebSymbolTest {
         WebSymbolAction action1 = mock(WebSymbolAction.class);
         given(action1.executeAction(connector)).willReturn(new ExecuteResult(false));
         WebSymbolAction action2 = mock(WebSymbolAction.class);
-
-        given(connector.getConnector(VariableStoreConnector.class)).willReturn(mock(VariableStoreConnector.class));
-        given(connector.getConnector(CounterStoreConnector.class)).willReturn(mock(CounterStoreConnector.class));
 
         final SymbolActionStep s1 = new SymbolActionStep(action1);
         final SymbolActionStep s2 = new SymbolActionStep(action2);

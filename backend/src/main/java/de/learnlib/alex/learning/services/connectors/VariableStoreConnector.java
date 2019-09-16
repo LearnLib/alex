@@ -86,22 +86,6 @@ public class VariableStoreConnector implements Connector {
     }
 
     /**
-     * Updates the current store by variables in another store.
-     *
-     * @param storeToMerge
-     *         The store with updated variables.
-     * @param namesToMerge
-     *         The names of the variables that should be transferred to this one.
-     */
-    public void merge(VariableStoreConnector storeToMerge, List<String> namesToMerge) {
-        namesToMerge.forEach(name -> {
-            if (storeToMerge.store.containsKey(name)) {
-                store.put(name, storeToMerge.store.get(name));
-            }
-        });
-    }
-
-    /**
      * Check if the store contains a variable.
      *
      * @param name

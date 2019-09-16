@@ -172,22 +172,6 @@ public class CounterStoreConnector implements Connector {
     }
 
     /**
-     * Updates the current store by variables in another store.
-     *
-     * @param storeToMerge
-     *         The store with updated variables.
-     * @param namesToMerge
-     *         The names of the variables that should be transferred to this one.
-     */
-    public void merge(CounterStoreConnector storeToMerge, List<String> namesToMerge) {
-        namesToMerge.forEach(name -> {
-            if (storeToMerge.countersMap.containsKey(name)) {
-                countersMap.put(name, storeToMerge.countersMap.get(name));
-            }
-        });
-    }
-
-    /**
      * Get the store as read only map.
      * @return The store.
      */

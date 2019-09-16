@@ -149,6 +149,7 @@ class SymbolViewComponent {
    */
   addAction(action: Action): void {
     this.symbol.steps.push({
+      _id: uniqueId(),
       type: 'action',
       errorOutput: null,
       negated: false,
@@ -162,10 +163,7 @@ class SymbolViewComponent {
    */
   addSymbolStep(): void {
     this.$uibModal.open({
-      component: 'symbolSelectModal',
-      resolve: {
-        groups: () => this.groups
-      }
+      component: 'symbolSelectModal'
     }).result.then(symbol => {
       if (symbol.id === this.symbol.id) {
         this.toastService.info('A symbol cannot execute itself');
@@ -173,6 +171,7 @@ class SymbolViewComponent {
       }
 
       this.symbol.steps.push({
+        _id: uniqueId(),
         type: 'symbol',
         errorOutput: null,
         negated: false,
@@ -195,17 +194,9 @@ class SymbolViewComponent {
    * Saves the changes that were made to the symbol by updating it on the server.
    */
   saveChanges() {
-    // make a copy of the symbol
     const symbolToUpdate = this.symbol.toJson();
-    symbolToUpdate.steps.forEach(step => {
-      delete step._id;
-      if (step.type === 'symbol') {
-        step.pSymbol.symbol = {id: step.pSymbol.symbol};
-      }
-    });
-    
+    symbolToUpdate.steps.forEach(s => delete s._id);
 
-    // update the symbol
     return this.symbolResource.update(symbolToUpdate)
       .then(updatedSymbol => {
         this.toastService.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
@@ -305,10 +296,7 @@ class SymbolViewComponent {
 
   editSymbolStep(step: any): void {
     this.$uibModal.open({
-      component: 'symbolSelectModal',
-      resolve: {
-        groups: () => this.groups
-      }
+      component: 'symbolSelectModal'
     }).result.then(selectedSymbol => {
       if (selectedSymbol.id === this.symbol.id) {
         this.toastService.info('A symbol cannot execute itself');

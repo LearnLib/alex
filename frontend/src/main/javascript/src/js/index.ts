@@ -74,6 +74,7 @@ import {switchToActionFormComponent} from './components/forms/actions/web/switch
 import {uploadFileActionFormComponent} from './components/forms/actions/web/upload-file-action-form/upload-file-action-form.component';
 import {waitForNodeActionFormComponent} from './components/forms/actions/web/wait-for-node-action-form/wait-for-node-action-form.component';
 import {waitForNodeAttributeActionFormComponent} from './components/forms/actions/web/wait-for-node-attribute-action-form/wait-for-node-attribute-action-form.component';
+import {waitForScriptActionFormComponent} from './components/forms/actions/web/wait-for-script-action-form/wait-for-script-action-form.component';
 import {waitForTextActionFormComponent} from './components/forms/actions/web/wait-for-text-action-form/wait-for-text-action-form.component';
 import {waitForTitleActionFormComponent} from './components/forms/actions/web/wait-for-title-action-form/wait-for-title-action-form.component';
 import {browserConfigFormComponent} from './components/forms/browser-config-form/browser-config-form.component';
@@ -245,6 +246,8 @@ import {logoutViewComponent} from './components/views/logout-view/logout-view.co
 import { defaultWebdriverButtonComponent } from './components/views/admin-settings-view/default-webdriver-button/default-webdriver-button.component';
 import { dragAndDropActionFormComponent } from './components/forms/actions/web/drag-and-drop-action-form/drag-and-drop-action-form.component';
 import { dragAndDropByActionFormComponent } from './components/forms/actions/web/drag-and-drop-by-action-form/drag-and-drop-by-action-form.component';
+import { symbolUsagesModalComponent } from './components/modals/symbol-usages-modal/symbol-usages-modal.component';
+import { executionResultModalComponent } from './components/modals/execution-result-modal/execution-result-modal.component';
 import { ProjectEnvironmentResourceService } from './services/resources/project-environment-resource.service';
 import { projectEnvironmentsViewComponent } from './components/views/project-environments-view/project-environments-view.component';
 import { projectUrlFormGroupsComponent } from './components/forms/project-url-form-groups/project-url-form-groups.component';
@@ -360,6 +363,8 @@ angular
   .component('ltsFormulaEditModal', ltsFormulaEditModalComponent)
   .component('projectUrlCreateModal', projectUrlCreateModalComponent)
   .component('projectUrlEditModal', projectUrlEditModalComponent)
+  .component('symbolUsagesModal', symbolUsagesModalComponent)
+  .component('executionResultModal', executionResultModalComponent)
 
   // view components
   .component('aboutView', aboutViewComponent)
@@ -458,6 +463,7 @@ angular
   .component('uploadFileActionForm', uploadFileActionFormComponent)
   .component('dragAndDropActionForm', dragAndDropActionFormComponent)
   .component('dragAndDropByActionForm', dragAndDropByActionFormComponent)
+  .component('waitForScriptActionForm', waitForScriptActionFormComponent)
 
   // rest action forms
   .component('requestActionForm', requestActionFormComponent)

@@ -22,6 +22,7 @@ import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
@@ -38,7 +39,7 @@ public class SymbolActionStep extends SymbolStep implements Serializable {
     private static final long serialVersionUID = 5116902783136721652L;
 
     /** The action to execute. */
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     private SymbolAction action;
 
     /** Constructor. */

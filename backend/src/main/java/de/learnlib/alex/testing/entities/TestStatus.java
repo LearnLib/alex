@@ -30,6 +30,9 @@ public class TestStatus {
     /** The number of tests in queue. */
     private int testsInQueue;
 
+    /** The test(suite) that is currently being executed. */
+    private Test currentTest;
+
     /** Constructor. */
     public TestStatus() {
         this.testsInQueue = 0;
@@ -57,5 +60,13 @@ public class TestStatus {
 
     public void setReport(TestReport report) {
         this.report = report;
+    }
+
+    public Test getCurrentTest() {
+        return currentTest;
+    }
+
+    public void setCurrentTest(Test currentTest) {
+        this.currentTest = currentTest;
     }
 }

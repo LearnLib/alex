@@ -31,13 +31,22 @@ export const reportOutputsColumnComponent = {
     /** If the table is collapsed and only the outputs are displayed. */
     public collapse: boolean;
 
-    /** Constructor. */
-    constructor() {
+    /* @ngInject */
+    constructor(private $uibModal: any) {
       this.collapse = true;
     }
 
     toggleCollapse(): void {
       this.collapse = !this.collapse;
+    }
+
+    showResultDetails(result: any): void {
+      this.$uibModal.open({
+        component: 'executionResultModal',
+        resolve: {
+          result: () => result,
+        }
+      });
     }
   }
 };

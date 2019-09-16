@@ -101,10 +101,6 @@ public class LearnerTest {
 
     @Test
     public void shouldStartAThread() throws NotFoundException {
-        System.out.println(user);
-        System.out.println(project);
-        System.out.println(learnerConfiguration);
-
         learner.start(user, project, learnerConfiguration);
     }
 

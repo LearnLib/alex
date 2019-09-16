@@ -195,7 +195,7 @@ export const testSuiteViewComponent = {
             testToUpdate.tests = test.tests.map(t => t.id);
             delete testToUpdate.tests;
           } else {
-            testToUpdate.steps = test.steps.map((step) => {
+            testToUpdate.steps = testToUpdate.steps.map((step) => {
               step.pSymbol.symbol = {id: step.pSymbol.symbol.id};
               return step;
             });

@@ -41,7 +41,11 @@
                         <div class="card-header">
                             <strong class="text-muted">Symbols</strong>
                         </div>
-                        <div class="card-body p-2">
+                        <div class="card-body">
+                            <div style="height: 31px; position: relative; z-index: 10" class="mb-2">
+                                <symbol-search-form groups="vm.groups" on-selected="vm.handleSymbolSelected(symbol)"></symbol-search-form>
+                            </div>
+
                             <simple-symbol-group-tree
                               groups="vm.groups"
                               on-symbol-selected="vm.handleSymbolSelected(symbol)"
