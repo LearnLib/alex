@@ -138,6 +138,7 @@ public class TestThread extends Thread {
 
                 testExecutor.executeTests(user, tests, config, results);
                 final TestReport report = getReport();
+                report.setEnvironment(config.getEnvironment());
 
                 if (config.isCreateReport()) {
                     testReportDAO.create(user, project.getId(), report);

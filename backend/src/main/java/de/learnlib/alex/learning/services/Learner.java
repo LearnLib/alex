@@ -19,6 +19,7 @@ package de.learnlib.alex.learning.services;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.LoggerMarkers;
+import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
@@ -105,16 +106,15 @@ public class Learner {
     @Inject
     private PreparedConnectorContextHandlerFactory contextHandlerFactory;
 
-    /** The repository for project URLs. */
-    @Inject
-    private ProjectUrlRepository projectUrlRepository;
-
     /** The injected test DAO. */
     @Inject
     private TestDAO testDAO;
 
     @Inject
     private ProjectEnvironmentRepository environmentRepository;
+
+    @Inject
+    private ProjectEnvironmentDAO projectEnvironmentDAO;
 
     /** The last thread of an user, if one exists. */
     private final Map<Long, AbstractLearnerThread> userThreads;
@@ -178,8 +178,10 @@ public class Learner {
             throw new IllegalStateException("You can not start more than one experiment at the same time.");
         }
 
+        configuration.setEnvironments(projectEnvironmentDAO.getByIds(user, project.getId(), configuration.getEnvironmentIds()));
+        configuration.getEnvironments().forEach(ProjectEnvironmentDAO::loadLazyRelations);
+
         final LearnerResult result = createLearnerResult(user, project, configuration);
-        configuration.setEnvironments(environmentRepository.findAllById(configuration.getEnvironmentIds()));
 
         final PreparedContextHandler contextHandler = contextHandlerFactory
                 .createPreparedContextHandler(user, project, configuration.getDriverConfig(), result.getResetSymbol(), result.getPostSymbol());
@@ -298,7 +300,7 @@ public class Learner {
         learnerResult.setComment(configuration.getComment());
         learnerResult.setUseMQCache(configuration.isUseMQCache());
 
-        final List<ProjectEnvironment> environments = environmentRepository.findAllById(configuration.getEnvironmentIds());
+        final List<ProjectEnvironment> environments = projectEnvironmentDAO.getByIds(user, project.getId(), configuration.getEnvironmentIds());
         learnerResult.setEnvironments(environments);
 
         return learnerResult;

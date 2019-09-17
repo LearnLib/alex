@@ -19,6 +19,7 @@ package de.learnlib.alex.testing.services;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
@@ -60,36 +61,19 @@ public class TestService {
     /** The {@link ProjectDAO} to use. */
     private final ProjectDAO projectDAO;
 
-    /** The {@link ProjectUrlRepository} to use. */
-    private final ProjectEnvironmentRepository environmentRepository;
+    private final ProjectEnvironmentDAO environmentDAO;
 
-    /**
-     * Constructor.
-     *
-     * @param contextHandlerFactory
-     *         The injected {@link PreparedConnectorContextHandlerFactory}.
-     * @param webhookService
-     *         The injected {@link WebhookService}.
-     * @param testDAO
-     *         The injected {@link TestDAO}.
-     * @param testReportDAO
-     *         The injected {@link TestReportDAO}.
-     * @param projectUrlRepository
-     *         The injected {@link ProjectUrlRepository}.
-     * @param projectDAO
-     *         The injected {@link ProjectDAO}.
-     */
     @Inject
     public TestService(PreparedConnectorContextHandlerFactory contextHandlerFactory, WebhookService webhookService,
-                       TestDAO testDAO, TestReportDAO testReportDAO, ProjectUrlRepository projectUrlRepository,
-                       ProjectDAO projectDAO, ProjectEnvironmentRepository environmentRepository) {
+                       TestDAO testDAO, TestReportDAO testReportDAO, ProjectEnvironmentDAO environmentDAO,
+                       ProjectDAO projectDAO) {
         this.contextHandlerFactory = contextHandlerFactory;
         this.webhookService = webhookService;
         this.testDAO = testDAO;
         this.testReportDAO = testReportDAO;
         this.testingThreads = new HashMap<>();
         this.projectDAO = projectDAO;
-        this.environmentRepository = environmentRepository;
+        this.environmentDAO = environmentDAO;
     }
 
     /**
@@ -175,6 +159,6 @@ public class TestService {
     }
 
     public TestExecutor createTestExecutor() {
-        return new TestExecutor(contextHandlerFactory, environmentRepository);
+        return new TestExecutor(contextHandlerFactory, environmentDAO);
     }
 }

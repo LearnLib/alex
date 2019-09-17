@@ -12,7 +12,9 @@ public class V1_3__Environments extends BaseJavaMigration {
     public void migrate(Context context) throws Exception {
         final Connection connection = context.getConnection();
 
+        // urlId -> envId
         final Map<Long, Long> urlToEnvMap = new HashMap<>();
+        final Map<Long, Long> projectToEnvMap = new HashMap<>();
 
         final ResultSet projectRows = connection.createStatement().executeQuery("SELECT ID FROM PUBLIC.PROJECT ORDER BY ID");
         while (projectRows.next()) {
@@ -34,6 +36,7 @@ public class V1_3__Environments extends BaseJavaMigration {
                     final long envId = lastEnvRow.getLong(1);
 
                     urlToEnvMap.put(urlId, envId);
+                    projectToEnvMap.putIfAbsent(projectId, envId);
 
                     connection.createStatement().executeUpdate("UPDATE PUBLIC.PROJECT_URL SET ENVIRONMENT_ID = " + envId + " WHERE ID = " + urlId);
                     break;
@@ -53,6 +56,15 @@ public class V1_3__Environments extends BaseJavaMigration {
         }
         connection.createStatement().executeUpdate("ALTER TABLE PUBLIC.TEST_EXECUTION_CONFIG DROP COLUMN URL_ID");
 
+        // set environments for existing test reports
+        final ResultSet testReportRows = connection.createStatement().executeQuery("SELECT ID, PROJECT_ID FROM PUBLIC.TEST_REPORT");
+        while (testConfigRows.next()) {
+            final long id = testReportRows.getLong(1);
+            final long projectId = testReportRows.getLong(2);
+            connection.createStatement().executeUpdate("UPDATE PUBLIC.TEST_REPORT SET ENVIRONMENT_ID = " + projectToEnvMap.get(projectId) + " WHERE ID = " + id);
+        }
+
+        // replace urls with environment in learner results
         final ResultSet learnerResultRows = connection.createStatement().executeQuery("SELECT LEARNER_RESULT_ID, URLS_ID FROM PUBLIC.LEARNER_RESULT_URLS");
         while (learnerResultRows.next()) {
             final long resultId = learnerResultRows.getLong(1);
@@ -62,6 +74,7 @@ public class V1_3__Environments extends BaseJavaMigration {
             connection.createStatement().execute("INSERT INTO PUBLIC.LEARNER_RESULT_ENVIRONMENTS (LEARNER_RESULT_ID, ENVIRONMENTS_ID) VALUES (" + resultId + ", " + envId + ")");
         }
 
+        // remove learner result urls
         connection.createStatement().executeUpdate("DROP TABLE LEARNER_RESULT_URLS");
     }
 }

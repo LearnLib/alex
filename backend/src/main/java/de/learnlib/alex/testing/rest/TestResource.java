@@ -216,7 +216,8 @@ public class TestResource {
     @POST
     @Path("/{id}/execute")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response execute(@PathParam("projectId") Long projectId, @PathParam("id") Long id,
+    public Response execute(@PathParam("projectId") Long projectId,
+                            @PathParam("id") Long id,
                             TestExecutionConfig testConfig) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         ThreadContext.put("userId", String.valueOf(user.getId()));
@@ -230,11 +231,12 @@ public class TestResource {
         final Map<Long, TestResult> results = new HashMap<>();
         testService.createTestExecutor().executeTestCase(user, (TestCase) test, testConfig, results);
 
-        final TestReport report = new TestReport();
+        TestReport report = new TestReport();
         report.setTestResults(new ArrayList<>(results.values()));
+        report.setEnvironment(testConfig.getEnvironment());
 
         if (testConfig.isCreateReport()) {
-            testReportDAO.create(user, projectId, report);
+            report = testReportDAO.create(user, projectId, report);
             webhookService.fireEvent(user, new TestEvent.ExecutionFinished(report));
         }
 

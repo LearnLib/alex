@@ -25,3 +25,5 @@ alter table PUBLIC.project_url alter column default_url rename to is_default;
 alter table PUBLIC.test_execution_config add column environment_id bigint not null default -1;
 alter table PUBLIC.test_execution_config add constraint FkTestExecutionConfigProjectEnvironment foreign key (environment_id) references PUBLIC.project_environment;
 alter table PUBLIC.test_execution_config drop constraint FKgpe6t1mwus6dpsm59q2nn22g1;
+
+alter table PUBLIC.test_report add column environment_id bigint not null default -1;

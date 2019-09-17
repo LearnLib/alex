@@ -19,7 +19,10 @@ package de.learnlib.alex.testing.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
+import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestReport;
@@ -44,6 +47,8 @@ public class TestReportDAOImpl implements TestReportDAO {
     /** The project repository. */
     private ProjectRepository projectRepository;
 
+    private ProjectEnvironmentDAO projectEnvironmentDAO;
+
     /** The project DAO. */
     private ProjectDAO projectDAO;
 
@@ -59,15 +64,16 @@ public class TestReportDAOImpl implements TestReportDAO {
      */
     @Inject
     public TestReportDAOImpl(TestReportRepository testReportRepository, ProjectRepository projectRepository,
-                             ProjectDAO projectDAO) {
+                             ProjectDAO projectDAO, ProjectEnvironmentDAO projectEnvironmentDAO) {
         this.testReportRepository = testReportRepository;
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
+        this.projectEnvironmentDAO = projectEnvironmentDAO;
     }
 
     @Override
     @Transactional
-    public void create(User user, Long projectId, TestReport testReport) throws NotFoundException {
+    public TestReport create(User user, Long projectId, TestReport testReport) throws NotFoundException {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
@@ -78,7 +84,12 @@ public class TestReportDAOImpl implements TestReportDAO {
             testResult.setProject(project);
         });
 
-        testReportRepository.save(testReport);
+        final ProjectEnvironment env = projectEnvironmentDAO.getById(user, testReport.getEnvironment().getId());
+        testReport.setEnvironment(env);
+
+        final TestReport createdTestReport = testReportRepository.save(testReport);
+        loadLazyRelations(createdTestReport);
+        return createdTestReport;
     }
 
     @Override
@@ -153,6 +164,8 @@ public class TestReportDAOImpl implements TestReportDAO {
     private void loadLazyRelations(TestReport testReport) {
         Hibernate.initialize(testReport.getProject());
         Hibernate.initialize(testReport.getTestResults());
+        Hibernate.initialize(testReport.getEnvironment());
+        ProjectEnvironmentDAO.loadLazyRelations(testReport.getEnvironment());
 
         testReport.getTestResults().forEach((result) -> {
             if (result instanceof TestCaseResult) {

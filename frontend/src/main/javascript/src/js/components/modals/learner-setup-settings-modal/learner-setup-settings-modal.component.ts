@@ -21,6 +21,8 @@ import {ToastService} from '../../../services/toast.service';
 import {ProjectService} from '../../../services/project.service';
 import {LearningAlgorithmService} from '../../../services/learning-algorithm.service';
 import {Project} from '../../../entities/project';
+import {Selectable} from "../../../utils/selectable";
+import {ProjectEnvironment} from "../../../entities/project-environment";
 
 /**
  * The controller for the modal dialog where you can set the settings for an upcoming test run.
@@ -45,6 +47,8 @@ export const learnerSetupSettingsModalComponent = {
     /** The selected learning algorithm. */
     public selectedLearningAlgorithm: string = null;
 
+    public selectedEnvironments: Selectable<ProjectEnvironment>;
+
     /**
      * Constructor.
      *
@@ -62,6 +66,7 @@ export const learnerSetupSettingsModalComponent = {
     $onInit() {
       this.learnConfiguration = this.resolve.learnConfiguration;
       this.selectedLearningAlgorithm = this.learnConfiguration.algorithm.name;
+      this.selectedEnvironments = new Selectable(this.project.environments, 'id');
     }
 
     /**
@@ -82,6 +87,7 @@ export const learnerSetupSettingsModalComponent = {
      * Close the modal dialog and pass the edited learn configuration instance.
      */
     ok(): void {
+      this.learnConfiguration.environments = this.selectedEnvironments.getSelected();
       this.toastService.success('Learn configuration updated');
       this.close({$value: this.learnConfiguration});
     }

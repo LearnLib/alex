@@ -139,8 +139,26 @@ public class ProjectEnvironmentDAO {
         projectDAO.checkAccess(user, project);
 
         final List<ProjectEnvironment> environments = environmentRepository.findAllByProject_Id(projectId);
-        environments.forEach(this::loadLazyRelations);
+        environments.forEach(ProjectEnvironmentDAO::loadLazyRelations);
         return environments;
+    }
+
+    public ProjectEnvironment getById(User user, Long envId) {
+        final ProjectEnvironment env = environmentRepository.findById(envId).orElse(null);
+        checkAccess(user, env.getProject(), env);
+        return ProjectEnvironmentDAO.loadLazyRelations(env);
+    }
+
+    public List<ProjectEnvironment> getByIds(User user, Long projectId, List<Long> envIds) {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final List<ProjectEnvironment> envs = environmentRepository.findAllById(envIds);
+
+        for (ProjectEnvironment env: envs) {
+            checkAccess(user, project, env);
+            loadLazyRelations(env);
+        }
+
+        return envs;
     }
 
     public List<ProjectUrl> createUrls(User user, Long projectId, Long environmentId, ProjectUrl url) {
@@ -261,7 +279,7 @@ public class ProjectEnvironmentDAO {
         }
     }
 
-    private ProjectEnvironment loadLazyRelations(ProjectEnvironment environment) {
+    public static ProjectEnvironment loadLazyRelations(ProjectEnvironment environment) {
         Hibernate.initialize(environment.getUrls());
         return environment;
     }

@@ -18,7 +18,6 @@ import * as remove from 'lodash/remove';
 import {Selectable} from '../../../utils/selectable';
 import {ProjectService} from '../../../services/project.service';
 import {LearnResultResource} from '../../../services/resources/learner-result-resource.service';
-import {PromptService} from '../../../services/prompt.service';
 import {ToastService} from '../../../services/toast.service';
 import {LearnerResultDownloadService} from '../../../services/learner-result-download.service';
 import {LearnResult} from '../../../entities/learner-result';
@@ -41,7 +40,6 @@ class ResultsViewComponent {
    * @param $state
    * @param projectService
    * @param learnResultResource
-   * @param promptService
    * @param toastService
    * @param learnerResultDownloadService
    * @param $uibModal
@@ -50,7 +48,6 @@ class ResultsViewComponent {
   constructor(private $state: any,
               private projectService: ProjectService,
               private learnResultResource: LearnResultResource,
-              private promptService: PromptService,
               private toastService: ToastService,
               private learnerResultDownloadService: LearnerResultDownloadService,
               private $uibModal: any) {
@@ -68,42 +65,36 @@ class ResultsViewComponent {
   }
 
   /**
-   * Deletes a test result from the server after prompting the user for confirmation.
+   * Deletes a test result from the server.
    *
    * @param result The test result that should be deleted.
    */
   deleteResult(result: LearnResult): void {
-    this.promptService.confirm('Do you want to permanently delete this result? Changes cannot be undone.')
+    this.learnResultResource.remove(result)
       .then(() => {
-        this.learnResultResource.remove(result)
-          .then(() => {
-            this.toastService.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
-            remove(this.results, {testNo: result.testNo});
-            this.selectedResults.unselect(result);
-          })
-          .catch(err => {
-            this.toastService.danger('<p><strong>Result deletion failed</strong></p>' + err.data.message);
-          });
+        this.toastService.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
+        remove(this.results, {testNo: result.testNo});
+        this.selectedResults.unselect(result);
+      })
+      .catch(err => {
+        this.toastService.danger('<p><strong>Could not delete learner result</strong></p>' + err.data.message);
       });
   }
 
   /**
-   * Deletes selected test results from the server after prompting the user for confirmation.
+   * Deletes selected test results from the server.
    */
   deleteResults(): void {
     const selectedResults = this.selectedResults.getSelected();
     if (selectedResults.length > 0) {
-      this.promptService.confirm('Do you want to permanently delete theses results? Changes cannot be undone.')
+      this.learnResultResource.removeMany(selectedResults)
         .then(() => {
-          this.learnResultResource.removeMany(selectedResults)
-            .then(() => {
-              this.toastService.success('Learn results deleted');
-              selectedResults.forEach(result => remove(this.results, {testNo: result.testNo}));
-              this.selectedResults.unselectAll();
-            })
-            .catch(err => {
-              this.toastService.danger('<p><strong>Result deletion failed</strong></p>' + err.data.message);
-            });
+          this.toastService.success('Learn results deleted');
+          selectedResults.forEach(result => remove(this.results, {testNo: result.testNo}));
+          this.selectedResults.unselectAll();
+        })
+        .catch(err => {
+          this.toastService.danger('<p><strong>Could not delete learner results</strong></p>' + err.data.message);
         });
     } else {
       this.toastService.info('You have to select a least one result');

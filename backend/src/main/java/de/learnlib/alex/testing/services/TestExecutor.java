@@ -18,6 +18,7 @@ package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.LoggerMarkers;
+import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
@@ -49,15 +50,15 @@ public class TestExecutor {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
-    private final ProjectEnvironmentRepository projectEnvironmentRepository;
+    private final ProjectEnvironmentDAO projectEnvironmentDAO;
 
     private Test currentTest;
     private boolean aborted;
 
     public TestExecutor(PreparedConnectorContextHandlerFactory contextHandlerFactory,
-                        ProjectEnvironmentRepository projectEnvironmentRepository) {
+                        ProjectEnvironmentDAO projectEnvironmentDAO) {
         this.contextHandlerFactory = contextHandlerFactory;
-        this.projectEnvironmentRepository = projectEnvironmentRepository;
+        this.projectEnvironmentDAO = projectEnvironmentDAO;
         this.aborted = false;
     }
 
@@ -142,7 +143,8 @@ public class TestExecutor {
         });
         final ParameterizedSymbol dummyPSymbol = new ParameterizedSymbol(dummySymbol);
 
-        final ProjectEnvironment env = projectEnvironmentRepository.findById(testConfig.getEnvironmentId()).orElse(null);
+        final ProjectEnvironment env = projectEnvironmentDAO.getById(user, testConfig.getEnvironmentId());
+        ProjectEnvironmentDAO.loadLazyRelations(env);
 
         final ConnectorContextHandler ctxHandler = contextHandlerFactory
                 .createPreparedContextHandler(user, testCase.getProject(), testConfig.getDriverConfig(), dummyPSymbol, null)

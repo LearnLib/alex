@@ -65,12 +65,23 @@
 
         <browser-config-form config="vm.learnConfiguration.driverConfig"></browser-config-form>
       </uib-tab>
-      <uib-tab heading="Target">
+      <uib-tab heading="Targets">
         <p></p>
 
         <p class="text-muted">
           Specify which URL should be used for learning. Select multiple URLs for learning in parallel.
         </p>
+
+        <div class="list-group">
+          <div class="list-group-item d-flex flex-row align-items-center" ng-repeat="env in vm.project.environments">
+            <div>
+              <selectable-checkbox item="env" selectable="vm.selectedEnvironments"></selectable-checkbox>
+            </div>
+            <div class="w-100 ml-3">
+              <strong>{{env.name}}</strong>
+            </div>
+          </div>
+        </div>
       </uib-tab>
     </uib-tabset>
 

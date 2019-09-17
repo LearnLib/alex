@@ -19,8 +19,12 @@
     <div class="view-body">
         <div class="container-fluid">
 
-            <h4>
+            <h4 class="d-flex">
                 <strong>{{vm.report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</strong>
+
+                <span class="badge badge-secondary ml-auto">
+                    {{vm.report.environment.name}}
+                </span>
             </h4>
 
             <hr>
@@ -34,6 +38,7 @@
             <table class="table table-striped">
                 <thead>
                 <tr>
+
                     <th>Status</th>
                     <th>Name</th>
                     <th>Output</th>

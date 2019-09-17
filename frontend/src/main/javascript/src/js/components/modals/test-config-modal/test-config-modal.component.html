@@ -36,7 +36,7 @@
       </p>
 
       <div class="list-group">
-        <div class="list-group-item"
+        <div class="list-group-item cursor-pointer"
              ng-repeat="env in vm.project.environments"
              ng-class="{'active': env.id === vm.selectedEnvironment.id}"
              ng-click="vm.selectedEnvironment = env"

@@ -145,13 +145,13 @@ public class ProjectDAOImpl implements ProjectDAO {
             throw new ValidationException("A project with that name already exists.");
         }
 
-        Project createdProject = projectRepository.save(project);
+        final Project createdProject = projectRepository.save(project);
         final ProjectEnvironment defaultEnv = new ProjectEnvironment();
         defaultEnv.setName("Production");
         defaultEnv.setDefault(true);
         final ProjectEnvironment createdDefaultEnvironment = projectEnvironmentDAO.create(user, createdProject.getId(), defaultEnv);
         createdProject.getEnvironments().add(createdDefaultEnvironment);
-        createdProject = projectRepository.save(createdProject);
+        projectRepository.save(createdProject);
 
         final ProjectUrl projectUrl = new ProjectUrl();
         projectUrl.setUrl(projectForm.getUrl());
@@ -163,7 +163,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         projectEnvironmentDAO.update(user, createdProject.getId(), createdDefaultEnvironment.getId(), createdDefaultEnvironment);
 
         LOGGER.traceExit(createdProject);
-        return createdProject;
+        return initLazyRelations(createdProject);
     }
 
     @Override
@@ -232,7 +232,7 @@ public class ProjectDAOImpl implements ProjectDAO {
      * @param project
      *         The project which needs the 'lazy' objects.
      */
-    private void initLazyRelations(Project project, EmbeddableFields... embedFields) {
+    private Project initLazyRelations(Project project, EmbeddableFields... embedFields) {
         Hibernate.initialize(project.getEnvironments());
         project.getEnvironments().forEach(env -> Hibernate.initialize(env.getUrls()));
 
@@ -261,6 +261,8 @@ public class ProjectDAOImpl implements ProjectDAO {
             project.setSymbols(null);
             project.setCounters(null);
         }
+
+        return project;
     }
 
     private Set<EmbeddableFields> fieldsArrayToHashSet(EmbeddableFields[] embedFields) {

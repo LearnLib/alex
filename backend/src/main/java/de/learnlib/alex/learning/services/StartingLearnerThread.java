@@ -30,23 +30,6 @@ import org.apache.logging.log4j.ThreadContext;
 /** The learner thread that is used for starting a new experiment. */
 public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartConfiguration> {
 
-    /**
-     * Constructor.
-     *
-     * @param user
-     *         The current user.
-     * @param learnerResultDAO
-     *         {@link AbstractLearnerThread#learnerResultDAO}.
-     * @param webhookService
-     * @param contextHandler
-     *         The context to use.
-     * @param result
-     *         {@link AbstractLearnerThread#result}.
-     * @param configuration
-     *         The configuration to use.
-     * @param testDAO
-     *         The DAO for tests that is passed to the eq oracle.
-     */
     public StartingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
                                  TestDAO testDAO, PreparedContextHandler contextHandler, LearnerResult result,
                                  LearnerStartConfiguration configuration) {

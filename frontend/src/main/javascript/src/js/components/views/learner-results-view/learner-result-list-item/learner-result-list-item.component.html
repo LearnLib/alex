@@ -13,6 +13,9 @@
                 Started: <span ng-bind="(vm.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></span>
             </em>
         </div>
+        <div>
+            <span class="badge badge-default mr-1" ng-repeat="env in vm.result.environments">{{env.name}}</span>
+        </div>
         <div class="comment text-muted" ng-if="vm.result.comment" ng-bind="vm.result.comment"></div>
     </div>
     <div ng-transclude></div>

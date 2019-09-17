@@ -284,7 +284,7 @@ export const testSuiteViewComponent = {
 
       const config = JSON.parse(JSON.stringify(this.testConfig));
       config.tests = selectedTests.map(t => t.id);
-      config.url = config.url.id;
+      config.environment = config.environment.id;
 
       this.testResource.executeMany(this.project.id, config)
         .then(() => {

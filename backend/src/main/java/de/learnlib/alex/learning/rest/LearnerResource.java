@@ -136,7 +136,7 @@ public class LearnerResource {
                 throw new IllegalArgumentException("The reset may not be a part of the input alphabet");
             }
 
-            Project project = projectDAO.getByID(user, projectId, ProjectDAO.EmbeddableFields.ALL);
+            final Project project = projectDAO.getByID(user, projectId, ProjectDAO.EmbeddableFields.ALL);
 
             learner.start(user, project, configuration);
             LearnerStatus status = learner.getStatus(projectId);

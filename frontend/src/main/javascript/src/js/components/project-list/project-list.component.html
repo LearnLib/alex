@@ -1,14 +1,14 @@
 <div class="list-group">
     <div class="list-group-item d-flex flex-row" ng-if="vm.projects.length > 0" ng-repeat="project in vm.projects | orderBy:'-name':true">
         <div class="w-100">
-            <h5 class="list-group-item-heading">
-                <strong>
-                    <a href="" ng-bind="project.name" ng-click="vm.openProject(project)"></a>
-                </strong>
-                <p class="text-muted mb-0">
-                    <small>{{project.getDefaultEnvironment().urls[0].url}}</small>
-                </p>
-            </h5>
+            <a ui-sref="project({projectId: project.id})">
+                <h5 class="list-group-item-heading mb-0">
+                    <strong>{{project.name}}</strong>
+                </h5>
+            </a>
+            <p class="text-muted mb-0">
+                {{project.getDefaultEnvironment().urls[0].url}}
+            </p>
         </div>
         <div>
             <div class="btn-group btn-group-xs" uib-dropdown>
