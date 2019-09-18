@@ -61,4 +61,8 @@ public interface TestReportRepository extends JpaRepository<TestReport, Long> {
     @Transactional
     @SuppressWarnings("checkstyle:methodname")
     Long deleteAllByProject_Id(Long projectId);
+
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
+    void deleteAllByEnvironment_Id(Long envId);
 }

@@ -28,6 +28,8 @@ import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
+import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,12 @@ public class ProjectEnvironmentDAO {
 
     @Autowired
     private SymbolActionRepository symbolActionRepository;
+
+    @Autowired
+    private TestReportRepository testReportRepository;
+
+    @Autowired
+    private LearnerResultRepository learnerResultRepository;
 
     public ProjectEnvironment create(User user, Long projectId, ProjectEnvironment environment) {
         final Project project = projectRepository.findById(projectId).orElse(null);
@@ -112,6 +120,10 @@ public class ProjectEnvironmentDAO {
             env.setDefault(true);
             environmentRepository.save(env);
         }
+
+        // delete test reports and learner results that have been executed in the environment
+        testReportRepository.deleteAllByEnvironment_Id(environment.getId());
+        learnerResultRepository.deleteAllByEnvironmentsContains(environment);
 
         project.getEnvironments().remove(environment);
         projectRepository.save(project);
@@ -302,6 +314,11 @@ public class ProjectEnvironmentDAO {
         if (url == null) {
             throw new NotFoundException("The url could not be found.");
         }
+
+        System.out.println("\n\n");
+        System.out.println(url.getEnvironmentId());
+        System.out.println(env.getId());
+        System.out.println("\n\n");
 
         if (!url.getEnvironmentId().equals(env.getId())) {
             throw new UnauthorizedException("You are not allowed to access the url.");

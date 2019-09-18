@@ -87,12 +87,14 @@ export const projectEnvironmentsViewComponent = {
       if (this.environments.length === 1) {
         this.toastService.danger('You cannot delete the only environment in a project.');
       } else {
-        this.projectEnvironmentResource.delete(this.project.id, env).then(
-          () => {
-            this.toastService.success(`Environment ${env.name} has been deleted.`);
-            this.init();
-          }
-        ).catch(err => this.toastService.danger(`Could not update environment. ${err.data.message}`));
+        this.promptService.confirm('When deleting the environment, associated test reports and learner results are deleted as well. Are you sure?').then(() => {
+          this.projectEnvironmentResource.delete(this.project.id, env).then(
+            () => {
+              this.toastService.success(`Environment ${env.name} has been deleted.`);
+              this.init();
+            }
+          ).catch(err => this.toastService.danger(`Could not update environment. ${err.data.message}`));
+        });
       }
     }
 
@@ -125,18 +127,18 @@ export const projectEnvironmentsViewComponent = {
       }).result.then(() => this.init());
     }
 
-    editUrl(url: ProjectUrl): void {
+    editUrl(env: ProjectEnvironment, url: ProjectUrl): void {
       this.$uibModal.open({
         component: 'projectUrlEditModal',
         resolve: {
-          environment: () => this.project.getDefaultEnvironment(),
+          environment: () => env,
           url: () => url.copy()
         }
       }).result.then(() => this.init());
     }
 
-    deleteUrl(url: ProjectUrl): void {
-      this.projectEnvironmentResource.deleteUrl(this.project.id, url.environment, url)
+    deleteUrl(env: ProjectEnvironment, url: ProjectUrl): void {
+      this.projectEnvironmentResource.deleteUrl(this.project.id, env.id, url)
         .then(() => this.init())
         .catch(err => this.toastService.danger(`Could not delete URL. ${err.data.message}`));
     }

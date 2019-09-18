@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.learning.repositories;
 
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -114,4 +115,7 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
     @SuppressWarnings("checkstyle:methodname")
     Long deleteAllByProject_Id(Long projectId);
 
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
+    void deleteAllByEnvironmentsContains(ProjectEnvironment env);
 }
