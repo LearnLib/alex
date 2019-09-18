@@ -16,6 +16,8 @@
 
 package de.learnlib.alex.learning.services.connectors;
 
+import de.learnlib.alex.data.entities.ProjectEnvironment;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -30,10 +32,14 @@ public class ConnectorManager implements Iterable<Connector> {
      */
     private Map<Class<? extends Connector>, Connector> connectors;
 
+    /** The environment the connectors are used in. */
+    private ProjectEnvironment environment;
+
     /**
      * Default constructor.
      */
-    public ConnectorManager() {
+    public ConnectorManager(ProjectEnvironment environment) {
+        this.environment = environment;
         this.connectors = new HashMap<>();
     }
 
@@ -73,5 +79,9 @@ public class ConnectorManager implements Iterable<Connector> {
     /** Clean up all connectors after the learner finished. */
     public void post() {
         connectors.values().forEach(Connector::post);
+    }
+
+    public ProjectEnvironment getEnvironment() {
+        return environment;
     }
 }

@@ -21,6 +21,7 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
+import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
@@ -94,6 +95,9 @@ public class SymbolGroupDAOImplTest {
     @Mock
     private TestExecutionResultRepository testExecutionResultRepository;
 
+    @Mock
+    private ProjectEnvironmentRepository projectEnvironmentRepository;
+
     private SymbolGroupDAO symbolGroupDAO;
 
     @Before
@@ -101,7 +105,7 @@ public class SymbolGroupDAOImplTest {
         symbolGroupDAO = new SymbolGroupDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
                 symbolActionRepository, symbolParameterRepository, parameterizedSymbolDAO, symbolStepRepository,
                 parameterizedSymbolRepository, testCaseStepRepository, testExecutionResultRepository,
-                symbolSymbolStepRepository);
+                symbolSymbolStepRepository, projectEnvironmentRepository);
     }
 
     @Test

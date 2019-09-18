@@ -173,9 +173,6 @@ public class ProjectResourceIT extends AbstractResourceIT {
         final Response res3 = projectApi.get(projectId, userJwt);
         final JsonNode projectPost = objectMapper.readTree(res3.readEntity(String.class));
 
-        System.out.println(projectPre.toString());
-        System.out.println(projectPost.toString());
-
         JSONAssert.assertEquals(projectPre.toString(), projectPost.toString(), true);
     }
 

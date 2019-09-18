@@ -52,6 +52,9 @@ public class GotoAction extends WebSymbolAction {
     @NotBlank
     private String url;
 
+    @NotBlank
+    private String baseUrl;
+
     /**
      * Optional credentials to authenticate via HTTP basic auth.
      */
@@ -61,7 +64,7 @@ public class GotoAction extends WebSymbolAction {
     @Override
     public ExecuteResult execute(WebSiteConnector connector) {
         try {
-            connector.get(getURLWithVariableValues(), getCredentialsWithVariableValues());
+            connector.get(baseUrl, getURLWithVariableValues(), getCredentialsWithVariableValues());
             LOGGER.info(LoggerMarkers.LEARNER, "Could goto '{}'.", url);
             return getSuccessOutput();
         } catch (Exception e) {
@@ -111,5 +114,13 @@ public class GotoAction extends WebSymbolAction {
 
     public void setCredentials(Credentials credentials) {
         this.credentials = credentials;
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 }

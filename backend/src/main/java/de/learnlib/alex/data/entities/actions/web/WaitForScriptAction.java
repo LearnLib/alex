@@ -77,6 +77,7 @@ public class WaitForScriptAction extends SymbolAction {
             final Map<String, Map<String, ? extends Object>> store = new HashMap<>();
             store.put("variables", variableStore.getStore());
             store.put("counters", counterStore.getStore());
+            store.put("urls", connector.getEnvironment().getUrlsAsMap());
 
             try {
                 webSiteConnector.getDriver().manage().timeouts().setScriptTimeout(timeout, TimeUnit.SECONDS);

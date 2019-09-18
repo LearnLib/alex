@@ -1,11 +1,22 @@
 <h5><strong>Make request</strong></h5>
 
-<p class="text-muted">Make a HTTP request to a URL that is either relative to your project's base URL or an absolute one.</p>
+<p class="text-muted">Make a HTTP request to a URL that is relative a base URL.</p>
 <hr>
 
-<div class="form-group">
-    <label>URL</label>
-    <input class="form-control" type="text" placeholder="The URL to make the request to" ng-model="vm.action.url">
+<div class="d-flex flex-row">
+    <div class="form-group w-25">
+        <label class="control-label">Base</label>
+        <select class="form-control" ng-model="vm.selectedBaseUrl" ng-change="vm.handleBaseUrlChange()">
+            <option ng-repeat="url in vm.project.getDefaultEnvironment().urls" ng-value="url.name">
+                {{url.name}}
+            </option>
+        </select>
+    </div>
+
+    <div class="form-group w-75 ml-3">
+        <label class="control-label">URL</label>
+        <input class="form-control" type="text" placeholder="The URL to make a request to" ng-model="vm.action.url">
+    </div>
 </div>
 
 <div class="form-group">

@@ -449,7 +449,7 @@ export const testSuiteViewComponent = {
       config.driverConfig.id = null;
       config.tests = selectedTests.map(t => t.id);
       config.project = this.project.id;
-      config.url = config.url.id;
+      config.environment = config.environment.id;
 
       this.testConfigResource.create(this.project.id, config)
         .then(createdConfig => {

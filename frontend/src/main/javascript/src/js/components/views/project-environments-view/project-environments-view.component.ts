@@ -51,7 +51,10 @@ export const projectEnvironmentsViewComponent = {
     init(): void {
       // load all existing counters from the server
       this.projectEnvironmentResource.getAll(this.project.id)
-        .then(envs => this.environments = envs)
+        .then(envs => {
+          this.environments = envs;
+          this.projectService.reloadCurrentProject();
+        })
         .catch(console.error);
     }
 
@@ -61,7 +64,7 @@ export const projectEnvironmentsViewComponent = {
           const env = new ProjectEnvironment();
           env.name = name;
           this.projectEnvironmentResource.create(this.project.id, env).then(
-            createdEnv => this.environments.push(createdEnv)
+            () => this.init()
           );
         }
       );
@@ -74,8 +77,7 @@ export const projectEnvironmentsViewComponent = {
           copy.name = name;
           this.projectEnvironmentResource.update(this.project.id, copy).then(updatedEnv => {
             this.toastService.success(`The environment has been updated.`);
-            const i = this.environments.findIndex(e => e.id === env.id);
-            this.environments[i] = updatedEnv;
+            this.init();
           }).catch(err => this.toastService.danger(`Could not update environment. ${err.data.message}`));
         }
       );

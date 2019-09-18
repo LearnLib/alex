@@ -32,7 +32,7 @@ public class CreateProjectForm {
     private String description;
 
     @NotBlank
-    @Pattern(regexp = "^https?://.+?")
+    @Pattern(regexp = "^https?://.*?")
     private String url;
 
     public String getName() {

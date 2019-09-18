@@ -81,6 +81,8 @@ public abstract class AbstractLearnerConfiguration implements Serializable {
             throw new IllegalArgumentException("The MaxAmountOfStep property must not be equal to 0.");
         } else if (eqOracle == null) {
             throw new IllegalArgumentException("Could not find an EQ oracle.");
+        } else if (environments.isEmpty()) {
+            throw new IllegalArgumentException("At least one environment is required.");
         }
         eqOracle.checkParameters();
     }

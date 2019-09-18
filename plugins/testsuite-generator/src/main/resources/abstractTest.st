@@ -40,6 +40,7 @@ public class AbstractExportedTest {
         testCases = export.getTestCases();
 
         final ProjectUrl url = new ProjectUrl();
+        url.setName("Testing");
         url.setUrl("<projectUrl>");
         final ProjectEnvironment env = new ProjectEnvironment();
         env.getUrls().add(url);
@@ -53,9 +54,9 @@ public class AbstractExportedTest {
         cdc.setHeadless(<headless>);
 
         wsc.reset();
-        wsc.get(url.getUrl(), null);
+        wsc.get("Testing", url.getUrl(), null);
 
-        cm = new ConnectorManager();
+        cm = new ConnectorManager(env);
         cm.addConnector(wsc);
         cm.addConnector(wService);
         cm.addConnector(vsc);

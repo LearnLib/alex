@@ -27,6 +27,7 @@ import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.data.entities.actions.misc.WaitAction;
 import de.learnlib.alex.data.entities.actions.web.ClearAction;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
+import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
@@ -113,6 +114,9 @@ public class SymbolDAOImplTest {
     @Mock
     private TestExecutionResultRepository testExecutionResultRepository;
 
+    @Mock
+    private ProjectEnvironmentRepository projectEnvironmentRepository;
+
 
     private SymbolDAO symbolDAO;
 
@@ -121,7 +125,7 @@ public class SymbolDAOImplTest {
         symbolDAO = new SymbolDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
                 symbolActionRepository, symbolGroupDAO, symbolParameterRepository, symbolStepRepository,
                 parameterizedSymbolDAO, parameterizedSymbolRepository, symbolSymbolStepRepository,
-                testCaseStepRepository, testExecutionResultRepository);
+                testCaseStepRepository, testExecutionResultRepository, projectEnvironmentRepository);
     }
 
     @Test

@@ -31,6 +31,8 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -48,7 +50,7 @@ public class WebSiteConnector implements Connector {
     private AbstractWebDriverConfig driverConfig;
 
     /** A managed base url to use. */
-    private BaseUrlManager baseUrl;
+    private BaseUrlManager baseUrlManager;
 
     /** The driver used to send and receive data to a WebSite. */
     private WebDriver driver;
@@ -60,7 +62,7 @@ public class WebSiteConnector implements Connector {
      * Constructor.
      */
     public WebSiteConnector(ProjectEnvironment environment, AbstractWebDriverConfig driverConfig) {
-        this.baseUrl = new BaseUrlManager(environment);
+        this.baseUrlManager = new BaseUrlManager(environment);
         this.driverConfig = driverConfig;
     }
 
@@ -117,12 +119,17 @@ public class WebSiteConnector implements Connector {
      * @throws Exception
      *         If the application could not connect to the web driver.
      */
-    public void get(String path, Credentials credentials) throws Exception {
+    public void get(String baseUrl, String path, Credentials credentials) throws Exception {
         if (this.driver == null) {
             this.driver = driverConfig.createDriver();
         }
 
-        final String url = baseUrl.getAbsoluteUrl("Base", path, credentials);
+        final String url = baseUrlManager.getAbsoluteUrl(baseUrl, path, credentials);
+        try {
+            new URL(url);
+        } catch (MalformedURLException e) {
+            throw new Exception("The URL is malformed.");
+        }
 
         int numRetries = 0;
         while (numRetries < MAX_RETRIES) {

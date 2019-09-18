@@ -65,6 +65,14 @@ export class ProjectService {
       });
   }
 
+  reloadCurrentProject(): void {
+    if (this.store.currentProject != null) {
+      this.projectResource.get(this.store.currentProject.id).then(
+          p => this.open(p)
+      );
+    }
+  }
+
   /**
    * Updates a project.
    *
@@ -82,7 +90,7 @@ export class ProjectService {
             resolve: {
               project: () => new Project(JSON.parse(JSON.stringify(project)))
             }
-          }).result.then(updatedProject => {
+          }).result.then((updatedProject: Project) => {
             const i = this.store.projects.findIndex(p => p.id === updatedProject.id);
             if (i > -1) this.store.projects[i] = updatedProject;
             return updatedProject;

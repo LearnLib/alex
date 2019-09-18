@@ -15,6 +15,8 @@
  */
 
 import {CallRestAction} from '../../../../../entities/actions/rest/request-action';
+import {ProjectService} from "../../../../../services/project.service";
+import {Project} from "../../../../../entities/project";
 
 const presets = {
   JSON: 'JSON',
@@ -37,9 +39,11 @@ export const requestActionFormComponent = {
     public header: any;
     public aceOptions: any;
     public action: CallRestAction;
+    public selectedBaseUrl: string;
 
     /** Constructor. */
-    constructor() {
+    /* @ngInject */
+    constructor(private projectService: ProjectService) {
       this.preset = presets.JSON;
       this.cookie = {name: null, value: null};
       this.header = {name: null, value: null};
@@ -54,6 +58,11 @@ export const requestActionFormComponent = {
       if (this.action.data == null) {
         this.setPreset();
       }
+
+      if (this.action.baseUrl == null) {
+        this.action.baseUrl = this.project.getDefaultEnvironment().getDefaultUrl().name;
+      }
+      this.selectedBaseUrl = this.action.baseUrl;
     }
 
     addHeader(): void {
@@ -79,6 +88,14 @@ export const requestActionFormComponent = {
         default:
           break;
       }
+    }
+
+    handleBaseUrlChange(): void {
+      this.action.baseUrl = this.selectedBaseUrl;
+    }
+
+    get project(): Project {
+      return this.projectService.store.currentProject;
     }
   }
 };

@@ -22,7 +22,6 @@ import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
-import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.testing.entities.TestCaseResult;
 import de.learnlib.alex.testing.entities.TestReport;

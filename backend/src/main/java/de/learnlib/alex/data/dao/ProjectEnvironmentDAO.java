@@ -21,9 +21,13 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectUrl;
+import de.learnlib.alex.data.entities.SymbolAction;
+import de.learnlib.alex.data.entities.actions.rest.CallAction;
+import de.learnlib.alex.data.entities.actions.web.GotoAction;
 import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
+import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +54,9 @@ public class ProjectEnvironmentDAO {
 
     @Autowired
     private ProjectUrlRepository urlRepository;
+
+    @Autowired
+    private SymbolActionRepository symbolActionRepository;
 
     public ProjectEnvironment create(User user, Long projectId, ProjectEnvironment environment) {
         final Project project = projectRepository.findById(projectId).orElse(null);
@@ -207,6 +214,17 @@ public class ProjectEnvironmentDAO {
         }
 
         environmentRepository.saveAll(envs);
+
+        // set base url of actions that reference url to the new base url
+        final List<SymbolAction> actions = symbolActionRepository.findAllWithBaseUrl(projectId, url.getName());
+        for (final SymbolAction a: actions) {
+            if (a instanceof CallAction) {
+                ((CallAction) a).setBaseUrl(env.getDefaultUrl().getName());
+            } else if (a instanceof GotoAction) {
+                ((GotoAction) a).setBaseUrl(env.getDefaultUrl().getName());
+            }
+        }
+        symbolActionRepository.saveAll(actions);
     }
 
     public List<ProjectUrl> updateUrls(User user, Long projectId, Long envId, Long urlId, ProjectUrl url) {
@@ -248,6 +266,17 @@ public class ProjectEnvironmentDAO {
                     }
                 }
             }
+
+            // update actions that reference the base url
+            final List<SymbolAction> actions = symbolActionRepository.findAllWithBaseUrl(projectId, originalName);
+            for (final SymbolAction a: actions) {
+                if (a instanceof CallAction) {
+                    ((CallAction) a).setBaseUrl(url.getName());
+                } else if (a instanceof GotoAction) {
+                    ((GotoAction) a).setBaseUrl(url.getName());
+                }
+            }
+            symbolActionRepository.saveAll(actions);
         }
 
         return updatedUrls;

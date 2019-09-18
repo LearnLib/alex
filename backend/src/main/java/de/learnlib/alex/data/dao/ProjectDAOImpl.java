@@ -30,6 +30,7 @@ import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.testing.entities.TestSuite;
+import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,49 +57,17 @@ public class ProjectDAOImpl implements ProjectDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
-
-    /** The repository for learner results. */
     private LearnerResultRepository learnerResultRepository;
-
-    /** The repository for test reports. */
     private TestReportRepository testReportRepository;
-
-    /** The repository for parameterized symbols. */
     private ParameterizedSymbolRepository parameterizedSymbolRepository;
-
-    /** The repository for symbol steps. */
     private SymbolStepRepository symbolStepRepository;
-
-    /** The repository for actions. */
     private SymbolActionRepository symbolActionRepository;
-
-    /** The FileDAO to use. Will be injected. */
     private FileDAO fileDAO;
-
     private ProjectEnvironmentDAO projectEnvironmentDAO;
-
     private ProjectUrlRepository projectUrlRepository;
+    private TestExecutionConfigRepository testExecutionConfigRepository;
 
-    /**
-     * Constructor.
-     *
-     * @param projectRepository
-     *         The ProjectRepository to use.
-     * @param learnerResultRepository
-     *         The LearnerResultRepository to use.
-     * @param fileDAO
-     *         The FileDAO to use.
-     * @param testReportRepository
-     *         The repository for test reports.
-     * @param parameterizedSymbolRepository
-     *         The repository for parameterized symbols.
-     * @param symbolStepRepository
-     *         The repository for symbol steps.
-     * @param symbolActionRepository
-     *         The repository for actions.
-     */
     @Inject
     public ProjectDAOImpl(ProjectRepository projectRepository,
                           LearnerResultRepository learnerResultRepository,
@@ -108,7 +77,8 @@ public class ProjectDAOImpl implements ProjectDAO {
                           SymbolStepRepository symbolStepRepository,
                           SymbolActionRepository symbolActionRepository,
                           @Lazy ProjectEnvironmentDAO projectEnvironmentDAO,
-                          ProjectUrlRepository projectUrlRepository) {
+                          ProjectUrlRepository projectUrlRepository,
+                          TestExecutionConfigRepository testExecutionConfigRepository) {
         this.projectRepository = projectRepository;
         this.learnerResultRepository = learnerResultRepository;
         this.fileDAO = fileDAO;
@@ -118,6 +88,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         this.symbolActionRepository = symbolActionRepository;
         this.projectEnvironmentDAO = projectEnvironmentDAO;
         this.projectUrlRepository = projectUrlRepository;
+        this.testExecutionConfigRepository = testExecutionConfigRepository;
     }
 
     @Override
@@ -150,8 +121,6 @@ public class ProjectDAOImpl implements ProjectDAO {
         defaultEnv.setName("Production");
         defaultEnv.setDefault(true);
         final ProjectEnvironment createdDefaultEnvironment = projectEnvironmentDAO.create(user, createdProject.getId(), defaultEnv);
-        createdProject.getEnvironments().add(createdDefaultEnvironment);
-        projectRepository.save(createdProject);
 
         final ProjectUrl projectUrl = new ProjectUrl();
         projectUrl.setUrl(projectForm.getUrl());
@@ -216,6 +185,7 @@ public class ProjectDAOImpl implements ProjectDAO {
         parameterizedSymbolRepository.deleteAllBySymbol_Project_Id(projectId);
         testReportRepository.deleteAllByProject_Id(projectId);
         learnerResultRepository.deleteAllByProject_Id(projectId);
+        testExecutionConfigRepository.deleteAllByProject_Id(projectId);
 
         // delete the project directory
         try {

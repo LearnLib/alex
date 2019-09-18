@@ -21,8 +21,6 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
-import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;

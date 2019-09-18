@@ -18,6 +18,7 @@ package de.learnlib.alex.learning.services.connectors;
 
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.learning.exceptions.LearnerException;
 import org.junit.Before;
@@ -51,7 +52,7 @@ public class ConnectorContextHandlerTest {
     public void shouldCreateTheContextCorrectly() {
         given(resetSymbol.execute(any(ConnectorManager.class))).willReturn(new ExecuteResult(true));
 
-        ConnectorManager connectorManager = new ConnectorManager();
+        ConnectorManager connectorManager = new ConnectorManager(new ProjectEnvironment());
         VariableStoreConnector connector1 = mock(VariableStoreConnector.class);
         CounterStoreConnector connector2 = mock(CounterStoreConnector.class);
         connectorManager.addConnector(connector1);
@@ -77,7 +78,7 @@ public class ConnectorContextHandlerTest {
     }
 
     private ConnectorManager createConnectorManager() {
-        ConnectorManager connectorManager = new ConnectorManager();
+        ConnectorManager connectorManager = new ConnectorManager(new ProjectEnvironment());
         Connector connector1 = mock(VariableStoreConnector.class);
         Connector connector2 = mock(CounterStoreConnector.class);
         connectorManager.addConnector(connector1);

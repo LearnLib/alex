@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+import {ProjectService} from "../../../../../services/project.service";
+import {Project} from "../../../../../entities/project";
+import {GoToWebAction} from "../../../../../entities/actions/web/open-url-action";
+
 /**
  * @type {{templateUrl: string, bindings: {action: string}, controllerAs: string}}
  */
@@ -22,5 +26,29 @@ export const openActionFormComponent = {
   bindings: {
     action: '='
   },
-  controllerAs: 'vm'
+  controllerAs: 'vm',
+  controller: class OpenUrlActionFormComponent {
+
+    public action: GoToWebAction;
+    public selectedBaseUrl: string;
+
+    /* @ngInject */
+    constructor(private projectService: ProjectService) {
+    }
+
+    $onInit() {
+      if (this.action.baseUrl == null) {
+        this.action.baseUrl = this.project.getDefaultEnvironment().getDefaultUrl().name;
+      }
+      this.selectedBaseUrl = this.action.baseUrl;
+    }
+
+    handleBaseUrlChange(): void {
+      this.action.baseUrl = this.selectedBaseUrl;
+    }
+
+    get project(): Project {
+      return this.projectService.store.currentProject;
+    }
+  }
 };

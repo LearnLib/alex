@@ -4,7 +4,7 @@
 
     <div class="form-group">
         <label>URL*</label>
-        <input required type="url" class="form-control" ng-model="vm.project.url">
+        <input required type="text" pattern="^https?://.*?" class="form-control" ng-model="vm.project.url">
     </div>
 
     <div class="form-group">

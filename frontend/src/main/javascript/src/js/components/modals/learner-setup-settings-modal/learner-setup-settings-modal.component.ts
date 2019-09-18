@@ -67,6 +67,13 @@ export const learnerSetupSettingsModalComponent = {
       this.learnConfiguration = this.resolve.learnConfiguration;
       this.selectedLearningAlgorithm = this.learnConfiguration.algorithm.name;
       this.selectedEnvironments = new Selectable(this.project.environments, 'id');
+
+      if (this.learnConfiguration.environments.length === 0) {
+        this.selectedEnvironments.select(this.project.getDefaultEnvironment());
+        this.learnConfiguration.environments = this.selectedEnvironments.getSelected();
+      } else {
+        this.selectedEnvironments.selectMany(this.learnConfiguration.environments);
+      }
     }
 
     /**

@@ -16,8 +16,8 @@
 
 package de.learnlib.alex.data.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -32,6 +32,8 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(
@@ -71,6 +73,16 @@ public class ProjectEnvironment implements Serializable {
                 .filter(ProjectUrl::isDefault)
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Transient
+    @JsonIgnore
+    public Map<String, String> getUrlsAsMap() {
+        return this.urls.stream().collect(Collectors.toMap(ProjectUrl::getName, ProjectUrl::getUrl));
     }
 
     public Long getId() {

@@ -27,7 +27,6 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
-import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;

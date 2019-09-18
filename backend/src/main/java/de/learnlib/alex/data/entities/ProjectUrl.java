@@ -33,7 +33,7 @@ public class ProjectUrl {
 
     /** The URL where the system is accessible. */
     @NotBlank
-    @Pattern(regexp = "^https?://.+?")
+    @Pattern(regexp = "^https?://.*?")
     private String url;
 
     private boolean isDefault;

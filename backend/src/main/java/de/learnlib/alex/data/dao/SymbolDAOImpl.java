@@ -19,14 +19,19 @@ package de.learnlib.alex.data.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.Symbol;
+import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.SymbolActionStep;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.entities.SymbolPSymbolStep;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolStep;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
+import de.learnlib.alex.data.entities.actions.rest.CallAction;
+import de.learnlib.alex.data.entities.actions.web.GotoAction;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
+import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
@@ -71,75 +76,21 @@ public class SymbolDAOImpl implements SymbolDAO {
     /** The format for archived symbols. */
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HH:mm:ss");
 
-    /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
-
-    /** The ProjectDAO to use. Will be injected. */
     private ProjectDAO projectDAO;
-
-    /** The injected DAO for symbol groups. */
     private SymbolGroupDAO symbolGroupDAO;
-
-    /** The SymbolGroupRepository to use. Will be injected. */
     private SymbolGroupRepository symbolGroupRepository;
-
-    /** The SymbolRepository to use. Will be injected. */
     private SymbolRepository symbolRepository;
-
-    /** The SymbolActionRepository to use. Will be injected. */
     private SymbolActionRepository symbolActionRepository;
-
-    /** The injected SymbolParameterRepository to use. */
     private SymbolParameterRepository symbolParameterRepository;
-
-    /** The repository for symbol steps. */
     private SymbolStepRepository symbolStepRepository;
-
-    /** The repository for parameterized symbols. */
     private ParameterizedSymbolDAO parameterizedSymbolDAO;
-
-    /** The repository for symbol steps. */
     private SymbolSymbolStepRepository symbolSymbolStepRepository;
-
-    /** The repository for parameterized symbols. */
     private ParameterizedSymbolRepository parameterizedSymbolRepository;
-
-    /** The repository for test case steps. */
     private TestCaseStepRepository testCaseStepRepository;
-
-    /** The repository for test results. */
     private TestExecutionResultRepository testExecutionResultRepository;
+    private ProjectEnvironmentRepository projectEnvironmentRepository;
 
-    /**
-     * Creates a new SymbolDAO.
-     *
-     * @param projectRepository
-     *         The ProjectRepository to use.
-     * @param projectDAO
-     *         The ProjectDAO to use.
-     * @param symbolGroupRepository
-     *         The SymbolGroupRepository to use.
-     * @param symbolRepository
-     *         The SymbolRepository to use.
-     * @param symbolActionRepository
-     *         The SymbolActionRepository to use.
-     * @param symbolGroupDAO
-     *         The symbolGroupDAO to use.
-     * @param symbolParameterRepository
-     *         The SymbolParameterRepository to use.
-     * @param symbolStepRepository
-     *         The repository for symbol steps.
-     * @param parameterizedSymbolDAO
-     *         The DAO for parameterized symbols.
-     * @param symbolSymbolStepRepository
-     *         {@link #symbolSymbolStepRepository}
-     * @param parameterizedSymbolRepository
-     *         {@link #parameterizedSymbolRepository}
-     * @param testCaseStepRepository
-     *         {@link #testCaseStepRepository}
-     * @param testExecutionResultRepository
-     *         {@link #testExecutionResultRepository}
-     */
     @Inject
     public SymbolDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
                          SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
@@ -149,7 +100,8 @@ public class SymbolDAOImpl implements SymbolDAO {
                          ParameterizedSymbolRepository parameterizedSymbolRepository,
                          SymbolSymbolStepRepository symbolSymbolStepRepository,
                          TestCaseStepRepository testCaseStepRepository,
-                         TestExecutionResultRepository testExecutionResultRepository) {
+                         TestExecutionResultRepository testExecutionResultRepository,
+                         ProjectEnvironmentRepository projectEnvironmentRepository) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
@@ -163,6 +115,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         this.symbolSymbolStepRepository = symbolSymbolStepRepository;
         this.testCaseStepRepository = testCaseStepRepository;
         this.testExecutionResultRepository = testExecutionResultRepository;
+        this.projectEnvironmentRepository = projectEnvironmentRepository;
     }
 
     @Override
@@ -293,6 +246,7 @@ public class SymbolDAOImpl implements SymbolDAO {
                 if (step instanceof SymbolActionStep) {
                     final SymbolActionStep actionStep = (SymbolActionStep) step;
                     actionStep.getAction().setSymbol(createdSymbol);
+                    checkIfBaseUrlExists(projectId, actionStep.getAction());
                     symbolActionRepository.save(actionStep.getAction());
                 } else if (step instanceof SymbolPSymbolStep) {
                     // first, set the reference to the corresponding symbol
@@ -317,6 +271,26 @@ public class SymbolDAOImpl implements SymbolDAO {
             }
 
             symbolStepRepository.saveAll(createdSymbol.getSteps());
+        }
+    }
+
+    private void checkIfBaseUrlExists(Long projectId, SymbolAction action) {
+        final String baseUrl;
+        if (action instanceof CallAction) {
+            baseUrl = ((CallAction) action).getBaseUrl();
+        } else if (action instanceof GotoAction) {
+            baseUrl = ((GotoAction) action).getBaseUrl();
+        } else {
+            return;
+        }
+
+        if (baseUrl == null || baseUrl.trim().equals("")) {
+            throw new ValidationException("The base URL may not be empty.");
+        }
+
+        final ProjectEnvironment env = projectEnvironmentRepository.findAllByProject_Id(projectId).get(0);
+        if (env.getUrls().stream().noneMatch(u -> u.getName().equals(baseUrl))) {
+            throw new ValidationException("The URL '" + baseUrl + "' does not exist within the project.");
         }
     }
 

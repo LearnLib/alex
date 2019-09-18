@@ -44,6 +44,8 @@ export class CallRestAction extends Action {
   /** The amount of time in ms before the request times out. */
   public timeout: number;
 
+  public baseUrl: string;
+
   /**
    * Constructor.
    *
@@ -59,6 +61,7 @@ export class CallRestAction extends Action {
     this.headers = obj.headers || {};
     this.credentials = obj.credentials || {};
     this.timeout = obj.timeout == null ? 0 : obj.timeout;
+    this.baseUrl = obj.baseUrl;
   }
 
   /**

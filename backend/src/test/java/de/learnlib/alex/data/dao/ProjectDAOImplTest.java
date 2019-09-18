@@ -26,6 +26,7 @@ import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
@@ -81,6 +82,9 @@ public class ProjectDAOImplTest {
     @Mock
     private ProjectUrlRepository projectUrlRepository;
 
+    @Mock
+    private TestExecutionConfigRepository testExecutionConfigRepository;
+
     private ProjectDAO projectDAO;
 
     private User user;
@@ -89,7 +93,7 @@ public class ProjectDAOImplTest {
     public void setUp() {
         projectDAO = new ProjectDAOImpl(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
                 parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository, environmentDAO,
-                projectUrlRepository);
+                projectUrlRepository, testExecutionConfigRepository);
         user = new User();
         user.setId(USER_ID);
     }

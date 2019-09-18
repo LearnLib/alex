@@ -90,6 +90,9 @@ public class CallAction extends RESTSymbolAction {
     @NotBlank
     private String url;
 
+    @NotBlank
+    private String baseUrl;
+
     /** The amount of time in ms before the request is aborted. The value 0 means wait infinitely long. */
     @NotNull
     @Min(value = 0)
@@ -258,7 +261,15 @@ public class CallAction extends RESTSymbolAction {
         this.timeout = timeout;
     }
 
-    private void doRequest(WebServiceConnector target) {
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    private void doRequest(WebServiceConnector target) throws Exception {
         final Map<String, String> requestHeaders = getHeadersWithVariableValues();
         if (credentials != null && credentials.areValid()) {
             LOGGER.info(LoggerMarkers.LEARNER, "Using credentials '{}'.", credentials);
@@ -267,18 +278,18 @@ public class CallAction extends RESTSymbolAction {
 
         switch (method) {
             case GET:
-                target.get(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(), timeout);
+                target.get(baseUrl, getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(), timeout);
                 break;
             case POST:
-                target.post(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(),
+                target.post(baseUrl, getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(),
                         getDataWithVariableValues(), timeout);
                 break;
             case PUT:
-                target.put(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(),
+                target.put(baseUrl, getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(),
                         getDataWithVariableValues(), timeout);
                 break;
             case DELETE:
-                target.delete(getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(), timeout);
+                target.delete(baseUrl, getUrlWithVariableValues(), requestHeaders, getCookiesWithVariableValues(), timeout);
                 break;
             default:
                 LOGGER.error(LoggerMarkers.LEARNER, "Tried to make a call to a REST API with an unknown method '{}'.",

@@ -62,7 +62,7 @@ public class PreparedContextHandler {
             e.printStackTrace();
         }
 
-        final ConnectorManager connectors = new ConnectorManager();
+        final ConnectorManager connectors = new ConnectorManager(environment);
         connectors.addConnector(new WebSiteConnector(environment, driverConfig));
         connectors.addConnector(new WebServiceConnector(environment));
         connectors.addConnector(new CounterStoreConnector(counterDAO, user, project, counters));

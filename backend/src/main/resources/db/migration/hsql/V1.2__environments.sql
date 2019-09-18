@@ -27,3 +27,6 @@ alter table PUBLIC.test_execution_config add constraint FkTestExecutionConfigPro
 alter table PUBLIC.test_execution_config drop constraint FKgpe6t1mwus6dpsm59q2nn22g1;
 
 alter table PUBLIC.test_report add column environment_id bigint not null default -1;
+
+alter table PUBLIC.actions add column base_url varchar(255);
+update PUBLIC.actions set base_url = 'Base' where type = 'web_goto' or type = 'rest_call';

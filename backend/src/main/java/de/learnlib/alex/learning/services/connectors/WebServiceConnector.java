@@ -29,6 +29,8 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 import java.util.Set;
 
@@ -145,8 +147,8 @@ public class WebServiceConnector implements Connector {
      * @param timeout
      *         The amount of time in ms before the request is canceled.
      */
-    public void get(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) {
-        final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).get();
+    public void get(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) throws Exception {
+        final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).get();
         rememberResponseComponents(response);
         followRedirects(response);
     }
@@ -173,10 +175,10 @@ public class WebServiceConnector implements Connector {
      * @param timeout
      *         The amount of time in ms before the request is canceled.
      */
-    public void post(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, String data,
-            int timeout) {
+    public void post(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, String data,
+            int timeout) throws Exception {
         final Entity body = getBody(requestHeaders, data);
-        final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).post(body);
+        final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).post(body);
         rememberResponseComponents(response);
         followRedirects(response);
     }
@@ -195,10 +197,10 @@ public class WebServiceConnector implements Connector {
      * @param timeout
      *         The amount of time in ms before the request is canceled.
      */
-    public void put(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies,
-            String data, int timeout) {
+    public void put(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies,
+            String data, int timeout) throws Exception {
         final Entity body = getBody(requestHeaders, data);
-        final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).put(body);
+        final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).put(body);
         rememberResponseComponents(response);
         followRedirects(response);
     }
@@ -215,8 +217,8 @@ public class WebServiceConnector implements Connector {
      * @param timeout
      *         The amount of time in ms before the request is canceled.
      */
-    public void delete(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) {
-        final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).delete();
+    public void delete(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) throws Exception {
+        final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).delete();
         rememberResponseComponents(response);
         followRedirects(response);
     }
@@ -276,11 +278,18 @@ public class WebServiceConnector implements Connector {
      *         The amount of time in ms before the request is canceled.
      * @return The request object.
      */
-    private Invocation.Builder getRequestObject(String path, Map<String, String> requestHeaders,
-            Set<Cookie> requestCookies, int timeout) {
+    private Invocation.Builder getRequestObject(String baseUrl, String path, Map<String, String> requestHeaders,
+            Set<Cookie> requestCookies, int timeout) throws Exception {
         final String[] splitPath = path.split("\\?");
 
-        WebTarget tmpTarget = client.target(baseUrlManager.getAbsoluteUrl("Base", path)).path(splitPath[0]);
+        final String url = baseUrlManager.getAbsoluteUrl(baseUrl, path);
+        try {
+            new URL(url);
+        } catch (MalformedURLException e) {
+            throw new Exception("The URL is malformed.");
+        }
+
+        WebTarget tmpTarget = client.target(url).path(splitPath[0]);
 
         if (splitPath.length > 1) {
             for (final String queryParam : splitPath[1].split("&")) {
