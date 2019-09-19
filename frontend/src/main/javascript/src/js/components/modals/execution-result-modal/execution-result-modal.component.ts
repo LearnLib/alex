@@ -27,23 +27,9 @@ export const executionResultModalComponent = {
   controller: class ExecutionResultModalComponent extends ModalComponent {
 
     public result: any;
-    public formattedTrace: any[];
-
-    /* @ngInject */
-    constructor() {
-      super();
-      this.formattedTrace = [];
-    }
 
     $onInit() {
       this.result = this.resolve.result;
-      if (this.result.trace !== '') {
-        const trace = this.result.trace;
-        this.formattedTrace = trace.substr(1, trace.length - 2).split('] > [').map(p => {
-          const parts = p.split(' / ');
-          return {symbol: parts.shift(), output: parts.join(' / ')}
-        });
-      }
     }
   }
 };

@@ -185,7 +185,7 @@ public class TestExecutor {
 
         // the remaining steps after the failing step are not executed
         if (outputs.size() < testCase.getSteps().size()) {
-            failedStep = outputs.size();
+            failedStep = outputs.size() - 1;
             while (outputs.size() < testCase.getSteps().size()) {
                 outputs.add(new ExecuteResult(false, "Not executed"));
             }

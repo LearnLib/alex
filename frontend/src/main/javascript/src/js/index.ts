@@ -248,6 +248,7 @@ import { dragAndDropActionFormComponent } from './components/forms/actions/web/d
 import { dragAndDropByActionFormComponent } from './components/forms/actions/web/drag-and-drop-by-action-form/drag-and-drop-by-action-form.component';
 import { symbolUsagesModalComponent } from './components/modals/symbol-usages-modal/symbol-usages-modal.component';
 import { executionResultModalComponent } from './components/modals/execution-result-modal/execution-result-modal.component';
+import {outputErrorTraceComponent} from "./components/output-error-trace/output-error-trace.component";
 import { ProjectEnvironmentResourceService } from './services/resources/project-environment-resource.service';
 import { projectEnvironmentsViewComponent } from './components/views/project-environments-view/project-environments-view.component';
 import { projectUrlFormGroupsComponent } from './components/forms/project-url-form-groups/project-url-form-groups.component';
@@ -532,6 +533,7 @@ angular
   .component('pagination', paginationComponent)
   .component('testSuiteTree', testSuiteTreeComponent)
   .component('ltsFormulaList', ltsFormulaListComponent)
-  .component('defaultWebdriverButton', defaultWebdriverButtonComponent);
+  .component('defaultWebdriverButton', defaultWebdriverButtonComponent)
+  .component('outputErrorTrace', outputErrorTraceComponent);
 
 angular.bootstrap(document, ['ALEX']);

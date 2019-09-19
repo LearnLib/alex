@@ -33,20 +33,12 @@
         {{vm.result.time | formatMilliseconds}}
       </td>
     </tr>
-    <tr>
+    <tr ng-if="!vm.result.success && vn.result.trace !== ''">
       <td>
         <strong>Trace</strong>
       </td>
       <td>
-        <em class="text-muted" ng-if="vm.result.trace === ''">No trace available</em>
-        <div ng-if="vm.result.trace !== ''">
-          <div
-              ng-repeat="t in vm.formattedTrace track by $index"
-              ng-style="{'margin-left': (1 * $index) + 'rem'}"
-          >
-            <i class="fa fa-fw fa-level-up-alt fa-rotate-90" ng-if="$index > 0"></i> {{t.symbol}} / {{t.output}}
-          </div>
-        </div>
+        <output-error-trace output="vm.result" show-first="true"></output-error-trace>
       </td>
     </tr>
     </tbody>
