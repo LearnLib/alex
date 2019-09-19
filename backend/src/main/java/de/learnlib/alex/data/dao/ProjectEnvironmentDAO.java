@@ -20,11 +20,13 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
+import de.learnlib.alex.data.entities.ProjectEnvironmentVariable;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.entities.actions.rest.CallAction;
 import de.learnlib.alex.data.entities.actions.web.GotoAction;
 import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
+import de.learnlib.alex.data.repositories.ProjectEnvironmentVariableRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
@@ -55,6 +57,9 @@ public class ProjectEnvironmentDAO {
     private ProjectEnvironmentRepository environmentRepository;
 
     @Autowired
+    private ProjectEnvironmentVariableRepository variableRepository;
+
+    @Autowired
     private ProjectUrlRepository urlRepository;
 
     @Autowired
@@ -75,9 +80,11 @@ public class ProjectEnvironmentDAO {
         }
 
         List<ProjectUrl> urls = new ArrayList<>();
+        List<ProjectEnvironmentVariable> variables = new ArrayList<>();
         final List<ProjectEnvironment> envs = environmentRepository.findAllByProject_Id(projectId);
         if (envs.size() > 0) {
             urls = envs.get(0).getUrls();
+            variables = envs.get(0).getVariables();
         }
 
         final ProjectEnvironment envToCreate = new ProjectEnvironment();
@@ -96,11 +103,23 @@ public class ProjectEnvironmentDAO {
             u.setEnvironment(projectEnvironment);
             u.setUrl(url.getUrl());
             u.setDefault(url.isDefault());
-            createdUrls.add(urlRepository.save(u));
+            createdUrls.add(u);
         }
+        urlRepository.saveAll(createdUrls);
         projectEnvironment.getUrls().addAll(createdUrls);
-        environmentRepository.save(projectEnvironment);
 
+        final List<ProjectEnvironmentVariable> createdVariables = new ArrayList<>();
+        for (ProjectEnvironmentVariable var: variables) {
+            final ProjectEnvironmentVariable v = new ProjectEnvironmentVariable();
+            v.setEnvironment(projectEnvironment);
+            v.setName(var.getName());
+            v.setValue(var.getValue());
+            createdVariables.add(v);
+        }
+        variableRepository.saveAll(createdVariables);
+        projectEnvironment.getVariables().addAll(createdVariables);
+
+        environmentRepository.save(projectEnvironment);
         return loadLazyRelations(projectEnvironment);
     }
 
@@ -178,6 +197,62 @@ public class ProjectEnvironmentDAO {
         }
 
         return envs;
+    }
+
+    public ProjectEnvironmentVariable createVariable(User user, Long projectId, Long environmentId, ProjectEnvironmentVariable variable) {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final ProjectEnvironment env = environmentRepository.findById(environmentId).orElse(null);
+        checkAccess(user, project, env);
+
+        if (variableRepository.findByEnvironment_IdAndName(environmentId, variable.getName()) != null) {
+            throw new ValidationException("The name of the variable already exists");
+        }
+
+        final List<ProjectEnvironmentVariable> variablesToCreate = new ArrayList<>();
+        final List<ProjectEnvironment> envs = environmentRepository.findAllByProject_Id(projectId);
+        for (ProjectEnvironment e: envs) {
+            final ProjectEnvironmentVariable v = new ProjectEnvironmentVariable();
+            v.setName(variable.getName());
+            v.setValue(variable.getValue());
+            v.setEnvironment(e);
+            variablesToCreate.add(v);
+            e.getVariables().add(v);
+        }
+
+        variableRepository.saveAll(variablesToCreate);
+        return variablesToCreate.stream().filter(v -> v.getEnvironment().equals(env)).findFirst().orElse(null);
+    }
+
+    public void deleteVariable(User user, Long projectId, Long environmentId, Long variableId) {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final ProjectEnvironment env = environmentRepository.findById(environmentId).orElse(null);
+        final ProjectEnvironmentVariable variable = variableRepository.findById(variableId).orElse(null);
+        checkAccess(user, project, env, variable);
+
+        variableRepository.deleteAllByEnvironment_Project_IdAndName(projectId, variable.getName());
+    }
+
+    public ProjectEnvironmentVariable updateVariable(User user, Long projectId, Long environmentId, Long variableId, ProjectEnvironmentVariable variable) {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final ProjectEnvironment env = environmentRepository.findById(environmentId).orElse(null);
+        final ProjectEnvironmentVariable variableInDb = variableRepository.findById(variableId).orElse(null);
+        checkAccess(user, project, env, variableInDb);
+
+        if (variableRepository.findByEnvironment_IdAndNameAndIdNot(environmentId, variable.getName(), variableId) != null) {
+            throw new ValidationException("The name of the variable already exists");
+        }
+
+        final List<ProjectEnvironmentVariable> variables = variableRepository.findAllByEnvironment_Project_IdAndName(projectId, variableInDb.getName());
+        for (ProjectEnvironmentVariable v: variables) {
+            v.setName(variable.getName());
+        }
+        if (!variables.isEmpty()) {
+            variableRepository.saveAll(variables);
+        }
+
+        variableInDb.setName(variable.getName());
+        variableInDb.setValue(variable.getValue());
+        return variableRepository.save(variableInDb);
     }
 
     public List<ProjectUrl> createUrls(User user, Long projectId, Long environmentId, ProjectUrl url) {
@@ -315,18 +390,27 @@ public class ProjectEnvironmentDAO {
             throw new NotFoundException("The url could not be found.");
         }
 
-        System.out.println("\n\n");
-        System.out.println(url.getEnvironmentId());
-        System.out.println(env.getId());
-        System.out.println("\n\n");
-
         if (!url.getEnvironmentId().equals(env.getId())) {
             throw new UnauthorizedException("You are not allowed to access the url.");
         }
     }
 
+    public void checkAccess(User user, Project project, ProjectEnvironment env, ProjectEnvironmentVariable variable)
+            throws NotFoundException, UnauthorizedException {
+        checkAccess(user, project, env);
+
+        if (variable == null) {
+            throw new NotFoundException("The variable could not be found.");
+        }
+
+        if (!variable.getEnvironmentId().equals(env.getId())) {
+            throw new UnauthorizedException("You are not allowed to access the variable.");
+        }
+    }
+
     public static ProjectEnvironment loadLazyRelations(ProjectEnvironment environment) {
         Hibernate.initialize(environment.getUrls());
+        Hibernate.initialize(environment.getVariables());
         return environment;
     }
 }

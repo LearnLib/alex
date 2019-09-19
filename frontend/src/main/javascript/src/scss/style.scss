@@ -672,14 +672,15 @@ test-case-view table {
 }
 
 
+.card-environment {
+  .card-header,
+  table tbody tr {
+    .actions {
+      visibility: hidden;
+    }
 
-.environment-list,
-.project-url-list .list-group-item {
-  .actions {
-    visibility: hidden;
-  }
-
-  &:hover .actions {
-    visibility: visible;
+    &:hover .actions {
+      visibility: visible;
+    }
   }
 }

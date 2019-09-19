@@ -26,33 +26,24 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import java.util.Objects;
 
-/** The class for the URL of a target system. */
 @Entity
-public class ProjectUrl {
+public class ProjectEnvironmentVariable {
 
-    /** The id in the db. */
     @Id
     @GeneratedValue
     private Long id;
 
-    /** The project the URL belongs to. */
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "environment_id")
     @JsonIgnore
     private ProjectEnvironment environment;
 
-    /** An optional name for the URL. */
+    @NotBlank
     private String name;
 
-    /** The URL where the system is accessible. */
     @NotBlank
-    @Pattern(regexp = "^https?://.*?")
-    private String url;
-
-    private boolean isDefault;
+    private String value;
 
     public Long getId() {
         return id;
@@ -60,22 +51,6 @@ public class ProjectUrl {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public ProjectEnvironment getEnvironment() {
@@ -92,39 +67,24 @@ public class ProjectUrl {
     }
 
     @JsonProperty("environment")
-    public void setEnvironmentId(Long environmentId) {
+    public void setEnvironmentId(Long envId) {
         this.environment = new ProjectEnvironment();
-        this.environment.setId(environmentId);
+        this.environment.setId(envId);
     }
 
-    public boolean isDefault() {
-        return isDefault;
+    public String getName() {
+        return name;
     }
 
-    public void setDefault(boolean aDefault) {
-        isDefault = aDefault;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @Override
-    @SuppressWarnings("checkstyle:needbraces")
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ProjectUrl)) return false;
-        ProjectUrl that = (ProjectUrl) o;
-        return Objects.equals(getId(), that.getId());
+    public String getValue() {
+        return value;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
-
-    @Override
-    public String toString() {
-        return "ProjectUrl{"
-                + "id=" + id
-                + ", name='" + name + '\''
-                + ", url='" + url + '\''
-                + '}';
+    public void setValue(String value) {
+        this.value = value;
     }
 }

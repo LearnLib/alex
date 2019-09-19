@@ -18,6 +18,7 @@ import { IHttpService, IPromise } from 'angular';
 import { apiUrl } from '../../../../environments';
 import { ProjectEnvironment } from '../../entities/project-environment';
 import { ProjectUrl } from '../../entities/project-url';
+import {ProjectEnvironmentVariable} from "../../entities/project-environment-variable";
 
 export class ProjectEnvironmentResourceService {
 
@@ -56,5 +57,19 @@ export class ProjectEnvironmentResourceService {
   updateUrl(projectId: number, envId: number, urlId: number, url: ProjectUrl): IPromise<any> {
     return this.$http.put(`${apiUrl}/projects/${projectId}/environments/${envId}/urls/${url.id}`, url)
       .then(res => (<any[]> res.data).map(u => ProjectUrl.fromData(u)));
+  }
+
+  createVariable(projectId: number, envId: number, variable: ProjectEnvironmentVariable): IPromise<any> {
+    return this.$http.post(`${apiUrl}/projects/${projectId}/environments/${envId}/variables`, variable)
+        .then(res => ProjectEnvironmentVariable.fromData(res.data));
+  }
+
+  deleteVariable(projectId: number, envId: number, variable: ProjectEnvironmentVariable): IPromise<any> {
+    return this.$http.delete(`${apiUrl}/projects/${projectId}/environments/${envId}/variables/${variable.id}`);
+  }
+
+  updateVariable(projectId: number, envId: number, urlId: number, variable: ProjectEnvironmentVariable): IPromise<any> {
+    return this.$http.put(`${apiUrl}/projects/${projectId}/environments/${envId}/variables/${variable.id}`, variable)
+        .then(res => ProjectEnvironmentVariable.fromData(res.data));
   }
 }

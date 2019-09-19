@@ -22,6 +22,7 @@ import { PromptService } from '../../../services/prompt.service';
 import { ToastService } from '../../../services/toast.service';
 import { remove } from 'lodash';
 import { ProjectUrl } from '../../../entities/project-url';
+import {ProjectEnvironmentVariable} from "../../../entities/project-environment-variable";
 
 /**
  * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.
@@ -141,6 +142,31 @@ export const projectEnvironmentsViewComponent = {
       this.projectEnvironmentResource.deleteUrl(this.project.id, env.id, url)
         .then(() => this.init())
         .catch(err => this.toastService.danger(`Could not delete URL. ${err.data.message}`));
+    }
+
+    createVariable(): void {
+      this.$uibModal.open({
+        component: 'environmentVariableCreateModal',
+        resolve: {
+          environment: () => this.project.getDefaultEnvironment()
+        }
+      }).result.then(() => this.init());
+    }
+
+    editVariable(env: ProjectEnvironment, variable: ProjectEnvironmentVariable): void {
+      this.$uibModal.open({
+        component: 'environmentVariableEditModal',
+        resolve: {
+          environment: () => env,
+          variable: () => variable.copy()
+        }
+      }).result.then(() => this.init());
+    }
+
+    deleteVariable(env: ProjectEnvironment, variable: ProjectEnvironmentVariable): void {
+      this.projectEnvironmentResource.deleteVariable(this.project.id, env.id, variable)
+          .then(() => this.init())
+          .catch(err => this.toastService.danger(`Could not delete variable. ${err.data.message}`));
     }
 
     get project(): Project {

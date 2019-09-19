@@ -17,6 +17,17 @@ create table PUBLIC.LEARNER_RESULT_ENVIRONMENTS
     constraint environment_id_fk foreign key (environments_id) references PUBLIC.project_environment
 );
 
+create table PUBLIC.project_environment_variable
+(
+    id              bigint  not null,
+    name            varchar(255),
+    value           varchar(255),
+    environment_id  bigint  not null,
+    primary key (id),
+    foreign key (environment_id) references PUBLIC.project_environment,
+    constraint unique_variable_name_per_environment unique (environment_id, name)
+);
+
 alter table PUBLIC.project_url add column environment_id bigint not null default -1;
 alter table PUBLIC.project_url add constraint FkProjectUrlProjectEnvironment foreign key (environment_id) references PUBLIC.project_environment;
 alter table PUBLIC.project_url drop constraint FK9f02w2m3biqaq2ooy55cusccr;

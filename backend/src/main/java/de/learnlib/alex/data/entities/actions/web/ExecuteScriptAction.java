@@ -84,6 +84,7 @@ public class ExecuteScriptAction extends SymbolAction {
             store.put("variables", variableStore.getStore());
             store.put("counters", counterStore.getStore());
             store.put("urls", connector.getEnvironment().getUrlsAsMap());
+            store.put("globals", connector.getEnvironment().getVariablesAsMap());
 
             try {
                 webSiteConnector.getDriver().manage().timeouts().setScriptTimeout(timeout, TimeUnit.SECONDS);

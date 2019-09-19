@@ -253,6 +253,8 @@ import { projectEnvironmentsViewComponent } from './components/views/project-env
 import { projectUrlFormGroupsComponent } from './components/forms/project-url-form-groups/project-url-form-groups.component';
 import { projectUrlCreateModalComponent } from './components/modals/project-url-create-modal/project-url-create-modal.component';
 import { projectUrlEditModalComponent } from './components/modals/project-url-edit-modal/project-url-edit-modal.component';
+import {environmentVariableCreateModalComponent} from "./components/modals/environment-variable-create-modal/environment-variable-create-modal.component";
+import {environmentVariableEditModalComponent} from "./components/modals/environment-variable-edit-modal/environment-variable-edit-modal.component";
 
 angular
   .module('ALEX', [
@@ -365,6 +367,8 @@ angular
   .component('projectUrlEditModal', projectUrlEditModalComponent)
   .component('symbolUsagesModal', symbolUsagesModalComponent)
   .component('executionResultModal', executionResultModalComponent)
+  .component('environmentVariableCreateModal', environmentVariableCreateModalComponent)
+  .component('environmentVariableEditModal', environmentVariableEditModalComponent)
 
   // view components
   .component('aboutView', aboutViewComponent)

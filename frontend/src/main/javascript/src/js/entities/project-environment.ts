@@ -15,6 +15,7 @@
  */
 
 import { ProjectUrl } from './project-url';
+import {ProjectEnvironmentVariable} from "./project-environment-variable";
 
 export class ProjectEnvironment {
   id: number;
@@ -22,6 +23,12 @@ export class ProjectEnvironment {
   project: number;
   default: boolean;
   urls: ProjectUrl[];
+  variables: ProjectEnvironmentVariable[];
+
+  constructor() {
+    this.urls = [];
+    this.variables = [];
+  }
 
   static fromData(data: any): ProjectEnvironment {
     const e = new ProjectEnvironment();
@@ -32,8 +39,10 @@ export class ProjectEnvironment {
 
     if (data.urls != null && data.urls.length > 0) {
       e.urls = data.urls.map(u => ProjectUrl.fromData(u));
-    } else {
-      e.urls = [];
+    }
+
+    if (data.variables != null && data.variables.length > 0) {
+      e.variables = data.variables.map(v => ProjectEnvironmentVariable.fromData(v));
     }
 
     return e;

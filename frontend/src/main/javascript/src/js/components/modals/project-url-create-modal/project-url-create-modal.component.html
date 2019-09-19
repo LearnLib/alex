@@ -7,11 +7,11 @@
 
 <form name="vm.form" ng-submit="vm.createUrl()">
 
-  <div class="alert alert-danger" ng-if="vm.errorMessage != null">
-    {{vm.errorMessage}}
-  </div>
-
   <div class="modal-body">
+    <div class="alert alert-danger" ng-if="vm.errorMessage != null">
+      {{vm.errorMessage}}
+    </div>
+
     <project-url-form-groups url="vm.url" form="vm.form"></project-url-form-groups>
   </div>
 

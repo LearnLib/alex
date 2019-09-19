@@ -60,10 +60,17 @@ public class ProjectEnvironment implements Serializable {
     )
     private List<ProjectUrl> urls;
 
+    @OneToMany(
+            mappedBy = "environment",
+            cascade = CascadeType.ALL
+    )
+    private List<ProjectEnvironmentVariable> variables;
+
     private boolean isDefault;
 
     public ProjectEnvironment() {
         this.urls = new ArrayList<>();
+        this.variables = new ArrayList<>();
     }
 
     @Transient
@@ -75,14 +82,16 @@ public class ProjectEnvironment implements Serializable {
                 .orElse(null);
     }
 
-    /**
-     *
-     * @return
-     */
     @Transient
     @JsonIgnore
     public Map<String, String> getUrlsAsMap() {
         return this.urls.stream().collect(Collectors.toMap(ProjectUrl::getName, ProjectUrl::getUrl));
+    }
+
+    @Transient
+    @JsonIgnore
+    public Map<String, String> getVariablesAsMap() {
+        return this.variables.stream().collect(Collectors.toMap(ProjectEnvironmentVariable::getName, ProjectEnvironmentVariable::getValue));
     }
 
     public Long getId() {
@@ -133,5 +142,13 @@ public class ProjectEnvironment implements Serializable {
 
     public void setUrls(List<ProjectUrl> urls) {
         this.urls = urls;
+    }
+
+    public List<ProjectEnvironmentVariable> getVariables() {
+        return variables;
+    }
+
+    public void setVariables(List<ProjectEnvironmentVariable> variables) {
+        this.variables = variables;
     }
 }

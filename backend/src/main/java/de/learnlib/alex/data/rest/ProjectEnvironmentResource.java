@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
+import de.learnlib.alex.data.entities.ProjectEnvironmentVariable;
 import de.learnlib.alex.data.entities.ProjectUrl;
 
 import javax.inject.Inject;
@@ -114,5 +115,40 @@ public class ProjectEnvironmentResource {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final List<ProjectUrl> updatedUrls = environmentDAO.updateUrls(user, projectId, environmentId, urlId, url);
         return Response.status(Response.Status.OK).entity(updatedUrls).build();
+    }
+
+    @POST
+    @Path("/{environmentId}/variables")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createVariable(@PathParam("projectId") Long projectId,
+                              @PathParam("environmentId") Long environmentId,
+                              ProjectEnvironmentVariable variable) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final ProjectEnvironmentVariable createdVariable = environmentDAO.createVariable(user, projectId, environmentId, variable);
+        return Response.status(Response.Status.CREATED).entity(createdVariable).build();
+    }
+
+    @DELETE
+    @Path("/{environmentId}/variables/{varId}")
+    public Response deleteVariable(@PathParam("projectId") Long projectId,
+                              @PathParam("environmentId") Long environmentId,
+                              @PathParam("varId") Long varId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        environmentDAO.deleteVariable(user, projectId, environmentId, varId);
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    @PUT
+    @Path("/{environmentId}/variables/{varId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateUrl(@PathParam("projectId") Long projectId,
+                              @PathParam("environmentId") Long environmentId,
+                              @PathParam("varId") Long varId,
+                              ProjectEnvironmentVariable variable) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final ProjectEnvironmentVariable updatedVariable = environmentDAO.updateVariable(user, projectId, environmentId, varId, variable);
+        return Response.status(Response.Status.OK).entity(updatedVariable).build();
     }
 }
