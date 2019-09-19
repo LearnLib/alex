@@ -23,7 +23,7 @@
             <div ng-if="vm.result">
                 <div class="alert alert-danger" ng-if="!vm.result.passed">
                     <i class="fas fa-fw fa-times float-right" ng-click="vm.result = null"></i>
-                    <i class="fas fa-fw fa-warning"></i> <strong>The test case failed.</strong>
+                    <i class="fas fa-fw fa-exclamation-circle"></i> <strong>The test case failed.</strong>
                     <a ng-if="vm.testConfig.createReport"
                        ui-sref="testReport({projectId: vm.project.id, reportId: vm.report.id})">(Show report)</a>
                 </div>
@@ -106,7 +106,6 @@
                           <th>Expected output</th>
                           <th>Actual output</th>
                           <th width="1">&nbsp;</th>
-                          <th width="1">&nbsp;</th>
                         </tr>
                       </thead>
                       <tbody dragula='"testSymbols"' dragula-model="vm.testCase.steps">
@@ -152,20 +151,10 @@
                             </div>
                           </td>
                           <td>
-                            <span ng-if="vm.result.outputs[$index]">
-                              {{vm.result.outputs[$index].output}}
-                            </span>
-                          </td>
-                          <td>
-                            <span ng-if="vm.result.outputs[$index]">
-                              <i
-                                  class="fa fa-fw fa-search cursor-pointer result-details-icon"
-                                  uib-tooltip="Details"
-                                  tooltip-placement="left"
-                                  ng-click="vm.showResultDetails(vm.result.outputs[$index])"
-                              >
-                              </i>
-                            </span>
+                            <div ng-if="vm.result.outputs[$index]">
+                                <div>{{vm.result.outputs[$index].output}}</div>
+                                <output-error-trace output="vm.result.outputs[$index]" show-first="false"></output-error-trace>
+                            </div>
                           </td>
                           <td>
                             <i class="fas fa-times cursor-pointer" ng-click="vm.testCase.steps.splice($index, 1)"></i>
