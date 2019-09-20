@@ -22,27 +22,33 @@ public class V1_3__Environments extends BaseJavaMigration {
 
             // create environment for each project url
             long i = 0L;
-            final ResultSet urlRows = connection.createStatement().executeQuery("SELECT ID, NAME, IS_DEFAULT, URL FROM PUBLIC.PROJECT_URL ORDER BY ID");
+            final ResultSet urlRows = connection.createStatement().executeQuery("SELECT ID, NAME, IS_DEFAULT, URL FROM PUBLIC.PROJECT_URL WHERE PROJECT_ID = " + projectId + " ORDER BY ID");
+
             while (urlRows.next()) {
                 String name = urlRows.getString(2);
                 name = name == null ? "Production" + (i++) : name;
                 final boolean isDefault = urlRows.getBoolean(3);
                 final long urlId = urlRows.getLong(1);
+
                 connection.createStatement().execute("INSERT INTO PUBLIC.PROJECT_ENVIRONMENT (NAME, PROJECT_ID, IS_DEFAULT) VALUES ('" + name + "', " + projectId + ", " + isDefault + ")");
 
                 // set environment_id to project_url
                 final ResultSet lastEnvRow = connection.createStatement().executeQuery("SELECT ID FROM PUBLIC.PROJECT_ENVIRONMENT ORDER BY ID DESC LIMIT 1");
-                while (urlRows.next()) {
+                while (lastEnvRow.next()) {
                     final long envId = lastEnvRow.getLong(1);
 
                     urlToEnvMap.put(urlId, envId);
                     projectToEnvMap.putIfAbsent(projectId, envId);
 
                     connection.createStatement().executeUpdate("UPDATE PUBLIC.PROJECT_URL SET ENVIRONMENT_ID = " + envId + " WHERE ID = " + urlId);
+                    connection.createStatement().executeUpdate("UPDATE PUBLIC.PROJECT_URL SET NAME = 'Base' WHERE ID = " + urlId);
                     break;
                 }
             }
         }
+
+        //make all project urls default since there is only one url per environment
+        connection.createStatement().executeUpdate("UPDATE PUBLIC.PROJECT_URL SET IS_DEFAULT = true");
 
         // remove columns
         connection.createStatement().executeUpdate("ALTER TABLE PUBLIC.PROJECT_URL DROP COLUMN PROJECT_ID");
@@ -58,7 +64,7 @@ public class V1_3__Environments extends BaseJavaMigration {
 
         // set environments for existing test reports
         final ResultSet testReportRows = connection.createStatement().executeQuery("SELECT ID, PROJECT_ID FROM PUBLIC.TEST_REPORT");
-        while (testConfigRows.next()) {
+        while (testReportRows.next()) {
             final long id = testReportRows.getLong(1);
             final long projectId = testReportRows.getLong(2);
             connection.createStatement().executeUpdate("UPDATE PUBLIC.TEST_REPORT SET ENVIRONMENT_ID = " + projectToEnvMap.get(projectId) + " WHERE ID = " + id);

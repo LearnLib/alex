@@ -33,6 +33,7 @@ export class GoToWebAction extends Action {
   /** The HTTP Basic auth credentials of the request (optional). */
   public credentials: Credentials;
 
+  /** The base URL. */
   public baseUrl: string;
 
   /**
@@ -49,6 +50,6 @@ export class GoToWebAction extends Action {
   }
 
   toString(): string {
-    return `Open URL "${this.url}"`;
+    return `Open URL "${this.url}" (${this.baseUrl})`;
   }
 }
