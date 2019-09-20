@@ -16,10 +16,9 @@
 
 package de.learnlib.alex.testing.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.ProjectUrl;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
 
@@ -69,7 +68,7 @@ public class TestExecutionConfig implements Serializable {
     /** The id of the URL to use for testing. */
     @NotNull
     @OneToOne
-    private ProjectUrl url;
+    private ProjectEnvironment environment;
 
     /** The project where the config is saved. */
     @ManyToOne
@@ -124,30 +123,24 @@ public class TestExecutionConfig implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    public ProjectUrl getUrl() {
-        return url;
+    public ProjectEnvironment getEnvironment() {
+        return environment;
     }
 
-    public void setUrl(ProjectUrl url) {
-        this.url = url;
+    public void setEnvironment(ProjectEnvironment environment) {
+        this.environment = environment;
     }
 
     @Transient
-    @JsonIgnore
-    public Long getUrlId() {
-        return url == null ? null : url.getId();
+    @JsonProperty("environment")
+    public Long getEnvironmentId() {
+        return environment.getId();
     }
 
-    /**
-     * The the URL by an URL ID.
-     *
-     * @param urlId
-     *         The ID of the URL.
-     */
-    @JsonProperty("url")
-    public void setUrlId(Long urlId) {
-        this.url = new ProjectUrl();
-        this.url.setId(urlId);
+    @JsonProperty("environment")
+    public void setEnvironmentId(Long environmentId) {
+        this.environment = new ProjectEnvironment();
+        this.environment.setId(environmentId);
     }
 
     public AbstractWebDriverConfig getDriverConfig() {

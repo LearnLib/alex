@@ -15,7 +15,8 @@
  */
 
 import {ModalComponent} from '../modal.component';
-import {Project, ProjectUrl} from '../../../entities/project';
+import {Project} from '../../../entities/project';
+import { ProjectEnvironment } from '../../../entities/project-environment';
 
 /**
  * A modal dialog for the web driver configuration.
@@ -37,7 +38,7 @@ export const testConfigModalComponent = {
     public project: Project = null;
 
     /** The model for the url ids. */
-    public selectedUrls: ProjectUrl[] = [];
+    public selectedEnvironment: ProjectEnvironment;
 
     /** Constructor. */
     constructor() {
@@ -46,7 +47,7 @@ export const testConfigModalComponent = {
 
     $onInit(): void {
       this.configuration = this.resolve.configuration;
-      this.selectedUrls = [this.configuration.url];
+      this.selectedEnvironment = this.configuration.environment;
       this.project = this.resolve.project;
     }
 
@@ -54,7 +55,7 @@ export const testConfigModalComponent = {
      * Close the modal window and pass the configuration.
      */
     update(): void {
-      this.configuration.url = this.selectedUrls[0];
+      this.configuration.environment = this.selectedEnvironment;
       this.close({$value: this.configuration});
     }
   }

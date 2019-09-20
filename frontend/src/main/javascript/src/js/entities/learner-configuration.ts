@@ -18,7 +18,7 @@ import {webBrowser} from '../constants';
 import {DriverConfigService} from '../services/driver-config.service';
 import {RandomEqOracle} from './eq-oracles/random-eq-oracle';
 import {ParametrizedSymbol} from './parametrized-symbol';
-import {ProjectUrl} from './project';
+import { ProjectEnvironment } from './project-environment';
 
 /**
  * The model for a learn configuration.
@@ -29,7 +29,7 @@ export class LearnConfiguration {
   public symbols: ParametrizedSymbol[];
 
   /** The URLs to use for learning. */
-  public urls: ProjectUrl[];
+  public environments: ProjectEnvironment[];
 
   /** The max amount of hypotheses to generate. */
   public maxAmountOfStepsToLearn: number;
@@ -61,7 +61,7 @@ export class LearnConfiguration {
    */
   constructor(obj: any = {}) {
     this.symbols = obj.symbols || [];
-    this.urls = obj.urls || [];
+    this.environments = obj.environments || [];
     this.maxAmountOfStepsToLearn = obj.maxAmountOfStepsToLearn || -1;
     this.eqOracle = obj.eqOracle || new RandomEqOracle(1, 10, 20);
     this.algorithm = obj.algorithm || {name: 'TTT'};

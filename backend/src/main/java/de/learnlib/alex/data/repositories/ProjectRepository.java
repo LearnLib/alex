@@ -43,4 +43,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     Project findByUser_IdAndName(Long userId, String name);
+
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    Project findByUser_IdAndNameAndIdNot(Long userId, String name, Long projectId);
 }

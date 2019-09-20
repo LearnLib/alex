@@ -99,19 +99,23 @@
         </div>
         <div uib-accordion-group>
           <uib-accordion-heading>
-            <div>Target URLs</div>
+            <div>Target environments</div>
           </uib-accordion-heading>
           <div>
 
             <div class="form-group">
-              <label>Target URLs</label>
+              <label>Environments</label>
 
-              <project-url-list
-                project="vm.project"
-                list-model="vm.configuration.urls"
-                multiple="true"
-              >
-              </project-url-list>
+              <div class="list-group">
+                <div class="list-group-item d-flex flex-row align-items-center" ng-repeat="env in vm.project.environments">
+                  <div>
+                    <selectable-checkbox item="env" selectable="vm.selectedEnvironments" change="vm.updateEnvironments()"></selectable-checkbox>
+                  </div>
+                  <div class="w-100 ml-3">
+                    <strong>{{env.name}}</strong>
+                  </div>
+                </div>
+              </div>
             </div>
 
           </div>

@@ -34,7 +34,11 @@ public interface TestExecutionConfigRepository extends JpaRepository<TestExecuti
      *         The id of the project.
      * @return The configurations.
      */
-    @Transactional
+    @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     List<TestExecutionConfig> findAllByProject_Id(Long projectId);
+
+    @Transactional
+    @SuppressWarnings("checkstyle:methodname")
+    void deleteAllByProject_Id(Long projectId);
 }

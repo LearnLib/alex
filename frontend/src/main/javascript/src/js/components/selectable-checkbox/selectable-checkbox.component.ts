@@ -20,17 +20,19 @@ export const selectableCheckboxComponent = {
   template: require('./selectable-checkbox.component.html'),
   bindings: {
     item: '=',
-    selectable: '='
+    selectable: '=',
+    change: '&'
   },
   controllerAs: 'vm',
   controller: class SelectableCheckboxComponent {
 
     public item: any;
-
     public selectable: Selectable<any>;
+    public change: (any) => void;
 
     selectItem() {
       this.selectable.toggleSelect(this.item);
+      this.change({item: this.item});
     }
 
     isSelected() {

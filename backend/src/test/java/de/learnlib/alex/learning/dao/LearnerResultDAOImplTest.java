@@ -21,7 +21,6 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
@@ -398,7 +397,6 @@ public class LearnerResultDAOImplTest {
         for (int i = 0; i < RESULTS_AMOUNT; i++) {
             LearnerResult r = new LearnerResult();
             Project project = new Project(1L);
-            project.setUrls(Collections.singletonList(new ProjectUrl()));
             Symbol s1 = new Symbol();
             s1.setId(1L);
             s1.setProject(project);

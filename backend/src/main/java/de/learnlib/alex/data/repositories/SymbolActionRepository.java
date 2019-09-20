@@ -18,6 +18,7 @@ package de.learnlib.alex.data.repositories;
 
 import de.learnlib.alex.data.entities.SymbolAction;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,18 +29,6 @@ import java.util.List;
  */
 @Repository
 public interface SymbolActionRepository extends JpaRepository<SymbolAction, Long> {
-
-    /**
-     * Delete all actions by a symbol ID.
-     *
-     * @param symbolId
-     *         The ID of the symbol.
-     * @param actionIds
-     *         The IDs of the actions to delete.
-     */
-    @Transactional
-    @SuppressWarnings("checkstyle:methodname")
-    void deleteAllBySymbol_IdAndIdNotIn(Long symbolId, List<Long> actionIds);
 
     /**
      * Delete all actions by a symbol ID.
@@ -60,4 +49,8 @@ public interface SymbolActionRepository extends JpaRepository<SymbolAction, Long
     @Transactional
     @SuppressWarnings("checkstyle:methodname")
     void deleteAllBySymbol_Project_Id(Long projectId);
+
+    @Query("SELECT a FROM  SymbolAction a WHERE a.symbol.project.id = ?1 AND BASE_URL = ?2 AND (TYPE = 'web_goto' OR TYPE = 'rest_call')")
+    @Transactional(readOnly = true)
+    List<SymbolAction> findAllWithBaseUrl(Long projectId, String baseUrl);
 }

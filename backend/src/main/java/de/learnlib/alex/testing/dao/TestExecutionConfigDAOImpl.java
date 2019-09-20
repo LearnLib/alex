@@ -19,11 +19,11 @@ package de.learnlib.alex.testing.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
-import de.learnlib.alex.data.dao.ProjectUrlDAO;
+import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.ProjectUrl;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
+import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
@@ -44,10 +44,6 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
     @Inject
     private ProjectDAO projectDAO;
 
-    /** The injected DAO for project URLs. */
-    @Inject
-    private ProjectUrlDAO projectUrlDAO;
-
     /** THe injected DAO for tests. */
     @Inject
     private TestDAO testDAO;
@@ -66,7 +62,11 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
 
     /** The injected repository for project URLs. */
     @Inject
-    private ProjectUrlRepository projectUrlRepository;
+    private ProjectEnvironmentRepository environmentRepository;
+
+    /** The injected repository for project URLs. */
+    @Inject
+    private ProjectEnvironmentDAO environmentDAO;
 
     @Override
     @Transactional
@@ -84,12 +84,12 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
             testDAO.checkAccess(user, project, test);
         }
 
-        final ProjectUrl projectUrl = projectUrlRepository.findById(config.getUrlId()).orElse(null);
-        projectUrlDAO.checkAccess(user, project, projectUrl);
+        final ProjectEnvironment projectUrl = environmentRepository.findById(config.getEnvironmentId()).orElse(null);
+        environmentDAO.checkAccess(user, project, projectUrl);
 
         config.setProject(project);
         config.setTests(tests);
-        config.setUrl(projectUrl);
+        config.setEnvironment(projectUrl);
 
         final TestExecutionConfig createdConfig = testExecutionConfigRepository.save(config);
         loadLazyRelations(createdConfig);
@@ -149,6 +149,6 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
     private void loadLazyRelations(TestExecutionConfig config) {
         Hibernate.initialize(config.getProject());
         Hibernate.initialize(config.getTests());
-        Hibernate.initialize(config.getUrl());
+        Hibernate.initialize(config.getEnvironment());
     }
 }

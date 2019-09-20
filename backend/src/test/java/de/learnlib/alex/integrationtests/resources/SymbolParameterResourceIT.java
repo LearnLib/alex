@@ -54,7 +54,7 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
         jwtUser1 = userApi.login("test1@test.de", "test");
 
         final ProjectApi projectApi = new ProjectApi(client, port);
-        final Response res1 = projectApi.create("{\"name\":\"test\",\"urls\":[{\"default\":true,\"url\":\"http://test\"}]}", jwtUser1);
+        final Response res1 = projectApi.create("{\"name\":\"test\",\"url\":\"http://test\"}", jwtUser1);
         Assert.assertEquals(res1.getStatus(), Response.Status.CREATED.getStatusCode());
         this.projectId = JsonPath.read(res1.readEntity(String.class), "$.id");
 

@@ -62,7 +62,7 @@ public class SymbolParameterTest {
 
         setUpReset();
 
-        connectors = new ConnectorManager();
+        connectors = new ConnectorManager(new ProjectEnvironment());
         CounterStoreConnector counterStore = new CounterStoreConnector(mock(CounterDAO.class), mock(User.class), mock(Project.class), new ArrayList<>());
         VariableStoreConnector variableStore = new VariableStoreConnector();
 

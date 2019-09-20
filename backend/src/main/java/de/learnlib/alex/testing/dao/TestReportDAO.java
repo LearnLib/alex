@@ -41,7 +41,7 @@ public interface TestReportDAO {
      * @throws NotFoundException
      *         If the project could not be found.
      */
-    void create(User user, Long projectId, TestReport testReport) throws NotFoundException;
+    TestReport create(User user, Long projectId, TestReport testReport) throws NotFoundException;
 
     /**
      * Get all test reports in a project.

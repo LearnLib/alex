@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.learning.entities;
 
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.AbstractEquivalenceOracleProxy;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +32,7 @@ public class LearnerResumeConfigurationTest {
     public void setUp() {
         configuration = new LearnerResumeConfiguration();
         configuration.setStepNo(1);
+        configuration.getEnvironments().add(new ProjectEnvironment());
     }
 
     @Test

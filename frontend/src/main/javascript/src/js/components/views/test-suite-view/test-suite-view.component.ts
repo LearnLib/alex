@@ -115,7 +115,7 @@ export const testSuiteViewComponent = {
 
       this.testConfig = {
         tests: [],
-        url: this.project.getDefaultUrl(),
+        environment: this.project.getDefaultEnvironment(),
         driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
         createReport: true
       };
@@ -284,7 +284,7 @@ export const testSuiteViewComponent = {
 
       const config = JSON.parse(JSON.stringify(this.testConfig));
       config.tests = selectedTests.map(t => t.id);
-      config.url = config.url.id;
+      config.environment = config.environment.id;
 
       this.testResource.executeMany(this.project.id, config)
         .then(() => {
@@ -449,7 +449,7 @@ export const testSuiteViewComponent = {
       config.driverConfig.id = null;
       config.tests = selectedTests.map(t => t.id);
       config.project = this.project.id;
-      config.url = config.url.id;
+      config.environment = config.environment.id;
 
       this.testConfigResource.create(this.project.id, config)
         .then(createdConfig => {

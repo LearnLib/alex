@@ -28,7 +28,6 @@ import de.learnlib.alex.data.services.SymbolUsageService;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;

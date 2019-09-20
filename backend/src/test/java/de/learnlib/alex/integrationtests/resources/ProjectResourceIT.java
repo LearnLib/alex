@@ -28,10 +28,6 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 
@@ -60,22 +56,28 @@ public class ProjectResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldCreateAProject() {
-        final String project =
-                createProjectJson("test", Arrays.asList("http://localhost:8080", "http://localhost:8081"));
+    public void shouldCreateAProjectWithDefaultEnvironment() {
+        final String url = "http://localhost:8080";
+        final String project = createProjectJson("test", url);
         final Response res = projectApi.create(project, adminJwt);
 
         assertEquals(HttpStatus.CREATED.value(), res.getStatus());
 
         final String body = res.readEntity(String.class);
         JsonPath.read(body, "id");
-        JsonPath.read(body, "urls[0].id");
-        JsonPath.read(body, "urls[1].id");
+        JsonPath.read(body, "environments[0].id");
+        JsonPath.read(body, "environments[0].urls[0].id");
+
+        final String envName = JsonPath.read(body, "environments[0].name");
+        assertEquals("Production", envName);
+
+        final String u = JsonPath.read(body, "environments[0].urls[0].url");
+        assertEquals(url, u);
     }
 
     @Test
     public void shouldNotCreateAProjectWithoutUrls() {
-        final String project = createProjectJson("test", new ArrayList<>());
+        final String project = createProjectJson("test", "");
         final Response res = projectApi.create(project, adminJwt);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
@@ -83,7 +85,7 @@ public class ProjectResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldNotCreateAProjectWithAnInvalidUrl() {
-        final String project = createProjectJson("", Arrays.asList("http://localhost:8080", "asdasd"));
+        final String project = createProjectJson("", "http://localhost:8080");
         final Response res = projectApi.create(project, adminJwt);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
@@ -91,7 +93,7 @@ public class ProjectResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldNotCreateProjectWithEmptyTitle() {
-        final String project = createProjectJson("", Arrays.asList("http://localhost:8080", "http://localhost:8081"));
+        final String project = createProjectJson("", "http://localhost:8080");
         final Response res = projectApi.create(project, adminJwt);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
@@ -100,7 +102,7 @@ public class ProjectResourceIT extends AbstractResourceIT {
     @Test
     public void shouldNotCreateTheSameProjectTwice() {
         final String project =
-                createProjectJson("test", Arrays.asList("http://localhost:8080", "http://localhost:8081"));
+                createProjectJson("test", "http://localhost:8080");
         projectApi.create(project, adminJwt);
 
         final Response res = projectApi.create(project, adminJwt);
@@ -111,7 +113,7 @@ public class ProjectResourceIT extends AbstractResourceIT {
     @Test
     public void shouldNotGetProjectOfAnotherUser() {
         final Response res1 =
-                projectApi.create(createProjectJson("test", Arrays.asList("http://localhost:8080", "http://localhost:8081")), userJwt);
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), userJwt);
         final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
 
         final Response res2 = projectApi.get(projectId, adminJwt);
@@ -121,7 +123,7 @@ public class ProjectResourceIT extends AbstractResourceIT {
     @Test
     public void shouldCreateADefaultGroup() {
         final String project =
-                createProjectJson("test", Arrays.asList("http://localhost:8080", "http://localhost:8081"));
+                createProjectJson("test", "http://localhost:8080");
         final Response res = projectApi.create(project, adminJwt);
 
         final int projectId = JsonPath.read(res.readEntity(String.class), "id");
@@ -142,7 +144,7 @@ public class ProjectResourceIT extends AbstractResourceIT {
     @Test
     public void shouldUpdateAProject() throws Exception {
         final Response res1 =
-                projectApi.create(createProjectJson("test", Arrays.asList("http://localhost:8080", "http://localhost:8081")), adminJwt);
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
 
         final JsonNode project = objectMapper.readTree(res1.readEntity(String.class));
         final int projectId = project.get("id").asInt();
@@ -153,24 +155,12 @@ public class ProjectResourceIT extends AbstractResourceIT {
 
         final JsonNode updatedProject = objectMapper.readTree(res2.readEntity(String.class));
         assertEquals(updatedProject.get("name").asText(), "updatedTest");
-
-        JSONAssert.assertEquals(project.get("urls").toString(), updatedProject.get("urls").toString(), true);
-    }
-
-    @Test
-    public void shouldNotUpdateNonExistingProject() throws Exception {
-        final JsonNode project =
-                objectMapper.readTree(createProjectJson("test", Arrays.asList("http://localhost:8080", "http://localhost:8081")));
-        ((ObjectNode) project).put("id", -1);
-
-        final Response res = projectApi.update(-1, project.toString(), adminJwt);
-        assertEquals(HttpStatus.NOT_FOUND.value(), res.getStatus());
     }
 
     @Test
     public void shouldNotUpdateTheProjectOfAnotherUser() throws Exception {
         final Response res1 =
-                projectApi.create(createProjectJson("test", Arrays.asList("http://localhost:8080", "http://localhost:8081")), userJwt);
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), userJwt);
 
         final JsonNode projectPre = objectMapper.readTree(res1.readEntity(String.class));
         final int projectId = projectPre.get("id").asInt();
@@ -182,13 +172,14 @@ public class ProjectResourceIT extends AbstractResourceIT {
         ((ObjectNode) projectPre).put("name", "test");
         final Response res3 = projectApi.get(projectId, userJwt);
         final JsonNode projectPost = objectMapper.readTree(res3.readEntity(String.class));
+
         JSONAssert.assertEquals(projectPre.toString(), projectPost.toString(), true);
     }
 
     @Test
     public void shouldDeleteAProject() throws Exception {
         final Response res1 =
-                projectApi.create(createProjectJson("test", Arrays.asList("http://localhost:8080", "http://localhost:8081")), adminJwt);
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
         final int projectId = JsonPath.read(res1.readEntity(String.class), "id");
 
         final Response res2 = projectApi.delete(projectId, adminJwt);
@@ -199,10 +190,10 @@ public class ProjectResourceIT extends AbstractResourceIT {
 
     @Test
     public void shouldNotDeleteTheProjectOfAnotherUser() {
-        projectApi.create(createProjectJson("test1", Arrays.asList("http://localhost:8080", "http://localhost:8081")), adminJwt);
+        projectApi.create(createProjectJson("test1", "http://localhost:8080"), adminJwt);
 
         final Response res2 =
-                projectApi.create(createProjectJson("test2", Arrays.asList("http://localhost:8080", "http://localhost:8081")), userJwt);
+                projectApi.create(createProjectJson("test2", "http://localhost:8080"), userJwt);
         final int projectId2 = JsonPath.read(res2.readEntity(String.class), "id");
 
         final Response res3 = projectApi.delete(projectId2, adminJwt);
@@ -212,7 +203,7 @@ public class ProjectResourceIT extends AbstractResourceIT {
     @Test
     public void shouldCrudProject() throws Exception {
         final Response res1 =
-                projectApi.create(createProjectJson("test", Arrays.asList("http://localhost:8080", "http://localhost:8081")), adminJwt);
+                projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);
         final JsonNode project = objectMapper.readTree(res1.readEntity(String.class));
         final int projectId = project.get("id").asInt();
         assertEquals(HttpStatus.CREATED.value(), res1.getStatus());
@@ -231,31 +222,10 @@ public class ProjectResourceIT extends AbstractResourceIT {
         assertEquals(HttpStatus.NOT_FOUND.value(), res5.getStatus());
     }
 
-    @Test
-    public void shouldNotUpdateIfUrlsAreEmpty() throws Exception {
-        final List<String> urls = Arrays.asList("http://localhost:8080", "http://localhost:8081");
-        final Response res1 = projectApi.create(createProjectJson("test", urls), adminJwt);
-        final JsonNode projectPre = objectMapper.readTree(res1.readEntity(String.class));
-        final int projectId = projectPre.get("id").asInt();
-
-        final JsonNode projectToUpdate = objectMapper.readTree(projectPre.toString());
-        ((ObjectNode) projectToUpdate).putArray("urls");
-
-        final Response res2 = projectApi.update(projectId, projectToUpdate.toString(), adminJwt);
-        assertEquals(HttpStatus.BAD_REQUEST.value(), res2.getStatus());
-
-        final Response res3 = projectApi.get(projectId, adminJwt);
-        JSONAssert.assertEquals(projectPre.toString(), res3.readEntity(String.class), true);
-    }
-
-    private String createProjectJson(String name, List<String> urls) {
-        final List<String> urlsJson = urls.stream()
-                .map(url -> "{\"name\":null, \"url\":\"" + url + "\"}")
-                .collect(Collectors.toList());
-
+    private String createProjectJson(String name, String url) {
         return "{"
                 + "\"name\":\"" + name + "\""
-                + ",\"urls\":[" + String.join(",", urlsJson) + "]"
+                + ",\"url\":\"" + url + "\""
                 + "}";
     }
 }

@@ -16,6 +16,8 @@
 
 package de.learnlib.alex.learning.services.connectors;
 
+import de.learnlib.alex.data.entities.ProjectEnvironment;
+import de.learnlib.alex.learning.services.BaseUrlManager;
 import org.glassfish.jersey.client.ClientProperties;
 
 import javax.ws.rs.client.Client;
@@ -37,9 +39,6 @@ import java.util.Set;
  */
 public class WebServiceConnector implements Connector {
 
-    /** The target behind the connector. */
-    private WebTarget target;
-
     /** Internal field to determine if the target called at least once (-> other fields have a value). */
     private boolean init;
 
@@ -58,15 +57,14 @@ public class WebServiceConnector implements Connector {
     /** Client for following redirects. */
     private Client client;
 
+    private BaseUrlManager baseUrlManager;
+
     /**
      * Constructor which sets the WebTarget to use.
-     *
-     * @param baseUrl
-     *         The base url used by the connector. All other paths will treated as suffix to this.
      */
-    public WebServiceConnector(String baseUrl) {
-        this.target = ClientBuilder.newClient().property(ClientProperties.FOLLOW_REDIRECTS, false).target(baseUrl);
+    public WebServiceConnector(ProjectEnvironment environment) {
         this.client = ClientBuilder.newClient().property(ClientProperties.FOLLOW_REDIRECTS, false);
+        this.baseUrlManager = new BaseUrlManager(environment);
     }
 
     @Override
@@ -149,8 +147,8 @@ public class WebServiceConnector implements Connector {
      * @param timeout
      *         The amount of time in ms before the request is canceled.
      */
-    public void get(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) {
-        final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).get();
+    public void get(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) throws Exception {
+        final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).get();
         rememberResponseComponents(response);
         followRedirects(response);
     }
@@ -177,10 +175,10 @@ public class WebServiceConnector implements Connector {
      * @param timeout
      *         The amount of time in ms before the request is canceled.
      */
-    public void post(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, String data,
-            int timeout) {
+    public void post(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, String data,
+            int timeout) throws Exception {
         final Entity body = getBody(requestHeaders, data);
-        final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).post(body);
+        final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).post(body);
         rememberResponseComponents(response);
         followRedirects(response);
     }
@@ -199,10 +197,10 @@ public class WebServiceConnector implements Connector {
      * @param timeout
      *         The amount of time in ms before the request is canceled.
      */
-    public void put(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies,
-            String data, int timeout) {
+    public void put(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies,
+            String data, int timeout) throws Exception {
         final Entity body = getBody(requestHeaders, data);
-        final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).put(body);
+        final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).put(body);
         rememberResponseComponents(response);
         followRedirects(response);
     }
@@ -219,8 +217,8 @@ public class WebServiceConnector implements Connector {
      * @param timeout
      *         The amount of time in ms before the request is canceled.
      */
-    public void delete(String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) {
-        final Response response = getRequestObject(path, requestHeaders, requestCookies, timeout).delete();
+    public void delete(String baseUrl, String path, Map<String, String> requestHeaders, Set<Cookie> requestCookies, int timeout) throws Exception {
+        final Response response = getRequestObject(baseUrl, path, requestHeaders, requestCookies, timeout).delete();
         rememberResponseComponents(response);
         followRedirects(response);
     }
@@ -232,7 +230,7 @@ public class WebServiceConnector implements Connector {
      *         The url (based on the base url) to reset the SUL.
      */
     public void reset(String resetUrl) {
-        target.path(resetUrl).request().get();
+        client.target("").path(resetUrl).request().get();
         this.init = false;
     }
 
@@ -280,17 +278,18 @@ public class WebServiceConnector implements Connector {
      *         The amount of time in ms before the request is canceled.
      * @return The request object.
      */
-    private Invocation.Builder getRequestObject(String path, Map<String, String> requestHeaders,
-            Set<Cookie> requestCookies, int timeout) {
+    private Invocation.Builder getRequestObject(String baseUrl, String path, Map<String, String> requestHeaders,
+            Set<Cookie> requestCookies, int timeout) throws Exception {
         final String[] splitPath = path.split("\\?");
 
-        WebTarget tmpTarget;
+        final String url = baseUrlManager.getAbsoluteUrl(baseUrl, path);
         try {
-            new URL(path);
-            tmpTarget = client.target(splitPath[0]);
+            new URL(url);
         } catch (MalformedURLException e) {
-            tmpTarget = target.path(splitPath[0]);
+            throw new Exception("The URL is malformed.");
         }
+
+        WebTarget tmpTarget = client.target(url).path(splitPath[0]);
 
         if (splitPath.length > 1) {
             for (final String queryParam : splitPath[1].split("&")) {

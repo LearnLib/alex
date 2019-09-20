@@ -19,7 +19,6 @@ package de.learnlib.alex.data.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolActionStep;
 import de.learnlib.alex.data.entities.SymbolGroup;
@@ -28,6 +27,7 @@ import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.data.entities.actions.misc.WaitAction;
 import de.learnlib.alex.data.entities.actions.web.ClearAction;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
+import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
@@ -114,6 +114,9 @@ public class SymbolDAOImplTest {
     @Mock
     private TestExecutionResultRepository testExecutionResultRepository;
 
+    @Mock
+    private ProjectEnvironmentRepository projectEnvironmentRepository;
+
 
     private SymbolDAO symbolDAO;
 
@@ -122,7 +125,7 @@ public class SymbolDAOImplTest {
         symbolDAO = new SymbolDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
                 symbolActionRepository, symbolGroupDAO, symbolParameterRepository, symbolStepRepository,
                 parameterizedSymbolDAO, parameterizedSymbolRepository, symbolSymbolStepRepository,
-                testCaseStepRepository, testExecutionResultRepository);
+                testCaseStepRepository, testExecutionResultRepository, projectEnvironmentRepository);
     }
 
     @Test
@@ -625,7 +628,6 @@ public class SymbolDAOImplTest {
 
         Project project = new Project();
         project.setId(PROJECT_ID);
-        project.getUrls().add(new ProjectUrl());
 
         SymbolGroup group = new SymbolGroup();
         group.setId(GROUP_ID);

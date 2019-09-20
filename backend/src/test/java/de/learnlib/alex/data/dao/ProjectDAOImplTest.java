@@ -20,12 +20,13 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
-import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
+import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.hamcrest.MatcherAssert;
 import org.junit.Before;
@@ -37,7 +38,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,9 +65,6 @@ public class ProjectDAOImplTest {
     private LearnerResultRepository learnerResultRepository;
 
     @Mock
-    private ProjectUrlDAO projectUrlDAO;
-
-    @Mock
     private TestReportRepository testReportRepository;
 
     @Mock
@@ -79,6 +76,15 @@ public class ProjectDAOImplTest {
     @Mock
     private SymbolActionRepository symbolActionRepository;
 
+    @Mock
+    private ProjectEnvironmentDAO environmentDAO;
+
+    @Mock
+    private ProjectUrlRepository projectUrlRepository;
+
+    @Mock
+    private TestExecutionConfigRepository testExecutionConfigRepository;
+
     private ProjectDAO projectDAO;
 
     private User user;
@@ -86,83 +92,17 @@ public class ProjectDAOImplTest {
     @Before
     public void setUp() {
         projectDAO = new ProjectDAOImpl(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
-                projectUrlDAO, parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository);
-
+                parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository, environmentDAO,
+                projectUrlRepository, testExecutionConfigRepository);
         user = new User();
         user.setId(USER_ID);
-    }
-
-    @Test
-    public void shouldCreateAValidEmptyProject() {
-        final ProjectUrl projectUrl = new ProjectUrl();
-
-        Project project = new Project();
-        project.getUrls().add(projectUrl);
-
-        Project createdProject = new Project();
-        createdProject.getUrls().add(projectUrl);
-        createdProject.setId(1L);
-
-        given(projectRepository.save(project)).willReturn(createdProject);
-
-        final Project p = projectDAO.create(user, project);
-
-        verify(projectRepository).save(project);
-        assertThat(p.getId(), is(equalTo(1L)));
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldNotCreateAProjectIfUrlsAreEmpty() throws NotFoundException {
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-        project.setUser(user);
-
-        projectDAO.create(user, project);
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldNotUpdateAProjectIfUrlsAreEmpty() throws NotFoundException {
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-        project.setUser(user);
-
-        given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
-
-        projectDAO.update(user, project);
-    }
-
-    @Test
-    public void shouldCreateAValidPreFilledProject() {
-        SymbolGroup testGroup = new SymbolGroup();
-        ProjectUrl url = new ProjectUrl();
-        Project project = new Project();
-        project.getUrls().add(url);
-
-        testGroup.setProject(project);
-        project.getGroups().add(testGroup);
-
-        given(projectRepository.save(project)).willReturn(project);
-
-        projectDAO.create(user, project);
-
-        verify(projectRepository).save(project);
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldHandleConstraintViolationExceptionOnProjectCreationGracefully() {
-        Project project = new Project();
-        project.setUrls(Collections.singletonList(new ProjectUrl()));
-        //
-        given(projectRepository.save(project)).willThrow(ConstraintViolationException.class);
-
-        projectDAO.create(user, project); // should fail
     }
 
     @Test
     public void shouldGetAllProjectsOfAnUser() {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         List<Project> projects = createProjectList();
         given(projectRepository.findAllByUser_Id(USER_ID)).willReturn(projects);
 
@@ -203,7 +143,6 @@ public class ProjectDAOImplTest {
 
         Project project = new Project();
         project.setUser(user);
-        project.getUrls().add(url);
         project.setId(PROJECT_ID);
 
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
@@ -224,7 +163,6 @@ public class ProjectDAOImplTest {
         Project project = new Project();
         project.setUser(user);
         project.setId(PROJECT_ID);
-        project.getUrls().add(url);
 
         projectDAO.update(user, project);
     }
@@ -235,7 +173,6 @@ public class ProjectDAOImplTest {
         user.setId(USER_ID);
 
         Project project = new Project();
-        project.setUrls(Collections.singletonList(new ProjectUrl()));
         project.setUser(user);
         project.setId(PROJECT_ID);
 

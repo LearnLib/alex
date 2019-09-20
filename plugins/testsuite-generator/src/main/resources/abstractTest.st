@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolAction;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
+import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.learning.entities.webdrivers.ChromeDriverConfig;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
@@ -37,19 +39,24 @@ public class AbstractExportedTest {
 
         testCases = export.getTestCases();
 
-        final String url = "<projectUrl>";
+        final ProjectUrl url = new ProjectUrl();
+        url.setName("Testing");
+        url.setUrl("<projectUrl>");
+        final ProjectEnvironment env = new ProjectEnvironment();
+        env.getUrls().add(url);
+
         final ChromeDriverConfig cdc = new ChromeDriverConfig();
-        final WebSiteConnector wsc = new WebSiteConnector(url, cdc);
-        final WebServiceConnector wService = new WebServiceConnector(url);
+        final WebSiteConnector wsc = new WebSiteConnector(env, cdc);
+        final WebServiceConnector wService = new WebServiceConnector(env);
         final VariableStoreConnector vsc = new VariableStoreConnector();
         final CounterStoreConnector csc = new CounterStoreConnector(null, null, null, new ArrayList\<>());
 
         cdc.setHeadless(<headless>);
 
         wsc.reset();
-        wsc.get(url, null);
+        wsc.get("Testing", url.getUrl(), null);
 
-        cm = new ConnectorManager();
+        cm = new ConnectorManager(env);
         cm.addConnector(wsc);
         cm.addConnector(wService);
         cm.addConnector(vsc);

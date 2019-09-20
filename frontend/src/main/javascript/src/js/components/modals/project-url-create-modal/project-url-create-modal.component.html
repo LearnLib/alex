@@ -1,0 +1,23 @@
+<div class="modal-header">
+  <h4 class="modal-title">Create a base URL for the environments</h4>
+  <a class="btn btn-default btn-icon float-right" ng-click="vm.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form name="vm.form" ng-submit="vm.createUrl()">
+
+  <div class="modal-body">
+    <div class="alert alert-danger" ng-if="vm.errorMessage != null">
+      {{vm.errorMessage}}
+    </div>
+
+    <project-url-form-groups url="vm.url" form="vm.form"></project-url-form-groups>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="submit">Create</button>
+    <a href="" class="btn btn-default btn-sm" ng-click="vm.dismiss()">Cancel</a>
+  </div>
+
+</form>

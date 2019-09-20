@@ -19,6 +19,7 @@ package de.learnlib.alex.testing.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -27,6 +28,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -64,6 +66,10 @@ public class TestReport implements Serializable {
             cascade = {CascadeType.ALL}
     )
     private List<TestResult> testResults;
+
+    /** The environment that the test was executed in. */
+    @OneToOne(fetch = FetchType.EAGER)
+    private ProjectEnvironment environment;
 
     /** Constructor. */
     public TestReport() {
@@ -105,6 +111,14 @@ public class TestReport implements Serializable {
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
         this.project = new Project(projectId);
+    }
+
+    public ProjectEnvironment getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(ProjectEnvironment environment) {
+        this.environment = environment;
     }
 
     public List<TestResult> getTestResults() {

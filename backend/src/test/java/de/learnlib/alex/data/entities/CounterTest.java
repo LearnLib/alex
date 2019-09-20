@@ -17,7 +17,6 @@
 package de.learnlib.alex.data.entities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

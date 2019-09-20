@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
+import de.learnlib.alex.data.entities.CreateProjectForm;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.events.ProjectEvent;
 import de.learnlib.alex.webhooks.services.WebhookService;
@@ -75,7 +76,7 @@ public class ProjectResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response create(Project project) {
+    public Response create(CreateProjectForm project) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("create({}) for user {}.", project, user);
 

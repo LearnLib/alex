@@ -24,6 +24,7 @@ import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.entities.SymbolStep;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
+import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolGroupRepository;
@@ -59,49 +60,12 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The ProjectRepository to use. Will be injected. */
     private ProjectRepository projectRepository;
-
-    /** The ProjectDAO to use. Will be injected. */
     private ProjectDAO projectDAO;
-
-    /** The SymbolGroupRepository to use. Will be injected. */
     private SymbolGroupRepository symbolGroupRepository;
-
-    /** The SymbolRepository to use. Will be injected. */
     private SymbolRepository symbolRepository;
-
-    /** The SymbolDAO to use. */
     private SymbolDAO symbolDAO;
 
-    /**
-     * Creates a new SymbolGroupDAO.
-     *
-     * @param projectRepository
-     *         The ProjectRepository to use.
-     * @param projectDAO
-     *         The ProjectDAO to use.
-     * @param symbolGroupRepository
-     *         The SymbolGroupRepository to use.
-     * @param symbolRepository
-     *         The SymbolRepository to use.
-     * @param symbolActionRepository
-     *         The SymbolActionRepository to use.
-     * @param symbolParameterRepository
-     *         The SymbolParameterRepository to use.
-     * @param symbolStepRepository
-     *         The repository for symbol steps.
-     * @param parameterizedSymbolDAO
-     *         The DAO for parameterized symbols.
-     * @param testCaseStepRepository
-     *         The testCaseStepRepository to use.
-     * @param parameterizedSymbolRepository
-     *         The parameterizedSymbolRepository to use.
-     * @param symbolSymbolStepRepository
-     *         The symbolSymbolStepRepository to use.
-     * @param testExecutionResultRepository
-     *         The testExecutionResultRepository to use.
-     */
     @Inject
     public SymbolGroupDAOImpl(ProjectRepository projectRepository, ProjectDAO projectDAO,
                               SymbolGroupRepository symbolGroupRepository, SymbolRepository symbolRepository,
@@ -109,7 +73,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
                               SymbolParameterRepository symbolParameterRepository, ParameterizedSymbolDAO parameterizedSymbolDAO,
                               SymbolStepRepository symbolStepRepository, ParameterizedSymbolRepository parameterizedSymbolRepository,
                               TestCaseStepRepository testCaseStepRepository, TestExecutionResultRepository testExecutionResultRepository,
-                              SymbolSymbolStepRepository symbolSymbolStepRepository) {
+                              SymbolSymbolStepRepository symbolSymbolStepRepository, ProjectEnvironmentRepository projectEnvironmentRepository) {
         this.projectRepository = projectRepository;
         this.projectDAO = projectDAO;
         this.symbolGroupRepository = symbolGroupRepository;
@@ -118,7 +82,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         this.symbolDAO = new SymbolDAOImpl(projectRepository, projectDAO, symbolGroupRepository, symbolRepository,
                 symbolActionRepository, this, symbolParameterRepository, symbolStepRepository,
                 parameterizedSymbolDAO, parameterizedSymbolRepository, symbolSymbolStepRepository,
-                testCaseStepRepository, testExecutionResultRepository);
+                testCaseStepRepository, testExecutionResultRepository, projectEnvironmentRepository);
     }
 
     @Override
@@ -144,7 +108,13 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         // create symbol steps
         final Map<Long, List<SymbolStep>> symbolIdToStepsMap = new HashMap<>();
         final List<Symbol> symbols = symbolDAO.getAll(user, projectId, SymbolVisibilityLevel.ALL);
-        symbols.forEach(s -> symbolIdToStepsMap.put(s.getId(), symbolNameToSymbolMap.get(s.getName()).getSteps()));
+        symbols.forEach(s -> {
+            if (symbolNameToSymbolMap.containsKey(s.getName())) {
+                symbolIdToStepsMap.put(s.getId(), symbolNameToSymbolMap.get(s.getName()).getSteps());
+            } else {
+                symbolIdToStepsMap.put(s.getId(), s.getSteps());
+            }
+        });
         symbolDAO.saveSymbolSteps(projectId, symbols, symbolIdToStepsMap);
 
         return importedGroups;
@@ -416,7 +386,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
 
         Hibernate.initialize(group.getGroups());
-        Hibernate.initialize(group.getProject().getUrls());
+        Hibernate.initialize(group.getProject().getEnvironments());
 
         if (fieldsToLoad.contains(EmbeddableFields.COMPLETE_SYMBOLS)) {
             group.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);

@@ -52,7 +52,7 @@ public class ATestResourceIT extends AbstractResourceIT {
         jwtUser2 = userApi.login("test2@test.de", "test");
 
         final ProjectApi projectApi = new ProjectApi(client, port);
-        final Response res1 = projectApi.create("{\"name\":\"test\",\"urls\":[{\"url\":\"http://localhost:8080\"}]}", jwtUser1);
+        final Response res1 = projectApi.create("{\"name\":\"test\",\"url\":\"http://localhost:8080\"}", jwtUser1);
         projectId = JsonPath.read(res1.readEntity(String.class), "$.id");
 
         final SymbolApi symbolApi = new SymbolApi(client, port);

@@ -101,7 +101,7 @@ class LearnerViewComponentComponent {
         stepNo: this.stepNo,
         symbolsToAdd: [],
         project: this.project.id,
-        urls: this.finalResult.urls,
+        environments: this.finalResult.environments,
       };
     } else {
       this.poll();
@@ -150,7 +150,7 @@ class LearnerViewComponentComponent {
                   stepNo: lastStep.stepNo,
                   symbolsToAdd: [],
                   project: this.project.id,
-                  urls: this.finalResult.urls
+                  environments: this.finalResult.environments
                 };
               }
 
@@ -170,7 +170,7 @@ class LearnerViewComponentComponent {
    */
   resumeLearning(): void {
     const config = JSON.parse(JSON.stringify(this.resumeConfig));
-    config.urls = this.resumeConfig.urls.map(u => u.id);
+    config.environments = config.environments.map(e => e.id);
     config.symbolsToAdd.forEach(ps => ps.symbol = {id: ps.symbol.id});
 
     this.learnerResource.resume(this.project.id, this.finalResult.testNo, config)

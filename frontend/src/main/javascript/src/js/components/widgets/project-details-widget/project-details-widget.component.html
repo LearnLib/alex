@@ -6,8 +6,12 @@
             <td ng-bind="vm.project.name"></td>
         </tr>
         <tr>
+            <td><strong>Default environment</strong></td>
+            <td ng-bind="vm.project.getDefaultEnvironment().name"></td>
+        </tr>
+        <tr>
             <td><strong>Default URL</strong></td>
-            <td><a href="{{vm.project.getDefaultUrl().url}}" target="_blank" ng-bind="vm.project.getDefaultUrl().url"></a></td>
+            <td ng-bind="vm.project.getDefaultEnvironment().getDefaultUrl().url"></td>
         </tr>
         <tr>
             <td><strong>Groups</strong></td>

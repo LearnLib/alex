@@ -96,7 +96,7 @@ public final class SearchHelper {
 
         String result = "" + text;
 
-        final Pattern pattern = Pattern.compile("\\{\\{(\\$|\\#|\\\\)(.*?)}}");
+        final Pattern pattern = Pattern.compile("\\{\\{(\\$|\\#|\\\\|:)(.*?)}}");
         final Matcher matcher = pattern.matcher(result);
 
         while (matcher.find()) {
@@ -113,6 +113,10 @@ public final class SearchHelper {
                 case "\\":
                     final String path = fileStore.getAbsoluteFileLocation(projectId, name);
                     result = result.replaceAll("\\{\\{\\\\" + name + "}}", path);
+                    break;
+                case ":":
+                    final String value = connector.getEnvironment().getVariablesAsMap().get(name);
+                    result = result.replaceAll("\\{\\{:" + name + "}}", value);
                     break;
                 default:
                     break;

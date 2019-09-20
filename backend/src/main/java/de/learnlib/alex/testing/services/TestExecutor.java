@@ -18,19 +18,15 @@ package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.utils.LoggerMarkers;
-import de.learnlib.alex.common.utils.SearchHelper;
+import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
-import de.learnlib.alex.data.entities.ProjectUrl;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolStep;
-import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.learning.services.connectors.ConnectorContextHandler;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
-import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestCaseResult;
@@ -53,15 +49,15 @@ public class TestExecutor {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
-    private final ProjectUrlRepository projectUrlRepository;
+    private final ProjectEnvironmentDAO projectEnvironmentDAO;
 
     private Test currentTest;
     private boolean aborted;
 
     public TestExecutor(PreparedConnectorContextHandlerFactory contextHandlerFactory,
-                        ProjectUrlRepository projectUrlRepository) {
+                        ProjectEnvironmentDAO projectEnvironmentDAO) {
         this.contextHandlerFactory = contextHandlerFactory;
-        this.projectUrlRepository = projectUrlRepository;
+        this.projectEnvironmentDAO = projectEnvironmentDAO;
         this.aborted = false;
     }
 
@@ -146,11 +142,12 @@ public class TestExecutor {
         });
         final ParameterizedSymbol dummyPSymbol = new ParameterizedSymbol(dummySymbol);
 
-        final ProjectUrl projectUrl = projectUrlRepository.findById(testConfig.getUrlId()).orElse(null);
+        final ProjectEnvironment env = projectEnvironmentDAO.getById(user, testConfig.getEnvironmentId());
+        ProjectEnvironmentDAO.loadLazyRelations(env);
 
         final ConnectorContextHandler ctxHandler = contextHandlerFactory
                 .createPreparedContextHandler(user, testCase.getProject(), testConfig.getDriverConfig(), dummyPSymbol, null)
-                .create(projectUrl.getUrl());
+                .create(env);
 
         final long startTime = System.currentTimeMillis();
         final ConnectorManager connectors = ctxHandler.createContext();

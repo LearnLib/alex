@@ -80,7 +80,7 @@ class LearnerSetupViewComponent {
     this.pPostSymbol = null;
 
     this.learnConfiguration = new LearnConfiguration();
-    this.learnConfiguration.urls = [this.project.getDefaultUrl()];
+    this.learnConfiguration.environments = [this.project.getDefaultEnvironment()];
 
     settingsResource.getSupportedWebDrivers()
       .then(data => this.learnConfiguration.driverConfig.name = data.defaultWebDriver)
@@ -158,7 +158,7 @@ class LearnerSetupViewComponent {
           config.postSymbol = JSON.parse(JSON.stringify(this.pPostSymbol));
           config.postSymbol.symbol = {id: config.postSymbol.symbol.id};
         }
-        config.urls = this.learnConfiguration.urls.map(u => u.id);
+        config.environments = this.learnConfiguration.environments.map(u => u.id);
 
         // start learning
         this.learnerResource.start(this.project.id, config)
@@ -185,7 +185,7 @@ class LearnerSetupViewComponent {
     this.learnConfiguration.eqOracle = result.steps[0].eqOracle;
     this.learnConfiguration.maxAmountOfStepsToLearn = result.maxAmountOfStepsToLearn;
     this.learnConfiguration.driverConfig = result.driverConfig;
-    this.learnConfiguration.urls = result.urls;
+    this.learnConfiguration.environments = result.environments;
     this.learnConfiguration.resetSymbol = result.resetSymbol;
     this.learnConfiguration.resetSymbol.id = null;
     this.learnConfiguration.resetSymbol.parameterValues.forEach(v => v.id = null);
