@@ -133,6 +133,8 @@ public interface ProjectDAO {
      */
     void delete(User user, Long projectId) throws NotFoundException;
 
+    void delete(User user, List<Long> projectIds) throws NotFoundException;
+
     /**
      * Check if the user is allowed to access or modify the project.
      *

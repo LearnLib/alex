@@ -86,7 +86,6 @@ import {testSuiteEqOracleFormComponent} from './components/forms/eq-oracles/test
 import {wMethodEqOracleFormComponent} from './components/forms/eq-oracles/w-method-eq-oracle-form/w-method-eq-oracle-form.component';
 import {wpMethodEqOracleFormComponent} from './components/forms/eq-oracles/wp-method-eq-oracle-form/wp-method-eq-oracle-form.component';
 import {nodeFormGroupComponent} from './components/forms/node-form-group/node-form-group.component';
-import {projectCreateFormComponent} from './components/forms/project-create-form/project-create-form.component';
 import {projectFormGroupsComponent} from './components/forms/project-form-groups/project-form-groups.component';
 import {symbolEditFormComponent} from './components/forms/symbol-edit-form/symbol-edit-form.component';
 import {symbolFormGroupsComponent} from './components/forms/symbol-form-groups/symbol-form-groups.component';
@@ -136,7 +135,6 @@ import {userEditModalComponent} from './components/modals/user-edit-modal/user-e
 import {webhookCreateModalComponent} from './components/modals/webhook-create-modal/webhook-create-modal.component';
 import {webhookEditModalComponent} from './components/modals/webhook-edit-modal/webhook-edit-modal.component';
 import {observationTableComponent} from './components/observation-table/observation-table.component';
-import {projectListComponent} from './components/project-list/project-list.component';
 import {searchFormComponent} from './components/search-form/search-form.component';
 import {selectableCheckboxMultipleComponent} from './components/selectable-checkbox-multiple/selectable-checkbox-multiple.component';
 import {selectableCheckboxComponent} from './components/selectable-checkbox/selectable-checkbox.component';
@@ -256,6 +254,7 @@ import { projectUrlCreateModalComponent } from './components/modals/project-url-
 import { projectUrlEditModalComponent } from './components/modals/project-url-edit-modal/project-url-edit-modal.component';
 import {environmentVariableCreateModalComponent} from "./components/modals/environment-variable-create-modal/environment-variable-create-modal.component";
 import {environmentVariableEditModalComponent} from "./components/modals/environment-variable-edit-modal/environment-variable-edit-modal.component";
+import {projectCreateModalComponent} from "./components/modals/project-create-modal/project-create-modal.component";
 
 angular
   .module('ALEX', [
@@ -340,6 +339,7 @@ angular
   .component('learnerResultDetailsModal', learnerResultDetailsModalComponent)
   .component('learnerSetupSettingsModal', learnerSetupSettingsModalComponent)
   .component('projectEditModal', projectEditModalComponent)
+  .component('projectCreateModal', projectCreateModalComponent)
   .component('symbolCreateModal', symbolCreateModalComponent)
   .component('symbolEditModal', symbolEditModalComponent)
   .component('symbolGroupCreateModal', symbolGroupCreateModalComponent)
@@ -404,7 +404,6 @@ angular
 
   // forms components
   .component('actionForm', actionFormComponent)
-  .component('projectCreateForm', projectCreateFormComponent)
   .component('projectFormGroups', projectFormGroupsComponent)
   .component('userEditForm', userEditFormComponent)
   .component('userLoginForm', userLoginFormComponent)
@@ -502,7 +501,6 @@ angular
   .component('hypothesis', hypothesisComponent)
   .component('discriminationTree', discriminationTreeComponent)
   .component('fileDropzone', fileDropzoneComponent)
-  .component('projectList', projectListComponent)
   .component('sidebar', sidebarComponent)
   .component('viewHeader', viewHeaderComponent)
   .component('learnerResultPanel', learnerResultPanelComponent)

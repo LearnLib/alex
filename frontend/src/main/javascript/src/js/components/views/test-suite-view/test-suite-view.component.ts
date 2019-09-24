@@ -464,6 +464,8 @@ export const testSuiteViewComponent = {
     selectTestConfig(config: any): void {
       if (config != null) {
         this.testConfig = config;
+        this.testConfig.environment = this.project.environments.find(e => e.id === config.environment);
+
         this.testSuite.tests.forEach(test => {
           if (this.testConfig.tests.indexOf(test.id) > -1) {
             this.selectedTests.select(test);

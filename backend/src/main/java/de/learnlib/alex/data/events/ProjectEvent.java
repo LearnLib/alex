@@ -20,6 +20,8 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.webhooks.entities.Event;
 import de.learnlib.alex.webhooks.entities.EventType;
 
+import java.util.List;
+
 /** Project events. */
 public class ProjectEvent {
 

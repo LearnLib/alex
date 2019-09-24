@@ -18,6 +18,7 @@ package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
+import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.CreateProjectForm;
@@ -186,11 +187,38 @@ public class ProjectResource {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
 
-        final Project project = projectDAO.getByID(user, projectId);
         projectDAO.delete(user, projectId);
-        webhookService.fireEvent(user, new ProjectEvent.Deleted(project.getId()));
+        webhookService.fireEvent(user, new ProjectEvent.Deleted(projectId));
         LOGGER.traceExit("Project {} deleted", projectId);
         return Response.status(Status.NO_CONTENT).build();
+    }
+
+    @DELETE
+    @Path("/batch/{projectIds}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response delete(@PathParam("projectIds") IdsList projectIds) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("delete({}) for user {}.", projectIds, user);
+
+        projectDAO.delete(user, projectIds);
+        LOGGER.traceExit("Projects {} deleted", projectIds);
+        return Response.status(Status.NO_CONTENT).build();
+    }
+
+    @POST
+    @Path("/{projectId}/export")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response exportProject(@PathParam("projectId") Long projectId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        return Response.status(Status.OK).build();
+    }
+
+    @POST
+    @Path("/import")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response importProject() {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        return Response.status(Status.OK).build();
     }
 
     private ProjectDAO.EmbeddableFields[] parseEmbeddableFields(String embed) throws IllegalArgumentException {
