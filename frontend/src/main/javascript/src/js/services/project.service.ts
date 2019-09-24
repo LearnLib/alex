@@ -125,6 +125,14 @@ export class ProjectService {
       });
   }
 
+  deleteMany(projects: Project[]): IPromise<any> {
+    return this.projectResource.removeMany(projects)
+        .then(() => {
+          projects.forEach(p => remove(this.store.projects, {id: p.id}));
+          return projects;
+        });
+  }
+
   /**
    * Saves a project in the current session.
    *

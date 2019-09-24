@@ -196,6 +196,14 @@ public class ProjectDAOImpl implements ProjectDAO {
         }
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(User user, List<Long> projectIds) throws NotFoundException {
+        for (Long id: projectIds) {
+            delete(user, id);
+        }
+    }
+
     /**
      * Load objects that are connected with a project over a 'lazy' relation ship.
      *

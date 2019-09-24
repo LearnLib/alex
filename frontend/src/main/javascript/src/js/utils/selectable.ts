@@ -31,6 +31,10 @@ export class Selectable<T> {
               private key: string) {
   }
 
+  addItem(item: T) {
+    this.items.push(item);
+  }
+
   select(item: T) {
     this.selectedItems[item[this.key]] = item;
   }

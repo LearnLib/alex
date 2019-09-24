@@ -79,4 +79,9 @@ export class ProjectResource {
   remove(project: Project): IPromise<any> {
     return this.$http.delete(`${apiUrl}/projects/${project.id}`);
   }
+
+  removeMany(projects: Project[]): IPromise<any> {
+    const ids = projects.map(p => p.id).join(',');
+    return this.$http.delete(`${apiUrl}/projects/batch/${ids}`);
+  }
 }
