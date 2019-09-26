@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import {webBrowser} from '../../../constants';
-import {TestCaseStep} from '../../../entities/test-case-step';
-import {DriverConfigService} from '../../../services/driver-config.service';
-import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
-import {IScope} from 'angular';
-import {SymbolGroupResource} from '../../../services/resources/symbol-group-resource.service';
-import {ProjectService} from '../../../services/project.service';
-import {ToastService} from '../../../services/toast.service';
-import {TestResource} from '../../../services/resources/test-resource.service';
-import {SettingsResource} from '../../../services/resources/settings-resource.service';
-import {SymbolGroup} from '../../../entities/symbol-group';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {Project} from '../../../entities/project';
+import { webBrowser } from '../../../constants';
+import { TestCaseStep } from '../../../entities/test-case-step';
+import { DriverConfigService } from '../../../services/driver-config.service';
+import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
+import { IScope } from 'angular';
+import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { ProjectService } from '../../../services/project.service';
+import { ToastService } from '../../../services/toast.service';
+import { TestResource } from '../../../services/resources/test-resource.service';
+import { SettingsResource } from '../../../services/resources/settings-resource.service';
+import { SymbolGroup } from '../../../entities/symbol-group';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { Project } from '../../../entities/project';
 
 export const testCaseViewComponent = {
   template: require('./test-case-view.component.html'),
@@ -104,7 +104,7 @@ export const testCaseViewComponent = {
         createReport: true,
       };
 
-      this.symbolGroupResource.getAll(this.project.id, true)
+      this.symbolGroupResource.getAll(this.project.id)
         .then((groups) => {
           this.groups = groups;
           SymbolGroupUtils.getSymbols(this.groups).forEach(s => this.symbolMap[s.id] = s);

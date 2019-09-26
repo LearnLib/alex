@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {supportedKeys} from '../../../../../constants';
+import { supportedKeys } from '../../../../../constants';
 
 export const pressKeyActionFormComponent = {
   template: require('./press-key-action-form.component.html'),

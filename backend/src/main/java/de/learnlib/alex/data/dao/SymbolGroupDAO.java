@@ -31,39 +31,6 @@ import java.util.List;
 public interface SymbolGroupDAO {
 
     /**
-     * Enum to select which fields should be not only referenced but directly be included, i.e. loaded from the DB.
-     */
-    enum EmbeddableFields {
-        /** Fetch all fields. */
-        ALL,
-
-        /** Fetch all the symbols with all actions. */
-        COMPLETE_SYMBOLS,
-
-        /** Fetch the symbols. */
-        SYMBOLS;
-
-        /**
-         * Parse a string into an entry of this enum. It is forbidden to override toValue(), so we use this method to
-         * allow the lowercase variants, too.
-         *
-         * @param name
-         *         THe name to parse into an entry.
-         * @return The fitting entry of this enum.
-         * @throws IllegalArgumentException
-         *         If the name could not be parsed.
-         */
-        public static EmbeddableFields fromString(String name) throws IllegalArgumentException {
-            return EmbeddableFields.valueOf(name.toUpperCase());
-        }
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-    }
-
-    /**
      * Save a group.
      *
      * @param user
@@ -95,6 +62,17 @@ public interface SymbolGroupDAO {
     List<SymbolGroup> create(User user, Long projectId, List<SymbolGroup> groups)
             throws NotFoundException, ValidationException;
 
+    /**
+     * Import symbols groups.
+     *
+     * @param user
+     *         The user.
+     * @param projectId
+     *         The ID of the project.
+     * @param groups
+     *         The groups to import.
+     * @return The imported groups.
+     */
     List<SymbolGroup> importGroups(User user, Long projectId, List<SymbolGroup> groups);
 
     /**
@@ -104,13 +82,11 @@ public interface SymbolGroupDAO {
      *         The user who wants to perform this method.
      * @param projectId
      *         The project the groups should belong to.
-     * @param embedFields
-     *         A list of field to directly embed/ load into the returned groups.
      * @return A List of groups. Can be empty.
      * @throws NotFoundException
      *         If no project with the given id was found.
      */
-    List<SymbolGroup> getAll(User user, long projectId, EmbeddableFields... embedFields) throws NotFoundException;
+    List<SymbolGroup> getAll(User user, long projectId) throws NotFoundException;
 
     /**
      * Get one group.
@@ -121,13 +97,11 @@ public interface SymbolGroupDAO {
      *         The project the group belongs to.
      * @param groupId
      *         The ID of the group within the project.
-     * @param embedFields
-     *         A list of field to directly embed/ load into the returned groups.
      * @return The group you are looking for.
      * @throws NotFoundException
      *         If the Project or the Group could not be found.
      */
-    SymbolGroup get(User user, long projectId, Long groupId, EmbeddableFields... embedFields) throws NotFoundException;
+    SymbolGroup get(User user, long projectId, Long groupId) throws NotFoundException;
 
     /**
      * Update a group.

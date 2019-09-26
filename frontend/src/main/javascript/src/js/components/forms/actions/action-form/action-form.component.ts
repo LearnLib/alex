@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from '../../../../entities/alphabet-symbol';
-import {Action} from '../../../../entities/actions/action';
+import { AlphabetSymbol } from '../../../../entities/alphabet-symbol';
+import { Action } from '../../../../entities/actions/action';
 
 /**
  * The component that displays the action forms.

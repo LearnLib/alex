@@ -636,7 +636,7 @@ public class SymbolDAOImplTest {
         symbol.setProject(project);
         symbol.setGroup(group);
 
-        given(projectDAO.getByID(user, PROJECT_ID, ProjectDAO.EmbeddableFields.ALL)).willReturn(project);
+        given(projectDAO.getByID(user, PROJECT_ID)).willReturn(project);
         given(symbolRepository.findById(SYMBOL_ID)).willReturn(Optional.of(symbol));
 
         symbolDAO.hide(user, PROJECT_ID, Collections.singletonList(SYMBOL_ID));

@@ -63,4 +63,8 @@ export class Project {
   getDefaultEnvironment(): ProjectEnvironment {
     return this.environments.find(env => env.default);
   }
+
+  getEnvironmentById(envId: number): ProjectEnvironment {
+    return this.environments.find(e => e.id === envId);
+  }
 }

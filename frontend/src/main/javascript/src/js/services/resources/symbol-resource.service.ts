@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {apiUrl} from '../../../../environments';
-import {AlphabetSymbol} from '../../entities/alphabet-symbol';
-import {IHttpPromise, IHttpService} from 'angular';
-import {SymbolGroup} from '../../entities/symbol-group';
+import { apiUrl } from '../../../../environments';
+import { AlphabetSymbol } from '../../entities/alphabet-symbol';
+import { IHttpPromise, IHttpService, IPromise } from 'angular';
+import { SymbolGroup } from '../../entities/symbol-group';
 import { SymbolUsageResult } from '../../entities/symbol-usage-result';
 
 /**
@@ -165,5 +165,9 @@ export class SymbolResource {
   getUsages(projectId: number, symbolId: number) {
     return this.$http.get(`${apiUrl}/projects/${projectId}/symbols/${symbolId}/usages`)
       .then(res => SymbolUsageResult.fromData(res.data));
+  }
+
+  export(projectId: number, config: any): IPromise<any> {
+    return this.$http.post(`${apiUrl}/projects/${projectId}/symbols/export`, config)
   }
 }

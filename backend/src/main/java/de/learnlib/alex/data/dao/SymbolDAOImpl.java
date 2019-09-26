@@ -580,7 +580,7 @@ public class SymbolDAOImpl implements SymbolDAO {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void show(User user, Long projectId, List<Long> ids) throws NotFoundException {
-        Project project = projectDAO.getByID(user, projectId, ProjectDAO.EmbeddableFields.ALL); // access check
+        Project project = projectDAO.getByID(user, projectId); // access check
 
         for (Long id : ids) {
             Symbol symbol = get(user, project, id);

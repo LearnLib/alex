@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {actionType} from '../../../constants';
-import {Action} from '../action';
+import { actionType } from '../../../constants';
+import { Action } from '../action';
 
 /**
  * Saves the displayed text of an alert window in a variable.

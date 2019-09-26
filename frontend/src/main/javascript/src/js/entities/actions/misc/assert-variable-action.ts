@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {actionType} from '../../../constants';
-import {Action} from '../action';
+import { actionType } from '../../../constants';
+import { Action } from '../action';
 
 /**
  * Action to check if the value of a variable equals or matches a specific string value.

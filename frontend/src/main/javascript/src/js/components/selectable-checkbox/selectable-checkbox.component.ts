@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Selectable} from '../../utils/selectable';
+import { Selectable } from '../../utils/selectable';
 
 export const selectableCheckboxComponent = {
   template: require('./selectable-checkbox.component.html'),

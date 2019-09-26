@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {ProjectService} from "../../../../../services/project.service";
-import {Project} from "../../../../../entities/project";
-import {GoToWebAction} from "../../../../../entities/actions/web/open-url-action";
+import { ProjectService } from "../../../../../services/project.service";
+import { Project } from "../../../../../entities/project";
+import { GoToWebAction } from "../../../../../entities/actions/web/open-url-action";
 
 /**
  * @type {{templateUrl: string, bindings: {action: string}, controllerAs: string}}

@@ -18,7 +18,7 @@ import { IHttpService, IPromise } from 'angular';
 import { apiUrl } from '../../../../environments';
 import { ProjectEnvironment } from '../../entities/project-environment';
 import { ProjectUrl } from '../../entities/project-url';
-import {ProjectEnvironmentVariable} from "../../entities/project-environment-variable";
+import { ProjectEnvironmentVariable } from "../../entities/project-environment-variable";
 
 export class ProjectEnvironmentResourceService {
 

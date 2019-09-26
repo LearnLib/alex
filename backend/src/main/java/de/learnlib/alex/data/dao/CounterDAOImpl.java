@@ -36,27 +36,13 @@ import java.util.List;
 @Service
 public class CounterDAOImpl implements CounterDAO {
 
-    /** The ProjectDAO to use. Will be injected. */
     private ProjectDAO projectDAO;
-
-    /** The injected repository for projects. */
     private ProjectRepository projectRepository;
-
-    /** The CounterRepository to use. Will be injected. */
     private CounterRepository counterRepository;
 
-    /**
-     * Creates a new CounterDAO.
-     *
-     * @param projectDAO
-     *         The projectDAO to use.
-     * @param counterRepository
-     *         The counterRepository to use.
-     * @param projectRepository
-     *         The projectRepository to use.
-     */
     @Inject
-    public CounterDAOImpl(ProjectDAO projectDAO, CounterRepository counterRepository,
+    public CounterDAOImpl(ProjectDAO projectDAO,
+                          CounterRepository counterRepository,
                           ProjectRepository projectRepository) {
         this.projectDAO = projectDAO;
         this.counterRepository = counterRepository;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {ILocationService} from 'angular';
-import {UserService} from '../../../services/user.service';
-import {User} from '../../../entities/user';
+import { ILocationService } from 'angular';
+import { UserService } from '../../../services/user.service';
+import { User } from '../../../entities/user';
 
 export const redirectViewComponent = {
   template: require('./redirect-view.component.html'),

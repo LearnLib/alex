@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {SymbolGroup} from '../../entities/symbol-group';
-import {AlphabetSymbol} from '../../entities/alphabet-symbol';
+import { SymbolGroup } from '../../entities/symbol-group';
+import { AlphabetSymbol } from '../../entities/alphabet-symbol';
 
 export const symbolSelectDropdownComponent = {
   template: require('./symbol-select-dropdown.component.html'),

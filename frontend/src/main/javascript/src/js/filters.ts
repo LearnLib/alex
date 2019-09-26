@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {eqOracleType, learnAlgorithm, webBrowser} from './constants';
+import { eqOracleType, learnAlgorithm, webBrowser } from './constants';
 
 /**
  * The filter to format a EQ type constant to something more readable.

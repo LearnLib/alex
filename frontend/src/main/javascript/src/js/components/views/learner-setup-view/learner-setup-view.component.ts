@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {LearnConfiguration} from '../../../entities/learner-configuration';
-import {ParametrizedSymbol} from '../../../entities/parametrized-symbol';
-import {SymbolGroupResource} from '../../../services/resources/symbol-group-resource.service';
-import {ProjectService} from '../../../services/project.service';
-import {LearnerResource} from '../../../services/resources/learner-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {SettingsResource} from '../../../services/resources/settings-resource.service';
-import {SymbolGroup} from '../../../entities/symbol-group';
-import {LearnResult} from '../../../entities/learner-result';
-import {Project} from '../../../entities/project';
-import {LearnResultResource} from '../../../services/resources/learner-result-resource.service';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { LearnConfiguration } from '../../../entities/learner-configuration';
+import { ParametrizedSymbol } from '../../../entities/parametrized-symbol';
+import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { ProjectService } from '../../../services/project.service';
+import { LearnerResource } from '../../../services/resources/learner-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { SettingsResource } from '../../../services/resources/settings-resource.service';
+import { SymbolGroup } from '../../../entities/symbol-group';
+import { LearnResult } from '../../../entities/learner-result';
+import { Project } from '../../../entities/project';
+import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
 
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
@@ -100,7 +100,7 @@ class LearnerSetupViewComponent {
         } else {
 
           // load all symbols in case there isn't any active learning process
-          this.symbolGroupResource.getAll(this.project.id, true)
+          this.symbolGroupResource.getAll(this.project.id)
             .then(groups => this.groups = groups)
             .catch(console.error);
 

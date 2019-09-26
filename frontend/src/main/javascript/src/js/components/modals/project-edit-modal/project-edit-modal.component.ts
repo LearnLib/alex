@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {Project} from '../../../entities/project';
-import {ModalComponent} from '../modal.component';
-import {IFormController} from 'angular';
-import {ProjectResource} from '../../../services/resources/project-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {ProjectService} from '../../../services/project.service';
+import { Project } from '../../../entities/project';
+import { ModalComponent } from '../modal.component';
+import { IFormController } from 'angular';
+import { ProjectResource } from '../../../services/resources/project-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { ProjectService } from '../../../services/project.service';
 
 /**
  * The component of the modal window for editing a project.

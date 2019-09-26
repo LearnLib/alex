@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {symbolParameterType} from '../../../constants';
-import {ModalComponent} from '../modal.component';
-import {SymbolParameterResource} from '../../../services/resources/symbol-parameter-resource.service';
-import {IFormController} from 'angular';
+import { symbolParameterType } from '../../../constants';
+import { ModalComponent } from '../modal.component';
+import { SymbolParameterResource } from '../../../services/resources/symbol-parameter-resource.service';
+import { IFormController } from 'angular';
 
 export const symbolParameterCreateModalComponent = {
   template: require('./symbol-parameter-create-modal.component.html'),

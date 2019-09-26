@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {ProjectService} from '../../../services/project.service';
-import {TestResource} from '../../../services/resources/test-resource.service';
-import {IPromise} from 'angular';
-import {Project} from '../../../entities/project';
+import { ProjectService } from '../../../services/project.service';
+import { TestResource } from '../../../services/resources/test-resource.service';
+import { IPromise } from 'angular';
+import { Project } from '../../../entities/project';
 
 export const testCaseResultsViewComponent = {
   template: require('./test-case-results-view.component.html'),

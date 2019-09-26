@@ -15,12 +15,12 @@
  */
 
 import * as remove from 'lodash/remove';
-import {Selectable} from '../../../utils/selectable';
-import {Project} from '../../../entities/project';
-import {ProjectService} from '../../../services/project.service';
-import {ToastService} from '../../../services/toast.service';
-import {CounterResource} from '../../../services/resources/counter-resource.service';
-import {Counter} from '../../../entities/counter';
+import { Selectable } from '../../../utils/selectable';
+import { Project } from '../../../entities/project';
+import { ProjectService } from '../../../services/project.service';
+import { ToastService } from '../../../services/toast.service';
+import { CounterResource } from '../../../services/resources/counter-resource.service';
+import { Counter } from '../../../entities/counter';
 
 /**
  * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.

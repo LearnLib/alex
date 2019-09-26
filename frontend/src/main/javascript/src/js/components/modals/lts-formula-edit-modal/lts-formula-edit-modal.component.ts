@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import {ModalComponent} from '../modal.component';
-import {ProjectService} from '../../../services/project.service';
-import {ToastService} from '../../../services/toast.service';
-import {LtsFormulaService} from '../../../services/lts-formula.service';
-import {Project} from '../../../entities/project';
+import { ModalComponent } from '../modal.component';
+import { ProjectService } from '../../../services/project.service';
+import { ToastService } from '../../../services/toast.service';
+import { LtsFormulaService } from '../../../services/lts-formula.service';
+import { Project } from '../../../entities/project';
 
 /**
  * The component for the modal that edits a formula.

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import {ModalComponent} from '../modal.component';
-import {ProjectService} from '../../../services/project.service';
-import {SymbolResource} from '../../../services/resources/symbol-resource.service';
-import {TestService} from '../../../services/test.service';
-import {Project} from '../../../entities/project';
+import { ModalComponent } from '../modal.component';
+import { ProjectService } from '../../../services/project.service';
+import { Project } from '../../../entities/project';
+import { TestResource } from "../../../services/resources/test-resource.service";
 
 export const testsImportModalComponent = {
   template: require('./tests-import-modal.component.html'),
@@ -36,17 +35,9 @@ export const testsImportModalComponent = {
     /** The tests to import. */
     public importData: any = null;
 
-    /**
-     * Constructor.
-     *
-     * @param projectService
-     * @param symbolResource
-     * @param testService
-     */
     /* @ngInject */
     constructor(private projectService: ProjectService,
-                private symbolResource: SymbolResource,
-                private testService: TestService) {
+                private testResource: TestResource) {
       super();
     }
 
@@ -75,7 +66,10 @@ export const testsImportModalComponent = {
       if (this.importData.tests.length) {
         const parentId = this.resolve.parent.id;
 
-        this.testService.importTests(this.project.id, this.importData.tests, parentId)
+        const tests = this.importData.tests;
+        tests.forEach(t => t.parent = parentId);
+
+        this.testResource.import(this.project.id, tests)
           .then(tests => this.close({$value: tests}))
           .catch(err => this.errorMessage = err.data.message);
       } else {

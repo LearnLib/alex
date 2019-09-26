@@ -684,3 +684,17 @@ test-case-view table {
     }
   }
 }
+
+test-config-list .list-group-item {
+  .actions {
+    visibility: hidden;
+  }
+
+  &:hover .actions {
+    visibility: visible;
+  }
+
+  &.active .badge {
+    background: #5795ca;
+  }
+}

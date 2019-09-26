@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from '../entities/alphabet-symbol';
-import {SymbolGroup} from '../entities/symbol-group';
+import { AlphabetSymbol } from '../entities/alphabet-symbol';
+import { SymbolGroup } from '../entities/symbol-group';
 
 /**
  * Utilities for symbol groups.

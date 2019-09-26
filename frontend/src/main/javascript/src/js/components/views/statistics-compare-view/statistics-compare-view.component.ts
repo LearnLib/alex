@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import {ProjectService} from '../../../services/project.service';
-import {LearnResultResource} from '../../../services/resources/learner-result-resource.service';
-import {LearnerResultChartService} from '../../../services/learner-result-chart.service';
-import {ToastService} from '../../../services/toast.service';
-import {DownloadService} from '../../../services/download.service';
-import {PromptService} from '../../../services/prompt.service';
-import {Project} from '../../../entities/project';
+import { ProjectService } from '../../../services/project.service';
+import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { LearnerResultChartService } from '../../../services/learner-result-chart.service';
+import { ToastService } from '../../../services/toast.service';
+import { DownloadService } from '../../../services/download.service';
+import { PromptService } from '../../../services/prompt.service';
+import { Project } from '../../../entities/project';
 
 /**
  * The controller for the learn statistics page.

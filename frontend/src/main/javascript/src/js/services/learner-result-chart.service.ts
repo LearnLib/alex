@@ -15,7 +15,7 @@
  */
 
 import * as zip from 'lodash/zip';
-import {LearnResult} from '../entities/learner-result';
+import { LearnResult } from '../entities/learner-result';
 
 const MARGIN_OPTIONS = {
   top: 20,

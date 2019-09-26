@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {ProjectService} from '../../../../services/project.service';
-import {TestResource} from '../../../../services/resources/test-resource.service';
-import {IFormController} from 'angular';
-import {TestSuiteEqOracle} from '../../../../entities/eq-oracles/test-suite-eq-oracle';
+import { ProjectService } from '../../../../services/project.service';
+import { TestResource } from '../../../../services/resources/test-resource.service';
+import { IFormController } from 'angular';
+import { TestSuiteEqOracle } from '../../../../entities/eq-oracles/test-suite-eq-oracle';
 
 export const testSuiteEqOracleFormComponent = {
   template: require('./test-suite-eq-oracle-form.component.html'),

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {apiUrl} from '../../../../environments';
-import {SymbolGroup} from '../../entities/symbol-group';
-import {IHttpService, IPromise} from 'angular';
+import { apiUrl } from '../../../../environments';
+import { SymbolGroup } from '../../entities/symbol-group';
+import { IHttpService, IPromise } from 'angular';
 
 /**
  * The resource that handles http requests to the API to do CRUD operations on symbol groups.
@@ -36,12 +36,9 @@ export class SymbolGroupResource {
    * Fetches all symbol groups from the server.
    *
    * @param projectId The id of the project whose projects should be fetched.
-   * @param includeSymbols If the symbols should be included.
    */
-  getAll(projectId: number, includeSymbols = false): IPromise<any> {
-    const params = includeSymbols ? '?embed=symbols' : '';
-
-    return this.$http.get(`${apiUrl}/projects/${projectId}/groups${params}`)
+  getAll(projectId: number): IPromise<any> {
+    return this.$http.get(`${apiUrl}/projects/${projectId}/groups`)
       .then(response => (<any[]> response.data).map(g => new SymbolGroup(g)));
   }
 

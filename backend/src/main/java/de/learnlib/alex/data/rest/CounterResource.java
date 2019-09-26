@@ -49,13 +49,15 @@ public class CounterResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The CounterDAO to use. */
-    @Inject
-    private CounterDAO counterDAO;
-
-    /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
+
+    private final CounterDAO counterDAO;
+
+    @Inject
+    public CounterResource(CounterDAO counterDAO) {
+        this.counterDAO = counterDAO;
+    }
 
     /**
      * Get all counters of a project.
@@ -67,7 +69,7 @@ public class CounterResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllCounters(@PathParam("projectId") Long projectId) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAllCounters({}) for user {}.", projectId, user);
 
         final List<Counter> counters = counterDAO.getAll(user, projectId);
@@ -89,7 +91,7 @@ public class CounterResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createCounter(@PathParam("projectId") Long projectId, Counter counter) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createCounter({}, {}) for user {}.", projectId, counter.getName(), user);
 
         if (!counter.getProjectId().equals(projectId)) {
@@ -116,7 +118,7 @@ public class CounterResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateCounter(@PathParam("projectId") Long projectId, @PathParam("counterId") Long counterId, Counter counter) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("updateCounter({}, {}) for user {}.", projectId, counterId, user);
 
         if (!counter.getProjectId().equals(projectId)) {
@@ -140,7 +142,7 @@ public class CounterResource {
     @Path("/{counterId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCounter(@PathParam("projectId") Long projectId, @PathParam("counterId") Long counterId) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, counterId, user);
 
         counterDAO.delete(user, projectId, Collections.singletonList(counterId));
@@ -162,7 +164,7 @@ public class CounterResource {
     @Path("/batch/{counterIds}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteCounter(@PathParam("projectId") Long projectId, @PathParam("counterIds") IdsList counterIds) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("deleteCounter({}, {}) for user {}.", projectId, counterIds, user);
 
         counterDAO.delete(user, projectId, counterIds);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {IHttpService, IRootScopeService} from 'angular';
+import { IHttpService, IRootScopeService } from 'angular';
 
 export interface UIStore {
   loading: boolean,

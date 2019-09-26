@@ -15,12 +15,12 @@
  */
 
 import * as remove from 'lodash/remove';
-import {Selectable} from '../../../utils/selectable';
-import {TestReportResource} from '../../../services/resources/test-report-resource.service';
-import {ProjectService} from '../../../services/project.service';
-import {ToastService} from '../../../services/toast.service';
-import {TestReportService} from '../../../services/test-report.service';
-import {Project} from '../../../entities/project';
+import { Selectable } from '../../../utils/selectable';
+import { TestReportResource } from '../../../services/resources/test-report-resource.service';
+import { ProjectService } from '../../../services/project.service';
+import { ToastService } from '../../../services/toast.service';
+import { TestReportService } from '../../../services/test-report.service';
+import { Project } from '../../../entities/project';
 
 /**
  * The component for test reports.

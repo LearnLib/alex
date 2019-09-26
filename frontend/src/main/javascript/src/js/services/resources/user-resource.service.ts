@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {apiUrl} from '../../../../environments';
-import {User} from '../../entities/user';
-import {IHttpService, IPromise} from 'angular';
+import { apiUrl } from '../../../../environments';
+import { User } from '../../entities/user';
+import { IHttpService, IPromise } from 'angular';
 
 /**
  * The resource to handle actions with users over the API.

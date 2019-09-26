@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import {DateUtils} from '../utils/date-utils';
-import {DownloadService} from './download.service';
-import {PromptService} from './prompt.service';
-import {TestReportResource} from './resources/test-report-resource.service';
-import {ToastService} from './toast.service';
+import { DateUtils } from '../utils/date-utils';
+import { DownloadService } from './download.service';
+import { PromptService } from './prompt.service';
+import { TestReportResource } from './resources/test-report-resource.service';
+import { ToastService } from './toast.service';
 
 /**
  * The service for test cases and test suites.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {UiService} from '../../services/ui.service';
+import { UiService } from '../../services/ui.service';
 
 /**
  * The main component that is the start point of the application.

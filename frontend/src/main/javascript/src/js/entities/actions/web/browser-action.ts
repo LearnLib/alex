@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {actionType} from '../../../constants';
-import {Action} from '../action';
+import { actionType } from '../../../constants';
+import { Action } from '../action';
 
 /** Action for doing something with the browser window. */
 export class BrowserAction extends Action {

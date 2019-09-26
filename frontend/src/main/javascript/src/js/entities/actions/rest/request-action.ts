@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {actionType} from '../../../constants';
-import {Action} from '../action';
+import { actionType } from '../../../constants';
+import { Action } from '../action';
 
 /**
  * Checks in a HTTP response body that is formatted in JSON if a specific attribute exists.

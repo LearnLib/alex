@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {CallRestAction} from '../../../../../entities/actions/rest/request-action';
-import {ProjectService} from "../../../../../services/project.service";
-import {Project} from "../../../../../entities/project";
+import { CallRestAction } from '../../../../../entities/actions/rest/request-action';
+import { ProjectService } from "../../../../../services/project.service";
+import { Project } from "../../../../../entities/project";
 
 const presets = {
   JSON: 'JSON',

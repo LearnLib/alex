@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {LearnResult} from '../../../entities/learner-result';
-import {ProjectService} from '../../../services/project.service';
-import {LearnerResource} from '../../../services/resources/learner-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {LearnResultResource} from '../../../services/resources/learner-result-resource.service';
-import {Project} from '../../../entities/project';
+import { LearnResult } from '../../../entities/learner-result';
+import { ProjectService } from '../../../services/project.service';
+import { LearnerResource } from '../../../services/resources/learner-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { Project } from '../../../entities/project';
 
 /**
  * The controller that handles the page for displaying multiple complete learn results in a slide show.

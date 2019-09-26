@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {actionType} from '../../../constants';
-import {Action} from '../action';
+import { actionType } from '../../../constants';
+import { Action } from '../action';
 
 /**
  * Submits a form. Can also be applied to an input element of a form.

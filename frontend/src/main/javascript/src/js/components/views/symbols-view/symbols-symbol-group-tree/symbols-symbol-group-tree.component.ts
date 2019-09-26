@@ -1,13 +1,13 @@
 import * as remove from 'lodash/remove';
-import {events} from '../../../../constants';
-import {AlphabetSymbol} from '../../../../entities/alphabet-symbol';
-import {SymbolGroup} from '../../../../entities/symbol-group';
-import {PromptService} from '../../../../services/prompt.service';
-import {SymbolGroupResource} from '../../../../services/resources/symbol-group-resource.service';
-import {ToastService} from '../../../../services/toast.service';
-import {SymbolResource} from '../../../../services/resources/symbol-resource.service';
-import {EventBus} from '../../../../services/eventbus.service';
-import {Selectable} from '../../../../utils/selectable';
+import { events } from '../../../../constants';
+import { AlphabetSymbol } from '../../../../entities/alphabet-symbol';
+import { SymbolGroup } from '../../../../entities/symbol-group';
+import { PromptService } from '../../../../services/prompt.service';
+import { SymbolGroupResource } from '../../../../services/resources/symbol-group-resource.service';
+import { ToastService } from '../../../../services/toast.service';
+import { SymbolResource } from '../../../../services/resources/symbol-resource.service';
+import { EventBus } from '../../../../services/eventbus.service';
+import { Selectable } from '../../../../utils/selectable';
 
 export const symbolsSymbolGroupTreeComponent = {
   template: require('./symbols-symbol-group-tree.component.html'),
@@ -119,18 +119,22 @@ export const symbolsSymbolGroupTreeComponent = {
       const newName = symbol.name + ' - Copy';
       this.promptService.prompt('Enter a name for the new symbol', newName)
         .then(name => {
-          const symbolToCreate = symbol.getExportableSymbol();
-          symbolToCreate.name = name;
-          symbolToCreate.group = symbol.group;
 
-          // first create the symbol without actions
-          this.symbolResource.create(symbol.project, symbolToCreate)
-            .then(createdSymbol => {
-              this.group.symbols.push(createdSymbol);
-              this.symbols.push(createdSymbol);
-              this.toastService.success('The symbol has been copied.');
-            })
-            .catch(err => this.toastService.danger(`The symbol could not be created. ${err.data.message}`));
+          this.symbolResource.export(symbol.project, {symbolIds: [symbol.id], symbolsOnly: true}).then(
+            res => {
+              const symbolToCreate = res.data.symbols[0];
+              symbolToCreate.name = name;
+              symbolToCreate.group = symbol.group;
+
+              // first create the symbol without actions
+              return this.symbolResource.create(symbol.project, symbolToCreate)
+                .then(createdSymbol => {
+                  this.group.symbols.push(createdSymbol);
+                  this.symbols.push(createdSymbol);
+                  this.toastService.success('The symbol has been copied.');
+                });
+            }
+          ).catch(err => this.toastService.danger(`The symbol could not be created. ${err.data.message}`));;
         });
     }
 

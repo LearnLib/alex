@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
-import {ModalComponent} from '../modal.component';
-import {SymbolResource} from '../../../services/resources/symbol-resource.service';
-import {ProjectService} from '../../../services/project.service';
-import {ToastService} from '../../../services/toast.service';
-import {SymbolGroupResource} from '../../../services/resources/symbol-group-resource.service';
-import {SymbolGroup} from '../../../entities/symbol-group';
-import {Project} from '../../../entities/project';
+import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
+import { ModalComponent } from '../modal.component';
+import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { ProjectService } from '../../../services/project.service';
+import { ToastService } from '../../../services/toast.service';
+import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { SymbolGroup } from '../../../entities/symbol-group';
+import { Project } from '../../../entities/project';
 
 /**
  * The component for the symbols import modal window.

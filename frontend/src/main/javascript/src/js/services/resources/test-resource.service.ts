@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {apiUrl} from '../../../../environments';
-import {IHttpService, IPromise} from 'angular';
+import { apiUrl } from '../../../../environments';
+import { IHttpService, IPromise } from 'angular';
 
 /**
  * The resource to handle actions with test cases over the API.
@@ -169,6 +169,16 @@ export class TestResource {
    */
   getResults(projectId: number, testId: number, page = 0, size = 25): IPromise<any> {
     return this.$http.get(`${apiUrl}/projects/${projectId}/tests/${testId}/results?page=${page}&size=${size}`)
+      .then(response => response.data);
+  }
+
+  export(projectId: number, config: any) {
+    return this.$http.post(`${apiUrl}/projects/${projectId}/tests/export`, config)
+      .then(response => response.data);
+  }
+
+  import(projectId: number, data: any) {
+    return this.$http.post(`${apiUrl}/projects/${projectId}/tests/import`, data)
       .then(response => response.data);
   }
 }

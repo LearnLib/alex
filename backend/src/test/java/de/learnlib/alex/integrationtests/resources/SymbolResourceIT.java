@@ -113,9 +113,9 @@ public class SymbolResourceIT extends AbstractResourceIT {
         ((ObjectNode) symbolNode).put("id", objectMapper.readTree(symbolRes).get("id").intValue());
         JSONAssert.assertEquals(symbolNode.toString(), symbolRes, true);
 
-        final Response res2 = symbolGroupApi.getAll(projectId1, jwtUser1);
-        final String symbolInGroup = objectMapper.readTree(res2.readEntity(String.class)).get(1).get("symbols").get(0).toString();
-        JSONAssert.assertEquals(symbolNode.toString(), symbolInGroup, true);
+        final Response res2 = symbolApi.getAll(projectId1, jwtUser1);
+        final String symbol = objectMapper.readTree(res2.readEntity(String.class)).get(0).toString();
+        JSONAssert.assertEquals(symbolNode.toString(), symbol, true);
     }
 
     @Test
@@ -260,8 +260,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
         final Response resS1 = symbolApi.create(projectId1, symbolWithSymbolStepsJson, jwtUser1);
         assertEquals(HttpStatus.CREATED.value(), resS1.getStatus());
 
-        final JsonNode groupsNode = objectMapper.readTree(symbolGroupApi.getAll(projectId1, jwtUser1).readEntity(String.class));
-        final JsonNode symbolsNode = groupsNode.get(1).get("symbols");
+        final JsonNode symbolsNode = objectMapper.readTree(symbolApi.getAll(projectId1, jwtUser1).readEntity(String.class));
 
         final Iterator<JsonNode> it = symbolsNode.iterator();
         while (it.hasNext()) {

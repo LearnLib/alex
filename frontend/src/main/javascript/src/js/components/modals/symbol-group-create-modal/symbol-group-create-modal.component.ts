@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {SymbolGroup} from '../../../entities/symbol-group';
-import {Project} from '../../../entities/project';
-import {ModalComponent} from '../modal.component';
-import {ProjectService} from '../../../services/project.service';
-import {SymbolGroupResource} from '../../../services/resources/symbol-group-resource.service';
-import {ToastService} from '../../../services/toast.service';
+import { SymbolGroup } from '../../../entities/symbol-group';
+import { Project } from '../../../entities/project';
+import { ModalComponent } from '../modal.component';
+import { ProjectService } from '../../../services/project.service';
+import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { ToastService } from '../../../services/toast.service';
 
 /**
  * The controller for the modal dialog that handles the creation of a new symbol group.
@@ -64,7 +64,7 @@ export const symbolGroupCreateModalComponent = {
       this.selectedSymbolGroup = null;
       this.errorMsg = null;
 
-      this.symbolGroupResource.getAll(this.project.id, true)
+      this.symbolGroupResource.getAll(this.project.id)
         .then(groups => this.groups = groups);
     }
 

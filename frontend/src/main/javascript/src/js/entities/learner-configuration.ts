@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {webBrowser} from '../constants';
-import {DriverConfigService} from '../services/driver-config.service';
-import {RandomEqOracle} from './eq-oracles/random-eq-oracle';
-import {ParametrizedSymbol} from './parametrized-symbol';
+import { webBrowser } from '../constants';
+import { DriverConfigService } from '../services/driver-config.service';
+import { RandomEqOracle } from './eq-oracles/random-eq-oracle';
+import { ParametrizedSymbol } from './parametrized-symbol';
 import { ProjectEnvironment } from './project-environment';
 
 /**

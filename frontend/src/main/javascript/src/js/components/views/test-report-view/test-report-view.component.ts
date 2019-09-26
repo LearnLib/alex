@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import {TestReportResource} from '../../../services/resources/test-report-resource.service';
-import {ProjectService} from '../../../services/project.service';
-import {ToastService} from '../../../services/toast.service';
-import {TestReportService} from '../../../services/test-report.service';
-import {Project} from '../../../entities/project';
+import { TestReportResource } from '../../../services/resources/test-report-resource.service';
+import { ProjectService } from '../../../services/project.service';
+import { ToastService } from '../../../services/toast.service';
+import { TestReportService } from '../../../services/test-report.service';
+import { Project } from '../../../entities/project';
 
 /**
  * The component for a single test report.

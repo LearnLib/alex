@@ -15,25 +15,23 @@
  */
 
 import * as remove from 'lodash/remove';
-import {version} from '../../../../../environments';
-import {webBrowser} from '../../../constants';
-import {DriverConfigService} from '../../../services/driver-config.service';
-import {DateUtils} from '../../../utils/date-utils';
-import {Selectable} from '../../../utils/selectable';
-import {SymbolGroupResource} from '../../../services/resources/symbol-group-resource.service';
-import {ProjectService} from '../../../services/project.service';
-import {ToastService} from '../../../services/toast.service';
-import {TestResource} from '../../../services/resources/test-resource.service';
-import {PromptService} from '../../../services/prompt.service';
-import {SettingsResource} from '../../../services/resources/settings-resource.service';
-import {DownloadService} from '../../../services/download.service';
-import {TestService} from '../../../services/test.service';
-import {ClipboardService} from '../../../services/clipboard.service';
-import {NotificationService} from '../../../services/notification.service';
-import {TestConfigResource} from '../../../services/resources/test-config-resource.service';
-import {TestReportResource} from '../../../services/resources/test-report-resource.service';
-import {Project} from '../../../entities/project';
-import {SymbolGroup} from '../../../entities/symbol-group';
+import { webBrowser } from '../../../constants';
+import { DriverConfigService } from '../../../services/driver-config.service';
+import { DateUtils } from '../../../utils/date-utils';
+import { Selectable } from '../../../utils/selectable';
+import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { ProjectService } from '../../../services/project.service';
+import { ToastService } from '../../../services/toast.service';
+import { TestResource } from '../../../services/resources/test-resource.service';
+import { PromptService } from '../../../services/prompt.service';
+import { SettingsResource } from '../../../services/resources/settings-resource.service';
+import { DownloadService } from '../../../services/download.service';
+import { ClipboardService } from '../../../services/clipboard.service';
+import { NotificationService } from '../../../services/notification.service';
+import { TestConfigResource } from '../../../services/resources/test-config-resource.service';
+import { TestReportResource } from '../../../services/resources/test-report-resource.service';
+import { Project } from '../../../entities/project';
+import { SymbolGroup } from '../../../entities/symbol-group';
 import { TestCase } from '../../../entities/test-case';
 
 export const testSuiteViewComponent = {
@@ -80,7 +78,6 @@ export const testSuiteViewComponent = {
      * @param $uibModal
      * @param settingsResource
      * @param downloadService
-     * @param testService
      * @param clipboardService
      * @param testReportResource
      * @param notificationService
@@ -96,7 +93,6 @@ export const testSuiteViewComponent = {
                 private $uibModal: any,
                 private settingsResource: SettingsResource,
                 private downloadService: DownloadService,
-                private testService: TestService,
                 private clipboardService: ClipboardService,
                 private testReportResource: TestReportResource,
                 private notificationService: NotificationService,
@@ -124,7 +120,7 @@ export const testSuiteViewComponent = {
         .then(data => this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver))
         .catch(console.error);
 
-      this.symbolGroupResource.getAll(this.project.id, true)
+      this.symbolGroupResource.getAll(this.project.id)
         .then((groups) => this.groups = groups)
         .catch(console.error);
 
@@ -363,19 +359,12 @@ export const testSuiteViewComponent = {
       if (!tests.length) {
         this.toastService.info('You have to select at least one test.');
       } else {
-        tests = JSON.parse(JSON.stringify(tests));
-        tests = this.testService.exportTests(tests);
-
-        const data = {
-          version,
-          type: 'tests',
-          tests
-        };
-
         const name = `tests-${this.testSuite.name}-${DateUtils.YYYYMMDD()}`;
         this.promptService.prompt('Enter a name for the file', name).then(name => {
-          this.downloadService.downloadObject(data, name);
-          this.toastService.success('The tests have been exported.');
+          this.testResource.export(this.project.id, {testIds: tests.map(t => t.id)}).then(data => {
+            this.downloadService.downloadObject(data, name);
+            this.toastService.success('The tests have been exported.');
+          });
         });
       }
     }
@@ -396,23 +385,28 @@ export const testSuiteViewComponent = {
     }
 
     importTests(): void {
-      this.testService.openImportModal(this.testSuite)
-        .then((tests) => {
-          this.toastService.success('Tests have been imported.');
-          tests.forEach(t => {
-            t.type = t.tests ? 'suite' : 'case';
-            this.testSuite.tests.push(t);
-          });
+      this.$uibModal.open({
+        component: 'testsImportModal',
+        resolve: {
+          parent: () => this.testSuite
+        }
+      }).result.then((tests) => {
+        this.toastService.success('Tests have been imported.');
+        tests.forEach(t => {
+          t.type = t.tests ? 'suite' : 'case';
+          this.testSuite.tests.push(t);
         });
+      });
     }
 
     copyTests(): void {
       let tests = this.selectedTests.getSelected();
       if (tests.length > 0) {
-        tests = JSON.parse(JSON.stringify(tests));
-        tests = this.testService.exportTests(tests);
-        this.clipboardService.copy(this.project.id, 'tests', tests);
-        this.toastService.info('Tests copied to clipboard.');
+        this.testResource.export(this.project.id, {testIds: tests.map(t => t.id)})
+          .then((data: any) => {
+            this.clipboardService.copy(this.project.id, 'tests', data.tests);
+            this.toastService.info('Tests copied to clipboard.');
+          });
       } else {
         this.toastService.info('You have to select at least one test');
       }
@@ -421,8 +415,9 @@ export const testSuiteViewComponent = {
     pasteTests(): void {
       const tests = this.clipboardService.paste(this.project.id, 'tests');
       if (tests != null) {
-        this.testService.importTests(this.project.id, tests, this.testSuite.id)
-          .then((importedTests) => {
+        tests.forEach(t => t.parent = this.testSuite.id);
+        this.testResource.import(this.project.id, tests)
+          .then((importedTests: any[]) => {
             importedTests.forEach((t) => {
               t.type = t.tests ? 'suite' : 'case';
               this.testSuite.tests.push(t);
@@ -438,16 +433,10 @@ export const testSuiteViewComponent = {
     }
 
     saveTestConfig(): void {
-      let selectedTests = this.selectedTests.getSelected();
-      if (!selectedTests.length) {
-        this.toastService.info('You have to select at least one test.');
-        return;
-      }
-
       const config = JSON.parse(JSON.stringify(this.testConfig));
       config.id = null;
       config.driverConfig.id = null;
-      config.tests = selectedTests.map(t => t.id);
+      config.tests = [];
       config.project = this.project.id;
       config.environment = config.environment.id;
 
@@ -458,19 +447,14 @@ export const testSuiteViewComponent = {
         })
         .catch(err => {
           this.toastService.danger(`The config could not be saved. ${err.data.message}`);
+          this.toastService.danger(`The config could not be saved. ${err.data.message}`);
         });
     }
 
     selectTestConfig(config: any): void {
       if (config != null) {
-        this.testConfig = config;
+        this.testConfig = JSON.parse(JSON.stringify(config));
         this.testConfig.environment = this.project.environments.find(e => e.id === config.environment);
-
-        this.testSuite.tests.forEach(test => {
-          if (this.testConfig.tests.indexOf(test.id) > -1) {
-            this.selectedTests.select(test);
-          }
-        });
       }
     }
 

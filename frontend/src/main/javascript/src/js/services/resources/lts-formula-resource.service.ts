@@ -1,5 +1,5 @@
-import {apiUrl} from '../../../../environments';
-import {IHttpService, IPromise} from 'angular';
+import { apiUrl } from '../../../../environments';
+import { IHttpService, IPromise } from 'angular';
 
 /** The resource for lts formulas. */
 export class LtsFormulaResource {

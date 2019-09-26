@@ -37,6 +37,7 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
@@ -44,32 +45,36 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(rollbackOn = Exception.class)
 public class ProjectEnvironmentDAO {
 
-    @Autowired
-    private ProjectDAO projectDAO;
+    private final ProjectDAO projectDAO;
+    private final ProjectRepository projectRepository;
+    private final ProjectEnvironmentRepository environmentRepository;
+    private final ProjectEnvironmentVariableRepository variableRepository;
+    private final ProjectUrlRepository urlRepository;
+    private final SymbolActionRepository symbolActionRepository;
+    private final TestReportRepository testReportRepository;
+    private final LearnerResultRepository learnerResultRepository;
 
-    @Autowired
-    private ProjectRepository projectRepository;
-
-    @Autowired
-    private ProjectEnvironmentRepository environmentRepository;
-
-    @Autowired
-    private ProjectEnvironmentVariableRepository variableRepository;
-
-    @Autowired
-    private ProjectUrlRepository urlRepository;
-
-    @Autowired
-    private SymbolActionRepository symbolActionRepository;
-
-    @Autowired
-    private TestReportRepository testReportRepository;
-
-    @Autowired
-    private LearnerResultRepository learnerResultRepository;
+    @Inject
+    public ProjectEnvironmentDAO(ProjectDAO projectDAO,
+                                 ProjectRepository projectRepository,
+                                 ProjectEnvironmentRepository environmentRepository,
+                                 ProjectEnvironmentVariableRepository variableRepository,
+                                 ProjectUrlRepository urlRepository,
+                                 SymbolActionRepository symbolActionRepository,
+                                 TestReportRepository testReportRepository,
+                                 LearnerResultRepository learnerResultRepository) {
+        this.projectDAO = projectDAO;
+        this.projectRepository = projectRepository;
+        this.environmentRepository = environmentRepository;
+        this.variableRepository = variableRepository;
+        this.urlRepository = urlRepository;
+        this.symbolActionRepository = symbolActionRepository;
+        this.testReportRepository = testReportRepository;
+        this.learnerResultRepository = learnerResultRepository;
+    }
 
     public ProjectEnvironment create(User user, Long projectId, ProjectEnvironment environment) {
         final Project project = projectRepository.findById(projectId).orElse(null);

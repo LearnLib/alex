@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {FileResource} from '../../../../../services/resources/file-resource.service';
-import {ProjectService} from '../../../../../services/project.service';
-import {Project} from '../../../../../entities/project';
+import { FileResource } from '../../../../../services/resources/file-resource.service';
+import { ProjectService } from '../../../../../services/project.service';
+import { Project } from '../../../../../entities/project';
 
 export const uploadFileActionFormComponent = {
   template: require('./upload-file-action-form.component.html'),

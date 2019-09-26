@@ -15,11 +15,9 @@
  */
 
 import { ModalComponent } from '../modal.component';
-import { IFormController } from 'angular';
-import { ProjectUrl } from '../../../entities/project-url';
 import { ProjectEnvironmentResourceService } from '../../../services/resources/project-environment-resource.service';
 import { ProjectEnvironment } from '../../../entities/project-environment';
-import {ProjectEnvironmentVariable} from "../../../entities/project-environment-variable";
+import { ProjectEnvironmentVariable } from "../../../entities/project-environment-variable";
 
 export const environmentVariableCreateModalComponent = {
   template: require('./environment-variable-create-modal.component.html'),

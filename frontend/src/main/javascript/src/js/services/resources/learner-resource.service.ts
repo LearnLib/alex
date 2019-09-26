@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {apiUrl} from '../../../../environments';
-import {LearnResult} from '../../entities/learner-result';
-import {IHttpService, IPromise} from 'angular';
-import {LearnConfiguration} from '../../entities/learner-configuration';
+import { apiUrl } from '../../../../environments';
+import { LearnResult } from '../../entities/learner-result';
+import { IHttpService, IPromise } from 'angular';
+import { LearnConfiguration } from '../../entities/learner-configuration';
 
 /**
  * The service for interacting with the learner.

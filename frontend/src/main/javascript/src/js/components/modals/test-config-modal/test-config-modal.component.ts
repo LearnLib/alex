@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {ModalComponent} from '../modal.component';
-import {Project} from '../../../entities/project';
+import { ModalComponent } from '../modal.component';
+import { Project } from '../../../entities/project';
 import { ProjectEnvironment } from '../../../entities/project-environment';
 
 /**

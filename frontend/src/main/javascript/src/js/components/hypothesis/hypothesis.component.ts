@@ -15,11 +15,11 @@
  */
 
 import * as d3 from 'd3';
-import {dagre, graphlib, render as Renderer} from 'dagre-d3';
+import { dagre, graphlib, render as Renderer } from 'dagre-d3';
 import * as forEach from 'lodash/forEach';
-import {events} from '../../constants';
-import {IRootElementService, IScope} from 'angular';
-import {EventBus} from '../../services/eventbus.service';
+import { events } from '../../constants';
+import { IRootElementService, IScope } from 'angular';
+import { EventBus } from '../../services/eventbus.service';
 
 // various styles used to style the hypothesis
 const STYLE = {

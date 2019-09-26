@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {CreateProjectForm, Project} from '../../../entities/project';
-import {ModalComponent} from '../modal.component';
-import {IFormController} from 'angular';
-import {ProjectResource} from '../../../services/resources/project-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {ProjectService} from '../../../services/project.service';
+import { CreateProjectForm } from '../../../entities/project';
+import { ModalComponent } from '../modal.component';
+import { IFormController } from 'angular';
+import { ProjectResource } from '../../../services/resources/project-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { ProjectService } from '../../../services/project.service';
 
 export const projectCreateModalComponent = {
     template: require('./project-create-modal.component.html'),

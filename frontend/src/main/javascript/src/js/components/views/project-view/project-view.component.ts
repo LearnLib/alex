@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {ProjectService} from '../../../services/project.service';
-import {Project} from '../../../entities/project';
+import { ProjectService } from '../../../services/project.service';
+import { Project } from '../../../entities/project';
 
 /**
  * The controller of the component for the project dashboard.

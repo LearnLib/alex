@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {ProjectService} from '../../../services/project.service';
-import {UserService} from '../../../services/user.service';
-import {User} from '../../../entities/user';
-import {Project} from '../../../entities/project';
+import { ProjectService } from '../../../services/project.service';
+import { UserService } from '../../../services/user.service';
+import { User } from '../../../entities/user';
+import { Project } from '../../../entities/project';
 
 /**
  * The controller of the index page.

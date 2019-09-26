@@ -15,7 +15,7 @@
  */
 
 import * as d3 from 'd3';
-import {IRootElementService} from 'angular';
+import { IRootElementService } from 'angular';
 
 export const reportChartsComponent = {
   template: '<div class="d-flex" style="align-items: center"></div>',

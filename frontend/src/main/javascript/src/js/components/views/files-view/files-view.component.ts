@@ -15,12 +15,12 @@
  */
 
 import * as remove from 'lodash/remove';
-import {apiUrl} from '../../../../../environments';
-import {Selectable} from '../../../utils/selectable';
-import {ToastService} from '../../../services/toast.service';
-import {FileResource} from '../../../services/resources/file-resource.service';
-import {ProjectService} from '../../../services/project.service';
-import {Project} from '../../../entities/project';
+import { apiUrl } from '../../../../../environments';
+import { Selectable } from '../../../utils/selectable';
+import { ToastService } from '../../../services/toast.service';
+import { FileResource } from '../../../services/resources/file-resource.service';
+import { ProjectService } from '../../../services/project.service';
+import { Project } from '../../../entities/project';
 import { UploadableFile } from '../../../entities/uploadable-file';
 
 /**

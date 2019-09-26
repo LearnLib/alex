@@ -15,12 +15,12 @@
  */
 
 import * as remove from 'lodash/remove';
-import {User} from '../../../entities/user';
-import {Selectable} from '../../../utils/selectable';
-import {IScope} from 'angular';
-import {UserResource} from '../../../services/resources/user-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {UserService} from '../../../services/user.service';
+import { User } from '../../../entities/user';
+import { Selectable } from '../../../utils/selectable';
+import { IScope } from 'angular';
+import { UserResource } from '../../../services/resources/user-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { UserService } from '../../../services/user.service';
 
 /**
  * The controller for the admin users page.

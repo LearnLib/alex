@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ParametrizedSymbol} from './parametrized-symbol';
+import { ParametrizedSymbol } from './parametrized-symbol';
 
 export class TestCaseStep {
 

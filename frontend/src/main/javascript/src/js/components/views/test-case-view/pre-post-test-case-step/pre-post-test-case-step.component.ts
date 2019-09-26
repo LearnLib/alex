@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {TestCaseStep} from '../../../../entities/test-case-step';
-import {SymbolGroup} from '../../../../entities/symbol-group';
-import {AlphabetSymbol} from '../../../../entities/alphabet-symbol';
+import { TestCaseStep } from '../../../../entities/test-case-step';
+import { SymbolGroup } from '../../../../entities/symbol-group';
+import { AlphabetSymbol } from '../../../../entities/alphabet-symbol';
 
 /**
  * The component for selecting a symbol that is executed before and after a test.

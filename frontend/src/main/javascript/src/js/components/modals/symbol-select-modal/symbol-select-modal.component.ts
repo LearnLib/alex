@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {ModalComponent} from '../modal.component';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {SymbolGroup} from '../../../entities/symbol-group';
+import { ModalComponent } from '../modal.component';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { SymbolGroup } from '../../../entities/symbol-group';
 import { ProjectService } from '../../../services/project.service';
 import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
 
@@ -44,7 +44,7 @@ export const symbolSelectModalComponent = {
     }
 
     $onInit(): void {
-      this.symbolGroupResource.getAll(this.projectService.store.currentProject.id, true).then(
+      this.symbolGroupResource.getAll(this.projectService.store.currentProject.id).then(
         groups => this.groups = groups
       );
     }

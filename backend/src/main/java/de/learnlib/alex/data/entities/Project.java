@@ -351,6 +351,7 @@ public class Project implements Serializable {
      * @return All the counters of the Project.
      */
     @JsonProperty
+    @JsonIgnore
     public Set<Counter> getCounters() {
         return counters;
     }

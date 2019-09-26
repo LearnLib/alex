@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {SymbolGroup} from '../../../entities/symbol-group';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
+import { SymbolGroup } from '../../../entities/symbol-group';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 
 /**
  * Recursive component that displays a single item in the symbol group tree.

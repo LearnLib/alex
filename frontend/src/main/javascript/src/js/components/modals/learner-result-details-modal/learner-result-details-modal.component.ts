@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {ModalComponent} from '../modal.component';
-import {LearnResult} from '../../../entities/learner-result';
+import { ModalComponent } from '../modal.component';
+import { LearnResult } from '../../../entities/learner-result';
 
 interface Tab {
   heading: string,

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {Project} from '../../../entities/project';
-import {SymbolGroup} from '../../../entities/symbol-group';
-import {ModalComponent} from '../modal.component';
-import {SymbolResource} from '../../../services/resources/symbol-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {ProjectService} from '../../../services/project.service';
-import {IFormController, IPromise} from 'angular';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { Project } from '../../../entities/project';
+import { SymbolGroup } from '../../../entities/symbol-group';
+import { ModalComponent } from '../modal.component';
+import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { ProjectService } from '../../../services/project.service';
+import { IFormController, IPromise } from 'angular';
 
 /**
  * The controller for the modal window to create a new symbol.

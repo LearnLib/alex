@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {LearnResultResource} from '../../../services/resources/learner-result-resource.service';
-import {LearnResult} from '../../../entities/learner-result';
-import {Project} from '../../../entities/project';
+import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { LearnResult } from '../../../entities/learner-result';
+import { Project } from '../../../entities/project';
 
 /**
  * The class for the learn result widget.

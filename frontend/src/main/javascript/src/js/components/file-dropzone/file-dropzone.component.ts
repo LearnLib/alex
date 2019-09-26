@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {IRootElementService, IScope} from 'angular';
+import { IRootElementService, IScope } from 'angular';
 
 /**
  * This component makes any element a place to drop files from the local pc. Currently this directive only

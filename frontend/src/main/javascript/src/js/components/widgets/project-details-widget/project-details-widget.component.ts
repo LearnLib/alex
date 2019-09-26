@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
-import {SymbolGroupResource} from '../../../services/resources/symbol-group-resource.service';
-import {LearnResultResource} from '../../../services/resources/learner-result-resource.service';
-import {Project} from '../../../entities/project';
+import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
+import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { Project } from '../../../entities/project';
 
 /**
  * The directive for the dashboard widget that displays information about the current project.
@@ -47,7 +47,7 @@ class ProjectDetailsWidgetComponent {
   }
 
   $onInit(): void {
-    this.symbolGroupResource.getAll(this.project.id, true)
+    this.symbolGroupResource.getAll(this.project.id)
       .then(groups => {
         this.numberOfGroups = groups.length;
         this.numberOfSymbols = SymbolGroupUtils.getSymbols(groups).length;

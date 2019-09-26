@@ -135,7 +135,7 @@ public class TestGenerator {
         final TestSuite testSuite = new TestSuite();
         testSuite.setName(config.getName());
         testSuite.setProject(project);
-        testDAO.create(user, testSuite);
+        testDAO.create(user, projectId, testSuite);
 
         final List<TestCase> generatedTestCases = new ArrayList<>();
 
@@ -179,7 +179,7 @@ public class TestGenerator {
             for (TestCase tc: targetTestSuite.getTestCases()) {
                 if (tc.getId() == null) {
                     tc.setGenerated(true);
-                    testDAO.createByGenerate(user, tc, project);
+                    testDAO.createByGenerate(user, project, tc);
                 }
             }
 
@@ -188,7 +188,7 @@ public class TestGenerator {
         } else {
             for (TestCase tc: testSuite.getTestCases()) {
                 tc.setGenerated(true);
-                testDAO.createByGenerate(user, tc, project);
+                testDAO.createByGenerate(user, project, tc);
             }
         }
 

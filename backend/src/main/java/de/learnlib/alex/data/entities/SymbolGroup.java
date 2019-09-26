@@ -65,6 +65,7 @@ public class SymbolGroup implements Serializable {
     /** The parent group. Is null if the group is on the top level. */
     @ManyToOne
     @JoinColumn(name = "parentId")
+    @JsonIgnore
     private SymbolGroup parent;
 
     /** The Symbols manged by this group. */

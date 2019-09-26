@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {version} from '../../../../../environments';
+import { version } from '../../../../../environments';
 
 /**
  * The component for the about page.

@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import {User} from '../../../entities/user';
-import {ToastService} from '../../../services/toast.service';
-import {UserResource} from '../../../services/resources/user-resource.service';
-import {PromptService} from '../../../services/prompt.service';
-import {ProjectService} from '../../../services/project.service';
-import {UserService} from '../../../services/user.service';
+import { User } from '../../../entities/user';
+import { ToastService } from '../../../services/toast.service';
+import { UserResource } from '../../../services/resources/user-resource.service';
+import { UserService } from '../../../services/user.service';
 
 /**
  * The component for the form to edit the password and the email of a user or to delete the user.

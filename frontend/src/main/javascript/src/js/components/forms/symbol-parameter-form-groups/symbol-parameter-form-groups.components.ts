@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {symbolParameterType} from '../../../constants';
-import {IFormController} from 'angular';
+import { symbolParameterType } from '../../../constants';
+import { IFormController } from 'angular';
 
 export const symbolParameterFormGroupsComponent = {
   template: require('./symbol-parameter-form-groups.component.html'),

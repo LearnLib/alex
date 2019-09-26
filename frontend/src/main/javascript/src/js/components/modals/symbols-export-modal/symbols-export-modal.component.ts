@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import {version} from '../../../../../environments';
-import {SymbolGroup} from '../../../entities/symbol-group';
-import {DateUtils} from '../../../utils/date-utils';
-import {ModalComponent} from '../modal.component';
-import {DownloadService} from '../../../services/download.service';
-import {ToastService} from '../../../services/toast.service';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {Selectable} from '../../../utils/selectable';
+import { SymbolGroup } from '../../../entities/symbol-group';
+import { DateUtils } from '../../../utils/date-utils';
+import { ModalComponent } from '../modal.component';
+import { DownloadService } from '../../../services/download.service';
+import { ToastService } from '../../../services/toast.service';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { Selectable } from '../../../utils/selectable';
+import { SymbolResource } from "../../../services/resources/symbol-resource.service";
 
 export const symbolsExportModalComponent = {
   template: require('./symbols-export-modal.component.html'),
@@ -53,7 +53,8 @@ export const symbolsExportModalComponent = {
      */
     /* @ngInject */
     constructor(private downloadService: DownloadService,
-                private toastService: ToastService) {
+                private toastService: ToastService,
+                private symbolResource: SymbolResource) {
       super();
 
       this.exportSymbolsOnly = false;
@@ -66,49 +67,15 @@ export const symbolsExportModalComponent = {
     }
 
     export(): void {
-      let data = {};
-      if (this.exportSymbolsOnly) {
-        const symbolsToExport = this.selectedSymbols.getSelected().map(s => s.getExportableSymbol());
-        data = {
-          version,
-          type: 'symbols',
-          symbols: symbolsToExport
-        };
-      } else {
-        const groupsToExport = JSON.parse(JSON.stringify(this.groups)).map(g => new SymbolGroup(g));
-        this.prepareGroups(groupsToExport);
-        data = {
-          version,
-          type: 'symbolGroups',
-          symbolGroups: groupsToExport
-        };
-      }
-
-      this.downloadService.downloadObject(data, this.filename);
-      this.toastService.success('The symbols have been exported.');
-      this.close();
-    }
-
-    private prepareGroup(group: SymbolGroup): boolean {
-      this.prepareGroups(group.groups);
-      group.symbols = <any[]> group.symbols
-        .filter(s => this.selectedSymbols.isSelected(s))
-        .map(s => s.getExportableSymbol());
-
-      return !(group.groups.length === 0 && group.symbols.length === 0);
-    }
-
-    private prepareGroups(groups: SymbolGroup[]): void {
-      for (let i = 0; i < groups.length; i++) {
-        if (!this.prepareGroup(groups[i])) {
-          groups.splice(i, 1);
-          i--;
-        } else {
-          delete (<any> groups[i]).$$hashKey;
-          delete groups[i].id;
-          delete groups[i].project;
-        }
-      }
+      const symbolIds = this.selectedSymbols.getSelected().map(s => s.id);
+      this.symbolResource.export(this.groups[0].project, {
+        symbolIds,
+        symbolsOnly: this.exportSymbolsOnly,
+      }).then(res => {
+        this.downloadService.downloadObject(res.data, this.filename);
+        this.toastService.success('The symbols have been exported.');
+        this.close();
+      }).catch(console.error);
     }
   }
 };

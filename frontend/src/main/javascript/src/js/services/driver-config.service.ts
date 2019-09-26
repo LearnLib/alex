@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {webBrowser} from '../constants';
+import { webBrowser } from '../constants';
 
 /**
  * The service to create new web driver config objects.

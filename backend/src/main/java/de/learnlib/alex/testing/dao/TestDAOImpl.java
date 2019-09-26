@@ -26,6 +26,7 @@ import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolInputParameter;
+import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
@@ -114,7 +115,7 @@ public class TestDAOImpl implements TestDAO {
 
     @Override
     @Transactional
-    public void createByGenerate(User user, Test test, Project project) {
+    public Test createByGenerate(User user, Project project, Test test) {
         beforeSaving(user, test, project);
         if (test instanceof TestCase) {
             final TestCase testCase = (TestCase) test;
@@ -138,17 +139,17 @@ public class TestDAOImpl implements TestDAO {
             saveTestCaseSteps(testCase.getPostSteps());
         }
 
-        testRepository.save(test);
+        return testRepository.save(test);
     }
 
     @Override
     @Transactional
-    public void create(User user, Test test) throws NotFoundException, ValidationException {
+    public Test create(User user, Long projectId, Test test) throws NotFoundException, ValidationException {
         LOGGER.traceEntry("create({})", test);
 
         test.setId(null);
 
-        final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(test.getProjectId());
+        final Test root = testRepository.findFirstByProject_IdOrderByIdAsc(projectId);
         if (test.getParent() == null) {
             test.setParent(root);
         }
@@ -162,8 +163,7 @@ public class TestDAOImpl implements TestDAO {
         }
         test.setName(name);
 
-        Long projectId = test.getProjectId();
-        Project project = projectDAO.getByID(user, projectId);
+        final Project project = projectDAO.getByID(user, projectId);
         test.setProject(project);
 
         if (test.getParentId() != null) {
@@ -176,33 +176,68 @@ public class TestDAOImpl implements TestDAO {
             test.setParent(parent);
         }
 
-        createByGenerate(user, test, project);
+        final Test createdTest = createByGenerate(user, project, test);
         LOGGER.traceExit(test);
+        return createdTest;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void create(User user, List<Test> tests) throws NotFoundException, ValidationException {
-        create(user, new ArrayList<>(tests), null);
+    public List<Test> create(User user, Long projectId, List<Test> tests) throws NotFoundException, ValidationException {
+        return create(user, projectId, new ArrayList<>(tests), null);
     }
 
-    private void create(User user, List<Test> tests, TestSuite parent) throws NotFoundException, ValidationException {
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<Test> importTests(User user, Long projectId, List<Test> tests) throws ValidationException, NotFoundException {
+        projectDAO.getByID(user, projectId);
+        final Map<String, Symbol> symbolMap = symbolDAO.getAll(user, projectId, SymbolVisibilityLevel.ALL).stream()
+                .collect(Collectors.toMap(Symbol::getName, Function.identity()));
+        mapSymbolsInTests(tests, symbolMap);
+
+        return create(user, projectId, tests);
+    }
+
+    private void mapSymbolsInTests(List<Test> tests, Map<String, Symbol> symbolMap) {
+        for (Test test: tests) {
+            if (test instanceof TestCase) {
+                final TestCase tc = (TestCase) test;
+                mapSymbolsInTestCaseSteps(tc.getPreSteps(), symbolMap);
+                mapSymbolsInTestCaseSteps(tc.getSteps(), symbolMap);
+                mapSymbolsInTestCaseSteps(tc.getPostSteps(), symbolMap);
+            } else {
+                mapSymbolsInTests(((TestSuite) test).getTests(), symbolMap);
+            }
+        }
+    }
+
+    private void mapSymbolsInTestCaseSteps(List<TestCaseStep> steps, Map<String, Symbol> symbolMap) {
+        for (TestCaseStep step: steps) {
+            step.getPSymbol().setSymbol(symbolMap.get(step.getPSymbol().getSymbol().getName()));
+        }
+    }
+
+    private List<Test> create(User user, Long projectId, List<Test> tests, TestSuite parent) throws NotFoundException, ValidationException {
+        final List<Test> createdTests = new ArrayList<>();
+
         for (final Test test : tests) {
             if (parent != null) {
                 test.setParent(parent);
             }
 
             if (test instanceof TestCase) {
-                create(user, test);
+                createdTests.add(create(user, projectId, test));
             } else {
                 final TestSuite testSuite = (TestSuite) test;
                 final List<Test> testsInSuite = testSuite.getTests();
 
                 testSuite.setTests(new ArrayList<>());
-                create(user, testSuite);
-                create(user, testsInSuite, testSuite);
+                createdTests.add(create(user, projectId, testSuite));
+                create(user, projectId, testsInSuite, testSuite);
             }
         }
+
+        return createdTests;
     }
 
     @Override
@@ -220,35 +255,6 @@ public class TestDAOImpl implements TestDAO {
         final List<Test> tests = testRepository.findAllByProject_IdAndIdIn(projectId, ids);
         for (Test t: tests) loadLazyRelations(t);
         return tests;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Test> getByType(User user, Long projectId, String type)
-            throws NotFoundException, UnauthorizedException, IllegalArgumentException {
-
-        final Project project = projectRepository.findById(projectId).orElse(null);
-        projectDAO.checkAccess(user, project);
-
-        final List<Test> tests = testRepository.findAllByProject_Id(projectId);
-        tests.forEach(this::loadLazyRelations);
-
-        if (type == null) {
-            return tests;
-        }
-
-        switch (type) {
-            case "case":
-                return tests.stream()
-                        .filter(TestCase.class::isInstance)
-                        .collect(Collectors.toList());
-            case "suite":
-                return tests.stream()
-                        .filter(TestSuite.class::isInstance)
-                        .collect(Collectors.toList());
-            default:
-                throw new IllegalArgumentException("Invalid type parameter. Allowed values: ['case', 'suite']");
-        }
     }
 
     @Override

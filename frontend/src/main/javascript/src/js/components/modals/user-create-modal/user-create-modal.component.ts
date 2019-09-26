@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {User} from '../../../entities/user';
-import {ModalComponent} from '../modal.component';
-import {UserResource} from '../../../services/resources/user-resource.service';
-import {ToastService} from '../../../services/toast.service';
+import { User } from '../../../entities/user';
+import { ModalComponent } from '../modal.component';
+import { UserResource } from '../../../services/resources/user-resource.service';
+import { ToastService } from '../../../services/toast.service';
 
 export const userCreateModalComponent = {
   template: require('./user-create-modal.component.html'),

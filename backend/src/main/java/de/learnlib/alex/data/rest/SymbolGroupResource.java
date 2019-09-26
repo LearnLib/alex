@@ -52,17 +52,18 @@ public class SymbolGroupResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The SymbolGroupDAO to use. */
-    @Inject
-    private SymbolGroupDAO symbolGroupDAO;
-
-    /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
 
-    /** The {@link WebhookService} to use. */
+    private final SymbolGroupDAO symbolGroupDAO;
+    private final WebhookService webhookService;
+
     @Inject
-    private WebhookService webhookService;
+    public SymbolGroupResource(SymbolGroupDAO symbolGroupDAO,
+                               WebhookService webhookService) {
+        this.symbolGroupDAO = symbolGroupDAO;
+        this.webhookService = webhookService;
+    }
 
     /**
      * Create a new group.
@@ -77,7 +78,7 @@ public class SymbolGroupResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createGroup(@PathParam("projectId") long projectId, SymbolGroup group) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createGroup({}, {}) for user {}.", projectId, group, user);
 
         group.setProjectId(projectId);
@@ -103,7 +104,7 @@ public class SymbolGroupResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createGroups(@PathParam("projectId") Long projectId, List<SymbolGroup> groups) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("createGroups({}, {}) for user {}.", projectId, groups, user);
 
         final List<SymbolGroup> createdGroups = symbolGroupDAO.create(user, projectId, groups);
@@ -131,26 +132,18 @@ public class SymbolGroupResource {
      *
      * @param projectId
      *         The ID of the project.
-     * @param embed
-     *         The properties to embed in the response.
      * @return All groups in a list. If the project contains no groups the list will be empty.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("projectId") long projectId, @QueryParam("embed") String embed) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("getAll({}, {}) for user {}.", projectId, embed, user);
+    public Response getAll(@PathParam("projectId") long projectId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
 
-        try {
-            final SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
-            final List<SymbolGroup> groups = symbolGroupDAO.getAll(user, projectId, embeddableFields);
+        final List<SymbolGroup> groups = symbolGroupDAO.getAll(user, projectId);
 
-            LOGGER.traceExit(groups);
-            return Response.ok(groups).build();
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.getAll", Response.Status.BAD_REQUEST, e);
-        }
+        LOGGER.traceExit(groups);
+        return Response.ok(groups).build();
     }
 
     /**
@@ -158,31 +151,21 @@ public class SymbolGroupResource {
      *
      * @param projectId
      *         The ID of the project.
-     * @param id
+     * @param groupId
      *         The ID of the group within the project.
-     * @param embed
-     *         The properties to embed in the response.
      * @return The requested group.
      */
     @GET
-    @Path("/{id}")
+    @Path("/{groupId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("projectId") long projectId,
-                        @PathParam("id") Long id,
-                        @QueryParam("embed") String embed) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("get({}, {}, {}) for user {}.", projectId, id, embed, user);
+    public Response get(@PathParam("projectId") long projectId, @PathParam("groupId") Long groupId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("get({}, {}) for user {}.", projectId, groupId, user);
 
-        try {
-            final SymbolGroupDAO.EmbeddableFields[] embeddableFields = parseEmbeddableFields(embed);
-            final SymbolGroup group = symbolGroupDAO.get(user, projectId, id, embeddableFields);
+        final SymbolGroup group = symbolGroupDAO.get(user, projectId, groupId);
 
-            LOGGER.traceExit(group);
-            return Response.ok(group).build();
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.get", Response.Status.BAD_REQUEST, e);
-        }
+        LOGGER.traceExit(group);
+        return Response.ok(group).build();
     }
 
     /**
@@ -263,20 +246,5 @@ public class SymbolGroupResource {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("SymbolGroupResource.update", Response.Status.BAD_REQUEST, e);
         }
-    }
-
-    private SymbolGroupDAO.EmbeddableFields[] parseEmbeddableFields(String embed) throws IllegalArgumentException {
-        if (embed == null) {
-            return new SymbolGroupDAO.EmbeddableFields[0];
-        }
-
-        String[] fields = embed.split(",");
-
-        SymbolGroupDAO.EmbeddableFields[] embedFields = new SymbolGroupDAO.EmbeddableFields[fields.length];
-        for (int i = 0; i < fields.length; i++) {
-            embedFields[i] = SymbolGroupDAO.EmbeddableFields.fromString(fields[i]);
-        }
-
-        return embedFields;
     }
 }

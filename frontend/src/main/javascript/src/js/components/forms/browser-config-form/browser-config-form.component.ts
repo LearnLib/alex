@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {DriverConfigService} from '../../../services/driver-config.service';
-import {SettingsResource} from '../../../services/resources/settings-resource.service';
+import { DriverConfigService } from '../../../services/driver-config.service';
+import { SettingsResource } from '../../../services/resources/settings-resource.service';
 
 /**
  * The component to configure the web driver.

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {webBrowser} from '../../../constants';
-import {SettingsResource} from '../../../services/resources/settings-resource.service';
-import {ToastService} from '../../../services/toast.service';
+import { webBrowser } from '../../../constants';
+import { SettingsResource } from '../../../services/resources/settings-resource.service';
+import { ToastService } from '../../../services/toast.service';
 
 /**
  * The component for the about page.

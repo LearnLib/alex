@@ -15,8 +15,8 @@
  */
 
 import * as d3 from 'd3';
-import {dagre, graphlib, render as Renderer} from 'dagre-d3';
-import {IRootElementService, IScope} from 'angular';
+import { dagre, graphlib, render as Renderer } from 'dagre-d3';
+import { IRootElementService, IScope } from 'angular';
 
 const STYLE = {
   edgeLabel: 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 10px',

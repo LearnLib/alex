@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {ProjectService} from '../../../services/project.service';
-import {TestResource} from '../../../services/resources/test-resource.service';
-import {Project} from '../../../entities/project';
+import { ProjectService } from '../../../services/project.service';
+import { TestResource } from '../../../services/resources/test-resource.service';
+import { Project } from '../../../entities/project';
 
 /**
  * The view for the tests.

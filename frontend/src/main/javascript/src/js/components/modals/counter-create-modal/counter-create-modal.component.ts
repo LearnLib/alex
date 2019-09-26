@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {Counter} from '../../../entities/counter';
-import {ProjectService} from '../../../services/project.service';
-import {CounterResource} from '../../../services/resources/counter-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {Project} from '../../../entities/project';
-import {ModalComponent} from '../modal.component';
+import { Counter } from '../../../entities/counter';
+import { ProjectService } from '../../../services/project.service';
+import { CounterResource } from '../../../services/resources/counter-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { Project } from '../../../entities/project';
+import { ModalComponent } from '../modal.component';
 
 /**
  * The component for the modal that creates new counters.

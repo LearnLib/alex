@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {apiUrl} from '../../../../environments';
+import { apiUrl } from '../../../../environments';
 import { CreateProjectForm, Project } from '../../entities/project';
-import {IHttpService, IPromise} from 'angular';
+import { IHttpService, IPromise } from 'angular';
 
 /**
  * The resource that handles http calls to the API to do CRUD operations on projects.
@@ -83,5 +83,14 @@ export class ProjectResource {
   removeMany(projects: Project[]): IPromise<any> {
     const ids = projects.map(p => p.id).join(',');
     return this.$http.delete(`${apiUrl}/projects/batch/${ids}`);
+  }
+
+  export(projectId: number): IPromise<any> {
+    return this.$http.post(`${apiUrl}/projects/${projectId}/export`, {});
+  }
+
+  import(project: Project): IPromise<any> {
+    return this.$http.post(`${apiUrl}/projects/import`, project)
+        .then(res => new Project(res.data));
   }
 }

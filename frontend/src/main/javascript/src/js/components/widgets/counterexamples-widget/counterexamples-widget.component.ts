@@ -15,13 +15,13 @@
  */
 
 import * as angular from 'angular';
-import {IPromise, IQService, IScope} from 'angular';
-import {events} from '../../../constants';
-import {LearnerResource} from '../../../services/resources/learner-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {SymbolResource} from '../../../services/resources/symbol-resource.service';
-import {EventBus} from '../../../services/eventbus.service';
-import {LearnResult} from '../../../entities/learner-result';
+import { IPromise, IQService, IScope } from 'angular';
+import { events } from '../../../constants';
+import { LearnerResource } from '../../../services/resources/learner-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { EventBus } from '../../../services/eventbus.service';
+import { LearnResult } from '../../../entities/learner-result';
 
 /**
  * The directive for the content of the counterexample widget that is used to create and test counterexamples.

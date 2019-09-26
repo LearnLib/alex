@@ -15,13 +15,13 @@
  */
 
 import * as remove from 'lodash/remove';
-import {Selectable} from '../../../utils/selectable';
-import {ProjectService} from '../../../services/project.service';
-import {LearnResultResource} from '../../../services/resources/learner-result-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {LearnerResultDownloadService} from '../../../services/learner-result-download.service';
-import {LearnResult} from '../../../entities/learner-result';
-import {Project} from '../../../entities/project';
+import { Selectable } from '../../../utils/selectable';
+import { ProjectService } from '../../../services/project.service';
+import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { LearnerResultDownloadService } from '../../../services/learner-result-download.service';
+import { LearnResult } from '../../../entities/learner-result';
+import { Project } from '../../../entities/project';
 
 /**
  * The controller for listing all final test results.

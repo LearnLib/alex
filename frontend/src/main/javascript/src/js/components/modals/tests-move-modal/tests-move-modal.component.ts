@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import {ModalComponent} from '../modal.component';
-import {TestResource} from '../../../services/resources/test-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {ProjectService} from '../../../services/project.service';
-import {Project} from '../../../entities/project';
+import { ModalComponent } from '../modal.component';
+import { TestResource } from '../../../services/resources/test-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { ProjectService } from '../../../services/project.service';
+import { Project } from '../../../entities/project';
 
 export const testsMoveModalComponent = {
   template: require('./tests-move-modal.component.html'),

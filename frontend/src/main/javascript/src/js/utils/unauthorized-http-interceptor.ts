@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {ToastService} from '../services/toast.service';
-import {UserService} from '../services/user.service';
-import {IQService} from 'angular';
+import { ToastService } from '../services/toast.service';
+import { UserService } from '../services/user.service';
+import { IQService } from 'angular';
 import IInjectorService = angular.auto.IInjectorService;
 
 /**

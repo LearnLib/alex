@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {ProjectService} from '../../services/project.service';
-import {TestReportService} from '../../services/test-report.service';
-import {Project} from '../../entities/project';
+import { ProjectService } from '../../services/project.service';
+import { TestReportService } from '../../services/test-report.service';
+import { Project } from '../../entities/project';
 
 /**
  * Displays a test result.

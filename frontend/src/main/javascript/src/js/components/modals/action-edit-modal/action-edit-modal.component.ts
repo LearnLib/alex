@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import {ModalComponent} from '../modal.component';
-import {ActionService} from '../../../services/action.service';
-import {SymbolResource} from '../../../services/resources/symbol-resource.service';
-import {ProjectService} from '../../../services/project.service';
-import {Project} from '../../../entities/project';
-import {Action} from '../../../entities/actions/action';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
+import { ModalComponent } from '../modal.component';
+import { ActionService } from '../../../services/action.service';
+import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { ProjectService } from '../../../services/project.service';
+import { Project } from '../../../entities/project';
+import { Action } from '../../../entities/actions/action';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 
 /**
  * The component for the modal dialog that handles the editing of an action.

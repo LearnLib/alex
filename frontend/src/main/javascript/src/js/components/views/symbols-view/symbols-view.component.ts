@@ -15,19 +15,19 @@
  */
 
 import * as remove from 'lodash/remove';
-import {events} from '../../../constants';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {SymbolGroup} from '../../../entities/symbol-group';
-import {Selectable} from '../../../utils/selectable';
-import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
-import {IScope} from 'angular';
-import {ProjectService} from '../../../services/project.service';
-import {SymbolResource} from '../../../services/resources/symbol-resource.service';
-import {SymbolGroupResource} from '../../../services/resources/symbol-group-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {EventBus} from '../../../services/eventbus.service';
-import {PromptService} from '../../../services/prompt.service';
-import {Project} from '../../../entities/project';
+import { events } from '../../../constants';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { SymbolGroup } from '../../../entities/symbol-group';
+import { Selectable } from '../../../utils/selectable';
+import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
+import { IScope } from 'angular';
+import { ProjectService } from '../../../services/project.service';
+import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { EventBus } from '../../../services/eventbus.service';
+import { PromptService } from '../../../services/prompt.service';
+import { Project } from '../../../entities/project';
 
 /**
  * The controller that handles CRUD operations on symbols and symbol groups.
@@ -71,7 +71,7 @@ class SymbolsViewComponent {
     this.groups = [];
     this.symbols = [];
 
-    this.symbolGroupResource.getAll(this.project.id, true)
+    this.symbolGroupResource.getAll(this.project.id)
       .then(groups => {
         this.groups = groups;
         this.symbols = SymbolGroupUtils.getSymbols(this.groups);
@@ -333,7 +333,7 @@ class SymbolsViewComponent {
   openSymbolGroupCreateModal(): void {
     this.$uibModal.open({
       component: 'symbolGroupCreateModal'
-    }).result.then(group => this.addGroup(group));
+    }).result.then((group: SymbolGroup) => this.addGroup(group));
   }
 
   get project(): Project {

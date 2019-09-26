@@ -184,8 +184,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
-        List<SymbolGroup> createdGroups = create(user, project, groups, null);
-        createdGroups.forEach(g -> initLazyRelations(user, g, EmbeddableFields.COMPLETE_SYMBOLS));
+        final List<SymbolGroup> createdGroups = create(user, project, groups, null);
+        createdGroups.forEach(this::loadLazyRelations);
         return groups;
     }
 
@@ -225,14 +225,14 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SymbolGroup> getAll(User user, long projectId, EmbeddableFields... embedFields)
+    public List<SymbolGroup> getAll(User user, long projectId)
             throws NotFoundException {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
         final List<SymbolGroup> groups = symbolGroupRepository.findAllByProject_IdAndParent_id(projectId, null);
         for (SymbolGroup group : groups) {
-            initLazyRelations(user, group, embedFields);
+            loadLazyRelations(group);
         }
 
         return groups;
@@ -240,13 +240,13 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public SymbolGroup get(User user, long projectId, Long groupId, EmbeddableFields... embedFields)
+    public SymbolGroup get(User user, long projectId, Long groupId)
             throws NotFoundException {
         final Project project = projectRepository.findById(projectId).orElse(null);
         final SymbolGroup group = symbolGroupRepository.findById(groupId).orElse(null);
         checkAccess(user, project, group);
 
-        initLazyRelations(user, group, embedFields);
+        loadLazyRelations(group);
 
         return group;
     }
@@ -320,7 +320,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             movedGroup = symbolGroupRepository.save(groupInDB);
         }
 
-        initLazyRelations(user, movedGroup, EmbeddableFields.COMPLETE_SYMBOLS);
+        loadLazyRelations(movedGroup);
         return movedGroup;
     }
 
@@ -382,36 +382,14 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         return name;
     }
 
-    private void initLazyRelations(User user, SymbolGroup group, EmbeddableFields... embedFields) {
-        Set<EmbeddableFields> fieldsToLoad = fieldsArrayToHashSet(embedFields);
-
+    private void loadLazyRelations(SymbolGroup group) {
         Hibernate.initialize(group.getGroups());
-        Hibernate.initialize(group.getProject().getEnvironments());
+        Hibernate.initialize(group.getSymbols());
+        group.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
 
-        if (fieldsToLoad.contains(EmbeddableFields.COMPLETE_SYMBOLS)) {
-            group.getSymbols().forEach(SymbolDAOImpl::loadLazyRelations);
-        } else if (fieldsToLoad.contains(EmbeddableFields.SYMBOLS)) {
-            try {
-                List<Symbol> symbols = symbolDAO.getAll(user, group.getProjectId(), group.getId());
-                group.setSymbols(new HashSet<>(symbols));
-            } catch (NotFoundException e) {
-                group.setSymbols(null);
-            }
+        for (SymbolGroup g: group.getGroups()) {
+            loadLazyRelations(g);
         }
-
-        for (SymbolGroup child : group.getGroups()) {
-            initLazyRelations(user, child, embedFields);
-        }
-    }
-
-    private Set<EmbeddableFields> fieldsArrayToHashSet(EmbeddableFields[] embedFields) {
-        Set<EmbeddableFields> fieldsToLoad = new HashSet<>();
-        if (Arrays.asList(embedFields).contains(EmbeddableFields.ALL)) {
-            fieldsToLoad.add(EmbeddableFields.COMPLETE_SYMBOLS);
-        } else {
-            Collections.addAll(fieldsToLoad, embedFields);
-        }
-        return fieldsToLoad;
     }
 
     /**
@@ -423,7 +401,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
     private void beforePersistGroup(SymbolGroup group) {
         LOGGER.traceEntry("beforePersistGroup({})", group);
 
-        Project project = group.getProject();
+        final Project project = group.getProject();
 
         group.getSymbols().forEach(symbol -> {
             project.addSymbol(symbol);

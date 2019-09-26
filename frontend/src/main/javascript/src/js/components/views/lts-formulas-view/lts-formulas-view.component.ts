@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import {Selectable} from '../../../utils/selectable';
-import {ToastService} from '../../../services/toast.service';
-import {ProjectService} from '../../../services/project.service';
-import {LtsFormulaService} from '../../../services/lts-formula.service';
-import {Project} from '../../../entities/project';
+import { Selectable } from '../../../utils/selectable';
+import { ToastService } from '../../../services/toast.service';
+import { ProjectService } from '../../../services/project.service';
+import { LtsFormulaService } from '../../../services/lts-formula.service';
+import { Project } from '../../../entities/project';
 
 export const ltsFormulasViewComponent = {
   template: require('./lts-formulas-view.component.html'),

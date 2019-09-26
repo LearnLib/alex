@@ -15,8 +15,8 @@
  */
 
 import * as remove from 'lodash/remove';
-import {LtsFormulaResource} from './resources/lts-formula-resource.service';
-import {IPromise} from 'angular';
+import { LtsFormulaResource } from './resources/lts-formula-resource.service';
+import { IPromise } from 'angular';
 
 export interface LtsFormulaStore {
   ltsFormulas: any[];

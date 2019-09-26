@@ -19,11 +19,12 @@ package de.learnlib.alex.data.rest;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.utils.IdsList;
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.CreateProjectForm;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.export.ProjectExportableEntity;
 import de.learnlib.alex.data.events.ProjectEvent;
+import de.learnlib.alex.data.services.export.ProjectExporter;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,26 +47,27 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
-/**
- * REST API to manage the projects.
- */
 @Path("/projects")
 @RolesAllowed({"REGISTERED"})
 public class ProjectResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The {@link ProjectDAO} to use. */
-    @Inject
-    private ProjectDAO projectDAO;
-
-    /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
 
-    /** The {@link WebhookService} to use. */
-    @Inject
+    private ProjectDAO projectDAO;
     private WebhookService webhookService;
+    private ProjectExporter projectExporter;
+
+    @Inject
+    public ProjectResource(ProjectDAO projectDAO,
+                           WebhookService webhookService,
+                           ProjectExporter projectExporter) {
+        this.projectDAO = projectDAO;
+        this.webhookService = webhookService;
+        this.projectExporter = projectExporter;
+    }
 
     /**
      * Create a new Project.
@@ -78,7 +80,7 @@ public class ProjectResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(CreateProjectForm project) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("create({}) for user {}.", project, user);
 
         final Project createdProject = projectDAO.create(user, project);
@@ -99,18 +101,10 @@ public class ProjectResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@QueryParam("embed") String embed) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("getAll({}) for user {}.", embed, user);
 
-        ProjectDAO.EmbeddableFields[] embeddableFields;
-        try {
-            embeddableFields = parseEmbeddableFields(embed);
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
-        }
-
-        final List<Project> projects = projectDAO.getAll(user, embeddableFields);
+        final List<Project> projects = projectDAO.getAll(user);
         LOGGER.traceExit(projects);
         return Response.ok(projects).build();
     }
@@ -120,57 +114,40 @@ public class ProjectResource {
      *
      * @param projectId
      *         The ID of the project.
-     * @param embed
-     *         By default no related objects are included in the project. However you can ask to include them with this
-     *         parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'. You can
-     *         request multiple by just put a ',' between them.
      * @return The project or an error message.
      */
     @GET
-    @Path("/{id}")
+    @Path("/{projectId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("id") long projectId, @QueryParam("embed") String embed) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("get({}, {}) for user {}.", projectId, embed, user);
+    public Response get(@PathParam("projectId") long projectId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("get({}) for user {}.", projectId, user);
 
-        ProjectDAO.EmbeddableFields[] embeddableFields;
-        try {
-            embeddableFields = parseEmbeddableFields(embed);
-            final Project project = projectDAO.getByID(user, projectId, embeddableFields);
-            LOGGER.traceExit(project);
-            return Response.ok(project).build();
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("ProjectResource.get", Status.BAD_REQUEST, e);
-        }
+        final Project project = projectDAO.getByID(user, projectId);
+        return Response.ok(project).build();
     }
 
     /**
      * Update a specific project.
      *
-     * @param id
+     * @param projectId
      *         The ID of the project.
      * @param project
      *         The new values
      * @return On success the updated project (enhanced with information from the DB); an error message on failure.
      */
     @PUT
-    @Path("/{id}")
+    @Path("/{projectId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("id") long id, Project project) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("update({}, {}) for user {}.", id, project, user);
+    public Response update(@PathParam("projectId") Long projectId, Project project) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("update({}, {}) for user {}.", projectId, project, user);
 
-        if (id != project.getId()) {
-            LOGGER.traceExit("Wrong Project ID");
-            return Response.status(Status.BAD_REQUEST).build();
-        } else {
-            final Project updatedProject = projectDAO.update(user, project);
-            webhookService.fireEvent(user, new ProjectEvent.Updated(updatedProject));
-            LOGGER.traceExit(updatedProject);
-            return Response.ok(updatedProject).build();
-        }
+        final Project updatedProject = projectDAO.update(user, projectId, project);
+        webhookService.fireEvent(user, new ProjectEvent.Updated(updatedProject));
+        LOGGER.traceExit(updatedProject);
+        return Response.ok(updatedProject).build();
     }
 
     /**
@@ -181,10 +158,10 @@ public class ProjectResource {
      * @return On success no content will be returned; an error message on failure.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("/{projectId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") long projectId) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    public Response delete(@PathParam("projectId") long projectId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
 
         projectDAO.delete(user, projectId);
@@ -193,6 +170,13 @@ public class ProjectResource {
         return Response.status(Status.NO_CONTENT).build();
     }
 
+    /**
+     * Delete multiple projects at once.
+     *
+     * @param projectIds
+     *         The IDs of the projects to delete.
+     * @return 204 No content on success
+     */
     @DELETE
     @Path("/batch/{projectIds}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -205,34 +189,38 @@ public class ProjectResource {
         return Response.status(Status.NO_CONTENT).build();
     }
 
+    /**
+     * Export a project as JSON document.
+     *
+     * @param projectId
+     *         The ID of the project to export.
+     * @return The exported project.
+     * @throws Exception
+     *         If something goes wrong.
+     */
     @POST
     @Path("/{projectId}/export")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response exportProject(@PathParam("projectId") Long projectId) {
+    public Response exportProject(@PathParam("projectId") Long projectId) throws Exception {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        return Response.status(Status.OK).build();
+        return Response.status(Status.OK).entity(projectExporter.export(user, projectId)).build();
     }
 
+    /**
+     * Import a project, its symbols and tests.
+     *
+     * @param project
+     *         The project to import
+     * @return the imported project.
+     */
     @POST
     @Path("/import")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response importProject() {
+    public Response importProject(ProjectExportableEntity project) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        return Response.status(Status.OK).build();
-    }
-
-    private ProjectDAO.EmbeddableFields[] parseEmbeddableFields(String embed) throws IllegalArgumentException {
-        if (embed == null) {
-            return new ProjectDAO.EmbeddableFields[0];
-        }
-
-        String[] fields = embed.split(",");
-
-        ProjectDAO.EmbeddableFields[] embedFields = new ProjectDAO.EmbeddableFields[fields.length];
-        for (int i = 0; i < fields.length; i++) {
-            embedFields[i] = ProjectDAO.EmbeddableFields.fromString(fields[i]);
-        }
-
-        return embedFields;
+        final Project importedProject = projectDAO.importProject(user, project);
+        webhookService.fireEvent(user, new ProjectEvent.Created(importedProject));
+        return Response.status(Status.OK).entity(importedProject).build();
     }
 }

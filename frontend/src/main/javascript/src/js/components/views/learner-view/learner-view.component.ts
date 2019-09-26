@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import {LearnResult} from '../../../entities/learner-result';
-import {ProjectService} from '../../../services/project.service';
-import {LearnerResource} from '../../../services/resources/learner-resource.service';
-import {LearnResultResource} from '../../../services/resources/learner-result-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {SymbolResource} from '../../../services/resources/symbol-resource.service';
-import {NotificationService} from '../../../services/notification.service';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {IPromise} from 'angular';
-import {Project} from '../../../entities/project';
+import { LearnResult } from '../../../entities/learner-result';
+import { ProjectService } from '../../../services/project.service';
+import { LearnerResource } from '../../../services/resources/learner-resource.service';
+import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { NotificationService } from '../../../services/notification.service';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { IPromise } from 'angular';
+import { Project } from '../../../entities/project';
 
 /**
  * The controller for showing a load screen during the learning and shows all learn results from the current test

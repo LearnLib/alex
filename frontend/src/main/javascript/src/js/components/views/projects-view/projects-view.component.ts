@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import {ProjectService} from '../../../services/project.service';
-import {ToastService} from '../../../services/toast.service';
-import {Project} from '../../../entities/project';
-import {Selectable} from "../../../utils/selectable";
-import {PromptService} from "../../../services/prompt.service";
+import { ProjectService } from '../../../services/project.service';
+import { ToastService } from '../../../services/toast.service';
+import { Project } from '../../../entities/project';
+import { Selectable } from "../../../utils/selectable";
+import { PromptService } from "../../../services/prompt.service";
+import { ProjectResource } from "../../../services/resources/project-resource.service";
+import { DownloadService } from "../../../services/download.service";
 
 /**
  * The controller that shows the page to manage projects.
@@ -42,7 +44,9 @@ export const projectsViewComponent = {
                 private $uibModal: any,
                 private projectService: ProjectService,
                 private promptService: PromptService,
-                private toastService: ToastService) {
+                private toastService: ToastService,
+                private projectResource: ProjectResource,
+                private downloadService: DownloadService) {
 
       // go to the dashboard if there is a project in the session
       const project = this.projectService.store.currentProject;
@@ -121,6 +125,24 @@ export const projectsViewComponent = {
 
     editSelectedProject(): void {
       this.editProject(this.selectedProjects.getSelected()[0]);
+    }
+
+    exportProject(project: Project): void {
+      this.promptService.prompt('Enter a name for the json file.', project.name).then(name => {
+        this.projectResource.export(project.id).then(res => {
+          this.downloadService.downloadObject(res.data, name);
+        });
+      });
+    }
+
+    exportSelectedProject(): void {
+      this.exportProject(this.selectedProjects.getSelected()[0]);
+    }
+
+    importProject(): void {
+      this.$uibModal.open({
+        component: 'projectImportModal'
+      }).result.then(() => {});
     }
 
     get projects(): Project[] {
