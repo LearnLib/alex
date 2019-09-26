@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {DownloadService} from './download.service';
-import {PromptService} from './prompt.service';
-import {IPromise} from 'angular';
-import {LearnResult} from '../entities/learner-result';
+import { DownloadService } from './download.service';
+import { PromptService } from './prompt.service';
+import { IPromise } from 'angular';
+import { LearnResult } from '../entities/learner-result';
 
 /**
  * The Service that is used to download learn results as csv.

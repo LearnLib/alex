@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {IScope} from 'angular';
-import {LearnResult} from '../../entities/learner-result';
+import { IScope } from 'angular';
+import { LearnResult } from '../../entities/learner-result';
 
 /**
  * The directive that displays a browsable list of learn results. For each result, it can display the observation

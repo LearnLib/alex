@@ -58,13 +58,6 @@ public class TestApi extends AbstractApi {
                 .get();
     }
 
-    public Response getAll(int projectId, String jwt) {
-        return client.target(url(projectId) + "?type=case").request()
-                .header(HttpHeaders.AUTHORIZATION, jwt)
-                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-                .get();
-    }
-
     public Response update(int projectId, int testId, String test, String jwt) {
         return client.target(url(projectId) + "/" + testId).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)

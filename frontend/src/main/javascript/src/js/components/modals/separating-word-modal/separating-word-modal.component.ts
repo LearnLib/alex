@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ModalComponent} from '../modal.component';
+import { ModalComponent } from '../modal.component';
 import { LearnResult } from '../../../entities/learner-result';
 import { TestResource } from '../../../services/resources/test-resource.service';
 import { TestCase } from '../../../entities/test-case';

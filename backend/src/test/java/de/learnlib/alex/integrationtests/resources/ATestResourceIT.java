@@ -197,22 +197,6 @@ public class ATestResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldGetAllTestCasesFlat() throws Exception {
-        final String tc1 = "{\"name\": \"tc1\", \"type\": \"case\"}";
-        testApi.create(projectId, tc1, jwtUser1);
-
-        final String ts = "{\"name\": \"tc2\", \"type\": \"suite\"}";
-        final Response res2 = testApi.create(projectId, ts, jwtUser1);
-        final int tsId = JsonPath.read(res2.readEntity(String.class), "$.id");
-
-        final String tc2 = "{\"name\": \"tc2\", \"type\": \"case\", \"parent\": " + tsId + "}";
-        testApi.create(projectId, tc2, jwtUser1);
-
-        final Response res4 = testApi.getAll(projectId, jwtUser1);
-        Assert.assertEquals(2, objectMapper.readTree(res4.readEntity(String.class)).size());
-    }
-
-    @Test
     public void shouldUpdateTest() {
         // TODO
     }

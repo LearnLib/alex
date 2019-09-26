@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import {ProjectService} from '../../services/project.service';
-import {UserService} from '../../services/user.service';
-import {UiService} from '../../services/ui.service';
-import {Project} from '../../entities/project';
-import {User} from '../../entities/user';
+import { ProjectService } from '../../services/project.service';
+import { UserService } from '../../services/user.service';
+import { UiService } from '../../services/ui.service';
+import { Project } from '../../entities/project';
+import { User } from '../../entities/user';
 
 /**
  * The controller for the sidebar.

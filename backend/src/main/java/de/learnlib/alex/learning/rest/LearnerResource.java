@@ -46,6 +46,7 @@ import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -119,6 +120,7 @@ public class LearnerResource {
     @Path("/{projectId}/start")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
     public Response start(@PathParam("projectId") long projectId, LearnerStartConfiguration configuration) {
         User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         LOGGER.traceEntry("start({}, {}) for user {}.", projectId, configuration, user);
@@ -136,7 +138,7 @@ public class LearnerResource {
                 throw new IllegalArgumentException("The reset may not be a part of the input alphabet");
             }
 
-            final Project project = projectDAO.getByID(user, projectId, ProjectDAO.EmbeddableFields.ALL);
+            final Project project = projectDAO.getByID(user, projectId);
 
             learner.start(user, project, configuration);
             LearnerStatus status = learner.getStatus(projectId);
@@ -169,6 +171,7 @@ public class LearnerResource {
     @Path("/{projectId}/resume/{testNo}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
     public Response resume(@PathParam("projectId") long projectId,
                            @PathParam("testNo") long testNo,
                            LearnerResumeConfiguration configuration) {

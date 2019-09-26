@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {events} from '../../../constants';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {ModalComponent} from '../modal.component';
-import {SymbolResource} from '../../../services/resources/symbol-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {EventBus} from '../../../services/eventbus.service';
+import { events } from '../../../constants';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { ModalComponent } from '../modal.component';
+import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { EventBus } from '../../../services/eventbus.service';
 
 /**
  * Handles the behaviour of the modal to edit an existing symbol and updates the edited symbol on the server.

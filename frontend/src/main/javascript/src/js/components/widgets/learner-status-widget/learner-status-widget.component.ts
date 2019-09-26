@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {IIntervalService, IPromise} from 'angular';
-import {LearnerResource} from '../../../services/resources/learner-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {Project} from '../../../entities/project';
+import { IIntervalService, IPromise } from 'angular';
+import { LearnerResource } from '../../../services/resources/learner-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { Project } from '../../../entities/project';
 
 /**
  * The directive of the dashboard widget that displays the current status of the learner.

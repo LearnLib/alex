@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {ToastService} from '../../services/toast.service';
-import {LtsFormulaService} from '../../services/lts-formula.service';
+import { ToastService } from '../../services/toast.service';
+import { LtsFormulaService } from '../../services/lts-formula.service';
 
 /**
  * The component for the modal that creates new lts formulas.

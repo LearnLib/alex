@@ -16,10 +16,10 @@
 
 import * as remove from 'lodash/remove';
 import { CreateProjectForm, Project } from '../entities/project';
-import {LearnerResource} from './resources/learner-resource.service';
-import {ToastService} from './toast.service';
-import {ProjectResource} from './resources/project-resource.service';
-import {IPromise} from 'angular';
+import { LearnerResource } from './resources/learner-resource.service';
+import { ToastService } from './toast.service';
+import { ProjectResource } from './resources/project-resource.service';
+import { IPromise } from 'angular';
 
 export interface ProjectStore {
   currentProject?: Project;
@@ -141,6 +141,14 @@ export class ProjectService {
   open(project: Project): void {
     sessionStorage.setItem('project', JSON.stringify(project));
     this.store.currentProject = project;
+  }
+
+  import(project: Project): IPromise<Project> {
+    return this.projectResource.import(project)
+        .then(importedProject => {
+          this.store.projects.push(importedProject);
+          return importedProject;
+        });
   }
 
   /**

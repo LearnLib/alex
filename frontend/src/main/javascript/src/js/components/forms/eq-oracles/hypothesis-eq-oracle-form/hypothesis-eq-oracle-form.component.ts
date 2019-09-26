@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {ToastService} from '../../../../services/toast.service';
-import {IFormController} from 'angular';
-import {HypothesisEqOracle} from '../../../../entities/eq-oracles/hypothesis-eq-oracle';
+import { ToastService } from '../../../../services/toast.service';
+import { IFormController } from 'angular';
+import { HypothesisEqOracle } from '../../../../entities/eq-oracles/hypothesis-eq-oracle';
 
 export const hypothesisEqOracleFormComponent = {
   template: require('./hypothesis-eq-oracle-form.component.html'),

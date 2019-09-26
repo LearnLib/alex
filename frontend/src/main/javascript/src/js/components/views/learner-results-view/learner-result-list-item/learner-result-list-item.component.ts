@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {LearnResult} from '../../../../entities/learner-result';
-import {Selectable} from '../../../../utils/selectable';
+import { LearnResult } from '../../../../entities/learner-result';
+import { Selectable } from '../../../../utils/selectable';
 
 /**
  * The component that displays a learn result list item.

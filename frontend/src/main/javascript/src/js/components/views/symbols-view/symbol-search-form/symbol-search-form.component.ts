@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {SymbolGroupUtils} from '../../../../utils/symbol-group-utils';
-import {SymbolGroup} from '../../../../entities/symbol-group';
-import {AlphabetSymbol} from '../../../../entities/alphabet-symbol';
+import { SymbolGroupUtils } from '../../../../utils/symbol-group-utils';
+import { SymbolGroup } from '../../../../entities/symbol-group';
+import { AlphabetSymbol } from '../../../../entities/alphabet-symbol';
 
 export const symbolSearchFormComponent = {
   template: require('./symbol-search-form.component.html'),

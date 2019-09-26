@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {IRootElementService, IScope} from 'angular';
+import { IRootElementService, IScope } from 'angular';
 
 /**
  * The form that searches for an action based on user input.

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import {events} from '../../../constants';
-import {SymbolGroup} from '../../../entities/symbol-group';
-import {ModalComponent} from '../modal.component';
-import {SymbolGroupResource} from '../../../services/resources/symbol-group-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {EventBus} from '../../../services/eventbus.service';
-import {PromptService} from '../../../services/prompt.service';
+import { events } from '../../../constants';
+import { SymbolGroup } from '../../../entities/symbol-group';
+import { ModalComponent } from '../modal.component';
+import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { EventBus } from '../../../services/eventbus.service';
+import { PromptService } from '../../../services/prompt.service';
 
 /**
  * The controller that handles the modal dialog for deleting and updating a symbol group. The modal data that is

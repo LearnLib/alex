@@ -16,19 +16,19 @@
 
 import * as remove from 'lodash/remove';
 import * as uniqueId from 'lodash/uniqueId';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {ParametrizedSymbol} from '../../../entities/parametrized-symbol';
-import {ClipboardMode, ClipboardService} from '../../../services/clipboard.service';
-import {Selectable} from '../../../utils/selectable';
-import {IScope} from 'angular';
-import {SymbolResource} from '../../../services/resources/symbol-resource.service';
-import {ProjectService} from '../../../services/project.service';
-import {ToastService} from '../../../services/toast.service';
-import {ActionService} from '../../../services/action.service';
-import {SymbolGroupResource} from '../../../services/resources/symbol-group-resource.service';
-import {SymbolGroup} from '../../../entities/symbol-group';
-import {Project} from '../../../entities/project';
-import {Action} from '../../../entities/actions/action';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { ParametrizedSymbol } from '../../../entities/parametrized-symbol';
+import { ClipboardMode, ClipboardService } from '../../../services/clipboard.service';
+import { Selectable } from '../../../utils/selectable';
+import { IScope } from 'angular';
+import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { ProjectService } from '../../../services/project.service';
+import { ToastService } from '../../../services/toast.service';
+import { ActionService } from '../../../services/action.service';
+import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { SymbolGroup } from '../../../entities/symbol-group';
+import { Project } from '../../../entities/project';
+import { Action } from '../../../entities/actions/action';
 
 /**
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
@@ -89,7 +89,7 @@ class SymbolViewComponent {
         this.$state.go('error', {message: `The symbol with the ID "${$stateParams.symbolId}" could not be found`});
       });
 
-    this.symbolGroupResource.getAll(this.project.id, true)
+    this.symbolGroupResource.getAll(this.project.id)
       .then(groups => this.groups = groups);
 
     const keyDownHandler = (e) => {

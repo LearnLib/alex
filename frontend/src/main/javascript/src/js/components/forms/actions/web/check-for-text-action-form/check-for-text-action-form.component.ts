@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {CheckForTextWebAction} from '../../../../../entities/actions/web/check-for-text-action';
+import { CheckForTextWebAction } from '../../../../../entities/actions/web/check-for-text-action';
 
 /**
  * @type {{templateUrl: string, bindings: {action: string}, controllerAs: string, controller: checkForTextActionFormComponent.controller}}

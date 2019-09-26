@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ModalComponent} from '../modal.component';
+import { ModalComponent } from '../modal.component';
 
 /**
  * The component of the prompt modal.

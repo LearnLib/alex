@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {IPromise} from 'angular';
+import { IPromise } from 'angular';
 
 /**
  * The service for handling prompt and confirm dialogs.

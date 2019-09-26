@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from '../../entities/alphabet-symbol';
-import {PromptService} from '../../services/prompt.service';
-import {SymbolParameterResource} from '../../services/resources/symbol-parameter-resource.service';
-import {ToastService} from '../../services/toast.service';
+import { AlphabetSymbol } from '../../entities/alphabet-symbol';
+import { PromptService } from '../../services/prompt.service';
+import { SymbolParameterResource } from '../../services/resources/symbol-parameter-resource.service';
+import { ToastService } from '../../services/toast.service';
 
 export const symbolParametersPanelComponent = {
   template: require('./symbol-parameters-panel.component.html'),

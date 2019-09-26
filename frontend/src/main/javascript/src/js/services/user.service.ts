@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {User} from '../entities/user';
-import {ClipboardService} from './clipboard.service';
-import {ProjectService} from './project.service';
+import { User } from '../entities/user';
+import { ClipboardService } from './clipboard.service';
+import { ProjectService } from './project.service';
 
 export interface UserStore {
   currentUser?: User,

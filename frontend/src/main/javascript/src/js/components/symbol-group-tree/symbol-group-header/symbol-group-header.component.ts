@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {SymbolGroup} from '../../../entities/symbol-group';
-import {Selectable} from '../../../utils/selectable';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
+import { SymbolGroup } from '../../../entities/symbol-group';
+import { Selectable } from '../../../utils/selectable';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 
 export const symbolGroupHeaderComponent = {
   template: require('./symbol-group-header.component.html'),

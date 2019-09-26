@@ -47,9 +47,9 @@ public interface TestDAO {
      * @throws NotFoundException
      *         If one of the required entities is not found.
      */
-    void create(User user, Test test) throws ValidationException, NotFoundException;
+    Test create(User user, Long projectId, Test test) throws ValidationException, NotFoundException;
 
-    void createByGenerate(User user, Test test, Project project) throws ValidationException, NotFoundException;
+    Test createByGenerate(User user, Project project, Test test) throws ValidationException, NotFoundException;
 
     /**
      * Creates multiple tests at once.
@@ -63,7 +63,9 @@ public interface TestDAO {
      * @throws NotFoundException
      *         If one of the required entities is not found.
      */
-    void create(User user, List<Test> tests) throws ValidationException, NotFoundException;
+    List<Test> create(User user, Long projectId, List<Test> tests) throws ValidationException, NotFoundException;
+
+    List<Test> importTests(User user, Long projectId, List<Test> tests) throws ValidationException, NotFoundException;
 
     /**
      * Gets a test.
@@ -101,26 +103,6 @@ public interface TestDAO {
      */
     List<TestCase> getTestCases(User user, Long projectId, Long testSuiteId, boolean includeChildTestSuites)
             throws NotFoundException, ValidationException;
-
-    /**
-     * Gets all tests of a specific type.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The id of the project.
-     * @param type
-     *         The type of the test ['case', 'suite'].
-     * @return The tests that match the type.
-     * @throws NotFoundException
-     *         If one of the entities could not be found.
-     * @throws UnauthorizedException
-     *         If the user has no access to one of the entities.
-     * @throws IllegalArgumentException
-     *         If the type is invalid.
-     */
-    List<Test> getByType(User user, Long projectId, String type)
-            throws NotFoundException, UnauthorizedException, IllegalArgumentException;
 
     /**
      * Gets the root test.

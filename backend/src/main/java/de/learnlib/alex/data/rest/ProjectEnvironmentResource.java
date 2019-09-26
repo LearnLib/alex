@@ -22,6 +22,8 @@ import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.ProjectEnvironmentVariable;
 import de.learnlib.alex.data.entities.ProjectUrl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -41,17 +43,27 @@ import java.util.List;
 @Path("/projects/{projectId}/environments")
 public class ProjectEnvironmentResource {
 
-    @Inject
-    private ProjectEnvironmentDAO environmentDAO;
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Context
     private SecurityContext securityContext;
+
+    private ProjectEnvironmentDAO environmentDAO;
+
+    @Inject
+    public ProjectEnvironmentResource(ProjectEnvironmentDAO environmentDAO) {
+        this.environmentDAO = environmentDAO;
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@PathParam("projectId") Long projectId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("enter getAll(projectId: {}) for user {}.", projectId, user);
+
         final List<ProjectEnvironment> envs = environmentDAO.getAll(user, projectId);
+
+        LOGGER.traceEntry("leave getAll(projectId: {}) for user {}.", projectId, user);
         return Response.status(Response.Status.OK).entity(envs).build();
     }
 

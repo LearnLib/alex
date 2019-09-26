@@ -21,11 +21,13 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
+import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.data.repositories.ProjectUrlRepository;
 import de.learnlib.alex.data.repositories.SymbolActionRepository;
 import de.learnlib.alex.data.repositories.SymbolStepRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
+import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.hamcrest.MatcherAssert;
@@ -85,6 +87,15 @@ public class ProjectDAOImplTest {
     @Mock
     private TestExecutionConfigRepository testExecutionConfigRepository;
 
+    @Mock
+    private ProjectEnvironmentRepository environmentRepository;
+
+    @Mock
+    private TestDAO testDAO;
+
+    @Mock
+    private SymbolGroupDAO symbolGroupDAO;
+
     private ProjectDAO projectDAO;
 
     private User user;
@@ -93,7 +104,7 @@ public class ProjectDAOImplTest {
     public void setUp() {
         projectDAO = new ProjectDAOImpl(projectRepository, learnerResultRepository, testReportRepository, fileDAO,
                 parameterizedSymbolRepository, symbolStepRepository, symbolActionRepository, environmentDAO,
-                projectUrlRepository, testExecutionConfigRepository);
+                projectUrlRepository, testExecutionConfigRepository, testDAO, environmentRepository, symbolGroupDAO);
         user = new User();
         user.setId(USER_ID);
     }
@@ -139,8 +150,6 @@ public class ProjectDAOImplTest {
         User user = new User();
         user.setId(USER_ID);
 
-        ProjectUrl url = new ProjectUrl();
-
         Project project = new Project();
         project.setUser(user);
         project.setId(PROJECT_ID);
@@ -148,7 +157,7 @@ public class ProjectDAOImplTest {
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
         given(projectRepository.save(project)).willReturn(project);
 
-        projectDAO.update(user, project);
+        projectDAO.update(user, PROJECT_ID, project);
 
         verify(projectRepository).save(project);
     }
@@ -158,13 +167,11 @@ public class ProjectDAOImplTest {
         User user = new User();
         user.setId(USER_ID);
 
-        ProjectUrl url = new ProjectUrl();
-
         Project project = new Project();
         project.setUser(user);
         project.setId(PROJECT_ID);
 
-        projectDAO.update(user, project);
+        projectDAO.update(user, PROJECT_ID, project);
     }
 
     @Test(expected = ValidationException.class)
@@ -179,7 +186,7 @@ public class ProjectDAOImplTest {
         given(projectRepository.save(project)).willThrow(ConstraintViolationException.class);
         given(projectRepository.findById(PROJECT_ID)).willReturn(Optional.of(project));
 
-        projectDAO.update(user, project); // should fail
+        projectDAO.update(user, PROJECT_ID, project);
     }
 
     @Test

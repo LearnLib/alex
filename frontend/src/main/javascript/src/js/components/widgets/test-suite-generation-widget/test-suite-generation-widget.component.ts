@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {LearnResult} from '../../../entities/learner-result';
-import {LearnResultResource} from '../../../services/resources/learner-result-resource.service';
-import {ToastService} from '../../../services/toast.service';
+import { LearnResult } from '../../../entities/learner-result';
+import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { ToastService } from '../../../services/toast.service';
 import { TestResource } from '../../../services/resources/test-resource.service';
 
 export const testSuiteGenerationWidgetComponent = {

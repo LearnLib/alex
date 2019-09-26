@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import {Selectable} from '../../../utils/selectable';
-import {LearnResult} from '../../../entities/learner-result';
-import {ToastService} from '../../../services/toast.service';
-import {ProjectService} from '../../../services/project.service';
-import {LtsFormulaService} from '../../../services/lts-formula.service';
-import {LtsFormulaResource} from '../../../services/resources/lts-formula-resource.service';
-import {Project} from '../../../entities/project';
-import {Resizer} from '../../../utils/resizer';
+import { Selectable } from '../../../utils/selectable';
+import { LearnResult } from '../../../entities/learner-result';
+import { ToastService } from '../../../services/toast.service';
+import { ProjectService } from '../../../services/project.service';
+import { LtsFormulaService } from '../../../services/lts-formula.service';
+import { LtsFormulaResource } from '../../../services/resources/lts-formula-resource.service';
+import { Project } from '../../../entities/project';
+import { Resizer } from '../../../utils/resizer';
 import * as _ from 'lodash';
 
 /** Panel view for model checking. */

@@ -15,9 +15,9 @@
  */
 
 import * as remove from 'lodash/remove';
-import {Selectable} from '../../../utils/selectable';
-import {WebhookResource} from '../../../services/resources/webhook-resource.service';
-import {ToastService} from '../../../services/toast.service';
+import { Selectable } from '../../../utils/selectable';
+import { WebhookResource } from '../../../services/resources/webhook-resource.service';
+import { ToastService } from '../../../services/toast.service';
 
 export const webhooksViewComponent = {
   template: require('./webhooks-view.component.html'),

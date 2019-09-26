@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {apiUrl} from '../../../../environments';
+import { apiUrl } from '../../../../environments';
 import { IHttpResponse, IHttpService, IPromise } from 'angular';
 import { UploadableFile } from '../../entities/uploadable-file';
 

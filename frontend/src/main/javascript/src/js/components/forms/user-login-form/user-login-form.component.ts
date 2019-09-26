@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import {User} from '../../../entities/user';
-import {UserResource} from '../../../services/resources/user-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {SettingsResource} from '../../../services/resources/settings-resource.service';
-import {UserService} from '../../../services/user.service';
+import { User } from '../../../entities/user';
+import { UserResource } from '../../../services/resources/user-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { SettingsResource } from '../../../services/resources/settings-resource.service';
+import { UserService } from '../../../services/user.service';
 
 /**
  * The component controller for the user login form.

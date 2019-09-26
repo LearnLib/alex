@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.CreateProjectForm;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.export.ProjectExportableEntity;
 import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.validation.ValidationException;
@@ -29,43 +30,6 @@ import java.util.List;
  * Interface to describe how Projects are handled.
  */
 public interface ProjectDAO {
-
-    /**
-     * Enum to describe what to embed while fetching a  project.
-     */
-    enum EmbeddableFields {
-
-        /** Flag to embed the groups of the project. */
-        GROUPS,
-
-        /** Flag to embed the symbols of the project. */
-        SYMBOLS,
-
-        /** FLag to embed counters. */
-        COUNTERS,
-
-        /** Flag to embed everything. */
-        ALL;
-
-        /**
-         * Parse a string into an entry of this enum. It is forbidden to override toValue(), so we use this method to
-         * allow the lowercase variants, too.
-         *
-         * @param name
-         *         THe name to parse into an entry.
-         * @return The fitting entry of this enum.
-         * @throws IllegalArgumentException
-         *         If the name could not be parsed.
-         */
-        public static EmbeddableFields fromString(String name) throws IllegalArgumentException {
-            return EmbeddableFields.valueOf(name.toUpperCase());
-        }
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-    }
 
     /**
      * Save the given project.
@@ -85,11 +49,9 @@ public interface ProjectDAO {
      *
      * @param user
      *         The user of the project.
-     * @param embedFields
-     *         The fields to include in returned project. By default no additional data will be fetched from the DB.
      * @return All projects in a list.
      */
-    List<Project> getAll(User user, EmbeddableFields... embedFields);
+    List<Project> getAll(User user);
 
     /**
      * Get a specific project by its ID.
@@ -98,28 +60,28 @@ public interface ProjectDAO {
      *         The user.
      * @param projectId
      *         The ID of the project to find.
-     * @param embedFields
-     *         The fields to include in returned project. By default no additional data will be fetched from the DB.
      * @return The project with the ID.
      * @throws NotFoundException
      *         If the project could not be found.
      */
-    Project getByID(User user, Long projectId, EmbeddableFields... embedFields) throws NotFoundException;
+    Project getByID(User user, Long projectId) throws NotFoundException;
 
     /**
      * Update a project.
      *
      * @param user
      *         The user.
+     * @param projectId
+     *         The ID of the project to update.
      * @param project
      *         The project to update.
      * @return The updated project.
      * @throws NotFoundException
-     *         When the Project was not found.
+     *         If the Project was not found.
      * @throws ValidationException
-     *         When the Project was not valid.
+     *         If the Project was not valid.
      */
-    Project update(User user, Project project) throws NotFoundException, ValidationException;
+    Project update(User user, Long projectId, Project project) throws NotFoundException, ValidationException;
 
     /**
      * Delete a project.
@@ -129,11 +91,19 @@ public interface ProjectDAO {
      * @param projectId
      *         The id of the project to delete.
      * @throws NotFoundException
-     *         When the Project id was not found.
+     *         If the Project id was not found.
      */
     void delete(User user, Long projectId) throws NotFoundException;
 
+    /**
+     * Delete multiple projects at once.
+     * @param user The user.
+     * @param projectIds The IDs of the projects to delete.
+     * @throws NotFoundException If one of the projects could not be found.
+     */
     void delete(User user, List<Long> projectIds) throws NotFoundException;
+
+    Project importProject(User user, ProjectExportableEntity project) throws NotFoundException;
 
     /**
      * Check if the user is allowed to access or modify the project.

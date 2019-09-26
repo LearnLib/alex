@@ -22,6 +22,8 @@ import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.export.ExportableEntity;
+import de.learnlib.alex.testing.entities.export.TestsExportConfig;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
@@ -32,6 +34,7 @@ import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.testing.events.TestEvent;
 import de.learnlib.alex.testing.services.TestService;
+import de.learnlib.alex.testing.services.export.TestsExporter;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -68,29 +71,30 @@ public class TestResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
 
-    /** The {@link TestDAO} to use. */
-    @Inject
-    private TestDAO testDAO;
+    private final TestDAO testDAO;
+    private final TestService testService;
+    private final WebhookService webhookService;
+    private final TestReportDAO testReportDAO;
+    private final ProjectDAO projectDAO;
+    private final TestsExporter testsExporter;
 
-    /** The test service. */
     @Inject
-    private TestService testService;
-
-    /** The {@link WebhookService} to use. */
-    @Inject
-    private WebhookService webhookService;
-
-    /** The {@link TestReportDAO} to use. */
-    @Inject
-    private TestReportDAO testReportDAO;
-
-    /** The {@link ProjectDAO} to use. */
-    @Inject
-    private ProjectDAO projectDAO;
+    public TestResource(TestDAO testDAO,
+                        TestService testService,
+                        WebhookService webhookService,
+                        TestReportDAO testReportDAO,
+                        ProjectDAO projectDAO,
+                        TestsExporter testsExporter) {
+        this.testDAO = testDAO;
+        this.testService = testService;
+        this.webhookService = webhookService;
+        this.testReportDAO = testReportDAO;
+        this.projectDAO = projectDAO;
+        this.testsExporter = testsExporter;
+    }
 
     /**
      * Create a test.
@@ -105,11 +109,8 @@ public class TestResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createTest(@PathParam("projectId") Long projectId, Test test) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        projectDAO.getByID(user, projectId);
-        test.setProjectId(projectId);
-
-        testDAO.create(user, test);
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        testDAO.create(user, projectId, test);
         webhookService.fireEvent(user, new TestEvent.Created(test));
         return Response.ok(test).status(Response.Status.CREATED).build();
     }
@@ -128,16 +129,8 @@ public class TestResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createTests(@PathParam("projectId") Long projectId, List<Test> tests) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        projectDAO.getByID(user, projectId);
-        tests.forEach(test -> test.setProjectId(projectId));
-        testDAO.create(user, tests);
-
-        final List<Test> createdTests = new ArrayList<>();
-        for (final Test t : tests) {
-            createdTests.add(testDAO.get(user, projectId, t.getId()));
-        }
-
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final List<Test> createdTests = testDAO.create(user, projectId, tests);
         webhookService.fireEvent(user, new TestEvent.CreatedMany(createdTests));
         return Response.ok(createdTests).status(Response.Status.CREATED).build();
     }
@@ -147,43 +140,17 @@ public class TestResource {
      *
      * @param projectId
      *         The id of the project.
-     * @param id
-     *         The id of the tests.
+     * @param testId
+     *         The id of the test.
      * @return The test.
      */
     @GET
-    @Path("/{id}")
+    @Path("/{testId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("projectId") Long projectId, @PathParam("id") Long id) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-
-        final Test test = testDAO.get(user, projectId, id);
+    public Response get(@PathParam("projectId") Long projectId, @PathParam("testId") Long testId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final Test test = testDAO.get(user, projectId, testId);
         return Response.ok(test).build();
-    }
-
-    /**
-     * Get all tests in a project.
-     *
-     * @param projectId
-     *         The if of the project.
-     * @param type
-     *         The type of the test.
-     * @return The list of projects.
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("projectId") Long projectId, @QueryParam("type") String type) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("getAll(projectId: {}, type: {}) with user {}", projectId, type, user);
-
-        try {
-            final List<Test> tests = testDAO.getByType(user, projectId, type);
-            LOGGER.traceExit("getAll() with status {}", Response.Status.OK);
-            return Response.ok(tests).build();
-        } catch (IllegalArgumentException e) {
-            LOGGER.traceExit("getAll() with status {}", Response.Status.BAD_REQUEST);
-            return ResourceErrorHandler.createRESTErrorMessage("Tests.get", Response.Status.BAD_REQUEST, e);
-        }
     }
 
     /**
@@ -207,22 +174,22 @@ public class TestResource {
      *
      * @param projectId
      *         The id of the project.
-     * @param id
+     * @param testId
      *         The id of the test.
      * @param testConfig
      *         The configuration to run the test with.
      * @return The result of the test execution.
      */
     @POST
-    @Path("/{id}/execute")
+    @Path("/{testId}/execute")
     @Produces(MediaType.APPLICATION_JSON)
     public Response execute(@PathParam("projectId") Long projectId,
-                            @PathParam("id") Long id,
+                            @PathParam("testId") Long testId,
                             TestExecutionConfig testConfig) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         ThreadContext.put("userId", String.valueOf(user.getId()));
 
-        final Test test = testDAO.get(user, projectId, id);
+        final Test test = testDAO.get(user, projectId, testId);
         if (!(test instanceof TestCase)) {
             final Exception e = new Exception("The test is not a test case.");
             return ResourceErrorHandler.createRESTErrorMessage("TestResource.execute", Response.Status.BAD_REQUEST, e);
@@ -301,32 +268,52 @@ public class TestResource {
         return Response.ok().build();
     }
 
+    @POST
+    @Path("/export")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response exportTests(@PathParam("projectId") Long projectId, TestsExportConfig config) throws Exception {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final ExportableEntity exportedTests = testsExporter.export(user, projectId, config);
+        return Response.ok(exportedTests).build();
+    }
+
+    @POST
+    @Path("/import")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response importTests(@PathParam("projectId") Long projectId, List<Test> tests) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final List<Test> importedTests = testDAO.importTests(user, projectId, tests);
+        return Response.ok(importedTests).build();
+    }
+
     /**
      * Update a test.
      *
      * @param projectId
      *         The id of the project.
-     * @param id
+     * @param testId
      *         The id of the test.
      * @param test
      *         The updated test.
      * @return The updated test.
      */
     @PUT
-    @Path("/{id}")
+    @Path("/{testId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("projectId") Long projectId,
-                           @PathParam("id") Long id,
+                           @PathParam("testId") Long testId,
                            Test test) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
 
-        if (test.getId() == null) {
-            test.setId(id);
+        if (!test.getId().equals(testId)) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        if (!test.getId().equals(id)) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+        if (test.getId() == null) {
+            test.setId(testId);
         }
 
         test.setProjectId(projectId);
@@ -359,8 +346,7 @@ public class TestResource {
     public Response move(@PathParam("projectId") Long projectId,
                          @PathParam("testIds") IdsList testIds,
                          @PathParam("targetId") Long targetId) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final List<Test> movedTests = testDAO.move(user, projectId, testIds, targetId);
         webhookService.fireEvent(user, new TestEvent.MovedMany(movedTests));
         return Response.ok(movedTests).build();
@@ -371,19 +357,17 @@ public class TestResource {
      *
      * @param projectId
      *         The id of the project.
-     * @param id
+     * @param testId
      *         The id of the test.
      * @return An empty body if the test has been deleted.
      */
     @DELETE
-    @Path("/{id}")
+    @Path("/{testId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") Long projectId, @PathParam("id") Long id) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-
-        testDAO.delete(user, projectId, id);
-
-        webhookService.fireEvent(user, new TestEvent.Deleted(id));
+    public Response delete(@PathParam("projectId") Long projectId, @PathParam("testId") Long testId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        testDAO.delete(user, projectId, testId);
+        webhookService.fireEvent(user, new TestEvent.Deleted(testId));
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 
@@ -392,19 +376,17 @@ public class TestResource {
      *
      * @param projectId
      *         The id of the project.
-     * @param ids
+     * @param testIds
      *         The ids of the tests to delete.
      * @return An empty body if the project has been deleted.
      */
     @DELETE
-    @Path("/batch/{ids}")
+    @Path("/batch/{testIds}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") Long projectId, @PathParam("ids") IdsList ids) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-
-        testDAO.delete(user, projectId, ids);
-
-        webhookService.fireEvent(user, new TestEvent.DeletedMany(ids));
+    public Response delete(@PathParam("projectId") Long projectId, @PathParam("testIds") IdsList testIds) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        testDAO.delete(user, projectId, testIds);
+        webhookService.fireEvent(user, new TestEvent.DeletedMany(testIds));
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 
@@ -424,9 +406,10 @@ public class TestResource {
     @GET
     @Path("/{testId}/results")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getResults(@PathParam("projectId") Long projectId, @PathParam("testId") Long testId,
+    public Response getResults(@PathParam("projectId") Long projectId,
+                               @PathParam("testId") Long testId,
                                @QueryParam("page") int page, @QueryParam("size") int size) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final PageRequest pr = PageRequest.of(page, size);
         final Page<TestResult> results = testDAO.getResults(user, projectId, testId, pr);
         return Response.ok(results).build();

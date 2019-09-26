@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {apiUrl} from '../../../../environments';
-import {IHttpService, IPromise} from 'angular';
+import { apiUrl } from '../../../../environments';
+import { IHttpService, IPromise } from 'angular';
 
 /** The resource for test reports. */
 export class TestReportResource {

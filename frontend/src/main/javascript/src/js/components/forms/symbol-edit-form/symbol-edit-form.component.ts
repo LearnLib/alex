@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 
 /**
  * The component to edit a symbols name.

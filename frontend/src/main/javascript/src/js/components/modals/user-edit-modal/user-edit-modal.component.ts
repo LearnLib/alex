@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import {userRole} from '../../../constants';
-import {User} from '../../../entities/user';
-import {ModalComponent} from '../modal.component';
-import {UserResource} from '../../../services/resources/user-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {PromptService} from '../../../services/prompt.service';
-import {ProjectService} from '../../../services/project.service';
-import {UserService} from '../../../services/user.service';
+import { userRole } from '../../../constants';
+import { User } from '../../../entities/user';
+import { ModalComponent } from '../modal.component';
+import { UserResource } from '../../../services/resources/user-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { PromptService } from '../../../services/prompt.service';
+import { ProjectService } from '../../../services/project.service';
+import { UserService } from '../../../services/user.service';
 
 /**
  * The component for the modal window that handles editing a user.

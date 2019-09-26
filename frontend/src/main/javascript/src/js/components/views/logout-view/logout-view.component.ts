@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {UserService} from '../../../services/user.service';
-import {ToastService} from '../../../services/toast.service';
+import { UserService } from '../../../services/user.service';
+import { ToastService } from '../../../services/toast.service';
 
 /**
  * The component for the logout view.

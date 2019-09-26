@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {UserResource} from '../../../services/resources/user-resource.service';
-import {UserService} from '../../../services/user.service';
-import {ToastService} from '../../../services/toast.service';
-import {User} from '../../../entities/user';
+import { UserResource } from '../../../services/resources/user-resource.service';
+import { UserService } from '../../../services/user.service';
+import { ToastService } from '../../../services/toast.service';
+import { User } from '../../../entities/user';
 import { PromptService } from '../../../services/prompt.service';
 import { ProjectService } from '../../../services/project.service';
 

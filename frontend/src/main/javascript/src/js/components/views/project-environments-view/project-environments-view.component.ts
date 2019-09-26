@@ -20,9 +20,8 @@ import { ProjectEnvironment } from '../../../entities/project-environment';
 import { ProjectEnvironmentResourceService } from '../../../services/resources/project-environment-resource.service';
 import { PromptService } from '../../../services/prompt.service';
 import { ToastService } from '../../../services/toast.service';
-import { remove } from 'lodash';
 import { ProjectUrl } from '../../../entities/project-url';
-import {ProjectEnvironmentVariable} from "../../../entities/project-environment-variable";
+import { ProjectEnvironmentVariable } from "../../../entities/project-environment-variable";
 
 /**
  * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.

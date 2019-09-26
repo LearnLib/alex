@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {IRootScopeService, IScope} from 'angular';
+import { IRootScopeService, IScope } from 'angular';
 
 /**
  * The event bus.

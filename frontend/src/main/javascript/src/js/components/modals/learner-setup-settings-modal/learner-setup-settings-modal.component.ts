@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm} from '../../../constants';
-import {LearnConfiguration} from '../../../entities/learner-configuration';
-import {ModalComponent} from '../modal.component';
-import {ToastService} from '../../../services/toast.service';
-import {ProjectService} from '../../../services/project.service';
-import {LearningAlgorithmService} from '../../../services/learning-algorithm.service';
-import {Project} from '../../../entities/project';
-import {Selectable} from "../../../utils/selectable";
-import {ProjectEnvironment} from "../../../entities/project-environment";
+import { learnAlgorithm } from '../../../constants';
+import { LearnConfiguration } from '../../../entities/learner-configuration';
+import { ModalComponent } from '../modal.component';
+import { ToastService } from '../../../services/toast.service';
+import { ProjectService } from '../../../services/project.service';
+import { LearningAlgorithmService } from '../../../services/learning-algorithm.service';
+import { Project } from '../../../entities/project';
+import { Selectable } from "../../../utils/selectable";
+import { ProjectEnvironment } from "../../../entities/project-environment";
 
 /**
  * The controller for the modal dialog where you can set the settings for an upcoming test run.

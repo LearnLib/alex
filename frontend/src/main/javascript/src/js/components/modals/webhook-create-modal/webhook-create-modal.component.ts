@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {ModalComponent} from '../modal.component';
-import {WebhookResource} from '../../../services/resources/webhook-resource.service';
-import {ToastService} from '../../../services/toast.service';
+import { ModalComponent } from '../modal.component';
+import { WebhookResource } from '../../../services/resources/webhook-resource.service';
+import { ToastService } from '../../../services/toast.service';
 
 /**
  * The component for the modal dialog to create a new webhook.

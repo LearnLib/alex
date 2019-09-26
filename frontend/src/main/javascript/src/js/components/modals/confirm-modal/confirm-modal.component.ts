@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ModalComponent} from '../modal.component';
+import { ModalComponent } from '../modal.component';
 
 /**
  * The component that handles the confirm modal dialog.

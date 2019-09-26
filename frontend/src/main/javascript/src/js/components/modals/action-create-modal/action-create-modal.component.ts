@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import {actionType} from '../../../constants';
-import {ActionService} from '../../../services/action.service';
-import {SymbolResource} from '../../../services/resources/symbol-resource.service';
-import {ProjectService} from '../../../services/project.service';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {Action} from '../../../entities/actions/action';
-import {ModalComponent} from '../modal.component';
+import { actionType } from '../../../constants';
+import { ActionService } from '../../../services/action.service';
+import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { ProjectService } from '../../../services/project.service';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { Action } from '../../../entities/actions/action';
+import { ModalComponent } from '../modal.component';
 
 /**
  * The component for the modal dialog that handles the creation of a new action.

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {Selectable} from '../../../utils/selectable';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { Selectable } from '../../../utils/selectable';
 
 export const symbolItemComponent = {
   template: require('./symbol-item.component.html'),

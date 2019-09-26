@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import {events} from '../../../constants';
-import {SymbolGroupUtils} from '../../../utils/symbol-group-utils';
-import {ModalComponent} from '../modal.component';
-import {SymbolGroupResource} from '../../../services/resources/symbol-group-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {EventBus} from '../../../services/eventbus.service';
-import {SymbolGroup} from '../../../entities/symbol-group';
+import { events } from '../../../constants';
+import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
+import { ModalComponent } from '../modal.component';
+import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { EventBus } from '../../../services/eventbus.service';
+import { SymbolGroup } from '../../../entities/symbol-group';
 
 export const symbolGroupMoveModalComponent = {
   template: require('./symbol-group-move-modal.component.html'),

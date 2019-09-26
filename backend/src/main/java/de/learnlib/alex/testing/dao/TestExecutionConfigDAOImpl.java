@@ -24,71 +24,53 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
-import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.repositories.TestExecutionConfigRepository;
-import de.learnlib.alex.testing.repositories.TestRepository;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 /** The implementation for the {@link TestExecutionConfigDAO}. */
 @Service
+@Transactional(rollbackOn = Exception.class)
 public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
 
-    /** The injected DAO for projects. */
-    @Inject
-    private ProjectDAO projectDAO;
+    private final ProjectDAO projectDAO;
+    private final ProjectRepository projectRepository;
+    private final TestExecutionConfigRepository testExecutionConfigRepository;
+    private final ProjectEnvironmentRepository environmentRepository;
+    private final ProjectEnvironmentDAO environmentDAO;
 
-    /** THe injected DAO for tests. */
     @Inject
-    private TestDAO testDAO;
-
-    /** The injected repository for project.. */
-    @Inject
-    private ProjectRepository projectRepository;
-
-    /** The injected repository for test configs. */
-    @Inject
-    private TestExecutionConfigRepository testExecutionConfigRepository;
-
-    /** The injected repository for tests. */
-    @Inject
-    private TestRepository testRepository;
-
-    /** The injected repository for project URLs. */
-    @Inject
-    private ProjectEnvironmentRepository environmentRepository;
-
-    /** The injected repository for project URLs. */
-    @Inject
-    private ProjectEnvironmentDAO environmentDAO;
+    public TestExecutionConfigDAOImpl(ProjectDAO projectDAO,
+                                      ProjectRepository projectRepository,
+                                      TestExecutionConfigRepository testExecutionConfigRepository,
+                                      ProjectEnvironmentRepository environmentRepository,
+                                      ProjectEnvironmentDAO environmentDAO) {
+        this.projectDAO = projectDAO;
+        this.projectRepository = projectRepository;
+        this.testExecutionConfigRepository = testExecutionConfigRepository;
+        this.environmentRepository = environmentRepository;
+        this.environmentDAO = environmentDAO;
+    }
 
     @Override
-    @Transactional
     public TestExecutionConfig create(User user, Long projectId, TestExecutionConfig config)
             throws NotFoundException, UnauthorizedException {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
-        final List<Test> tests = testRepository.findAllById(config.getTestIds());
-        if (tests.isEmpty()) {
-            throw new NotFoundException("At least one test could not be found.");
-        }
-
-        for (Test test: tests) {
-            testDAO.checkAccess(user, project, test);
-        }
+        config.setTests(new ArrayList<>());
 
         final ProjectEnvironment projectUrl = environmentRepository.findById(config.getEnvironmentId()).orElse(null);
         environmentDAO.checkAccess(user, project, projectUrl);
 
         config.setProject(project);
-        config.setTests(tests);
         config.setEnvironment(projectUrl);
 
         final TestExecutionConfig createdConfig = testExecutionConfigRepository.save(config);
@@ -98,7 +80,6 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
     }
 
     @Override
-    @Transactional
     public List<TestExecutionConfig> getAll(User user, Long projectId) throws NotFoundException, UnauthorizedException {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
@@ -110,7 +91,6 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
     }
 
     @Override
-    @Transactional
     public TestExecutionConfig get(User user, Long projectId, Long configId)
             throws NotFoundException, UnauthorizedException {
         final Project project = projectRepository.findById(projectId).orElse(null);
@@ -122,7 +102,6 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
     }
 
     @Override
-    @Transactional
     public void delete(User user, Long projectId, Long configId)
             throws NotFoundException, UnauthorizedException {
         final Project project = projectRepository.findById(projectId).orElse(null);

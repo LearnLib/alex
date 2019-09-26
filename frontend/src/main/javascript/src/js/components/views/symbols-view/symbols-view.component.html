@@ -28,13 +28,13 @@
                     </button>
                     <button
                             class="btn btn-default"
-                            ng-disabled="vm.selectedSymbols.getSelected().length !== 0"
+                            ng-disabled="vm.selectedSymbols.getSelected().length === 0"
                             ng-click="vm.moveSelectedSymbols()"
                     >
                         Move
                     </button>
                     <button class="btn btn-default"
-                            ng-disabled="vm.selectedSymbols.getSelected().length !== 0"
+                            ng-disabled="vm.selectedSymbols.getSelected().length === 0"
                             ng-click="vm.deleteSelectedSymbols()">
                         Delete
                     </button>
@@ -54,7 +54,7 @@
                             ng-click="vm.exportSelectedSymbols()"
                             uib-tooltip="Export"
                             tooltip-placement="bottom"
-                            ng-disabled="vm.selectedSymbols.getSelected().length !== 0"
+                            ng-disabled="vm.selectedSymbols.getSelected().length === 0"
                     >
                         <i class="fas fa-fw fa-download"></i>
                     </button>

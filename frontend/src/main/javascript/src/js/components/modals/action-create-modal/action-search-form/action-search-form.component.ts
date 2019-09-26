@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Action} from '../../../../entities/actions/action';
+import { Action } from '../../../../entities/actions/action';
 
 export const actionSearchFormComponent = {
   template: require('./action-search-form.component.html'),

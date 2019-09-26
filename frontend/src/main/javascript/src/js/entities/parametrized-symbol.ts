@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from './alphabet-symbol';
+import { AlphabetSymbol } from './alphabet-symbol';
 
 /**
  * The parametrized symbol.

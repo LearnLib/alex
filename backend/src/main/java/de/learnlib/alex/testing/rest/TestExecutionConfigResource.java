@@ -49,21 +49,21 @@ public class TestExecutionConfigResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The injected DAO for test configs. */
-    @Inject
-    private TestExecutionConfigDAO testExecutionConfigDAO;
-
-    /** The injected DAO for projects. */
-    @Inject
-    private ProjectDAO projectDAO;
-
-    /** The injected service for executing tests. */
-    @Inject
-    private TestService testService;
-
-    /** The security context containing the user of the request. */
     @Context
     private SecurityContext securityContext;
+
+    private final TestExecutionConfigDAO testExecutionConfigDAO;
+    private final ProjectDAO projectDAO;
+    private final TestService testService;
+
+    @Inject
+    public TestExecutionConfigResource(TestExecutionConfigDAO testExecutionConfigDAO,
+                                       ProjectDAO projectDAO,
+                                       TestService testService) {
+        this.testExecutionConfigDAO = testExecutionConfigDAO;
+        this.projectDAO = projectDAO;
+        this.testService = testService;
+    }
 
     /**
      * Get all test configs in a project.

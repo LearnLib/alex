@@ -33,25 +33,10 @@ import javax.inject.Inject;
 @Service
 public class ParameterizedSymbolDAOImpl implements ParameterizedSymbolDAO {
 
-    /** The repository for symbols. */
     private SymbolRepository symbolRepository;
-
-    /** The repository for symbol parameter values. */
     private SymbolParameterValueRepository symbolParameterValueRepository;
-
-    /** The repository for parameterized symbols. */
     private ParameterizedSymbolRepository parameterizedSymbolRepository;
 
-    /**
-     * Constructor.
-     *
-     * @param symbolRepository
-     *         {@link #symbolRepository}.
-     * @param symbolParameterValueRepository
-     *         {@link #symbolParameterValueRepository}.
-     * @param parameterizedSymbolRepository
-     *         {@link #parameterizedSymbolRepository}.
-     */
     @Inject
     public ParameterizedSymbolDAOImpl(
             SymbolRepository symbolRepository,
@@ -72,12 +57,6 @@ public class ParameterizedSymbolDAOImpl implements ParameterizedSymbolDAO {
         return parameterizedSymbolRepository.save(pSymbol);
     }
 
-    /**
-     * Load lazy relations.
-     *
-     * @param pSymbol
-     *         The parameterized symbol.
-     */
     public static void loadLazyRelations(ParameterizedSymbol pSymbol) {
         Hibernate.initialize(pSymbol.getParameterValues());
         SymbolDAOImpl.loadLazyRelations(pSymbol.getSymbol());

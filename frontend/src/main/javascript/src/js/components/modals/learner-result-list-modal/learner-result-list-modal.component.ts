@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {ProjectService} from '../../../services/project.service';
-import {LearnResultResource} from '../../../services/resources/learner-result-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {ModalComponent} from '../modal.component';
-import {LearnResult} from '../../../entities/learner-result';
-import {Project} from '../../../entities/project';
+import { ProjectService } from '../../../services/project.service';
+import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { ModalComponent } from '../modal.component';
+import { LearnResult } from '../../../entities/learner-result';
+import { Project } from '../../../entities/project';
 
 /**
  * The component for the modal that displays a selectable list of results.

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {ActionService} from '../services/action.service';
-import {ParametrizedSymbol} from './parametrized-symbol';
+import { ActionService } from '../services/action.service';
+import { ParametrizedSymbol } from './parametrized-symbol';
 
 const actionService = new ActionService();
 
@@ -85,47 +85,8 @@ export class AlphabetSymbol {
     this.expectedResult = obj.expectedResult || '';
   }
 
-  /**
-   * Gets a reduced version of the symbol that can be used to export it.
-   *
-   * @returns The exportable symbol.
-   */
-  getExportableSymbol(): any {
-    const symbol = JSON.parse(JSON.stringify(this));
-    symbol.inputs.forEach(input => delete input.id);
-    symbol.outputs.forEach(output => delete output.id);
-    symbol.steps = symbol.steps.map(step => {
-      const s = AlphabetSymbol.stepsToJson(step);
-      if (s.type === 'symbol') {
-        s.pSymbol.symbol = {
-          name: s.pSymbol.symbol.name
-        };
-      }
-      return s;
-    });
-
-    return {
-      name: symbol.name,
-      description: symbol.description,
-      expectedResult: symbol.expectedResult,
-      successOutput: symbol.successOutput,
-      inputs: symbol.inputs,
-      outputs: symbol.outputs,
-      steps: symbol.steps
-    };
-  }
-
   containsSymbolSteps() {
     return this.steps.filter(s => s.type === 'symbol').length > 0;
-  }
-
-  copy() {
-    const copy = new AlphabetSymbol(JSON.parse(JSON.stringify(this)));
-    delete copy.id;
-    copy.steps = copy.steps.map(AlphabetSymbol.stepsToJson);
-    copy.inputs.forEach(input => delete input.id);
-    copy.outputs.forEach(output => delete output.id);
-    return copy;
   }
 
   static stepsToJson(step) {

@@ -53,7 +53,6 @@ public class TestExecutionConfig implements Serializable {
     private Long id;
 
     /** The ids of the tests to execute. */
-    @NotEmpty
     @ManyToMany
     private List<Test> tests;
 

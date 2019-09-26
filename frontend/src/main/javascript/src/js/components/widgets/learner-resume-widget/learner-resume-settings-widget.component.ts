@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import {eqOracleType} from '../../../constants';
-import {ParametrizedSymbol} from '../../../entities/parametrized-symbol';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {Project} from '../../../entities/project';
-import {LearnResult} from '../../../entities/learner-result';
-import {EqOracle} from '../../../entities/eq-oracles/eq-oracle';
-import {ProjectEnvironment} from "../../../entities/project-environment";
-import {Selectable} from "../../../utils/selectable";
+import { eqOracleType } from '../../../constants';
+import { ParametrizedSymbol } from '../../../entities/parametrized-symbol';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { Project } from '../../../entities/project';
+import { LearnResult } from '../../../entities/learner-result';
+import { EqOracle } from '../../../entities/eq-oracles/eq-oracle';
+import { ProjectEnvironment } from "../../../entities/project-environment";
+import { Selectable } from "../../../utils/selectable";
 
 /**
  * The directive for the widget of the sidebar where learn resume configurations can be edited. Should be included

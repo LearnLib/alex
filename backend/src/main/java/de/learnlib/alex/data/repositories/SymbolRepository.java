@@ -30,37 +30,29 @@ import java.util.List;
 @Repository
 public interface SymbolRepository extends JpaRepository<Symbol, Long> {
 
-    /**
-     * Find all Symbol with given IDs.
-     *
-     * @param ids
-     *         The ID to look for.
-     * @return The Symbols.
-     */
     @Transactional(readOnly = true)
     List<Symbol> findAllByIdIn(List<Long> ids);
 
-    /**
-     * Find a symbol by a specific name in a project.
-     *
-     * @param projectId
-     *         The ID of the project.
-     * @param name
-     *         The name of the symbol.
-     * @return The symbol with that name.
-     */
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<Symbol> findAllByProject_idAndIdIn(Long projectId, List<Long> ids);
+
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     Symbol findOneByProject_IdAndName(Long projectId, String name);
 
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    List<Symbol> findAllByProject_Id(Long projectId);
+
     /**
-     * Find all symbols.
+     * Find all symbols with a given visibility level.
      *
      * @param projectId
-     *         The ID the Project the Symbols belong to.
+     *         The ID of the project
      * @param hidden
      *         The visibility level to look for. true = hidden, false = visible, {false, true} = both.
-     * @return The Symbols that matched the criteria.
+     * @return The symbols that matched the criteria.
      */
     @Query("SELECT s "
             + "FROM  Symbol s "
@@ -70,26 +62,15 @@ public interface SymbolRepository extends JpaRepository<Symbol, Long> {
     List<Symbol> findAll(Long projectId, Boolean[] hidden);
 
     /**
-     * Final all symbols in a project.
-     *
-     * @param projectId
-     *         The ID of the project.
-     * @return The symbols in the project.
-     */
-    @Transactional(readOnly = true)
-    @SuppressWarnings("checkstyle:methodname")
-    List<Symbol> findAllByProject_Id(Long projectId);
-
-    /**
      * Find all symbols in a symbol group.
      *
      * @param projectId
-     *         The ID the Project the Symbols belong to.
+     *         The ID of the project the symbols belong to.
      * @param groupId
-     *         The ID the SymbolGroup the Symbols belong to.
+     *         The ID the group the symbols belong to.
      * @param hidden
      *         The visibility level to look for. true = hidden, false = visible, {false, true} = both.
-     * @return The Symbols that matched the criteria.
+     * @return The symbols that matched the criteria.
      */
     @Query("SELECT s "
             + "FROM  Symbol s "

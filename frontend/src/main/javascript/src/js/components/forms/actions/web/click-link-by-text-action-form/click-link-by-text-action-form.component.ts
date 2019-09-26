@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ClickLinkByTextWebAction} from '../../../../../entities/actions/web/click-link-by-text-action';
+import { ClickLinkByTextWebAction } from '../../../../../entities/actions/web/click-link-by-text-action';
 
 export const clickLinkByTextActionFormComponent = {
   template: require('./click-link-by-text-action-form.component.html'),

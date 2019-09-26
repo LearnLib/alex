@@ -1,12 +1,12 @@
-import {events} from '../../../constants';
-import {TestCaseStep} from '../../../entities/test-case-step';
-import {LearnResult} from '../../../entities/learner-result';
-import {IScope} from 'angular';
-import {EventBus} from '../../../services/eventbus.service';
-import {ProjectService} from '../../../services/project.service';
-import {TestResource} from '../../../services/resources/test-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {Project} from '../../../entities/project';
+import { events } from '../../../constants';
+import { TestCaseStep } from '../../../entities/test-case-step';
+import { LearnResult } from '../../../entities/learner-result';
+import { IScope } from 'angular';
+import { EventBus } from '../../../services/eventbus.service';
+import { ProjectService } from '../../../services/project.service';
+import { TestResource } from '../../../services/resources/test-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { Project } from '../../../entities/project';
 import { TestCase } from '../../../entities/test-case';
 
 export const testCaseGenerationWidgetComponent = {

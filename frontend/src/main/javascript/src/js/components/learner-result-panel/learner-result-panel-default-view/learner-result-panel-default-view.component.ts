@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import {learnAlgorithm} from '../../../constants';
-import {LearnResult} from '../../../entities/learner-result';
-import {IRootElementService} from 'angular';
-import {PromptService} from '../../../services/prompt.service';
-import {DownloadService} from '../../../services/download.service';
+import { learnAlgorithm } from '../../../constants';
+import { LearnResult } from '../../../entities/learner-result';
+import { IRootElementService } from 'angular';
+import { PromptService } from '../../../services/prompt.service';
+import { DownloadService } from '../../../services/download.service';
 
 export const learnerResultPanelDefaultViewComponent = {
   template: require('./learner-result-panel-default-view.component.html'),

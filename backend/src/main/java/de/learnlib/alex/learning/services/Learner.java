@@ -234,7 +234,7 @@ public class Learner {
         symbols.forEach(s -> symbolMap.put(s.getId(), s));
         result.getSymbols().forEach(ps -> ps.setSymbol(symbolMap.get(ps.getSymbol().getId())));
 
-        final List<ProjectEnvironment> envs = environmentRepository.findAllById(configuration.getEnvironmentIds());
+        final List<ProjectEnvironment> envs = projectEnvironmentDAO.getByIds(user, project.getId(), configuration.getEnvironmentIds());
         result.setEnvironments(envs);
         configuration.setEnvironments(envs);
 

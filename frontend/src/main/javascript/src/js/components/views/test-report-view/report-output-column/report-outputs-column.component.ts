@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Project} from '../../../../entities/project';
+import { Project } from '../../../../entities/project';
 
 export const reportOutputsColumnComponent = {
   template: require('./report-outputs-column.component.html'),

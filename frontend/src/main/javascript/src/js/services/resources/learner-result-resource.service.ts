@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {apiUrl} from '../../../../environments';
-import {LearnResult} from '../../entities/learner-result';
-import {IHttpService, IPromise} from 'angular';
+import { apiUrl } from '../../../../environments';
+import { LearnResult } from '../../entities/learner-result';
+import { IHttpService, IPromise } from 'angular';
 
 /**
  * The resource that handles http request to the API to do CRUD operations on learn results.

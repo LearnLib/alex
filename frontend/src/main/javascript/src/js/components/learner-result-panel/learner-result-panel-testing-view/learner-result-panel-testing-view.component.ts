@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {LearnResult} from '../../../entities/learner-result';
-import {Resizer} from '../../../utils/resizer';
-import {IRootElementService} from 'angular';
+import { LearnResult } from '../../../entities/learner-result';
+import { Resizer } from '../../../utils/resizer';
+import { IRootElementService } from 'angular';
 
 /** Component for the testing view. */
 export const learnerResultPanelTestingViewComponent = {

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {IFormController} from 'angular';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { IFormController } from 'angular';
 
 export const symbolFormGroupsComponent = {
   template: require('./symbol-form-groups.component.html'),

@@ -27,8 +27,6 @@ import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.webhooks.services.WebhookService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -38,8 +36,6 @@ import java.util.Map;
 /** The service that executes tests. */
 @Service
 public class TestService {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     /** Factory to create a new ContextHandler. */
     private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
@@ -121,7 +117,7 @@ public class TestService {
      *         If the project cannot be found.
      */
     public void abort(User user, Long projectId) throws NotFoundException {
-        final Project project = projectDAO.getByID(user, projectId, ProjectDAO.EmbeddableFields.COUNTERS);
+        final Project project = projectDAO.getByID(user, projectId);
         if (testingThreads.containsKey(user.getId()) && testingThreads.get(user.getId()).containsKey(project.getId())) {
             testingThreads.get(user.getId()).get(project.getId()).abort();
         }

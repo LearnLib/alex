@@ -15,12 +15,12 @@
  */
 
 import * as remove from 'lodash/remove';
-import {AlphabetSymbol} from '../../../entities/alphabet-symbol';
-import {Selectable} from '../../../utils/selectable';
-import {ProjectService} from '../../../services/project.service';
-import {SymbolResource} from '../../../services/resources/symbol-resource.service';
-import {ToastService} from '../../../services/toast.service';
-import {Project} from '../../../entities/project';
+import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { Selectable } from '../../../utils/selectable';
+import { ProjectService } from '../../../services/project.service';
+import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { ToastService } from '../../../services/toast.service';
+import { Project } from '../../../entities/project';
 
 /**
  * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover

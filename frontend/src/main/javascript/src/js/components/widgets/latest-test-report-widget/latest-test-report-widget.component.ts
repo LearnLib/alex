@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {TestReportResource} from '../../../services/resources/test-report-resource.service';
-import {Project} from '../../../entities/project';
+import { TestReportResource } from '../../../services/resources/test-report-resource.service';
+import { Project } from '../../../entities/project';
 
 /**
  * The widget that displays the latest test report.

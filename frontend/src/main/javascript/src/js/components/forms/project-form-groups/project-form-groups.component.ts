@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import {Project} from '../../../entities/project';
-import {IFormController} from 'angular';
+import { Project } from '../../../entities/project';
+import { IFormController } from 'angular';
 
 /**
  * Form groups for a project.

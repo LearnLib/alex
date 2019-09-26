@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {IFormController} from 'angular';
+import { IFormController } from 'angular';
 
 /**
  * Form groups for a formula.

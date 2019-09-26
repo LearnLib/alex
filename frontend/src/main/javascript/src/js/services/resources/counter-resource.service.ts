@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {apiUrl} from '../../../../environments';
-import {Counter} from '../../entities/counter';
-import {IHttpService, IPromise} from 'angular';
+import { apiUrl } from '../../../../environments';
+import { Counter } from '../../entities/counter';
+import { IHttpService, IPromise } from 'angular';
 
 /**
  * The service that communicates with the API in order to read and delete counters.

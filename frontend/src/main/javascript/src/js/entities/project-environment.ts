@@ -15,7 +15,7 @@
  */
 
 import { ProjectUrl } from './project-url';
-import {ProjectEnvironmentVariable} from "./project-environment-variable";
+import { ProjectEnvironmentVariable } from "./project-environment-variable";
 
 export class ProjectEnvironment {
   id: number;

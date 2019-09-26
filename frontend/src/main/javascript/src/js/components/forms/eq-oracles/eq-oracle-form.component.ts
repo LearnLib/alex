@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import {eqOracleType} from '../../../constants';
-import {EqOracleService} from '../../../services/eq-oracle.service';
-import {EqOracle} from '../../../entities/eq-oracles/eq-oracle';
-import {IFormController} from 'angular';
+import { eqOracleType } from '../../../constants';
+import { EqOracleService } from '../../../services/eq-oracle.service';
+import { EqOracle } from '../../../entities/eq-oracles/eq-oracle';
+import { IFormController } from 'angular';
 
 export const eqOracleFormComponent = {
   template: require('./eq-oracle-form.component.html'),
