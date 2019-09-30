@@ -1,0 +1,44 @@
+<aside id="sidebar">
+
+  <header id="sidebar-header">
+    <a class="logo-button" ui-sref="root">
+      <img src="/assets/images/favicon.png" height="18" width="18">
+      <strong class="ml-1" style="margin-bottom: -2px">LEX</strong>
+    </a>
+    <a class="toggle-button" href="" ng-click="vm.toggleCollapse()">
+      <i class="fa" ng-class="vm.collapsed ? 'fa-bars' : 'fa-chevron-left'"></i>
+    </a>
+  </header>
+
+  <div id="sidebar-body">
+
+    <div class="sidebar-group" ng-repeat="group in vm.groups">
+      <div ng-if="group.display()">
+        <div class="sidebar-group-title">
+          <strong>{{group.title()}}</strong>
+        </div>
+        <a
+          ui-sref="{{item.sref()}}"
+          class="sidebar-group-item"
+          ng-class="{'active':item.active()}"
+          ng-repeat="item in group.items"
+          ng-click="item.click()"
+          ng-if="item.display()"
+        >
+          <div class="sidebar-group-item-icon">
+            <i class="fas fa-fw {{item.icon}}"></i>
+          </div>
+          <div class="sidebar-group-item-label">{{item.title}}</div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="sidebar-footer">
+    <a ui-sref="about">
+      <i class="fas fa-info-circle"></i>
+      <span>About</span>
+    </a>
+  </div>
+</aside>
