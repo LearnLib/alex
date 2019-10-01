@@ -15,11 +15,11 @@
  */
 
 import { LearnResult } from '../../../entities/learner-result';
-import { ProjectService } from '../../../services/project.service';
 import { LearnerResource } from '../../../services/resources/learner-resource.service';
 import { ToastService } from '../../../services/toast.service';
 import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller that handles the page for displaying multiple complete learn results in a slide show.
@@ -38,22 +38,11 @@ class ResultsCompareViewComponent {
   /** The list of layout settings for the current hypothesis that is shown in a panel. */
   public layoutSettings: any;
 
-  /**
-   * Constructor.
-   *
-   * @param $uibModal
-   * @param $state
-   * @param $stateParams
-   * @param projectService
-   * @param learnResultResource
-   * @param learnerResource
-   * @param toastService
-   */
   /* @ngInject */
   constructor(private $uibModal: any,
               private $state: any,
               private $stateParams: any,
-              private projectService: ProjectService,
+              private appStore: AppStoreService,
               private learnResultResource: LearnResultResource,
               private learnerResource: LearnerResource,
               private toastService: ToastService) {
@@ -153,11 +142,11 @@ class ResultsCompareViewComponent {
       resolve: {
         results: () => this.results
       }
-    }).result.then(result => this.panels.push(result));
+    }).result.then((result: LearnResult) => this.panels.push(result));
   }
 
   get project(): Project {
-    return this.projectService.store.currentProject;
+    return this.appStore.project;
   }
 }
 

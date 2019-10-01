@@ -19,7 +19,6 @@ import { UserService } from '../../../services/user.service';
 import { ToastService } from '../../../services/toast.service';
 import { User } from '../../../entities/user';
 import { PromptService } from '../../../services/prompt.service';
-import { ProjectService } from '../../../services/project.service';
 
 /**
  * The component of the user settings page.
@@ -32,20 +31,12 @@ export const profileViewComponent = {
     /** The user to edit. */
     public user: User;
 
-    /**
-     * Constructor.
-     *
-     * @param userResource
-     * @param userService
-     * @param toastService
-     */
     /* @ngInject */
     constructor(private userResource: UserResource,
                 private userService: UserService,
                 private toastService: ToastService,
                 private promptService: PromptService,
-                private $state: any,
-                private projectService: ProjectService) {
+                private $state: any) {
 
       this.user = null;
 
@@ -64,7 +55,6 @@ export const profileViewComponent = {
           this.userResource.remove(this.user)
             .then(() => {
               this.toastService.success('Your account has been deleted');
-              this.projectService.close();
               this.userService.logout();
               this.$state.go('root');
             })

@@ -20,7 +20,6 @@ import { ModalComponent } from '../modal.component';
 import { UserResource } from '../../../services/resources/user-resource.service';
 import { ToastService } from '../../../services/toast.service';
 import { PromptService } from '../../../services/prompt.service';
-import { ProjectService } from '../../../services/project.service';
 import { UserService } from '../../../services/user.service';
 
 /**
@@ -48,22 +47,11 @@ export const userEditModalComponent = {
     /** The email of the user. */
     public email: string = null;
 
-    /**
-     * Constructor.
-     *
-     * @param $state
-     * @param userResource
-     * @param toastService
-     * @param promptService
-     * @param projectService
-     * @param userService
-     */
     /* @ngInject */
     constructor(private $state: any,
                 private userResource: UserResource,
                 private toastService: ToastService,
                 private promptService: PromptService,
-                private projectService: ProjectService,
                 private userService: UserService) {
       super();
     }
@@ -118,7 +106,6 @@ export const userEditModalComponent = {
       this.userResource.demote(this.user)
         .then((user) => {
           if (this.currentUser.id === this.user.id) {
-            this.projectService.close();
             this.userService.logout();
             this.$state.go('root');
           } else {

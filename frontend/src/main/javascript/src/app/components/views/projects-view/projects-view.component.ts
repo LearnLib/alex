@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { ProjectService } from '../../../services/project.service';
 import { ToastService } from '../../../services/toast.service';
 import { Project } from '../../../entities/project';
-import { Selectable } from "../../../utils/selectable";
-import { PromptService } from "../../../services/prompt.service";
-import { ProjectResource } from "../../../services/resources/project-resource.service";
-import { DownloadService } from "../../../services/download.service";
+import { Selectable } from '../../../utils/selectable';
+import { PromptService } from '../../../services/prompt.service';
+import { ProjectApiService } from '../../../services/resources/project-api.service';
+import { DownloadService } from '../../../services/download.service';
+import { AppStoreService } from '../../../services/app-store.service';
+import { ProjectService } from '../../../services/project.service';
 
 /**
  * The controller that shows the page to manage projects.
@@ -32,25 +33,19 @@ export const projectsViewComponent = {
 
     public selectedProjects: Selectable<Project>;
 
-    /**
-     * Constructor.
-     *
-     * @param $state
-     * @param projectService
-     * @param toastService
-     */
     /* @ngInject */
     constructor(private $state: any,
                 private $uibModal: any,
-                private projectService: ProjectService,
+                private appStore: AppStoreService,
                 private promptService: PromptService,
                 private toastService: ToastService,
-                private projectResource: ProjectResource,
+                private projectApi: ProjectApiService,
+                private projectService: ProjectService,
                 private downloadService: DownloadService) {
 
       // go to the dashboard if there is a project in the session
-      const project = this.projectService.store.currentProject;
-      if (project !== null) {
+      const project = this.appStore.project;
+      if (project != null) {
         this.$state.go('project', {projectId: project.id});
         return;
       }
@@ -58,15 +53,16 @@ export const projectsViewComponent = {
       this.selectedProjects = new Selectable<Project>([], 'id');
 
       //get all projects from the server
-      this.projectService.load()
-        .catch(err => {
-          this.toastService.danger(`Loading project failed. ${err.data.message}`);
-        });
+      this.projectService.load().subscribe(
+        () => {
+        },
+        err => this.toastService.danger(`Loading project failed. ${err.data.message}`)
+      );
     }
 
     createProject(): void {
       this.$uibModal.open({
-        component: 'projectCreateModal',
+        component: 'projectCreateModal'
       }).result.then((createdProject: Project) => {
         this.selectedProjects.addItem(createdProject);
       });
@@ -78,7 +74,7 @@ export const projectsViewComponent = {
      * @param project The project to work on.
      */
     openProject(project: Project): void {
-      this.projectService.open(project);
+      this.appStore.openProject(project);
       this.$state.go('project', {projectId: project.id});
     }
 
@@ -89,28 +85,30 @@ export const projectsViewComponent = {
      */
     deleteProject(project: Project): void {
       this.promptService.confirm('Do you really want to delete this project? All related data will be lost.')
-          .then(() => {
-            this.projectService.delete(project)
-                .then(() => {
-                  this.toastService.success(`The project '${project.name}' has been deleted.`);
-                })
-                .catch(response => {
-                  this.toastService.danger(`The project could not be deleted. ${response.data.message}`);
-                });
-          });
+        .then(() => {
+          this.projectService.delete(project).subscribe(
+            () => {
+              this.toastService.success(`The project '${project.name}' has been deleted.`);
+            },
+            response => {
+              this.toastService.danger(`The project could not be deleted. ${response.data.message}`);
+            }
+          );
+        });
     }
 
     deleteSelectedProjects(): void {
       this.promptService.confirm('Do you really want to delete these projects? All related data will be lost.')
-          .then(() => {
-            const projects = this.selectedProjects.getSelected();
-            this.projectService.deleteMany(projects)
-                .then(() => {
-                  this.toastService.success(`The projects have been deleted.`);
-                  this.selectedProjects.unselectMany(projects);
-                })
-                .catch(err => this.toastService.danger(`The projects could not be deleted. ${err.data.message}`));
-          });
+        .then(() => {
+          const projects = this.selectedProjects.getSelected();
+          this.projectService.deleteMany(projects).subscribe(
+            () => {
+              this.toastService.success(`The projects have been deleted.`);
+              this.selectedProjects.unselectMany(projects);
+            },
+            err => this.toastService.danger(`The projects could not be deleted. ${err.data.message}`)
+          );
+        });
     }
 
     /**
@@ -120,7 +118,7 @@ export const projectsViewComponent = {
      */
     editProject(project: Project): void {
       this.projectService.update(project)
-          .catch(err => this.toastService.danger(`The project could not be update. ${err.data.message}`));
+        .catch(err => this.toastService.danger(`The project could not be update. ${err.data.message}`));
     }
 
     editSelectedProject(): void {
@@ -129,8 +127,8 @@ export const projectsViewComponent = {
 
     exportProject(project: Project): void {
       this.promptService.prompt('Enter a name for the json file.', project.name).then(name => {
-        this.projectResource.export(project.id).then(res => {
-          this.downloadService.downloadObject(res.data, name);
+        this.projectApi.export(project.id).subscribe(data => {
+          this.downloadService.downloadObject(data, name);
         });
       });
     }
@@ -142,7 +140,8 @@ export const projectsViewComponent = {
     importProject(): void {
       this.$uibModal.open({
         component: 'projectImportModal'
-      }).result.then(() => {});
+      }).result.then(() => {
+      });
     }
 
     get projects(): Project[] {

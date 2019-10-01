@@ -17,9 +17,9 @@
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { Project } from '../../../entities/project';
 import { ModalComponent } from '../modal.component';
-import { ProjectService } from '../../../services/project.service';
-import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller for the modal dialog that handles the creation of a new symbol group.
@@ -45,17 +45,9 @@ export const symbolGroupCreateModalComponent = {
     /** An error message that can be displayed in the modal template. */
     public errorMsg: string;
 
-
-    /**
-     * Constructor.
-     *
-     * @param projectService
-     * @param symbolGroupResource
-     * @param toastService
-     */
     /* @ngInject */
-    constructor(private projectService: ProjectService,
-                private symbolGroupResource: SymbolGroupResource,
+    constructor(private appStore: AppStoreService,
+                private symbolGroupApi: SymbolGroupApiService,
                 private toastService: ToastService) {
       super();
 
@@ -64,8 +56,9 @@ export const symbolGroupCreateModalComponent = {
       this.selectedSymbolGroup = null;
       this.errorMsg = null;
 
-      this.symbolGroupResource.getAll(this.project.id)
-        .then(groups => this.groups = groups);
+      this.symbolGroupApi.getAll(this.project.id).subscribe(
+        groups => this.groups = groups
+      );
     }
 
     /**
@@ -75,15 +68,16 @@ export const symbolGroupCreateModalComponent = {
       this.errorMsg = null;
       this.group.parent = this.selectedSymbolGroup == null ? null : this.selectedSymbolGroup.id;
 
-      this.symbolGroupResource.create(this.project.id, this.group)
-        .then(createdGroup => {
+      this.symbolGroupApi.create(this.project.id, this.group).subscribe(
+        createdGroup => {
           this.toastService.success('Symbol group <strong>' + createdGroup.name + '</strong> created');
           this.close({$value: createdGroup});
           this.dismiss();
-        })
-        .catch(response => {
+        },
+        response => {
           this.errorMsg = response.data.message;
-        });
+        }
+      );
     }
 
     selectSymbolGroup(group: SymbolGroup): void {
@@ -95,7 +89,7 @@ export const symbolGroupCreateModalComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

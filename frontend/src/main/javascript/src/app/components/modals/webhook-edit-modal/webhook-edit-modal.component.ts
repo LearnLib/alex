@@ -15,7 +15,7 @@
  */
 
 import { ModalComponent } from '../modal.component';
-import { WebhookResource } from '../../../services/resources/webhook-resource.service';
+import { WebhookApiService } from '../../../services/resources/webhook-api.service';
 import { ToastService } from '../../../services/toast.service';
 
 export const webhookEditModalComponent = {
@@ -43,11 +43,11 @@ export const webhookEditModalComponent = {
     /**
      * Constructor.
      *
-     * @param webhookResource
+     * @param webhookApi
      * @param toastService
      */
     /* @ngInject */
-    constructor(private webhookResource: WebhookResource,
+    constructor(private webhookApi: WebhookApiService,
                 private toastService: ToastService) {
       super();
     }
@@ -55,9 +55,10 @@ export const webhookEditModalComponent = {
     $onInit(): void {
       this.webhook = this.resolve.webhook;
 
-      this.webhookResource.getEvents()
-        .then((events) => this.events = events)
-        .catch(console.error);
+      this.webhookApi.getEvents().subscribe(
+        events => this.events = events,
+        console.error
+      );
     }
 
     /** Updates the webhook. */
@@ -69,14 +70,15 @@ export const webhookEditModalComponent = {
         return;
       }
 
-      this.webhookResource.update(this.webhook)
-        .then((webhook) => {
+      this.webhookApi.update(this.webhook).subscribe(
+        webhook => {
           this.toastService.success('The webhook has been updated.');
           this.close({$value: webhook});
-        })
-        .catch((error) => {
+        },
+        error => {
           this.errorMessage = error.data.message;
-        });
+        }
+      );
     }
   }
 };

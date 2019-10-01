@@ -75,7 +75,7 @@
         <div class="list-group">
           <div class="list-group-item d-flex flex-row align-items-center" ng-repeat="env in vm.project.environments">
             <div>
-              <selectable-checkbox item="env" selectable="vm.selectedEnvironments"></selectable-checkbox>
+              <selectable-checkbox [item]="env" [selectable]="vm.selectedEnvironments"></selectable-checkbox>
             </div>
             <div class="w-100 ml-3">
               <strong>{{env.name}}</strong>

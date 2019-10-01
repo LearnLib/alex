@@ -17,9 +17,9 @@
 import { Project } from '../../../entities/project';
 import { ModalComponent } from '../modal.component';
 import { IFormController } from 'angular';
-import { ProjectResource } from '../../../services/resources/project-resource.service';
+import { ProjectApiService } from '../../../services/resources/project-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { ProjectService } from '../../../services/project.service';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The component of the modal window for editing a project.
@@ -43,17 +43,10 @@ export const projectEditModalComponent = {
     /** An error message that is displayed on a failed updated. */
     public errorMessage: string = null;
 
-    /**
-     * Constructor.
-     *
-     * @param projectResource
-     * @param toastService
-     * @param projectService
-     */
     /* @ngInject */
-    constructor(private projectResource: ProjectResource,
+    constructor(private projectApi: ProjectApiService,
                 private toastService: ToastService,
-                private projectService: ProjectService) {
+                private appStore: AppStoreService) {
       super();
     }
 
@@ -67,19 +60,20 @@ export const projectEditModalComponent = {
     updateProject(): void {
       this.errorMessage = null;
 
-      this.projectResource.update(this.project)
-        .then(updatedProject => {
+      this.projectApi.update(this.project).subscribe(
+        updatedProject => {
           this.toastService.success('Project updated');
-          this.projectService.open(updatedProject);
+          this.appStore.openProject(updatedProject);
           this.close({$value: updatedProject});
 
           // set the form to its original state
           this.form.$setPristine();
           this.form.$setUntouched();
-        })
-        .catch(err => {
+        },
+        err => {
           this.errorMessage = err.data.message;
-        });
+        }
+      );
     }
   },
 };

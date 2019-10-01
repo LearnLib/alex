@@ -15,7 +15,7 @@
  */
 
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
-import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
 import { Project } from '../../../entities/project';
 
@@ -38,21 +38,22 @@ class ProjectDetailsWidgetComponent {
   /**
    * Constructor.
    *
-   * @param symbolGroupResource
+   * @param symbolGroupApi
    * @param learnResultResource
    */
   /* @ngInject */
-  constructor(private symbolGroupResource: SymbolGroupResource,
+  constructor(private symbolGroupApi: SymbolGroupApiService,
               private learnResultResource: LearnResultResource) {
   }
 
   $onInit(): void {
-    this.symbolGroupResource.getAll(this.project.id)
-      .then(groups => {
+    this.symbolGroupApi.getAll(this.project.id).subscribe(
+      groups => {
         this.numberOfGroups = groups.length;
         this.numberOfSymbols = SymbolGroupUtils.getSymbols(groups).length;
-      })
-      .catch(err => console.log(err));
+      },
+      console.error
+    );
 
     this.learnResultResource.getAll(this.project.id)
       .then(results => {

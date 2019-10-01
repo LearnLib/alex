@@ -1,5 +1,5 @@
 <div class="view">
-    <view-header title="{{vm.symbol.name}}" ng-if="vm.symbol">
+    <view-header [title]="vm.symbol.name" ng-if="vm.symbol">
         <a ui-sref="symbols({projectId: vm.project.id})" class="btn btn-sm btn-default btn-icon"
            uib-tooltip="Back to symbols" tooltip-placement="right">
             <i class="fas fa-reply"></i>
@@ -34,7 +34,7 @@
                 <div class="px-3 py-2 border-bottom d-flex flex-row align-items-center">
                     <div>
                         <selectable-checkbox-multiple
-                            selectable="vm.selectedSteps"
+                            [selectable]="vm.selectedSteps"
                             class="float-left"
                             style="margin-top: 7px"
                             ng-if="vm.selectedSteps != null"
@@ -97,8 +97,8 @@
                             <div class="d-flex flex-row align-items-center">
                                 <div>
                                     <selectable-checkbox
-                                      item="step"
-                                      selectable="vm.selectedSteps"
+                                      [item]="step"
+                                      [selectable]="vm.selectedSteps"
                                     >
                                     </selectable-checkbox>
                                 </div>
@@ -117,7 +117,7 @@
                                             </a>
                                         </span>
                                         <br>
-                                        <symbol-parameters parameter-values="step.pSymbol.parameterValues"></symbol-parameters>
+                                        <symbol-parameters [parameter-values]="step.pSymbol.parameterValues"></symbol-parameters>
                                     </div>
 
                                     <div class="step-labels">

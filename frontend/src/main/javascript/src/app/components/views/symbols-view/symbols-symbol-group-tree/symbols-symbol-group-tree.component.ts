@@ -3,7 +3,7 @@ import { events } from '../../../../constants';
 import { AlphabetSymbol } from '../../../../entities/alphabet-symbol';
 import { SymbolGroup } from '../../../../entities/symbol-group';
 import { PromptService } from '../../../../services/prompt.service';
-import { SymbolGroupResource } from '../../../../services/resources/symbol-group-resource.service';
+import { SymbolGroupApiService } from '../../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../../services/toast.service';
 import { SymbolResource } from '../../../../services/resources/symbol-resource.service';
 import { EventBus } from '../../../../services/eventbus.service';
@@ -36,7 +36,7 @@ export const symbolsSymbolGroupTreeComponent = {
      * Constructor.
      *
      * @param promptService
-     * @param symbolGroupResource
+     * @param symbolGroupApi
      * @param toastService
      * @param symbolResource
      * @param eventBus
@@ -44,7 +44,7 @@ export const symbolsSymbolGroupTreeComponent = {
      */
     /* @ngInject */
     constructor(private promptService: PromptService,
-                private symbolGroupResource: SymbolGroupResource,
+                private symbolGroupApi: SymbolGroupApiService,
                 private toastService: ToastService,
                 private symbolResource: SymbolResource,
                 private eventBus: EventBus,
@@ -67,16 +67,17 @@ export const symbolsSymbolGroupTreeComponent = {
     deleteGroup(): void {
       this.promptService.confirm('Are you sure that you want to delete the group? All symbols will be archived.')
         .then(() => {
-          this.symbolGroupResource.remove(this.group)
-            .then(() => {
+          this.symbolGroupApi.remove(this.group).subscribe(
+            () => {
               this.toastService.success(`Group <strong>${this.group.name}</strong> deleted`);
               this.eventBus.emit(events.GROUP_DELETED, {
                 group: this.group
               });
-            })
-            .catch(err => {
+            },
+            err => {
               this.toastService.danger(`The group could not be deleted. ${err.data.message}`);
-            });
+            }
+          );
         });
     }
 

@@ -17,8 +17,8 @@
 import { ModalComponent } from '../modal.component';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { SymbolGroup } from '../../../entities/symbol-group';
-import { ProjectService } from '../../../services/project.service';
-import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
+import { AppStoreService } from '../../../services/app-store.service';
 
 export const symbolSelectModalComponent = {
   template: require('html-loader!./symbol-select-modal.component.html'),
@@ -38,13 +38,13 @@ export const symbolSelectModalComponent = {
 
     /** Constructor. */
     /* @ngInject */
-    constructor(private projectService: ProjectService,
-                private symbolGroupResource: SymbolGroupResource) {
+    constructor(private appStore: AppStoreService,
+                private symbolGroupApi: SymbolGroupApiService) {
       super();
     }
 
     $onInit(): void {
-      this.symbolGroupResource.getAll(this.projectService.store.currentProject.id).then(
+      this.symbolGroupApi.getAll(this.appStore.project.id).subscribe(
         groups => this.groups = groups
       );
     }

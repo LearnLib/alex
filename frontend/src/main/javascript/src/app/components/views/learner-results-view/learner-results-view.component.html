@@ -1,9 +1,9 @@
 <div class="view">
-    <view-header title="Results"></view-header>
+    <view-header [title]="'Results'"></view-header>
 
     <action-bar>
         <div ng-show="vm.results.length > 0" class="d-flex flex-row align-items-center">
-            <selectable-checkbox-multiple selectable="vm.selectedResults"></selectable-checkbox-multiple>
+            <selectable-checkbox-multiple [selectable]="vm.selectedResults"></selectable-checkbox-multiple>
 
             <div class="ml-3">
                 <button
@@ -47,7 +47,7 @@
 
             <div class="list-group" ng-if="vm.results.length > 0">
                 <div class="list-group-item" ng-repeat="result in vm.results | orderBy:'-testNo':false">
-                    <learner-result-list-item result="result" selectable="vm.selectedResults">
+                    <learner-result-list-item result="result" [selectable]="vm.selectedResults">
                         <div class="btn-group btn-group-xs" uib-dropdown>
                             <button type="button" class="btn btn-default btn-icon dropdown-toggle no-caret" uib-dropdown-toggle>
                                 <i class="fas fa-bars"></i>

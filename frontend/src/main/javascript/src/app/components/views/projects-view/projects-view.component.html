@@ -1,11 +1,11 @@
 <div class="view">
-  <view-header title="Projects"></view-header>
+  <view-header [title]="'Projects'"></view-header>
 
   <action-bar>
     <div class="d-flex flex-row align-items-center">
 
       <div class="mr-3">
-        <selectable-checkbox-multiple items="vm.projects" selectable="vm.selectedProjects"></selectable-checkbox-multiple>
+        <selectable-checkbox-multiple [items]="vm.projects" [selectable]="vm.selectedProjects"></selectable-checkbox-multiple>
       </div>
 
       <button class="btn btn-primary btn-sm mr-3" ng-click="vm.createProject()">Create</button>
@@ -57,7 +57,7 @@
       <div class="list-group" ng-if="vm.projects.length > 0" >
         <div class="list-group-item d-flex flex-row" ng-repeat="project in vm.projects | orderBy:'-name':true">
           <div class="mr-3">
-            <selectable-checkbox item="project" selectable="vm.selectedProjects"></selectable-checkbox>
+            <selectable-checkbox [item]="project" [selectable]="vm.selectedProjects"></selectable-checkbox>
           </div>
           <div class="w-100">
             <a ui-sref="project({projectId: project.id})">

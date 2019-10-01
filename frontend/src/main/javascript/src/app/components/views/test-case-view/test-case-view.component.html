@@ -1,12 +1,8 @@
 <div class="view view-test-case">
-    <view-header title="Test Management"></view-header>
+    <view-header [title]="'Test Management'"></view-header>
     <action-bar>
         <button class="btn btn-sm btn-success mr-2" ng-disabled="vm.active" ng-click="vm.save()">
             <i class="fas fa-fw fa-save"></i> Save
-        </button>
-        <button class="btn btn-sm btn-default" ng-disabled="vm.active"
-                ui-sref="test({projectId: vm.testCase.project, testId: vm.testCase.parent})">
-            <i class="fas fa-fw fa-times"></i> Cancel
         </button>
         <div class="btn-group btn-group-sm float-right mr-0">
             <button class="btn btn-primary" ng-click="vm.execute()" ng-disabled="vm.active">
@@ -42,7 +38,6 @@
             </div>
             <hr>
           </div>
-
 
             <div class="d-flex align-items-center">
                 <div class="mr-1">
@@ -90,90 +85,14 @@
                 </div>
                 <div class="col-md-9 col-sm-7">
 
-                    <pre-post-test-case-step
-                      text="Pre"
-                      groups="vm.groups"
-                      steps="vm.testCase.preSteps"
-                    >
-                    </pre-post-test-case-step>
-                    <hr>
-
-                    <table class="table" ng-if="vm.testCase.steps.length > 0">
-                      <thead>
-                        <tr>
-                          <th width="1">&nbsp;</th>
-                          <th>Symbol</th>
-                          <th>Expected output</th>
-                          <th>Actual output</th>
-                          <th width="1">&nbsp;</th>
-                        </tr>
-                      </thead>
-                      <tbody dragula='"testSymbols"' dragula-model="vm.testCase.steps">
-                        <tr ng-repeat="step in vm.testCase.steps track by $index" ng-class="{'table-danger': vm.result && vm.result.failedStep === $index}">
-                          <td>
-                            <i class="fas fa-grip-vertical handle text-muted cursor-grabbing"></i>
-                          </td>
-
-                          <td>
-                            <div>
-                              <strong>
-                                <a
-                                  class="text-black"
-                                  ui-sref="symbol({project: vm.project.id, symbolId: step.pSymbol.symbol.id})"
-                                >
-                                  {{step.pSymbol.symbol.name}}
-                                </a>
-                              </strong>
-                              <span ng-if="vm.symbolMap[step.pSymbol.symbol.id].steps.length === 0"
-                                    class="badge badge-info">
-                                Not implemented
-                              </span>
-                              <div ng-if="step.pSymbol.parameterValues.length > 0" style="margin-top: .5rem">
-                                <symbol-parameters parameter-values="step.pSymbol.parameterValues"></symbol-parameters>
-                              </div>
-                              <div ng-if="vm.options.showSymbolOutputs && step.pSymbol.symbol.outputs.length > 0"
-                                   style="margin-top: .25rem">
-                                <div ng-repeat="output in step.pSymbol.symbol.outputs" style="margin-bottom: 4px">
-                                  <i class="fas fa-fw fa-level-up-alt fa-rotate-90"></i>
-                                  <span class="output">
-                                    <strong>{{output.name}}</strong>: <em>{{output.parameterType}}</em>
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <div class="flex-shrink-0">
-                              <span ng-click="step.expectedOutputSuccess = !step.expectedOutputSuccess">{{step.expectedOutputSuccess ? 'Ok' : 'Failed'}}</span>
-                              <span ng-class="{'visibility-hidden': step.expectedOutputMessage === ''}">(</span>
-                              <input type="text" ng-model="step.expectedOutputMessage" style="max-width: 60px; margin: 0; padding: 0; border: 0; background: none; outline: none">
-                              <span ng-class="{'visibility-hidden': step.expectedOutputMessage === ''}">)</span>
-                            </div>
-                          </td>
-                          <td>
-                            <div ng-if="vm.result.outputs[$index]">
-                                <div>{{vm.result.outputs[$index].output}}</div>
-                                <output-error-trace output="vm.result.outputs[$index]" show-first="false"></output-error-trace>
-                            </div>
-                          </td>
-                          <td>
-                            <i class="fas fa-times cursor-pointer" ng-click="vm.testCase.steps.splice($index, 1)"></i>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-
-                    <div class="alert alert-info" ng-if="!vm.testCase.steps.length">
-                        Select a symbol to model the test case.
-                    </div>
-
-                    <hr>
-                    <pre-post-test-case-step
-                      text="Post"
-                      groups="vm.groups"
-                      steps="vm.testCase.postSteps"
-                    >
-                    </pre-post-test-case-step>
+                  <test-case-table
+                    *ngIf="vm.testCase != null"
+                    [test-case]="vm.testCase"
+                    [symbol-map]="vm.symbolMap"
+                    [options]="vm.options"
+                    [result]="vm.result"
+                  >
+                  </test-case-table>
 
                 </div>
             </div>

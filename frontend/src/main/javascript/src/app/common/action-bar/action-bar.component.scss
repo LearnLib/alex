@@ -1,0 +1,19 @@
+@import "../../../scss/mixins";
+@import "../../../scss/sidebar";
+
+.action-bar {
+  min-height: 37px;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  &.fixed {
+    @include position(fixed, 0, 0, null, 0);
+    margin-left: $sidebar-width;
+    z-index: 1010; // that is 10 higher than the drop down menus in the view
+  }
+
+  .btn-group {
+    margin-right: 6px
+  }
+}

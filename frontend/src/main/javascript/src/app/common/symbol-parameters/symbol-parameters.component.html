@@ -1,0 +1,21 @@
+<div
+  class="symbol-parameter-values d-flex flex-row text-muted"
+  *ngFor="let pv of publicParameterValues"
+>
+  <div class="flex-shrink-0">
+    <em>{{pv.parameter.name}}</em> =&nbsp;
+  </div>
+  <div class="w-100 input-parameter-value" style="position: relative">
+    <i
+      class="fas fa-fw fa-times cursor-pointer"
+      (click)="pv.value = null"
+    >
+    </i>
+    <input
+      class="w-100 d-block"
+      type="text"
+      [(ngModel)]="pv.value"
+      [placeholder]="pv.value == null ? 'null' : ''"
+    >
+  </div>
+</div>

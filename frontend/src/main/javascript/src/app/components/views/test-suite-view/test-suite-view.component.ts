@@ -19,20 +19,20 @@ import { webBrowser } from '../../../constants';
 import { DriverConfigService } from '../../../services/driver-config.service';
 import { DateUtils } from '../../../utils/date-utils';
 import { Selectable } from '../../../utils/selectable';
-import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
-import { ProjectService } from '../../../services/project.service';
+import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { TestResource } from '../../../services/resources/test-resource.service';
 import { PromptService } from '../../../services/prompt.service';
-import { SettingsResource } from '../../../services/resources/settings-resource.service';
+import { SettingsApiService } from '../../../services/resources/settings-api.service';
 import { DownloadService } from '../../../services/download.service';
 import { ClipboardService } from '../../../services/clipboard.service';
 import { NotificationService } from '../../../services/notification.service';
-import { TestConfigResource } from '../../../services/resources/test-config-resource.service';
-import { TestReportResource } from '../../../services/resources/test-report-resource.service';
+import { TestConfigApiService } from '../../../services/resources/test-config-api.service';
+import { TestReportApiService } from '../../../services/resources/test-report-api.service';
 import { Project } from '../../../entities/project';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { TestCase } from '../../../entities/test-case';
+import { AppStoreService } from '../../../services/app-store.service';
 
 export const testSuiteViewComponent = {
   template: require('html-loader!./test-suite-view.component.html'),
@@ -66,37 +66,20 @@ export const testSuiteViewComponent = {
 
     public selectedTests: Selectable<any>;
 
-    /**
-     * Constructor.
-     *
-     * @param {$state} $state
-     * @param symbolGroupResource
-     * @param projectService
-     * @param toastService
-     * @param testResource
-     * @param promptService
-     * @param $uibModal
-     * @param settingsResource
-     * @param downloadService
-     * @param clipboardService
-     * @param testReportResource
-     * @param notificationService
-     * @param testConfigResource
-     */
     /* @ngInject */
     constructor(private $state: any,
-                private symbolGroupResource: SymbolGroupResource,
-                private projectService: ProjectService,
+                private symbolGroupApi: SymbolGroupApiService,
+                private appStore: AppStoreService,
                 private toastService: ToastService,
                 private testResource: TestResource,
                 private promptService: PromptService,
                 private $uibModal: any,
-                private settingsResource: SettingsResource,
+                private settingsApi: SettingsApiService,
                 private downloadService: DownloadService,
                 private clipboardService: ClipboardService,
-                private testReportResource: TestReportResource,
+                private testReportApi: TestReportApiService,
                 private notificationService: NotificationService,
-                private testConfigResource: TestConfigResource) {
+                private testConfigApi: TestConfigApiService) {
 
       this.testSuite = null;
       this.results = {};
@@ -116,17 +99,20 @@ export const testSuiteViewComponent = {
         createReport: true
       };
 
-      this.settingsResource.getSupportedWebDrivers()
-        .then(data => this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver))
-        .catch(console.error);
+      this.settingsApi.getSupportedWebDrivers().subscribe(
+        data => this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver),
+        console.error
+      );
 
-      this.symbolGroupResource.getAll(this.project.id)
-        .then((groups) => this.groups = groups)
-        .catch(console.error);
+      this.symbolGroupApi.getAll(this.project.id).subscribe(
+        groups => this.groups = groups,
+        console.error
+      );
 
-      this.testConfigResource.getAll(this.project.id)
-        .then(testConfigs => this.testConfigs = testConfigs)
-        .catch(console.error);
+      this.testConfigApi.getAll(this.project.id).subscribe(
+        testConfigs => this.testConfigs = testConfigs,
+        console.error
+      );
 
       // check if a test process is active
       this.testResource.getStatus(this.project.id)
@@ -314,14 +300,15 @@ export const testSuiteViewComponent = {
                 this.toastService.success('The test process finished');
                 this.notificationService.notify('ALEX has finished executing the tests.');
 
-                this.testReportResource.getLatest(this.project.id)
-                  .then(data => {
+                this.testReportApi.getLatest(this.project.id).subscribe(
+                  data => {
                     data.testResults.forEach((result) => {
                       this.results[result.test.id] = result;
                     });
                     this.report = data;
-                  })
-                  .catch(console.error);
+                  },
+                  console.error
+                );
               } else {
                 poll(3000);
               }
@@ -440,15 +427,16 @@ export const testSuiteViewComponent = {
       config.project = this.project.id;
       config.environment = config.environment.id;
 
-      this.testConfigResource.create(this.project.id, config)
-        .then(createdConfig => {
+      this.testConfigApi.create(this.project.id, config).subscribe(
+        createdConfig => {
           this.testConfigs.push(createdConfig);
           this.toastService.success('Config has been saved');
-        })
-        .catch(err => {
+        },
+        err => {
           this.toastService.danger(`The config could not be saved. ${err.data.message}`);
           this.toastService.danger(`The config could not be saved. ${err.data.message}`);
-        });
+        }
+      );
     }
 
     selectTestConfig(config: any): void {
@@ -459,7 +447,7 @@ export const testSuiteViewComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

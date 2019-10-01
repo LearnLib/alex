@@ -17,7 +17,7 @@
 import { ModalComponent } from '../modal.component';
 import { ProjectService } from '../../../services/project.service';
 import { ToastService } from '../../../services/toast.service';
-import { ProjectResource } from "../../../services/resources/project-resource.service";
+import { ProjectApiService } from '../../../services/resources/project-api.service';
 
 /**
  * The component for the symbols import modal window.
@@ -26,7 +26,7 @@ export const projectImportModalComponent = {
   template: require('html-loader!./project-import-modal.component.html'),
   bindings: {
     dismiss: '&',
-    close: '&',
+    close: '&'
   },
   controllerAs: 'vm',
   controller: class ProjectImportModalComponent extends ModalComponent {
@@ -40,7 +40,7 @@ export const projectImportModalComponent = {
     public name: string;
 
     /* @ngInject */
-    constructor(private projectResource: ProjectResource,
+    constructor(private projectApi: ProjectApiService,
                 private projectService: ProjectService,
                 private toastService: ToastService) {
       super();
@@ -68,14 +68,15 @@ export const projectImportModalComponent = {
       this.errorMessage = null;
 
       this.importData.project.name = this.name;
-      this.projectService.import(this.importData)
-        .then(() => {
+      this.projectService.import(this.importData).subscribe(
+        () => {
           this.toastService.success('The project has been imported');
           this.close();
-        })
-        .catch(err => {
+        },
+        err => {
           this.errorMessage = `The project could not be imported. ${err.data.message}`;
-        });
+        }
+      );
     }
   }
 };

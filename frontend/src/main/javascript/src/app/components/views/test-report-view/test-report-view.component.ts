@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { TestReportResource } from '../../../services/resources/test-report-resource.service';
-import { ProjectService } from '../../../services/project.service';
+import { TestReportApiService } from '../../../services/resources/test-report-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { TestReportService } from '../../../services/test-report.service';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The component for a single test report.
@@ -31,19 +31,9 @@ export const testReportViewComponent = {
     /** The report. */
     public report: any;
 
-    /**
-     * Constructor.
-     *
-     * @param testReportResource
-     * @param projectService
-     * @param toastService
-     * @param testReportService
-     * @param $state
-     * @param $stateParams
-     */
     /* @ngInject */
-    constructor(private testReportResource: TestReportResource,
-                private projectService: ProjectService,
+    constructor(private testReportApi: TestReportApiService,
+                private appStore: AppStoreService,
                 private toastService: ToastService,
                 private testReportService: TestReportService,
                 private $state: any,
@@ -51,19 +41,21 @@ export const testReportViewComponent = {
 
       this.report = null;
 
-      this.testReportResource.get(this.project.id, this.$stateParams.reportId)
-        .then((data) => this.report = data)
-        .catch((err) => this.toastService.danger(`Failed to load the report. ${err.data.message}`));
+      this.testReportApi.get(this.project.id, this.$stateParams.reportId).subscribe(
+        data => this.report = data,
+        err => this.toastService.danger(`Failed to load the report. ${err.data.message}`)
+      );
     }
 
     /** Deletes the report. */
     deleteReport(): void {
-      this.testReportResource.remove(this.project.id, this.report.id)
-        .then(() => {
+      this.testReportApi.remove(this.project.id, this.report.id).subscribe(
+        () => {
           this.toastService.success('The report has been deleted.');
           this.$state.go('testReports', {projectId: this.project.id});
-        })
-        .catch((err) => this.toastService.danger(`The report could not be deleted. ${err.data.message}`));
+        },
+        err => this.toastService.danger(`The report could not be deleted. ${err.data.message}`)
+      );
     }
 
     /** Download the report. */
@@ -72,7 +64,7 @@ export const testReportViewComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

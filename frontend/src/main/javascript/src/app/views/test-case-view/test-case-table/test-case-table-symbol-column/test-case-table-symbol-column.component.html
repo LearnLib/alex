@@ -1,0 +1,33 @@
+<div>
+  <strong>
+    <a
+      class="text-black"
+      ui-sref="symbol({project: project.id, symbolId: step.pSymbol.symbol.id})"
+    >
+      {{pSymbol.symbol.name}}
+    </a>
+  </strong>
+  <span
+    *ngIf="symbolMap[pSymbol.symbol.id]?.steps.length === 0"
+    class="badge badge-info"
+  >
+    Not implemented
+  </span>
+  <div *ngIf="pSymbol.parameterValues.length > 0">
+    <symbol-parameters [parameterValues]="pSymbol.parameterValues"></symbol-parameters>
+  </div>
+  <div
+    class="mt-1"
+    *ngIf="options.showSymbolOutputs && pSymbol.symbol.outputs.length > 0"
+  >
+    <div
+      style="margin-bottom: 4px"
+      *ngFor="let output of pSymbol.symbol.outputs"
+    >
+      <i class="fas fa-fw fa-level-up-alt fa-rotate-90"></i>
+      <span class="output">
+        <strong>{{output.name}}</strong>: <em>{{output.parameterType}}</em>
+      </span>
+    </div>
+  </div>
+</div>

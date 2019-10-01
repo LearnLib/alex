@@ -1,5 +1,5 @@
 <div class="view">
-    <view-header title="Learner Process Setup"></view-header>
+    <view-header [title]="'Learner Process Setup'"></view-header>
 
     <action-bar>
         <div class="btn-group btn-group-sm float-right">
@@ -65,13 +65,9 @@
                             Select a reset symbol <em>(required)</em>
                         </div>
                         <div class="flex-shrink-0">
-                            <symbol-select-dropdown
-                                groups="vm.groups"
-                                on-symbol-selected="vm.setResetSymbol(symbol)"
-                                variant="btn-xs btn-info"
-                                class="float-right flex-shrink-0"
-                            >
-                            </symbol-select-dropdown>
+                          <button class="btn btn-xs btn-info float-right flex-shrink-0" ng-click="vm.selectResetSymbol()">
+                            Select symbol
+                          </button>
                         </div>
                     </div>
 
@@ -82,17 +78,14 @@
                                     <strong>{{vm.pResetSymbol.symbol.name}}</strong>
                                 </div>
                                 <symbol-parameters
-                                  parameter-values="vm.pResetSymbol.parameterValues"
+                                  [parameter-values]="vm.pResetSymbol.parameterValues"
                                 >
                                 </symbol-parameters>
                             </div>
                             <div class="flex-shrink-0">
-                                <symbol-select-dropdown
-                                  groups="vm.groups"
-                                  on-symbol-selected="vm.setResetSymbol(symbol)"
-                                  variant="btn-xs btn-default"
-                                >
-                                </symbol-select-dropdown>
+                              <button class="btn btn-xs btn-default" ng-click="vm.selectResetSymbol()">
+                                Select symbol
+                              </button>
                             </div>
                         </div>
                     </div>
@@ -106,7 +99,7 @@
                                 <div>
                                     <strong>{{pSymbol.symbol.name}}</strong>
                                 </div>
-                                <symbol-parameters parameter-values="pSymbol.parameterValues"></symbol-parameters>
+                                <symbol-parameters [parameter-values]="pSymbol.parameterValues"></symbol-parameters>
                             </div>
                             <div style="flex-shrink: 0">
                                 <i class="fas fa-fw fa-times text-muted cursor-pointer"
@@ -126,13 +119,9 @@
                             Select a post symbol <em>(optional)</em>
                         </div>
                         <div class="flex-shrink-0">
-                            <symbol-select-dropdown
-                                groups="vm.groups"
-                                on-symbol-selected="vm.setPostSymbol(symbol)"
-                                variant="btn-xs btn-info"
-                                class="float-right flex-shrink-0"
-                            >
-                            </symbol-select-dropdown>
+                          <button class="btn btn-xs btn-info float-right flex-shrink-0" ng-click="vm.selectPostSymbol()">
+                            Select symbol
+                          </button>
                         </div>
                     </div>
 
@@ -143,21 +132,19 @@
                                     <strong>{{vm.pPostSymbol.symbol.name}}</strong>
                                 </div>
                                 <symbol-parameters
-                                  parameter-values="vm.pPostSymbol.parameterValues"
+                                  [parameter-values]="vm.pPostSymbol.parameterValues"
                                 >
                                 </symbol-parameters>
                             </div>
                             <div class="flex-shrink-0">
-                                <symbol-select-dropdown
-                                  groups="vm.groups"
-                                  on-symbol-selected="vm.setResetSymbol(symbol)"
-                                  variant="btn-xs btn-default"
-                                  class="d-inline-block"
-                                >
-                                </symbol-select-dropdown>
-                                <button class="btn btn-xs btn-default" ng-click="vm.pPostSymbol = null">
+                              <div class="btn btn-group btn-group-xs">
+                                <button class="btn btn-default" ng-click="vm.selectPostSymbol()">
+                                  Select symbol
+                                </button>
+                                <button class="btn  btn-default" ng-click="vm.pPostSymbol = null">
                                     <i class="fas fa-fw fa-times"></i>
                                 </button>
+                              </div>
                             </div>
                         </div>
                     </div>

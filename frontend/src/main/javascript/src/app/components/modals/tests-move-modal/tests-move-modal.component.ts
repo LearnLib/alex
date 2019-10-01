@@ -17,8 +17,8 @@
 import { ModalComponent } from '../modal.component';
 import { TestResource } from '../../../services/resources/test-resource.service';
 import { ToastService } from '../../../services/toast.service';
-import { ProjectService } from '../../../services/project.service';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 export const testsMoveModalComponent = {
   template: require('html-loader!./tests-move-modal.component.html'),
@@ -42,17 +42,10 @@ export const testsMoveModalComponent = {
     /** The error message to display. */
     public errorMessage: string = null;
 
-    /**
-     * Constructor.
-     *
-     * @param testResource
-     * @param toastService
-     * @param projectService
-     */
     /* @ngInject */
     constructor(private testResource: TestResource,
                 private toastService: ToastService,
-                private projectService: ProjectService) {
+                private appStore: AppStoreService) {
       super();
     }
 
@@ -102,7 +95,7 @@ export const testsMoveModalComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

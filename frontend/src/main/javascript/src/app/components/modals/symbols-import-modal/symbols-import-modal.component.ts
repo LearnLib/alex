@@ -17,11 +17,11 @@
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 import { ModalComponent } from '../modal.component';
 import { SymbolResource } from '../../../services/resources/symbol-resource.service';
-import { ProjectService } from '../../../services/project.service';
 import { ToastService } from '../../../services/toast.service';
-import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The component for the symbols import modal window.
@@ -48,19 +48,11 @@ export const symbolsImportModalComponent = {
     /** The data to import */
     public importData: any = null;
 
-    /**
-     * Constructor.
-     *
-     * @param symbolResource
-     * @param projectService
-     * @param toastService
-     * @param symbolGroupResource
-     */
     /* @ngInject */
     constructor(private symbolResource: SymbolResource,
-                private projectService: ProjectService,
+                private appStore: AppStoreService,
                 private toastService: ToastService,
-                private symbolGroupResource: SymbolGroupResource) {
+                private symbolGroupApi: SymbolGroupApiService) {
       super();
     }
 
@@ -103,14 +95,15 @@ export const symbolsImportModalComponent = {
             this.errorMessage = `The symbols could not be imported. ${err.data.message}`;
           });
       } else {
-        this.symbolGroupResource.importMany(this.project.id, this.importData.symbolGroups)
-          .then(importedGroups => {
+        this.symbolGroupApi.importMany(this.project.id, this.importData.symbolGroups).subscribe(
+          importedGroups => {
             this.toastService.success('The symbols have been imported');
             this.close({$value: {type: 'symbolGroups', groups: importedGroups}});
-          })
-          .catch(err => {
+          },
+          err => {
             this.errorMessage = `The symbols could not be imported. ${err.data.message}`;
-          });
+          }
+        );
       }
     }
 
@@ -119,7 +112,7 @@ export const symbolsImportModalComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

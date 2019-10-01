@@ -15,7 +15,7 @@
  */
 
 import { ModalComponent } from '../modal.component';
-import { WebhookResource } from '../../../services/resources/webhook-resource.service';
+import { WebhookApiService } from '../../../services/resources/webhook-api.service';
 import { ToastService } from '../../../services/toast.service';
 
 /**
@@ -45,11 +45,11 @@ export const webhookCreateModalComponent = {
     /**
      * Constructor.
      *
-     * @param webhookResource
+     * @param webhookApi
      * @param toastService
      */
     /* @ngInject */
-    constructor(private webhookResource: WebhookResource,
+    constructor(private webhookApi: WebhookApiService,
                 private toastService: ToastService) {
       super();
 
@@ -61,9 +61,10 @@ export const webhookCreateModalComponent = {
     }
 
     $onInit(): void {
-      this.webhookResource.getEvents()
-        .then((events) => this.events = events)
-        .catch(console.error);
+      this.webhookApi.getEvents().subscribe(
+        events => this.events = events,
+        console.error
+      );
     }
 
     /** Creates the webhook. */
@@ -75,14 +76,15 @@ export const webhookCreateModalComponent = {
         return;
       }
 
-      this.webhookResource.create(this.webhook)
-        .then((webhook) => {
+      this.webhookApi.create(this.webhook).subscribe(
+        webhook => {
           this.toastService.success('The webhook has been registered.');
           this.close({$value: webhook});
-        })
-        .catch((error) => {
+        },
+        error => {
           this.errorMessage = error.data.message;
-        });
+        }
+      );
     }
   }
 };

@@ -17,7 +17,7 @@
 import { DateUtils } from '../utils/date-utils';
 import { DownloadService } from './download.service';
 import { PromptService } from './prompt.service';
-import { TestReportResource } from './resources/test-report-resource.service';
+import { TestReportApiService } from './resources/test-report-api.service';
 import { ToastService } from './toast.service';
 
 /**
@@ -25,16 +25,8 @@ import { ToastService } from './toast.service';
  */
 export class TestReportService {
 
-  /**
-   * Constructor.
-   *
-   * @param testReportResource
-   * @param promptService
-   * @param downloadService
-   * @param toastService
-   */
   /* @ngInject */
-  constructor(private testReportResource: TestReportResource,
+  constructor(private testReportApi: TestReportApiService,
               private promptService: PromptService,
               private downloadService: DownloadService,
               private toastService: ToastService) {
@@ -47,13 +39,15 @@ export class TestReportService {
    * @param reportId The id of the report.
    */
   download(projectId: number, reportId: number): void {
-    this.testReportResource.get(projectId, reportId, {format: 'junit+xml'})
-      .then((xml) => {
+    this.testReportApi.get(projectId, reportId, {format: 'junit+xml'}).subscribe(
+      xml => {
         this.promptService.prompt('Enter the name for the report', 'report-' + DateUtils.YYYYMMDD())
           .then((name) => {
             this.downloadService.downloadXml(xml, name);
             this.toastService.success('The report has been downloaded.');
           });
-      }).catch(console.error);
+      },
+      console.error
+    );
   }
 }

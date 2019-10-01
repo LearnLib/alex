@@ -1,0 +1,39 @@
+<table class="table mb-0">
+  <tbody dragula="STEPS" [dragulaModel]="steps" (dragulaModelChange)="stepsChange.emit($event)">
+  <ng-container *ngIf="steps.length === 0">
+    <tr>
+      <td colspan="5">
+        <div class="alert alert-info mb-0">
+          There are no steps yet.
+        </div>
+      </td>
+    </tr>
+  </ng-container>
+  <ng-container *ngIf="steps.length > 0">
+    <tr *ngFor="let step of steps">
+      <td width="1">
+        <div class="pl-2">
+          <i class="fas fa-grip-vertical handle text-muted cursor-grabbing"></i>
+        </div>
+      </td>
+      <td>
+        <test-case-table-symbol-column
+          [symbolMap]="symbolMap"
+          [options]="options"
+          [pSymbol]="step.pSymbol"
+        >
+        </test-case-table-symbol-column>
+      </td>
+      <td>
+      </td>
+      <td>
+      </td>
+      <td width="1">
+        <div class="pr-2">
+          <i class="fas fa-times cursor-pointer" (click)="steps.splice(i, 1)"></i>
+        </div>
+      </td>
+    </tr>
+  </ng-container>
+  </tbody>
+</table>

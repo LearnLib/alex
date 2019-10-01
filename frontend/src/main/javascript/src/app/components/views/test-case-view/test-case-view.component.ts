@@ -19,14 +19,14 @@ import { TestCaseStep } from '../../../entities/test-case-step';
 import { DriverConfigService } from '../../../services/driver-config.service';
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 import { IScope } from 'angular';
-import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
-import { ProjectService } from '../../../services/project.service';
+import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { TestResource } from '../../../services/resources/test-resource.service';
-import { SettingsResource } from '../../../services/resources/settings-resource.service';
+import { SettingsApiService } from '../../../services/resources/settings-api.service';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 export const testCaseViewComponent = {
   template: require('html-loader!./test-case-view.component.html'),
@@ -63,29 +63,14 @@ export const testCaseViewComponent = {
 
     public groups: SymbolGroup[];
 
-    /**
-     * Constructor.
-     *
-     * @param $scope
-     * @param $state
-     * @param dragulaService
-     * @param symbolGroupResource
-     * @param projectService
-     * @param toastService
-     * @param testResource
-     * @param $uibModal
-     * @param settingsResource
-     */
     /* @ngInject */
     constructor(private $scope: IScope,
-                private $state: any,
-                private dragulaService: any,
-                private symbolGroupResource: SymbolGroupResource,
-                private projectService: ProjectService,
+                private symbolGroupApi: SymbolGroupApiService,
+                private appStore: AppStoreService,
                 private toastService: ToastService,
                 private testResource: TestResource,
                 private $uibModal: any,
-                private settingsResource: SettingsResource) {
+                private settingsApi: SettingsApiService) {
 
       this.testCase = null;
       this.result = null;
@@ -104,24 +89,18 @@ export const testCaseViewComponent = {
         createReport: true,
       };
 
-      this.symbolGroupResource.getAll(this.project.id)
-        .then((groups) => {
+      this.symbolGroupApi.getAll(this.project.id).subscribe(
+        groups => {
+          SymbolGroupUtils.getSymbols(groups).forEach(s => this.symbolMap[s.id] = s);
           this.groups = groups;
-          SymbolGroupUtils.getSymbols(this.groups).forEach(s => this.symbolMap[s.id] = s);
-        })
-        .catch(console.error);
+        },
+        console.error
+      );
 
-      this.settingsResource.getSupportedWebDrivers()
-        .then((data) => this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver))
-        .catch(console.error);
-
-      this.dragulaService.options($scope, 'testSymbols', {
-        removeOnSpill: false,
-        mirrorContainer: document.createElement('div'),
-        moves: (el, container, handle) => {
-          return handle.classList.contains('handle');
-        }
-      });
+      this.settingsApi.getSupportedWebDrivers().subscribe(
+        data => this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver),
+        console.error
+      );
 
       const keyDownHandler = (e) => {
         if (e.ctrlKey && e.which === 83) {
@@ -134,11 +113,8 @@ export const testCaseViewComponent = {
       window.addEventListener('keydown', keyDownHandler);
 
       this.$scope.$on('$destroy', () => {
-        this.dragulaService.destroy($scope, 'testSymbols');
         window.removeEventListener('keydown', keyDownHandler);
       });
-
-      this.$scope.$on('testSymbols.drag', () => this.result.outputs = []);
     }
 
     $onInit(): void {
@@ -212,7 +188,7 @@ export const testCaseViewComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

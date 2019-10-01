@@ -17,7 +17,7 @@
 import { User } from '../../../entities/user';
 import { UserResource } from '../../../services/resources/user-resource.service';
 import { ToastService } from '../../../services/toast.service';
-import { SettingsResource } from '../../../services/resources/settings-resource.service';
+import { SettingsApiService } from '../../../services/resources/settings-api.service';
 import { UserService } from '../../../services/user.service';
 
 /**
@@ -42,7 +42,7 @@ class UserLoginFormComponent {
    * @param userResource
    * @param jwtHelper
    * @param toastService
-   * @param settingsResource
+   * @param settingsApi
    * @param userService
    */
   /* @ngInject */
@@ -50,12 +50,13 @@ class UserLoginFormComponent {
               private userResource: UserResource,
               private jwtHelper: any,
               private toastService: ToastService,
-              private settingsResource: SettingsResource,
+              private settingsApi: SettingsApiService,
               private userService: UserService) {
 
-    this.settingsResource.get()
-      .then(settings => this.settings = settings)
-      .catch(err => this.toastService.danger(`Could not get settings. ${err.data.message}`));
+    this.settingsApi.get().subscribe(
+      settings => this.settings = settings,
+      err => this.toastService.danger(`Could not get settings. ${err.data.message}`)
+    );
   }
 
   /**

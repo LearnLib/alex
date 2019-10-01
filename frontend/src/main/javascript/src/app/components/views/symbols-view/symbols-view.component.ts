@@ -21,13 +21,13 @@ import { SymbolGroup } from '../../../entities/symbol-group';
 import { Selectable } from '../../../utils/selectable';
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 import { IScope } from 'angular';
-import { ProjectService } from '../../../services/project.service';
 import { SymbolResource } from '../../../services/resources/symbol-resource.service';
-import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { EventBus } from '../../../services/eventbus.service';
 import { PromptService } from '../../../services/prompt.service';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller that handles CRUD operations on symbols and symbol groups.
@@ -43,24 +43,11 @@ class SymbolsViewComponent {
   /** The symbols in the groups. */
   public symbols: AlphabetSymbol[];
 
-  /**
-   * Constructor.
-   *
-   * @param $scope
-   * @param projectService
-   * @param symbolResource
-   * @param symbolGroupResource
-   * @param toastService
-   * @param eventBus
-   * @param promptService
-   * @param $state
-   * @param $uibModal
-   */
   /* @ngInject */
   constructor(private $scope: IScope,
-              private projectService: ProjectService,
+              private appStore: AppStoreService,
               private symbolResource: SymbolResource,
-              private symbolGroupResource: SymbolGroupResource,
+              private symbolGroupApi: SymbolGroupApiService,
               private toastService: ToastService,
               private eventBus: EventBus,
               private promptService: PromptService,
@@ -71,13 +58,14 @@ class SymbolsViewComponent {
     this.groups = [];
     this.symbols = [];
 
-    this.symbolGroupResource.getAll(this.project.id)
-      .then(groups => {
+    this.symbolGroupApi.getAll(this.project.id).subscribe(
+      groups => {
         this.groups = groups;
         this.symbols = SymbolGroupUtils.getSymbols(this.groups);
         this.selectedSymbols = new Selectable(this.symbols, 'id');
-      })
-      .catch(err => console.log(err));
+      },
+      console.error
+    );
 
     this.eventBus.on(events.GROUP_UPDATED, (evt, data) => {
       this.updateGroup(data.group);
@@ -337,7 +325,7 @@ class SymbolsViewComponent {
   }
 
   get project(): Project {
-    return this.projectService.store.currentProject;
+    return this.appStore.project;
   }
 }
 

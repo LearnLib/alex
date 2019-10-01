@@ -31,7 +31,7 @@
             <div class="list-group-item" ng-repeat="formula in vm.formulas" ng-class="vm.getItemClass(formula.id)" ng-if="vm.formulas.length > 0">
               <div class="d-flex">
                 <div>
-                  <selectable-checkbox item="formula" selectable="vm.selectedFormulas"></selectable-checkbox>
+                  <selectable-checkbox [item]="formula" [selectable]="vm.selectedFormulas"></selectable-checkbox>
                 </div>
                 <div class="pl-3 w-100">
                   <div class="d-flex">

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { ProjectService } from '../../../services/project.service';
 import { TestResource } from '../../../services/resources/test-resource.service';
-import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The view for the tests.
@@ -29,21 +28,14 @@ export const testsViewComponent = {
     /** The test case or test suite. */
     public test: any;
 
-    /**
-     * Constructor.
-     *
-     * @param $state
-     * @param projectService
-     * @param testResource
-     */
     /* @ngInject */
     constructor(private $state: any,
-                private projectService: ProjectService,
+                private appStore: AppStoreService,
                 private testResource: TestResource) {
 
       this.test = null;
 
-      const project: Project = projectService.store.currentProject;
+      const project = this.appStore.project;
       const testId: number = $state.params.testId;
       if (testId === 0) {
         testResource.getRoot(project.id)

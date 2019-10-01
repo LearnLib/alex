@@ -1,13 +1,29 @@
+/*
+ * Copyright 2015 - 2019 TU Dortmund
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { events } from '../../../constants';
 import { TestCaseStep } from '../../../entities/test-case-step';
 import { LearnResult } from '../../../entities/learner-result';
 import { IScope } from 'angular';
 import { EventBus } from '../../../services/eventbus.service';
-import { ProjectService } from '../../../services/project.service';
 import { TestResource } from '../../../services/resources/test-resource.service';
 import { ToastService } from '../../../services/toast.service';
 import { Project } from '../../../entities/project';
 import { TestCase } from '../../../entities/test-case';
+import { AppStoreService } from '../../../services/app-store.service';
 
 export const testCaseGenerationWidgetComponent = {
   template: require('html-loader!./test-case-generation-widget.component.html'),
@@ -31,20 +47,10 @@ export const testCaseGenerationWidgetComponent = {
     /** The test case to create. */
     public testCase: TestCase;
 
-
-    /**
-     * Constructor.
-     *
-     * @param $scope
-     * @param eventBus
-     * @param projectService
-     * @param testResource
-     * @param toastService
-     */
     /* @ngInject */
     constructor(private $scope: IScope,
                 private eventBus: EventBus,
-                private projectService: ProjectService,
+                private appStore: AppStoreService,
                 private testResource: TestResource,
                 private toastService: ToastService) {
 
@@ -97,7 +103,7 @@ export const testCaseGenerationWidgetComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

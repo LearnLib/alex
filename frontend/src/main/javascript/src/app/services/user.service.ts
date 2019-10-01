@@ -16,7 +16,7 @@
 
 import { User } from '../entities/user';
 import { ClipboardService } from './clipboard.service';
-import { ProjectService } from './project.service';
+import { AppStoreService } from './app-store.service';
 
 export interface UserStore {
   currentUser?: User,
@@ -28,14 +28,8 @@ export class UserService {
   /** The store. */
   public store: UserStore;
 
-  /**
-   * Constructor.
-   *
-   * @param projectService
-   * @param clipboardService
-   */
   /* @ngInject */
-  constructor(private projectService: ProjectService,
+  constructor(private appStore: AppStoreService,
               private clipboardService: ClipboardService) {
 
     this.store = {
@@ -76,7 +70,7 @@ export class UserService {
     localStorage.removeItem('jwt');
     this.store.currentUser = null;
     this.store.jwt = null;
-    this.projectService.reset();
+    this.appStore.closeProject();
     this.clipboardService.clear();
   }
 }

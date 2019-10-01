@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { ProjectService } from '../../../services/project.service';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller of the component for the project dashboard.
@@ -25,17 +25,12 @@ export const projectViewComponent = {
   controllerAs: 'vm',
   controller: class ProjectViewComponent {
 
-    /**
-     * Constructor.
-     *
-     * @param projectService
-     */
     /* @ngInject */
-    constructor(private projectService: ProjectService) {
+    constructor(private appStore: AppStoreService) {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

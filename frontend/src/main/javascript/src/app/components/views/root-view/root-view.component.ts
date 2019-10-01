@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { ProjectService } from '../../../services/project.service';
 import { UserService } from '../../../services/user.service';
 import { User } from '../../../entities/user';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller of the index page.
@@ -27,16 +27,9 @@ export const rootViewComponent = {
   controllerAs: 'vm',
   controller: class RootViewComponent {
 
-    /**
-     * Constructor.
-     *
-     * @param $state
-     * @param projectService
-     * @param userService
-     */
     /* @ngInject */
     constructor(private $state: any,
-                private projectService: ProjectService,
+                private appStore: AppStoreService,
                 private userService: UserService) {
 
       if (this.user !== null) {
@@ -57,7 +50,7 @@ export const rootViewComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

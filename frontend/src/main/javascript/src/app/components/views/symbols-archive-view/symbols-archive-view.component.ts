@@ -17,10 +17,10 @@
 import { remove } from 'lodash';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { Selectable } from '../../../utils/selectable';
-import { ProjectService } from '../../../services/project.service';
 import { SymbolResource } from '../../../services/resources/symbol-resource.service';
 import { ToastService } from '../../../services/toast.service';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover
@@ -34,16 +34,8 @@ class SymbolsArchiveViewComponent {
   /** The selected symbols. */
   public selectedSymbols: Selectable<AlphabetSymbol>;
 
-  /**
-   * Constructor.
-   *
-   * @param projectService
-   * @param symbolResource
-   * @param toastService
-   * @param $uibModal
-   */
   /* @ngInject */
-  constructor(private projectService: ProjectService,
+  constructor(private appStore: AppStoreService,
               private symbolResource: SymbolResource,
               private toastService: ToastService,
               private $uibModal: any) {
@@ -153,7 +145,7 @@ class SymbolsArchiveViewComponent {
   }
 
   get project(): Project {
-    return this.projectService.store.currentProject;
+    return this.appStore.project;
   }
 }
 

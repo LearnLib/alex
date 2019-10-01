@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { UiService } from '../../services/ui.service';
+import { AppStoreService } from '../../services/app-store.service';
 
 /**
  * The main component that is the start point of the application.
@@ -25,17 +25,8 @@ export const alexComponent = {
   controllerAs: 'vm',
   controller: class AlexComponent {
 
-    /**
-     * Constructor.
-     *
-     * @param uiService
-     */
     /* @ngInject */
-    constructor(private uiService: UiService) {
-    }
-
-    get collapsed(): boolean {
-      return this.uiService.store.sidebar.collapsed;
+    constructor(public appStore: AppStoreService) {
     }
   }
 };

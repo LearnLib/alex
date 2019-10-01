@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ProjectService } from '../../services/project.service';
 import { TestReportService } from '../../services/test-report.service';
 import { Project } from '../../entities/project';
+import { AppStoreService } from '../../services/app-store.service';
 
 /**
  * Displays a test result.
@@ -39,7 +39,7 @@ export const testResultReportComponent = {
      * @param testReportService
      */
     /* @ngInject */
-    constructor(private projectService: ProjectService,
+    constructor(private appStore: AppStoreService,
                 private testReportService: TestReportService) {
     }
 
@@ -49,7 +49,7 @@ export const testResultReportComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

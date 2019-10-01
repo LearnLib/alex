@@ -1,5 +1,5 @@
 <div class="view">
-  <view-header title="ALEX is learning"></view-header>
+  <view-header [title]="'ALEX is learning'"></view-header>
 
   <div class="learn-start-wrapper flex-column" ng-if="vm.status != null && !vm.finished">
     <div class="container-fluid learn-loading-indicator">
@@ -74,7 +74,7 @@
     </div>
 
     <div class="w-100 h-100" style="border-top: 1px solid #ddd">
-      <view-header title="Current hypothesis"></view-header>
+      <view-header [title]="'Current hypothesis'"></view-header>
       <learner-result-panel result="vm.status.result"></learner-result-panel>
     </div>
   </div>

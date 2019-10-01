@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { ProjectService } from '../../../services/project.service';
 import { TestResource } from '../../../services/resources/test-resource.service';
 import { IPromise } from 'angular';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 export const testCaseResultsViewComponent = {
   template: require('html-loader!./test-case-results-view.component.html'),
@@ -33,15 +33,8 @@ export const testCaseResultsViewComponent = {
     /** The current page object. */
     public page: any;
 
-    /**
-     * Constructor.
-     *
-     * @param projectService
-     * @param testResource
-     * @param $stateParams
-     */
     /* @ngInject */
-    constructor(private projectService: ProjectService,
+    constructor(private appStore: AppStoreService,
                 private testResource: TestResource,
                 private $stateParams: any) {
       this.test = null;
@@ -73,7 +66,7 @@ export const testCaseResultsViewComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

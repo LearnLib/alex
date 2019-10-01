@@ -16,12 +16,12 @@
 
 import { remove } from 'lodash';
 import { Selectable } from '../../../utils/selectable';
-import { ProjectService } from '../../../services/project.service';
 import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
 import { ToastService } from '../../../services/toast.service';
 import { LearnerResultDownloadService } from '../../../services/learner-result-download.service';
 import { LearnResult } from '../../../entities/learner-result';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller for listing all final test results.
@@ -34,19 +34,9 @@ class ResultsViewComponent {
   /** The test results the user selected. */
   public selectedResults: Selectable<LearnResult>;
 
-  /**
-   * Constructor.
-   *
-   * @param $state
-   * @param projectService
-   * @param learnResultResource
-   * @param toastService
-   * @param learnerResultDownloadService
-   * @param $uibModal
-   */
   /* @ngInject */
   constructor(private $state: any,
-              private projectService: ProjectService,
+              private appStore: AppStoreService,
               private learnResultResource: LearnResultResource,
               private toastService: ToastService,
               private learnerResultDownloadService: LearnerResultDownloadService,
@@ -170,7 +160,7 @@ class ResultsViewComponent {
   }
 
   get project(): Project {
-    return this.projectService.store.currentProject;
+    return this.appStore.project;
   }
 }
 

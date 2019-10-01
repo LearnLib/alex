@@ -15,8 +15,8 @@
  */
 
 import { FileResource } from '../../../../../services/resources/file-resource.service';
-import { ProjectService } from '../../../../../services/project.service';
 import { Project } from '../../../../../entities/project';
+import { AppStoreService } from '../../../../../services/app-store.service';
 
 export const uploadFileActionFormComponent = {
   template: require('html-loader!./upload-file-action-form.component.html'),
@@ -36,14 +36,14 @@ export const uploadFileActionFormComponent = {
      */
     /* @ngInject */
     constructor(private fileResource: FileResource,
-                private projectService: ProjectService) {
+                private appStore: AppStoreService) {
       this.files = [];
       this.fileResource.getAll(this.project.id)
         .then(files => this.files = files);
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

@@ -17,7 +17,7 @@
 import { events } from '../../../constants';
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 import { ModalComponent } from '../modal.component';
-import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { EventBus } from '../../../services/eventbus.service';
 import { SymbolGroup } from '../../../entities/symbol-group';
@@ -47,12 +47,12 @@ export const symbolGroupMoveModalComponent = {
     /**
      * Constructor.
      *
-     * @param symbolGroupResource
+     * @param symbolGroupApi
      * @param toastService
      * @param eventBus
      */
     /* @ngInject */
-    constructor(private symbolGroupResource: SymbolGroupResource,
+    constructor(private symbolGroupApi: SymbolGroupApiService,
                 private toastService: ToastService,
                 private eventBus: EventBus) {
       super();
@@ -61,14 +61,15 @@ export const symbolGroupMoveModalComponent = {
     $onInit(): void {
       this.group = this.resolve.group;
 
-      this.symbolGroupResource.getAll(this.group.project)
-        .then(groups => {
+      this.symbolGroupApi.getAll(this.group.project).subscribe(
+        groups => {
           this.groups = groups;
 
           if (this.group.parent != null) {
             this.selectedGroup = SymbolGroupUtils.findGroupById(this.groups, this.group.parent);
           }
-        });
+        }
+      );
     }
 
     /**
@@ -78,16 +79,17 @@ export const symbolGroupMoveModalComponent = {
       const fromGroupId = this.group.parent;
       this.group.parent = this.selectedGroup == null ? null : this.selectedGroup.id;
 
-      this.symbolGroupResource.move(this.group)
-        .then(movedGroup => {
+      this.symbolGroupApi.move(this.group).subscribe(
+        movedGroup => {
           this.toastService.success('The group has been moved');
           this.eventBus.emit(events.GROUP_MOVED, {from: fromGroupId, group: movedGroup});
           this.close({$value: movedGroup});
-        })
-        .catch(err => {
+        },
+        err => {
           this.errorMessage = `The group could not be moved. ${err.data.message}`;
           this.group.parent = fromGroupId;
-        });
+        }
+      );
     }
 
     /**

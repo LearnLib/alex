@@ -18,6 +18,9 @@
  * Define application routes.
  */
 /* @ngInject */
+import { AppStoreService } from './services/app-store.service';
+import { ProjectApiService } from './services/resources/project-api.service';
+
 export function config($stateProvider, $urlRouterProvider) {
 
   // redirect to the start page when no other route fits
@@ -107,18 +110,17 @@ export function config($stateProvider, $urlRouterProvider) {
       data: {title: 'Project'},
 
       /* @ngInject */
-      onEnter: function ($state, projectService, projectResource, $stateParams) {
+      onEnter: function ($state, appStore: AppStoreService, projectApi: ProjectApiService, $stateParams) {
         const projectId = $stateParams.projectId;
-        const project = projectService.store.currentProject;
+        const project = appStore.project;
 
         if (project == null || project.id !== projectId) {
-          return projectResource.get(projectId)
-            .then(project => {
-              projectService.open(project);
-            })
-            .catch(() => {
+          return projectApi.get(projectId).subscribe(
+            project => appStore.openProject(project),
+            () => {
               $state.go('error', {message: `The project with the id ${projectId} could not be found`});
-            });
+            }
+          );
         }
       }
     })
@@ -327,7 +329,7 @@ export function config($stateProvider, $urlRouterProvider) {
  * @param toastService
  */
 /* @ngInject */
-export function run($transitions, projectService, userService, toastService) {
+export function run($transitions, appStore: AppStoreService, userService, toastService) {
 
   // route validation
   $transitions.onBefore({}, onBefore, {});
@@ -335,7 +337,7 @@ export function run($transitions, projectService, userService, toastService) {
 
   function onBefore(transition) {
     const user = userService.store.currentUser;
-    const project = projectService.store.currentProject;
+    const project = appStore.project;
 
     const data = transition.to().data;
     if ((data.roles && (user === null || data.roles.indexOf(user.role) === -1))

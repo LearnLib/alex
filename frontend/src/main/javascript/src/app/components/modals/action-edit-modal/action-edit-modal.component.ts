@@ -17,10 +17,10 @@
 import { ModalComponent } from '../modal.component';
 import { ActionService } from '../../../services/action.service';
 import { SymbolResource } from '../../../services/resources/symbol-resource.service';
-import { ProjectService } from '../../../services/project.service';
 import { Project } from '../../../entities/project';
 import { Action } from '../../../entities/actions/action';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The component for the modal dialog that handles the editing of an action.
@@ -41,24 +41,17 @@ export const actionEditModalComponent = {
     /** All symbols. */
     public symbols: AlphabetSymbol[];
 
-    /**
-     * Constructor.
-     *
-     * @param actionService
-     * @param symbolResource
-     * @param projectService
-     */
     /* @ngInject */
     constructor(private actionService: ActionService,
                 private symbolResource: SymbolResource,
-                private projectService: ProjectService) {
+                private appStore: AppStoreService) {
       super();
 
       this.action = null;
       this.symbols = [];
 
       // fetch all symbols so that symbols have access to it
-      const project: Project = this.projectService.store.currentProject;
+      const project: Project = this.appStore.project;
       this.symbolResource.getAll(project.id).then(symbols => {
         this.symbols = symbols;
       });

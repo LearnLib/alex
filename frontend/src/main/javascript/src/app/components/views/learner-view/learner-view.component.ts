@@ -15,7 +15,6 @@
  */
 
 import { LearnResult } from '../../../entities/learner-result';
-import { ProjectService } from '../../../services/project.service';
 import { LearnerResource } from '../../../services/resources/learner-resource.service';
 import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
 import { ToastService } from '../../../services/toast.service';
@@ -24,6 +23,7 @@ import { NotificationService } from '../../../services/notification.service';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { IPromise } from 'angular';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller for showing a load screen during the learning and shows all learn results from the current test
@@ -55,22 +55,10 @@ class LearnerViewComponentComponent {
   /** If the learning process finished. */
   public finished: boolean;
 
-  /**
-   * Constructor.
-   *
-   * @param $state
-   * @param $interval
-   * @param projectService
-   * @param learnerResource
-   * @param learnResultResource
-   * @param toastService
-   * @param symbolResource
-   * @param notificationService
-   */
   /* @ngInject */
   constructor(private $state: any,
               private $interval: any,
-              private projectService: ProjectService,
+              private appStore: AppStoreService,
               private learnerResource: LearnerResource,
               private learnResultResource: LearnResultResource,
               private toastService: ToastService,
@@ -196,7 +184,7 @@ class LearnerViewComponentComponent {
   }
 
   get project(): Project {
-    return this.projectService.store.currentProject;
+    return this.appStore.project;
   }
 }
 

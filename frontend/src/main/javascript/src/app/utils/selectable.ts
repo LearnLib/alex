@@ -35,6 +35,10 @@ export class Selectable<T> {
     this.items.push(item);
   }
 
+  addItems(items: T[]) {
+    items.forEach(i => this.addItem(i));
+  }
+
   select(item: T) {
     this.selectedItems[item[this.key]] = item;
   }

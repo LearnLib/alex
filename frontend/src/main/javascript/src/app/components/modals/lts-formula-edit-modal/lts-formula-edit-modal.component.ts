@@ -15,10 +15,10 @@
  */
 
 import { ModalComponent } from '../modal.component';
-import { ProjectService } from '../../../services/project.service';
 import { ToastService } from '../../../services/toast.service';
 import { LtsFormulaService } from '../../../services/lts-formula.service';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The component for the modal that edits a formula.
@@ -39,15 +39,8 @@ export const ltsFormulaEditModalComponent = {
     /** An error message that can be displayed in the modal template. */
     public errorMessage: string;
 
-    /**
-     * Constructor.
-     *
-     * @param projectService
-     * @param toastService
-     * @param ltsFormulaService
-     */
     /* @ngInject */
-    constructor(private projectService: ProjectService,
+    constructor(private appStore: AppStoreService,
                 private toastService: ToastService,
                 private ltsFormulaService: LtsFormulaService) {
       super();
@@ -77,7 +70,7 @@ export const ltsFormulaEditModalComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

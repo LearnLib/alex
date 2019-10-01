@@ -16,9 +16,9 @@
 
 import { Selectable } from '../../../utils/selectable';
 import { ToastService } from '../../../services/toast.service';
-import { ProjectService } from '../../../services/project.service';
 import { LtsFormulaService } from '../../../services/lts-formula.service';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 export const ltsFormulasViewComponent = {
   template: require('html-loader!./lts-formulas-view.component.html'),
@@ -27,17 +27,10 @@ export const ltsFormulasViewComponent = {
 
     public selectedFormulas: Selectable<any>;
 
-    /**
-     * Constructor.
-     *
-     * @param toastService
-     * @param projectService
-     * @param ltsFormulaService
-     */
     /* @ngInject */
     constructor(private toastService: ToastService,
-                private projectService: ProjectService,
-                private ltsFormulaService: LtsFormulaService) {
+                private appStore: AppStoreService,
+                public ltsFormulaService: LtsFormulaService) {
 
       this.selectedFormulas = new Selectable(null, 'id');
     }
@@ -61,6 +54,17 @@ export const ltsFormulasViewComponent = {
       }
     }
 
+    /**
+     * Delete a formula.
+     *
+     * @param formula The formula to delete.
+     */
+    deleteFormula(formula: any): void {
+      this.ltsFormulaService.delete(formula)
+        .then(() => this.toastService.success('The formula has been deleted.'))
+        .catch(err => this.toastService.danger(`The formula could not be deleted. ${err.data.message}`));
+    }
+
     editSelectedFormula(): void {
       const selectedFormulas = this.selectedFormulas.getSelected();
       if (selectedFormulas.length === 1) {
@@ -69,7 +73,7 @@ export const ltsFormulasViewComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
 
     get formulas(): any[] {

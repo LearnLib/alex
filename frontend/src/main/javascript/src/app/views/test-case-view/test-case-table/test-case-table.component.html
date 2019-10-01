@@ -1,0 +1,100 @@
+<div class="card mb-4">
+  <div class="card-header">
+    <strong class="text-muted">Pre steps</strong>
+  </div>
+  <div class="card-body p-0">
+    <test-case-table-pre-post-steps
+      [steps]="testCase.preSteps"
+      [options]="options"
+      [symbolMap]="symbolMap"
+      (stepsChange)="testCase.preSteps = $event"
+    >
+    </test-case-table-pre-post-steps>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <strong class="text-muted">Test steps</strong>
+  </div>
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead>
+      <tr>
+        <th width="1">&nbsp;</th>
+        <th>Symbol</th>
+        <th>Expected output</th>
+        <th>Actual output</th>
+        <th width="1">&nbsp;</th>
+      </tr>
+      </thead>
+      <tbody dragula="STEPS" [dragulaModel]="testCase.steps" (dragulaModelChange)="testCase.steps = $event">
+      <ng-container *ngIf="testCase.steps.length > 0">
+        <tr *ngFor="let step of testCase.steps; let i = index" [class.table-danger]="result && result.failedStep === i">
+          <td>
+            <div class="pl-2">
+              <i class="fas fa-grip-vertical handle text-muted cursor-grabbing"></i>
+            </div>
+          </td>
+
+          <td>
+            <test-case-table-symbol-column
+              [symbolMap]="symbolMap"
+              [options]="options"
+              [pSymbol]="step.pSymbol"
+            >
+            </test-case-table-symbol-column>
+          </td>
+          <td>
+            <div class="flex-shrink-0">
+              <span
+                (click)="step.expectedOutputSuccess = !step.expectedOutputSuccess">{{step.expectedOutputSuccess ? 'Ok' : 'Failed'}}</span>
+              <span [ngClass]="{'visibility-hidden': step.expectedOutputMessage === ''}">(</span>
+              <input
+                type="text" [(ngModel)]="step.expectedOutputMessage"
+                style="max-width: 60px; margin: 0; padding: 0; border: 0; background: none; outline: none"
+              >
+              <span [ngClass]="{'visibility-hidden': step.expectedOutputMessage === ''}">)</span>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="result != null && result.outputs[i] != null">
+              <div>{{result.outputs[i].output}}</div>
+              <output-error-trace [output]="result.outputs[i]" [showFirst]="false"></output-error-trace>
+            </div>
+          </td>
+          <td>
+            <div class="pr-2">
+              <i class="fas fa-times cursor-pointer" (click)="testCase.steps.splice(i, 1)"></i>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+      <ng-container *ngIf="testCase.steps.length === 0">
+        <tr>
+          <td colspan="5">
+            <div class="alert alert-info mb-0">
+              Select a symbol to model the test case.
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <strong class="text-muted">Post steps</strong>
+  </div>
+  <div class="card-body p-0">
+    <test-case-table-pre-post-steps
+      [steps]="testCase.postSteps"
+      [options]="options"
+      [symbolMap]="symbolMap"
+      (stepsChange)="testCase.postSteps = $event"
+    >
+    </test-case-table-pre-post-steps>
+  </div>
+</div>

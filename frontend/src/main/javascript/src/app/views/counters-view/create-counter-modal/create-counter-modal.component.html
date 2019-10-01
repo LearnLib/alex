@@ -1,0 +1,48 @@
+<div class="modal-header">
+  <h4 class="modal-title">Create a new counter</h4>
+  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form name="form" (ngSubmit)="createCounter()">
+
+  <div class="modal-body">
+
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      {{errorMessage}}
+    </div>
+
+    <div class="form-group">
+      <label>Name</label>
+      <input
+        class="form-control"
+        name="name"
+        type="text"
+        placeholder="The name of the counter"
+        required
+        [(ngModel)]="counter.name"
+      >
+    </div>
+
+    <div class="form-group">
+      <label>Value</label>
+      <input
+        class="form-control"
+        name="value"
+        type="number"
+        placeholder="The value of the counter"
+        required
+        min="0"
+        [(ngModel)]="counter.value"
+      >
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-primary" type="submit">Create</button>
+    <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.stopPropagation()">Cancel</button>
+  </div>
+
+</form>

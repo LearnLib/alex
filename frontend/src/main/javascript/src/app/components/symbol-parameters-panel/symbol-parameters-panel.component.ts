@@ -16,7 +16,7 @@
 
 import { AlphabetSymbol } from '../../entities/alphabet-symbol';
 import { PromptService } from '../../services/prompt.service';
-import { SymbolParameterResource } from '../../services/resources/symbol-parameter-resource.service';
+import { SymbolParameterApiService } from '../../services/resources/symbol-parameter-api.service';
 import { ToastService } from '../../services/toast.service';
 
 export const symbolParametersPanelComponent = {
@@ -32,17 +32,9 @@ export const symbolParametersPanelComponent = {
 
     public onChange: (any?) => void;
 
-    /**
-     * Constructor.
-     *
-     * @param promptService
-     * @param symbolParameterResource
-     * @param toastService
-     * @param $uibModal
-     */
     /* @ngInject */
     constructor(private promptService: PromptService,
-                private symbolParameterResource: SymbolParameterResource,
+                private symbolParameterApi: SymbolParameterApiService,
                 private toastService: ToastService,
                 private $uibModal: any) {
     }
@@ -99,16 +91,18 @@ export const symbolParametersPanelComponent = {
 
     removeInput(index: number): void {
       const param = this.symbol.inputs[index];
-      this.symbolParameterResource.remove(this.symbol.project, this.symbol.id, param.id)
-        .then(() => this.symbol.inputs.splice(index, 1))
-        .catch(err => this.toastService.danger(`The input parameter could not be deleted. ${err.data.message}`));
+      this.symbolParameterApi.remove(this.symbol.project, this.symbol.id, param.id).subscribe(
+        () => this.symbol.inputs.splice(index, 1),
+        err => this.toastService.danger(`The input parameter could not be deleted. ${err.data.message}`)
+      );
     }
 
     removeOutput(index: number): void {
       const param = this.symbol.outputs[index];
-      this.symbolParameterResource.remove(this.symbol.project, this.symbol.id, param.id)
-        .then(() => this.symbol.outputs.splice(index, 1))
-        .catch(err => this.toastService.danger(`The output parameter could not be deleted. ${err.data.message}`));
+      this.symbolParameterApi.remove(this.symbol.project, this.symbol.id, param.id).subscribe(
+        () => this.symbol.outputs.splice(index, 1),
+        err => this.toastService.danger(`The output parameter could not be deleted. ${err.data.message}`)
+      );
     }
   }
 };

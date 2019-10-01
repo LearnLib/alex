@@ -1,35 +1,44 @@
-<widget title="Latest test report">
+<div class="card">
+  <div class="card-header">
+    Latest test report
+  </div>
+  <div class="card-body">
+
     <div class="alert alert-info mb-0" ng-if="vm.report === ''">
-        There is no test report for this project yet.
+      There is no test report for this project yet.
     </div>
 
     <div class="" ng-if="vm.report != null && vm.report !== ''">
-        <table class="table">
-            <tbody>
-            <tr>
-                <td><strong>Date</strong></td>
-                <td>{{vm.report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
-            </tr>
-            <tr>
-                <td><strong>Status</strong></td>
-                <td>
-                    <span class="badge badge-success" ng-if="vm.report.passed">Passed</span>
-                    <span class="badge badge-danger" ng-if="!vm.report.passed">Failed</span>
-                </td>
-            </tr>
-            <tr>
-                <td><strong>Tests</strong></td>
-                <td>{{vm.report.numTests - vm.report.numTestsFailed}}/{{vm.report.numTests}} tests passed</td>
-            </tr>
-            <tr>
-                <td><strong>Duration</strong></td>
-                <td>{{vm.report.time | formatMilliseconds}}</td>
-            </tr>
-            </tbody>
-        </table>
+      <table class="table">
+        <tbody>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td>{{vm.report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
+        </tr>
+        <tr>
+          <td><strong>Status</strong></td>
+          <td>
+            <span class="badge badge-success" ng-if="vm.report.passed">Passed</span>
+            <span class="badge badge-danger" ng-if="!vm.report.passed">Failed</span>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Tests</strong></td>
+          <td>{{vm.report.numTests - vm.report.numTestsFailed}}/{{vm.report.numTests}} tests passed</td>
+        </tr>
+        <tr>
+          <td><strong>Duration</strong></td>
+          <td>{{vm.report.time | formatMilliseconds}}</td>
+        </tr>
+        </tbody>
+      </table>
 
-        <button class="btn btn-xs btn-default" ui-sref="testReport({projectId: vm.report.project, reportId: vm.report.id})">
-            <i class="fas fa-fw fa-eye"></i> View details
-        </button>
+      <button class="btn btn-xs btn-default" ui-sref="testReport({projectId: vm.report.project, reportId: vm.report.id})">
+        <i class="fas fa-fw fa-eye"></i> View details
+      </button>
     </div>
-</widget>
+
+  </div>
+</div>
+
+

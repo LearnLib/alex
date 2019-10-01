@@ -1,10 +1,10 @@
 <div class="view">
-    <view-header title="Test Management"></view-header>
+    <view-header [title]="'Test Management'"></view-header>
     <action-bar>
         <div class="d-flex flex-row align-items-center">
-            <selectable-checkbox-multiple selectable="vm.selectedTests"></selectable-checkbox-multiple>
+            <selectable-checkbox-multiple [selectable]="vm.selectedTests"></selectable-checkbox-multiple>
             <div class="w-100 ml-3">
-                <div class="btn-group btn-group-sm" uib-dropdown>
+                <div class="btn-group btn-group-sm mr-2" uib-dropdown>
                     <button class="btn btn-primary" uib-dropdown-toggle>
                         Create
                     </button>
@@ -18,7 +18,7 @@
                     </div>
                 </div>
 
-                <div class="btn-group btn-group-sm">
+                <div class="btn-group btn-group-sm mr-2">
                     <button
                         class="btn btn-default"
                         ng-click="vm.moveSelected()"
@@ -35,7 +35,7 @@
                     </button>
                 </div>
 
-                <div class="btn-group btn-group-sm">
+                <div class="btn-group btn-group-sm mr-2">
                     <button class="btn btn-default" uib-tooltip="Import" tooltip-placement="bottom" ng-click="vm.importTests()">
                         <i class="fas fa-fw fa-upload"></i>
                     </button>
@@ -131,7 +131,7 @@
 
                             <div class="d-flex flex-row">
                                 <div style="padding-right: 12px">
-                                    <selectable-checkbox item="test" selectable="vm.selectedTests"></selectable-checkbox>
+                                    <selectable-checkbox [item]="test" [selectable]="vm.selectedTests"></selectable-checkbox>
                                 </div>
                                 <div class="test-list-item-content flex-grow-1">
                                     <test-tree root="test" results="vm.results"></test-tree>

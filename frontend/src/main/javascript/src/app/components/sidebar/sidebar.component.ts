@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { ProjectService } from '../../services/project.service';
 import { UserService } from '../../services/user.service';
-import { UiService } from '../../services/ui.service';
 import { Project } from '../../entities/project';
 import { User } from '../../entities/user';
+import { AppStoreService } from '../../services/app-store.service';
 
 /**
  * The controller for the sidebar.
@@ -28,19 +27,10 @@ class SidebarComponent {
   /** The item groups */
   public groups: any[];
 
-  /**
-   * Constructor.
-   *
-   * @param $state
-   * @param projectService
-   * @param userService
-   * @param uiService
-   */
   /* @ngInject */
   constructor(private $state: any,
-              private projectService: ProjectService,
               private userService: UserService,
-              private uiService: UiService) {
+              private appStore: AppStoreService) {
 
     this.groups = [
       {
@@ -217,13 +207,13 @@ class SidebarComponent {
 
   /** Removes the project object from the session and redirect to the start page. */
   closeProject(): void {
-    this.projectService.close();
+    this.appStore.closeProject();
     this.$state.go('projects');
   }
 
   /** Toggles the collapsed state. */
   toggleCollapse(): void {
-    this.uiService.toggleSidebar();
+    this.appStore.toggleSidebar();
   }
 
   /**
@@ -241,15 +231,11 @@ class SidebarComponent {
   }
 
   get project(): Project {
-    return this.projectService.store.currentProject;
+    return this.appStore.project;
   }
 
   get user(): User {
     return this.userService.store.currentUser;
-  }
-
-  get collapsed(): boolean {
-    return this.uiService.store.sidebar.collapsed;
   }
 }
 

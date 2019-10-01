@@ -15,8 +15,8 @@
  */
 
 import { CallRestAction } from '../../../../../entities/actions/rest/request-action';
-import { ProjectService } from "../../../../../services/project.service";
 import { Project } from "../../../../../entities/project";
+import { AppStoreService } from '../../../../../services/app-store.service';
 
 const presets = {
   JSON: 'JSON',
@@ -40,7 +40,7 @@ export const requestActionFormComponent = {
 
     /** Constructor. */
     /* @ngInject */
-    constructor(private projectService: ProjectService) {
+    constructor(private appStore: AppStoreService) {
       this.preset = presets.JSON;
       this.cookie = {name: null, value: null};
       this.header = {name: null, value: null};
@@ -92,7 +92,7 @@ export const requestActionFormComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

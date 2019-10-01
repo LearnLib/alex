@@ -18,11 +18,13 @@ import { remove } from 'lodash';
 import { CreateProjectForm, Project } from '../entities/project';
 import { LearnerResource } from './resources/learner-resource.service';
 import { ToastService } from './toast.service';
-import { ProjectResource } from './resources/project-resource.service';
+import { ProjectApiService } from './resources/project-api.service';
 import { IPromise } from 'angular';
+import { AppStoreService } from './app-store.service';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 export interface ProjectStore {
-  currentProject?: Project;
   projects: Project[];
 }
 
@@ -31,44 +33,28 @@ export class ProjectService {
   /** The store. */
   public store: ProjectStore;
 
-  /**
-   * Constructor.
-   *
-   * @param $uibModal
-   * @param learnerResource
-   * @param toastService
-   * @param projectResource
-   */
   /* @ngInject */
   constructor(private $uibModal: any,
               private learnerResource: LearnerResource,
               private toastService: ToastService,
-              private projectResource: ProjectResource) {
+              private projectApi: ProjectApiService,
+              private appStore: AppStoreService) {
 
     this.store = {
-      currentProject: null,
       projects: []
     };
-
-    // load the project from the session
-    const projectInSession = sessionStorage.getItem('project');
-    if (projectInSession != null) {
-      this.store.currentProject = new Project(JSON.parse(projectInSession));
-    }
   }
 
-  load(): IPromise<any> {
-    return this.projectResource.getAll()
-      .then(projects => {
-        this.store.projects = projects;
-        return projects;
-      });
+  load(): Observable<Project[]> {
+    return this.projectApi.getAll().pipe(
+      tap((projects: Project[]) => this.store.projects = projects)
+    );
   }
 
   reloadCurrentProject(): void {
-    if (this.store.currentProject != null) {
-      this.projectResource.get(this.store.currentProject.id).then(
-          p => this.open(p)
+    if (this.appStore.project != null) {
+      this.projectApi.get(this.appStore.project.id).subscribe(
+        p => this.appStore.openProject(p)
       );
     }
   }
@@ -104,12 +90,10 @@ export class ProjectService {
    *
    * @param project The project to create.
    */
-  create(project: CreateProjectForm): IPromise<any> {
-    return this.projectResource.create(project)
-      .then(createdProject => {
-        this.store.projects.push(createdProject);
-        return createdProject;
-      });
+  create(project: CreateProjectForm): Observable<Project> {
+    return this.projectApi.create(project).pipe(
+      tap((p: Project) => this.store.projects.push(p))
+    );
   }
 
   /**
@@ -117,50 +101,23 @@ export class ProjectService {
    *
    * @param project The project to delete.
    */
-  delete(project: Project): IPromise<any> {
-    return this.projectResource.remove(project)
-      .then(() => {
-        remove(this.store.projects, {id: project.id});
-        return project;
-      });
+  delete(project: Project): Observable<Project> {
+    return this.projectApi.remove(project).pipe(
+      tap((p: Project) => remove(this.store.projects, {id: p.id}))
+    );
   }
 
-  deleteMany(projects: Project[]): IPromise<any> {
-    return this.projectResource.removeMany(projects)
-        .then(() => {
-          projects.forEach(p => remove(this.store.projects, {id: p.id}));
-          return projects;
-        });
+  deleteMany(projects: Project[]): Observable<Project[]> {
+    return this.projectApi.removeMany(projects).pipe(
+      tap((ps: Project[]) => {
+        ps.forEach(p => remove(this.store.projects, {id: p.id}))
+      })
+    );
   }
 
-  /**
-   * Saves a project in the current session.
-   *
-   * @param project The project to.
-   */
-  open(project: Project): void {
-    sessionStorage.setItem('project', JSON.stringify(project));
-    this.store.currentProject = project;
-  }
-
-  import(project: Project): IPromise<Project> {
-    return this.projectResource.import(project)
-        .then(importedProject => {
-          this.store.projects.push(importedProject);
-          return importedProject;
-        });
-  }
-
-  /**
-   * Removes the current project from the session.
-   */
-  close(): void {
-    sessionStorage.removeItem('project');
-    this.store.currentProject = null;
-  }
-
-  reset(): void {
-    this.close();
-    this.store.projects = [];
+  import(project: Project): Observable<Project> {
+    return this.projectApi.import(project).pipe(
+      tap((p: Project) => this.store.projects.push(p))
+    );
   }
 }

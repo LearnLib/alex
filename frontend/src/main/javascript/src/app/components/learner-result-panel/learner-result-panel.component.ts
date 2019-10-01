@@ -39,16 +39,8 @@ class LearnerResultPanelComponent {
   public menu: any;
   public pointer: number;
 
-  /**
-   * Constructor.
-   *
-   * @param $scope
-   * @param $uibModal
-   */
   /* @ngInject */
-  constructor(private $scope: IScope,
-              private $uibModal: any) {
-
+  constructor(private $scope: IScope) {
     this.layoutSettings = null;
     this.view = 'DEFAULT';
     this.menu = [];

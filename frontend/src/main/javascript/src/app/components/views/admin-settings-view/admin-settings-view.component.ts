@@ -15,7 +15,7 @@
  */
 
 import { webBrowser } from '../../../constants';
-import { SettingsResource } from '../../../services/resources/settings-resource.service';
+import { SettingsApiService } from '../../../services/resources/settings-api.service';
 import { ToastService } from '../../../services/toast.service';
 
 /**
@@ -33,29 +33,27 @@ export const adminSettingsViewComponent = {
     /**
      * Constructor.
      *
-     * @param settingsResource
+     * @param settingsApi
      * @param toastService
      */
     /* @ngInject */
-    constructor(private settingsResource: SettingsResource,
+    constructor(private settingsApi: SettingsApiService,
                 private toastService: ToastService) {
 
-      this.settingsResource.get()
-        .then(settings => this.settings = settings)
-        .catch(err => console.log(err));
+      this.settingsApi.get().subscribe(
+        settings => this.settings = settings,
+        console.error
+      );
     }
 
     /**
      * Updates the settings.
      */
     updateSettings(): void {
-      this.settingsResource.update(this.settings)
-        .then(() => {
-          this.toastService.success('The settings have been updated.');
-        })
-        .catch(res => {
-          this.toastService.danger('<strong>Update failed!</strong> ' + res.data.message);
-        });
+      this.settingsApi.update(this.settings).subscribe(
+        () => this.toastService.success('The settings have been updated.'),
+        res => this.toastService.danger('<strong>Update failed!</strong> ' + res.data.message)
+      );
     }
   }
 };

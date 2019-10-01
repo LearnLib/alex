@@ -19,9 +19,9 @@ import { environment } from '../../../../environments/environment';
 import { Selectable } from '../../../utils/selectable';
 import { ToastService } from '../../../services/toast.service';
 import { FileResource } from '../../../services/resources/file-resource.service';
-import { ProjectService } from '../../../services/project.service';
 import { Project } from '../../../entities/project';
 import { UploadableFile } from '../../../entities/uploadable-file';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller of the files page.
@@ -40,19 +40,11 @@ class FilesViewComponent {
   /** The list of files to upload. */
   public filesToUpload: any[];
 
-  /**
-   * Constructor.
-   *
-   * @param Upload
-   * @param toastService
-   * @param fileResource
-   * @param projectService
-   */
   /* @ngInject */
   constructor(private Upload: any,
               private toastService: ToastService,
               private fileResource: FileResource,
-              private projectService: ProjectService) {
+              private appStore: AppStoreService) {
 
     this.files = [];
     this.selectedFiles = new Selectable(this.files, 'name');
@@ -170,7 +162,7 @@ class FilesViewComponent {
   }
 
   get project(): Project {
-    return this.projectService.store.currentProject;
+    return this.appStore.project;
   }
 }
 

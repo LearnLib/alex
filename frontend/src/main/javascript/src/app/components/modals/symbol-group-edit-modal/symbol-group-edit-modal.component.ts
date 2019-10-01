@@ -17,7 +17,7 @@
 import { events } from '../../../constants';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { ModalComponent } from '../modal.component';
-import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { EventBus } from '../../../services/eventbus.service';
 import { PromptService } from '../../../services/prompt.service';
@@ -44,13 +44,13 @@ export const symbolGroupEditModalComponent = {
     /**
      * Constructor.
      *
-     * @param symbolGroupResource
+     * @param symbolGroupApi
      * @param toastService
      * @param eventBus
      * @param promptService
      */
     /* @ngInject */
-    constructor(private symbolGroupResource: SymbolGroupResource,
+    constructor(private symbolGroupApi: SymbolGroupApiService,
                 private toastService: ToastService,
                 private eventBus: EventBus,
                 private promptService: PromptService) {
@@ -68,17 +68,18 @@ export const symbolGroupEditModalComponent = {
       this.errorMessage = null;
 
       this.group.symbols = [];
-      this.symbolGroupResource.update(this.group)
-        .then((updatedGroup: SymbolGroup) => {
+      this.symbolGroupApi.update(this.group).subscribe(
+        updatedGroup => {
           this.toastService.success('Group updated');
           this.eventBus.emit(events.GROUP_UPDATED, {
             group: updatedGroup
           });
           this.dismiss();
-        })
-        .catch(err => {
+        },
+        err => {
           this.errorMessage = err.data.message;
-        });
+        }
+      );
     }
   }
 };

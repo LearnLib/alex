@@ -1,9 +1,9 @@
 <div class="view">
-    <view-header title="Files"></view-header>
+    <view-header [title]="'Files'"></view-header>
 
     <action-bar>
         <div class="d-flex flex-row align-items-center" ng-if="vm.files.length > 0">
-            <selectable-checkbox-multiple selectable="vm.selectedFiles"></selectable-checkbox-multiple>
+            <selectable-checkbox-multiple [selectable]="vm.selectedFiles"></selectable-checkbox-multiple>
 
             <div class="w-100 ml-3">
                 <button
@@ -47,7 +47,7 @@
                 <div class="list-group-item d-flex flex-row" ng-repeat="file in vm.files">
 
                     <div>
-                        <selectable-checkbox item="file" selectable="vm.selectedFiles"></selectable-checkbox>
+                        <selectable-checkbox [item]="file" [selectable]="vm.selectedFiles"></selectable-checkbox>
                     </div>
                     <div class="w-100 ml-3 mr-3">
                         <span ng-bind="file.name"></span>

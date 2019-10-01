@@ -17,10 +17,10 @@
 import { actionType } from '../../../constants';
 import { ActionService } from '../../../services/action.service';
 import { SymbolResource } from '../../../services/resources/symbol-resource.service';
-import { ProjectService } from '../../../services/project.service';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { Action } from '../../../entities/actions/action';
 import { ModalComponent } from '../modal.component';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The component for the modal dialog that handles the creation of a new action.
@@ -43,17 +43,10 @@ export const actionCreateModalComponent = {
     /** The model of the action to create. */
     public action: Action;
 
-    /**
-     * Constructor.
-     *
-     * @param actionService
-     * @param symbolResource
-     * @param projectService
-     */
     /* @ngInject */
     constructor(private actionService: ActionService,
                 private symbolResource: SymbolResource,
-                private projectService: ProjectService) {
+                private appStore: AppStoreService) {
       super();
 
       this.action = null;
@@ -120,7 +113,7 @@ export const actionCreateModalComponent = {
       };
 
       // get all symbols
-      const project = projectService.store.currentProject;
+      const project = this.appStore.project;
       symbolResource.getAll(project.id).then(symbols => {
         this.symbols = symbols;
       });

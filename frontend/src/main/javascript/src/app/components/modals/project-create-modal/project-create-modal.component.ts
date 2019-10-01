@@ -17,49 +17,50 @@
 import { CreateProjectForm } from '../../../entities/project';
 import { ModalComponent } from '../modal.component';
 import { IFormController } from 'angular';
-import { ProjectResource } from '../../../services/resources/project-resource.service';
+import { ProjectApiService } from '../../../services/resources/project-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { ProjectService } from '../../../services/project.service';
 
 export const projectCreateModalComponent = {
-    template: require('html-loader!./project-create-modal.component.html'),
-    bindings: {
-        dismiss: '&',
-        close: '&',
-        resolve: '='
-    },
-    controllerAs: 'vm',
-    controller: class ProjectCreateModalComponent extends ModalComponent {
+  template: require('html-loader!./project-create-modal.component.html'),
+  bindings: {
+    dismiss: '&',
+    close: '&',
+    resolve: '='
+  },
+  controllerAs: 'vm',
+  controller: class ProjectCreateModalComponent extends ModalComponent {
 
-        /** The form object. */
-        public form: IFormController = null;
+    /** The form object. */
+    public form: IFormController = null;
 
-        /** The project to create. */
-        public project: CreateProjectForm = {
-            url: 'http://'
-        };
+    /** The project to create. */
+    public project: CreateProjectForm = {
+      url: 'http://'
+    };
 
-        /** An error message that is displayed on a failed updated. */
-        public errorMessage: string = null;
+    /** An error message that is displayed on a failed updated. */
+    public errorMessage: string = null;
 
-        /* @ngInject */
-        constructor(private projectResource: ProjectResource,
-                    private toastService: ToastService,
-                    private projectService: ProjectService) {
-            super();
+    /* @ngInject */
+    constructor(private projectApi: ProjectApiService,
+                private toastService: ToastService,
+                private projectService: ProjectService) {
+      super();
+    }
+
+    createProject(): void {
+      this.errorMessage = null;
+
+      this.projectService.create(this.project).subscribe(
+        createdProject => {
+          this.toastService.success('Project created');
+          this.close({$value: createdProject});
+        },
+        err => {
+          this.errorMessage = err.data.message;
         }
-
-        createProject(): void {
-            this.errorMessage = null;
-
-            this.projectService.create(this.project)
-                .then(createdProject => {
-                    this.toastService.success('Project created');
-                    this.close({$value: createdProject});
-                })
-                .catch(err => {
-                    this.errorMessage = err.data.message;
-                });
-        }
-    },
+      );
+    }
+  }
 };

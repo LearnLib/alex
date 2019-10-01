@@ -15,10 +15,10 @@
  */
 
 import { remove } from 'lodash';
-import { TestConfigResource } from '../../services/resources/test-config-resource.service';
+import { TestConfigApiService } from '../../services/resources/test-config-api.service';
 import { ToastService } from '../../services/toast.service';
-import { ProjectService } from "../../services/project.service";
 import { Project } from "../../entities/project";
+import { AppStoreService } from '../../services/app-store.service';
 
 export const testConfigListComponent = {
   template: require('html-loader!./test-config-list.component.html'),
@@ -36,9 +36,9 @@ export const testConfigListComponent = {
     public selectedConfig: any = null;
 
     /* @ngInject */
-    constructor(private testConfigResource: TestConfigResource,
+    constructor(private testConfigApi: TestConfigApiService,
                 private toastService: ToastService,
-                private projectService: ProjectService) {
+                private appStore: AppStoreService) {
     }
 
     selectConfig(config: any): void {
@@ -51,15 +51,16 @@ export const testConfigListComponent = {
     }
 
     deleteConfig(config: any): void {
-      this.testConfigResource.remove(config.project, config.id)
-        .then(() => {
+      this.testConfigApi.remove(config.project, config.id).subscribe(
+        () => {
           remove(this.configs, {id: config.id});
           this.toastService.success('The test config has been deleted.');
-        });
+        }
+      );
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

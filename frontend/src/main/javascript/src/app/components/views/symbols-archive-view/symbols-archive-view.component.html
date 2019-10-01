@@ -1,9 +1,9 @@
 <div class="view">
-    <view-header title="Symbol Archive"></view-header>
+    <view-header [title]="'Symbol Archive'"></view-header>
 
     <action-bar>
         <div ng-if="vm.symbols.length > 0" class="d-flex flex-row align-items-center">
-            <selectable-checkbox-multiple selectable="vm.selectedSymbols"></selectable-checkbox-multiple>
+            <selectable-checkbox-multiple [selectable]="vm.selectedSymbols"></selectable-checkbox-multiple>
 
             <div class="w-100 ml-3">
                 <button
@@ -33,31 +33,40 @@
             </div>
 
             <div class="list-group">
-                <div class="list-group-item" ng-repeat="symbol in vm.symbols | orderBy:'-name':true">
+                <div class="list-group-item d-flex flex-row align-items-center" ng-repeat="symbol in vm.symbols | orderBy:'-name':true">
 
-                    <symbol-list-item symbol="symbol" selectable="vm.selectedSymbols">
-                        <div class="btn-group btn-group-xs" uib-dropdown>
-                            <button type="button" class="btn btn-default btn-icon no-caret" uib-dropdown-toggle>
-                                <i class="fas fa-bars"></i>
-                            </button>
-                            <div uib-dropdown-menu class="dropdown-menu dropdown-menu-right" role="menu">
-                                <a class="dropdown-item" href="" ng-click="vm.editSymbol(symbol)">
-                                    <i class="fas fa-edit fa-fw"></i> Edit
-                                </a>
-                                <a class="dropdown-item" href="" ng-click="vm.recoverSymbol(symbol)">
-                                    <i class="fas fa-undo fa-fw"></i> Recover
-                                </a>
-                                <a class="dropdown-item" href="" ng-click="vm.showUsages(symbol)">
-                                    <i class="fas fa-search fa-fw"></i> Usages
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="" ng-click="vm.deleteSymbol(symbol)">
-                                    <i class="fas fa-trash fa-fw"></i> Delete
-                                </a>
-                            </div>
+                    <div class="mr-3">
+                      <selectable-checkbox [item]="symbol" [selectable]="vm.selectedSymbols"></selectable-checkbox>
+                    </div>
+
+                    <div class="w-100 mr-1">
+                      <strong>{{symbol.name}}</strong>
+                    </div>
+
+                    <div>
+                      <div class="btn-group btn-group-xs" uib-dropdown>
+                        <button type="button" class="btn btn-default btn-icon no-caret" uib-dropdown-toggle>
+                          <i class="fas fa-bars"></i>
+                        </button>
+                        <div uib-dropdown-menu class="dropdown-menu dropdown-menu-right" role="menu">
+                          <a class="dropdown-item" href="" ng-click="vm.editSymbol(symbol)">
+                            <i class="fas fa-edit fa-fw"></i> Edit
+                          </a>
+                          <a class="dropdown-item" href="" ng-click="vm.recoverSymbol(symbol)">
+                            <i class="fas fa-undo fa-fw"></i> Recover
+                          </a>
+                          <a class="dropdown-item" href="" ng-click="vm.showUsages(symbol)">
+                            <i class="fas fa-search fa-fw"></i> Usages
+                          </a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="" ng-click="vm.deleteSymbol(symbol)">
+                            <i class="fas fa-trash fa-fw"></i> Delete
+                          </a>
                         </div>
+                      </div>
+                    </div>
+                  </div>
 
-                    </symbol-list-item>
                 </div>
             </div>
 

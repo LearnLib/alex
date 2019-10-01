@@ -22,13 +22,13 @@ import { ClipboardMode, ClipboardService } from '../../../services/clipboard.ser
 import { Selectable } from '../../../utils/selectable';
 import { IScope } from 'angular';
 import { SymbolResource } from '../../../services/resources/symbol-resource.service';
-import { ProjectService } from '../../../services/project.service';
 import { ToastService } from '../../../services/toast.service';
 import { ActionService } from '../../../services/action.service';
-import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
+import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { Project } from '../../../entities/project';
 import { Action } from '../../../entities/actions/action';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
@@ -45,33 +45,18 @@ class SymbolViewComponent {
   /** The selected actions. */
   public selectedSteps: Selectable<any>;
 
-  /**
-   * Constructor.
-   *
-   * @param $scope
-   * @param $stateParams
-   * @param symbolResource
-   * @param projectService
-   * @param toastService
-   * @param actionService
-   * @param clipboardService
-   * @param $state
-   * @param dragulaService
-   * @param $uibModal
-   * @param symbolGroupResource
-   */
   /* @ngInject */
   constructor(private $scope: IScope,
               private $stateParams: any,
               private symbolResource: SymbolResource,
-              private projectService: ProjectService,
+              private appStore: AppStoreService,
               private toastService: ToastService,
               private actionService: ActionService,
               private clipboardService: ClipboardService,
               private $state: any,
               private dragulaService: any,
               private $uibModal: any,
-              private symbolGroupResource: SymbolGroupResource) {
+              private symbolGroupApi: SymbolGroupApiService) {
 
     this.symbol = null;
     this.groups = [];
@@ -89,8 +74,9 @@ class SymbolViewComponent {
         this.$state.go('error', {message: `The symbol with the ID "${$stateParams.symbolId}" could not be found`});
       });
 
-    this.symbolGroupResource.getAll(this.project.id)
-      .then(groups => this.groups = groups);
+    this.symbolGroupApi.getAll(this.project.id).subscribe(
+      groups => this.groups = groups
+    );
 
     const keyDownHandler = (e) => {
       if (e.ctrlKey && e.which === 83) {
@@ -164,7 +150,7 @@ class SymbolViewComponent {
   addSymbolStep(): void {
     this.$uibModal.open({
       component: 'symbolSelectModal'
-    }).result.then(symbol => {
+    }).result.then((symbol: AlphabetSymbol) => {
       if (symbol.id === this.symbol.id) {
         this.toastService.info('A symbol cannot execute itself');
         return;
@@ -297,7 +283,7 @@ class SymbolViewComponent {
   editSymbolStep(step: any): void {
     this.$uibModal.open({
       component: 'symbolSelectModal'
-    }).result.then(selectedSymbol => {
+    }).result.then((selectedSymbol: AlphabetSymbol) => {
       if (selectedSymbol.id === this.symbol.id) {
         this.toastService.info('A symbol cannot execute itself');
         return;
@@ -318,7 +304,7 @@ class SymbolViewComponent {
   }
 
   get project(): Project {
-    return this.projectService.store.currentProject;
+    return this.appStore.project;
   }
 }
 

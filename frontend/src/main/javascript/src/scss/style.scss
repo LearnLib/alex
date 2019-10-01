@@ -121,16 +121,6 @@ report-charts {
 .no-border-radius {
   border-radius: 0 !important;
 }
-
-.alx-checkbox {
-  display: inline-block;
-  font-size: 15px;
-  line-height: 0;
-  color: #6e6e6e;
-  cursor: pointer;
-  user-select: none;
-}
-
 #load-screen {
   position: fixed;
   bottom: 6px;
@@ -223,33 +213,6 @@ report-charts {
   overflow: auto;
 }
 
-.view-header {
-  height: 42px;
-  background: #f2f2f2;
-  border-bottom: 1px solid #ddd;
-  padding-top: 4px;
-  overflow: hidden;
-
-  .view-header-title-pre {
-    display: inline-block;
-    margin-top: 2px;
-  }
-
-  .view-header-title {
-    display: inline-block;
-    margin: 0;
-    padding-top: 9px;
-    font-size: 14px;
-    font-weight: 700;
-    color: rgba(0, 0, 0, 0.5);
-
-    @media all and (max-width: map_get($grid-breakpoints, 'sm')) {
-      @include text-overflow-ellipsis();
-      max-width: 240px;
-    }
-  }
-}
-
 #alex {
   position: absolute;
   top: 0;
@@ -280,23 +243,6 @@ report-charts {
   width: 100%;
   max-width: 320px;
   margin: 50px auto;
-}
-
-.action-bar {
-  min-height: 37px;
-  background: #fff;
-  border-bottom: 1px solid #ddd;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-
-  &.fixed {
-    @include position(fixed, 0, 0, null, 0);
-    margin-left: $sidebar-width;
-    z-index: 1010; // that is 10 higher than the drop down menus in the view
-  }
-
-  .btn-group {
-    margin-right: 6px
-  }
 }
 
 .no-caret {

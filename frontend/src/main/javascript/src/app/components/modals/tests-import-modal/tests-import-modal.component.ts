@@ -15,9 +15,9 @@
  */
 
 import { ModalComponent } from '../modal.component';
-import { ProjectService } from '../../../services/project.service';
 import { Project } from '../../../entities/project';
 import { TestResource } from "../../../services/resources/test-resource.service";
+import { AppStoreService } from '../../../services/app-store.service';
 
 export const testsImportModalComponent = {
   template: require('html-loader!./tests-import-modal.component.html'),
@@ -36,7 +36,7 @@ export const testsImportModalComponent = {
     public importData: any = null;
 
     /* @ngInject */
-    constructor(private projectService: ProjectService,
+    constructor(private appStore: AppStoreService,
                 private testResource: TestResource) {
       super();
     }
@@ -78,7 +78,7 @@ export const testsImportModalComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

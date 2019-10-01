@@ -16,7 +16,7 @@
 
 import { remove } from 'lodash';
 import { Selectable } from '../../../utils/selectable';
-import { WebhookResource } from '../../../services/resources/webhook-resource.service';
+import { WebhookApiService } from '../../../services/resources/webhook-api.service';
 import { ToastService } from '../../../services/toast.service';
 
 export const webhooksViewComponent = {
@@ -29,15 +29,8 @@ export const webhooksViewComponent = {
 
     public selectedWebhooks: Selectable<any>;
 
-    /**
-     * Constructor.
-     *
-     * @param webhookResource
-     * @param toastService
-     * @param $uibModal
-     */
     /* @ngInject */
-    constructor(private webhookResource: WebhookResource,
+    constructor(private webhookApi: WebhookApiService,
                 private toastService: ToastService,
                 private $uibModal: any) {
       this.webhooks = [];
@@ -45,12 +38,13 @@ export const webhooksViewComponent = {
     }
 
     $onInit(): void {
-      this.webhookResource.getAll()
-        .then((webhooks) => {
+      this.webhookApi.getAll().subscribe(
+        webhooks => {
           this.webhooks = webhooks;
           this.selectedWebhooks = new Selectable(this.webhooks, 'id');
-        })
-        .catch(console.error);
+        },
+        console.error
+      );
     }
 
     /** Opens the modal dialog to create a new webhook. */
@@ -86,14 +80,15 @@ export const webhooksViewComponent = {
      * @param webhook The webhook to delete.
      */
     deleteWebhook(webhook: any): void {
-      this.webhookResource.remove(webhook)
-        .then(() => {
+      this.webhookApi.remove(webhook).subscribe(
+        () => {
           this.toastService.success('The webhook has been deleted.');
           this._deleteWebhook(webhook);
-        })
-        .catch((error) => {
+        },
+        error => {
           this.toastService.danger(`The webhook could not be deleted. ${error.data.message}`);
-        });
+        }
+      );
     }
 
     /** Deletes all selected webhooks. */
@@ -104,14 +99,15 @@ export const webhooksViewComponent = {
         return;
       }
 
-      this.webhookResource.removeMany(webhooks)
-        .then(() => {
+      this.webhookApi.removeMany(webhooks).subscribe(
+        () => {
           this.toastService.success('The webhooks have been deleted.');
           webhooks.forEach(wh => this._deleteWebhook(wh));
-        })
-        .catch((error) => {
+        },
+        error => {
           this.toastService.danger(`The webhooks could not be deleted. ${error.data.message}`);
-        });
+        }
+      );
     }
 
     private _deleteWebhook(webhook: any): void {

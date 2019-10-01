@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { ProjectService } from '../../../../services/project.service';
 import { TestResource } from '../../../../services/resources/test-resource.service';
 import { IFormController } from 'angular';
 import { TestSuiteEqOracle } from '../../../../entities/eq-oracles/test-suite-eq-oracle';
+import { AppStoreService } from '../../../../services/app-store.service';
 
 export const testSuiteEqOracleFormComponent = {
   template: require('html-loader!./test-suite-eq-oracle-form.component.html'),
@@ -45,7 +45,7 @@ export const testSuiteEqOracleFormComponent = {
      * @param testResource
      */
     /* @ngInject */
-    constructor(private projectService: ProjectService,
+    constructor(private appStore: AppStoreService,
                 private testResource: TestResource) {
 
       this.root = null;
@@ -53,7 +53,7 @@ export const testSuiteEqOracleFormComponent = {
     }
 
     $onInit(): any {
-      const project = this.projectService.store.currentProject;
+      const project = this.appStore.project;
 
       this.testResource.getRoot(project.id)
         .then(root => this.root = root);

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ProjectService } from '../../../../../services/project.service';
 import { Project } from '../../../../../entities/project';
 import { GoToWebAction } from '../../../../../entities/actions/web/open-url-action';
+import { AppStoreService } from '../../../../../services/app-store.service';
 
 export const openActionFormComponent = {
   template: require('html-loader!./open-url-action-form.component.html'),
@@ -30,7 +30,7 @@ export const openActionFormComponent = {
     public selectedBaseUrl: string;
 
     /* @ngInject */
-    constructor(private projectService: ProjectService) {
+    constructor(private appStore: AppStoreService) {
     }
 
     $onInit() {
@@ -45,7 +45,7 @@ export const openActionFormComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

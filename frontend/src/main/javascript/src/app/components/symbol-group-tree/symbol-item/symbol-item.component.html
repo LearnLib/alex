@@ -1,6 +1,6 @@
 <div class="symbol-item d-flex w-100">
     <div ng-class="{'visibility-hidden': !vm.selectable}">
-        <selectable-checkbox item="vm.symbol" selectable="vm.selectedSymbols"></selectable-checkbox>
+        <selectable-checkbox [item]="vm.symbol" [selectable]="vm.selectedSymbols"></selectable-checkbox>
     </div>
     <div class="w-100 pl-3">
         <div>

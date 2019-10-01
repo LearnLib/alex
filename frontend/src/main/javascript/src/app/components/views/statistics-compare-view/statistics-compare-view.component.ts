@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { ProjectService } from '../../../services/project.service';
 import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
 import { LearnerResultChartService } from '../../../services/learner-result-chart.service';
 import { ToastService } from '../../../services/toast.service';
 import { DownloadService } from '../../../services/download.service';
 import { PromptService } from '../../../services/prompt.service';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller for the learn statistics page.
@@ -50,20 +50,8 @@ class StatisticsCompareViewComponent {
   /** If the charts should be shown in two columns. */
   public showInColumns: boolean;
 
-  /**
-   * Constructor.
-   *
-   * @param projectService
-   * @param learnResultResource
-   * @param learnerResultChartService
-   * @param toastService
-   * @param $stateParams
-   * @param $state
-   * @param downloadService
-   * @param promptService
-   */
   /* @ngInject */
-  constructor(private projectService: ProjectService,
+  constructor(private appStore: AppStoreService,
               private learnResultResource: LearnResultResource,
               private learnerResultChartService: LearnerResultChartService,
               private toastService: ToastService,
@@ -178,7 +166,7 @@ class StatisticsCompareViewComponent {
   }
 
   get project(): Project {
-    return this.projectService.store.currentProject;
+    return this.appStore.project;
   }
 }
 

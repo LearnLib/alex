@@ -18,11 +18,11 @@ import { learnAlgorithm } from '../../../constants';
 import { LearnConfiguration } from '../../../entities/learner-configuration';
 import { ModalComponent } from '../modal.component';
 import { ToastService } from '../../../services/toast.service';
-import { ProjectService } from '../../../services/project.service';
 import { LearningAlgorithmService } from '../../../services/learning-algorithm.service';
 import { Project } from '../../../entities/project';
 import { Selectable } from "../../../utils/selectable";
 import { ProjectEnvironment } from "../../../entities/project-environment";
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller for the modal dialog where you can set the settings for an upcoming test run.
@@ -49,16 +49,9 @@ export const learnerSetupSettingsModalComponent = {
 
     public selectedEnvironments: Selectable<ProjectEnvironment>;
 
-    /**
-     * Constructor.
-     *
-     * @param toastService
-     * @param projectService
-     * @param learningAlgorithmService
-     */
     /* @ngInject */
     constructor(private toastService: ToastService,
-                private projectService: ProjectService,
+                private appStore: AppStoreService,
                 private learningAlgorithmService: LearningAlgorithmService) {
       super();
     }
@@ -100,7 +93,7 @@ export const learnerSetupSettingsModalComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

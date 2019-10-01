@@ -17,15 +17,15 @@
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { LearnConfiguration } from '../../../entities/learner-configuration';
 import { ParametrizedSymbol } from '../../../entities/parametrized-symbol';
-import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
-import { ProjectService } from '../../../services/project.service';
+import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { LearnerResource } from '../../../services/resources/learner-resource.service';
 import { ToastService } from '../../../services/toast.service';
-import { SettingsResource } from '../../../services/resources/settings-resource.service';
+import { SettingsApiService } from '../../../services/resources/settings-api.service';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { LearnResult } from '../../../entities/learner-result';
 import { Project } from '../../../entities/project';
 import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
@@ -50,26 +50,14 @@ class LearnerSetupViewComponent {
 
   public pPostSymbol: ParametrizedSymbol;
 
-  /**
-   * Constructor.
-   *
-   * @param $state
-   * @param symbolGroupResource
-   * @param projectService
-   * @param learnerResource
-   * @param toastService
-   * @param learnResultResource
-   * @param settingsResource
-   * @param $uibModal
-   */
   /* @ngInject */
   constructor(private $state: any,
-              private symbolGroupResource: SymbolGroupResource,
-              private projectService: ProjectService,
+              private symbolGroupApi: SymbolGroupApiService,
+              private appStore: AppStoreService,
               private learnerResource: LearnerResource,
               private toastService: ToastService,
               private learnResultResource: LearnResultResource,
-              private settingsResource: SettingsResource,
+              private settingsApi: SettingsApiService,
               private $uibModal: any) {
 
     this.groups = [];
@@ -82,9 +70,10 @@ class LearnerSetupViewComponent {
     this.learnConfiguration = new LearnConfiguration();
     this.learnConfiguration.environments = [this.project.getDefaultEnvironment()];
 
-    settingsResource.getSupportedWebDrivers()
-      .then(data => this.learnConfiguration.driverConfig.name = data.defaultWebDriver)
-      .catch(console.error);
+    settingsApi.getSupportedWebDrivers().subscribe(
+      data => this.learnConfiguration.driverConfig.name = data.defaultWebDriver,
+      console.error
+    );
 
     // make sure that there isn't any other learn process active
     // redirect to the load screen in case there is an active one
@@ -100,9 +89,10 @@ class LearnerSetupViewComponent {
         } else {
 
           // load all symbols in case there isn't any active learning process
-          this.symbolGroupResource.getAll(this.project.id)
-            .then(groups => this.groups = groups)
-            .catch(console.error);
+          this.symbolGroupApi.getAll(this.project.id).subscribe(
+            groups => this.groups = groups,
+            console.error
+          );
 
           // load learn results so that their configuration can be reused
           this.learnResultResource.getAll(this.project.id)
@@ -123,12 +113,20 @@ class LearnerSetupViewComponent {
   }
 
   /** @param symbol The symbol that will be used to reset the sul. */
-  setResetSymbol(symbol: AlphabetSymbol): void {
-    this.pResetSymbol = ParametrizedSymbol.fromSymbol(symbol);
+  selectResetSymbol(): void {
+    this.$uibModal.open({
+      component: 'symbolSelectModal'
+    }).result.then(s => {
+      this.pResetSymbol = ParametrizedSymbol.fromSymbol(s);
+    });
   }
 
-  setPostSymbol(symbol: AlphabetSymbol): void {
-    this.pPostSymbol = ParametrizedSymbol.fromSymbol(symbol);
+  selectPostSymbol(): void {
+    this.$uibModal.open({
+      component: 'symbolSelectModal'
+    }).result.then(s => {
+      this.pPostSymbol = ParametrizedSymbol.fromSymbol(s);
+    });
   }
 
   handleSymbolSelected(symbol: AlphabetSymbol): void {
@@ -215,7 +213,7 @@ class LearnerSetupViewComponent {
   }
 
   get project(): Project {
-    return this.projectService.store.currentProject;
+    return this.appStore.project;
   }
 }
 

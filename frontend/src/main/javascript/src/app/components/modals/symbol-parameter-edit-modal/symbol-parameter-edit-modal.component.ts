@@ -15,7 +15,7 @@
  */
 
 import { ModalComponent } from '../modal.component';
-import { SymbolParameterResource } from '../../../services/resources/symbol-parameter-resource.service';
+import { SymbolParameterApiService } from '../../../services/resources/symbol-parameter-api.service';
 import { IFormController } from 'angular';
 
 export const symbolParameterEditModalComponent = {
@@ -37,13 +37,8 @@ export const symbolParameterEditModalComponent = {
     /** The parameter under edit. */
     public parameter: any = null;
 
-    /**
-     * Constructor.
-     *
-     * @param symbolParameterResource
-     */
     /* @ngInject */
-    constructor(private symbolParameterResource: SymbolParameterResource) {
+    constructor(private symbolParameterApi: SymbolParameterApiService) {
       super();
     }
 
@@ -55,9 +50,10 @@ export const symbolParameterEditModalComponent = {
       this.errorMessage = null;
 
       const symbol = this.resolve.symbol;
-      this.symbolParameterResource.update(symbol.project, symbol.id, this.parameter)
-        .then(param => this.close({$value: param}))
-        .catch(err => this.errorMessage = err.data.message);
+      this.symbolParameterApi.update(symbol.project, symbol.id, this.parameter).subscribe(
+        param => this.close({$value: param}),
+        err => this.errorMessage = err.data.message
+      );
     }
   }
 };

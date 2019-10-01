@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TestReportResource } from '../../../services/resources/test-report-resource.service';
+import { TestReportApiService } from '../../../services/resources/test-report-api.service';
 import { Project } from '../../../entities/project';
 
 /**
@@ -33,19 +33,15 @@ export const latestTestReportWidgetComponent = {
     /** The test report. */
     public report: any = null;
 
-    /**
-     * Constructor.
-     *
-     * @param testReportResource
-     */
     /* @ngInject */
-    constructor(private testReportResource: TestReportResource) {
+    constructor(private testReportApi: TestReportApiService) {
     }
 
     $onInit(): void {
-      this.testReportResource.getLatest(this.project.id)
-        .then(report => this.report = report)
-        .catch(console.error);
+      this.testReportApi.getLatest(this.project.id).subscribe(
+        report => this.report = report,
+        console.error
+      );
     }
   }
 };

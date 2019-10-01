@@ -22,6 +22,7 @@ import { PromptService } from '../../../services/prompt.service';
 import { ToastService } from '../../../services/toast.service';
 import { ProjectUrl } from '../../../entities/project-url';
 import { ProjectEnvironmentVariable } from "../../../entities/project-environment-variable";
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller for the page that lists all counters of a project in a list. It is also possible to delete them.
@@ -40,7 +41,8 @@ export const projectEnvironmentsViewComponent = {
                 private projectEnvironmentResource: ProjectEnvironmentResourceService,
                 private promptService: PromptService,
                 private toastService: ToastService,
-                private $uibModal: any) {
+                private $uibModal: any,
+                private appStore: AppStoreService) {
 
       this.environments = [];
       this.url = new ProjectUrl();
@@ -169,7 +171,7 @@ export const projectEnvironmentsViewComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

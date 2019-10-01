@@ -16,7 +16,7 @@
 
 import { symbolParameterType } from '../../../constants';
 import { ModalComponent } from '../modal.component';
-import { SymbolParameterResource } from '../../../services/resources/symbol-parameter-resource.service';
+import { SymbolParameterApiService } from '../../../services/resources/symbol-parameter-api.service';
 import { IFormController } from 'angular';
 
 export const symbolParameterCreateModalComponent = {
@@ -38,13 +38,8 @@ export const symbolParameterCreateModalComponent = {
     /** The model for the new parameter. */
     public parameter: any;
 
-    /**
-     * Constructor.
-     *
-     * @param symbolParameterResource
-     */
     /* @ngInject */
-    constructor(private symbolParameterResource: SymbolParameterResource) {
+    constructor(private symbolParameterApi: SymbolParameterApiService) {
       super();
 
       this.parameter = {
@@ -61,9 +56,10 @@ export const symbolParameterCreateModalComponent = {
     addParameter(): void {
       this.errorMessage = null;
       const symbol = this.resolve.symbol;
-      this.symbolParameterResource.create(symbol.project, symbol.id, this.parameter)
-        .then(param => this.close({$value: param}))
-        .catch(err => this.errorMessage = err.data.message);
+      this.symbolParameterApi.create(symbol.project, symbol.id, this.parameter).subscribe(
+        param => this.close({$value: param}),
+        err => this.errorMessage = err.data.message
+      );
     }
   }
 };

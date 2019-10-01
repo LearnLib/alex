@@ -1,5 +1,5 @@
 <div class="d-flex learner-result-list-item">
-    <selectable-checkbox item="vm.result" selectable="vm.selectable"></selectable-checkbox>
+    <selectable-checkbox [item]="vm.result" [selectable]="vm.selectable"></selectable-checkbox>
     <div class="flex-grow-1 mr-3 ml-3">
         <span class="badge badge-danger float-right" ng-if="vm.result.error">Failed</span>
         <strong>

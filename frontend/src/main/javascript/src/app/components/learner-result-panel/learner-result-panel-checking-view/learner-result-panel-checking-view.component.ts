@@ -17,12 +17,12 @@
 import { Selectable } from '../../../utils/selectable';
 import { LearnResult } from '../../../entities/learner-result';
 import { ToastService } from '../../../services/toast.service';
-import { ProjectService } from '../../../services/project.service';
 import { LtsFormulaService } from '../../../services/lts-formula.service';
 import { LtsFormulaResource } from '../../../services/resources/lts-formula-resource.service';
 import { Project } from '../../../entities/project';
 import { Resizer } from '../../../utils/resizer';
 import { uniqueId } from 'lodash';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /** Panel view for model checking. */
 export const learnerResultPanelCheckingViewComponent = {
@@ -46,17 +46,9 @@ export const learnerResultPanelCheckingViewComponent = {
     public results: any;
     public manualFormula: string;
 
-    /**
-     * Constructor.
-     *
-     * @param toastService
-     * @param projectService
-     * @param ltsFormulaService
-     * @param ltsFormulaResource
-     */
     /* @ngInject */
     constructor(private toastService: ToastService,
-                private projectService: ProjectService,
+                private appStore: AppStoreService,
                 private ltsFormulaService: LtsFormulaService,
                 private ltsFormulaResource: LtsFormulaResource,
                 private $element: any) {
@@ -129,7 +121,7 @@ export const learnerResultPanelCheckingViewComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
 
     get formulas(): any[] {

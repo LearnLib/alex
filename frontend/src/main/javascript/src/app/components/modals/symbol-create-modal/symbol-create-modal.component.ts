@@ -20,8 +20,8 @@ import { SymbolGroup } from '../../../entities/symbol-group';
 import { ModalComponent } from '../modal.component';
 import { SymbolResource } from '../../../services/resources/symbol-resource.service';
 import { ToastService } from '../../../services/toast.service';
-import { ProjectService } from '../../../services/project.service';
 import { IFormController, IPromise } from 'angular';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller for the modal window to create a new symbol.
@@ -50,17 +50,10 @@ export const symbolCreateModalComponent = {
     /** The form. */
     public form: IFormController;
 
-    /**
-     * Constructor.
-     *
-     * @param symbolResource
-     * @param toastService
-     * @param projectService
-     */
     /* @ngInject */
     constructor(private symbolResource: SymbolResource,
                 private toastService: ToastService,
-                private projectService: ProjectService) {
+                private appStore: AppStoreService) {
       super();
 
       this.symbol = new AlphabetSymbol();
@@ -126,7 +119,7 @@ export const symbolCreateModalComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

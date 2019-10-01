@@ -16,11 +16,11 @@
 
 import { remove } from 'lodash';
 import { Selectable } from '../../../utils/selectable';
-import { TestReportResource } from '../../../services/resources/test-report-resource.service';
-import { ProjectService } from '../../../services/project.service';
+import { TestReportApiService } from '../../../services/resources/test-report-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { TestReportService } from '../../../services/test-report.service';
 import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The component for test reports.
@@ -39,18 +39,9 @@ export const testReportsViewComponent = {
     /** The page object */
     public page: any;
 
-    /**
-     * Constructor.
-     *
-     * @param testReportResource
-     * @param projectService
-     * @param toastService
-     * @param testReportService
-     * @param $state
-     */
     /* @ngInject */
-    constructor(private testReportResource: TestReportResource,
-                private projectService: ProjectService,
+    constructor(private testReportApi: TestReportApiService,
+                private appStore: AppStoreService,
                 private toastService: ToastService,
                 private testReportService: TestReportService,
                 private $state: any) {
@@ -71,13 +62,14 @@ export const testReportsViewComponent = {
     }
 
     loadTestReports(page: number = 0): void {
-      this.testReportResource.getAll(this.project.id, page)
-        .then(page => {
+      this.testReportApi.getAll(this.project.id, page).subscribe(
+        page => {
           this.page = page;
           this.reports = this.page.content;
           this.selectedReports = new Selectable(this.reports, 'id');
-        })
-        .catch((err) => this.toastService.danger(`Failed to load reports. ${err.data.message}`));
+        },
+        err => this.toastService.danger(`Failed to load reports. ${err.data.message}`)
+      );
     }
 
     /**
@@ -86,29 +78,31 @@ export const testReportsViewComponent = {
      * @param report The report.
      */
     deleteReport(report: any): void {
-      this.testReportResource.remove(this.project.id, report.id)
-        .then(() => {
+      this.testReportApi.remove(this.project.id, report.id).subscribe(
+        () => {
           this.toastService.success(`The report has been deleted.`);
           this._deleteReport(report);
           this.loadTestReports(this.page.number);
-        })
-        .catch((err) => {
+        },
+        err => {
           this.toastService.danger(`The report could not be deleted. ${err.data.message}`);
-        });
+        }
+      );
     }
 
     /** Delete selected reports. */
     deleteSelectedReports(): void {
       const reportsToDelete = this.selectedReports.getSelected();
-      this.testReportResource.removeMany(this.project.id, reportsToDelete)
-        .then(() => {
+      this.testReportApi.removeMany(this.project.id, reportsToDelete).subscribe(
+        () => {
           this.toastService.success(`The reports have been deleted.`);
           reportsToDelete.forEach(report => this._deleteReport(report));
           this.loadTestReports(this.page.number);
-        })
-        .catch((err) => {
+        },
+        err => {
           this.toastService.danger(`The reports could not be deleted. ${err.data.message}`);
-        });
+        }
+      );
     }
 
     /**
@@ -135,7 +129,7 @@ export const testReportsViewComponent = {
     }
 
     get project(): Project {
-      return this.projectService.store.currentProject;
+      return this.appStore.project;
     }
   }
 };

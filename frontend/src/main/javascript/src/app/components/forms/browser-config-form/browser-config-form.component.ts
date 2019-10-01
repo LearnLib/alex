@@ -15,7 +15,7 @@
  */
 
 import { DriverConfigService } from '../../../services/driver-config.service';
-import { SettingsResource } from '../../../services/resources/settings-resource.service';
+import { SettingsApiService } from '../../../services/resources/settings-api.service';
 
 /**
  * The component to configure the web driver.
@@ -47,10 +47,10 @@ export const browserConfigFormComponent = {
     /**
      * Constructor.
      *
-     * @param settingsResource
+     * @param settingsApi
      */
     /* @ngInject */
-    constructor(private settingsResource: SettingsResource) {
+    constructor(private settingsApi: SettingsApiService) {
       this.supportedWebDrivers = [];
       this.timeoutsCollapsed = true;
 
@@ -93,9 +93,10 @@ export const browserConfigFormComponent = {
     }
 
     $onInit(): void {
-      this.settingsResource.getSupportedWebDrivers()
-        .then(data => this.supportedWebDrivers = data.supportedWebDrivers)
-        .catch(console.error);
+      this.settingsApi.getSupportedWebDrivers().subscribe(
+        data => this.supportedWebDrivers = data.supportedWebDrivers,
+        console.error
+      );
 
       this.driverName = this.config.name;
     }

@@ -1,8 +1,8 @@
 <div class="view view-test-reports">
-    <view-header title="Test Reports"></view-header>
+    <view-header [title]="'Test Reports'"></view-header>
     <action-bar>
         <div ng-if="vm.reports.length > 0" class="d-flex flex-row align-items-center">
-            <selectable-checkbox-multiple selectable="vm.selectedReports"></selectable-checkbox-multiple>
+            <selectable-checkbox-multiple [selectable]="vm.selectedReports"></selectable-checkbox-multiple>
 
             <div class="w-100 ml-3">
                 <div class="btn-group btn-group-sm">
@@ -42,7 +42,7 @@
                     <tbody>
                     <tr ng-repeat="report in vm.reports | orderBy:'-startDate':false">
                         <th width="1%">
-                            <selectable-checkbox item="report" selectable="vm.selectedReports"></selectable-checkbox>
+                            <selectable-checkbox [item]="report" [selectable]="vm.selectedReports"></selectable-checkbox>
                         </th>
                         <td width="1%" style="min-width: 140px;">{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
                         <td width="1%">

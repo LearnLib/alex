@@ -77,7 +77,7 @@
                 <div class="list-group-item d-flex" ng-repeat="pSymbol in vm.configuration.symbolsToAdd track by $index">
                   <div class="w-100">
                     <strong>{{pSymbol.symbol.name}}</strong><br>
-                    <symbol-parameters parameter-values="pSymbol.parameterValues"></symbol-parameters>
+                    <symbol-parameters [parameter-values]="pSymbol.parameterValues"></symbol-parameters>
                   </div>
                   <div class="text-muted">
                     <i class="fas fa-fw fa-times cursor-pointer"
@@ -109,7 +109,7 @@
               <div class="list-group">
                 <div class="list-group-item d-flex flex-row align-items-center" ng-repeat="env in vm.project.environments">
                   <div>
-                    <selectable-checkbox item="env" selectable="vm.selectedEnvironments" change="vm.updateEnvironments()"></selectable-checkbox>
+                    <selectable-checkbox [item]="env" [selectable]="vm.selectedEnvironments" (change)=vm.updateEnvironments()"></selectable-checkbox>
                   </div>
                   <div class="w-100 ml-3">
                     <strong>{{env.name}}</strong>

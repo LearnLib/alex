@@ -1,9 +1,9 @@
 <div class="view">
-    <view-header title="Manage Users"></view-header>
+    <view-header [title]="'Manage Users'"></view-header>
 
     <action-bar>
         <div class="d-flex flex-row align-items-center" ng-if="vm.users.length > 0">
-            <selectable-checkbox-multiple selectable="vm.selectedUsers"></selectable-checkbox-multiple>
+            <selectable-checkbox-multiple [selectable]="vm.selectedUsers"></selectable-checkbox-multiple>
 
             <div class="w-100 ml-3">
                 <button class="btn btn-sm btn-primary mr-2" ng-click="vm.createUser()">
@@ -39,8 +39,8 @@
                 >
                     <td>
                         <selectable-checkbox
-                            item="user"
-                            selectable="vm.selectedUsers"
+                            [item]="user"
+                            [selectable]="vm.selectedUsers"
                         >
                         </selectable-checkbox>
                     </td>

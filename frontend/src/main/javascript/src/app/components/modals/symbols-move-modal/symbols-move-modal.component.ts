@@ -18,12 +18,11 @@ import { events } from '../../../constants';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { ModalComponent } from '../modal.component';
 import { SymbolResource } from '../../../services/resources/symbol-resource.service';
-import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
-import { ProjectService } from '../../../services/project.service';
+import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { EventBus } from '../../../services/eventbus.service';
 import { SymbolGroup } from '../../../entities/symbol-group';
-import { Project } from '../../../entities/project';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller that handles the moving of symbols into another group.
@@ -52,15 +51,15 @@ export const symbolMoveModalComponent = {
      * Constructor.
      *
      * @param symbolResource
-     * @param symbolGroupResource
+     * @param symbolGroupApi
      * @param projectService
      * @param toastService
      * @param eventBus
      */
     /* @ngInject */
     constructor(private symbolResource: SymbolResource,
-                private symbolGroupResource: SymbolGroupResource,
-                private projectService: ProjectService,
+                private symbolGroupApi: SymbolGroupApiService,
+                private appStore: AppStoreService,
                 private toastService: ToastService,
                 private eventBus: EventBus) {
       super();
@@ -70,10 +69,9 @@ export const symbolMoveModalComponent = {
       this.selectedGroup = null;
       this.errorMessage = null;
 
-      const project: Project = projectService.store.currentProject;
-      symbolGroupResource.getAll(project.id).then(groups => {
-        this.groups = groups;
-      });
+      symbolGroupApi.getAll(this.appStore.project.id).subscribe(
+        groups => this.groups = groups
+      );
     }
 
     $onInit(): void {
