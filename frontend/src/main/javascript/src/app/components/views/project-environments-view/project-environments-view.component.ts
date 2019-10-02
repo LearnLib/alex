@@ -17,7 +17,7 @@
 import { Project } from '../../../entities/project';
 import { ProjectService } from '../../../services/project.service';
 import { ProjectEnvironment } from '../../../entities/project-environment';
-import { ProjectEnvironmentResourceService } from '../../../services/resources/project-environment-resource.service';
+import { ProjectEnvironmentApiService } from '../../../services/resources/project-environment-api.service';
 import { PromptService } from '../../../services/prompt.service';
 import { ToastService } from '../../../services/toast.service';
 import { ProjectUrl } from '../../../entities/project-url';
@@ -38,7 +38,7 @@ export const projectEnvironmentsViewComponent = {
 
     /* @ngInject */
     constructor(private projectService: ProjectService,
-                private projectEnvironmentResource: ProjectEnvironmentResourceService,
+                private projectEnvironmentApi: ProjectEnvironmentApiService,
                 private promptService: PromptService,
                 private toastService: ToastService,
                 private $uibModal: any,
@@ -52,12 +52,13 @@ export const projectEnvironmentsViewComponent = {
 
     init(): void {
       // load all existing counters from the server
-      this.projectEnvironmentResource.getAll(this.project.id)
-        .then(envs => {
+      this.projectEnvironmentApi.getAll(this.project.id).subscribe(
+        envs => {
           this.environments = envs;
           this.projectService.reloadCurrentProject();
-        })
-        .catch(console.error);
+        },
+        console.error
+      );
     }
 
     createEnvironment(): void {
@@ -65,7 +66,7 @@ export const projectEnvironmentsViewComponent = {
         name => {
           const env = new ProjectEnvironment();
           env.name = name;
-          this.projectEnvironmentResource.create(this.project.id, env).then(
+          this.projectEnvironmentApi.create(this.project.id, env).subscribe(
             () => this.init()
           );
         }
@@ -77,10 +78,13 @@ export const projectEnvironmentsViewComponent = {
         name => {
           const copy = env.copy();
           copy.name = name;
-          this.projectEnvironmentResource.update(this.project.id, copy).then(updatedEnv => {
-            this.toastService.success(`The environment has been updated.`);
-            this.init();
-          }).catch(err => this.toastService.danger(`Could not update environment. ${err.data.message}`));
+          this.projectEnvironmentApi.update(this.project.id, copy).subscribe(
+            () => {
+              this.toastService.success(`The environment has been updated.`);
+              this.init();
+            },
+            err => this.toastService.danger(`Could not update environment. ${err.data.message}`)
+          );
         }
       );
     }
@@ -90,12 +94,13 @@ export const projectEnvironmentsViewComponent = {
         this.toastService.danger('You cannot delete the only environment in a project.');
       } else {
         this.promptService.confirm('When deleting the environment, associated test reports and learner results are deleted as well. Are you sure?').then(() => {
-          this.projectEnvironmentResource.delete(this.project.id, env).then(
+          this.projectEnvironmentApi.delete(this.project.id, env).subscribe(
             () => {
               this.toastService.success(`Environment ${env.name} has been deleted.`);
               this.init();
-            }
-          ).catch(err => this.toastService.danger(`Could not update environment. ${err.data.message}`));
+            },
+          err => this.toastService.danger(`Could not update environment. ${err.data.message}`)
+          );
         });
       }
     }
@@ -105,9 +110,10 @@ export const projectEnvironmentsViewComponent = {
 
       const e = env.copy();
       e.default = true;
-      this.projectEnvironmentResource.update(env.project, e)
-        .then(() => this.init())
-        .catch(err => this.toastService.danger(`Failed to make environment default. ${err.data.message}`));
+      this.projectEnvironmentApi.update(env.project, e).subscribe(
+        () => this.init(),
+          err => this.toastService.danger(`Failed to make environment default. ${err.data.message}`)
+      );
     }
 
     makeUrlDefault(env: ProjectEnvironment, url: ProjectUrl): void {
@@ -115,9 +121,10 @@ export const projectEnvironmentsViewComponent = {
 
       const u = url.copy();
       u.default = true;
-      this.projectEnvironmentResource.updateUrl(env.project, env.id, url.id, u)
-        .then(() => this.init())
-        .catch(err => this.toastService.danger(`Failed to make URL default. ${err.data.message}`));
+      this.projectEnvironmentApi.updateUrl(env.project, env.id, url.id, u).subscribe(
+        () => this.init(),
+        err => this.toastService.danger(`Failed to make URL default. ${err.data.message}`)
+      );
     }
 
     createUrl(): void {
@@ -140,9 +147,10 @@ export const projectEnvironmentsViewComponent = {
     }
 
     deleteUrl(env: ProjectEnvironment, url: ProjectUrl): void {
-      this.projectEnvironmentResource.deleteUrl(this.project.id, env.id, url)
-        .then(() => this.init())
-        .catch(err => this.toastService.danger(`Could not delete URL. ${err.data.message}`));
+      this.projectEnvironmentApi.deleteUrl(this.project.id, env.id, url).subscribe(
+        () => this.init(),
+          err => this.toastService.danger(`Could not delete URL. ${err.data.message}`)
+      );
     }
 
     createVariable(): void {
@@ -165,9 +173,10 @@ export const projectEnvironmentsViewComponent = {
     }
 
     deleteVariable(env: ProjectEnvironment, variable: ProjectEnvironmentVariable): void {
-      this.projectEnvironmentResource.deleteVariable(this.project.id, env.id, variable)
-          .then(() => this.init())
-          .catch(err => this.toastService.danger(`Could not delete variable. ${err.data.message}`));
+      this.projectEnvironmentApi.deleteVariable(this.project.id, env.id, variable).subscribe(
+        () => this.init(),
+          err => this.toastService.danger(`Could not delete variable. ${err.data.message}`)
+      );
     }
 
     get project(): Project {

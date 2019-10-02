@@ -15,7 +15,7 @@
  */
 
 import { ModalComponent } from '../modal.component';
-import { ProjectEnvironmentResourceService } from '../../../services/resources/project-environment-resource.service';
+import { ProjectEnvironmentApiService } from '../../../services/resources/project-environment-api.service';
 import { ProjectEnvironment } from '../../../entities/project-environment';
 import { ProjectEnvironmentVariable } from "../../../entities/project-environment-variable";
 
@@ -35,7 +35,7 @@ export const environmentVariableEditModalComponent = {
     public errorMessage: string;
 
     /* @ngInject */
-    constructor(private projectEnvironmentResource: ProjectEnvironmentResourceService) {
+    constructor(private projectEnvironmentApi: ProjectEnvironmentApiService) {
       super();
     }
 
@@ -46,13 +46,14 @@ export const environmentVariableEditModalComponent = {
 
     editVariable(): void {
       this.errorMessage = null;
-      this.projectEnvironmentResource.updateVariable(this.environment.project, this.environment.id, this.variable.id, this.variable)
-        .then(updatedVariable => {
+      this.projectEnvironmentApi.updateVariable(this.environment.project, this.environment.id, this.variable.id, this.variable).subscribe(
+        updatedVariable => {
           this.close({$value: updatedVariable});
-        })
-        .catch(err => {
+        },
+          err => {
           this.errorMessage = `The variable could not be updated. ${err.data.message}`;
-        });
+        }
+      );
     }
   },
 };

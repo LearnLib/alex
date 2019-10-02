@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
-import { IFormController } from 'angular';
-
-/**
- * Form groups for a formula.
- */
-export const ltsFormulaFormGroupsComponent = {
-  template: require('html-loader!./lts-formula-form-groups.component.html'),
-  bindings: {
-    formula: '=',
-    form: '='
-  },
-  controllerAs: 'vm',
-  controller: class LtsFormulaListComponent {
-
-    public formula: any;
-
-    public form: IFormController;
-  }
-};
+export function replaceItem<T>(arr: T[], findFn: (T) => boolean, newItem: T): T[] {
+  const newArr = [...arr];
+  const i = newArr.findIndex(findFn);
+  newArr[i] = newItem;
+  return newArr;
+}

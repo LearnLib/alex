@@ -10,7 +10,7 @@
     </tr>
   </ng-container>
   <ng-container *ngIf="steps.length > 0">
-    <tr *ngFor="let step of steps">
+    <tr *ngFor="let step of steps; let i = index">
       <td width="1">
         <div class="pl-2">
           <i class="fas fa-grip-vertical handle text-muted cursor-grabbing"></i>

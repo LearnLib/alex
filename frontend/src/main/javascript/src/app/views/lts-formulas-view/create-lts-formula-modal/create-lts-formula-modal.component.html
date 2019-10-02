@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title">Create Lts Formula</h4>
+  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form [formGroup]="createForm" (ngSubmit)="createFormula()">
+
+  <div class="modal-body">
+
+    <div class="alert alert-danger" *ngIf="errorMessage != null">
+      {{errorMessage}}
+    </div>
+
+    <lts-formula-form-groups [formula]="formula" [form]="createForm"></lts-formula-form-groups>
+
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-primary" type="submit">Create</button>
+    <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.stopPropagation()">Cancel</button>
+  </div>
+
+</form>

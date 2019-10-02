@@ -17,7 +17,7 @@
 import { ModalComponent } from '../modal.component';
 import { IFormController } from 'angular';
 import { ProjectUrl } from '../../../entities/project-url';
-import { ProjectEnvironmentResourceService } from '../../../services/resources/project-environment-resource.service';
+import { ProjectEnvironmentApiService } from '../../../services/resources/project-environment-api.service';
 import { ProjectEnvironment } from '../../../entities/project-environment';
 
 export const projectUrlEditModalComponent = {
@@ -37,7 +37,7 @@ export const projectUrlEditModalComponent = {
     public url: ProjectUrl;
 
     /* @ngInject */
-    constructor(private projectEnvironmentResource: ProjectEnvironmentResourceService) {
+    constructor(private projectEnvironmentApi: ProjectEnvironmentApiService) {
       super();
       this.url = new ProjectUrl();
     }
@@ -48,11 +48,10 @@ export const projectUrlEditModalComponent = {
     }
 
     updateUrl(): void {
-      this.projectEnvironmentResource.updateUrl(this.environment.project, this.environment.id, this.url.id, this.url)
-        .then(urls => {
-          this.close({$value: urls});
-        })
-        .catch(console.error);
+      this.projectEnvironmentApi.updateUrl(this.environment.project, this.environment.id, this.url.id, this.url).subscribe(
+        urls => this.close({$value: urls}),
+        console.error
+      );
     }
   },
 };

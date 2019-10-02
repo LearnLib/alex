@@ -1,15 +1,15 @@
-<div ng-if="!vm.output.success">
-  <div ng-if="vm.output.trace !== ''">
+<div *ngIf="!output.success">
+  <div *ngIf="output.trace !== ''">
     <div
-      ng-repeat="t in vm.formattedTrace track by $index"
-      ng-style="{'margin-left': (1 * $index) + 'rem'}"
+      *ngFor="let t of formattedTrace; let i = index"
+      [ngStyle]="{'margin-left': i + 'rem'}"
     >
-        <span ng-if="!vm.showFirst">
-            <i class="fa fa-fw fa-level-up-alt fa-rotate-90"></i> {{t.symbol}} / {{t.output}}
-        </span>
-      <span ng-if="vm.showFirst">
-            <i class="fa fa-fw fa-level-up-alt fa-rotate-90" ng-if="$index > 0"></i> {{t.symbol}} / {{t.output}}
-        </span>
+      <span *ngIf="!showFirst">
+        <i class="fa fa-fw fa-level-up-alt fa-rotate-90"></i> {{t.symbol}} / {{t.output}}
+      </span>
+      <span *ngIf="showFirst">
+        <i class="fa fa-fw fa-level-up-alt fa-rotate-90" *ngIf="i > 0"></i> {{t.symbol}} / {{t.output}}
+      </span>
     </div>
   </div>
 </div>

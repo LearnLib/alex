@@ -7,7 +7,7 @@ import { UpgradeModule } from '@angular/upgrade/static';
 
 import ALEX from './app.module.ajs';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { ToastService } from './services/toast.service';
@@ -34,6 +34,12 @@ import { CounterApiService } from './services/resources/counter-api.service';
 import { ProjectApiService } from './services/resources/project-api.service';
 import { CountersViewComponent } from './views/counters-view/counters-view.component';
 import { CreateCounterModalComponent } from './views/counters-view/create-counter-modal/create-counter-modal.component';
+import { ProjectEnvironmentApiService } from './services/resources/project-environment-api.service';
+import { LtsFormulaApiService } from './services/resources/lts-formula-api.service';
+import { LtsFormulasViewComponent } from './views/lts-formulas-view/lts-formulas-view.component';
+import { CreateLtsFormulaModalComponent } from './views/lts-formulas-view/create-lts-formula-modal/create-lts-formula-modal.component';
+import { EditLtsFormulaModalComponent } from './views/lts-formulas-view/edit-lts-formula-modal/edit-lts-formula-modal.component';
+import { LtsFormulaFormGroupsComponent } from './views/lts-formulas-view/lts-formula-form-groups/lts-formula-form-groups.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +55,11 @@ import { CreateCounterModalComponent } from './views/counters-view/create-counte
     TestCaseTablePrePostStepsComponent,
     TestCaseTableSymbolColumnComponent,
     CountersViewComponent,
-    CreateCounterModalComponent
+    CreateCounterModalComponent,
+    LtsFormulasViewComponent,
+    CreateLtsFormulaModalComponent,
+    EditLtsFormulaModalComponent,
+    LtsFormulaFormGroupsComponent
   ],
   imports: [
     BrowserModule,
@@ -57,6 +67,7 @@ import { CreateCounterModalComponent } from './views/counters-view/create-counte
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     ToastrModule.forRoot({
       enableHtml: true,
       positionClass: 'toast-bottom-center',
@@ -76,10 +87,14 @@ import { CreateCounterModalComponent } from './views/counters-view/create-counte
     TestReportApiService,
     WebhookApiService,
     CounterApiService,
-    ProjectApiService
+    ProjectApiService,
+    ProjectEnvironmentApiService,
+    LtsFormulaApiService
   ],
   entryComponents: [
     CreateCounterModalComponent,
+    CreateLtsFormulaModalComponent,
+    EditLtsFormulaModalComponent,
     // remove when migration is done
     ViewHeaderComponent,
     ActionBarComponent,
@@ -89,7 +104,8 @@ import { CreateCounterModalComponent } from './views/counters-view/create-counte
     TestCaseTableComponent,
     SymbolParametersComponent,
     OutputErrorTraceComponent,
-    CountersViewComponent
+    CountersViewComponent,
+    LtsFormulasViewComponent
   ]
   // bootstrap: [AppComponent]
 })

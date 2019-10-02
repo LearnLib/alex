@@ -217,12 +217,7 @@ import { TestReportService } from './services/test-report.service';
 import { ToastService } from './services/toast.service';
 import { UserService } from './services/user.service';
 import { setVariableByHttpStatusActionFormComponent } from './components/forms/actions/misc/set-variable-by-http-status-action-form/set-variable-by-http-status-action-form.component';
-import { LtsFormulaResource } from './services/resources/lts-formula-resource.service';
-import { LtsFormulaService } from './services/lts-formula.service';
-import { ltsFormulasViewComponent } from './components/views/lts-formulas-view/lts-formulas-view.component';
-import { ltsFormulaCreateModalComponent } from './components/modals/lts-formula-create-modal/lts-formula-create-modal.component';
-import { ltsFormulaFormGroupsComponent } from './components/forms/lts-formula-form-groups/lts-formula-form-groups.component';
-import { ltsFormulaEditModalComponent } from './components/modals/lts-formula-edit-modal/lts-formula-edit-modal.component';
+import { LtsFormulaApiService } from './services/resources/lts-formula-api.service';
 import { unauthorizedHttpInterceptor } from './utils/unauthorized-http-interceptor';
 import { logoutViewComponent } from './components/views/logout-view/logout-view.component';
 import { defaultWebdriverButtonComponent } from './components/views/admin-settings-view/default-webdriver-button/default-webdriver-button.component';
@@ -230,7 +225,7 @@ import { dragAndDropActionFormComponent } from './components/forms/actions/web/d
 import { dragAndDropByActionFormComponent } from './components/forms/actions/web/drag-and-drop-by-action-form/drag-and-drop-by-action-form.component';
 import { symbolUsagesModalComponent } from './components/modals/symbol-usages-modal/symbol-usages-modal.component';
 import { executionResultModalComponent } from './components/modals/execution-result-modal/execution-result-modal.component';
-import { ProjectEnvironmentResourceService } from './services/resources/project-environment-resource.service';
+import { ProjectEnvironmentApiService } from './services/resources/project-environment-api.service';
 import { projectEnvironmentsViewComponent } from './components/views/project-environments-view/project-environments-view.component';
 import { projectUrlFormGroupsComponent } from './components/forms/project-url-form-groups/project-url-form-groups.component';
 import { projectUrlCreateModalComponent } from './components/modals/project-url-create-modal/project-url-create-modal.component';
@@ -250,6 +245,7 @@ import { TestCaseTableComponent } from './views/test-case-view/test-case-table/t
 import { SymbolParametersComponent } from './common/symbol-parameters/symbol-parameters.component';
 import { OutputErrorTraceComponent } from './common/output-error-trace/output-error-trace.component';
 import { CountersViewComponent } from './views/counters-view/counters-view.component';
+import { LtsFormulasViewComponent } from './views/lts-formulas-view/lts-formulas-view.component';
 
 angular
   .module('ALEX', [
@@ -303,8 +299,8 @@ angular
   .service('testResource', TestResource)
   .service('testReportApi', downgradeInjectable(TestReportApiService))
   .service('webhookApi', downgradeInjectable(WebhookApiService))
-  .service('ltsFormulaResource', LtsFormulaResource)
-  .service('projectEnvironmentResource', ProjectEnvironmentResourceService)
+  .service('ltsFormulaApi', downgradeInjectable(LtsFormulaApiService))
+  .service('projectEnvironmentApi', downgradeInjectable(ProjectEnvironmentApiService))
 
   // services
   .service('actionService', ActionService)
@@ -321,7 +317,6 @@ angular
   .service('notificationService', NotificationService)
   .service('projectService', ProjectService)
   .service('userService', UserService)
-  .service('ltsFormulaService', LtsFormulaService)
   .service('appStore', downgradeInjectable(AppStoreService))
 
   // modals
@@ -354,8 +349,6 @@ angular
   .component('separatingWordModal', separatingWordModalComponent)
   .component('testsMoveModal', testsMoveModalComponent)
   .component('symbolSelectModal', symbolSelectModalComponent)
-  .component('ltsFormulaCreateModal', ltsFormulaCreateModalComponent)
-  .component('ltsFormulaEditModal', ltsFormulaEditModalComponent)
   .component('projectUrlCreateModal', projectUrlCreateModalComponent)
   .component('projectUrlEditModal', projectUrlEditModalComponent)
   .component('symbolUsagesModal', symbolUsagesModalComponent)
@@ -391,7 +384,7 @@ angular
   .component('testSuiteView', testSuiteViewComponent)
   .component('webhooksView', webhooksViewComponent)
   .component('redirectView', redirectViewComponent)
-  .component('ltsFormulasView', ltsFormulasViewComponent)
+  .directive('ltsFormulasView', downgradeComponent({ component: LtsFormulasViewComponent }) as angular.IDirectiveFactory)
   .component('logoutView', logoutViewComponent)
   .component('projectEnvironmentsView', projectEnvironmentsViewComponent)
 
@@ -416,7 +409,6 @@ angular
   .component('hypothesisEqOracleForm', hypothesisEqOracleFormComponent)
   .component('testSuiteEqOracleForm', testSuiteEqOracleFormComponent)
   .component('wpMethodEqOracleForm', wpMethodEqOracleFormComponent)
-  .component('ltsFormulaFormGroups', ltsFormulaFormGroupsComponent)
   .component('projectUrlFormGroups', projectUrlFormGroupsComponent)
 
   // widgets components

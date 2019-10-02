@@ -16,6 +16,11 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 
+interface FormattedOutputTrace {
+  symbol: string,
+  output: string
+}
+
 @Component({
   selector: 'output-error-trace',
   templateUrl: './output-error-trace.component.html',
@@ -29,7 +34,7 @@ export class OutputErrorTraceComponent implements OnInit {
   @Input()
   showFirst: boolean;
 
-  formattedTrace: string[];
+  formattedTrace: FormattedOutputTrace[];
 
   constructor() {
     this.formattedTrace = [];

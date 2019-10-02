@@ -17,8 +17,7 @@
 import { Selectable } from '../../../utils/selectable';
 import { LearnResult } from '../../../entities/learner-result';
 import { ToastService } from '../../../services/toast.service';
-import { LtsFormulaService } from '../../../services/lts-formula.service';
-import { LtsFormulaResource } from '../../../services/resources/lts-formula-resource.service';
+import { LtsFormulaApiService } from '../../../services/resources/lts-formula-api.service';
 import { Project } from '../../../entities/project';
 import { Resizer } from '../../../utils/resizer';
 import { uniqueId } from 'lodash';
@@ -45,16 +44,17 @@ export const learnerResultPanelCheckingViewComponent = {
     public config: any;
     public results: any;
     public manualFormula: string;
+    public formulas: any[];
 
     /* @ngInject */
     constructor(private toastService: ToastService,
                 private appStore: AppStoreService,
-                private ltsFormulaService: LtsFormulaService,
-                private ltsFormulaResource: LtsFormulaResource,
+                private ltsFormulaApi: LtsFormulaApiService,
                 private $element: any) {
 
       this.selectedFormulas = new Selectable([], 'id');
       this.results = {};
+      this.formulas = [];
 
       this.config = {
         minUnfolds: 3,
@@ -68,8 +68,11 @@ export const learnerResultPanelCheckingViewComponent = {
     $onInit(): void {
       this.registerMenu({menu: []});
 
-      this.ltsFormulaService.load(this.project.id)
-        .then(formulas => this.selectedFormulas = new Selectable(formulas, 'id'));
+      this.ltsFormulaApi.getAll(this.project.id)
+        .subscribe(formulas => {
+          this.selectedFormulas = new Selectable(formulas, 'id');
+          this.formulas = formulas;
+        });
 
       new Resizer(this.$element[0], '.resize', '.right-sidebar');
     }
@@ -99,11 +102,12 @@ export const learnerResultPanelCheckingViewComponent = {
         return;
       }
 
-      this.ltsFormulaResource.check(this.project.id, this.config)
-        .then(res => {
-          res.data.forEach(f => this.results[f.formula.id] = f);
-        })
-        .catch(err => this.toastService.danger(`Could not check formulas. ${err.data.message}`));
+      this.ltsFormulaApi.check(this.project.id, this.config).subscribe(
+        data => {
+          data.forEach(f => this.results[f.formula.id] = f);
+        },
+        err => this.toastService.danger(`Could not check formulas. ${err.data.message}`)
+      );
     }
 
     getItemClass(id: number): any {
@@ -122,10 +126,6 @@ export const learnerResultPanelCheckingViewComponent = {
 
     get project(): Project {
       return this.appStore.project;
-    }
-
-    get formulas(): any[] {
-      return this.ltsFormulaService.store.ltsFormulas;
     }
   }
 };

@@ -17,7 +17,7 @@
 import { ModalComponent } from '../modal.component';
 import { IFormController } from 'angular';
 import { ProjectUrl } from '../../../entities/project-url';
-import { ProjectEnvironmentResourceService } from '../../../services/resources/project-environment-resource.service';
+import { ProjectEnvironmentApiService } from '../../../services/resources/project-environment-api.service';
 import { ProjectEnvironment } from '../../../entities/project-environment';
 
 export const projectUrlCreateModalComponent = {
@@ -38,7 +38,7 @@ export const projectUrlCreateModalComponent = {
     public errorMessage: string;
 
     /* @ngInject */
-    constructor(private projectEnvironmentResource: ProjectEnvironmentResourceService) {
+    constructor(private projectEnvironmentApi: ProjectEnvironmentApiService) {
       super();
       this.url = new ProjectUrl();
     }
@@ -52,13 +52,12 @@ export const projectUrlCreateModalComponent = {
      */
     createUrl(): void {
       this.errorMessage = null;
-      this.projectEnvironmentResource.createUrl(this.environment.project, this.environment.id, this.url)
-        .then(urls => {
-          this.close({$value: urls});
-        })
-        .catch(err => {
+      this.projectEnvironmentApi.createUrl(this.environment.project, this.environment.id, this.url).subscribe(
+        urls => this.close({$value: urls}),
+          err => {
           this.errorMessage = `The URL could not be created. ${err.data.message}`;
-        });
+          }
+      );
     }
   },
 };

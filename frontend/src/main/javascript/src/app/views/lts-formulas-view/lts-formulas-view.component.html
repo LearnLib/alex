@@ -1,0 +1,66 @@
+<div class="view">
+  <view-header [title]="'Lts Formulas'"></view-header>
+  <action-bar>
+    <div class="d-flex flex-row align-items-center">
+      <selectable-checkbox-multiple [selectable]="store.formulasSelectable"></selectable-checkbox-multiple>
+      <div class="w-100 ml-3">
+        <button class="btn btn-sm btn-primary mr-2" (click)="store.create()">
+          Create
+        </button>
+
+        <div class="btn-group btn-group-sm">
+          <button
+            class="btn btn-default"
+            (click)="store.edit(store.formulasSelectable.getSelected()[0])"
+            [disabled]="store.formulasSelectable.getSelected().length !== 1"
+          >
+            Edit
+          </button>
+          <button
+            class="btn btn-default"
+            (click)="store.deleteSelected()"
+            [disabled]="!store.formulasSelectable.isAnySelected()"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <div class="list-group" *ngIf="(store.formulas$ | async).length > 0">
+        <div class="list-group-item d-flex flex-row" *ngFor="let formula of store.formulas$ | async">
+          <div class="mr-3">
+            <selectable-checkbox [item]="formula" [selectable]="store.formulasSelectable"></selectable-checkbox>
+          </div>
+          <div class="w-100 mr-3">
+            <strong class="mb-0 mt-0">{{formula.name}}</strong>
+            <p class="mb-0 mt-0 text-muted">{{formula.formula}}</p>
+          </div>
+          <div>
+            <div class="d-inline-block" ngbDropdown placement="bottom-right">
+              <button class="btn btn-sm btn-icon btn-dropdown no-caret" ngbDropdownToggle>
+                <i class="fas fa-fw fa-bars"></i>
+              </button>
+              <div ngbDropdownMenu>
+                <button ngbDropdownItem (click)="store.edit(formula)">
+                  <i class="fas fa-fw fa-edit"></i> Edit
+                </button>
+                <button ngbDropdownItem (click)="store.delete(formula)">
+                  <i class="fas fa-fw fa-trash"></i> Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-info" *ngIf="(store.formulas$ | async).length === 0">
+        There aren't any lts formulas yet.
+      </div>
+    </div>
+  </div>
+</div>

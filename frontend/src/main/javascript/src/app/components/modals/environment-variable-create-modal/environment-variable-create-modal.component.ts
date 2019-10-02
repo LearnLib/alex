@@ -15,7 +15,7 @@
  */
 
 import { ModalComponent } from '../modal.component';
-import { ProjectEnvironmentResourceService } from '../../../services/resources/project-environment-resource.service';
+import { ProjectEnvironmentApiService } from '../../../services/resources/project-environment-api.service';
 import { ProjectEnvironment } from '../../../entities/project-environment';
 import { ProjectEnvironmentVariable } from "../../../entities/project-environment-variable";
 
@@ -35,7 +35,7 @@ export const environmentVariableCreateModalComponent = {
     public errorMessage: string;
 
     /* @ngInject */
-    constructor(private projectEnvironmentResource: ProjectEnvironmentResourceService) {
+    constructor(private projectEnvironmentApi: ProjectEnvironmentApiService) {
       super();
       this.variable = new ProjectEnvironmentVariable();
     }
@@ -46,13 +46,14 @@ export const environmentVariableCreateModalComponent = {
 
     createVariable(): void {
       this.errorMessage = null;
-      this.projectEnvironmentResource.createVariable(this.environment.project, this.environment.id, this.variable)
-        .then(createdVariable => {
+      this.projectEnvironmentApi.createVariable(this.environment.project, this.environment.id, this.variable).subscribe(
+        createdVariable => {
           this.close({$value: createdVariable});
-        })
-        .catch(err => {
+        },
+        err => {
           this.errorMessage = `The variable could not be created. ${err.data.message}`;
-        });
+        }
+      );
     }
   },
 };
