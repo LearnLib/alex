@@ -17,10 +17,10 @@
 import { userRole } from '../../../constants';
 import { User } from '../../../entities/user';
 import { ModalComponent } from '../modal.component';
-import { UserResource } from '../../../services/resources/user-resource.service';
+import { UserApiService } from '../../../services/resources/user-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { PromptService } from '../../../services/prompt.service';
-import { UserService } from '../../../services/user.service';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The component for the modal window that handles editing a user.
@@ -49,10 +49,10 @@ export const userEditModalComponent = {
 
     /* @ngInject */
     constructor(private $state: any,
-                private userResource: UserResource,
+                private userApi: UserApiService,
                 private toastService: ToastService,
                 private promptService: PromptService,
-                private userService: UserService) {
+                private appStore: AppStoreService) {
       super();
     }
 
@@ -66,19 +66,20 @@ export const userEditModalComponent = {
      */
     changeEmail(): void {
       this.error = null;
-      this.userResource.changeEmail(this.user, this.email)
-        .then((user) => {
+      this.userApi.changeEmail(this.user, this.email).subscribe(
+        user => {
           if (this.currentUser.id === this.user.id) {
-            this.userService.login(user);
+            this.appStore.login(user);
           }
 
           this.resolve.onUpdated(user);
           this.dismiss();
           this.toastService.success('The email has been changed.');
-        })
-        .catch(response => {
+        },
+        response => {
           this.error = response.data.message;
-        });
+        }
+      );
     }
 
     /**
@@ -86,15 +87,16 @@ export const userEditModalComponent = {
      */
     promoteUser(): void {
       this.error = null;
-      this.userResource.promote(this.user)
-        .then((user) => {
+      this.userApi.promote(this.user).subscribe(
+        user => {
           this.toastService.success('The user now has admin rights.');
           this.resolve.onUpdated(user);
           this.dismiss();
-        })
-        .catch(response => {
+        },
+        response => {
           this.error = response.data.message;
-        });
+        }
+      );
     }
 
     /**
@@ -103,20 +105,21 @@ export const userEditModalComponent = {
      */
     demoteUser(): void {
       this.error = null;
-      this.userResource.demote(this.user)
-        .then((user) => {
+      this.userApi.demote(this.user).subscribe(
+        user => {
           if (this.currentUser.id === this.user.id) {
-            this.userService.logout();
+            this.appStore.logout();
             this.$state.go('root');
           } else {
             this.resolve.onUpdated(user);
           }
           this.dismiss();
           this.toastService.success('The user now has default user rights.');
-        })
-        .catch(response => {
+        },
+        response => {
           this.error = response.data.message;
-        });
+        }
+      );
     }
 
     /**
@@ -126,20 +129,21 @@ export const userEditModalComponent = {
       this.error = null;
       this.promptService.confirm('Do you want to delete this user permanently?')
         .then(() => {
-          this.userResource.remove(this.user)
-            .then(() => {
+          this.userApi.remove(this.user).subscribe(
+            () => {
               this.toastService.success('The user has been deleted');
               this.resolve.onDeleted(this.user);
               this.dismiss();
-            })
-            .catch(response => {
+            },
+            response => {
               this.error = response.data.message;
-            });
+            }
+          );
         });
     }
 
     get currentUser(): User {
-      return this.userService.store.currentUser;
+      return this.appStore.user;
     }
   },
 };

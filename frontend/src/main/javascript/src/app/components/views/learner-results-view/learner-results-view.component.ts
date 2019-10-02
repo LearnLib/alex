@@ -16,7 +16,7 @@
 
 import { remove } from 'lodash';
 import { Selectable } from '../../../utils/selectable';
-import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { LearnerResultDownloadService } from '../../../services/learner-result-download.service';
 import { LearnResult } from '../../../entities/learner-result';
@@ -37,7 +37,7 @@ class ResultsViewComponent {
   /* @ngInject */
   constructor(private $state: any,
               private appStore: AppStoreService,
-              private learnResultResource: LearnResultResource,
+              private learnerResultApi: LearnerResultApiService,
               private toastService: ToastService,
               private learnerResultDownloadService: LearnerResultDownloadService,
               private $uibModal: any) {
@@ -46,12 +46,13 @@ class ResultsViewComponent {
     this.selectedResults = new Selectable(this.results, 'testNo');
 
     // get all final test results
-    this.learnResultResource.getAll(this.project.id)
-      .then(results => {
+    this.learnerResultApi.getAll(this.project.id).subscribe(
+      results => {
         this.results = results;
         this.selectedResults = new Selectable(this.results, 'testNo');
-      })
-      .catch(err => console.log(err));
+      },
+      console.error
+    );
   }
 
   /**
@@ -60,15 +61,16 @@ class ResultsViewComponent {
    * @param result The test result that should be deleted.
    */
   deleteResult(result: LearnResult): void {
-    this.learnResultResource.remove(result)
-      .then(() => {
+    this.learnerResultApi.remove(result).subscribe(
+      () => {
         this.toastService.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
         remove(this.results, {testNo: result.testNo});
         this.selectedResults.unselect(result);
-      })
-      .catch(err => {
+      },
+      err => {
         this.toastService.danger('<p><strong>Could not delete learner result</strong></p>' + err.data.message);
-      });
+      }
+    );
   }
 
   /**
@@ -77,15 +79,16 @@ class ResultsViewComponent {
   deleteResults(): void {
     const selectedResults = this.selectedResults.getSelected();
     if (selectedResults.length > 0) {
-      this.learnResultResource.removeMany(selectedResults)
-        .then(() => {
+      this.learnerResultApi.removeMany(selectedResults).subscribe(
+        () => {
           this.toastService.success('Learn results deleted');
           selectedResults.forEach(result => remove(this.results, {testNo: result.testNo}));
           this.selectedResults.unselectAll();
-        })
-        .catch(err => {
+        },
+        err => {
           this.toastService.danger('<p><strong>Could not delete learner results</strong></p>' + err.data.message);
-        });
+        }
+      );
     } else {
       this.toastService.info('You have to select a least one result');
     }
@@ -139,14 +142,15 @@ class ResultsViewComponent {
   }
 
   cloneResult(result: LearnResult): void {
-    this.learnResultResource.clone(result)
-      .then(clonedResult => {
+    this.learnerResultApi.clone(result).subscribe(
+      clonedResult => {
         this.toastService.success('The result has been cloned.');
         this.results.push(clonedResult);
-      })
-      .catch(err => {
+      },
+      err => {
         this.toastService.danger(`The result could not be cloned. ${err.data.message}`);
-      });
+      }
+    );
   }
 
   openResultDetailsModal(result: LearnResult): void {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
 import { LearnerResultChartService } from '../../../services/learner-result-chart.service';
 import { ToastService } from '../../../services/toast.service';
 import { DownloadService } from '../../../services/download.service';
@@ -52,7 +52,7 @@ class StatisticsCompareViewComponent {
 
   /* @ngInject */
   constructor(private appStore: AppStoreService,
-              private learnResultResource: LearnResultResource,
+              private learnerResultApi: LearnerResultApiService,
               private learnerResultChartService: LearnerResultChartService,
               private toastService: ToastService,
               private $stateParams: any,
@@ -82,19 +82,17 @@ class StatisticsCompareViewComponent {
   createChartData(): void {
     switch (this.chartMode) {
       case this.chartModes.SINGLE_FINAL:
-        this.learnResultResource.get(this.project.id, this.testNos[0])
-          .then(result => {
-            this.chartData = this.learnerResultChartService.createDataSingleFinal(result);
-          });
+        this.learnerResultApi.get(this.project.id, this.testNos[0]).subscribe(result => {
+          this.chartData = this.learnerResultChartService.createDataSingleFinal(result);
+        });
         break;
       case this.chartModes.SINGLE_COMPLETE:
-        this.learnResultResource.get(this.project.id, this.testNos[0])
-          .then(result => {
-            this.chartData = this.learnerResultChartService.createDataSingleComplete(result);
-          });
+        this.learnerResultApi.get(this.project.id, this.testNos[0]).subscribe(result => {
+          this.chartData = this.learnerResultChartService.createDataSingleComplete(result);
+        });
         break;
       case this.chartModes.MULTIPLE_FINAL:
-        this.learnResultResource.getAll(this.project.id).then(results => {
+        this.learnerResultApi.getAll(this.project.id).subscribe(results => {
 
           // get all results and filter because there is still no other api endpoint
           const resultsFromTestNos = results.filter(r => this.testNos.indexOf(r.testNo) > -1);
@@ -102,7 +100,7 @@ class StatisticsCompareViewComponent {
         });
         break;
       case this.chartModes.MULTIPLE_COMPLETE:
-        this.learnResultResource.getAll(this.project.id).then(results => {
+        this.learnerResultApi.getAll(this.project.id).subscribe(results => {
 
           // get all results and filter because there is still no other api endpoint
           const resultsFromTestNos = results.filter(r => this.testNos.indexOf(r.testNo) > -1);

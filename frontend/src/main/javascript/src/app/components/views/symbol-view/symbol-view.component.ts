@@ -21,7 +21,7 @@ import { ParametrizedSymbol } from '../../../entities/parametrized-symbol';
 import { ClipboardMode, ClipboardService } from '../../../services/clipboard.service';
 import { Selectable } from '../../../utils/selectable';
 import { IScope } from 'angular';
-import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { SymbolApiService } from '../../../services/resources/symbol-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { ActionService } from '../../../services/action.service';
 import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
@@ -48,7 +48,7 @@ class SymbolViewComponent {
   /* @ngInject */
   constructor(private $scope: IScope,
               private $stateParams: any,
-              private symbolResource: SymbolResource,
+              private symbolApi: SymbolApiService,
               private appStore: AppStoreService,
               private toastService: ToastService,
               private actionService: ActionService,
@@ -64,15 +64,16 @@ class SymbolViewComponent {
 
     // load all actions from the symbol
     // redirect to an error page when the symbol from the url id cannot be found
-    this.symbolResource.get(this.project.id, $stateParams.symbolId)
-      .then(symbol => {
+    this.symbolApi.get(this.project.id, $stateParams.symbolId).subscribe(
+      symbol => {
         this.symbol = symbol;
         this.symbol.steps.forEach(step => step._id = uniqueId());
         this.selectedSteps = new Selectable(this.symbol.steps, '_id');
-      })
-      .catch(() => {
+      },
+      () => {
         this.$state.go('error', {message: `The symbol with the ID "${$stateParams.symbolId}" could not be found`});
-      });
+      }
+    );
 
     this.symbolGroupApi.getAll(this.project.id).subscribe(
       groups => this.groups = groups
@@ -183,16 +184,17 @@ class SymbolViewComponent {
     const symbolToUpdate = this.symbol.toJson();
     symbolToUpdate.steps.forEach(s => delete s._id);
 
-    return this.symbolResource.update(symbolToUpdate)
-      .then(updatedSymbol => {
+    return this.symbolApi.update(symbolToUpdate).subscribe(
+      updatedSymbol => {
         this.toastService.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
         this.symbol = updatedSymbol;
         this.symbol.steps.forEach(step => step._id = uniqueId());
         this.selectedSteps = new Selectable(this.symbol.steps, '_id');
-      })
-      .catch(response => {
+      },
+      response => {
         this.toastService.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
-      });
+      }
+    );
   }
 
   /** Copies actions to the clipboard. */

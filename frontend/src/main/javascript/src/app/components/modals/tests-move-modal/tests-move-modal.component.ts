@@ -15,7 +15,7 @@
  */
 
 import { ModalComponent } from '../modal.component';
-import { TestResource } from '../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../services/resources/test-resource.service';
 import { ToastService } from '../../../services/toast.service';
 import { Project } from '../../../entities/project';
 import { AppStoreService } from '../../../services/app-store.service';
@@ -43,7 +43,7 @@ export const testsMoveModalComponent = {
     public errorMessage: string = null;
 
     /* @ngInject */
-    constructor(private testResource: TestResource,
+    constructor(private testApi: TestApiService,
                 private toastService: ToastService,
                 private appStore: AppStoreService) {
       super();
@@ -52,8 +52,9 @@ export const testsMoveModalComponent = {
     $onInit(): void {
       this.tests = this.resolve.tests;
 
-      this.testResource.getRoot(this.project.id)
-        .then(root => this.root = root);
+      this.testApi.getRoot(this.project.id).subscribe(
+        root => this.root = root
+      );
     }
 
     /**
@@ -84,14 +85,15 @@ export const testsMoveModalComponent = {
 
       const testIds: number[] = this.tests.map(t => t.id);
       const targetId: number = this.selectedTestSuite.id;
-      this.testResource.moveMany(this.project.id, testIds, targetId)
-        .then(movedTests => {
+      this.testApi.moveMany(this.project.id, testIds, targetId).subscribe(
+        movedTests => {
           this.toastService.success('The tests have been moved.');
           this.close({$value: movedTests});
-        })
-        .catch(err => {
+        },
+        err => {
           this.errorMessage = `The tests could not be moved. ${err.data.message}`;
-        });
+        }
+      );
     }
 
     get project(): Project {

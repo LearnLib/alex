@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { UserService } from '../../../services/user.service';
 import { ToastService } from '../../../services/toast.service';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The component for the logout view.
@@ -25,21 +25,14 @@ export const logoutViewComponent = {
   controllerAs: 'vm',
   controller: class LogoutViewComponent {
 
-    /**
-     * Constructor.
-     *
-     * @param userService
-     * @param toastService
-     * @param $state
-     */
     /* @ngInject */
-    constructor(private userService: UserService,
+    constructor(private appStore: AppStoreService,
                 private toastService: ToastService,
                 private $state: any) {
     }
 
     $onInit() {
-      this.userService.logout();
+      this.appStore.logout();
       this.toastService.success('You have been logged out.');
       this.$state.go('root');
     }

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { UserService } from '../../services/user.service';
 import { Project } from '../../entities/project';
 import { User } from '../../entities/user';
 import { AppStoreService } from '../../services/app-store.service';
@@ -29,7 +28,6 @@ class SidebarComponent {
 
   /* @ngInject */
   constructor(private $state: any,
-              private userService: UserService,
               private appStore: AppStoreService) {
 
     this.groups = [
@@ -235,7 +233,7 @@ class SidebarComponent {
   }
 
   get user(): User {
-    return this.userService.store.currentUser;
+    return this.appStore.user;
   }
 }
 

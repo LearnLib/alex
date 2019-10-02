@@ -16,7 +16,7 @@
 
 import { ModalComponent } from '../modal.component';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
-import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { SymbolApiService } from '../../../services/resources/symbol-api.service';
 import { SymbolUsageResult } from '../../../entities/symbol-usage-result';
 
 export const symbolUsagesModalComponent = {
@@ -33,13 +33,13 @@ export const symbolUsagesModalComponent = {
     public result: SymbolUsageResult;
 
     /* @ngInject */
-    constructor(private symbolResource: SymbolResource) {
+    constructor(private symbolApi: SymbolApiService) {
       super();
     }
 
     $onInit(): void {
       this.symbol = this.resolve.symbol;
-      this.symbolResource.getUsages(this.symbol.project, this.symbol.id).then(
+      this.symbolApi.getUsages(this.symbol.project, this.symbol.id).subscribe(
         r => this.result = r
       );
     }

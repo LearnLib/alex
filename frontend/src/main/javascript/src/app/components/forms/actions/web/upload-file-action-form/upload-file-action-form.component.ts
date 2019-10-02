@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FileResource } from '../../../../../services/resources/file-resource.service';
+import { FileApiService } from '../../../../../services/resources/file-api.service';
 import { Project } from '../../../../../entities/project';
 import { AppStoreService } from '../../../../../services/app-store.service';
 
@@ -31,15 +31,16 @@ export const uploadFileActionFormComponent = {
     /**
      * Constructor.
      *
-     * @param fileResource
+     * @param fileApi
      * @param projectService
      */
     /* @ngInject */
-    constructor(private fileResource: FileResource,
+    constructor(private fileApi: FileApiService,
                 private appStore: AppStoreService) {
       this.files = [];
-      this.fileResource.getAll(this.project.id)
-        .then(files => this.files = files);
+      this.fileApi.getAll(this.project.id).subscribe(
+        files => this.files = files
+      );
     }
 
     get project(): Project {

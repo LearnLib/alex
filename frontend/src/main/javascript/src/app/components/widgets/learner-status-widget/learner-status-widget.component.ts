@@ -15,7 +15,7 @@
  */
 
 import { IIntervalService, IPromise } from 'angular';
-import { LearnerResource } from '../../../services/resources/learner-resource.service';
+import { LearnerApiService } from '../../../services/resources/learner-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { Project } from '../../../entities/project';
 
@@ -37,12 +37,12 @@ class LearnerStatusWidgetComponent {
    * Constructor.
    *
    * @param $interval
-   * @param learnerResource
+   * @param learnerApi
    * @param toastService
    */
   /* @ngInject */
   constructor(private $interval: IIntervalService,
-              private learnerResource: LearnerResource,
+              private learnerApi: LearnerApiService,
               private toastService: ToastService) {
   }
 
@@ -56,20 +56,20 @@ class LearnerStatusWidgetComponent {
   }
 
   getStatus(): void {
-    this.learnerResource.getStatus(this.project.id)
-      .then(status => this.status = status)
-      .catch(console.error);
+    this.learnerApi.getStatus(this.project.id).subscribe(
+      status => this.status = status,
+      console.error
+    );
   }
 
   /**
    * Induces the Learner to stop learning after the current hypothesis model.
    */
   abort(): void {
-    this.learnerResource.stop(this.project.id)
-      .then(() => {
-        this.toastService.info('The learner stops as soon as possible.');
-      })
-      .catch(console.error);
+    this.learnerApi.stop(this.project.id).subscribe(
+      () => this.toastService.info('The learner stops as soon as possible.'),
+      console.error
+    );
   }
 }
 

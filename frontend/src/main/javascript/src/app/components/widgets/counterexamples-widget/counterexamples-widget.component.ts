@@ -17,9 +17,9 @@
 import * as angular from 'angular';
 import { IPromise, IQService, IScope } from 'angular';
 import { events } from '../../../constants';
-import { LearnerResource } from '../../../services/resources/learner-resource.service';
+import { LearnerApiService } from '../../../services/resources/learner-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { SymbolApiService } from '../../../services/resources/symbol-api.service';
 import { EventBus } from '../../../services/eventbus.service';
 import { LearnResult } from '../../../entities/learner-result';
 
@@ -49,18 +49,19 @@ export const counterexamplesWidgetComponent = {
      * Constructor.
      *
      * @param $scope
-     * @param learnerResource
+     * @param learnerApi
      * @param toastService
-     * @param symbolResource
+     * @param symbolApi
      * @param $q
      * @param eventBus
      * @param dragulaService
      */
+
     /* @ngInject */
     constructor(private $scope: IScope,
-                private learnerResource: LearnerResource,
+                private learnerApi: LearnerApiService,
                 private toastService: ToastService,
-                private symbolResource: SymbolResource,
+                private symbolApi: SymbolApiService,
                 private $q: IQService,
                 private eventBus: EventBus,
                 private dragulaService: any) {
@@ -153,23 +154,26 @@ export const counterexamplesWidgetComponent = {
           postSymbol.symbol = {id: postSymbol.symbol.id};
         }
 
-        this.learnerResource.readOutputs(this.result.project, {
+        this.learnerApi.readOutputs(this.result.project, {
           symbols: {resetSymbol, symbols, postSymbol},
           driverConfig: this.result.driverConfig
-        }).then(ce => {
-          let ceFound = false;
-          for (let i = 0; i < ce.length; i++) {
-            if (ce[i].output !== this.counterExample[i].output) {
-              ceFound = true;
-              break;
+        }).subscribe(
+          ce => {
+            let ceFound = false;
+            for (let i = 0; i < ce.length; i++) {
+              if (ce[i].output !== this.counterExample[i].output) {
+                ceFound = true;
+                break;
+              }
             }
-          }
-          if (ceFound) {
-            deferred.resolve(ce);
-          } else {
-            deferred.reject();
-          }
-        }).catch(console.error);
+            if (ceFound) {
+              deferred.resolve(ce);
+            } else {
+              deferred.reject();
+            }
+          },
+          console.error
+        );
       };
 
       test();

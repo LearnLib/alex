@@ -16,7 +16,7 @@
 
 import { remove } from 'lodash';
 import { CreateProjectForm, Project } from '../entities/project';
-import { LearnerResource } from './resources/learner-resource.service';
+import { LearnerApiService } from './resources/learner-api.service';
 import { ToastService } from './toast.service';
 import { ProjectApiService } from './resources/project-api.service';
 import { IPromise } from 'angular';
@@ -35,7 +35,7 @@ export class ProjectService {
 
   /* @ngInject */
   constructor(private $uibModal: any,
-              private learnerResource: LearnerResource,
+              private learnerApi: LearnerApiService,
               private toastService: ToastService,
               private projectApi: ProjectApiService,
               private appStore: AppStoreService) {
@@ -65,24 +65,17 @@ export class ProjectService {
    * @param project The project to update.
    * @return The promise with the updated project on success.
    */
-  update(project: Project): IPromise<any> {
-    return this.learnerResource.getStatus(project.id)
-      .then(status => {
-        if (status.active && status.project === project.id) {
-          this.toastService.info('You cannot edit this project because a learning process is still active.');
-        } else {
-          return this.$uibModal.open({
-            component: 'projectEditModal',
-            resolve: {
-              project: () => new Project(JSON.parse(JSON.stringify(project)))
-            }
-          }).result.then((updatedProject: Project) => {
-            const i = this.store.projects.findIndex(p => p.id === updatedProject.id);
-            if (i > -1) this.store.projects[i] = updatedProject;
-            return updatedProject;
-          });
-        }
-      });
+  update(project: Project): Promise<any> {
+    return this.$uibModal.open({
+      component: 'projectEditModal',
+      resolve: {
+        project: () => new Project(JSON.parse(JSON.stringify(project)))
+      }
+    }).result.then((updatedProject: Project) => {
+      const i = this.store.projects.findIndex(p => p.id === updatedProject.id);
+      if (i > -1) this.store.projects[i] = updatedProject;
+      return updatedProject;
+    });
   }
 
   /**

@@ -16,7 +16,7 @@
 
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 import { ModalComponent } from '../modal.component';
-import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { SymbolApiService } from '../../../services/resources/symbol-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { SymbolGroup } from '../../../entities/symbol-group';
@@ -49,7 +49,7 @@ export const symbolsImportModalComponent = {
     public importData: any = null;
 
     /* @ngInject */
-    constructor(private symbolResource: SymbolResource,
+    constructor(private symbolApi: SymbolApiService,
                 private appStore: AppStoreService,
                 private toastService: ToastService,
                 private symbolGroupApi: SymbolGroupApiService) {
@@ -86,14 +86,15 @@ export const symbolsImportModalComponent = {
           symbol.group = this.selectedGroup == null ? defaultGroup.id : this.selectedGroup.id;
         });
 
-        this.symbolResource.createMany(this.project.id, this.importData.symbols)
-          .then(createdSymbols => {
+        this.symbolApi.createMany(this.project.id, this.importData.symbols).subscribe(
+          createdSymbols => {
             this.toastService.success('The symbols have been imported');
             this.close({$value: {type: 'symbols', symbols: createdSymbols}});
-          })
-          .catch(err => {
+          },
+          err => {
             this.errorMessage = `The symbols could not be imported. ${err.data.message}`;
-          });
+          }
+        );
       } else {
         this.symbolGroupApi.importMany(this.project.id, this.importData.symbolGroups).subscribe(
           importedGroups => {

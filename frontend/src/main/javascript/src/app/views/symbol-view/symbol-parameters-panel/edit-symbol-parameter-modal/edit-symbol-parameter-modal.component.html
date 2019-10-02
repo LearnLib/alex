@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title">Edit parameter {{parameter.name}}</h4>
+  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="update()">
+  <div class="modal-body">
+    <div class="alert alert-danger" *ngIf="errorMessage != null">
+      {{errorMessage}}
+    </div>
+
+    <symbol-parameter-form-groups
+      [parameter]="parameter"
+      [form]="form"
+    >
+    </symbol-parameter-form-groups>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="submit">Update</button>
+    <button class="btn btn-default btn-sm" (click)="modal.dismiss()">Cancel</button>
+  </div>
+</form>

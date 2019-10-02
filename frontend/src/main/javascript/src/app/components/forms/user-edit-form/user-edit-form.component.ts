@@ -16,8 +16,8 @@
 
 import { User } from '../../../entities/user';
 import { ToastService } from '../../../services/toast.service';
-import { UserResource } from '../../../services/resources/user-resource.service';
-import { UserService } from '../../../services/user.service';
+import { UserApiService } from '../../../services/resources/user-api.service';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The component for the form to edit the password and the email of a user or to delete the user.
@@ -35,19 +35,11 @@ class UserEditFormComponent {
   /** The model for the input of the users mail. */
   public email: string = null;
 
-  /**
-   * Constructor.
-   *
-   * @param $state
-   * @param toastService
-   * @param userResource
-   * @param userService
-   */
   /* @ngInject */
   constructor(private $state: any,
               private toastService: ToastService,
-              private userResource: UserResource,
-              private userService: UserService) {
+              private userApi: UserApiService,
+              private appStore: AppStoreService) {
   }
 
   $onInit(): void {
@@ -59,18 +51,19 @@ class UserEditFormComponent {
    */
   changeEmail(): void {
     if (this.email !== '') {
-      this.userResource.changeEmail(this.user, this.email)
-        .then(() => {
+      this.userApi.changeEmail(this.user, this.email).subscribe(
+        () => {
           this.toastService.success('The email has been changed');
 
           // update the jwt correspondingly
           const user = this.currentUser.copy();
           user.email = this.email;
-          this.userService.login(user);
-        })
-        .catch(response => {
+          this.appStore.login(user);
+        },
+        response => {
           this.toastService.danger('The email could not be changed. ' + response.data.message);
-        });
+        }
+      );
     }
   }
 
@@ -88,19 +81,20 @@ class UserEditFormComponent {
       return;
     }
 
-    this.userResource.changePassword(this.user, this.oldPassword, this.newPassword)
-      .then(() => {
+    this.userApi.changePassword(this.user, this.oldPassword, this.newPassword).subscribe(
+      () => {
         this.toastService.success('The password has been changed');
         this.oldPassword = '';
         this.newPassword = '';
-      })
-      .catch(response => {
+      },
+      response => {
         this.toastService.danger('There has been an error. ' + response.data.message);
-      });
+      }
+    );
   }
 
   get currentUser(): User {
-    return this.userService.store.currentUser;
+    return this.appStore.user;
   }
 }
 

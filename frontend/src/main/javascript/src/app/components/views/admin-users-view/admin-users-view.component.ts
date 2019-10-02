@@ -18,9 +18,9 @@ import { remove } from 'lodash';
 import { User } from '../../../entities/user';
 import { Selectable } from '../../../utils/selectable';
 import { IScope } from 'angular';
-import { UserResource } from '../../../services/resources/user-resource.service';
+import { UserApiService } from '../../../services/resources/user-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { UserService } from '../../../services/user.service';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The controller for the admin users page.
@@ -36,34 +36,26 @@ export const adminUsersViewComponent = {
     /** All selected users. */
     public selectedUsers: Selectable<User>;
 
-    /**
-     * Constructor.
-     *
-     * @param $scope
-     * @param userResource
-     * @param toastService
-     * @param $uibModal
-     * @param userService
-     */
     /* @ngInject */
     constructor(private $scope: IScope,
-                private userResource: UserResource,
+                private userApi: UserApiService,
                 private toastService: ToastService,
                 private $uibModal: any,
-                private userService: UserService) {
+                private appStore: AppStoreService) {
 
       this.users = [];
       this.selectedUsers = new Selectable(this.users, 'id');
 
       // fetch all users from the server
-      this.userResource.getAll()
-        .then(users => {
+      this.userApi.getAll().subscribe(
+        users => {
           this.users = users;
           this.selectedUsers = new Selectable(this.users, 'id');
-        })
-        .catch(err => {
+        },
+        err => {
           this.toastService.danger(`Loading users failed! ${err.data.message}`);
-        });
+        }
+      );
     }
 
     /**
@@ -84,7 +76,7 @@ export const adminUsersViewComponent = {
     createUser(): void {
       this.$uibModal.open({
         component: 'userCreateModal',
-      }).result.then(createdUser => this.users.push(createdUser));
+      }).result.then((createdUser: User) => this.users.push(createdUser));
     }
 
     /**
@@ -114,18 +106,19 @@ export const adminUsersViewComponent = {
       }
 
       const ids = users.map(u => u.id);
-      this.userResource.removeManyUsers(ids)
-        .then(() => {
+      this.userApi.removeManyUsers(ids).subscribe(
+        () => {
           this.toastService.success('The users have been deleted');
           users.forEach(user => this.removeUser(user));
-        })
-        .catch(err => {
+        },
+        err => {
           this.toastService.danger(`Deleting failed! ${err.data.message}`);
-        });
+        }
+      );
     }
 
     get user(): User {
-      return this.userService.store.currentUser;
+      return this.appStore.user;
     }
   }
 };

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
 import { LearnResult } from '../../../entities/learner-result';
 import { Project } from '../../../entities/project';
 
@@ -31,19 +31,17 @@ class LatestLearnerResultWidgetComponent {
   /**
    * Constructor.
    *
-   * @param learnResultResource
+   * @param learnerResultApi
    */
   /* @ngInject */
-  constructor(private learnResultResource: LearnResultResource) {
+  constructor(private learnerResultApi: LearnerResultApiService) {
   }
 
   $onInit(): void {
-    // get the latest learn result
-    this.learnResultResource.getLatest(this.project.id)
-      .then(result => {
-        this.result = result === '' ? null : result;
-      })
-      .catch(err => console.log(err));
+    this.learnerResultApi.getLatest(this.project.id).subscribe(
+      result => this.result = result,
+      console.error
+    );
   }
 }
 

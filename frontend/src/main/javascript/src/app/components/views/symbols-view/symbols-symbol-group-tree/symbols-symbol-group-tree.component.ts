@@ -5,7 +5,7 @@ import { SymbolGroup } from '../../../../entities/symbol-group';
 import { PromptService } from '../../../../services/prompt.service';
 import { SymbolGroupApiService } from '../../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../../services/toast.service';
-import { SymbolResource } from '../../../../services/resources/symbol-resource.service';
+import { SymbolApiService } from '../../../../services/resources/symbol-api.service';
 import { EventBus } from '../../../../services/eventbus.service';
 import { Selectable } from '../../../../utils/selectable';
 
@@ -38,7 +38,7 @@ export const symbolsSymbolGroupTreeComponent = {
      * @param promptService
      * @param symbolGroupApi
      * @param toastService
-     * @param symbolResource
+     * @param symbolApi
      * @param eventBus
      * @param $uibModal
      */
@@ -46,7 +46,7 @@ export const symbolsSymbolGroupTreeComponent = {
     constructor(private promptService: PromptService,
                 private symbolGroupApi: SymbolGroupApiService,
                 private toastService: ToastService,
-                private symbolResource: SymbolResource,
+                private symbolApi: SymbolApiService,
                 private eventBus: EventBus,
                 private $uibModal: any) {
 
@@ -121,21 +121,23 @@ export const symbolsSymbolGroupTreeComponent = {
       this.promptService.prompt('Enter a name for the new symbol', newName)
         .then(name => {
 
-          this.symbolResource.export(symbol.project, {symbolIds: [symbol.id], symbolsOnly: true}).then(
+          this.symbolApi.export(symbol.project, {symbolIds: [symbol.id], symbolsOnly: true}).subscribe(
             res => {
               const symbolToCreate = res.data.symbols[0];
               symbolToCreate.name = name;
               symbolToCreate.group = symbol.group;
 
               // first create the symbol without actions
-              return this.symbolResource.create(symbol.project, symbolToCreate)
-                .then(createdSymbol => {
+              return this.symbolApi.create(symbol.project, symbolToCreate).subscribe(
+                createdSymbol => {
                   this.group.symbols.push(createdSymbol);
                   this.symbols.push(createdSymbol);
                   this.toastService.success('The symbol has been copied.');
-                });
-            }
-          ).catch(err => this.toastService.danger(`The symbol could not be created. ${err.data.message}`));;
+                }
+              );
+            },
+            err => this.toastService.danger(`The symbol could not be created. ${err.data.message}`)
+          );
         });
     }
 
@@ -145,15 +147,16 @@ export const symbolsSymbolGroupTreeComponent = {
      * @param symbol The symbol to be deleted.
      */
     deleteSymbol(symbol: AlphabetSymbol): void {
-      this.symbolResource.remove(symbol)
-        .then(() => {
+      this.symbolApi.remove(symbol).subscribe(
+        () => {
           this.toastService.success('Symbol <strong>' + symbol.name + '</strong> deleted');
           remove(this.group.symbols, {id: symbol.id});
           this.selectedSymbols.unselect(symbol);
-        })
-        .catch(err => {
+        },
+        err => {
           this.toastService.danger(`The symbol could not be deleted. ${err.data.message}`);
-        });
+        }
+      );
     }
 
     openSymbolEditModal(symbol: AlphabetSymbol): void {

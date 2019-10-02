@@ -18,10 +18,12 @@ import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { Project } from '../../../entities/project';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { ModalComponent } from '../modal.component';
-import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { SymbolApiService } from '../../../services/resources/symbol-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { IFormController, IPromise } from 'angular';
 import { AppStoreService } from '../../../services/app-store.service';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 /**
  * The controller for the modal window to create a new symbol.
@@ -51,7 +53,7 @@ export const symbolCreateModalComponent = {
     public form: IFormController;
 
     /* @ngInject */
-    constructor(private symbolResource: SymbolResource,
+    constructor(private symbolApi: SymbolApiService,
                 private toastService: ToastService,
                 private appStore: AppStoreService) {
       super();
@@ -76,8 +78,10 @@ export const symbolCreateModalComponent = {
      */
     createSymbolAndContinue(): void {
       this.errorMessage = null;
-      this._createSymbol()
-        .catch(response => this.errorMessage = response.data.message);
+      this._createSymbol().subscribe(
+        () => {},
+        response => this.errorMessage = response.data.message
+      );
     }
 
     /**
@@ -85,9 +89,10 @@ export const symbolCreateModalComponent = {
      * the symbol will be put in the default group with the id 0. Closes the modal on success.
      */
     createSymbol(): void {
-      this._createSymbol()
-        .then(this.dismiss)
-        .catch(response => this.errorMessage = response.data.message);
+      this._createSymbol().subscribe(
+        this.dismiss,
+        response => this.errorMessage = response.data.message
+      );
     }
 
     selectSymbolGroup(group: SymbolGroup): void {
@@ -102,11 +107,11 @@ export const symbolCreateModalComponent = {
       return this.groups.reduce((acc, curr) => curr.id < acc.id ? curr : acc);
     }
 
-    private _createSymbol(): IPromise<any> {
+    private _createSymbol(): Observable<AlphabetSymbol> {
       this.symbol.group = this.selectedSymbolGroup.id;
 
-      return this.symbolResource.create(this.project.id, this.symbol)
-        .then(symbol => {
+      return this.symbolApi.create(this.project.id, this.symbol).pipe(
+        tap((symbol: AlphabetSymbol) => {
           this.toastService.success(`Created symbol "${symbol.name}"`);
           this.resolve.onCreated(symbol);
           this.symbol = new AlphabetSymbol();
@@ -115,7 +120,8 @@ export const symbolCreateModalComponent = {
           // set the form to its original state
           this.form.$setPristine();
           this.form.$setUntouched();
-        });
+        })
+      );
     }
 
     get project(): Project {

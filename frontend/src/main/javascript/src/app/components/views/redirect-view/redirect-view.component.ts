@@ -15,8 +15,8 @@
  */
 
 import { ILocationService } from 'angular';
-import { UserService } from '../../../services/user.service';
 import { User } from '../../../entities/user';
+import { AppStoreService } from '../../../services/app-store.service';
 
 export const redirectViewComponent = {
   template: require('html-loader!./redirect-view.component.html'),
@@ -25,19 +25,11 @@ export const redirectViewComponent = {
 
     public targetUrl: string;
 
-    /**
-     * Constructor.
-     *
-     * @param $state
-     * @param $stateParams
-     * @param $location
-     * @param userService
-     */
     /* @ngInject */
     constructor(private $state: any,
                 private $stateParams: any,
                 private $location: ILocationService,
-                private userService: UserService) {
+                private appStore: AppStoreService) {
 
       if (this.$stateParams.to == null) {
         this.$state.go('error', {message: 'You did not specify a target URL.'});
@@ -62,7 +54,7 @@ export const redirectViewComponent = {
     }
 
     get currentUser(): User {
-      return this.userService.store.currentUser;
+      return this.appStore.user;
     }
   }
 };

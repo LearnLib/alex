@@ -15,7 +15,7 @@
  */
 
 import { ProjectService } from '../../../services/project.service';
-import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { ModalComponent } from '../modal.component';
 import { LearnResult } from '../../../entities/learner-result';
@@ -41,12 +41,12 @@ export const resultListModalComponent = {
      * Constructor.
      *
      * @param projectService
-     * @param learnResultResource
+     * @param learnerResultApi
      * @param toastService
      */
     /* @ngInject */
     constructor(private projectService: ProjectService,
-                private learnResultResource: LearnResultResource,
+                private learnerResultApi: LearnerResultApiService,
                 private toastService: ToastService) {
       super();
       projectService.load();
@@ -67,9 +67,10 @@ export const resultListModalComponent = {
      * @param project The project to display all results from.
      */
     selectProject(project: Project): void {
-      this.learnResultResource.getAll(project.id)
-        .then(results => this.results = results)
-        .catch(err => console.log(err));
+      this.learnerResultApi.getAll(project.id).subscribe(
+        results => this.results = results,
+        console.error
+      );
     }
 
     /**

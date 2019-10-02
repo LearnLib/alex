@@ -16,7 +16,7 @@
 
 import { ModalComponent } from '../modal.component';
 import { Project } from '../../../entities/project';
-import { TestResource } from "../../../services/resources/test-resource.service";
+import { TestApiService } from "../../../services/resources/test-resource.service";
 import { AppStoreService } from '../../../services/app-store.service';
 
 export const testsImportModalComponent = {
@@ -37,7 +37,7 @@ export const testsImportModalComponent = {
 
     /* @ngInject */
     constructor(private appStore: AppStoreService,
-                private testResource: TestResource) {
+                private testApi: TestApiService) {
       super();
     }
 
@@ -69,9 +69,10 @@ export const testsImportModalComponent = {
         const tests = this.importData.tests;
         tests.forEach(t => t.parent = parentId);
 
-        this.testResource.import(this.project.id, tests)
-          .then(tests => this.close({$value: tests}))
-          .catch(err => this.errorMessage = err.data.message);
+        this.testApi.import(this.project.id, tests).subscribe(
+          tests => this.close({$value: tests}),
+          err => this.errorMessage = err.data.message
+        );
       } else {
         this.errorMessage = 'There aren\'t any tests to import';
       }

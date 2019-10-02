@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TestResource } from '../../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../../services/resources/test-resource.service';
 import { IFormController } from 'angular';
 import { TestSuiteEqOracle } from '../../../../entities/eq-oracles/test-suite-eq-oracle';
 import { AppStoreService } from '../../../../services/app-store.service';
@@ -42,11 +42,11 @@ export const testSuiteEqOracleFormComponent = {
      * Constructor.
      *
      * @param projectService
-     * @param testResource
+     * @param testApi
      */
     /* @ngInject */
     constructor(private appStore: AppStoreService,
-                private testResource: TestResource) {
+                private testApi: TestApiService) {
 
       this.root = null;
       this.selectedTestSuite = null;
@@ -55,13 +55,14 @@ export const testSuiteEqOracleFormComponent = {
     $onInit(): any {
       const project = this.appStore.project;
 
-      this.testResource.getRoot(project.id)
-        .then(root => this.root = root);
+      this.testApi.getRoot(project.id).subscribe(
+        root => this.root = root
+      );
 
       if (this.eqOracle.testSuiteId != null) {
-        this.testResource.get(project.id, this.eqOracle.testSuiteId)
-          .then(ts => this.selectedTestSuite = ts);
-
+        this.testApi.get(project.id, this.eqOracle.testSuiteId).subscribe(
+          ts => this.selectedTestSuite = ts
+        );
       }
     }
 

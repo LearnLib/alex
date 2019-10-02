@@ -43,7 +43,7 @@
                     </div>
                     <div class="w-100 ml-3">
 
-                        <div class="btn-group btn-group-sm" uib-dropdown>
+                        <div class="btn-group btn-group-sm mr-2" uib-dropdown>
                             <button class="btn btn-primary btn-dropdown" uib-dropdown-toggle>
                                 Add
                             </button>
@@ -57,7 +57,7 @@
                             </div>
                         </div>
 
-                        <div class="btn-group btn-group-sm">
+                        <div class="btn-group btn-group-sm mr-2">
                             <button
                                 class="btn btn-default"
                                 ng-class="{'disabled': vm.selectedSteps.getSelected().length !== 1}"
@@ -200,7 +200,14 @@
                 </div>
             </div>
 
-            <symbol-parameters-panel symbol="vm.symbol" on-change="vm.setChanged(true)" class="d-block mb-4"></symbol-parameters-panel>
+            <symbol-parameters-panel
+              ng-if="vm.symbol != null"
+              class="d-block mb-4"
+              [symbol]="vm.symbol"
+              (inputs-change)="vm.symbol.inputs = $event"
+              (outputs-change)="vm.symbol.outputs = $event"
+            >
+            </symbol-parameters-panel>
 
             <div class="card">
                 <div class="card-header">
@@ -208,8 +215,13 @@
                 </div>
                 <div class="card-body" style="padding-bottom: 0">
                     <div class="form-group">
-                        <input class="form-control" type="text" ng-model="vm.symbol.successOutput" placeholder="Ok"
-                               ng-change="vm.hasChanged = true">
+                        <input
+                          class="form-control"
+                          type="text"
+                          ng-model="vm.symbol.successOutput"
+                          placeholder="Ok"
+                          ng-change="vm.hasChanged = true"
+                        >
                     </div>
                 </div>
             </div>

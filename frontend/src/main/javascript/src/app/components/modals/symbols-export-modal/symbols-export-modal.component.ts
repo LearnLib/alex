@@ -21,7 +21,7 @@ import { DownloadService } from '../../../services/download.service';
 import { ToastService } from '../../../services/toast.service';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { Selectable } from '../../../utils/selectable';
-import { SymbolResource } from "../../../services/resources/symbol-resource.service";
+import { SymbolApiService } from "../../../services/resources/symbol-api.service";
 
 export const symbolsExportModalComponent = {
   template: require('html-loader!./symbols-export-modal.component.html'),
@@ -54,7 +54,7 @@ export const symbolsExportModalComponent = {
     /* @ngInject */
     constructor(private downloadService: DownloadService,
                 private toastService: ToastService,
-                private symbolResource: SymbolResource) {
+                private symbolApi: SymbolApiService) {
       super();
 
       this.exportSymbolsOnly = false;
@@ -68,14 +68,17 @@ export const symbolsExportModalComponent = {
 
     export(): void {
       const symbolIds = this.selectedSymbols.getSelected().map(s => s.id);
-      this.symbolResource.export(this.groups[0].project, {
+      this.symbolApi.export(this.groups[0].project, {
         symbolIds,
         symbolsOnly: this.exportSymbolsOnly,
-      }).then(res => {
-        this.downloadService.downloadObject(res.data, this.filename);
+      }).subscribe(
+        data => {
+        this.downloadService.downloadObject(data, this.filename);
         this.toastService.success('The symbols have been exported.');
         this.close();
-      }).catch(console.error);
+        },
+        console.error
+      );
     }
   }
 };

@@ -16,7 +16,7 @@
 
 import { ModalComponent } from '../modal.component';
 import { LearnResult } from '../../../entities/learner-result';
-import { TestResource } from '../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../services/resources/test-resource.service';
 import { TestCase } from '../../../entities/test-case';
 import { TestCaseStep } from '../../../entities/test-case-step';
 import { ToastService } from '../../../services/toast.service';
@@ -38,7 +38,7 @@ export const separatingWordModalComponent = {
 
     /** Constructor. */
     /* @ngInject */
-    constructor(private testResource: TestResource,
+    constructor(private testApi: TestApiService,
                 private toastService: ToastService) {
       super();
     }
@@ -79,9 +79,10 @@ export const separatingWordModalComponent = {
         tc.postSteps = [postStep];
       }
 
-      this.testResource.create(tc)
-        .then(() => this.toastService.success('The test case has been created.'))
-        .catch(() => this.toastService.danger('The test case could not be created.'));
+      this.testApi.create(tc).subscribe(
+        () => this.toastService.success('The test case has been created.'),
+        () => this.toastService.danger('The test case could not be created.')
+      );
     }
   }
 };

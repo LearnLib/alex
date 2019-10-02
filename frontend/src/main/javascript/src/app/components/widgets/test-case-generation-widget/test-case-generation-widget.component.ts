@@ -19,7 +19,7 @@ import { TestCaseStep } from '../../../entities/test-case-step';
 import { LearnResult } from '../../../entities/learner-result';
 import { IScope } from 'angular';
 import { EventBus } from '../../../services/eventbus.service';
-import { TestResource } from '../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../services/resources/test-resource.service';
 import { ToastService } from '../../../services/toast.service';
 import { Project } from '../../../entities/project';
 import { TestCase } from '../../../entities/test-case';
@@ -51,7 +51,7 @@ export const testCaseGenerationWidgetComponent = {
     constructor(private $scope: IScope,
                 private eventBus: EventBus,
                 private appStore: AppStoreService,
-                private testResource: TestResource,
+                private testApi: TestApiService,
                 private toastService: ToastService) {
 
       this.symbolMap = {};
@@ -90,12 +90,13 @@ export const testCaseGenerationWidgetComponent = {
         step.pSymbol.parameterValues.forEach(v => delete v.id);
       });
 
-      this.testResource.create(test)
-        .then(createdTestCase => {
+      this.testApi.create(test).subscribe(
+        createdTestCase => {
           this.toastService.success('The test has been generated.');
           this.onCreated({testCase: createdTestCase});
-        })
-        .catch(err => this.toastService.danger(`The test could not be generated. ${err.data.message}`));
+        },
+        err => this.toastService.danger(`The test could not be generated. ${err.data.message}`)
+      );
     }
 
     cancel(): void {

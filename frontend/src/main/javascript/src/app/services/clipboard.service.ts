@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { Injectable } from '@angular/core';
+
 export enum ClipboardMode {
   COPY = 'copy',
   CUT = 'cut',
@@ -22,6 +24,7 @@ export enum ClipboardMode {
 /**
  * The factory for the Clipboard.
  */
+@Injectable()
 export class ClipboardService {
 
   /** Constructor. */

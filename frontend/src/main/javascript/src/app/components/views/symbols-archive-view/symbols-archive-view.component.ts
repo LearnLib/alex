@@ -17,7 +17,7 @@
 import { remove } from 'lodash';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { Selectable } from '../../../utils/selectable';
-import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { SymbolApiService } from '../../../services/resources/symbol-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { Project } from '../../../entities/project';
 import { AppStoreService } from '../../../services/app-store.service';
@@ -36,7 +36,7 @@ class SymbolsArchiveViewComponent {
 
   /* @ngInject */
   constructor(private appStore: AppStoreService,
-              private symbolResource: SymbolResource,
+              private symbolApi: SymbolApiService,
               private toastService: ToastService,
               private $uibModal: any) {
 
@@ -44,12 +44,13 @@ class SymbolsArchiveViewComponent {
     this.selectedSymbols = new Selectable(this.symbols, 'id');
 
     // fetch all deleted symbols and save them in scope
-    this.symbolResource.getAll(this.project.id, true)
-      .then(symbols => {
+    this.symbolApi.getAll(this.project.id, true).subscribe(
+      symbols => {
         this.symbols = symbols;
         this.selectedSymbols = new Selectable(this.symbols, 'id');
-      })
-      .catch(err => this.toastService.danger(`Could not get symbols. ${err.data.message}`));
+      },
+      err => this.toastService.danger(`Could not get symbols. ${err.data.message}`)
+    );
   }
 
   /**
@@ -58,15 +59,16 @@ class SymbolsArchiveViewComponent {
    * @param symbol The symbol that should be recovered from the trash.
    */
   recoverSymbol(symbol: AlphabetSymbol): void {
-    this.symbolResource.recover(symbol)
-      .then(() => {
+    this.symbolApi.recover(symbol).subscribe(
+      () => {
         this.toastService.success('Symbol ' + symbol.name + ' recovered');
         this.selectedSymbols.unselect(symbol);
         remove(this.symbols, {id: symbol.id});
-      })
-      .catch(err => {
+      },
+      err => {
         this.toastService.danger('<p><strong>Error recovering symbol ' + symbol.name + '!</strong></p>' + err.data.message);
-      });
+      }
+    );
   }
 
   /**
@@ -79,15 +81,16 @@ class SymbolsArchiveViewComponent {
       return;
     }
 
-    this.symbolResource.recoverMany(selectedSymbols)
-      .then(() => {
+    this.symbolApi.recoverMany(selectedSymbols).subscribe(
+      () => {
         this.toastService.success('Symbols recovered');
         selectedSymbols.forEach(symbol => remove(this.symbols, {id: symbol.id}));
         this.selectedSymbols.unselectAll();
-      })
-      .catch(err => {
+      },
+      err => {
         this.toastService.danger('<p><strong>Error recovering symbols!</strong></p>' + err.data.message);
-      });
+      }
+    );
   }
 
   showUsages(symbol: AlphabetSymbol): void {
@@ -117,13 +120,14 @@ class SymbolsArchiveViewComponent {
   }
 
   deleteSymbol(symbol: AlphabetSymbol): void {
-    this.symbolResource.delete(symbol)
-      .then(() => {
+    this.symbolApi.delete(symbol).subscribe(
+      () => {
         this.toastService.success('The symbol has been deleted permanently.');
         this.selectedSymbols.unselect(symbol);
         remove(this.symbols, {id: symbol.id});
-      })
-      .catch(err => this.toastService.danger(`The symbol could be deleted permanently. ${err.data.message}`));
+      },
+      err => this.toastService.danger(`The symbol could be deleted permanently. ${err.data.message}`)
+    );
   }
 
   deleteSelectedSymbols(): void {
@@ -133,15 +137,16 @@ class SymbolsArchiveViewComponent {
       return;
     }
 
-    this.symbolResource.deleteMany(this.project.id, symbols)
-      .then(() => {
+    this.symbolApi.deleteMany(this.project.id, symbols).subscribe(
+      () => {
         this.toastService.success('The symbols have been deleted.');
         this.selectedSymbols.unselectAll();
         symbols.forEach(s1 => remove(this.symbols, s2 => s2.id === s1.id));
-      })
-      .catch(err => {
+      },
+      err => {
         this.toastService.danger(`The symbols could not be deleted. ${err.data.message}`)
-      });
+      }
+    );
   }
 
   get project(): Project {

@@ -17,7 +17,7 @@
 import { events } from '../../../constants';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { ModalComponent } from '../modal.component';
-import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { SymbolApiService } from '../../../services/resources/symbol-api.service';
 import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { EventBus } from '../../../services/eventbus.service';
@@ -50,14 +50,14 @@ export const symbolMoveModalComponent = {
     /**
      * Constructor.
      *
-     * @param symbolResource
+     * @param symbolApi
      * @param symbolGroupApi
      * @param projectService
      * @param toastService
      * @param eventBus
      */
     /* @ngInject */
-    constructor(private symbolResource: SymbolResource,
+    constructor(private symbolApi: SymbolApiService,
                 private symbolGroupApi: SymbolGroupApiService,
                 private appStore: AppStoreService,
                 private toastService: ToastService,
@@ -91,18 +91,19 @@ export const symbolMoveModalComponent = {
           s.group = this.selectedGroup.id;
         });
 
-        this.symbolResource.moveMany(symbolsToMove, this.selectedGroup)
-          .then(() => {
+        this.symbolApi.moveMany(symbolsToMove, this.selectedGroup).subscribe(
+          () => {
             this.toastService.success('Symbols move to group <strong>' + this.selectedGroup.name + '</strong>');
             this.eventBus.emit(events.SYMBOLS_MOVED, {
               symbols: this.symbols,
               group: this.selectedGroup
             });
             this.dismiss();
-          })
-          .catch(err => {
+          }, 
+          err => {
             this.errorMessage = "Failed to move symbols: " + err.data.message;
-          });
+          }
+        );
       }
     }
 

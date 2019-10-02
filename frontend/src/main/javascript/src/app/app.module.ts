@@ -45,6 +45,17 @@ import { CreateWebhookModalComponent } from './views/webhooks-view/create-webhoo
 import { EditWebhookModalComponent } from './views/webhooks-view/edit-webhook-modal/edit-webhook-modal.component';
 import { WebhookFormGroupsComponent } from './views/webhooks-view/webhook-form-groups/webhook-form-groups.component';
 import { NormalizeUpperCasePipe } from './pipes/normalize-upper-case.pipe';
+import { SymbolApiService } from './services/resources/symbol-api.service';
+import { SymbolParametersPanelComponent } from './views/symbol-view/symbol-parameters-panel/symbol-parameters-panel.component';
+import { CreateSymbolParameterModalComponent } from './views/symbol-view/symbol-parameters-panel/create-symbol-parameter-modal/create-symbol-parameter-modal.component';
+import { EditSymbolParameterModalComponent } from './views/symbol-view/symbol-parameters-panel/edit-symbol-parameter-modal/edit-symbol-parameter-modal.component';
+import { SymbolParameterFormGroupsComponent } from './views/symbol-view/symbol-parameters-panel/symbol-parameter-form-groups/symbol-parameter-form-groups.component';
+import { ClipboardService } from './services/clipboard.service';
+import { UserApiService } from './services/resources/user-api.service';
+import { LearnerResultApiService } from './services/resources/learner-result-api.service';
+import { LearnerApiService } from './services/resources/learner-api.service';
+import { TestApiService } from './services/resources/test-resource.service';
+import { FileApiService } from './services/resources/file-api.service';
 
 @NgModule({
   declarations: [
@@ -69,7 +80,11 @@ import { NormalizeUpperCasePipe } from './pipes/normalize-upper-case.pipe';
     CreateWebhookModalComponent,
     EditWebhookModalComponent,
     WebhookFormGroupsComponent,
-    NormalizeUpperCasePipe
+    NormalizeUpperCasePipe,
+    SymbolParametersPanelComponent,
+    CreateSymbolParameterModalComponent,
+    EditSymbolParameterModalComponent,
+    SymbolParameterFormGroupsComponent
   ],
   imports: [
     BrowserModule,
@@ -99,7 +114,14 @@ import { NormalizeUpperCasePipe } from './pipes/normalize-upper-case.pipe';
     CounterApiService,
     ProjectApiService,
     ProjectEnvironmentApiService,
-    LtsFormulaApiService
+    LtsFormulaApiService,
+    SymbolApiService,
+    ClipboardService,
+    UserApiService,
+    LearnerResultApiService,
+    LearnerApiService,
+    TestApiService,
+    FileApiService
   ],
   entryComponents: [
     CreateCounterModalComponent,
@@ -107,6 +129,8 @@ import { NormalizeUpperCasePipe } from './pipes/normalize-upper-case.pipe';
     EditLtsFormulaModalComponent,
     CreateWebhookModalComponent,
     EditWebhookModalComponent,
+    CreateSymbolParameterModalComponent,
+    EditSymbolParameterModalComponent,
     // remove when migration is done
     ViewHeaderComponent,
     ActionBarComponent,
@@ -118,7 +142,8 @@ import { NormalizeUpperCasePipe } from './pipes/normalize-upper-case.pipe';
     OutputErrorTraceComponent,
     CountersViewComponent,
     LtsFormulasViewComponent,
-    WebhooksViewComponent
+    WebhooksViewComponent,
+    SymbolParametersPanelComponent
   ]
   // bootstrap: [AppComponent]
 })

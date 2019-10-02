@@ -18,7 +18,7 @@ import { remove } from 'lodash';
 import { environment } from '../../../../environments/environment';
 import { Selectable } from '../../../utils/selectable';
 import { ToastService } from '../../../services/toast.service';
-import { FileResource } from '../../../services/resources/file-resource.service';
+import { FileApiService } from '../../../services/resources/file-api.service';
 import { Project } from '../../../entities/project';
 import { UploadableFile } from '../../../entities/uploadable-file';
 import { AppStoreService } from '../../../services/app-store.service';
@@ -43,7 +43,7 @@ class FilesViewComponent {
   /* @ngInject */
   constructor(private Upload: any,
               private toastService: ToastService,
-              private fileResource: FileResource,
+              private fileApi: FileApiService,
               private appStore: AppStoreService) {
 
     this.files = [];
@@ -52,14 +52,15 @@ class FilesViewComponent {
     this.filesToUpload = null;
 
     // load all files
-    this.fileResource.getAll(this.project.id)
-      .then(files => {
+    this.fileApi.getAll(this.project.id).subscribe(
+      files => {
         this.files = files;
         this.selectedFiles = new Selectable(this.files, 'name');
-      })
-      .catch(err => {
+      },
+      err => {
         this.toastService.danger(`Fetching all files failed! ${err.data.message}`);
-      });
+      }
+    );
   }
 
   /**
@@ -68,15 +69,16 @@ class FilesViewComponent {
    * @param file The name of the file to delete.
    */
   deleteFile(file: UploadableFile): void {
-    this.fileResource.remove(this.project.id, file)
-      .then(() => {
+    this.fileApi.remove(this.project.id, file).subscribe(
+      () => {
         this.toastService.success(`File "${file.name}" has been deleted.`);
         remove(this.files, {id: file.id});
         this.selectedFiles.unselect(file);
-      })
-      .catch(err => {
+      },
+      err => {
         this.toastService.danger(`The file could not be deleted. ${err.data.message}`);
-      });
+      }
+    );
   }
 
   /**
@@ -129,15 +131,16 @@ class FilesViewComponent {
     if (selectedFiles.length === 0) {
       this.toastService.info('You have to select at least one file');
     } else {
-      this.fileResource.removeMany(this.project.id, selectedFiles)
-        .then(() => {
+      this.fileApi.removeMany(this.project.id, selectedFiles).subscribe(
+        () => {
           this.toastService.success(`The files have been deleted.`);
           selectedFiles.forEach(file => remove(this.files, {id: file.id}));
           this.selectedFiles.unselectMany(selectedFiles);
-        })
-        .catch(err => {
+        },
+        err => {
           this.toastService.danger(`The files could not be deleted. ${err.data.message}`);
-        });
+        }
+      );
     }
   }
 
@@ -147,8 +150,8 @@ class FilesViewComponent {
    * @param file The file to download.
    */
   downloadFile(file: UploadableFile): void {
-    this.fileResource.download(this.project.id, file)
-      .then(response => {
+    this.fileApi.download(this.project.id, file).subscribe(
+      response => {
         const blob = response.data;
         const objectUrl = URL.createObjectURL(blob);
 
@@ -158,7 +161,8 @@ class FilesViewComponent {
         a.click();
 
         window.URL.revokeObjectURL(objectUrl);
-      });
+      }
+    );
   }
 
   get project(): Project {

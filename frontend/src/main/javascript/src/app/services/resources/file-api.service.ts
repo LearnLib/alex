@@ -15,16 +15,21 @@
  */
 
 import { environment as env } from '../../../environments/environment';
-import { IHttpResponse, IHttpService, IPromise } from 'angular';
 import { UploadableFile } from '../../entities/uploadable-file';
+import { BaseApiService } from './base-api.service';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /**
  * The resource that handles API calls concerning the management of files.
  */
-export class FileResource {
+@Injectable()
+export class FileApiService extends BaseApiService {
 
-  /* @ngInject */
-  constructor(private $http: IHttpService) {
+  constructor(private http: HttpClient) {
+    super();
   }
 
   /**
@@ -32,9 +37,11 @@ export class FileResource {
    *
    * @param projectId The id of the project.
    */
-  getAll(projectId: number): IPromise<UploadableFile[]> {
-    return this.$http.get(`${env.apiUrl}/projects/${projectId}/files`)
-      .then((response: IHttpResponse<any[]>) => response.data.map(d => UploadableFile.fromData(d)));
+  getAll(projectId: number): Observable<UploadableFile[]> {
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/files`, this.defaultHttpOptions)
+      .pipe(
+        map((body: any) => body.map(f => UploadableFile.fromData(f)))
+      );
   }
 
   /**
@@ -43,8 +50,8 @@ export class FileResource {
    * @param projectId The id of the project.
    * @param file The file object to be deleted.
    */
-  remove(projectId: number, file: UploadableFile): IPromise<any> {
-    return this.$http.delete(`${env.apiUrl}/projects/${projectId}/files/${file.id}`);
+  remove(projectId: number, file: UploadableFile): Observable<any> {
+    return this.http.delete(`${env.apiUrl}/projects/${projectId}/files/${file.id}`, this.defaultHttpOptions);
   }
 
   /**
@@ -53,9 +60,9 @@ export class FileResource {
    * @param projectId The ID of the project.
    * @param files The files to delete.
    */
-  removeMany(projectId: number, files: UploadableFile[]): IPromise<any> {
+  removeMany(projectId: number, files: UploadableFile[]): Observable<any> {
     const ids = files.map(f => f.id);
-    return this.$http.delete(`${env.apiUrl}/projects/${projectId}/files/batch/${ids.join(',')}`);
+    return this.http.delete(`${env.apiUrl}/projects/${projectId}/files/batch/${ids.join(',')}`, this.defaultHttpOptions);
   }
 
   /**
@@ -64,7 +71,11 @@ export class FileResource {
    * @param projectId The id of the project.
    * @param file The file to download.
    */
-  download(projectId: number, file: UploadableFile): IPromise<any> {
-    return this.$http.get(`${env.apiUrl}/projects/${projectId}/files/${file.id}/download`, {responseType: 'blob'});
+  download(projectId: number, file: UploadableFile): Observable<any> {
+    const options = JSON.parse(JSON.stringify(this.defaultHttpOptions));
+    options.responseType = 'blob';
+    options.observe = 'response';
+
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/files/${file.id}/download`, options);
   }
 }

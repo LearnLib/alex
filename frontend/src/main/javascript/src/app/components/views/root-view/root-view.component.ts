@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { UserService } from '../../../services/user.service';
 import { User } from '../../../entities/user';
 import { Project } from '../../../entities/project';
 import { AppStoreService } from '../../../services/app-store.service';
@@ -29,8 +28,7 @@ export const rootViewComponent = {
 
     /* @ngInject */
     constructor(private $state: any,
-                private appStore: AppStoreService,
-                private userService: UserService) {
+                private appStore: AppStoreService) {
 
       if (this.user !== null) {
         if (this.project !== null) {
@@ -46,7 +44,7 @@ export const rootViewComponent = {
     }
 
     get user(): User {
-      return this.userService.store.currentUser;
+      return this.appStore.user;
     }
 
     get project(): Project {

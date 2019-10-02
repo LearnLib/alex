@@ -21,7 +21,7 @@ import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 import { IScope } from 'angular';
 import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { TestResource } from '../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../services/resources/test-resource.service';
 import { SettingsApiService } from '../../../services/resources/settings-api.service';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
@@ -68,7 +68,7 @@ export const testCaseViewComponent = {
                 private symbolGroupApi: SymbolGroupApiService,
                 private appStore: AppStoreService,
                 private toastService: ToastService,
-                private testResource: TestResource,
+                private testApi: TestApiService,
                 private $uibModal: any,
                 private settingsApi: SettingsApiService) {
 
@@ -135,12 +135,13 @@ export const testCaseViewComponent = {
      */
     save(): void {
       const test = JSON.parse(JSON.stringify(this.testCase));
-      this.testResource.update(test)
-        .then(updatedTestCase => {
+      this.testApi.update(test).subscribe(
+        updatedTestCase => {
           this.toastService.success('The test case has been updated.');
           this.testCase = updatedTestCase;
-        })
-        .catch((err) => this.toastService.danger('The test case could not be updated. ' + err.data.message));
+        },
+        err => this.toastService.danger('The test case could not be updated. ' + err.data.message)
+      );
     }
 
     /**
@@ -158,16 +159,17 @@ export const testCaseViewComponent = {
 
       this.result = null;
       this.active = true;
-      this.testResource.execute(this.testCase, config)
-        .then(data => {
+      this.testApi.execute(this.testCase, config).subscribe(
+        data => {
           this.report = data;
           this.result = data.testResults[0];
           this.active = false;
-        })
-        .catch((err) => {
+        },
+        err => {
           this.toastService.info('The test case could not be executed. ' + err.data.message);
           this.active = false;
-        });
+        }
+      );
     }
 
     openTestConfigModal(): void {

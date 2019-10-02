@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { TestResource } from '../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../services/resources/test-resource.service';
 import { IPromise } from 'angular';
 import { Project } from '../../../entities/project';
 import { AppStoreService } from '../../../services/app-store.service';
+import { Observable } from 'rxjs';
 
 export const testCaseResultsViewComponent = {
   template: require('html-loader!./test-case-results-view.component.html'),
@@ -35,26 +36,26 @@ export const testCaseResultsViewComponent = {
 
     /* @ngInject */
     constructor(private appStore: AppStoreService,
-                private testResource: TestResource,
+                private testApi: TestApiService,
                 private $stateParams: any) {
       this.test = null;
       this.results = [];
       this.page = {};
 
-      this.testResource.get(this.project.id, this.$stateParams.testId)
-        .then(test => {
+      this.testApi.get(this.project.id, this.$stateParams.testId).subscribe(
+        test => {
           this.test = test;
-          return this.loadTestResults();
-        })
-        .catch(console.error);
+          this.loadTestResults();
+        },
+        console.error
+      );
     }
 
-    loadTestResults(page: number = 0): IPromise<any> {
-      return this.testResource.getResults(this.project.id, this.test.id, page)
-        .then(page => {
-          this.page = page;
-          this.results = page.content;
-        });
+    loadTestResults(page: number = 0): void {
+      this.testApi.getResults(this.project.id, this.test.id, page).subscribe(page => {
+        this.page = page;
+        this.results = page.content;
+      });
     }
 
     nextPage(): void {

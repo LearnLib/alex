@@ -18,13 +18,13 @@ import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { LearnConfiguration } from '../../../entities/learner-configuration';
 import { ParametrizedSymbol } from '../../../entities/parametrized-symbol';
 import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
-import { LearnerResource } from '../../../services/resources/learner-resource.service';
+import { LearnerApiService } from '../../../services/resources/learner-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { SettingsApiService } from '../../../services/resources/settings-api.service';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { LearnResult } from '../../../entities/learner-result';
 import { Project } from '../../../entities/project';
-import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
 import { AppStoreService } from '../../../services/app-store.service';
 
 /**
@@ -54,9 +54,9 @@ class LearnerSetupViewComponent {
   constructor(private $state: any,
               private symbolGroupApi: SymbolGroupApiService,
               private appStore: AppStoreService,
-              private learnerResource: LearnerResource,
+              private learnerApi: LearnerApiService,
               private toastService: ToastService,
-              private learnResultResource: LearnResultResource,
+              private learnerResultApi: LearnerResultApiService,
               private settingsApi: SettingsApiService,
               private $uibModal: any) {
 
@@ -77,8 +77,8 @@ class LearnerSetupViewComponent {
 
     // make sure that there isn't any other learn process active
     // redirect to the load screen in case there is an active one
-    this.learnerResource.getStatus(this.project.id)
-      .then(data => {
+    this.learnerApi.getStatus(this.project.id).subscribe(
+      data => {
         if (data.active) {
           if (data.project === this.project.id) {
             this.toastService.info('There is an active learning process for this project.');
@@ -95,16 +95,19 @@ class LearnerSetupViewComponent {
           );
 
           // load learn results so that their configuration can be reused
-          this.learnResultResource.getAll(this.project.id)
-            .then(learnResults => this.learnResults = learnResults)
-            .catch(console.error);
+          this.learnerResultApi.getAll(this.project.id).subscribe(
+            learnResults => this.learnResults = learnResults,
+            console.error
+          );
 
-          this.learnResultResource.getLatest(this.project.id)
-            .then(latestLearnerResult => this.latestLearnerResult = latestLearnerResult)
-            .catch(console.error);
+          this.learnerResultApi.getLatest(this.project.id).subscribe(
+            latestLearnerResult => this.latestLearnerResult = latestLearnerResult,
+            console.error
+          );
         }
-      })
-      .catch(console.error);
+      },
+      console.error
+    );
   }
 
   /** @param config The config to use. */
@@ -159,14 +162,15 @@ class LearnerSetupViewComponent {
         config.environments = this.learnConfiguration.environments.map(u => u.id);
 
         // start learning
-        this.learnerResource.start(this.project.id, config)
-          .then(() => {
+        this.learnerApi.start(this.project.id, config).subscribe(
+          () => {
             this.toastService.success('Learn process started successfully.');
             this.$state.go('learnerStart', {projectId: this.project.id});
-          })
-          .catch(error => {
+          },
+          error => {
             this.toastService.danger('<p><strong>Start learning failed</strong></p>' + error.data.message);
-          });
+          }
+        );
       } else {
         this.toastService.danger('You <strong>must</strong> at least select one symbol to start learning');
       }

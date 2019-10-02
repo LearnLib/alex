@@ -16,7 +16,7 @@
 
 import { User } from '../../../entities/user';
 import { ModalComponent } from '../modal.component';
-import { UserResource } from '../../../services/resources/user-resource.service';
+import { UserApiService } from '../../../services/resources/user-api.service';
 import { ToastService } from '../../../services/toast.service';
 
 export const userCreateModalComponent = {
@@ -37,25 +37,25 @@ export const userCreateModalComponent = {
     /**
      * Constructor.
      *
-     * @param userResource
+     * @param userApi
      * @param toastService
      */
     /* @ngInject */
-    constructor(private userResource: UserResource,
+    constructor(private userApi: UserApiService,
                 private toastService: ToastService) {
       super();
-
       this.user = new User();
     }
 
     createUser(): void {
       this.errorMessage = null;
-      this.userResource.create(this.user)
-        .then(res => {
+      this.userApi.create(this.user).subscribe(
+        res => {
           this.toastService.success('The user has been created.');
           this.close({$value: User.fromData(res.data)});
-        })
-        .catch(err => this.errorMessage = `Could not create the user. ${err.data.message}`);
+        },
+        err => this.errorMessage = `Could not create the user. ${err.data.message}`
+      );
     }
   }
 };

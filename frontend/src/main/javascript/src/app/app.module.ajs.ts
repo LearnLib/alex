@@ -87,7 +87,6 @@ import { nodeFormGroupComponent } from './components/forms/node-form-group/node-
 import { projectFormGroupsComponent } from './components/forms/project-form-groups/project-form-groups.component';
 import { symbolEditFormComponent } from './components/forms/symbol-edit-form/symbol-edit-form.component';
 import { symbolFormGroupsComponent } from './components/forms/symbol-form-groups/symbol-form-groups.component';
-import { symbolParameterFormGroupsComponent } from './components/forms/symbol-parameter-form-groups/symbol-parameter-form-groups.components';
 import { userEditFormComponent } from './components/forms/user-edit-form/user-edit-form.component';
 import { userLoginFormComponent } from './components/forms/user-login-form/user-login-form.component';
 import { hypothesisComponent } from './components/hypothesis/hypothesis.component';
@@ -118,8 +117,6 @@ import { symbolEditModalComponent } from './components/modals/symbol-edit-modal/
 import { symbolGroupCreateModalComponent } from './components/modals/symbol-group-create-modal/symbol-group-create-modal.component';
 import { symbolGroupEditModalComponent } from './components/modals/symbol-group-edit-modal/symbol-group-edit-modal.component';
 import { symbolGroupMoveModalComponent } from './components/modals/symbol-group-move-modal/symbol-group-move-modal.component';
-import { symbolParameterCreateModalComponent } from './components/modals/symbol-parameter-create-modal/symbol-parameter-create-modal.component';
-import { symbolParameterEditModalComponent } from './components/modals/symbol-parameter-edit-modal/symbol-parameter-edit-modal.component';
 import { symbolsImportModalComponent } from './components/modals/symbols-import-modal/symbols-import-modal.component';
 import { symbolMoveModalComponent } from './components/modals/symbols-move-modal/symbols-move-modal.component';
 import { testConfigModalComponent } from './components/modals/test-config-modal/test-config-modal.component';
@@ -134,7 +131,6 @@ import { simpleSymbolGroupTreeItemComponent } from './components/simple-symbol-g
 import { simpleSymbolGroupTreeComponent } from './components/simple-symbol-group-tree/simple-symbol-group-tree.component';
 import { symbolGroupHeaderComponent } from './components/symbol-group-tree/symbol-group-header/symbol-group-header.component';
 import { symbolItemComponent } from './components/symbol-group-tree/symbol-item/symbol-item.component';
-import { symbolParametersPanelComponent } from './components/symbol-parameters-panel/symbol-parameters-panel.component';
 import { testConfigListComponent } from './components/test-config-list/test-config-list.component';
 import { testResultReportComponent } from './components/test-result-report/test-result-report.component';
 import { testCaseNodeComponent } from './components/test-tree/test-case-node/test-case-node.component';
@@ -196,22 +192,21 @@ import { NotificationService } from './services/notification.service';
 import { ProjectService } from './services/project.service';
 import { PromptService } from './services/prompt.service';
 import { CounterApiService } from './services/resources/counter-api.service';
-import { FileResource } from './services/resources/file-resource.service';
-import { LearnerResource } from './services/resources/learner-resource.service';
-import { LearnResultResource } from './services/resources/learner-result-resource.service';
+import { FileApiService } from './services/resources/file-api.service';
+import { LearnerApiService } from './services/resources/learner-api.service';
+import { LearnerResultApiService } from './services/resources/learner-result-api.service';
 import { ProjectApiService } from './services/resources/project-api.service';
 import { SettingsApiService } from './services/resources/settings-api.service';
 import { SymbolGroupApiService } from './services/resources/symbol-group-api.service';
 import { SymbolParameterApiService } from './services/resources/symbol-parameter-api.service';
-import { SymbolResource } from './services/resources/symbol-resource.service';
+import { SymbolApiService } from './services/resources/symbol-api.service';
 import { TestConfigApiService } from './services/resources/test-config-api.service';
 import { TestReportApiService } from './services/resources/test-report-api.service';
-import { TestResource } from './services/resources/test-resource.service';
-import { UserResource } from './services/resources/user-resource.service';
+import { TestApiService } from './services/resources/test-resource.service';
+import { UserApiService } from './services/resources/user-api.service';
 import { WebhookApiService } from './services/resources/webhook-api.service';
 import { TestReportService } from './services/test-report.service';
 import { ToastService } from './services/toast.service';
-import { UserService } from './services/user.service';
 import { setVariableByHttpStatusActionFormComponent } from './components/forms/actions/misc/set-variable-by-http-status-action-form/set-variable-by-http-status-action-form.component';
 import { LtsFormulaApiService } from './services/resources/lts-formula-api.service';
 import { unauthorizedHttpInterceptor } from './utils/unauthorized-http-interceptor';
@@ -243,6 +238,7 @@ import { OutputErrorTraceComponent } from './common/output-error-trace/output-er
 import { CountersViewComponent } from './views/counters-view/counters-view.component';
 import { LtsFormulasViewComponent } from './views/lts-formulas-view/lts-formulas-view.component';
 import { WebhooksViewComponent } from './views/webhooks-view/webhooks-view.component';
+import { SymbolParametersPanelComponent } from './views/symbol-view/symbol-parameters-panel/symbol-parameters-panel.component';
 
 angular
   .module('ALEX', [
@@ -283,17 +279,17 @@ angular
 
   // resources
   .service('counterApi', downgradeInjectable(CounterApiService))
-  .service('fileResource', FileResource)
-  .service('learnerResource', LearnerResource)
-  .service('learnResultResource', LearnResultResource)
+  .service('fileApi', downgradeInjectable(FileApiService))
+  .service('learnerApi', downgradeInjectable(LearnerApiService))
+  .service('learnerResultApi', downgradeInjectable(LearnerResultApiService))
   .service('projectApi', downgradeInjectable(ProjectApiService))
   .service('settingsApi', downgradeInjectable(SettingsApiService))
   .service('symbolGroupApi', downgradeInjectable(SymbolGroupApiService))
   .service('symbolParameterApi', downgradeInjectable(SymbolParameterApiService))
-  .service('symbolResource', SymbolResource)
-  .service('userResource', UserResource)
+  .service('symbolApi', downgradeInjectable(SymbolApiService))
+  .service('userApi', downgradeInjectable(UserApiService))
   .service('testConfigApi', downgradeInjectable(TestConfigApiService))
-  .service('testResource', TestResource)
+  .service('testApi', downgradeInjectable(TestApiService))
   .service('testReportApi', downgradeInjectable(TestReportApiService))
   .service('webhookApi', downgradeInjectable(WebhookApiService))
   .service('ltsFormulaApi', downgradeInjectable(LtsFormulaApiService))
@@ -301,7 +297,7 @@ angular
 
   // services
   .service('actionService', ActionService)
-  .service('clipboardService', ClipboardService)
+  .service('clipboardService', downgradeInjectable(ClipboardService))
   .service('eventBus', EventBus)
   .service('eqOracleService', EqOracleService)
   .service('learningAlgorithmService', LearningAlgorithmService)
@@ -313,7 +309,6 @@ angular
   .service('testReportService', TestReportService)
   .service('notificationService', NotificationService)
   .service('projectService', ProjectService)
-  .service('userService', UserService)
   .service('appStore', downgradeInjectable(AppStoreService))
 
   // modals
@@ -338,8 +333,6 @@ angular
   .component('confirmModal', confirmModalComponent)
   .component('testConfigModal', testConfigModalComponent)
   .component('testsImportModal', testsImportModalComponent)
-  .component('symbolParameterCreateModal', symbolParameterCreateModalComponent)
-  .component('symbolParameterEditModal', symbolParameterEditModalComponent)
   .component('symbolGroupMoveModal', symbolGroupMoveModalComponent)
   .component('separatingWordModal', separatingWordModalComponent)
   .component('testsMoveModal', testsMoveModalComponent)
@@ -395,7 +388,6 @@ angular
   .component('searchForm', searchFormComponent)
   .component('actionSearchForm', actionSearchFormComponent)
   .component('symbolSearchForm', symbolSearchFormComponent)
-  .component('symbolParameterFormGroups', symbolParameterFormGroupsComponent)
   .component('eqOracleForm', eqOracleFormComponent)
   .component('completeEqOracleForm', completeEqOracleFormComponent)
   .component('randomEqOracleForm', randomEqOracleFormComponent)
@@ -490,7 +482,7 @@ angular
   .component('testResultReport', testResultReportComponent)
   .component('testTree', testTreeComponent)
   .component('testCaseNode', testCaseNodeComponent)
-  .component('symbolParametersPanel', symbolParametersPanelComponent)
+  .directive('symbolParametersPanel', downgradeComponent({ component: SymbolParametersPanelComponent }) as angular.IDirectiveFactory)
   .component('testSuiteNode', testSuiteNodeComponent)
   .component('simpleSymbolGroupTree', simpleSymbolGroupTreeComponent)
   .component('simpleSymbolGroupTreeItem', simpleSymbolGroupTreeItemComponent)

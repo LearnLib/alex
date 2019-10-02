@@ -21,7 +21,7 @@ import { SymbolGroup } from '../../../entities/symbol-group';
 import { Selectable } from '../../../utils/selectable';
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 import { IScope } from 'angular';
-import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { SymbolApiService } from '../../../services/resources/symbol-api.service';
 import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { EventBus } from '../../../services/eventbus.service';
@@ -46,7 +46,7 @@ class SymbolsViewComponent {
   /* @ngInject */
   constructor(private $scope: IScope,
               private appStore: AppStoreService,
-              private symbolResource: SymbolResource,
+              private symbolApi: SymbolApiService,
               private symbolGroupApi: SymbolGroupApiService,
               private toastService: ToastService,
               private eventBus: EventBus,
@@ -188,14 +188,15 @@ class SymbolsViewComponent {
   deleteSelectedSymbols(): void {
     const selectedSymbols = this.selectedSymbols.getSelected();
     if (selectedSymbols.length > 0) {
-      this.symbolResource.removeMany(selectedSymbols)
-        .then(() => {
+      this.symbolApi.removeMany(selectedSymbols).subscribe(
+        () => {
           this.toastService.success('Symbols deleted');
           this.removeSymbols(selectedSymbols);
-        })
-        .catch(err => {
+        },
+        err => {
           this.toastService.danger('<p><strong>Deleting symbols failed</strong></p>' + err.data.message);
-        });
+        }
+      );
     }
   }
 

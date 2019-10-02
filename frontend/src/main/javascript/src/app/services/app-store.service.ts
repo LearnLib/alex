@@ -16,6 +16,8 @@
 
 import { Injectable } from '@angular/core';
 import { Project } from '../entities/project';
+import { User } from '../entities/user';
+import { ClipboardService } from './clipboard.service';
 
 @Injectable()
 export class AppStoreService {
@@ -27,12 +29,18 @@ export class AppStoreService {
   project: Project;
 
   /**
+   * The current user.
+   * Is saved in the localstorage.
+   */
+  user: User;
+
+  /**
    * If the sidebar is collapsed.
    * The setting is persisted in the localstorage.
    */
   sidebarCollapsed: boolean;
 
-  constructor() {
+  constructor(private clipboard: ClipboardService) {
     this.sidebarCollapsed = false;
 
     const sidebarCollapsed = localStorage.getItem('sidebarCollapsed');
@@ -44,6 +52,29 @@ export class AppStoreService {
     if (project != null) {
       this.project = new Project(JSON.parse(project));
     }
+
+    const user = localStorage.getItem('user');
+    if (user != null) {
+      this.user = User.fromData(JSON.parse(user));
+    }
+  }
+
+  login(user: User, jwt: string = null): void {
+    this.clipboard.clear();
+    localStorage.setItem('user', JSON.stringify(user));
+    this.user = user;
+    if (jwt) {
+      localStorage.setItem('jwt', jwt);
+    }
+  }
+
+  /** Removes all user related data from the session. */
+  logout(): void {
+    localStorage.removeItem('user');
+    localStorage.removeItem('jwt');
+    this.user = null;
+    this.closeProject();
+    this.clipboard.clear();
   }
 
   openProject(project: Project): void {

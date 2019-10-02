@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { UserResource } from '../../../services/resources/user-resource.service';
-import { UserService } from '../../../services/user.service';
+import { UserApiService } from '../../../services/resources/user-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { User } from '../../../entities/user';
 import { PromptService } from '../../../services/prompt.service';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The component of the user settings page.
@@ -32,8 +32,8 @@ export const profileViewComponent = {
     public user: User;
 
     /* @ngInject */
-    constructor(private userResource: UserResource,
-                private userService: UserService,
+    constructor(private userApi: UserApiService,
+                private appStore: AppStoreService,
                 private toastService: ToastService,
                 private promptService: PromptService,
                 private $state: any) {
@@ -41,9 +41,10 @@ export const profileViewComponent = {
       this.user = null;
 
       // fetch the user from the api
-      this.userResource.get(this.userService.store.currentUser.id)
-        .then(user => this.user = user)
-        .catch(err => this.toastService.danger(`Loading the user failed. ${err.data.message}`));
+      this.userApi.get(this.appStore.user.id).subscribe(
+        user => this.user = user,
+        err => this.toastService.danger(`Loading the user failed. ${err.data.message}`)
+      );
     }
 
     /**
@@ -52,15 +53,16 @@ export const profileViewComponent = {
     deleteProfile(): void {
       this.promptService.confirm('Do you really want to delete this profile? All data will be permanently deleted.')
         .then(() => {
-          this.userResource.remove(this.user)
-            .then(() => {
+          this.userApi.remove(this.user).subscribe(
+            () => {
               this.toastService.success('Your account has been deleted');
-              this.userService.logout();
+              this.appStore.logout();
               this.$state.go('root');
-            })
-            .catch(err => {
+            },
+            err => {
               this.toastService.danger('The profile could not be deleted. ' + err.data.message);
-            });
+            }
+          );
         });
     }
   }

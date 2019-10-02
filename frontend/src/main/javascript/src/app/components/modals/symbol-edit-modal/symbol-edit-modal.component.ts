@@ -17,7 +17,7 @@
 import { events } from '../../../constants';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { ModalComponent } from '../modal.component';
-import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { SymbolApiService } from '../../../services/resources/symbol-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { EventBus } from '../../../services/eventbus.service';
 
@@ -43,12 +43,12 @@ export const symbolEditModalComponent = {
     /**
      * Constructor.
      *
-     * @param symbolResource
+     * @param symbolApi
      * @param toastService
      * @param eventBus
      */
     /* @ngInject */
-    constructor(private symbolResource: SymbolResource,
+    constructor(private symbolApi: SymbolApiService,
                 private toastService: ToastService,
                 private eventBus: EventBus) {
       super();
@@ -65,15 +65,16 @@ export const symbolEditModalComponent = {
       this.errorMsg = null;
 
       // update the symbol and close the modal dialog on success with the updated symbol
-      this.symbolResource.update(this.symbol.toJson())
-        .then((updatedSymbol: AlphabetSymbol) => {
+      this.symbolApi.update(this.symbol.toJson()).subscribe(
+        updatedSymbol => {
           this.toastService.success('Symbol updated');
           this.eventBus.emit(events.SYMBOL_UPDATED, {symbol: updatedSymbol});
           this.close({$value: updatedSymbol});
-        })
-        .catch(err => {
+        },
+        err => {
           this.errorMsg = err.data.message;
-        });
+        }
+      );
     }
   }
 };

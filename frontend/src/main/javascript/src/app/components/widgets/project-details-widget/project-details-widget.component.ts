@@ -16,7 +16,7 @@
 
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
-import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
 import { Project } from '../../../entities/project';
 
 /**
@@ -39,11 +39,11 @@ class ProjectDetailsWidgetComponent {
    * Constructor.
    *
    * @param symbolGroupApi
-   * @param learnResultResource
+   * @param learnerResultApi
    */
   /* @ngInject */
   constructor(private symbolGroupApi: SymbolGroupApiService,
-              private learnResultResource: LearnResultResource) {
+              private learnerResultApi: LearnerResultApiService) {
   }
 
   $onInit(): void {
@@ -55,11 +55,10 @@ class ProjectDetailsWidgetComponent {
       console.error
     );
 
-    this.learnResultResource.getAll(this.project.id)
-      .then(results => {
-        this.numberOfTests = results.length;
-      })
-      .catch(err => console.log(err));
+    this.learnerResultApi.getAll(this.project.id).subscribe(
+      results => this.numberOfTests = results.length,
+      console.error
+    );
   }
 }
 

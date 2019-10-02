@@ -20,6 +20,7 @@
 /* @ngInject */
 import { AppStoreService } from './services/app-store.service';
 import { ProjectApiService } from './services/resources/project-api.service';
+import { ToastService } from './services/toast.service';
 
 export function config($stateProvider, $urlRouterProvider) {
 
@@ -329,14 +330,14 @@ export function config($stateProvider, $urlRouterProvider) {
  * @param toastService
  */
 /* @ngInject */
-export function run($transitions, appStore: AppStoreService, userService, toastService) {
+export function run($transitions, appStore: AppStoreService, toastService: ToastService) {
 
   // route validation
   $transitions.onBefore({}, onBefore, {});
   $transitions.onSuccess({}, onSuccess, {});
 
   function onBefore(transition) {
-    const user = userService.store.currentUser;
+    const user = appStore.user;
     const project = appStore.project;
 
     const data = transition.to().data;

@@ -15,9 +15,9 @@
  */
 
 import { LearnResult } from '../../../entities/learner-result';
-import { LearnerResource } from '../../../services/resources/learner-resource.service';
+import { LearnerApiService } from '../../../services/resources/learner-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
 import { Project } from '../../../entities/project';
 import { AppStoreService } from '../../../services/app-store.service';
 
@@ -43,8 +43,8 @@ class ResultsCompareViewComponent {
               private $state: any,
               private $stateParams: any,
               private appStore: AppStoreService,
-              private learnResultResource: LearnResultResource,
-              private learnerResource: LearnerResource,
+              private learnerResultApi: LearnerResultApiService,
+              private learnerApi: LearnerApiService,
               private toastService: ToastService) {
 
     this.results = [];
@@ -58,14 +58,15 @@ class ResultsCompareViewComponent {
       this.$state.go('error', {message: 'There are no test numbers defined in the URL'});
     } else {
       const testNos = $stateParams.testNos.split(',');
-      this.learnResultResource.getAll(this.project.id)
-        .then(results => {
+      this.learnerResultApi.getAll(this.project.id).subscribe(
+        results => {
           this.results = results;
           this.panels = results.filter((r) => {
             return testNos.indexOf('' + r.testNo.toString()) > -1;
           });
-        })
-        .catch(console.error);
+        },
+        console.error
+      );
     }
   }
 
@@ -100,8 +101,8 @@ class ResultsCompareViewComponent {
     const hypA = this.panels[0].steps[this.panelPointers[0]].hypothesis;
     const hypB = this.panels[1].steps[this.panelPointers[1]].hypothesis;
 
-    this.learnerResource.getSeparatingWord(hypA, hypB)
-      .then(diff => {
+    this.learnerApi.getSeparatingWord(hypA, hypB).subscribe(
+      diff => {
         if (diff.input.length === 0) {
           this.toastService.info('The two hypotheses are identical.');
         } else {
@@ -114,8 +115,9 @@ class ResultsCompareViewComponent {
             }
           });
         }
-      })
-      .catch(err => this.toastService.danger(err.data.message));
+      },
+      err => this.toastService.danger(err.data.message)
+    );
   }
 
   /**
@@ -125,15 +127,16 @@ class ResultsCompareViewComponent {
     let hypLeft = this.panels[0].steps[this.panelPointers[0]].hypothesis;
     let hypRight = this.panels[1].steps[this.panelPointers[1]].hypothesis;
 
-    this.learnerResource.getDifferenceTree(hypLeft, hypRight)
-      .then(data => {
+    this.learnerApi.getDifferenceTree(hypLeft, hypRight).subscribe(
+      data => {
         if (data.edges.length === 0) {
           this.toastService.info('Cannot find a difference.');
         } else {
           this.panels.push(<any> {hypothesis: data, steps: [{hypothesis: data}]});
         }
-      })
-      .catch(err => this.toastService.danger(err.data.message));
+      },
+      err => this.toastService.danger(err.data.message)
+    );
   }
 
   openResultListModal(): void {

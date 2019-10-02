@@ -15,10 +15,10 @@
  */
 
 import { LearnResult } from '../../../entities/learner-result';
-import { LearnerResource } from '../../../services/resources/learner-resource.service';
-import { LearnResultResource } from '../../../services/resources/learner-result-resource.service';
+import { LearnerApiService } from '../../../services/resources/learner-api.service';
+import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { SymbolApiService } from '../../../services/resources/symbol-api.service';
 import { NotificationService } from '../../../services/notification.service';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { IPromise } from 'angular';
@@ -59,10 +59,10 @@ class LearnerViewComponentComponent {
   constructor(private $state: any,
               private $interval: any,
               private appStore: AppStoreService,
-              private learnerResource: LearnerResource,
-              private learnResultResource: LearnResultResource,
+              private learnerApi: LearnerApiService,
+              private learnerResultApi: LearnerResultApiService,
               private toastService: ToastService,
-              private symbolResource: SymbolResource,
+              private symbolApi: SymbolApiService,
               private notificationService: NotificationService) {
 
     this.intervalHandle = null;
@@ -74,9 +74,10 @@ class LearnerViewComponentComponent {
     this.finalResult = null;
     this.finished = false;
 
-    this.symbolResource.getAll(this.project.id)
-      .then(symbols => this.symbols = symbols)
-      .catch(console.error);
+    this.symbolApi.getAll(this.project.id).subscribe(
+      symbols => this.symbols = symbols,
+      console.error
+    );
 
     if (this.$state.params.result !== null) {
       this.finished = true;
@@ -112,8 +113,8 @@ class LearnerViewComponentComponent {
   }
 
   getStatus(): void {
-    this.learnerResource.getStatus(this.project.id)
-      .then(status => {
+    this.learnerApi.getStatus(this.project.id).subscribe(
+      status => {
         this.status = status;
         if (this.status.result != null) {
           const now = new Date();
@@ -124,8 +125,8 @@ class LearnerViewComponentComponent {
         if (!this.status.active) {
           this.finished = true;
 
-          this.learnResultResource.getLatest(this.project.id)
-            .then(latestResult => {
+          this.learnerResultApi.getLatest(this.project.id).subscribe(
+            latestResult => {
               if (latestResult.error) {
                 this.$state.go('error', {message: latestResult.errorText});
               } else {
@@ -144,13 +145,15 @@ class LearnerViewComponentComponent {
 
               this.toastService.success('The learning process finished');
               this.notificationService.notify('ALEX has finished learning the application.');
-            })
-            .catch(console.error);
+            },
+            console.error
+          );
 
           this.$interval.cancel(this.intervalHandle);
         }
-      })
-      .catch(console.error);
+      },
+      console.error
+    );
   }
 
   /**
@@ -161,16 +164,17 @@ class LearnerViewComponentComponent {
     config.environments = config.environments.map(e => e.id);
     config.symbolsToAdd.forEach(ps => ps.symbol = {id: ps.symbol.id});
 
-    this.learnerResource.resume(this.project.id, this.finalResult.testNo, config)
-      .then(() => {
+    this.learnerApi.resume(this.project.id, this.finalResult.testNo, config).subscribe(
+      () => {
         this.finalResult = null;
         this.stepNo = this.resumeConfig.stepNo;
         this.status = null;
         this.poll();
-      })
-      .catch(err => {
+      },
+      err => {
         this.toastService.danger('<p><strong>Resume learning failed!</strong></p>' + err.data.message);
-      });
+      }
+    );
   }
 
   /**
@@ -179,7 +183,7 @@ class LearnerViewComponentComponent {
   abort(): void {
     if (this.status.active) {
       this.toastService.info('The learner will stop after executing the current query batch');
-      this.learnerResource.stop(this.project.id);
+      this.learnerApi.stop(this.project.id);
     }
   }
 

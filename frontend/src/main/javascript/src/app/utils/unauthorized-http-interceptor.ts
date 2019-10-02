@@ -15,18 +15,13 @@
  */
 
 import { ToastService } from '../services/toast.service';
-import { UserService } from '../services/user.service';
 import { IQService } from 'angular';
 import IInjectorService = angular.auto.IInjectorService;
+import { AppStoreService } from '../services/app-store.service';
 
 /**
  * Intercept HTTP responses and redirect to the start page if the user is unauthorized (status 401).
- *
- * @param $q
- * @param $injector
- * @param $state
  */
-
 /* @ngInject */
 export function unauthorizedHttpInterceptor($q: IQService, $injector: IInjectorService, $state: any) {
   return {
@@ -35,8 +30,8 @@ export function unauthorizedHttpInterceptor($q: IQService, $injector: IInjectorS
         const toastService: ToastService = $injector.get('toastService');
         toastService.danger('You are currently not authorized to view this page.');
 
-        const userService: UserService = $injector.get('userService');
-        userService.logout();
+        const appStore: AppStoreService = $injector.get('appStore');
+        appStore.logout();
 
         $state.go('root');
       }

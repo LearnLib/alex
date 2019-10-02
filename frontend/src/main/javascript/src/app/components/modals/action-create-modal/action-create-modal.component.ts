@@ -16,7 +16,7 @@
 
 import { actionType } from '../../../constants';
 import { ActionService } from '../../../services/action.service';
-import { SymbolResource } from '../../../services/resources/symbol-resource.service';
+import { SymbolApiService } from '../../../services/resources/symbol-api.service';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { Action } from '../../../entities/actions/action';
 import { ModalComponent } from '../modal.component';
@@ -45,7 +45,7 @@ export const actionCreateModalComponent = {
 
     /* @ngInject */
     constructor(private actionService: ActionService,
-                private symbolResource: SymbolResource,
+                private symbolApi: SymbolApiService,
                 private appStore: AppStoreService) {
       super();
 
@@ -114,9 +114,9 @@ export const actionCreateModalComponent = {
 
       // get all symbols
       const project = this.appStore.project;
-      symbolResource.getAll(project.id).then(symbols => {
-        this.symbols = symbols;
-      });
+      symbolApi.getAll(project.id).subscribe(
+        symbols => this.symbols = symbols
+      );
     }
 
     /**

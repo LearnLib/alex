@@ -15,15 +15,19 @@
  */
 
 import { environment as env } from '../../../environments/environment';
-import { IHttpService, IPromise } from 'angular';
+import { BaseApiService } from './base-api.service';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 /**
  * The resource to handle actions with test cases over the API.
  */
-export class TestResource {
+@Injectable()
+export class TestApiService extends BaseApiService {
 
-  /* @ngInject */
-  constructor(private $http: IHttpService) {
+  constructor(private http: HttpClient) {
+    super();
   }
 
   /**
@@ -31,20 +35,8 @@ export class TestResource {
    *
    * @param testCase The test case to create.
    */
-  create(testCase: any): IPromise<any> {
-    return this.$http.post(`${env.apiUrl}/projects/${testCase.project}/tests`, testCase)
-      .then(response => response.data);
-  }
-
-  /**
-   * Create multiple test cases at once.
-   *
-   * @param projectId The id of the project.
-   * @param tests The tests to create.
-   */
-  createMany(projectId: number, tests: any[]): IPromise<any> {
-    return this.$http.post(`${env.apiUrl}/projects/${projectId}/tests/batch`, tests)
-      .then(response => response.data);
+  create(testCase: any): Observable<any> {
+    return this.http.post(`${env.apiUrl}/projects/${testCase.project}/tests`, testCase, this.defaultHttpOptions);
   }
 
   /**
@@ -52,9 +44,8 @@ export class TestResource {
    *
    * @param projectId The id of the project to get all test cases from
    */
-  getRoot(projectId: number): IPromise<any> {
-    return this.$http.get(`${env.apiUrl}/projects/${projectId}/tests/root`)
-      .then(response => response.data);
+  getRoot(projectId: number): Observable<any> {
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/root`, this.defaultHttpOptions);
   }
 
   /**
@@ -63,9 +54,8 @@ export class TestResource {
    * @param projectId The id of the project.
    * @param testCaseId The id of the test case.
    */
-  get(projectId: number, testCaseId: number): IPromise<any> {
-    return this.$http.get(`${env.apiUrl}/projects/${projectId}/tests/${testCaseId}`)
-      .then(response => response.data);
+  get(projectId: number, testCaseId: number): Observable<any> {
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/${testCaseId}`, this.defaultHttpOptions);
   }
 
   /**
@@ -73,9 +63,8 @@ export class TestResource {
    *
    * @param projectId The id of the project.
    */
-  getStatus(projectId: number): IPromise<any> {
-    return this.$http.get(`${env.apiUrl}/projects/${projectId}/tests/status`)
-      .then(response => response.data);
+  getStatus(projectId: number): Observable<any> {
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/status`, this.defaultHttpOptions);
   }
 
   /**
@@ -83,9 +72,8 @@ export class TestResource {
    *
    * @param projectId The ID of the project.
    */
-  abort(projectId: number): IPromise<any> {
-    return this.$http.post(`${env.apiUrl}/projects/${projectId}/tests/abort`, null)
-      .then(response => response.data);
+  abort(projectId: number): Observable<any> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/tests/abort`, null, this.defaultHttpOptions);
   }
 
   /**
@@ -93,9 +81,8 @@ export class TestResource {
    *
    * @param testCase The updated test case.
    */
-  update(testCase: any): IPromise<any> {
-    return this.$http.put(`${env.apiUrl}/projects/${testCase.project}/tests/${testCase.id}`, testCase)
-      .then(response => response.data);
+  update(testCase: any): Observable<any> {
+    return this.http.put(`${env.apiUrl}/projects/${testCase.project}/tests/${testCase.id}`, testCase, this.defaultHttpOptions);
   }
 
   /**
@@ -103,9 +90,8 @@ export class TestResource {
    *
    * @param testCase The test case to delete.
    */
-  remove(testCase: any): IPromise<any> {
-    return this.$http.delete(`${env.apiUrl}/projects/${testCase.project}/tests/${testCase.id}`)
-      .then(response => response.data);
+  remove(testCase: any): Observable<any> {
+    return this.http.delete(`${env.apiUrl}/projects/${testCase.project}/tests/${testCase.id}`, this.defaultHttpOptions);
   }
 
   /**
@@ -114,10 +100,9 @@ export class TestResource {
    * @param projectId The id of the project the tests are in.
    * @param tests The test case to delete.
    */
-  removeMany(projectId: number, tests: any[]): IPromise<any> {
+  removeMany(projectId: number, tests: any[]): Observable<any> {
     const ids = tests.map(t => t.id).join(',');
-    return this.$http.delete(`${env.apiUrl}/projects/${projectId}/tests/batch/${ids}`)
-      .then(response => response.data);
+    return this.http.delete(`${env.apiUrl}/projects/${projectId}/tests/batch/${ids}`, this.defaultHttpOptions);
   }
 
   /**
@@ -127,9 +112,8 @@ export class TestResource {
    * @param testIds The ids of the tests to move.
    * @param targetId The id of the target test suite.
    */
-  moveMany(projectId: number, testIds: number[], targetId: number): IPromise<any> {
-    return this.$http.put(`${env.apiUrl}/projects/${projectId}/tests/batch/${testIds.join(',')}/moveTo/${targetId}`, null)
-      .then(response => response.data);
+  moveMany(projectId: number, testIds: number[], targetId: number): Observable<any> {
+    return this.http.put(`${env.apiUrl}/projects/${projectId}/tests/batch/${testIds.join(',')}/moveTo/${targetId}`, null, this.defaultHttpOptions);
   }
 
   /**
@@ -138,9 +122,8 @@ export class TestResource {
    * @param testCase The test to execute.
    * @param browserConfig The config to execute the test with.
    */
-  execute(testCase: any, browserConfig: number): IPromise<any> {
-    return this.$http.post(`${env.apiUrl}/projects/${testCase.project}/tests/${testCase.id}/execute`, browserConfig)
-      .then(response => response.data);
+  execute(testCase: any, browserConfig: number): Observable<any> {
+    return this.http.post(`${env.apiUrl}/projects/${testCase.project}/tests/${testCase.id}/execute`, browserConfig, this.defaultHttpOptions);
   }
 
   /**
@@ -149,9 +132,8 @@ export class TestResource {
    * @param projectId The id of the project
    * @param testConfig The configuration for the web driver.
    */
-  executeMany(projectId: number, testConfig: number): IPromise<any> {
-    return this.$http.post(`${env.apiUrl}/projects/${projectId}/tests/execute`, testConfig)
-      .then((response) => response.data);
+  executeMany(projectId: number, testConfig: number): Observable<any> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/tests/execute`, testConfig, this.defaultHttpOptions);
   }
 
   /**
@@ -162,18 +144,15 @@ export class TestResource {
    * @param page
    * @param size
    */
-  getResults(projectId: number, testId: number, page = 0, size = 25): IPromise<any> {
-    return this.$http.get(`${env.apiUrl}/projects/${projectId}/tests/${testId}/results?page=${page}&size=${size}`)
-      .then(response => response.data);
+  getResults(projectId: number, testId: number, page = 0, size = 25): Observable<any> {
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/${testId}/results?page=${page}&size=${size}`, this.defaultHttpOptions);
   }
 
-  export(projectId: number, config: any) {
-    return this.$http.post(`${env.apiUrl}/projects/${projectId}/tests/export`, config)
-      .then(response => response.data);
+  export(projectId: number, config: any): Observable<any> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/tests/export`, config, this.defaultHttpOptions);
   }
 
-  import(projectId: number, data: any) {
-    return this.$http.post(`${env.apiUrl}/projects/${projectId}/tests/import`, data)
-      .then(response => response.data);
+  import(projectId: number, data: any): Observable<any> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/tests/import`, data, this.defaultHttpOptions);
   }
 }

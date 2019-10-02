@@ -15,10 +15,10 @@
  */
 
 import { User } from '../../../entities/user';
-import { UserResource } from '../../../services/resources/user-resource.service';
+import { UserApiService } from '../../../services/resources/user-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { SettingsApiService } from '../../../services/resources/settings-api.service';
-import { UserService } from '../../../services/user.service';
+import { AppStoreService } from '../../../services/app-store.service';
 
 /**
  * The component controller for the user login form.
@@ -35,23 +35,13 @@ class UserLoginFormComponent {
 
   public settings: any = null;
 
-  /**
-   * Constructor.
-   *
-   * @param $state
-   * @param userResource
-   * @param jwtHelper
-   * @param toastService
-   * @param settingsApi
-   * @param userService
-   */
   /* @ngInject */
   constructor(private $state: any,
-              private userResource: UserResource,
+              private userApi: UserApiService,
               private jwtHelper: any,
               private toastService: ToastService,
               private settingsApi: SettingsApiService,
-              private userService: UserService) {
+              private appStore: AppStoreService) {
 
     this.settingsApi.get().subscribe(
       settings => this.settings = settings,
@@ -64,12 +54,11 @@ class UserLoginFormComponent {
    */
   login(): void {
     if (this.email && this.password) {
-      this.userResource.login(this.email, this.password)
-        .then(response => {
+      this.userApi.login(this.email, this.password).subscribe(data => {
           this.toastService.info('You have logged in!');
 
           // decode the token and create a user from it
-          const token = response.data.token;
+          const token = data.token;
           const tokenPayload = this.jwtHelper.decodeToken(token);
           const user = User.fromData({
             id: tokenPayload.id,
@@ -77,14 +66,15 @@ class UserLoginFormComponent {
             email: tokenPayload.email
           });
 
-          this.userService.login(user, token);
+          this.appStore.login(user, token);
           if (this.onLoggedIn != null) {
             this.onLoggedIn();
           }
-        })
-        .catch(() => {
+        },
+        () => {
           this.toastService.danger('Login failed');
-        });
+        }
+      );
     } else {
       this.toastService.info('Make sure your inputs are valid.');
     }
@@ -95,13 +85,10 @@ class UserLoginFormComponent {
    */
   signUp(): void {
     if (this.email && this.password) {
-      this.userResource.create(<any> {email: this.email, password: this.password})
-        .then(() => {
-          this.toastService.success('Registration successful. You can now use the credentials to login.');
-        })
-        .catch(response => {
-          this.toastService.danger(`Registration failed. ${response.data.message}`);
-        });
+      this.userApi.create(<any> {email: this.email, password: this.password}).subscribe(
+        () => this.toastService.success('Registration successful. You can now use the credentials to login.'),
+        response => this.toastService.danger(`Registration failed. ${response.data.message}`)
+      );
     } else {
       this.toastService.info('Make sure your inputs are valid.');
     }
