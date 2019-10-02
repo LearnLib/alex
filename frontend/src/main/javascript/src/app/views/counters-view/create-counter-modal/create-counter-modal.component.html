@@ -5,7 +5,7 @@
   </a>
 </div>
 
-<form name="form" (ngSubmit)="createCounter()">
+<form [formGroup]="createForm" (ngSubmit)="createCounter()">
 
   <div class="modal-body">
 
@@ -17,12 +17,15 @@
       <label>Name</label>
       <input
         class="form-control"
-        name="name"
         type="text"
         placeholder="The name of the counter"
         required
-        [(ngModel)]="counter.name"
+        [formControl]="createForm.controls.name"
+        [class.is-invalid]="isInvalidFormControl(createForm.controls.name)"
       >
+      <div class="invalid-feedback">
+        Please provide a name for the counter.
+      </div>
     </div>
 
     <div class="form-group">
@@ -34,14 +37,18 @@
         placeholder="The value of the counter"
         required
         min="0"
-        [(ngModel)]="counter.value"
+        [formControl]="createForm.controls.value"
+        [class.is-invalid]="isInvalidFormControl(createForm.controls.value)"
       >
+      <div class="invalid-feedback">
+        Please a value greater than 0.
+      </div>
     </div>
 
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-sm btn-primary" type="submit">Create</button>
+    <button class="btn btn-sm btn-primary" type="submit" [disabled]="createForm.invalid">Create</button>
     <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.stopPropagation()">Cancel</button>
   </div>
 

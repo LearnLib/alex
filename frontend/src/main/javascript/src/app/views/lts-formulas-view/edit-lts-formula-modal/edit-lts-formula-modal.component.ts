@@ -32,18 +32,26 @@ export class EditLtsFormulaModalComponent {
   public errorMessage: string;
   public editForm: FormGroup;
 
-  constructor(private ltsFormulaApi: LtsFormulaApiService,
-              private modal: NgbActiveModal,
+  constructor(public modal: NgbActiveModal,
+              private ltsFormulaApi: LtsFormulaApiService,
               private appStore: AppStoreService) {
     this.editForm = new FormGroup({});
   }
 
   updateFormula(): void {
     this.errorMessage = null;
-    this.ltsFormulaApi.update(this.appStore.project.id, this.formula).subscribe(
-      updatedFormula => {
-        this.modal.close(updatedFormula);
-      }, err => this.errorMessage = err.data.message
-    );
+    if (this.editForm.valid) {
+      const values = this.editForm.value;
+
+      this.formula.name = values.name;
+      this.formula.formula = values.formula;
+
+      this.ltsFormulaApi.update(this.appStore.project.id, this.formula).subscribe(
+        updatedFormula => {
+          this.modal.close(updatedFormula);
+        },
+        err => this.errorMessage = err.data.message
+      );
+    }
   }
 }

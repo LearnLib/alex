@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
+import { remove } from 'lodash';
+
 export function replaceItem<T>(arr: T[], findFn: (T) => boolean, newItem: T): T[] {
   const newArr = [...arr];
   const i = newArr.findIndex(findFn);
   newArr[i] = newItem;
+  return newArr;
+}
+
+export function removeItems<T>(arr: T[], removeFn: (T) => boolean): T[] {
+  const newArr = [...arr];
+  remove(newArr, removeFn);
   return newArr;
 }

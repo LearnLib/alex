@@ -26,29 +26,26 @@ import { FormGroup } from '@angular/forms';
 })
 export class CreateLtsFormulaModalComponent {
 
-  public formula: any;
   public errorMessage: string;
   public createForm: FormGroup;
+  public formula: any;
 
-  constructor(private ltsFormulaApi: LtsFormulaApiService,
-              private modal: NgbActiveModal,
+  constructor(public modal: NgbActiveModal,
+              private ltsFormulaApi: LtsFormulaApiService,
               private appStore: AppStoreService) {
-    this.formula = {
-      name: '',
-      formula: ''
-    };
     this.createForm = new FormGroup({});
+    this.formula = {};
   }
 
   createFormula(): void {
     this.errorMessage = null;
-
-    console.log(this.createForm);
-
-    this.ltsFormulaApi.create(this.appStore.project.id, this.formula).subscribe(
-      createdFormula => {
-        this.modal.close(createdFormula);
-      }, err => this.errorMessage = err.data.message
-    );
+    if (this.createForm.valid) {
+      const formula = this.createForm.value;
+      this.ltsFormulaApi.create(this.appStore.project.id, formula).subscribe(
+        createdFormula => {
+          this.modal.close(createdFormula);
+        }, err => this.errorMessage = err.data.message
+      );
+    }
   }
 }

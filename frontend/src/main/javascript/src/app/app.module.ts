@@ -40,6 +40,11 @@ import { LtsFormulasViewComponent } from './views/lts-formulas-view/lts-formulas
 import { CreateLtsFormulaModalComponent } from './views/lts-formulas-view/create-lts-formula-modal/create-lts-formula-modal.component';
 import { EditLtsFormulaModalComponent } from './views/lts-formulas-view/edit-lts-formula-modal/edit-lts-formula-modal.component';
 import { LtsFormulaFormGroupsComponent } from './views/lts-formulas-view/lts-formula-form-groups/lts-formula-form-groups.component';
+import { WebhooksViewComponent } from './views/webhooks-view/webhooks-view.component';
+import { CreateWebhookModalComponent } from './views/webhooks-view/create-webhook-modal/create-webhook-modal.component';
+import { EditWebhookModalComponent } from './views/webhooks-view/edit-webhook-modal/edit-webhook-modal.component';
+import { WebhookFormGroupsComponent } from './views/webhooks-view/webhook-form-groups/webhook-form-groups.component';
+import { NormalizeUpperCasePipe } from './pipes/normalize-upper-case.pipe';
 
 @NgModule({
   declarations: [
@@ -59,7 +64,12 @@ import { LtsFormulaFormGroupsComponent } from './views/lts-formulas-view/lts-for
     LtsFormulasViewComponent,
     CreateLtsFormulaModalComponent,
     EditLtsFormulaModalComponent,
-    LtsFormulaFormGroupsComponent
+    LtsFormulaFormGroupsComponent,
+    WebhooksViewComponent,
+    CreateWebhookModalComponent,
+    EditWebhookModalComponent,
+    WebhookFormGroupsComponent,
+    NormalizeUpperCasePipe
   ],
   imports: [
     BrowserModule,
@@ -95,6 +105,8 @@ import { LtsFormulaFormGroupsComponent } from './views/lts-formulas-view/lts-for
     CreateCounterModalComponent,
     CreateLtsFormulaModalComponent,
     EditLtsFormulaModalComponent,
+    CreateWebhookModalComponent,
+    EditWebhookModalComponent,
     // remove when migration is done
     ViewHeaderComponent,
     ActionBarComponent,
@@ -105,7 +117,8 @@ import { LtsFormulaFormGroupsComponent } from './views/lts-formulas-view/lts-for
     SymbolParametersComponent,
     OutputErrorTraceComponent,
     CountersViewComponent,
-    LtsFormulasViewComponent
+    LtsFormulasViewComponent,
+    WebhooksViewComponent
   ]
   // bootstrap: [AppComponent]
 })

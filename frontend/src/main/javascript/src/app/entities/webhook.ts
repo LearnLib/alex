@@ -18,6 +18,7 @@ export class Webhook {
   id: number;
   user: number;
   url: string;
+  name: string;
   events: string[];
 
   constructor() {
@@ -30,6 +31,7 @@ export class Webhook {
     w.id = data.id;
     w.user = data.user;
     w.url = data.url;
+    w.name = data.name;
 
     if (data.events != null && data.events.length > 0) {
       w.events = data.events;

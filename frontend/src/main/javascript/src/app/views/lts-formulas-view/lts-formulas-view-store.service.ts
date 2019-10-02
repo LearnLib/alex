@@ -53,7 +53,8 @@ export class LtsFormulasViewStoreService {
     modalRef.result.then(f => {
       this.formulas.next([...this.formulas.value, f]);
       this.formulasSelectable.addItem(f);
-    }).catch(() => {});
+    }).catch(() => {
+    });
   }
 
   edit(formula: any): void {
@@ -63,7 +64,8 @@ export class LtsFormulasViewStoreService {
       const fs = replaceItem(this.formulas.value, f => f.id === updatedFormula.id, updatedFormula);
       this.formulas.next(fs);
       this.formulasSelectable.update(updatedFormula);
-    }).catch(() => {});
+    }).catch(() => {
+    });
   }
 
   delete(formula: any): void {

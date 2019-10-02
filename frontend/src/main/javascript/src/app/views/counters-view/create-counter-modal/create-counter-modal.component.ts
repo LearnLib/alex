@@ -19,6 +19,7 @@ import { Counter } from '../../../entities/counter';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CounterApiService } from '../../../services/resources/counter-api.service';
 import { AppStoreService } from '../../../services/app-store.service';
+import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'create-counter-modal',
@@ -28,19 +29,34 @@ export class CreateCounterModalComponent {
 
   errorMessage: string;
 
-  counter: Counter;
+  createForm: FormGroup;
 
   constructor(public modal: NgbActiveModal,
               private counterApi: CounterApiService,
               private appStore: AppStoreService) {
-    this.counter = new Counter();
+    this.createForm = new FormGroup({
+      name: new FormControl('', Validators.required),
+      value: new FormControl(0, [Validators.required, Validators.min(0)])
+    });
   }
 
   createCounter(): void {
-    this.counter.project = this.appStore.project.id;
-    this.counterApi.create(this.appStore.project.id, this.counter).subscribe(
-      createdCounter => this.modal.close(createdCounter),
-      res => this.errorMessage = res.error.message
-    );
+    if (this.createForm.valid) {
+      this.errorMessage = null;
+
+      const counter = new Counter();
+      counter.name = this.createForm.controls.name.value;
+      counter.value = this.createForm.controls.value.value;
+      counter.project = this.appStore.project.id;
+
+      this.counterApi.create(this.appStore.project.id, counter).subscribe(
+        createdCounter => this.modal.close(createdCounter),
+        res => this.errorMessage = res.error.message
+      );
+    }
+  }
+
+  isInvalidFormControl(c: AbstractControl): boolean {
+    return c.invalid && (c.dirty || c.touched);
   }
 }

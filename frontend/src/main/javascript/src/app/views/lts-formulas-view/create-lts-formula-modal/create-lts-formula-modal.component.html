@@ -18,7 +18,7 @@
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-sm btn-primary" type="submit">Create</button>
+    <button class="btn btn-sm btn-primary" type="submit" [disabled]="createForm.invalid">Create</button>
     <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.stopPropagation()">Cancel</button>
   </div>
 

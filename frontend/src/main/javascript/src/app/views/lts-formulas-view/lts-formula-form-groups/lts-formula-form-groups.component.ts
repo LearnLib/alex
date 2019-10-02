@@ -15,11 +15,11 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'lts-formula-form-groups',
-  templateUrl: './lts-formula-form-groups.component.html',
+  templateUrl: './lts-formula-form-groups.component.html'
 })
 export class LtsFormulaFormGroupsComponent implements OnInit {
 
@@ -29,11 +29,12 @@ export class LtsFormulaFormGroupsComponent implements OnInit {
   @Input()
   public form: FormGroup;
 
-  constructor() {
-  }
-
   ngOnInit(): void {
     this.form.addControl('name', new FormControl(this.formula.name, Validators.required));
     this.form.addControl('formula', new FormControl(this.formula.formula, Validators.required));
+  }
+
+  isInvalidFormControl(c: AbstractControl): boolean {
+    return c.invalid && (c.dirty || c.touched);
   }
 }

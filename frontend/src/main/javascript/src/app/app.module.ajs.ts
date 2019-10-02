@@ -90,7 +90,6 @@ import { symbolFormGroupsComponent } from './components/forms/symbol-form-groups
 import { symbolParameterFormGroupsComponent } from './components/forms/symbol-parameter-form-groups/symbol-parameter-form-groups.components';
 import { userEditFormComponent } from './components/forms/user-edit-form/user-edit-form.component';
 import { userLoginFormComponent } from './components/forms/user-login-form/user-login-form.component';
-import { webhookFormComponent } from './components/forms/webhook-form/webhook-form.component';
 import { hypothesisComponent } from './components/hypothesis/hypothesis.component';
 import { learnerResultPanelCheckingViewComponent } from './components/learner-result-panel/learner-result-panel-checking-view/learner-result-panel-checking-view.component';
 import { learnerResultPanelDefaultViewComponent } from './components/learner-result-panel/learner-result-panel-default-view/learner-result-panel-default-view.component';
@@ -128,8 +127,6 @@ import { testsImportModalComponent } from './components/modals/tests-import-moda
 import { testSuiteTreeComponent } from './components/modals/tests-move-modal/test-suite-tree-component/test-suite-tree.component';
 import { testsMoveModalComponent } from './components/modals/tests-move-modal/tests-move-modal.component';
 import { userEditModalComponent } from './components/modals/user-edit-modal/user-edit-modal.component';
-import { webhookCreateModalComponent } from './components/modals/webhook-create-modal/webhook-create-modal.component';
-import { webhookEditModalComponent } from './components/modals/webhook-edit-modal/webhook-edit-modal.component';
 import { observationTableComponent } from './components/observation-table/observation-table.component';
 import { searchFormComponent } from './components/search-form/search-form.component';
 import { sidebarComponent } from './components/sidebar/sidebar.component';
@@ -170,7 +167,6 @@ import { testReportViewComponent } from './components/views/test-report-view/tes
 import { testReportsViewComponent } from './components/views/test-reports-view/test-reports-view.component';
 import { testSuiteViewComponent } from './components/views/test-suite-view/test-suite-view.component';
 import { testsViewComponent } from './components/views/tests-view/tests-view.component';
-import { webhooksViewComponent } from './components/views/webhooks-view/webhooks-view.component';
 import { counterexamplesWidgetComponent } from './components/widgets/counterexamples-widget/counterexamples-widget.component';
 import { latestLearnerResultWidgetComponent } from './components/widgets/latest-learner-result-widget/latest-learner-result-widget.component';
 import { latestTestReportWidgetComponent } from './components/widgets/latest-test-report-widget/latest-test-report-widget.component';
@@ -246,6 +242,7 @@ import { SymbolParametersComponent } from './common/symbol-parameters/symbol-par
 import { OutputErrorTraceComponent } from './common/output-error-trace/output-error-trace.component';
 import { CountersViewComponent } from './views/counters-view/counters-view.component';
 import { LtsFormulasViewComponent } from './views/lts-formulas-view/lts-formulas-view.component';
+import { WebhooksViewComponent } from './views/webhooks-view/webhooks-view.component';
 
 angular
   .module('ALEX', [
@@ -341,8 +338,6 @@ angular
   .component('confirmModal', confirmModalComponent)
   .component('testConfigModal', testConfigModalComponent)
   .component('testsImportModal', testsImportModalComponent)
-  .component('webhookCreateModal', webhookCreateModalComponent)
-  .component('webhookEditModal', webhookEditModalComponent)
   .component('symbolParameterCreateModal', symbolParameterCreateModalComponent)
   .component('symbolParameterEditModal', symbolParameterEditModalComponent)
   .component('symbolGroupMoveModal', symbolGroupMoveModalComponent)
@@ -382,7 +377,7 @@ angular
   .component('testReportsView', testReportsViewComponent)
   .component('testReportView', testReportViewComponent)
   .component('testSuiteView', testSuiteViewComponent)
-  .component('webhooksView', webhooksViewComponent)
+  .directive('webhooksView', downgradeComponent({ component: WebhooksViewComponent }) as angular.IDirectiveFactory)
   .component('redirectView', redirectViewComponent)
   .directive('ltsFormulasView', downgradeComponent({ component: LtsFormulasViewComponent }) as angular.IDirectiveFactory)
   .component('logoutView', logoutViewComponent)
@@ -400,7 +395,6 @@ angular
   .component('searchForm', searchFormComponent)
   .component('actionSearchForm', actionSearchFormComponent)
   .component('symbolSearchForm', symbolSearchFormComponent)
-  .component('webhookForm', webhookFormComponent)
   .component('symbolParameterFormGroups', symbolParameterFormGroupsComponent)
   .component('eqOracleForm', eqOracleFormComponent)
   .component('completeEqOracleForm', completeEqOracleFormComponent)

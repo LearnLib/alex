@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-import { Component, OnInit } from '@angular/core';
-import { LtsFormulasViewStoreService } from './lts-formulas-view-store.service';
+import { Pipe, PipeTransform } from '@angular/core';
 
-@Component({
-  selector: 'lts-formulas-view',
-  templateUrl: './lts-formulas-view.component.html',
-  providers: [LtsFormulasViewStoreService]
+@Pipe({
+  name: 'normalizeUpperCase'
 })
-export class LtsFormulasViewComponent implements OnInit {
+export class NormalizeUpperCasePipe implements PipeTransform {
 
-  constructor(public store: LtsFormulasViewStoreService) {
-  }
-
-  ngOnInit(): void {
-    this.store.load();
+  transform(value: string): string {
+    let res = value.split('_').map(part => part.toLowerCase()).join(' ');
+    return res.charAt(0).toUpperCase() + res.slice(1);
   }
 }
