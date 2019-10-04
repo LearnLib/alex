@@ -56,6 +56,9 @@ import { LearnerResultApiService } from './services/resources/learner-result-api
 import { LearnerApiService } from './services/resources/learner-api.service';
 import { TestApiService } from './services/resources/test-resource.service';
 import { FileApiService } from './services/resources/file-api.service';
+import { PromptModalComponent } from './common/prompt-modal/prompt-modal.component';
+import { ConfirmModalComponent } from './common/confirm-modal/confirm-modal.component';
+import { PromptService } from './services/prompt.service';
 
 @NgModule({
   declarations: [
@@ -84,7 +87,9 @@ import { FileApiService } from './services/resources/file-api.service';
     SymbolParametersPanelComponent,
     CreateSymbolParameterModalComponent,
     EditSymbolParameterModalComponent,
-    SymbolParameterFormGroupsComponent
+    SymbolParameterFormGroupsComponent,
+    PromptModalComponent,
+    ConfirmModalComponent
   ],
   imports: [
     BrowserModule,
@@ -121,7 +126,8 @@ import { FileApiService } from './services/resources/file-api.service';
     LearnerResultApiService,
     LearnerApiService,
     TestApiService,
-    FileApiService
+    FileApiService,
+    PromptService
   ],
   entryComponents: [
     CreateCounterModalComponent,
@@ -131,6 +137,8 @@ import { FileApiService } from './services/resources/file-api.service';
     EditWebhookModalComponent,
     CreateSymbolParameterModalComponent,
     EditSymbolParameterModalComponent,
+    PromptModalComponent,
+    ConfirmModalComponent,
     // remove when migration is done
     ViewHeaderComponent,
     ActionBarComponent,

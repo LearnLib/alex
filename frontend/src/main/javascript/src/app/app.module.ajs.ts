@@ -104,13 +104,11 @@ import { learnerResultPanelComponent } from './components/learner-result-panel/l
 import { actionCreateModalComponent } from './components/modals/action-create-modal/action-create-modal.component';
 import { actionSearchFormComponent } from './components/modals/action-create-modal/action-search-form/action-search-form.component';
 import { actionEditModalComponent } from './components/modals/action-edit-modal/action-edit-modal.component';
-import { confirmModalComponent } from './components/modals/confirm-modal/confirm-modal.component';
 import { hypothesisLayoutSettingsModalComponent } from './components/modals/hypothesis-layout-settings-modal/hypothesis-layout-settings-modal.component';
 import { learnerResultDetailsModalComponent } from './components/modals/learner-result-details-modal/learner-result-details-modal.component';
 import { resultListModalComponent } from './components/modals/learner-result-list-modal/learner-result-list-modal.component';
 import { learnerSetupSettingsModalComponent } from './components/modals/learner-setup-settings-modal/learner-setup-settings-modal.component';
 import { projectEditModalComponent } from './components/modals/project-edit-modal/project-edit-modal.component';
-import { promptModalComponent } from './components/modals/prompt-modal/prompt-modal.component';
 import { separatingWordModalComponent } from './components/modals/separating-word-modal/separating-word-modal.component';
 import { symbolCreateModalComponent } from './components/modals/symbol-create-modal/symbol-create-modal.component';
 import { symbolEditModalComponent } from './components/modals/symbol-edit-modal/symbol-edit-modal.component';
@@ -303,7 +301,7 @@ angular
   .service('learningAlgorithmService', LearningAlgorithmService)
   .service('downloadService', DownloadService)
   .service('learnerResultChartService', LearnerResultChartService)
-  .service('promptService', PromptService)
+  .service('promptService', downgradeInjectable(PromptService))
   .service('toastService', downgradeInjectable(ToastService))
   .service('learnerResultDownloadService', LearnerResultDownloadService)
   .service('testReportService', TestReportService)
@@ -329,8 +327,6 @@ angular
   .component('userEditModal', userEditModalComponent)
   .component('resultListModal', resultListModalComponent)
   .component('symbolsImportModal', symbolsImportModalComponent)
-  .component('promptModal', promptModalComponent)
-  .component('confirmModal', confirmModalComponent)
   .component('testConfigModal', testConfigModalComponent)
   .component('testsImportModal', testsImportModalComponent)
   .component('symbolGroupMoveModal', symbolGroupMoveModalComponent)

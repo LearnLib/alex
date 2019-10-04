@@ -14,31 +14,18 @@
  * limitations under the License.
  */
 
-import { ModalComponent } from '../modal.component';
+import { Component, Input } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-/**
- * The component that handles the confirm modal dialog.
- */
-export const confirmModalComponent = {
-  template: require('html-loader!./confirm-modal.component.html'),
-  bindings: {
-    dismiss: '&',
-    close: '&',
-    resolve: '='
-  },
-  controllerAs: 'vm',
-  controller: class ConfirmModalComponent extends ModalComponent {
+@Component({
+  selector: 'confirm-modal',
+  templateUrl: './confirm-modal.component.html'
+})
+export class ConfirmModalComponent {
 
-    /** The text to display. */
-    public text: string = null;
+  /** The text message to display. */
+  @Input()
+  text: string;
 
-    /** Constructor. */
-    constructor() {
-      super();
-    }
-
-    $onInit(): void {
-      this.text = this.resolve.text;
-    }
-  },
-};
+  constructor(public modal: NgbActiveModal) { }
+}

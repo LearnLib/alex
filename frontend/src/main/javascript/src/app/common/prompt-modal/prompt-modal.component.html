@@ -1,0 +1,18 @@
+<div class="modal-header">
+  <h4>{{text}}</h4>
+</div>
+
+<form (ngSubmit)="accept()">
+
+  <div class="modal-body">
+    <div class="form-group">
+      <input name="input" type="text" class="form-control" [(ngModel)]="input" required>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary btn-sm">Ok</button>
+    <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.preventDefault()">Cancel</button>
+  </div>
+
+</form>

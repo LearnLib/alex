@@ -14,51 +14,26 @@
  * limitations under the License.
  */
 
-import { IPromise } from 'angular';
+import { Injectable } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PromptModalComponent } from '../common/prompt-modal/prompt-modal.component';
+import { ConfirmModalComponent } from '../common/confirm-modal/confirm-modal.component';
 
-/**
- * The service for handling prompt and confirm dialogs.
- */
+@Injectable()
 export class PromptService {
 
-  /**
-   * Constructor.
-   *
-   * @param $uibModal
-   */
-  /* @ngInject */
-  constructor(private $uibModal: any) {
+  constructor(private modalService: NgbModal) { }
+
+  prompt(text: string, defaultValue: string = ''): Promise<any> {
+    const modalRef = this.modalService.open(PromptModalComponent);
+    modalRef.componentInstance.text = text;
+    modalRef.componentInstance.defaultValue = defaultValue;
+    return modalRef.result;
   }
 
-  /**
-   * Opens the prompt dialog.
-   *
-   * @param text The text to display.
-   * @param defaultValue The default text value.
-   * @return The modal result promise.
-   */
-  prompt(text: string, defaultValue: string = ''): IPromise<any> {
-    return this.$uibModal.open({
-      component: 'promptModal',
-      resolve: {
-        text: () => text,
-        defaultValue: () => defaultValue
-      }
-    }).result;
-  }
-
-  /**
-   * Opens the confirm dialog.
-   *
-   * @param text The text to be displayed in the confirm dialog.
-   * @returns The modal result promise.
-   */
-  confirm(text: string): IPromise<any> {
-    return this.$uibModal.open({
-      component: 'confirmModal',
-      resolve: {
-        text: () => text
-      }
-    }).result;
+  confirm(text: string): Promise<any> {
+    const modalRef = this.modalService.open(ConfirmModalComponent);
+    modalRef.componentInstance.text = text;
+    return modalRef.result;
   }
 }
