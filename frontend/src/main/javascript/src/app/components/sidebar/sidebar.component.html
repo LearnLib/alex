@@ -1,7 +1,7 @@
 <aside id="sidebar">
 
   <header id="sidebar-header">
-    <a class="logo-button" ui-sref="root">
+    <a class="logo-button" href="#!/">
       <img src="/assets/images/favicon.png" height="18" width="18">
       <strong class="ml-1" style="margin-bottom: -2px">LEX</strong>
     </a>
@@ -18,7 +18,7 @@
           <strong>{{group.title()}}</strong>
         </div>
         <a
-          ui-sref="{{item.sref()}}"
+          href="{{item.href()}}"
           class="sidebar-group-item"
           ng-class="{'active':item.active()}"
           ng-repeat="item in group.items"
@@ -36,7 +36,7 @@
   </div>
 
   <div id="sidebar-footer">
-    <a ui-sref="about">
+    <a href="#!/about">
       <i class="fas fa-info-circle"></i>
       <span>About</span>
     </a>

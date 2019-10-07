@@ -79,7 +79,7 @@ export class UserApiService extends BaseApiService {
   getAll(): Observable<User[]> {
     return this.http.get(`${env.apiUrl}/users`, this.defaultHttpOptions)
       .pipe(
-        map((body: any) => body.map(u => User.fromData(body)))
+        map((body: any) => body.map(u => User.fromData(u)))
       );
   }
 

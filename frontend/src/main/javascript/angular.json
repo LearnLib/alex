@@ -31,6 +31,7 @@
               "src/styles.scss"
             ],
             "scripts": [
+              "node_modules/d3/dist/d3.js",
               "node_modules/ace-builds/src/ace.js",
               "node_modules/angular/angular.js",
               "node_modules/angular-ui-ace/src/ui-ace.js",

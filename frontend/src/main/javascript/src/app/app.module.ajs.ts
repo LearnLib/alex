@@ -19,12 +19,10 @@ import * as angular from 'angular';
 import * as ngAnimate from 'angular-animate';
 import * as ngMessages from 'angular-messages';
 import * as angularDragula from 'angular-dragula';
-import * as angularJwt from 'angular-jwt';
 import * as uiBootstrap from 'angular-ui-bootstrap';
 import * as ngFileUpload from 'ng-file-upload';
 import { alexComponent } from './components/alex/alex.component';
 import { discriminationTreeComponent } from './components/discrimination-tree/discrimination-tree.component';
-import { fileDropzoneComponent } from './components/file-dropzone/file-dropzone.component';
 import { actionFormComponent } from './components/forms/actions/action-form/action-form.component';
 import { assertCounterActionFormComponent } from './components/forms/actions/misc/assert-counter-action-form/assert-counter-action-form.component';
 import { assertVariableActionFormComponent } from './components/forms/actions/misc/assert-variable-action-form/assert-variable-action-form.component';
@@ -84,7 +82,6 @@ import { testSuiteEqOracleFormComponent } from './components/forms/eq-oracles/te
 import { wMethodEqOracleFormComponent } from './components/forms/eq-oracles/w-method-eq-oracle-form/w-method-eq-oracle-form.component';
 import { wpMethodEqOracleFormComponent } from './components/forms/eq-oracles/wp-method-eq-oracle-form/wp-method-eq-oracle-form.component';
 import { nodeFormGroupComponent } from './components/forms/node-form-group/node-form-group.component';
-import { projectFormGroupsComponent } from './components/forms/project-form-groups/project-form-groups.component';
 import { symbolEditFormComponent } from './components/forms/symbol-edit-form/symbol-edit-form.component';
 import { symbolFormGroupsComponent } from './components/forms/symbol-form-groups/symbol-form-groups.component';
 import { userEditFormComponent } from './components/forms/user-edit-form/user-edit-form.component';
@@ -96,7 +93,6 @@ import { learnerResultPanelTestingViewComponent } from './components/learner-res
 import { symbolSelectModalComponent } from './components/modals/symbol-select-modal/symbol-select-modal.component';
 import { symbolsExportModalComponent } from './components/modals/symbols-export-modal/symbols-export-modal.component';
 import { userCreateModalComponent } from './components/modals/user-create-modal/user-create-modal.component';
-import { paginationComponent } from './components/pagination/pagination.component';
 import { testCaseGenerationWidgetComponent } from './components/widgets/test-case-generation-widget/test-case-generation-widget.component';
 import { testSuiteGenerationWidgetComponent } from './components/widgets/test-suite-generation-widget/test-suite-generation-widget.component';
 import { learnerResultListItemComponent } from './components/views/learner-results-view/learner-result-list-item/learner-result-list-item.component';
@@ -108,7 +104,6 @@ import { hypothesisLayoutSettingsModalComponent } from './components/modals/hypo
 import { learnerResultDetailsModalComponent } from './components/modals/learner-result-details-modal/learner-result-details-modal.component';
 import { resultListModalComponent } from './components/modals/learner-result-list-modal/learner-result-list-modal.component';
 import { learnerSetupSettingsModalComponent } from './components/modals/learner-setup-settings-modal/learner-setup-settings-modal.component';
-import { projectEditModalComponent } from './components/modals/project-edit-modal/project-edit-modal.component';
 import { separatingWordModalComponent } from './components/modals/separating-word-modal/separating-word-modal.component';
 import { symbolCreateModalComponent } from './components/modals/symbol-create-modal/symbol-create-modal.component';
 import { symbolEditModalComponent } from './components/modals/symbol-edit-modal/symbol-edit-modal.component';
@@ -129,7 +124,6 @@ import { simpleSymbolGroupTreeItemComponent } from './components/simple-symbol-g
 import { simpleSymbolGroupTreeComponent } from './components/simple-symbol-group-tree/simple-symbol-group-tree.component';
 import { symbolGroupHeaderComponent } from './components/symbol-group-tree/symbol-group-header/symbol-group-header.component';
 import { symbolItemComponent } from './components/symbol-group-tree/symbol-item/symbol-item.component';
-import { testConfigListComponent } from './components/test-config-list/test-config-list.component';
 import { testResultReportComponent } from './components/test-result-report/test-result-report.component';
 import { testCaseNodeComponent } from './components/test-tree/test-case-node/test-case-node.component';
 import { testSuiteNodeComponent } from './components/test-tree/test-suite-node/test-suite-node.component';
@@ -143,8 +137,6 @@ import { resultsViewComponent } from './components/views/learner-results-view/le
 import { learnerSetupViewComponent } from './components/views/learner-setup-view/learner-setup-view.component';
 import { learnerViewComponent } from './components/views/learner-view/learner-view.component';
 import { profileViewComponent } from './components/views/profile-view/profile-view.component';
-import { projectViewComponent } from './components/views/project-view/project-view.component';
-import { projectsViewComponent } from './components/views/projects-view/projects-view.component';
 import { redirectViewComponent } from './components/views/redirect-view/redirect-view.component';
 import { rootViewComponent } from './components/views/root-view/root-view.component';
 import { statisticsCompareViewComponent } from './components/views/statistics-compare-view/statistics-compare-view.component';
@@ -162,11 +154,7 @@ import { testReportsViewComponent } from './components/views/test-reports-view/t
 import { testSuiteViewComponent } from './components/views/test-suite-view/test-suite-view.component';
 import { testsViewComponent } from './components/views/tests-view/tests-view.component';
 import { counterexamplesWidgetComponent } from './components/widgets/counterexamples-widget/counterexamples-widget.component';
-import { latestLearnerResultWidgetComponent } from './components/widgets/latest-learner-result-widget/latest-learner-result-widget.component';
-import { latestTestReportWidgetComponent } from './components/widgets/latest-test-report-widget/latest-test-report-widget.component';
 import { learnerResumeSettingsWidgetComponent } from './components/widgets/learner-resume-widget/learner-resume-settings-widget.component';
-import { learnerStatusWidgetComponent } from './components/widgets/learner-status-widget/learner-status-widget.component';
-import { projectDetailsWidgetComponent } from './components/widgets/project-details-widget/project-details-widget.component';
 import * as config from './config';
 import * as constant from './constants';
 import {
@@ -187,7 +175,6 @@ import { LearnerResultChartService } from './services/learner-result-chart.servi
 import { LearnerResultDownloadService } from './services/learner-result-download.service';
 import { LearningAlgorithmService } from './services/learning-algorithm.service';
 import { NotificationService } from './services/notification.service';
-import { ProjectService } from './services/project.service';
 import { PromptService } from './services/prompt.service';
 import { CounterApiService } from './services/resources/counter-api.service';
 import { FileApiService } from './services/resources/file-api.service';
@@ -208,7 +195,6 @@ import { ToastService } from './services/toast.service';
 import { setVariableByHttpStatusActionFormComponent } from './components/forms/actions/misc/set-variable-by-http-status-action-form/set-variable-by-http-status-action-form.component';
 import { LtsFormulaApiService } from './services/resources/lts-formula-api.service';
 import { unauthorizedHttpInterceptor } from './utils/unauthorized-http-interceptor';
-import { logoutViewComponent } from './components/views/logout-view/logout-view.component';
 import { defaultWebdriverButtonComponent } from './components/views/admin-settings-view/default-webdriver-button/default-webdriver-button.component';
 import { dragAndDropActionFormComponent } from './components/forms/actions/web/drag-and-drop-action-form/drag-and-drop-action-form.component';
 import { dragAndDropByActionFormComponent } from './components/forms/actions/web/drag-and-drop-by-action-form/drag-and-drop-by-action-form.component';
@@ -221,8 +207,6 @@ import { projectUrlCreateModalComponent } from './components/modals/project-url-
 import { projectUrlEditModalComponent } from './components/modals/project-url-edit-modal/project-url-edit-modal.component';
 import { environmentVariableCreateModalComponent } from './components/modals/environment-variable-create-modal/environment-variable-create-modal.component';
 import { environmentVariableEditModalComponent } from './components/modals/environment-variable-edit-modal/environment-variable-edit-modal.component';
-import { projectCreateModalComponent } from './components/modals/project-create-modal/project-create-modal.component';
-import { projectImportModalComponent } from './components/modals/project-import-modal/project-import-modal.component';
 import { downgradeComponent, downgradeInjectable } from '@angular/upgrade/static';
 import { ViewHeaderComponent } from './common/view-header/view-header.component';
 import { ActionBarComponent } from './common/action-bar/action-bar.component';
@@ -237,6 +221,12 @@ import { CountersViewComponent } from './views/counters-view/counters-view.compo
 import { LtsFormulasViewComponent } from './views/lts-formulas-view/lts-formulas-view.component';
 import { WebhooksViewComponent } from './views/webhooks-view/webhooks-view.component';
 import { SymbolParametersPanelComponent } from './views/symbol-view/symbol-parameters-panel/symbol-parameters-panel.component';
+import { TestConfigListComponent } from './views/test-suite-view/test-config-list/test-config-list.component';
+import { ProjectViewComponent } from './views/project-view/project-view.component';
+import { ProjectsViewComponent } from './views/projects-view/projects-view.component';
+import { FileDropzoneComponent } from './common/file-dropzone/file-dropzone.component';
+import { LogoutViewComponent } from './views/logout-view/logout-view.component';
+import { PaginationComponent } from './common/pagination/pagination.component';
 
 angular
   .module('ALEX', [
@@ -248,7 +238,6 @@ angular
     uiRouter,
     'ui.ace',
     'n3-line-chart',
-    angularJwt,
     ngFileUpload,
     angularDragula(angular)
   ])
@@ -294,19 +283,18 @@ angular
   .service('projectEnvironmentApi', downgradeInjectable(ProjectEnvironmentApiService))
 
   // services
-  .service('actionService', ActionService)
+  .service('actionService', downgradeInjectable(ActionService))
   .service('clipboardService', downgradeInjectable(ClipboardService))
   .service('eventBus', EventBus)
-  .service('eqOracleService', EqOracleService)
-  .service('learningAlgorithmService', LearningAlgorithmService)
-  .service('downloadService', DownloadService)
-  .service('learnerResultChartService', LearnerResultChartService)
+  .service('eqOracleService', downgradeInjectable(EqOracleService))
+  .service('learningAlgorithmService', downgradeInjectable(LearningAlgorithmService))
+  .service('downloadService', downgradeInjectable(DownloadService))
+  .service('learnerResultChartService', downgradeInjectable(LearnerResultChartService))
   .service('promptService', downgradeInjectable(PromptService))
   .service('toastService', downgradeInjectable(ToastService))
   .service('learnerResultDownloadService', LearnerResultDownloadService)
-  .service('testReportService', TestReportService)
-  .service('notificationService', NotificationService)
-  .service('projectService', ProjectService)
+  .service('testReportService', downgradeInjectable(TestReportService))
+  .service('notificationService', downgradeInjectable(NotificationService))
   .service('appStore', downgradeInjectable(AppStoreService))
 
   // modals
@@ -315,8 +303,6 @@ angular
   .component('hypothesisLayoutSettingsModal', hypothesisLayoutSettingsModalComponent)
   .component('learnerResultDetailsModal', learnerResultDetailsModalComponent)
   .component('learnerSetupSettingsModal', learnerSetupSettingsModalComponent)
-  .component('projectEditModal', projectEditModalComponent)
-  .component('projectCreateModal', projectCreateModalComponent)
   .component('symbolCreateModal', symbolCreateModalComponent)
   .component('symbolEditModal', symbolEditModalComponent)
   .component('symbolGroupCreateModal', symbolGroupCreateModalComponent)
@@ -339,7 +325,6 @@ angular
   .component('executionResultModal', executionResultModalComponent)
   .component('environmentVariableCreateModal', environmentVariableCreateModalComponent)
   .component('environmentVariableEditModal', environmentVariableEditModalComponent)
-  .component('projectImportModal', projectImportModalComponent)
 
   // view components
   .directive('aboutView', downgradeComponent({ component: AboutViewComponent }) as angular.IDirectiveFactory)
@@ -351,8 +336,8 @@ angular
   .component('rootView', rootViewComponent)
   .component('learnerSetupView', learnerSetupViewComponent)
   .component('learnerView', learnerViewComponent)
-  .component('projectsView', projectsViewComponent)
-  .component('projectView', projectViewComponent)
+  .directive('projectsView', downgradeComponent({ component: ProjectsViewComponent }) as angular.IDirectiveFactory)
+  .directive('projectView', downgradeComponent({ component: ProjectViewComponent }) as angular.IDirectiveFactory)
   .component('resultsCompareView', resultsCompareViewComponent)
   .component('resultsView', resultsViewComponent)
   .component('statisticsCompareView', statisticsCompareViewComponent)
@@ -369,12 +354,11 @@ angular
   .directive('webhooksView', downgradeComponent({ component: WebhooksViewComponent }) as angular.IDirectiveFactory)
   .component('redirectView', redirectViewComponent)
   .directive('ltsFormulasView', downgradeComponent({ component: LtsFormulasViewComponent }) as angular.IDirectiveFactory)
-  .component('logoutView', logoutViewComponent)
+  .directive('logoutView', downgradeComponent({ component: LogoutViewComponent }) as angular.IDirectiveFactory)
   .component('projectEnvironmentsView', projectEnvironmentsViewComponent)
 
   // forms components
   .component('actionForm', actionFormComponent)
-  .component('projectFormGroups', projectFormGroupsComponent)
   .component('userEditForm', userEditFormComponent)
   .component('userLoginForm', userLoginFormComponent)
   .component('nodeFormGroup', nodeFormGroupComponent)
@@ -396,10 +380,6 @@ angular
   // widgets components
   .component('counterexamplesWidget', counterexamplesWidgetComponent)
   .component('learnResumeSettingsWidget', learnerResumeSettingsWidgetComponent)
-  .component('learnerStatusWidget', learnerStatusWidgetComponent)
-  .component('latestLearnResultWidget', latestLearnerResultWidgetComponent)
-  .component('projectDetailsWidget', projectDetailsWidgetComponent)
-  .component('latestTestReportWidget', latestTestReportWidgetComponent)
   .component('testCaseGenerationWidget', testCaseGenerationWidgetComponent)
   .component('testSuiteGenerationWidget', testSuiteGenerationWidgetComponent)
 
@@ -466,7 +446,7 @@ angular
   .directive('actionBar', downgradeComponent({ component: ActionBarComponent }) as angular.IDirectiveFactory)
   .component('hypothesis', hypothesisComponent)
   .component('discriminationTree', discriminationTreeComponent)
-  .component('fileDropzone', fileDropzoneComponent)
+  .directive('fileDropzone', downgradeComponent({ component: FileDropzoneComponent }) as angular.IDirectiveFactory)
   .component('sidebar', sidebarComponent)
   .directive('viewHeader', downgradeComponent({ component: ViewHeaderComponent }) as angular.IDirectiveFactory)
   .component('learnerResultPanel', learnerResultPanelComponent)
@@ -487,11 +467,11 @@ angular
   .component('symbolsSymbolGroupTree', symbolsSymbolGroupTreeComponent)
   .component('reportOutputsColumn', reportOutputsColumnComponent)
   .component('reportCharts', reportChartsComponent)
-  .component('testConfigList', testConfigListComponent)
+  .directive('testConfigList', downgradeComponent({ component: TestConfigListComponent }) as angular.IDirectiveFactory)
   .directive('selectableCheckbox', downgradeComponent({ component: SelectableCheckboxComponent }) as angular.IDirectiveFactory)
   .directive('selectableCheckboxMultiple', downgradeComponent({ component: SelectableCheckboxMultipleComponent }) as angular.IDirectiveFactory)
   .directive('symbolParameters', downgradeComponent({ component: SymbolParametersComponent }) as angular.IDirectiveFactory)
-  .component('pagination', paginationComponent)
+  .directive('pagination', downgradeComponent({ component: PaginationComponent }) as angular.IDirectiveFactory)
   .component('testSuiteTree', testSuiteTreeComponent)
   .component('defaultWebdriverButton', defaultWebdriverButtonComponent)
   .directive('outputErrorTrace', downgradeComponent({ component: OutputErrorTraceComponent }) as angular.IDirectiveFactory)

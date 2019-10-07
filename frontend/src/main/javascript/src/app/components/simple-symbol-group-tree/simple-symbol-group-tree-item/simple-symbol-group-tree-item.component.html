@@ -1,5 +1,5 @@
 <div class="simple-symbol-group-tree-item">
-    <div style="padding: .25rem" class="d-flex flex-row">
+    <div class="d-flex flex-row p-1">
         <div>
             <i
                 class="far fa-fw cursor-pointer"
@@ -13,8 +13,8 @@
             ng-class="{'selected': vm.selectedSymbolGroup != null && vm.selectedSymbolGroup.id === vm.group.id}"
             ng-click="vm.selectSymbolGroup()"
         >
-            <i class="fas fa-fw fa-folder" style="margin-left: .5rem"></i>
-            <strong style="padding-left: .25rem">
+            <i class="fas fa-fw fa-folder mr-2"></i>
+            <strong class="pl-1">
                 {{vm.group.name}}
             </strong>
         </div>
@@ -31,14 +31,13 @@
             </simple-symbol-group-tree>
         </div>
         <div>
-            <div ng-repeat="symbol in vm.group.symbols | orderBy:'-name':true" class="d-flex" style="padding: .25rem; margin-left: 1rem">
+            <div ng-repeat="symbol in vm.group.symbols | orderBy:'-name':true" class="d-flex p-1 ml-4">
                 <div
-                    class="symbol"
-                    style="flex-shrink: 0"
+                    class="symbol flex-shrink-0"
                     ng-class="{'selected': vm.selectedSymbol != null && vm.selectedSymbol.id === symbol.id}"
                     ng-click="vm.selectSymbol(symbol)"
                 >
-                    <i class="fas fa-fw fa-file-code" style="margin-left: .5rem"></i>
+                    <i class="fas fa-fw fa-file-code ml-2"></i>
                     <span style="padding-left: .25rem">
                         {{symbol.name}}
                     </span>

@@ -34,7 +34,8 @@ export class PromptModalComponent implements OnInit {
   /** The model for the input field for the user input. */
   public input: string;
 
-  constructor(public modal: NgbActiveModal) { }
+  constructor(public modal: NgbActiveModal) {
+  }
 
   ngOnInit(): void {
     this.input = this.defaultValue;

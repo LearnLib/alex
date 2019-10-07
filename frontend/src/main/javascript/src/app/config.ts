@@ -20,17 +20,8 @@ declare const Notification: any;
  * Configure some third party libraries and set the http interceptor to send the jwt with each request.
  */
 /* @ngInject */
-export function config(jwtInterceptorProvider, jwtOptionsProvider, $httpProvider) {
-
-  // pass the jwt with each request to the server
-  jwtInterceptorProvider.tokenGetter = ['$window', $window => {
-    return $window.localStorage.getItem('jwt');
-  }];
-  $httpProvider.interceptors.push('jwtInterceptor');
-
+export function config($httpProvider) {
   $httpProvider.interceptors.push('unauthorizedHttpInterceptor');
-
-  jwtOptionsProvider.config({whiteListedDomains: ['localhost']});
 
   // request the permission to send notifications only once
   if (('Notification' in window) && Notification.permission !== 'denied') {

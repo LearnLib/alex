@@ -21,6 +21,7 @@ import { IRootScopeService, IScope } from 'angular';
  */
 export class EventBus {
 
+
   /**
    * Constructor.
    *

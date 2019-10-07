@@ -20,7 +20,7 @@
     <div class="list-group" ng-if="vm.result.symbols.length > 0">
       <a
           class="list-group-item list-group-item-action"
-          ui-sref="symbol({projectId: s.project, symbolId: s.id})"
+          href="{{'#!/projects/' + s.project + '/symbols/' + s.id}}"
           ng-repeat="s in vm.result.symbols"
           ng-click="vm.dismiss()"
       >
@@ -38,7 +38,7 @@
       <div class="list-group" ng-if="vm.result.testCases.length > 0">
         <a
             class="list-group-item list-group-item-action"
-            ui-sref="test({projectId: t.project, testId: t.id})"
+            href="{{'#!/projects/' + t.project + '/tests/' + t.id}}"
             ng-repeat="t in vm.result.testCases"
             ng-click="vm.dismiss()"
         >
@@ -56,10 +56,10 @@
       </div>
       <div class="list-group" ng-if="vm.result.learnerResults.length > 0">
         <a
-            ui-sref="learnerResultsCompare({testNos: [r.testNo], projectId: r.project})"
-            class="list-group-item list-group-item-action"
-            ng-repeat="r in vm.result.learnerResults"
-            ng-click="vm.dismiss()"
+          href="{{'#!/projects/' + r.project + '/learner/results/' + r.testNo}}"
+          class="list-group-item list-group-item-action"
+          ng-repeat="r in vm.result.learnerResults"
+          ng-click="vm.dismiss()"
         >
           Test No <span>{{r.testNo}}</span>
         </a>

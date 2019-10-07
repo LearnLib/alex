@@ -1,0 +1,54 @@
+<div class="card">
+  <div class="card-header">
+    Latest learner result
+  </div>
+  <div class="card-body">
+
+    <div *ngIf="result != null">
+      <table class="table">
+        <tbody>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td>{{(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')}}</td>
+        </tr>
+        <tr>
+          <td><strong>Algorithm</strong></td>
+          <td>{{result.algorithm.name | formatLearningAlgorithm}}</td>
+        </tr>
+        <tr>
+          <td><strong>Browser</strong></td>
+          <td>{{result.driverConfig.name | formatWebBrowser}}</td>
+        </tr>
+        <tr>
+          <td><strong>Status</strong></td>
+          <td>
+            <div *ngIf="result.error">
+              <span class="badge badge-danger">Error</span>
+            </div>
+            <div *ngIf="!result.error">
+              <span class="badge badge-success">Success</span>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <a class="btn btn-xs btn-default mb-2 mr-2" [href]="'#!/projects/' + project.id + '/learner/learn'">
+        <i class="fas fa-fw fa-play"></i> Continue learning
+      </a>
+      <a class="btn btn-xs btn-default mb-2 mr-2"
+         [href]="'#!/projects/' + project.id + '/learner/results/' + result.testNo">
+        <i class="fas fa-fw fa-eye"></i> View result
+      </a>
+      <a class="btn btn-xs btn-default"
+         [href]="'#!/projects/' + project.id + '/learner/results/statistics/' + result.testNo">
+        <i class="fas fa-fw fa-chart-bar"></i> View statistics
+      </a>
+
+    </div>
+    <div class="alert alert-info mb-0" *ngIf="result == null">
+      There are no learner results in the database.
+    </div>
+
+  </div>
+</div>

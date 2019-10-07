@@ -21,13 +21,13 @@
                     <i class="fas fa-fw fa-times float-right" ng-click="vm.result = null"></i>
                     <i class="fas fa-fw fa-exclamation-circle"></i> <strong>The test case failed.</strong>
                     <a ng-if="vm.testConfig.createReport"
-                       ui-sref="testReport({projectId: vm.project.id, reportId: vm.report.id})">(Show report)</a>
+                       href="{{'#!/projects/' + vm.project.id + '/tests/reports/' + vm.report.id}}">(Show report)</a>
                 </div>
                 <div class="alert alert-success" ng-if="vm.result.passed">
                     <i class="fas fa-fw fa-times float-right" ng-click="vm.result = null"></i>
                     <i class="fas fa-fw fa-check"></i> <strong>The test case passed.</strong>
                     <a ng-if="vm.testConfig.createReport"
-                       ui-sref="testReport({projectId: vm.project.id, reportId: vm.report.id})">(Show report)</a>
+                       href="{{'#!/projects/' + vm.project.id + '/tests/reports/' + vm.report.id}}">(Show report)</a>
                 </div>
                 <hr>
             </div>
@@ -41,10 +41,12 @@
 
             <div class="d-flex align-items-center">
                 <div class="mr-1">
-                  <button class="btn btn-sm btn-default"
-                          ui-sref="test({projectId: vm.testCase.project, testId: vm.testCase.parent})">
+                  <a
+                    class="btn btn-sm btn-default"
+                    href="{{'#!/projects/' + vm.testCase.project + '/tests/' + vm.testCase.parent}}"
+                  >
                     <i class="fas fa-fw fa-level-up-alt"></i>
-                  </button>
+                  </a>
                 </div>
                 <h4 class="w-100 m-0">
                   <strong>

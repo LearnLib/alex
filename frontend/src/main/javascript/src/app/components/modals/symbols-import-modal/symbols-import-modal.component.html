@@ -9,7 +9,7 @@
 
   <div class="alert alert-danger" ng-if="vm.errorMessage != null">{{vm.errorMessage}}</div>
 
-  <file-dropzone on-loaded="vm.fileLoaded.bind(vm)" ng-if="vm.importData == null">
+  <file-dropzone (loaded)="vm.fileLoaded.bind(vm)" ng-if="vm.importData == null">
     Drag and drop *.json file here or click to upload
   </file-dropzone>
 

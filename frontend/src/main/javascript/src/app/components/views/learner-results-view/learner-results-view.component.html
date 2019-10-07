@@ -47,20 +47,20 @@
 
             <div class="list-group" ng-if="vm.results.length > 0">
                 <div class="list-group-item" ng-repeat="result in vm.results | orderBy:'-testNo':false">
-                    <learner-result-list-item result="result" [selectable]="vm.selectedResults">
+                    <learner-result-list-item result="result" selectable="vm.selectedResults">
                         <div class="btn-group btn-group-xs" uib-dropdown>
                             <button type="button" class="btn btn-default btn-icon dropdown-toggle no-caret" uib-dropdown-toggle>
                                 <i class="fas fa-bars"></i>
                             </button>
                             <div uib-dropdown-menu class="dropdown-menu dropdown-menu-right" role="menu">
-                                <a class="dropdown-item" ui-sref="learnerStart({projectId: vm.project.id, result: result})">
+                                <a class="dropdown-item" href="{{'#!/projects/' + result.project + '/learner/learn'}}">
                                     <i class="fas fa-play fa-fw"></i> Continue learning
                                 </a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="" ng-click="vm.openResultDetailsModal(result)">
                                     <i class="fas fa-info fa-fw"></i> Details
                                 </a>
-                                <a class="dropdown-item" ui-sref="learnerResultsCompare({testNos: [result.testNo], projectId: result.project})">
+                                <a class="dropdown-item" href="{{'#!/projects/' + result.project + '/learner/results/' + result.testNo}}">
                                     <i class="fas fa-code-branch fa-fw"></i> Hypotheses
                                 </a>
                                 <a class="dropdown-item" href="" ng-click="vm.cloneResult(result)">

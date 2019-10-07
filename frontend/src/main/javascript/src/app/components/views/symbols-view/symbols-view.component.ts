@@ -51,7 +51,6 @@ class SymbolsViewComponent {
               private toastService: ToastService,
               private eventBus: EventBus,
               private promptService: PromptService,
-              private $state: any,
               private $uibModal: any) {
 
     this.selectedSymbols = null;
@@ -288,7 +287,7 @@ class SymbolsViewComponent {
   }
 
   selectSymbol(symbol: AlphabetSymbol): void {
-    this.$state.go('symbol', {projectId: this.project.id, symbolId: symbol.id});
+    location.hash = `!/projects/${this.project.id}/symbols/${symbol.id}`;
   }
 
   /**

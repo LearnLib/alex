@@ -58,7 +58,8 @@ export class CountersViewStoreService {
         this.counters.next([...this.counters.value, createdCounter]);
         this.countersSelectable.addItem(createdCounter);
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   }
 
   /**

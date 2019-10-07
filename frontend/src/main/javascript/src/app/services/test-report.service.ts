@@ -19,13 +19,14 @@ import { DownloadService } from './download.service';
 import { PromptService } from './prompt.service';
 import { TestReportApiService } from './resources/test-report-api.service';
 import { ToastService } from './toast.service';
+import { Injectable } from '@angular/core';
 
 /**
  * The service for test cases and test suites.
  */
+@Injectable()
 export class TestReportService {
 
-  /* @ngInject */
   constructor(private testReportApi: TestReportApiService,
               private promptService: PromptService,
               private downloadService: DownloadService,

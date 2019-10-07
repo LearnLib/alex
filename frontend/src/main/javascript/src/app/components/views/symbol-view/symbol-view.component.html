@@ -1,7 +1,11 @@
 <div class="view">
     <view-header [title]="vm.symbol.name" ng-if="vm.symbol">
-        <a ui-sref="symbols({projectId: vm.project.id})" class="btn btn-sm btn-default btn-icon"
-           uib-tooltip="Back to symbols" tooltip-placement="right">
+        <a
+          href="{{'#!/projects/' + vm.project.id + '/symbols'}}"
+          class="btn btn-sm btn-default btn-icon"
+          uib-tooltip="Back to symbols"
+          tooltip-placement="right"
+        >
             <i class="fas fa-reply"></i>
         </a>
     </view-header>
@@ -112,7 +116,7 @@
                                     <div class="symbol-description" ng-if="step.type === 'symbol'">
                                         <span class="symbol-description">
                                             Execute symbol
-                                            <a ui-sref="symbol({projectId: vm.project.id, symbolId: step.pSymbol.symbol.id})">
+                                            <a href="{{'#!/projects/' + vm.project.id + '/symbols/' + step.pSymbol.symbol.id}}">
                                                 <strong>{{step.pSymbol.symbol.name}}</strong>
                                             </a>
                                         </span>

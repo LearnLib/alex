@@ -23,10 +23,12 @@ import { TestSuiteEqOracle } from '../entities/eq-oracles/test-suite-eq-oracle';
 import { WMethodEqOracle } from '../entities/eq-oracles/w-method-eq-oracle';
 import { WpMethodEqOracle } from '../entities/eq-oracles/wp-method-eq-oracle';
 import { EqOracle } from '../entities/eq-oracles/eq-oracle';
+import { Injectable } from '@angular/core';
 
 /**
  * The service to create new eq oracles.
  */
+@Injectable()
 export class EqOracleService {
   private registry = {
     [eqOracleType.RANDOM]: (data) => new RandomEqOracle(data.minLength, data.maxLength, data.maxNoOfTests, data.seed),

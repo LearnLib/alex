@@ -75,7 +75,7 @@
                     </button>
                 </div>
 
-                <div class="btn-group btn-group-sm float-right">
+                <div class="btn-group btn-group-sm float-right ml-2">
                     <button class="btn btn-success" uib-tooltip="Save configuration" tooltip-placement="left" ng-click="vm.saveTestConfig()">
                         <i class="fas fa-fw fa-save"></i>
                     </button>
@@ -110,10 +110,12 @@
             </div>
 
             <div class="d-flex" style="align-items: center">
-                <button class="btn btn-sm btn-default"
-                        ui-sref="test({projectId: vm.testSuite.project, testId:vm.testSuite.parent})"
-                        ng-if="vm.testSuite.parent !== null"
-                        style="margin-right: 12px">
+                <button
+                  class="btn btn-sm btn-default"
+                  href="{{'#!/projects/' + vm.testSuite.project + '/tests/' + vm.testSuite.parent}}"
+                  ng-if="vm.testSuite.parent !== null"
+                  style="margin-right: 12px"
+                >
                     <i class="fas fa-fw fa-level-up-alt"></i>
                 </button>
                 <h4 ng-if="vm.testSuite.name" style="margin: 0;">
@@ -154,7 +156,11 @@
                                                 <i class="fas fa-fw fa-trash"></i> Delete
                                             </a>
                                             <div class="dropdown-divider" ng-if="test.type === 'case'"></div>
-                                            <a class="dropdown-item" ui-sref="testResults({projectId: vm.project.id, testId: test.id})" ng-if="test.type === 'case'">
+                                            <a
+                                              class="dropdown-item"
+                                              href="{{'#!/projects/' + vm.project.id + '/tests/' + test.id + '/results'}}"
+                                              ng-if="test.type === 'case'"
+                                            >
                                                 <i class="fas fa-fw fa-history"></i> Results
                                             </a>
                                         </div>
@@ -172,8 +178,8 @@
                 </div>
                 <div class="col-sm-12 col-md-3">
                     <test-config-list
-                        configs="vm.testConfigs"
-                        on-selected="vm.selectTestConfig(config)"
+                        [configs]="vm.testConfigs"
+                        (selected)="vm.selectTestConfig(config)"
                         ng-if="vm.testConfigs.length > 0"
                     >
                     </test-config-list>

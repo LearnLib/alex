@@ -36,7 +36,6 @@ export const testReportViewComponent = {
                 private appStore: AppStoreService,
                 private toastService: ToastService,
                 private testReportService: TestReportService,
-                private $state: any,
                 private $stateParams: any) {
 
       this.report = null;
@@ -52,7 +51,7 @@ export const testReportViewComponent = {
       this.testReportApi.remove(this.project.id, this.report.id).subscribe(
         () => {
           this.toastService.success('The report has been deleted.');
-          this.$state.go('testReports', {projectId: this.project.id});
+          location.hash = `!/projects/${this.project.id}/tests/reports`;
         },
         err => this.toastService.danger(`The report could not be deleted. ${err.data.message}`)
       );

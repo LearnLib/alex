@@ -68,10 +68,12 @@ import { Action } from '../entities/actions/action';
 import { DragAndDropAction } from '../entities/actions/web/drag-and-drop-action';
 import { DragAndDropByAction } from '../entities/actions/web/drag-and-drop-by-action';
 import { WaitForScriptAction } from '../entities/actions/web/wait-for-script-action';
+import { Injectable } from '@angular/core';
 
 /**
  * The service that is used to create new actions.
  */
+@Injectable()
 export class ActionService {
   private registry = {
     // web actions

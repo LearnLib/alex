@@ -1,0 +1,43 @@
+<div class="modal-header">
+  <h4 class="modal-title">Create a new project</h4>
+  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="createProject()">
+
+  <div class="modal-body">
+    <div class="alert alert-danger" *ngIf="errorMessage != null">
+      {{errorMessage}}
+    </div>
+
+    <project-form-groups [project]="project" [form]="form"></project-form-groups>
+
+    <div class="form-group">
+      <label>URL*</label>
+      <input
+        required
+        type="text"
+        pattern="^https?://.*?"
+        class="form-control"
+        [formControl]="form.controls.url"
+        [class.is-invalid]="isInvalidFormControl(form.controls.url)"
+      >
+      <div class="invalid-feedback">
+        Please provide a valid URL.
+      </div>
+    </div>
+
+    <hr>
+    <div class="text-muted">
+      <em>* These fields are required</em>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="submit" [disabled]="form.invalid">Create</button>
+    <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.preventDefault()">Cancel</button>
+  </div>
+
+</form>

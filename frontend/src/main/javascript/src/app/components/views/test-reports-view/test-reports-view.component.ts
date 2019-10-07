@@ -106,15 +106,6 @@ export const testReportsViewComponent = {
     }
 
     /**
-     * Navigate to the report details view.
-     *
-     * @param report The report.
-     */
-    openReport(report: any): void {
-      this.$state.go('testReport', {projectId: this.project.id, reportId: report.id});
-    }
-
-    /**
      * Download the report.
      *
      * @param report The report.

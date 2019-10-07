@@ -67,4 +67,8 @@ export class Project {
   getEnvironmentById(envId: number): ProjectEnvironment {
     return this.environments.find(e => e.id === envId);
   }
+
+  copy(): Project {
+    return new Project(JSON.parse(JSON.stringify(this)));
+  }
 }

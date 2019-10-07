@@ -6,7 +6,7 @@
     {{vm.errorMessage}}
   </div>
 
-  <file-dropzone on-loaded="vm.fileLoaded.bind(vm)" ng-if="vm.importData == null">
+  <file-dropzone (loaded)="vm.fileLoaded.bind(vm)" ng-if="vm.importData == null">
     Drag and drop file here or click to select a file
   </file-dropzone>
 

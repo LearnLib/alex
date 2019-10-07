@@ -7,7 +7,7 @@
       <div>
         <h4 class="m-0">
           <i class="fas fa-fw fa-file-alt"></i>
-          <a ui-sref="test({projectId: vm.project.id, testId: vm.test.id})">{{vm.test.name}}</a>
+          <a href="{{'#!/projects/' + vm.project.id + '/tests/' + vm.test.id}}">{{vm.test.name}}</a>
         </h4>
       </div>
       <hr>
@@ -46,7 +46,7 @@
         </table>
         <hr>
 
-        <pagination page="vm.page" on-next="vm.nextPage()" on-previous="vm.previousPage()"></pagination>
+        <pagination [page]="vm.page" (next)="vm.nextPage()" (previous)="vm.previousPage()"></pagination>
       </div>
 
       <div class="alert alert-info" ng-if="vm.results.length === 0">

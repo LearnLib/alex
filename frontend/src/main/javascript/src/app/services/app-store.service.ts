@@ -18,6 +18,7 @@ import { Injectable } from '@angular/core';
 import { Project } from '../entities/project';
 import { User } from '../entities/user';
 import { ClipboardService } from './clipboard.service';
+import { ProjectApiService } from './resources/project-api.service';
 
 @Injectable()
 export class AppStoreService {
@@ -40,7 +41,8 @@ export class AppStoreService {
    */
   sidebarCollapsed: boolean;
 
-  constructor(private clipboard: ClipboardService) {
+  constructor(private clipboard: ClipboardService,
+              private projectApi: ProjectApiService ) {
     this.sidebarCollapsed = false;
 
     const sidebarCollapsed = localStorage.getItem('sidebarCollapsed');
@@ -75,6 +77,7 @@ export class AppStoreService {
     this.user = null;
     this.closeProject();
     this.clipboard.clear();
+    location.hash = '!/';
   }
 
   openProject(project: Project): void {
@@ -85,6 +88,14 @@ export class AppStoreService {
   closeProject(): void {
     sessionStorage.removeItem('project');
     this.project = null;
+  }
+
+  reloadProject(): void {
+    if (this.project != null) {
+      this.projectApi.get(this.project.id).subscribe(
+        p => this.openProject(p)
+      );
+    }
   }
 
   toggleSidebar(): void {

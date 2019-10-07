@@ -1,0 +1,20 @@
+<div class="list-group">
+  <div
+    class="list-group-item d-flex flex-row"
+    [ngClass]="{'active': selectedConfig?.id === config.id}"
+    *ngFor="let config of configs"
+  >
+    <div class="w-100 cursor-pointer text-wrap" (click)="selectConfig(config)">
+      <strong>{{config.driverConfig.name | formatWebBrowser}}</strong> <span>({{config.driverConfig.width}}
+      x {{config.driverConfig.height}})</span>
+      <div>
+        <span class="badge badge-default">
+            {{project.getEnvironmentById(config.environment).name}}
+        </span>
+      </div>
+    </div>
+    <div class="pl-1 actions">
+      <i class="fas fa-fw fa-trash cursor-pointer" (click)="deleteConfig(config)"></i>
+    </div>
+  </div>
+</div>

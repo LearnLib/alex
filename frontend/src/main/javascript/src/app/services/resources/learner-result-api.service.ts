@@ -65,7 +65,7 @@ export class LearnerResultApiService extends BaseApiService {
   getLatest(projectId: number): Observable<LearnResult> {
     return this.http.get(`${env.apiUrl}/projects/${projectId}/results/latest`, this.defaultHttpOptions)
       .pipe(
-        map((body: any) => body === '' ? null : new LearnResult(body))
+        map((body: any) => (body === '' || body == null) ? null : new LearnResult(body))
       );
   }
 

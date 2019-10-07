@@ -15,10 +15,12 @@
  */
 
 import * as angular from 'angular';
+import { Injectable } from '@angular/core';
 
 /**
  * The service that helps with downloading various kind of files.
  */
+@Injectable()
 export class DownloadService {
 
   /**

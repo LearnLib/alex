@@ -5,7 +5,7 @@
     </div>
     <a
       class="name d-flex flex-row align-items-center w-100"
-      ui-sref="test({projectId: vm.suite.project, testId: vm.suite.id})"
+      href="{{'#!/projects/' + vm.suite.project + '/tests/' + vm.suite.id}}"
     >
       <div class="w-100">
         <strong>{{vm.suite.name}}</strong>
