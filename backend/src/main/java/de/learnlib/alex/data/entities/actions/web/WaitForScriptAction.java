@@ -21,9 +21,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
+import de.learnlib.alex.data.utils.ExecuteScriptUtils;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
-import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,7 +35,6 @@ import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -68,21 +66,14 @@ public class WaitForScriptAction extends SymbolAction {
     @Override
     protected ExecuteResult execute(ConnectorManager connector) {
         final WebSiteConnector webSiteConnector = connector.getConnector(WebSiteConnector.class);
-        final VariableStoreConnector variableStore = connector.getConnector(VariableStoreConnector.class);
-        final CounterStoreConnector counterStore = connector.getConnector(CounterStoreConnector.class);
 
         if (webSiteConnector.getDriver() instanceof JavascriptExecutor) {
             final WebDriverWait wait = new WebDriverWait(webSiteConnector.getDriver(), maxWaitTime);
 
-            final Map<String, Map<String, ? extends Object>> store = new HashMap<>();
-            store.put("variables", variableStore.getStore());
-            store.put("counters", counterStore.getStore());
-            store.put("urls", connector.getEnvironment().getUrlsAsMap());
-            store.put("globals", connector.getEnvironment().getVariablesAsMap());
-
             try {
                 webSiteConnector.getDriver().manage().timeouts().setScriptTimeout(timeout, TimeUnit.SECONDS);
 
+                final Map<String, Map<String, ? extends Object>> store = ExecuteScriptUtils.createScriptStore(connector);
                 final Object returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeScript(script, store);
                 if (!(returnValue instanceof Boolean)) {
                     LOGGER.info(LoggerMarkers.LEARNER, "Script does not return boolean result.");

@@ -28,6 +28,8 @@ import de.learnlib.alex.data.entities.SymbolPSymbolStep;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolStep;
 import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
+import de.learnlib.alex.data.entities.actions.misc.CreateLabelAction;
+import de.learnlib.alex.data.entities.actions.misc.JumpToLabelAction;
 import de.learnlib.alex.data.entities.actions.rest.CallAction;
 import de.learnlib.alex.data.entities.actions.web.GotoAction;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
@@ -237,6 +239,7 @@ public class SymbolDAOImpl implements SymbolDAO {
 
         for (Symbol createdSymbol : createdSymbols) {
             createdSymbol.setSteps(symbolStepMap.get(createdSymbol.getId()));
+            checkLabelsConsistency(createdSymbol);
 
             for (int i = 0; i < createdSymbol.getSteps().size(); i++) {
                 final SymbolStep step = createdSymbol.getSteps().get(i);
@@ -396,6 +399,32 @@ public class SymbolDAOImpl implements SymbolDAO {
         }
     }
 
+    private void checkLabelsConsistency(Symbol symbol) throws ValidationException {
+        final List<String> labels = symbol.getSteps().stream()
+                .filter(s -> s instanceof SymbolActionStep)
+                .map(s -> ((SymbolActionStep) s).getAction())
+                .filter(a -> a instanceof CreateLabelAction)
+                .map(a -> ((CreateLabelAction) a).getLabel())
+                .collect(Collectors.toList());
+
+        if (labels.size() != new HashSet<>(labels).size()) {
+            throw new ValidationException("The labels are not unique.");
+        }
+
+        final List<String> labelsToJumpTo = symbol.getSteps().stream()
+                .filter(s -> s instanceof SymbolActionStep)
+                .map(s -> ((SymbolActionStep) s).getAction())
+                .filter(a -> a instanceof JumpToLabelAction)
+                .map(a -> ((JumpToLabelAction) a).getLabel())
+                .collect(Collectors.toList());
+
+        for (String label: labelsToJumpTo) {
+            if (labels.indexOf(label) == -1) {
+                throw new ValidationException("Label " + label + " has not been created.");
+            }
+        }
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Symbol> update(User user, Long projectId, List<Symbol> symbols) throws NotFoundException, ValidationException {
@@ -423,6 +452,8 @@ public class SymbolDAOImpl implements SymbolDAO {
         if (symbolWithSameName != null && !symbolWithSameName.getId().equals(symbol.getId())) {
             throw new ValidationException("To update a symbol its name must be unique.");
         }
+
+        checkLabelsConsistency(symbol);
 
         // update meta info
         Symbol symbolInDb = symbolRepository.findById(symbol.getId()).orElse(null);

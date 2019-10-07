@@ -68,6 +68,8 @@ import { Action } from '../entities/actions/action';
 import { DragAndDropAction } from '../entities/actions/web/drag-and-drop-action';
 import { DragAndDropByAction } from '../entities/actions/web/drag-and-drop-by-action';
 import { WaitForScriptAction } from '../entities/actions/web/wait-for-script-action';
+import { JumpToLabelAction } from '../entities/actions/misc/jump-to-label-action';
+import { CreateLabelAction } from '../entities/actions/misc/create-label-action';
 
 /**
  * The service that is used to create new actions.
@@ -131,6 +133,8 @@ export class ActionService {
     [actionType.WAIT_FOR_NODE]: (data) => new WaitForNodeAction(data),
     [actionType.WAIT_FOR_TEXT]: (data) => new WaitForTextAction(data),
     [actionType.WAIT_FOR_NODE_ATTRIBUTE]: (data) => new WaitForNodeAttributeAction(data),
+    [actionType.GENERAL_JUMP_TO_LABEL]: (data) => new JumpToLabelAction(data),
+    [actionType.GENERAL_CREATE_LABEL]: (data) => new CreateLabelAction(data)
   };
 
   /**

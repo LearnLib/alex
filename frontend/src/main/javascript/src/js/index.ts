@@ -255,6 +255,8 @@ import { environmentVariableCreateModalComponent } from "./components/modals/env
 import { environmentVariableEditModalComponent } from "./components/modals/environment-variable-edit-modal/environment-variable-edit-modal.component";
 import { projectCreateModalComponent } from "./components/modals/project-create-modal/project-create-modal.component";
 import { projectImportModalComponent } from "./components/modals/project-import-modal/project-import-modal.component";
+import { jumpToLabelActionFormComponent } from './components/forms/actions/misc/jump-to-label-action-form/jump-to-label-action-form.component';
+import { createLabelActionFormComponent } from './components/forms/actions/misc/create-label-action-form/create-label-action-form.component';
 
 angular
   .module('ALEX', [
@@ -494,6 +496,8 @@ angular
   .component('setVariableByRegexGroupActionForm', setVariableByRegexGroupActionFormComponent)
   .component('setVariableByHttpStatusActionForm', setVariableByHttpStatusActionFormComponent)
   .component('waitActionForm', waitActionFormComponent)
+  .component('jumpToLabelActionForm', jumpToLabelActionFormComponent)
+  .component('createLabelActionForm', createLabelActionFormComponent)
 
   // misc components
   .component('alex', alexComponent)

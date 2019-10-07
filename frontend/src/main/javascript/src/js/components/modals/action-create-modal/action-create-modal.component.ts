@@ -116,6 +116,10 @@ export const actionCreateModalComponent = {
           {type: actionType.GENERAL_SET_VARIABLE_BY_NODE_COUNT, text: 'Set variable by node count'},
           {type: actionType.GENERAL_SET_VARIABLE_BY_REGEX_GROUP, text: 'Set variable by regex group'},
           {type: actionType.WAIT, text: 'Wait'}
+        ],
+        labels: [
+          {type: actionType.GENERAL_CREATE_LABEL, text: 'Create label'},
+          {type: actionType.GENERAL_JUMP_TO_LABEL, text: 'Jump to label'},
         ]
       };
 

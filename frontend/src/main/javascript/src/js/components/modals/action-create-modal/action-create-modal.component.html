@@ -54,6 +54,23 @@
 
           <div uib-accordion-group class="panel-default">
             <uib-accordion-heading>
+              <div><strong>Labels</strong></div>
+            </uib-accordion-heading>
+
+            <div class="list-group list-group-condensed list-group-flush">
+              <a href=""
+                 class="list-group-item"
+                 ng-class="{'active': action.type === vm.action.type}"
+                 ng-repeat="action in vm.actions.labels"
+                 ng-click="vm.selectNewActionType(action.type)"
+              >
+                {{action.text}}
+              </a>
+            </div>
+          </div>
+
+          <div uib-accordion-group class="panel-default">
+            <uib-accordion-heading>
               <div><strong>Misc</strong></div>
             </uib-accordion-heading>
 
