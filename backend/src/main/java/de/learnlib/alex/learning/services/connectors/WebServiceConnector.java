@@ -282,14 +282,14 @@ public class WebServiceConnector implements Connector {
             Set<Cookie> requestCookies, int timeout) throws Exception {
         final String[] splitPath = path.split("\\?");
 
-        final String url = baseUrlManager.getAbsoluteUrl(baseUrl, path);
+        final String url = baseUrlManager.getAbsoluteUrl(baseUrl, splitPath[0]);
         try {
             new URL(url);
         } catch (MalformedURLException e) {
             throw new Exception("The URL is malformed.");
         }
 
-        WebTarget tmpTarget = client.target(url).path(splitPath[0]);
+        WebTarget tmpTarget = client.target(url);
 
         if (splitPath.length > 1) {
             for (final String queryParam : splitPath[1].split("&")) {

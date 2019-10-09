@@ -18,7 +18,7 @@ import { webBrowser } from '../../../constants';
 import { TestCaseStep } from '../../../entities/test-case-step';
 import { DriverConfigService } from '../../../services/driver-config.service';
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
-import { IScope } from 'angular';
+import { IPromise, IScope } from 'angular';
 import { SymbolGroupResource } from '../../../services/resources/symbol-group-resource.service';
 import { ProjectService } from '../../../services/project.service';
 import { ToastService } from '../../../services/toast.service';
@@ -157,9 +157,9 @@ export const testCaseViewComponent = {
     /**
      * Save the state of the test case.
      */
-    save(): void {
+    save(): IPromise<void> {
       const test = JSON.parse(JSON.stringify(this.testCase));
-      this.testResource.update(test)
+      return this.testResource.update(test)
         .then(updatedTestCase => {
           this.toastService.success('The test case has been updated.');
           this.testCase = updatedTestCase;
@@ -176,22 +176,23 @@ export const testCaseViewComponent = {
         return;
       }
 
-      const config = JSON.parse(JSON.stringify(this.testConfig));
-      config.tests = [this.testCase.id];
-      config.environment = config.environment.id;
+      this.save().then(() => {
+        const config = JSON.parse(JSON.stringify(this.testConfig));
+        config.tests = [this.testCase.id];
+        config.environment = config.environment.id;
 
-      this.result = null;
-      this.active = true;
-      this.testResource.execute(this.testCase, config)
-        .then(data => {
-          this.report = data;
-          this.result = data.testResults[0];
-          this.active = false;
-        })
-        .catch((err) => {
-          this.toastService.info('The test case could not be executed. ' + err.data.message);
-          this.active = false;
-        });
+        this.result = null;
+        this.active = true;
+        return this.testResource.execute(this.testCase, config)
+          .then(data => {
+            this.report = data;
+            this.result = data.testResults[0];
+            this.active = false;
+          })
+      }).catch((err) => {
+        this.toastService.info('The test case could not be executed. ' + err.data.message);
+        this.active = false;
+      });
     }
 
     openTestConfigModal(): void {

@@ -193,6 +193,9 @@ public class TestResource {
         if (!(test instanceof TestCase)) {
             final Exception e = new Exception("The test is not a test case.");
             return ResourceErrorHandler.createRESTErrorMessage("TestResource.execute", Response.Status.BAD_REQUEST, e);
+        } else if (((TestCase) test).getSteps().isEmpty()) {
+            final Exception e = new Exception("The test has no steps to execute");
+            return ResourceErrorHandler.createRESTErrorMessage("TestResource.execute", Response.Status.BAD_REQUEST, e);
         }
 
         final Map<Long, TestResult> results = new HashMap<>();
