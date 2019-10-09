@@ -1,39 +1,52 @@
 <div class="view results-compare-view">
-    <action-bar>
-        <div class="float-left" ng-if="vm.panels.length === 2">
-            <button class="btn btn-sm btn-default"
-                    ng-click="vm.showSeparatingWord()">
-                <i class="fas fa-fw fa-bolt"></i> Separating word
-            </button>
+  <action-bar>
+    <div class="float-left" ng-if="vm.panels.length === 2">
+      <button
+        class="btn btn-sm btn-default mr-2"
+        ng-click="vm.showSeparatingWord()"
+      >
+        <i class="fas fa-fw fa-bolt"></i> Separating word
+      </button>
 
-            <button class="btn btn-sm btn-default"
-                    ng-click="vm.showDifferenceTree()">
-                <i class="fas fa-fw fa-sitemap"></i> Differences
-            </button>
-        </div>
-
-        <button class="btn btn-sm btn-success float-right"
-                ng-if="vm.panels.length < 3"
-                ng-click="vm.openResultListModal()">
-            <i class="fas fa-fw fa-plus"></i> Add hypothesis
-        </button>
-    </action-bar>
-
-    <div class="learn-results-compare-wrapper d-flex flex-row h-100">
-
-        <div class="container" ng-if="vm.panels.length === 0">
-            <p></p>
-            <div class="alert alert-info" ng-click="vm.openResultListModal()">
-                <i class="fas fa-plus-square fa-fw"></i>
-                <strong>Click to add a hypothesis</strong> or click on the green button on the top right
-            </div>
-        </div>
-
-        <learner-result-panel class="w-100" ng-if="vm.panels.length > 0" ng-repeat="result in vm.panels track by $index" result="result" index="$index" on-step="vm.onStep.bind(vm)">
-            <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="vm.closePanel($index)">
-                <i class="fas fa-times"></i>
-            </button>
-        </learner-result-panel>
-
+      <button
+        class="btn btn-sm btn-default"
+        ng-click="vm.showDifferenceTree()"
+      >
+        <i class="fas fa-fw fa-sitemap"></i> Differences
+      </button>
     </div>
+
+    <button
+      class="btn btn-sm btn-success float-right"
+      ng-if="vm.panels.length < 3"
+      ng-click="vm.openResultListModal()"
+    >
+      <i class="fas fa-fw fa-plus"></i> Add hypothesis
+    </button>
+  </action-bar>
+
+  <div class="learn-results-compare-wrapper d-flex flex-row h-100">
+
+    <div class="container" ng-if="vm.panels.length === 0">
+      <p></p>
+      <div class="alert alert-info" ng-click="vm.openResultListModal()">
+        <i class="fas fa-plus-square fa-fw"></i>
+        <strong>Click to add a hypothesis</strong> or click on the green button on the top right
+      </div>
+    </div>
+
+    <learner-result-panel
+      class="w-100"
+      ng-if="vm.panels.length > 0"
+      ng-repeat="result in vm.panels track by $index"
+      result="result"
+      index="$index"
+      on-step="vm.onStep.bind(vm)"
+    >
+      <button class="btn btn-sm btn-danger learn-result-panel-close-button" ng-click="vm.closePanel($index)">
+        <i class="fas fa-times"></i>
+      </button>
+    </learner-result-panel>
+
+  </div>
 </div>

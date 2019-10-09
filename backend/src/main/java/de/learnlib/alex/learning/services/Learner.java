@@ -16,6 +16,7 @@
 
 package de.learnlib.alex.learning.services;
 
+import de.learnlib.acex.AcexAnalyzer;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.LoggerMarkers;
@@ -45,8 +46,15 @@ import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHan
 import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
+import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
+import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
+import de.learnlib.api.oracle.SingleQueryOracle;
+import de.learnlib.api.query.Query;
+import de.learnlib.oracle.equivalence.SimulatorEQOracle;
+import de.learnlib.oracle.membership.SimulatorOracle;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.util.automata.Automata;
+import net.automatalib.util.automata.conformance.WpMethodTestsIterator;
 import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.apache.logging.log4j.LogManager;
@@ -546,8 +554,7 @@ public class Learner {
         final Alphabet<String> alphabet = mealyProxy1.createAlphabet();
         final Alphabet<String> alph2 = mealyProxy2.createAlphabet();
         if (alphabet.size() != alph2.size() || !alphabet.containsAll(alph2)) {
-            throw new IllegalArgumentException("The alphabets of the hypotheses are not "
-                    + "identical!");
+            throw new IllegalArgumentException("The alphabets of the hypotheses are not identical!");
         }
 
         final CompactMealy<String, String> hyp1 = mealyProxy1.createMealyMachine(alphabet);
@@ -576,7 +583,7 @@ public class Learner {
 
                     String out = diff.getOutput2().getSymbol(k);
                     if (k == diff.getInput().length() - 1) {
-                        out += " vs. " + diff.getOutput1().getSymbol(k);
+                        out += " <-> " + diff.getOutput1().getSymbol(k);
                     }
 
                     diffTree.addTransition(currentState, sym, newState, out);
@@ -616,23 +623,18 @@ public class Learner {
             final Alphabet<String> alphabet,
             final Set<SeparatingWord> diffs) {
 
-        final List<Word<String>> transCover = Automata.transitionCover(hyp2, alphabet);
-        final List<Word<String>> charSet = Automata.characterizingSet(hyp2, alphabet);
+        final WpMethodTestsIterator<String> testsIterator = new WpMethodTestsIterator<>(hyp2, alphabet, 0);
+        while (testsIterator.hasNext()) {
+            final Word<String> word = testsIterator.next();
 
-        // use the same coverage as for the w method
-        for (final Word<String> prefix : transCover) {
-            for (final Word<String> suffix : charSet) {
-                final Word<String> word = prefix.concat(suffix);
+            final Word<String> out1 = hyp1.computeOutput(word);
+            final Word<String> out2 = hyp2.computeOutput(word);
 
-                final Word<String> out1 = hyp1.computeOutput(word);
-                final Word<String> out2 = hyp2.computeOutput(word);
-
-                if (!out1.equals(out2)) {
-                    for (int i = 0; i < word.length(); i++) {
-                        if (!out1.getSymbol(i).equals(out2.getSymbol(i))) {
-                            diffs.add(new SeparatingWord(word.subWord(0, i + 1), out1, out2));
-                            break;
-                        }
+            if (!out1.equals(out2)) {
+                for (int i = 0; i < word.length(); i++) {
+                    if (!out1.getSymbol(i).equals(out2.getSymbol(i))) {
+                        diffs.add(new SeparatingWord(word.subWord(0, i + 1), out1, out2));
+                        break;
                     }
                 }
             }

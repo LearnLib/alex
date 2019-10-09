@@ -166,9 +166,15 @@
                                 TestNo <span ng-bind="result.testNo"></span>
 
                                 <div>
-                                    <i class="text-muted"
-                                       ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"></i>
+                                    <i
+                                      class="text-muted"
+                                      ng-bind="(result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm')"
+                                    >
+                                    </i>
                                 </div>
+                              <div>
+                                <span class="badge badge-default mr-1" ng-repeat="env in result.environments">{{env.name}}</span>
+                              </div>
                             </a>
                         </div>
                         <div class="card-body p-0" ng-if="vm.learnResults.length === 0">
