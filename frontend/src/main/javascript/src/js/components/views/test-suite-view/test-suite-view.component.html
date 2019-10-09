@@ -21,6 +21,13 @@
                 <div class="btn-group btn-group-sm">
                     <button
                         class="btn btn-default"
+                        ng-click="vm.editTest(vm.selectedTests.getSelected()[0])"
+                        ng-disabled="vm.selectedTests.getSelected().length !== 1"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        class="btn btn-default"
                         ng-click="vm.moveSelected()"
                         ng-disabled="!vm.selectedTests.isAnySelected()"
                     >

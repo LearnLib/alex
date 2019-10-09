@@ -10,13 +10,22 @@
                     Create
                 </button>
 
-                <button
-                    class="btn btn-sm btn-default"
-                    ng-click="vm.deleteSelectedWebhooks()"
-                    ng-disabled="!vm.selectedWebhooks.isAnySelected()"
-                >
-                    Delete
-                </button>
+                <div class="btn-group btn-group-sm">
+                    <button
+                        class="btn btn-default"
+                        ng-click="vm.updateWebhook(vm.selectedWebhooks.getSelected()[0])"
+                        ng-disabled="vm.selectedWebhooks.getSelected().length !== 1"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        class="btn btn-default"
+                        ng-click="vm.deleteSelectedWebhooks()"
+                        ng-disabled="!vm.selectedWebhooks.isAnySelected()"
+                    >
+                        Delete
+                    </button>
+                </div>
             </div>
         </div>
     </action-bar>
