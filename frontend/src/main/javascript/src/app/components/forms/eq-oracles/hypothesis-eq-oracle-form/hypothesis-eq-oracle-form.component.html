@@ -1,5 +1,5 @@
 <div class="form-horizontal form-condensed">
-    <file-dropzone on-loaded="vm.fileLoaded.bind(vm)">
+    <file-dropzone (loaded)="vm.fileLoaded($event)">
         <span ng-if="vm.eqOracle.hypothesis.nodes == null">
             Drag and drop *.json file here or click to upload
         </span>

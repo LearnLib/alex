@@ -13,7 +13,12 @@
           <strong>Symbol</strong>
         </td>
         <td>
-          <a ui-sref="symbol({project: vm.result.symbol.project, symbolId: vm.result.symbol.id})" ng-click="vm.dismiss()">{{vm.result.symbol.name}}</a>
+          <a
+            href="{{'#!/projects/' + vm.result.symbol.project + '/symbols/' + vm.result.symbol.id}}"
+            ng-click="vm.dismiss()"
+          >
+            {{vm.result.symbol.name}}
+          </a>
         </td>
       </tr>
       <tr>

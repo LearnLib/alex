@@ -21,6 +21,7 @@ import { IRootScopeService, IScope } from 'angular';
  */
 export class EventBus {
 
+
   /**
    * Constructor.
    *
@@ -39,7 +40,7 @@ export class EventBus {
    */
   on(eventName: string, fn, scope: IScope = null): void {
     const off = this.$rootScope.$on(eventName, fn);
-    if (scope !== null) scope.$on('$destroy', off);
+    if (scope != null) scope.$on('$destroy', off);
   }
 
   /**

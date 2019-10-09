@@ -46,8 +46,8 @@ export class CreateWebhookModalComponent {
     wh.url = this.form.controls.url.value;
 
     this.webhookApi.create(wh).subscribe(
-     createdWh => this.modal.close(createdWh),
-     err => this.errorMessage = err.data.message
+      createdWh => this.modal.close(createdWh),
+      err => this.errorMessage = err.data.message
     );
   }
 }

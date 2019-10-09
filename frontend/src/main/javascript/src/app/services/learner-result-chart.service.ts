@@ -16,6 +16,7 @@
 
 import { zip } from 'lodash';
 import { LearnResult } from '../entities/learner-result';
+import { Injectable } from '@angular/core';
 
 const MARGIN_OPTIONS = {
   top: 20,
@@ -32,6 +33,7 @@ const GRID_OPTIONS = {
 /**
  * The service that helps transforming learn results into chart data that is required by n3-line-chart.
  */
+@Injectable()
 export class LearnerResultChartService {
 
   createDataSingleFinal(result: LearnResult): any {

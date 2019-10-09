@@ -83,7 +83,7 @@ export const symbolMoveModalComponent = {
      * updating them on the server.
      */
     moveSymbols(): void {
-      if (this.selectedGroup !== null) {
+      if (this.selectedGroup != null) {
         this.errorMessage = null;
 
         const symbolsToMove = this.symbols.map(s => new AlphabetSymbol(s));
@@ -99,7 +99,7 @@ export const symbolMoveModalComponent = {
               group: this.selectedGroup
             });
             this.dismiss();
-          }, 
+          },
           err => {
             this.errorMessage = "Failed to move symbols: " + err.data.message;
           }

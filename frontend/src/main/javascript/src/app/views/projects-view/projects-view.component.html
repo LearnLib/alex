@@ -1,0 +1,102 @@
+<div class="view">
+  <view-header [title]="'Projects'"></view-header>
+
+  <action-bar>
+    <div class="d-flex flex-row align-items-center">
+
+      <div class="mr-3">
+        <selectable-checkbox-multiple [items]="(store.projects$ | async)"
+                                      [selectable]="store.projectsSelectable"></selectable-checkbox-multiple>
+      </div>
+
+      <button class="btn btn-primary btn-sm mr-3" (click)="store.createProject()">Create</button>
+
+      <div class="btn-group btn-group-sm mr-3">
+        <button
+          class="btn btn-default"
+          [disabled]="store.projectsSelectable.getSelected().length !== 1"
+          (click)="store.editProject(store.projectsSelectable.getSelected()[0])"
+        >
+          Edit
+        </button>
+        <button
+          class="btn btn-default"
+          [disabled]="store.projectsSelectable.getSelected().length === 0"
+          (click)="store.deleteSelectedProjects()"
+        >
+          Delete
+        </button>
+      </div>
+      <div class="btn-group btn-group-sm mr-3">
+        <button
+          class="btn btn-default"
+          (click)="store.importProject()"
+          ngbTooltip="Import"
+          placement="left"
+        >
+          <i class="fas fa-upload fa-fw"></i>
+        </button>
+        <button
+          class="btn btn-default"
+          [disabled]="store.projectsSelectable.getSelected().length !== 1"
+          (click)="store.exportProject(store.projectsSelectable.getSelected()[0])"
+          ngbTooltip="Export"
+          placement="left"
+        >
+          <i class="fas fa-download fa-fw"></i>
+        </button>
+      </div>
+
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <div class="alert alert-info" *ngIf="(store.projects$ | async).length == 0">
+        You haven't created a project yet.
+      </div>
+
+      <div class="list-group" *ngIf="(store.projects$ | async).length > 0">
+        <div class="list-group-item d-flex flex-row" *ngFor="let project of store.projects$ | async">
+          <div class="mr-3">
+            <selectable-checkbox [item]="project" [selectable]="store.projectsSelectable"></selectable-checkbox>
+          </div>
+          <div class="w-100">
+            <a [href]="'#!/projects/' + project.id">
+              <h5 class="list-group-item-heading mb-0">
+                <strong>{{project.name}}</strong>
+              </h5>
+            </a>
+            <p class="text-muted mb-0">
+              {{project.getDefaultEnvironment().urls[0].url}}
+            </p>
+          </div>
+          <div>
+            <div class="d-inline-block" ngbDropdown placement="bottom-right">
+              <button class="btn btn-sm btn-icon btn-dropdown no-caret" ngbDropdownToggle>
+                <i class="fas fa-fw fa-bars"></i>
+              </button>
+              <div ngbDropdownMenu>
+                <a ngbDropdownItem [href]="'#!/projects/' + project.id">
+                  <i class="fas fa-fw fa-external-link-alt"></i> Open
+                </a>
+                <div class="dropdown-divider"></div>
+                <div ngbDropdownItem (click)="store.editProject(project)">
+                  <i class="fas fa-edit fa-fw"></i> Edit
+                </div>
+                <div ngbDropdownItem (click)="store.exportProject(project)">
+                  <i class="fas fa-download fa-fw"></i> Export
+                </div>
+                <div ngbDropdownItem (click)="store.deleteProject(project)">
+                  <i class="fas fa-trash fa-fw"></i> Delete
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

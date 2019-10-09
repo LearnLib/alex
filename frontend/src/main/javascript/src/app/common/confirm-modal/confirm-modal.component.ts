@@ -27,5 +27,6 @@ export class ConfirmModalComponent {
   @Input()
   text: string;
 
-  constructor(public modal: NgbActiveModal) { }
+  constructor(public modal: NgbActiveModal) {
+  }
 }

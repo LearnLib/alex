@@ -1,0 +1,26 @@
+<div class="card">
+  <div class="card-header">
+    Learner status
+  </div>
+  <div class="card-body">
+
+    <div class="alert alert-info mb-0" *ngIf="status == null || !status.active">
+      The learner is not active. <a [href]="'#!/projects/' + project.id + '/learner/setup'">Start learning</a> your
+      application!
+    </div>
+
+    <div class="alert alert-warning mb-0 clearfix" *ngIf="status != null && status.active">
+      The learner is currently learning an application.
+      <hr>
+      <div>
+        <a class="btn btn-xs btn-warning mr-2" [href]="'#!/projects/' + project.id + '/learner/learn'">
+          <i class="fas fa-eye fa-fw"></i> Show progress
+        </a>
+        <button class="btn btn-xs btn-warning" (click)="abort()">
+          <i class="fas fa-times fa-fw"></i> Abort
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

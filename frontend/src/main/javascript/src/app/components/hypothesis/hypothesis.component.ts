@@ -128,7 +128,7 @@ class HypothesisComponent {
       multigraph: true
     });
 
-    if (this.layoutSettings !== null) {
+    if (this.layoutSettings != null) {
       this.graph.setGraph({
         edgesep: this.layoutSettings.edgesep,
         nodesep: this.layoutSettings.nodesep,

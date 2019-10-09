@@ -1,0 +1,37 @@
+<div class="card">
+  <div class="card-header">
+    Project details
+  </div>
+  <div class="card-body">
+
+    <table class="table mb-0">
+      <tbody>
+      <tr>
+        <td><strong>Name</strong></td>
+        <td>{{project.name}}</td>
+      </tr>
+      <tr>
+        <td><strong>Default environment</strong></td>
+        <td>{{project.getDefaultEnvironment().name}}</td>
+      </tr>
+      <tr>
+        <td><strong>Default URL</strong></td>
+        <td>{{project.getDefaultEnvironment().getDefaultUrl().url}}</td>
+      </tr>
+      <tr>
+        <td><strong>Groups</strong></td>
+        <td>{{numberOfGroups}}</td>
+      </tr>
+      <tr>
+        <td><strong>Symbols</strong></td>
+        <td>{{numberOfSymbols}}</td>
+      </tr>
+      <tr>
+        <td><strong>Tests</strong></td>
+        <td>{{numberOfTests}}</td>
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>

@@ -37,7 +37,7 @@ export const errorViewComponent = {
 
     $onInit() {
       const message = this.$stateParams.message;
-      if (message !== null) {
+      if (message != null) {
         this.message = message;
       }
     }

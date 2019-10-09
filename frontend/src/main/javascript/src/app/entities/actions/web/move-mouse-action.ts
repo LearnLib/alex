@@ -46,7 +46,7 @@ export class MoveMouseAction extends Action {
   }
 
   toString(): string {
-    if (this.node.selector === null || this.node.selector.trim() === '') {
+    if (this.node.selector == null || this.node.selector.trim() === '') {
       return `Move mouse by ${this.offsetX}px (x), ${this.offsetY}px (y)`;
     } else {
       return `Move mouse to element "${this.node.selector}" with offset: ${this.offsetX}px (x), ${this.offsetY}px (y)`;

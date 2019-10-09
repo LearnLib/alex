@@ -15,8 +15,8 @@
             <tr ng-repeat="output in vm.outputs track by $index">
                 <td style="width: 1px" class="text-right">
                     <a
-                        ui-sref="symbol({projectId: vm.project.id, symbolId: output.symbol.id})"
-                        class="badge badge-default cursor-pointer"
+                      href="{{'#!/projects/' + vm.project.id + '/symbols/' + output.symbol.id}}"
+                      class="badge badge-default cursor-pointer"
                     >
                         {{output.symbol.name}}
                     </a>

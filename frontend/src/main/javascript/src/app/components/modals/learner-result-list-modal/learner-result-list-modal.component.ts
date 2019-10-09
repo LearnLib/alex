@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { ProjectService } from '../../../services/project.service';
 import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { ModalComponent } from '../modal.component';
 import { LearnResult } from '../../../entities/learner-result';
 import { Project } from '../../../entities/project';
+import { ProjectApiService } from '../../../services/resources/project-api.service';
 
 /**
  * The component for the modal that displays a selectable list of results.
@@ -37,19 +37,16 @@ export const resultListModalComponent = {
     /** The results of the current project. */
     public results: LearnResult[] = null;
 
-    /**
-     * Constructor.
-     *
-     * @param projectService
-     * @param learnerResultApi
-     * @param toastService
-     */
+    public projects: Project[] = [];
+
     /* @ngInject */
-    constructor(private projectService: ProjectService,
+    constructor(private projectApi: ProjectApiService,
                 private learnerResultApi: LearnerResultApiService,
                 private toastService: ToastService) {
       super();
-      projectService.load();
+      this.projectApi.getAll().subscribe(
+        projects => this.projects = projects
+      );
     }
 
     $onInit(): void {
@@ -93,10 +90,6 @@ export const resultListModalComponent = {
       } catch (e) {
         this.toastService.danger('Could not parse the file.');
       }
-    }
-
-    get projects(): Project[] {
-      return this.projectService.store.projects;
     }
   },
 };

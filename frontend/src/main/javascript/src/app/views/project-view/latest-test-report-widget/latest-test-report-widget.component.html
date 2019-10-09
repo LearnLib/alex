@@ -1,0 +1,42 @@
+<div class="card">
+  <div class="card-header">
+    Latest test report
+  </div>
+  <div class="card-body">
+
+    <div class="alert alert-info mb-0" *ngIf="report == null || report === ''">
+      There is no test report for this project yet.
+    </div>
+
+    <div *ngIf="report != null && report !== ''">
+      <table class="table">
+        <tbody>
+        <tr>
+          <td><strong>Date</strong></td>
+          <td>{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
+        </tr>
+        <tr>
+          <td><strong>Status</strong></td>
+          <td>
+            <span class="badge badge-success" *ngIf="report.passed">Passed</span>
+            <span class="badge badge-danger" *ngIf="!report.passed">Failed</span>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Tests</strong></td>
+          <td>{{report.numTests - report.numTestsFailed}}/{{report.numTests}} tests passed</td>
+        </tr>
+        <tr>
+          <td><strong>Duration</strong></td>
+          <td>{{report.time | formatMilliseconds}}</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <a class="btn btn-xs btn-default" [href]="'#!/projects/' + report.project + '/tests/reports/' + report.id">
+        <i class="fas fa-fw fa-eye"></i> View details
+      </a>
+    </div>
+
+  </div>
+</div>

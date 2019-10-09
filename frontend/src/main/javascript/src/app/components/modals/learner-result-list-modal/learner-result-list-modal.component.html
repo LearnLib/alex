@@ -38,7 +38,7 @@
     </uib-tab>
     <uib-tab heading="From file">
       <br>
-      <file-dropzone on-loaded="vm.loadResultFromFile.bind(vm)">
+      <file-dropzone (loaded)="vm.loadResultFromFile($event)">
         Drag and drop *.json file here or click to upload.
       </file-dropzone>
     </uib-tab>

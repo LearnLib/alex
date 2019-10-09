@@ -18,9 +18,15 @@ import { environment as env } from '../../../environments/environment';
 import { UploadableFile } from '../../entities/uploadable-file';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+export interface UploadProgress {
+  progress: number;
+  error: boolean;
+  file: UploadableFile;
+}
 
 /**
  * The resource that handles API calls concerning the management of files.
@@ -77,5 +83,51 @@ export class FileApiService extends BaseApiService {
     options.observe = 'response';
 
     return this.http.get(`${env.apiUrl}/projects/${projectId}/files/${file.id}/download`, options);
+  }
+
+  upload(projectId: number, file: File): Observable<UploadProgress> {
+    const status = new BehaviorSubject<UploadProgress>({
+      progress: 0,
+      file: null,
+      error: false
+    });
+
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+
+    this.http.post(`${env.apiUrl}/projects/${projectId}/files/upload`, formData, {
+      headers: this.defaultHttpHeaders,
+      observe: 'events',
+      reportProgress: true
+    }).subscribe(
+      e => {
+        if (e.type === HttpEventType.UploadProgress) {
+          const percentDone = Math.round(100 * e.loaded / e.total);
+          status.next({
+            progress: percentDone,
+            file: null,
+            error: false
+          });
+        } else if (e instanceof HttpResponse) {
+          const uploadedFile = UploadableFile.fromData(e.body);
+          status.next({
+            progress: 100,
+            file: uploadedFile,
+            error: false
+          });
+          status.complete();
+        }
+      },
+      () => {
+        status.next({
+          progress: 100,
+          file: null,
+          error: true
+        });
+        status.complete();
+      }
+    );
+
+    return status;
   }
 }

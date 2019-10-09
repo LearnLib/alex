@@ -42,7 +42,7 @@ export class PressKeyAction extends Action {
   }
 
   toString(): string {
-    if (this.node.selector === null || this.node.selector.trim() === '') {
+    if (this.node.selector == null || this.node.selector.trim() === '') {
       return `Press a key`;
     } else {
       return `Press a key on "${this.node.selector}"`;

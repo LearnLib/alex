@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { UpgradeModule } from '@angular/upgrade/static';
 
 import ALEX from './app.module.ajs';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
@@ -59,6 +59,32 @@ import { FileApiService } from './services/resources/file-api.service';
 import { PromptModalComponent } from './common/prompt-modal/prompt-modal.component';
 import { ConfirmModalComponent } from './common/confirm-modal/confirm-modal.component';
 import { PromptService } from './services/prompt.service';
+import { TestConfigListComponent } from './views/test-suite-view/test-config-list/test-config-list.component';
+import { FormatWebBrowserPipe } from './pipes/format-web-browser.pipe';
+import { ProjectDetailsWidgetComponent } from './views/project-view/project-details-widget/project-details-widget.component';
+import { LatestTestReportWidgetComponent } from './views/project-view/latest-test-report-widget/latest-test-report-widget.component';
+import { LatestLearnerResultWidgetComponent } from './views/project-view/latest-learner-result-widget/latest-learner-result-widget.component';
+import { LearnerStatusWidgetComponent } from './views/project-view/learner-status-widget/learner-status-widget.component';
+import { FormatLearningAlgorithmPipe } from './pipes/format-learning-algorithm.pipe';
+import { FormatMillisecondsPipe } from './pipes/format-milliseconds.pipe';
+import { ProjectViewComponent } from './views/project-view/project-view.component';
+import { ProjectsViewComponent } from './views/projects-view/projects-view.component';
+import { CreateProjectModalComponent } from './views/projects-view/create-project-modal/create-project-modal.component';
+import { EditProjectModalComponent } from './views/projects-view/edit-project-modal/edit-project-modal.component';
+import { ImportProjectModalComponent } from './views/projects-view/import-project-modal/import-project-modal.component';
+import { DownloadService } from './services/download.service';
+import { ProjectFormGroupsComponent } from './views/projects-view/project-form-groups/project-form-groups.component';
+import { FileDropzoneComponent } from './common/file-dropzone/file-dropzone.component';
+import { LogoutViewComponent } from './views/logout-view/logout-view.component';
+import { TestReportService } from './services/test-report.service';
+import { NotificationService } from './services/notification.service';
+import { ActionService } from './services/action.service';
+import { EqOracleService } from './services/eq-oracle.service';
+import { LearningAlgorithmService } from './services/learning-algorithm.service';
+import { LearnerResultChartService } from './services/learner-result-chart.service';
+import { PaginationComponent } from './common/pagination/pagination.component';
+import { AngularjsJsonInterceptor } from './angularjs-json-interceptor';
+import { FilesViewComponent } from './views/files-view/files-view.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +115,25 @@ import { PromptService } from './services/prompt.service';
     EditSymbolParameterModalComponent,
     SymbolParameterFormGroupsComponent,
     PromptModalComponent,
-    ConfirmModalComponent
+    ConfirmModalComponent,
+    TestConfigListComponent,
+    FormatWebBrowserPipe,
+    ProjectDetailsWidgetComponent,
+    LatestTestReportWidgetComponent,
+    LatestLearnerResultWidgetComponent,
+    LearnerStatusWidgetComponent,
+    FormatLearningAlgorithmPipe,
+    FormatMillisecondsPipe,
+    ProjectViewComponent,
+    ProjectsViewComponent,
+    CreateProjectModalComponent,
+    EditProjectModalComponent,
+    ImportProjectModalComponent,
+    ProjectFormGroupsComponent,
+    FileDropzoneComponent,
+    LogoutViewComponent,
+    PaginationComponent,
+    FilesViewComponent
   ],
   imports: [
     BrowserModule,
@@ -108,6 +152,11 @@ import { PromptService } from './services/prompt.service';
     DragulaModule.forRoot()
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AngularjsJsonInterceptor,
+      multi: true
+    },
     ToastService,
     AppStoreService,
     SettingsApiService,
@@ -127,7 +176,14 @@ import { PromptService } from './services/prompt.service';
     LearnerApiService,
     TestApiService,
     FileApiService,
-    PromptService
+    PromptService,
+    DownloadService,
+    TestReportService,
+    NotificationService,
+    ActionService,
+    EqOracleService,
+    LearningAlgorithmService,
+    LearnerResultChartService
   ],
   entryComponents: [
     CreateCounterModalComponent,
@@ -139,6 +195,9 @@ import { PromptService } from './services/prompt.service';
     EditSymbolParameterModalComponent,
     PromptModalComponent,
     ConfirmModalComponent,
+    CreateProjectModalComponent,
+    EditProjectModalComponent,
+    ImportProjectModalComponent,
     // remove when migration is done
     ViewHeaderComponent,
     ActionBarComponent,
@@ -151,7 +210,18 @@ import { PromptService } from './services/prompt.service';
     CountersViewComponent,
     LtsFormulasViewComponent,
     WebhooksViewComponent,
-    SymbolParametersPanelComponent
+    SymbolParametersPanelComponent,
+    TestConfigListComponent,
+    LatestLearnerResultWidgetComponent,
+    LatestTestReportWidgetComponent,
+    LearnerStatusWidgetComponent,
+    ProjectDetailsWidgetComponent,
+    ProjectViewComponent,
+    ProjectsViewComponent,
+    FileDropzoneComponent,
+    LogoutViewComponent,
+    PaginationComponent,
+    FilesViewComponent
   ]
   // bootstrap: [AppComponent]
 })

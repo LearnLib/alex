@@ -79,7 +79,7 @@ class LearnerViewComponentComponent {
       console.error
     );
 
-    if (this.$state.params.result !== null) {
+    if (this.$state.params.result != null) {
       this.finished = true;
       this.finalResult = this.$state.params.result;
       this.stepNo = this.finalResult.steps.length;

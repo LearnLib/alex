@@ -51,8 +51,7 @@ class LearnerSetupViewComponent {
   public pPostSymbol: ParametrizedSymbol;
 
   /* @ngInject */
-  constructor(private $state: any,
-              private symbolGroupApi: SymbolGroupApiService,
+  constructor(private symbolGroupApi: SymbolGroupApiService,
               private appStore: AppStoreService,
               private learnerApi: LearnerApiService,
               private toastService: ToastService,
@@ -82,7 +81,7 @@ class LearnerSetupViewComponent {
         if (data.active) {
           if (data.project === this.project.id) {
             this.toastService.info('There is an active learning process for this project.');
-            this.$state.go('learnerStart', {projectId: this.project.id});
+            location.hash = `!/projects/${this.project.id}/learner/learn`;
           } else {
             this.toastService.info('There is an active learning process for another project.');
           }
@@ -119,7 +118,7 @@ class LearnerSetupViewComponent {
   selectResetSymbol(): void {
     this.$uibModal.open({
       component: 'symbolSelectModal'
-    }).result.then(s => {
+    }).result.then((s: AlphabetSymbol) => {
       this.pResetSymbol = ParametrizedSymbol.fromSymbol(s);
     });
   }
@@ -127,7 +126,7 @@ class LearnerSetupViewComponent {
   selectPostSymbol(): void {
     this.$uibModal.open({
       component: 'symbolSelectModal'
-    }).result.then(s => {
+    }).result.then((s: AlphabetSymbol) => {
       this.pPostSymbol = ParametrizedSymbol.fromSymbol(s);
     });
   }
@@ -145,7 +144,7 @@ class LearnerSetupViewComponent {
    * learning load screen on success.
    */
   startLearning(): void {
-    if (this.pResetSymbol === null) {
+    if (this.pResetSymbol == null) {
       this.toastService.danger('You <strong>must</strong> selected a reset symbol in order to start learning!');
     } else {
 
@@ -165,7 +164,7 @@ class LearnerSetupViewComponent {
         this.learnerApi.start(this.project.id, config).subscribe(
           () => {
             this.toastService.success('Learn process started successfully.');
-            this.$state.go('learnerStart', {projectId: this.project.id});
+            location.hash = `!/projects/${this.project.id}/learner/learn`;
           },
           error => {
             this.toastService.danger('<p><strong>Start learning failed</strong></p>' + error.data.message);
@@ -213,7 +212,7 @@ class LearnerSetupViewComponent {
       resolve: {
         learnConfiguration: () => new LearnConfiguration(this.learnConfiguration)
       }
-    }).result.then(config => this.learnConfiguration = config);
+    }).result.then((config: LearnConfiguration) => this.learnConfiguration = config);
   }
 
   get project(): Project {

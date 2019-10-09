@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+import { Injectable } from '@angular/core';
+
 /** Service for notifications. */
+@Injectable()
 export class NotificationService {
 
   /**

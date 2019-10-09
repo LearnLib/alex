@@ -40,14 +40,14 @@ class SidebarComponent {
             icon: 'fa-user',
             active: () => this.isState('profile'),
             display: () => true,
-            sref: () => 'profile'
+            href: () => '#!/profile'
           },
           {
             title: 'Logout',
             icon: 'fa-sign-out-alt',
             active: () => false,
             display: () => true,
-            sref: () => 'logout'
+            href: () => '#!/logout'
           }
         ]
       },
@@ -60,14 +60,14 @@ class SidebarComponent {
             icon: 'fa-cogs',
             active: () => this.isState('adminSettings'),
             display: () => true,
-            sref: () => 'adminSettings'
+            href: () => '#!/admin/settings'
           },
           {
             title: 'User Management',
             icon: 'fa-users',
             active: () => this.isState('adminUsers'),
             display: () => true,
-            sref: () => 'adminUsers'
+            href: () => '#!/admin/users'
           }
         ]
       },
@@ -80,28 +80,28 @@ class SidebarComponent {
             icon: 'fa-briefcase',
             active: () => this.isState('projects'),
             display: () => !this.project,
-            sref: () => 'projects'
+            href: () => '#!/projects'
           },
           {
             title: 'Dashboard',
             icon: 'fa-columns',
             active: () => this.isState('project'),
             display: () => this.project,
-            sref: () => `project({projectId: ${this.project.id}})`
+            href: () => `#!/projects/${this.project.id}`
           },
           {
             title: 'Environments',
             icon: 'fa-cloud',
             active: () => this.isState('environments'),
             display: () => this.project,
-            sref: () => `environments({projectId: ${this.project.id}})`
+            href: () => `#!/projects/${this.project.id}/environments`
           },
           {
             title: 'Files',
             icon: 'fa-file',
             active: () => this.isState('files'),
             display: () => this.project,
-            sref: () => `files({projectId: ${this.project.id}})`
+            href: () => `#!/projects/${this.project.id}/files`
           },
           {
             title: 'Close',
@@ -109,7 +109,7 @@ class SidebarComponent {
             active: () => false,
             display: () => this.project,
             click: () => this.closeProject(),
-            sref: () => '/'
+            href: () => '/'
           }
         ]
       },
@@ -122,14 +122,14 @@ class SidebarComponent {
             icon: 'fa-list-alt',
             active: () => this.isState('symbols', 'symbol'),
             display: () => true,
-            sref: () => `symbols({projectId: ${this.project.id}})`
+            href: () => `#!/projects/${this.project.id}/symbols`
           },
           {
             title: 'Archive',
             icon: 'fa-archive',
             active: () => this.isState('symbolsArchive'),
             display: () => true,
-            sref: () => `symbolsArchive({projectId: ${this.project.id}})`
+            href: () => `#!/projects/${this.project.id}/symbols/archive`
           }
         ]
       },
@@ -142,14 +142,14 @@ class SidebarComponent {
             icon: 'fa-wrench',
             active: () => this.isState('test'),
             display: () => true,
-            sref: () => `test({projectId: ${this.project.id}})`
+            href: () => `#!/projects/${this.project.id}/tests/0`
           },
           {
             title: 'Reports',
             icon: 'fa-list',
             active: () => this.isState('testReports', 'testReport'),
             display: () => true,
-            sref: () => `testReports({projectId: ${this.project.id}})`
+            href: () => `#!/projects/${this.project.id}/tests/reports`
           }
         ]
       },
@@ -162,28 +162,28 @@ class SidebarComponent {
             icon: 'fa-play',
             active: () => this.isState('learnerSetup', 'learnerStart'),
             display: () => true,
-            sref: () => `learnerSetup({projectId: ${this.project.id}})`
+            href: () => `#!/projects/${this.project.id}/learner/setup`
           },
           {
             title: 'Results',
             icon: 'fa-sitemap',
             active: () => this.isState('learnerResults', 'learnerResultsCompare', 'learnerResultsStatistics'),
             display: () => true,
-            sref: () => `learnerResults({projectId: ${this.project.id}})`
+            href: () => `#!/projects/${this.project.id}/learner/results`
           },
           {
             title: 'Lts Formulas',
             icon: 'fa-subscript',
             active: () => this.isState('ltsFormulas'),
             display: () => true,
-            sref: () => `ltsFormulas({projectId: ${this.project.id}})`
+            href: () => `#!/projects/${this.project.id}/lts-formulas`
           },
           {
             title: 'Counters',
             icon: 'fa-list-ol',
             active: () => this.isState('counters'),
             display: () => true,
-            sref: () => `counters({projectId: ${this.project.id}})`
+            href: () => `#!/projects/${this.project.id}/counters`
           },
         ]
       },
@@ -196,7 +196,7 @@ class SidebarComponent {
             icon: 'fa-share-alt',
             active: () => this.isState('webhooks'),
             display: () => this.user,
-            sref: () => 'webhooks'
+            href: () => '#!/integrations/webhooks'
           }
         ]
       }
@@ -206,7 +206,7 @@ class SidebarComponent {
   /** Removes the project object from the session and redirect to the start page. */
   closeProject(): void {
     this.appStore.closeProject();
-    this.$state.go('projects');
+    location.hash = `!/projects`;
   }
 
   /** Toggles the collapsed state. */

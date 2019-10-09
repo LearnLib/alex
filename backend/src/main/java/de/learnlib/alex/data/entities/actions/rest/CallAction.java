@@ -136,9 +136,7 @@ public class CallAction extends RESTSymbolAction {
     @Override
     public ExecuteResult execute(WebServiceConnector target) {
         try {
-            LOGGER.info(LoggerMarkers.LEARNER, "Doing REST request '{} {}'.",
-                    method, url);
-
+            LOGGER.info(LoggerMarkers.LEARNER, "Doing {} request to '{}'.", method, url);
             doRequest(target);
             return getSuccessOutput();
         } catch (Exception e) {

@@ -27,20 +27,18 @@ export const rootViewComponent = {
   controller: class RootViewComponent {
 
     /* @ngInject */
-    constructor(private $state: any,
-                private appStore: AppStoreService) {
-
-      if (this.user !== null) {
-        if (this.project !== null) {
-          $state.go('project', {projectId: this.project.id});
+    constructor(private appStore: AppStoreService) {
+      if (this.user != null) {
+        if (this.project != null) {
+          location.hash = `!/projects/${this.project.id}`;
         } else {
-          $state.go('projects');
+          location.hash = `!/projects`;
         }
       }
     }
 
     handleLoggedIn(): void {
-      this.$state.go('projects');
+      location.hash = `!/projects`;
     }
 
     get user(): User {

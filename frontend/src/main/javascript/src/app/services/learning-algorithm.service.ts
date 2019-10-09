@@ -15,10 +15,12 @@
  */
 
 import { learnAlgorithm } from '../constants';
+import { Injectable } from '@angular/core';
 
 /**
  * The service to create new eq oracles.
  */
+@Injectable()
 export class LearningAlgorithmService {
   private registry = {
     [learnAlgorithm.DHC]: () => ({name: learnAlgorithm.DHC}),

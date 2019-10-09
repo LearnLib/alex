@@ -35,14 +35,15 @@ export class TestCaseTableComponent implements OnInit, OnDestroy {
   @Input()
   symbolMap: any;
 
-  constructor(private dragulaService: DragulaService) { }
+  constructor(private dragulaService: DragulaService) {
+  }
 
   ngOnInit() {
     this.dragulaService.createGroup('STEPS', {
       moves: (el, container, handle) => {
         return handle.classList.contains('handle');
       },
-      removeOnSpill: false,
+      removeOnSpill: false
     })
   }
 

@@ -15,7 +15,6 @@
  */
 
 import { Project } from '../../../entities/project';
-import { ProjectService } from '../../../services/project.service';
 import { ProjectEnvironment } from '../../../entities/project-environment';
 import { ProjectEnvironmentApiService } from '../../../services/resources/project-environment-api.service';
 import { PromptService } from '../../../services/prompt.service';
@@ -37,8 +36,7 @@ export const projectEnvironmentsViewComponent = {
     url: ProjectUrl;
 
     /* @ngInject */
-    constructor(private projectService: ProjectService,
-                private projectEnvironmentApi: ProjectEnvironmentApiService,
+    constructor(private projectEnvironmentApi: ProjectEnvironmentApiService,
                 private promptService: PromptService,
                 private toastService: ToastService,
                 private $uibModal: any,
@@ -55,7 +53,7 @@ export const projectEnvironmentsViewComponent = {
       this.projectEnvironmentApi.getAll(this.project.id).subscribe(
         envs => {
           this.environments = envs;
-          this.projectService.reloadCurrentProject();
+          this.appStore.reloadProject();
         },
         console.error
       );

@@ -35,8 +35,7 @@ export const profileViewComponent = {
     constructor(private userApi: UserApiService,
                 private appStore: AppStoreService,
                 private toastService: ToastService,
-                private promptService: PromptService,
-                private $state: any) {
+                private promptService: PromptService) {
 
       this.user = null;
 
@@ -57,7 +56,6 @@ export const profileViewComponent = {
             () => {
               this.toastService.success('Your account has been deleted');
               this.appStore.logout();
-              this.$state.go('root');
             },
             err => {
               this.toastService.danger('The profile could not be deleted. ' + err.data.message);

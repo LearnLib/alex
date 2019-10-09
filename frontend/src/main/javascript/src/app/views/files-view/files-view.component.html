@@ -1,0 +1,95 @@
+<div class="view">
+  <view-header [title]="'Files'"></view-header>
+
+  <action-bar>
+    <div class="d-flex flex-row align-items-center" *ngIf="(store.files$ | async).length > 0">
+      <selectable-checkbox-multiple [selectable]="store.filesSelectable"></selectable-checkbox-multiple>
+
+      <div class="w-100 ml-3">
+        <button
+          class="btn btn-default btn-sm"
+          (click)="store.deleteSelectedFiles()"
+          [disabled]="!store.filesSelectable.isAnySelected()"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <div *ngIf="store.noFilesToUploadOrOnlyErrors">
+        <div class="alert alert-info" (click)="uploadInput.click()">
+          Drag and drop files here.
+          <input #uploadInput class="visibility-hidden" type="file" multiple="true" (change)="store.uploadFiles($event)" >
+        </div>
+      </div>
+
+      <div *ngIf="store.filesToUpload.size > 0">
+        <div class="list-group">
+          <div
+            class="list-group-item d-flex flex-row align-items-center"
+            *ngFor="let entry of store.filesToUpload | keyvalue"
+            [class.list-group-item-danger]="entry.value.error"
+            [class.list-group-item-success]="entry.value.file != null"
+          >
+            <div class="w-100">
+              {{entry.key}}
+            </div>
+            <div class="pl-3">
+              <span class="badge badge-primary" *ngIf="entry.value.progress < 100">
+                <i class="fas fa-fw fa-circle-o-notch fa-spin"></i> {{entry.value.progress}} %
+              </span>
+              <span *ngIf="entry.value.progress === 100">
+                <span *ngIf="!entry.value.error">
+                  <i class="fas fa-fw fa-check text-success"></i>
+                </span>
+                <span *ngIf="entry.value.error">
+                  <i class="fas fa-fw fa-times text-danger"></i>
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="list-group" *ngIf="(store.files$ | async).length > 0">
+        <div class="list-group-item d-flex flex-row" *ngFor="let file of store.files$ | async">
+
+          <div>
+            <selectable-checkbox [item]="file" [selectable]="store.filesSelectable"></selectable-checkbox>
+          </div>
+          <div class="w-100 ml-3 mr-3">
+            {{file.name}}
+          </div>
+          <div>
+            <div class="d-inline-block" ngbDropdown placement="bottom-right">
+              <button class="btn btn-sm btn-icon btn-dropdown no-caret" ngbDropdownToggle>
+                <i class="fas fa-fw fa-bars"></i>
+              </button>
+              <div ngbDropdownMenu>
+                <button class="dropdown-item" (click)="store.deleteFile(file)">
+                  <i class="fas fa-fw fa-trash"></i> Delete
+                </button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" (click)="store.downloadFile(file)">
+                  <i class="fas fa-download fa-fw"></i> Download
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="alert alert-info" *ngIf="(store.files$ | async).length === 0">
+        There are no uploaded files
+      </div>
+
+    </div>
+  </div>
+</div>

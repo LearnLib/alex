@@ -3,7 +3,7 @@
     <div class="test-icon">
       <i class="fas fa-fw fa-file"></i>
     </div>
-    <a class="test-name w-100 d-flex flex-row" ui-sref="test({projectId: vm.case.project, testId: vm.case.id})">
+    <a class="test-name w-100 d-flex flex-row" href="{{'#!/projects/' + vm.case.project + '/tests/' + vm.case.id}}">
       <div class="w-100">
         <div>
           <strong>{{vm.case.name}}</strong> <span class="badge badge-secondary" ng-if="vm.case.generated">Gen.</span>

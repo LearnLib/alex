@@ -1,7 +1,11 @@
 <div class="view">
     <view-header [title]="'Statistics Compare'">
-        <a ui-sref="learnerResults({projectId: vm.project.id})" class="btn btn-sm btn-default btn-icon"
-           uib-tooltip="Back to the list" tooltip-placement="right">
+        <a
+          href="{{'#!/projects/' + vm.project.id + '/learner/results'}}"
+          class="btn btn-sm btn-default btn-icon"
+          uib-tooltip="Back to the list"
+          tooltip-placement="right"
+        >
             <i class="fas fa-reply"></i>
         </a>
     </view-header>
@@ -63,46 +67,63 @@
 
             <hr>
 
-            <div class="row" ng-if="vm.chartData.options">
+            <div class="row" ng-if="vm.chartData.data != null">
                 <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-sm-12'">
 
-                    <widget title="Membership queries" id="chart-eqs" class="d-block mb-3">
-                        <div style="width: 100%; height: 450px">
-                            <linechart data="vm.chartData.data.mqs" options="vm.chartData.options"></linechart>
-                        </div>
-                        <hr>
-                        <button class="btn btn-xs btn-default float-right" ng-click="vm.downloadChart('#chart-eqs')">
-                            <i class="fas fa-fw fa-download"></i> Download SVG
-                        </button>
-                    </widget>
+                  <div class="card mb-3" id="chart-eq">
+                    <div class="card-header">
+                      <strong>Membership queries</strong>
+                    </div>
+                    <div class="card-body">
+                      <div style="width: 100%; height: 450px">
+                        <linechart data="vm.chartData.data.mqs" options="vm.chartData.options"></linechart>
+                      </div>
+                    </div>
+                    <div class="card-footer">
+                      <button class="btn btn-xs btn-default float-right" ng-click="vm.downloadChart('#chart-eqs')">
+                        <i class="fas fa-fw fa-download"></i> Download SVG
+                      </button>
+                    </div>
+                  </div>
 
-                    <widget title="Duration (in ms)" id="chart-duration">
-                        <div style="width: 100%; height: 450px">
-                            <linechart data="vm.chartData.data.duration" options="vm.chartData.options"></linechart>
-                        </div>
-                        <hr>
-                        <button class="btn btn-xs btn-default float-right"
-                                ng-click="vm.downloadChart('#chart-duration')">
-                            <i class="fas fa-fw fa-download"></i> Download SVG
-                        </button>
-                    </widget>
+                  <div class="card mb-3" id="chart-duration">
+                    <div class="card-header">
+                      <strong>Duration</strong>
+                    </div>
+                    <div class="card-body">
+                      <div style="width: 100%; height: 450px">
+                        <linechart data="vm.chartData.data.duration" options="vm.chartData.options"></linechart>
+                      </div>
+                    </div>
+                    <div class="card-footer">
+                      <button class="btn btn-xs btn-default float-right" ng-click="vm.downloadChart('#chart-duration')">
+                        <i class="fas fa-fw fa-download"></i> Download SVG
+                      </button>
+                    </div>
+                  </div>
 
                 </div>
                 <div ng-class="vm.showInColumns ? 'col-md-12 col-lg-6' : 'col-sm-12'">
 
-                    <widget title="Symbol calls" id="chart-symbols" class="d-block mb-3">
-                        <div style="width: 100%; height: 450px">
-                            <linechart data="vm.chartData.data.symbols" options="vm.chartData.options"></linechart>
-                        </div>
-                        <hr>
-                        <button class="btn btn-xs btn-default float-right"
-                                ng-click="vm.downloadChart('#chart-symbols')">
-                            <i class="fas fa-fw fa-download"></i> Download SVG
-                        </button>
-                    </widget>
+                  <div class="card mb-3" id="chart-symbols">
+                    <div class="card-header">
+                      <strong>Duration</strong>
+                    </div>
+                    <div class="card-body">
+                      <div style="width: 100%; height: 450px">
+                        <linechart data="vm.chartData.data.symbols" options="vm.chartData.options"></linechart>
+                      </div>
+                    </div>
+                    <div class="card-footer">
+                      <button class="btn btn-xs btn-default float-right" ng-click="vm.downloadChart('#chart-symbols')">
+                        <i class="fas fa-fw fa-download"></i> Download SVG
+                      </button>
+                    </div>
+                  </div>
 
                 </div>
             </div>
+
         </div>
 
     </div>

@@ -341,8 +341,8 @@ export function run($transitions, appStore: AppStoreService, toastService: Toast
     const project = appStore.project;
 
     const data = transition.to().data;
-    if ((data.roles && (user === null || data.roles.indexOf(user.role) === -1))
-      || (data.requiresProject && project === null)) {
+    if ((data.roles && (user == null || data.roles.indexOf(user.role) === -1))
+      || (data.requiresProject && project == null)) {
 
       toastService.danger('You cannot access this page!');
       return transition.router.stateService.target('root');

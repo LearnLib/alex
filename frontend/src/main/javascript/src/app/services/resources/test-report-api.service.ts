@@ -50,7 +50,9 @@ export class TestReportApiService extends BaseApiService{
    */
   get(projectId: number, testReportId: number, format: any = null): Observable<any> {
     const options = this.defaultHttpOptions;
-    options.params = format;
+    if (format != null) {
+      options.params = encodeURIComponent(format);
+    }
     return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}`, options);
   }
 

@@ -56,14 +56,13 @@ class StatisticsCompareViewComponent {
               private learnerResultChartService: LearnerResultChartService,
               private toastService: ToastService,
               private $stateParams: any,
-              private $state: any,
               private downloadService: DownloadService,
               private promptService: PromptService) {
 
     // make sure there is at least one test number given in the URL
     if (!this.$stateParams.testNos || this.$stateParams.testNos === '') {
       this.toastService.danger('You have to select at least one result');
-      this.$state.go('statistics');
+      location.hash = `!/projects/${this.project.id}/learner/results`;
       return;
     }
 

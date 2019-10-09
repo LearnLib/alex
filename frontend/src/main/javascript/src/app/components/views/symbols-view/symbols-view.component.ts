@@ -51,21 +51,11 @@ class SymbolsViewComponent {
               private toastService: ToastService,
               private eventBus: EventBus,
               private promptService: PromptService,
-              private $state: any,
               private $uibModal: any) {
 
     this.selectedSymbols = null;
     this.groups = [];
     this.symbols = [];
-
-    this.symbolGroupApi.getAll(this.project.id).subscribe(
-      groups => {
-        this.groups = groups;
-        this.symbols = SymbolGroupUtils.getSymbols(this.groups);
-        this.selectedSymbols = new Selectable(this.symbols, 'id');
-      },
-      console.error
-    );
 
     this.eventBus.on(events.GROUP_UPDATED, (evt, data) => {
       this.updateGroup(data.group);
@@ -86,6 +76,17 @@ class SymbolsViewComponent {
     this.eventBus.on(events.GROUP_MOVED, (evt, data) => {
       this.moveGroup(data.from, data.group);
     });
+  }
+
+  $onInit(): void {
+    this.symbolGroupApi.getAll(this.project.id).subscribe(
+      groups => {
+        this.groups = groups;
+        this.symbols = SymbolGroupUtils.getSymbols(this.groups);
+        this.selectedSymbols = new Selectable(this.symbols, 'id');
+      },
+      console.error
+    );
   }
 
   /**
@@ -288,7 +289,7 @@ class SymbolsViewComponent {
   }
 
   selectSymbol(symbol: AlphabetSymbol): void {
-    this.$state.go('symbol', {projectId: this.project.id, symbolId: symbol.id});
+    location.hash = `!/projects/${this.project.id}/symbols/${symbol.id}`;
   }
 
   /**

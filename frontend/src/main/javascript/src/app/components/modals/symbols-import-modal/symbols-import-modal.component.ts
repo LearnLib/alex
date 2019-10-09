@@ -91,8 +91,8 @@ export const symbolsImportModalComponent = {
             this.toastService.success('The symbols have been imported');
             this.close({$value: {type: 'symbols', symbols: createdSymbols}});
           },
-          err => {
-            this.errorMessage = `The symbols could not be imported. ${err.data.message}`;
+          res => {
+            this.errorMessage = `The symbols could not be imported. ${res.error.message}`;
           }
         );
       } else {
@@ -101,8 +101,8 @@ export const symbolsImportModalComponent = {
             this.toastService.success('The symbols have been imported');
             this.close({$value: {type: 'symbolGroups', groups: importedGroups}});
           },
-          err => {
-            this.errorMessage = `The symbols could not be imported. ${err.data.message}`;
+          res => {
+            this.errorMessage = `The symbols could not be imported. ${res.error.message}`;
           }
         );
       }

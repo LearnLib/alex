@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { User } from '../../../entities/user';
 import { UserApiService } from '../../../services/resources/user-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { SettingsApiService } from '../../../services/resources/settings-api.service';
@@ -38,7 +37,6 @@ class UserLoginFormComponent {
   /* @ngInject */
   constructor(private $state: any,
               private userApi: UserApiService,
-              private jwtHelper: any,
               private toastService: ToastService,
               private settingsApi: SettingsApiService,
               private appStore: AppStoreService) {
@@ -59,17 +57,16 @@ class UserLoginFormComponent {
 
           // decode the token and create a user from it
           const token = data.token;
-          const tokenPayload = this.jwtHelper.decodeToken(token);
-          const user = User.fromData({
-            id: tokenPayload.id,
-            role: tokenPayload.role,
-            email: tokenPayload.email
-          });
-
-          this.appStore.login(user, token);
-          if (this.onLoggedIn != null) {
-            this.onLoggedIn();
-          }
+          localStorage.setItem('jwt', token);
+          this.userApi.myself().subscribe(
+            user => {
+              this.appStore.login(user, token);
+              if (this.onLoggedIn != null) {
+                this.onLoggedIn();
+              }
+            },
+            console.error
+          );
         },
         () => {
           this.toastService.danger('Login failed');

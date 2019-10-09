@@ -2,7 +2,7 @@
   <strong>
     <a
       class="text-black"
-      ui-sref="symbol({project: project.id, symbolId: step.pSymbol.symbol.id})"
+      [href]="'#!/projects/' + pSymbol.symbol.project + '/symbols/' + pSymbol.symbol.id"
     >
       {{pSymbol.symbol.name}}
     </a>

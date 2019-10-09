@@ -122,8 +122,8 @@ export const symbolsSymbolGroupTreeComponent = {
         .then(name => {
 
           this.symbolApi.export(symbol.project, {symbolIds: [symbol.id], symbolsOnly: true}).subscribe(
-            res => {
-              const symbolToCreate = res.data.symbols[0];
+            body => {
+              const symbolToCreate = body.symbols[0];
               symbolToCreate.name = name;
               symbolToCreate.group = symbol.group;
 

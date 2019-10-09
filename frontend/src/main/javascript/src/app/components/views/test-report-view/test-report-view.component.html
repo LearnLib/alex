@@ -1,13 +1,17 @@
 <div class="view view-test-reports">
     <view-header [title]="'Test Report'">
-        <a ui-sref="testReports({projectId: vm.report.project})" class="btn btn-sm btn-default btn-icon"
-           uib-tooltip="Back to reports" tooltip-placement="right">
-            <i class="fas fa-reply"></i>
-        </a>
+      <a
+        href="{{'#!/projects/' + vm.report.project + '/tests/reports'}}"
+        class="btn btn-sm btn-default btn-icon"
+        uib-tooltip="Back to reports"
+        tooltip-placement="right"
+      >
+        <i class="fas fa-reply"></i>
+      </a>
     </view-header>
     <action-bar>
 
-        <div class="btn-group btn-group-sm">
+        <div class="btn-group btn-group-sm mr-2">
             <button class="btn btn-default" ng-click="vm.deleteReport()">Delete</button>
         </div>
 
@@ -53,7 +57,7 @@
                         <span class="badge badge-danger" ng-if="!result.passed">Failed</span>
                     </td>
                     <td>
-                        <a ui-sref="test({projectId: result.project, testId: result.test.id})">{{result.test.name}}</a>
+                        <a href="{{'#!/projects/' + result.project + '/tests/' + result.test.id}}">{{result.test.name}}</a>
                     </td>
                     <td>
                         <report-outputs-column outputs="result.outputs" project="vm.project"></report-outputs-column>
