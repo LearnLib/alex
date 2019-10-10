@@ -81,6 +81,9 @@ public interface TestExecutionConfigDAO {
     TestExecutionConfig get(User user, Long projectId, Long configId)
             throws NotFoundException, UnauthorizedException;
 
+    TestExecutionConfig update(User user, Long projectId, Long configId, TestExecutionConfig config)
+            throws NotFoundException, UnauthorizedException;
+
     /**
      * Delete a test config.
      *

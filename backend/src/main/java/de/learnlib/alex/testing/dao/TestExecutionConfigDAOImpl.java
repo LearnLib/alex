@@ -72,6 +72,7 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
 
         config.setProject(project);
         config.setEnvironment(projectUrl);
+        config.setDefault(false);
 
         final TestExecutionConfig createdConfig = testExecutionConfigRepository.save(config);
         loadLazyRelations(createdConfig);
@@ -109,6 +110,31 @@ public class TestExecutionConfigDAOImpl implements TestExecutionConfigDAO {
         checkAccess(user, project, config);
 
         testExecutionConfigRepository.deleteById(configId);
+    }
+
+    @Override
+    public TestExecutionConfig update(User user, Long projectId, Long configId, TestExecutionConfig config)
+            throws NotFoundException, UnauthorizedException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final TestExecutionConfig configInDb = testExecutionConfigRepository.findById(configId).orElse(null);
+        checkAccess(user, project, configInDb);
+
+        if (config.isDefault()) {
+            final TestExecutionConfig defaultConfig = testExecutionConfigRepository.findByProject_IdAndIs_Default(projectId);
+            if (defaultConfig == null) {
+                configInDb.setDefault(true);
+            } else {
+                if (!defaultConfig.equals(configInDb)) {
+                    defaultConfig.setDefault(false);
+                    testExecutionConfigRepository.save(defaultConfig);
+                    configInDb.setDefault(true);
+                }
+            }
+        }
+
+        final TestExecutionConfig updatedConfig = testExecutionConfigRepository.save(configInDb);
+        loadLazyRelations(updatedConfig);
+        return updatedConfig;
     }
 
     @Override

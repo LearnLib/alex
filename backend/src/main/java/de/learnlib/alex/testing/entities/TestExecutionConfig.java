@@ -74,6 +74,8 @@ public class TestExecutionConfig implements Serializable {
     @JoinColumn(name = "projectId")
     private Project project;
 
+    private boolean isDefault;
+
     /** Constructor. */
     public TestExecutionConfig() {
         this(new ArrayList<>(), new HtmlUnitDriverConfig());
@@ -91,6 +93,7 @@ public class TestExecutionConfig implements Serializable {
         this.setTestIds(testIds);
         this.driverConfig = driverConfig;
         this.createReport = true;
+        this.isDefault = false;
     }
 
     public Long getId() {
@@ -175,6 +178,14 @@ public class TestExecutionConfig implements Serializable {
     @JsonProperty("project")
     public void setProjectId(Long projectId) {
         this.project = new Project(projectId);
+    }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
     }
 
     @Override

@@ -33,6 +33,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -104,6 +105,22 @@ public class TestExecutionConfigResource {
 
         LOGGER.traceExit(createdConfig);
         return Response.status(Response.Status.CREATED).entity(createdConfig).build();
+    }
+
+    @PUT
+    @Path("/{configId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response update(@PathParam("projectId") Long projectId,
+                           @PathParam("configId") Long configId,
+                           TestExecutionConfig config) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        LOGGER.traceEntry("update({}) for user {}.", projectId, user);
+
+        final TestExecutionConfig updatedConfig = testExecutionConfigDAO.update(user, projectId, configId, config);
+
+        LOGGER.traceExit(updatedConfig);
+        return Response.status(Response.Status.OK).entity(updatedConfig).build();
     }
 
     /**
