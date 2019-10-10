@@ -53,6 +53,17 @@ export class TestConfigResource {
   }
 
   /**
+   * update a test config.
+   *
+   * @param projectId The id of the project.
+   * @param config The config to create.
+   */
+  update(projectId: number, config: any): IPromise<any> {
+    return this.$http.put(`${this.url(projectId)}/${config.id}`, config)
+      .then(res => res.data);
+  }
+
+  /**
    * Delete a tes config.
    *
    * @param projectId The id of the project.

@@ -6,6 +6,12 @@
   >
     <div class="w-100 cursor-pointer text-wrap" ng-click="vm.selectConfig(config)">
       <strong>{{config.driverConfig.name | formatWebBrowser}}</strong> <span>({{config.driverConfig.width}} x {{config.driverConfig.height}})</span>
+
+      <span class="pl-1 default" ng-class="{'is-default': config.default}">
+        <span class="badge badge-default cursor-pointer" ng-click="vm.makeConfigDefault(config)" ng-if="!config.default">Default</span>
+        <span class="badge badge-primary" ng-if="config.default">Default</span>
+      </span>
+
       <div>
         <span class="badge badge-default">
             {{vm.project.getEnvironmentById(config.environment).name}}

@@ -125,7 +125,13 @@ export const testSuiteViewComponent = {
         .catch(console.error);
 
       this.testConfigResource.getAll(this.project.id)
-        .then(testConfigs => this.testConfigs = testConfigs)
+        .then(testConfigs => {
+          this.testConfigs = testConfigs;
+          const i = this.testConfigs.findIndex(c => c.default);
+          if (i > -1) {
+            this.testConfig = this.testConfigs[i];
+          }
+        })
         .catch(console.error);
 
       // check if a test process is active

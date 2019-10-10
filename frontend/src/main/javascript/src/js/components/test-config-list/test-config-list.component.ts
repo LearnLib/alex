@@ -41,6 +41,11 @@ export const testConfigListComponent = {
                 private projectService: ProjectService) {
     }
 
+    $onInit(): void {
+      const i = this.configs.findIndex(c => c.default);
+      if (i > -1) this.selectConfig(this.configs[i]);
+    }
+
     selectConfig(config: any): void {
       if (this.selectedConfig != null && this.selectedConfig.id === config.id) {
         this.selectedConfig = null;
@@ -48,6 +53,17 @@ export const testConfigListComponent = {
         this.selectedConfig = config;
       }
       this.onSelected({config: this.selectedConfig});
+    }
+
+    makeConfigDefault(config: any): void {
+      const cfg = JSON.parse(JSON.stringify(config));
+      cfg.default = true;
+      this.testConfigResource.update(config.project, cfg)
+        .then(updatedConfig => {
+          this.configs.forEach(c => c.default = false);
+          const i = this.configs.findIndex(c => c.id === config.id);
+          this.configs[i] = updatedConfig;
+        });
     }
 
     deleteConfig(config: any): void {

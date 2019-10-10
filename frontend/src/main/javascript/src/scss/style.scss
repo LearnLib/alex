@@ -686,12 +686,14 @@ test-case-view table {
 }
 
 test-config-list .list-group-item {
-  .actions {
+  .actions, .default:not(.is-default) {
     visibility: hidden;
   }
 
-  &:hover .actions {
-    visibility: visible;
+  &:hover {
+    .actions, .default {
+      visibility: visible;
+    }
   }
 
   &.active .badge {

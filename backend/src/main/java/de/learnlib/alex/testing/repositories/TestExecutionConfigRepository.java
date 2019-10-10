@@ -16,8 +16,10 @@
 
 package de.learnlib.alex.testing.repositories;
 
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,4 +43,9 @@ public interface TestExecutionConfigRepository extends JpaRepository<TestExecuti
     @Transactional
     @SuppressWarnings("checkstyle:methodname")
     void deleteAllByProject_Id(Long projectId);
+
+    @Transactional(readOnly = true)
+    @SuppressWarnings("checkstyle:methodname")
+    @Query(nativeQuery = true, value = "select * from PUBLIC.test_execution_config where project_id = ? and is_default = true limit 1")
+    TestExecutionConfig findByProject_IdAndIs_Default(Long projectId);
 }

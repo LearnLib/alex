@@ -27,6 +27,7 @@ import { SettingsResource } from '../../../services/resources/settings-resource.
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { Project } from '../../../entities/project';
+import { TestConfigResource } from '../../../services/resources/test-config-resource.service';
 
 export const testCaseViewComponent = {
   template: require('./test-case-view.component.html'),
@@ -81,6 +82,7 @@ export const testCaseViewComponent = {
                 private $state: any,
                 private dragulaService: any,
                 private symbolGroupResource: SymbolGroupResource,
+                private testConfigResource: TestConfigResource,
                 private projectService: ProjectService,
                 private toastService: ToastService,
                 private testResource: TestResource,
@@ -142,7 +144,14 @@ export const testCaseViewComponent = {
     }
 
     $onInit(): void {
-      this.testConfig.tests = [this.testCase];
+      this.testConfigResource.getAll(this.project.id)
+        .then((configs: any[]) => {
+          const i = configs.findIndex(c => c.default);
+          if (i > -1) {
+            this.testConfig = configs[i];
+            this.testConfig.environment = this.project.getEnvironmentById(this.testConfig.environment);
+          }
+        });
     }
 
     showResultDetails(result: any): void {
