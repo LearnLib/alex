@@ -22,7 +22,8 @@ import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 
 @Component({
   selector: 'project-details-widget',
-  templateUrl: './project-details-widget.component.html'
+  templateUrl: './project-details-widget.component.html',
+  styleUrls: ['./project-details-widget.component.scss']
 })
 export class ProjectDetailsWidgetComponent implements OnInit {
 

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { events } from '../../../constants';
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 import { ModalComponent } from '../modal.component';
 import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
@@ -80,9 +79,9 @@ export const symbolGroupMoveModalComponent = {
       this.group.parent = this.selectedGroup == null ? null : this.selectedGroup.id;
 
       this.symbolGroupApi.move(this.group).subscribe(
-        movedGroup => {
+        (movedGroup: SymbolGroup) => {
           this.toastService.success('The group has been moved');
-          this.eventBus.emit(events.GROUP_MOVED, {from: fromGroupId, group: movedGroup});
+          this.eventBus.groupMoved$.next({from: fromGroupId, group: movedGroup});
           this.close({$value: movedGroup});
         },
         err => {

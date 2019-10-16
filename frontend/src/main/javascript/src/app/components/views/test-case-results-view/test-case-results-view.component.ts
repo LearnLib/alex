@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TestApiService } from '../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../services/resources/test-api.service';
 import { IPromise } from 'angular';
 import { Project } from '../../../entities/project';
 import { AppStoreService } from '../../../services/app-store.service';

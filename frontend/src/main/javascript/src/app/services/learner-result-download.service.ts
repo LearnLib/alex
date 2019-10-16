@@ -16,21 +16,15 @@
 
 import { DownloadService } from './download.service';
 import { PromptService } from './prompt.service';
-import { IPromise } from 'angular';
 import { LearnResult } from '../entities/learner-result';
+import { Injectable } from '@angular/core';
 
 /**
  * The Service that is used to download learn results as csv.
  */
+@Injectable()
 export class LearnerResultDownloadService {
 
-  /**
-   * Constructor.
-   *
-   * @param downloadService
-   * @param promptService
-   */
-  /* @ngInject */
   constructor(private downloadService: DownloadService,
               private promptService: PromptService) {
   }
@@ -40,7 +34,7 @@ export class LearnerResultDownloadService {
    *
    * @param results The learn results to download as csv.
    */
-  download(results: LearnResult[]): IPromise<any> {
+  download(results: LearnResult[]): Promise<any> {
     let csv = 'Project;Test no;Start time;Step no;Algorithm;EQ oracle;|Sigma|;#EQs;'
       + '#MQs (total);#MQs (learner);#MQs (EQ oracle);'
       + '#Symbol calls (total);#Symbol calls (learner);#Symbol calls (EQ oracle);'

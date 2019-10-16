@@ -2,9 +2,9 @@
   <div class="w-100" style="position: relative">
     <div ng-if="!vm.result.steps[vm.pointer].error && vm.result.steps[vm.pointer].hypothesis">
       <hypothesis
-        data="vm.result.steps[vm.pointer].hypothesis"
-        layout-settings="vm.layoutSettings"
-        is-selectable="true">
+        [data]="vm.result.steps[vm.pointer].hypothesis"
+        [layout-settings]="vm.layoutSettings"
+        [is-selectable]="true">
       </hypothesis>
     </div>
   </div>

@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import { events } from '../../../constants';
 import { TestCaseStep } from '../../../entities/test-case-step';
 import { LearnResult } from '../../../entities/learner-result';
 import { IScope } from 'angular';
 import { EventBus } from '../../../services/eventbus.service';
-import { TestApiService } from '../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../services/resources/test-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { Project } from '../../../entities/project';
 import { TestCase } from '../../../entities/test-case';
@@ -58,13 +57,13 @@ export const testCaseGenerationWidgetComponent = {
       this.testCase = new TestCase();
       this.testCase.name = 'Test Case';
 
-      this.eventBus.on(events.HYPOTHESIS_LABEL_SELECTED, (evt, data) => {
+      this.eventBus.hypothesisLabelSelected$.subscribe((data) => {
         const step = TestCaseStep.fromSymbol(this.symbolMap[data.input].symbol);
         step.expectedOutputSuccess = data.output.startsWith('Ok');
         step.setExpectedOutputMessageFromOutput(data.output);
         step.pSymbol.parameterValues = this.symbolMap[data.input].parameterValues;
         this.testCase.steps.push(step);
-      }, $scope);
+      });
     }
 
     $onInit(): void {

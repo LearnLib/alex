@@ -43,8 +43,7 @@ export const testReportsViewComponent = {
     constructor(private testReportApi: TestReportApiService,
                 private appStore: AppStoreService,
                 private toastService: ToastService,
-                private testReportService: TestReportService,
-                private $state: any) {
+                private testReportService: TestReportService) {
 
       this.reports = [];
       this.page = {};

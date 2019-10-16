@@ -16,7 +16,6 @@
 
 import * as angular from 'angular';
 import { IPromise, IQService, IScope } from 'angular';
-import { events } from '../../../constants';
 import { LearnerApiService } from '../../../services/resources/learner-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { SymbolApiService } from '../../../services/resources/symbol-api.service';
@@ -67,12 +66,12 @@ export const counterexamplesWidgetComponent = {
                 private dragulaService: any) {
 
       // wait for a click on the hypothesis and add the io pair to the counterexample
-      this.eventBus.on(events.HYPOTHESIS_LABEL_SELECTED, (evt, data) => {
+      this.eventBus.hypothesisLabelSelected$.subscribe((data) => {
         this.counterExample.push({
           input: data.input,
           output: data.output
         });
-      }, this.$scope);
+      });
 
       this.dragulaService.options($scope, 'ceList', {
         removeOnSpill: false

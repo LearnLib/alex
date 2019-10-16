@@ -1,0 +1,12 @@
+<div class="test-tree" *ngIf="root != null">
+  <test-suite-node
+    [suite]="root"
+    [results]="results"
+    *ngIf="root.type === 'suite'"
+  ></test-suite-node>
+  <test-case-node
+    [case]="root"
+    [results]="results"
+    *ngIf="root.type === 'case'"
+  ></test-case-node>
+</div>

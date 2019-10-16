@@ -21,7 +21,7 @@ import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 import { IScope } from 'angular';
 import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { TestApiService } from '../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../services/resources/test-api.service';
 import { SettingsApiService } from '../../../services/resources/settings-api.service';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';

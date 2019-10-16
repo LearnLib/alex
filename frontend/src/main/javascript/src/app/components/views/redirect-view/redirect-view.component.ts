@@ -17,6 +17,7 @@
 import { ILocationService } from 'angular';
 import { User } from '../../../entities/user';
 import { AppStoreService } from '../../../services/app-store.service';
+import { ErrorViewStoreService } from '../../../views/error-view/error-view-store.service';
 
 export const redirectViewComponent = {
   template: require('html-loader!./redirect-view.component.html'),
@@ -29,10 +30,11 @@ export const redirectViewComponent = {
     constructor(private $state: any,
                 private $stateParams: any,
                 private $location: ILocationService,
+                private errorViewStore: ErrorViewStoreService,
                 private appStore: AppStoreService) {
 
       if (this.$stateParams.to == null) {
-        this.$state.go('error', {message: 'You did not specify a target URL.'});
+        this.errorViewStore.navigateToErrorPage('You did not specify a target URL.');
         return;
       }
 
@@ -40,7 +42,7 @@ export const redirectViewComponent = {
 
       const matchingStates = this.$state.get().filter(s => s.$$state().url.exec(this.targetUrl));
       if (matchingStates.length === 0) {
-        this.$state.go('error', {message: 'The URL that you want to go to can not be found.'});
+        this.errorViewStore.navigateToErrorPage('The URL that you want to go to can not be found.');
         return;
       }
 

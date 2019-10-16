@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { events } from '../../../constants';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { ModalComponent } from '../modal.component';
 import { SymbolApiService } from '../../../services/resources/symbol-api.service';
@@ -68,7 +67,7 @@ export const symbolEditModalComponent = {
       this.symbolApi.update(this.symbol.toJson()).subscribe(
         updatedSymbol => {
           this.toastService.success('Symbol updated');
-          this.eventBus.emit(events.SYMBOL_UPDATED, {symbol: updatedSymbol});
+          this.eventBus.symbolUpdated$.next(updatedSymbol);
           this.close({$value: updatedSymbol});
         },
         err => {

@@ -1,0 +1,12 @@
+.card-environment {
+  .card-header,
+  table tbody tr {
+    .actions {
+      visibility: hidden;
+    }
+
+    &:hover .actions {
+      visibility: visible;
+    }
+  }
+}

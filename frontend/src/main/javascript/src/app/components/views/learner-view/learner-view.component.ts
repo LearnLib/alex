@@ -24,6 +24,7 @@ import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { IPromise } from 'angular';
 import { Project } from '../../../entities/project';
 import { AppStoreService } from '../../../services/app-store.service';
+import { ErrorViewStoreService } from '../../../views/error-view/error-view-store.service';
 
 /**
  * The controller for showing a load screen during the learning and shows all learn results from the current test
@@ -63,7 +64,8 @@ class LearnerViewComponentComponent {
               private learnerResultApi: LearnerResultApiService,
               private toastService: ToastService,
               private symbolApi: SymbolApiService,
-              private notificationService: NotificationService) {
+              private notificationService: NotificationService,
+              private errorViewStore: ErrorViewStoreService) {
 
     this.intervalHandle = null;
     this.intervalTime = 5000;
@@ -128,7 +130,7 @@ class LearnerViewComponentComponent {
           this.learnerResultApi.getLatest(this.project.id).subscribe(
             latestResult => {
               if (latestResult.error) {
-                this.$state.go('error', {message: latestResult.errorText});
+                this.errorViewStore.navigateToErrorPage(latestResult.errorText);
               } else {
                 this.finalResult = latestResult;
 

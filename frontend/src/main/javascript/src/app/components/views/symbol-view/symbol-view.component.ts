@@ -29,6 +29,7 @@ import { SymbolGroup } from '../../../entities/symbol-group';
 import { Project } from '../../../entities/project';
 import { Action } from '../../../entities/actions/action';
 import { AppStoreService } from '../../../services/app-store.service';
+import { ErrorViewStoreService } from '../../../views/error-view/error-view-store.service';
 
 /**
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
@@ -53,7 +54,7 @@ class SymbolViewComponent {
               private toastService: ToastService,
               private actionService: ActionService,
               private clipboardService: ClipboardService,
-              private $state: any,
+              private errorViewStore: ErrorViewStoreService,
               private dragulaService: any,
               private $uibModal: any,
               private symbolGroupApi: SymbolGroupApiService) {
@@ -71,7 +72,7 @@ class SymbolViewComponent {
         this.selectedSteps = new Selectable(this.symbol.steps, '_id');
       },
       () => {
-        this.$state.go('error', {message: `The symbol with the ID "${$stateParams.symbolId}" could not be found`});
+        errorViewStore.navigateToErrorPage(`The symbol with the ID "${$stateParams.symbolId}" could not be found`);
       }
     );
 

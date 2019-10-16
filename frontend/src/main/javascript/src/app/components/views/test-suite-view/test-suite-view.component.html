@@ -135,7 +135,7 @@
                                     <selectable-checkbox [item]="test" [selectable]="vm.selectedTests"></selectable-checkbox>
                                 </div>
                                 <div class="test-list-item-content flex-grow-1">
-                                    <test-tree root="test" results="vm.results"></test-tree>
+                                    <test-tree [root]="test" [results]="vm.results"></test-tree>
                                 </div>
                                 <div class="pl-2" ng-if="vm.status != null && vm.status.currentTest != null && vm.status.currentTest.id === test.id">
                                     <span class="badge badge-info">
@@ -171,7 +171,7 @@
                     </div>
 
                     <div ng-if="vm.report != null" style="margin-top: 48px">
-                        <test-result-report report="vm.report"></test-result-report>
+                        <test-result-report [report]="vm.report"></test-result-report>
                     </div>
 
                 </div>

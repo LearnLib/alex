@@ -1,0 +1,22 @@
+<div class="form-group">
+  <label>Name</label>
+  <input
+    type="text"
+    class="form-control"
+    [formControl]="form.controls.name"
+    name="name"
+    placeholder="Enter a unique name for the URL"
+    required
+  >
+</div>
+<div class="form-group">
+  <label>URL</label>
+  <input
+    type="text"
+    class="form-control"
+    [formControl]="form.controls.url"
+    name="url"
+    placeholder="Enter URL"
+    required
+  >
+</div>

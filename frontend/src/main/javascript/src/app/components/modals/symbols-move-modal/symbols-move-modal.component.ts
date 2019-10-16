@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { events } from '../../../constants';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { ModalComponent } from '../modal.component';
 import { SymbolApiService } from '../../../services/resources/symbol-api.service';
@@ -94,7 +93,7 @@ export const symbolMoveModalComponent = {
         this.symbolApi.moveMany(symbolsToMove, this.selectedGroup).subscribe(
           () => {
             this.toastService.success('Symbols move to group <strong>' + this.selectedGroup.name + '</strong>');
-            this.eventBus.emit(events.SYMBOLS_MOVED, {
+            this.eventBus.symbolsMoved$.next({
               symbols: this.symbols,
               group: this.selectedGroup
             });

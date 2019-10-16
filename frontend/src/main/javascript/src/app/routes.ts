@@ -17,11 +17,12 @@
 /**
  * Define application routes.
  */
-/* @ngInject */
 import { AppStoreService } from './services/app-store.service';
 import { ProjectApiService } from './services/resources/project-api.service';
 import { ToastService } from './services/toast.service';
+import { ErrorViewStoreService } from './views/error-view/error-view-store.service';
 
+/* @ngInject */
 export function config($stateProvider, $urlRouterProvider) {
 
   // redirect to the start page when no other route fits
@@ -111,7 +112,7 @@ export function config($stateProvider, $urlRouterProvider) {
       data: {title: 'Project'},
 
       /* @ngInject */
-      onEnter: function ($state, appStore: AppStoreService, projectApi: ProjectApiService, $stateParams) {
+      onEnter: function (errorViewStore: ErrorViewStoreService, appStore: AppStoreService, projectApi: ProjectApiService, $stateParams) {
         const projectId = $stateParams.projectId;
         const project = appStore.project;
 
@@ -119,7 +120,7 @@ export function config($stateProvider, $urlRouterProvider) {
           return projectApi.get(projectId).subscribe(
             project => appStore.openProject(project),
             () => {
-              $state.go('error', {message: `The project with the id ${projectId} could not be found`});
+              errorViewStore.navigateToErrorPage(`The project with the id ${projectId} could not be found`);
             }
           );
         }

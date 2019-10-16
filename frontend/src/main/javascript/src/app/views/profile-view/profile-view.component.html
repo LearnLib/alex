@@ -1,0 +1,77 @@
+<div class="view">
+  <view-header [title]="'Profile'"></view-header>
+  <action-bar>
+    <div class="container text-right">
+      <button class="btn btn-sm btn-danger" (click)="deleteProfile()">
+        <i class="fas fa-fw fa-trash"></i> Delete Profile
+      </button>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container">
+
+      <form class="mb-4" [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+        <div class="card">
+          <div class="card-header">
+            <h5>Password</h5>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Old password</label>
+              <input
+                class="form-control"
+                type="password"
+                [formControl]="passwordForm.controls.old"
+                required
+                placeholder="Enter your old password"
+              >
+            </div>
+            <div class="form-group">
+              <label>New password</label>
+              <input
+                class="form-control"
+                type="password"
+                [formControl]="passwordForm.controls.new"
+                required
+                placeholder="Enter your new password"
+              >
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary btn-sm" [disabled]="passwordForm.invalid">Change Password</button>
+          </div>
+        </div>
+      </form>
+
+      <form [formGroup]="emailForm" (ngSubmit)="changeEmail()">
+        <div class="card">
+          <div class="card-header">
+            <h5>Email</h5>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label>Email</label>
+              <input
+                class="form-control"
+                name="mail"
+                type="email"
+                ng-model="email"
+                placeholder="Enter an email address"
+                required
+                [formControl]="emailForm.controls.email"
+                [class.invalid]="isInvalidFormControl(emailForm.controls.email)"
+              />
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary btn-sm" [disabled]="emailForm.invalid">Change Email</button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+

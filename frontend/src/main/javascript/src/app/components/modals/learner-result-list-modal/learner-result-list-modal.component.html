@@ -19,7 +19,7 @@
         <div class="list-group">
           <a class="list-group-item" ng-repeat="result in vm.results | orderBy:'-testNo':false"
              ng-click="vm.selectResult(result)">
-            <span class="badge badge-danger float-right" ng-show="result.error">Failed</span>
+            <span class="badge badge-danger float-right" ng-if="result.error">Failed</span>
             <strong>Test No <span ng-bind="result.testNo"></span></strong>,
             [<span ng-bind="(result.algorithm.name|formatAlgorithm)"></span>]
             <br>

@@ -15,7 +15,7 @@
  */
 
 import { ModalComponent } from '../modal.component';
-import { TestApiService } from '../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../services/resources/test-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { Project } from '../../../entities/project';
 import { AppStoreService } from '../../../services/app-store.service';

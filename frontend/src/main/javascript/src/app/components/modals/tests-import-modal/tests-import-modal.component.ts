@@ -16,7 +16,7 @@
 
 import { ModalComponent } from '../modal.component';
 import { Project } from '../../../entities/project';
-import { TestApiService } from "../../../services/resources/test-resource.service";
+import { TestApiService } from "../../../services/resources/test-api.service";
 import { AppStoreService } from '../../../services/app-store.service';
 
 export const testsImportModalComponent = {

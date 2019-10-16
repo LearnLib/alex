@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { TestApiService } from '../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../services/resources/test-api.service';
 import { AppStoreService } from '../../../services/app-store.service';
+import { ErrorViewStoreService } from '../../../views/error-view/error-view-store.service';
 
 /**
  * The view for the tests.
@@ -31,6 +32,7 @@ export const testsViewComponent = {
     /* @ngInject */
     constructor(private $state: any,
                 private appStore: AppStoreService,
+                private errorViewStore: ErrorViewStoreService,
                 private testApi: TestApiService) {
 
       this.test = null;
@@ -40,12 +42,12 @@ export const testsViewComponent = {
       if (testId === 0) {
         testApi.getRoot(project.id).subscribe(
           data => this.test = data,
-          err => $state.go('error', {message: err.data.message})
+          res => errorViewStore.navigateToErrorPage(res.error.message)
         );
       } else {
         testApi.get(project.id, testId).subscribe(
           data => this.test = data,
-          err => $state.go('error', {message: err.data.message})
+          res => errorViewStore.navigateToErrorPage(res.error.message)
         );
       }
     }

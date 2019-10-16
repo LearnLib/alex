@@ -1,0 +1,22 @@
+<div class="test-case-node">
+  <div class="header d-flex flex-row">
+    <div class="test-icon">
+      <i class="fas fa-fw fa-file"></i>
+    </div>
+    <a class="test-name w-100 d-flex flex-row align-items-center" [href]="'#!/projects/' + case.project + '/tests/' + case.id">
+      <div class="w-100">
+        <div>
+          <strong>{{case.name}}</strong> <span class="badge badge-secondary ml-2" *ngIf="case.generated">Gen.</span>
+        </div>
+        <span class="badge badge-warning" *ngIf="case.status === 'EMPTY'">Empty</span>
+        <span class="badge badge-info" *ngIf="case.status === 'WORK_IN_PROGRESS'">Work in progress</span>
+      </div>
+      <div>
+        <span *ngIf="result">
+          <span class="badge badge-success" *ngIf="result.passed">Passed</span>
+          <span class="badge badge-danger" *ngIf="!result.passed">Failed</span>
+        </span>
+      </div>
+    </a>
+  </div>
+</div>

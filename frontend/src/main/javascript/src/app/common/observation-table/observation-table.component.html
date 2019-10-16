@@ -1,0 +1,21 @@
+<table class="table table-sm observation-table">
+  <thead>
+  <tr>
+    <th *ngFor="let th of table.header">
+      {{th}}
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let tr of table.body.s1">
+    <td *ngFor="let td of tr">
+      {{td}}
+    </td>
+  </tr>
+  <tr *ngFor="let tr of table.body.s2; let i = index" [class.line]="i === 0">
+    <td *ngFor="let td of tr">
+      {{td}}
+    </td>
+  </tr>
+  </tbody>
+</table>

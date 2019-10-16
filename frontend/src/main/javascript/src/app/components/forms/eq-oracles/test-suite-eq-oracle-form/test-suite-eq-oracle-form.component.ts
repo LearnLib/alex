@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TestApiService } from '../../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../../services/resources/test-api.service';
 import { IFormController } from 'angular';
 import { TestSuiteEqOracle } from '../../../../entities/eq-oracles/test-suite-eq-oracle';
 import { AppStoreService } from '../../../../services/app-store.service';

@@ -89,7 +89,7 @@ export class UserApiService extends BaseApiService {
    * @param user he user to create.
    * @returns A promise.
    */
-  create(user: User): Observable<any> {
+  create(user: any): Observable<any> {
     return this.http.post(`${env.apiUrl}/users`, user, this.defaultHttpOptions);
   }
 

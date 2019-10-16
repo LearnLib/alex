@@ -14,42 +14,20 @@
  * limitations under the License.
  */
 
-import { IRootScopeService, IScope } from 'angular';
+import { Subject } from 'rxjs';
+import { SymbolGroup } from '../entities/symbol-group';
+import { AlphabetSymbol } from '../entities/alphabet-symbol';
+import { Injectable } from '@angular/core';
 
-/**
- * The event bus.
- */
+@Injectable()
 export class EventBus {
 
+  groupUpdated$ = new Subject<SymbolGroup>();
+  groupDeleted$ = new Subject<SymbolGroup>();
+  groupMoved$ = new Subject<{from: number, group: SymbolGroup}>();
 
-  /**
-   * Constructor.
-   *
-   * @param $rootScope
-   */
-  /* @ngInject */
-  constructor(private $rootScope: IRootScopeService) {
-  }
+  hypothesisLabelSelected$ = new Subject<{input: string, output: string}>();
 
-  /**
-   * Listen on an event with automatic event destructor.
-   *
-   * @param eventName The event to emit.
-   * @param fn The callback function.
-   * @param scope The related scope.
-   */
-  on(eventName: string, fn, scope: IScope = null): void {
-    const off = this.$rootScope.$on(eventName, fn);
-    if (scope != null) scope.$on('$destroy', off);
-  }
-
-  /**
-   * Emits an event on the rootScope.
-   *
-   * @param eventName The eventName.
-   * @param data The data to pass.
-   */
-  emit(eventName: string, data: any): void {
-    this.$rootScope.$emit(eventName, data);
-  }
+  symbolUpdated$ = new Subject<AlphabetSymbol>();
+  symbolsMoved$ = new Subject<{group: SymbolGroup, symbols: AlphabetSymbol[]}>();
 }

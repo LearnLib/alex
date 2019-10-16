@@ -16,7 +16,7 @@
 
 import { ModalComponent } from '../modal.component';
 import { LearnResult } from '../../../entities/learner-result';
-import { TestApiService } from '../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../services/resources/test-api.service';
 import { TestCase } from '../../../entities/test-case';
 import { TestCaseStep } from '../../../entities/test-case-step';
 import { ToastService } from '../../../services/toast.service';

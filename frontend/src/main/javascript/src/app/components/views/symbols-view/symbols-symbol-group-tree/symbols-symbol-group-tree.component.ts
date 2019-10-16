@@ -1,5 +1,4 @@
 import { remove } from 'lodash';
-import { events } from '../../../../constants';
 import { AlphabetSymbol } from '../../../../entities/alphabet-symbol';
 import { SymbolGroup } from '../../../../entities/symbol-group';
 import { PromptService } from '../../../../services/prompt.service';
@@ -70,9 +69,7 @@ export const symbolsSymbolGroupTreeComponent = {
           this.symbolGroupApi.remove(this.group).subscribe(
             () => {
               this.toastService.success(`Group <strong>${this.group.name}</strong> deleted`);
-              this.eventBus.emit(events.GROUP_DELETED, {
-                group: this.group
-              });
+              this.eventBus.groupDeleted$.next(this.group);
             },
             err => {
               this.toastService.danger(`The group could not be deleted. ${err.data.message}`);

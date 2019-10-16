@@ -38,7 +38,7 @@
   <uib-tabset justified="true">
     <uib-tab ng-repeat="tab in vm.tabs" heading="{{tab.heading}}">
 
-      <div class="alert alert-condensed alert-danger" ng-show="tab.result.error">
+      <div class="alert alert-condensed alert-danger" ng-if="tab.result.error">
         <i class="fas fa-fw fa-warning"></i> <strong>This step failed:</strong>
         <span ng-bind="tab.result.errorText"></span>
       </div>

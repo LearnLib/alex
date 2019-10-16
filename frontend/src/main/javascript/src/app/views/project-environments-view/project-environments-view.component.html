@@ -1,0 +1,156 @@
+<div class="view">
+  <view-header [title]="'Environments'"></view-header>
+
+  <action-bar>
+    <div class="d-flex flex-row align-items-center">
+      <div class="w-100 ml-3">
+
+        <div class="d-inline-block" ngbDropdown placement="bottom-left">
+          <button class="btn btn-sm btn-primary btn-dropdown" ngbDropdownToggle>
+            Create
+          </button>
+          <div ngbDropdownMenu>
+            <button ngbDropdownItem (click)="store.createEnvironment()">
+              Environment
+            </button>
+            <button ngbDropdownItem (click)="store.createUrl()">
+              URL
+            </button>
+            <button ngbDropdownItem (click)="store.createVariable()">
+              Variable
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <div class="card card-environment mb-4" *ngFor="let env of store.environments$ | async; trackBy: trackByIndex">
+        <div class="card-header d-flex flex-row align-items-center">
+          <div class="w-100 mr-3">
+            <strong>{{env.name}}</strong>
+          </div>
+          <div class="flex-shrink-0">
+            <div class="btn-group btn-group-sm actions">
+              <button class="btn btn-outline-secondary" (click)="store.editEnvironment(env)" ngbTooltip="Edit"
+                      placement="top">
+                <i class="fas fa-fw fa-edit"></i>
+              </button>
+              <button class="btn btn-outline-secondary" (click)="store.deleteEnvironment(env)" ngbTooltip="Delete"
+                      placement="top">
+                <i class="fas fa-fw fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          <div class="ml-3">
+            <span
+              class="badge cursor-pointer"
+              [ngClass]="{'badge-secondary': !env.default, 'badge-primary': env.default}"
+              (click)="store.makeEnvironmentDefault(env)"
+            >
+              Default
+            </span>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <ngb-tabset>
+            <ngb-tab title="URLs">
+              <ng-template ngbTabContent>
+                <p></p>
+
+                <table class="table mb-0">
+                  <thead class="bg-light">
+                  <tr>
+                    <th width="1">Name</th>
+                    <th>URL</th>
+                    <th width="1">&nbsp;</th>
+                    <th width="1">&nbsp;</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let url of env.urls">
+                    <td>
+                      <span class="badge badge-secondary mr-3">{{url.name}}</span>
+                    </td>
+                    <td>
+                      {{url.url}}
+                    </td>
+                    <td>
+                      <div class="btn-group btn-group-sm actions">
+                        <button class="btn btn-outline-secondary" (click)="store.editUrl(env, url)" ngbTooltip="Edit"
+                                placement="top">
+                          <i class="fas fa-fw fa-edit"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary" (click)="store.deleteUrl(env, url)"
+                                ngbTooltip="Delete" placement="top">
+                          <i class="fas fa-fw fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      <span
+                        class="badge cursor-pointer"
+                        [ngClass]="{'badge-secondary': !url.default, 'badge-primary': url.default}"
+                        (click)="store.makeUrlDefault(env, url)"
+                      >
+                         Default
+                      </span>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </ng-template>
+            </ngb-tab>
+            <ngb-tab title="Variables">
+              <ng-template ngbTabContent>
+                <p></p>
+
+                <div class="alert alert-info mb-0" *ngIf="env.variables.length === 0">
+                  No environment variables have been defined yet.
+                </div>
+
+                <table class="table mb-0" *ngIf="env.variables.length > 0">
+                  <thead class="bg-light">
+                  <tr>
+                    <th width="1">Variable</th>
+                    <th>Value</th>
+                    <th width="1">&nbsp;</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let v of env.variables">
+                    <td>
+                      <strong style="white-space: nowrap">{{v.name}}</strong>
+                    </td>
+                    <td>{{v.value}}</td>
+                    <td>
+                      <div class="btn-group btn-group-sm actions">
+                        <button class="btn btn-outline-secondary" (click)="store.editVariable(env, v)" ngbTooltip="Edit"
+                                placement="top">
+                          <i class="fas fa-fw fa-edit"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary" (click)="store.deleteVariable(env, v)"
+                                ngbTooltip="Delete" placement="top">
+                          <i class="fas fa-fw fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </ng-template>
+            </ngb-tab>
+          </ngb-tabset>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

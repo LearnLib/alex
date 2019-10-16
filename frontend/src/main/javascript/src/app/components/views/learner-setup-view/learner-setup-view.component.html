@@ -162,7 +162,7 @@
                                 ng-repeat="result in vm.learnResults | orderBy:'-testNo':false | limitTo:5"
                                 ng-click="vm.reuseConfigurationFromResult(result)"
                             >
-                                <span class="badge badge-danger float-right" ng-show="result.error">Failed</span>
+                                <span class="badge badge-danger float-right" ng-if="result.error">Failed</span>
                                 TestNo <span ng-bind="result.testNo"></span>
 
                                 <div>

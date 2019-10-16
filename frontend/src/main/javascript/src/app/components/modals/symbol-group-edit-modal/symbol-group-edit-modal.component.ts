@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { events } from '../../../constants';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { ModalComponent } from '../modal.component';
 import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
@@ -71,9 +70,7 @@ export const symbolGroupEditModalComponent = {
       this.symbolGroupApi.update(this.group).subscribe(
         updatedGroup => {
           this.toastService.success('Group updated');
-          this.eventBus.emit(events.GROUP_UPDATED, {
-            group: updatedGroup
-          });
+          this.eventBus.groupUpdated$.next(updatedGroup);
           this.dismiss();
         },
         err => {

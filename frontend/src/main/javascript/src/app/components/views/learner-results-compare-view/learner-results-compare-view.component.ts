@@ -20,6 +20,7 @@ import { ToastService } from '../../../services/toast.service';
 import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
 import { Project } from '../../../entities/project';
 import { AppStoreService } from '../../../services/app-store.service';
+import { ErrorViewStoreService } from '../../../views/error-view/error-view-store.service';
 
 /**
  * The controller that handles the page for displaying multiple complete learn results in a slide show.
@@ -40,11 +41,11 @@ class ResultsCompareViewComponent {
 
   /* @ngInject */
   constructor(private $uibModal: any,
-              private $state: any,
               private $stateParams: any,
               private appStore: AppStoreService,
               private learnerResultApi: LearnerResultApiService,
               private learnerApi: LearnerApiService,
+              private errorViewStore: ErrorViewStoreService,
               private toastService: ToastService) {
 
     this.results = [];
@@ -55,7 +56,7 @@ class ResultsCompareViewComponent {
     // load all final learn results of all test an then load the complete test results from the test numbers
     // that are passed from the url in the panels
     if (!this.$stateParams.testNos) {
-      this.$state.go('error', {message: 'There are no test numbers defined in the URL'});
+      this.errorViewStore.navigateToErrorPage('There are no test numbers defined in the URL');
     } else {
       const testNos = $stateParams.testNos.split(',');
       this.learnerResultApi.getAll(this.project.id).subscribe(

@@ -52,21 +52,6 @@ export const userRole = {
   REGISTERED: 'REGISTERED'
 };
 
-export const events = {
-
-  // symbol group related events
-  GROUP_UPDATED: 'group:updated',
-  GROUP_DELETED: 'group:deleted',
-  GROUP_MOVED: 'group:moved',
-
-  // hypothesis related events
-  HYPOTHESIS_LABEL_SELECTED: 'hypothesis:labelSelected',
-
-  // symbol related events
-  SYMBOL_UPDATED: 'symbol:updated',
-  SYMBOLS_MOVED: 'symbols:moved',
-};
-
 export const actionType = {
 
   // web actions

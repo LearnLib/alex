@@ -3,9 +3,7 @@
 @import "bootstrap";
 @import "compat";
 @import "font-awesome";
-@import "hypothesis";
 @import "search-form";
-@import "test-tree";
 @import "sidebar";
 @import "animations";
 @import "simple-symbol-group-tree.component";
@@ -14,10 +12,6 @@
 
 *, *:after, *:before {
   box-sizing: border-box;
-}
-
-#toast-container {
-  margin-bottom: 40px;
 }
 
 html {
@@ -67,6 +61,10 @@ body {
   &:hover {
     color: #000;
   }
+}
+
+#toast-container {
+  margin-bottom: 2rem;
 }
 
 report-charts {
@@ -119,22 +117,6 @@ report-charts {
 
 .no-border-radius {
   border-radius: 0 !important;
-}
-#load-screen {
-  position: fixed;
-  bottom: 6px;
-  right: 6px;
-  border-radius: 4px;
-  text-align: center;
-  padding: 12px 16px;
-  font-size: 14px;
-  color: #fff;
-  background: #337ab7;
-  z-index: 1100;
-
-  i {
-    margin-right: 6px;
-  }
 }
 
 .view {
@@ -247,34 +229,6 @@ report-charts {
 .no-caret {
   &::after {
     display: none;
-  }
-}
-
-/* Helper classes
-============================================================================= */
-
-.panel#alert-list {
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-  position: absolute;
-  z-index: 2000;
-  height: auto;
-  left: 50%;
-  margin-left: -250px;
-  width: 500px;
-  max-height: 320px;
-  overflow: auto;
-
-  .panel-body {
-    padding-bottom: 0;
-
-    .close {
-      opacity: 0.6;
-      cursor: pointer;
-      &:hover {
-        opacity: 1;
-      }
-    }
   }
 }
 
@@ -414,17 +368,6 @@ test-case-view {
   }
 }
 
-.learn-result-list-item {
-  .comment {
-    padding: 4px 0 0 8px;
-    border-left: 2px solid #ddd;
-  }
-  .label-danger {
-    margin-top: 3px;
-    margin-right: 8px;
-  }
-}
-
 .counterexample-list-item {
   padding: 6px !important;
 }
@@ -434,12 +377,6 @@ test-case-view {
 
 .separator-small {
   margin: 12px 0;
-}
-
-.observation-table {
-  .line {
-    border-top: 2px solid #666;
-  }
 }
 
 .action-types-accordion {
@@ -522,18 +459,6 @@ learn-result-panel {
   }
 }
 
-.modal-dialog {
-  .modal-content {
-    border: 0;
-    border-top: 5px solid $color-blue-dark;
-    border-radius: 0;
-  }
-  .modal-footer {
-    padding: 10px 15px;
-    background: #f2f2f2;
-  }
-}
-
 .table-rest-call-action {
   display: block;
   max-height: 200px;
@@ -545,43 +470,6 @@ learn-result-panel {
   }
 }
 
-.panel-body {
-  &.panel-body-list {
-    padding: 0;
-
-    .list-group {
-      margin: 0;
-
-      .list-group-item {
-        border-radius: 0;
-        border: none;
-        border-top: 1px solid #ddd;
-        border-bottom: 1px solid #ddd;
-
-        &:first-of-type {
-          border-top: 0;
-        }
-
-        &:last-of-type {
-          border-bottom: 0;
-        }
-      }
-    }
-  }
-}
-
-project-details-widget {
-  a {
-    word-break: break-all;
-  }
-}
-
-project-details-widget {
-  table tr > td:nth-of-type(2) {
-    max-width: 200px;
-    @include text-overflow-ellipsis();
-  }
-}
 
 learn-resume-settings-widget {
   .panel-group {
@@ -614,20 +502,6 @@ test-case-view table {
 
 .chart-legend {
   display: none;
-}
-
-
-.card-environment {
-  .card-header,
-  table tbody tr {
-    .actions {
-      visibility: hidden;
-    }
-
-    &:hover .actions {
-      visibility: visible;
-    }
-  }
 }
 
 test-config-list .list-group-item {

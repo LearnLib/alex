@@ -1,0 +1,75 @@
+<div class="view">
+  <view-header [title]="'Manage Users'"></view-header>
+
+  <action-bar>
+    <div class="d-flex flex-row align-items-center" *ngIf="(store.users$ | async).length > 0">
+      <selectable-checkbox-multiple [selectable]="store.usersSelectable"></selectable-checkbox-multiple>
+
+      <div class="w-100 ml-3">
+        <button class="btn btn-sm btn-primary mr-2" (click)="store.createUser()">
+          Create
+        </button>
+
+        <button
+          class="btn btn-sm btn-default"
+          (click)="store.deleteSelectedUsers()"
+          [disabled]="!store.usersSelectable.isAnySelected()">
+          Delete
+        </button>
+      </div>
+    </div>
+  </action-bar>
+
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <table class="table">
+        <thead>
+        <tr>
+          <th width="1">&nbsp;</th>
+          <th width="1">ID</th>
+          <th width="1">Email</th>
+          <th>Role</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr
+          *ngFor="let user of store.users$ | async"
+          [ngClass]="{
+            'success': user.id === store.currentUser.id,
+            'info': user.role === 'ADMIN' && user.id !== store.currentUser.id
+          }"
+        >
+          <td>
+            <selectable-checkbox
+              [item]="user"
+              [selectable]="store.usersSelectable"
+            >
+            </selectable-checkbox>
+          </td>
+          <td>{{user.id}}</td>
+          <td>{{user.email}}</td>
+          <td>
+            <span
+              class="badge"
+              [ngClass]="{
+                'badge-danger': user.role === 'ADMIN',
+                 'badge-primary': user.role !== 'ADMIN'
+              }"
+            >
+              {{user.role | normalizeUpperCase}}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-default btn-xs float-right" (click)="store.editUser(user)">
+              <i class="fas fa-edit fa-fw"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>

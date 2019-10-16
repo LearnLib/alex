@@ -15,7 +15,6 @@
  */
 
 import { remove } from 'lodash';
-import { events } from '../../../constants';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { Selectable } from '../../../utils/selectable';
@@ -57,23 +56,23 @@ class SymbolsViewComponent {
     this.groups = [];
     this.symbols = [];
 
-    this.eventBus.on(events.GROUP_UPDATED, (evt, data) => {
-      this.updateGroup(data.group);
-    }, $scope);
+    this.eventBus.groupUpdated$.subscribe(group => {
+      this.updateGroup(group);
+    });
 
-    this.eventBus.on(events.GROUP_DELETED, (evt, data) => {
-      this.deleteGroup(data.group);
-    }, $scope);
+    this.eventBus.groupDeleted$.subscribe((group) => {
+      this.deleteGroup(group);
+    });
 
-    this.eventBus.on(events.SYMBOL_UPDATED, (evt, data) => {
-      this.updateSymbol(data.symbol);
-    }, $scope);
+    this.eventBus.symbolUpdated$.subscribe(symbol => {
+      this.updateSymbol(symbol);
+    });
 
-    this.eventBus.on(events.SYMBOLS_MOVED, (evt, data) => {
+    this.eventBus.symbolsMoved$.subscribe(data => {
       this.moveSymbolsToGroup(data.symbols, data.group);
-    }, $scope);
+    });
 
-    this.eventBus.on(events.GROUP_MOVED, (evt, data) => {
+    this.eventBus.groupMoved$.subscribe(data => {
       this.moveGroup(data.from, data.group);
     });
   }

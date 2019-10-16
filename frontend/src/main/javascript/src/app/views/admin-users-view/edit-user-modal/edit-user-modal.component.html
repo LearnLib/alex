@@ -1,0 +1,59 @@
+<div class="modal-header">
+  <h4 class="modal-title">Edit the user</h4>
+  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div class="modal-body">
+
+  <div class="alert alert-danger" *ngIf="error != null">
+    <strong class="d-block">Could not update the user!</strong>
+    <span>{{error}}</span>
+  </div>
+
+  <h5><strong>Email</strong></h5>
+  <form [formGroup]="form" (ngSubmit)="changeEmail()">
+    <div class="form-group">
+      <input
+        type="email"
+        class="form-control"
+        name="mail"
+        placeholder="Enter an email address"
+        required
+        [formControl]="form.controls.email"
+        [class.invalid]="isInvalidFormControl(form.controls.email)"
+      />
+    </div>
+    <button class="btn btn-primary btn-sm" [disabled]="form.invalid">Change email</button>
+  </form>
+
+  <hr>
+  <h5><strong>Role</strong></h5>
+  <div *ngIf="user.role === userRole.ADMIN">
+    <p class="text-muted">
+      <em>Note: if you take your own admin rights, you will be logged out automatically.</em>
+    </p>
+    <p>
+      <button class="btn btn-primary btn-sm" (click)="demoteUser()">
+        Remove admin rights
+      </button>
+    </p>
+  </div>
+  <div *ngIf="user.role === userRole.REGISTERED" (click)="promoteUser()">
+    <button class="btn btn-primary btn-sm">
+      Give admin rights
+    </button>
+  </div>
+
+  <hr>
+  <h5><strong>Account</strong></h5>
+  <button class="btn btn-danger btn-sm" (click)="deleteUser()">
+    Delete profile
+  </button>
+
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-default btn-sm" (click)="modal.dismiss()">Cancel</button>
+</div>

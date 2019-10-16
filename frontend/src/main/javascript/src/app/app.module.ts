@@ -54,7 +54,7 @@ import { ClipboardService } from './services/clipboard.service';
 import { UserApiService } from './services/resources/user-api.service';
 import { LearnerResultApiService } from './services/resources/learner-result-api.service';
 import { LearnerApiService } from './services/resources/learner-api.service';
-import { TestApiService } from './services/resources/test-resource.service';
+import { TestApiService } from './services/resources/test-api.service';
 import { FileApiService } from './services/resources/file-api.service';
 import { PromptModalComponent } from './common/prompt-modal/prompt-modal.component';
 import { ConfirmModalComponent } from './common/confirm-modal/confirm-modal.component';
@@ -85,6 +85,28 @@ import { LearnerResultChartService } from './services/learner-result-chart.servi
 import { PaginationComponent } from './common/pagination/pagination.component';
 import { AngularjsJsonInterceptor } from './angularjs-json-interceptor';
 import { FilesViewComponent } from './views/files-view/files-view.component';
+import { ProjectEnvironmentsViewComponent } from './views/project-environments-view/project-environments-view.component';
+import { CreateEnvironmentVariableModalComponent } from './views/project-environments-view/create-environment-variable-modal/create-environment-variable-modal.component';
+import { EditEnvironmentVariableModalComponent } from './views/project-environments-view/edit-environment-variable-modal/edit-environment-variable-modal.component';
+import { CreateProjectUrlModalComponent } from './views/project-environments-view/create-project-url-modal/create-project-url-modal.component';
+import { EditProjectUrlModalComponent } from './views/project-environments-view/edit-project-url-modal/edit-project-url-modal.component';
+import { ProjectUrlFormGroupsComponent } from './views/project-environments-view/project-url-form-groups/project-url-form-groups.component';
+import { HypothesisComponent } from './common/hypothesis/hypothesis.component';
+import { DiscriminationTreeComponent } from './common/discrimination-tree/discrimination-tree.component';
+import { ObservationTableComponent } from './common/observation-table/observation-table.component';
+import { EventBus } from './services/eventbus.service';
+import { LearnerResultDownloadService } from './services/learner-result-download.service';
+import { TestResultReportComponent } from './views/test-suite-view/test-result-report/test-result-report.component';
+import { AdminUsersViewComponent } from './views/admin-users-view/admin-users-view.component';
+import { CreateUserModalComponent } from './views/admin-users-view/create-user-modal/create-user-modal.component';
+import { EditUserModalComponent } from './views/admin-users-view/edit-user-modal/edit-user-modal.component';
+import { ProfileViewComponent } from './views/profile-view/profile-view.component';
+import { TestTreeComponent } from './views/test-suite-view/test-tree/test-tree.component';
+import { TestCaseNodeComponent } from './views/test-suite-view/test-tree/test-case-node/test-case-node.component';
+import { TestSuiteNodeComponent } from './views/test-suite-view/test-tree/test-suite-node/test-suite-node.component';
+import { AdminSettingsViewComponent } from './views/admin-settings-view/admin-settings-view.component';
+import { ErrorViewComponent } from './views/error-view/error-view.component';
+import { ErrorViewStoreService } from './views/error-view/error-view-store.service';
 
 @NgModule({
   declarations: [
@@ -133,7 +155,26 @@ import { FilesViewComponent } from './views/files-view/files-view.component';
     FileDropzoneComponent,
     LogoutViewComponent,
     PaginationComponent,
-    FilesViewComponent
+    FilesViewComponent,
+    ProjectEnvironmentsViewComponent,
+    CreateEnvironmentVariableModalComponent,
+    EditEnvironmentVariableModalComponent,
+    CreateProjectUrlModalComponent,
+    EditProjectUrlModalComponent,
+    ProjectUrlFormGroupsComponent,
+    HypothesisComponent,
+    DiscriminationTreeComponent,
+    ObservationTableComponent,
+    TestResultReportComponent,
+    AdminUsersViewComponent,
+    CreateUserModalComponent,
+    EditUserModalComponent,
+    ProfileViewComponent,
+    TestTreeComponent,
+    TestCaseNodeComponent,
+    TestSuiteNodeComponent,
+    AdminSettingsViewComponent,
+    ErrorViewComponent,
   ],
   imports: [
     BrowserModule,
@@ -183,7 +224,10 @@ import { FilesViewComponent } from './views/files-view/files-view.component';
     ActionService,
     EqOracleService,
     LearningAlgorithmService,
-    LearnerResultChartService
+    LearnerResultChartService,
+    EventBus,
+    LearnerResultDownloadService,
+    ErrorViewStoreService
   ],
   entryComponents: [
     CreateCounterModalComponent,
@@ -198,6 +242,12 @@ import { FilesViewComponent } from './views/files-view/files-view.component';
     CreateProjectModalComponent,
     EditProjectModalComponent,
     ImportProjectModalComponent,
+    CreateProjectUrlModalComponent,
+    EditProjectUrlModalComponent,
+    CreateEnvironmentVariableModalComponent,
+    EditEnvironmentVariableModalComponent,
+    CreateUserModalComponent,
+    EditUserModalComponent,
     // remove when migration is done
     ViewHeaderComponent,
     ActionBarComponent,
@@ -221,7 +271,15 @@ import { FilesViewComponent } from './views/files-view/files-view.component';
     FileDropzoneComponent,
     LogoutViewComponent,
     PaginationComponent,
-    FilesViewComponent
+    FilesViewComponent,
+    ProjectEnvironmentsViewComponent,
+    HypothesisComponent,
+    DiscriminationTreeComponent,
+    ObservationTableComponent,
+    AdminUsersViewComponent,
+    ProfileViewComponent,
+    TestTreeComponent,
+    AdminSettingsViewComponent
   ]
   // bootstrap: [AppComponent]
 })

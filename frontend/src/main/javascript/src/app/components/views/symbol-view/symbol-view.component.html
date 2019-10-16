@@ -125,8 +125,8 @@
                                     </div>
 
                                     <div class="step-labels">
-                                        <span class="badge badge-info" ng-show="step.negated">Negate</span>
-                                        <span class="badge badge-danger" ng-show="step.ignoreFailure">Ignore Failure</span>
+                                        <span class="badge badge-info" ng-if="step.negated">Negate</span>
+                                        <span class="badge badge-danger" ng-if="step.ignoreFailure">Ignore Failure</span>
                                     </div>
                                     <div class="step-output text-muted d-flex">
                                         <div style="flex-shrink: 0">
@@ -149,10 +149,10 @@
 
                                 <div>
                                     <span class="btn btn-sm" ng-click="vm.toggleDisableAction(step)">
-                                        <span ng-show="!step.disabled" tooltip-placement="left" uib-tooltip="Disable">
+                                        <span ng-if="!step.disabled" tooltip-placement="left" uib-tooltip="Disable">
                                             <i class="fas fa-toggle-on fa-fw text-success"></i>
                                         </span>
-                                        <span ng-show="step.disabled" tooltip-placement="left" uib-tooltip="Enable">
+                                        <span ng-if="step.disabled" tooltip-placement="left" uib-tooltip="Enable">
                                             <i class="fas fa-toggle-off fa-fw text-danger"></i>
                                         </span>
                                     </span>

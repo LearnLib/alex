@@ -17,7 +17,7 @@
 import { LearnResult } from '../../../entities/learner-result';
 import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { TestApiService } from '../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../services/resources/test-api.service';
 
 export const testSuiteGenerationWidgetComponent = {
   template: require('html-loader!./test-suite-generation-widget.component.html'),

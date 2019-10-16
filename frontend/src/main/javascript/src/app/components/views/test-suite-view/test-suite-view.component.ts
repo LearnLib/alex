@@ -21,7 +21,7 @@ import { DateUtils } from '../../../utils/date-utils';
 import { Selectable } from '../../../utils/selectable';
 import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { TestApiService } from '../../../services/resources/test-resource.service';
+import { TestApiService } from '../../../services/resources/test-api.service';
 import { PromptService } from '../../../services/prompt.service';
 import { SettingsApiService } from '../../../services/resources/settings-api.service';
 import { DownloadService } from '../../../services/download.service';

@@ -21,10 +21,10 @@
 
             <div
               class="alert alert-danger alert-condensed"
-              ng-show="vm.form.step_no.$dirty && vm.form.step_no.$invalid"
+              ng-if="vm.form.step_no.$dirty && vm.form.step_no.$invalid"
             >
-              <small ng-show="vm.form.step_no.$error.required">The field must not be empty.</small>
-              <small ng-show="vm.form.step_no.$error.min">The value must be &ge; 1.</small>
+              <small ng-if="vm.form.step_no.$error.required">The field must not be empty.</small>
+              <small ng-if="vm.form.step_no.$error.min">The value must be &ge; 1.</small>
             </div>
 
             <div class="form-group">
@@ -36,10 +36,10 @@
 
             <div
               class="alert alert-danger alert-condensed"
-              ng-show="vm.form.max_steps.$dirty && vm.form.max_steps.$invalid"
+              ng-if="vm.form.max_steps.$dirty && vm.form.max_steps.$invalid"
             >
-              <small ng-show="vm.form.max_steps.$error.required">The field must not be empty.</small>
-              <small ng-show="vm.form.max_steps.$error.min">The value must be &ge; -1.</small>
+              <small ng-if="vm.form.max_steps.$error.required">The field must not be empty.</small>
+              <small ng-if="vm.form.max_steps.$error.min">The value must be &ge; -1.</small>
             </div>
           </div>
         </div>
