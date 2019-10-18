@@ -107,6 +107,47 @@ import { TestSuiteNodeComponent } from './views/test-suite-view/test-tree/test-s
 import { AdminSettingsViewComponent } from './views/admin-settings-view/admin-settings-view.component';
 import { ErrorViewComponent } from './views/error-view/error-view.component';
 import { ErrorViewStoreService } from './views/error-view/error-view-store.service';
+import { SimpleSymbolGroupTreeComponent } from './common/simple-symbol-group-tree/simple-symbol-group-tree.component';
+import { SimpleSymbolGroupTreeItemComponent } from './common/simple-symbol-group-tree/simple-symbol-group-tree-item/simple-symbol-group-tree-item.component';
+import { CreateSymbolGroupModalComponent } from './views/symbols-view/create-symbol-group-modal/create-symbol-group-modal.component';
+import { EditSymbolGroupModalComponent } from './views/symbols-view/edit-symbol-group-modal/edit-symbol-group-modal.component';
+import { MoveSymbolGroupModalComponent } from './views/symbols-view/move-symbol-group-modal/move-symbol-group-modal.component';
+import { SymbolFormGroupsComponent } from './views/symbols-view/symbol-form-groups/symbol-form-groups.component';
+import { CreateSymbolModalComponent } from './views/symbols-view/create-symbol-modal/create-symbol-modal.component';
+import { EditSymbolModalComponent } from './views/symbols-view/edit-symbol-modal/edit-symbol-modal.component';
+import { MoveSymbolsModalComponent } from './views/symbols-view/move-symbols-modal/move-symbols-modal.component';
+import { SelectSymbolModalComponent } from './common/select-symbol-modal/select-symbol-modal.component';
+import { SymbolUsagesModalComponent } from './common/symbol-usages-modal/symbol-usages-modal.component';
+import { SymbolsArchiveViewComponent } from './views/symbols-archive-view/symbols-archive-view.component';
+import { SearchFormComponent } from './common/search-form/search-form.component';
+import { SymbolSearchFormComponent } from './common/search-form/symbol-search-form/symbol-search-form.component';
+import { ExportSymbolsModalComponent } from './views/symbols-view/export-symbols-modal/export-symbols-modal.component';
+import { ImportSymbolsModalComponent } from './views/symbols-view/import-symbols-modal/import-symbols-modal.component';
+import { StateParamsService, StateService } from './providers';
+import { ExecutionResultModalComponent } from './common/execution-result-modal/execution-result-modal.component';
+import { ReportChartsComponent } from './views/test-report-view/report-donut-chart/report-charts.component';
+import { ReportOutputsColumnComponent } from './views/test-report-view/report-output-column/report-outputs-column.component';
+import { TestReportViewComponent } from './views/test-report-view/test-report-view.component';
+import { TestReportsViewComponent } from './views/test-reports-view/test-reports-view.component';
+import { TestCaseResultsViewComponent } from './views/test-case-results-view/test-case-results-view.component';
+import { FormatEqOraclePipe } from './pipes/format-eq-oracle.pipe';
+import { LearnerResultsViewComponent } from './views/learner-results-view/learner-results-view.component';
+import { LearnerResultDetailsModalComponent } from './common/learner-result-details-modal/learner-result-details-modal.component';
+import { LearnerResultListItemComponent } from './views/learner-results-view/learner-result-list-item/learner-result-list-item.component';
+import { TestsViewComponent } from './views/tests-view/tests-view.component';
+import { TestCaseViewComponent } from './views/test-case-view/test-case-view.component';
+import { TestSuiteViewComponent } from './views/test-suite-view/test-suite-view.component';
+import { TestConfigModalComponent } from './common/test-config-modal/test-config-modal.component';
+import { TestsImportModalComponent } from './common/tests-import-modal/tests-import-modal.component';
+import { TestSuiteTreeComponent } from './common/tests-move-modal/test-suite-tree-component/test-suite-tree.component';
+import { TestsMoveModalComponent } from './common/tests-move-modal/tests-move-modal.component';
+import { BrowserConfigFormComponent } from './common/browser-config-form/browser-config-form.component';
+import { LearnerResultListModalComponent } from './common/learner-result-list-modal/learner-result-list-modal.component';
+import { SeparatingWordModalComponent } from './common/separating-word-modal/separating-word-modal.component';
+import { SymbolsViewComponent } from './views/symbols-view/symbols-view.component';
+import { SymbolGroupHeaderComponent } from './views/symbols-view/symbols-symbol-group-tree/symbol-group-header/symbol-group-header.component';
+import { SymbolsSymbolGroupTreeComponent } from './views/symbols-view/symbols-symbol-group-tree/symbols-symbol-group-tree.component';
+import { SymbolItemComponent } from './views/symbols-view/symbols-symbol-group-tree/symbol-item/symbol-item.component';
 
 @NgModule({
   declarations: [
@@ -175,6 +216,46 @@ import { ErrorViewStoreService } from './views/error-view/error-view-store.servi
     TestSuiteNodeComponent,
     AdminSettingsViewComponent,
     ErrorViewComponent,
+    SimpleSymbolGroupTreeComponent,
+    SimpleSymbolGroupTreeItemComponent,
+    CreateSymbolGroupModalComponent,
+    EditSymbolGroupModalComponent,
+    MoveSymbolGroupModalComponent,
+    SymbolFormGroupsComponent,
+    CreateSymbolModalComponent,
+    EditSymbolModalComponent,
+    MoveSymbolsModalComponent,
+    SelectSymbolModalComponent,
+    SymbolUsagesModalComponent,
+    SymbolsArchiveViewComponent,
+    SearchFormComponent,
+    SymbolSearchFormComponent,
+    ExportSymbolsModalComponent,
+    ImportSymbolsModalComponent,
+    ReportChartsComponent,
+    ReportOutputsColumnComponent,
+    ExecutionResultModalComponent,
+    TestReportViewComponent,
+    TestReportsViewComponent,
+    TestCaseResultsViewComponent,
+    FormatEqOraclePipe,
+    LearnerResultsViewComponent,
+    LearnerResultDetailsModalComponent,
+    LearnerResultListItemComponent,
+    TestsViewComponent,
+    TestCaseViewComponent,
+    TestSuiteViewComponent,
+    TestSuiteTreeComponent,
+    TestConfigModalComponent,
+    TestsMoveModalComponent,
+    TestsImportModalComponent,
+    BrowserConfigFormComponent,
+    LearnerResultListModalComponent,
+    SeparatingWordModalComponent,
+    SymbolsViewComponent,
+    SymbolGroupHeaderComponent,
+    SymbolsSymbolGroupTreeComponent,
+    SymbolItemComponent
   ],
   imports: [
     BrowserModule,
@@ -197,6 +278,20 @@ import { ErrorViewStoreService } from './views/error-view/error-view-store.servi
       provide: HTTP_INTERCEPTORS,
       useClass: AngularjsJsonInterceptor,
       multi: true
+    },
+    {
+      provide: StateService,
+      useFactory: (i: any) => {
+        return i.get('$state');
+      },
+      deps: ['$injector']
+    },
+    {
+      provide: StateParamsService,
+      useFactory: (i: any) => {
+        return i.get('$stateParams');
+      },
+      deps: ['$injector']
     },
     ToastService,
     AppStoreService,
@@ -248,6 +343,23 @@ import { ErrorViewStoreService } from './views/error-view/error-view-store.servi
     EditEnvironmentVariableModalComponent,
     CreateUserModalComponent,
     EditUserModalComponent,
+    CreateSymbolGroupModalComponent,
+    EditSymbolGroupModalComponent,
+    MoveSymbolGroupModalComponent,
+    CreateSymbolModalComponent,
+    EditSymbolModalComponent,
+    MoveSymbolsModalComponent,
+    SelectSymbolModalComponent,
+    SymbolUsagesModalComponent,
+    ExportSymbolsModalComponent,
+    ImportSymbolsModalComponent,
+    ExecutionResultModalComponent,
+    LearnerResultDetailsModalComponent,
+    TestConfigModalComponent,
+    TestsMoveModalComponent,
+    TestsImportModalComponent,
+    LearnerResultListModalComponent,
+    SeparatingWordModalComponent,
     // remove when migration is done
     ViewHeaderComponent,
     ActionBarComponent,
@@ -279,7 +391,23 @@ import { ErrorViewStoreService } from './views/error-view/error-view-store.servi
     AdminUsersViewComponent,
     ProfileViewComponent,
     TestTreeComponent,
-    AdminSettingsViewComponent
+    AdminSettingsViewComponent,
+    SimpleSymbolGroupTreeComponent,
+    SimpleSymbolGroupTreeItemComponent,
+    SymbolsArchiveViewComponent,
+    SearchFormComponent,
+    SymbolSearchFormComponent,
+    ReportChartsComponent,
+    ReportOutputsColumnComponent,
+    TestReportViewComponent,
+    TestReportsViewComponent,
+    TestsViewComponent,
+    TestSuiteViewComponent,
+    TestCaseViewComponent,
+    TestCaseResultsViewComponent,
+    LearnerResultsViewComponent,
+    LearnerResultListItemComponent,
+    SymbolsViewComponent,
   ]
   // bootstrap: [AppComponent]
 })

@@ -26,6 +26,8 @@ import { LearnResult } from '../../../entities/learner-result';
 import { Project } from '../../../entities/project';
 import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
 import { AppStoreService } from '../../../services/app-store.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SelectSymbolModalComponent } from '../../../common/select-symbol-modal/select-symbol-modal.component';
 
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
@@ -57,7 +59,8 @@ class LearnerSetupViewComponent {
               private toastService: ToastService,
               private learnerResultApi: LearnerResultApiService,
               private settingsApi: SettingsApiService,
-              private $uibModal: any) {
+              private $uibModal: any,
+              private modalService: NgbModal) {
 
     this.groups = [];
     this.learnResults = [];
@@ -116,17 +119,15 @@ class LearnerSetupViewComponent {
 
   /** @param symbol The symbol that will be used to reset the sul. */
   selectResetSymbol(): void {
-    this.$uibModal.open({
-      component: 'symbolSelectModal'
-    }).result.then((s: AlphabetSymbol) => {
+    const modalRef = this.modalService.open(SelectSymbolModalComponent);
+    modalRef.result.then((s: AlphabetSymbol) => {
       this.pResetSymbol = ParametrizedSymbol.fromSymbol(s);
     });
   }
 
   selectPostSymbol(): void {
-    this.$uibModal.open({
-      component: 'symbolSelectModal'
-    }).result.then((s: AlphabetSymbol) => {
+    const modalRef = this.modalService.open(SelectSymbolModalComponent);
+    modalRef.result.then((s: AlphabetSymbol) => {
       this.pPostSymbol = ParametrizedSymbol.fromSymbol(s);
     });
   }

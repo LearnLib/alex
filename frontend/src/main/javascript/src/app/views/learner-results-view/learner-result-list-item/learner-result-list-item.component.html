@@ -1,0 +1,24 @@
+<div class="d-flex learner-result-list-item">
+  <selectable-checkbox [item]="result" [selectable]="selectable"></selectable-checkbox>
+  <div class="flex-grow-1 mr-3 ml-3">
+    <span class="badge badge-danger float-right" *ngIf="result.error">Failed</span>
+    <strong>
+      <a [href]="'#!/projects/' + result.project + '/learner/results/' + result.testNo">
+        Test No {{result.testNo}}
+      </a>
+    </strong>
+    [{{result.algorithm.name | formatLearningAlgorithm}}]
+    <div class="text-muted">
+      <em>
+        Started: {{result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}
+      </em>
+    </div>
+    <div>
+      <span class="badge badge-default mr-1" *ngFor="let env of result.environments">{{env.name}}</span>
+    </div>
+    <div class="comment text-muted" *ngIf="result.comment">{{result.comment}}</div>
+  </div>
+  <div>
+    <ng-content></ng-content>
+  </div>
+</div>

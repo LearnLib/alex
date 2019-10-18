@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title">Edit symbol {{symbol.name}}</h4>
+  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="updateSymbol()">
+
+  <div class="modal-body">
+
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      {{errorMessage}}
+    </div>
+
+    <symbol-form-groups [symbol]="symbol" [form]="form"></symbol-form-groups>
+
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="submit" [disabled]="form.invalid">Update</button>
+    <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.preventDefault()">Cancel</button>
+  </div>
+
+</form>

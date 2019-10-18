@@ -17,6 +17,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProjectsViewStoreService } from './projects-view-store.service';
 import { AppStoreService } from '../../services/app-store.service';
+import { StateService } from '../../providers';
 
 @Component({
   selector: 'projects-view',
@@ -26,7 +27,9 @@ import { AppStoreService } from '../../services/app-store.service';
 export class ProjectsViewComponent implements OnInit {
 
   constructor(public store: ProjectsViewStoreService,
-              private appStore: AppStoreService) {
+              private appStore: AppStoreService,
+              private $state: StateService) {
+    console.log($state)
   }
 
   ngOnInit() {

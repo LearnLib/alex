@@ -1,0 +1,96 @@
+<div class="view view-test-reports">
+  <view-header [title]="'Test Reports'"></view-header>
+  <action-bar>
+    <div *ngIf="reports.length > 0" class="d-flex flex-row align-items-center">
+      <selectable-checkbox-multiple [selectable]="selectedReports"></selectable-checkbox-multiple>
+
+      <div class="w-100 ml-3">
+        <div class="btn-group btn-group-sm">
+          <button
+            class="btn btn-default"
+            (click)="deleteSelectedReports()"
+            [disabled]="!selectedReports.isAnySelected()"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </action-bar>
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <div class="alert alert-info" *ngIf="reports.length === 0">
+        There are no reports.
+      </div>
+
+      <div *ngIf="reports.length > 0">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>Date</th>
+            <th>Environment</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th>Failed</th>
+            <th>Time</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let report of reports">
+            <th width="1%">
+              <selectable-checkbox [item]="report" [selectable]="selectedReports"></selectable-checkbox>
+            </th>
+            <td width="1%" style="min-width: 140px;">{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
+            <td width="1%">
+              <span class="badge badge-default">{{report.environment.name}}</span>
+            </td>
+            <td width="1%">
+              <span class="badge badge-success" *ngIf="report.passed">Passed</span>
+              <span class="badge badge-danger" *ngIf="!report.passed">Failed</span>
+            </td>
+            <td width="1%" class="text-center">
+              {{report.numTests}}
+            </td>
+            <td width="1%" class="text-center">
+              {{report.numTestsFailed}}
+            </td>
+            <td width="1%" style="min-width: 80px">
+              {{report.time | formatMilliseconds}}
+            </td>
+            <td width="100%">
+              <a [href]="'#!/projects/' + report.project + '/tests/reports/' + report.id">Details</a>
+            </td>
+            <td width="1%">
+              <div class="btn-group btn-group-sm" ngbDropdown>
+                <button type="button" class="btn btn-default btn-icon no-caret" ngbDropdownToggle>
+                  <i class="fas fa-bars"></i>
+                </button>
+                <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">
+                  <a ngbDropdownItem [href]="'#!/projects/' + report.project + '/tests/reports/' + report.id">
+                    <i class="fas fa-fw fa-search"></i> Details
+                  </a>
+                  <div ngbDropdownItem (click)="deleteReport(report)">
+                    <i class="fas fa-fw fa-trash"></i> Delete
+                  </div>
+                  <div class="dropdown-divider"></div>
+                  <div ngbDropdownItem (click)="downloadReport(report)">
+                    <i class="fas fa-fw fa-download"></i> Download
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <hr>
+
+        <pagination [page]="page" (next)="nextPage()" (previous)="previousPage()"></pagination>
+      </div>
+
+    </div>
+  </div>
+</div>

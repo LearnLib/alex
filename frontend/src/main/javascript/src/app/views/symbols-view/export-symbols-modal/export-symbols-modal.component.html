@@ -1,0 +1,28 @@
+<div class="modal-header">
+  <h4 class="modal-title">Export symbols</h4>
+  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form (ngSubmit)="export()">
+
+  <div class="modal-body">
+    <div class="form-group">
+      <label>Filename</label>
+      <input type="text" [(ngModel)]="filename" name="filename" required class="form-control">
+    </div>
+
+    <div class="form-group form-check">
+      <label class="form-check-label">
+        <input type="checkbox" class="form-check-input" name="export" [(ngModel)]="exportSymbolsOnly"> Export symbols only
+      </label>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-primary" type="submit">Export</button>
+    <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.stopPropagation()">Cancel</button>
+  </div>
+
+</form>

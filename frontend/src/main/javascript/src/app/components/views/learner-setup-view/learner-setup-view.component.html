@@ -43,13 +43,13 @@
                         </div>
                         <div class="card-body">
                             <div style="height: 31px; position: relative; z-index: 10" class="mb-2">
-                                <symbol-search-form groups="vm.groups" on-selected="vm.handleSymbolSelected(symbol)"></symbol-search-form>
+                                <symbol-search-form [groups]="vm.groups" (selected)="vm.handleSymbolSelected($event)"></symbol-search-form>
                             </div>
 
                             <simple-symbol-group-tree
-                              groups="vm.groups"
-                              on-symbol-selected="vm.handleSymbolSelected(symbol)"
-                              on-symbol-group-selected="vm.handleSymbolGroupSelected(group)"
+                              [groups]="vm.groups"
+                              (symbol-selected)="vm.handleSymbolSelected($event)"
+                              (group-selected)="vm.handleSymbolGroupSelected($event)"
                             >
                             </simple-symbol-group-tree>
                         </div>

@@ -1,0 +1,198 @@
+<div class="view">
+  <view-header [title]="'Test Management'"></view-header>
+  <action-bar>
+    <div class="d-flex flex-row align-items-center">
+      <selectable-checkbox-multiple [selectable]="selectedTests"></selectable-checkbox-multiple>
+      <div class="w-100 ml-3">
+        <div class="btn-group btn-group-sm mr-2" ngbDropdown>
+          <button class="btn btn-primary" ngbDropdownToggle>
+            Create
+          </button>
+          <div ngbDropdownMenu class="dropdown-menu dropdown-menu-left" role="menu">
+            <div ngbDropdownItem (click)="createTestSuite()">
+              Test suite
+            </div>
+            <div ngbDropdownItem (click)="createTestCase()">
+              Test case
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-group btn-group-sm mr-2">
+          <button
+            class="btn btn-default"
+            (click)="moveSelected()"
+            [disabled]="!selectedTests.isAnySelected()"
+          >
+            Move
+          </button>
+          <button
+            class="btn btn-default"
+            (click)="deleteSelected()"
+            [disabled]="!selectedTests.isAnySelected()"
+          >
+            Delete
+          </button>
+        </div>
+
+        <div class="btn-group btn-group-sm mr-2">
+          <button class="btn btn-default" ngbTooltip="Import" placement="bottom" (click)="importTests()">
+            <i class="fas fa-fw fa-upload"></i>
+          </button>
+          <div class="btn-group btn-group-sm mr-0" ngbDropdown>
+            <button
+              class="btn btn-default"
+              ngbDropdownToggle
+              ngbTooltip="Export"
+              placement="bottom"
+              [disabled]="!selectedTests.isAnySelected()"
+            >
+              <i class="fas fa-fw fa-download"></i>
+            </button>
+            <div ngbDropdownMenu class="dropdown-menu" role="menu">
+              <div ngbDropdownItem (click)="exportSelectedTests()">
+                Export for ALEX
+              </div>
+              <div ngbDropdownItem (click)="exportForSelenium()">
+                Export for Selenium
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-group btn-group-sm" ngbDropdown>
+          <button
+            class="btn btn-default"
+            ngbTooltip="Copy"
+            placement="bottom"
+            (click)="copyTests()"
+            [disabled]="!selectedTests.isAnySelected()"
+          >
+            <i class="fas fa-fw fa-copy"></i>
+          </button>
+          <button class="btn btn-default" ngbTooltip="Paste" placement="bottom" (click)="pasteTests()">
+            <i class="fas fa-fw fa-paste"></i>
+          </button>
+        </div>
+
+        <div class="btn-group btn-group-sm float-right ml-2">
+          <button class="btn btn-success" ngbTooltip="Save configuration" placement="left" (click)="saveTestConfig()">
+            <i class="fas fa-fw fa-save"></i>
+          </button>
+        </div>
+
+        <div class="btn-group btn-group-sm float-right">
+          <button class="btn btn-primary" (click)="executeSelected()">
+            <span *ngIf="!status.active">Execute</span>
+            <span *ngIf="status.active">Enqueue</span>
+          </button>
+          <button class="btn btn-primary" (click)="openTestConfigModal()">
+            <i class="fas fa-fw fa-cog"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </action-bar>
+  <div class="view-body">
+    <div class="container-fluid">
+
+      <div *ngIf="status.active">
+        <div class="alert alert-info d-flex flex-row">
+          <div class="w-100">
+            <i class="fas fa-circle-notch fa-spin"></i>&nbsp;
+            Tests are being executed. There are <strong>{{status.testsInQueue}}</strong> processes in the queue.
+          </div>
+          <div>
+            <button class="btn btn-info btn-xs" (click)="abortTesting()">Abort</button>
+          </div>
+        </div>
+        <hr>
+      </div>
+
+      <div class="d-flex flex-row align-items-center">
+        <a
+          class="btn btn-sm btn-default mr-3"
+          href="{{'#!/projects/' + testSuite.project + '/tests/' + testSuite.parent}}"
+          *ngIf="testSuite.parent != null"
+        >
+          <i class="fas fa-fw fa-level-up-alt"></i>
+        </a>
+        <h4 *ngIf="testSuite.name" class="m-0">
+          <strong><i class="fas fa-fw fa-folder"></i> {{testSuite.name}}</strong>
+        </h4>
+      </div>
+
+      <hr>
+
+      <div class="row" *ngIf="testSuite.tests.length > 0">
+        <div class="col-sm-12 col-md-9 mb-4">
+
+          <div class="list-group test-list">
+            <div class="list-group-item test-list-item" *ngFor="let test of testSuite.tests">
+
+              <div class="d-flex flex-row">
+                <div style="padding-right: 12px">
+                  <selectable-checkbox [item]="test" [selectable]="selectedTests"></selectable-checkbox>
+                </div>
+                <div class="test-list-item-content flex-grow-1">
+                  <test-tree [root]="test" [results]="results"></test-tree>
+                </div>
+                <div class="pl-2" *ngIf="status != null && status.currentTest != null && status.currentTest.id === test.id">
+                  <span class="badge badge-info">
+                      <i class="fas fa-fw fa-circle-notch fa-spin"></i> In progress
+                  </span>
+                </div>
+                <div style="padding-left: 6px">
+                  <div class="btn-group btn-group-xs" ngbDropdown>
+                    <button class="btn btn-icon btn-dropdown no-caret" ngbDropdownToggle>
+                      <i class="fas fa-fw fa-bars"></i>
+                    </button>
+                    <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">
+                      <div ngbDropdownItem (click)="editTest(test)">
+                        <i class="fas fa-fw fa-edit"></i> Edit
+                      </div>
+                      <div ngbDropdownItem (click)="deleteTest(test)">
+                        <i class="fas fa-fw fa-trash"></i> Delete
+                      </div>
+                      <div class="dropdown-divider" *ngIf="test.type === 'case'"></div>
+                      <a
+                        ngbDropdownItem
+                        [href]="'#!/projects/' + project.id + '/tests/' + test.id + '/results'"
+                        *ngIf="test.type === 'case'"
+                      >
+                        <i class="fas fa-fw fa-history"></i> Results
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div *ngIf="report != null" style="margin-top: 48px">
+            <test-result-report [report]="report"></test-result-report>
+          </div>
+
+        </div>
+        <div class="col-sm-12 col-md-3">
+          <test-config-list
+            [configs]="testConfigs"
+            (selected)="selectTestConfig($event)"
+            *ngIf="testConfigs.length > 0"
+          >
+          </test-config-list>
+
+          <div class="alert alert-info" *ngIf="testConfigs.length === 0">
+            There are no saved configurations yet.
+          </div>
+        </div>
+      </div>
+
+      <div class="alert alert-info" *ngIf="!testSuite.tests.length">
+        You haven't created any tests yet.
+      </div>
+
+    </div>
+  </div>
+</div>

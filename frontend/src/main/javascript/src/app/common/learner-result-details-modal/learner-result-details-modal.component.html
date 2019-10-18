@@ -1,0 +1,109 @@
+<div class="modal-header">
+  <h4 class="modal-title">Test details</h4>
+  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div class="modal-body">
+
+  <table class="table">
+    <tr class="active">
+      <td colspan="2"><strong>About this test</strong></td>
+    </tr>
+    <tr>
+      <td>nth Test</td>
+      <td>{{result.testNo}}</td>
+    </tr>
+    <tr>
+      <td>|Sigma|</td>
+      <td>{{result.symbols.length}}</td>
+    </tr>
+    <tr>
+      <td>Algorithm</td>
+      <td>{{result.algorithm.name | formatLearningAlgorithm}}</td>
+    </tr>
+    <tr>
+      <td>Web Driver</td>
+      <td>
+        {{result.driverConfig.name | formatWebBrowser}} ({{result.driverConfig.width}}px x
+        {{result.driverConfig.height}}px)
+      </td>
+    </tr>
+  </table>
+
+  <h4>Statistics</h4>
+  <hr>
+
+  <ngb-tabset [justify]="'center'">
+    <ngb-tab *ngFor="let tab of tabs" [title]="tab.heading">
+      <ng-template ngbTabContent>
+
+        <div class="alert alert-condensed alert-danger" *ngIf="tab.result.error">
+          <i class="fas fa-fw fa-warning"></i> <strong>This step failed:</strong>
+          <span>{{tab.result.errorText}}</span>
+        </div>
+
+        <table class="table">
+
+          <tr>
+            <td>nth Step</td>
+            <td>{{tab.result.stepNo}}</td>
+          </tr>
+
+          <tr>
+            <td>Started</td>
+            <td>{{tab.result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
+          </tr>
+
+          <tr class="active" *ngIf="tab.result.eqOracle">
+            <td colspan="2"><strong>Configuration</strong></td>
+          </tr>
+          <tr *ngIf="tab.result.eqOracle">
+            <td>EQ Oracle</td>
+            <td>{{tab.result.eqOracle.type | formatEqOracle}}</td>
+          </tr>
+          <tr *ngIf="tab.result.eqOracle">
+            <td>Steps to Learn</td>
+            <td>{{tab.result.stepsToLearn}}</td>
+          </tr>
+
+          <tr class="active">
+            <td colspan="2"><strong>Numbers</strong></td>
+          </tr>
+          <tr>
+            <td>Duration</td>
+            <td>{{tab.result.statistics.duration.total | formatMilliseconds}} (Learner:
+              {{tab.result.statistics.duration.learner | formatMilliseconds}}, EQ Oracle:
+              {{tab.result.statistics.duration.eqOracle | formatMilliseconds}})
+            </td>
+          </tr>
+          <tr>
+            <td>#Membership Queries</td>
+            <td>{{tab.result.statistics.mqsUsed.total}} (Learner: {{tab.result.statistics.mqsUsed.learner}}, EQ Oracle:
+              {{tab.result.statistics.mqsUsed.eqOracle}})
+            </td>
+          </tr>
+          <tr>
+            <td>#Equivalence Queries</td>
+            <td>{{tab.result.statistics.eqsUsed}}</td>
+          </tr>
+          <tr>
+            <td>#Symbol Calls</td>
+            <td>{{tab.result.statistics.symbolsUsed.total}} (Learner: {{tab.result.statistics.symbolsUsed.learner}}, EQ
+              Oracle: {{tab.result.statistics.symbolsUsed.eqOracle}})
+            </td>
+          </tr>
+
+        </table>
+
+      </ng-template>
+    </ngb-tab>
+  </ngb-tabset>
+
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-sm btn-primary" (click)="modal.dismiss()">Ok</button>
+  <button class="btn btn-default btn-sm" (click)="modal.dismiss()">Cancel</button>
+</div>

@@ -1,0 +1,19 @@
+<div class="symbol-item d-flex w-100">
+  <div [ngClass]="{'visibility-hidden': !selectable}">
+    <selectable-checkbox [item]="symbol" [selectable]="selectedSymbols"></selectable-checkbox>
+  </div>
+  <div class="w-100 pl-3">
+    <div>
+      <a [href]="'#!/projects/' + symbol.project + '/symbols/' + symbol.id">
+        <strong>{{symbol.name}}</strong>
+      </a>
+      <i class="text-muted fa fa-cubes fa-fw" *ngIf="symbol.containsSymbolSteps()"></i>
+    </div>
+    <div *ngIf="symbol.steps.length === 0">
+      <span class="badge badge-info">Not implemented</span>
+    </div>
+  </div>
+  <div>
+    <ng-content></ng-content>
+  </div>
+</div>

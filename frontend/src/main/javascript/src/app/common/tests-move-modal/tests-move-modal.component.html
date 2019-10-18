@@ -1,0 +1,33 @@
+<div class="modal-header">
+  <h4 class="modal-title">Move tests</h4>
+  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div class="modal-body pb-0">
+  <div class="alert alert-danger" *ngIf="errorMessage != null">
+    {{errorMessage}}
+  </div>
+
+  <div class="alert alert-info alert-condensed">
+    Move {{tests.length}} test(s) to another test suite.
+  </div>
+
+  <label>Target test suite</label>
+  <div class="card" *ngIf="root != null">
+    <div class="card-body" style="overflow: auto; max-height: 420px">
+      <test-suite-tree
+        [testSuite]="root"
+        [selectedTestSuite]="selectedTestSuite"
+        (selected)="selectTestSuite($event)"
+      >
+      </test-suite-tree>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-primary btn-sm" (click)="moveTests()">Move</button>
+  <button class="btn btn-default btn-sm" (click)="modal.dismiss()">Cancel</button>
+</div>

@@ -264,7 +264,7 @@ export function config($stateProvider, $urlRouterProvider) {
       parent: 'learner',
       url: '/results',
       views: {
-        '@': {template: '<results-view></results-view>'}
+        '@': {template: '<learner-results-view></learner-results-view>'}
       },
       data: {title: 'Results'}
     })

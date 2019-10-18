@@ -30,6 +30,8 @@ import { Project } from '../../../entities/project';
 import { Action } from '../../../entities/actions/action';
 import { AppStoreService } from '../../../services/app-store.service';
 import { ErrorViewStoreService } from '../../../views/error-view/error-view-store.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SelectSymbolModalComponent } from '../../../common/select-symbol-modal/select-symbol-modal.component';
 
 /**
  * The controller that handles the page for managing all actions of a symbol. The symbol whose actions should be
@@ -57,7 +59,8 @@ class SymbolViewComponent {
               private errorViewStore: ErrorViewStoreService,
               private dragulaService: any,
               private $uibModal: any,
-              private symbolGroupApi: SymbolGroupApiService) {
+              private symbolGroupApi: SymbolGroupApiService,
+              private modalService: NgbModal) {
 
     this.symbol = null;
     this.groups = [];
@@ -150,9 +153,8 @@ class SymbolViewComponent {
    * Adds a new action to the list of actions of the symbol and gives it a temporary unique id.
    */
   addSymbolStep(): void {
-    this.$uibModal.open({
-      component: 'symbolSelectModal'
-    }).result.then((symbol: AlphabetSymbol) => {
+    const modalRef = this.modalService.open(SelectSymbolModalComponent);
+    modalRef.result.then((symbol: AlphabetSymbol) => {
       if (symbol.id === this.symbol.id) {
         this.toastService.info('A symbol cannot execute itself');
         return;
@@ -284,14 +286,12 @@ class SymbolViewComponent {
   }
 
   editSymbolStep(step: any): void {
-    this.$uibModal.open({
-      component: 'symbolSelectModal'
-    }).result.then((selectedSymbol: AlphabetSymbol) => {
+    const modalRef = this.modalService.open(SelectSymbolModalComponent);
+    modalRef.result.then((selectedSymbol: AlphabetSymbol) => {
       if (selectedSymbol.id === this.symbol.id) {
         this.toastService.info('A symbol cannot execute itself');
         return;
       }
-
       step.symbol = ParametrizedSymbol.fromSymbol(selectedSymbol);
     });
   }

@@ -52,4 +52,8 @@ export class SymbolGroup {
     this.symbols = obj.symbols ? obj.symbols.filter(s => !s.hidden).map(s => new AlphabetSymbol(s)) : [];
     this.groups = obj.groups ? obj.groups.map(g => new SymbolGroup(g)) : [];
   }
+
+  copy(): SymbolGroup {
+    return new SymbolGroup(JSON.parse(JSON.stringify(this)));
+  }
 }

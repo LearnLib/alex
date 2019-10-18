@@ -1,0 +1,25 @@
+<div
+  class="symbol-group-header d-flex flex-row align-items-center"
+  [ngClass]="{'collapse': collapse}"
+>
+  <div>
+    <i
+      class="far fa-fw cursor-pointer"
+      [ngClass]="{'fa-minus-square': !collapse, 'fa-plus-square': collapse}"
+      (click)="collapse = !collapse"
+    >
+    </i>
+  </div>
+  <div class="pl-3">
+    <selectable-checkbox-multiple [items]="group.symbols" [selectable]="selectedSymbols"></selectable-checkbox-multiple>
+  </div>
+  <div class="w-100 pl-3 py-0">
+    <span class="symbol-group-name">{{group.name}}</span>
+  </div>
+  <div class="mr-3" *ngIf="group.symbols.length === 0 && group.groups.length === 0">
+    <span class="badge badge-default">Empty</span>
+  </div>
+  <div>
+    <ng-content></ng-content>
+  </div>
+</div>

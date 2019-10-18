@@ -1,0 +1,74 @@
+<div class="view">
+  <view-header [title]="'Symbol Archive'"></view-header>
+
+  <action-bar>
+    <div *ngIf="symbols.length > 0" class="d-flex flex-row align-items-center">
+      <selectable-checkbox-multiple [selectable]="selectedSymbols"></selectable-checkbox-multiple>
+
+      <div class="w-100 ml-3">
+        <button
+          class="btn btn-sm btn-primary mr-2"
+          (click)="recoverSelectedSymbols()"
+          [disabled]="!selectedSymbols.isAnySelected()"
+        >
+          <i class="fas fa-undo fa-fw"></i> Recover
+        </button>
+
+        <button
+          class="btn btn-sm btn-default"
+          (click)="deleteSelectedSymbols()"
+          [disabled]="!selectedSymbols.isAnySelected()"
+        >
+          <i class="fas fa-trash fa-fw"></i> Delete
+        </button>
+      </div>
+    </div>
+  </action-bar>
+
+  <div class="view-body has-sub-nav">
+    <div class="container-fluid">
+
+      <div class="alert alert-info" *ngIf="symbols.length === 0">
+        There aren't any deleted symbols.
+      </div>
+
+      <div class="list-group">
+        <div class="list-group-item d-flex flex-row align-items-center" *ngFor="let symbol of symbols">
+
+          <div class="mr-3">
+            <selectable-checkbox [item]="symbol" [selectable]="selectedSymbols"></selectable-checkbox>
+          </div>
+
+          <div class="w-100 mr-1">
+            <strong>{{symbol.name}}</strong>
+          </div>
+
+          <div>
+            <div class="btn-group btn-group-xs" ngbDropdown>
+              <button type="button" class="btn btn-default btn-icon no-caret" ngbDropdownToggle>
+                <i class="fas fa-bars"></i>
+              </button>
+              <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">
+                <button ngbDropdownItem (click)="editSymbol(symbol)">
+                  <i class="fas fa-edit fa-fw"></i> Edit
+                </button>
+                <button ngbDropdownItem (click)="recoverSymbol(symbol)">
+                  <i class="fas fa-undo fa-fw"></i> Recover
+                </button>
+                <button ngbDropdownItem (click)="showUsages(symbol)">
+                  <i class="fas fa-search fa-fw"></i> Usages
+                </button>
+                <div class="dropdown-divider"></div>
+                <button ngbDropdownItem (click)="deleteSymbol(symbol)">
+                  <i class="fas fa-trash fa-fw"></i> Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,38 @@
+<div class="modal-header">
+  <h4 class="modal-title">Edit the symbol group</h4>
+  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="updateGroup()">
+
+  <div class="modal-body">
+
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      {{errorMessage}}
+    </div>
+
+    <div class="form-group">
+      <label>Name</label>
+      <input
+        class="form-control"
+        type="text"
+        placeholder="The name of the group"
+        required
+        [formControl]="form.controls.name"
+        [class.is-invalid]="isInvalidFormControl(form.controls.name)"
+      >
+      <div class="invalid-feedback">
+        Please provide name for the group.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-primary" type="submit" [disabled]="form.invalid">Update</button>
+    <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.preventDefault()">Cancel</button>
+  </div>
+
+</form>
