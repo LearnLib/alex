@@ -15,7 +15,7 @@
  */
 
 import { environment as env } from '../../../environments/environment';
-import { LearnResult } from '../../entities/learner-result';
+import { LearnerResult } from '../../entities/learner-result';
 import { LearnConfiguration } from '../../entities/learner-configuration';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
@@ -75,7 +75,7 @@ export class LearnerApiService extends BaseApiService {
       .pipe(
         map((body: any) => {
           if (body.result != null) {
-            body.result = new LearnResult(body.result);
+            body.result = new LearnerResult(body.result);
           }
           return body;
         })

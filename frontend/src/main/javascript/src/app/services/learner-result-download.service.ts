@@ -16,7 +16,7 @@
 
 import { DownloadService } from './download.service';
 import { PromptService } from './prompt.service';
-import { LearnResult } from '../entities/learner-result';
+import { LearnerResult } from '../entities/learner-result';
 import { Injectable } from '@angular/core';
 
 /**
@@ -34,7 +34,7 @@ export class LearnerResultDownloadService {
    *
    * @param results The learn results to download as csv.
    */
-  download(results: LearnResult[]): Promise<any> {
+  download(results: LearnerResult[]): Promise<any> {
     let csv = 'Project;Test no;Start time;Step no;Algorithm;EQ oracle;|Sigma|;#EQs;'
       + '#MQs (total);#MQs (learner);#MQs (EQ oracle);'
       + '#Symbol calls (total);#Symbol calls (learner);#Symbol calls (EQ oracle);'

@@ -1,19 +1,17 @@
 <div class="view">
-  <view-header [title]="'Counters'"></view-header>
-
   <action-bar>
     <div class="d-flex flex-row align-items-center">
       <selectable-checkbox-multiple [selectable]="store.countersSelectable"></selectable-checkbox-multiple>
 
       <div class="w-100 ml-3">
-        <button class="btn btn-sm btn-primary mr-2" (click)="store.createCounter()">
+        <button (click)="store.createCounter()" class="btn btn-sm btn-primary mr-2">
           Create
         </button>
 
         <button
-          class="btn btn-sm btn-default"
           (click)="store.deleteSelectedCounters()"
           [disabled]="!store.countersSelectable.isAnySelected()"
+          class="btn btn-sm btn-default"
         >
           Delete
         </button>
@@ -24,10 +22,10 @@
   <div class="view-body">
     <div class="container-fluid">
 
-      <div class="list-group" *ngIf="(store.counters$ | async).length > 0">
-        <div class="list-group-item" *ngFor="let counter of store.counters$ | async">
+      <div *ngIf="(store.counters$ | async).length > 0" class="list-group">
+        <div *ngFor="let counter of store.counters$ | async" class="list-group-item">
 
-          <div class="d-flex" *ngIf="counter.id !== counterUnderEdit.id">
+          <div *ngIf="counter.id !== counterUnderEdit.id" class="d-flex">
             <selectable-checkbox [item]="counter" [selectable]="store.countersSelectable"></selectable-checkbox>
             <div class="flex-grow-1 mx-3">
               <strong>{{counter.name}}</strong><br>
@@ -39,10 +37,10 @@
                   <i class="fas fa-fw fa-bars"></i>
                 </button>
                 <div ngbDropdownMenu>
-                  <button ngbDropdownItem (click)="counterUnderEdit = counter.copy()">
+                  <button (click)="counterUnderEdit = counter.copy()" ngbDropdownItem>
                     <i class="fas fa-fw fa-edit"></i> Edit
                   </button>
-                  <button ngbDropdownItem (click)="store.deleteCounter(counter)">
+                  <button (click)="store.deleteCounter(counter)" ngbDropdownItem>
                     <i class="fas fa-fw fa-trash"></i> Delete
                   </button>
                 </div>
@@ -60,20 +58,21 @@
                 <form (ngSubmit)="store.updateCounter(counterUnderEdit); resetCounterUnderEdit();" class="d-flex">
                   <div class="form-group flex-grow-1 mb-0" style="margin-right: 8px">
                     <input
-                      class="form-control"
-                      type="number"
-                      min="0"
-                      placeholder="The value of the counter"
-                      name="value"
                       [(ngModel)]="counterUnderEdit.value"
+                      class="form-control"
+                      min="0"
+                      name="value"
+                      placeholder="The value of the counter"
+                      type="number"
                     >
                   </div>
                   <div class="form-group mb-0" style="margin-right: 8px">
-                    <input class="btn btn-primary" type="submit" value="Update">
-                  </div>
-                  <div class="form-group mb-0">
-                    <button class="btn btn-default" (click)="resetCounterUnderEdit(); $event.stopPropagation()">Cancel
-                    </button>
+                    <div class="btn-group">
+                      <input class="btn btn-primary" type="submit" value="Update">
+                      <button (click)="resetCounterUnderEdit(); $event.stopPropagation()" class="btn btn-default">
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 </form>
               </div>
@@ -83,7 +82,7 @@
         </div>
       </div>
 
-      <div class="alert alert-info" *ngIf="(store.counters$ | async).length === 0">
+      <div *ngIf="(store.counters$ | async).length === 0" class="alert alert-info">
         There aren't any counters yet
       </div>
 

@@ -12,7 +12,7 @@ import { EditSymbolGroupModalComponent } from '../edit-symbol-group-modal/edit-s
 import { MoveSymbolGroupModalComponent } from '../move-symbol-group-modal/move-symbol-group-modal.component';
 import { EditSymbolModalComponent } from '../edit-symbol-modal/edit-symbol-modal.component';
 import { MoveSymbolsModalComponent } from '../move-symbols-modal/move-symbols-modal.component';
-import { SymbolUsagesModalComponent } from '../../../common/symbol-usages-modal/symbol-usages-modal.component';
+import { SymbolUsagesModalComponent } from '../../../common/modals/symbol-usages-modal/symbol-usages-modal.component';
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({

@@ -24,7 +24,7 @@ import { AppStoreService } from '../../services/app-store.service';
 import { EditSymbolModalComponent } from '../symbols-view/edit-symbol-modal/edit-symbol-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Component, OnInit } from '@angular/core';
-import { SymbolUsagesModalComponent } from '../../common/symbol-usages-modal/symbol-usages-modal.component';
+import { SymbolUsagesModalComponent } from '../../common/modals/symbol-usages-modal/symbol-usages-modal.component';
 
 /**
  * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover
@@ -49,6 +49,10 @@ export class SymbolsArchiveViewComponent implements OnInit {
 
     this.symbols = [];
     this.selectedSymbols = new Selectable(this.symbols, 'id');
+  }
+
+  get project(): Project {
+    return this.appStore.project;
   }
 
   ngOnInit(): void {
@@ -117,7 +121,8 @@ export class SymbolsArchiveViewComponent implements OnInit {
     modalRef.result.then((updatedSymbol: AlphabetSymbol) => {
       const i = this.symbols.findIndex(s => s.id === updatedSymbol.id);
       this.symbols[i].name = updatedSymbol.name;
-    }).catch(() => {});
+    }).catch(() => {
+    });
   }
 
   deleteSymbol(symbol: AlphabetSymbol): void {
@@ -148,9 +153,5 @@ export class SymbolsArchiveViewComponent implements OnInit {
         this.toastService.danger(`The symbols could not be deleted. ${res.error.message}`)
       }
     );
-  }
-
-  get project(): Project {
-    return this.appStore.project;
   }
 }

@@ -1,0 +1,61 @@
+<div class="modal-header">
+  <h4 class="modal-title">Edit the layout</h4>
+  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form (ngSubmit)="update()">
+
+  <div class="modal-body">
+
+    <div class="form-group">
+      <label>Node Separation</label>
+      <input
+        [(ngModel)]="layoutSettings.nodesep"
+        class="form-control"
+        max="200"
+        min="1"
+        placeholder="nodesep"
+        type="number"
+      >
+
+      <p class="help-block">Number of pixels that separate nodes horizontally in the layout.</p>
+    </div>
+
+    <div class="form-group">
+      <label>Edge Separation</label>
+      <input
+        [(ngModel)]="layoutSettings.edgesep"
+        class="form-control"
+        max="200"
+        min="1"
+        placeholder="edgesep"
+        type="number"
+      >
+
+      <p class="help-block">Number of pixels that separate edges horizontally in the layout.</p>
+    </div>
+
+    <div class="form-group">
+      <label>Rank Separation</label>
+      <input
+        [(ngModel)]="layoutSettings.ranksep"
+        class="form-control"
+        max="200"
+        min="1"
+        placeholder="ranksep"
+        type="number"
+      >
+
+      <p class="help-block">Number of pixels between each rank in the layout.</p>
+    </div>
+
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-sm">Update</button>
+    <button (click)="defaultLayoutSettings(); $event.preventDefault()" class="btn btn-default btn-sm">Default</button>
+  </div>
+
+</form>

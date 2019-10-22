@@ -21,7 +21,7 @@ import { Action } from '../action';
  * Action that, given a regular expression, searches in the page source for matches.
  * If a match is found, it extracts the nth group, e.g. (.*?) in the regex, and saves the value into a variable.
  */
-export class SetVariableByRegexGroup extends Action {
+export class SetVariableByRegexGroupAction extends Action {
 
   /** The name of the variable. */
   public name: string;

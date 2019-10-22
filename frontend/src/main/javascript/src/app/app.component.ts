@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { AppStoreService } from './services/app-store.service';
 
 @Component({
-  selector: 'app-root',
+  selector: 'root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'ALEX';
+  constructor(public appStore: AppStoreService) {
+  }
 }

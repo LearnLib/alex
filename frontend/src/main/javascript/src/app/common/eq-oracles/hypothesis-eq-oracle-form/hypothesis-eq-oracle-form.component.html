@@ -1,0 +1,10 @@
+<div class="form-horizontal form-condensed">
+  <file-dropzone (loaded)="fileLoaded($event)">
+        <span *ngIf="eqOracle.hypothesis.nodes == null">
+            Drag and drop *.json file here or click to upload
+        </span>
+    <span *ngIf="eqOracle.hypothesis.nodes != null">
+            Use a hypothesis with {{ eqOracle.hypothesis.nodes.length }} states
+        </span>
+  </file-dropzone>
+</div>

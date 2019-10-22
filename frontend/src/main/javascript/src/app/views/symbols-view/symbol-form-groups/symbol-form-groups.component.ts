@@ -17,6 +17,7 @@
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Component, Input, OnInit } from '@angular/core';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({
   selector: 'symbol-form-groups',
@@ -30,6 +31,9 @@ export class SymbolFormGroupsComponent implements OnInit {
   @Input()
   form: FormGroup;
 
+  constructor(public formUtils: FormUtilsService) {
+  }
+
   ngOnInit(): void {
     this.form.addControl('name', new FormControl(this.symbol.name, [
       Validators.required, Validators.maxLength(100)
@@ -40,9 +44,5 @@ export class SymbolFormGroupsComponent implements OnInit {
     this.form.addControl('expectedResult', new FormControl(this.symbol.expectedResult, [
       Validators.maxLength(1024)
     ]));
-  }
-
-  isInvalidFormControl(c: AbstractControl): boolean {
-    return c.invalid && (c.dirty || c.touched);
   }
 }

@@ -46,12 +46,15 @@ export class ImportSymbolsModalComponent {
   /** The data to import */
   importData: any = null;
 
-  /* @ngInject */
   constructor(private symbolApi: SymbolApiService,
               private appStore: AppStoreService,
               private toastService: ToastService,
               private symbolGroupApi: SymbolGroupApiService,
               public modal: NgbActiveModal) {
+  }
+
+  get project(): Project {
+    return this.appStore.project;
   }
 
   /**
@@ -104,9 +107,5 @@ export class ImportSymbolsModalComponent {
 
   selectGroup(group: SymbolGroup): void {
     this.selectedGroup = group === this.selectedGroup ? null : group;
-  }
-
-  get project(): Project {
-    return this.appStore.project;
   }
 }

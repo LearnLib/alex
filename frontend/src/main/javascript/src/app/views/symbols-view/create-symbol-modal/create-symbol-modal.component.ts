@@ -60,6 +60,10 @@ export class CreateSymbolModalComponent implements OnInit {
     this.groups = [];
   }
 
+  get project(): Project {
+    return this.appStore.project;
+  }
+
   ngOnInit(): void {
     this.selectedSymbolGroup = this.getDefaultGroup();
   }
@@ -115,9 +119,5 @@ export class CreateSymbolModalComponent implements OnInit {
         this.form.reset();
       })
     );
-  }
-
-  get project(): Project {
-    return this.appStore.project;
   }
 }

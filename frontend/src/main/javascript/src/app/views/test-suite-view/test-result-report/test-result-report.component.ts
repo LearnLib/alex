@@ -34,12 +34,12 @@ export class TestResultReportComponent {
               private testReportService: TestReportService) {
   }
 
+  get project(): Project {
+    return this.appStore.project;
+  }
+
   /** Saves the report as JUnit XML. */
   exportReport(): void {
     this.testReportService.download(this.project.id, this.report.id);
-  }
-
-  get project(): Project {
-    return this.appStore.project;
   }
 }

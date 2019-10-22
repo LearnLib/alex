@@ -21,6 +21,7 @@ import { EventBus } from '../../../services/eventbus.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 /**
  * The controller that handles the modal dialog for deleting and updating a symbol group. The modal data that is
@@ -46,7 +47,8 @@ export class EditSymbolGroupModalComponent implements OnInit {
   constructor(private symbolGroupApi: SymbolGroupApiService,
               private toastService: ToastService,
               private eventBus: EventBus,
-              public modal: NgbActiveModal) {
+              public modal: NgbActiveModal,
+              public formUtils: FormUtilsService) {
   }
 
   ngOnInit(): void {
@@ -72,9 +74,5 @@ export class EditSymbolGroupModalComponent implements OnInit {
         this.errorMessage = res.error.message;
       }
     );
-  }
-
-  isInvalidFormControl(c: AbstractControl): boolean {
-    return c.invalid && (c.dirty || c.touched);
   }
 }

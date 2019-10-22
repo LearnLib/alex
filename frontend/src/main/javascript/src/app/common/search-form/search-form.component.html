@@ -1,21 +1,21 @@
-<div style="position: relative; z-index: 10" [class.focused]="focused">
+<div [class.focused]="focused" style="position: relative; z-index: 10">
   <div class="wrapper">
     <div class="form-group mb-0">
       <i class="fas fa-fw fa-search text-muted"></i>
       <input
-        class="form-control"
-        type="text"
         (focus)="handleFocus()"
+        (input)='updateItemList()'
         [(ngModel)]="value"
-        (input)='updateItemList()' [placeholder]="placeholder"
+        [placeholder]="placeholder"
+        class="form-control" type="text"
       >
     </div>
 
-    <div class="list-group list-group-condensed mb-0" *ngIf="focused">
+    <div *ngIf="focused" class="list-group list-group-condensed mb-0">
       <div
-        class="list-group-item"
-        *ngFor="let item of itemList"
         (click)="selectItem(item)"
+        *ngFor="let item of itemList"
+        class="list-group-item"
       >
         {{displayFn()(item)}}
       </div>

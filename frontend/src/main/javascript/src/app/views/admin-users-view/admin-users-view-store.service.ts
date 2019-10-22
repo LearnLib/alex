@@ -43,6 +43,14 @@ export class AdminUsersViewStoreService {
     this.usersSelectable = new Selectable<User>([], 'id');
   }
 
+  get currentUser(): User {
+    return this.appStore.user;
+  }
+
+  get users$(): Observable<User[]> {
+    return this.users.asObservable();
+  }
+
   load(): void {
     this.userApi.getAll().subscribe(
       users => {
@@ -55,9 +63,10 @@ export class AdminUsersViewStoreService {
   createUser(): void {
     this.modalService.open(CreateUserModalComponent)
       .result.then((createdUser: User) => {
-        this.users.next([...this.users.value, createdUser]);
-        this.usersSelectable.addItem(createdUser);
-      }).catch(() => {});
+      this.users.next([...this.users.value, createdUser]);
+      this.usersSelectable.addItem(createdUser);
+    }).catch(() => {
+    });
   }
 
   /**
@@ -77,8 +86,10 @@ export class AdminUsersViewStoreService {
       this.usersSelectable.unselect(user);
     });
     modalRef.result
-      .then(() => {})
-      .catch(() => {});
+      .then(() => {
+      })
+      .catch(() => {
+      });
   }
 
   /**
@@ -102,13 +113,5 @@ export class AdminUsersViewStoreService {
         this.toastService.danger(`Deleting failed! ${err.data.message}`);
       }
     );
-  }
-
-  get currentUser(): User {
-    return this.appStore.user;
-  }
-
-  get users$(): Observable<User[]> {
-    return this.users.asObservable();
   }
 }

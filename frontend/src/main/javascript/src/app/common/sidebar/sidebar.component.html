@@ -1,0 +1,26 @@
+<aside [class.collapse]="appStore.sidebarCollapsed" class="h-100" id="sidebar">
+  <div id="sidebar-body">
+    <div *ngFor="let group of groups" class="sidebar-group">
+      <div *ngIf="group.display()">
+        <div class="sidebar-group-title">
+          <strong>{{group.title()}}</strong>
+        </div>
+        <ng-container *ngFor="let item of group.items">
+          <a
+            *ngIf="item.display()"
+            [routerLinkActiveOptions]="{exact: true}"
+            [routerLinkActive]="'active'"
+            [routerLink]="item.href()"
+            class="sidebar-group-item"
+          >
+            <div class="sidebar-group-item-icon">
+              <i class="fas fa-fw {{item.icon}}"></i>
+            </div>
+            <div class="sidebar-group-item-label">{{item.title}}</div>
+          </a>
+        </ng-container>
+      </div>
+    </div>
+
+  </div>
+</aside>

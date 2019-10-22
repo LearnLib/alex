@@ -1,19 +1,19 @@
 <div class="d-flex flex-row">
-  <div class="w-100" *ngIf="collapse">
+  <div *ngIf="collapse" class="w-100">
     <span
-      class="badge d-inline-block"
-      style="margin-left: 3px"
       *ngFor="let output of outputs"
       [ngClass]="{'badge-success': output.success,'badge-danger':!output.success}"
+      class="badge d-inline-block"
+      style="margin-left: 3px"
     >
         {{output.output}}
     </span>
   </div>
-  <div class="w-100" *ngIf="!collapse">
+  <div *ngIf="!collapse" class="w-100">
     <table class="table table-hollow">
       <tbody>
       <tr *ngFor="let output of outputs">
-        <td style="width: 1px" class="text-right">
+        <td class="text-right" style="width: 1px">
           <a
             [href]="'#!/projects/' + project.id + '/symbols/' + output.symbol.id"
             class="badge badge-default cursor-pointer"
@@ -23,8 +23,8 @@
         </td>
         <td class="w-100">
           <span
-            class="badge"
             [ngClass]="{'badge-success': output.success,'badge-danger':!output.success}"
+            class="badge"
           >
             {{output.output}}
           </span>
@@ -32,10 +32,10 @@
         </td>
         <td style="width: 1px">
           <i
+            (click)="showResultDetails(output)"
             class="fa fa-fw fa-search cursor-pointer result-details-icon"
             ngbTooltip="Details"
             placement="left"
-            (click)="showResultDetails(output)"
           >
           </i>
         </td>
@@ -45,9 +45,9 @@
   </div>
   <div>
     <i
-      class="fas fa-fw cursor-pointer"
-      [ngClass]="{'fa-caret-square-down': !collapse, 'fa-caret-square-right': collapse}"
       (click)="toggleCollapse()"
+      [ngClass]="{'fa-caret-square-down': !collapse, 'fa-caret-square-right': collapse}"
+      class="fas fa-fw cursor-pointer"
       ngbTooltip="Details"
       placement="left"
     >

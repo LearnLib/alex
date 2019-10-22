@@ -1,22 +1,22 @@
 <div class="modal-header">
   <h4 class="modal-title">Update webhook <em>{{webhook.name}}</em></h4>
-  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
     <i class="fas fa-times fa-fw"></i>
   </a>
 </div>
 
-<form [formGroup]="form" (ngSubmit)="updateWebhook()">
+<form (ngSubmit)="updateWebhook()" [formGroup]="form">
   <div class="modal-body">
-    <div class="alert alert-danger" *ngIf="errorMessage != null">
+    <div *ngIf="errorMessage != null" class="alert alert-danger">
       <strong class="d-block">The webhook could not be updated.</strong>
       <span>{{errorMessage}}</span>
     </div>
 
-    <webhook-form-groups [webhook]="webhook" [events]="store.events$ | async" [form]="form"></webhook-form-groups>
+    <webhook-form-groups [events]="store.events$ | async" [form]="form" [webhook]="webhook"></webhook-form-groups>
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-primary btn-sm" type="submit" [disabled]="form.invalid">Update</button>
-    <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.stopPropagation()">Cancel</button>
+    <button [disabled]="form.invalid" class="btn btn-primary btn-sm" type="submit">Update</button>
+    <button (click)="modal.dismiss(); $event.stopPropagation()" class="btn btn-default btn-sm">Cancel</button>
   </div>
 </form>

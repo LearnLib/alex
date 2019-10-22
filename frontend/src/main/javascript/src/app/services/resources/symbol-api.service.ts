@@ -28,7 +28,7 @@ import { map } from 'rxjs/operators';
  * The resource that handles http requests to the API to do CRUD operations on symbols.
  */
 @Injectable()
-export class SymbolApiService extends BaseApiService{
+export class SymbolApiService extends BaseApiService {
 
   constructor(private http: HttpClient) {
     super();
@@ -171,7 +171,7 @@ export class SymbolApiService extends BaseApiService{
     return this.http.post(`${env.apiUrl}/projects/${project}/symbols/batch/${ids}/show`, {}, this.defaultHttpOptions);
   }
 
-  getUsages(projectId: number, symbolId: number): Observable<SymbolUsageResult>  {
+  getUsages(projectId: number, symbolId: number): Observable<SymbolUsageResult> {
     return this.http.get(`${env.apiUrl}/projects/${projectId}/symbols/${symbolId}/usages`, this.defaultHttpOptions)
       .pipe(
         map(body => SymbolUsageResult.fromData(body))

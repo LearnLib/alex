@@ -1,22 +1,22 @@
 <div class="modal-header">
   <h4 class="modal-title">Import symbols</h4>
-  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
     <i class="fas fa-times fa-fw"></i>
   </a>
 </div>
 
 <div class="modal-body">
 
-  <div class="alert alert-danger" *ngIf="errorMessage != null">{{errorMessage}}</div>
+  <div *ngIf="errorMessage != null" class="alert alert-danger">{{errorMessage}}</div>
 
   <file-dropzone (loaded)="fileLoaded($event)" *ngIf="importData == null">
     Drag and drop *.json file here or click to upload
   </file-dropzone>
 
-  <div class="alert alert-info" *ngIf="importData != null">
-    <i class="fas fa-fw fa-times float-right cursor-pointer" (click)="importData = null"></i>
-    <span class="badge badge-primary" *ngIf="importData.type === 'symbols'">Symbols only</span>
-    <span class="badge badge-primary" *ngIf="importData.type === 'symbolGroups'">Groups and symbols</span> <br>
+  <div *ngIf="importData != null" class="alert alert-info">
+    <i (click)="importData = null" class="fas fa-fw fa-times float-right cursor-pointer"></i>
+    <span *ngIf="importData.type === 'symbols'" class="badge badge-primary">Symbols only</span>
+    <span *ngIf="importData.type === 'symbolGroups'" class="badge badge-primary">Groups and symbols</span> <br>
     <span class="badge badge-default">{{importData.version}}</span>
   </div>
 
@@ -25,9 +25,9 @@
     <div class="card">
       <div class="card-body p-2" style="max-height: 240px; overflow: auto">
         <simple-symbol-group-tree
+          (groupSelected)="selectGroup($event)"
           [groups]="groups"
           [selectedGroup]="selectedGroup"
-          (groupSelected)="selectGroup($event)"
         >
         </simple-symbol-group-tree>
       </div>
@@ -37,6 +37,6 @@
 </div>
 
 <div class="modal-footer">
-  <button class="btn btn-primary btn-sm" (click)="importSymbols()">Import</button>
-  <button class="btn btn-default btn-sm" (click)="modal.dismiss()">Cancel</button>
+  <button (click)="importSymbols()" class="btn btn-primary btn-sm">Import</button>
+  <button (click)="modal.dismiss()" class="btn btn-default btn-sm">Cancel</button>
 </div>

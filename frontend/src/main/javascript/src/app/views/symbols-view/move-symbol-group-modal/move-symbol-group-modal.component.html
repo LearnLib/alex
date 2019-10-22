@@ -1,6 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">Move group</h4>
-  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
     <i class="fas fa-times fa-fw"></i>
   </a>
 </div>
@@ -9,7 +9,7 @@
 
   <div class="modal-body">
 
-    <div class="alert alert-danger" *ngIf="errorMessage">
+    <div *ngIf="errorMessage" class="alert alert-danger">
       {{errorMessage}}
     </div>
 
@@ -17,9 +17,9 @@
     <div class="card">
       <div class="card-body p-2" style="max-height: 240px; overflow: auto">
         <simple-symbol-group-tree
+          (groupSelected)="setSelectedGroup($event)"
           [groups]="groups"
           [selectedGroup]="selectedGroup"
-          (groupSelected)="setSelectedGroup($event)"
         >
         </simple-symbol-group-tree>
       </div>
@@ -29,7 +29,7 @@
 
   <div class="modal-footer">
     <button class="btn btn-primary btn-sm" type="submit">Move</button>
-    <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.preventDefault()">Cancel</button>
+    <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">Cancel</button>
   </div>
 
 </form>

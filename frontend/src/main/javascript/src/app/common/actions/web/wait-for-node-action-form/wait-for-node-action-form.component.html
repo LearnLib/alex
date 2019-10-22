@@ -1,0 +1,48 @@
+<h5><strong>Wait for an element</strong></h5>
+
+<p class="text-muted">
+  Wait until the state of an element changes.
+</p>
+<hr>
+
+<node-form-group [node]="action.node"></node-form-group>
+
+<label>Wait until the element</label>
+<div class="form-group form-check mt-0">
+  <label class="form-check-label">
+    <input [(ngModel)]="action.waitCriterion" [value]="'VISIBLE'" class="form-check-input" name="waitType" type="radio">
+    is visible
+  </label>
+</div>
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input [(ngModel)]="action.waitCriterion" [value]="'INVISIBLE'" class="form-check-input" name="waitType"
+           type="radio">
+    is invisible
+  </label>
+</div>
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input [(ngModel)]="action.waitCriterion" [value]="'ADDED'" class="form-check-input" name="waitType" type="radio">
+    is added to the DOM
+  </label>
+</div>
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input [(ngModel)]="action.waitCriterion" [value]="'REMOVED'" class="form-check-input" name="waitType" type="radio">
+    is removed from the DOM
+  </label>
+</div>
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input [(ngModel)]="action.waitCriterion" [value]="'CLICKABLE'" class="form-check-input" name="waitType"
+           type="radio">
+    is clickable <em>(visible & enabled)</em>
+  </label>
+</div>
+
+<div class="form-group">
+  <label>Max. wait time (seconds)</label>
+  <input [(ngModel)]="action.maxWaitTime" class="form-control" min="0" placeholder="The maximum time to wait for a change"
+         type="number">
+</div>

@@ -17,6 +17,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Project } from '../../../entities/project';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({
   selector: 'project-form-groups',
@@ -30,6 +31,9 @@ export class ProjectFormGroupsComponent implements OnInit {
   @Input()
   public form: FormGroup;
 
+  constructor(public formUtils: FormUtilsService) {
+  }
+
   ngOnInit(): void {
     this.form.addControl('name', new FormControl(this.project.name, [
       Validators.required
@@ -37,9 +41,5 @@ export class ProjectFormGroupsComponent implements OnInit {
     this.form.addControl('description', new FormControl(this.project.description, [
       Validators.maxLength(250)
     ]));
-  }
-
-  isInvalidFormControl(c: AbstractControl): boolean {
-    return c.invalid && (c.dirty || c.touched);
   }
 }

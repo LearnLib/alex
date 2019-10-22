@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, ElementRef, EventEmitter, Input } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/core';
 
 /**
  * The form that searches for an action based on user input.
@@ -24,6 +24,9 @@ import { Component, ElementRef, EventEmitter, Input } from '@angular/core';
   templateUrl: './search-form.component.html'
 })
 export class SearchFormComponent {
+
+  @Output()
+  selected = new EventEmitter<any>();
 
   @Input()
   placeholder: string;
@@ -36,8 +39,6 @@ export class SearchFormComponent {
 
   @Input()
   searchFn: () => any;
-
-  selected = new EventEmitter<any>();
 
   /** If the input element has been focused. */
   public focused: boolean;

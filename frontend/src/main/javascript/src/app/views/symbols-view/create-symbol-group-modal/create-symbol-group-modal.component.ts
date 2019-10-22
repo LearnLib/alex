@@ -22,6 +22,7 @@ import { AppStoreService } from '../../../services/app-store.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 /**
  * The controller for the modal dialog that handles the creation of a new symbol group.
@@ -48,10 +49,15 @@ export class CreateSymbolGroupModalComponent implements OnInit {
   constructor(private appStore: AppStoreService,
               private symbolGroupApi: SymbolGroupApiService,
               private toastService: ToastService,
-              public modal: NgbActiveModal) {
+              public modal: NgbActiveModal,
+              public formUtils: FormUtilsService) {
     this.groups = [];
     this.selectedSymbolGroup = null;
     this.errorMessage = null;
+  }
+
+  get project(): Project {
+    return this.appStore.project;
   }
 
   ngOnInit(): void {
@@ -88,13 +94,5 @@ export class CreateSymbolGroupModalComponent implements OnInit {
     } else {
       this.selectedSymbolGroup = group;
     }
-  }
-
-  isInvalidFormControl(c: AbstractControl): boolean {
-    return c.invalid && (c.dirty || c.touched);
-  }
-
-  get project(): Project {
-    return this.appStore.project;
   }
 }

@@ -86,6 +86,10 @@ export class SymbolsViewComponent implements OnInit {
     });
   }
 
+  get project(): Project {
+    return this.appStore.project;
+  }
+
   ngOnInit(): void {
     this.symbolGroupApi.getAll(this.project.id).subscribe(
       groups => {
@@ -315,9 +319,5 @@ export class SymbolsViewComponent implements OnInit {
       .then(group => this.addGroup(group))
       .catch(() => {
       });
-  }
-
-  get project(): Project {
-    return this.appStore.project;
   }
 }

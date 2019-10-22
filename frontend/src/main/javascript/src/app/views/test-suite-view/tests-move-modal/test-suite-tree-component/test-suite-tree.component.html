@@ -1,0 +1,29 @@
+<div class="test-suite-tree">
+  <div class="d-flex flex-row">
+    <div>
+      <i
+        (click)="collapse = !collapse"
+        [ngClass]="{'fa-minus-square': !collapse, 'fa-plus-square': collapse, 'invisible': getTestSuites().length === 0}"
+        class="far fa-fw cursor-pointer"
+      >
+      </i>
+    </div>
+    <div
+      (click)="selectTestSuite(testSuite)"
+      [ngClass]="{'selected': testSuite === selectedTestSuite}"
+      class="header w-100 cursor-pointer"
+    >
+      <i class="fas fa-folder fa-fw"></i> <strong>{{testSuite.name}}</strong>
+    </div>
+  </div>
+  <div [ngbCollapse]="collapse" class="children" style="padding-left: 1.5rem">
+    <test-suite-tree
+      (selected)="selectTestSuite($event)"
+      *ngFor="let testSuite of getTestSuites()"
+      [level]="level + 1"
+      [selectedTestSuite]="selectedTestSuite"
+      [testSuite]="testSuite"
+    >
+    </test-suite-tree>
+  </div>
+</div>

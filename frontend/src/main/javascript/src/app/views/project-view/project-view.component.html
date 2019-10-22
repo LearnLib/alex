@@ -1,7 +1,5 @@
 <div class="view">
-  <view-header [title]="'Dashboard of ' + project?.name"></view-header>
-
-  <div class="view-body" *ngIf="project != null">
+  <div *ngIf="project != null" class="view-body">
     <div class="container">
       <div class="row">
 

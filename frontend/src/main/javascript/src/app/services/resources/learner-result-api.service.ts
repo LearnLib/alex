@@ -15,7 +15,7 @@
  */
 
 import { environment as env } from '../../../environments/environment';
-import { LearnResult } from '../../entities/learner-result';
+import { LearnerResult } from '../../entities/learner-result';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -37,10 +37,10 @@ export class LearnerResultApiService extends BaseApiService {
    *
    * @param projectId The id of the project whose final learn results should be fetched.
    */
-  getAll(projectId: number): Observable<LearnResult[]> {
+  getAll(projectId: number): Observable<LearnerResult[]> {
     return this.http.get(`${env.apiUrl}/projects/${projectId}/results?embed=steps`, this.defaultHttpOptions)
       .pipe(
-        map((body: any) => body.map(lr => new LearnResult(lr)))
+        map((body: any) => body.map(lr => new LearnerResult(lr)))
       );
   }
 
@@ -50,10 +50,10 @@ export class LearnerResultApiService extends BaseApiService {
    * @param projectId The id of the project.
    * @param testNo The number of the test run.
    */
-  get(projectId: number, testNo: number): Observable<LearnResult> {
+  get(projectId: number, testNo: number): Observable<LearnerResult> {
     return this.http.get(`${env.apiUrl}/projects/${projectId}/results/${testNo}?embed=steps`, this.defaultHttpOptions)
       .pipe(
-        map((body: any) => new LearnResult(body))
+        map((body: any) => new LearnerResult(body))
       );
   }
 
@@ -62,10 +62,10 @@ export class LearnerResultApiService extends BaseApiService {
    *
    * @param projectId The id of the project.
    */
-  getLatest(projectId: number): Observable<LearnResult> {
+  getLatest(projectId: number): Observable<LearnerResult> {
     return this.http.get(`${env.apiUrl}/projects/${projectId}/results/latest`, this.defaultHttpOptions)
       .pipe(
-        map((body: any) => (body === '' || body == null) ? null : new LearnResult(body))
+        map((body: any) => (body === '' || body == null) ? null : new LearnerResult(body))
       );
   }
 
@@ -74,7 +74,7 @@ export class LearnerResultApiService extends BaseApiService {
    *
    * @param result The learn result to delete.
    */
-  remove(result: LearnResult): Observable<any> {
+  remove(result: LearnerResult): Observable<any> {
     return this.http.delete(`${env.apiUrl}/projects/${result.project}/results/${result.testNo}`, this.defaultHttpOptions);
   }
 
@@ -83,7 +83,7 @@ export class LearnerResultApiService extends BaseApiService {
    *
    * @param results The learn results to delete.
    */
-  removeMany(results: LearnResult[]): Observable<any> {
+  removeMany(results: LearnerResult[]): Observable<any> {
     const testNos = results.map(r => r.testNo).join(',');
     const projectId = results[0].project;
     return this.http.delete(`${env.apiUrl}/projects/${projectId}/results/${testNos}`, this.defaultHttpOptions);
@@ -94,10 +94,10 @@ export class LearnerResultApiService extends BaseApiService {
    *
    * @param result The result to clone.
    */
-  clone(result: LearnResult): Observable<LearnResult> {
+  clone(result: LearnerResult): Observable<LearnerResult> {
     return this.http.post(`${env.apiUrl}/projects/${result.project}/results/${result.testNo}/clone`, {}, this.defaultHttpOptions)
       .pipe(
-        map((body: any) => new LearnResult(body))
+        map((body: any) => new LearnerResult(body))
       );
   }
 

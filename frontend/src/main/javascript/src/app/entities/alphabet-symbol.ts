@@ -85,10 +85,6 @@ export class AlphabetSymbol {
     this.expectedResult = obj.expectedResult || '';
   }
 
-  containsSymbolSteps() {
-    return this.steps.filter(s => s.type === 'symbol').length > 0;
-  }
-
   static stepsToJson(step) {
     const s = JSON.parse(JSON.stringify(step));
     delete s.$$hashKey;
@@ -103,6 +99,10 @@ export class AlphabetSymbol {
       delete s.action.id;
     }
     return s;
+  }
+
+  containsSymbolSteps() {
+    return this.steps.filter(s => s.type === 'symbol').length > 0;
   }
 
   toJson() {

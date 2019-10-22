@@ -1,45 +1,46 @@
 <div class="view">
-  <view-header [title]="'Projects'"></view-header>
-
   <action-bar>
     <div class="d-flex flex-row align-items-center">
 
       <div class="mr-3">
-        <selectable-checkbox-multiple [items]="(store.projects$ | async)"
-                                      [selectable]="store.projectsSelectable"></selectable-checkbox-multiple>
+        <selectable-checkbox-multiple
+          [items]="(store.projects$ | async)"
+          [selectable]="store.projectsSelectable"
+        >
+        </selectable-checkbox-multiple>
       </div>
 
-      <button class="btn btn-primary btn-sm mr-3" (click)="store.createProject()">Create</button>
+      <button (click)="store.createProject()" class="btn btn-primary btn-sm mr-2">Create</button>
 
-      <div class="btn-group btn-group-sm mr-3">
+      <div class="btn-group btn-group-sm mr-2">
         <button
-          class="btn btn-default"
-          [disabled]="store.projectsSelectable.getSelected().length !== 1"
           (click)="store.editProject(store.projectsSelectable.getSelected()[0])"
+          [disabled]="store.projectsSelectable.getSelected().length !== 1"
+          class="btn btn-default"
         >
           Edit
         </button>
         <button
-          class="btn btn-default"
-          [disabled]="store.projectsSelectable.getSelected().length === 0"
           (click)="store.deleteSelectedProjects()"
+          [disabled]="store.projectsSelectable.getSelected().length === 0"
+          class="btn btn-default"
         >
           Delete
         </button>
       </div>
-      <div class="btn-group btn-group-sm mr-3">
+      <div class="btn-group btn-group-sm mr-2">
         <button
-          class="btn btn-default"
           (click)="store.importProject()"
+          class="btn btn-default"
           ngbTooltip="Import"
           placement="left"
         >
           <i class="fas fa-upload fa-fw"></i>
         </button>
         <button
-          class="btn btn-default"
-          [disabled]="store.projectsSelectable.getSelected().length !== 1"
           (click)="store.exportProject(store.projectsSelectable.getSelected()[0])"
+          [disabled]="store.projectsSelectable.getSelected().length !== 1"
+          class="btn btn-default"
           ngbTooltip="Export"
           placement="left"
         >
@@ -53,17 +54,17 @@
   <div class="view-body">
     <div class="container-fluid">
 
-      <div class="alert alert-info" *ngIf="(store.projects$ | async).length == 0">
+      <div *ngIf="(store.projects$ | async).length == 0" class="alert alert-info">
         You haven't created a project yet.
       </div>
 
-      <div class="list-group" *ngIf="(store.projects$ | async).length > 0">
-        <div class="list-group-item d-flex flex-row" *ngFor="let project of store.projects$ | async">
+      <div *ngIf="(store.projects$ | async).length > 0" class="list-group">
+        <div *ngFor="let project of store.projects$ | async" class="list-group-item d-flex flex-row">
           <div class="mr-3">
             <selectable-checkbox [item]="project" [selectable]="store.projectsSelectable"></selectable-checkbox>
           </div>
           <div class="w-100">
-            <a [href]="'#!/projects/' + project.id">
+            <a [routerLink]="[project.id]">
               <h5 class="list-group-item-heading mb-0">
                 <strong>{{project.name}}</strong>
               </h5>
@@ -78,17 +79,17 @@
                 <i class="fas fa-fw fa-bars"></i>
               </button>
               <div ngbDropdownMenu>
-                <a ngbDropdownItem [href]="'#!/projects/' + project.id">
+                <a [routerLink]="[project.id]" ngbDropdownItem>
                   <i class="fas fa-fw fa-external-link-alt"></i> Open
                 </a>
                 <div class="dropdown-divider"></div>
-                <div ngbDropdownItem (click)="store.editProject(project)">
+                <div (click)="store.editProject(project)" ngbDropdownItem>
                   <i class="fas fa-edit fa-fw"></i> Edit
                 </div>
-                <div ngbDropdownItem (click)="store.exportProject(project)">
+                <div (click)="store.exportProject(project)" ngbDropdownItem>
                   <i class="fas fa-download fa-fw"></i> Export
                 </div>
-                <div ngbDropdownItem (click)="store.deleteProject(project)">
+                <div (click)="store.deleteProject(project)" ngbDropdownItem>
                   <i class="fas fa-trash fa-fw"></i> Delete
                 </div>
               </div>

@@ -8,7 +8,7 @@
         <i class="fa fa-fw fa-level-up-alt fa-rotate-90"></i> {{t.symbol}} / {{t.output}}
       </span>
       <span *ngIf="showFirst">
-        <i class="fa fa-fw fa-level-up-alt fa-rotate-90" *ngIf="i > 0"></i> {{t.symbol}} / {{t.output}}
+        <i *ngIf="i > 0" class="fa fa-fw fa-level-up-alt fa-rotate-90"></i> {{t.symbol}} / {{t.output}}
       </span>
     </div>
   </div>

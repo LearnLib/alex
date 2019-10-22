@@ -15,7 +15,7 @@
  */
 
 import { zip } from 'lodash';
-import { LearnResult } from '../entities/learner-result';
+import { LearnerResult } from '../entities/learner-result';
 import { Injectable } from '@angular/core';
 
 const MARGIN_OPTIONS = {
@@ -36,7 +36,7 @@ const GRID_OPTIONS = {
 @Injectable()
 export class LearnerResultChartService {
 
-  createDataSingleFinal(result: LearnResult): any {
+  createDataSingleFinal(result: LearnerResult): any {
     const options = {
       margin: MARGIN_OPTIONS,
       grid: GRID_OPTIONS,
@@ -71,7 +71,7 @@ export class LearnerResultChartService {
           {x: 1, y: result.statistics.mqsUsed.total},
           {x: 2, y: result.statistics.mqsUsed.learner},
           {x: 3, y: result.statistics.mqsUsed.eqOracle},
-          {x: 4, y: 0},
+          {x: 4, y: 0}
         ]
       },
       symbols: {
@@ -80,7 +80,7 @@ export class LearnerResultChartService {
           {x: 1, y: result.statistics.symbolsUsed.total},
           {x: 2, y: result.statistics.symbolsUsed.learner},
           {x: 3, y: result.statistics.symbolsUsed.eqOracle},
-          {x: 4, y: 0},
+          {x: 4, y: 0}
         ]
       },
       duration: {
@@ -89,7 +89,7 @@ export class LearnerResultChartService {
           {x: 1, y: result.statistics.duration.total},
           {x: 2, y: result.statistics.duration.learner},
           {x: 3, y: result.statistics.duration.eqOracle},
-          {x: 4, y: 0},
+          {x: 4, y: 0}
         ]
       }
     };
@@ -104,7 +104,7 @@ export class LearnerResultChartService {
   /**
    * @param result
    */
-  createDataSingleComplete(result: LearnResult): any {
+  createDataSingleComplete(result: LearnerResult): any {
     const options = {
       margin: MARGIN_OPTIONS,
       grid: GRID_OPTIONS,
@@ -201,7 +201,7 @@ export class LearnerResultChartService {
     };
   }
 
-  createDataMultipleFinal(results: LearnResult[]): any {
+  createDataMultipleFinal(results: LearnerResult[]): any {
     const options = {
       margin: MARGIN_OPTIONS,
       grid: GRID_OPTIONS,
@@ -255,7 +255,7 @@ export class LearnerResultChartService {
     };
   }
 
-  createDataMultipleComplete(results: LearnResult[]): any {
+  createDataMultipleComplete(results: LearnerResult[]): any {
     const colors = ['#4B6396', '#3BA3B8', '#3BB877', '#8ACF36', '#E8E835', '#F7821B', '#F74F1B', '#C01BF7'];
     const props = ['mqs', 'symbols', 'duration'];
 

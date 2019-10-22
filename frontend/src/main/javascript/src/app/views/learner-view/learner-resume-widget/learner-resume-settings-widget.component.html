@@ -1,0 +1,120 @@
+<div class="card learner-resume-settings-widget">
+  <div class="card-header">
+    <strong class="text-muted">Resume configuration</strong>
+  </div>
+  <div class="card-body p-0">
+
+    <form name="form">
+
+      <ngb-accordion [closeOthers]="true" activeIds="static-1">
+        <ngb-panel id="static-1" title="General configuration">
+          <ng-template ngbPanelContent>
+
+            <div class="form-group">
+              <label class="control-label">Step from where to continue</label><br>
+              <input
+                [(ngModel)]="configuration.stepNo"
+                [max]="result.steps.length"
+                class="form-control"
+                min="1"
+                name="step_no"
+                required
+                type="number"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="control-label">Steps to learn</label>
+              <input
+                [(ngModel)]="configuration.maxAmountOfStepsToLearn"
+                class="form-control"
+                min="-1"
+                name="max_steps"
+                placeholder="-1"
+                required
+                type="number"
+              >
+              <p class="help-block">(-1 := learn until no counterexample can be found)</p>
+            </div>
+
+          </ng-template>
+        </ngb-panel>
+        <ngb-panel id="static-2" title="Equivalence oracle">
+          <ng-template ngbPanelContent>
+
+            <eq-oracle-form
+              (selected)="setEqOracle($event)"
+              [form]="form"
+              [oracle]="configuration.eqOracle"
+            >
+            </eq-oracle-form>
+
+            <div *ngIf="configuration.eqOracle.type === eqOracleTypes.SAMPLE"
+                 class="form-horizontal form-condensed">
+              <counterexamples-widget
+                [counterexamples]="configuration.eqOracle.counterExamples"
+                [result]="result"
+              >
+              </counterexamples-widget>
+            </div>
+
+          </ng-template>
+        </ngb-panel>
+        <ngb-panel id="static-3" title="Symbols">
+          <ng-template ngbPanelContent>
+
+            <div class="form-group">
+              <label class="control-label">Symbols to add</label><br>
+
+              <div *ngIf="configuration.symbolsToAdd.length > 0" class="list-group">
+                <div *ngFor="let pSymbol of configuration.symbolsToAdd; let i = index" class="list-group-item d-flex">
+                  <div class="w-100">
+                    <strong>{{pSymbol.symbol.name}}</strong><br>
+                    <symbol-parameters [parameterValues]="pSymbol.parameterValues"></symbol-parameters>
+                  </div>
+                  <div class="text-muted">
+                    <i (click)="configuration.symbolsToAdd.splice(i, 1)"
+                       class="fas fa-fw fa-times cursor-pointer"></i>
+                  </div>
+                </div>
+              </div>
+
+              <select (change)="addSelectedSymbol()"
+                      [(ngModel)]="selectedSymbol"
+                      class="form-control"
+              >
+                <option [value]="null" disabled>Select a symbol to add</option>
+                <option *ngFor="let symbol of symbols" [value]="symbol">{{symbol.name}}</option>
+              </select>
+            </div>
+
+          </ng-template>
+        </ngb-panel>
+        <ngb-panel id="static-4" title="Targets">
+          <ng-template ngbPanelContent>
+
+            <div class="form-group">
+              <label>Environments</label>
+
+              <div class="list-group">
+                <div *ngFor="let env of project.environments"
+                     class="list-group-item d-flex flex-row align-items-center">
+                  <div>
+                    <selectable-checkbox (change)="updateEnvironments()" [item]="env"
+                                         [selectable]="selectedEnvironments"></selectable-checkbox>
+                  </div>
+                  <div class="w-100 ml-3">
+                    <strong>{{env.name}}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </ng-template>
+        </ngb-panel>
+      </ngb-accordion>
+
+    </form>
+
+  </div>
+</div>

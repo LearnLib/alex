@@ -1,12 +1,12 @@
 <div class="form-group">
   <label>Name</label>
   <input
-    class="form-control"
-    type="text"
-    required
-    placeholder="The name of the webhook"
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.name)"
     [formControl]="form.controls.name"
-    [class.is-invalid]="isInvalidFormControl(form.controls.name)"
+    class="form-control"
+    placeholder="The name of the webhook"
+    required
+    type="text"
   >
   <div class="invalid-feedback">
     Please provide a name for the webhook.
@@ -16,12 +16,12 @@
 <div class="form-group">
   <label>URL</label>
   <input
-    class="form-control"
-    type="url"
-    required
-    placeholder="The URL registered to the webhook"
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.url)"
     [formControl]="form.controls.url"
-    [class.is-invalid]="isInvalidFormControl(form.controls.url)"
+    class="form-control"
+    placeholder="The URL registered to the webhook"
+    required
+    type="url"
   >
   <div class="invalid-feedback">
     Please provide a valid URL.
@@ -32,15 +32,15 @@
   <label>Events</label>
   <div class="d-flex flex-row">
     <div class="form-group w-100">
-      <select class="form-control" [disabled]="remainingEvents.length === 0" [(ngModel)]="selectedEvent">
-        <option disabled [value]="''">Select an event</option>
+      <select [(ngModel)]="selectedEvent" [disabled]="remainingEvents.length === 0" class="form-control">
+        <option [value]="''" disabled>Select an event</option>
         <option *ngFor="let event of remainingEvents" [value]="event">{{event | normalizeUpperCase}}</option>
       </select>
     </div>
     <div class="flex-shrink-0 ml-2">
       <div class="btn-group">
-        <button class="btn btn-default" (click)="addSelectedEvent()" [disabled]="selectedEvent === ''">Add</button>
-        <button class="btn btn-default" (click)="addAllEvents()" [disabled]="remainingEvents.length === 0">Add all
+        <button (click)="addSelectedEvent()" [disabled]="selectedEvent === ''" class="btn btn-default">Add</button>
+        <button (click)="addAllEvents()" [disabled]="remainingEvents.length === 0" class="btn btn-default">Add all
         </button>
       </div>
     </div>
@@ -49,14 +49,14 @@
 
 <div *ngIf="webhook.events.length > 0">
   <span
-    class="badge badge-success badge-event d-inline-block py-2 px-3 mr-2 mb-2"
     *ngFor="let event of webhook.events; let i = index"
+    class="badge badge-success badge-event d-inline-block py-2 px-3 mr-2 mb-2"
   >
     {{event | normalizeUpperCase}}
-    <i class="fas fa-times cursor-pointer ml-2" (click)="removeEvent(i)"></i>
+    <i (click)="removeEvent(i)" class="fas fa-times cursor-pointer ml-2"></i>
   </span>
 </div>
 
-<div class="alert alert-info mb-0" *ngIf="webhook.events.length === 0">
+<div *ngIf="webhook.events.length === 0" class="alert alert-info mb-0">
   Select at least one event.
 </div>

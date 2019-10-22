@@ -1,14 +1,13 @@
 <div class="view view-test-case">
-  <view-header [title]="'Test Management'"></view-header>
   <action-bar>
-    <button class="btn btn-sm btn-success mr-2" [disabled]="active" (click)="save()">
+    <button (click)="save()" [disabled]="active" class="btn btn-sm btn-success mr-2">
       <i class="fas fa-fw fa-save"></i> Save
     </button>
     <div class="btn-group btn-group-sm float-right mr-0">
-      <button class="btn btn-primary" (click)="execute()" [disabled]="active">
+      <button (click)="execute()" [disabled]="active" class="btn btn-primary">
         Execute
       </button>
-      <button class="btn btn-primary" (click)="openTestConfigModal()" [disabled]="active">
+      <button (click)="openTestConfigModal()" [disabled]="active" class="btn btn-primary">
         <i class="fas fa-fm fa-cog"></i>
       </button>
     </div>
@@ -17,14 +16,14 @@
     <div class="container-fluid">
 
       <div *ngIf="result">
-        <div class="alert alert-danger" *ngIf="!result.passed">
-          <i class="fas fa-fw fa-times float-right" (click)="result = null"></i>
+        <div *ngIf="!result.passed" class="alert alert-danger">
+          <i (click)="result = null" class="fas fa-fw fa-times float-right"></i>
           <i class="fas fa-fw fa-exclamation-circle"></i> <strong>The test case failed.</strong>
           <a *ngIf="testConfig.createReport"
              href="{{'#!/projects/' + project.id + '/tests/reports/' + report.id}}">(Show report)</a>
         </div>
-        <div class="alert alert-success" *ngIf="result.passed">
-          <i class="fas fa-fw fa-times float-right" (click)="result = null"></i>
+        <div *ngIf="result.passed" class="alert alert-success">
+          <i (click)="result = null" class="fas fa-fw fa-times float-right"></i>
           <i class="fas fa-fw fa-check"></i> <strong>The test case passed.</strong>
           <a *ngIf="testConfig.createReport"
              [href]="'#!/projects/' + project.id + '/tests/reports/' + report.id">(Show report)</a>
@@ -42,8 +41,8 @@
       <div class="d-flex align-items-center">
         <div class="mr-1">
           <a
-            class="btn btn-sm btn-default"
             [href]="'#!/projects/' + testCase.project + '/tests/' + testCase.parent"
+            class="btn btn-sm btn-default"
           >
             <i class="fas fa-fw fa-level-up-alt"></i>
           </a>
@@ -55,12 +54,12 @@
         </h4>
         <div>
           <div class="btn-group btn-group-sm" ngbDropdown>
-            <button type="button" class="btn btn-default" ngbDropdownToggle>
+            <button class="btn btn-default" ngbDropdownToggle type="button">
               <i class="fas fa-cogs"></i>
             </button>
-            <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">
-              <div ngbDropdownItem (click)="options.showSymbolOutputs = !options.showSymbolOutputs">
-                <i class="fas fa-fw" [ngClass]="{'fa-check': options.showSymbolOutputs}"></i> Show symbol outputs
+            <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
+              <div (click)="options.showSymbolOutputs = !options.showSymbolOutputs" ngbDropdownItem>
+                <i [ngClass]="{'fa-check': options.showSymbolOutputs}" class="fas fa-fw"></i> Show symbol outputs
               </div>
             </div>
           </div>
@@ -76,13 +75,13 @@
               <strong>Symbols</strong>
             </div>
             <div class="card-body">
-              <div style="height: 31px; position: relative; z-index: 10" class="mb-2">
-                <symbol-search-form [groups]="groups" (selected)="addSymbolStep($event)"></symbol-search-form>
+              <div class="mb-2" style="height: 31px; position: relative; z-index: 10">
+                <symbol-search-form (selected)="addSymbolStep($event)" [groups]="groups"></symbol-search-form>
               </div>
 
               <simple-symbol-group-tree
-                [groups]="groups"
                 (symbolSelected)="addSymbolStep($event)"
+                [groups]="groups"
               >
               </simple-symbol-group-tree>
             </div>
@@ -93,10 +92,10 @@
 
           <test-case-table
             *ngIf="testCase != null"
-            [testCase]="testCase"
-            [symbolMap]="symbolMap"
             [options]="options"
             [result]="result"
+            [symbolMap]="symbolMap"
+            [testCase]="testCase"
           >
           </test-case-table>
 

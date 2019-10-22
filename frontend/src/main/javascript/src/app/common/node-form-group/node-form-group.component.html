@@ -1,0 +1,19 @@
+<div>
+  <label class="control-label">{{label}}</label>
+  <div class="d-flex flex-row">
+    <div *ngIf="node.type !== 'JS'" class="form-group w-100 mr-3">
+      <input [(ngModel)]="node.selector" [placeholder]="node.type === 'CSS' ? 'CSS selector' : 'XPath expression'" class="form-control"
+             type="text">
+    </div>
+    <div *ngIf="node.type === 'JS'" class="form-group w-100 mr-3">
+            <textarea [(ngModel)]="node.selector" class="form-control"
+                      placeholder="return document.getElementById('el');" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+      <select [(ngModel)]="node.type" class="form-control">
+        <option [value]="" disabled>Select a type</option>
+        <option *ngFor="let m of ['CSS', 'XPATH', 'JS']" [value]="m">{{m}}</option>
+      </select>
+    </div>
+  </div>
+</div>

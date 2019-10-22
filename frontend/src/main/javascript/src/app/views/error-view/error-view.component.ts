@@ -23,5 +23,6 @@ import { ErrorViewStoreService } from './error-view-store.service';
 })
 export class ErrorViewComponent {
 
-  constructor(public store: ErrorViewStoreService) { }
+  constructor(public store: ErrorViewStoreService) {
+  }
 }

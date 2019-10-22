@@ -17,6 +17,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppStoreService } from '../../services/app-store.service';
 import { ToastService } from '../../services/toast.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'logout-view',
@@ -25,12 +26,13 @@ import { ToastService } from '../../services/toast.service';
 export class LogoutViewComponent implements OnInit {
 
   constructor(private appStore: AppStoreService,
-              private toastService: ToastService) {
+              private toastService: ToastService,
+              private router: Router) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.appStore.logout();
     this.toastService.success('You have been logged out.');
-    location.hash = '!/';
+    this.router.navigate(['login']);
   }
 }

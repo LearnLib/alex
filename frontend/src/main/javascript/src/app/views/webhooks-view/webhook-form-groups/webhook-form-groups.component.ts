@@ -17,6 +17,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Webhook } from '../../../entities/webhook';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({
   selector: 'webhook-form-groups',
@@ -36,9 +37,13 @@ export class WebhookFormGroupsComponent implements OnInit {
 
   public selectedEvent: string;
 
-  constructor() {
+  constructor(public formUtils: FormUtilsService) {
     this.events = [];
     this.selectedEvent = '';
+  }
+
+  get remainingEvents(): string[] {
+    return this.events.filter(e => this.webhook.events.indexOf(e) === -1);
   }
 
   ngOnInit(): void {
@@ -70,15 +75,7 @@ export class WebhookFormGroupsComponent implements OnInit {
     this.updateEventsFC();
   }
 
-  isInvalidFormControl(c: AbstractControl): boolean {
-    return c.invalid && (c.dirty || c.touched);
-  }
-
   private updateEventsFC(): void {
     this.form.controls.events.setValue(this.webhook.events.length);
-  }
-
-  get remainingEvents(): string[] {
-    return this.events.filter(e => this.webhook.events.indexOf(e) === -1);
   }
 }

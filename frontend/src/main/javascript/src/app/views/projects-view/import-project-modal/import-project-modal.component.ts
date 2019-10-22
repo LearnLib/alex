@@ -18,6 +18,8 @@ import { Component } from '@angular/core';
 import { ProjectApiService } from '../../../services/resources/project-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({
   selector: 'import-project-modal',
@@ -31,9 +33,12 @@ export class ImportProjectModalComponent {
   /** The data to import */
   public importData: any = null;
 
-  public name: string;
+  form = new FormGroup({
+    name: new FormControl('', [Validators.required])
+  });
 
   constructor(public modal: NgbActiveModal,
+              public formUtils: FormUtilsService,
               private projectApi: ProjectApiService,
               private toastService: ToastService) {
   }
@@ -49,7 +54,7 @@ export class ImportProjectModalComponent {
       this.errorMessage = 'The file does not seem to contain a project.';
     } else {
       this.importData = importData;
-      this.name = importData.project.name;
+      this.form.controls.name.setValue(importData.project.name);
     }
   }
 
@@ -59,7 +64,7 @@ export class ImportProjectModalComponent {
   importProject(): void {
     this.errorMessage = null;
 
-    this.importData.project.name = this.name;
+    this.importData.project.name = this.form.controls.name.value;
     this.projectApi.import(this.importData).subscribe(
       importedProject => {
         this.toastService.success('The project has been imported');

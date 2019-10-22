@@ -1,0 +1,47 @@
+<div class="form-horizontal form-condensed">
+  <div class="form-group row">
+    <label class="col-sm-3 col-form-label">Min depth</label>
+    <div class="col-sm-9">
+      <input
+        [(ngModel)]="eqOracle.minDepth"
+        class="form-control"
+        min="1"
+        name="eq_oracle_complete_min_depth"
+        placeholder="1"
+        required
+        type="number"
+      >
+
+      <div
+        *ngIf="form.eq_oracle_complete_min_depth.$dirty && form.eq_oracle_complete_min_depth.$invalid"
+        class="alert alert-danger alert-condensed mb-0"
+      >
+        <small *ngIf="form.eq_oracle_complete_min_depth.$error.required">The field must not be empty.</small>
+        <small *ngIf="form.eq_oracle_complete_min_depth.$error.min">The value must be &ge; 1.</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-sm-3 col-form-label">Max depth</label>
+    <div class="col-sm-9">
+      <input
+        [(ngModel)]="eqOracle.maxDepth"
+        class="form-control"
+        min="1"
+        name="eq_oracle_complete_max_depth"
+        placeholder="1"
+        required
+        type="number"
+      >
+
+      <div
+        *ngIf="form.eq_oracle_complete_max_depth.$dirty && form.eq_oracle_complete_max_depth.$invalid"
+        class="alert alert-danger alert-condensed mb-0"
+      >
+        <small *ngIf="form.eq_oracle_complete_max_depth.$error.required">The field must not be empty.</small>
+        <small *ngIf="form.eq_oracle_complete_max_depth.$error.min">The value must be &ge; 1.</small>
+      </div>
+    </div>
+  </div>
+</div>

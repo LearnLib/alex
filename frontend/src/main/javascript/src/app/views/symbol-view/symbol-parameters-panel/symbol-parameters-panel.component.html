@@ -3,10 +3,10 @@
     <strong>Input & output parameters</strong>
   </div>
   <div class="px-3 py-2 border-bottom">
-    <button type="button" class="btn btn-default btn-sm mr-2" (click)="addInput()">
+    <button (click)="addInput()" class="btn btn-default btn-sm mr-2" type="button">
       Add input
     </button>
-    <button type="button" class="btn btn-default btn-sm" (click)="addOutput()">
+    <button (click)="addOutput()" class="btn btn-default btn-sm" type="button">
       Add output
     </button>
   </div>
@@ -20,18 +20,18 @@
             <div *ngFor="let input of symbol.inputs; let i = index">
               <div class="d-flex py-2 px-0">
                 <div class="input w-100">
-                  <span class="btn-close float-right ml-1" (click)="removeInput(i)">
+                  <span (click)="removeInput(i)" class="btn-close float-right ml-1">
                     <i class="fas fa-times"></i>
                   </span>
 
-                  <i class="fas fa-fw fa-lock mr-2"
-                     [ngClass]="{'fa-lock': input.private, 'fa-unlock': !input.private}"></i>
-                  <strong class="cursor-pointer" (click)="editInput(input, i)">{{input.name}}</strong>:
+                  <i [ngClass]="{'fa-lock': input.private, 'fa-unlock': !input.private}"
+                     class="fas fa-fw fa-lock mr-2"></i>
+                  <strong (click)="editInput(input, i)" class="cursor-pointer">{{input.name}}</strong>:
                   <em>{{input.parameterType | normalizeUpperCase}}</em>
                 </div>
                 <div class="d-flex align-items-center">
-                  <svg width="68px" height="14px" xmlns="http://www.w3.org/2000/svg">
-                    <line x1="0" y1="7" x2="50" y2="7" stroke="#000" stroke-width="2"/>
+                  <svg height="14px" width="68px" xmlns="http://www.w3.org/2000/svg">
+                    <line stroke="#000" stroke-width="2" x1="0" x2="50" y1="7" y2="7"/>
                     <polygon points="50,13 50,1 68,7" style="fill:#000"/>
                   </svg>
                 </div>
@@ -57,17 +57,17 @@
             <div *ngFor="let output of symbol.outputs; let i = index">
               <div class="d-flex py-2 px-0">
                 <div class="d-flex align-items-center">
-                  <svg width="68px" height="14px" xmlns="http://www.w3.org/2000/svg">
-                    <line x1="0" y1="7" x2="50" y2="7" stroke="#000" stroke-width="2"/>
+                  <svg height="14px" width="68px" xmlns="http://www.w3.org/2000/svg">
+                    <line stroke="#000" stroke-width="2" x1="0" x2="50" y1="7" y2="7"/>
                     <polygon points="50,13 50,1 68,7" style="fill:#000"/>
                   </svg>
                 </div>
                 <div class="output w-100">
-                  <span class="btn-close float-right ml-1" (click)="removeOutput(i)">
+                  <span (click)="removeOutput(i)" class="btn-close float-right ml-1">
                     <i class="fas fa-times"></i>
                   </span>
 
-                  <strong class="cursor-pointer" (click)="editOutput(output, i)">{{output.name}}</strong>:
+                  <strong (click)="editOutput(output, i)" class="cursor-pointer">{{output.name}}</strong>:
                   <em>{{output.parameterType | normalizeUpperCase}}</em>
                 </div>
               </div>

@@ -18,7 +18,7 @@ import { TestApiService } from '../../services/resources/test-api.service';
 import { AppStoreService } from '../../services/app-store.service';
 import { ErrorViewStoreService } from '../error-view/error-view-store.service';
 import { Component, OnInit } from '@angular/core';
-import { StateService } from '../../providers';
+import { ActivatedRoute } from '@angular/router';
 
 /**
  * The view for the tests.
@@ -32,7 +32,7 @@ export class TestsViewComponent implements OnInit {
   /** The test case or test suite. */
   public test: any;
 
-  constructor(private state: StateService,
+  constructor(private route: ActivatedRoute,
               private appStore: AppStoreService,
               private errorViewStore: ErrorViewStoreService,
               private testApi: TestApiService) {
@@ -40,17 +40,22 @@ export class TestsViewComponent implements OnInit {
 
   ngOnInit(): void {
     const project = this.appStore.project;
-    const testId: number = (this.state as any).params.testId;
-    if (testId === 0) {
-      this.testApi.getRoot(project.id).subscribe(
-        data => this.test = data,
-        res => this.errorViewStore.navigateToErrorPage(res.error.message)
-      );
-    } else {
-      this.testApi.get(project.id, testId).subscribe(
-        data => this.test = data,
-        res => this.errorViewStore.navigateToErrorPage(res.error.message)
-      );
-    }
+
+    this.route.paramMap.subscribe(
+      map => {
+        const testId: number = parseInt(map.get('testId'));
+        if (testId === 0) {
+          this.testApi.getRoot(project.id).subscribe(
+            data => this.test = data,
+            res => this.errorViewStore.navigateToErrorPage(res.error.message)
+          );
+        } else {
+          this.testApi.get(project.id, testId).subscribe(
+            data => this.test = data,
+            res => this.errorViewStore.navigateToErrorPage(res.error.message)
+          );
+        }
+      }
+    );
   }
 }

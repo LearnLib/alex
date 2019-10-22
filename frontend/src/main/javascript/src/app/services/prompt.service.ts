@@ -16,13 +16,14 @@
 
 import { Injectable } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { PromptModalComponent } from '../common/prompt-modal/prompt-modal.component';
-import { ConfirmModalComponent } from '../common/confirm-modal/confirm-modal.component';
+import { PromptModalComponent } from '../common/modals/prompt-modal/prompt-modal.component';
+import { ConfirmModalComponent } from '../common/modals/confirm-modal/confirm-modal.component';
 
 @Injectable()
 export class PromptService {
 
-  constructor(private modalService: NgbModal) { }
+  constructor(private modalService: NgbModal) {
+  }
 
   prompt(text: string, defaultValue: string = ''): Promise<any> {
     const modalRef = this.modalService.open(PromptModalComponent);

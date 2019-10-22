@@ -19,13 +19,12 @@ import { Selectable } from '../../utils/selectable';
 import { LearnerResultApiService } from '../../services/resources/learner-result-api.service';
 import { ToastService } from '../../services/toast.service';
 import { LearnerResultDownloadService } from '../../services/learner-result-download.service';
-import { LearnResult } from '../../entities/learner-result';
+import { LearnerResult } from '../../entities/learner-result';
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { StateService } from '../../providers';
-import { LearnerResultDetailsModalComponent } from '../../common/learner-result-details-modal/learner-result-details-modal.component';
+import { LearnerResultDetailsModalComponent } from '../../common/modals/learner-result-details-modal/learner-result-details-modal.component';
 
 /**
  * The controller for listing all final test results.
@@ -37,13 +36,12 @@ import { LearnerResultDetailsModalComponent } from '../../common/learner-result-
 export class LearnerResultsViewComponent implements OnInit {
 
   /** All final test results of a project. */
-  results: LearnResult[];
+  results: LearnerResult[];
 
   /** The test results the user selected. */
-  selectedResults: Selectable<LearnResult>;
+  selectedResults: Selectable<LearnerResult>;
 
-  constructor(private state: StateService,
-              private appStore: AppStoreService,
+  constructor(private appStore: AppStoreService,
               private learnerResultApi: LearnerResultApiService,
               private toastService: ToastService,
               private learnerResultDownloadService: LearnerResultDownloadService,
@@ -69,7 +67,7 @@ export class LearnerResultsViewComponent implements OnInit {
    *
    * @param result The test result that should be deleted.
    */
-  deleteResult(result: LearnResult): void {
+  deleteResult(result: LearnerResult): void {
     this.learnerResultApi.remove(result).subscribe(
       () => {
         this.toastService.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
@@ -109,8 +107,7 @@ export class LearnerResultsViewComponent implements OnInit {
   openSelectedResults(): void {
     const selectedResults = this.selectedResults.getSelected();
     if (selectedResults.length > 0) {
-      const testNos = selectedResults.map(r => r.testNo).join(',');
-      (this.state as any).go('learnerResultsCompare', {testNos, projectId: this.project.id});
+      const resultIds = selectedResults.map(r => r.id).join(',');
     }
   }
 
@@ -120,13 +117,11 @@ export class LearnerResultsViewComponent implements OnInit {
   showSelectedStatistics(): void {
     const selectedResults = this.selectedResults.getSelected();
     if (selectedResults.length > 0) {
-      const testNos = selectedResults.map(r => r.testNo).join(',');
-      (this.state as any).go('learnerResultsStatistics', {testNos, projectId: this.project.id});
+      const resultIds = selectedResults.map(r => r.id).join(',');
     }
   }
 
-  showStatistics(result: LearnResult): void {
-    (this.state as any).go('learnerResultsStatistics', {testNos: '' + result.testNo, projectId: this.project.id});
+  showStatistics(result: LearnerResult): void {
   }
 
   /**
@@ -134,7 +129,7 @@ export class LearnerResultsViewComponent implements OnInit {
    *
    * @param result The learn result to download as csv.
    */
-  exportAsCSV(result: LearnResult): void {
+  exportAsCSV(result: LearnerResult): void {
     this.learnerResultDownloadService.download([result])
       .then(() => this.toastService.success('The result has been exported.'));
   }
@@ -150,7 +145,7 @@ export class LearnerResultsViewComponent implements OnInit {
     }
   }
 
-  cloneResult(result: LearnResult): void {
+  cloneResult(result: LearnerResult): void {
     this.learnerResultApi.clone(result).subscribe(
       clonedResult => {
         this.toastService.success('The result has been cloned.');
@@ -162,7 +157,7 @@ export class LearnerResultsViewComponent implements OnInit {
     );
   }
 
-  openResultDetailsModal(result: LearnResult): void {
+  openResultDetailsModal(result: LearnerResult): void {
     const modalRef = this.modalService.open(LearnerResultDetailsModalComponent);
     modalRef.componentInstance.result = result;
     modalRef.componentInstance.current = null;

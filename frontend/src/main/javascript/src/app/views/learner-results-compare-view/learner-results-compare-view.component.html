@@ -1,0 +1,52 @@
+<div class="view results-compare-view">
+  <action-bar>
+    <div *ngIf="panels.length === 2" class="float-left">
+      <button
+        (click)="showSeparatingWord()"
+        class="btn btn-sm btn-default mr-2"
+      >
+        <i class="fas fa-fw fa-bolt"></i> Separating word
+      </button>
+
+      <button
+        (click)="showDifferenceTree()"
+        class="btn btn-sm btn-default"
+      >
+        <i class="fas fa-fw fa-sitemap"></i> Differences
+      </button>
+    </div>
+
+    <button
+      (click)="openResultListModal()"
+      *ngIf="panels.length < 3"
+      class="btn btn-sm btn-success float-right"
+    >
+      <i class="fas fa-fw fa-plus"></i> Add hypothesis
+    </button>
+  </action-bar>
+
+  <div class="learn-results-compare-wrapper d-flex flex-row h-100">
+
+    <div *ngIf="panels.length === 0" class="container">
+      <p></p>
+      <div (click)="openResultListModal()" class="alert alert-info">
+        <i class="fas fa-plus-square fa-fw"></i>
+        <strong>Click to add a hypothesis</strong> or click on the green button on the top right
+      </div>
+    </div>
+
+    <ng-container *ngIf="panels.length > 0">
+      <learner-result-panel
+        (step)="onStep.bind(this)"
+        *ngFor="let result of panels; let i = index"
+        [index]="i"
+        [result]="result"
+        class="w-100"
+      >
+        <button (click)="closePanel(i)" class="btn btn-sm btn-danger learn-result-panel-close-button">
+          <i class="fas fa-times"></i>
+        </button>
+      </learner-result-panel>
+    </ng-container>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+<div class="modal-header">
+  <h4>
+    <strong *ngIf="results">Select a result</strong>
+    <strong *ngIf="!results">Select a project</strong>
+  </h4>
+  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+<div class="modal-body">
+  <ngb-tabset>
+    <ngb-tab title="From project">
+      <ng-template ngbTabContent>
+        <br>
+
+        <div *ngIf="results">
+          <button (click)="switchProject()" class="btn btn-sm btn-primary">
+            <i class="fas fa-fw fa-exchange-alt"></i> Change project
+          </button>
+          <hr class="separator-small">
+          <div class="list-group">
+            <a (click)="selectResult(result)" *ngFor="let result of results"
+               class="list-group-item">
+              <span *ngIf="result.error" class="badge badge-danger float-right">Failed</span>
+              <strong>Test No <span>{{result.testNo}}</span></strong>,
+              [<span>{{result.algorithm.name|formatLearningAlgorithm}}</span>]
+              <br>
+              <p class="text-muted" style="margin-bottom: 0">
+                Started: <span>{{result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</span>
+              </p>
+            </a>
+          </div>
+        </div>
+        <div *ngIf="!results" class="list-group">
+          <a (click)="selectProject(project)" *ngFor="let project of projects" class="list-group-item">
+            <strong>{{project.name}}</strong><br>
+            <span class="text-muted">{{project.getDefaultEnvironment().getDefaultUrl().url}}</span>
+          </a>
+        </div>
+      </ng-template>
+    </ngb-tab>
+    <ngb-tab title="From file">
+      <ng-template ngbTabContent>
+        <br>
+
+        <file-dropzone (loaded)="loadResultFromFile($event)">
+          Drag and drop *.json file here or click to upload.
+        </file-dropzone>
+      </ng-template>
+    </ngb-tab>
+  </ngb-tabset>
+
+</div>
+<div class="modal-footer">
+  <button (click)="modal.dismiss()" class="btn btn-default btn-sm">Cancel</button>
+</div>

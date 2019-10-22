@@ -1,0 +1,20 @@
+<h5><strong>Check attribute value</strong></h5>
+
+<p class="text-muted">Check a JSON attribute of the response body to be a specific value.</p>
+<hr>
+
+<div class="form-group">
+  <label>Attribute</label>
+  <input [(ngModel)]="action.attribute" class="form-control" placeholder="json attribute, e.g. myobj.attr[1].obj"
+         type="text">
+</div>
+<div class="form-group">
+  <label>Value</label>
+  <input [(ngModel)]="action.value" class="form-control" placeholder="the attribute value"
+         type="text">
+</div>
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input [(ngModel)]="action.regexp" class="form-check-input" type="checkbox"> is regular expression
+  </label>
+</div>

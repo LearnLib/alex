@@ -24,10 +24,10 @@ export class EventBus {
 
   groupUpdated$ = new Subject<SymbolGroup>();
   groupDeleted$ = new Subject<SymbolGroup>();
-  groupMoved$ = new Subject<{from: number, group: SymbolGroup}>();
+  groupMoved$ = new Subject<{ from: number, group: SymbolGroup }>();
 
-  hypothesisLabelSelected$ = new Subject<{input: string, output: string}>();
+  hypothesisLabelSelected$ = new Subject<{ input: string, output: string }>();
 
   symbolUpdated$ = new Subject<AlphabetSymbol>();
-  symbolsMoved$ = new Subject<{group: SymbolGroup, symbols: AlphabetSymbol[]}>();
+  symbolsMoved$ = new Subject<{ group: SymbolGroup, symbols: AlphabetSymbol[] }>();
 }

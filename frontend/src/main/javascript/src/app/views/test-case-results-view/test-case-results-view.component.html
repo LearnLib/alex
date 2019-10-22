@@ -1,5 +1,4 @@
 <div class="view view-test-case-results">
-  <view-header [title]="'Test Results'"></view-header>
   <action-bar></action-bar>
   <div class="view-body">
     <div class="container-fluid">
@@ -13,7 +12,7 @@
       <hr>
 
       <div *ngIf="results.length > 0">
-        <table class="table table-striped" >
+        <table class="table table-striped">
           <thead>
           <tr>
             <th>Date</th>
@@ -29,8 +28,8 @@
               {{result.date | date : 'EEE, dd.MM.yyyy, HH:mm'}}
             </td>
             <td width="50">
-              <span class="badge badge-success" *ngIf="result.passed">Passed</span>
-              <span class="badge badge-danger" *ngIf="!result.passed">Failed</span>
+              <span *ngIf="result.passed" class="badge badge-success">Passed</span>
+              <span *ngIf="!result.passed" class="badge badge-danger">Failed</span>
             </td>
             <td>
               <report-outputs-column [outputs]="result.outputs" [project]="project"></report-outputs-column>
@@ -46,10 +45,10 @@
         </table>
         <hr>
 
-        <pagination [page]="page" (next)="nextPage()" (previous)="previousPage()"></pagination>
+        <pagination (next)="nextPage()" (previous)="previousPage()" [page]="page"></pagination>
       </div>
 
-      <div class="alert alert-info" *ngIf="results.length === 0">
+      <div *ngIf="results.length === 0" class="alert alert-info">
         There are not results for this test yet.
       </div>
 

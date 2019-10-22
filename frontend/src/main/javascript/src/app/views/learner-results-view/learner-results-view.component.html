@@ -1,39 +1,38 @@
 <div class="view">
-  <view-header [title]="'Results'"></view-header>
 
   <action-bar>
-    <div *ngIf="results.length > 0" class="d-flex flex-row align-items-center">
+    <div class="d-flex flex-row align-items-center">
       <selectable-checkbox-multiple [selectable]="selectedResults"></selectable-checkbox-multiple>
 
       <div class="ml-3">
         <button
-          class="btn btn-sm btn-primary mr-2"
           (click)="openSelectedResults()"
           [disabled]="!selectedResults.isAnySelected()"
+          class="btn btn-sm btn-primary mr-2"
         >
           Compare
         </button>
         <button
-          class="btn btn-sm btn-default mr-2"
           (click)="deleteResults()"
           [disabled]="!selectedResults.isAnySelected()"
+          class="btn btn-sm btn-default mr-2"
         >
           Delete
         </button>
 
         <div class="btn-group btn-group-sm" ngbDropdown>
           <button
+            [disabled]="!selectedResults.isAnySelected()"
             class="btn btn-default btn-dropdown"
             ngbDropdownToggle
-            [disabled]="!selectedResults.isAnySelected()"
           >
             Statistics
           </button>
-          <div ngbDropdownMenu class="dropdown-menu dropdown-menu-left" role="menu">
-            <div ngbDropdownItem (click)="showSelectedStatistics()">
+          <div class="dropdown-menu dropdown-menu-left" ngbDropdownMenu role="menu">
+            <div (click)="showSelectedStatistics()" ngbDropdownItem>
               <i class="fas fa-fw fa-chart-bar"></i> Show statistics
             </div>
-            <div ngbDropdownItem (click)="exportSelectedAsCSV()">
+            <div (click)="exportSelectedAsCSV()" ngbDropdownItem>
               <i class="fas fa-fw fa-download"></i> Export statistics
             </div>
           </div>
@@ -45,35 +44,35 @@
   <div class="view-body has-sub-nav">
     <div class="container-fluid">
 
-      <div class="list-group" *ngIf="results.length > 0">
-        <div class="list-group-item" *ngFor="let result of results">
+      <div *ngIf="results.length > 0" class="list-group">
+        <div *ngFor="let result of results" class="list-group-item">
           <learner-result-list-item [result]="result" [selectable]="selectedResults">
             <div class="btn-group btn-group-xs" ngbDropdown>
-              <button type="button" class="btn btn-default btn-icon dropdown-toggle no-caret" ngbDropdownToggle>
+              <button class="btn btn-default btn-icon dropdown-toggle no-caret" ngbDropdownToggle type="button">
                 <i class="fas fa-bars"></i>
               </button>
-              <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">
-                <a ngbDropdownItem [href]="'#!/projects/' + result.project + '/learner/learn'">
+              <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
+                <a [href]="'#!/projects/' + result.project + '/learner/learn'" ngbDropdownItem>
                   <i class="fas fa-play fa-fw"></i> Continue learning
                 </a>
                 <div class="dropdown-divider"></div>
-                <div ngbDropdownItem href="" (click)="openResultDetailsModal(result)">
+                <div (click)="openResultDetailsModal(result)" href="" ngbDropdownItem>
                   <i class="fas fa-info fa-fw"></i> Details
                 </div>
-                <a ngbDropdownItem [href]="'#!/projects/' + result.project + '/learner/results/' + result.testNo">
+                <a [href]="'#!/projects/' + result.project + '/learner/results/' + result.testNo" ngbDropdownItem>
                   <i class="fas fa-code-branch fa-fw"></i> Hypotheses
                 </a>
-                <div ngbDropdownItem (click)="cloneResult(result)">
+                <div (click)="cloneResult(result)" ngbDropdownItem>
                   <i class="fas fa-clone fa-fw"></i> Clone
                 </div>
-                <div ngbDropdownItem (click)="deleteResult(result)">
+                <div (click)="deleteResult(result)" ngbDropdownItem>
                   <i class="fas fa-trash fa-fw"></i> Delete
                 </div>
                 <div class="dropdown-divider"></div>
-                <div ngbDropdownItem (click)="showStatistics(result)">
+                <div (click)="showStatistics(result)" ngbDropdownItem>
                   <i class="fas fa-fw fa-chart-bar"></i> Show statistics
                 </div>
-                <div ngbDropdownItem (click)="exportAsCSV(result)">
+                <div (click)="exportAsCSV(result)" ngbDropdownItem>
                   <i class="fas fa-fw fa-download"></i> Export statistics
                 </div>
               </div>
@@ -82,7 +81,7 @@
         </div>
       </div>
 
-      <div class="alert alert-info" *ngIf="results.length === 0">
+      <div *ngIf="results.length === 0" class="alert alert-info">
         You have not run any tests yet or the active one is not finished.
       </div>
 

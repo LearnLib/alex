@@ -27,9 +27,8 @@ import { CreateCounterModalComponent } from './create-counter-modal/create-count
 @Injectable()
 export class CountersViewStoreService {
 
-  private counters: BehaviorSubject<Counter[]>;
-
   public countersSelectable: Selectable<Counter>;
+  private counters: BehaviorSubject<Counter[]>;
 
   constructor(private appStore: AppStoreService,
               private counterApi: CounterApiService,
@@ -37,6 +36,10 @@ export class CountersViewStoreService {
               private toastService: ToastService) {
     this.counters = new BehaviorSubject<Counter[]>([]);
     this.countersSelectable = new Selectable<Counter>([], 'id');
+  }
+
+  get counters$(): Observable<Counter[]> {
+    return this.counters.asObservable();
   }
 
   load(): void {
@@ -117,9 +120,5 @@ export class CountersViewStoreService {
     } else {
       this.toastService.info('You have to select at least one counter.');
     }
-  }
-
-  get counters$(): Observable<Counter[]> {
-    return this.counters.asObservable();
   }
 }

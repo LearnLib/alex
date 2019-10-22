@@ -26,7 +26,7 @@ import { SetVariableByJsonAttributeGeneralAction } from '../entities/actions/mis
 import { SetVariableByNodeGeneralAction } from '../entities/actions/misc/set-variable-by-node-action';
 import { SetVariableByNodeAttributeGeneralAction } from '../entities/actions/misc/set-variable-by-node-attribute-action';
 import { SetVariableByNodeCountAction } from '../entities/actions/misc/set-variable-by-node-count-action';
-import { SetVariableByRegexGroup } from '../entities/actions/misc/set-variable-by-regex-group-action';
+import { SetVariableByRegexGroupAction } from '../entities/actions/misc/set-variable-by-regex-group-action';
 import { WaitGeneralAction } from '../entities/actions/misc/wait-action';
 import { CheckAttributeExistsRestAction } from '../entities/actions/rest/check-attribute-exists-action';
 import { CheckAttributeTypeRestAction } from '../entities/actions/rest/check-attribute-type-action';
@@ -127,12 +127,12 @@ export class ActionService {
     [actionType.GENERAL_SET_VARIABLE]: (data) => new SetVariableGeneralAction(data),
     [actionType.GENERAL_SET_VARIABLE_BY_NODE_ATTRIBUTE]: (data) => new SetVariableByNodeAttributeGeneralAction(data),
     [actionType.GENERAL_SET_VARIABLE_BY_NODE_COUNT]: (data) => new SetVariableByNodeCountAction(data),
-    [actionType.GENERAL_SET_VARIABLE_BY_REGEX_GROUP]: (data) => new SetVariableByRegexGroup(data),
+    [actionType.GENERAL_SET_VARIABLE_BY_REGEX_GROUP]: (data) => new SetVariableByRegexGroupAction(data),
     [actionType.WAIT]: (data) => new WaitGeneralAction(data),
     [actionType.WAIT_FOR_TITLE]: (data) => new WaitForTitleAction(data),
     [actionType.WAIT_FOR_NODE]: (data) => new WaitForNodeAction(data),
     [actionType.WAIT_FOR_TEXT]: (data) => new WaitForTextAction(data),
-    [actionType.WAIT_FOR_NODE_ATTRIBUTE]: (data) => new WaitForNodeAttributeAction(data),
+    [actionType.WAIT_FOR_NODE_ATTRIBUTE]: (data) => new WaitForNodeAttributeAction(data)
   };
 
   /**

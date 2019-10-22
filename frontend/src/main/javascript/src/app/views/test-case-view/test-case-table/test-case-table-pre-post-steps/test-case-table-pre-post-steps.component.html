@@ -1,5 +1,5 @@
 <table class="table mb-0">
-  <tbody dragula="STEPS" [dragulaModel]="steps" (dragulaModelChange)="stepsChange.emit($event)">
+  <tbody (dragulaModelChange)="stepsChange.emit($event)" [dragulaModel]="steps" dragula="STEPS">
   <ng-container *ngIf="steps.length === 0">
     <tr>
       <td colspan="5">
@@ -18,9 +18,9 @@
       </td>
       <td>
         <test-case-table-symbol-column
-          [symbolMap]="symbolMap"
           [options]="options"
           [pSymbol]="step.pSymbol"
+          [symbolMap]="symbolMap"
         >
         </test-case-table-symbol-column>
       </td>
@@ -30,7 +30,7 @@
       </td>
       <td width="1">
         <div class="pr-2">
-          <i class="fas fa-times cursor-pointer" (click)="steps.splice(i, 1)"></i>
+          <i (click)="steps.splice(i, 1)" class="fas fa-times cursor-pointer"></i>
         </div>
       </td>
     </tr>

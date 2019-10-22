@@ -1,0 +1,32 @@
+<div id="alex" class="d-flex flex-column">
+  <nav class="navbar navbar-expand-lg navbar-dark flex-shrink-0" style="background: #224c6f; box-shadow: 0px 1px 3px rgba(0,0,0,0.4)">
+    <a class="navbar-brand d-flex flex-row align-items-center" [routerLink]="['.']">
+      <img height="18" src="/assets/images/favicon.png" width="18"> <strong class="ml-1">LEX</strong>
+    </a>
+
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown" ngbDropdown>
+          <a class="nav-link dropdown-toggle" ngbDropdownToggle>
+            {{username}}
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>
+            <a ngbDropdownItem [routerLink]="['profile']">
+              <i class="fas fa-fw fa-user"></i> Profile
+            </a>
+            <div class="dropdown-divider"></div>
+            <a ngbDropdownItem [routerLink]="['..', 'logout']">
+              <i class="fas fa-fw fa-sign-out-alt"></i> Logout
+            </a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="h-100 d-flex flex-row" style="overflow: auto">
+    <sidebar></sidebar>
+    <div class="w-100">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

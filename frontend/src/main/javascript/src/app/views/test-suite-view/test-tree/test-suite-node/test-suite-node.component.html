@@ -4,21 +4,21 @@
       <i class="fas fa-fw fa-folder"></i>
     </div>
     <a
+      [routerLink]="['..', suite.id]"
       class="name d-flex flex-row align-items-center w-100"
-      [href]="'#!/projects/' + suite.project + '/tests/' + suite.id"
     >
       <div class="w-100">
         <strong>{{suite.name}}</strong>
       </div>
       <div>
-        <span class="float-right" *ngIf="result">
-          <span class="badge badge-success" *ngIf="result.passed">
+        <span *ngIf="result" class="float-right">
+          <span *ngIf="result.passed" class="badge badge-success">
             Passed
           </span>
-          <span class="badge badge-danger" *ngIf="!result.passed && result.testCasesPassed === 0">
+          <span *ngIf="!result.passed && result.testCasesPassed === 0" class="badge badge-danger">
             Failed
           </span>
-          <span class="badge badge-warning" *ngIf="!result.passed && result.testCasesPassed > 0">
+          <span *ngIf="!result.passed && result.testCasesPassed > 0" class="badge badge-warning">
             {{result.testCasesFailed}}/{{result.testCasesRun}} Failed
           </span>
         </span>

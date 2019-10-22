@@ -1,8 +1,8 @@
 <div
-  class="alert alert-info"
+  (click)="onClick()"
   (dragover)="onDragover($event)"
   (drop)="onDrop($event)"
-  (click)="onClick()"
+  class="alert alert-info"
 >
   <ng-content></ng-content>
 </div>

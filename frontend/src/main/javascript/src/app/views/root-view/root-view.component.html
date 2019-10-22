@@ -1,0 +1,16 @@
+<div class="container" id="view-home">
+  <div class="mx-auto" style="max-width: 320px">
+    <img id="logo" src="/assets/images/logo.png">
+    <div class="card">
+      <div class="card-body">
+        <user-login-form (loggedIn)="handleLoggedIn()"></user-login-form>
+      </div>
+    </div>
+    <hr>
+    <div class="text-center links">
+      <a [routerLink]="['..', 'about']" class="mx-2">About</a>
+      <a href="https://learnlib.github.io/alex/book/1.7.0/" class="mx-2" target="_blank">Docs</a>
+      <a href="https://github.com/LearnLib/alex" class="mx-2" target="_blank">GitHub</a>
+    </div>
+  </div>
+</div>

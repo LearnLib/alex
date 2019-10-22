@@ -1,8 +1,7 @@
 <div class="view">
-  <view-header [title]="'Profile'"></view-header>
   <action-bar>
     <div class="container text-right">
-      <button class="btn btn-sm btn-danger" (click)="deleteProfile()">
+      <button (click)="deleteProfile()" class="btn btn-sm btn-danger">
         <i class="fas fa-fw fa-trash"></i> Delete Profile
       </button>
     </div>
@@ -11,7 +10,7 @@
   <div class="view-body">
     <div class="container">
 
-      <form class="mb-4" [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+      <form (ngSubmit)="changePassword()" [formGroup]="passwordForm" class="mb-4">
         <div class="card">
           <div class="card-header">
             <h5>Password</h5>
@@ -20,31 +19,31 @@
             <div class="form-group">
               <label>Old password</label>
               <input
-                class="form-control"
-                type="password"
                 [formControl]="passwordForm.controls.old"
-                required
+                class="form-control"
                 placeholder="Enter your old password"
+                required
+                type="password"
               >
             </div>
             <div class="form-group">
               <label>New password</label>
               <input
-                class="form-control"
-                type="password"
                 [formControl]="passwordForm.controls.new"
-                required
+                class="form-control"
                 placeholder="Enter your new password"
+                required
+                type="password"
               >
             </div>
           </div>
           <div class="card-footer">
-            <button class="btn btn-primary btn-sm" [disabled]="passwordForm.invalid">Change Password</button>
+            <button [disabled]="passwordForm.invalid" class="btn btn-primary btn-sm">Change Password</button>
           </div>
         </div>
       </form>
 
-      <form [formGroup]="emailForm" (ngSubmit)="changeEmail()">
+      <form (ngSubmit)="changeEmail()" [formGroup]="emailForm">
         <div class="card">
           <div class="card-header">
             <h5>Email</h5>
@@ -53,19 +52,19 @@
             <div class="form-group">
               <label>Email</label>
               <input
+                [class.invalid]="isInvalidFormControl(emailForm.controls.email)"
+                [formControl]="emailForm.controls.email"
                 class="form-control"
                 name="mail"
-                type="email"
                 ng-model="email"
                 placeholder="Enter an email address"
                 required
-                [formControl]="emailForm.controls.email"
-                [class.invalid]="isInvalidFormControl(emailForm.controls.email)"
+                type="email"
               />
             </div>
           </div>
           <div class="card-footer">
-            <button class="btn btn-primary btn-sm" [disabled]="emailForm.invalid">Change Email</button>
+            <button [disabled]="emailForm.invalid" class="btn btn-primary btn-sm">Change Email</button>
           </div>
         </div>
       </form>

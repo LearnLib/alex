@@ -17,7 +17,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProjectsViewStoreService } from './projects-view-store.service';
 import { AppStoreService } from '../../services/app-store.service';
-import { StateService } from '../../providers';
 
 @Component({
   selector: 'projects-view',
@@ -27,17 +26,11 @@ import { StateService } from '../../providers';
 export class ProjectsViewComponent implements OnInit {
 
   constructor(public store: ProjectsViewStoreService,
-              private appStore: AppStoreService,
-              private $state: StateService) {
-    console.log($state)
+              public appStore: AppStoreService) {
   }
 
-  ngOnInit() {
-    const project = this.appStore.project;
-    if (project != null) {
-      window.location.hash = '!/projects/' + project.id;
-    } else {
-      this.store.load();
-    }
+  ngOnInit(): void {
+    this.store.load();
+    this.appStore.closeProject();
   }
 }

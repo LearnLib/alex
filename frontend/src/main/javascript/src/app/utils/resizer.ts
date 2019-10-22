@@ -36,7 +36,7 @@ export class Resizer {
 
   private handleMousemove(e) {
     const offsetX = -1 * (e.pageX - this.startX);
-    this.containerEl.style.minWidth = this.startWidth + offsetX + "px";
+    this.containerEl.style.minWidth = this.startWidth + offsetX + 'px';
   }
 
   private handleMouseup(e) {

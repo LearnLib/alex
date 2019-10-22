@@ -55,6 +55,10 @@ export class EditUserModalComponent implements OnInit {
     this.deleted = new EventEmitter<User>();
   }
 
+  get currentUser(): User {
+    return this.appStore.user;
+  }
+
   ngOnInit(): void {
     this.form = new FormGroup({
       'email': new FormControl(this.user.email, [Validators.required, Validators.email])
@@ -143,9 +147,5 @@ export class EditUserModalComponent implements OnInit {
 
   isInvalidFormControl(c: AbstractControl): boolean {
     return c.invalid && (c.dirty || c.touched);
-  }
-
-  get currentUser(): User {
-    return this.appStore.user;
   }
 }

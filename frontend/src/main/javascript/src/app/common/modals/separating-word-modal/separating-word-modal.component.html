@@ -1,0 +1,50 @@
+<div class="modal-header">
+  <h4 class="modal-title">Separating word</h4>
+  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div class="modal-body" style="overflow: auto; max-height: 420px">
+  <table class="table">
+    <thead>
+    <tr>
+      <th>&nbsp;</th>
+      <th>Symbol</th>
+      <th>Hypothesis 1</th>
+      <th>Hypothesis 2</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let symbol of diff.input; let i = index" [ngClass]="{'info': i === diff.input.length - 1}">
+      <td style="width: 1px">{{i + 1}}.</td>
+      <td>
+        <strong>{{symbol}}</strong>
+      </td>
+      <td>
+        <span [ngClass]="{'badge-info': i === diff.input.length - 1}"
+              class="badge badge-default">{{diff.output1[i]}}</span>
+      </td>
+      <td>
+        <span [ngClass]="{'badge-info': i === diff.input.length - 1}"
+              class="badge badge-default">{{diff.output2[i]}}</span>
+      </td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>
+        <button (click)="generateTestCase(1)" class="btn btn-default btn-sm btn-block">Generate test case</button>
+      </td>
+      <td>
+        <button (click)="generateTestCase(2)" class="btn btn-default btn-sm btn-block">Generate test case</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-footer">
+  <button (click)="modal.dismiss()" class="btn btn-sm btn-primary">Ok</button>
+  <button (click)="modal.dismiss()" class="btn btn-sm btn-default">Cancel</button>
+</div>

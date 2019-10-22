@@ -1,0 +1,128 @@
+<h5><strong>Make request</strong></h5>
+
+<p class="text-muted">Make a HTTP request to a URL that is relative a base URL.</p>
+<hr>
+
+<div class="d-flex flex-row">
+  <div class="form-group w-25">
+    <label class="control-label">Base</label>
+    <select (change)="handleBaseUrlChange()" [(ngModel)]="selectedBaseUrl" class="form-control">
+      <option *ngFor="let url of project.getDefaultEnvironment().urls" [value]="url.name">
+        {{url.name}}
+      </option>
+    </select>
+  </div>
+
+  <div class="form-group w-75 ml-3">
+    <label class="control-label">URL</label>
+    <input [(ngModel)]="action.url" class="form-control" placeholder="The URL to make a request to" type="text">
+  </div>
+</div>
+
+<div class="form-group">
+  <label>Method</label>
+  <select [(ngModel)]="action.method"
+          class="form-control">
+    <option [value]="null" disabled>Select a Method</option>
+    <option *ngFor="let m of ['DELETE', 'GET', 'POST', 'PUT']" [value]="m">{{m}}</option>
+  </select>
+</div>
+
+<div class="form-group">
+  <div class="d-flex">
+    <div class="w-100">
+      <label>Data</label>
+    </div>
+    <div>
+      <select (change)="setPreset()" [(ngModel)]="preset" class="form-control p-0 h-auto" style="width: 80px">
+        <option selected value="JSON">JSON</option>
+        <option value="GRAPH_QL">GraphQL</option>
+      </select>
+    </div>
+  </div>
+  <div [(ngModel)]="action.data"></div>
+</div>
+
+<div class="form-group">
+  <label>Timeout [ms] <em class="text-muted">(0 - The request does not timeout)</em></label>
+  <input [(ngModel)]="action.timeout" class="form-control" min="0" placeholder="Timeout im ms" type="number">
+</div>
+
+<ngb-tabset>
+  <ngb-tab title="HTTP Headers">
+    <ng-template ngbTabContent>
+
+      <br>
+
+      <div class="form-group">
+        <div class="row">
+          <div class="col-sm-5 pr-0">
+            <input [(ngModel)]="header.name" class="form-control" placeholder="Header Name" type="text">
+          </div>
+          <div class="col-sm-5 pr-0">
+            <input [(ngModel)]="header.value" class="form-control" placeholder="Header Value" type="text">
+          </div>
+          <div class="col-sm-2">
+            <a (click)="addHeader()" class="btn btn-default btn-block">
+              <i class="fas fa-plus"></i>
+            </a>
+          </div>
+        </div>
+        <br>
+        <ul class="list-group list-group-condensed">
+          <li *ngFor="let i of action.headers | keyvalue" class="list-group-item">
+            <i (click)="action.removeHeader(i.key)" class="fas fa-trash fa-fw float-right"></i>
+            <strong>{{i.key}}</strong>: <span>{{action.headers[i.key]}}</span>
+          </li>
+        </ul>
+      </div>
+
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab title="Authentication">
+    <ng-template ngbTabContent>
+
+      <br>
+
+      <div class="form-group">
+        <label class="control-label">Name</label>
+        <input [(ngModel)]="action.credentials.name" class="form-control" placeholder="Name" type="text">
+      </div>
+      <div class="form-group">
+        <label class="control-label">Password</label>
+        <input [(ngModel)]="action.credentials.password" class="form-control" placeholder="Password" type="text">
+      </div>
+
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab title="Cookies">
+    <ng-template ngbTabContent>
+
+      <br>
+
+      <div class="form-group">
+        <div class="row">
+          <div class="col-sm-5 pr-0">
+            <input [(ngModel)]="cookie.name" class="form-control" placeholder="Cookie Name" type="text">
+          </div>
+          <div class="col-sm-5 pr-0">
+            <input [(ngModel)]="cookie.value" class="form-control" placeholder="Cookie Value" type="text">
+          </div>
+          <div class="col-sm-2">
+            <a (click)="addCookie()" class="btn btn-default btn-block">
+              <i class="fas fa-plus"></i>
+            </a>
+          </div>
+        </div>
+        <br>
+        <ul class="list-group list-group-condensed">
+          <li *ngFor="let i of action.cookies | keyvalue" class="list-group-item">
+            <i (click)="action.removeCookie(i.key)" class="fas fa-trash fa-fw float-right"></i>
+            <strong>{{i.key}}</strong>: <span>{{action.cookies[i.key]}}</span>
+          </li>
+        </ul>
+      </div>
+
+    </ng-template>
+  </ngb-tab>
+</ngb-tabset>

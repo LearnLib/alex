@@ -1,12 +1,12 @@
 <div
-  class="symbol-group-header d-flex flex-row align-items-center"
   [ngClass]="{'collapse': collapse}"
+  class="symbol-group-header d-flex flex-row align-items-center"
 >
   <div>
     <i
-      class="far fa-fw cursor-pointer"
-      [ngClass]="{'fa-minus-square': !collapse, 'fa-plus-square': collapse}"
       (click)="collapse = !collapse"
+      [ngClass]="{'fa-minus-square': !collapse, 'fa-plus-square': collapse}"
+      class="far fa-fw cursor-pointer"
     >
     </i>
   </div>
@@ -16,7 +16,7 @@
   <div class="w-100 pl-3 py-0">
     <span class="symbol-group-name">{{group.name}}</span>
   </div>
-  <div class="mr-3" *ngIf="group.symbols.length === 0 && group.groups.length === 0">
+  <div *ngIf="group.symbols.length === 0 && group.groups.length === 0" class="mr-3">
     <span class="badge badge-default">Empty</span>
   </div>
   <div>

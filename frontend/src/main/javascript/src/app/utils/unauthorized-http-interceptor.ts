@@ -16,12 +16,13 @@
 
 import { ToastService } from '../services/toast.service';
 import { IQService } from 'angular';
-import IInjectorService = angular.auto.IInjectorService;
 import { AppStoreService } from '../services/app-store.service';
+import IInjectorService = angular.auto.IInjectorService;
 
 /**
  * Intercept HTTP responses and redirect to the start page if the user is unauthorized (status 401).
  */
+
 /* @ngInject */
 export function unauthorizedHttpInterceptor($q: IQService, $injector: IInjectorService, $state: any) {
   return {

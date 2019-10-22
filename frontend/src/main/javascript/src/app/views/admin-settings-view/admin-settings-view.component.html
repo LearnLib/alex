@@ -1,15 +1,14 @@
 <div class="view">
-  <view-header [title]="'Settings'"></view-header>
   <action-bar>
-    <div class="container">
-      <button class="btn btn-sm btn-success float-right" (click)="updateSettings()">
+    <div class="container d-flex">
+      <button (click)="updateSettings()" class="btn btn-sm btn-success ml-auto">
         <i class="fas fa-save fa-fw"></i> Save
       </button>
     </div>
   </action-bar>
 
   <div class="view-body settings">
-    <div class="container" *ngIf="settings != null">
+    <div *ngIf="settings != null" class="container">
 
       <div class="card mb-4">
         <div class="card-header">
@@ -22,12 +21,12 @@
               <div class="w-100 pr-3">
                 <div class="form-group mb-0">
                   <label><strong>Chrome</strong></label>
-                  <input class="form-control" [(ngModel)]="settings.driver.chrome" type="text"
-                         placeholder="Enter the absolute path to the chromedriver executable">
+                  <input [(ngModel)]="settings.driver.chrome" class="form-control" placeholder="Enter the absolute path to the chromedriver executable"
+                         type="text">
                   <p class="form-text text-muted mb-0">
                     You can find the latest ChromeDriver
-                    <a href="https://sites.google.com/a/chromium.org/chromedriver/downloads" target="_blank"
-                       rel="nofollow">
+                    <a href="https://sites.google.com/a/chromium.org/chromedriver/downloads" rel="nofollow"
+                       target="_blank">
                       here
                     </a>.
                   </p>
@@ -35,9 +34,9 @@
               </div>
               <div class="flex-shrink-0">
                 <button
-                  class="btn btn-sm"
                   (click)="makeDriverDefault(webBrowsers.CHROME)"
                   [ngClass]="getDefaultButtonClass(webBrowsers.CHROME)"
+                  class="btn btn-sm"
                 >
                   Default
                 </button>
@@ -48,12 +47,12 @@
               <div class="w-100 pr-3">
                 <div class="form-group mb-0">
                   <label><strong>Firefox</strong></label>
-                  <input class="form-control" [(ngModel)]="settings.driver.firefox" type="text"
-                         placeholder="Enter the absolute path to the geckodriver executable">
+                  <input [(ngModel)]="settings.driver.firefox" class="form-control" placeholder="Enter the absolute path to the geckodriver executable"
+                         type="text">
 
                   <p class="form-text text-muted mb-0">
                     You can find the latest driver
-                    <a href="https://github.com/mozilla/geckodriver/releases" target="_blank" rel="nofollow">
+                    <a href="https://github.com/mozilla/geckodriver/releases" rel="nofollow" target="_blank">
                       here
                     </a>.
                   </p>
@@ -61,9 +60,9 @@
               </div>
               <div class="flex-shrink-0">
                 <button
-                  class="btn btn-sm"
                   (click)="makeDriverDefault(webBrowsers.FIREFOX)"
                   [ngClass]="getDefaultButtonClass(webBrowsers.FIREFOX)"
+                  class="btn btn-sm"
                 >
                   Default
                 </button>
@@ -74,13 +73,13 @@
               <div class="w-100 pr-3">
                 <div class="form-group mb-0">
                   <label><strong>Edge</strong></label>
-                  <input class="form-control" [(ngModel)]="settings.driver.edge" type="text"
-                         placeholder="Enter the absolute path to the edgedriver executable">
+                  <input [(ngModel)]="settings.driver.edge" class="form-control" placeholder="Enter the absolute path to the edgedriver executable"
+                         type="text">
 
                   <p class="form-text text-muted mb-0">
                     You can find the latest driver
-                    <a href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/" target="_blank"
-                       rel="nofollow">
+                    <a href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/" rel="nofollow"
+                       target="_blank">
                       here
                     </a>.
                   </p>
@@ -88,9 +87,9 @@
               </div>
               <div class="flex-shrink-0">
                 <button
-                  class="btn btn-sm"
                   (click)="makeDriverDefault(webBrowsers.EDGE)"
                   [ngClass]="getDefaultButtonClass(webBrowsers.EDGE)"
+                  class="btn btn-sm"
                 >
                   Default
                 </button>
@@ -101,13 +100,13 @@
               <div class="w-100 pr-3">
                 <div class="form-group mb-0">
                   <label><strong>Internet Explorer</strong></label>
-                  <input class="form-control" [(ngModel)]="settings.driver.ie" type="text"
-                         placeholder="Enter the absolute path to the IEDriver executable">
+                  <input [(ngModel)]="settings.driver.ie" class="form-control" placeholder="Enter the absolute path to the IEDriver executable"
+                         type="text">
 
                   <p class="form-text text-muted mb-0">
                     You can find the driver for Selenium 3.11.0
-                    <a href="http://selenium-release.storage.googleapis.com/index.html?path=3.11/" target="_blank"
-                       rel="nofollow">
+                    <a href="http://selenium-release.storage.googleapis.com/index.html?path=3.11/" rel="nofollow"
+                       target="_blank">
                       here
                     </a>.
                   </p>
@@ -115,9 +114,9 @@
               </div>
               <div class="flex-shrink-0">
                 <button
-                  class="btn btn-sm"
                   (click)="makeDriverDefault(webBrowsers.IE)"
                   [ngClass]="getDefaultButtonClass(webBrowsers.IE)"
+                  class="btn btn-sm"
                 >
                   Default
                 </button>
@@ -128,13 +127,13 @@
               <div class="w-100 pr-3">
                 <div class="form-group mb-0">
                   <label><strong>Remote Selenium Server</strong></label>
-                  <input class="form-control" [(ngModel)]="settings.driver.remote" type="text"
-                         placeholder="Enter the URL to the remote Selenium Server">
+                  <input [(ngModel)]="settings.driver.remote" class="form-control" placeholder="Enter the URL to the remote Selenium Server"
+                         type="text">
 
                   <p class="form-text text-muted mb-0">
                     You can find Selenium server 3.11.0
-                    <a href="http://selenium-release.storage.googleapis.com/index.html?path=3.11/" target="_blank"
-                       rel="nofollow">
+                    <a href="http://selenium-release.storage.googleapis.com/index.html?path=3.11/" rel="nofollow"
+                       target="_blank">
                       here
                     </a>.
                   </p>
@@ -142,9 +141,9 @@
               </div>
               <div class="flex-shrink-0">
                 <button
-                  class="btn btn-sm"
                   (click)="makeDriverDefault(webBrowsers.REMOTE)"
                   [ngClass]="getDefaultButtonClass(webBrowsers.REMOTE)"
+                  class="btn btn-sm"
                 >
                   Default
                 </button>
@@ -159,9 +158,9 @@
               </div>
               <div class="flex-shrink-0">
                 <button
-                  class="btn btn-sm"
                   (click)="makeDriverDefault(webBrowsers.HTML_UNIT)"
                   [ngClass]="getDefaultButtonClass(webBrowsers.HTML_UNIT)"
+                  class="btn btn-sm"
                 >
                   Default
                 </button>
@@ -176,9 +175,9 @@
               </div>
               <div class="flex-shrink-0">
                 <button
-                  class="btn btn-sm"
                   (click)="makeDriverDefault(webBrowsers.SAFARI)"
                   [ngClass]="getDefaultButtonClass(webBrowsers.SAFARI)"
+                  class="btn btn-sm"
                 >
                   Default
                 </button>
@@ -205,7 +204,7 @@
               <div>
                 <div class="form-group form-check">
                   <label class="form-check-label">
-                    <input class="form-check-input" type="checkbox" [(ngModel)]="settings.allowUserRegistration">
+                    <input [(ngModel)]="settings.allowUserRegistration" class="form-check-input" type="checkbox">
                   </label>
                 </div>
               </div>

@@ -1,0 +1,80 @@
+<div *ngIf="action != null">
+  <div [ngSwitch]="action.type">
+
+    <!-- web actions -->
+    <alert-accept-dismiss-action-form *ngSwitchCase="'web_alertAcceptDismiss'"
+                                      [action]="action"></alert-accept-dismiss-action-form>
+    <alert-get-text-action-form *ngSwitchCase="'web_alertGetText'" [action]="action"></alert-get-text-action-form>
+    <alert-send-keys-action-form *ngSwitchCase="'web_alertSendKeys'" [action]="action"></alert-send-keys-action-form>
+    <browser-action-form *ngSwitchCase="'web_browser'" [action]="action"></browser-action-form>
+    <check-for-node-action-form *ngSwitchCase="'web_checkForNode'" [action]="action"></check-for-node-action-form>
+    <check-for-text-action-form *ngSwitchCase="'web_checkForText'" [action]="action"></check-for-text-action-form>
+    <check-page-title-action-form *ngSwitchCase="'web_checkPageTitle'" [action]="action"></check-page-title-action-form>
+    <check-node-selected-action-form *ngSwitchCase="'web_checkNodeSelected'"
+                                     [action]="action"></check-node-selected-action-form>
+    <clear-input-action-form *ngSwitchCase="'web_clear'" [action]="action"></clear-input-action-form>
+    <click-action-form *ngSwitchCase="'web_click'" [action]="action"></click-action-form>
+    <click-element-by-text-action-form *ngSwitchCase="'web_clickElementByText'"
+                                       [action]="action"></click-element-by-text-action-form>
+    <click-link-by-text-action-form *ngSwitchCase="'web_clickLinkByText'"
+                                    [action]="action"></click-link-by-text-action-form>
+    <execute-script-action-form *ngSwitchCase="'web_executeScript'" [action]="action"></execute-script-action-form>
+    <move-mouse-action-form *ngSwitchCase="'web_moveMouse'" [action]="action"></move-mouse-action-form>
+    <open-url-action-form *ngSwitchCase="'web_goto'" [action]="action"></open-url-action-form>
+    <select-action-form *ngSwitchCase="'web_select'" [action]="action"></select-action-form>
+    <send-keys-action-form *ngSwitchCase="'web_fill'" [action]="action"></send-keys-action-form>
+    <submit-action-form *ngSwitchCase="'web_submit'" [action]="action"></submit-action-form>
+    <wait-for-node-action-form *ngSwitchCase="'web_waitForNode'" [action]="action"></wait-for-node-action-form>
+    <wait-for-node-attribute-action-form *ngSwitchCase="'web_waitForNodeAttribute'"
+                                         [action]="action"></wait-for-node-attribute-action-form>
+    <wait-for-title-action-form *ngSwitchCase="'web_waitForTitle'" [action]="action"></wait-for-title-action-form>
+    <wait-for-text-action-form *ngSwitchCase="'web_waitForText'" [action]="action"></wait-for-text-action-form>
+    <press-key-action-form *ngSwitchCase="'web_pressKey'" [action]="action"></press-key-action-form>
+    <check-node-attribute-value-action-form *ngSwitchCase="'web_checkNodeAttributeValue'"
+                                            [action]="action"></check-node-attribute-value-action-form>
+    <switch-to-action-form *ngSwitchCase="'web_switchTo'" [action]="action"></switch-to-action-form>
+    <switch-to-frame-action-form *ngSwitchCase="'web_switchToFrame'" [action]="action"></switch-to-frame-action-form>
+    <upload-file-action-form *ngSwitchCase="'web_uploadFile'" [action]="action"></upload-file-action-form>
+    <drag-and-drop-action-form *ngSwitchCase="'web_dragAndDrop'" [action]="action"></drag-and-drop-action-form>
+    <drag-and-drop-by-action-form *ngSwitchCase="'web_dragAndDropBy'" [action]="action"></drag-and-drop-by-action-form>
+    <wait-for-script-action-form *ngSwitchCase="'web_waitForScript'" [action]="action"></wait-for-script-action-form>
+
+    <!-- rest actions -->
+    <request-action-form *ngSwitchCase="'rest_call'" [action]="action"></request-action-form>
+    <check-attribute-exists-action-form *ngSwitchCase="'rest_checkAttributeExists'"
+                                        [action]="action"></check-attribute-exists-action-form>
+    <check-attribute-type-action-form *ngSwitchCase="'rest_checkAttributeType'"
+                                      [action]="action"></check-attribute-type-action-form>
+    <check-attribute-value-action-form *ngSwitchCase="'rest_checkAttributeValue'"
+                                       [action]="action"></check-attribute-value-action-form>
+    <check-header-field-action-form *ngSwitchCase="'rest_checkHeaderField'"
+                                    [action]="action"></check-header-field-action-form>
+    <check-http-body-action-form *ngSwitchCase="'rest_checkForText'" [action]="action"></check-http-body-action-form>
+    <check-status-action-form *ngSwitchCase="'rest_checkStatus'" [action]="action"></check-status-action-form>
+    <validate-json-action-form *ngSwitchCase="'rest_validateJson'" [action]="action"></validate-json-action-form>
+
+    <!-- general actions -->
+    <assert-counter-action-form *ngSwitchCase="'assertCounter'" [action]="action"></assert-counter-action-form>
+    <assert-variable-action-form *ngSwitchCase="'assertVariable'" [action]="action"></assert-variable-action-form>
+    <increment-counter-action-form *ngSwitchCase="'incrementCounter'" [action]="action"></increment-counter-action-form>
+    <set-counter-action-form *ngSwitchCase="'setCounter'" [action]="action"></set-counter-action-form>
+    <set-variable-action-form *ngSwitchCase="'setVariable'" [action]="action"></set-variable-action-form>
+    <set-variable-by-cookie-action-form *ngSwitchCase="'setVariableByCookie'"
+                                        [action]="action"></set-variable-by-cookie-action-form>
+    <set-variable-by-http-response-action-form *ngSwitchCase="'setVariableByHttpResponse'"
+                                               [action]="action"></set-variable-by-http-response-action-form>
+    <set-variable-by-http-status-action-form *ngSwitchCase="'setVariableByHttpStatus'"
+                                             [action]="action"></set-variable-by-http-status-action-form>
+    <set-variable-by-html-action-form *ngSwitchCase="'setVariableByHTML'"
+                                      [action]="action"></set-variable-by-html-action-form>
+    <set-variable-by-json-action-form *ngSwitchCase="'setVariableByJSON'"
+                                      [action]="action"></set-variable-by-json-action-form>
+    <set-variable-by-node-attribute-action-form *ngSwitchCase="'setVariableByNodeAttribute'"
+                                                [action]="action"></set-variable-by-node-attribute-action-form>
+    <set-variable-by-node-count-action-form *ngSwitchCase="'setVariableByNodeCount'"
+                                            [action]="action"></set-variable-by-node-count-action-form>
+    <set-variable-by-regex-group-action-form *ngSwitchCase="'setVariableByRegexGroup'"
+                                             [action]="action"></set-variable-by-regex-group-action-form>
+    <wait-action-form *ngSwitchCase="'wait'" [action]="action"></wait-action-form>
+  </div>
+</div>

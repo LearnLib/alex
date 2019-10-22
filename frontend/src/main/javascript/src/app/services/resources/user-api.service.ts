@@ -41,7 +41,10 @@ export class UserApiService extends BaseApiService {
    * @returns A promise.
    */
   changePassword(user: User, oldPassword: string, newPassword: string): Observable<any> {
-    return this.http.put(`${env.apiUrl}/users/${user.id}/password`, {oldPassword, newPassword}, this.defaultHttpOptions);
+    return this.http.put(`${env.apiUrl}/users/${user.id}/password`, {
+      oldPassword,
+      newPassword
+    }, this.defaultHttpOptions);
   }
 
   /**

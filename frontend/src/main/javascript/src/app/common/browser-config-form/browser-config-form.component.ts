@@ -28,74 +28,74 @@ import { Component, Input, OnInit } from '@angular/core';
 export class BrowserConfigFormComponent implements OnInit {
 
   @Input()
-    config: any;
+  config: any;
 
-    /** The list of locally installed web drivers. */
-    supportedWebDrivers: string[];
+  /** The list of locally installed web drivers. */
+  supportedWebDrivers: string[];
 
-    /** If the timeouts fields are displayed. */
-    timeoutsCollapsed: boolean;
+  /** If the timeouts fields are displayed. */
+  timeoutsCollapsed: boolean;
 
-    /** Target web platform for the remote driver. */
-    platforms: any;
+  /** Target web platform for the remote driver. */
+  platforms: any;
 
-    /** Target web browsers for the remote driver. */
-    browsers: any;
+  /** Target web browsers for the remote driver. */
+  browsers: any;
 
-    driverName: string;
+  driverName: string;
 
-    constructor(private settingsApi: SettingsApiService) {
-      this.supportedWebDrivers = [];
-      this.timeoutsCollapsed = true;
+  constructor(private settingsApi: SettingsApiService) {
+    this.supportedWebDrivers = [];
+    this.timeoutsCollapsed = true;
 
-      this.platforms = {
-        any: {
-          'Any': 'ANY'
-        },
-        windows: {
-          'Windows': 'WINDOWS',
-          'Windows 10': 'WIN10',
-          'Windows 8.1': 'WIN8_1',
-          'Windows 8': 'WIN8',
-          'Windows Vista': 'VISTA',
-          'Windows XP': 'XP',
-        },
-        mac: {
-          'Mac OS': 'MAC',
-          'Sierra': 'SIERRA',
-          'El Capitan': 'EL_CAPITAN',
-          'Yosemite': 'YOSEMITE',
-          'Mavericks': 'MAVERICKS',
-          'Mountain Lion': 'MOUNTAIN_LION',
-          'Snow Leopard': 'SNOW_LEOPARD'
-        },
-        unix: {
-          'Linux': 'LINUX',
-          'Unix': 'UNIX'
-        }
-      };
+    this.platforms = {
+      any: {
+        'Any': 'ANY'
+      },
+      windows: {
+        'Windows': 'WINDOWS',
+        'Windows 10': 'WIN10',
+        'Windows 8.1': 'WIN8_1',
+        'Windows 8': 'WIN8',
+        'Windows Vista': 'VISTA',
+        'Windows XP': 'XP'
+      },
+      mac: {
+        'Mac OS': 'MAC',
+        'Sierra': 'SIERRA',
+        'El Capitan': 'EL_CAPITAN',
+        'Yosemite': 'YOSEMITE',
+        'Mavericks': 'MAVERICKS',
+        'Mountain Lion': 'MOUNTAIN_LION',
+        'Snow Leopard': 'SNOW_LEOPARD'
+      },
+      unix: {
+        'Linux': 'LINUX',
+        'Unix': 'UNIX'
+      }
+    };
 
-      this.browsers = {
-        'Chrome': 'chrome',
-        'Edge': 'MicrosoftEdge',
-        'Firefox': 'firefox',
-        'HTML Unit': 'htmlunit',
-        'Internet Explorer': 'iexplore',
-        'Opera': 'operablink',
-        'Safari': 'safari'
-      };
-    }
-
-    ngOnInit(): void {
-      this.settingsApi.getSupportedWebDrivers().subscribe(
-        data => this.supportedWebDrivers = data.supportedWebDrivers,
-        console.error
-      );
-
-      this.driverName = this.config.name;
-    }
-
-    selectWebDriver(): void {
-      this.config = DriverConfigService.createFromName(this.driverName);
-    }
+    this.browsers = {
+      'Chrome': 'chrome',
+      'Edge': 'MicrosoftEdge',
+      'Firefox': 'firefox',
+      'HTML Unit': 'htmlunit',
+      'Internet Explorer': 'iexplore',
+      'Opera': 'operablink',
+      'Safari': 'safari'
+    };
   }
+
+  ngOnInit(): void {
+    this.settingsApi.getSupportedWebDrivers().subscribe(
+      data => this.supportedWebDrivers = data.supportedWebDrivers,
+      console.error
+    );
+
+    this.driverName = this.config.name;
+  }
+
+  selectWebDriver(): void {
+    this.config = DriverConfigService.createFromName(this.driverName);
+  }
+}

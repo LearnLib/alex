@@ -1,21 +1,27 @@
 <div class="view">
-  <view-header [title]="'Manage Users'"></view-header>
-
   <action-bar>
-    <div class="d-flex flex-row align-items-center" *ngIf="(store.users$ | async).length > 0">
+    <div *ngIf="(store.users$ | async).length > 0" class="d-flex flex-row align-items-center">
       <selectable-checkbox-multiple [selectable]="store.usersSelectable"></selectable-checkbox-multiple>
 
       <div class="w-100 ml-3">
-        <button class="btn btn-sm btn-primary mr-2" (click)="store.createUser()">
+        <button (click)="store.createUser()" class="btn btn-sm btn-primary mr-2">
           Create
         </button>
 
-        <button
-          class="btn btn-sm btn-default"
-          (click)="store.deleteSelectedUsers()"
-          [disabled]="!store.usersSelectable.isAnySelected()">
-          Delete
-        </button>
+        <div class="btn-group btn-group-sm">
+          <button
+            (click)="store.editUser(store.usersSelectable.getSelected()[0])"
+            [disabled]="store.usersSelectable.getSelected().length !== 1"
+            class="btn btn-default">
+            Edit
+          </button>
+          <button
+            (click)="store.deleteSelectedUsers()"
+            [disabled]="!store.usersSelectable.isAnySelected()"
+            class="btn btn-default">
+            Delete
+          </button>
+        </div>
       </div>
     </div>
   </action-bar>
@@ -52,17 +58,17 @@
           <td>{{user.email}}</td>
           <td>
             <span
-              class="badge"
               [ngClass]="{
                 'badge-danger': user.role === 'ADMIN',
-                 'badge-primary': user.role !== 'ADMIN'
+                'badge-primary': user.role !== 'ADMIN'
               }"
+              class="badge"
             >
               {{user.role | normalizeUpperCase}}
             </span>
           </td>
           <td>
-            <button class="btn btn-default btn-xs float-right" (click)="store.editUser(user)">
+            <button (click)="store.editUser(user)" class="btn btn-default btn-xs float-right">
               <i class="fas fa-edit fa-fw"></i>
             </button>
           </td>

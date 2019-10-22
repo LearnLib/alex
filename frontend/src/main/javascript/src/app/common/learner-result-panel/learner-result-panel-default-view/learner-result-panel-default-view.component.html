@@ -1,0 +1,36 @@
+<div class="d-flex">
+  <div *ngIf="!result.steps[pointer].error && result.steps[pointer].hypothesis">
+    <hypothesis
+      *ngIf="mode === modes.HYPOTHESIS"
+      [data]="result.steps[pointer].hypothesis"
+      [isSelectable]="true"
+      [layoutSettings]="layoutSettings"
+    >
+    </hypothesis>
+
+    <observation-table
+      *ngIf="mode === modes.OBSERVATION_TABLE"
+      [data]="result.steps[pointer].algorithmInformation"
+    >
+    </observation-table>
+
+    <discrimination-tree
+      *ngIf="mode === modes.DISCRIMINATION_TREE"
+      [data]="result.steps[pointer].algorithmInformation"
+    >
+    </discrimination-tree>
+  </div>
+
+  <div *ngIf="!result.steps[pointer].hypothesis" class="container">
+    <div class="alert alert-info mt-3">
+      <strong>No hypothesis has been saved in this step</strong>
+    </div>
+  </div>
+
+  <div *ngIf="result.steps[pointer].error" class="container">
+    <div class="alert alert-danger mt-3">
+      <p><strong>There has been an error while learning</strong></p>
+      <p>{{result.steps[pointer].errorText}}</p>
+    </div>
+  </div>
+</div>

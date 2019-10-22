@@ -16,7 +16,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { Project } from '../../../entities/project';
-import { LearnResult } from '../../../entities/learner-result';
+import { LearnerResult } from '../../../entities/learner-result';
 import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
 
 @Component({
@@ -29,7 +29,7 @@ export class LatestLearnerResultWidgetComponent implements OnInit {
   public project: Project;
 
   /** The latest learning result. */
-  public result: LearnResult;
+  public result: LearnerResult;
 
   constructor(private learnerResultApi: LearnerResultApiService) {
   }

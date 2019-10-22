@@ -1,0 +1,17 @@
+<h5>
+  <strong>Switch to</strong>
+</h5>
+
+<p class="text-muted">
+  Switch to a target context.
+</p>
+<hr>
+
+<div class="form-group">
+  <label>Target</label>
+  <select [(ngModel)]="action.target" class="form-control">
+    <option [value]="null" disabled>Select a target</option>
+    <option *ngFor="let type of ['PARENT_FRAME', 'DEFAULT_CONTENT', 'LAST_FRAME', 'WINDOW', 'DEFAULT_WINDOW']"
+            [value]="type">{{type}}</option>
+  </select>
+</div>

@@ -59,6 +59,6 @@ export class TestCaseStep {
   }
 
   getComputedOutputMessage(): string {
-    return (this.expectedOutputSuccess ? "Ok" : "Failed") + (this.expectedOutputMessage === '' ? '' : ` (${this.expectedOutputMessage})`);
+    return (this.expectedOutputSuccess ? 'Ok' : 'Failed') + (this.expectedOutputMessage === '' ? '' : ` (${this.expectedOutputMessage})`);
   }
 }

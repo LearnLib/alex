@@ -28,10 +28,9 @@ import { EditWebhookModalComponent } from './edit-webhook-modal/edit-webhook-mod
 @Injectable()
 export class WebhooksViewStoreService {
 
+  public webhooksSelectable: Selectable<Webhook>;
   private webhooks: BehaviorSubject<Webhook[]>;
   private events: BehaviorSubject<string[]>;
-
-  public webhooksSelectable: Selectable<Webhook>;
 
   constructor(private webhookApi: WebhookApiService,
               private modalService: NgbModal,
@@ -39,6 +38,14 @@ export class WebhooksViewStoreService {
     this.webhooks = new BehaviorSubject<Webhook[]>([]);
     this.events = new BehaviorSubject<string[]>([]);
     this.webhooksSelectable = new Selectable<Webhook>([], 'id');
+  }
+
+  get webhooks$(): Observable<Webhook[]> {
+    return this.webhooks.asObservable();
+  }
+
+  get events$(): Observable<string[]> {
+    return this.events.asObservable();
   }
 
   public load(): void {
@@ -97,13 +104,5 @@ export class WebhooksViewStoreService {
         error => this.toastService.danger(`The webhooks could not be deleted. ${error.data.message}`)
       );
     }
-  }
-
-  get webhooks$(): Observable<Webhook[]> {
-    return this.webhooks.asObservable();
-  }
-
-  get events$(): Observable<string[]> {
-    return this.events.asObservable();
   }
 }

@@ -19,6 +19,7 @@ import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/fo
 import { CreateProjectForm, Project } from '../../../entities/project';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProjectApiService } from '../../../services/resources/project-api.service';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({
   selector: 'create-project-modal',
@@ -33,6 +34,7 @@ export class CreateProjectModalComponent {
   public project: Project;
 
   constructor(public modal: NgbActiveModal,
+              public formUtils: FormUtilsService,
               private projectApi: ProjectApiService) {
 
     this.project = new Project();
@@ -56,9 +58,5 @@ export class CreateProjectModalComponent {
       createdProject => this.modal.close(createdProject),
       res => this.errorMessage = res.error.message
     );
-  }
-
-  isInvalidFormControl(c: AbstractControl): boolean {
-    return c.invalid && (c.dirty || c.touched);
   }
 }

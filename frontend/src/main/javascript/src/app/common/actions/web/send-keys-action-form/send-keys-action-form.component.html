@@ -1,0 +1,15 @@
+<h5>
+  <strong>Fill input</strong>
+</h5>
+
+<p class="text-muted">
+  Send user input to an element (eg. input or contenteditable element).
+</p>
+<hr>
+
+<node-form-group [node]="action.node"></node-form-group>
+
+<div class="form-group">
+  <label class="control-label">The value to fill the element with</label>
+  <input [(ngModel)]="action.value" class="form-control" placeholder="value" type="text">
+</div>

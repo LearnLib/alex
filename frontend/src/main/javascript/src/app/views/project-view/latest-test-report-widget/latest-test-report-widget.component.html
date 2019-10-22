@@ -4,7 +4,7 @@
   </div>
   <div class="card-body">
 
-    <div class="alert alert-info mb-0" *ngIf="report == null || report === ''">
+    <div *ngIf="report == null || report === ''" class="alert alert-info mb-0">
       There is no test report for this project yet.
     </div>
 
@@ -18,8 +18,8 @@
         <tr>
           <td><strong>Status</strong></td>
           <td>
-            <span class="badge badge-success" *ngIf="report.passed">Passed</span>
-            <span class="badge badge-danger" *ngIf="!report.passed">Failed</span>
+            <span *ngIf="report.passed" class="badge badge-success">Passed</span>
+            <span *ngIf="!report.passed" class="badge badge-danger">Failed</span>
           </td>
         </tr>
         <tr>
@@ -33,7 +33,7 @@
         </tbody>
       </table>
 
-      <a class="btn btn-xs btn-default" [href]="'#!/projects/' + report.project + '/tests/reports/' + report.id">
+      <a [href]="'#!/projects/' + report.project + '/tests/reports/' + report.id" class="btn btn-xs btn-default">
         <i class="fas fa-fw fa-eye"></i> View details
       </a>
     </div>

@@ -1,14 +1,14 @@
 <div class="form-group">
   <label>Name</label>
   <input
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.name)"
+    [formControl]="form.controls.name"
+    autofocus
     class="form-control"
-    type="text"
+    maxlength="100"
     placeholder="The name of the symbol"
     required
-    maxlength="100"
-    autofocus
-    [formControl]="form.controls.name"
-    [class.is-invalid]="isInvalidFormControl(form.controls.name)"
+    type="text"
   >
 
   <div class="invalid-feedback">
@@ -19,12 +19,12 @@
 <div class="form-group">
   <label>Description</label>
   <textarea
-    class="form-control"
-    placeholder="Describe what the symbol does."
-    maxlength="1024"
-    rows="2"
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.description)"
     [formControl]="form.controls.description"
-    [class.is-invalid]="isInvalidFormControl(form.controls.description)"
+    class="form-control"
+    maxlength="1024"
+    placeholder="Describe what the symbol does."
+    rows="2"
   >
     </textarea>
 
@@ -36,12 +36,12 @@
 <div class="form-group">
   <label>Expected result</label>
   <textarea
-    class="form-control"
-    placeholder="Describe what should be the state after the symbol has been executed."
-    maxlength="1024"
-    rows="2"
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.expectedResult)"
     [formControl]="form.controls.expectedResult"
-    [class.is-invalid]="isInvalidFormControl(form.controls.expectedResult)"
+    class="form-control"
+    maxlength="1024"
+    placeholder="Describe what should be the state after the symbol has been executed."
+    rows="2"
   >
     </textarea>
 

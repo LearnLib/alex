@@ -42,7 +42,7 @@ export class AppStoreService {
   sidebarCollapsed: boolean;
 
   constructor(private clipboard: ClipboardService,
-              private projectApi: ProjectApiService ) {
+              private projectApi: ProjectApiService) {
     this.sidebarCollapsed = false;
 
     const sidebarCollapsed = localStorage.getItem('sidebarCollapsed');

@@ -1,0 +1,26 @@
+<h5><strong>Increment counter</strong></h5>
+
+<p class="text-muted">
+  Increment a counter.
+</p>
+<hr>
+
+<div class="form-group">
+  <label>Name</label>
+  <input
+    [(ngModel)]="action.name"
+    class="form-control"
+    placeholder="The name of the counter"
+    type="text"
+  >
+</div>
+
+<div class="form-group">
+  <label>Increment by</label>
+  <input
+    [(ngModel)]="action.incrementBy"
+    class="form-control"
+    placeholder="The value to increment by"
+    type="number"
+  >
+</div>

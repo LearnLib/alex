@@ -1,26 +1,17 @@
 <div class="view view-test-reports">
-  <view-header [title]="'Test Report'">
-    <a
-      [href]="'#!/projects/' + project.id + '/tests/reports'"
-      class="btn btn-sm btn-default btn-icon"
-      ngbTooltip="Back to reports"
-      placement="right"
-    >
-      <i class="fas fa-reply"></i>
-    </a>
-  </view-header>
+
   <action-bar>
 
     <div class="btn-group btn-group-sm mr-2">
-      <button class="btn btn-default" (click)="deleteReport()">Delete</button>
+      <button (click)="deleteReport()" class="btn btn-default">Delete</button>
     </div>
 
     <div class="btn-group btn-group-sm">
-      <button class="btn btn-default" (click)="downloadReport()">Download</button>
+      <button (click)="downloadReport()" class="btn btn-default">Download</button>
     </div>
 
   </action-bar>
-  <div class="view-body" *ngIf="report != null">
+  <div *ngIf="report != null" class="view-body">
     <div class="container-fluid">
 
       <h4 class="d-flex">
@@ -34,7 +25,7 @@
       <hr>
 
       <div class="d-flex justify-content-center">
-        <report-charts [report]="report" *ngIf="report != null"></report-charts>
+        <report-charts *ngIf="report != null" [report]="report"></report-charts>
       </div>
 
       <hr>
@@ -54,8 +45,8 @@
         <tr *ngFor="let result of report.testResults">
           <ng-container *ngIf="result.test.type === 'case'">
             <td width="1%">
-              <span class="badge badge-success" *ngIf="result.passed">Passed</span>
-              <span class="badge badge-danger" *ngIf="!result.passed">Failed</span>
+              <span *ngIf="result.passed" class="badge badge-success">Passed</span>
+              <span *ngIf="!result.passed" class="badge badge-danger">Failed</span>
             </td>
             <td>
               <a [href]="'#!/projects/' + result.project + '/tests/' + result.test.id">{{result.test.name}}</a>

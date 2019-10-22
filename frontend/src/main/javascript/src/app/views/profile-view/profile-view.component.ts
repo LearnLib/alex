@@ -32,7 +32,7 @@ export class ProfileViewComponent {
   user: User;
 
   passwordForm: FormGroup = new FormGroup({
-    'old' : new FormControl('', [Validators.required]),
+    'old': new FormControl('', [Validators.required]),
     'new': new FormControl('', [])
   });
 
@@ -62,19 +62,19 @@ export class ProfileViewComponent {
    * Changes the email of the user.
    */
   changeEmail(): void {
-      this.userApi.changeEmail(this.user, this.emailForm.controls.email.value).subscribe(
-        () => {
-          this.toastService.success('The email has been changed');
+    this.userApi.changeEmail(this.user, this.emailForm.controls.email.value).subscribe(
+      () => {
+        this.toastService.success('The email has been changed');
 
-          // update the jwt correspondingly
-          const user = this.user.copy();
-          user.email = this.emailForm.controls.email.value;
-          this.appStore.login(user);
-        },
-        response => {
-          this.toastService.danger('The email could not be changed. ' + response.error.message);
-        }
-      );
+        // update the jwt correspondingly
+        const user = this.user.copy();
+        user.email = this.emailForm.controls.email.value;
+        this.appStore.login(user);
+      },
+      response => {
+        this.toastService.danger('The email could not be changed. ' + response.error.message);
+      }
+    );
   }
 
   /**
@@ -104,7 +104,8 @@ export class ProfileViewComponent {
             this.toastService.danger('The profile could not be deleted. ' + response.error.message);
           }
         );
-      }).catch(() => {});
+      }).catch(() => {
+    });
   }
 
   isInvalidFormControl(c: AbstractControl): boolean {

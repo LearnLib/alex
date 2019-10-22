@@ -20,7 +20,7 @@ import { TestReportService } from '../../services/test-report.service';
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, Input, OnInit } from '@angular/core';
-import { StateParamsService } from '../../providers';
+import { ActivatedRoute } from '@angular/router';
 
 /**
  * The component for a single test report.
@@ -39,15 +39,21 @@ export class TestReportViewComponent implements OnInit {
               private appStore: AppStoreService,
               private toastService: ToastService,
               private testReportService: TestReportService,
-              private stateParams: StateParamsService) {
+              private route: ActivatedRoute) {
+  }
+
+  get project(): Project {
+    return this.appStore.project;
   }
 
   ngOnInit(): void {
-    const reportId = (this.stateParams as any).reportId;
-    this.testReportApi.get(this.project.id, reportId).subscribe(
-      data => this.report = data,
-      err => this.toastService.danger(`Failed to load the report. ${err.data.message}`)
-    );
+    this.route.paramMap.subscribe(
+      map => {
+        this.testReportApi.get(this.project.id, parseInt(map.get('reportId'))).subscribe(
+          data => this.report = data,
+          err => this.toastService.danger(`Failed to load the report. ${err.data.message}`)
+        );
+      });
   }
 
   /** Deletes the report. */
@@ -64,9 +70,5 @@ export class TestReportViewComponent implements OnInit {
   /** Download the report. */
   downloadReport(): void {
     this.testReportService.download(this.project.id, this.report.id);
-  }
-
-  get project(): Project {
-    return this.appStore.project;
   }
 }

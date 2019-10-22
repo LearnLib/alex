@@ -4,10 +4,10 @@
   </div>
   <div class="w-100 pl-3">
     <div>
-      <a [href]="'#!/projects/' + symbol.project + '/symbols/' + symbol.id">
+      <a [routerLink]="[symbol.id]">
         <strong>{{symbol.name}}</strong>
       </a>
-      <i class="text-muted fa fa-cubes fa-fw" *ngIf="symbol.containsSymbolSteps()"></i>
+      <i *ngIf="symbol.containsSymbolSteps()" class="text-muted fa fa-cubes fa-fw"></i>
     </div>
     <div *ngIf="symbol.steps.length === 0">
       <span class="badge badge-info">Not implemented</span>

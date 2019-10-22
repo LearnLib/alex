@@ -22,7 +22,7 @@ import { Observable } from 'rxjs';
 
 /** The resource for test reports. */
 @Injectable()
-export class TestReportApiService extends BaseApiService{
+export class TestReportApiService extends BaseApiService {
 
   constructor(private http: HttpClient) {
     super();

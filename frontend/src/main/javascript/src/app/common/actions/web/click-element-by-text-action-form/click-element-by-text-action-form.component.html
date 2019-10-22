@@ -1,0 +1,21 @@
+<h5>
+  <strong>Click element by text</strong>
+</h5>
+
+<p class="text-muted">
+  Click on an element by its visible text.
+</p>
+<hr>
+
+<node-form-group [label]="'Container element'" [node]="action.node"></node-form-group>
+
+<div class="form-group">
+  <label class="control-label">Visible text</label>
+  <input [(ngModel)]="action.text" class="form-control" placeholder="The text of the element" required type="text">
+</div>
+
+<div class="form-group">
+  <label class="control-label">Tag name</label>
+  <input [(ngModel)]="action.tagName" class="form-control" placeholder="e.g. 'button' or 'div'" type="text">
+  <p class="form-text text-muted">Can be empty but the search for the element will be more expensive.</p>
+</div>

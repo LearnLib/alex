@@ -31,9 +31,8 @@ import { EditProjectModalComponent } from './edit-project-modal/edit-project-mod
 @Injectable()
 export class ProjectsViewStoreService {
 
-  private projects: BehaviorSubject<Project[]>;
-
   public readonly projectsSelectable: Selectable<Project>;
+  private projects: BehaviorSubject<Project[]>;
 
   constructor(private projectApi: ProjectApiService,
               private modalService: NgbModal,
@@ -42,6 +41,10 @@ export class ProjectsViewStoreService {
               private downloadService: DownloadService) {
     this.projects = new BehaviorSubject<Project[]>([]);
     this.projectsSelectable = new Selectable<Project>([], 'id');
+  }
+
+  get projects$(): Observable<Project[]> {
+    return this.projects.asObservable();
   }
 
   load(): void {
@@ -126,9 +129,5 @@ export class ProjectsViewStoreService {
       this.projects.next([...this.projects.value, importedProject]);
       this.projectsSelectable.addItem(importedProject);
     });
-  }
-
-  get projects$(): Observable<Project[]> {
-    return this.projects.asObservable();
   }
 }

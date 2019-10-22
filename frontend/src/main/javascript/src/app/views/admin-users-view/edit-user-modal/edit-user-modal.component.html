@@ -1,31 +1,31 @@
 <div class="modal-header">
   <h4 class="modal-title">Edit the user</h4>
-  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
     <i class="fas fa-times fa-fw"></i>
   </a>
 </div>
 
 <div class="modal-body">
 
-  <div class="alert alert-danger" *ngIf="error != null">
+  <div *ngIf="error != null" class="alert alert-danger">
     <strong class="d-block">Could not update the user!</strong>
     <span>{{error}}</span>
   </div>
 
   <h5><strong>Email</strong></h5>
-  <form [formGroup]="form" (ngSubmit)="changeEmail()">
+  <form (ngSubmit)="changeEmail()" [formGroup]="form">
     <div class="form-group">
       <input
-        type="email"
+        [class.invalid]="isInvalidFormControl(form.controls.email)"
+        [formControl]="form.controls.email"
         class="form-control"
         name="mail"
         placeholder="Enter an email address"
         required
-        [formControl]="form.controls.email"
-        [class.invalid]="isInvalidFormControl(form.controls.email)"
+        type="email"
       />
     </div>
-    <button class="btn btn-primary btn-sm" [disabled]="form.invalid">Change email</button>
+    <button [disabled]="form.invalid" class="btn btn-primary btn-sm">Change email</button>
   </form>
 
   <hr>
@@ -35,12 +35,12 @@
       <em>Note: if you take your own admin rights, you will be logged out automatically.</em>
     </p>
     <p>
-      <button class="btn btn-primary btn-sm" (click)="demoteUser()">
+      <button (click)="demoteUser()" class="btn btn-primary btn-sm">
         Remove admin rights
       </button>
     </p>
   </div>
-  <div *ngIf="user.role === userRole.REGISTERED" (click)="promoteUser()">
+  <div (click)="promoteUser()" *ngIf="user.role === userRole.REGISTERED">
     <button class="btn btn-primary btn-sm">
       Give admin rights
     </button>
@@ -48,12 +48,12 @@
 
   <hr>
   <h5><strong>Account</strong></h5>
-  <button class="btn btn-danger btn-sm" (click)="deleteUser()">
+  <button (click)="deleteUser()" class="btn btn-danger btn-sm">
     Delete profile
   </button>
 
 </div>
 
 <div class="modal-footer">
-  <button class="btn btn-default btn-sm" (click)="modal.dismiss()">Cancel</button>
+  <button (click)="modal.dismiss()" class="btn btn-default btn-sm">Cancel</button>
 </div>

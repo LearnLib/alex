@@ -19,6 +19,7 @@ import { UserApiService } from '../../../services/resources/user-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({
   selector: 'create-user-modal',
@@ -33,7 +34,8 @@ export class CreateUserModalComponent {
 
   constructor(private userApi: UserApiService,
               private toastService: ToastService,
-              private modal: NgbActiveModal) {
+              public modal: NgbActiveModal,
+              public formUtils: FormUtilsService) {
     this.form = new FormGroup({
       'email': new FormControl('', [Validators.required, Validators.email]),
       'password': new FormControl('', [Validators.required]),

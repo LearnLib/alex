@@ -1,19 +1,19 @@
 <div class="modal-header">
   <h4 class="modal-title">Update the base URL</h4>
-  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
     <i class="fas fa-times fa-fw"></i>
   </a>
 </div>
 
-<form [formGroup]="form" (ngSubmit)="updateUrl()">
+<form (ngSubmit)="updateUrl()" [formGroup]="form">
 
   <div class="modal-body">
-    <project-url-form-groups [url]="url" [form]="form"></project-url-form-groups>
+    <project-url-form-groups [form]="form" [url]="url"></project-url-form-groups>
   </div>
 
   <div class="modal-footer">
     <button class="btn btn-primary btn-sm" type="submit">Update</button>
-    <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.stopPropagation()">Cancel</button>
+    <button (click)="modal.dismiss(); $event.stopPropagation()" class="btn btn-default btn-sm">Cancel</button>
   </div>
 
 </form>

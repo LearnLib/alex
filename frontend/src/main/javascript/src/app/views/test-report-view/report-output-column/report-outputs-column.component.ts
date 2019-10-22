@@ -17,7 +17,7 @@
 import { Project } from '../../../entities/project';
 import { Component, Input } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ExecutionResultModalComponent } from '../../../common/execution-result-modal/execution-result-modal.component';
+import { ExecutionResultModalComponent } from '../../../common/modals/execution-result-modal/execution-result-modal.component';
 
 @Component({
   selector: 'report-outputs-column',

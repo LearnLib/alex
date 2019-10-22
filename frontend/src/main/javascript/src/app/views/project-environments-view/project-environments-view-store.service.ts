@@ -45,6 +45,14 @@ export class ProjectEnvironmentsViewStoreService {
     this.environments = new BehaviorSubject<ProjectEnvironment[]>([]);
   }
 
+  public get environments$(): Observable<ProjectEnvironment[]> {
+    return this.environments.asObservable();
+  }
+
+  private get project(): Project {
+    return this.appStore.project;
+  }
+
   load(): void {
     this.environmentApi.getAll(this.project.id).subscribe(
       environments => {
@@ -174,13 +182,5 @@ export class ProjectEnvironmentsViewStoreService {
   private init(): void {
     this.load();
     this.appStore.reloadProject();
-  }
-
-  public get environments$(): Observable<ProjectEnvironment[]> {
-    return this.environments.asObservable();
-  }
-
-  private get project(): Project {
-    return this.appStore.project;
   }
 }

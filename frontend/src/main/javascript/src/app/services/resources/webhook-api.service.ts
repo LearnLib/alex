@@ -26,7 +26,7 @@ import { map } from 'rxjs/operators';
  * The resource for webhooks.
  */
 @Injectable()
-export class WebhookApiService extends BaseApiService{
+export class WebhookApiService extends BaseApiService {
 
   constructor(private http: HttpClient) {
     super()

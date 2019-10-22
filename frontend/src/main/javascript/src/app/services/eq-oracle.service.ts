@@ -37,7 +37,7 @@ export class EqOracleService {
     [eqOracleType.WMETHOD]: (data) => new WMethodEqOracle(data.maxDepth),
     [eqOracleType.HYPOTHESIS]: (data) => new HypothesisEqOracle(data.hypothesis),
     [eqOracleType.TEST_SUITE]: (data) => new TestSuiteEqOracle(data.testSuiteId, data.includeChildTestSuites),
-    [eqOracleType.WP_METHOD]: (data) => new WpMethodEqOracle(data.maxDepth),
+    [eqOracleType.WP_METHOD]: (data) => new WpMethodEqOracle(data.maxDepth)
   };
 
   /**

@@ -16,6 +16,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({
   selector: 'lts-formula-form-groups',
@@ -29,12 +30,11 @@ export class LtsFormulaFormGroupsComponent implements OnInit {
   @Input()
   public form: FormGroup;
 
+  constructor(public formUtils: FormUtilsService) {
+  }
+
   ngOnInit(): void {
     this.form.addControl('name', new FormControl(this.formula.name, Validators.required));
     this.form.addControl('formula', new FormControl(this.formula.formula, Validators.required));
-  }
-
-  isInvalidFormControl(c: AbstractControl): boolean {
-    return c.invalid && (c.dirty || c.touched);
   }
 }

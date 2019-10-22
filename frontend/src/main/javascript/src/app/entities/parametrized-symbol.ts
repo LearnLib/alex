@@ -41,6 +41,23 @@ export class ParametrizedSymbol {
     this.parameterValues = obj.parameterValues || [];
   }
 
+  /**
+   * Create a parametrized symbol from a symbol.
+   *
+   * @param symbol The symbol.
+   * @return The parameterized symbol.
+   */
+  static fromSymbol(symbol: AlphabetSymbol): ParametrizedSymbol {
+    const pSymbol = new ParametrizedSymbol();
+    pSymbol.symbol = <any>{
+      id: symbol.id,
+      name: symbol.name,
+      expectedResult: symbol.expectedResult
+    };
+    pSymbol.parameterValues = symbol.inputs.map(input => ({parameter: input, value: null}));
+    return pSymbol;
+  }
+
   /** Get the string representation of the symbol with parameter values. */
   getComputedName(): string {
     const params = this.parameterValues
@@ -52,22 +69,5 @@ export class ParametrizedSymbol {
     } else {
       return `${this.symbol.name} <${params.join(', ')}>`;
     }
-  }
-
-  /**
-   * Create a parametrized symbol from a symbol.
-   *
-   * @param symbol The symbol.
-   * @return The parameterized symbol.
-   */
-  static fromSymbol(symbol: AlphabetSymbol): ParametrizedSymbol {
-    const pSymbol = new ParametrizedSymbol();
-    pSymbol.symbol = <any> {
-      id: symbol.id,
-      name: symbol.name,
-      expectedResult: symbol.expectedResult
-    };
-    pSymbol.parameterValues = symbol.inputs.map(input => ({parameter: input, value: null}));
-    return pSymbol;
   }
 }

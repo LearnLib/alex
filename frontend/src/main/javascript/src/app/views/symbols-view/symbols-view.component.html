@@ -1,6 +1,4 @@
 <div class="view">
-  <view-header [title]="'Manage Symbols'"></view-header>
-
   <action-bar>
     <div *ngIf="groups.length > 0" class="d-flex flex-row align-items-center">
       <selectable-checkbox-multiple [selectable]="selectedSymbols"></selectable-checkbox-multiple>
@@ -10,49 +8,49 @@
           <button class="btn btn-primary btn-dropdown" ngbDropdownToggle>
             Create
           </button>
-          <div ngbDropdownMenu class="dropdown-menu" role="menu">
-            <div ngbDropdownItem (click)="openSymbolCreateModal()">Symbol</div>
-            <div ngbDropdownItem (click)="openSymbolGroupCreateModal()">Group</div>
+          <div class="dropdown-menu" ngbDropdownMenu role="menu">
+            <div (click)="openSymbolCreateModal()" ngbDropdownItem>Symbol</div>
+            <div (click)="openSymbolGroupCreateModal()" ngbDropdownItem>Group</div>
           </div>
         </div>
 
         <div class="btn-group btn-group-sm ml-2">
           <button
-            class="btn btn-default"
-            [disabled]="selectedSymbols.getSelected().length !== 1"
             (click)="editSelectedSymbol()"
+            [disabled]="selectedSymbols.getSelected().length !== 1"
+            class="btn btn-default"
           >
             Edit
           </button>
           <button
-            class="btn btn-default"
-            [disabled]="selectedSymbols.getSelected().length === 0"
             (click)="moveSelectedSymbols()"
+            [disabled]="selectedSymbols.getSelected().length === 0"
+            class="btn btn-default"
           >
             Move
           </button>
-          <button class="btn btn-default"
+          <button (click)="deleteSelectedSymbols()"
                   [disabled]="selectedSymbols.getSelected().length === 0"
-                  (click)="deleteSelectedSymbols()">
+                  class="btn btn-default">
             Delete
           </button>
         </div>
 
         <div class="btn-group btn-group-sm ml-2">
           <button
-            class="btn btn-default"
             (click)="importSymbols()"
+            class="btn btn-default"
             ngbTooltip="Import"
             placement="bottom"
           >
             <i class="fas fa-fw fa-upload"></i>
           </button>
           <button
-            class="btn btn-default"
             (click)="exportSelectedSymbols()"
+            [disabled]="selectedSymbols.getSelected().length === 0"
+            class="btn btn-default"
             ngbTooltip="Export"
             placement="bottom"
-            [disabled]="selectedSymbols.getSelected().length === 0"
           >
             <i class="fas fa-fw fa-download"></i>
           </button>
@@ -66,17 +64,17 @@
 
       <div style="height: 31px; margin-bottom: 1.5rem">
         <symbol-search-form
-          [groups]="groups"
           (selected)="selectSymbol($event)"
+          [groups]="groups"
         >
         </symbol-search-form>
       </div>
 
-      <div style="margin-bottom: 2rem" *ngFor="let group of groups">
+      <div *ngFor="let group of groups" style="margin-bottom: 2rem">
         <symbols-symbol-group-tree
           [group]="group"
-          [symbols]="symbols"
           [selectedSymbols]="selectedSymbols"
+          [symbols]="symbols"
         >
         </symbols-symbol-group-tree>
       </div>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { LearnResult } from '../../../entities/learner-result';
+import { LearnerResult } from '../../../entities/learner-result';
 import { Selectable } from '../../../utils/selectable';
 import { Component, Input } from '@angular/core';
 
@@ -30,8 +30,8 @@ import { Component, Input } from '@angular/core';
 export class LearnerResultListItemComponent {
 
   @Input()
-  result: LearnResult;
+  result: LearnerResult;
 
   @Input()
-  selectable: Selectable<LearnResult>;
+  selectable: Selectable<LearnerResult>;
 }

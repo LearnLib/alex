@@ -20,7 +20,7 @@ import { ProjectEnvironment } from './project-environment';
 /**
  * The model for a learner result.
  */
-export class LearnResult {
+export class LearnerResult {
 
   /** The ID of the learner result. */
   public id: number;
@@ -97,10 +97,10 @@ export class LearnResult {
     this.maxAmountOfStepsToLearn = obj.maxAmountOfStepsToLearn == null ? -1 : obj.maxAmountOfStepsToLearn;
 
     // convert ns to ms
-    LearnResult.convertNsToMs(this.statistics.duration);
+    LearnerResult.convertNsToMs(this.statistics.duration);
 
     if (this.steps != null && this.steps.length > 0) {
-      this.steps.forEach(step => LearnResult.convertNsToMs(step.statistics.duration));
+      this.steps.forEach(step => LearnerResult.convertNsToMs(step.statistics.duration));
     }
   }
 

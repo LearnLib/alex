@@ -28,8 +28,8 @@ import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ExecutionResultModalComponent } from '../../common/execution-result-modal/execution-result-modal.component';
-import { TestConfigModalComponent } from '../../common/test-config-modal/test-config-modal.component';
+import { ExecutionResultModalComponent } from '../../common/modals/execution-result-modal/execution-result-modal.component';
+import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 
 @Component({
   selector: 'test-case-view',
@@ -40,33 +40,18 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
   /** The current test. */
   @Input()
   testCase: any;
-
-  private keyDownHandler = (e) => {
-    if (e.ctrlKey && e.which === 83) {
-      e.preventDefault();
-      this.save();
-      return false;
-    }
-  };
-
   /** The test result. */
   result: any;
-
   /** The test report. */
   report: any;
-
   /** Map id -> symbol. */
   symbolMap: any;
-
   /** If testing is in progress. */
   active: boolean;
-
   /** Display options */
   options: any;
-
   /** The config used for testing. */
   testConfig: any;
-
   groups: SymbolGroup[];
 
   constructor(private symbolGroupApi: SymbolGroupApiService,
@@ -85,6 +70,10 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     this.options = {
       showSymbolOutputs: false
     };
+  }
+
+  get project(): Project {
+    return this.appStore.project;
   }
 
   ngOnInit(): void {
@@ -176,7 +165,11 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     this.testCase.steps.push(TestCaseStep.fromSymbol(symbol));
   }
 
-  get project(): Project {
-    return this.appStore.project;
-  }
+  private keyDownHandler = (e) => {
+    if (e.ctrlKey && e.which === 83) {
+      e.preventDefault();
+      this.save();
+      return false;
+    }
+  };
 }

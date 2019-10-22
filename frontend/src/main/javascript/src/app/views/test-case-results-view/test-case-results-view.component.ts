@@ -18,7 +18,7 @@ import { TestApiService } from '../../services/resources/test-api.service';
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, OnInit } from '@angular/core';
-import { StateParamsService } from '../../providers';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'test-case-results-view',
@@ -37,18 +37,26 @@ export class TestCaseResultsViewComponent implements OnInit {
 
   constructor(private appStore: AppStoreService,
               private testApi: TestApiService,
-              private stateParams: StateParamsService) {
+              private route: ActivatedRoute) {
     this.results = [];
     this.page = {};
   }
 
+  get project(): Project {
+    return this.appStore.project;
+  }
+
   ngOnInit(): void {
-    this.testApi.get(this.project.id, (this.stateParams as any).testId).subscribe(
-      test => {
-        this.test = test;
-        this.loadTestResults();
-      },
-      console.error
+    this.route.paramMap.subscribe(
+      map => {
+        this.testApi.get(this.project.id, parseInt(map.get('testId'))).subscribe(
+          test => {
+            this.test = test;
+            this.loadTestResults();
+          },
+          console.error
+        );
+      }
     );
   }
 
@@ -65,9 +73,5 @@ export class TestCaseResultsViewComponent implements OnInit {
 
   previousPage(): void {
     this.loadTestResults(Math.max(0, this.page.number - 1));
-  }
-
-  get project(): Project {
-    return this.appStore.project;
   }
 }

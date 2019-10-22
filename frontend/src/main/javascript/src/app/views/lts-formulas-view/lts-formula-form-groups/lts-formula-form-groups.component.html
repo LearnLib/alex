@@ -2,11 +2,11 @@
   <label>Name</label>
   <input
     class="form-control"
-    type="text"
     placeholder="A descriptive name of the formula"
     required
+    type="text"
     [formControl]="form.controls.name"
-    [class.is-invalid]="isInvalidFormControl(form.controls.name)"
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.name)"
   >
   <div class="invalid-feedback">
     Please provide a name for the formula.
@@ -17,11 +17,11 @@
   <label>Formula</label>
   <input
     class="form-control"
-    type="text"
     placeholder="The LtsMin formula"
     required
+    type="text"
     [formControl]="form.controls.formula"
-    [class.is-invalid]="isInvalidFormControl(form.controls.formula)"
+    [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.formula)"
   >
   <div class="invalid-feedback">
     Please provide a LTL formula.

@@ -53,6 +53,6 @@ export class WaitForNodeAttributeAction extends Action {
   }
 
   toString(): string {
-    return `Wait until the attribute "${this.attribute}" of the element "${this.node.selector}" ${this.waitCriterion === 'IS' ? 'is' : 'contains' } "${this.value}" for a maximum of "${this.maxWaitTime}s"`;
+    return `Wait until the attribute "${this.attribute}" of the element "${this.node.selector}" ${this.waitCriterion === 'IS' ? 'is' : 'contains'} "${this.value}" for a maximum of "${this.maxWaitTime}s"`;
   }
 }

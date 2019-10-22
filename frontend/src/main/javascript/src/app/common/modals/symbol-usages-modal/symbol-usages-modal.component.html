@@ -1,0 +1,73 @@
+<div class="modal-header">
+  <h4 class="modal-title">Usages of symbol <strong>{{symbol.name}}</strong></h4>
+  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<div *ngIf="result != null" class="modal-body">
+  <div *ngIf="!result.inUse" class="alert alert-info mb-0">
+    The symbol is not used anywhere.
+  </div>
+
+  <div *ngIf="result.inUse">
+    <p>
+      <strong>In symbols</strong>
+    </p>
+    <div *ngIf="result.symbols.length === 0" class="alert alert-info">
+      The symbol is not used in other symbols.
+    </div>
+    <div *ngIf="result.symbols.length > 0" class="list-group">
+      <a
+        (click)="modal.dismiss(); $event.preventDefault()"
+        *ngFor="let s of result.symbols"
+        [href]="'#!/projects/' + s.project + '/symbols/' + s.id"
+        class="list-group-item list-group-item-action"
+      >
+        {{s.name}}
+      </a>
+    </div>
+
+    <div class="mt-3">
+      <p>
+        <strong>In tests</strong>
+      </p>
+      <div *ngIf="result.testCases.length === 0" class="alert alert-info">
+        The symbol is not used in tests.
+      </div>
+      <div *ngIf="result.testCases.length > 0" class="list-group">
+        <a
+          (click)="modal.dismiss(); $event.preventDefault()"
+          *ngFor="let t of result.testCases"
+          [href]="'#!/projects/' + t.project + '/tests/' + t.id"
+          class="list-group-item list-group-item-action"
+        >
+          {{t.name}}
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <p>
+        <strong>In learner results</strong>
+      </p>
+      <div *ngIf="result.learnerResults.length === 0" class="alert alert-info">
+        The symbol has not been used for learning.
+      </div>
+      <div *ngIf="result.learnerResults.length > 0" class="list-group">
+        <a
+          (click)="modal.dismiss(); $event.preventDefault()"
+          *ngFor="let r of result.learnerResults"
+          [href]="'#!/projects/' + r.project + '/learner/results/' + r.testNo"
+          class="list-group-item list-group-item-action"
+        >
+          Test No <span>{{r.testNo}}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button (click)="modal.dismiss()" class="btn btn-primary btn-sm">Ok</button>
+</div>

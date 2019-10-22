@@ -1,12 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { ApplicationRef, DoBootstrap, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { UpgradeModule } from '@angular/upgrade/static';
 
-import ALEX from './app.module.ajs';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
@@ -56,8 +54,8 @@ import { LearnerResultApiService } from './services/resources/learner-result-api
 import { LearnerApiService } from './services/resources/learner-api.service';
 import { TestApiService } from './services/resources/test-api.service';
 import { FileApiService } from './services/resources/file-api.service';
-import { PromptModalComponent } from './common/prompt-modal/prompt-modal.component';
-import { ConfirmModalComponent } from './common/confirm-modal/confirm-modal.component';
+import { PromptModalComponent } from './common/modals/prompt-modal/prompt-modal.component';
+import { ConfirmModalComponent } from './common/modals/confirm-modal/confirm-modal.component';
 import { PromptService } from './services/prompt.service';
 import { TestConfigListComponent } from './views/test-suite-view/test-config-list/test-config-list.component';
 import { FormatWebBrowserPipe } from './pipes/format-web-browser.pipe';
@@ -83,7 +81,6 @@ import { EqOracleService } from './services/eq-oracle.service';
 import { LearningAlgorithmService } from './services/learning-algorithm.service';
 import { LearnerResultChartService } from './services/learner-result-chart.service';
 import { PaginationComponent } from './common/pagination/pagination.component';
-import { AngularjsJsonInterceptor } from './angularjs-json-interceptor';
 import { FilesViewComponent } from './views/files-view/files-view.component';
 import { ProjectEnvironmentsViewComponent } from './views/project-environments-view/project-environments-view.component';
 import { CreateEnvironmentVariableModalComponent } from './views/project-environments-view/create-environment-variable-modal/create-environment-variable-modal.component';
@@ -116,15 +113,14 @@ import { SymbolFormGroupsComponent } from './views/symbols-view/symbol-form-grou
 import { CreateSymbolModalComponent } from './views/symbols-view/create-symbol-modal/create-symbol-modal.component';
 import { EditSymbolModalComponent } from './views/symbols-view/edit-symbol-modal/edit-symbol-modal.component';
 import { MoveSymbolsModalComponent } from './views/symbols-view/move-symbols-modal/move-symbols-modal.component';
-import { SelectSymbolModalComponent } from './common/select-symbol-modal/select-symbol-modal.component';
-import { SymbolUsagesModalComponent } from './common/symbol-usages-modal/symbol-usages-modal.component';
+import { SelectSymbolModalComponent } from './common/modals/select-symbol-modal/select-symbol-modal.component';
+import { SymbolUsagesModalComponent } from './common/modals/symbol-usages-modal/symbol-usages-modal.component';
 import { SymbolsArchiveViewComponent } from './views/symbols-archive-view/symbols-archive-view.component';
 import { SearchFormComponent } from './common/search-form/search-form.component';
 import { SymbolSearchFormComponent } from './common/search-form/symbol-search-form/symbol-search-form.component';
 import { ExportSymbolsModalComponent } from './views/symbols-view/export-symbols-modal/export-symbols-modal.component';
 import { ImportSymbolsModalComponent } from './views/symbols-view/import-symbols-modal/import-symbols-modal.component';
-import { StateParamsService, StateService } from './providers';
-import { ExecutionResultModalComponent } from './common/execution-result-modal/execution-result-modal.component';
+import { ExecutionResultModalComponent } from './common/modals/execution-result-modal/execution-result-modal.component';
 import { ReportChartsComponent } from './views/test-report-view/report-donut-chart/report-charts.component';
 import { ReportOutputsColumnComponent } from './views/test-report-view/report-output-column/report-outputs-column.component';
 import { TestReportViewComponent } from './views/test-report-view/test-report-view.component';
@@ -132,22 +128,105 @@ import { TestReportsViewComponent } from './views/test-reports-view/test-reports
 import { TestCaseResultsViewComponent } from './views/test-case-results-view/test-case-results-view.component';
 import { FormatEqOraclePipe } from './pipes/format-eq-oracle.pipe';
 import { LearnerResultsViewComponent } from './views/learner-results-view/learner-results-view.component';
-import { LearnerResultDetailsModalComponent } from './common/learner-result-details-modal/learner-result-details-modal.component';
+import { LearnerResultDetailsModalComponent } from './common/modals/learner-result-details-modal/learner-result-details-modal.component';
 import { LearnerResultListItemComponent } from './views/learner-results-view/learner-result-list-item/learner-result-list-item.component';
 import { TestsViewComponent } from './views/tests-view/tests-view.component';
 import { TestCaseViewComponent } from './views/test-case-view/test-case-view.component';
 import { TestSuiteViewComponent } from './views/test-suite-view/test-suite-view.component';
-import { TestConfigModalComponent } from './common/test-config-modal/test-config-modal.component';
-import { TestsImportModalComponent } from './common/tests-import-modal/tests-import-modal.component';
-import { TestSuiteTreeComponent } from './common/tests-move-modal/test-suite-tree-component/test-suite-tree.component';
-import { TestsMoveModalComponent } from './common/tests-move-modal/tests-move-modal.component';
+import { TestConfigModalComponent } from './views/tests-view/test-config-modal/test-config-modal.component';
+import { TestsImportModalComponent } from './views/test-suite-view/tests-import-modal/tests-import-modal.component';
+import { TestSuiteTreeComponent } from './views/test-suite-view/tests-move-modal/test-suite-tree-component/test-suite-tree.component';
+import { TestsMoveModalComponent } from './views/test-suite-view/tests-move-modal/tests-move-modal.component';
 import { BrowserConfigFormComponent } from './common/browser-config-form/browser-config-form.component';
-import { LearnerResultListModalComponent } from './common/learner-result-list-modal/learner-result-list-modal.component';
-import { SeparatingWordModalComponent } from './common/separating-word-modal/separating-word-modal.component';
+import { LearnerResultListModalComponent } from './common/modals/learner-result-list-modal/learner-result-list-modal.component';
+import { SeparatingWordModalComponent } from './common/modals/separating-word-modal/separating-word-modal.component';
 import { SymbolsViewComponent } from './views/symbols-view/symbols-view.component';
 import { SymbolGroupHeaderComponent } from './views/symbols-view/symbols-symbol-group-tree/symbol-group-header/symbol-group-header.component';
 import { SymbolsSymbolGroupTreeComponent } from './views/symbols-view/symbols-symbol-group-tree/symbols-symbol-group-tree.component';
 import { SymbolItemComponent } from './views/symbols-view/symbols-symbol-group-tree/symbol-item/symbol-item.component';
+import { SidebarComponent } from './common/sidebar/sidebar.component';
+import { UserLoginFormComponent } from './common/user-login-form/user-login-form.component';
+import { RootViewComponent } from './views/root-view/root-view.component';
+import { NodeFormGroupComponent } from './common/node-form-group/node-form-group.component';
+import { LearnerSettingsModalComponent } from './views/learner-setup-view/learner-settings-modal/learner-settings-modal.component';
+import { LearnerSetupViewComponent } from './views/learner-setup-view/learner-setup-view.component';
+import { SymbolViewComponent } from './views/symbol-view/symbol-view.component';
+import { CreateActionModalComponent } from './views/symbol-view/create-action-modal/create-action-modal.component';
+import { EditActionModalComponent } from './views/symbol-view/edit-action-modal/edit-action-modal.component';
+import { HypothesisLayoutSettingsModalComponent } from './common/learner-result-panel/hypothesis-layout-settings-modal/hypothesis-layout-settings-modal.component';
+import { LearnerResultsCompareViewComponent } from './views/learner-results-compare-view/learner-results-compare-view.component';
+import { StatisticsCompareViewComponent } from './views/statistics-compare-view/statistics-compare-view.component';
+import { LearnerResultPanelComponent } from './common/learner-result-panel/learner-result-panel.component';
+import { LearnerViewComponent } from './views/learner-view/learner-view.component';
+import { LearnerResultPanelCheckingViewComponent } from './common/learner-result-panel/learner-result-panel-checking-view/learner-result-panel-checking-view.component';
+import { LearnerResultPanelDefaultViewComponent } from './common/learner-result-panel/learner-result-panel-default-view/learner-result-panel-default-view.component';
+import { LearnerResultPanelTestingViewComponent } from './common/learner-result-panel/learner-result-panel-testing-view/learner-result-panel-testing-view.component';
+import { TestSuiteGenerationWidgetComponent } from './common/learner-result-panel/learner-result-panel-testing-view/test-suite-generation-widget/test-suite-generation-widget.component';
+import { TestCaseGenerationWidgetComponent } from './common/learner-result-panel/learner-result-panel-testing-view/test-case-generation-widget/test-case-generation-widget.component';
+import { LearnerResumeSettingsWidgetComponent } from './views/learner-view/learner-resume-widget/learner-resume-settings-widget.component';
+import { CounterexamplesWidgetComponent } from './views/learner-view/learner-resume-widget/counterexamples-widget/counterexamples-widget.component';
+import { EqOracleFormComponent } from './common/eq-oracles/eq-oracle-form.component';
+import { WpMethodEqOracleFormComponent } from './common/eq-oracles/wp-method-eq-oracle-form/wp-method-eq-oracle-form.component';
+import { RandomEqOracleFormComponent } from './common/eq-oracles/random-eq-oracle-form/random-eq-oracle-form.component';
+import { CompleteEqOracleFormComponent } from './common/eq-oracles/complete-eq-oracle-form/complete-eq-oracle-form.component';
+import { TestSuiteEqOracleFormComponent } from './common/eq-oracles/test-suite-eq-oracle-form/test-suite-eq-oracle-form.component';
+import { HypothesisEqOracleFormComponent } from './common/eq-oracles/hypothesis-eq-oracle-form/hypothesis-eq-oracle-form.component';
+import { WMethodEqOracleFormComponent } from './common/eq-oracles/w-method-eq-oracle-form/w-method-eq-oracle-form.component';
+import { ActionFormComponent } from './common/actions/action-form/action-form.component';
+import { AssertCounterActionFormComponent } from './common/actions/misc/assert-counter-action-form/assert-counter-action-form.component';
+import { AssertVariableActionFormComponent } from './common/actions/misc/assert-variable-action-form/assert-variable-action-form.component';
+import { IncrementCounterActionFormComponent } from './common/actions/misc/increment-counter-action-form/increment-counter-action-form.component';
+import { SetCounterActionFormComponent } from './common/actions/misc/set-counter-action-form/set-counter-action-form.component';
+import { SetVariableActionFormComponent } from './common/actions/misc/set-variable-action-form/set-variable-action-form.component';
+import { SetVariableByCookieActionFormComponent } from './common/actions/misc/set-variable-by-cookie-action-form/set-variable-by-cookie-action-form.component';
+import { SetVariableByHtmlActionFormComponent } from './common/actions/misc/set-variable-by-html-action-form/set-variable-by-html-action-form.component';
+import { SetVariableByHttpResponseActionFormComponent } from './common/actions/misc/set-variable-by-http-response-action-form/set-variable-by-http-response-action-form.component';
+import { SetVariableByHttpStatusActionFormComponent } from './common/actions/misc/set-variable-by-http-status-action-form/set-variable-by-http-status-action-form.component';
+import { SetVariableByJsonActionFormComponent } from './common/actions/misc/set-variable-by-json-action-form/set-variable-by-json-action-form.component';
+import { SetVariableByNodeAttributeActionFormComponent } from './common/actions/misc/set-variable-by-node-attribute-action-form/set-variable-by-node-attribute-action-form.component';
+import { SetVariableByNodeCountActionFormComponent } from './common/actions/misc/set-variable-by-node-count-action-form/set-variable-by-node-count-action-form.component';
+import { SetVariableByRegexGroupActionFormComponent } from './common/actions/misc/set-variable-by-regex-group-action-form/set-variable-by-regex-group-action-form.component';
+import { CheckAttributeExistsActionFormComponent } from './common/actions/rest/check-attribute-exists-action-form/check-attribute-exists-action-form.component';
+import { CheckAttributeTypeActionFormComponent } from './common/actions/rest/check-attribute-type-action-form/check-attribute-type-action-form.component';
+import { CheckAttributeValueActionFormComponent } from './common/actions/rest/check-attribute-value-action-form/check-attribute-value-action-form.component';
+import { CheckHeaderFieldActionFormComponent } from './common/actions/rest/check-header-field-action-form/check-header-field-action-form.component';
+import { CheckHttpBodyActionFormComponent } from './common/actions/rest/check-http-body-action-form/check-http-body-action-form.component';
+import { CheckStatusActionFormComponent } from './common/actions/rest/check-status-action-form/check-status-action-form.component';
+import { RequestActionFormComponent } from './common/actions/rest/request-action-form/request-action-form.component';
+import { ValidateJsonActionFormComponent } from './common/actions/rest/validate-json-action-form/validate-json-action-form.component';
+import { AlertAcceptDismissActionFormComponent } from './common/actions/web/alert-accept-dismiss-action-form/alert-accept-dismiss-action-form.component';
+import { AlertGetTextActionFormComponent } from './common/actions/web/alert-get-text-action-form/alert-get-text-action-form.component';
+import { AlertSendKeysActionFormComponent } from './common/actions/web/alert-send-keys-action-form/alert-send-keys-action-form.component';
+import { BrowserActionFormComponent } from './common/actions/web/browser-action-form/browser-action-form.component';
+import { CheckForNodeActionFormComponent } from './common/actions/web/check-for-node-action-form/check-for-node-action-form.component';
+import { CheckForTextActionFormComponent } from './common/actions/web/check-for-text-action-form/check-for-text-action-form.component';
+import { CheckNodeAttributeValueActionFormComponent } from './common/actions/web/check-node-attribute-value-action-form/check-node-attribute-value-action-form.component';
+import { CheckNodeSelectedActionFormComponent } from './common/actions/web/check-node-selected-action-form/check-node-selected-action-form.component';
+import { CheckPageTitleActionFormComponent } from './common/actions/web/check-page-title-action-form/check-page-title-action-form.component';
+import { ClearInputActionFormComponent } from './common/actions/web/clear-input-action-form/clear-input-action-form.component';
+import { ClickActionFormComponent } from './common/actions/web/click-action-form/click-action-form.component';
+import { ClickElementByTextActionFormComponent } from './common/actions/web/click-element-by-text-action-form/click-element-by-text-action-form.component';
+import { ClickLinkByTextActionFormComponent } from './common/actions/web/click-link-by-text-action-form/click-link-by-text-action-form.component';
+import { DragAndDropActionFormComponent } from './common/actions/web/drag-and-drop-action-form/drag-and-drop-action-form.component';
+import { DragAndDropByActionFormComponent } from './common/actions/web/drag-and-drop-by-action-form/drag-and-drop-by-action-form.component';
+import { ExecuteScriptActionFormComponent } from './common/actions/web/execute-script-action-form/execute-script-action-form.component';
+import { MoveMouseActionFormComponent } from './common/actions/web/move-mouse-action-form/move-mouse-action-form.component';
+import { OpenUrlActionFormComponent } from './common/actions/web/open-url-action-form/open-url-action-form.component';
+import { PressKeyActionFormComponent } from './common/actions/web/press-key-action-form/press-key-action-form.component';
+import { SelectActionFormComponent } from './common/actions/web/select-action-form/select-action-form.component';
+import { SendKeysActionFormComponent } from './common/actions/web/send-keys-action-form/send-keys-action-form.component';
+import { SubmitActionFormComponent } from './common/actions/web/submit-action-form/submit-action-form.component';
+import { SwitchToActionFormComponent } from './common/actions/web/switch-to/switch-to-action-form.component';
+import { SwitchToFrameActionFormComponent } from './common/actions/web/switch-to-frame/switch-to-frame-action-form.component';
+import { UploadFileActionFormComponent } from './common/actions/web/upload-file-action-form/upload-file-action-form.component';
+import { WaitForNodeActionFormComponent } from './common/actions/web/wait-for-node-action-form/wait-for-node-action-form.component';
+import { WaitForNodeAttributeActionFormComponent } from './common/actions/web/wait-for-node-attribute-action-form/wait-for-node-attribute-action-form.component';
+import { WaitForScriptActionFormComponent } from './common/actions/web/wait-for-script-action-form/wait-for-script-action-form.component';
+import { WaitForTextActionFormComponent } from './common/actions/web/wait-for-text-action-form/wait-for-text-action-form.component';
+import { WaitForTitleActionFormComponent } from './common/actions/web/wait-for-title-action-form/wait-for-title-action-form.component';
+import { WaitActionFormComponent } from './common/actions/misc/wait-action-form/wait-action-form.component';
+import { ActionSearchFormComponent } from './views/symbol-view/create-action-modal/action-search-form/action-search-form.component';
+import { AppViewComponent } from './views/app-view/app-view.component';
 
 @NgModule({
   declarations: [
@@ -255,7 +334,91 @@ import { SymbolItemComponent } from './views/symbols-view/symbols-symbol-group-t
     SymbolsViewComponent,
     SymbolGroupHeaderComponent,
     SymbolsSymbolGroupTreeComponent,
-    SymbolItemComponent
+    SymbolItemComponent,
+    SidebarComponent,
+    UserLoginFormComponent,
+    RootViewComponent,
+    NodeFormGroupComponent,
+    LearnerSetupViewComponent,
+    LearnerSettingsModalComponent,
+    SymbolViewComponent,
+    CreateActionModalComponent,
+    EditActionModalComponent,
+    HypothesisLayoutSettingsModalComponent,
+    LearnerResultsCompareViewComponent,
+    StatisticsCompareViewComponent,
+    LearnerResultPanelComponent,
+    LearnerViewComponent,
+    LearnerResultPanelCheckingViewComponent,
+    LearnerResultPanelDefaultViewComponent,
+    LearnerResultPanelTestingViewComponent,
+    TestSuiteGenerationWidgetComponent,
+    TestCaseGenerationWidgetComponent,
+    LearnerResumeSettingsWidgetComponent,
+    CounterexamplesWidgetComponent,
+    EqOracleFormComponent,
+    WpMethodEqOracleFormComponent,
+    WMethodEqOracleFormComponent,
+    RandomEqOracleFormComponent,
+    CompleteEqOracleFormComponent,
+    TestSuiteEqOracleFormComponent,
+    HypothesisEqOracleFormComponent,
+    ActionFormComponent,
+    AssertCounterActionFormComponent,
+    AssertVariableActionFormComponent,
+    IncrementCounterActionFormComponent,
+    SetCounterActionFormComponent,
+    SetVariableActionFormComponent,
+    SetVariableByCookieActionFormComponent,
+    SetVariableByHtmlActionFormComponent,
+    SetVariableByHttpResponseActionFormComponent,
+    SetVariableByHttpStatusActionFormComponent,
+    SetVariableByJsonActionFormComponent,
+    SetVariableByNodeAttributeActionFormComponent,
+    SetVariableByNodeCountActionFormComponent,
+    SetVariableByRegexGroupActionFormComponent,
+    CheckAttributeExistsActionFormComponent,
+    CheckAttributeTypeActionFormComponent,
+    CheckAttributeValueActionFormComponent,
+    CheckHeaderFieldActionFormComponent,
+    CheckHttpBodyActionFormComponent,
+    CheckStatusActionFormComponent,
+    RequestActionFormComponent,
+    ValidateJsonActionFormComponent,
+    AlertAcceptDismissActionFormComponent,
+    AlertGetTextActionFormComponent,
+    AlertSendKeysActionFormComponent,
+    BrowserActionFormComponent,
+    CheckForNodeActionFormComponent,
+    CheckForTextActionFormComponent,
+    CheckNodeAttributeValueActionFormComponent,
+    CheckNodeSelectedActionFormComponent,
+    CheckPageTitleActionFormComponent,
+    ClearInputActionFormComponent,
+    ClickActionFormComponent,
+    ClickElementByTextActionFormComponent,
+    ClickLinkByTextActionFormComponent,
+    DragAndDropActionFormComponent,
+    DragAndDropByActionFormComponent,
+    ExecuteScriptActionFormComponent,
+    MoveMouseActionFormComponent,
+    OpenUrlActionFormComponent,
+    PressKeyActionFormComponent,
+    SelectActionFormComponent,
+    SendKeysActionFormComponent,
+    SubmitActionFormComponent,
+    SwitchToActionFormComponent,
+    SwitchToFrameActionFormComponent,
+    UploadFileActionFormComponent,
+    WaitForNodeActionFormComponent,
+    WaitForNodeAttributeActionFormComponent,
+    WaitForScriptActionFormComponent,
+    WaitForTextActionFormComponent,
+    WaitForTitleActionFormComponent,
+    WaitActionFormComponent,
+    ActionFormComponent,
+    ActionSearchFormComponent,
+    AppViewComponent
   ],
   imports: [
     BrowserModule,
@@ -269,30 +432,10 @@ import { SymbolItemComponent } from './views/symbols-view/symbols-symbol-group-t
       positionClass: 'toast-bottom-center',
       preventDuplicates: true
     }),
-    UpgradeModule,
     NgbModule,
     DragulaModule.forRoot()
   ],
   providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AngularjsJsonInterceptor,
-      multi: true
-    },
-    {
-      provide: StateService,
-      useFactory: (i: any) => {
-        return i.get('$state');
-      },
-      deps: ['$injector']
-    },
-    {
-      provide: StateParamsService,
-      useFactory: (i: any) => {
-        return i.get('$stateParams');
-      },
-      deps: ['$injector']
-    },
     ToastService,
     AppStoreService,
     SettingsApiService,
@@ -360,62 +503,12 @@ import { SymbolItemComponent } from './views/symbols-view/symbols-symbol-group-t
     TestsImportModalComponent,
     LearnerResultListModalComponent,
     SeparatingWordModalComponent,
-    // remove when migration is done
-    ViewHeaderComponent,
-    ActionBarComponent,
-    SelectableCheckboxComponent,
-    SelectableCheckboxMultipleComponent,
-    AboutViewComponent,
-    TestCaseTableComponent,
-    SymbolParametersComponent,
-    OutputErrorTraceComponent,
-    CountersViewComponent,
-    LtsFormulasViewComponent,
-    WebhooksViewComponent,
-    SymbolParametersPanelComponent,
-    TestConfigListComponent,
-    LatestLearnerResultWidgetComponent,
-    LatestTestReportWidgetComponent,
-    LearnerStatusWidgetComponent,
-    ProjectDetailsWidgetComponent,
-    ProjectViewComponent,
-    ProjectsViewComponent,
-    FileDropzoneComponent,
-    LogoutViewComponent,
-    PaginationComponent,
-    FilesViewComponent,
-    ProjectEnvironmentsViewComponent,
-    HypothesisComponent,
-    DiscriminationTreeComponent,
-    ObservationTableComponent,
-    AdminUsersViewComponent,
-    ProfileViewComponent,
-    TestTreeComponent,
-    AdminSettingsViewComponent,
-    SimpleSymbolGroupTreeComponent,
-    SimpleSymbolGroupTreeItemComponent,
-    SymbolsArchiveViewComponent,
-    SearchFormComponent,
-    SymbolSearchFormComponent,
-    ReportChartsComponent,
-    ReportOutputsColumnComponent,
-    TestReportViewComponent,
-    TestReportsViewComponent,
-    TestsViewComponent,
-    TestSuiteViewComponent,
-    TestCaseViewComponent,
-    TestCaseResultsViewComponent,
-    LearnerResultsViewComponent,
-    LearnerResultListItemComponent,
-    SymbolsViewComponent,
-  ]
-  // bootstrap: [AppComponent]
+    LearnerSettingsModalComponent,
+    CreateActionModalComponent,
+    EditActionModalComponent,
+    HypothesisLayoutSettingsModalComponent
+  ],
+  bootstrap: [AppComponent]
 })
-export class AppModule implements DoBootstrap {
-  constructor(private upgrade: UpgradeModule) {
-  }
-
-  ngDoBootstrap(app: ApplicationRef) {
-    this.upgrade.bootstrap(document.body, [ALEX], { strictDi: false });
-  }
+export class AppModule {
 }

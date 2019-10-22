@@ -24,7 +24,8 @@ import { FilesViewStoreService } from './files-view-store.service';
 })
 export class FilesViewComponent implements OnInit {
 
-  constructor(public store: FilesViewStoreService) { }
+  constructor(public store: FilesViewStoreService) {
+  }
 
   ngOnInit() {
     this.store.load();

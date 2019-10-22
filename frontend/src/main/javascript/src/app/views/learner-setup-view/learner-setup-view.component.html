@@ -1,0 +1,197 @@
+<div class="view">
+
+  <action-bar>
+    <div class="d-flex">
+      <div class="ml-auto">
+        <a
+          *ngIf="latestLearnerResult != null"
+          class="btn btn-info btn-sm"
+          href="{{'#!/projects/' + project.id + '/learner/learn'}}"
+        >
+          Continue learning
+        </a>
+        <div class="btn-group btn-group-sm ml-2">
+          <button (click)="startLearning()" class="btn btn-primary">
+            Start learning
+          </button>
+          <button (click)="openLearnerConfigurationModal()" class="btn btn-primary">
+            <i class="fas fa-cog"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </action-bar>
+
+  <div class="view-body has-sub-nav">
+    <div class="container-fluid">
+
+      <div class="alert alert-info alert-condensed clearfix">
+        <i class="fas fa-fw fa-info-circle"></i>
+
+        Use the <strong>{{learnConfiguration.algorithm.name | formatLearningAlgorithm}}</strong> algorithm
+        with the <strong>{{learnConfiguration.eqOracle.type | formatEqOracle}}</strong> equivalence oracle
+        in the <strong>{{learnConfiguration.driverConfig.name | formatWebBrowser}}</strong> browser.
+      </div>
+
+      <hr>
+
+      <div *ngIf="groups.length > 0" class="row">
+        <div class="col-md-4 col-lg-3">
+          <div class="card mb-4">
+            <div class="card-header">
+              <strong class="text-muted">Symbols</strong>
+            </div>
+            <div class="card-body">
+              <div class="mb-2" style="height: 31px; position: relative; z-index: 10">
+                <symbol-search-form
+                  (selected)="handleSymbolSelected($event)"
+                  [groups]="groups"
+                >
+                </symbol-search-form>
+              </div>
+
+              <simple-symbol-group-tree
+                (groupSelected)="handleSymbolGroupSelected($event)"
+                (symbolSelected)="handleSymbolSelected($event)"
+                [groups]="groups"
+              >
+              </simple-symbol-group-tree>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 col-lg-6">
+
+          <h5><strong>Pre</strong></h5>
+          <hr class="hr-small">
+          <div *ngIf="pResetSymbol == null" class="alert alert-info d-flex flex-row">
+            <div class="w-100">
+              Select a reset symbol <em>(required)</em>
+            </div>
+            <div class="flex-shrink-0">
+              <button (click)="selectResetSymbol()" class="btn btn-xs btn-info float-right flex-shrink-0">
+                Select symbol
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="pResetSymbol != null" class="list-group">
+            <div class="d-flex flex-row list-group-item">
+              <div class="w-100">
+                <div>
+                  <strong>{{pResetSymbol.symbol.name}}</strong>
+                </div>
+                <symbol-parameters
+                  [parameterValues]="pResetSymbol.parameterValues"
+                >
+                </symbol-parameters>
+              </div>
+              <div class="flex-shrink-0">
+                <button (click)="selectResetSymbol()" class="btn btn-xs btn-default">
+                  Select symbol
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <h5 style="margin-top: 3rem"><strong>Input alphabet</strong></h5>
+          <hr class="hr-small">
+          <div *ngIf="pSymbols.length > 0" class="list-group">
+            <div *ngFor="let pSymbol of pSymbols; let i = index"
+                 class="list-group-item d-flex flex-row">
+              <div class="w-100">
+                <div>
+                  <strong>{{pSymbol.symbol.name}}</strong>
+                </div>
+                <symbol-parameters [parameterValues]="pSymbol.parameterValues"></symbol-parameters>
+              </div>
+              <div style="flex-shrink: 0">
+                <i (click)="pSymbols.splice(i, 1)"
+                   class="fas fa-fw fa-times text-muted cursor-pointer"></i>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="pSymbols.length === 0" class="alert alert-info">
+            Select symbols to create an input alphabet.
+          </div>
+
+          <h5 style="margin-top: 3rem"><strong>Post</strong></h5>
+          <hr class="hr-small">
+          <div *ngIf="pPostSymbol == null" class="alert alert-info d-flex flex-row">
+            <div class="w-100">
+              Select a post symbol <em>(optional)</em>
+            </div>
+            <div class="flex-shrink-0">
+              <button (click)="selectPostSymbol()" class="btn btn-xs btn-info float-right flex-shrink-0">
+                Select symbol
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="pPostSymbol != null" class="list-group">
+            <div class="d-flex flex-row list-group-item">
+              <div class="w-100">
+                <div>
+                  <strong>{{pPostSymbol.symbol.name}}</strong>
+                </div>
+                <symbol-parameters
+                  [parameterValues]="pPostSymbol.parameterValues"
+                >
+                </symbol-parameters>
+              </div>
+              <div class="flex-shrink-0">
+                <div class="btn btn-group btn-group-xs">
+                  <button (click)="selectPostSymbol()" class="btn btn-default">
+                    Select symbol
+                  </button>
+                  <button (click)="pPostSymbol = null" class="btn  btn-default">
+                    <i class="fas fa-fw fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 col-lg-3">
+          <div class="card">
+            <div class="card-header">
+              <strong class="text-muted">Reuse a previous configuration</strong>
+            </div>
+            <div *ngIf="learnResults.length > 0" class="list-group list-group-flush">
+              <div
+                class="list-group-item list-group-item-action"
+                (click)="reuseConfigurationFromResult(result); $event.preventDefault()"
+                *ngFor="let result of getFirstNLearnerResults(5)"
+              >
+                <span *ngIf="result.error" class="badge badge-danger float-right">Failed</span>
+                <span>TestNo {{result.testNo}}</span>
+
+                <div>
+                  <em class="text-muted">
+                    {{result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}
+                  </em>
+                </div>
+                <div>
+                  <span *ngFor="let env of result.environments" class="badge badge-default mr-1">{{env.name}}</span>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="learnResults.length === 0" class="card-body p-0">
+              <div class="alert alert-info mb-0">
+                There are no learner results yet.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div *ngIf="groups.length === 0" class="alert alert-info">
+        There aren't any symbols in this project yet.
+      </div>
+
+    </div>
+  </div>
+</div>

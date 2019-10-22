@@ -33,20 +33,20 @@
         </tbody>
       </table>
 
-      <a class="btn btn-xs btn-default mb-2 mr-2" [href]="'#!/projects/' + project.id + '/learner/learn'">
+      <a [href]="'#!/projects/' + project.id + '/learner/learn'" class="btn btn-xs btn-default mb-2 mr-2">
         <i class="fas fa-fw fa-play"></i> Continue learning
       </a>
-      <a class="btn btn-xs btn-default mb-2 mr-2"
-         [href]="'#!/projects/' + project.id + '/learner/results/' + result.testNo">
+      <a [href]="'#!/projects/' + project.id + '/learner/results/' + result.testNo"
+         class="btn btn-xs btn-default mb-2 mr-2">
         <i class="fas fa-fw fa-eye"></i> View result
       </a>
-      <a class="btn btn-xs btn-default"
-         [href]="'#!/projects/' + project.id + '/learner/results/statistics/' + result.testNo">
+      <a [href]="'#!/projects/' + project.id + '/learner/results/statistics/' + result.testNo"
+         class="btn btn-xs btn-default">
         <i class="fas fa-fw fa-chart-bar"></i> View statistics
       </a>
 
     </div>
-    <div class="alert alert-info mb-0" *ngIf="result == null">
+    <div *ngIf="result == null" class="alert alert-info mb-0">
       There are no learner results in the database.
     </div>
 

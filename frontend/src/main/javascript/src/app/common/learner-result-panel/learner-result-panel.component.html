@@ -1,0 +1,96 @@
+<div class="learn-result-panel h-100">
+  <div class="learn-result-panel-header d-flex flex-shrink-0">
+
+    <div class="w-100 mr-1">
+
+      <div
+        (click)="menu.click()"
+        *ngFor="let menu of menu"
+        class="btn-group btn-group-sm mr-2"
+        ngbDropdown
+      >
+        <button class="btn btn-default dropdown-toggle" ngbDropdownToggle>
+          {{menu.text}} <span *ngIf="menu.children.length > 0" class="caret"></span>
+        </button>
+        <div
+          *ngIf="menu.children.length > 0"
+          class="dropdown-menu dropdown-menu-left"
+          ngbDropdownMenu
+        >
+          <ng-container *ngFor="let item of menu.children">
+            <div (click)="item.click()" *ngIf="!item.divider" ngbDropdownItem>
+              <i class="fas fa-fw {{item.icon}}"></i> {{item.text}}
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mr-1 flex-shrink-0">
+      <!-- browser -->
+      <div class="btn-group btn-group-sm float-right">
+        <button (click)="firstStep()" class="btn btn-default">
+          <i class="fas fa-angle-double-left fa-fw"></i>
+        </button>
+        <button (click)="previousStep()" class="btn btn-default">
+          <i class="fas fa-angle-left fa-fw"></i>
+        </button>
+        <button class="btn btn-default disabled">
+          Step <span>{{pointer + 1}}</span>/<span>{{result.steps.length}}</span>
+        </button>
+        <button (click)="nextStep()" class="btn btn-default">
+          <i class="fas fa-angle-right fa-fw"></i>
+        </button>
+        <button (click)="lastStep()" class="btn btn-default">
+          <i class="fas fa-angle-double-right fa-fw"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group mb-0">
+      <select [(ngModel)]="view" class="form-control" style="width: 90px; height: 23px">
+        <option [value]="'DEFAULT'">Default</option>
+        <option [value]="'TEST'">Tests</option>
+        <option [value]="'MODEL_CHECKING'">Checking</option>
+      </select>
+    </div>
+
+    <div>
+      <ng-content></ng-content>
+    </div>
+
+  </div>
+  <div class="learn-result-panel-body overflow-auto">
+
+    <learner-result-panel-default-view
+      (registerMenu)="registerMenu($event)"
+      *ngIf="view === 'DEFAULT'"
+      [layoutSettings]="layoutSettings"
+      [pointer]="pointer"
+      [result]="result"
+    >
+    </learner-result-panel-default-view>
+
+    <learner-result-panel-testing-view
+      (registerMenu)="registerMenu($event)"
+      *ngIf="view === 'TEST'"
+      [layoutSettings]="layoutSettings"
+      [pointer]="pointer"
+      [result]="result"
+    >
+    </learner-result-panel-testing-view>
+
+    <learner-result-panel-checking-view
+      (registerMenu)="registerMenu($event)"
+      *ngIf="view === 'MODEL_CHECKING'"
+      [layoutSettings]="layoutSettings"
+      [pointer]="pointer"
+      [result]="result"
+    >
+    </learner-result-panel-checking-view>
+
+  </div>
+</div>
+
+

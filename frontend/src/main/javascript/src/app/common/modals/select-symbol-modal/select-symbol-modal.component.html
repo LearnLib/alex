@@ -1,0 +1,35 @@
+<div class="modal-header">
+  <h4 class="modal-title">Select a symbol</h4>
+  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
+    <i class="fas fa-times fa-fw"></i>
+  </a>
+</div>
+
+<form (ngSubmit)="ok()">
+  <div class="modal-body">
+
+    <div style="height: 31px; margin-bottom: 1rem">
+      <symbol-search-form
+        (selected)="selectSymbolAndClose($event)"
+        [groups]="groups"
+      >
+      </symbol-search-form>
+    </div>
+
+    <div class="card mb-0">
+      <div class="card-body p-2">
+        <simple-symbol-group-tree
+          (symbolSelected)="selectSymbol($event)"
+          [groups]="groups"
+          [selectedSymbol]="selectedSymbol"
+        >
+        </simple-symbol-group-tree>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary btn-sm" type="submit">Add</button>
+    <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">Cancel</button>
+  </div>
+</form>

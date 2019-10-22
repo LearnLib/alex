@@ -6,12 +6,12 @@
     <hr>
     <p>
       <a
-        class="btn btn-default btn-sm mr-2"
         [href]="'#!/projects/' + report.project + '/tests/reports/' + report.id"
+        class="btn btn-default btn-sm mr-2"
       >
         <i class="fas fa-fw fa-search"></i> Details
       </a>
-      <button class="btn btn-default btn-sm" (click)="exportReport()">
+      <button (click)="exportReport()" class="btn btn-default btn-sm">
         <i class="fas fa-fw fa-download"></i> Download
       </button>
     </p>

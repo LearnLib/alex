@@ -20,6 +20,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CounterApiService } from '../../../services/resources/counter-api.service';
 import { AppStoreService } from '../../../services/app-store.service';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({
   selector: 'create-counter-modal',
@@ -32,6 +33,7 @@ export class CreateCounterModalComponent {
   createForm: FormGroup;
 
   constructor(public modal: NgbActiveModal,
+              public formUtils: FormUtilsService,
               private counterApi: CounterApiService,
               private appStore: AppStoreService) {
     this.createForm = new FormGroup({
@@ -54,9 +56,5 @@ export class CreateCounterModalComponent {
         res => this.errorMessage = res.error.message
       );
     }
-  }
-
-  isInvalidFormControl(c: AbstractControl): boolean {
-    return c.invalid && (c.dirty || c.touched);
   }
 }

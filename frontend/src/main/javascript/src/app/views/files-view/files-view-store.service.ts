@@ -27,11 +27,9 @@ import { removeItems } from '../../utils/list-utils';
 @Injectable()
 export class FilesViewStoreService {
 
-  private readonly files: BehaviorSubject<UploadableFile[]>;
-
   public readonly filesSelectable: Selectable<UploadableFile>;
-
   public filesToUpload: Map<string, UploadProgress>;
+  private readonly files: BehaviorSubject<UploadableFile[]>;
 
   constructor(private appStore: AppStoreService,
               private fileApi: FileApiService,
@@ -39,6 +37,19 @@ export class FilesViewStoreService {
     this.files = new BehaviorSubject<UploadableFile[]>([]);
     this.filesToUpload = new Map();
     this.filesSelectable = new Selectable<UploadableFile>([], 'id');
+  }
+
+  get noFilesToUploadOrOnlyErrors(): boolean {
+    return this.filesToUpload.size === 0 || Array.from(this.filesToUpload.values())
+      .reduce((acc, val) => acc && val.error, true);
+  }
+
+  get files$(): Observable<UploadableFile[]> {
+    return this.files.asObservable();
+  }
+
+  private get project(): Project {
+    return this.appStore.project;
   }
 
   load(): void {
@@ -114,7 +125,7 @@ export class FilesViewStoreService {
   uploadFiles(e: Event): void {
     this.filesToUpload.clear();
 
-    const files = (<any> e.target).files as File[];
+    const files = (<any>e.target).files as File[];
 
     const queue = [...files];
     const next = () => {
@@ -136,23 +147,10 @@ export class FilesViewStoreService {
           console.error(err);
           next();
         },
-        () => next(),
+        () => next()
       );
     };
 
     next();
-  }
-
-  get noFilesToUploadOrOnlyErrors(): boolean {
-    return this.filesToUpload.size === 0 || Array.from(this.filesToUpload.values())
-      .reduce((acc, val) => acc && val.error, true);
-  }
-
-  get files$(): Observable<UploadableFile[]> {
-    return this.files.asObservable();
-  }
-
-  private get project(): Project {
-    return this.appStore.project;
   }
 }

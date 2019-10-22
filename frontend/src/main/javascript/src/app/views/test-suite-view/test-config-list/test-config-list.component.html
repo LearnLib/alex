@@ -1,10 +1,10 @@
 <div class="list-group">
   <div
-    class="list-group-item d-flex flex-row"
-    [ngClass]="{'active': selectedConfig?.id === config.id}"
     *ngFor="let config of configs"
+    [ngClass]="{'active': selectedConfig?.id === config.id}"
+    class="list-group-item d-flex flex-row"
   >
-    <div class="w-100 cursor-pointer text-wrap" (click)="selectConfig(config)">
+    <div (click)="selectConfig(config)" class="w-100 cursor-pointer text-wrap">
       <strong>{{config.driverConfig.name | formatWebBrowser}}</strong> <span>({{config.driverConfig.width}}
       x {{config.driverConfig.height}})</span>
       <div>
@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="pl-1 actions">
-      <i class="fas fa-fw fa-trash cursor-pointer" (click)="deleteConfig(config)"></i>
+      <i (click)="deleteConfig(config)" class="fas fa-fw fa-trash cursor-pointer"></i>
     </div>
   </div>
 </div>

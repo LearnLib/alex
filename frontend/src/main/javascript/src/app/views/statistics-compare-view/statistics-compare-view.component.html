@@ -1,0 +1,119 @@
+<div class="view">
+
+  <action-bar>
+    <div class="btn-group btn-group-sm">
+      <button (click)="switchToFinal()" [ngClass]="{'active': [chartModes.SINGLE_FINAL,chartModes.MULTIPLE_FINAL].indexOf(chartMode) > -1}"
+              class="btn btn-default">
+        <i class="fas fa-fw fa-chart-bar"></i> Cumulated
+      </button>
+      <button (click)="switchToComplete()" [ngClass]="{'active': [chartModes.SINGLE_COMPLETE,chartModes.MULTIPLE_COMPLETE].indexOf(chartMode) > -1}"
+              class="btn btn-default">
+        <i class="fas fa-fw fa-chart-line"></i> Complete
+      </button>
+    </div>
+
+    <button (click)="toggleShowInColumns()" [ngClass]="{'active':showInColumns}" class="btn btn-sm btn-default"
+            style="margin-left: 4px">
+      <i class="fas fa-fw fa-columns"></i>
+    </button>
+  </action-bar>
+
+  <div class="view-body has-sub-nav">
+    <div class="container-fluid">
+
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th>&nbsp;</th>
+          <th>Browser</th>
+          <th>Algorithm</th>
+          <th>|&#931;|</th>
+          <th>Equivalence queries</th>
+        </tr>
+        </thead>
+        <tbody *ngIf="!chartData.context.length">
+        <tr>
+          <td><strong>Test {{chartData.context.testNo}}</strong></td>
+          <td>
+            {{chartData.context.driverConfig.name | formatWebBrowser}} ({{chartData.context.driverConfig.width}}px
+            x {{chartData.context.driverConfig.height}}px)
+          </td>
+          <td>{{chartData.context.algorithm.name | formatLearningAlgorithm}}</td>
+          <td>{{chartData.context.symbols.length}}</td>
+          <td>{{chartData.context.statistics.eqsUsed}}</td>
+        </tr>
+        </tbody>
+        <tbody *ngIf="chartData.context.length">
+        <tr *ngFor="let result of chartData.context">
+          <td><strong>Test {{result.testNo}}</strong></td>
+          <td>
+            {{result.driverConfig.name | formatWebBrowser}} ({{result.driverConfig.width}}px
+            x {{result.driverConfig.height}}px)
+          </td>
+          <td>{{result.algorithm.name | formatLearningAlgorithm}}</td>
+          <td>{{result.symbols.length}}</td>
+          <td>{{result.statistics.eqsUsed}}</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <hr>
+
+      <div *ngIf="chartData.data != null" class="row">
+        <div [ngClass]="showInColumns ? 'col-md-12 col-lg-6' : 'col-sm-12'">
+
+          <div class="card mb-3" id="chart-eq">
+            <div class="card-header">
+              <strong>Membership queries</strong>
+            </div>
+            <div class="card-body">
+              <div style="width: 100%; height: 450px">
+              </div>
+            </div>
+            <div class="card-footer">
+              <button (click)="downloadChart('#chart-eqs')" class="btn btn-xs btn-default float-right">
+                <i class="fas fa-fw fa-download"></i> Download SVG
+              </button>
+            </div>
+          </div>
+
+          <div class="card mb-3" id="chart-duration">
+            <div class="card-header">
+              <strong>Duration</strong>
+            </div>
+            <div class="card-body">
+              <div style="width: 100%; height: 450px">
+              </div>
+            </div>
+            <div class="card-footer">
+              <button (click)="downloadChart('#chart-duration')" class="btn btn-xs btn-default float-right">
+                <i class="fas fa-fw fa-download"></i> Download SVG
+              </button>
+            </div>
+          </div>
+
+        </div>
+        <div [ngClass]="showInColumns ? 'col-md-12 col-lg-6' : 'col-sm-12'">
+
+          <div class="card mb-3" id="chart-symbols">
+            <div class="card-header">
+              <strong>Duration</strong>
+            </div>
+            <div class="card-body">
+              <div style="width: 100%; height: 450px">
+              </div>
+            </div>
+            <div class="card-footer">
+              <button (click)="downloadChart('#chart-symbols')" class="btn btn-xs btn-default float-right">
+                <i class="fas fa-fw fa-download"></i> Download SVG
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

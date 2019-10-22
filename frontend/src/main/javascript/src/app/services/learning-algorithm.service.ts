@@ -27,7 +27,7 @@ export class LearningAlgorithmService {
     [learnAlgorithm.DT]: () => ({name: learnAlgorithm.DT}),
     [learnAlgorithm.LSTAR]: () => ({name: learnAlgorithm.LSTAR}),
     [learnAlgorithm.KEARNS_VAZIRANI]: () => ({name: learnAlgorithm.KEARNS_VAZIRANI}),
-    [learnAlgorithm.TTT]: () => ({name: learnAlgorithm.TTT}),
+    [learnAlgorithm.TTT]: () => ({name: learnAlgorithm.TTT})
   };
 
   /**

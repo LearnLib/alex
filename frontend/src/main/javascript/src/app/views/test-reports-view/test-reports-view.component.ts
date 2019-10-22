@@ -51,6 +51,10 @@ export class TestReportsViewComponent implements OnInit {
     this.selectedReports = new Selectable(this.reports, 'id');
   }
 
+  get project(): Project {
+    return this.appStore.project;
+  }
+
   ngOnInit(): void {
     this.loadTestReports();
   }
@@ -119,9 +123,5 @@ export class TestReportsViewComponent implements OnInit {
   _deleteReport(report: any): void {
     remove(this.reports, {id: report.id});
     this.selectedReports.unselect(report);
-  }
-
-  get project(): Project {
-    return this.appStore.project;
   }
 }

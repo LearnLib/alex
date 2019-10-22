@@ -47,7 +47,7 @@ export class CreateWebhookModalComponent {
 
     this.webhookApi.create(wh).subscribe(
       createdWh => this.modal.close(createdWh),
-      err => this.errorMessage = err.data.message
+      res => this.errorMessage = res.error.message
     );
   }
 }

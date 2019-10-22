@@ -2,16 +2,16 @@
   <div class="d-flex flex-row p-1">
     <div>
       <i
-        class="far fa-fw cursor-pointer"
-        [ngClass]="{'fa-minus-square': !collapse, 'fa-plus-square': collapse}"
         (click)="collapse = !collapse"
+        [ngClass]="{'fa-minus-square': !collapse, 'fa-plus-square': collapse}"
+        class="far fa-fw cursor-pointer"
       >
       </i>
     </div>
     <div
-      class="group w-100 ml-2"
-      [ngClass]="{'selected': selectedGroup != null && selectedGroup.id === group.id}"
       (click)="groupSelected.emit(group)"
+      [ngClass]="{'selected': selectedGroup != null && selectedGroup.id === group.id}"
+      class="group w-100 ml-2"
     >
       <i class="fas fa-fw fa-folder m-1"></i>
       <strong class="pl-1">
@@ -19,23 +19,23 @@
       </strong>
     </div>
   </div>
-  <div class="ml-4 pl-2" style="border-left: 1px solid #ddd" [ngbCollapse]="collapse">
+  <div [ngbCollapse]="collapse" class="ml-4 pl-2" style="border-left: 1px solid #ddd">
     <div>
       <simple-symbol-group-tree
+        (groupSelected)="groupSelected.emit($event)"
+        (symbolSelected)="symbolSelected.emit($event)"
         [groups]="group.groups"
         [selectedGroup]="selectedGroup"
         [selectedSymbol]="selectedSymbol"
-        (groupSelected)="groupSelected.emit($event)"
-        (symbolSelected)="symbolSelected.emit($event)"
       >
       </simple-symbol-group-tree>
     </div>
     <div>
       <div *ngFor="let symbol of group.symbols" class="d-flex p-1 ml-4">
         <div
-          class="symbol w-100 flex-shrink-0"
-          [ngClass]="{'selected': selectedSymbol != null && selectedSymbol.id === symbol.id}"
           (click)="symbolSelected.emit(symbol)"
+          [ngClass]="{'selected': selectedSymbol != null && selectedSymbol.id === symbol.id}"
+          class="symbol w-100 flex-shrink-0"
         >
           <i class="fas fa-fw fa-file-code ml-1"></i>
           <span class="pl-1">

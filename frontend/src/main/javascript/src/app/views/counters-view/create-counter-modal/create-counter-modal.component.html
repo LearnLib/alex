@@ -1,27 +1,27 @@
 <div class="modal-header">
   <h4 class="modal-title">Create a new counter</h4>
-  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
     <i class="fas fa-times fa-fw"></i>
   </a>
 </div>
 
-<form [formGroup]="createForm" (ngSubmit)="createCounter()">
+<form (ngSubmit)="createCounter()" [formGroup]="createForm">
 
   <div class="modal-body">
 
-    <div class="alert alert-danger" *ngIf="errorMessage">
+    <div *ngIf="errorMessage" class="alert alert-danger">
       {{errorMessage}}
     </div>
 
     <div class="form-group">
       <label>Name</label>
       <input
+        [class.is-invalid]="formUtils.isInvalidFormControl(createForm.controls.name)"
+        [formControl]="createForm.controls.name"
         class="form-control"
-        type="text"
         placeholder="The name of the counter"
         required
-        [formControl]="createForm.controls.name"
-        [class.is-invalid]="isInvalidFormControl(createForm.controls.name)"
+        type="text"
       >
       <div class="invalid-feedback">
         Please provide a name for the counter.
@@ -31,14 +31,14 @@
     <div class="form-group">
       <label>Value</label>
       <input
+        [class.is-invalid]="formUtils.isInvalidFormControl(createForm.controls.value)"
+        [formControl]="createForm.controls.value"
         class="form-control"
+        min="0"
         name="value"
-        type="number"
         placeholder="The value of the counter"
         required
-        min="0"
-        [formControl]="createForm.controls.value"
-        [class.is-invalid]="isInvalidFormControl(createForm.controls.value)"
+        type="number"
       >
       <div class="invalid-feedback">
         Please a value greater than 0.
@@ -48,8 +48,8 @@
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-sm btn-primary" type="submit" [disabled]="createForm.invalid">Create</button>
-    <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.stopPropagation()">Cancel</button>
+    <button [disabled]="createForm.invalid" class="btn btn-sm btn-primary" type="submit">Create</button>
+    <button (click)="modal.dismiss(); $event.stopPropagation()" class="btn btn-default btn-sm">Cancel</button>
   </div>
 
 </form>

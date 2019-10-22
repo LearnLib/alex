@@ -1,15 +1,14 @@
 <div class="view view-test-reports">
-  <view-header [title]="'Test Reports'"></view-header>
   <action-bar>
-    <div *ngIf="reports.length > 0" class="d-flex flex-row align-items-center">
+    <div class="d-flex flex-row align-items-center">
       <selectable-checkbox-multiple [selectable]="selectedReports"></selectable-checkbox-multiple>
 
       <div class="w-100 ml-3">
         <div class="btn-group btn-group-sm">
           <button
-            class="btn btn-default"
             (click)="deleteSelectedReports()"
             [disabled]="!selectedReports.isAnySelected()"
+            class="btn btn-default"
           >
             Delete
           </button>
@@ -20,7 +19,7 @@
   <div class="view-body">
     <div class="container-fluid">
 
-      <div class="alert alert-info" *ngIf="reports.length === 0">
+      <div *ngIf="reports.length === 0" class="alert alert-info">
         There are no reports.
       </div>
 
@@ -44,40 +43,40 @@
             <th width="1%">
               <selectable-checkbox [item]="report" [selectable]="selectedReports"></selectable-checkbox>
             </th>
-            <td width="1%" style="min-width: 140px;">{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
+            <td style="min-width: 140px;" width="1%">{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
             <td width="1%">
               <span class="badge badge-default">{{report.environment.name}}</span>
             </td>
             <td width="1%">
-              <span class="badge badge-success" *ngIf="report.passed">Passed</span>
-              <span class="badge badge-danger" *ngIf="!report.passed">Failed</span>
+              <span *ngIf="report.passed" class="badge badge-success">Passed</span>
+              <span *ngIf="!report.passed" class="badge badge-danger">Failed</span>
             </td>
-            <td width="1%" class="text-center">
+            <td class="text-center" width="1%">
               {{report.numTests}}
             </td>
-            <td width="1%" class="text-center">
+            <td class="text-center" width="1%">
               {{report.numTestsFailed}}
             </td>
-            <td width="1%" style="min-width: 80px">
+            <td style="min-width: 80px" width="1%">
               {{report.time | formatMilliseconds}}
             </td>
             <td width="100%">
-              <a [href]="'#!/projects/' + report.project + '/tests/reports/' + report.id">Details</a>
+              <a [routerLink]="[report.id]">Details</a>
             </td>
             <td width="1%">
               <div class="btn-group btn-group-sm" ngbDropdown>
-                <button type="button" class="btn btn-default btn-icon no-caret" ngbDropdownToggle>
+                <button class="btn btn-default btn-icon no-caret" ngbDropdownToggle type="button">
                   <i class="fas fa-bars"></i>
                 </button>
-                <div ngbDropdownMenu class="dropdown-menu dropdown-menu-right" role="menu">
-                  <a ngbDropdownItem [href]="'#!/projects/' + report.project + '/tests/reports/' + report.id">
+                <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
+                  <a [routerLink]="[report.id]" ngbDropdownItem>
                     <i class="fas fa-fw fa-search"></i> Details
                   </a>
-                  <div ngbDropdownItem (click)="deleteReport(report)">
+                  <div (click)="deleteReport(report)" ngbDropdownItem>
                     <i class="fas fa-fw fa-trash"></i> Delete
                   </div>
                   <div class="dropdown-divider"></div>
-                  <div ngbDropdownItem (click)="downloadReport(report)">
+                  <div (click)="downloadReport(report)" ngbDropdownItem>
                     <i class="fas fa-fw fa-download"></i> Download
                   </div>
                 </div>
@@ -88,7 +87,7 @@
         </table>
         <hr>
 
-        <pagination [page]="page" (next)="nextPage()" (previous)="previousPage()"></pagination>
+        <pagination (next)="nextPage()" (previous)="previousPage()" [page]="page"></pagination>
       </div>
 
     </div>

@@ -1,27 +1,27 @@
 <div class="modal-header">
   <h4 class="modal-title">Create a new symbol</h4>
-  <a class="btn btn-default btn-icon float-right" (click)="modal.dismiss()">
+  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
     <i class="fas fa-times fa-fw"></i>
   </a>
 </div>
 
-<form [formGroup]="form" (ngSubmit)="createSymbol()">
+<form (ngSubmit)="createSymbol()" [formGroup]="form">
 
   <div class="modal-body">
 
-    <div class="alert alert-danger" *ngIf="errorMessage">
+    <div *ngIf="errorMessage" class="alert alert-danger">
       {{errorMessage}}
     </div>
 
-    <symbol-form-groups [symbol]="symbol" [form]="form"></symbol-form-groups>
+    <symbol-form-groups [form]="form" [symbol]="symbol"></symbol-form-groups>
 
     <label>Group</label>
     <div class="card">
       <div class="card-body p-2" style="max-height: 240px; overflow: auto">
         <simple-symbol-group-tree
+          (groupSelected)="selectSymbolGroup($event)"
           [groups]="groups"
           [selectedGroup]="selectedSymbolGroup"
-          (groupSelected)="selectSymbolGroup($event)"
         >
         </simple-symbol-group-tree>
       </div>
@@ -33,8 +33,8 @@
     <button (click)="createSymbolAndContinue(); $event.preventDefault()" class="btn btn-info btn-sm">
       Create and continue
     </button>
-    <button class="btn btn-primary btn-sm" type="submit" [disabled]="form.invalid">Create</button>
-    <button class="btn btn-default btn-sm" (click)="modal.dismiss(); $event.preventDefault()">Cancel</button>
+    <button [disabled]="form.invalid" class="btn btn-primary btn-sm" type="submit">Create</button>
+    <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">Cancel</button>
   </div>
 
 </form>

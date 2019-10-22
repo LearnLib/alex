@@ -1,0 +1,33 @@
+<h5>
+  <strong>Alert - Accept/Dismiss</strong>
+</h5>
+
+<p class="text-muted">
+  Accept or dismiss the current alert window.
+</p>
+<hr>
+
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input
+      [(ngModel)]="action.action"
+      [value]="'ACCEPT'"
+      class="form-check-input"
+      name="alertAction"
+      type="radio"
+    >
+    Accept
+  </label>
+</div>
+<div class="form-group form-check">
+  <label class="form-check-label">
+    <input
+      [(ngModel)]="action.action"
+      [value]="'DISMISS'"
+      class="form-check-input"
+      name="alertAction"
+      type="radio"
+    >
+    Dismiss
+  </label>
+</div>

@@ -17,6 +17,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { symbolParameterType } from '../../../../constants';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../../services/form-utils.service';
 
 @Component({
   selector: 'symbol-parameter-form-groups',
@@ -32,13 +33,12 @@ export class SymbolParameterFormGroupsComponent implements OnInit {
 
   types: string[] = Object.values(symbolParameterType);
 
+  constructor(public formUtils: FormUtilsService) {
+  }
+
   ngOnInit(): void {
     this.form.addControl('name', new FormControl(this.parameter.name, [Validators.required]));
     this.form.addControl('parameterType', new FormControl(this.parameter.parameterType, [Validators.required]));
     this.form.addControl('private', new FormControl(this.parameter.private));
-  }
-
-  isInvalidFormControl(c: AbstractControl): boolean {
-    return c.invalid && (c.dirty || c.touched);
   }
 }

@@ -42,6 +42,10 @@ export class TestConfigListComponent {
     this.selected = new EventEmitter<any>();
   }
 
+  get project(): Project {
+    return this.appStore.project;
+  }
+
   selectConfig(config: any): void {
     if (this.selectedConfig != null && this.selectedConfig.id === config.id) {
       this.selectedConfig = null;
@@ -58,9 +62,5 @@ export class TestConfigListComponent {
         this.toastService.success('The test config has been deleted.');
       }
     );
-  }
-
-  get project(): Project {
-    return this.appStore.project;
   }
 }
