@@ -277,6 +277,14 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
     step.disabled = !step.disabled;
   }
 
+  editStep(step: any): void {
+    if (step.type === 'symbol') {
+      this.editSymbolStep(step);
+    } else {
+      this.editActionStep(step);
+    }
+  }
+
   editActionStep(step: any): void {
     const modalRef = this.modalService.open(EditActionModalComponent);
     modalRef.componentInstance.action = this.actionService.create(JSON.parse(JSON.stringify(step.action)));

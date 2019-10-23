@@ -41,8 +41,8 @@
       <div class="d-flex align-items-center">
         <div class="mr-1">
           <a
-            [href]="'#!/projects/' + testCase.project + '/tests/' + testCase.parent"
             class="btn btn-sm btn-default"
+            [routerLink]="['..', testCase.parent]"
           >
             <i class="fas fa-fw fa-level-up-alt"></i>
           </a>

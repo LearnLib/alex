@@ -23,7 +23,8 @@ import { Project } from '../../../entities/project';
 
 @Component({
   selector: 'test-config-list',
-  templateUrl: './test-config-list.component.html'
+  templateUrl: './test-config-list.component.html',
+  styleUrls: ['./test-config-list.component.scss']
 })
 export class TestConfigListComponent {
 

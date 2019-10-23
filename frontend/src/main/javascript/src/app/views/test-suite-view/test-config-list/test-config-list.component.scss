@@ -1,0 +1,15 @@
+.list-group-item {
+  .actions, .default:not(.is-default) {
+    visibility: hidden;
+  }
+
+  &:hover {
+    .actions, .default {
+      visibility: visible;
+    }
+  }
+
+  &.active .badge {
+    background: #5795ca;
+  }
+}

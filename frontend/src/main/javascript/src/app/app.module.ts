@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
@@ -227,6 +227,7 @@ import { WaitForTitleActionFormComponent } from './common/actions/web/wait-for-t
 import { WaitActionFormComponent } from './common/actions/misc/wait-action-form/wait-action-form.component';
 import { ActionSearchFormComponent } from './views/symbol-view/create-action-modal/action-search-form/action-search-form.component';
 import { AppViewComponent } from './views/app-view/app-view.component';
+import { UnauthorizedHttpInterceptor } from './interceptors/unauthorized-http-interceptor';
 
 @NgModule({
   declarations: [
@@ -436,6 +437,11 @@ import { AppViewComponent } from './views/app-view/app-view.component';
     DragulaModule.forRoot()
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: UnauthorizedHttpInterceptor,
+      multi: true
+    },
     ToastService,
     AppStoreService,
     SettingsApiService,

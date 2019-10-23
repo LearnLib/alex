@@ -69,11 +69,10 @@
             </div>
 
             <div class="btn-group btn-group-sm">
-              <button (click)="copySelectedSteps()" class="btn btn-default" ngbTooltip="Copy"
-                      placement="bottom">
+              <button (click)="copySelectedSteps()" class="btn btn-default" ngbTooltip="Copy" placement="bottom" >
                 <i class="fas fa-copy fa-fw"></i>
               </button>
-              <button (click)="cutSelectedSteps()" class="btn btn-default" ngbTooltip="Cut" placement="bottom">
+              <button (click)="cutSelectedSteps()" class="btn btn-default" ngbTooltip="Cut" placement="bottom" >
                 <i class="fas fa-cut fa-fw"></i>
               </button>
               <button (click)="pasteSteps()" class="btn btn-default" ngbTooltip="Paste" placement="bottom">
@@ -85,8 +84,12 @@
         <div class="card-body" style="padding: 0">
           <div (dragulaModelChange)="symbol.steps = $event" *ngIf="symbol.steps.length > 0" [dragulaModel]="symbol.steps" class="action-list"
                dragula="STEPS">
-            <div *ngFor="let step of symbol.steps; let i = index" [ngClass]="{'disabled': step.disabled}"
-                 class="action-list-item">
+            <div
+              class="action-list-item"
+              [ngClass]="{'disabled': step.disabled}"
+              (dblclick)="editStep(step)"
+              *ngFor="let step of symbol.steps; let i = index"
+            >
 
               <div class="d-flex flex-row align-items-center">
                 <div>
@@ -141,14 +144,14 @@
                 </div>
 
                 <div>
-                                    <span (click)="toggleDisableAction(step)" class="btn btn-sm">
-                                        <span *ngIf="!step.disabled" ngbTooltip="Disable" placement="left">
-                                            <i class="fas fa-toggle-on fa-fw text-success"></i>
-                                        </span>
-                                        <span *ngIf="step.disabled" ngbTooltip="Enable" placement="left">
-                                            <i class="fas fa-toggle-off fa-fw text-danger"></i>
-                                        </span>
-                                    </span>
+                  <span (click)="toggleDisableAction(step)" class="btn btn-sm">
+                      <span *ngIf="!step.disabled" ngbTooltip="Disable" placement="left">
+                          <i class="fas fa-toggle-on fa-fw text-success"></i>
+                      </span>
+                      <span *ngIf="step.disabled" ngbTooltip="Enable" placement="left">
+                          <i class="fas fa-toggle-off fa-fw text-danger"></i>
+                      </span>
+                  </span>
                 </div>
 
                 <div>
@@ -157,10 +160,7 @@
                       <i class="fas fa-bars"></i>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
-                      <div (click)="editActionStep(step)" *ngIf="step.type === 'action'" ngbDropdownItem>
-                        <i class="fas fa-edit fa-fw"></i> Edit
-                      </div>
-                      <div (click)="editSymbolStep(step)" *ngIf="step.type === 'symbol'" ngbDropdownItem>
+                      <div (click)="editStep(step)" ngbDropdownItem>
                         <i class="fas fa-edit fa-fw"></i> Edit
                       </div>
                       <div (click)="deleteStep(i)" ngbDropdownItem>

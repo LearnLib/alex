@@ -30,7 +30,8 @@ import { Component, Input, OnInit } from '@angular/core';
  */
 @Component({
   selector: 'learner-resume-settings-widget',
-  templateUrl: './learner-resume-settings-widget.component.html'
+  templateUrl: './learner-resume-settings-widget.component.html',
+  styleUrls: ['./learner-resume-settings-widget.component.scss']
 })
 export class LearnerResumeSettingsWidgetComponent implements OnInit {
 

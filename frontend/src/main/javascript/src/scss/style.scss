@@ -191,39 +191,6 @@ report-charts {
   }
 }
 
-/* Libraries
-============================================================================== */
-
-// ace editor
-.ace_editor {
-  height: 150px;
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
-}
-
-// ng-sortable
-.as-sortable-item, .as-sortable-placeholder {
-  display: block;
-}
-
-.as-sortable-item {
-  touch-action: none;
-}
-
-.as-sortable-item-handle {
-  cursor: move;
-}
-
-.as-sortable-drag {
-  position: absolute;
-  pointer-events: none;
-  z-index: 9999;
-}
-
-.as-sortable-hidden {
-  display: none !important;
-}
-
 /* Bootstrap Extensions & Modifications
 ============================================================================== */
 
@@ -338,24 +305,8 @@ test-case-view {
   margin: 12px 0;
 }
 
-.action-types-accordion {
-  margin-bottom: 0;
-
-  .panel-title {
-    font-size: 12px;
-  }
-  .panel-body {
-    padding: 0;
-  }
-}
-
 .learn-results-compare-wrapper {
   display: flex;
-}
-
-learn-result-panel {
-  flex: 1;
-  position: relative;
 }
 
 .learn-result-panel {
@@ -430,22 +381,6 @@ learn-result-panel {
 }
 
 
-learn-resume-settings-widget {
-  .panel-group {
-    margin-bottom: 0;
-  }
-
-  .panel-title {
-    font-size: 12px;
-  }
-
-  project-list {
-    .list-group {
-      margin-bottom: 0;
-    }
-  }
-}
-
 report-outputs-column,
 test-case-view table {
   tr {
@@ -456,25 +391,5 @@ test-case-view table {
     &:hover .result-details-icon {
       visibility: visible;
     }
-  }
-}
-
-.chart-legend {
-  display: none;
-}
-
-test-config-list .list-group-item {
-  .actions, .default:not(.is-default) {
-    visibility: hidden;
-  }
-
-  &:hover {
-    .actions, .default {
-      visibility: visible;
-    }
-  }
-
-  &.active .badge {
-    background: #5795ca;
   }
 }
