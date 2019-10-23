@@ -21,7 +21,7 @@ import { LearnerResultApiService } from '../../services/resources/learner-result
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { ErrorViewStoreService } from '../error-view/error-view-store.service';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SeparatingWordModalComponent } from '../../common/modals/separating-word-modal/separating-word-modal.component';
@@ -34,7 +34,7 @@ import { LearnerResultListModalComponent } from '../../common/modals/learner-res
   selector: 'learner-results-compare-view',
   templateUrl: './learner-results-compare-view.component.html'
 })
-export class LearnerResultsCompareViewComponent {
+export class LearnerResultsCompareViewComponent implements OnInit {
 
   /** All final learn results from all tests that were made for a project. */
   results: LearnerResult[];
@@ -60,7 +60,9 @@ export class LearnerResultsCompareViewComponent {
     this.panels = [];
     this.panelPointers = [];
     this.layoutSettings = [];
+  }
 
+  ngOnInit(): void {
     this.currentRoute.paramMap.subscribe(map => {
       const resultIds = map.get('resultIds').split(',');
       this.learnerResultApi.getAll(this.project.id).subscribe(

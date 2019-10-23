@@ -25,6 +25,7 @@ import { AppStoreService } from '../../services/app-store.service';
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LearnerResultDetailsModalComponent } from '../../common/modals/learner-result-details-modal/learner-result-details-modal.component';
+import { Router } from '@angular/router';
 
 /**
  * The controller for listing all final test results.
@@ -45,7 +46,8 @@ export class LearnerResultsViewComponent implements OnInit {
               private learnerResultApi: LearnerResultApiService,
               private toastService: ToastService,
               private learnerResultDownloadService: LearnerResultDownloadService,
-              private modalService: NgbModal) {
+              private modalService: NgbModal,
+              private router: Router) {
 
     this.results = [];
     this.selectedResults = new Selectable(this.results, 'testNo');
@@ -107,7 +109,8 @@ export class LearnerResultsViewComponent implements OnInit {
   openSelectedResults(): void {
     const selectedResults = this.selectedResults.getSelected();
     if (selectedResults.length > 0) {
-      const resultIds = selectedResults.map(r => r.id).join(',');
+      const testNos = selectedResults.map(r => r.testNo).join(',');
+      this.router.navigate(['/app', 'projects', this.project.id , 'learner', 'statistics', testNos]);
     }
   }
 
@@ -117,11 +120,13 @@ export class LearnerResultsViewComponent implements OnInit {
   showSelectedStatistics(): void {
     const selectedResults = this.selectedResults.getSelected();
     if (selectedResults.length > 0) {
-      const resultIds = selectedResults.map(r => r.id).join(',');
+      const testNos = selectedResults.map(r => r.testNo).join(',');
+      this.router.navigate(['/app', 'projects', this.project.id , 'learner', 'statistics', testNos]);
     }
   }
 
   showStatistics(result: LearnerResult): void {
+    this.router.navigate(['/app', 'projects', this.project.id , 'learner', 'statistics', result.testNo]);
   }
 
   /**

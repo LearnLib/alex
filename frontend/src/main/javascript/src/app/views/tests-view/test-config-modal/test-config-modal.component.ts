@@ -16,7 +16,7 @@
 
 import { Project } from '../../../entities/project';
 import { ProjectEnvironment } from '../../../entities/project-environment';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 /**
@@ -26,15 +26,15 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   selector: 'test-config-modal',
   templateUrl: './test-config-modal.component.html'
 })
-export class TestConfigModalComponent {
+export class TestConfigModalComponent implements OnInit {
 
   /** The web driver configuration. */
   @Input()
-  configuration: any = null;
+  configuration: any;
 
   /** The current project. */
   @Input()
-  project: Project = null;
+  project: Project;
 
   /** The model for the url ids. */
   @Input()
@@ -42,6 +42,10 @@ export class TestConfigModalComponent {
 
   /** Constructor. */
   constructor(public modal: NgbActiveModal) {
+  }
+
+  ngOnInit(): void {
+    this.selectedEnvironment = this.project.getDefaultEnvironment();
   }
 
   /**

@@ -21,7 +21,7 @@
       <a
         (click)="modal.dismiss(); $event.preventDefault()"
         *ngFor="let s of result.symbols"
-        [href]="'#!/projects/' + s.project + '/symbols/' + s.id"
+        [routerLink]="['/app', 'projects', s.project, 'symbols', s.id]"
         class="list-group-item list-group-item-action"
       >
         {{s.name}}
@@ -39,7 +39,7 @@
         <a
           (click)="modal.dismiss(); $event.preventDefault()"
           *ngFor="let t of result.testCases"
-          [href]="'#!/projects/' + t.project + '/tests/' + t.id"
+          [routerLink]="['/app', 'projects', t.project, 'tests', t.id]"
           class="list-group-item list-group-item-action"
         >
           {{t.name}}
@@ -58,7 +58,7 @@
         <a
           (click)="modal.dismiss(); $event.preventDefault()"
           *ngFor="let r of result.learnerResults"
-          [href]="'#!/projects/' + r.project + '/learner/results/' + r.testNo"
+          [routerLink]="['/app', 'projects', r.project, 'learner', 'results', r.id]"
           class="list-group-item list-group-item-action"
         >
           Test No <span>{{r.testNo}}</span>

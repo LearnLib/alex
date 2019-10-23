@@ -15,14 +15,18 @@
  */
 
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class ErrorViewStoreService {
 
   message: string;
 
+  constructor(private router: Router) {
+  }
+
   navigateToErrorPage(message: string): void {
     this.message = message;
-    window.location.hash = '!/error';
+    this.router.navigate(['/error']);
   }
 }

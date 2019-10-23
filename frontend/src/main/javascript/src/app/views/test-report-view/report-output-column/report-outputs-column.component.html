@@ -15,7 +15,7 @@
       <tr *ngFor="let output of outputs">
         <td class="text-right" style="width: 1px">
           <a
-            [href]="'#!/projects/' + project.id + '/symbols/' + output.symbol.id"
+            [routerLink]="['/app', 'projects', project.id, 'symbols', output.symbol.id]"
             class="badge badge-default cursor-pointer"
           >
             {{output.symbol.name}}

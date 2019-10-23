@@ -20,7 +20,7 @@ import { TestReportService } from '../../services/test-report.service';
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /**
  * The component for a single test report.
@@ -39,7 +39,8 @@ export class TestReportViewComponent implements OnInit {
               private appStore: AppStoreService,
               private toastService: ToastService,
               private testReportService: TestReportService,
-              private route: ActivatedRoute) {
+              private route: ActivatedRoute,
+              private router: Router) {
   }
 
   get project(): Project {
@@ -61,7 +62,7 @@ export class TestReportViewComponent implements OnInit {
     this.testReportApi.remove(this.project.id, this.report.id).subscribe(
       () => {
         this.toastService.success('The report has been deleted.');
-        location.hash = `!/projects/${this.project.id}/tests/reports`;
+        this.router.navigate(['..']);
       },
       err => this.toastService.danger(`The report could not be deleted. ${err.data.message}`)
     );

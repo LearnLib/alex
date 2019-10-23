@@ -157,7 +157,7 @@
                       <div *ngIf="test.type === 'case'" class="dropdown-divider"></div>
                       <a
                         ngbDropdownItem
-                        [routerLink]="['..', test.id, 'results']"
+                        [routerLink]="['../', test.id, 'results']"
                         *ngIf="test.type === 'case'"
                       >
                         <i class="fas fa-fw fa-history"></i> Results

@@ -19,6 +19,7 @@ import { Project } from '../entities/project';
 import { User } from '../entities/user';
 import { ClipboardService } from './clipboard.service';
 import { ProjectApiService } from './resources/project-api.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AppStoreService {
@@ -42,7 +43,8 @@ export class AppStoreService {
   sidebarCollapsed: boolean;
 
   constructor(private clipboard: ClipboardService,
-              private projectApi: ProjectApiService) {
+              private projectApi: ProjectApiService,
+              private router: Router) {
     this.sidebarCollapsed = false;
 
     const sidebarCollapsed = localStorage.getItem('sidebarCollapsed');
@@ -77,7 +79,7 @@ export class AppStoreService {
     this.user = null;
     this.closeProject();
     this.clipboard.clear();
-    location.hash = '!/';
+    this.router.navigate(['/login']);
   }
 
   openProject(project: Project): void {

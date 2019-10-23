@@ -25,8 +25,12 @@
         <div *ngIf="result.passed" class="alert alert-success">
           <i (click)="result = null" class="fas fa-fw fa-times float-right"></i>
           <i class="fas fa-fw fa-check"></i> <strong>The test case passed.</strong>
-          <a *ngIf="testConfig.createReport"
-             [href]="'#!/projects/' + project.id + '/tests/reports/' + report.id">(Show report)</a>
+          <a
+            *ngIf="testConfig.createReport"
+            [routerLink]="['/app', 'projects', project.id, 'tests', 'reports', report.id]"
+          >
+            (Show report)
+          </a>
         </div>
         <hr>
       </div>

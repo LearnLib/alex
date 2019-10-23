@@ -15,7 +15,7 @@
       <td>
         <a
           (click)="modal.dismiss()"
-          [href]="'#!/projects/' + result.symbol.project + '/symbols/' + result.symbol.id"
+          [routerLink]="['/app', 'projects', result.symbol.project, 'symbols', result.symbol.id]"
         >
           {{result.symbol.name}}
         </a>

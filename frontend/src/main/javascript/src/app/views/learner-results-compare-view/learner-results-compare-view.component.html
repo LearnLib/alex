@@ -1,28 +1,30 @@
 <div class="view results-compare-view">
   <action-bar>
-    <div *ngIf="panels.length === 2" class="float-left">
-      <button
-        (click)="showSeparatingWord()"
-        class="btn btn-sm btn-default mr-2"
-      >
-        <i class="fas fa-fw fa-bolt"></i> Separating word
-      </button>
+    <div class="d-flex flex-row">
+      <div *ngIf="panels.length === 2">
+        <button
+          (click)="showSeparatingWord()"
+          class="btn btn-sm btn-default mr-2"
+        >
+          <i class="fas fa-fw fa-bolt"></i> Separating word
+        </button>
+
+        <button
+          (click)="showDifferenceTree()"
+          class="btn btn-sm btn-default"
+        >
+          <i class="fas fa-fw fa-sitemap"></i> Differences
+        </button>
+      </div>
 
       <button
-        (click)="showDifferenceTree()"
-        class="btn btn-sm btn-default"
+        (click)="openResultListModal()"
+        *ngIf="panels.length < 3"
+        class="btn btn-sm btn-success"
       >
-        <i class="fas fa-fw fa-sitemap"></i> Differences
+        <i class="fas fa-fw fa-plus"></i> Add hypothesis
       </button>
     </div>
-
-    <button
-      (click)="openResultListModal()"
-      *ngIf="panels.length < 3"
-      class="btn btn-sm btn-success float-right"
-    >
-      <i class="fas fa-fw fa-plus"></i> Add hypothesis
-    </button>
   </action-bar>
 
   <div class="learn-results-compare-wrapper d-flex flex-row h-100">
@@ -35,10 +37,9 @@
       </div>
     </div>
 
-    <ng-container *ngIf="panels.length > 0">
+    <div *ngFor="let result of panels; let i = index" class="w-100">
       <learner-result-panel
-        (step)="onStep.bind(this)"
-        *ngFor="let result of panels; let i = index"
+        (step)="onStep(i, $event)"
         [index]="i"
         [result]="result"
         class="w-100"
@@ -47,6 +48,6 @@
           <i class="fas fa-times"></i>
         </button>
       </learner-result-panel>
-    </ng-container>
+    </div>
   </div>
 </div>

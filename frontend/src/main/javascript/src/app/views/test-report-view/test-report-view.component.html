@@ -33,7 +33,6 @@
       <table class="table table-striped">
         <thead>
         <tr>
-
           <th>Status</th>
           <th>Name</th>
           <th>Output</th>
@@ -49,7 +48,7 @@
               <span *ngIf="!result.passed" class="badge badge-danger">Failed</span>
             </td>
             <td>
-              <a [href]="'#!/projects/' + result.project + '/tests/' + result.test.id">{{result.test.name}}</a>
+              <a [title]="['/app', 'projects', result.project, 'tests', result.test.id]">{{result.test.name}}</a>
             </td>
             <td>
               <report-outputs-column [outputs]="result.outputs" [project]="project"></report-outputs-column>

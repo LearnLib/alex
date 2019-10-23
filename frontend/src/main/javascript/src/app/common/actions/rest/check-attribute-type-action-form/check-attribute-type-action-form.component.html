@@ -5,13 +5,17 @@
 
 <div class="form-group">
   <label>Attribute</label>
-  <input [(ngModel)]="action.attribute" class="form-control" placeholder="json attribute, e.g. myobj.attr[1].obj"
-         type="text">
+  <input
+    [(ngModel)]="action.attribute"
+    class="form-control"
+    placeholder="json attribute, e.g. myobj.attr[1].obj"
+    type="text"
+  >
 </div>
 <div class="form-group">
   <label>Type</label>
-  <select [(ngModel)]="action.jsonType" class="form-control"
-          ng-options="t as t for t in ['ARRAY', 'BOOLEAN', 'INTEGER', 'OBJECT', 'NULL', 'STRING']">
-    <option disabled value="">Choose a JavaScript type</option>
+  <select [(ngModel)]="action.jsonType" class="form-control">
+    <option disabled [value]="null">Choose a JavaScript type</option>
+    <option *ngFor="let t of ['ARRAY', 'BOOLEAN', 'INTEGER', 'OBJECT', 'NULL', 'STRING']" [value]="t">{{t | normalizeUpperCase}}</option>
   </select>
 </div>

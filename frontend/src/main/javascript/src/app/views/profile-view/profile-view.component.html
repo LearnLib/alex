@@ -13,7 +13,7 @@
       <form (ngSubmit)="changePassword()" [formGroup]="passwordForm" class="mb-4">
         <div class="card">
           <div class="card-header">
-            <h5>Password</h5>
+            <h5 class="m-0">Password</h5>
           </div>
           <div class="card-body">
             <div class="form-group">
@@ -26,7 +26,7 @@
                 type="password"
               >
             </div>
-            <div class="form-group">
+            <div class="form-group mb-0">
               <label>New password</label>
               <input
                 [formControl]="passwordForm.controls.new"
@@ -46,17 +46,16 @@
       <form (ngSubmit)="changeEmail()" [formGroup]="emailForm">
         <div class="card">
           <div class="card-header">
-            <h5>Email</h5>
+            <h5 class="m-0">Email</h5>
           </div>
           <div class="card-body">
-            <div class="form-group">
+            <div class="form-group mb-0">
               <label>Email</label>
               <input
                 [class.invalid]="isInvalidFormControl(emailForm.controls.email)"
                 [formControl]="emailForm.controls.email"
                 class="form-control"
                 name="mail"
-                ng-model="email"
                 placeholder="Enter an email address"
                 required
                 type="email"

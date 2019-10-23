@@ -34,6 +34,7 @@ import { CreateSymbolModalComponent } from './create-symbol-modal/create-symbol-
 import { ImportSymbolsModalComponent } from './import-symbols-modal/import-symbols-modal.component';
 import { ExportSymbolsModalComponent } from './export-symbols-modal/export-symbols-modal.component';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 /**
  * The controller that handles CRUD operations on symbols and symbol groups.
@@ -59,7 +60,8 @@ export class SymbolsViewComponent implements OnInit {
               private toastService: ToastService,
               private eventBus: EventBus,
               private promptService: PromptService,
-              private modalService: NgbModal) {
+              private modalService: NgbModal,
+              private router: Router) {
 
     this.selectedSymbols = null;
     this.groups = [];
@@ -290,7 +292,7 @@ export class SymbolsViewComponent implements OnInit {
   }
 
   selectSymbol(symbol: AlphabetSymbol): void {
-    location.hash = `!/projects/${this.project.id}/symbols/${symbol.id}`;
+    this.router.navigate(['/app', 'projects', this.project.id, 'symbols', symbol.id]);
   }
 
   /**

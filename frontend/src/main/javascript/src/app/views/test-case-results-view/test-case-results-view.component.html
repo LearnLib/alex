@@ -6,7 +6,7 @@
       <div>
         <h4 class="m-0">
           <i class="fas fa-fw fa-file-alt"></i>
-          <a [href]="'#!/projects/' + project.id + '/tests/' + test.id">{{test.name}}</a>
+          <a [routerLink]="['/app', 'projects', project.id, 'tests', test.id]">{{test.name}}</a>
         </h4>
       </div>
       <hr>

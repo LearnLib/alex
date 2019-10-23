@@ -41,7 +41,7 @@
       </div>
     </div>
     <div class="card-footer text-right">
-      <button class="btn btn-sm btn-primary" [disabled]="form.invalid">Generate</button>
+      <button class="btn btn-sm btn-primary mr-2" [disabled]="form.invalid || testCase.steps.length === 0">Generate</button>
       <button (click)="removeSteps(); $event.preventDefault()" class="btn btn-sm btn-default">Cancel</button>
     </div>
   </div>

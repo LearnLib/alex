@@ -61,7 +61,7 @@
               {{report.time | formatMilliseconds}}
             </td>
             <td width="100%">
-              <a [routerLink]="['.', report.id]">Details</a>
+              <a [routerLink]="['./', report.id]">Details</a>
             </td>
             <td width="1%">
               <div class="btn-group btn-group-sm" ngbDropdown>
@@ -69,7 +69,7 @@
                   <i class="fas fa-bars"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
-                  <a [routerLink]="[report.id]" ngbDropdownItem>
+                  <a [routerLink]="['./', report.id]" ngbDropdownItem>
                     <i class="fas fa-fw fa-search"></i> Details
                   </a>
                   <div (click)="deleteReport(report)" ngbDropdownItem>

@@ -43,14 +43,14 @@ export class TestsViewComponent implements OnInit {
 
     this.route.paramMap.subscribe(
       map => {
-        const testId: number = parseInt(map.get('testId'));
-        if (testId === 0) {
-          this.testApi.getRoot(project.id).subscribe(
+        if (map.has('testId')) {
+          const testId: number = parseInt(map.get('testId'));
+          this.testApi.get(project.id, testId).subscribe(
             data => this.test = data,
             res => this.errorViewStore.navigateToErrorPage(res.error.message)
           );
-        } else {
-          this.testApi.get(project.id, testId).subscribe(
+        }  else {
+          this.testApi.getRoot(project.id).subscribe(
             data => this.test = data,
             res => this.errorViewStore.navigateToErrorPage(res.error.message)
           );

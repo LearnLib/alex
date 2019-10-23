@@ -4,23 +4,24 @@
     <div class="w-100 mr-1">
 
       <div
-        (click)="menu.click()"
-        *ngFor="let menu of menu"
+        (click)="m.click()"
+        *ngFor="let m of menu"
         class="btn-group btn-group-sm mr-2"
         ngbDropdown
       >
         <button class="btn btn-default dropdown-toggle" ngbDropdownToggle>
-          {{menu.text}} <span *ngIf="menu.children.length > 0" class="caret"></span>
+          {{m.text}} <span *ngIf="m.children.length > 0" class="caret"></span>
         </button>
         <div
-          *ngIf="menu.children.length > 0"
+          *ngIf="m.children.length > 0"
           class="dropdown-menu dropdown-menu-left"
           ngbDropdownMenu
         >
-          <ng-container *ngFor="let item of menu.children">
-            <div (click)="item.click()" *ngIf="!item.divider" ngbDropdownItem>
+          <ng-container *ngFor="let item of m.children">
+            <button (click)="item.click()" *ngIf="!item.divider" ngbDropdownItem>
               <i class="fas fa-fw {{item.icon}}"></i> {{item.text}}
-            </div>
+            </button>
+            <div class="dropdown-divider" *ngIf="item.divider"></div>
           </ng-container>
         </div>
       </div>

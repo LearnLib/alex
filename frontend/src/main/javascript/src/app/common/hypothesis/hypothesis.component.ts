@@ -32,8 +32,8 @@ import { EventBus } from '../../services/eventbus.service';
 
 // various styles used to style the hypothesis
 const STYLE = {
-  edge: 'stroke: red; stroke-width: 5; fill: none',
-  edgeLabel: 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 10px; fill: red',
+  edge: 'stroke: rgba(0, 0, 0, 0.2); stroke-width: 5; fill: none',
+  edgeLabel: 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 10px',
   nodeLabel: 'display: inline; font-weight: bold; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; font-size: 12px',
   node: 'fill: #fff; stroke: #000; stroke-width: 1',
   initNode: 'fill: #B3E6B3; stroke: #5cb85c; stroke-width: 3',
@@ -53,27 +53,30 @@ const STYLE = {
 export class HypothesisComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit {
 
   @Input()
-  public data: any;
+  data: any;
 
   @Input()
-  public layoutSettings: any;
+  layoutSettings: any;
 
   @Input()
-  public isSelectable: boolean;
+  isSelectable: boolean;
 
-  public renderer: any;
-  public graph: any;
-  public edgeData: any;
-  public svg: any;
-  public svgGroup: any;
-  public svgContainer: any;
-  public resizeHandler: any;
+  rendering: boolean;
+
+  renderer: any;
+  graph: any;
+  edgeData: any;
+  svg: any;
+  svgGroup: any;
+  svgContainer: any;
+  resizeHandler: any;
 
   constructor(private element: ElementRef,
               private eventBus: EventBus) {
 
     this.renderer = new Renderer();
     this.graph = null;
+    this.rendering = false;
 
     // from -> (to -> edge)
     // needed so that we get the correct input output on edge label click
@@ -92,7 +95,6 @@ export class HypothesisComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.svg.style(STYLE.svg);
     this.svgGroup = this.svg.select('g');
     this.svgContainer = svg.parentNode;
-
     this.init();
   }
 
@@ -107,13 +109,15 @@ export class HypothesisComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   init(): void {
+    this.svgGroup.html('');
+    this.rendering = true;
     this.fitSize();
-    this.layout();
-    this.render();
-    this.handleEvents();
-
-    const diffs = [['Drive 60', 'Enable', 'Add Vehicle Slow', 'Disable', 'Drive 150', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 120', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Slow', 'Drive 60', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 120', 'Release Break', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Break', 'Release Break', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 120', 'Break', 'Add Vehicle Slow', 'Drive 150', 'Release Break', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 80', 'Drive 120', 'Remove Vehicle'], ['Add Vehicle Slow', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Slow', 'Add Vehicle Fast', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Slow', 'Drive 120', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Drive 150', 'Add Vehicle Fast', 'Disable', 'Enable'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Break', 'Drive 80', 'Drive 150', 'Release Break', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 80', 'Drive 150', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Slow', 'Release Break', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Disable', 'Drive 150', 'Add Vehicle Slow', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Slow', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Drive 150', 'Disable', 'Enable', 'Add Vehicle Fast'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Drive 150', 'Break', 'Release Break', 'Enable', 'Add Vehicle Fast'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Release Break', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Disable', 'Enable', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Break', 'Remove Vehicle', 'Drive 150', 'Add Vehicle Slow', 'Release Break', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Add Vehicle Fast', 'Drive 150', 'Disable', 'Enable'], ['Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Slow', 'Drive 80', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 150', 'Add Vehicle Slow', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 120', 'Drive 150', 'Remove Vehicle'], ['Enable', 'Add Vehicle Slow', 'Drive 150', 'Disable', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Slow', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Drive 150', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 120', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Break', 'Drive 150', 'Drive 150', 'Release Break', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Add Vehicle Fast', 'Remove Vehicle'], ['Break', 'Drive 150', 'Add Vehicle Slow', 'Break', 'Release Break', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Drive 80', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Slow', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 120', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Disable', 'Drive 150', 'Release Break', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Add Vehicle Slow', 'Add Vehicle Slow', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Drive 120', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Slow', 'Drive 150', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 60', 'Drive 120', 'Remove Vehicle'], ['Break', 'Drive 150', 'Add Vehicle Fast', 'Add Vehicle Slow', 'Release Break', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Add Vehicle Fast', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Add Vehicle Slow', 'Enable', 'Remove Vehicle'], ['Drive 80', 'Enable', 'Drive 150', 'Add Vehicle Fast', 'Disable', 'Enable'], ['Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Add Vehicle Slow', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Drive 60', 'Drive 150', 'Add Vehicle Fast', 'Disable', 'Enable'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Add Vehicle Fast', 'Drive 150', 'Remove Vehicle', 'Add Vehicle Fast', 'Disable', 'Enable'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Drive 120', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 80', 'Enable', 'Drive 150', 'Disable', 'Enable'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 60', 'Break', 'Add Vehicle Slow', 'Drive 150', 'Release Break', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Break', 'Add Vehicle Slow', 'Drive 150', 'Release Break', 'Enable', 'Remove Vehicle'], ['Drive 60', 'Add Vehicle Slow', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Disable', 'Drive 150', 'Disable', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Break', 'Drive 120', 'Drive 150', 'Release Break', 'Enable', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Drive 150', 'Remove Vehicle', 'Add Vehicle Fast', 'Disable', 'Enable'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 120', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 120', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Drive 60', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Break', 'Drive 150', 'Break', 'Release Break', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Drive 150', 'Release Break', 'Add Vehicle Fast', 'Disable', 'Enable'], ['Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Fast', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Drive 150', 'Drive 150', 'Add Vehicle Fast', 'Disable', 'Enable'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Add Vehicle Fast', 'Break', 'Drive 150', 'Add Vehicle Slow', 'Release Break', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Fast', 'Remove Vehicle'], ['Drive 150', 'Add Vehicle Slow', 'Break', 'Release Break', 'Enable', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Break', 'Drive 150', 'Release Break', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 120', 'Add Vehicle Slow', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Break', 'Drive 150', 'Add Vehicle Slow', 'Enable', 'Release Break', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Drive 80', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Drive 60', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Disable', 'Drive 120', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Break', 'Drive 150', 'Add Vehicle Slow', 'Drive 150', 'Release Break', 'Enable', 'Remove Vehicle'], ['Break', 'Drive 80', 'Add Vehicle Slow', 'Drive 150', 'Release Break', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Drive 120', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Add Vehicle Fast', 'Drive 150', 'Break', 'Release Break', 'Enable'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Add Vehicle Slow', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Remove Vehicle'], ['Break', 'Drive 150', 'Add Vehicle Slow', 'Add Vehicle Slow', 'Release Break', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Break', 'Drive 150', 'Add Vehicle Slow', 'Disable', 'Release Break', 'Enable', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Add Vehicle Fast', 'Drive 150', 'Add Vehicle Fast', 'Disable', 'Enable'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Break', 'Drive 150', 'Add Vehicle Slow', 'Release Break', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 120', 'Drive 120', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Drive 60', 'Add Vehicle Fast', 'Drive 150', 'Disable', 'Enable'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Disable', 'Remove Vehicle', 'Drive 150', 'Add Vehicle Slow', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Drive 150', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 80', 'Add Vehicle Slow', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Add Vehicle Fast', 'Disable', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Drive 150', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Release Break', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 60', 'Drive 150', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Break', 'Drive 150', 'Disable', 'Release Break', 'Enable', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Add Vehicle Fast', 'Disable', 'Drive 150', 'Add Vehicle Slow', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 60', 'Add Vehicle Slow', 'Drive 60', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Break', 'Drive 150', 'Add Vehicle Slow', 'Release Break', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Add Vehicle Slow', 'Disable', 'Enable', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Add Vehicle Fast', 'Drive 150', 'Drive 150', 'Disable', 'Enable'], ['Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Slow', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Add Vehicle Slow', 'Drive 80', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Enable', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Disable', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Drive 150', 'Remove Vehicle'], ['Drive 150', 'Add Vehicle Slow', 'Release Break', 'Enable', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Drive 150', 'Enable', 'Add Vehicle Fast', 'Disable', 'Enable'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Add Vehicle Fast', 'Drive 150', 'Release Break', 'Disable', 'Enable'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Disable', 'Drive 150', 'Break', 'Release Break', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Enable', 'Add Vehicle Slow', 'Drive 150', 'Break', 'Release Break', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Add Vehicle Fast', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 80', 'Add Vehicle Slow', 'Release Break', 'Remove Vehicle'], ['Drive 150', 'Enable', 'Drive 120', 'Add Vehicle Slow', 'Remove Vehicle'], ['Drive 120', 'Enable', 'Add Vehicle Fast', 'Drive 150', 'Enable', 'Disable', 'Enable'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Disable', 'Drive 80', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Drive 150', 'Add Vehicle Slow', 'Drive 150', 'Enable', 'Remove Vehicle'], ['Add Vehicle Fast', 'Drive 150', 'Enable', 'Release Break', 'Remove Vehicle'], ['Drive 60', 'Enable', 'Add Vehicle Slow', 'Break', 'Drive 150', 'Enable', 'Release Break', 'Enable', 'Remove Vehicle']];
-    diffs.forEach(diff => this.highlightWord(diff, 'green'));
+    window.setTimeout(() => {
+      this.layout();
+      this.render();
+      this.handleEvents();
+      this.rendering = false;
+    }, 0);
   }
 
   /**
@@ -290,7 +294,7 @@ export class HypothesisComponent implements OnInit, OnDestroy, OnChanges, AfterV
     const self = this;
     if (this.isSelectable) {
       this.svg.selectAll('.edgeLabel tspan').on('click', function (d) {
-        const edges = self.edgeData[d.v][d.w];
+        const edges = self.edgeData[this.getAttribute('data-from')][this.getAttribute('data-to')];
         const edge = edges.filter(e => (e.input + ' / ' + e.output) === this.textContent)[0];
         eventBus.hypothesisLabelSelected$.next({input: edge.input, output: edge.output});
       });

@@ -16,6 +16,8 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 interface LayoutProperties {
   nodesep: number,
@@ -35,19 +37,22 @@ export class HypothesisLayoutSettingsModalComponent implements OnInit {
   /** The layout properties to apply on the model. */
   @Input()
   layoutSettings: LayoutProperties;
-  /** The default layout settings for a hypothesis. */
-  private defaultLayoutProperties: LayoutProperties = {
-    nodesep: 50,
-    edgesep: 25,
-    ranksep: 50
-  };
 
-  constructor(public modal: NgbActiveModal) {
+  form = new FormGroup({
+    nodesep: new FormControl(50, [Validators.required, Validators.min(1)]),
+    edgesep: new FormControl(25, [Validators.required, Validators.min(1)]),
+    ranksep: new FormControl(50, [Validators.required, Validators.min(1)])
+  });
+
+  constructor(public modal: NgbActiveModal,
+              public formUtils: FormUtilsService) {
   }
 
   ngOnInit(): void {
-    if (this.layoutSettings == null) {
-      this.layoutSettings = this.defaultLayoutProperties;
+    if (this.layoutSettings != null) {
+      this.form.controls.nodesep.setValue(this.layoutSettings.nodesep);
+      this.form.controls.edgesep.setValue(this.layoutSettings.edgesep);
+      this.form.controls.ranksep.setValue(this.layoutSettings.ranksep);
     }
   }
 
@@ -55,13 +60,15 @@ export class HypothesisLayoutSettingsModalComponent implements OnInit {
    * Closes the modal window and passes the updated layout settings.
    */
   update(): void {
-    this.modal.close(this.layoutSettings);
+    this.modal.close(this.form.value);
   }
 
   /**
    * Sets the layout settings to its default values.
    */
   defaultLayoutSettings(): void {
-    this.layoutSettings = this.defaultLayoutProperties;
+    this.form.controls.nodesep.setValue(50);
+    this.form.controls.edgesep.setValue(25);
+    this.form.controls.ranksep.setValue(50);
   }
 }

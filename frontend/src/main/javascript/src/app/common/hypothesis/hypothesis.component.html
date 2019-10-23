@@ -1,4 +1,9 @@
 <div class="hypothesis-wrapper">
+
+  <div class="alert alert-info m-3" *ngIf="rendering">
+    <i class="fas fa-fw fa-circle-notch fa-spin"></i> The model is being rendered.
+  </div>
+
   <svg class="hypothesis">
     <g></g>
   </svg>

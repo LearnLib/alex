@@ -31,6 +31,7 @@ import { SelectSymbolModalComponent } from '../../common/modals/select-symbol-mo
 import { Component } from '@angular/core';
 import { LearnerSettingsModalComponent } from './learner-settings-modal/learner-settings-modal.component';
 import { take } from 'lodash';
+import { Router } from '@angular/router';
 
 /**
  * The controller that handles the preparation of a learn process. Lists all symbol groups and its visible symbols.
@@ -65,7 +66,8 @@ export class LearnerSetupViewComponent {
               private toastService: ToastService,
               private learnerResultApi: LearnerResultApiService,
               private settingsApi: SettingsApiService,
-              private modalService: NgbModal) {
+              private modalService: NgbModal,
+              private router: Router) {
 
     this.groups = [];
     this.learnResults = [];
@@ -89,7 +91,7 @@ export class LearnerSetupViewComponent {
         if (data.active) {
           if (data.project === this.project.id) {
             this.toastService.info('There is an active learning process for this project.');
-            location.hash = `!/projects/${this.project.id}/learner/learn`;
+            this.router.navigate(['/app', 'projects', this.project.id, 'learner', 'learn']);
           } else {
             this.toastService.info('There is an active learning process for another project.');
           }
@@ -174,7 +176,7 @@ export class LearnerSetupViewComponent {
         this.learnerApi.start(this.project.id, config).subscribe(
           () => {
             this.toastService.success('Learn process started successfully.');
-            location.hash = `!/projects/${this.project.id}/learner/learn`;
+            this.router.navigate(['/app', 'projects', this.project.id, 'learner', 'learn']);
           },
           error => {
             this.toastService.danger('<p><strong>Start learning failed</strong></p>' + error.data.message);

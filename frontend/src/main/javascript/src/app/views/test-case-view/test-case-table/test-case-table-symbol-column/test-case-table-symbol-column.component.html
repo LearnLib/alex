@@ -1,8 +1,8 @@
 <div>
   <strong>
     <a
-      [href]="'#!/projects/' + pSymbol.symbol.project + '/symbols/' + pSymbol.symbol.id"
       class="text-black"
+      [routerLink]="['/app', 'projects', pSymbol.symbol.project, 'symbols', pSymbol.symbol.id]"
     >
       {{pSymbol.symbol.name}}
     </a>

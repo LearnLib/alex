@@ -16,7 +16,15 @@ export class ProjectGuard implements CanActivate, CanActivateChild {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    let projectId = parseInt(route.paramMap.get('projectId'));
+    let projectId;
+    let curr = route;
+    while (curr != null) {
+      if (curr.paramMap.has('projectId')) {
+        projectId = parseInt(curr.paramMap.get('projectId'));
+        break;
+      }
+      curr = curr.parent;
+    }
 
     const project = this.appStore.project;
     if (project == null || projectId !== project.id) {

@@ -27,6 +27,8 @@ import { LearnerResultsCompareViewComponent } from './views/learner-results-comp
 import { TestReportViewComponent } from './views/test-report-view/test-report-view.component';
 import { TestCaseResultsViewComponent } from './views/test-case-results-view/test-case-results-view.component';
 import { LearnerViewComponent } from './views/learner-view/learner-view.component';
+import { ErrorViewComponent } from './views/error-view/error-view.component';
+import { StatisticsCompareViewComponent } from './views/statistics-compare-view/statistics-compare-view.component';
 
 const routes: Routes = [
   {
@@ -45,6 +47,10 @@ const routes: Routes = [
   {
     path: 'about',
     component: AboutViewComponent
+  },
+  {
+    path: 'error',
+    component: ErrorViewComponent
   },
   {
     path: 'app',
@@ -134,13 +140,20 @@ const routes: Routes = [
                   },
                   {
                     path: 'results',
-                    component: LearnerResultsViewComponent,
                     children: [
+                      {
+                        path: '',
+                        component: LearnerResultsViewComponent,
+                      },
                       {
                         path: ':resultIds',
                         component: LearnerResultsCompareViewComponent
                       }
                     ]
+                  },
+                  {
+                    path: 'statistics/:testNos',
+                    component: StatisticsCompareViewComponent
                   }
                 ]
               },
@@ -168,13 +181,16 @@ const routes: Routes = [
                 children: [
                   {
                     path: '',
-                    redirectTo: '0',
-                    pathMatch: 'full'
+                    component: TestsViewComponent
                   },
                   {
                     path: 'reports',
-                    component: TestReportsViewComponent,
                     children: [
+                      {
+                        path: '',
+                        component: TestReportsViewComponent,
+                        pathMatch: 'full'
+                      },
                       {
                         path: ':reportId',
                         component: TestReportViewComponent
@@ -183,8 +199,12 @@ const routes: Routes = [
                   },
                   {
                     path: ':testId',
-                    component: TestsViewComponent,
                     children: [
+                      {
+                        path: '',
+                        component: TestsViewComponent,
+                        pathMatch: 'full'
+                      },
                       {
                         path: 'results',
                         component: TestCaseResultsViewComponent

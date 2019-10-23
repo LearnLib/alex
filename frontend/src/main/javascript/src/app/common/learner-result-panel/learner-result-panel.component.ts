@@ -15,7 +15,7 @@
  */
 
 import { LearnerResult } from '../../entities/learner-result';
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 
 /**
  * The directive that displays a browsable list of learn results. For each result, it can display the observation
@@ -34,8 +34,8 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 })
 export class LearnerResultPanelComponent implements OnInit, OnChanges {
 
-  @Input()
-  onStep: () => ((n1: number, n2: number) => void);
+  @Output()
+  step = new EventEmitter<any>();
 
   @Input()
   result: LearnerResult;
@@ -47,7 +47,7 @@ export class LearnerResultPanelComponent implements OnInit, OnChanges {
   layoutSettings: any;
 
   view: string;
-  menu: any;
+  menu: any[];
   pointer: number;
 
   constructor() {
@@ -77,8 +77,8 @@ export class LearnerResultPanelComponent implements OnInit, OnChanges {
    * Emits the index of the currently shown step.
    */
   emitStep(): void {
-    if (this.index >= 0 && this.onStep()) {
-      this.onStep()(this.index, this.pointer);
+    if (this.index >= 0) {
+      this.step.emit(this.pointer);
     }
   }
 
