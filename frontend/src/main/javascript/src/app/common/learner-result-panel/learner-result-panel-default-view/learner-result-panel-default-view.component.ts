@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { learnAlgorithm } from '../../../constants';
+import { learningAlgorithm } from '../../../constants';
 import { LearnerResult } from '../../../entities/learner-result';
 import { PromptService } from '../../../services/prompt.service';
 import { DownloadService } from '../../../services/download.service';
@@ -30,7 +30,7 @@ import { HypothesisLayoutSettingsModalComponent } from '../hypothesis-layout-set
 export class LearnerResultPanelDefaultViewComponent implements OnInit {
 
   /** Available learn algorithms. Needed for access in the template. */
-  learnAlgorithms: any = learnAlgorithm;
+  learnAlgorithms: any = learningAlgorithm;
 
   @Output()
   registerMenu = new EventEmitter<any>();
@@ -113,15 +113,15 @@ export class LearnerResultPanelDefaultViewComponent implements OnInit {
   /** Switches the mode to the one to display the internal data structure. */
   showInternalDataStructure(): void {
     switch (this.result.algorithm.name) {
-      case learnAlgorithm.LSTAR:
+      case learningAlgorithm.LSTAR:
         this.mode = this.modes.OBSERVATION_TABLE;
         this.registerOtMenu();
         break;
-      case learnAlgorithm.DT:
+      case learningAlgorithm.DT:
         this.mode = this.modes.DISCRIMINATION_TREE;
         this.registerDtMenu();
         break;
-      case learnAlgorithm.TTT:
+      case learningAlgorithm.TTT:
         this.mode = this.modes.DISCRIMINATION_TREE;
         this.registerDtMenu();
         break;

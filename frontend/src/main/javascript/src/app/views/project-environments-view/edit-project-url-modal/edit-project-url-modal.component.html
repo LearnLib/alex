@@ -12,7 +12,7 @@
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-primary btn-sm" type="submit">Update</button>
+    <button class="btn btn-primary btn-sm" type="submit" [disabled]="form.invalid">Update</button>
     <button (click)="modal.dismiss(); $event.stopPropagation()" class="btn btn-default btn-sm">Cancel</button>
   </div>
 

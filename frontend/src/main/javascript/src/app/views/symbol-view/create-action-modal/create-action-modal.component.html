@@ -19,56 +19,59 @@
 
         <div style="margin-top: 36px;"></div>
 
-        <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-0">
-          <ngb-panel title="Web">
-            <ng-template ngbPanelContent>
-
-              <div class="list-group list-group-condensed list-group-flush">
-                <div
-                  (click)="selectNewActionType(a.type); $event.preventDefault()"
-                  *ngFor="let a of actions.web"
-                  [ngClass]="{'active': a.type === action?.type}"
-                  class="list-group-item list-group-item-action"
-                >
-                  {{a.text}}
-                </div>
+        <div class="card">
+          <div class="card-header cursor-pointer" (click)="show = 'web'">
+            <strong>Web</strong>
+          </div>
+          <div class="card-body p-0" *ngIf="show === 'web'">
+            <div class="list-group list-group-condensed list-group-flush">
+              <div
+                class="list-group-item list-group-item-action"
+                [ngClass]="{'active': a.type === action?.type}"
+                (click)="selectNewActionType(a.type); $event.preventDefault()"
+                *ngFor="let a of actions.web"
+              >
+                {{a.text}}
               </div>
+            </div>
+          </div>
+        </div>
 
-            </ng-template>
-          </ngb-panel>
-          <ngb-panel title="REST">
-            <ng-template ngbPanelContent>
-
-              <div class="list-group list-group-condensed list-group-flush">
-                <div
-                  (click)="selectNewActionType(a.type); $event.preventDefault()"
-                  *ngFor="let a of actions.rest"
-                  [ngClass]="{'active': a.type === action?.type}"
-                  class="list-group-item list-group-item-action"
-                >
-                  {{a.text}}
-                </div>
+        <div class="card">
+          <div class="card-header cursor-pointer" (click)="show = 'rest'">
+            <strong>REST</strong>
+          </div>
+          <div class="card-body p-0" *ngIf="show === 'rest'">
+            <div class="list-group list-group-condensed list-group-flush">
+              <div
+                class="list-group-item list-group-item-action"
+                [ngClass]="{'active': a.type === action?.type}"
+                (click)="selectNewActionType(a.type); $event.preventDefault()"
+                *ngFor="let a of actions.rest"
+              >
+                {{a.text}}
               </div>
+            </div>
+          </div>
+        </div>
 
-            </ng-template>
-          </ngb-panel>
-          <ngb-panel title="Misc">
-            <ng-template ngbPanelContent>
-
-              <div class="list-group list-group-condensed list-group-flush">
-                <div
-                  (click)="selectNewActionType(a.type); $event.preventDefault()"
-                  *ngFor="let a of actions.misc"
-                  [ngClass]="{'active': a.type === action?.type}"
-                  class="list-group-item list-group-item-action"
-                >
-                  {{a.text}}
-                </div>
+        <div class="card">
+          <div class="card-header cursor-pointer" (click)="show = 'misc'">
+            <strong>Misc</strong>
+          </div>
+          <div class="card-body p-0" *ngIf="show === 'misc'">
+            <div class="list-group list-group-condensed list-group-flush">
+              <div
+                class="list-group-item list-group-item-action"
+                [ngClass]="{'active': a.type === action?.type}"
+                (click)="selectNewActionType(a.type); $event.preventDefault()"
+                *ngFor="let a of actions.misc"
+              >
+                {{a.text}}
               </div>
-
-            </ng-template>
-          </ngb-panel>
-        </ngb-accordion>
+            </div>
+          </div>
+        </div>
 
       </div>
       <div class="col-8">
@@ -84,8 +87,8 @@
   </div>
 
   <div class="modal-footer">
-    <button (click)="createActionAndContinue(); $event.preventDefault()" class="btn btn-info btn-sm">Create and
-      continue
+    <button (click)="createActionAndContinue(); $event.preventDefault()" class="btn btn-info btn-sm">
+      Create and continue
     </button>
     <button class="btn btn-primary btn-sm" type="submit">Create</button>
     <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">Cancel</button>

@@ -23,5 +23,6 @@ import { AlertAcceptDismissAction } from '../../../../entities/actions/web/alert
 })
 export class AlertAcceptDismissActionFormComponent {
 
-  @Input() action: AlertAcceptDismissAction;
+  @Input()
+  action: AlertAcceptDismissAction;
 }

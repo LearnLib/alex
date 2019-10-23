@@ -9,4 +9,16 @@
       visibility: visible;
     }
   }
+
+  &:not(.default) {
+    .card-header {
+      .default-badge {
+        visibility: hidden;
+      }
+
+      &:hover .default-badge {
+        visibility: visible;
+      }
+    }
+  }
 }

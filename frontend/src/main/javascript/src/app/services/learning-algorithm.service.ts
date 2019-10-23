@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { learnAlgorithm } from '../constants';
+import { learningAlgorithm } from '../constants';
 import { Injectable } from '@angular/core';
 
 /**
@@ -23,11 +23,11 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class LearningAlgorithmService {
   private registry = {
-    [learnAlgorithm.DHC]: () => ({name: learnAlgorithm.DHC}),
-    [learnAlgorithm.DT]: () => ({name: learnAlgorithm.DT}),
-    [learnAlgorithm.LSTAR]: () => ({name: learnAlgorithm.LSTAR}),
-    [learnAlgorithm.KEARNS_VAZIRANI]: () => ({name: learnAlgorithm.KEARNS_VAZIRANI}),
-    [learnAlgorithm.TTT]: () => ({name: learnAlgorithm.TTT})
+    [learningAlgorithm.DHC]: () => ({name: learningAlgorithm.DHC}),
+    [learningAlgorithm.DT]: () => ({name: learningAlgorithm.DT}),
+    [learningAlgorithm.LSTAR]: () => ({name: learningAlgorithm.LSTAR}),
+    [learningAlgorithm.KEARNS_VAZIRANI]: () => ({name: learningAlgorithm.KEARNS_VAZIRANI}),
+    [learningAlgorithm.TTT]: () => ({name: learningAlgorithm.TTT})
   };
 
   /**

@@ -11,14 +11,6 @@
         required
         type="number"
       >
-
-      <div
-        *ngIf="form.eq_oracle_random_min_length.$dirty && form.eq_oracle_random_min_length.$invalid"
-        class="alert alert-danger alert-condensed mb-0"
-      >
-        <small *ngIf="form.eq_oracle_random_min_length.$error.required">The field must not be empty.</small>
-        <small *ngIf="form.eq_oracle_random_min_length.$error.min">The value must be &ge; 1.</small>
-      </div>
     </div>
   </div>
 
@@ -34,14 +26,6 @@
         required
         type="number"
       >
-
-      <div
-        *ngIf="form.eq_oracle_random_max_length.$dirty && form.eq_oracle_random_max_length.$invalid"
-        class="alert alert-danger alert-condensed mb-0"
-      >
-        <small *ngIf="form.eq_oracle_random_max_length.$error.required">The field must not be empty.</small>
-        <small *ngIf="form.eq_oracle_random_max_length.$error.min">The value must be &ge; 1.</small>
-      </div>
     </div>
   </div>
 
@@ -57,14 +41,6 @@
         required
         type="number"
       >
-
-      <div
-        *ngIf="form.eq_oracle_random_no_words.$dirty && form.eq_oracle_random_no_words.$invalid"
-        class="alert alert-danger alert-condensed mb-0"
-      >
-        <small *ngIf="form.eq_oracle_random_no_words.$error.required">The field must not be empty.</small>
-        <small *ngIf="form.eq_oracle_random_no_words.$error.min">TThe value must be &ge; 1.</small>
-      </div>
     </div>
   </div>
 
@@ -78,13 +54,6 @@
         required
         type="number"
       >
-
-      <div
-        *ngIf="form.eq_oracle_random_seed.$dirty && form.eq_oracle_random_seed.$invalid"
-        class="alert alert-danger alert-condensed mb-0"
-      >
-        <small *ngIf="form.eq_oracle_random_seed.$error.required">The field must not be empty.</small>
-      </div>
     </div>
   </div>
 </div>

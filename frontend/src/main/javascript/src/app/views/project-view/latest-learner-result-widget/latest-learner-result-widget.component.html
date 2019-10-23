@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header">
-    Latest learner result
+    <strong>Latest learner result</strong>
   </div>
   <div class="card-body">
 
@@ -33,21 +33,22 @@
         </tbody>
       </table>
 
-      <a [href]="'#!/projects/' + project.id + '/learner/learn'" class="btn btn-xs btn-default mb-2 mr-2">
-        <i class="fas fa-fw fa-play"></i> Continue learning
-      </a>
-      <a [href]="'#!/projects/' + project.id + '/learner/results/' + result.testNo"
-         class="btn btn-xs btn-default mb-2 mr-2">
-        <i class="fas fa-fw fa-eye"></i> View result
-      </a>
-      <a [href]="'#!/projects/' + project.id + '/learner/results/statistics/' + result.testNo"
-         class="btn btn-xs btn-default">
-        <i class="fas fa-fw fa-chart-bar"></i> View statistics
-      </a>
+      <div style="line-height: 2.4rem">
+        <a [routerLink]="['learner', 'learn']" class="btn btn-xs btn-default mr-2">
+          <i class="fas fa-fw fa-play"></i> Continue learning
+        </a>
+        <a [routerLink]="['learner', 'results', result.id]" class="btn btn-xs btn-default mr-2">
+          <i class="fas fa-fw fa-eye"></i> View result
+        </a>
+        <a [routerLink]="['learner', 'results', 'statistics', result.id]" class="btn btn-xs btn-default">
+          <i class="fas fa-fw fa-chart-bar"></i> View statistics
+        </a>
+
+      </div>
 
     </div>
     <div *ngIf="result == null" class="alert alert-info mb-0">
-      There are no learner results in the database.
+      There are no learner results.
     </div>
 
   </div>

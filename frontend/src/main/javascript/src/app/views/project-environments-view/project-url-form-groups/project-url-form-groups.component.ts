@@ -17,6 +17,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ProjectUrl } from '../../../entities/project-url';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({
   selector: 'project-url-form-groups',
@@ -30,8 +31,15 @@ export class ProjectUrlFormGroupsComponent implements OnInit {
   @Input()
   public form: FormGroup;
 
-  ngOnInit() {
-    this.form.addControl('name', new FormControl(this.url.name, [Validators.required]));
-    this.form.addControl('url', new FormControl(this.url.url, [Validators.required]));
+  constructor(public formUtils: FormUtilsService) {
+  }
+
+  ngOnInit(): void {
+    this.form.addControl('name', new FormControl(this.url.name, [
+      Validators.required
+    ]));
+    this.form.addControl('url', new FormControl(this.url.url, [
+      Validators.required, Validators.pattern(/^https?:\/\//)
+    ]));
   }
 }

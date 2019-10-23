@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { learnAlgorithm } from '../../../constants';
+import { learningAlgorithm } from '../../../constants';
 import { LearnConfiguration } from '../../../entities/learner-configuration';
 import { ToastService } from '../../../services/toast.service';
 import { LearningAlgorithmService } from '../../../services/learning-algorithm.service';
@@ -36,7 +36,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 export class LearnerSettingsModalComponent implements OnInit {
 
   /** The constants for learnAlgorithm names. */
-  learnAlgorithms: any = learnAlgorithm;
+  learnAlgorithms: any = learningAlgorithm;
 
   /** The configuration. */
   @Input()

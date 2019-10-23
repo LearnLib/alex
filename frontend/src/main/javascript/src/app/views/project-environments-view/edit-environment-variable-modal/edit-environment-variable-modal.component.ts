@@ -20,6 +20,7 @@ import { ProjectEnvironmentVariable } from '../../../entities/project-environmen
 import { ProjectEnvironmentApiService } from '../../../services/resources/project-environment-api.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({
   selector: 'edit-environment-variable-modal',
@@ -38,6 +39,7 @@ export class EditEnvironmentVariableModalComponent implements OnInit {
   public form: FormGroup;
 
   constructor(public modal: NgbActiveModal,
+              public formUtils: FormUtilsService,
               private projectEnvironmentApi: ProjectEnvironmentApiService) {
   }
 

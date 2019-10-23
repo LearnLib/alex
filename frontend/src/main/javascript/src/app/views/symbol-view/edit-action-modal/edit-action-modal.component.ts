@@ -36,6 +36,8 @@ export class EditActionModalComponent {
   @Input()
   action: Action;
 
+
+
   /** All symbols. */
   symbols: AlphabetSymbol[];
 

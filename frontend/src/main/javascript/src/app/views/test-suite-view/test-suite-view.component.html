@@ -110,14 +110,14 @@
 
       <div class="d-flex flex-row align-items-center">
         <a
+          class="btn btn-sm btn-default mr-2"
           *ngIf="testSuite.parent != null"
-          [routerLink]="['.', testSuite.parent]"
-          class="btn btn-sm btn-default mr-3"
+          [routerLink]="['..', testSuite.parent]"
         >
           <i class="fas fa-fw fa-level-up-alt"></i>
         </a>
         <h4 *ngIf="testSuite.name" class="m-0">
-          <strong><i class="fas fa-fw fa-folder"></i> {{testSuite.name}}</strong>
+          <i class="fas fa-fw fa-folder mr-2"></i> <strong>{{testSuite.name}}</strong>
         </h4>
       </div>
 
@@ -156,9 +156,9 @@
                       </div>
                       <div *ngIf="test.type === 'case'" class="dropdown-divider"></div>
                       <a
-                        *ngIf="test.type === 'case'"
-                        [href]="'#!/projects/' + project.id + '/tests/' + test.id + '/results'"
                         ngbDropdownItem
+                        [routerLink]="['..', test.id, 'results']"
+                        *ngIf="test.type === 'case'"
                       >
                         <i class="fas fa-fw fa-history"></i> Results
                       </a>

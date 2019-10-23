@@ -16,7 +16,7 @@
   <form (ngSubmit)="changeEmail()" [formGroup]="form">
     <div class="form-group">
       <input
-        [class.invalid]="isInvalidFormControl(form.controls.email)"
+        [class.is-invalid]="isInvalidFormControl(form.controls.email)"
         [formControl]="form.controls.email"
         class="form-control"
         name="mail"
@@ -24,6 +24,9 @@
         required
         type="email"
       />
+      <div class="invalid-feedback">
+        Please enter an email address.
+      </div>
     </div>
     <button [disabled]="form.invalid" class="btn btn-primary btn-sm">Change email</button>
   </form>

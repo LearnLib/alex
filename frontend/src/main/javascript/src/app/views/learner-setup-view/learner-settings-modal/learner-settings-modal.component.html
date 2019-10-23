@@ -16,7 +16,7 @@
 
           <div class="form-group">
             <label class="control-label">Algorithm</label> <br>
-            <select (change)="setLearningAlgorithm()" [(ngModel)]="selectedLearningAlgorithm" class="form-control">
+            <select (change)="setLearningAlgorithm()" [(ngModel)]="selectedLearningAlgorithm" class="form-control" name="algorithm">
               <option disabled [value]="null">select an algorithm</option>
               <option
                 [value]="i.value"
@@ -38,8 +38,8 @@
 
           <div class="form-group form-check">
             <label class="form-check-label">
-              <input [(ngModel)]="learnConfiguration.useMQCache" class="form-check-input" type="checkbox"> Cache
-              membership queries
+              <input [(ngModel)]="learnConfiguration.useMQCache" class="form-check-input" type="checkbox" name="cache">
+              Cache membership queries
             </label>
           </div>
 
@@ -54,7 +54,6 @@
               class="form-control"
               min="-1"
               name="max_steps"
-
               placeholder="-1"
               required
               type="number"
@@ -67,6 +66,7 @@
               [(ngModel)]="learnConfiguration.comment"
               class="form-control"
               placeholder="Enter a short description of the test"
+              name="comment"
             >
             </textarea>
           </div>

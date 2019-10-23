@@ -20,9 +20,12 @@
         placeholder="Email address"
         required
         type="email"
-        [class.invalid]="formUtils.isInvalidFormControl(form.controls.email)"
+        [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.email)"
         [formControl]="form.controls.email"
       >
+      <div class="invalid-feedback">
+        Please enter an email address.
+      </div>
     </div>
 
     <div class="form-group">
@@ -34,9 +37,12 @@
         placeholder="Password"
         required
         type="password"
-        [class.invalid]="formUtils.isInvalidFormControl(form.controls.password)"
+        [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.password)"
         [formControl]="form.controls.password"
       >
+      <div class="invalid-feedback">
+        Please enter a password.
+      </div>
     </div>
 
     <div class="form-group">
@@ -46,7 +52,6 @@
         <option [value]="'ADMIN'">Admin</option>
       </select>
     </div>
-
 
   </div>
 

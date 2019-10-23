@@ -23,6 +23,8 @@ import { Project } from '../../../../entities/project';
 import { TestCase } from '../../../../entities/test-case';
 import { AppStoreService } from '../../../../services/app-store.service';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormUtilsService } from '../../../../services/form-utils.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'test-case-generation-widget',
@@ -45,7 +47,12 @@ export class TestCaseGenerationWidgetComponent implements OnInit {
   /** The test case to create. */
   testCase: TestCase;
 
-  constructor(private eventBus: EventBus,
+  form = new FormGroup({
+    name: new FormControl('', [Validators.required])
+  });
+
+  constructor(public formUtils: FormUtilsService,
+              private eventBus: EventBus,
               private appStore: AppStoreService,
               private testApi: TestApiService,
               private toastService: ToastService) {
@@ -69,6 +76,7 @@ export class TestCaseGenerationWidgetComponent implements OnInit {
 
   ngOnInit(): void {
     this.result.symbols.forEach(s => this.symbolMap[s.getComputedName()] = s);
+    this.form.controls.name.setValue(this.testCase.name);
 
     const preStep = TestCaseStep.fromSymbol(this.result.resetSymbol.symbol);
     preStep.pSymbol.parameterValues = this.result.resetSymbol.parameterValues;
@@ -84,6 +92,7 @@ export class TestCaseGenerationWidgetComponent implements OnInit {
   generateTestCase(): void {
     const test = JSON.parse(JSON.stringify(this.testCase));
     test.project = this.project.id;
+    test.name = this.form.controls.name.value;
 
     test.steps.forEach(step => {
       step.pSymbol.symbol = {id: step.pSymbol.symbol.id};
@@ -94,6 +103,9 @@ export class TestCaseGenerationWidgetComponent implements OnInit {
       createdTestCase => {
         this.toastService.success('The test has been generated.');
         this.created.emit(createdTestCase);
+        this.form.reset({
+          name: 'Test Case'
+        });
       },
       res => this.toastService.danger(`The test could not be generated. ${res.error.message}`)
     );

@@ -29,7 +29,6 @@ export class ClipboardService {
 
   /** Constructor. */
   constructor() {
-    // initialize clipboard
     const clipboard = localStorage.getItem('clipboard');
     if (clipboard == null) {
       localStorage.setItem('clipboard', JSON.stringify({}));
@@ -65,7 +64,7 @@ export class ClipboardService {
    * @param key The key whose data to get.
    * @returns The data.
    */
-  paste(projectId: number, key: string): any | null {
+  paste(projectId: number, key: string): any {
     const clipboard = JSON.parse(localStorage.getItem('clipboard'));
     const entry = clipboard[projectId][key];
     if (entry) {

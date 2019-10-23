@@ -77,12 +77,15 @@
     </div>
   </div>
 
-  <div *ngIf="finished" class="learn-start-wrapper flex-row">
+  <div *ngIf="finished" class="learn-start-wrapper d-flex flex-row h-100">
     <learner-result-panel *ngIf="finalResult != null" [result]="finalResult" class="w-100">
     </learner-result-panel>
 
-    <div *ngIf="resumeConfig != null && finalResult != null" class="panel-sidebar show"
-         style="min-width: 280px">
+    <div
+      class="panel-sidebar show"
+      style="min-width: 280px"
+      *ngIf="resumeConfig != null && finalResult != null"
+    >
 
       <button (click)="resumeLearning()" class="btn btn-sm btn-block btn-success mb-3">Resume</button>
 

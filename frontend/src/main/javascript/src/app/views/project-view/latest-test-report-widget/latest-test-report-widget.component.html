@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header">
-    Latest test report
+    <strong>Latest test report</strong>
   </div>
   <div class="card-body">
 
@@ -33,7 +33,7 @@
         </tbody>
       </table>
 
-      <a [href]="'#!/projects/' + report.project + '/tests/reports/' + report.id" class="btn btn-xs btn-default">
+      <a class="btn btn-xs btn-default" [routerLink]="['tests', 'reports', report.id]">
         <i class="fas fa-fw fa-eye"></i> View details
       </a>
     </div>

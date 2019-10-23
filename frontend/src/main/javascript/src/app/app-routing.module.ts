@@ -26,6 +26,7 @@ import { AppViewComponent } from './views/app-view/app-view.component';
 import { LearnerResultsCompareViewComponent } from './views/learner-results-compare-view/learner-results-compare-view.component';
 import { TestReportViewComponent } from './views/test-report-view/test-report-view.component';
 import { TestCaseResultsViewComponent } from './views/test-case-results-view/test-case-results-view.component';
+import { LearnerViewComponent } from './views/learner-view/learner-view.component';
 
 const routes: Routes = [
   {
@@ -126,6 +127,10 @@ const routes: Routes = [
                   {
                     path: 'setup',
                     component: LearnerSetupViewComponent
+                  },
+                  {
+                    path: 'learn',
+                    component: LearnerViewComponent
                   },
                   {
                     path: 'results',

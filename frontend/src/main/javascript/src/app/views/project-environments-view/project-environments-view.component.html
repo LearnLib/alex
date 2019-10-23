@@ -27,19 +27,31 @@
   <div class="view-body">
     <div class="container-fluid">
 
-      <div *ngFor="let env of store.environments$ | async; trackBy: trackByIndex" class="card card-environment mb-4">
+      <div
+        class="card card-environment mb-4"
+        [class.default]="env.default"
+        *ngFor="let env of store.environments$ | async; trackBy: trackByIndex"
+      >
         <div class="card-header d-flex flex-row align-items-center">
           <div class="w-100 mr-3">
             <strong>{{env.name}}</strong>
           </div>
           <div class="flex-shrink-0">
             <div class="btn-group btn-group-sm actions">
-              <button (click)="store.editEnvironment(env)" class="btn btn-outline-secondary" ngbTooltip="Edit"
-                      placement="top">
+              <button
+                (click)="store.editEnvironment(env)"
+                class="btn btn-outline-secondary"
+                ngbTooltip="Edit"
+                placement="top"
+              >
                 <i class="fas fa-fw fa-edit"></i>
               </button>
-              <button (click)="store.deleteEnvironment(env)" class="btn btn-outline-secondary" ngbTooltip="Delete"
-                      placement="top">
+              <button
+                (click)="store.deleteEnvironment(env)"
+                class="btn btn-outline-secondary"
+                ngbTooltip="Delete"
+                placement="top"
+              >
                 <i class="fas fa-fw fa-trash"></i>
               </button>
             </div>
@@ -48,7 +60,7 @@
             <span
               (click)="store.makeEnvironmentDefault(env)"
               [ngClass]="{'badge-secondary': !env.default, 'badge-primary': env.default}"
-              class="badge cursor-pointer"
+              class="badge default-badge cursor-pointer"
             >
               Default
             </span>

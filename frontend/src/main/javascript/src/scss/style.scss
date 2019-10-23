@@ -331,9 +331,6 @@ test-case-view {
 }
 
 .learn-start-wrapper {
-  @include position(absolute, 0, 0, 0, 0);
-  display: flex;
-
   .panel-sidebar {
     display: none;
     max-width: 340px;

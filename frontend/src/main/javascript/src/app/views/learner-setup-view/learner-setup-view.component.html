@@ -4,9 +4,9 @@
     <div class="d-flex">
       <div class="ml-auto">
         <a
-          *ngIf="latestLearnerResult != null"
           class="btn btn-info btn-sm"
-          href="{{'#!/projects/' + project.id + '/learner/learn'}}"
+          [routerLink]="['..', 'learn']"
+          *ngIf="latestLearnerResult != null"
         >
           Continue learning
         </a>

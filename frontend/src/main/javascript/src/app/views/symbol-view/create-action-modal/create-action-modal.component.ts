@@ -22,6 +22,7 @@ import { Action } from '../../../entities/actions/action';
 import { AppStoreService } from '../../../services/app-store.service';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormGroup } from '@angular/forms';
 
 /**
  * The component for the modal dialog that handles the creation of a new action.
@@ -45,10 +46,13 @@ export class CreateActionModalComponent {
   /** The model of the action to create. */
   action: Action;
 
+  show: string;
+
   constructor(private actionService: ActionService,
               private symbolApi: SymbolApiService,
               private appStore: AppStoreService,
               public modal: NgbActiveModal) {
+    this.show = 'web';
     this.action = null;
     this.symbols = [];
     this.actions = {

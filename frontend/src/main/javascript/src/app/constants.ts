@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export const learnAlgorithm = {
+export const learningAlgorithm = {
   LSTAR: 'LSTAR',
   DHC: 'DHC',
   DT: 'DT',

@@ -1,9 +1,11 @@
 <div class="view">
 
   <action-bar>
-    <button (click)="saveChanges()" class="btn btn-success btn-sm float-right">
-      Save
-    </button>
+    <div class="d-flex flex-row">
+      <button (click)="saveChanges()" class="btn btn-success btn-sm ml-auto">
+        Save
+      </button>
+    </div>
   </action-bar>
 
   <div *ngIf="symbol != null" class="view-body has-sub-nav">
@@ -17,7 +19,7 @@
           <strong>Description</strong>
           <p class="text-muted" style="white-space:pre-wrap;">{{symbol.description}}</p>
           <strong>Expected result</strong>
-          <p class="text-muted mb-0 pb-0" style="white-space:pre-wrap;">{{symbol.expectedResult}}</p>
+          <p class="text-muted mb-0 pb-0" style="white-space: pre-wrap;">{{symbol.expectedResult}}</p>
         </div>
       </div>
 
@@ -26,15 +28,11 @@
           <strong>Actions</strong>
         </div>
         <div class="px-3 py-2 border-bottom d-flex flex-row align-items-center">
-          <div>
-            <selectable-checkbox-multiple
-              *ngIf="selectedSteps != null"
-              [selectable]="selectedSteps"
-              class="float-left"
-              style="margin-top: 7px"
-            >
-            </selectable-checkbox-multiple>
-          </div>
+          <selectable-checkbox-multiple
+            *ngIf="selectedSteps != null"
+            [selectable]="selectedSteps"
+          >
+          </selectable-checkbox-multiple>
           <div class="w-100 ml-3">
 
             <div class="btn-group btn-group-sm mr-2" ngbDropdown>
@@ -54,14 +52,14 @@
             <div class="btn-group btn-group-sm mr-2">
               <button
                 (click)="editSelectedAction()"
-                [ngClass]="{'disabled': selectedSteps.getSelected().length !== 1}"
+                [disabled]="selectedSteps.getSelected().length !== 1"
                 class="btn btn-default"
               >
                 Edit
               </button>
               <button
                 (click)="deleteSelectedSteps()"
-                [ngClass]="{'disabled': selectedSteps.getSelected().length === 0}"
+                [disabled]="selectedSteps.getSelected().length === 0"
                 class="btn btn-default"
               >
                 Delete
@@ -69,10 +67,10 @@
             </div>
 
             <div class="btn-group btn-group-sm">
-              <button (click)="copySelectedSteps()" class="btn btn-default" ngbTooltip="Copy" placement="bottom" >
+              <button (click)="copySelectedSteps()" class="btn btn-default" ngbTooltip="Copy" placement="bottom" [disabled]="selectedSteps.getSelected().length === 0">
                 <i class="fas fa-copy fa-fw"></i>
               </button>
-              <button (click)="cutSelectedSteps()" class="btn btn-default" ngbTooltip="Cut" placement="bottom" >
+              <button (click)="cutSelectedSteps()" class="btn btn-default" ngbTooltip="Cut" placement="bottom" [disabled]="selectedSteps.getSelected().length === 0">
                 <i class="fas fa-cut fa-fw"></i>
               </button>
               <button (click)="pasteSteps()" class="btn btn-default" ngbTooltip="Paste" placement="bottom">
@@ -81,9 +79,14 @@
             </div>
           </div>
         </div>
-        <div class="card-body" style="padding: 0">
-          <div (dragulaModelChange)="symbol.steps = $event" *ngIf="symbol.steps.length > 0" [dragulaModel]="symbol.steps" class="action-list"
-               dragula="STEPS">
+        <div class="card-body p-0">
+          <div
+            class="action-list"
+            dragula="STEPS"
+            [dragulaModel]="symbol.steps"
+            (dragulaModelChange)="symbol.steps = $event"
+            *ngIf="symbol.steps.length > 0"
+          >
             <div
               class="action-list-item"
               [ngClass]="{'disabled': step.disabled}"
@@ -109,33 +112,31 @@
                     {{step.action.toString()}}
                   </div>
                   <div *ngIf="step.type === 'symbol'" class="symbol-description">
-                                        <span class="symbol-description">
-                                            Execute symbol
-                                            <a
-                                              href="{{'/app/projects/' + project.id + '/symbols/' + step.pSymbol.symbol.id}}">
-                                                <strong>{{step.pSymbol.symbol.name}}</strong>
-                                            </a>
-                                        </span>
+                    <span class="symbol-description">
+                      Execute symbol
+                      <a [routerLink]="['..', step.pSymbol.symbol.id]">
+                        <strong>{{step.pSymbol.symbol.name}}</strong>
+                      </a>
+                    </span>
                     <br>
                     <symbol-parameters [parameterValues]="step.pSymbol.parameterValues"></symbol-parameters>
                   </div>
 
                   <div class="step-labels">
-                    <span *ngIf="step.negated" class="badge badge-info">Negate</span>
+                    <span *ngIf="step.negated" class="badge badge-info mr-1">Negate</span>
                     <span *ngIf="step.ignoreFailure" class="badge badge-danger">Ignore Failure</span>
                   </div>
                   <div class="step-output text-muted d-flex">
-                    <div style="flex-shrink: 0">
+                    <div class="flex-shrink-0">
                       <em>Output on error:&nbsp;</em>
                     </div>
-                    <div class="w-100 input-parameter-value" style="position: relative">
-                      <i (click)="step.errorOutput = null"
-                         class="fas fa-fw fa-times cursor-pointer"></i>
+                    <div class="w-100 input-parameter-value position-relative">
+                      <i (click)="step.errorOutput = null" class="fas fa-fw fa-times cursor-pointer"></i>
                       <em>
                         <input
                           [(ngModel)]="step.errorOutput"
+                          [placeholder]="'Failed' + (i + 1)"
                           class="w-100 d-block"
-                          placeholder="Failed ({{i + 1}})"
                           type="text"
                         >
                       </em>

@@ -35,10 +35,10 @@ export class SearchFormComponent {
   itemsFn: () => any[];
 
   @Input()
-  displayFn: () => any;
+  displayFn: (item: any) => any;
 
   @Input()
-  searchFn: () => any;
+  searchFn: (item: any, prop: any) => any;
 
   /** If the input element has been focused. */
   public focused: boolean;
@@ -85,7 +85,7 @@ export class SearchFormComponent {
    */
   updateItemList(): void {
     const items = this.itemsFn();
-    this.itemList = items.filter(item => this.searchFn()(item, this.value));
+    this.itemList = items.filter(item => this.searchFn(item, this.value));
   }
 
   private handleClick(e): void {

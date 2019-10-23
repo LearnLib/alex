@@ -15,24 +15,24 @@
  */
 
 import { Pipe, PipeTransform } from '@angular/core';
-import { learnAlgorithm } from '../constants';
+import { learningAlgorithm } from '../constants';
 
 @Pipe({
   name: 'formatLearningAlgorithm'
 })
 export class FormatLearningAlgorithmPipe implements PipeTransform {
 
-  transform(value: string): string {
+  transform(name: string): string {
     switch (name) {
-      case learnAlgorithm.LSTAR:
+      case learningAlgorithm.LSTAR:
         return 'L*';
-      case learnAlgorithm.DHC:
+      case learningAlgorithm.DHC:
         return 'DHC';
-      case learnAlgorithm.TTT:
+      case learningAlgorithm.TTT:
         return 'TTT';
-      case learnAlgorithm.DT:
+      case learningAlgorithm.DT:
         return 'Discrimination Tree';
-      case learnAlgorithm.KEARNS_VAZIRANI:
+      case learningAlgorithm.KEARNS_VAZIRANI:
         return 'Kearns Vazirani';
       default:
         return name;
