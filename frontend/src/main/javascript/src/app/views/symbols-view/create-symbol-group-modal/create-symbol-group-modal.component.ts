@@ -16,7 +16,7 @@
 
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { Project } from '../../../entities/project';
-import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
+import { SymbolGroupApiService } from '../../../services/api/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { AppStoreService } from '../../../services/app-store.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';

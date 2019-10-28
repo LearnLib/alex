@@ -2,16 +2,25 @@
   <h4>{{text}}</h4>
 </div>
 
-<form (ngSubmit)="accept()">
+<form [formGroup]="form" (ngSubmit)="accept()">
 
   <div class="modal-body">
-    <div class="form-group">
-      <input [(ngModel)]="input" class="form-control" name="input" required type="text">
+    <div class="form-group mb-0">
+      <input
+        [formControl]="form.controls.input"
+        [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.input)"
+        class="form-control"
+        name="input"
+        type="text"
+      >
+      <div class="invalid-feedback">
+        Please enter a value.
+      </div>
     </div>
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-primary btn-sm" type="submit">Ok</button>
+    <button class="btn btn-primary btn-sm" type="submit" [disabled]="form.invalid">Ok</button>
     <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">Cancel</button>
   </div>
 

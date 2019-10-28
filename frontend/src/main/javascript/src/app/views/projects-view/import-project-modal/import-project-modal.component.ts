@@ -15,7 +15,7 @@
  */
 
 import { Component } from '@angular/core';
-import { ProjectApiService } from '../../../services/resources/project-api.service';
+import { ProjectApiService } from '../../../services/api/project-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormControl, FormGroup, Validators } from '@angular/forms';

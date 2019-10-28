@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { WebhookApiService } from '../../services/resources/webhook-api.service';
+import { WebhookApiService } from '../../services/api/webhook-api.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Webhook } from '../../entities/webhook';
 import { Selectable } from '../../utils/selectable';

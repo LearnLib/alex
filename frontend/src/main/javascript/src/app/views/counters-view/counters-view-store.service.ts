@@ -17,18 +17,21 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Counter } from '../../entities/counter';
-import { CounterApiService } from '../../services/resources/counter-api.service';
+import { CounterApiService } from '../../services/api/counter-api.service';
 import { AppStoreService } from '../../services/app-store.service';
 import { Selectable } from '../../utils/selectable';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastService } from '../../services/toast.service';
 import { CreateCounterModalComponent } from './create-counter-modal/create-counter-modal.component';
+import { map } from 'rxjs/operators';
+import { orderBy } from 'lodash';
 
 @Injectable()
 export class CountersViewStoreService {
 
-  public countersSelectable: Selectable<Counter>;
   private counters: BehaviorSubject<Counter[]>;
+
+  countersSelectable: Selectable<Counter>;
 
   constructor(private appStore: AppStoreService,
               private counterApi: CounterApiService,
@@ -40,6 +43,12 @@ export class CountersViewStoreService {
 
   get counters$(): Observable<Counter[]> {
     return this.counters.asObservable();
+  }
+
+  get orderedCounters$(): Observable<Counter[]> {
+    return this.counters.pipe(
+      map(counters => orderBy(counters, ['name']))
+    );
   }
 
   load(): void {
@@ -79,7 +88,7 @@ export class CountersViewStoreService {
         this.counters.next(counters);
         this.countersSelectable.update(updatedCounter);
       },
-      err => this.toastService.danger(`The counter could not be updated. ${err.data.message}`)
+      res => this.toastService.danger(`The counter could not be updated. ${res.error.message}`)
     );
   }
 

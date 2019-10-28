@@ -16,7 +16,7 @@
 
 import { actionType } from '../../../constants';
 import { ActionService } from '../../../services/action.service';
-import { SymbolApiService } from '../../../services/resources/symbol-api.service';
+import { SymbolApiService } from '../../../services/api/symbol-api.service';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { Action } from '../../../entities/actions/action';
 import { AppStoreService } from '../../../services/app-store.service';

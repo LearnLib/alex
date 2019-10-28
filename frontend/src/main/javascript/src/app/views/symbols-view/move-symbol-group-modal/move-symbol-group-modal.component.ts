@@ -15,7 +15,7 @@
  */
 
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
-import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
+import { SymbolGroupApiService } from '../../../services/api/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { EventBus } from '../../../services/eventbus.service';
 import { SymbolGroup } from '../../../entities/symbol-group';

@@ -1,16 +1,11 @@
+:host,
 .hypothesis-wrapper,
-.discrimination-tree-wrapper {
-  position: absolute;
-  top: 0;
+.hypothesis {
   width: 100%;
-  bottom: 0;
-  overflow: hidden;
-  background: #fff;
+  height: 100%;
 }
 
 .hypothesis {
-  width: 100%;
-
   .edgePath {
     &.selected {
       > .path {

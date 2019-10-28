@@ -1,26 +1,5 @@
 /*
- * Quickly position an element and set the properties top, right, bottom, left in this order
- * Use 'null' (without apostrophes) to not set a direction property
- */
-@mixin position($type, $top, $right, $bottom, $left) {
-  position: $type;
-
-  @if ($top != null) {
-    top: $top;
-  }
-  @if ($right != null) {
-    right: $right;
-  }
-  @if ($bottom != null) {
-    bottom: $bottom;
-  }
-  @if ($left != null) {
-    left: $left;
-  }
-}
-
-/*
- * Mixin for ... text overflow.
+ * Mixin for text overflow.
  * Element should have display: block|inline-block.
  */
 @mixin text-overflow-ellipsis() {

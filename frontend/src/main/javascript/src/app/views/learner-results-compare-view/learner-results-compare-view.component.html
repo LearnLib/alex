@@ -1,6 +1,7 @@
-<div class="view results-compare-view">
+<div class="view">
+
   <action-bar>
-    <div class="d-flex flex-row">
+    <div class="d-flex flex-row align-items-center">
       <div *ngIf="panels.length === 2">
         <button
           (click)="showSeparatingWord()"
@@ -20,34 +21,35 @@
       <button
         (click)="openResultListModal()"
         *ngIf="panels.length < 3"
-        class="btn btn-sm btn-success"
+        class="btn btn-sm btn-success ml-auto"
       >
         <i class="fas fa-fw fa-plus"></i> Add hypothesis
       </button>
     </div>
   </action-bar>
 
-  <div class="learn-results-compare-wrapper d-flex flex-row h-100">
+  <div class="view-body p-0">
 
     <div *ngIf="panels.length === 0" class="container">
-      <p></p>
-      <div (click)="openResultListModal()" class="alert alert-info">
-        <i class="fas fa-plus-square fa-fw"></i>
+      <div (click)="openResultListModal()" class="alert alert-info m-3">
+        <i class="fas fa-plus-square fa-fw mr-2"></i>
         <strong>Click to add a hypothesis</strong> or click on the green button on the top right
       </div>
     </div>
 
-    <div *ngFor="let result of panels; let i = index" class="w-100">
-      <learner-result-panel
-        (step)="onStep(i, $event)"
-        [index]="i"
-        [result]="result"
-        class="w-100"
-      >
-        <button (click)="closePanel(i)" class="btn btn-sm btn-danger learn-result-panel-close-button">
-          <i class="fas fa-times"></i>
-        </button>
-      </learner-result-panel>
+    <div class="d-flex flex-row h-100" *ngIf="panels.length > 0">
+      <div *ngFor="let result of panels; let i = index" class="w-100">
+        <learner-result-panel
+          (step)="onStep(i, $event)"
+          [result]="result"
+        >
+          <button (click)="closePanel(i)" class="btn btn-sm btn-danger learn-result-panel-close-button ml-2">
+            <i class="fas fa-times"></i>
+          </button>
+        </learner-result-panel>
+      </div>
     </div>
+
   </div>
+
 </div>

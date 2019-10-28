@@ -16,6 +16,8 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({
   selector: 'prompt-modal',
@@ -25,23 +27,32 @@ export class PromptModalComponent implements OnInit {
 
   /** The text to display. */
   @Input()
-  public text: string;
+  text: string;
 
   /** The value to display when the dialog is opened. */
   @Input()
-  public defaultValue: string;
+  defaultValue: string;
 
-  /** The model for the input field for the user input. */
-  public input: string;
+  @Input()
+  validators: ValidatorFn[];
 
-  constructor(public modal: NgbActiveModal) {
+  form = new FormGroup({
+    input: new FormControl('', [])
+  });
+
+  constructor(public modal: NgbActiveModal,
+              public formUtils: FormUtilsService) {
+    this.validators = [];
   }
 
   ngOnInit(): void {
-    this.input = this.defaultValue;
+    const validators = [...this.validators, Validators.required];
+
+    this.form.controls.input.setValue(this.defaultValue != null ? this.defaultValue : '');
+    this.form.controls.input.setValidators(validators);
   }
 
   accept(): void {
-    this.modal.close(this.input.trim());
+    this.modal.close(this.form.controls.input.value.trim());
   }
 }

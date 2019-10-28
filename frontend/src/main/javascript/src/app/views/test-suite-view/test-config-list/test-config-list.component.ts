@@ -15,8 +15,8 @@
  */
 
 import { remove } from 'lodash';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { TestConfigApiService } from '../../../services/resources/test-config-api.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { TestConfigApiService } from '../../../services/api/test-config-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { AppStoreService } from '../../../services/app-store.service';
 import { Project } from '../../../entities/project';
@@ -26,7 +26,7 @@ import { Project } from '../../../entities/project';
   templateUrl: './test-config-list.component.html',
   styleUrls: ['./test-config-list.component.scss']
 })
-export class TestConfigListComponent {
+export class TestConfigListComponent implements OnInit {
 
   @Input()
   public configs: any[];
@@ -43,8 +43,9 @@ export class TestConfigListComponent {
     this.selected = new EventEmitter<any>();
   }
 
-  get project(): Project {
-    return this.appStore.project;
+  ngOnInit(): void {
+    const i = this.configs.findIndex(c => c.default);
+    if (i > -1) this.selectConfig(this.configs[i]);
   }
 
   selectConfig(config: any): void {
@@ -63,5 +64,19 @@ export class TestConfigListComponent {
         this.toastService.success('The test config has been deleted.');
       }
     );
+  }
+
+  makeConfigDefault(config: any): void {
+    const cfg = JSON.parse(JSON.stringify(config));
+    cfg.default = true;
+    this.testConfigApi.update(config.project, cfg).subscribe(updatedConfig => {
+        this.configs.forEach(c => c.default = false);
+        const i = this.configs.findIndex(c => c.id === config.id);
+        this.configs[i] = updatedConfig;
+      });
+  }
+
+  get project(): Project {
+    return this.appStore.project;
   }
 }

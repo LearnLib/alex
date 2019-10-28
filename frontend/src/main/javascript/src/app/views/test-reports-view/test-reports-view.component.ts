@@ -16,7 +16,7 @@
 
 import { remove } from 'lodash';
 import { Selectable } from '../../utils/selectable';
-import { TestReportApiService } from '../../services/resources/test-report-api.service';
+import { TestReportApiService } from '../../services/api/test-report-api.service';
 import { ToastService } from '../../services/toast.service';
 import { TestReportService } from '../../services/test-report.service';
 import { Project } from '../../entities/project';

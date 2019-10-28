@@ -5,10 +5,16 @@
     class="list-group-item d-flex flex-row"
   >
     <div (click)="selectConfig(config)" class="w-100 cursor-pointer text-wrap">
-      <strong>{{config.driverConfig.name | formatWebBrowser}}</strong> <span>({{config.driverConfig.width}}
-      x {{config.driverConfig.height}})</span>
+      <strong>{{config.driverConfig.name | formatWebBrowser}}</strong>
+
+      <span class="pl-1 default" [class.is-default]="config.default">
+        <span class="badge badge-default cursor-pointer" (click)="makeConfigDefault(config)" *ngIf="!config.default">Default</span>
+        <span class="badge badge-primary" *ngIf="config.default">Default</span>
+      </span>
+
+      <span> ({{config.driverConfig.width}} x {{config.driverConfig.height}})</span>
       <div>
-        <span class="badge badge-default">
+        <span class="badge badge-secondary">
             {{project.getEnvironmentById(config.environment).name}}
         </span>
       </div>

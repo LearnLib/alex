@@ -17,7 +17,7 @@
 import { TestCaseStep } from '../../../../entities/test-case-step';
 import { LearnerResult } from '../../../../entities/learner-result';
 import { EventBus } from '../../../../services/eventbus.service';
-import { TestApiService } from '../../../../services/resources/test-api.service';
+import { TestApiService } from '../../../../services/api/test-api.service';
 import { ToastService } from '../../../../services/toast.service';
 import { Project } from '../../../../entities/project';
 import { TestCase } from '../../../../entities/test-case';

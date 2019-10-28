@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
+import { LearnerResultApiService } from '../../../services/api/learner-result-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { LearnerResult } from '../../../entities/learner-result';
 import { Project } from '../../../entities/project';
-import { ProjectApiService } from '../../../services/resources/project-api.service';
+import { ProjectApiService } from '../../../services/api/project-api.service';
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 

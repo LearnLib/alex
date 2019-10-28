@@ -15,7 +15,7 @@
  */
 
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
-import { SymbolApiService } from '../../../services/resources/symbol-api.service';
+import { SymbolApiService } from '../../../services/api/symbol-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { EventBus } from '../../../services/eventbus.service';
 import { Component, Input } from '@angular/core';

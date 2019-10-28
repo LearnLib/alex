@@ -20,7 +20,7 @@ import { User } from '../../entities/user';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AppStoreService } from '../../services/app-store.service';
 import { ToastService } from '../../services/toast.service';
-import { UserApiService } from '../../services/resources/user-api.service';
+import { UserApiService } from '../../services/api/user-api.service';
 import { PromptService } from '../../services/prompt.service';
 
 @Component({

@@ -24,10 +24,6 @@
   }
 }
 .btn-default:active:hover,
-.btn-default.active:hover,
-.btn-default:active:focus,
-.btn-default.active:focus,
-.btn-default:active.focus,
 .btn-default.active.focus {
   color: #333;
   background-color: #d4d4d4;
@@ -44,88 +40,4 @@ fieldset[disabled] .btn-default:focus,
 fieldset[disabled] .btn-default.focus {
   background-color: #fff;
   border-color: #ccc;
-}
-
-
-/* extra small button from bs3. */
-.btn-xs,
-.btn-group-xs > .btn {
-  padding: 1px 5px;
-  font-size: 12px;
-  line-height: 1.5;
-  border-radius: 3px;
-}
-
-
-/* compat for bs3 collapse menus. */
-.collapse[aria-expanded="true"] {
-  display: block;
-}
-
-
-/* display dropdown menus. */
-.dropdown.open .dropdown-menu {
-  display: block;
-}
-
-
-/* like label-default from bs3. */
-.badge-default {
-  background-color: #777777;
-  color: #fff;
-}
-.badge-default[href]:hover,
-.badge-default[href]:focus {
-  background-color: #5e5e5e;
-  color: #fff;
-}
-
-
-/* display modal dialogs. */
-.modal-content {
-  margin-top: 70px;
-}
-.modal.fade.in {
-  display: block;
-  opacity: 1;
-  background: rgba(0,0,0,.75);
-}
-
-
-/* get panel and accordion from bs3 back. */
-.panel {
-  @extend .card;
-}
-.panel-heading {
-  @extend .card-header;
-}
-.panel-body {
-  @extend .card-body;
-}
-uib-accordion {
-  .panel-title {
-    margin: 0;
-
-    a {
-      color: #212529;
-      &:hover {
-        text-decoration: none;
-      }
-    }
-  }
-}
-
-
-/* make active tabs look normal. */
-.nav.nav-tabs .nav-item.active .nav-link {
-  color: #495057;
-  background-color: #fff;
-  border-color: #dee2e6 #dee2e6 #fff;
-}
-
-
-/* display tooltips. */
-.tooltip.fade.in {
-  display: block;
-  opacity: 1;
 }

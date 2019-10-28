@@ -15,9 +15,9 @@
  */
 
 import { LearnerResult } from '../../../../entities/learner-result';
-import { LearnerResultApiService } from '../../../../services/resources/learner-result-api.service';
+import { LearnerResultApiService } from '../../../../services/api/learner-result-api.service';
 import { ToastService } from '../../../../services/toast.service';
-import { TestApiService } from '../../../../services/resources/test-api.service';
+import { TestApiService } from '../../../../services/api/test-api.service';
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({

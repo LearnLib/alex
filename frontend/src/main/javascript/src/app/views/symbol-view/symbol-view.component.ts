@@ -19,10 +19,10 @@ import { AlphabetSymbol } from '../../entities/alphabet-symbol';
 import { ParametrizedSymbol } from '../../entities/parametrized-symbol';
 import { ClipboardMode, ClipboardService } from '../../services/clipboard.service';
 import { Selectable } from '../../utils/selectable';
-import { SymbolApiService } from '../../services/resources/symbol-api.service';
+import { SymbolApiService } from '../../services/api/symbol-api.service';
 import { ToastService } from '../../services/toast.service';
 import { ActionService } from '../../services/action.service';
-import { SymbolGroupApiService } from '../../services/resources/symbol-group-api.service';
+import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
 import { SymbolGroup } from '../../entities/symbol-group';
 import { Project } from '../../entities/project';
 import { Action } from '../../entities/actions/action';
@@ -42,7 +42,8 @@ import { DragulaService } from 'ng2-dragula';
  */
 @Component({
   selector: 'symbol-view',
-  templateUrl: './symbol-view.component.html'
+  templateUrl: './symbol-view.component.html',
+  styleUrls: ['./symbol-view.component.scss']
 })
 export class SymbolViewComponent implements OnInit, OnDestroy {
 

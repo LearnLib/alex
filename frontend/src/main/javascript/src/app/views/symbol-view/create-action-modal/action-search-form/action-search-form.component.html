@@ -1,8 +1,8 @@
 <search-form
   (selected)="selectAction($event)"
-  [displayFn]="displayAction"
-  [itemsFn]="getActions()"
+  [displayFn]="displayAction.bind(this)"
+  [itemsFn]="getActions.bind(this)"
+  [searchFn]="filterAction.bind(this)"
   [placeholder]="'Search an action'"
-  [searchFn]="filterAction"
 >
 </search-form>

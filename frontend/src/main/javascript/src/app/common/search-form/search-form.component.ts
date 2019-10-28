@@ -21,7 +21,8 @@ import { Component, ElementRef, EventEmitter, Input, Output } from '@angular/cor
  */
 @Component({
   selector: 'search-form',
-  templateUrl: './search-form.component.html'
+  templateUrl: './search-form.component.html',
+  styleUrls: ['./search-form.component.scss']
 })
 export class SearchFormComponent {
 
@@ -91,7 +92,7 @@ export class SearchFormComponent {
   private handleClick(e): void {
     let target = e.target;
     while (target !== document.body) {
-      if (target === this.element.nativeElement[0]) {
+      if (target === this.element.nativeElement) {
         return;
       }
       target = target.parentNode;

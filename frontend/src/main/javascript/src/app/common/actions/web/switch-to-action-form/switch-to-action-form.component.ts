@@ -15,6 +15,7 @@
  */
 
 import { Component, Input } from '@angular/core';
+import { SwitchToAction } from '../../../../entities/actions/web/switch-to-action';
 
 @Component({
   selector: 'switch-to-action-form',
@@ -22,5 +23,5 @@ import { Component, Input } from '@angular/core';
 })
 export class SwitchToActionFormComponent {
 
-  @Input() action: SwitchToActionFormComponent;
+  @Input() action: SwitchToAction;
 }

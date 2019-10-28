@@ -16,7 +16,7 @@
 
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { User } from '../../../entities/user';
-import { UserApiService } from '../../../services/resources/user-api.service';
+import { UserApiService } from '../../../services/api/user-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { PromptService } from '../../../services/prompt.service';
 import { AppStoreService } from '../../../services/app-store.service';
@@ -53,6 +53,10 @@ export class EditUserModalComponent implements OnInit {
               public modal: NgbActiveModal) {
     this.updated = new EventEmitter<User>();
     this.deleted = new EventEmitter<User>();
+
+    this.form = new FormGroup({
+      'email': new FormControl('', [Validators.required, Validators.email])
+    });
   }
 
   get currentUser(): User {
@@ -60,9 +64,7 @@ export class EditUserModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form = new FormGroup({
-      'email': new FormControl(this.user.email, [Validators.required, Validators.email])
-    });
+    this.form.controls.email.setValue(this.user.email);
   }
 
   /**

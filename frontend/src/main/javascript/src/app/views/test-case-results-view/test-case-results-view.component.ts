@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TestApiService } from '../../services/resources/test-api.service';
+import { TestApiService } from '../../services/api/test-api.service';
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, OnInit } from '@angular/core';

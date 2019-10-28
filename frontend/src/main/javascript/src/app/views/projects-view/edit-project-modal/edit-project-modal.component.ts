@@ -18,7 +18,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Project } from '../../../entities/project';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ProjectApiService } from '../../../services/resources/project-api.service';
+import { ProjectApiService } from '../../../services/api/project-api.service';
 
 @Component({
   selector: 'edit-project-modal',

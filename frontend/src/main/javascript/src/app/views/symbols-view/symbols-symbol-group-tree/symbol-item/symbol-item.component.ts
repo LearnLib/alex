@@ -20,7 +20,8 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'symbol-item',
-  templateUrl: './symbol-item.component.html'
+  templateUrl: './symbol-item.component.html',
+  styleUrls: ['./symbol-item.component.scss']
 })
 export class SymbolItemComponent {
 

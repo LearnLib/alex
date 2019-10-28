@@ -15,7 +15,7 @@
  */
 
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
-import { SymbolApiService } from '../../../services/resources/symbol-api.service';
+import { SymbolApiService } from '../../../services/api/symbol-api.service';
 import { SymbolUsageResult } from '../../../entities/symbol-usage-result';
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';

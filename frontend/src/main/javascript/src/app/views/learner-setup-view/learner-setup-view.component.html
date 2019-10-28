@@ -63,13 +63,13 @@
         <div class="col-md-4 col-lg-6">
 
           <h5><strong>Pre</strong></h5>
-          <hr class="hr-small">
+          <hr class="hr-sm">
           <div *ngIf="pResetSymbol == null" class="alert alert-info d-flex flex-row">
             <div class="w-100">
               Select a reset symbol <em>(required)</em>
             </div>
             <div class="flex-shrink-0">
-              <button (click)="selectResetSymbol()" class="btn btn-xs btn-info float-right flex-shrink-0">
+              <button (click)="selectResetSymbol()" class="btn btn-sm btn-info float-right flex-shrink-0">
                 Select symbol
               </button>
             </div>
@@ -87,7 +87,7 @@
                 </symbol-parameters>
               </div>
               <div class="flex-shrink-0">
-                <button (click)="selectResetSymbol()" class="btn btn-xs btn-default">
+                <button (click)="selectResetSymbol()" class="btn btn-sm btn-default">
                   Select symbol
                 </button>
               </div>
@@ -95,7 +95,7 @@
           </div>
 
           <h5 style="margin-top: 3rem"><strong>Input alphabet</strong></h5>
-          <hr class="hr-small">
+          <hr class="hr-sm">
           <div *ngIf="pSymbols.length > 0" class="list-group">
             <div *ngFor="let pSymbol of pSymbols; let i = index"
                  class="list-group-item d-flex flex-row">
@@ -117,13 +117,13 @@
           </div>
 
           <h5 style="margin-top: 3rem"><strong>Post</strong></h5>
-          <hr class="hr-small">
+          <hr class="hr-sm">
           <div *ngIf="pPostSymbol == null" class="alert alert-info d-flex flex-row">
             <div class="w-100">
               Select a post symbol <em>(optional)</em>
             </div>
             <div class="flex-shrink-0">
-              <button (click)="selectPostSymbol()" class="btn btn-xs btn-info float-right flex-shrink-0">
+              <button (click)="selectPostSymbol()" class="btn btn-sm btn-info float-right flex-shrink-0">
                 Select symbol
               </button>
             </div>
@@ -141,7 +141,7 @@
                 </symbol-parameters>
               </div>
               <div class="flex-shrink-0">
-                <div class="btn btn-group btn-group-xs">
+                <div class="btn btn-group btn-group-sm">
                   <button (click)="selectPostSymbol()" class="btn btn-default">
                     Select symbol
                   </button>
@@ -174,12 +174,12 @@
                   </em>
                 </div>
                 <div>
-                  <span *ngFor="let env of result.environments" class="badge badge-default mr-1">{{env.name}}</span>
+                  <span *ngFor="let env of result.environments" class="badge badge-secondary mr-1">{{env.name}}</span>
                 </div>
               </div>
             </div>
             <div *ngIf="learnResults.length === 0" class="card-body p-0">
-              <div class="alert alert-info mb-0">
+              <div class="alert alert-info mb-0 no-border-radius">
                 There are no learner results yet.
               </div>
             </div>

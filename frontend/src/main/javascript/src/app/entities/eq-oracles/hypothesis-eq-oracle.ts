@@ -29,7 +29,7 @@ export class HypothesisEqOracle extends EqOracle {
    *
    * @param hypothesis
    */
-  constructor(public hypothesis = {}) {
+  constructor(public hypothesis: any = {}) {
     super();
   }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FileApiService } from '../../../../services/resources/file-api.service';
+import { FileApiService } from '../../../../services/api/file-api.service';
 import { Project } from '../../../../entities/project';
 import { AppStoreService } from '../../../../services/app-store.service';
 

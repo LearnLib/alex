@@ -1,12 +1,11 @@
 <div class="view view-test-case-results">
-  <action-bar></action-bar>
   <div class="view-body">
     <div class="container-fluid">
 
       <div>
         <h4 class="m-0">
-          <i class="fas fa-fw fa-file-alt"></i>
-          <a [routerLink]="['/app', 'projects', project.id, 'tests', test.id]">{{test.name}}</a>
+          <i class="fas fa-fw fa-file-alt mr-1"></i>
+          <a [routerLink]="['/app', 'projects', project.id, 'tests', test?.id]">{{test?.name}}</a>
         </h4>
       </div>
       <hr>
@@ -37,7 +36,7 @@
             <td>
               <em *ngIf="result.failureMessage">{{result.failureMessage}}</em>
             </td>
-            <td width="70">
+            <td width="100">
               {{result.time | formatMilliseconds}}
             </td>
           </tr>

@@ -16,7 +16,7 @@
 
 import { remove } from 'lodash';
 import { Injectable } from '@angular/core';
-import { LtsFormulaApiService } from '../../services/resources/lts-formula-api.service';
+import { LtsFormulaApiService } from '../../services/api/lts-formula-api.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Selectable } from '../../utils/selectable';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

@@ -15,9 +15,9 @@
  */
 
 import { LearnerResult } from '../../entities/learner-result';
-import { LearnerApiService } from '../../services/resources/learner-api.service';
+import { LearnerApiService } from '../../services/api/learner-api.service';
 import { ToastService } from '../../services/toast.service';
-import { LearnerResultApiService } from '../../services/resources/learner-result-api.service';
+import { LearnerResultApiService } from '../../services/api/learner-result-api.service';
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { ErrorViewStoreService } from '../error-view/error-view-store.service';
@@ -69,8 +69,10 @@ export class LearnerResultsCompareViewComponent implements OnInit {
         results => {
           this.results = results;
           this.panels = results.filter((r) => {
-            return resultIds.indexOf('' + r.id.toString()) > -1;
+            return resultIds.indexOf(r.testNo.toString()) > -1;
           });
+
+          console.log()
         },
         console.error
       );
@@ -119,7 +121,7 @@ export class LearnerResultsCompareViewComponent implements OnInit {
           modalRef.componentInstance.result2 = this.panels[1];
         }
       },
-      err => this.toastService.danger(err.data.message)
+      res => this.toastService.danger(res.error.message)
     );
   }
 
@@ -138,7 +140,7 @@ export class LearnerResultsCompareViewComponent implements OnInit {
           this.panels.push(<any>{hypothesis: data, steps: [{hypothesis: data}]});
         }
       },
-      err => this.toastService.danger(err.data.message)
+      res => this.toastService.danger(res.error.message)
     );
   }
 

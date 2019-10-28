@@ -17,7 +17,7 @@
 import { Component, Input } from '@angular/core';
 import { ProjectEnvironment } from '../../../entities/project-environment';
 import { ProjectEnvironmentVariable } from '../../../entities/project-environment-variable';
-import { ProjectEnvironmentApiService } from '../../../services/resources/project-environment-api.service';
+import { ProjectEnvironmentApiService } from '../../../services/api/project-environment-api.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormUtilsService } from '../../../services/form-utils.service';

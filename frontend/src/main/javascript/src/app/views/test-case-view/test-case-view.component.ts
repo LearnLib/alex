@@ -18,10 +18,10 @@ import { webBrowser } from '../../constants';
 import { TestCaseStep } from '../../entities/test-case-step';
 import { DriverConfigService } from '../../services/driver-config.service';
 import { SymbolGroupUtils } from '../../utils/symbol-group-utils';
-import { SymbolGroupApiService } from '../../services/resources/symbol-group-api.service';
+import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
 import { ToastService } from '../../services/toast.service';
-import { TestApiService } from '../../services/resources/test-api.service';
-import { SettingsApiService } from '../../services/resources/settings-api.service';
+import { TestApiService } from '../../services/api/test-api.service';
+import { SettingsApiService } from '../../services/api/settings-api.service';
 import { SymbolGroup } from '../../entities/symbol-group';
 import { AlphabetSymbol } from '../../entities/alphabet-symbol';
 import { Project } from '../../entities/project';
@@ -30,6 +30,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExecutionResultModalComponent } from '../../common/modals/execution-result-modal/execution-result-modal.component';
 import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
+import { TestConfigApiService } from '../../services/api/test-config-api.service';
 
 @Component({
   selector: 'test-case-view',
@@ -59,6 +60,7 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
               private toastService: ToastService,
               private testApi: TestApiService,
               private modalService: NgbModal,
+              private testConfigApi: TestConfigApiService,
               private settingsApi: SettingsApiService) {
 
     this.testCase = null;
@@ -85,6 +87,14 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
       driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
       createReport: true
     };
+
+    this.testConfigApi.getAll(this.project.id).subscribe((configs: any[]) => {
+      const i = configs.findIndex(c => c.default);
+      if (i > -1) {
+        this.testConfig = configs[i];
+        this.testConfig.environment = this.project.getEnvironmentById(this.testConfig.environment);
+      }
+    });
 
     this.symbolGroupApi.getAll(this.project.id).subscribe(
       groups => {

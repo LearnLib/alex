@@ -18,7 +18,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'test-suite-tree',
-  templateUrl: './test-suite-tree.component.html'
+  templateUrl: './test-suite-tree.component.html',
+  styleUrls: ['./test-suite-tree.component.scss']
 })
 export class TestSuiteTreeComponent implements OnInit {
 

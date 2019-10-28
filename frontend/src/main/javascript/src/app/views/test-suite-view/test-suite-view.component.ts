@@ -19,16 +19,16 @@ import { webBrowser } from '../../constants';
 import { DriverConfigService } from '../../services/driver-config.service';
 import { DateUtils } from '../../utils/date-utils';
 import { Selectable } from '../../utils/selectable';
-import { SymbolGroupApiService } from '../../services/resources/symbol-group-api.service';
+import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
 import { ToastService } from '../../services/toast.service';
-import { TestApiService } from '../../services/resources/test-api.service';
+import { TestApiService } from '../../services/api/test-api.service';
 import { PromptService } from '../../services/prompt.service';
-import { SettingsApiService } from '../../services/resources/settings-api.service';
+import { SettingsApiService } from '../../services/api/settings-api.service';
 import { DownloadService } from '../../services/download.service';
 import { ClipboardService } from '../../services/clipboard.service';
 import { NotificationService } from '../../services/notification.service';
-import { TestConfigApiService } from '../../services/resources/test-config-api.service';
-import { TestReportApiService } from '../../services/resources/test-report-api.service';
+import { TestConfigApiService } from '../../services/api/test-config-api.service';
+import { TestReportApiService } from '../../services/api/test-report-api.service';
 import { Project } from '../../entities/project';
 import { SymbolGroup } from '../../entities/symbol-group';
 import { TestCase } from '../../entities/test-case';
@@ -113,7 +113,13 @@ export class TestSuiteViewComponent implements OnInit {
     );
 
     this.testConfigApi.getAll(this.project.id).subscribe(
-      testConfigs => this.testConfigs = testConfigs,
+      testConfigs => {
+        this.testConfigs = testConfigs;
+        const i = this.testConfigs.findIndex(c => c.default);
+        if (i > -1) {
+          this.testConfig = this.testConfigs[i];
+        }
+      },
       console.error
     );
 

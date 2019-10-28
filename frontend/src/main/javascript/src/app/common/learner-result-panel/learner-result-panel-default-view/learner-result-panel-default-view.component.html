@@ -1,5 +1,5 @@
-<div class="d-flex">
-  <div *ngIf="!result.steps[pointer].error && result.steps[pointer].hypothesis">
+<div class="d-flex h-100">
+  <ng-container *ngIf="!result.steps[pointer].error && result.steps[pointer].hypothesis">
     <hypothesis
       *ngIf="mode === modes.HYPOTHESIS"
       [data]="result.steps[pointer].hypothesis"
@@ -19,7 +19,7 @@
       [data]="result.steps[pointer].algorithmInformation"
     >
     </discrimination-tree>
-  </div>
+  </ng-container>
 
   <div *ngIf="!result.steps[pointer].hypothesis" class="container">
     <div class="alert alert-info mt-3">

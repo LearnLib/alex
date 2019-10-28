@@ -16,6 +16,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import { AdminUsersViewStoreService } from './admin-users-view-store.service';
+import { AppStoreService } from '../../services/app-store.service';
+import { User } from '../../entities/user';
 
 @Component({
   selector: 'app-admin-users-view',
@@ -24,10 +26,15 @@ import { AdminUsersViewStoreService } from './admin-users-view-store.service';
 })
 export class AdminUsersViewComponent implements OnInit {
 
-  constructor(public store: AdminUsersViewStoreService) {
+  constructor(public store: AdminUsersViewStoreService,
+              public appStore: AppStoreService) {
   }
 
   ngOnInit() {
     this.store.load();
+  }
+
+  get currentUser(): User {
+    return this.appStore.user;
   }
 }

@@ -16,7 +16,7 @@
   <div *ngIf="importData != null" class="alert alert-info mb-0">
     <i (click)="importData = null" class="fas fa-fw fa-times float-right cursor-pointer"></i>
     <span class="badge badge-primary">Tests</span> <br>
-    <span class="badge badge-default">{{importData.version}}</span>
+    <span class="badge badge-secondary">{{importData.version}}</span>
   </div>
 
   <div *ngIf="importData != null && importData.tests.length" class="list-group mt-3">

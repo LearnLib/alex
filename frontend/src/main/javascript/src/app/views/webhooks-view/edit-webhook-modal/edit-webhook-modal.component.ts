@@ -19,7 +19,7 @@ import { WebhooksViewStoreService } from '../webhooks-view-store.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup } from '@angular/forms';
 import { Webhook } from '../../../entities/webhook';
-import { WebhookApiService } from '../../../services/resources/webhook-api.service';
+import { WebhookApiService } from '../../../services/api/webhook-api.service';
 
 @Component({
   selector: 'edit-webhook-modal',

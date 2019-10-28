@@ -17,7 +17,7 @@
 import { remove } from 'lodash';
 import { AlphabetSymbol } from '../../entities/alphabet-symbol';
 import { Selectable } from '../../utils/selectable';
-import { SymbolApiService } from '../../services/resources/symbol-api.service';
+import { SymbolApiService } from '../../services/api/symbol-api.service';
 import { ToastService } from '../../services/toast.service';
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';

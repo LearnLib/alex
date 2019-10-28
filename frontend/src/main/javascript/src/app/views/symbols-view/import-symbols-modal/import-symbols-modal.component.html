@@ -17,7 +17,7 @@
     <i (click)="importData = null" class="fas fa-fw fa-times float-right cursor-pointer"></i>
     <span *ngIf="importData.type === 'symbols'" class="badge badge-primary">Symbols only</span>
     <span *ngIf="importData.type === 'symbolGroups'" class="badge badge-primary">Groups and symbols</span> <br>
-    <span class="badge badge-default">{{importData.version}}</span>
+    <span class="badge badge-secondary">{{importData.version}}</span>
   </div>
 
   <div *ngIf="importData != null && importData.type === 'symbols'">

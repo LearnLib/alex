@@ -59,6 +59,16 @@ export class TestConfigApiService extends BaseApiService {
     return this.http.delete(`${this.url(projectId)}/${configId}`, this.defaultHttpOptions);
   }
 
+  /**
+   * update a test config.
+   *
+   * @param projectId The id of the project.
+   * @param config The config to create.
+   */
+  update(projectId: number, config: any): Observable<any> {
+    return this.http.put(`${this.url(projectId)}/${config.id}`, config, this.defaultHttpOptions);
+  }
+
   private url(projectId: number) {
     return `${env.apiUrl}/projects/${projectId}/testConfigs`;
   }

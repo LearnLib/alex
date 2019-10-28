@@ -16,7 +16,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { Project } from '../../../entities/project';
-import { TestReportApiService } from '../../../services/resources/test-report-api.service';
+import { TestReportApiService } from '../../../services/api/test-report-api.service';
 
 @Component({
   selector: 'latest-test-report-widget',

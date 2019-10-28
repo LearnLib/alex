@@ -23,6 +23,7 @@ import { EqOracle } from '../../../entities/eq-oracles/eq-oracle';
 import { ProjectEnvironment } from '../../../entities/project-environment';
 import { Selectable } from '../../../utils/selectable';
 import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
 /**
  * The directive for the widget of the sidebar where learn resume configurations can be edited. Should be included
@@ -53,6 +54,8 @@ export class LearnerResumeSettingsWidgetComponent implements OnInit {
   selectedSymbol: AlphabetSymbol = null;
 
   selectedEnvironments: Selectable<ProjectEnvironment>;
+
+  form = new FormGroup({});
 
   ngOnInit(): void {
     this.selectedEnvironments = new Selectable<ProjectEnvironment>(this.project.environments, 'id');

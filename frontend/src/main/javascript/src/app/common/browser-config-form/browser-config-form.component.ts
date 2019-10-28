@@ -15,7 +15,7 @@
  */
 
 import { DriverConfigService } from '../../services/driver-config.service';
-import { SettingsApiService } from '../../services/resources/settings-api.service';
+import { SettingsApiService } from '../../services/api/settings-api.service';
 import { Component, Input, OnInit } from '@angular/core';
 
 /**
@@ -88,7 +88,9 @@ export class BrowserConfigFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.settingsApi.getSupportedWebDrivers().subscribe(
-      data => this.supportedWebDrivers = data.supportedWebDrivers,
+      data => {
+        this.supportedWebDrivers = data.supportedWebDrivers
+      },
       console.error
     );
 

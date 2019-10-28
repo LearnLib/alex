@@ -16,7 +16,7 @@
 
 import { Injectable } from '@angular/core';
 import { AppStoreService } from '../../services/app-store.service';
-import { FileApiService, UploadProgress } from '../../services/resources/file-api.service';
+import { FileApiService, UploadProgress } from '../../services/api/file-api.service';
 import { Project } from '../../entities/project';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { UploadableFile } from '../../entities/uploadable-file';

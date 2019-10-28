@@ -21,7 +21,8 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@ang
 /** Component for the testing view. */
 @Component({
   selector: 'learner-result-panel-testing-view',
-  templateUrl: './learner-result-panel-testing-view.component.html'
+  templateUrl: './learner-result-panel-testing-view.component.html',
+  styleUrls: ['../learner-result-panel.component.scss']
 })
 export class LearnerResultPanelTestingViewComponent implements OnInit {
 

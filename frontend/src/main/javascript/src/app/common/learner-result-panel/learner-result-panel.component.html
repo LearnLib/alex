@@ -50,7 +50,7 @@
     </div>
 
     <div class="form-group mb-0">
-      <select [(ngModel)]="view" class="form-control" style="width: 90px; height: 23px">
+      <select [(ngModel)]="view" class="form-control btn-sm" style="width: 90px; height: 23px">
         <option [value]="'DEFAULT'">Default</option>
         <option [value]="'TEST'">Tests</option>
         <option [value]="'MODEL_CHECKING'">Checking</option>
@@ -62,7 +62,7 @@
     </div>
 
   </div>
-  <div class="learn-result-panel-body overflow-auto">
+  <div class="learn-result-panel-body">
 
     <learner-result-panel-default-view
       (registerMenu)="registerMenu($event)"

@@ -17,23 +17,23 @@ import { SelectableCheckboxComponent } from './common/selectable-checkbox/select
 import { SelectableCheckboxMultipleComponent } from './common/selectable-checkbox-multiple/selectable-checkbox-multiple.component';
 import { AboutViewComponent } from './views/about-view/about-view.component';
 import { AppStoreService } from './services/app-store.service';
-import { SettingsApiService } from './services/resources/settings-api.service';
+import { SettingsApiService } from './services/api/settings-api.service';
 import { TestCaseTableComponent } from './views/test-case-view/test-case-table/test-case-table.component';
 import { SymbolParametersComponent } from './common/symbol-parameters/symbol-parameters.component';
 import { OutputErrorTraceComponent } from './common/output-error-trace/output-error-trace.component';
 import { TestCaseTablePrePostStepsComponent } from './views/test-case-view/test-case-table/test-case-table-pre-post-steps/test-case-table-pre-post-steps.component';
 import { TestCaseTableSymbolColumnComponent } from './views/test-case-view/test-case-table/test-case-table-symbol-column/test-case-table-symbol-column.component';
-import { SymbolGroupApiService } from './services/resources/symbol-group-api.service';
-import { SymbolParameterApiService } from './services/resources/symbol-parameter-api.service';
-import { TestConfigApiService } from './services/resources/test-config-api.service';
-import { WebhookApiService } from './services/resources/webhook-api.service';
-import { TestReportApiService } from './services/resources/test-report-api.service';
-import { CounterApiService } from './services/resources/counter-api.service';
-import { ProjectApiService } from './services/resources/project-api.service';
+import { SymbolGroupApiService } from './services/api/symbol-group-api.service';
+import { SymbolParameterApiService } from './services/api/symbol-parameter-api.service';
+import { TestConfigApiService } from './services/api/test-config-api.service';
+import { WebhookApiService } from './services/api/webhook-api.service';
+import { TestReportApiService } from './services/api/test-report-api.service';
+import { CounterApiService } from './services/api/counter-api.service';
+import { ProjectApiService } from './services/api/project-api.service';
 import { CountersViewComponent } from './views/counters-view/counters-view.component';
 import { CreateCounterModalComponent } from './views/counters-view/create-counter-modal/create-counter-modal.component';
-import { ProjectEnvironmentApiService } from './services/resources/project-environment-api.service';
-import { LtsFormulaApiService } from './services/resources/lts-formula-api.service';
+import { ProjectEnvironmentApiService } from './services/api/project-environment-api.service';
+import { LtsFormulaApiService } from './services/api/lts-formula-api.service';
 import { LtsFormulasViewComponent } from './views/lts-formulas-view/lts-formulas-view.component';
 import { CreateLtsFormulaModalComponent } from './views/lts-formulas-view/create-lts-formula-modal/create-lts-formula-modal.component';
 import { EditLtsFormulaModalComponent } from './views/lts-formulas-view/edit-lts-formula-modal/edit-lts-formula-modal.component';
@@ -43,17 +43,17 @@ import { CreateWebhookModalComponent } from './views/webhooks-view/create-webhoo
 import { EditWebhookModalComponent } from './views/webhooks-view/edit-webhook-modal/edit-webhook-modal.component';
 import { WebhookFormGroupsComponent } from './views/webhooks-view/webhook-form-groups/webhook-form-groups.component';
 import { NormalizeUpperCasePipe } from './pipes/normalize-upper-case.pipe';
-import { SymbolApiService } from './services/resources/symbol-api.service';
+import { SymbolApiService } from './services/api/symbol-api.service';
 import { SymbolParametersPanelComponent } from './views/symbol-view/symbol-parameters-panel/symbol-parameters-panel.component';
 import { CreateSymbolParameterModalComponent } from './views/symbol-view/symbol-parameters-panel/create-symbol-parameter-modal/create-symbol-parameter-modal.component';
 import { EditSymbolParameterModalComponent } from './views/symbol-view/symbol-parameters-panel/edit-symbol-parameter-modal/edit-symbol-parameter-modal.component';
 import { SymbolParameterFormGroupsComponent } from './views/symbol-view/symbol-parameters-panel/symbol-parameter-form-groups/symbol-parameter-form-groups.component';
 import { ClipboardService } from './services/clipboard.service';
-import { UserApiService } from './services/resources/user-api.service';
-import { LearnerResultApiService } from './services/resources/learner-result-api.service';
-import { LearnerApiService } from './services/resources/learner-api.service';
-import { TestApiService } from './services/resources/test-api.service';
-import { FileApiService } from './services/resources/file-api.service';
+import { UserApiService } from './services/api/user-api.service';
+import { LearnerResultApiService } from './services/api/learner-result-api.service';
+import { LearnerApiService } from './services/api/learner-api.service';
+import { TestApiService } from './services/api/test-api.service';
+import { FileApiService } from './services/api/file-api.service';
 import { PromptModalComponent } from './common/modals/prompt-modal/prompt-modal.component';
 import { ConfirmModalComponent } from './common/modals/confirm-modal/confirm-modal.component';
 import { PromptService } from './services/prompt.service';
@@ -216,8 +216,8 @@ import { PressKeyActionFormComponent } from './common/actions/web/press-key-acti
 import { SelectActionFormComponent } from './common/actions/web/select-action-form/select-action-form.component';
 import { SendKeysActionFormComponent } from './common/actions/web/send-keys-action-form/send-keys-action-form.component';
 import { SubmitActionFormComponent } from './common/actions/web/submit-action-form/submit-action-form.component';
-import { SwitchToActionFormComponent } from './common/actions/web/switch-to/switch-to-action-form.component';
-import { SwitchToFrameActionFormComponent } from './common/actions/web/switch-to-frame/switch-to-frame-action-form.component';
+import { SwitchToActionFormComponent } from './common/actions/web/switch-to-action-form/switch-to-action-form.component';
+import { SwitchToFrameActionFormComponent } from './common/actions/web/switch-to-frame-action-form/switch-to-frame-action-form.component';
 import { UploadFileActionFormComponent } from './common/actions/web/upload-file-action-form/upload-file-action-form.component';
 import { WaitForNodeActionFormComponent } from './common/actions/web/wait-for-node-action-form/wait-for-node-action-form.component';
 import { WaitForNodeAttributeActionFormComponent } from './common/actions/web/wait-for-node-attribute-action-form/wait-for-node-attribute-action-form.component';
@@ -228,6 +228,7 @@ import { WaitActionFormComponent } from './common/actions/misc/wait-action-form/
 import { ActionSearchFormComponent } from './views/symbol-view/create-action-modal/action-search-form/action-search-form.component';
 import { AppViewComponent } from './views/app-view/app-view.component';
 import { UnauthorizedHttpInterceptor } from './interceptors/unauthorized-http-interceptor';
+import { AceEditorModule } from 'ng2-ace-editor';
 
 @NgModule({
   declarations: [
@@ -434,7 +435,8 @@ import { UnauthorizedHttpInterceptor } from './interceptors/unauthorized-http-in
       preventDuplicates: true
     }),
     NgbModule,
-    DragulaModule.forRoot()
+    DragulaModule.forRoot(),
+    AceEditorModule
   ],
   providers: [
     {

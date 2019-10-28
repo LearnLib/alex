@@ -36,16 +36,16 @@
           <div class="w-100 ml-3">
 
             <div class="btn-group btn-group-sm mr-2" ngbDropdown>
-              <button class="btn btn-primary btn-dropdown" ngbDropdownToggle>
+              <button class="btn btn-primary" ngbDropdownToggle>
                 Add
               </button>
               <div class="dropdown-menu" ngbDropdownMenu role="menu">
-                <div (click)="openActionCreateModal()" ngbDropdownItem>
+                <button (click)="openActionCreateModal()" ngbDropdownItem>
                   Action
-                </div>
-                <div (click)="addSymbolStep()" ngbDropdownItem>
+                </button>
+                <button (click)="addSymbolStep()" ngbDropdownItem>
                   Symbol
-                </div>
+                </button>
               </div>
             </div>
 
@@ -132,14 +132,13 @@
                     </div>
                     <div class="w-100 input-parameter-value position-relative">
                       <i (click)="step.errorOutput = null" class="fas fa-fw fa-times cursor-pointer"></i>
-                      <em>
-                        <input
-                          [(ngModel)]="step.errorOutput"
-                          [placeholder]="'Failed (' + (i + 1) + ')'"
-                          class="w-100 d-block"
-                          type="text"
-                        >
-                      </em>
+                      <input
+                        [(ngModel)]="step.errorOutput"
+                        [placeholder]="'Failed (' + (i + 1) + ')'"
+                        [name]="'step' + i"
+                        class="w-100 d-block"
+                        type="text"
+                      >
                     </div>
                   </div>
                 </div>

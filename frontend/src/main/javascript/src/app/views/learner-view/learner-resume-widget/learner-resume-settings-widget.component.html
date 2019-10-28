@@ -34,7 +34,7 @@
                 required
                 type="number"
               >
-              <p class="help-block">(-1 := learn until no counterexample can be found)</p>
+              <small class="form-text text-muted">(-1 := learn until no counterexample can be found)</small>
             </div>
 
           </ng-template>
@@ -79,9 +79,11 @@
                 </div>
               </div>
 
-              <select (change)="addSelectedSymbol()"
-                      [(ngModel)]="selectedSymbol"
-                      class="form-control"
+              <select
+                (change)="addSelectedSymbol()"
+                [(ngModel)]="selectedSymbol"
+                class="form-control"
+                name="symbolToAdd"
               >
                 <option [value]="null" disabled>Select a symbol to add</option>
                 <option *ngFor="let symbol of symbols" [value]="symbol">{{symbol.name}}</option>

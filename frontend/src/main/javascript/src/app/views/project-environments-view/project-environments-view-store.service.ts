@@ -17,7 +17,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ProjectEnvironment } from '../../entities/project-environment';
-import { ProjectEnvironmentApiService } from '../../services/resources/project-environment-api.service';
+import { ProjectEnvironmentApiService } from '../../services/api/project-environment-api.service';
 import { AppStoreService } from '../../services/app-store.service';
 import { Project } from '../../entities/project';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

@@ -18,7 +18,7 @@ import { Injectable } from '@angular/core';
 import { Project } from '../entities/project';
 import { User } from '../entities/user';
 import { ClipboardService } from './clipboard.service';
-import { ProjectApiService } from './resources/project-api.service';
+import { ProjectApiService } from './api/project-api.service';
 import { Router } from '@angular/router';
 
 @Injectable()

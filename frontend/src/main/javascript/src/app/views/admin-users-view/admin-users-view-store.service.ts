@@ -18,7 +18,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../../entities/user';
 import { Selectable } from '../../utils/selectable';
-import { UserApiService } from '../../services/resources/user-api.service';
+import { UserApiService } from '../../services/api/user-api.service';
 import { AppStoreService } from '../../services/app-store.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastService } from '../../services/toast.service';
@@ -109,8 +109,8 @@ export class AdminUsersViewStoreService {
         this.users.next(removeItems(this.users.value, (u => ids.indexOf(u.id) > -1)));
         this.usersSelectable.unselectMany(users);
       },
-      err => {
-        this.toastService.danger(`Deleting failed! ${err.data.message}`);
+      res => {
+        this.toastService.danger(`Deleting failed! ${res.error.message}`);
       }
     );
   }

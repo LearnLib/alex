@@ -15,9 +15,9 @@
  */
 
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
-import { SymbolApiService } from '../../../services/resources/symbol-api.service';
+import { SymbolApiService } from '../../../services/api/symbol-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
+import { SymbolGroupApiService } from '../../../services/api/symbol-group-api.service';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { Project } from '../../../entities/project';
 import { AppStoreService } from '../../../services/app-store.service';

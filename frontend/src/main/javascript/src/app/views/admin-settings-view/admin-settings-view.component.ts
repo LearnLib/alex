@@ -16,7 +16,7 @@
 
 import { Component } from '@angular/core';
 import { webBrowser } from '../../constants';
-import { SettingsApiService } from '../../services/resources/settings-api.service';
+import { SettingsApiService } from '../../services/api/settings-api.service';
 import { ToastService } from '../../services/toast.service';
 
 @Component({
@@ -42,7 +42,7 @@ export class AdminSettingsViewComponent {
   updateSettings(): void {
     this.settingsApi.update(this.settings).subscribe(
       () => this.toastService.success('The settings have been updated.'),
-      res => this.toastService.danger('<strong>Update failed!</strong> ' + res.data.message)
+      res => this.toastService.danger('<strong>Update failed!</strong> ' + res.error.message)
     );
   }
 

@@ -15,7 +15,7 @@
  */
 
 import { Project } from '../../../entities/project';
-import { TestApiService } from '../../../services/resources/test-api.service';
+import { TestApiService } from '../../../services/api/test-api.service';
 import { AppStoreService } from '../../../services/app-store.service';
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';

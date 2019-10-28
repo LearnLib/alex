@@ -7,14 +7,14 @@
         Test No {{result.testNo}}
       </a>
     </strong>
-    [{{result.algorithm.name}}]
+    [{{result.algorithm.name | formatLearningAlgorithm}}]
     <div class="text-muted">
       <em>
         Started: {{result.statistics.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}
       </em>
     </div>
     <div>
-      <span *ngFor="let env of result.environments" class="badge badge-default mr-1">{{env.name}}</span>
+      <span *ngFor="let env of result.environments" class="badge badge-secondary mr-1">{{env.name}}</span>
     </div>
     <div *ngIf="result.comment" class="comment text-muted">{{result.comment}}</div>
   </div>

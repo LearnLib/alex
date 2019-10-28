@@ -2,9 +2,9 @@ import { remove } from 'lodash';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { PromptService } from '../../../services/prompt.service';
-import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
+import { SymbolGroupApiService } from '../../../services/api/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { SymbolApiService } from '../../../services/resources/symbol-api.service';
+import { SymbolApiService } from '../../../services/api/symbol-api.service';
 import { EventBus } from '../../../services/eventbus.service';
 import { Selectable } from '../../../utils/selectable';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -17,7 +17,8 @@ import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'symbols-symbol-group-tree',
-  templateUrl: './symbols-symbol-group-tree.component.html'
+  templateUrl: './symbols-symbol-group-tree.component.html',
+  styleUrls: ['./symbols-symbol-group-tree.component.scss']
 })
 export class SymbolsSymbolGroupTreeComponent implements OnInit {
 

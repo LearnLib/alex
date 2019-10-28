@@ -18,7 +18,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Project } from '../../entities/project';
 import { Selectable } from '../../utils/selectable';
-import { ProjectApiService } from '../../services/resources/project-api.service';
+import { ProjectApiService } from '../../services/api/project-api.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CreateProjectModalComponent } from './create-project-modal/create-project-modal.component';
 import { PromptService } from '../../services/prompt.service';

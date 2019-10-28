@@ -31,11 +31,8 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/d3/dist/d3.js",
-              "node_modules/ace-builds/src/ace.js",
-              "node_modules/angular/angular.js",
-              "node_modules/angular-ui-ace/src/ui-ace.js",
-              "node_modules/n3-charts/build/LineChart.js"
+              "node_modules/d3/dist/d3.min.js",
+              "node_modules/ace-builds/src-min/ace.js"
             ]
           },
           "configurations": {
@@ -59,7 +56,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumError": "10mb"
                 },
                 {
                   "type": "anyComponentStyle",

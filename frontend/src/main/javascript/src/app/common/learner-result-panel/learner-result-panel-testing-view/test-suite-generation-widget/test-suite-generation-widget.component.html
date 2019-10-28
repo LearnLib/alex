@@ -47,8 +47,12 @@
       <label>Test suite to update</label>
       <div class="card">
         <div class="card-body">
-          <test-suite-tree (selected)="handleTestSuiteSelected($event)" [selectedTestSuite]="selectedTestSuite"
-                           [testSuite]="rootTestSuite"></test-suite-tree>
+          <test-suite-tree
+            (selected)="handleTestSuiteSelected($event)"
+            [selectedTestSuite]="selectedTestSuite"
+            [testSuite]="rootTestSuite"
+          >
+          </test-suite-tree>
         </div>
       </div>
     </div>

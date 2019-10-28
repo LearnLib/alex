@@ -3,7 +3,7 @@
     <div class="test-icon">
       <i class="fas fa-fw fa-file"></i>
     </div>
-    <a [routerLink]="['..', case.id]" class="test-name w-100 d-flex flex-row align-items-center">
+    <a [routerLink]="['/app', 'projects', case.project, 'tests', case.id]" class="test-name w-100 d-flex flex-row align-items-center">
       <div class="w-100">
         <div>
           <strong>{{case.name}}</strong> <span *ngIf="case.generated" class="badge badge-secondary ml-2">Gen.</span>

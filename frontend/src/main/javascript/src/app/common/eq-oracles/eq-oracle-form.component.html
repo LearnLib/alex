@@ -7,7 +7,7 @@
       class="form-control"
     >
       <option [value]="null" disabled>Select an EQ Oracle</option>
-      <option *ngFor="let i of types | keyvalue" [value]="i.value">{{i.key | formatEqOracle}}</option>
+      <option *ngFor="let i of types | keyvalue" [value]="i.value">{{i.value | formatEqOracle}}</option>
     </select>
   </div>
 

@@ -30,7 +30,8 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
  */
 @Component({
   selector: 'learner-result-panel',
-  templateUrl: './learner-result-panel.component.html'
+  templateUrl: './learner-result-panel.component.html',
+  styleUrls: ['./learner-result-panel.component.scss']
 })
 export class LearnerResultPanelComponent implements OnInit, OnChanges {
 
@@ -39,9 +40,6 @@ export class LearnerResultPanelComponent implements OnInit, OnChanges {
 
   @Input()
   result: LearnerResult;
-
-  @Input()
-  index: number;
 
   @Input()
   layoutSettings: any;
@@ -77,9 +75,7 @@ export class LearnerResultPanelComponent implements OnInit, OnChanges {
    * Emits the index of the currently shown step.
    */
   emitStep(): void {
-    if (this.index >= 0) {
-      this.step.emit(this.pointer);
-    }
+    this.step.emit(this.pointer);
   }
 
   /**

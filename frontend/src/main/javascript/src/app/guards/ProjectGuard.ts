@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, RouterStateSnapshot } from '@angular/router';
 import { AppStoreService } from '../services/app-store.service';
 import { Observable, of } from 'rxjs';
-import { ProjectApiService } from '../services/resources/project-api.service';
+import { ProjectApiService } from '../services/api/project-api.service';
 import { Project } from '../entities/project';
 import { map, tap } from 'rxjs/operators';
 

@@ -24,6 +24,7 @@ import { ProjectEnvironment } from '../../../entities/project-environment';
 import { AppStoreService } from '../../../services/app-store.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormGroup } from '@angular/forms';
 
 /**
  * The controller for the modal dialog where you can set the settings for an upcoming test run.
@@ -46,6 +47,8 @@ export class LearnerSettingsModalComponent implements OnInit {
   selectedLearningAlgorithm: string = null;
 
   selectedEnvironments: Selectable<ProjectEnvironment>;
+
+  form = new FormGroup({});
 
   constructor(private toastService: ToastService,
               private appStore: AppStoreService,

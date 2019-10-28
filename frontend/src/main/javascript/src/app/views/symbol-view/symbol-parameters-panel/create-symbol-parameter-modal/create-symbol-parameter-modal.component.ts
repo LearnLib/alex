@@ -15,7 +15,7 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
-import { SymbolParameterApiService } from '../../../../services/resources/symbol-parameter-api.service';
+import { SymbolParameterApiService } from '../../../../services/api/symbol-parameter-api.service';
 import { symbolParameterType } from '../../../../constants';
 import { AlphabetSymbol } from '../../../../entities/alphabet-symbol';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';

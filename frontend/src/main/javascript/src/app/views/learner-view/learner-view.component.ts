@@ -15,16 +15,17 @@
  */
 
 import { LearnerResult } from '../../entities/learner-result';
-import { LearnerApiService } from '../../services/resources/learner-api.service';
-import { LearnerResultApiService } from '../../services/resources/learner-result-api.service';
+import { LearnerApiService } from '../../services/api/learner-api.service';
+import { LearnerResultApiService } from '../../services/api/learner-result-api.service';
 import { ToastService } from '../../services/toast.service';
-import { SymbolApiService } from '../../services/resources/symbol-api.service';
+import { SymbolApiService } from '../../services/api/symbol-api.service';
 import { NotificationService } from '../../services/notification.service';
 import { AlphabetSymbol } from '../../entities/alphabet-symbol';
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { ErrorViewStoreService } from '../error-view/error-view-store.service';
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 /**
  * The controller for showing a load screen during the learning and shows all learn results from the current test
@@ -34,7 +35,7 @@ import { Component, OnDestroy } from '@angular/core';
   selector: 'learner-view',
   templateUrl: './learner-view.component.html'
 })
-export class LearnerViewComponent implements OnDestroy {
+export class LearnerViewComponent implements OnInit, OnDestroy {
 
   /** The interval that is used for polling. */
   public intervalHandle: number;
@@ -61,6 +62,7 @@ export class LearnerViewComponent implements OnDestroy {
   public finished: boolean;
 
   constructor(private appStore: AppStoreService,
+              private currentRoute: ActivatedRoute,
               private learnerApi: LearnerApiService,
               private learnerResultApi: LearnerResultApiService,
               private toastService: ToastService,
@@ -81,12 +83,34 @@ export class LearnerViewComponent implements OnDestroy {
       symbols => this.symbols = symbols,
       console.error
     );
-
-    this.poll();
   }
 
   get project(): Project {
     return this.appStore.project;
+  }
+
+  ngOnInit(): void {
+    this.currentRoute.paramMap.subscribe(params => {
+      if (params.has("testNo")) {
+        const testNo = parseInt(params.get("testNo"));
+        this.learnerResultApi.get(this.project.id, testNo).subscribe(
+          result => {
+            this.finalResult = result;
+            this.finished = true;
+            this.resumeConfig = {
+              eqOracle: this.finalResult.steps[this.stepNo - 1].eqOracle,
+              maxAmountOfStepsToLearn: this.finalResult.steps[this.stepNo - 1].stepsToLearn,
+              stepNo: this.stepNo,
+              symbolsToAdd: [],
+              project: this.project.id,
+              environments: this.finalResult.environments,
+            };
+          }
+        )
+      } else {
+        this.poll();
+      }
+    });
   }
 
   ngOnDestroy(): void {

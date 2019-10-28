@@ -17,7 +17,7 @@
 import { DateUtils } from '../utils/date-utils';
 import { DownloadService } from './download.service';
 import { PromptService } from './prompt.service';
-import { TestReportApiService } from './resources/test-report-api.service';
+import { TestReportApiService } from './api/test-report-api.service';
 import { ToastService } from './toast.service';
 import { Injectable } from '@angular/core';
 

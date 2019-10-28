@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { LearnerResultApiService } from '../../services/resources/learner-result-api.service';
+import { LearnerResultApiService } from '../../services/api/learner-result-api.service';
 import { LearnerResultChartService } from '../../services/learner-result-chart.service';
 import { ToastService } from '../../services/toast.service';
 import { DownloadService } from '../../services/download.service';

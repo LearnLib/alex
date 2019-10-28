@@ -16,7 +16,7 @@
 
 import { remove } from 'lodash';
 import { Selectable } from '../../utils/selectable';
-import { LearnerResultApiService } from '../../services/resources/learner-result-api.service';
+import { LearnerResultApiService } from '../../services/api/learner-result-api.service';
 import { ToastService } from '../../services/toast.service';
 import { LearnerResultDownloadService } from '../../services/learner-result-download.service';
 import { LearnerResult } from '../../entities/learner-result';
@@ -110,7 +110,7 @@ export class LearnerResultsViewComponent implements OnInit {
     const selectedResults = this.selectedResults.getSelected();
     if (selectedResults.length > 0) {
       const testNos = selectedResults.map(r => r.testNo).join(',');
-      this.router.navigate(['/app', 'projects', this.project.id , 'learner', 'statistics', testNos]);
+      this.router.navigate(['/app', 'projects', this.project.id , 'learner', 'results', testNos]);
     }
   }
 

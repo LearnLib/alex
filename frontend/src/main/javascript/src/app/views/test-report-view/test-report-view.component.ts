@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TestReportApiService } from '../../services/resources/test-report-api.service';
+import { TestReportApiService } from '../../services/api/test-report-api.service';
 import { ToastService } from '../../services/toast.service';
 import { TestReportService } from '../../services/test-report.service';
 import { Project } from '../../entities/project';
@@ -52,7 +52,7 @@ export class TestReportViewComponent implements OnInit {
       map => {
         this.testReportApi.get(this.project.id, parseInt(map.get('reportId'))).subscribe(
           data => this.report = data,
-          err => this.toastService.danger(`Failed to load the report. ${err.data.message}`)
+          res => this.toastService.danger(`Failed to load the report. ${res.error.message}`)
         );
       });
   }
@@ -62,9 +62,9 @@ export class TestReportViewComponent implements OnInit {
     this.testReportApi.remove(this.project.id, this.report.id).subscribe(
       () => {
         this.toastService.success('The report has been deleted.');
-        this.router.navigate(['..']);
+        this.router.navigate(['/app', 'projects', this.appStore.project.id, 'tests', 'reports']);
       },
-      err => this.toastService.danger(`The report could not be deleted. ${err.data.message}`)
+      res => this.toastService.danger(`The report could not be deleted. ${res.error.message}`)
     );
   }
 

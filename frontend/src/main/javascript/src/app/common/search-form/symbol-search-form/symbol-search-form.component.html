@@ -1,8 +1,8 @@
 <search-form
   (selected)="selectSymbol($event)"
-  [displayFn]="displaySymbol"
-  [itemsFn]="getSymbols"
+  [displayFn]="displaySymbol.bind(this)"
+  [itemsFn]="getSymbols.bind(this)"
+  [searchFn]="filterSymbol.bind(this)"
   [placeholder]="'Search a symbol'"
-  [searchFn]="filterSymbol"
 >
 </search-form>

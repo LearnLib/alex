@@ -1,25 +1,88 @@
 <aside [class.collapse]="appStore.sidebarCollapsed" class="h-100" id="sidebar">
   <div id="sidebar-body">
-    <div *ngFor="let group of groups" class="sidebar-group">
-      <div *ngIf="group.display()">
-        <div class="sidebar-group-title">
-          <strong>{{group.title()}}</strong>
-        </div>
-        <ng-container *ngFor="let item of group.items">
-          <a
-            *ngIf="item.display()"
-            [routerLinkActiveOptions]="{exact: true}"
-            [routerLinkActive]="'active'"
-            [routerLink]="item.href()"
-            class="sidebar-group-item"
-          >
-            <div class="sidebar-group-item-icon">
-              <i class="fas fa-fw {{item.icon}}"></i>
-            </div>
-            <div class="sidebar-group-item-label">{{item.title}}</div>
-          </a>
-        </ng-container>
+
+    <div class="sidebar-group" *ngIf="user?.role === 'ADMIN'">
+      <strong class="sidebar-group-title">Admin</strong>
+      <a [routerLink]="['/app', 'admin', 'settings']" [routerLinkActive]="'active'">
+        <i class="fas fa-fw fa-cogs"></i> App Settings
+      </a>
+      <a [routerLink]="['/app', 'admin', 'users']" [routerLinkActive]="'active'">
+        <i class="fas fa-fw fa-users"></i> User Management
+      </a>
+    </div>
+
+    <ng-container *ngIf="project == null">
+
+      <div class="sidebar-group">
+        <strong class="sidebar-group-title">Projects</strong>
+        <a [routerLink]="['/app', 'projects']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-columns"></i> Overview
+        </a>
       </div>
+
+    </ng-container>
+
+    <ng-container *ngIf="project != null">
+
+      <div class="sidebar-group" *ngIf="project != null">
+        <strong class="sidebar-group-title">{{project.name}}</strong>
+        <a [routerLink]="['/app', 'projects', project.id]" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">
+          <i class="fas fa-fw fa-columns"></i> Dashboard
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'environments']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-cloud"></i> Environments
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'files']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-file"></i> Files
+        </a>
+        <a [routerLink]="['/app', 'projects']">
+          <i class="fas fa-fw fa-sign-out-alt"></i> Close
+        </a>
+      </div>
+
+      <div class="sidebar-group">
+        <strong class="sidebar-group-title">Symbols</strong>
+        <a [routerLink]="['/app', 'projects', project.id, 'symbols']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">
+          <i class="fas fa-fw fa-list-alt"></i> Management
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'symbols', 'archive']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-archive"></i> Archive
+        </a>
+      </div>
+
+      <div class="sidebar-group">
+        <strong class="sidebar-group-title">Tests</strong>
+        <a [routerLink]="['/app', 'projects', project.id, 'tests']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">
+          <i class="fas fa-fw fa-wrench"></i> Management
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'tests', 'reports']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-list"></i> Reports
+        </a>
+      </div>
+
+      <div class="sidebar-group">
+        <strong class="sidebar-group-title">Learning</strong>
+        <a [routerLink]="['/app', 'projects', project.id, 'learner']" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}">
+          <i class="fas fa-fw fa-play"></i> Setup
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'learner', 'results']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-sitemap"></i> Results
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'lts-formulas']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-subscript"></i> Formulas
+        </a>
+        <a [routerLink]="['/app', 'projects', project.id, 'counters']" [routerLinkActive]="'active'">
+          <i class="fas fa-fw fa-list-ol"></i> Counters
+        </a>
+      </div>
+
+    </ng-container>
+
+    <div class="sidebar-group">
+      <strong class="sidebar-group-title">Integrations</strong>
+      <a [routerLink]="['/app', 'integrations', 'webhooks']" [routerLinkActive]="'active'">
+        <i class="fas fa-fw fa-share-alt"></i> Hooks
+      </a>
     </div>
 
   </div>

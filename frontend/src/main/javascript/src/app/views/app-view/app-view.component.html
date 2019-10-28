@@ -1,5 +1,5 @@
 <div id="alex" class="d-flex flex-column">
-  <nav class="navbar navbar-expand-lg navbar-dark flex-shrink-0" style="background: #224c6f; box-shadow: 0px 1px 3px rgba(0,0,0,0.4)">
+  <nav class="navbar navbar-expand-lg navbar-dark flex-shrink-0">
     <a class="navbar-brand d-flex flex-row align-items-center" [routerLink]="['.']">
       <img height="18" src="/assets/images/favicon.png" width="18"> <strong class="ml-1">LEX</strong>
     </a>
@@ -7,7 +7,7 @@
     <div class="collapse navbar-collapse">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown" ngbDropdown>
-          <a class="nav-link dropdown-toggle" ngbDropdownToggle>
+          <a class="nav-link dropdown-toggle cursor-pointer" ngbDropdownToggle>
             {{username}}
           </a>
           <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu>

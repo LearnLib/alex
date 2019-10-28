@@ -16,8 +16,8 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { Project } from '../../../entities/project';
-import { SymbolGroupApiService } from '../../../services/resources/symbol-group-api.service';
-import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
+import { SymbolGroupApiService } from '../../../services/api/symbol-group-api.service';
+import { LearnerResultApiService } from '../../../services/api/learner-result-api.service';
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 
 @Component({

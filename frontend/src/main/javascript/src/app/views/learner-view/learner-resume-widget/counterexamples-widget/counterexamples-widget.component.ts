@@ -16,9 +16,9 @@
 
 import * as angular from 'angular';
 import { IPromise } from 'angular';
-import { LearnerApiService } from '../../../../services/resources/learner-api.service';
+import { LearnerApiService } from '../../../../services/api/learner-api.service';
 import { ToastService } from '../../../../services/toast.service';
-import { SymbolApiService } from '../../../../services/resources/symbol-api.service';
+import { SymbolApiService } from '../../../../services/api/symbol-api.service';
 import { EventBus } from '../../../../services/eventbus.service';
 import { LearnerResult } from '../../../../entities/learner-result';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';

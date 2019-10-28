@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { TestApiService } from '../../../services/resources/test-api.service';
-import { IFormController } from 'angular';
+import { TestApiService } from '../../../services/api/test-api.service';
 import { TestSuiteEqOracle } from '../../../entities/eq-oracles/test-suite-eq-oracle';
 import { AppStoreService } from '../../../services/app-store.service';
 import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'test-suite-eq-oracle-form',
@@ -27,7 +27,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class TestSuiteEqOracleFormComponent implements OnInit {
 
   @Input()
-  form: IFormController;
+  form: FormGroup;
 
   @Input('oracle')
   eqOracle: TestSuiteEqOracle;

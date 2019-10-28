@@ -15,7 +15,7 @@
  */
 
 import { ActionService } from '../../../services/action.service';
-import { SymbolApiService } from '../../../services/resources/symbol-api.service';
+import { SymbolApiService } from '../../../services/api/symbol-api.service';
 import { Project } from '../../../entities/project';
 import { Action } from '../../../entities/actions/action';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';

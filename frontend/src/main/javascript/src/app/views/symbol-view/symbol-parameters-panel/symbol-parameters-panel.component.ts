@@ -15,7 +15,7 @@
  */
 
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { SymbolParameterApiService } from '../../../services/resources/symbol-parameter-api.service';
+import { SymbolParameterApiService } from '../../../services/api/symbol-parameter-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';

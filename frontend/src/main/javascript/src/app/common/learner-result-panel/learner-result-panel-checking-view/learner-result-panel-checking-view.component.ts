@@ -17,7 +17,7 @@
 import { Selectable } from '../../../utils/selectable';
 import { LearnerResult } from '../../../entities/learner-result';
 import { ToastService } from '../../../services/toast.service';
-import { LtsFormulaApiService } from '../../../services/resources/lts-formula-api.service';
+import { LtsFormulaApiService } from '../../../services/api/lts-formula-api.service';
 import { Project } from '../../../entities/project';
 import { Resizer } from '../../../utils/resizer';
 import { uniqueId } from 'lodash';
@@ -27,7 +27,8 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@ang
 /** Panel view for model checking. */
 @Component({
   selector: 'learner-result-panel-checking-view',
-  templateUrl: './learner-result-panel-checking-view.component.html'
+  templateUrl: './learner-result-panel-checking-view.component.html',
+  styleUrls: ['../learner-result-panel.component.scss']
 })
 export class LearnerResultPanelCheckingViewComponent implements OnInit {
 

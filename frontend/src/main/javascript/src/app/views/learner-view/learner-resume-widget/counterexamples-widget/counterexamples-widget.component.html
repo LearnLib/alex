@@ -10,7 +10,7 @@
           <div *ngFor="let io of counterExample; let i = index" class="list-group-item counterexample-list-item">
             <i (click)="removeInputOutputAt(i)" class="fas fa-fw fa-times float-right"></i>
             <span class="badge badge-primary">{{io.input}}</span>
-            <span class="badge badge-default">{{io.output}}</span>
+            <span class="badge badge-secondary">{{io.output}}</span>
           </div>
         </div>
         <button class="btn btn-default btn-sm btn-block">Add counterexample</button>

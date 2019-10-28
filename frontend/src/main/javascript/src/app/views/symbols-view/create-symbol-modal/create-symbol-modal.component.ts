@@ -17,7 +17,7 @@
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { Project } from '../../../entities/project';
 import { SymbolGroup } from '../../../entities/symbol-group';
-import { SymbolApiService } from '../../../services/resources/symbol-api.service';
+import { SymbolApiService } from '../../../services/api/symbol-api.service';
 import { ToastService } from '../../../services/toast.service';
 import { AppStoreService } from '../../../services/app-store.service';
 import { Observable } from 'rxjs';

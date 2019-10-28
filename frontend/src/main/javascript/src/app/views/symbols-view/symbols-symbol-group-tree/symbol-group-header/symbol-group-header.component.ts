@@ -21,7 +21,8 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'symbol-group-header',
-  templateUrl: './symbol-group-header.component.html'
+  templateUrl: './symbol-group-header.component.html',
+  styleUrls: ['./symbol-group-header.component.scss']
 })
 export class SymbolGroupHeaderComponent {
 

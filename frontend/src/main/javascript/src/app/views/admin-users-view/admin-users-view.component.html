@@ -43,8 +43,8 @@
         <tr
           *ngFor="let user of store.users$ | async"
           [ngClass]="{
-            'success': user.id === store.currentUser.id,
-            'info': user.role === 'ADMIN' && user.id !== store.currentUser.id
+            'table-primary': user.id === store.currentUser.id,
+            'table-info': user.role === 'ADMIN' && user.id !== store.currentUser.id
           }"
         >
           <td>
@@ -67,8 +67,11 @@
               {{user.role | normalizeUpperCase}}
             </span>
           </td>
-          <td>
-            <button (click)="store.editUser(user)" class="btn btn-default btn-xs float-right">
+          <td class="text-right">
+            <button
+              class="btn btn-default btn-sm"
+              (click)="store.editUser(user)"
+            >
               <i class="fas fa-edit fa-fw"></i>
             </button>
           </td>

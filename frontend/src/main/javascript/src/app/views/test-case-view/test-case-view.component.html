@@ -1,14 +1,16 @@
 <div class="view view-test-case">
   <action-bar>
-    <button (click)="save()" [disabled]="active" class="btn btn-sm btn-success mr-2">
-      <i class="fas fa-fw fa-save"></i> Save
-    </button>
-    <div class="btn-group btn-group-sm float-right mr-0">
-      <button (click)="execute()" [disabled]="active" class="btn btn-primary">
-        Execute
-      </button>
-      <button (click)="openTestConfigModal()" [disabled]="active" class="btn btn-primary">
-        <i class="fas fa-fm fa-cog"></i>
+    <div class="d-flex flex-row align-items-center">
+      <div class="btn-group btn-group-sm ml-auto">
+        <button (click)="execute()" [disabled]="active || testCase.steps.length === 0" class="btn btn-primary">
+          Execute
+        </button>
+        <button (click)="openTestConfigModal()" [disabled]="active" class="btn btn-primary">
+          <i class="fas fa-fm fa-cog"></i>
+        </button>
+      </div>
+      <button (click)="save()" [disabled]="active" class="btn btn-sm btn-success ml-2">
+        <i class="fas fa-fw fa-save"></i> Save
       </button>
     </div>
   </action-bar>
@@ -45,8 +47,8 @@
       <div class="d-flex align-items-center">
         <div class="mr-1">
           <a
-            class="btn btn-sm btn-default"
-            [routerLink]="['..', testCase.parent]"
+            class="btn btn-sm btn-default mr-1"
+            [routerLink]="['/app', 'projects', testCase.project, 'tests', testCase.parent]"
           >
             <i class="fas fa-fw fa-level-up-alt"></i>
           </a>

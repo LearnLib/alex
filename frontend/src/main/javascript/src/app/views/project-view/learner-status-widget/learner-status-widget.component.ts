@@ -16,7 +16,7 @@
 
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Project } from '../../../entities/project';
-import { LearnerApiService } from '../../../services/resources/learner-api.service';
+import { LearnerApiService } from '../../../services/api/learner-api.service';
 import { ToastService } from '../../../services/toast.service';
 
 @Component({

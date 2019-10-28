@@ -1,5 +1,5 @@
 <div class="d-flex h-100">
-  <div class="w-100" style="position: relative">
+  <div class="w-100">
     <div *ngIf="!result.steps[pointer].error && result.steps[pointer].hypothesis">
       <hypothesis
         [data]="result.steps[pointer].hypothesis"
@@ -8,8 +8,7 @@
       </hypothesis>
     </div>
   </div>
-  <div class="right-sidebar"
-       style="background: #f2f2f2; min-width: 340px; padding: 1rem; overflow: auto; border-left: 1px solid #ddd; position: relative">
+  <div class="right-sidebar">
     <div class="resize resize-x" style="left: 0;"></div>
 
     <div>

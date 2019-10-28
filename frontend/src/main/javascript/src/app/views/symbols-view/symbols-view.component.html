@@ -5,12 +5,12 @@
 
       <div class="w-100 ml-3">
         <div class="btn-group btn-group-sm" ngbDropdown>
-          <button class="btn btn-primary btn-dropdown" ngbDropdownToggle>
+          <button class="btn btn-primary" ngbDropdownToggle>
             Create
           </button>
           <div class="dropdown-menu" ngbDropdownMenu role="menu">
-            <div (click)="openSymbolCreateModal()" ngbDropdownItem>Symbol</div>
-            <div (click)="openSymbolGroupCreateModal()" ngbDropdownItem>Group</div>
+            <button (click)="openSymbolCreateModal()" ngbDropdownItem>Symbol</button>
+            <button (click)="openSymbolGroupCreateModal()" ngbDropdownItem>Group</button>
           </div>
         </div>
 
@@ -62,7 +62,7 @@
   <div class="view-body">
     <div class="container-fluid">
 
-      <div style="height: 31px; margin-bottom: 1.5rem">
+      <div style="height: 31px; margin-bottom: 1rem">
         <symbol-search-form
           (selected)="selectSymbol($event)"
           [groups]="groups"

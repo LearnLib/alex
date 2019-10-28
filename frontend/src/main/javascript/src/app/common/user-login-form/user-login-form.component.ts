@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { UserApiService } from '../../services/resources/user-api.service';
+import { UserApiService } from '../../services/api/user-api.service';
 import { ToastService } from '../../services/toast.service';
-import { SettingsApiService } from '../../services/resources/settings-api.service';
+import { SettingsApiService } from '../../services/api/settings-api.service';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';

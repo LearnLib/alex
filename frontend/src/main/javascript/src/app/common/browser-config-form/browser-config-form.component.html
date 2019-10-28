@@ -1,9 +1,13 @@
 <div class="form-group">
   <label class="control-label">Web Driver</label>
-  <select (change)="selectWebDriver()"
-          [(ngModel)]="driverName" class="form-control">
-    <option [value]="" disabled>Select a WebDriver</option>
-    <option *ngFor="let wd of supportedWebDrivers | keyvalue" [value]="wd.key">{{wd.value|formatWebBrowser}}</option>
+  <select
+    class="form-control"
+    name="browser"
+    (change)="selectWebDriver()"
+    [(ngModel)]="driverName"
+  >
+    <option [value]="null" disabled>Select a WebDriver</option>
+    <option *ngFor="let wd of supportedWebDrivers | keyvalue" [value]="wd.value">{{wd.value | formatWebBrowser}}</option>
   </select>
 </div>
 
@@ -37,14 +41,18 @@
   <div class="form-group">
     <label class="control-label">Browser</label>
     <select [(ngModel)]="config.browser" class="form-control" required>
-      <option [value]="" disabled>Select a browser</option>
+      <option [value]="null" disabled>Select a browser</option>
       <option *ngFor="let item of browsers" [value]="item.v">{{item.k}}</option>
     </select>
   </div>
   <div class="form-group">
     <label class="control-label">Version</label>
-    <input [(ngModel)]="config.version" class="form-control" placeholder="The version of the browser"
-           type="text">
+    <input
+      [(ngModel)]="config.version"
+      class="form-control"
+      placeholder="The version of the browser"
+      type="text"
+    >
   </div>
 </div>
 
@@ -52,22 +60,34 @@
   <div class="col-6">
     <div class="form-group">
       <label class="control-label">Width</label>
-      <input [(ngModel)]="config.width" class="form-control" placeholder="Browser width in px" required
-             type="number">
+      <input
+        class="form-control"
+        placeholder="Browser width in px"
+        required
+        type="number"
+        name="browser_width"
+        [(ngModel)]="config.width"
+      >
     </div>
   </div>
   <div class="col-6">
     <div class="form-group">
       <label class="control-label">Height</label>
-      <input [(ngModel)]="config.height" class="form-control" placeholder="Browser height in px" required
-             type="number">
+      <input
+        class="form-control"
+        placeholder="Browser height in px"
+        required
+        type="number"
+        name="browser_height"
+        [(ngModel)]="config.height"
+      >
     </div>
   </div>
 </div>
 
 <hr>
 <p>
-  <button (click)="timeoutsCollapsed = !timeoutsCollapsed; $event.preventDefault()" class="btn btn-xs btn-default">
+  <button (click)="timeoutsCollapsed = !timeoutsCollapsed; $event.preventDefault()" class="btn btn-sm btn-default">
     Timeouts <i [ngClass]="{'fa-caret-right' : timeoutsCollapsed, 'fa-caret-down': !timeoutsCollapsed}"
                 class="fas fa-fw"></i>
   </button>

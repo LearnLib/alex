@@ -17,7 +17,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Project } from '../../../entities/project';
 import { LearnerResult } from '../../../entities/learner-result';
-import { LearnerResultApiService } from '../../../services/resources/learner-result-api.service';
+import { LearnerResultApiService } from '../../../services/api/learner-result-api.service';
 
 @Component({
   selector: 'latest-learner-result-widget',

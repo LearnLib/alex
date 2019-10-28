@@ -19,7 +19,8 @@ import { Component, ElementRef, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'report-charts',
-  template: '<div class="d-flex" style="align-items: center"></div>'
+  template: '<div class="d-flex" style="align-items: center"></div>',
+  styleUrls: ['./report-charts.component.scss']
 })
 export class ReportChartsComponent implements OnInit {
 
