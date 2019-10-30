@@ -23,7 +23,7 @@
     </div>
   </action-bar>
 
-  <div class="view-body has-sub-nav">
+  <div class="view-body">
     <div class="container-fluid">
 
       <div *ngIf="symbols.length === 0" class="alert alert-info">
@@ -31,7 +31,7 @@
       </div>
 
       <div class="list-group">
-        <div *ngFor="let symbol of symbols" class="list-group-item d-flex flex-row align-items-center">
+        <div *ngFor="let symbol of orderedSymbols" class="list-group-item d-flex flex-row align-items-center">
 
           <div class="mr-3">
             <selectable-checkbox [item]="symbol" [selectable]="selectedSymbols"></selectable-checkbox>
@@ -43,7 +43,7 @@
 
           <div>
             <div class="btn-group btn-group-sm" ngbDropdown>
-              <button class="btn btn-default btn-icon no-caret" ngbDropdownToggle type="button">
+              <button class="btn btn-icon no-caret" ngbDropdownToggle type="button">
                 <i class="fas fa-bars"></i>
               </button>
               <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">

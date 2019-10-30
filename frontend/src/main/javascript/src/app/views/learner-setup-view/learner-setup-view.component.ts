@@ -15,7 +15,7 @@
  */
 
 import { AlphabetSymbol } from '../../entities/alphabet-symbol';
-import { LearnConfiguration } from '../../entities/learner-configuration';
+import { LearnerConfiguration } from '../../entities/learner-configuration';
 import { ParametrizedSymbol } from '../../entities/parametrized-symbol';
 import { SymbolGroupApiService } from '../../services/api/symbol-group-api.service';
 import { LearnerApiService } from '../../services/api/learner-api.service';
@@ -46,10 +46,10 @@ export class LearnerSetupViewComponent {
   public groups: SymbolGroup[];
 
   /** The learn results of previous learn processes. */
-  public learnResults: LearnerResult[];
+  public learnerResults: LearnerResult[];
 
   /** The configuration that is send to the server for learning. */
-  public learnConfiguration: LearnConfiguration;
+  public learnerConfiguration: LearnerConfiguration;
 
   /** The latest learner result in the project. */
   public latestLearnerResult: LearnerResult;
@@ -70,17 +70,17 @@ export class LearnerSetupViewComponent {
               private router: Router) {
 
     this.groups = [];
-    this.learnResults = [];
+    this.learnerResults = [];
     this.latestLearnerResult = null;
     this.pSymbols = [];
     this.pResetSymbol = null;
     this.pPostSymbol = null;
 
-    this.learnConfiguration = new LearnConfiguration();
-    this.learnConfiguration.environments = [this.project.getDefaultEnvironment()];
+    this.learnerConfiguration = new LearnerConfiguration();
+    this.learnerConfiguration.environments = [this.project.getDefaultEnvironment()];
 
     settingsApi.getSupportedWebDrivers().subscribe(
-      data => this.learnConfiguration.driverConfig.name = data.defaultWebDriver,
+      data => this.learnerConfiguration.driverConfig.name = data.defaultWebDriver,
       console.error
     );
 
@@ -105,7 +105,7 @@ export class LearnerSetupViewComponent {
 
           // load learn results so that their configuration can be reused
           this.learnerResultApi.getAll(this.project.id).subscribe(
-            learnResults => this.learnResults = learnResults,
+            learnResults => this.learnerResults = learnResults,
             console.error
           );
 
@@ -124,11 +124,10 @@ export class LearnerSetupViewComponent {
   }
 
   /** @param config The config to use. */
-  setLearnConfiguration(config): void {
-    this.learnConfiguration = config;
+  setLearnerConfiguration(config): void {
+    this.learnerConfiguration = config;
   }
 
-  /** @param symbol The symbol that will be used to reset the sul. */
   selectResetSymbol(): void {
     const modalRef = this.modalService.open(SelectSymbolModalComponent);
     modalRef.result.then((s: AlphabetSymbol) => {
@@ -161,7 +160,7 @@ export class LearnerSetupViewComponent {
     } else {
 
       if (this.pSymbols.length > 0) {
-        const config = JSON.parse(JSON.stringify(this.learnConfiguration));
+        const config = JSON.parse(JSON.stringify(this.learnerConfiguration));
         config.symbols = JSON.parse(JSON.stringify(this.pSymbols));
         config.symbols.forEach(ps => ps.symbol = {id: ps.symbol.id});
         config.resetSymbol = JSON.parse(JSON.stringify(this.pResetSymbol));
@@ -170,7 +169,7 @@ export class LearnerSetupViewComponent {
           config.postSymbol = JSON.parse(JSON.stringify(this.pPostSymbol));
           config.postSymbol.symbol = {id: config.postSymbol.symbol.id};
         }
-        config.environments = this.learnConfiguration.environments.map(u => u.id);
+        config.environments = this.learnerConfiguration.environments.map(u => u.id);
 
         // start learning
         this.learnerApi.start(this.project.id, config).subscribe(
@@ -178,8 +177,8 @@ export class LearnerSetupViewComponent {
             this.toastService.success('Learn process started successfully.');
             this.router.navigate(['/app', 'projects', this.project.id, 'learner', 'learn']);
           },
-          error => {
-            this.toastService.danger('<p><strong>Start learning failed</strong></p>' + error.data.message);
+          res => {
+            this.toastService.danger('<p><strong>Start learning failed</strong></p>' + res.error.message);
           }
         );
       } else {
@@ -194,39 +193,39 @@ export class LearnerSetupViewComponent {
    * @param result The learn result from that the configuration should be reused.
    */
   reuseConfigurationFromResult(result: LearnerResult): void {
-    this.learnConfiguration.algorithm = result.algorithm;
-    this.learnConfiguration.eqOracle = result.steps[0].eqOracle;
-    this.learnConfiguration.maxAmountOfStepsToLearn = result.maxAmountOfStepsToLearn;
-    this.learnConfiguration.driverConfig = result.driverConfig;
-    this.learnConfiguration.environments = result.environments;
-    this.learnConfiguration.resetSymbol = result.resetSymbol;
-    this.learnConfiguration.resetSymbol.id = null;
-    this.learnConfiguration.resetSymbol.parameterValues.forEach(v => v.id = null);
+    this.learnerConfiguration.algorithm = result.algorithm;
+    this.learnerConfiguration.eqOracle = result.steps[0].eqOracle;
+    this.learnerConfiguration.maxAmountOfStepsToLearn = result.maxAmountOfStepsToLearn;
+    this.learnerConfiguration.driverConfig = result.driverConfig;
+    this.learnerConfiguration.environments = result.environments;
+    this.learnerConfiguration.resetSymbol = result.resetSymbol;
+    this.learnerConfiguration.resetSymbol.id = null;
+    this.learnerConfiguration.resetSymbol.parameterValues.forEach(v => v.id = null);
     if (result.postSymbol != null) {
-      this.learnConfiguration.postSymbol = result.postSymbol;
-      this.learnConfiguration.postSymbol.id = null;
-      this.learnConfiguration.postSymbol.parameterValues.forEach(v => v.id = null);
+      this.learnerConfiguration.postSymbol = result.postSymbol;
+      this.learnerConfiguration.postSymbol.id = null;
+      this.learnerConfiguration.postSymbol.parameterValues.forEach(v => v.id = null);
     }
-    this.learnConfiguration.symbols = result.symbols;
-    this.learnConfiguration.symbols.forEach(s => {
+    this.learnerConfiguration.symbols = result.symbols;
+    this.learnerConfiguration.symbols.forEach(s => {
       s.id = null;
       s.parameterValues.forEach(v => v.id = null);
     });
 
-    this.pSymbols = this.learnConfiguration.symbols;
-    this.pResetSymbol = this.learnConfiguration.resetSymbol;
-    this.pPostSymbol = this.learnConfiguration.postSymbol;
+    this.pSymbols = this.learnerConfiguration.symbols;
+    this.pResetSymbol = this.learnerConfiguration.resetSymbol;
+    this.pPostSymbol = this.learnerConfiguration.postSymbol;
   }
 
   openLearnerConfigurationModal(): void {
     const modalRef = this.modalService.open(LearnerSettingsModalComponent);
-    modalRef.componentInstance.learnConfiguration = new LearnConfiguration(this.learnConfiguration);
-    modalRef.result.then((config: LearnConfiguration) => this.learnConfiguration = config);
+    modalRef.componentInstance.learnConfiguration = new LearnerConfiguration(this.learnerConfiguration);
+    modalRef.result.then((config: LearnerConfiguration) => this.learnerConfiguration = config);
   }
 
   getFirstNLearnerResults(n: number): LearnerResult[] {
     n = Math.max(1, n);
-    n = Math.min(this.learnResults.length, n);
-    return take(this.learnResults, n);
+    n = Math.min(this.learnerResults.length, n);
+    return take(this.learnerResults, n);
   }
 }

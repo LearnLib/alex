@@ -22,15 +22,15 @@
     </div>
   </action-bar>
 
-  <div class="view-body has-sub-nav">
+  <div class="view-body">
     <div class="container-fluid">
 
       <div class="alert alert-info alert-condensed clearfix">
         <i class="fas fa-fw fa-info-circle"></i>
 
-        Use the <strong>{{learnConfiguration.algorithm.name | formatLearningAlgorithm}}</strong> algorithm
-        with the <strong>{{learnConfiguration.eqOracle.type | formatEqOracle}}</strong> equivalence oracle
-        in the <strong>{{learnConfiguration.driverConfig.name | formatWebBrowser}}</strong> browser.
+        Use the <strong>{{learnerConfiguration.algorithm.name | formatLearningAlgorithm}}</strong> algorithm
+        with the <strong>{{learnerConfiguration.eqOracle.type | formatEqOracle}}</strong> equivalence oracle
+        in the <strong>{{learnerConfiguration.driverConfig.name | formatWebBrowser}}</strong> browser.
       </div>
 
       <hr>
@@ -42,7 +42,7 @@
               <strong class="text-muted">Symbols</strong>
             </div>
             <div class="card-body">
-              <div class="mb-2" style="height: 31px; position: relative; z-index: 10">
+              <div class="mb-2">
                 <symbol-search-form
                   (selected)="handleSymbolSelected($event)"
                   [groups]="groups"
@@ -62,7 +62,7 @@
 
         <div class="col-md-4 col-lg-6">
 
-          <h5><strong>Pre</strong></h5>
+          <h5><strong>Reset</strong></h5>
           <hr class="hr-sm">
           <div *ngIf="pResetSymbol == null" class="alert alert-info d-flex flex-row">
             <div class="w-100">
@@ -159,9 +159,9 @@
             <div class="card-header">
               <strong class="text-muted">Reuse a previous configuration</strong>
             </div>
-            <div *ngIf="learnResults.length > 0" class="list-group list-group-flush">
+            <div *ngIf="learnerResults.length > 0" class="list-group list-group-flush">
               <div
-                class="list-group-item list-group-item-action"
+                class="list-group-item list-group-item-action cursor-pointer"
                 (click)="reuseConfigurationFromResult(result); $event.preventDefault()"
                 *ngFor="let result of getFirstNLearnerResults(5)"
               >
@@ -178,7 +178,7 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="learnResults.length === 0" class="card-body p-0">
+            <div *ngIf="learnerResults.length === 0" class="card-body p-0">
               <div class="alert alert-info mb-0 no-border-radius">
                 There are no learner results yet.
               </div>

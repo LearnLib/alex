@@ -28,14 +28,14 @@ import { replaceItem } from '../../utils/list-utils';
 @Injectable()
 export class LtsFormulasViewStoreService {
 
-  public formulasSelectable: Selectable<any>;
+  public formulasSelectable: Selectable<any, any>;
   private formulas: BehaviorSubject<any[]>;
 
   constructor(private ltsFormulaApi: LtsFormulaApiService,
               private modalService: NgbModal,
               private appStore: AppStoreService) {
     this.formulas = new BehaviorSubject<any[]>([]);
-    this.formulasSelectable = new Selectable<any>([], 'id');
+    this.formulasSelectable = new Selectable<any, any>([], f => f.id);
   }
 
   get formulas$(): Observable<any> {

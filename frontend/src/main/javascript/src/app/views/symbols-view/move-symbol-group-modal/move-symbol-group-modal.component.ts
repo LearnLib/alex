@@ -17,7 +17,6 @@
 import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
 import { SymbolGroupApiService } from '../../../services/api/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { EventBus } from '../../../services/eventbus.service';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { Component, Input, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -43,7 +42,6 @@ export class MoveSymbolGroupModalComponent implements OnInit {
 
   constructor(private symbolGroupApi: SymbolGroupApiService,
               private toastService: ToastService,
-              private eventBus: EventBus,
               public modal: NgbActiveModal) {
   }
 
@@ -69,7 +67,6 @@ export class MoveSymbolGroupModalComponent implements OnInit {
     this.symbolGroupApi.move(this.group).subscribe(
       (movedGroup: SymbolGroup) => {
         this.toastService.success('The group has been moved');
-        this.eventBus.groupMoved$.next({from: fromGroupId, group: movedGroup});
         this.modal.close(movedGroup);
       },
       res => {

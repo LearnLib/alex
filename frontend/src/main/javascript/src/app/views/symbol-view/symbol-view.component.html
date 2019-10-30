@@ -8,18 +8,36 @@
     </div>
   </action-bar>
 
-  <div *ngIf="symbol != null" class="view-body has-sub-nav">
+  <div *ngIf="symbol != null" class="view-body">
     <div class="container-fluid">
+
+      <div class="d-flex flex-row align-items-center">
+        <a
+          class="btn btn-default btn-sm mr-2"
+          [routerLink]="['/app', 'projects', symbol.project, 'symbols']"
+        >
+          <i class="fas fa-fw fa-level-up-alt"></i>
+        </a>
+        <h4 class="m-0">
+          <strong>{{symbol.name}}</strong>
+        </h4>
+      </div>
+      <hr>
 
       <div *ngIf="symbol.description != null && symbol.description !== ''" class="card mb-4">
         <div class="card-header">
           <strong>Description</strong>
         </div>
         <div class="card-body">
-          <strong>Description</strong>
-          <p class="text-muted" style="white-space:pre-wrap;">{{symbol.description}}</p>
-          <strong>Expected result</strong>
-          <p class="text-muted mb-0 pb-0" style="white-space: pre-wrap;">{{symbol.expectedResult}}</p>
+          <p class="text-muted" style="white-space:pre-wrap;">
+            <strong class="mr-2">Description</strong>
+            {{symbol.description}}
+          </p>
+          <hr>
+          <p class="text-muted mb-0 pb-0" style="white-space: pre-wrap;">
+            <strong class="mr-2">Expected result</strong>
+            {{symbol.expectedResult}}
+          </p>
         </div>
       </div>
 
@@ -73,7 +91,7 @@
               <button (click)="cutSelectedSteps()" class="btn btn-default" ngbTooltip="Cut" placement="bottom" [disabled]="selectedSteps.getSelected().length === 0">
                 <i class="fas fa-cut fa-fw"></i>
               </button>
-              <button (click)="pasteSteps()" class="btn btn-default" ngbTooltip="Paste" placement="bottom">
+              <button (click)="pasteSteps()" class="btn btn-default" ngbTooltip="Paste" placement="bottom" [disabled]="!clipboardService.canPaste(project.id, 'symbolSteps')">
                 <i class="fas fa-paste fa-fw"></i>
               </button>
             </div>
@@ -107,7 +125,7 @@
                   <span>{{i + 1}})</span>
                 </div>
 
-                <div class="w-100 action-step">
+                <div class="w-100 action-step mr-2">
                   <div *ngIf="step.type === 'action'" class="action-description">
                     {{step.action.toString()}}
                   </div>
@@ -120,6 +138,14 @@
                     </span>
                     <br>
                     <symbol-parameters [parameterValues]="step.pSymbol.parameterValues"></symbol-parameters>
+
+                    <div>
+                      <ng-container *ngFor="let out of step.pSymbol.symbol.outputs">
+                        <div *ngIf="out.parameterType === 'STRING'" class="d-flex flex-row align-items-center">
+                          <i class="fas fa-fw fa-level-up-alt fa-rotate-90"></i> <span class="badge badge-secondary ml-1">{{out.name}}</span>
+                        </div>
+                      </ng-container>
+                    </div>
                   </div>
 
                   <div class="step-labels">
@@ -156,32 +182,32 @@
 
                 <div>
                   <div class="btn-group btn-group-sm" ngbDropdown>
-                    <button class="btn btn-default btn-icon dropdown-toggle no-caret" ngbDropdownToggle type="button">
+                    <button class="btn btn-icon no-caret" ngbDropdownToggle type="button">
                       <i class="fas fa-bars"></i>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
-                      <div (click)="editStep(step)" ngbDropdownItem>
+                      <button (click)="editStep(step)" ngbDropdownItem>
                         <i class="fas fa-edit fa-fw"></i> Edit
-                      </div>
-                      <div (click)="deleteStep(i)" ngbDropdownItem>
+                      </button>
+                      <button (click)="deleteStep(i)" ngbDropdownItem>
                         <i class="fas fa-trash fa-fw"></i> Delete
-                      </div>
+                      </button>
                       <div class="dropdown-divider"></div>
-                      <div (click)="cutStep(i)" ngbDropdownItem>
+                      <button (click)="cutStep(i)" ngbDropdownItem>
                         <i class="fas fa-cut fa-fw"></i> Cut
-                      </div>
-                      <div (click)="copyStep(i)" ngbDropdownItem>
+                      </button>
+                      <button (click)="copyStep(i)" ngbDropdownItem>
                         <i class="fas fa-copy fa-fw"></i> Copy
-                      </div>
+                      </button>
                       <div class="dropdown-divider"></div>
-                      <div (click)="step.negated = !step.negated" ngbDropdownItem>
+                      <button (click)="step.negated = !step.negated" ngbDropdownItem>
                         <i [ngClass]="{'fa-check': step.negated}" class="fas fa-fw"></i>
                         Negate result
-                      </div>
-                      <div (click)="step.ignoreFailure = !step.ignoreFailure" ngbDropdownItem>
+                      </button>
+                      <button (click)="step.ignoreFailure = !step.ignoreFailure" ngbDropdownItem>
                         <i [ngClass]="{'fa-check': step.ignoreFailure}" class="fas fa-fw"></i>
                         Ignore failure
-                      </div>
+                      </button>
                     </div>
                   </div>
                 </div>

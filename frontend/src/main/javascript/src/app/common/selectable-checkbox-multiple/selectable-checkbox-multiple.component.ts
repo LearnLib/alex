@@ -28,7 +28,7 @@ export class SelectableCheckboxMultipleComponent {
   items: any[];
 
   @Input()
-  selectable: Selectable<any>;
+  selectable: Selectable<any, any>;
 
   selectItem(): void {
     if (this.items != null) {

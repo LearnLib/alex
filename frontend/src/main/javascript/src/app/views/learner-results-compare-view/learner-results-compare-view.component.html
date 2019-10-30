@@ -1,6 +1,6 @@
 <div class="view">
 
-  <action-bar>
+  <action-bar *ngIf="panels.length <= 2">
     <div class="d-flex flex-row align-items-center">
       <div *ngIf="panels.length === 2">
         <button

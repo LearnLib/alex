@@ -40,7 +40,7 @@ export class TestReportService {
    * @param reportId The id of the report.
    */
   download(projectId: number, reportId: number): void {
-    this.testReportApi.get(projectId, reportId, {format: 'junit+xml'}).subscribe(
+    this.testReportApi.get(projectId, reportId, 'junit+xml').subscribe(
       xml => {
         this.promptService.prompt('Enter the name for the report', 'report-' + DateUtils.YYYYMMDD())
           .then((name) => {

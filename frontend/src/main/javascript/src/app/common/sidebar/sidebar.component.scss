@@ -8,6 +8,8 @@
   flex-direction: column;
 
   .sidebar-group-title {
+    @include text-overflow-ellipsis;
+
     color: #fff;
     padding: .75rem 1rem;
     display: block;
@@ -21,7 +23,7 @@
       padding: .75rem 1rem;
 
       i {
-        margin-right: .5rem;
+        margin-right: .75rem;
       }
 
       &.active {
@@ -39,6 +41,24 @@
       }
     }
   }
+
+  &.collapse {
+    width: auto;
+
+    .sidebar-group-title,
+    .sidebar-group a span,
+    .sidebar-footer div span {
+      display: none;
+    }
+
+    .sidebar-group a i {
+      margin: .25rem .25rem;
+    }
+
+    .sidebar-group {
+      margin-bottom: 1rem;
+    }
+  }
 }
 
 #sidebar-body {
@@ -47,4 +67,13 @@
   height: 100%;
   overflow: auto;
   overflow-x: hidden;
+}
+
+.sidebar-footer {
+  div {
+    display: block;
+    padding: .75rem 1rem;
+    color: rgba(255,255,255,.7);
+    border-top: 1px solid rgba(255,255,255,.1);
+  }
 }

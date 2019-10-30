@@ -99,7 +99,7 @@ export class SymbolParametersPanelComponent {
         inputs.splice(index, 1);
         this.inputsChange.emit(inputs);
       },
-      err => this.toastService.danger(`The input parameter could not be deleted. ${err.data.message}`)
+      res => this.toastService.danger(`The input parameter could not be deleted. ${res.error.message}`)
     );
   }
 
@@ -111,7 +111,7 @@ export class SymbolParametersPanelComponent {
         outputs.splice(index, 1);
         this.outputsChange.emit(outputs);
       },
-      err => this.toastService.danger(`The output parameter could not be deleted. ${err.data.message}`)
+      res => this.toastService.danger(`The output parameter could not be deleted. ${res.error.message}`)
     );
   }
 }

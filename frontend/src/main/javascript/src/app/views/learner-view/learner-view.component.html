@@ -72,13 +72,17 @@
     </div>
 
     <div class="w-100 h-100" style="border-top: 1px solid #ddd">
-      <view-header [title]="'Current hypothesis'"></view-header>
       <learner-result-panel [result]="status.result"></learner-result-panel>
     </div>
   </div>
 
   <div *ngIf="finished" class="learn-start-wrapper d-flex flex-row h-100">
-    <learner-result-panel *ngIf="finalResult != null" [result]="finalResult" class="w-100">
+    <learner-result-panel
+      *ngIf="finalResult != null"
+      [result]="finalResult"
+      (selectEdge)="store.edgeSelected$.next($event)"
+      class="w-100"
+    >
     </learner-result-panel>
 
     <div

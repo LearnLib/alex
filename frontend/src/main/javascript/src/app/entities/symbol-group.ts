@@ -56,4 +56,10 @@ export class SymbolGroup {
   copy(): SymbolGroup {
     return new SymbolGroup(JSON.parse(JSON.stringify(this)));
   }
+
+  walk(groupFn: (SymbolGroup) => void, symbolFn: (AlphabetSymbol) => void): void {
+    groupFn(this);
+    this.groups.forEach(g => groupFn(g));
+    this.symbols.forEach(s => symbolFn(s));
+  }
 }

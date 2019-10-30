@@ -15,20 +15,19 @@
  */
 
 import {
-  AfterViewInit, ChangeDetectorRef,
+  AfterViewInit,
   Component,
-  ElementRef,
+  ElementRef, EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
-  OnInit,
+  OnInit, Output,
   SimpleChanges
 } from '@angular/core';
 
 import * as d3 from 'd3';
 import { dagre, graphlib, render as Renderer } from 'dagre-d3';
 import { forEach } from 'lodash';
-import { EventBus } from '../../services/eventbus.service';
 
 // various styles used to style the hypothesis
 const STYLE = {
@@ -45,6 +44,13 @@ const STYLE = {
   }
 };
 
+export interface Edge {
+  from: string,
+  to: string,
+  input: string,
+  output: string
+}
+
 @Component({
   selector: 'hypothesis',
   templateUrl: './hypothesis.component.html',
@@ -52,14 +58,14 @@ const STYLE = {
 })
 export class HypothesisComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit {
 
+  @Output()
+  selectEdge = new EventEmitter<Edge>();
+
   @Input()
   data: any;
 
   @Input()
   layoutSettings: any;
-
-  @Input()
-  isSelectable: boolean;
 
   rendering: boolean;
 
@@ -71,8 +77,7 @@ export class HypothesisComponent implements OnInit, OnDestroy, OnChanges, AfterV
   svgContainer: any;
   resizeHandler: any;
 
-  constructor(private element: ElementRef,
-              private eventBus: EventBus) {
+  constructor(private element: ElementRef) {
 
     this.renderer = new Renderer();
     this.graph = null;
@@ -276,7 +281,6 @@ export class HypothesisComponent implements OnInit, OnDestroy, OnChanges, AfterV
    * Create click and zoom events.
    */
   handleEvents(): void {
-    const eventBus = this.eventBus;
 
     // zoom support
     const zoom = d3.zoom().on('zoom', () => {
@@ -292,13 +296,18 @@ export class HypothesisComponent implements OnInit, OnDestroy, OnChanges, AfterV
     // attach click events for the selection of counter examples to the edge labels
     // only if counterexamples is defined
     const self = this;
-    if (this.isSelectable) {
-      this.svg.selectAll('.edgeLabel tspan').on('click', function (d) {
-        const edges = self.edgeData[this.getAttribute('data-from')][this.getAttribute('data-to')];
-        const edge = edges.filter(e => (e.input + ' / ' + e.output) === this.textContent)[0];
-        eventBus.hypothesisLabelSelected$.next({input: edge.input, output: edge.output});
-      });
-    }
-  }
+    this.svg.selectAll('.edgeLabel tspan').on('click', function (d) {
+      const from = this.getAttribute('data-from');
+      const to = this.getAttribute('data-to');
+      const edges = self.edgeData[from][to];
+      const edge = edges.filter(e => (e.input + ' / ' + e.output) === this.textContent)[0];
 
+      self.selectEdge.emit({
+        from,
+        to,
+        input: edge.input,
+        output: edge.output
+      });
+    });
+  }
 }

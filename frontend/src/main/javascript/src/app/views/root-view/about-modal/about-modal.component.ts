@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../../../../environments/environment';
 
 @Component({
-  selector: 'view-header',
-  templateUrl: './view-header.component.html',
-  styleUrls: ['./view-header.component.scss']
+  selector: 'about-modal',
+  templateUrl: './about-modal.component.html',
+  styleUrls: ['./about-modal.component.scss']
 })
-export class ViewHeaderComponent {
+export class AboutModalComponent {
 
-  @Input()
-  title: string;
+  /** The version of ALEX. */
+  version: string;
+
+  constructor(public modal: NgbActiveModal) {
+    this.version = environment.version;
+  }
 }

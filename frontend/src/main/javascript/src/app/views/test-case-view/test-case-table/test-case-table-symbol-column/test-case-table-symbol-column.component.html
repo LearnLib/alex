@@ -2,7 +2,7 @@
   <strong>
     <a
       class="text-black"
-      [routerLink]="['/app', 'projects', pSymbol.symbol.project, 'symbols', pSymbol.symbol.id]"
+      [routerLink]="['/app', 'projects', appStore.project.id, 'symbols', pSymbol.symbol.id]"
     >
       {{pSymbol.symbol.name}}
     </a>

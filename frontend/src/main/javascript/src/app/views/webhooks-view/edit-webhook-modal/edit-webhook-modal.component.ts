@@ -48,7 +48,7 @@ export class EditWebhookModalComponent {
 
     this.webhookApi.update(wh).subscribe(
       updatedWh => this.modal.close(updatedWh),
-      err => this.errorMessage = err.data.message
+      res => this.errorMessage = res.error.message
     );
   }
 }

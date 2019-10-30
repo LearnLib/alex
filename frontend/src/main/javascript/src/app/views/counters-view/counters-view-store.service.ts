@@ -31,14 +31,14 @@ export class CountersViewStoreService {
 
   private counters: BehaviorSubject<Counter[]>;
 
-  countersSelectable: Selectable<Counter>;
+  countersSelectable: Selectable<Counter, number>;
 
   constructor(private appStore: AppStoreService,
               private counterApi: CounterApiService,
               private modalService: NgbModal,
               private toastService: ToastService) {
     this.counters = new BehaviorSubject<Counter[]>([]);
-    this.countersSelectable = new Selectable<Counter>([], 'id');
+    this.countersSelectable = new Selectable<Counter, number>([], c => c.id);
   }
 
   get counters$(): Observable<Counter[]> {
@@ -104,8 +104,8 @@ export class CountersViewStoreService {
         this.counters.next(counters);
         this.countersSelectable.unselect(counter);
       },
-      err => {
-        this.toastService.danger('<p><strong>Deleting counter "' + counter.name + '" failed</strong></p>' + err.data.message);
+      res => {
+        this.toastService.danger('<p><strong>Deleting counter "' + counter.name + '" failed</strong></p>' + res.error.message);
       }
     );
   }
@@ -122,8 +122,8 @@ export class CountersViewStoreService {
           this.counters.next(counters);
           this.countersSelectable.unselectMany(selectedCounters);
         },
-        err => {
-          this.toastService.danger('<p><strong>Deleting counters failed</strong></p>' + err.data.message);
+        res => {
+          this.toastService.danger('<p><strong>Deleting counters failed</strong></p>' + res.error.message);
         }
       );
     } else {

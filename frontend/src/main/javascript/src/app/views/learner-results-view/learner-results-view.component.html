@@ -41,14 +41,14 @@
     </div>
   </action-bar>
 
-  <div class="view-body has-sub-nav">
+  <div class="view-body">
     <div class="container-fluid">
 
       <div *ngIf="results.length > 0" class="list-group">
-        <div *ngFor="let result of results" class="list-group-item">
+        <div *ngFor="let result of orderedResults" class="list-group-item">
           <learner-result-list-item [result]="result" [selectable]="selectedResults">
             <div class="btn-group btn-group-sm" ngbDropdown>
-              <button class="btn btn-default btn-icon dropdown-toggle no-caret" ngbDropdownToggle type="button">
+              <button class="btn btn-icon dropdown-toggle no-caret" ngbDropdownToggle type="button">
                 <i class="fas fa-bars"></i>
               </button>
               <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
@@ -56,25 +56,25 @@
                   <i class="fas fa-play fa-fw"></i> Continue learning
                 </a>
                 <div class="dropdown-divider"></div>
-                <div (click)="openResultDetailsModal(result)" href="" ngbDropdownItem>
+                <button (click)="openResultDetailsModal(result)" ngbDropdownItem>
                   <i class="fas fa-info fa-fw"></i> Details
-                </div>
+                </button>
                 <a [routerLink]="[result.id]" ngbDropdownItem>
                   <i class="fas fa-code-branch fa-fw"></i> Hypotheses
                 </a>
-                <div (click)="cloneResult(result)" ngbDropdownItem>
+                <button (click)="cloneResult(result)" ngbDropdownItem>
                   <i class="fas fa-clone fa-fw"></i> Clone
-                </div>
-                <div (click)="deleteResult(result)" ngbDropdownItem>
+                </button>
+                <button (click)="deleteResult(result)" ngbDropdownItem>
                   <i class="fas fa-trash fa-fw"></i> Delete
-                </div>
+                </button>
                 <div class="dropdown-divider"></div>
-                <div (click)="showStatistics(result)" ngbDropdownItem>
+                <button (click)="showStatistics(result)" ngbDropdownItem>
                   <i class="fas fa-fw fa-chart-bar"></i> Show statistics
-                </div>
-                <div (click)="exportAsCSV(result)" ngbDropdownItem>
+                </button>
+                <button (click)="exportAsCSV(result)" ngbDropdownItem>
                   <i class="fas fa-fw fa-download"></i> Export statistics
-                </div>
+                </button>
               </div>
             </div>
           </learner-result-list-item>

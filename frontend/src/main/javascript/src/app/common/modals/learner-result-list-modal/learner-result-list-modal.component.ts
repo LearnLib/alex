@@ -21,6 +21,7 @@ import { Project } from '../../../entities/project';
 import { ProjectApiService } from '../../../services/api/project-api.service';
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { orderBy } from 'lodash';
 
 /**
  * The component for the modal that displays a selectable list of results.
@@ -83,5 +84,9 @@ export class LearnerResultListModalComponent {
     } catch (e) {
       this.toastService.danger('Could not parse the file.');
     }
+  }
+
+  get orderedResults(): LearnerResult[] {
+    return orderBy(this.results, ['testNo'], ['desc']);
   }
 }

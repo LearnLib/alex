@@ -5,7 +5,6 @@ import { RootViewComponent } from './views/root-view/root-view.component';
 import { ProjectsViewComponent } from './views/projects-view/projects-view.component';
 import { ProjectViewComponent } from './views/project-view/project-view.component';
 import { ProfileViewComponent } from './views/profile-view/profile-view.component';
-import { AboutViewComponent } from './views/about-view/about-view.component';
 import { AdminSettingsViewComponent } from './views/admin-settings-view/admin-settings-view.component';
 import { AdminUsersViewComponent } from './views/admin-users-view/admin-users-view.component';
 import { WebhooksViewComponent } from './views/webhooks-view/webhooks-view.component';
@@ -43,10 +42,6 @@ const routes: Routes = [
   {
     path: 'logout',
     component: LogoutViewComponent
-  },
-  {
-    path: 'about',
-    component: AboutViewComponent
   },
   {
     path: 'error',

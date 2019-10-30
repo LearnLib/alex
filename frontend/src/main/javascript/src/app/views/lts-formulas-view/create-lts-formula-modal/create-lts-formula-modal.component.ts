@@ -44,7 +44,7 @@ export class CreateLtsFormulaModalComponent {
       this.ltsFormulaApi.create(this.appStore.project.id, formula).subscribe(
         createdFormula => {
           this.modal.close(createdFormula);
-        }, err => this.errorMessage = err.data.message
+        }, res => this.errorMessage = res.error.message
       );
     }
   }

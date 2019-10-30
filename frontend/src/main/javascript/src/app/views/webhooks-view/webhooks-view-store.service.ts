@@ -28,7 +28,7 @@ import { EditWebhookModalComponent } from './edit-webhook-modal/edit-webhook-mod
 @Injectable()
 export class WebhooksViewStoreService {
 
-  public webhooksSelectable: Selectable<Webhook>;
+  public webhooksSelectable: Selectable<Webhook, number>;
   private webhooks: BehaviorSubject<Webhook[]>;
   private events: BehaviorSubject<string[]>;
 
@@ -37,7 +37,7 @@ export class WebhooksViewStoreService {
               private toastService: ToastService) {
     this.webhooks = new BehaviorSubject<Webhook[]>([]);
     this.events = new BehaviorSubject<string[]>([]);
-    this.webhooksSelectable = new Selectable<Webhook>([], 'id');
+    this.webhooksSelectable = new Selectable<Webhook, number>([], w => w.id);
   }
 
   get webhooks$(): Observable<Webhook[]> {
@@ -88,7 +88,7 @@ export class WebhooksViewStoreService {
         this.webhooks.next(removeItems(this.webhooks.value, w => w.id === webhook.id));
         this.webhooksSelectable.unselect(webhook);
       },
-      error => this.toastService.danger(`The webhook could not be deleted. ${error.data.message}`)
+      res => this.toastService.danger(`The webhook could not be deleted. ${res.error.message}`)
     );
   }
 
@@ -101,7 +101,7 @@ export class WebhooksViewStoreService {
           this.webhooks.next(removeItems(this.webhooks.value, w => ids.indexOf(w.id) > -1));
           this.webhooksSelectable.unselectMany(selected);
         },
-        error => this.toastService.danger(`The webhooks could not be deleted. ${error.data.message}`)
+        res => this.toastService.danger(`The webhooks could not be deleted. ${res.error.message}`)
       );
     }
   }

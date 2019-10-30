@@ -23,7 +23,7 @@
               >
             </div>
 
-            <div class="form-group">
+            <div class="form-group mb-0">
               <label class="control-label">Steps to learn</label>
               <input
                 [(ngModel)]="configuration.maxAmountOfStepsToLearn"
@@ -66,19 +66,6 @@
             <div class="form-group">
               <label class="control-label">Symbols to add</label><br>
 
-              <div *ngIf="configuration.symbolsToAdd.length > 0" class="list-group">
-                <div *ngFor="let pSymbol of configuration.symbolsToAdd; let i = index" class="list-group-item d-flex">
-                  <div class="w-100">
-                    <strong>{{pSymbol.symbol.name}}</strong><br>
-                    <symbol-parameters [parameterValues]="pSymbol.parameterValues"></symbol-parameters>
-                  </div>
-                  <div class="text-muted">
-                    <i (click)="configuration.symbolsToAdd.splice(i, 1)"
-                       class="fas fa-fw fa-times cursor-pointer"></i>
-                  </div>
-                </div>
-              </div>
-
               <select
                 (change)="addSelectedSymbol()"
                 [(ngModel)]="selectedSymbol"
@@ -90,20 +77,36 @@
               </select>
             </div>
 
+            <div *ngIf="configuration.symbolsToAdd.length > 0" class="list-group mb-0">
+              <div *ngFor="let pSymbol of configuration.symbolsToAdd; let i = index" class="list-group-item d-flex">
+                <div class="w-100">
+                  <strong>{{pSymbol.symbol.name}}</strong><br>
+                  <symbol-parameters [parameterValues]="pSymbol.parameterValues"></symbol-parameters>
+                </div>
+                <div class="text-muted">
+                  <i (click)="configuration.symbolsToAdd.splice(i, 1)"
+                     class="fas fa-fw fa-times cursor-pointer"></i>
+                </div>
+              </div>
+            </div>
+
           </ng-template>
         </ngb-panel>
         <ngb-panel id="static-4" title="Targets">
           <ng-template ngbPanelContent>
 
-            <div class="form-group">
-              <label>Environments</label>
-
+            <div class="form-group mb-0">
               <div class="list-group">
-                <div *ngFor="let env of project.environments"
-                     class="list-group-item d-flex flex-row align-items-center">
+                <div
+                  *ngFor="let env of project.environments"
+                  class="list-group-item d-flex flex-row align-items-center"
+                >
                   <div>
-                    <selectable-checkbox (change)="updateEnvironments()" [item]="env"
-                                         [selectable]="selectedEnvironments"></selectable-checkbox>
+                    <selectable-checkbox
+                      (change)="updateEnvironments()" [item]="env"
+                      [selectable]="selectedEnvironments"
+                    >
+                    </selectable-checkbox>
                   </div>
                   <div class="w-100 ml-3">
                     <strong>{{env.name}}</strong>

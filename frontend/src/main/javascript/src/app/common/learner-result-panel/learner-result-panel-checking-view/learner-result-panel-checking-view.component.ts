@@ -23,6 +23,7 @@ import { Resizer } from '../../../utils/resizer';
 import { uniqueId } from 'lodash';
 import { AppStoreService } from '../../../services/app-store.service';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { LearnerResultPanelService } from '../learner-result-panel.service';
 
 /** Panel view for model checking. */
 @Component({
@@ -44,7 +45,7 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
   @Input()
   pointer: number;
 
-  selectedFormulas: Selectable<any>;
+  selectedFormulas: Selectable<any, any>;
   config: any;
   results: any;
   manualFormula: string;
@@ -53,9 +54,10 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
   constructor(private toastService: ToastService,
               private appStore: AppStoreService,
               private ltsFormulaApi: LtsFormulaApiService,
-              private element: ElementRef) {
+              private element: ElementRef,
+              public panelService: LearnerResultPanelService) {
 
-    this.selectedFormulas = new Selectable([], 'id');
+    this.selectedFormulas = new Selectable([], (f) => f.id);
     this.results = {};
     this.formulas = [];
 
@@ -77,11 +79,9 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
 
     this.ltsFormulaApi.getAll(this.project.id)
       .subscribe(formulas => {
-        this.selectedFormulas = new Selectable(formulas, 'id');
+        this.selectedFormulas.addItems(formulas);
         this.formulas = formulas;
       });
-
-    new Resizer(this.element.nativeElement, '.resize', '.right-sidebar');
   }
 
   addManualFormula() {
@@ -113,7 +113,7 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
       data => {
         data.forEach(f => this.results[f.formula.id] = f);
       },
-      err => this.toastService.danger(`Could not check formulas. ${err.data.message}`)
+      res => this.toastService.danger(`Could not check formulas. ${res.error.message}`)
     );
   }
 

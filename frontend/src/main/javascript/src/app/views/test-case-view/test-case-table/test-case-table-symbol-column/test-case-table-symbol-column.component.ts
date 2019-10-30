@@ -17,6 +17,7 @@
 
 import { Component, Input } from '@angular/core';
 import { ParametrizedSymbol } from '../../../../entities/parametrized-symbol';
+import { AppStoreService } from '../../../../services/app-store.service';
 
 @Component({
   selector: 'test-case-table-symbol-column',
@@ -32,4 +33,7 @@ export class TestCaseTableSymbolColumnComponent {
 
   @Input()
   symbolMap: any;
+
+  constructor(public appStore: AppStoreService) {
+  }
 }

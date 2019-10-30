@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+import { Edge } from '../../common/hypothesis/hypothesis.component';
 
-@Component({
-  selector: 'about-view',
-  templateUrl: './about-view.component.html'
-})
-export class AboutViewComponent {
+@Injectable()
+export class LearnerViewStoreService {
 
-  /** The version of ALEX. */
-  public version: string;
-
-  constructor() {
-    this.version = environment.version;
-  }
+  readonly edgeSelected$ = new Subject<Edge>();
 }

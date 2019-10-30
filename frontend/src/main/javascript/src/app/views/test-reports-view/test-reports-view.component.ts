@@ -36,7 +36,7 @@ export class TestReportsViewComponent implements OnInit {
   public reports: any[];
 
   /** The selected reports. */
-  public selectedReports: Selectable<any>;
+  public selectedReports: Selectable<any, any>;
 
   /** The page object */
   public page: any;
@@ -48,7 +48,7 @@ export class TestReportsViewComponent implements OnInit {
 
     this.reports = [];
     this.page = {};
-    this.selectedReports = new Selectable(this.reports, 'id');
+    this.selectedReports = new Selectable(this.reports, r => r.id);
   }
 
   get project(): Project {
@@ -72,7 +72,7 @@ export class TestReportsViewComponent implements OnInit {
       page => {
         this.page = page;
         this.reports = this.page.content;
-        this.selectedReports = new Selectable(this.reports, 'id');
+        this.selectedReports = new Selectable(this.reports, r => r.id);
       },
       res => this.toastService.danger(`Failed to load reports. ${res.error.message}`)
     );

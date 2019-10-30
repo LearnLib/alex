@@ -1,5 +1,5 @@
 <div class="form-group">
-  <label class="control-label">Web Driver</label>
+  <label class="control-label">WebDriver</label>
   <select
     class="form-control"
     name="browser"
@@ -14,8 +14,8 @@
 <div *ngIf="['chrome', 'firefox', 'remote'].indexOf(config.name) > -1" class="form-group form-check">
   <label class="form-check-label">
     <input [(ngModel)]="config.headless" class="form-check-input" type="checkbox">
-    <strong>Use headless mode</strong>
-    <span class="d-block form-text text-muted">Make sure your browser version supports running in headless mode</span>
+    <span>Use headless mode</span>
+    <small class="d-block form-text text-muted">Make sure your browser version supports running in headless mode</small>
   </label>
 </div>
 

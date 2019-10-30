@@ -14,34 +14,27 @@
       class="group w-100 ml-2"
     >
       <i class="fas fa-fw fa-folder m-1"></i>
-      <strong class="pl-1">
-        {{group.name}}
-      </strong>
+      <strong class="pl-1">{{group.name}}</strong>
     </div>
   </div>
-  <div [ngbCollapse]="collapse" class="ml-4 pl-2" style="border-left: 1px solid #ddd">
-    <div>
-      <simple-symbol-group-tree
-        (groupSelected)="groupSelected.emit($event)"
-        (symbolSelected)="symbolSelected.emit($event)"
-        [groups]="group.groups"
-        [selectedGroup]="selectedGroup"
-        [selectedSymbol]="selectedSymbol"
+  <div [ngbCollapse]="collapse" class="ml-3 pl-3 border-left">
+    <simple-symbol-group-tree-item
+      *ngFor="let g of group.groups"
+      (groupSelected)="groupSelected.emit($event)"
+      (symbolSelected)="symbolSelected.emit($event)"
+      [group]="g"
+      [selectedGroup]="selectedGroup"
+      [selectedSymbol]="selectedSymbol"
+    >
+    </simple-symbol-group-tree-item>
+    <div *ngFor="let symbol of orderedSymbols" class="d-flex p-1 ml-4">
+      <div
+        (click)="symbolSelected.emit(symbol)"
+        [ngClass]="{'selected': selectedSymbol != null && selectedSymbol.id === symbol.id}"
+        class="symbol w-100 flex-shrink-0"
       >
-      </simple-symbol-group-tree>
-    </div>
-    <div>
-      <div *ngFor="let symbol of group.symbols" class="d-flex p-1 ml-4">
-        <div
-          (click)="symbolSelected.emit(symbol)"
-          [ngClass]="{'selected': selectedSymbol != null && selectedSymbol.id === symbol.id}"
-          class="symbol w-100 flex-shrink-0"
-        >
-          <i class="fas fa-fw fa-file-code ml-1"></i>
-          <span class="pl-1">
-            {{symbol.name}}
-          </span>
-        </div>
+        <i class="fas fa-fw fa-file-code ml-1"></i>
+        <span class="pl-1">{{symbol.name}}</span>
       </div>
     </div>
   </div>

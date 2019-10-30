@@ -9,7 +9,7 @@
         <div class="list-group list-group-condensed mb-3">
           <div *ngFor="let io of counterExample; let i = index" class="list-group-item counterexample-list-item">
             <i (click)="removeInputOutputAt(i)" class="fas fa-fw fa-times float-right"></i>
-            <span class="badge badge-primary">{{io.input}}</span>
+            <span class="badge badge-primary mr-1">{{io.input}}</span>
             <span class="badge badge-secondary">{{io.output}}</span>
           </div>
         </div>
@@ -18,16 +18,20 @@
     </form>
     <div *ngIf="tmpCounterExamples.length > 0">
       <hr>
-      <ul (dragulaModelChange)="tmpCounterExamples = $event" [dragulaModel]="tmpCounterExamples" class="list-group"
-          dragula="CE">
+      <ul
+        class="list-group"
+        dragula="CE"
+        (dragulaModelChange)="tmpCounterExamples = $event"
+        [dragulaModel]="tmpCounterExamples"
+      >
         <li *ngFor="let ce of tmpCounterExamples; let i = index" class="list-group-item">
-                    <span (click)="removeCounterExampleAt(i)" class="float-right">
-                        <i class="fas fa-trash"></i>
-                    </span>
+          <span (click)="removeCounterExampleAt(i)" class="float-right">
+            <i class="fas fa-fw fa-trash"></i>
+          </span>
           <div class="clearfix" style="margin-right: 32px;">
-                        <span *ngFor="let c of ce" class="badge badge-primary float-left" style="margin: 0 3px 3px 0">
-                          {{c.input}}
-                        </span>
+            <span *ngFor="let c of ce" class="badge badge-primary float-left" style="margin: 0 3px 3px 0">
+              {{c.input}}
+            </span>
           </div>
         </li>
       </ul>

@@ -18,6 +18,8 @@ import { CallRestAction } from '../../../../entities/actions/rest/request-action
 import { Project } from '../../../../entities/project';
 import { AppStoreService } from '../../../../services/app-store.service';
 import { Component, Input, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../../services/form-utils.service';
 
 const presets = {
   JSON: 'JSON',
@@ -32,22 +34,21 @@ export class RequestActionFormComponent implements OnInit {
 
   @Input()
   action: CallRestAction;
-  preset: string;
-  cookie: any;
-  header: any;
-  aceOptions: any;
   selectedBaseUrl: string;
 
-  /** Constructor. */
-  constructor(private appStore: AppStoreService) {
-    this.preset = presets.JSON;
-    this.cookie = {name: null, value: null};
-    this.header = {name: null, value: null};
+  cookieForm = new FormGroup({
+    name: new FormControl('', [Validators.required]),
+    value: new FormControl('')
+  });
 
-    this.aceOptions = {
-      useWrapMode: true,
-      showGutter: true
-    };
+  headerForm = new FormGroup({
+    name: new FormControl('', [Validators.required]),
+    value: new FormControl('')
+  });
+
+  /** Constructor. */
+  constructor(private appStore: AppStoreService,
+              public formUtils: FormUtilsService) {
   }
 
   get project(): Project {
@@ -55,10 +56,6 @@ export class RequestActionFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.action.data == null) {
-      this.setPreset();
-    }
-
     if (this.action.baseUrl == null) {
       this.action.baseUrl = this.project.getDefaultEnvironment().getDefaultUrl().name;
     }
@@ -66,28 +63,15 @@ export class RequestActionFormComponent implements OnInit {
   }
 
   addHeader(): void {
-    this.action.addHeader(this.header.name, this.header.value);
-    this.header.name = null;
-    this.header.value = null;
+    const header = this.headerForm.value;
+    this.action.addHeader(header.name, header.value);
+    this.headerForm.reset();
   }
 
   addCookie(): void {
-    this.action.addCookie(this.cookie.name, this.cookie.value);
-    this.cookie.name = null;
-    this.cookie.value = null;
-  }
-
-  setPreset(): void {
-    switch (this.preset) {
-      case presets.JSON:
-        this.action.data = '{}';
-        break;
-      case presets.GRAPH_QL:
-        this.action.data = `{\n  "query": "",\n  "variables": {}\n}`;
-        break;
-      default:
-        break;
-    }
+    const cookie = this.cookieForm.value;
+    this.action.addCookie(cookie.name, cookie.value);
+    this.cookieForm.reset();
   }
 
   handleBaseUrlChange(): void {

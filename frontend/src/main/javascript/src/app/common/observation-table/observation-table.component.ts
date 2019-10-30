@@ -85,5 +85,4 @@ export class ObservationTableComponent implements OnInit {
       }
     }
   }
-
 }

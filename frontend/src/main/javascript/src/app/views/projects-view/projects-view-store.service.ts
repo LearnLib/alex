@@ -27,11 +27,13 @@ import { ImportProjectModalComponent } from './import-project-modal/import-proje
 import { DownloadService } from '../../services/download.service';
 import { removeItems, replaceItem } from '../../utils/list-utils';
 import { EditProjectModalComponent } from './edit-project-modal/edit-project-modal.component';
+import { map } from 'rxjs/operators';
+import { orderBy } from 'lodash';
 
 @Injectable()
 export class ProjectsViewStoreService {
 
-  public readonly projectsSelectable: Selectable<Project>;
+  public readonly projectsSelectable: Selectable<Project, number>;
   private projects: BehaviorSubject<Project[]>;
 
   constructor(private projectApi: ProjectApiService,
@@ -40,7 +42,7 @@ export class ProjectsViewStoreService {
               private toastService: ToastService,
               private downloadService: DownloadService) {
     this.projects = new BehaviorSubject<Project[]>([]);
-    this.projectsSelectable = new Selectable<Project>([], 'id');
+    this.projectsSelectable = new Selectable<Project, number>([], p => p.id);
   }
 
   get projects$(): Observable<Project[]> {
@@ -78,8 +80,8 @@ export class ProjectsViewStoreService {
             this.projects.next(removeItems(this.projects.value, p => p.id === project.id));
             this.toastService.success(`The project '${project.name}' has been deleted.`);
           },
-          response => {
-            this.toastService.danger(`The project could not be deleted. ${response.data.message}`);
+          res => {
+            this.toastService.danger(`The project could not be deleted. ${res.error.message}`);
           }
         );
       });
@@ -96,7 +98,7 @@ export class ProjectsViewStoreService {
             this.projects.next(removeItems(this.projects.value, (p => ids.indexOf(p.id) > -1)));
             this.projectsSelectable.unselectMany(projects);
           },
-          err => this.toastService.danger(`The projects could not be deleted. ${err.data.message}`)
+          res => this.toastService.danger(`The projects could not be deleted. ${res.error.message}`)
         );
       });
   }
@@ -129,5 +131,11 @@ export class ProjectsViewStoreService {
       this.projects.next([...this.projects.value, importedProject]);
       this.projectsSelectable.addItem(importedProject);
     });
+  }
+
+  get orderedProjects$(): Observable<Project[]> {
+    return this.projects$.pipe(
+      map(projects => orderBy(projects, ['name']))
+    );
   }
 }

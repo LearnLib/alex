@@ -18,11 +18,10 @@ import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { SymbolApiService } from '../../../services/api/symbol-api.service';
 import { SymbolGroupApiService } from '../../../services/api/symbol-group-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { EventBus } from '../../../services/eventbus.service';
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { AppStoreService } from '../../../services/app-store.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 /**
  * The controller that handles the moving of symbols into another group.
@@ -34,21 +33,21 @@ import { Component, OnInit } from '@angular/core';
 export class MoveSymbolsModalComponent implements OnInit {
 
   /** The list of symbols that should be moved. */
-  public symbols: AlphabetSymbol[];
+  @Input()
+  symbols: AlphabetSymbol[];
 
   /** The list of existing symbol groups. */
-  public groups: SymbolGroup[];
+  groups: SymbolGroup[];
 
   /** The symbol group the symbols should be moved into. */
-  public selectedGroup: SymbolGroup;
+  selectedGroup: SymbolGroup;
 
-  public errorMessage: string;
+  errorMessage: string;
 
   constructor(private symbolApi: SymbolApiService,
               private symbolGroupApi: SymbolGroupApiService,
               private appStore: AppStoreService,
               private toastService: ToastService,
-              private eventBus: EventBus,
               public modal: NgbActiveModal) {
     this.groups = [];
     this.symbols = [];
@@ -76,14 +75,10 @@ export class MoveSymbolsModalComponent implements OnInit {
       this.symbolApi.moveMany(symbolsToMove, this.selectedGroup).subscribe(
         () => {
           this.toastService.success('Symbols move to group <strong>' + this.selectedGroup.name + '</strong>');
-          this.eventBus.symbolsMoved$.next({
-            symbols: this.symbols,
-            group: this.selectedGroup
-          });
-          this.modal.dismiss();
+          this.modal.close(this.selectedGroup);
         },
-        err => {
-          this.errorMessage = 'Failed to move symbols: ' + err.data.message;
+        res => {
+          this.errorMessage = 'Failed to move symbols: ' + res.error.message;
         }
       );
     }

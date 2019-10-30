@@ -29,13 +29,8 @@ export class SymbolGroupUtils {
    * @return All symbols in the groups.
    */
   static getSymbols(groups: SymbolGroup[]): AlphabetSymbol[] {
-    function getSymbols(group, symbols) {
-      group.symbols.forEach(s => symbols.push(s));
-      group.groups.forEach(g => getSymbols(g, symbols));
-    }
-
     const symbols = [];
-    groups.forEach(g => getSymbols(g, symbols));
+    groups.forEach(group => group.walk(() => {}, s => symbols.push(s)));
     return symbols;
   }
 

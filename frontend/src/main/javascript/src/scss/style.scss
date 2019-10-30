@@ -17,30 +17,6 @@ body {
   background: #f2f2f2;
 }
 
-.resize {
-  background: rgba(0,0,0,0);
-  transition: background .4s;
-  position: absolute;
-
-  &:hover {
-    background: rgba(0,0,0,.5);
-  }
-
-  &.resize-x {
-    cursor: ew-resize;
-    width: 4px;
-    top: 0;
-    bottom: 0;
-  }
-
-  &.resize-y {
-    cursor: nw-resize;
-    height: 4px;
-    left: 0;
-    right: 0;
-  }
-}
-
 .text-black {
   color: #000;
 
@@ -176,4 +152,25 @@ body {
   td, th {
     min-width: 120px;
   }
+}
+
+
+ngb-accordion {
+  div[role="tab"] {
+    padding: .5rem;
+
+    > button {
+      display: block;
+      color: #555555;
+
+      &:hover {
+        text-decoration: none;
+        color: #000;
+      }
+    }
+  }
+}
+
+create-action-modal ngb-accordion .card-body {
+  padding: 0;
 }

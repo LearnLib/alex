@@ -16,7 +16,7 @@
 
 import { environment as env } from '../../../environments/environment';
 import { LearnerResult } from '../../entities/learner-result';
-import { LearnConfiguration } from '../../entities/learner-configuration';
+import { LearnerConfiguration } from '../../entities/learner-configuration';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -39,7 +39,7 @@ export class LearnerApiService extends BaseApiService {
    * @param projectId The id of the project of the test.
    * @param learnConfiguration The configuration to learn with.
    */
-  start(projectId: number, learnConfiguration: LearnConfiguration): Observable<any> {
+  start(projectId: number, learnConfiguration: LearnerConfiguration): Observable<any> {
     return this.http.post(`${env.apiUrl}/learner/${projectId}/start`, learnConfiguration, this.defaultHttpOptions);
   }
 
@@ -61,7 +61,7 @@ export class LearnerApiService extends BaseApiService {
    * @param testNo The test number of the test to resume.
    * @param learnConfiguration The configuration to resume with.
    */
-  resume(projectId: number, testNo: number, learnConfiguration: LearnConfiguration): Observable<any> {
+  resume(projectId: number, testNo: number, learnConfiguration: LearnerConfiguration): Observable<any> {
     return this.http.post(`${env.apiUrl}/learner/${projectId}/resume/${testNo}`, learnConfiguration, this.defaultHttpOptions);
   }
 

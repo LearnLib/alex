@@ -33,5 +33,5 @@ export class LearnerResultListItemComponent {
   result: LearnerResult;
 
   @Input()
-  selectable: Selectable<LearnerResult>;
+  selectable: Selectable<LearnerResult, number>;
 }

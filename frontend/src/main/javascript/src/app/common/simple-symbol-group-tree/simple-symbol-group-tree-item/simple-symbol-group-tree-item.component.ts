@@ -17,6 +17,7 @@
 import { SymbolGroup } from '../../../entities/symbol-group';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { orderBy } from 'lodash';
 
 /**
  * Recursive component that displays a single item in the symbol group tree.
@@ -44,4 +45,12 @@ export class SimpleSymbolGroupTreeItemComponent {
   selectedGroup: SymbolGroup;
 
   collapse = true;
+
+  get orderedGroups(): SymbolGroup[] {
+    return orderBy(this.group.groups, ['name']);
+  }
+
+  get orderedSymbols(): AlphabetSymbol[] {
+    return orderBy(this.group.symbols, ['name']);
+  }
 }

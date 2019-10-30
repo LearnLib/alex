@@ -48,11 +48,18 @@ export class TestReportApiService extends BaseApiService {
    * @param testReportId The id of the report.
    * @param format How and if the report should be returned in another format.
    */
-  get(projectId: number, testReportId: number, format: any = null): Observable<any> {
-    const options = this.defaultHttpOptions;
+  get(projectId: number, testReportId: number, format: string = null): Observable<any> {
+    const options = {
+      headers: this.defaultHttpHeaders,
+      params: {}
+    };
+
     if (format != null) {
-      options.params = encodeURIComponent(format);
+      options.params = {
+        format: encodeURIComponent(format)
+      }
     }
+
     return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}`, options);
   }
 

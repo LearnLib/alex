@@ -25,12 +25,13 @@ import { ToastService } from '../../services/toast.service';
 import { removeItems, replaceItem } from '../../utils/list-utils';
 import { EditUserModalComponent } from './edit-user-modal/edit-user-modal.component';
 import { CreateUserModalComponent } from './create-user-modal/create-user-modal.component';
+import { PromptService } from '../../services/prompt.service';
 
 @Injectable()
 export class AdminUsersViewStoreService {
 
   /** All selected users. */
-  usersSelectable: Selectable<User>;
+  usersSelectable: Selectable<User, number>;
 
   /** All registered users. */
   private users: BehaviorSubject<User[]>;
@@ -38,9 +39,10 @@ export class AdminUsersViewStoreService {
   constructor(private userApi: UserApiService,
               private appStore: AppStoreService,
               private modalService: NgbModal,
-              private toastService: ToastService) {
+              private toastService: ToastService,
+              private promptService: PromptService) {
     this.users = new BehaviorSubject<User[]>([]);
-    this.usersSelectable = new Selectable<User>([], 'id');
+    this.usersSelectable = new Selectable<User, number>([], u => u.id);
   }
 
   get currentUser(): User {
@@ -96,21 +98,25 @@ export class AdminUsersViewStoreService {
    * Deletes selected users which are not admins.
    */
   deleteSelectedUsers(): void {
-    const users = this.usersSelectable.getSelected().filter(u => u.id !== this.currentUser.id);
-    if (users.length === 0) {
-      this.toastService.info('You have to select at least one user.');
-      return;
-    }
-
-    const ids = users.map(u => u.id);
-    this.userApi.removeManyUsers(ids).subscribe(
+    this.promptService.confirm('Are you sure you want to delete the users?').then(
       () => {
-        this.toastService.success('The users have been deleted');
-        this.users.next(removeItems(this.users.value, (u => ids.indexOf(u.id) > -1)));
-        this.usersSelectable.unselectMany(users);
-      },
-      res => {
-        this.toastService.danger(`Deleting failed! ${res.error.message}`);
+        const users = this.usersSelectable.getSelected().filter(u => u.id !== this.currentUser.id);
+        if (users.length === 0) {
+          this.toastService.info('You have to select at least one user.');
+          return;
+        }
+
+        const ids = users.map(u => u.id);
+        this.userApi.removeManyUsers(ids).subscribe(
+          () => {
+            this.toastService.success('The users have been deleted');
+            this.users.next(removeItems(this.users.value, (u => ids.indexOf(u.id) > -1)));
+            this.usersSelectable.unselectMany(users);
+          },
+          res => {
+            this.toastService.danger(`Deleting failed! ${res.error.message}`);
+          }
+        );
       }
     );
   }

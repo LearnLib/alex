@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import * as angular from 'angular';
 import { Injectable } from '@angular/core';
 
 /**
@@ -48,7 +47,7 @@ export class DownloadService {
    * @param filename The name of the file to download.
    */
   downloadObject(obj: any, filename: string): void {
-    const href = 'data:text/json;charset=utf-8,' + encodeURIComponent(angular.toJson(obj, true));
+    const href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj, null, 2));
     this.download(filename, 'json', href);
   }
 

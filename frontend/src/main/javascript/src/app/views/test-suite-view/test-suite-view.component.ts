@@ -38,6 +38,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TestsImportModalComponent } from './tests-import-modal/tests-import-modal.component';
 import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
+import { orderBy } from 'lodash';
 
 @Component({
   selector: 'test-suite-view',
@@ -64,7 +65,7 @@ export class TestSuiteViewComponent implements OnInit {
 
   testConfigs: any[];
 
-  selectedTests: Selectable<any>;
+  selectedTests: Selectable<any, any>;
 
   constructor(private symbolGroupApi: SymbolGroupApiService,
               private appStore: AppStoreService,
@@ -74,13 +75,13 @@ export class TestSuiteViewComponent implements OnInit {
               private modalService: NgbModal,
               private settingsApi: SettingsApiService,
               private downloadService: DownloadService,
-              private clipboardService: ClipboardService,
+              public clipboardService: ClipboardService,
               private testReportApi: TestReportApiService,
               private notificationService: NotificationService,
               private testConfigApi: TestConfigApiService) {
     this.results = {};
     this.testConfigs = [];
-    this.selectedTests = new Selectable([], 'id');
+    this.selectedTests = new Selectable([], t => t.id);
     this.groups = [];
 
     this.status = {
@@ -93,7 +94,7 @@ export class TestSuiteViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.selectedTests = new Selectable(this.testSuite.tests, 'id');
+    this.selectedTests.addItems(this.testSuite.tests);
 
     this.testConfig = {
       tests: [],
@@ -149,7 +150,7 @@ export class TestSuiteViewComponent implements OnInit {
             this.toastService.success(`The test suite "${testSuite.name}" has been created.`);
             this.testSuite.tests.push(data);
           },
-          err => this.toastService.danger('The test suite could not be created. ' + err.data.message)
+          res => this.toastService.danger('The test suite could not be created. ' + res.error.message)
         );
       });
   }
@@ -167,7 +168,7 @@ export class TestSuiteViewComponent implements OnInit {
             this.toastService.success(`The test case "${testCase.name}" has been created.`);
             this.testSuite.tests.push(data);
           },
-          err => this.toastService.danger('The test suite could not be created. ' + err.data.message)
+          res => this.toastService.danger('The test suite could not be created. ' + res.error.message)
         );
       });
   }
@@ -204,7 +205,7 @@ export class TestSuiteViewComponent implements OnInit {
             this.toastService.success('The name has been updated.');
             test.name = name;
           },
-          err => this.toastService.danger(`The test ${test.type} could not be updated. ${err.data.message}`)
+          res => this.toastService.danger(`The test ${test.type} could not be updated. ${res.error.message}`)
         );
       });
   }
@@ -222,7 +223,7 @@ export class TestSuiteViewComponent implements OnInit {
         remove(this.testSuite.tests, {id: test.id});
         this.selectedTests.unselect(test);
       },
-      err => this.toastService.danger(`The test ${test.type} could not be deleted. ${err.data.message}`)
+      res => this.toastService.danger(`The test ${test.type} could not be deleted. ${res.error.message}`)
     );
   }
 
@@ -241,7 +242,7 @@ export class TestSuiteViewComponent implements OnInit {
         selectedTests.forEach(test => remove(this.testSuite.tests, {id: test.id}));
         this.selectedTests.unselectAll();
       },
-      err => this.toastService.danger(`Deleting the tests failed. ${err.data.message}`)
+      res => this.toastService.danger(`Deleting the tests failed. ${res.error.message}`)
     );
   }
 
@@ -284,8 +285,8 @@ export class TestSuiteViewComponent implements OnInit {
           this._pollStatus();
         }
       },
-      err => {
-        this.toastService.danger(`The test execution failed. ${err.data.message}`);
+      res => {
+        this.toastService.danger(`The test execution failed. ${res.error.message}`);
       }
     );
   }
@@ -332,7 +333,7 @@ export class TestSuiteViewComponent implements OnInit {
   abortTesting(): void {
     this.testApi.abort(this.project.id).subscribe(
       () => this.toastService.success('The testing process has been aborted.'),
-      err => this.toastService.danger(`Could not abort the testing process. ${err.data.message}`)
+      res => this.toastService.danger(`Could not abort the testing process. ${res.error.message}`)
     );
   }
 
@@ -360,21 +361,6 @@ export class TestSuiteViewComponent implements OnInit {
           this.downloadService.downloadObject(data, name);
           this.toastService.success('The tests have been exported.');
         });
-      });
-    }
-  }
-
-  exportForSelenium(): void {
-    let tests = this.selectedTests.getSelected();
-    if (!tests.length) {
-      this.toastService.info('You have to select at least one test.');
-    } else {
-      const ts = JSON.parse(JSON.stringify(this.testSuite));
-      ts.tests = tests;
-      const name = `tests-selenium-${this.testSuite.name}-${DateUtils.YYYYMMDD()}`;
-      this.promptService.prompt('Enter a name for the file', name).then(name => {
-        this.downloadService.downloadObject(ts, name);
-        this.toastService.success('The tests have been exported.');
       });
     }
   }
@@ -415,8 +401,8 @@ export class TestSuiteViewComponent implements OnInit {
           });
           this.toastService.success(`Pasted tests from clipboard.`);
         },
-        err => {
-          this.toastService.danger(`Could not paste tests in this suite. ${err.data.message}`);
+        res => {
+          this.toastService.danger(`Could not paste tests in this suite. ${res.error.message}`);
         }
       );
     } else {
@@ -437,9 +423,8 @@ export class TestSuiteViewComponent implements OnInit {
         this.testConfigs.push(createdConfig);
         this.toastService.success('Config has been saved');
       },
-      err => {
-        this.toastService.danger(`The config could not be saved. ${err.data.message}`);
-        this.toastService.danger(`The config could not be saved. ${err.data.message}`);
+      res => {
+        this.toastService.danger(`The config could not be saved. ${res.error.message}`);
       }
     );
   }
@@ -449,5 +434,9 @@ export class TestSuiteViewComponent implements OnInit {
       this.testConfig = JSON.parse(JSON.stringify(config));
       this.testConfig.environment = this.project.environments.find(e => e.id === config.environment);
     }
+  }
+
+  get orderedTests(): any[] {
+    return orderBy(this.testSuite.tests, ['type', 'name'], ['desc', 'asc']);
   }
 }

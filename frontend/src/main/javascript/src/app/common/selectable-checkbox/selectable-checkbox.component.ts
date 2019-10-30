@@ -28,7 +28,7 @@ export class SelectableCheckboxComponent {
   item: any;
 
   @Input()
-  selectable: Selectable<any>;
+  selectable: Selectable<any, any>;
 
   @Output()
   change: EventEmitter<any>;

@@ -17,7 +17,6 @@
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
 import { SymbolApiService } from '../../../services/api/symbol-api.service';
 import { ToastService } from '../../../services/toast.service';
-import { EventBus } from '../../../services/eventbus.service';
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup } from '@angular/forms';
@@ -43,7 +42,6 @@ export class EditSymbolModalComponent {
 
   constructor(private symbolApi: SymbolApiService,
               private toastService: ToastService,
-              private eventBus: EventBus,
               public modal: NgbActiveModal) {
   }
 
@@ -61,7 +59,6 @@ export class EditSymbolModalComponent {
     this.symbolApi.update(this.symbol.toJson()).subscribe(
       updatedSymbol => {
         this.toastService.success('Symbol updated');
-        this.eventBus.symbolUpdated$.next(updatedSymbol);
         this.modal.close(updatedSymbol);
       },
       res => {

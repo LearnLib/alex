@@ -39,9 +39,4 @@ export class SidebarComponent {
   get user(): User {
     return this.appStore.user;
   }
-
-  /** Toggles the collapsed state. */
-  toggleCollapse(): void {
-    this.appStore.toggleSidebar();
-  }
 }

@@ -10,12 +10,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { ToastService } from './services/toast.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ViewHeaderComponent } from './common/view-header/view-header.component';
 import { ActionBarComponent } from './common/action-bar/action-bar.component';
 import { DragulaModule } from 'ng2-dragula';
 import { SelectableCheckboxComponent } from './common/selectable-checkbox/selectable-checkbox.component';
 import { SelectableCheckboxMultipleComponent } from './common/selectable-checkbox-multiple/selectable-checkbox-multiple.component';
-import { AboutViewComponent } from './views/about-view/about-view.component';
 import { AppStoreService } from './services/app-store.service';
 import { SettingsApiService } from './services/api/settings-api.service';
 import { TestCaseTableComponent } from './views/test-case-view/test-case-table/test-case-table.component';
@@ -91,7 +89,6 @@ import { ProjectUrlFormGroupsComponent } from './views/project-environments-view
 import { HypothesisComponent } from './common/hypothesis/hypothesis.component';
 import { DiscriminationTreeComponent } from './common/discrimination-tree/discrimination-tree.component';
 import { ObservationTableComponent } from './common/observation-table/observation-table.component';
-import { EventBus } from './services/eventbus.service';
 import { LearnerResultDownloadService } from './services/learner-result-download.service';
 import { TestResultReportComponent } from './views/test-suite-view/test-result-report/test-result-report.component';
 import { AdminUsersViewComponent } from './views/admin-users-view/admin-users-view.component';
@@ -229,15 +226,15 @@ import { ActionSearchFormComponent } from './views/symbol-view/create-action-mod
 import { AppViewComponent } from './views/app-view/app-view.component';
 import { UnauthorizedHttpInterceptor } from './interceptors/unauthorized-http-interceptor';
 import { AceEditorModule } from 'ng2-ace-editor';
+import { AboutModalComponent } from './views/root-view/about-modal/about-modal.component';
+import { FormUtilsService } from './services/form-utils.service';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ViewHeaderComponent,
     ActionBarComponent,
     SelectableCheckboxComponent,
     SelectableCheckboxMultipleComponent,
-    AboutViewComponent,
     TestCaseTableComponent,
     SymbolParametersComponent,
     OutputErrorTraceComponent,
@@ -420,7 +417,8 @@ import { AceEditorModule } from 'ng2-ace-editor';
     WaitActionFormComponent,
     ActionFormComponent,
     ActionSearchFormComponent,
-    AppViewComponent
+    AppViewComponent,
+    AboutModalComponent
   ],
   imports: [
     BrowserModule,
@@ -471,9 +469,9 @@ import { AceEditorModule } from 'ng2-ace-editor';
     EqOracleService,
     LearningAlgorithmService,
     LearnerResultChartService,
-    EventBus,
     LearnerResultDownloadService,
-    ErrorViewStoreService
+    ErrorViewStoreService,
+    FormUtilsService
   ],
   entryComponents: [
     CreateCounterModalComponent,
@@ -514,7 +512,8 @@ import { AceEditorModule } from 'ng2-ace-editor';
     LearnerSettingsModalComponent,
     CreateActionModalComponent,
     EditActionModalComponent,
-    HypothesisLayoutSettingsModalComponent
+    HypothesisLayoutSettingsModalComponent,
+    AboutModalComponent
   ],
   bootstrap: [AppComponent]
 })

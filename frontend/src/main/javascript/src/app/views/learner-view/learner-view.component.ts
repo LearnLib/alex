@@ -26,6 +26,7 @@ import { AppStoreService } from '../../services/app-store.service';
 import { ErrorViewStoreService } from '../error-view/error-view-store.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { LearnerViewStoreService } from './learner-view-store.service';
 
 /**
  * The controller for showing a load screen during the learning and shows all learn results from the current test
@@ -33,7 +34,8 @@ import { ActivatedRoute } from '@angular/router';
  */
 @Component({
   selector: 'learner-view',
-  templateUrl: './learner-view.component.html'
+  templateUrl: './learner-view.component.html',
+  providers: [LearnerViewStoreService]
 })
 export class LearnerViewComponent implements OnInit, OnDestroy {
 
@@ -68,7 +70,8 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
               private toastService: ToastService,
               private symbolApi: SymbolApiService,
               private notificationService: NotificationService,
-              private errorViewStore: ErrorViewStoreService) {
+              private errorViewStore: ErrorViewStoreService,
+              public store: LearnerViewStoreService) {
 
     this.intervalHandle = null;
     this.intervalTime = 5000;
@@ -187,8 +190,8 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
         this.status = null;
         this.poll();
       },
-      err => {
-        this.toastService.danger('<p><strong>Resume learning failed!</strong></p>' + err.data.message);
+      res => {
+        this.toastService.danger('<p><strong>Resume learning failed!</strong></p>' + res.error.message);
       }
     );
   }

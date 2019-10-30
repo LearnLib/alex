@@ -18,13 +18,21 @@ import { Component, OnInit } from '@angular/core';
 import { AdminUsersViewStoreService } from './admin-users-view-store.service';
 import { AppStoreService } from '../../services/app-store.service';
 import { User } from '../../entities/user';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-admin-users-view',
   templateUrl: './admin-users-view.component.html',
+  styleUrls: ['./admin-users-view.component.scss'],
   providers: [AdminUsersViewStoreService]
 })
 export class AdminUsersViewComponent implements OnInit {
+
+  searchForm = new FormGroup({
+    value: new FormControl('')
+  });
 
   constructor(public store: AdminUsersViewStoreService,
               public appStore: AppStoreService) {
@@ -36,5 +44,11 @@ export class AdminUsersViewComponent implements OnInit {
 
   get currentUser(): User {
     return this.appStore.user;
+  }
+
+  get filteredUsers$(): Observable<User[]> {
+    return this.store.users$.pipe(map(users =>
+      users.filter(u => u.email.includes(this.searchForm.controls.value.value))
+    ));
   }
 }

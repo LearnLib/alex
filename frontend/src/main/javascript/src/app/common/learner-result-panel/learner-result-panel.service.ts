@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-import { Subject } from 'rxjs';
-import { SymbolGroup } from '../entities/symbol-group';
-import { AlphabetSymbol } from '../entities/alphabet-symbol';
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+import { Edge } from '../hypothesis/hypothesis.component';
 
 @Injectable()
-export class EventBus {
-
-  groupUpdated$ = new Subject<SymbolGroup>();
-  groupDeleted$ = new Subject<SymbolGroup>();
-  groupMoved$ = new Subject<{ from: number, group: SymbolGroup }>();
-
-  hypothesisLabelSelected$ = new Subject<{ input: string, output: string }>();
-
-  symbolUpdated$ = new Subject<AlphabetSymbol>();
-  symbolsMoved$ = new Subject<{ group: SymbolGroup, symbols: AlphabetSymbol[] }>();
+export class LearnerResultPanelService {
+  readonly edgeSelected$ = new Subject<Edge>();
 }

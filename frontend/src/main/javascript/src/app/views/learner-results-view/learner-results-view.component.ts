@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { remove } from 'lodash';
+import { remove, orderBy } from 'lodash';
 import { Selectable } from '../../utils/selectable';
 import { LearnerResultApiService } from '../../services/api/learner-result-api.service';
 import { ToastService } from '../../services/toast.service';
@@ -40,7 +40,7 @@ export class LearnerResultsViewComponent implements OnInit {
   results: LearnerResult[];
 
   /** The test results the user selected. */
-  selectedResults: Selectable<LearnerResult>;
+  selectedResults: Selectable<LearnerResult, number>;
 
   constructor(private appStore: AppStoreService,
               private learnerResultApi: LearnerResultApiService,
@@ -50,15 +50,14 @@ export class LearnerResultsViewComponent implements OnInit {
               private router: Router) {
 
     this.results = [];
-    this.selectedResults = new Selectable(this.results, 'testNo');
+    this.selectedResults = new Selectable(this.results, r => r.testNo);
   }
 
   ngOnInit(): void {
-    // get all final test results
     this.learnerResultApi.getAll(this.project.id).subscribe(
       results => {
         this.results = results;
-        this.selectedResults = new Selectable(this.results, 'testNo');
+        this.selectedResults.addItems(this.results);
       },
       console.error
     );
@@ -72,12 +71,12 @@ export class LearnerResultsViewComponent implements OnInit {
   deleteResult(result: LearnerResult): void {
     this.learnerResultApi.remove(result).subscribe(
       () => {
-        this.toastService.success('Learn result for test <strong>' + result.testNo + '</strong> deleted');
+        this.toastService.success('Learner result for test <strong>' + result.testNo + '</strong> deleted');
         remove(this.results, {testNo: result.testNo});
         this.selectedResults.unselect(result);
       },
-      err => {
-        this.toastService.danger('<p><strong>Could not delete learner result</strong></p>' + err.data.message);
+      res => {
+        this.toastService.danger('<p><strong>Could not delete learner result</strong></p>' + res.error.message);
       }
     );
   }
@@ -90,12 +89,12 @@ export class LearnerResultsViewComponent implements OnInit {
     if (selectedResults.length > 0) {
       this.learnerResultApi.removeMany(selectedResults).subscribe(
         () => {
-          this.toastService.success('Learn results deleted');
+          this.toastService.success('Learner results deleted');
           selectedResults.forEach(result => remove(this.results, {testNo: result.testNo}));
           this.selectedResults.unselectAll();
         },
-        err => {
-          this.toastService.danger('<p><strong>Could not delete learner results</strong></p>' + err.data.message);
+        res => {
+          this.toastService.danger('<p><strong>Could not delete learner results</strong></p>' + res.error.message);
         }
       );
     } else {
@@ -109,8 +108,8 @@ export class LearnerResultsViewComponent implements OnInit {
   openSelectedResults(): void {
     const selectedResults = this.selectedResults.getSelected();
     if (selectedResults.length > 0) {
-      const testNos = selectedResults.map(r => r.testNo).join(',');
-      this.router.navigate(['/app', 'projects', this.project.id , 'learner', 'results', testNos]);
+      const ids = selectedResults.map(r => r.id).join(',');
+      this.router.navigate(['/app', 'projects', this.project.id , 'learner', 'results', ids]);
     }
   }
 
@@ -156,8 +155,8 @@ export class LearnerResultsViewComponent implements OnInit {
         this.toastService.success('The result has been cloned.');
         this.results.push(clonedResult);
       },
-      err => {
-        this.toastService.danger(`The result could not be cloned. ${err.data.message}`);
+      res => {
+        this.toastService.danger(`The result could not be cloned. ${res.error.message}`);
       }
     );
   }
@@ -170,5 +169,9 @@ export class LearnerResultsViewComponent implements OnInit {
 
   get project(): Project {
     return this.appStore.project;
+  }
+
+  get orderedResults(): LearnerResult[] {
+    return orderBy(this.results, ['testNo'], ['desc']);
   }
 }

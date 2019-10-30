@@ -23,7 +23,7 @@ import { ProjectEnvironment } from './project-environment';
 /**
  * The model for a learn configuration.
  */
-export class LearnConfiguration {
+export class LearnerConfiguration {
 
   /** The list of ids of symbols to learn. */
   public symbols: ParametrizedSymbol[];

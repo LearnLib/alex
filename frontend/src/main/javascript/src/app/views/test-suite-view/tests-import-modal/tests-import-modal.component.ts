@@ -72,7 +72,7 @@ export class TestsImportModalComponent {
 
       this.testApi.import(this.project.id, tests).subscribe(
         tests => this.modal.close(tests),
-        err => this.errorMessage = err.data.message
+        res => this.errorMessage = res.error.message
       );
     } else {
       this.errorMessage = 'There aren\'t any tests to import';

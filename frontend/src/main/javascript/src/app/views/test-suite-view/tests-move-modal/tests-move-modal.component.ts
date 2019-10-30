@@ -77,11 +77,6 @@ export class TestsMoveModalComponent implements OnInit {
   moveTests(): void {
     this.errorMessage = null;
 
-    if (this.selectedTestSuite == null) {
-      this.errorMessage = 'You have to select a test suite.';
-      return;
-    }
-
     const testIds: number[] = this.tests.map(t => t.id);
     const targetId: number = this.selectedTestSuite.id;
     this.testApi.moveMany(this.project.id, testIds, targetId).subscribe(
@@ -89,8 +84,8 @@ export class TestsMoveModalComponent implements OnInit {
         this.toastService.success('The tests have been moved.');
         this.modal.close(movedTests);
       },
-      err => {
-        this.errorMessage = `The tests could not be moved. ${err.data.message}`;
+      res => {
+        this.errorMessage = `The tests could not be moved. ${res.error.message}`;
       }
     );
   }

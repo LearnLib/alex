@@ -15,9 +15,8 @@
  */
 
 import { SymbolGroup } from '../../../../entities/symbol-group';
-import { Selectable } from '../../../../utils/selectable';
-import { AlphabetSymbol } from '../../../../entities/alphabet-symbol';
 import { Component, Input } from '@angular/core';
+import { SymbolsViewStoreService } from '../../symbols-view-store.service';
 
 @Component({
   selector: 'symbol-group-header',
@@ -30,16 +29,13 @@ export class SymbolGroupHeaderComponent {
   @Input()
   group: SymbolGroup;
 
-  /** If the group is collapsed. */
-  @Input()
-  collapse: boolean;
-
-  @Input()
-  selectedSymbols: Selectable<AlphabetSymbol>;
-
   /** Constructor. */
-  constructor() {
-    this.collapse = false;
+  constructor(public store: SymbolsViewStoreService) {
+  }
+
+  toggleCollapse(): void {
+    const collapsed = this.store.groupsCollapsedMap.get(this.group.id);
+    this.store.groupsCollapsedMap.set(this.group.id, collapsed == null ? true : !collapsed);
   }
 }
 

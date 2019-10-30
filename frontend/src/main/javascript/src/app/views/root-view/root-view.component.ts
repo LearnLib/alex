@@ -19,6 +19,8 @@ import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AboutModalComponent } from './about-modal/about-modal.component';
 
 /**
  * The controller of the index page.
@@ -31,7 +33,8 @@ import { Router } from '@angular/router';
 export class RootViewComponent implements OnInit {
 
   constructor(private appStore: AppStoreService,
-              private router: Router) {
+              private router: Router,
+              private modalService: NgbModal) {
   }
 
   get user(): User {
@@ -54,5 +57,9 @@ export class RootViewComponent implements OnInit {
 
   handleLoggedIn(): void {
     this.router.navigate(['app', 'projects']);
+  }
+
+  showAboutModal(): void {
+    this.modalService.open(AboutModalComponent);
   }
 }

@@ -15,8 +15,10 @@
  */
 
 import { AlphabetSymbol } from '../../../../entities/alphabet-symbol';
-import { Selectable } from '../../../../utils/selectable';
 import { Component, Input } from '@angular/core';
+import { SymbolsViewStoreService } from '../../symbols-view-store.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SymbolUsagesModalComponent } from '../../../../common/modals/symbol-usages-modal/symbol-usages-modal.component';
 
 @Component({
   selector: 'symbol-item',
@@ -29,15 +31,12 @@ export class SymbolItemComponent {
   @Input()
   symbol: AlphabetSymbol;
 
-  /** The selectable model. */
-  @Input()
-  selectedSymbols: Selectable<AlphabetSymbol>;
+  constructor(public store: SymbolsViewStoreService,
+              private modal: NgbModal) {
+  }
 
-  /** If the symbol can be selected. */
-  @Input()
-  selectable: boolean;
-
-  selectSymbol(symbol: AlphabetSymbol): void {
-    this.selectedSymbols.select(symbol);
+  showSymbolUsages() {
+    const modalRef = this.modal.open(SymbolUsagesModalComponent);
+    modalRef.componentInstance.symbol = this.symbol;
   }
 }

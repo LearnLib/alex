@@ -64,3 +64,9 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 
 // fix for dragula
 (window as any).global = window;
+
+import * as ace from 'brace';
+import 'brace/mode/javascript';
+import 'brace/mode/plain_text';
+import 'brace/theme/eclipse'
+(window as any).ace = ace;

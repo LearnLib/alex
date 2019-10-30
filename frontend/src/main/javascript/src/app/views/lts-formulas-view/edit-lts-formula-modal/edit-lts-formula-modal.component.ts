@@ -50,7 +50,7 @@ export class EditLtsFormulaModalComponent {
         updatedFormula => {
           this.modal.close(updatedFormula);
         },
-        err => this.errorMessage = err.data.message
+        res => this.errorMessage = res.error.message
       );
     }
   }

@@ -30,5 +30,5 @@ export class ActionFormComponent {
 
   /** All symbols. */
   @Input()
-  symbols: AlphabetSymbol[];
+  symbols: AlphabetSymbol[] = [];
 }

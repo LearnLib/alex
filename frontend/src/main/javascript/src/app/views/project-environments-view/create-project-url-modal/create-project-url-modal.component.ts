@@ -50,8 +50,8 @@ export class CreateProjectUrlModalComponent {
 
     this.projectEnvironmentApi.createUrl(this.environment.project, this.environment.id, this.url).subscribe(
       urls => this.modal.close(urls),
-      err => {
-        this.errorMessage = `The URL could not be created. ${err.data.message}`;
+      res => {
+        this.errorMessage = `The URL could not be created. ${res.error.message}`;
       }
     );
   }

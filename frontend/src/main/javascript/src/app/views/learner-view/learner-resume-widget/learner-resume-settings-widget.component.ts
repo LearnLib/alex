@@ -53,12 +53,12 @@ export class LearnerResumeSettingsWidgetComponent implements OnInit {
   /** The selected symbol to add. */
   selectedSymbol: AlphabetSymbol = null;
 
-  selectedEnvironments: Selectable<ProjectEnvironment>;
+  selectedEnvironments: Selectable<ProjectEnvironment, number>;
 
   form = new FormGroup({});
 
   ngOnInit(): void {
-    this.selectedEnvironments = new Selectable<ProjectEnvironment>(this.project.environments, 'id');
+    this.selectedEnvironments = new Selectable<ProjectEnvironment, number>(this.project.environments, env => env.id);
     this.selectedEnvironments.selectMany(this.configuration.environments);
   }
 

@@ -49,7 +49,7 @@ export class UserLoginFormComponent {
 
     this.settingsApi.get().subscribe(
       settings => this.settings = settings,
-      err => this.toastService.danger(`Could not get settings. ${err.data.message}`)
+      res => this.toastService.danger(`Could not get settings. ${res.error.message}`)
     );
   }
 

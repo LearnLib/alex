@@ -17,9 +17,7 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class FormUtilsService {
 
   isInvalidFormControl(c: AbstractControl): boolean {

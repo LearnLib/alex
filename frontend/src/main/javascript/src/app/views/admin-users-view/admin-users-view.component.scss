@@ -1,0 +1,16 @@
+.search-form {
+  .form-group {
+    position: relative;
+
+    i {
+      position: absolute;
+      top: .75rem;
+      left: .75rem;
+      color: #8f8f8f;
+    }
+
+    input {
+      padding-left: 2.5rem;
+    }
+  }
+}

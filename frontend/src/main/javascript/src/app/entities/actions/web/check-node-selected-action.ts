@@ -16,6 +16,7 @@
 
 import { actionType } from '../../../constants';
 import { Action } from '../action';
+import { WebElementLocator } from '../../web-element-locator';
 
 export class CheckNodeSelectedAction extends Action {
 
@@ -30,7 +31,7 @@ export class CheckNodeSelectedAction extends Action {
   constructor(obj: any = {}) {
     super(actionType.WEB_CHECK_NODE_SELECTED, obj);
 
-    this.node = obj.node || {selector: '', type: 'CSS'};
+    this.node = obj.node || new WebElementLocator();
   }
 
   toString(): string {

@@ -1,16 +1,18 @@
 .symbol-group-header {
-  border-radius: 4px 4px 0 4px;
-  padding: 1rem 1.25rem;
+  padding: .75rem 1.25rem;
   margin-top: -1px;
   background: #f2f2f2;
   border: 1px solid #ddd;
 
   .symbol-group-name {
-    color: rgba(0, 0, 0, 0.5);
-    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
   }
 
-  &.collapse {
+  &:not(.has-parent) {
     border-radius: 4px;
+
+    &:not(.collapse) {
+      border-bottom-right-radius: 0;
+    }
   }
 }

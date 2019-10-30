@@ -1,6 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">Select a symbol</h4>
-  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
     <i class="fas fa-times fa-fw"></i>
   </a>
 </div>
@@ -29,7 +29,7 @@
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-primary btn-sm" type="submit">Add</button>
+    <button class="btn btn-primary btn-sm" type="submit" [disabled]="selectedSymbol == null">Ok</button>
     <button (click)="modal.dismiss(); $event.preventDefault()" class="btn btn-default btn-sm">Cancel</button>
   </div>
 </form>

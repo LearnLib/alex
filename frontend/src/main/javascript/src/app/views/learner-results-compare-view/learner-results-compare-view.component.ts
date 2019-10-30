@@ -69,10 +69,8 @@ export class LearnerResultsCompareViewComponent implements OnInit {
         results => {
           this.results = results;
           this.panels = results.filter((r) => {
-            return resultIds.indexOf(r.testNo.toString()) > -1;
+            return resultIds.indexOf(r.id.toString()) > -1;
           });
-
-          console.log()
         },
         console.error
       );

@@ -17,6 +17,7 @@
 import { SymbolGroup } from '../../entities/symbol-group';
 import { AlphabetSymbol } from '../../entities/alphabet-symbol';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { orderBy } from 'lodash';
 
 /**
  * Component that displays the symbol group tree.
@@ -41,4 +42,8 @@ export class SimpleSymbolGroupTreeComponent {
 
   @Input()
   selectedGroup: SymbolGroup;
+
+  get orderedGroups(): SymbolGroup[] {
+    return orderBy(this.groups, ['name']);
+  }
 }

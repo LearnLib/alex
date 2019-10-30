@@ -52,14 +52,14 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
   /** All symbol groups. */
   groups: SymbolGroup[];
   /** The selected actions. */
-  selectedSteps: Selectable<any>;
+  selectedSteps: Selectable<any, any>;
   private readonly keyDownHandler: any;
 
   constructor(private symbolApi: SymbolApiService,
               private appStore: AppStoreService,
               private toastService: ToastService,
               private actionService: ActionService,
-              private clipboardService: ClipboardService,
+              public clipboardService: ClipboardService,
               private errorViewStore: ErrorViewStoreService,
               private symbolGroupApi: SymbolGroupApiService,
               private modalService: NgbModal,
@@ -76,7 +76,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
         symbol => {
           this.symbol = symbol;
           this.symbol.steps.forEach(step => step._id = uniqueId());
-          this.selectedSteps = new Selectable(this.symbol.steps, '_id');
+          this.selectedSteps = new Selectable(this.symbol.steps, s => s._id);
         },
         () => {
           errorViewStore.navigateToErrorPage(`The symbol with the ID "${symbolId}" could not be found`);
@@ -198,10 +198,10 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
         this.toastService.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
         this.symbol = updatedSymbol;
         this.symbol.steps.forEach(step => step._id = uniqueId());
-        this.selectedSteps = new Selectable(this.symbol.steps, '_id');
+        this.selectedSteps = new Selectable(this.symbol.steps, s => s._id);
       },
-      response => {
-        this.toastService.danger('<p><strong>Error updating symbol</strong></p>' + response.data.message);
+      res => {
+        this.toastService.danger('<p><strong>Error updating symbol</strong></p>' + res.error.message);
       }
     );
   }

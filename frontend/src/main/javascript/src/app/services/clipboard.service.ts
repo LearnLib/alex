@@ -27,11 +27,16 @@ export enum ClipboardMode {
 @Injectable()
 export class ClipboardService {
 
+  private clipboard;
+
   /** Constructor. */
   constructor() {
     const clipboard = localStorage.getItem('clipboard');
     if (clipboard == null) {
-      localStorage.setItem('clipboard', JSON.stringify({}));
+      this.clipboard = {};
+      this.persist();
+    } else {
+      this.clipboard = JSON.parse(clipboard);
     }
   }
 
@@ -44,17 +49,16 @@ export class ClipboardService {
    * @param mode The mode for copying.
    */
   copy(projectId: number, key: string, data: any, mode = ClipboardMode.COPY): void {
-    const clipboard = JSON.parse(localStorage.getItem('clipboard'));
-    if (clipboard[projectId] == null) {
-      clipboard[projectId] = {};
+    if (this.clipboard[projectId] == null) {
+      this.clipboard[projectId] = {};
     }
 
-    clipboard[projectId][key] = {
+    this.clipboard[projectId][key] = {
       data,
       mode
     };
 
-    localStorage.setItem('clipboard', JSON.stringify(clipboard));
+    this.persist();
   }
 
   /**
@@ -65,12 +69,11 @@ export class ClipboardService {
    * @returns The data.
    */
   paste(projectId: number, key: string): any {
-    const clipboard = JSON.parse(localStorage.getItem('clipboard'));
-    const entry = clipboard[projectId][key];
+    const entry = this.clipboard[projectId][key];
     if (entry) {
       if (entry.mode === ClipboardMode.CUT) {
-        delete clipboard[projectId][key];
-        localStorage.setItem('clipboard', JSON.stringify(clipboard));
+        delete this.clipboard[projectId][key];
+        this.persist();
       }
       return entry.data;
     } else {
@@ -80,6 +83,15 @@ export class ClipboardService {
 
   /** Clear the clipboard. */
   clear(): void {
-    localStorage.setItem('clipboard', JSON.stringify({}));
+    this.clipboard = {};
+    this.persist();
+  }
+
+  canPaste(projectId: number, key: string): boolean {
+    return this.clipboard[projectId] != null && this.clipboard[projectId][key] != null;
+  }
+
+  private persist(): void {
+    localStorage.setItem('clipboard', JSON.stringify(this.clipboard));
   }
 }

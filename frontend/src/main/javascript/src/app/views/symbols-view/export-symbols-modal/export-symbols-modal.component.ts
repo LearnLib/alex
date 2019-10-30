@@ -23,6 +23,8 @@ import { Selectable } from '../../../utils/selectable';
 import { SymbolApiService } from '../../../services/api/symbol-api.service';
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({
   selector: 'symbols-export-modal',
@@ -32,34 +34,34 @@ export class ExportSymbolsModalComponent {
 
   /** The selected symbols. */
   @Input()
-  public selectedSymbols: Selectable<AlphabetSymbol>;
+  public symbols: AlphabetSymbol[] = [];
 
   /** All symbol groups. */
   @Input()
   public groups: SymbolGroup[] = [];
 
-  /** If only symbols and not symbol groups are exported. */
-  public exportSymbolsOnly: boolean;
-
-  /** The name of the file to export. */
-  public filename: string;
+  form = new FormGroup({
+    filename: new FormControl('', [Validators.required]),
+    exportSymbolsOnly: new FormControl(false)
+  });
 
   constructor(private downloadService: DownloadService,
               private toastService: ToastService,
               private symbolApi: SymbolApiService,
-              public modal: NgbActiveModal) {
-    this.exportSymbolsOnly = false;
-    this.filename = 'symbols-' + DateUtils.YYYYMMDD();
+              public modal: NgbActiveModal,
+              public formUtils: FormUtilsService) {
+    this.form.controls.filename.setValue('symbols-' + DateUtils.YYYYMMDD());
   }
 
   export(): void {
-    const symbolIds = this.selectedSymbols.getSelected().map(s => s.id);
+    const value = this.form.value;
+    const symbolIds = this.symbols.map(s => s.id);
     this.symbolApi.export(this.groups[0].project, {
       symbolIds,
-      symbolsOnly: this.exportSymbolsOnly
+      symbolsOnly: value.exportSymbolsOnly
     }).subscribe(
       data => {
-        this.downloadService.downloadObject(data, this.filename);
+        this.downloadService.downloadObject(data, value.filename);
         this.toastService.success('The symbols have been exported.');
         this.modal.close();
       },

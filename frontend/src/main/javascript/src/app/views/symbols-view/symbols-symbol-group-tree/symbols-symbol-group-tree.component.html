@@ -1,64 +1,18 @@
 <div class="symbol-group-tree">
-  <symbol-group-header [collapse]="collapse" [group]="group" [selectedSymbols]="selectedSymbols">
-    <div class="btn-group btn-group-sm float-right" ngbDropdown>
-      <button class="btn btn-default btn-icon no-caret" ngbDropdownToggle type="button">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
-        <div (click)="editGroup()" ngbDropdownItem>
-          <i class="fas fa-edit fa-fw"></i> Edit
-        </div>
-        <div (click)="moveGroup()" ngbDropdownItem>
-          <i class="fas fa-exchange-alt fa-fw"></i> Move
-        </div>
-        <div (click)="deleteGroup()" ngbDropdownItem>
-          <i class="fas fa-trash fa-fw"></i> Delete
-        </div>
-      </div>
-    </div>
-  </symbol-group-header>
-  <div [ngbCollapse]="collapse">
+  <symbol-group-header [group]="group"></symbol-group-header>
+  <div *ngIf="!store.isGroupCollapsed(group)">
     <div *ngIf="group.groups.length > 0" class="children">
       <symbols-symbol-group-tree
-        *ngFor="let group of group.groups"
+        *ngFor="let group of orderedGroups"
         [group]="group"
-        [level]="level + 1"
-        [selectedSymbols]="selectedSymbols"
-        [symbols]="symbols"
       >
       </symbols-symbol-group-tree>
     </div>
     <div *ngIf="group.symbols.length > 0" class="symbol-list">
       <symbol-item
-        *ngFor="let symbol of group.symbols"
-        [selectable]="true"
-        [selectedSymbols]="selectedSymbols"
+        *ngFor="let symbol of orderedSymbols"
         [symbol]="symbol"
       >
-
-        <div class="btn-group btn-group-sm float-right" ngbDropdown>
-          <button class="btn btn-default btn-icon dropdown-toggle no-caret" ngbDropdownToggle type="button">
-            <i class="fas fa-bars"></i>
-          </button>
-          <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
-            <div (click)="openSymbolEditModal(symbol)" ngbDropdownItem>
-              <i class="fas fa-edit fa-fw"></i> Edit
-            </div>
-            <div (click)="copySymbol(symbol)" ngbDropdownItem>
-              <i class="fas fa-copy fa-fw"></i> Copy
-            </div>
-            <div (click)="openSymbolsMoveModal([symbol])" ngbDropdownItem>
-              <i class="fas fa-exchange-alt fa-fw"></i> Move
-            </div>
-            <div (click)="showUsages(symbol)" ngbDropdownItem>
-              <i class="fas fa-search fa-fw"></i> Usages
-            </div>
-            <div (click)="deleteSymbol(symbol)" ngbDropdownItem>
-              <i class="fas fa-trash fa-fw"></i> Delete
-            </div>
-          </div>
-        </div>
-
       </symbol-item>
     </div>
   </div>

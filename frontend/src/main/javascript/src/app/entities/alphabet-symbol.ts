@@ -114,4 +114,8 @@ export class AlphabetSymbol {
     });
     return symbol;
   }
+
+  copy(): AlphabetSymbol {
+    return new AlphabetSymbol(JSON.parse(JSON.stringify(this)));
+  }
 }

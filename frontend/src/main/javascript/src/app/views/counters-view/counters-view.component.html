@@ -22,8 +22,8 @@
   <div class="view-body">
     <div class="container-fluid">
 
-      <table class="table" *ngIf="(store.counters$ | async).length > 0">
-        <thead class="thead-light">
+      <table class="table table-striped" *ngIf="(store.counters$ | async).length > 0">
+        <thead>
         <tr>
           <th width="1">&nbsp;</th>
           <th style="width: 50%"><strong>Name</strong></th>

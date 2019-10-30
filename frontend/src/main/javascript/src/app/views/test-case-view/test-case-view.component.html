@@ -64,9 +64,9 @@
               <i class="fas fa-cogs"></i>
             </button>
             <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
-              <div (click)="options.showSymbolOutputs = !options.showSymbolOutputs" ngbDropdownItem>
+              <button (click)="options.showSymbolOutputs = !options.showSymbolOutputs" ngbDropdownItem>
                 <i [ngClass]="{'fa-check': options.showSymbolOutputs}" class="fas fa-fw"></i> Show symbol outputs
-              </div>
+              </button>
             </div>
           </div>
         </div>

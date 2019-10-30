@@ -15,6 +15,7 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
+import { WebElementLocator } from '../../entities/web-element-locator';
 
 /**
  * The node form group component.
@@ -26,7 +27,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class NodeFormGroupComponent implements OnInit {
 
   @Input()
-  node: any;
+  node: WebElementLocator;
 
   @Input()
   label: string;

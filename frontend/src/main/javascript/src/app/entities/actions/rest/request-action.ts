@@ -64,6 +64,14 @@ export class CallRestAction extends Action {
     this.baseUrl = obj.baseUrl;
   }
 
+  hasHeaders(): boolean {
+    return Object.keys(this.headers).length > 0;
+  }
+
+  hasCookies(): boolean {
+    return Object.keys(this.cookies).length > 0;
+  }
+
   /**
    * Adds a cookie to the action.
    *

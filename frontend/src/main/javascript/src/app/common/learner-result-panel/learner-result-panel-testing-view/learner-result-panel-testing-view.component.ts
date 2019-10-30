@@ -15,8 +15,8 @@
  */
 
 import { LearnerResult } from '../../../entities/learner-result';
-import { Resizer } from '../../../utils/resizer';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { LearnerResultPanelService } from '../learner-result-panel.service';
 
 /** Component for the testing view. */
 @Component({
@@ -38,11 +38,11 @@ export class LearnerResultPanelTestingViewComponent implements OnInit {
   @Input()
   pointer: number;
 
-  constructor(private element: ElementRef) {
+  constructor(private element: ElementRef,
+              public panelService: LearnerResultPanelService) {
   }
 
   ngOnInit(): void {
     this.registerMenu.emit([]);
-    new Resizer(this.element.nativeElement, '.resize', '.right-sidebar');
   }
 }

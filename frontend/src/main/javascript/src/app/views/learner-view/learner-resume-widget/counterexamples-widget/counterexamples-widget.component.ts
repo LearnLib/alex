@@ -19,10 +19,10 @@ import { IPromise } from 'angular';
 import { LearnerApiService } from '../../../../services/api/learner-api.service';
 import { ToastService } from '../../../../services/toast.service';
 import { SymbolApiService } from '../../../../services/api/symbol-api.service';
-import { EventBus } from '../../../../services/eventbus.service';
 import { LearnerResult } from '../../../../entities/learner-result';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { DragulaService } from 'ng2-dragula';
+import { LearnerViewStoreService } from '../../learner-view-store.service';
 
 /**
  * The directive for the content of the counterexample widget that is used to create and test counterexamples.
@@ -48,11 +48,10 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
   constructor(private learnerApi: LearnerApiService,
               private toastService: ToastService,
               private symbolApi: SymbolApiService,
-              private eventBus: EventBus,
-              private dragulaService: DragulaService) {
+              private dragulaService: DragulaService,
+              private store: LearnerViewStoreService) {
 
-    // wait for a click on the hypothesis and add the io pair to the counterexample
-    this.eventBus.hypothesisLabelSelected$.subscribe((data) => {
+    this.store.edgeSelected$.subscribe((data) => {
       this.counterExample.push({
         input: data.input,
         output: data.output
@@ -62,7 +61,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.dragulaService.createGroup('CE', {
-      moves: (el, container, handle) => {
+      moves: () => {
         return true;
       },
       removeOnSpill: false

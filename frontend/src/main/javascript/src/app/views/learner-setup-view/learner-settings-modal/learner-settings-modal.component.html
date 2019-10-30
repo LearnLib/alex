@@ -1,6 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">Experiment settings</h4>
-  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
     <i class="fas fa-times fa-fw"></i>
   </a>
 </div>
@@ -20,7 +20,7 @@
               <option disabled [value]="null">select an algorithm</option>
               <option
                 [value]="i.value"
-                *ngFor="let i of learnAlgorithms | keyvalue"
+                *ngFor="let i of learningAlgorithms | keyvalue"
               >
                 {{i.key | formatLearningAlgorithm}}
               </option>
@@ -77,7 +77,7 @@
         <ng-template ngbTabContent>
           <p></p>
 
-          <browser-config-form config="learnConfiguration.driverConfig"></browser-config-form>
+          <browser-config-form [config]="learnConfiguration.driverConfig"></browser-config-form>
 
         </ng-template>
       </ngb-tab>

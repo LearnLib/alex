@@ -16,6 +16,8 @@
 
 import { LearnerResult } from '../../entities/learner-result';
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { LearnerResultPanelService } from './learner-result-panel.service';
+import { Edge } from '../hypothesis/hypothesis.component';
 
 /**
  * The directive that displays a browsable list of learn results. For each result, it can display the observation
@@ -31,12 +33,16 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 @Component({
   selector: 'learner-result-panel',
   templateUrl: './learner-result-panel.component.html',
-  styleUrls: ['./learner-result-panel.component.scss']
+  styleUrls: ['./learner-result-panel.component.scss'],
+  providers: [LearnerResultPanelService]
 })
 export class LearnerResultPanelComponent implements OnInit, OnChanges {
 
   @Output()
   step = new EventEmitter<any>();
+
+  @Output()
+  selectEdge = new EventEmitter<Edge>();
 
   @Input()
   result: LearnerResult;
@@ -48,7 +54,7 @@ export class LearnerResultPanelComponent implements OnInit, OnChanges {
   menu: any[];
   pointer: number;
 
-  constructor() {
+  constructor(private panelService: LearnerResultPanelService) {
     this.layoutSettings = null;
     this.view = 'DEFAULT';
     this.menu = [];
@@ -56,7 +62,9 @@ export class LearnerResultPanelComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.result) this.pointer = this.result.steps.length - 1;
+    if (this.result != null) {
+      this.pointer = this.result.steps.length - 1;
+    }
   }
 
   ngOnInit(): void {
@@ -65,6 +73,10 @@ export class LearnerResultPanelComponent implements OnInit, OnChanges {
      */
     this.pointer = this.result.steps.length - 1;
     this.emitStep();
+
+    this.panelService.edgeSelected$.subscribe(edge => {
+      this.selectEdge.emit(edge);
+    });
   }
 
   registerMenu(menu: any): void {

@@ -27,7 +27,6 @@ export class NotificationService {
    * @param duration How long the notification is displayed.
    */
   notify(message: string, duration: number = 5000): void {
-    // notify the user that the learning process has finished
     if (('Notification' in window) && Notification.permission === 'granted') {
       const notification = new Notification(message);
       setTimeout(notification.close.bind(notification), duration);

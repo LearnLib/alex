@@ -1,6 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">Move tests</h4>
-  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
     <i class="fas fa-times fa-fw"></i>
   </a>
 </div>
@@ -28,6 +28,6 @@
 </div>
 
 <div class="modal-footer">
-  <button (click)="moveTests()" class="btn btn-primary btn-sm">Move</button>
+  <button (click)="moveTests()" [disabled]="selectedTestSuite == null" class="btn btn-primary btn-sm">Move</button>
   <button (click)="modal.dismiss()" class="btn btn-default btn-sm">Cancel</button>
 </div>

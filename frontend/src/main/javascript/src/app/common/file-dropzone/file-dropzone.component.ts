@@ -37,7 +37,6 @@ export class FileDropzoneComponent {
 
   /**
    * Is called when the file has been loaded.
-   * Emits the loaded files to the EventBus.
    *
    * @param e The event.
    */

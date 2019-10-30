@@ -18,10 +18,6 @@
         </div>
       </div>
 
-      <p>
-        <strong>Test case</strong>
-      </p>
-
       <div *ngIf="testCase.steps.length > 0" class="list-group mb-0">
         <div *ngFor="let step of testCase.steps; let i = index" class="list-group-item d-flex">
           <div class="w-100 mr-1">
@@ -42,7 +38,7 @@
     </div>
     <div class="card-footer text-right">
       <button class="btn btn-sm btn-primary mr-2" [disabled]="form.invalid || testCase.steps.length === 0">Generate</button>
-      <button (click)="removeSteps(); $event.preventDefault()" class="btn btn-sm btn-default">Cancel</button>
+      <button (click)="removeSteps(); $event.preventDefault()" class="btn btn-sm btn-default" *ngIf="testCase.steps.length > 0">Cancel</button>
     </div>
   </div>
 </form>

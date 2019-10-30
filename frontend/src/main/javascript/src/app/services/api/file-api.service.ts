@@ -78,11 +78,13 @@ export class FileApiService extends BaseApiService {
    * @param file The file to download.
    */
   download(projectId: number, file: UploadableFile): Observable<any> {
-    const options = JSON.parse(JSON.stringify(this.defaultHttpOptions));
-    options.responseType = 'blob';
-    options.observe = 'response';
+    const options = {
+      headers: this.defaultHttpHeaders.append('Accept', 'application/octet-stream'),
+      responseType: 'blob',
+      observe: 'response'
+    };
 
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/files/${file.id}/download`, options);
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/files/${file.id}/download`, options as any);
   }
 
   upload(projectId: number, file: File): Observable<UploadProgress> {

@@ -1,6 +1,6 @@
 <div class="modal-header">
   <h4 class="modal-title">Learner result details</h4>
-  <a (click)="modal.dismiss()" class="btn btn-default btn-icon float-right">
+  <a (click)="modal.dismiss()" class="btn btn-icon float-right">
     <i class="fas fa-times fa-fw"></i>
   </a>
 </div>
@@ -46,7 +46,7 @@
 
         <table class="table">
 
-          <tr>
+          <tr *ngIf="tab.result.stepNo != null">
             <td>nth Step</td>
             <td>{{tab.result.stepNo}}</td>
           </tr>
@@ -104,6 +104,5 @@
 </div>
 
 <div class="modal-footer">
-  <button (click)="modal.dismiss()" class="btn btn-sm btn-primary">Ok</button>
-  <button (click)="modal.dismiss()" class="btn btn-default btn-sm">Cancel</button>
+  <button (click)="modal.dismiss()" class="btn btn-sm btn-default">Close</button>
 </div>

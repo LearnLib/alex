@@ -83,7 +83,7 @@ export class ProjectEnvironmentsViewStoreService {
             this.toastService.success(`The environment has been updated.`);
             this.init();
           },
-          err => this.toastService.danger(`Could not update environment. ${err.data.message}`)
+          res => this.toastService.danger(`Could not update environment. ${res.error.message}`)
         );
       }
     );
@@ -99,7 +99,7 @@ export class ProjectEnvironmentsViewStoreService {
             this.toastService.success(`Environment ${env.name} has been deleted.`);
             this.init();
           },
-          err => this.toastService.danger(`Could not update environment. ${err.data.message}`)
+          res => this.toastService.danger(`Could not update environment. ${res.error.message}`)
         );
       });
     }
@@ -112,7 +112,7 @@ export class ProjectEnvironmentsViewStoreService {
     e.default = true;
     this.environmentApi.update(env.project, e).subscribe(
       () => this.init(),
-      err => this.toastService.danger(`Failed to make environment default. ${err.data.message}`)
+      res => this.toastService.danger(`Failed to make environment default. ${res.error.message}`)
     );
   }
 
@@ -123,7 +123,7 @@ export class ProjectEnvironmentsViewStoreService {
     u.default = true;
     this.environmentApi.updateUrl(env.project, env.id, url.id, u).subscribe(
       () => this.init(),
-      err => this.toastService.danger(`Failed to make URL default. ${err.data.message}`)
+      res => this.toastService.danger(`Failed to make URL default. ${res.error.message}`)
     );
   }
 
@@ -149,7 +149,7 @@ export class ProjectEnvironmentsViewStoreService {
   deleteUrl(env: ProjectEnvironment, url: ProjectUrl): void {
     this.environmentApi.deleteUrl(this.project.id, env.id, url).subscribe(
       () => this.init(),
-      err => this.toastService.danger(`Could not delete URL. ${err.data.message}`)
+      res => this.toastService.danger(`Could not delete URL. ${res.error.message}`)
     );
   }
 
@@ -175,7 +175,7 @@ export class ProjectEnvironmentsViewStoreService {
   deleteVariable(env: ProjectEnvironment, variable: ProjectEnvironmentVariable): void {
     this.environmentApi.deleteVariable(this.project.id, env.id, variable).subscribe(
       () => this.init(),
-      err => this.toastService.danger(`Could not delete variable. ${err.data.message}`)
+      res => this.toastService.danger(`Could not delete variable. ${res.error.message}`)
     );
   }
 

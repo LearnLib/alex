@@ -25,6 +25,7 @@ import { EditSymbolModalComponent } from '../symbols-view/edit-symbol-modal/edit
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Component, OnInit } from '@angular/core';
 import { SymbolUsagesModalComponent } from '../../common/modals/symbol-usages-modal/symbol-usages-modal.component';
+import { orderBy } from 'lodash';
 
 /**
  * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover
@@ -40,7 +41,7 @@ export class SymbolsArchiveViewComponent implements OnInit {
   public symbols: AlphabetSymbol[];
 
   /** The selected symbols. */
-  public selectedSymbols: Selectable<AlphabetSymbol>;
+  public selectedSymbols: Selectable<AlphabetSymbol, number>;
 
   constructor(private appStore: AppStoreService,
               private symbolApi: SymbolApiService,
@@ -48,18 +49,22 @@ export class SymbolsArchiveViewComponent implements OnInit {
               private modalService: NgbModal) {
 
     this.symbols = [];
-    this.selectedSymbols = new Selectable(this.symbols, 'id');
+    this.selectedSymbols = new Selectable(this.symbols, s => s.id);
   }
 
   get project(): Project {
     return this.appStore.project;
   }
 
+  get orderedSymbols(): AlphabetSymbol[] {
+    return orderBy(this.symbols, ['name']);
+  }
+
   ngOnInit(): void {
     this.symbolApi.getAll(this.project.id, true).subscribe(
       symbols => {
         this.symbols = symbols;
-        this.selectedSymbols = new Selectable(this.symbols, 'id');
+        this.selectedSymbols.addItems(this.symbols);
       },
       res => this.toastService.danger(`Could not get symbols. ${res.error.message}`)
     );

@@ -19,6 +19,8 @@ import { LearnerResultApiService } from '../../../../services/api/learner-result
 import { ToastService } from '../../../../services/toast.service';
 import { TestApiService } from '../../../../services/api/test-api.service';
 import { Component, Input, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormUtilsService } from '../../../../services/form-utils.service';
 
 @Component({
   selector: 'test-suite-generation-widget',
@@ -34,37 +36,35 @@ export class TestSuiteGenerationWidgetComponent implements OnInit {
   @Input()
   stepNo: number;
 
-  /** The config to use for the generation. */
-  config: any;
-
   rootTestSuite: any;
   selectedTestSuite: any;
 
+  form = new FormGroup({
+    stepNo: new FormControl(1, [Validators.required, Validators.min(1)]),
+    includeParameterValues: new FormControl(true),
+    name: new FormControl('', [Validators.required]),
+    method: new FormControl('DT')
+  });
+
   constructor(private learnerResultApi: LearnerResultApiService,
               private toastService: ToastService,
-              private testApi: TestApiService) {
-    this.result = null;
-    this.config = {
-      stepNo: 0,
-      includeParameterValues: true,
-      name: '',
-      method: 'DT'
-    };
+              private testApi: TestApiService,
+              public formUtils: FormUtilsService) {
   }
 
   ngOnInit(): void {
-    this.config.stepNo = this.stepNo + 1;
-    this.config.name = `TestNo ${this.result.testNo} (Generated)`;
+    this.form.controls.stepNo.setValue(this.stepNo + 1);
+    this.form.controls.name.setValue(`TestNo ${this.result.testNo} (Generated)`);
     this.loadRootTestSuite();
   }
 
-  loadRootTestSuite() {
+  loadRootTestSuite(): void {
     this.testApi.getRoot(this.result.project).subscribe(
       root => this.rootTestSuite = root
     );
   }
 
-  handleTestSuiteSelected(testSuite) {
+  handleTestSuiteSelected(testSuite): void {
     if (this.selectedTestSuite == null) {
       this.selectedTestSuite = testSuite;
     } else if (this.selectedTestSuite.id === testSuite.id) {
@@ -75,22 +75,19 @@ export class TestSuiteGenerationWidgetComponent implements OnInit {
   }
 
   generateTestSuite(): void {
-    if (this.config.name.trim() === '') {
-      this.toastService.danger(`The name may not be empty`);
-      return;
-    }
+    const config = this.form.value;
 
     if (this.selectedTestSuite != null) {
-      this.config.testSuiteToUpdateId = this.selectedTestSuite.id;
+      config.testSuiteToUpdateId = this.selectedTestSuite.id;
     }
 
-    this.learnerResultApi.generateTestSuite(this.result.project, this.result.testNo, this.config).subscribe(
+    this.learnerResultApi.generateTestSuite(this.result.project, this.result.testNo, config).subscribe(
       () => {
         this.loadRootTestSuite();
         this.toastService.success('The test suite has been generated.');
       },
-      err => {
-        this.toastService.danger(`The test suite could not ne generated. ${err.data.message}`);
+      res => {
+        this.toastService.danger(`The test suite could not ne generated. ${res.error.message}`);
       }
     );
   }

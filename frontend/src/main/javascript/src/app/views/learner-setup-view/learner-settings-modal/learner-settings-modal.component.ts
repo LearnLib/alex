@@ -15,7 +15,7 @@
  */
 
 import { learningAlgorithm } from '../../../constants';
-import { LearnConfiguration } from '../../../entities/learner-configuration';
+import { LearnerConfiguration } from '../../../entities/learner-configuration';
 import { ToastService } from '../../../services/toast.service';
 import { LearningAlgorithmService } from '../../../services/learning-algorithm.service';
 import { Project } from '../../../entities/project';
@@ -37,16 +37,16 @@ import { FormGroup } from '@angular/forms';
 export class LearnerSettingsModalComponent implements OnInit {
 
   /** The constants for learnAlgorithm names. */
-  learnAlgorithms: any = learningAlgorithm;
+  learningAlgorithms: any = learningAlgorithm;
 
   /** The configuration. */
   @Input()
-  learnConfiguration: LearnConfiguration = null;
+  learnConfiguration: LearnerConfiguration = null;
 
   /** The selected learning algorithm. */
   selectedLearningAlgorithm: string = null;
 
-  selectedEnvironments: Selectable<ProjectEnvironment>;
+  selectedEnvironments: Selectable<ProjectEnvironment, number>;
 
   form = new FormGroup({});
 
@@ -62,7 +62,7 @@ export class LearnerSettingsModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedLearningAlgorithm = this.learnConfiguration.algorithm.name;
-    this.selectedEnvironments = new Selectable(this.project.environments, 'id');
+    this.selectedEnvironments = new Selectable(this.project.environments, env => env.id);
 
     if (this.learnConfiguration.environments.length === 0) {
       this.selectedEnvironments.select(this.project.getDefaultEnvironment());

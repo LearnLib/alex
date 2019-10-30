@@ -17,18 +17,18 @@
 /**
  * Manages selectable entities.
  */
-export class Selectable<T> {
+export class Selectable<T, K> {
 
-  private selectedItems = {};
+  private selectedItems: Map<K, T> = new Map<K, T>();
 
   /**
    * Constructor.
    *
    * @param items The items that can be selected.
-   * @param key The property by which the items can be differentiated.
+   * @param keyFn The property by which the items can be differentiated.
    */
   constructor(private items: T[],
-              private key: string) {
+              private keyFn: (item: T) => K) {
   }
 
   addItem(item: T) {
@@ -40,11 +40,11 @@ export class Selectable<T> {
   }
 
   select(item: T) {
-    this.selectedItems[item[this.key]] = item;
+    this.selectedItems.set(this.keyFn(item), item);
   }
 
   unselect(item: T) {
-    delete this.selectedItems[item[this.key]];
+    this.selectedItems.delete(this.keyFn(item));
   }
 
   selectAll() {
@@ -52,7 +52,7 @@ export class Selectable<T> {
   }
 
   unselectAll() {
-    this.selectedItems = {};
+    this.selectedItems.clear();
   }
 
   selectMany(items: T[]) {
@@ -76,11 +76,11 @@ export class Selectable<T> {
   }
 
   isSelected(item: T) {
-    return this.selectedItems[item[this.key]] != null;
+    return this.selectedItems.has(this.keyFn(item));
   }
 
   isAnySelected() {
-    return Object.keys(this.selectedItems).length > 0;
+    return this.selectedItems.size > 0;
   }
 
   isAnySelectedIn(items: T[]) {
@@ -101,6 +101,6 @@ export class Selectable<T> {
   }
 
   getSelected(): T[] {
-    return Object.values(this.selectedItems);
+    return Array.from(this.selectedItems.values());
   }
 }

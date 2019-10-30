@@ -3,8 +3,8 @@
     <hypothesis
       *ngIf="mode === modes.HYPOTHESIS"
       [data]="result.steps[pointer].hypothesis"
-      [isSelectable]="true"
       [layoutSettings]="layoutSettings"
+      (selectEdge)="panelService.edgeSelected$.next($event)"
     >
     </hypothesis>
 
@@ -30,7 +30,7 @@
   <div *ngIf="result.steps[pointer].error" class="container">
     <div class="alert alert-danger mt-3">
       <p><strong>There has been an error while learning</strong></p>
-      <p>{{result.steps[pointer].errorText}}</p>
+      <p>{{result.steps[pointer]?.errorText}}</p>
     </div>
   </div>
 </div>

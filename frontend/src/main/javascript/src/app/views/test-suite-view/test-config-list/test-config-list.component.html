@@ -7,19 +7,19 @@
     <div (click)="selectConfig(config)" class="w-100 cursor-pointer text-wrap">
       <strong>{{config.driverConfig.name | formatWebBrowser}}</strong>
 
-      <span class="pl-1 default" [class.is-default]="config.default">
+      <span> ({{config.driverConfig.width}} x {{config.driverConfig.height}})</span>
+
+      <span class="pl-1 default float-right" [class.is-default]="config.default">
         <span class="badge badge-default cursor-pointer" (click)="makeConfigDefault(config)" *ngIf="!config.default">Default</span>
         <span class="badge badge-primary" *ngIf="config.default">Default</span>
       </span>
-
-      <span> ({{config.driverConfig.width}} x {{config.driverConfig.height}})</span>
       <div>
         <span class="badge badge-secondary">
             {{project.getEnvironmentById(config.environment).name}}
         </span>
       </div>
     </div>
-    <div class="pl-1 actions">
+    <div class="pl-2 actions">
       <i (click)="deleteConfig(config)" class="fas fa-fw fa-trash cursor-pointer"></i>
     </div>
   </div>

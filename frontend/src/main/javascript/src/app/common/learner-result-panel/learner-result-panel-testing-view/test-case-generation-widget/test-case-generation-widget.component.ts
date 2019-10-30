@@ -16,7 +16,6 @@
 
 import { TestCaseStep } from '../../../../entities/test-case-step';
 import { LearnerResult } from '../../../../entities/learner-result';
-import { EventBus } from '../../../../services/eventbus.service';
 import { TestApiService } from '../../../../services/api/test-api.service';
 import { ToastService } from '../../../../services/toast.service';
 import { Project } from '../../../../entities/project';
@@ -25,6 +24,7 @@ import { AppStoreService } from '../../../../services/app-store.service';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormUtilsService } from '../../../../services/form-utils.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { LearnerResultPanelService } from '../../learner-result-panel.service';
 
 @Component({
   selector: 'test-case-generation-widget',
@@ -52,16 +52,16 @@ export class TestCaseGenerationWidgetComponent implements OnInit {
   });
 
   constructor(public formUtils: FormUtilsService,
-              private eventBus: EventBus,
               private appStore: AppStoreService,
               private testApi: TestApiService,
-              private toastService: ToastService) {
+              private toastService: ToastService,
+              private panelService: LearnerResultPanelService) {
 
     this.symbolMap = {};
     this.testCase = new TestCase();
     this.testCase.name = 'Test Case';
 
-    this.eventBus.hypothesisLabelSelected$.subscribe((data) => {
+    this.panelService.edgeSelected$.subscribe((data) => {
       const step = TestCaseStep.fromSymbol(this.symbolMap[data.input].symbol);
       step.expectedOutputSuccess = data.output.startsWith('Ok');
       step.setExpectedOutputMessageFromOutput(data.output);

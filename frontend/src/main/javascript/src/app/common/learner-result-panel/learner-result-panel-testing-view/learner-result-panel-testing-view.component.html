@@ -1,18 +1,17 @@
 <div class="d-flex h-100">
-  <div class="w-100">
-    <div *ngIf="!result.steps[pointer].error && result.steps[pointer].hypothesis">
-      <hypothesis
-        [data]="result.steps[pointer].hypothesis"
-        [isSelectable]="true"
-        [layoutSettings]="layoutSettings">
-      </hypothesis>
-    </div>
+  <div class="w-100 h-100">
+    <hypothesis
+      *ngIf="!result.steps[pointer].error && result.steps[pointer].hypothesis"
+      [data]="result.steps[pointer].hypothesis"
+      [layoutSettings]="layoutSettings"
+      (selectEdge)="panelService.edgeSelected$.next($event)"
+    >
+    </hypothesis>
   </div>
   <div class="right-sidebar">
-    <div class="resize resize-x" style="left: 0;"></div>
-
     <test-case-generation-widget [result]="result" class="d-block mb-3">
     </test-case-generation-widget>
+
     <test-suite-generation-widget [result]="result" [stepNo]="pointer">
     </test-suite-generation-widget>
   </div>

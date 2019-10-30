@@ -122,13 +122,10 @@ export class SymbolApiService extends BaseApiService {
 
   /**
    * Removes many symbols.
-   *
-   * @param symbols The symbols to delete.
    */
-  removeMany(symbols: AlphabetSymbol[]): Observable<any> {
+  removeMany(projectId: number, symbols: AlphabetSymbol[]): Observable<any> {
     const ids = symbols.map(s => s.id).join(',');
-    const project = symbols[0].project;
-    return this.http.post(`${env.apiUrl}/projects/${project}/symbols/batch/${ids}/hide`, {}, this.defaultHttpOptions);
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/symbols/batch/${ids}/hide`, {}, this.defaultHttpOptions);
   }
 
   /**

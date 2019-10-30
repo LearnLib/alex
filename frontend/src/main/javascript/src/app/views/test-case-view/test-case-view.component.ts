@@ -129,7 +129,7 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
         this.toastService.success('The test case has been updated.');
         this.testCase = updatedTestCase;
       },
-      err => this.toastService.danger('The test case could not be updated. ' + err.data.message)
+      res => this.toastService.danger('The test case could not be updated. ' + res.error.message)
     );
   }
 
@@ -154,8 +154,8 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
         this.result = data.testResults[0];
         this.active = false;
       },
-      err => {
-        this.toastService.info('The test case could not be executed. ' + err.data.message);
+      res => {
+        this.toastService.info('The test case could not be executed. ' + res.error.message);
         this.active = false;
       }
     );

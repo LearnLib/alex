@@ -22,6 +22,7 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@ang
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LearnerResultDetailsModalComponent } from '../../modals/learner-result-details-modal/learner-result-details-modal.component';
 import { HypothesisLayoutSettingsModalComponent } from '../hypothesis-layout-settings-modal/hypothesis-layout-settings-modal.component';
+import { LearnerResultPanelService } from '../learner-result-panel.service';
 
 @Component({
   selector: 'learner-result-panel-default-view',
@@ -57,7 +58,8 @@ export class LearnerResultPanelDefaultViewComponent implements OnInit {
   constructor(private modalService: NgbModal,
               private promptService: PromptService,
               private downloadService: DownloadService,
-              private element: ElementRef) {
+              private element: ElementRef,
+              public panelService: LearnerResultPanelService) {
     this.mode = this.modes.HYPOTHESIS;
   }
 

@@ -27,7 +27,7 @@ import { removeItems } from '../../utils/list-utils';
 @Injectable()
 export class FilesViewStoreService {
 
-  public readonly filesSelectable: Selectable<UploadableFile>;
+  public readonly filesSelectable: Selectable<UploadableFile, number>;
   public filesToUpload: Map<string, UploadProgress>;
   private readonly files: BehaviorSubject<UploadableFile[]>;
 
@@ -36,7 +36,7 @@ export class FilesViewStoreService {
               private toastService: ToastService) {
     this.files = new BehaviorSubject<UploadableFile[]>([]);
     this.filesToUpload = new Map();
-    this.filesSelectable = new Selectable<UploadableFile>([], 'id');
+    this.filesSelectable = new Selectable<UploadableFile, number>([], f => f.id);
   }
 
   get noFilesToUploadOrOnlyErrors(): boolean {
@@ -73,8 +73,8 @@ export class FilesViewStoreService {
         this.files.next(removeItems(this.files.value, f => f.id === file.id));
         this.filesSelectable.unselect(file);
       },
-      err => {
-        this.toastService.danger(`The file could not be deleted. ${err.data.message}`);
+      res => {
+        this.toastService.danger(`The file could not be deleted. ${res.error.message}`);
       }
     );
   }
@@ -94,8 +94,8 @@ export class FilesViewStoreService {
           this.files.next(removeItems(this.files.value, f => ids.indexOf(f.id) > -1));
           this.filesSelectable.unselectMany(selectedFiles);
         },
-        err => {
-          this.toastService.danger(`The files could not be deleted. ${err.data.message}`);
+        res => {
+          this.toastService.danger(`The files could not be deleted. ${res.error.message}`);
         }
       );
     }
@@ -109,7 +109,7 @@ export class FilesViewStoreService {
   downloadFile(file: UploadableFile): void {
     this.fileApi.download(this.project.id, file).subscribe(
       response => {
-        const blob = response.data;
+        const blob = response.body;
         const objectUrl = URL.createObjectURL(blob);
 
         const a = document.createElement('a');
