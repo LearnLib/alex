@@ -29,7 +29,7 @@ export class ActionSearchFormComponent {
 
   /** The items in the sidebar. */
   @Input()
-  actions: any;
+  actions: any = [];
 
   /**
    * Select an action.
@@ -46,7 +46,7 @@ export class ActionSearchFormComponent {
    * @return The actions.
    */
   getActions(): any {
-    return this.actions.web.concat(this.actions.rest).concat(this.actions.misc);
+    return this.actions;
   }
 
   /**

@@ -36,45 +36,16 @@ export class CreateActionModalComponent {
   @Output()
   created = new EventEmitter<Action>();
 
-  /** The items that are displayed on the left menu. */
-  actions: any;
-
   /** All available symbols. */
   symbols: AlphabetSymbol[];
 
   /** The model of the action to create. */
   action: Action;
 
-  show: string;
-
-  panels: [
+  panels = [
     {
       text: 'Web',
-      key: 'web'
-    },
-    {
-      text: 'REST',
-      key: 'rest'
-    },
-    {
-      text: 'Misc',
-      key: 'misc'
-    },
-    {
-      text: 'Labels',
-      key: 'labels'
-    }
-  ];
-
-  constructor(private actionService: ActionService,
-              private symbolApi: SymbolApiService,
-              private appStore: AppStoreService,
-              public modal: NgbActiveModal) {
-    this.show = 'web';
-    this.action = null;
-    this.symbols = [];
-    this.actions = {
-      web: [
+      actions: [
         {type: actionType.WEB_ALERT_ACCEPT_DISMISS, text: 'Alert - Accept/Dismiss'},
         {type: actionType.WEB_ALERT_GET_TEXT, text: 'Alert - Get text'},
         {type: actionType.WEB_ALERT_SEND_KEYS, text: 'Alert - Send keys'},
@@ -105,8 +76,11 @@ export class CreateActionModalComponent {
         {type: actionType.WEB_WAIT_FOR_SCRIPT, text: 'Wait for JavaScript'},
         {type: actionType.WAIT_FOR_TEXT, text: 'Wait for text'},
         {type: actionType.WAIT_FOR_TITLE, text: 'Wait for page title'}
-      ],
-      rest: [
+      ]
+    },
+    {
+      text: 'REST',
+      actions: [
         {type: actionType.REST_CHECK_ATTRIBUTE_EXISTS, text: 'Check attribute'},
         {type: actionType.REST_CHECK_ATTRIBUTE_TYPE, text: 'Check attribute type'},
         {type: actionType.REST_CHECK_ATTRIBUTE_VALUE, text: 'Check attribute value'},
@@ -115,8 +89,11 @@ export class CreateActionModalComponent {
         {type: actionType.REST_CALL, text: 'Make request'},
         {type: actionType.REST_CHECK_FOR_TEXT, text: 'Search in body'},
         {type: actionType.REST_VALIDATE_JSON, text: 'Validate JSON'}
-      ],
-      misc: [
+      ]
+    },
+    {
+      text: 'Misc',
+      actions: [
         {type: actionType.GENERAL_ASSERT_COUNTER, text: 'Assert counter'},
         {type: actionType.GENERAL_ASSERT_VARIABLE, text: 'Assert variable'},
         {type: actionType.GENERAL_INCREMENT_COUNTER, text: 'Increment counter'},
@@ -131,12 +108,23 @@ export class CreateActionModalComponent {
         {type: actionType.GENERAL_SET_VARIABLE_BY_NODE_COUNT, text: 'Set variable by node count'},
         {type: actionType.GENERAL_SET_VARIABLE_BY_REGEX_GROUP, text: 'Set variable by regex group'},
         {type: actionType.WAIT, text: 'Wait'}
-      ],
-      labels: [
+      ]
+    },
+    {
+      text: 'Labels',
+      actions: [
         {type: actionType.GENERAL_CREATE_LABEL, text: 'Create label'},
         {type: actionType.GENERAL_JUMP_TO_LABEL, text: 'Jump to label'}
       ]
-    };
+    }
+  ];
+
+  constructor(private actionService: ActionService,
+              private symbolApi: SymbolApiService,
+              private appStore: AppStoreService,
+              public modal: NgbActiveModal) {
+    this.action = null;
+    this.symbols = [];
 
     // get all symbols
     const project = this.appStore.project;
@@ -167,5 +155,9 @@ export class CreateActionModalComponent {
   createActionAndContinue(): void {
     this.created.emit(this.action);
     this.action = null;
+  }
+
+  get actions(): any[] {
+    return this.panels.reduce((acc, val) => acc.concat(val.actions), []);
   }
 }
