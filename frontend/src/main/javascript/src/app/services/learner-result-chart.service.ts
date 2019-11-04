@@ -253,7 +253,6 @@ export class LearnerResultChartService {
       duration: []
     };
 
-
     results.forEach((result) => {
 
       const mqs_total_series = [{name: 0, "value": 0}];
@@ -264,17 +263,10 @@ export class LearnerResultChartService {
 
         i = i + 1;
 
-        if(step.statistics.mqsUsed.total == null) {
-          mqs_total_series.push({
-            name: i,
-            "value": 0
-          });
-        } else {
-          mqs_total_series.push({
-            name: i,
-            "value": step.statistics.mqsUsed.total
-          });
-        }
+        mqs_total_series.push({
+          name: i,
+          "value": step.statistics.mqsUsed.total
+        });
         symbols_total_series.push({
           name: i,
           "value": step.statistics.symbolsUsed.total
