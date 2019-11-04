@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import * as angular from 'angular';
-import { IPromise } from 'angular';
 import { LearnerApiService } from '../../../../services/api/learner-api.service';
 import { ToastService } from '../../../../services/toast.service';
 import { SymbolApiService } from '../../../../services/api/symbol-api.service';
@@ -98,7 +96,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
         for (let i = 0; i < counterexample.length; i++) {
           this.counterExample[i].output = counterexample[i].output;
         }
-        this.tmpCounterExamples.push(angular.copy(this.counterExample));
+        this.tmpCounterExamples.push(JSON.parse(JSON.stringify(this.counterExample)));
         this.renewCounterexamples();
       })
       .catch(() => {
@@ -119,7 +117,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
   /**
    * Tests if the entered counterexample really is one by sending it to the server for testing purposes.
    */
-  testCounterExample(): IPromise<any> {
+  testCounterExample(): Promise<any> {
     return new Promise((resolve, reject) => {
       // helper function to test the counterexample
       const testSymbols = [];

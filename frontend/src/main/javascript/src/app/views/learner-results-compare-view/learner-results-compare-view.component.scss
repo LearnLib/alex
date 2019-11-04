@@ -1,0 +1,24 @@
+.result-tabs {
+  .nav-link {
+
+    &.active {
+      background: #f9f9f9;
+    }
+
+    .close-icon {
+      visibility: hidden;
+    }
+
+    &:hover {
+      .close-icon {
+        visibility: visible;
+      }
+    }
+  }
+
+  .add-model {
+    color: #000;
+    background: #fff;
+    border-bottom: 1px solid #dee2e6;
+  }
+}

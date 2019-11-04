@@ -129,17 +129,13 @@ body {
 /* Other Stuff
 ============================================================================== */
 
-.learn-start-wrapper {
+.learner-wrapper {
   .panel-sidebar {
-    display: none;
-    max-width: 340px;
-    padding: 7px 15px;
+    min-width: 320px;
+    max-width: 320px;
+    padding: .5rem;
     background: #f7f7f7;
     overflow: auto;
-
-    &.show {
-      display: block;
-    }
   }
 }
 
@@ -173,4 +169,12 @@ ngb-accordion {
 
 create-action-modal ngb-accordion .card-body {
   padding: 0;
+}
+
+
+learner-results-compare-view ngb-tabset {
+  .tab-content,
+  .tab-pane {
+    height: 100%;
+  }
 }

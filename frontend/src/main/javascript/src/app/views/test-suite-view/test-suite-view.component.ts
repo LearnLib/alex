@@ -393,12 +393,13 @@ export class TestSuiteViewComponent implements OnInit {
     const tests = this.clipboardService.paste(this.project.id, 'tests');
     if (tests != null) {
       tests.forEach(t => t.parent = this.testSuite.id);
-      this.testApi.import(this.project.id, tests).subscribe((
-        importedTests: any[]) => {
+      this.testApi.import(this.project.id, tests).subscribe(
+        (importedTests: any[]) => {
           importedTests.forEach((t) => {
             t.type = t.tests ? 'suite' : 'case';
             this.testSuite.tests.push(t);
           });
+          this.selectedTests.addItems(importedTests);
           this.toastService.success(`Pasted tests from clipboard.`);
         },
         res => {

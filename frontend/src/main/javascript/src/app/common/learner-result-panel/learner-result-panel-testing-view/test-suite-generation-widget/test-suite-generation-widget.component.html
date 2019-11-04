@@ -1,4 +1,4 @@
-<form [formGroup]="form" (ngSubmit)="generateTestSuite()">
+<form (ngSubmit)="generateTestSuite()" [formGroup]="form">
 
   <div class="card">
     <div class="card-header">
@@ -8,8 +8,8 @@
       <div class="form-group">
         <label>Name</label>
         <input
-          [formControl]="form.controls.name"
           [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.name)"
+          [formControl]="form.controls.name"
           class="form-control"
           minlength="1"
           placeholder="The name of the generated test suite"
@@ -23,8 +23,8 @@
       <div class="form-group">
         <label>Step No</label>
         <input
-          [formControl]="form.controls.stepNo"
           [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.stepNo)"
+          [formControl]="form.controls.stepNo"
           [max]="result.steps.length"
           class="form-control"
           min="1"
@@ -62,8 +62,8 @@
         <div class="card">
           <div class="card-body">
             <test-suite-tree
-              *ngIf="rootTestSuite != null"
               (selected)="handleTestSuiteSelected($event)"
+              *ngIf="rootTestSuite != null"
               [selectedTestSuite]="selectedTestSuite"
               [testSuite]="rootTestSuite"
             >
@@ -74,7 +74,7 @@
     </div>
 
     <div class="card-footer text-right">
-      <button class="btn btn-primary btn-sm" [disabled]="form.invalid">Generate</button>
+      <button [disabled]="form.invalid" class="btn btn-primary btn-sm">Generate</button>
     </div>
   </div>
 

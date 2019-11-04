@@ -154,6 +154,7 @@ export class LearnerResultsViewComponent implements OnInit {
       clonedResult => {
         this.toastService.success('The result has been cloned.');
         this.results.push(clonedResult);
+        this.selectedResults.addItem(clonedResult);
       },
       res => {
         this.toastService.danger(`The result could not be cloned. ${res.error.message}`);

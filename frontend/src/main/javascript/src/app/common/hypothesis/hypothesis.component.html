@@ -1,10 +1,53 @@
 <div class="hypothesis-wrapper">
+  <div class="hypothesis">
+    <ngx-graph
+      [links]="links"
+      [nodes]="nodes"
+      [draggingEnabled]="false"
+      [animate]="false"
+      [layout]="'dagre'"
+      [layoutSettings]="layoutSettings"
+    >
+      <ng-template #defsTemplate>
+        <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="6" markerHeight="6" orient="auto">
+          <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
+        </svg:marker>
+      </ng-template>
 
-  <div class="alert alert-info m-3" *ngIf="rendering">
-    <i class="fas fa-fw fa-circle-notch fa-spin"></i> The model is being rendered.
+      <ng-template #nodeTemplate let-node>
+        <svg:g class="node">
+          <svg:circle
+            [attr.r]="node.dimension.width / 2"
+            [attr.cy]="node.dimension.height / 2"
+            [attr.cx]="node.dimension.width / 2"
+            [attr.fill]="getNodeFill(node)"
+            [attr.stroke]="getNodeStroke(node)"
+            [attr.stroke-width]="2"
+          />
+          <svg:text
+            alignment-baseline="central"
+            [attr.x]="10"
+            [attr.y]="node.dimension.height / 2"
+          >
+            {{node.label}}
+          </svg:text>
+        </svg:g>
+      </ng-template>
+
+      <ng-template #linkTemplate let-link>
+        <svg:g class="edge">
+          <svg:path class="line" stroke-width="2" marker-end="url(#arrow)"></svg:path>
+          <svg:text
+            class="edge-label"
+            [attr.y]="getMidPoint(link).y"
+            [attr.x]="getMidPoint(link).x"
+          >
+            <svg:tspan *ngFor="let label of link.label"  dy="1.2em" [attr.x]="getMidPoint(link).x" (click)="handleEdgeClick(link, label)">
+              {{label}}
+            </svg:tspan>
+          </svg:text>
+        </svg:g>
+      </ng-template>
+    </ngx-graph>
   </div>
-
-  <svg class="hypothesis">
-    <g></g>
-  </svg>
 </div>

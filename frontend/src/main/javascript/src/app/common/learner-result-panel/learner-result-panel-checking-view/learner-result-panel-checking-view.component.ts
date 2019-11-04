@@ -19,11 +19,9 @@ import { LearnerResult } from '../../../entities/learner-result';
 import { ToastService } from '../../../services/toast.service';
 import { LtsFormulaApiService } from '../../../services/api/lts-formula-api.service';
 import { Project } from '../../../entities/project';
-import { Resizer } from '../../../utils/resizer';
 import { uniqueId } from 'lodash';
 import { AppStoreService } from '../../../services/app-store.service';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { LearnerResultPanelService } from '../learner-result-panel.service';
+import { Component, Input, OnInit } from '@angular/core';
 
 /** Panel view for model checking. */
 @Component({
@@ -32,12 +30,6 @@ import { LearnerResultPanelService } from '../learner-result-panel.service';
   styleUrls: ['../learner-result-panel.component.scss']
 })
 export class LearnerResultPanelCheckingViewComponent implements OnInit {
-
-  @Output()
-  registerMenu = new EventEmitter<any>();
-
-  @Input()
-  layoutSettings: any;
 
   @Input()
   result: LearnerResult;
@@ -53,9 +45,7 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
 
   constructor(private toastService: ToastService,
               private appStore: AppStoreService,
-              private ltsFormulaApi: LtsFormulaApiService,
-              private element: ElementRef,
-              public panelService: LearnerResultPanelService) {
+              private ltsFormulaApi: LtsFormulaApiService) {
 
     this.selectedFormulas = new Selectable([], (f) => f.id);
     this.results = {};
@@ -75,8 +65,6 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.registerMenu.emit([]);
-
     this.ltsFormulaApi.getAll(this.project.id)
       .subscribe(formulas => {
         this.selectedFormulas.addItems(formulas);

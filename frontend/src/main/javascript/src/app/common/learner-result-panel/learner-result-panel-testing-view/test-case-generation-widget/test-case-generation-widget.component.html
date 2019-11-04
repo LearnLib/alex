@@ -1,4 +1,4 @@
-<form [formGroup]="form" (ngSubmit)="generateTestCase()">
+<form (ngSubmit)="generateTestCase()" [formGroup]="form">
   <div class="card">
     <div class="card-header">
       <strong>Generate test case</strong>
@@ -7,8 +7,8 @@
       <div class="form-group">
         <label>Name of the test</label>
         <input
-          [formControl]="form.controls.name"
           [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.name)"
+          [formControl]="form.controls.name"
           class="form-control"
           placeholder="Test Case"
           type="text"
@@ -37,8 +37,11 @@
       </div>
     </div>
     <div class="card-footer text-right">
-      <button class="btn btn-sm btn-primary mr-2" [disabled]="form.invalid || testCase.steps.length === 0">Generate</button>
-      <button (click)="removeSteps(); $event.preventDefault()" class="btn btn-sm btn-default" *ngIf="testCase.steps.length > 0">Cancel</button>
+      <button [disabled]="form.invalid || testCase.steps.length === 0" class="btn btn-sm btn-primary mr-2">Generate
+      </button>
+      <button (click)="removeSteps(); $event.preventDefault()" *ngIf="testCase.steps.length > 0"
+              class="btn btn-sm btn-default">Cancel
+      </button>
     </div>
   </div>
 </form>

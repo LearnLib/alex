@@ -27,12 +27,18 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SeparatingWordModalComponent } from '../../common/modals/separating-word-modal/separating-word-modal.component';
 import { LearnerResultListModalComponent } from '../../common/modals/learner-result-list-modal/learner-result-list-modal.component';
 
+interface Panel {
+  result: LearnerResult;
+  step: number;
+}
+
 /**
  * The controller that handles the page for displaying multiple complete learn results in a slide show.
  */
 @Component({
   selector: 'learner-results-compare-view',
-  templateUrl: './learner-results-compare-view.component.html'
+  templateUrl: './learner-results-compare-view.component.html',
+  styleUrls: ['./learner-results-compare-view.component.scss']
 })
 export class LearnerResultsCompareViewComponent implements OnInit {
 
@@ -40,13 +46,9 @@ export class LearnerResultsCompareViewComponent implements OnInit {
   results: LearnerResult[];
 
   /** The list of active panels where each panel contains a complete learn result set. */
-  panels: LearnerResult[];
+  panels: Panel[];
 
-  /** The indeces of the steps that are displayed. */
-  panelPointers: number[];
-
-  /** The list of layout settings for the current hypothesis that is shown in a panel. */
-  layoutSettings: any;
+  activePanel: number;
 
   constructor(private modalService: NgbModal,
               private currentRoute: ActivatedRoute,
@@ -58,8 +60,7 @@ export class LearnerResultsCompareViewComponent implements OnInit {
 
     this.results = [];
     this.panels = [];
-    this.panelPointers = [];
-    this.layoutSettings = [];
+    this.activePanel = 0;
   }
 
   ngOnInit(): void {
@@ -68,9 +69,13 @@ export class LearnerResultsCompareViewComponent implements OnInit {
       this.learnerResultApi.getAll(this.project.id).subscribe(
         results => {
           this.results = results;
-          this.panels = results.filter((r) => {
+          this.panels = results.filter(r => {
             return resultIds.indexOf(r.id.toString()) > -1;
-          });
+          }).map(r => ({
+            result: r,
+            step: r.steps.length - 1
+          }));
+          this.activePanel = 0;
         },
         console.error
       );
@@ -83,30 +88,23 @@ export class LearnerResultsCompareViewComponent implements OnInit {
    * @param index The index of the panel to remove.
    */
   closePanel(index: number): void {
-    this.panels[index] = null;
     this.panels.splice(index, 1);
-    this.panelPointers.splice(index, 1);
+
+    if (this.panels.length > 0) {
+      this.activePanel = 0;
+    }
+
     window.setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
-    }, 100);
-  }
-
-  /**
-   * Get the pointer to the step of the displayed hypotheses.
-   *
-   * @param index
-   * @param pointer
-   */
-  onStep(index: number, pointer: number): void {
-    this.panelPointers[index] = pointer;
+    }, 200);
   }
 
   /**
    * Test if a separating word between the first two displayed hypotheses can be found.
    */
   showSeparatingWord(): void {
-    const hypA = this.panels[0].steps[this.panelPointers[0]].hypothesis;
-    const hypB = this.panels[1].steps[this.panelPointers[1]].hypothesis;
+    const hypA = this.panels[0].result.steps[this.panels[0].step].hypothesis;
+    const hypB = this.panels[1].result.steps[this.panels[1].step].hypothesis;
 
     this.learnerApi.getSeparatingWord(hypA, hypB).subscribe(
       diff => {
@@ -127,15 +125,15 @@ export class LearnerResultsCompareViewComponent implements OnInit {
    * Gets the difference tree of the two displayed hypotheses
    */
   showDifferenceTree(): void {
-    let hypLeft = this.panels[0].steps[this.panelPointers[0]].hypothesis;
-    let hypRight = this.panels[1].steps[this.panelPointers[1]].hypothesis;
+    const hypA = this.panels[0].result.steps[this.panels[0].step].hypothesis;
+    const hypB = this.panels[1].result.steps[this.panels[1].step].hypothesis;
 
-    this.learnerApi.getDifferenceTree(hypLeft, hypRight).subscribe(
+    this.learnerApi.getDifferenceTree(hypA, hypB).subscribe(
       data => {
         if (data.edges.length === 0) {
           this.toastService.info('Cannot find a difference.');
         } else {
-          this.panels.push(<any>{hypothesis: data, steps: [{hypothesis: data}]});
+          this.addPanel(<any>{hypothesis: data, steps: [{hypothesis: data}], testNo: 'Diff'});
         }
       },
       res => this.toastService.danger(res.error.message)
@@ -145,7 +143,15 @@ export class LearnerResultsCompareViewComponent implements OnInit {
   openResultListModal(): void {
     const modalRef = this.modalService.open(LearnerResultListModalComponent);
     modalRef.componentInstance.results = this.results;
-    modalRef.result.then((result: LearnerResult) => this.panels.push(result));
+    modalRef.result.then((result: LearnerResult) => this.addPanel(result));
+  }
+
+  private addPanel(result: LearnerResult) {
+    this.panels.push({
+      result: result,
+      step: result.steps.length - 1
+    });
+    this.activePanel = this.panels.length - 1;
   }
 
   get project(): Project {

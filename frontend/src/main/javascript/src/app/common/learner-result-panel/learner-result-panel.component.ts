@@ -15,9 +15,13 @@
  */
 
 import { LearnerResult } from '../../entities/learner-result';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { LearnerResultPanelService } from './learner-result-panel.service';
 import { Edge } from '../hypothesis/hypothesis.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { LearnerResultDetailsModalComponent } from '../modals/learner-result-details-modal/learner-result-details-modal.component';
+import { PromptService } from '../../services/prompt.service';
+import { DownloadService } from '../../services/download.service';
 
 /**
  * The directive that displays a browsable list of learn results. For each result, it can display the observation
@@ -36,7 +40,7 @@ import { Edge } from '../hypothesis/hypothesis.component';
   styleUrls: ['./learner-result-panel.component.scss'],
   providers: [LearnerResultPanelService]
 })
-export class LearnerResultPanelComponent implements OnInit, OnChanges {
+export class LearnerResultPanelComponent implements OnInit {
 
   @Output()
   step = new EventEmitter<any>();
@@ -48,39 +52,43 @@ export class LearnerResultPanelComponent implements OnInit, OnChanges {
   result: LearnerResult;
 
   @Input()
-  layoutSettings: any;
+  layoutSettings = {
+    orientation: 'TB',
+    align: 'UL',
+    ranker: 'tight-tree',
+    multigraph: true,
+    edgePadding: 35,
+    rankPadding: 50,
+    nodePadding: 50
+  };
 
-  view: string;
-  menu: any[];
+  @Input()
   pointer: number;
 
-  constructor(private panelService: LearnerResultPanelService) {
-    this.layoutSettings = null;
+  view: string;
+
+  showSidebar = false;
+
+  constructor(private panelService: LearnerResultPanelService,
+              private modalService: NgbModal,
+              private promptService: PromptService,
+              private element: ElementRef,
+              private downloadService: DownloadService) {
     this.view = 'DEFAULT';
-    this.menu = [];
     this.pointer = 0;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.result != null) {
-      this.pointer = this.result.steps.length - 1;
-    }
-  }
-
   ngOnInit(): void {
+
     /**
      * The index of the step from the results that should be shown.
      */
-    this.pointer = this.result.steps.length - 1;
+    this.pointer = this.pointer == null ? this.result.steps.length - 1 : this.pointer;
     this.emitStep();
 
     this.panelService.edgeSelected$.subscribe(edge => {
       this.selectEdge.emit(edge);
     });
-  }
-
-  registerMenu(menu: any): void {
-    this.menu = menu;
   }
 
   /**
@@ -128,5 +136,25 @@ export class LearnerResultPanelComponent implements OnInit, OnChanges {
   lastStep(): void {
     this.pointer = this.result.steps.length - 1;
     this.emitStep();
+  }
+
+  openResultDetailsModal(): void {
+    const modalRef = this.modalService.open(LearnerResultDetailsModalComponent);
+    modalRef.componentInstance.result = this.result;
+    modalRef.componentInstance.current = this.pointer;
+  }
+
+  /** Downloads the currently displayed observation table. */
+  exportObservationTable(): void {
+    const table = this.element.nativeElement.querySelector('.observation-table');
+    this.promptService.prompt('Enter a name for the csv file')
+      .then(filename => this.downloadService.downloadTableEl(table, filename));
+  }
+
+  /** Downloads the currently displayed hypothesis as svg. */
+  exportHypothesisAsSvg(): void {
+    const svg = this.element.nativeElement.querySelector('svg');
+    this.promptService.prompt('Enter a name for the svg file')
+      .then(filename => this.downloadService.downloadSvgEl(svg, true, filename));
   }
 }

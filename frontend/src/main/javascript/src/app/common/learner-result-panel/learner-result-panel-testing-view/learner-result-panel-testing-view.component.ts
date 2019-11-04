@@ -15,8 +15,7 @@
  */
 
 import { LearnerResult } from '../../../entities/learner-result';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { LearnerResultPanelService } from '../learner-result-panel.service';
+import { Component, Input } from '@angular/core';
 
 /** Component for the testing view. */
 @Component({
@@ -24,10 +23,7 @@ import { LearnerResultPanelService } from '../learner-result-panel.service';
   templateUrl: './learner-result-panel-testing-view.component.html',
   styleUrls: ['../learner-result-panel.component.scss']
 })
-export class LearnerResultPanelTestingViewComponent implements OnInit {
-
-  @Output()
-  registerMenu = new EventEmitter<any>();
+export class LearnerResultPanelTestingViewComponent {
 
   @Input()
   layoutSettings: any;
@@ -37,12 +33,4 @@ export class LearnerResultPanelTestingViewComponent implements OnInit {
 
   @Input()
   pointer: number;
-
-  constructor(private element: ElementRef,
-              public panelService: LearnerResultPanelService) {
-  }
-
-  ngOnInit(): void {
-    this.registerMenu.emit([]);
-  }
 }

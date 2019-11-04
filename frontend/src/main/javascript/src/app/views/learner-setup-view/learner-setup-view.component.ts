@@ -30,7 +30,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SelectSymbolModalComponent } from '../../common/modals/select-symbol-modal/select-symbol-modal.component';
 import { Component } from '@angular/core';
 import { LearnerSettingsModalComponent } from './learner-settings-modal/learner-settings-modal.component';
-import { take } from 'lodash';
+import { takeRight, reverse } from 'lodash';
 import { Router } from '@angular/router';
 
 /**
@@ -226,6 +226,6 @@ export class LearnerSetupViewComponent {
   getFirstNLearnerResults(n: number): LearnerResult[] {
     n = Math.max(1, n);
     n = Math.min(this.learnerResults.length, n);
-    return take(this.learnerResults, n);
+    return reverse(takeRight(this.learnerResults, n)) as LearnerResult[];
   }
 }

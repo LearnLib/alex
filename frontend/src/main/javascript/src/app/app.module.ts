@@ -150,7 +150,6 @@ import { LearnerSetupViewComponent } from './views/learner-setup-view/learner-se
 import { SymbolViewComponent } from './views/symbol-view/symbol-view.component';
 import { CreateActionModalComponent } from './views/symbol-view/create-action-modal/create-action-modal.component';
 import { EditActionModalComponent } from './views/symbol-view/edit-action-modal/edit-action-modal.component';
-import { HypothesisLayoutSettingsModalComponent } from './common/learner-result-panel/hypothesis-layout-settings-modal/hypothesis-layout-settings-modal.component';
 import { LearnerResultsCompareViewComponent } from './views/learner-results-compare-view/learner-results-compare-view.component';
 import { StatisticsCompareViewComponent } from './views/statistics-compare-view/statistics-compare-view.component';
 import { LearnerResultPanelComponent } from './common/learner-result-panel/learner-result-panel.component';
@@ -228,6 +227,7 @@ import { UnauthorizedHttpInterceptor } from './interceptors/unauthorized-http-in
 import { AceEditorModule } from 'ng2-ace-editor';
 import { AboutModalComponent } from './views/root-view/about-modal/about-modal.component';
 import { FormUtilsService } from './services/form-utils.service';
+import { NgxGraphModule } from '@swimlane/ngx-graph';
 
 @NgModule({
   declarations: [
@@ -343,7 +343,6 @@ import { FormUtilsService } from './services/form-utils.service';
     SymbolViewComponent,
     CreateActionModalComponent,
     EditActionModalComponent,
-    HypothesisLayoutSettingsModalComponent,
     LearnerResultsCompareViewComponent,
     StatisticsCompareViewComponent,
     LearnerResultPanelComponent,
@@ -434,7 +433,8 @@ import { FormUtilsService } from './services/form-utils.service';
     }),
     NgbModule,
     DragulaModule.forRoot(),
-    AceEditorModule
+    AceEditorModule,
+    NgxGraphModule
   ],
   providers: [
     {
@@ -512,7 +512,6 @@ import { FormUtilsService } from './services/form-utils.service';
     LearnerSettingsModalComponent,
     CreateActionModalComponent,
     EditActionModalComponent,
-    HypothesisLayoutSettingsModalComponent,
     AboutModalComponent
   ],
   bootstrap: [AppComponent]

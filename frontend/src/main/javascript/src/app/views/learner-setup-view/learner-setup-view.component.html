@@ -79,7 +79,9 @@
             <div class="d-flex flex-row list-group-item">
               <div class="w-100">
                 <div>
-                  <strong>{{pResetSymbol.symbol.name}}</strong>
+                  <a [routerLink]="['/app', 'projects', project.id, 'symbols', pResetSymbol.symbol.id]">
+                    <strong>{{pResetSymbol.symbol.name}}</strong>
+                  </a>
                 </div>
                 <symbol-parameters
                   [parameterValues]="pResetSymbol.parameterValues"
@@ -101,7 +103,9 @@
                  class="list-group-item d-flex flex-row">
               <div class="w-100">
                 <div>
-                  <strong>{{pSymbol.symbol.name}}</strong>
+                  <a [routerLink]="['/app', 'projects', project.id, 'symbols', pSymbol.symbol.id]">
+                    <strong>{{pSymbol.symbol.name}}</strong>
+                  </a>
                 </div>
                 <symbol-parameters [parameterValues]="pSymbol.parameterValues"></symbol-parameters>
               </div>
@@ -133,7 +137,9 @@
             <div class="d-flex flex-row list-group-item">
               <div class="w-100">
                 <div>
-                  <strong>{{pPostSymbol.symbol.name}}</strong>
+                  <a [routerLink]="['/app', 'projects', project.id, 'symbols', pPostSymbol.symbol.id]">
+                    <strong>{{pPostSymbol.symbol.name}}</strong>
+                  </a>
                 </div>
                 <symbol-parameters
                   [parameterValues]="pPostSymbol.parameterValues"

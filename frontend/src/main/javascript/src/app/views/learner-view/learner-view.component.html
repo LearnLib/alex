@@ -1,18 +1,16 @@
 <div class="view">
-  <div *ngIf="status != null && !finished" class="learn-start-wrapper flex-column">
-    <div class="container-fluid learn-loading-indicator">
-      <div>
-        <div class="alert alert-info d-flex flex-row my-3">
-          <div class="w-100">
-            <i class="fas fa-circle-notch fa-spin"></i>&nbsp; Application is
-            <strong *ngIf="status.learnerPhase === 'LEARNING'">learning</strong>
-            <strong *ngIf="status.learnerPhase=== 'EQUIVALENCE_TESTING'">testing for equivalence</strong>
-          </div>
-          <div class="flex-shrink-0">
-            <button (click)="abort()" class="btn btn-info btn-sm">
-              <i class="fas fa-times fa-fw"></i> Abort
-            </button>
-          </div>
+  <div *ngIf="status != null && !finished" class="d-flex flex-column h-100">
+    <div class="container-fluid">
+      <div class="alert alert-info d-flex flex-row my-3">
+        <div class="w-100">
+          <i class="fas fa-circle-notch fa-spin"></i>&nbsp; Application is
+          <strong *ngIf="status.learnerPhase === 'LEARNING'">learning</strong>
+          <strong *ngIf="status.learnerPhase=== 'EQUIVALENCE_TESTING'">testing for equivalence</strong>
+        </div>
+        <div class="flex-shrink-0">
+          <button (click)="abort()" class="btn btn-info btn-sm">
+            <i class="fas fa-times fa-fw"></i> Abort
+          </button>
         </div>
       </div>
 
@@ -71,26 +69,25 @@
       </div>
     </div>
 
-    <div class="w-100 h-100" style="border-top: 1px solid #ddd">
+    <div class="border-top" style="flex-basis: 0; flex-grow: 1">
       <learner-result-panel [result]="status.result"></learner-result-panel>
     </div>
   </div>
 
-  <div *ngIf="finished" class="learn-start-wrapper d-flex flex-row h-100">
-    <learner-result-panel
-      *ngIf="finalResult != null"
-      [result]="finalResult"
-      (selectEdge)="store.edgeSelected$.next($event)"
-      class="w-100"
-    >
-    </learner-result-panel>
+  <div *ngIf="finished" class="learner-wrapper d-flex flex-row h-100">
+    <div style="flex-basis: 0; flex-grow: 1">
+      <learner-result-panel
+        *ngIf="finalResult != null"
+        [result]="finalResult"
+        (selectEdge)="store.edgeSelected$.next($event)"
+      >
+      </learner-result-panel>
+    </div>
 
     <div
-      class="panel-sidebar show"
-      style="min-width: 280px"
+      class="panel-sidebar border-left flex-shrink-0"
       *ngIf="resumeConfig != null && finalResult != null"
     >
-
       <button (click)="resumeLearning()" class="btn btn-sm btn-block btn-success mb-3">Resume</button>
 
       <learner-resume-settings-widget
