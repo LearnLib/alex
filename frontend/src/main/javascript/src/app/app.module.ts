@@ -230,6 +230,8 @@ import { FormUtilsService } from './services/form-utils.service';
 import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { JumpToLabelActionFormComponent } from './common/actions/misc/jump-to-label-action-form/jump-to-label-action-form.component';
 import { CreateLabelActionFormComponent } from './common/actions/misc/create-label-action-form/create-label-action-form.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+
 
 @NgModule({
   declarations: [
@@ -438,7 +440,8 @@ import { CreateLabelActionFormComponent } from './common/actions/misc/create-lab
     NgbModule,
     DragulaModule.forRoot(),
     AceEditorModule,
-    NgxGraphModule
+    NgxGraphModule,
+    NgxChartsModule
   ],
   providers: [
     {
