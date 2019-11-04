@@ -262,5 +262,15 @@
       [action]="action"
     >
     </wait-action-form>
+    <jump-to-label-action-form
+      *ngSwitchCase="'jumpToLabel'"
+      [action]="action"
+    >
+    </jump-to-label-action-form>
+    <create-label-action-form
+      *ngSwitchCase="'createLabel'"
+      [action]="action"
+    >
+    </create-label-action-form>
   </div>
 </div>

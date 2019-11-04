@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-export const jumpToLabelActionFormComponent = {
-  template: require('./jump-to-label-action-form.component.html'),
-  bindings: {
-    action: '='
-  },
-  controllerAs: 'vm',
-  controller: class JumpToLabelActionFormComponent {
-    aceOptions = {
-      useWrapMode: true,
-      showGutter: true
-    };
-  }
-};
+import { Component, Input } from '@angular/core';
+import { CreateLabelAction } from '../../../../entities/actions/misc/create-label-action';
+
+@Component({
+  selector: 'create-label-action-form',
+  templateUrl: './create-label-action-form.component.html'
+})
+export class CreateLabelActionFormComponent {
+
+  @Input()
+  action: CreateLabelAction
+}

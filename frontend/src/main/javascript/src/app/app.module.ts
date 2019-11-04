@@ -228,6 +228,8 @@ import { AceEditorModule } from 'ng2-ace-editor';
 import { AboutModalComponent } from './views/root-view/about-modal/about-modal.component';
 import { FormUtilsService } from './services/form-utils.service';
 import { NgxGraphModule } from '@swimlane/ngx-graph';
+import { JumpToLabelActionFormComponent } from './common/actions/misc/jump-to-label-action-form/jump-to-label-action-form.component';
+import { CreateLabelActionFormComponent } from './common/actions/misc/create-label-action-form/create-label-action-form.component';
 
 @NgModule({
   declarations: [
@@ -417,7 +419,9 @@ import { NgxGraphModule } from '@swimlane/ngx-graph';
     ActionFormComponent,
     ActionSearchFormComponent,
     AppViewComponent,
-    AboutModalComponent
+    AboutModalComponent,
+    JumpToLabelActionFormComponent,
+    CreateLabelActionFormComponent
   ],
   imports: [
     BrowserModule,

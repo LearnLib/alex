@@ -19,14 +19,15 @@
 
         <div class="mt-3">
           <ngb-accordion [closeOthers]="true">
-            <ngb-panel title="Web">
+
+            <ngb-panel [title]="panel.text" *ngFor="let panel of panels">
               <ng-template ngbPanelContent>
 
                 <div class="list-group list-group-condensed list-group-flush border-top">
                   <button
                     class="list-group-item list-group-item-action"
                     (click)="selectNewActionType(a.type); $event.preventDefault()"
-                    *ngFor="let a of actions.web"
+                    *ngFor="let a of actions[panel.key]"
                   >
                     {{a.text}}
                   </button>
@@ -34,36 +35,7 @@
 
               </ng-template>
             </ngb-panel>
-            <ngb-panel title="REST">
-              <ng-template ngbPanelContent>
 
-                <div class="list-group list-group-condensed list-group-flush border-top">
-                  <button
-                    class="list-group-item list-group-item-action"
-                    (click)="selectNewActionType(a.type); $event.preventDefault()"
-                    *ngFor="let a of actions.rest"
-                  >
-                    {{a.text}}
-                  </button>
-                </div>
-
-              </ng-template>
-            </ngb-panel>
-            <ngb-panel title="Misc">
-              <ng-template ngbPanelContent>
-
-                <div class="list-group list-group-condensed list-group-flush border-top">
-                  <button
-                    class="list-group-item list-group-item-action"
-                    (click)="selectNewActionType(a.type); $event.preventDefault()"
-                    *ngFor="let a of actions.misc"
-                  >
-                    {{a.text}}
-                  </button>
-                </div>
-
-              </ng-template>
-            </ngb-panel>
           </ngb-accordion>
         </div>
 

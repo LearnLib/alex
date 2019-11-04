@@ -110,6 +110,8 @@ export const actionType = {
   GENERAL_SET_VARIABLE_BY_NODE_COUNT: 'setVariableByNodeCount',
   GENERAL_SET_VARIABLE_BY_REGEX_GROUP: 'setVariableByRegexGroup',
   GENERAL_SET_VARIABLE: 'setVariable',
+  GENERAL_JUMP_TO_LABEL: 'jumpToLabel',
+  GENERAL_CREATE_LABEL: 'createLabel',
   WAIT: 'wait'
 };
 

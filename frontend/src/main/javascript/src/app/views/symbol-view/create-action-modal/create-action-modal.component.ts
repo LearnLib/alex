@@ -22,7 +22,6 @@ import { Action } from '../../../entities/actions/action';
 import { AppStoreService } from '../../../services/app-store.service';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormGroup } from '@angular/forms';
 
 /**
  * The component for the modal dialog that handles the creation of a new action.
@@ -47,6 +46,25 @@ export class CreateActionModalComponent {
   action: Action;
 
   show: string;
+
+  panels: [
+    {
+      text: 'Web',
+      key: 'web'
+    },
+    {
+      text: 'REST',
+      key: 'rest'
+    },
+    {
+      text: 'Misc',
+      key: 'misc'
+    },
+    {
+      text: 'Labels',
+      key: 'labels'
+    }
+  ];
 
   constructor(private actionService: ActionService,
               private symbolApi: SymbolApiService,
@@ -113,6 +131,10 @@ export class CreateActionModalComponent {
         {type: actionType.GENERAL_SET_VARIABLE_BY_NODE_COUNT, text: 'Set variable by node count'},
         {type: actionType.GENERAL_SET_VARIABLE_BY_REGEX_GROUP, text: 'Set variable by regex group'},
         {type: actionType.WAIT, text: 'Wait'}
+      ],
+      labels: [
+        {type: actionType.GENERAL_CREATE_LABEL, text: 'Create label'},
+        {type: actionType.GENERAL_JUMP_TO_LABEL, text: 'Jump to label'}
       ]
     };
 
