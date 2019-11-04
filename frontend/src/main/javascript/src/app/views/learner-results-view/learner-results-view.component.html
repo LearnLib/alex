@@ -29,12 +29,12 @@
             Statistics
           </button>
           <div class="dropdown-menu dropdown-menu-left" ngbDropdownMenu role="menu">
-            <div (click)="showSelectedStatistics()" ngbDropdownItem>
+            <button (click)="showSelectedStatistics()" ngbDropdownItem>
               <i class="fas fa-fw fa-chart-bar"></i> Show statistics
-            </div>
-            <div (click)="exportSelectedAsCSV()" ngbDropdownItem>
+            </button>
+            <button (click)="exportSelectedAsCSV()" ngbDropdownItem>
               <i class="fas fa-fw fa-download"></i> Export statistics
-            </div>
+            </button>
           </div>
         </div>
       </div>

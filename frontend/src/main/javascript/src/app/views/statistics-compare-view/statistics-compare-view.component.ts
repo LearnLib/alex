@@ -49,7 +49,7 @@ export class StatisticsCompareViewComponent {
   chartMode: number;
 
   /** The list of test result nos that are used for the chart. */
-  testNos: number[];
+  testNos: number[] = [];
 
   /** The data to fill the charts. */
   chartData: any;
@@ -66,11 +66,9 @@ export class StatisticsCompareViewComponent {
               private promptService: PromptService) {
 
     currentRoute.paramMap.subscribe(map => {
-
       this.testNos = map.get('testNos').split(',').map(t => parseInt(t));
       this.chartMode = this.testNos.length > 1 ? this.chartModes.MULTIPLE_FINAL : this.chartModes.SINGLE_FINAL;
       this.showInColumns = true;
-      this.chartData = {};
       this.createChartData();
     });
   }
@@ -83,6 +81,8 @@ export class StatisticsCompareViewComponent {
    * Create chart data for the given mode and learn results.
    */
   createChartData(): void {
+    this.chartData = null;
+
     switch (this.chartMode) {
       case this.chartModes.SINGLE_FINAL:
         this.learnerResultApi.get(this.project.id, this.testNos[0]).subscribe(result => {

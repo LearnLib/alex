@@ -11,7 +11,7 @@
           Continue learning
         </a>
         <div class="btn-group btn-group-sm ml-2">
-          <button (click)="startLearning()" class="btn btn-primary">
+          <button (click)="startLearning()" class="btn btn-primary" [disabled]="pResetSymbol == null || pSymbols.length === 0">
             Start learning
           </button>
           <button (click)="openLearnerConfigurationModal()" class="btn btn-primary">

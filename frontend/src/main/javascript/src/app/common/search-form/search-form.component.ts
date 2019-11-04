@@ -42,15 +42,15 @@ export class SearchFormComponent {
   searchFn: (item: any, prop: any) => any;
 
   /** If the input element has been focused. */
-  public focused: boolean;
+  focused: boolean;
 
   /** The list of actions that are displayed based on the user input. */
-  public itemList: any[];
+  itemList: any[];
 
   /** The user input. */
-  public value: string;
+  value: string;
 
-  public clickHandler: any;
+  clickHandler: any;
 
   constructor(private element: ElementRef) {
     this.focused = false;
@@ -62,11 +62,15 @@ export class SearchFormComponent {
   /**
    * Handles to input focus event.
    */
-  handleFocus(): void {
-    this.focused = true;
-    this.updateItemList();
-
-    document.addEventListener('click', this.clickHandler);
+  handleFocus(e): void {
+    if (e.relatedTarget != null) {
+      e.preventDefault();
+      this.element.nativeElement.querySelector('input').blur();
+    } else {
+      this.focused = true;
+      this.updateItemList();
+      document.addEventListener('click', this.clickHandler);
+    }
   }
 
   /**
@@ -91,6 +95,7 @@ export class SearchFormComponent {
 
   private handleClick(e): void {
     let target = e.target;
+
     while (target !== document.body) {
       if (target === this.element.nativeElement) {
         return;

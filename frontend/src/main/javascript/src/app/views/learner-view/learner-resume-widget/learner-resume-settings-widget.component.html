@@ -73,7 +73,7 @@
                 name="symbolToAdd"
               >
                 <option [value]="null" disabled>Select a symbol to add</option>
-                <option *ngFor="let symbol of symbols" [value]="symbol">{{symbol.name}}</option>
+                <option *ngFor="let symbol of symbols" [value]="symbol.id">{{symbol.name}}</option>
               </select>
             </div>
 

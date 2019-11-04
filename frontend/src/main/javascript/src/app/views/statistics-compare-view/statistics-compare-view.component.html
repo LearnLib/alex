@@ -2,18 +2,27 @@
 
   <action-bar>
     <div class="btn-group btn-group-sm">
-      <button (click)="switchToFinal()" [ngClass]="{'active': [chartModes.SINGLE_FINAL,chartModes.MULTIPLE_FINAL].indexOf(chartMode) > -1}"
-              class="btn btn-default">
+      <button
+        (click)="switchToFinal()"
+        [disabled]="[chartModes.SINGLE_FINAL,chartModes.MULTIPLE_FINAL].indexOf(chartMode) > -1"
+        class="btn btn-default"
+      >
         <i class="fas fa-fw fa-chart-bar"></i> Cumulated
       </button>
-      <button (click)="switchToComplete()" [ngClass]="{'active': [chartModes.SINGLE_COMPLETE,chartModes.MULTIPLE_COMPLETE].indexOf(chartMode) > -1}"
-              class="btn btn-default">
+      <button
+        (click)="switchToComplete()"
+        [disabled]="[chartModes.SINGLE_COMPLETE,chartModes.MULTIPLE_COMPLETE].indexOf(chartMode) > -1"
+        class="btn btn-default"
+      >
         <i class="fas fa-fw fa-chart-line"></i> Complete
       </button>
     </div>
 
-    <button (click)="toggleShowInColumns()" [ngClass]="{'active':showInColumns}" class="btn btn-sm btn-default"
-            style="margin-left: 4px">
+    <button
+      (click)="toggleShowInColumns()"
+      [class.active]="showInColumns"
+      class="btn btn-sm btn-default ml-2"
+    >
       <i class="fas fa-fw fa-columns"></i>
     </button>
   </action-bar>
@@ -21,7 +30,7 @@
   <div class="view-body">
     <div class="container-fluid">
 
-      <table class="table table-striped">
+      <table class="table table-striped" *ngIf="chartData != null && chartData.context != null">
         <thead>
         <tr>
           <th>&nbsp;</th>
@@ -31,7 +40,7 @@
           <th>Equivalence queries</th>
         </tr>
         </thead>
-        <tbody *ngIf="!chartData.context.length">
+        <tbody *ngIf="chartData.context.length === 0">
         <tr>
           <td><strong>Test {{chartData.context.testNo}}</strong></td>
           <td>
@@ -43,7 +52,7 @@
           <td>{{chartData.context.statistics.eqsUsed}}</td>
         </tr>
         </tbody>
-        <tbody *ngIf="chartData.context.length">
+        <tbody *ngIf="chartData.context.length > 0">
         <tr *ngFor="let result of chartData.context">
           <td><strong>Test {{result.testNo}}</strong></td>
           <td>
@@ -59,7 +68,7 @@
 
       <hr>
 
-      <div *ngIf="chartData.data != null" class="row">
+      <div *ngIf="chartData != null && chartData.data != null" class="row">
         <div [ngClass]="showInColumns ? 'col-md-12 col-lg-6' : 'col-sm-12'">
 
           <div class="card mb-3" id="chart-eqs">

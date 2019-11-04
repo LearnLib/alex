@@ -1,16 +1,19 @@
 <div [class.focused]="focused" style="position: relative; z-index: 10">
   <div class="wrapper">
-    <div class="form-group mb-0">
-      <i class="fas fa-fw fa-search text-muted"></i>
-      <input
-        (focus)="handleFocus()"
-        (input)='updateItemList()'
-        [(ngModel)]="value"
-        [placeholder]="placeholder"
-        class="form-control"
-        type="text"
-      >
-    </div>
+    <form (submit)="$event.preventDefault()">
+      <div class="form-group mb-0">
+        <i class="fas fa-fw fa-search text-muted"></i>
+        <input
+          (focus)="handleFocus($event)"
+          (input)='updateItemList()'
+          [(ngModel)]="value"
+          [placeholder]="placeholder"
+          class="form-control"
+          type="text"
+          name="value"
+        >
+      </div>
+    </form>
 
     <div *ngIf="focused" class="list-group list-group-condensed mb-0">
       <div

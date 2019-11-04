@@ -51,7 +51,7 @@ export class LearnerResumeSettingsWidgetComponent implements OnInit {
   result: LearnerResult;
 
   /** The selected symbol to add. */
-  selectedSymbol: AlphabetSymbol = null;
+  selectedSymbol: string = null;
 
   selectedEnvironments: Selectable<ProjectEnvironment, number>;
 
@@ -63,7 +63,9 @@ export class LearnerResumeSettingsWidgetComponent implements OnInit {
   }
 
   addSelectedSymbol(): void {
-    this.configuration.symbolsToAdd.push(ParametrizedSymbol.fromSymbol(this.selectedSymbol));
+    const id = parseInt(this.selectedSymbol);
+    const s = this.symbols.find(s => s.id === id);
+    this.configuration.symbolsToAdd.push(ParametrizedSymbol.fromSymbol(s));
     this.selectedSymbol = null;
   }
 

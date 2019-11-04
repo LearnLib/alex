@@ -18,9 +18,9 @@
         </action-search-form>
 
         <div class="mt-3">
-          <ngb-accordion [closeOthers]="true">
+          <ngb-accordion [closeOthers]="true" [activeIds]="['Web']">
 
-            <ngb-panel [title]="panel.text" *ngFor="let panel of panels">
+            <ngb-panel [title]="panel.text" *ngFor="let panel of panels" [id]="panel.text">
               <ng-template ngbPanelContent>
 
                 <div class="list-group list-group-condensed list-group-flush border-top">
