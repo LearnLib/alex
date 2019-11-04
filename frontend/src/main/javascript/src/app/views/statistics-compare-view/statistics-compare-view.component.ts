@@ -23,6 +23,7 @@ import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 /**
  * The controller for the learn statistics page.
@@ -65,10 +66,11 @@ export class StatisticsCompareViewComponent {
               private promptService: PromptService) {
 
     currentRoute.paramMap.subscribe(map => {
+
       this.testNos = map.get('testNos').split(',').map(t => parseInt(t));
       this.chartMode = this.testNos.length > 1 ? this.chartModes.MULTIPLE_FINAL : this.chartModes.SINGLE_FINAL;
-      this.chartData = {};
       this.showInColumns = true;
+      this.chartData = {};
       this.createChartData();
     });
   }
@@ -162,5 +164,15 @@ export class StatisticsCompareViewComponent {
     const el = document.querySelector(selector + ' svg');
     this.promptService.prompt('Enter a name for the svg file')
       .then(filename => this.downloadService.downloadSvgEl(el, false, filename));
+  }
+
+  /** Reformat X Values to avoid floating point numbers to be displayed. */
+  formatXTicks(value) {
+
+    if (value % 1 != 0) {
+      return ""
+    }
+
+    return "Step " + Math.trunc(value)
   }
 }

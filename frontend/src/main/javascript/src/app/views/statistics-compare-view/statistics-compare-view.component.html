@@ -62,12 +62,47 @@
       <div *ngIf="chartData.data != null" class="row">
         <div [ngClass]="showInColumns ? 'col-md-12 col-lg-6' : 'col-sm-12'">
 
-          <div class="card mb-3" id="chart-eq">
+          <div class="card mb-3" id="chart-eqs">
             <div class="card-header">
               <strong>Membership queries</strong>
             </div>
             <div class="card-body">
               <div style="width: 100%; height: 450px">
+                <ngx-charts-bar-vertical
+                  *ngIf="chartMode == chartModes.SINGLE_FINAL || chartMode == chartModes.MULTIPLE_FINAL"
+                  [results]="chartData.data.mqs"
+                  [legend]="chartData.options.legend"
+                  [xAxis]="chartData.options.xAxis"
+                  [yAxis]="chartData.options.yAxis"
+                  [showGridLines]="chartData.options.showGridLines"
+                  [roundDomains]="chartData.options.roundDomains"
+                  [showXAxisLabel]="chartData.options.showXAxisLabel"
+                  [showYAxisLabel]="chartData.options.showYAxisLabel"
+                  [gradient]="chartData.options.gradient"
+                  [noBarWhenZero]="chartData.options.noBarWhenZero"
+                  [barPadding]="chartData.options.barPadding"
+                  [showDataLabel]="chartData.options.showDataLabel"
+                  [scheme]="chartData.options.schemeBarChart"
+                >
+                </ngx-charts-bar-vertical>
+                <ngx-charts-area-chart
+                  *ngIf="chartMode == chartModes.SINGLE_COMPLETE || chartMode == chartModes.MULTIPLE_COMPLETE"
+                  [results]="chartData.data.mqs"
+                  [legend]="chartData.options.legendAreaChart"
+                  [xAxis]="chartData.options.xAxis"
+                  [yAxis]="chartData.options.yAxis"
+                  [showGridLines]="chartData.options.showGridLines"
+                  [roundDomains]="chartData.options.roundDomains"
+                  [showXAxisLabel]="chartData.options.showXAxisLabelAreaChart"
+                  [showYAxisLabel]="chartData.options.showYAxisLabelAreaChart"
+                  [gradient]="chartData.options.gradient"
+                  [scheme]="chartData.options.schemeAreaChart"
+                  [timeline]="chartData.options.timeline"
+                  [xAxisLabel]="chartData.options.xAxisLabelAreaChart"
+                  [yAxisLabel]="chartData.options.yAxisLabelAreaChart"
+                  [xAxisTickFormatting]="formatXTicks"
+                >
+                </ngx-charts-area-chart>
               </div>
             </div>
             <div class="card-footer">
@@ -83,6 +118,41 @@
             </div>
             <div class="card-body">
               <div style="width: 100%; height: 450px">
+                <ngx-charts-bar-vertical
+                  *ngIf="chartMode == chartModes.SINGLE_FINAL || chartMode == chartModes.MULTIPLE_FINAL"
+                  [results]="chartData.data.duration"
+                  [legend]="chartData.options.legend"
+                  [xAxis]="chartData.options.xAxis"
+                  [yAxis]="chartData.options.yAxis"
+                  [showGridLines]="chartData.options.showGridLines"
+                  [roundDomains]="chartData.options.roundDomains"
+                  [showXAxisLabel]="chartData.options.showXAxisLabel"
+                  [showYAxisLabel]="chartData.options.showYAxisLabel"
+                  [gradient]="chartData.options.gradient"
+                  [noBarWhenZero]="chartData.options.noBarWhenZero"
+                  [barPadding]="chartData.options.barPadding"
+                  [showDataLabel]="chartData.options.showDataLabel"
+                  [scheme]="chartData.options.schemeBarChart"
+                >
+                </ngx-charts-bar-vertical>
+                <ngx-charts-area-chart
+                  *ngIf="chartMode == chartModes.SINGLE_COMPLETE || chartMode == chartModes.MULTIPLE_COMPLETE"
+                  [results]="chartData.data.duration"
+                  [legend]="chartData.options.legendAreaChart"
+                  [xAxis]="chartData.options.xAxis"
+                  [yAxis]="chartData.options.yAxis"
+                  [showGridLines]="chartData.options.showGridLines"
+                  [roundDomains]="chartData.options.roundDomains"
+                  [showXAxisLabel]="chartData.options.showXAxisLabelAreaChart"
+                  [showYAxisLabel]="chartData.options.showYAxisLabelAreaChart"
+                  [gradient]="chartData.options.gradient"
+                  [scheme]="chartData.options.schemeAreaChart"
+                  [timeline]="chartData.options.timeline"
+                  [xAxisLabel]="chartData.options.xAxisLabelAreaChart"
+                  [yAxisLabel]="chartData.options.yAxisLabelAreaChart"
+                  [xAxisTickFormatting]="formatXTicks"
+                >
+                </ngx-charts-area-chart>
               </div>
             </div>
             <div class="card-footer">
@@ -97,10 +167,45 @@
 
           <div class="card mb-3" id="chart-symbols">
             <div class="card-header">
-              <strong>Duration</strong>
+              <strong>Symbols</strong>
             </div>
             <div class="card-body">
               <div style="width: 100%; height: 450px">
+                <ngx-charts-bar-vertical
+                  *ngIf="chartMode == chartModes.SINGLE_FINAL || chartMode == chartModes.MULTIPLE_FINAL"
+                  [results]="chartData.data.symbols"
+                  [legend]="chartData.options.legend"
+                  [xAxis]="chartData.options.xAxis"
+                  [yAxis]="chartData.options.yAxis"
+                  [showGridLines]="chartData.options.showGridLines"
+                  [roundDomains]="chartData.options.roundDomains"
+                  [showXAxisLabel]="chartData.options.showXAxisLabel"
+                  [showYAxisLabel]="chartData.options.showYAxisLabel"
+                  [gradient]="chartData.options.gradient"
+                  [noBarWhenZero]="chartData.options.noBarWhenZero"
+                  [barPadding]="chartData.options.barPadding"
+                  [showDataLabel]="chartData.options.showDataLabel"
+                  [scheme]="chartData.options.schemeBarChart"
+                >
+                </ngx-charts-bar-vertical>
+                <ngx-charts-area-chart
+                  *ngIf="chartMode == chartModes.SINGLE_COMPLETE || chartMode == chartModes.MULTIPLE_COMPLETE"
+                  [results]="chartData.data.symbols"
+                  [legend]="chartData.options.legendAreaChart"
+                  [xAxis]="chartData.options.xAxis"
+                  [yAxis]="chartData.options.yAxis"
+                  [showGridLines]="chartData.options.showGridLines"
+                  [roundDomains]="chartData.options.roundDomains"
+                  [showXAxisLabel]="chartData.options.showXAxisLabelAreaChart"
+                  [showYAxisLabel]="chartData.options.showYAxisLabelAreaChart"
+                  [gradient]="chartData.options.gradient"
+                  [scheme]="chartData.options.schemeAreaChart"
+                  [timeline]="chartData.options.timeline"
+                  [xAxisLabel]="chartData.options.xAxisLabelAreaChart"
+                  [yAxisLabel]="chartData.options.yAxisLabelAreaChart"
+                  [xAxisTickFormatting]="formatXTicks"
+                >
+                </ngx-charts-area-chart>
               </div>
             </div>
             <div class="card-footer">
