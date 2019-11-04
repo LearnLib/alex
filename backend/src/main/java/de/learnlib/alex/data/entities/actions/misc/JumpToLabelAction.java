@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.data.entities.actions.web;
+package de.learnlib.alex.data.entities.actions.misc;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.learnlib.alex.common.utils.LoggerMarkers;
@@ -22,13 +22,10 @@ import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.SymbolAction;
 import de.learnlib.alex.data.utils.ExecuteScriptUtils;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import de.learnlib.alex.learning.services.connectors.CounterStoreConnector;
-import de.learnlib.alex.learning.services.connectors.VariableStoreConnector;
 import de.learnlib.alex.learning.services.connectors.WebSiteConnector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebElement;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -36,47 +33,33 @@ import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Action to execute JavaScript on the opened browser.
- */
 @Entity
-@DiscriminatorValue("web_executeScript")
-@JsonTypeName("web_executeScript")
-public class ExecuteScriptAction extends SymbolAction {
-
-    private static final long serialVersionUID = 6118333853615934954L;
+@DiscriminatorValue("jumpToLabel")
+@JsonTypeName("jumpToLabel")
+public class JumpToLabelAction extends SymbolAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** How long in seconds should be waited before the script times out. */
-    private static final int DEFAULT_SCRIPT_TIMEOUT = 10;
+    @NotBlank
+    private String label;
 
-    /** The JavaScript to execute. */
     @NotBlank
     @Column(columnDefinition = "MEDIUMTEXT")
     private String script;
 
-    /** If the script should be executed asynchronously. */
     @NotNull
     private boolean async = false;
 
-    /** When the script should be timed out in s. */
     @NotNull
     @Min(value = 0)
-    private int timeout = DEFAULT_SCRIPT_TIMEOUT;
-
-    /** The name of the variable to store the result into. */
-    private String name;
+    private int timeout = 10;
 
     @Override
-    public ExecuteResult execute(ConnectorManager connector) {
-        WebSiteConnector webSiteConnector = connector.getConnector(WebSiteConnector.class);
-        VariableStoreConnector variableStore = connector.getConnector(VariableStoreConnector.class);
+    protected ExecuteResult execute(ConnectorManager connector) {
+        final WebSiteConnector webSiteConnector = connector.getConnector(WebSiteConnector.class);
 
         if (webSiteConnector.getDriver() instanceof JavascriptExecutor) {
 
@@ -92,22 +75,19 @@ public class ExecuteScriptAction extends SymbolAction {
                     returnValue = ((JavascriptExecutor) webSiteConnector.getDriver()).executeScript(script, store);
                 }
 
-                if (name != null) {
-                    if (returnValue == null) {
-                        variableStore.set(name, "null");
-                    } else if (returnValue instanceof Double || returnValue instanceof Long
-                            || returnValue instanceof Boolean) {
-                        variableStore.set(name, String.valueOf(returnValue));
-                    } else if (returnValue instanceof WebElement || returnValue instanceof List) {
-                        LOGGER.info(LoggerMarkers.LEARNER, "WebElements and lists as return values are not supported.");
-                        return getFailedOutput();
+                if (!(returnValue instanceof Boolean)) {
+                    LOGGER.info(LoggerMarkers.LEARNER, "Result of jump condition is not a boolean value.");
+                    return getFailedOutput();
+                } else {
+                    final boolean canJump = (Boolean) returnValue;
+                    if (canJump) {
+                        LOGGER.info(LoggerMarkers.LEARNER, "Jump to label '{}'.", label);
+                        return getSuccessOutput();
                     } else {
-                        variableStore.set(name, (String) returnValue);
+                        LOGGER.info(LoggerMarkers.LEARNER, "Jump condition for label '" + label + "' not satisfied.");
+                        return getFailedOutput();
                     }
                 }
-
-                LOGGER.info(LoggerMarkers.LEARNER, "JavaScript {} successfully executed.");
-                return getSuccessOutput();
             } catch (Exception e) {
                 LOGGER.info(LoggerMarkers.LEARNER, "Could not execute JavaScript", e);
                 return getFailedOutput();
@@ -118,20 +98,20 @@ public class ExecuteScriptAction extends SymbolAction {
         }
     }
 
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
     public String getScript() {
         return script;
     }
 
     public void setScript(String script) {
         this.script = script;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public boolean isAsync() {

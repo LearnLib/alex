@@ -21,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.SearchHelper;
+import de.learnlib.alex.data.entities.actions.misc.CreateLabelAction;
+import de.learnlib.alex.data.entities.actions.misc.JumpToLabelAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.api.exception.SULException;
 import de.learnlib.mapper.api.ContextExecutableInput;
@@ -43,8 +45,12 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Representation of a symbol for the learning process. A Symbol is one unit which will be executed and it is made of a
@@ -349,6 +355,9 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
             return new ExecuteResult(false, "Not implemented");
         }
 
+
+        final Map<String, Integer> labels = getLabelsMap();
+
         // assume the output is ok until proven otherwise
         ExecuteResult result = new ExecuteResult(true);
 
@@ -360,6 +369,10 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
                 final ExecuteResult stepResult = step.execute(i, connectors);
 
                 if (!stepResult.isSuccess() && !step.isIgnoreFailure()) {
+                    if (step instanceof SymbolActionStep && ((SymbolActionStep) step).getAction() instanceof JumpToLabelAction) {
+                        continue;
+                    }
+
                     result = stepResult;
 
                     if (step.errorOutput != null && !step.errorOutput.equals("")) {
@@ -370,6 +383,11 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
                     result.addTrace(this, result);
 
                     break;
+                } else {
+                    if (step instanceof SymbolActionStep && ((SymbolActionStep) step).getAction() instanceof JumpToLabelAction) {
+                        final String label = ((JumpToLabelAction) ((SymbolActionStep) step).getAction()).getLabel();
+                        i = labels.get(label);
+                    }
                 }
             }
         }
@@ -427,6 +445,21 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         } else if (parameter instanceof SymbolOutputParameter) {
             this.outputs.remove(parameter);
         }
+    }
+
+    @Transient
+    private Map<String, Integer> getLabelsMap() {
+        final Map<String, Integer> labelsMap = new HashMap<>();
+
+        for (int i = 0; i < steps.size(); i++) {
+            final SymbolStep step = steps.get(i);
+            if (step instanceof SymbolActionStep && ((SymbolActionStep) step).getAction() instanceof CreateLabelAction) {
+                final String label = ((CreateLabelAction) ((SymbolActionStep) step).getAction()).getLabel();
+                labelsMap.put(label, i);
+            }
+        }
+
+        return labelsMap;
     }
 
     @Override

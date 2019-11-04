@@ -22,7 +22,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.actions.misc.AssertCounterAction;
 import de.learnlib.alex.data.entities.actions.misc.AssertVariableAction;
+import de.learnlib.alex.data.entities.actions.misc.CreateLabelAction;
 import de.learnlib.alex.data.entities.actions.misc.IncrementCounterAction;
+import de.learnlib.alex.data.entities.actions.misc.JumpToLabelAction;
 import de.learnlib.alex.data.entities.actions.misc.SetCounterAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableAction;
 import de.learnlib.alex.data.entities.actions.misc.SetVariableByCookieAction;
@@ -120,6 +122,8 @@ import java.util.Objects;
         @JsonSubTypes.Type(name = "setVariableByNodeCount", value = SetVariableByNodeCountAction.class),
         @JsonSubTypes.Type(name = "setVariableByRegexGroup", value = SetVariableByRegexGroupAction.class),
         @JsonSubTypes.Type(name = "setVariableByHttpStatus", value = SetVariableByHttpStatusAction.class),
+        @JsonSubTypes.Type(name = "createLabel", value = CreateLabelAction.class),
+        @JsonSubTypes.Type(name = "jumpToLabel", value = JumpToLabelAction.class),
         // Web Actions
         @JsonSubTypes.Type(name = "web", value = WebSymbolAction.class),
         @JsonSubTypes.Type(name = "web_alertAcceptDismiss", value = AlertAcceptDismissAction.class),
