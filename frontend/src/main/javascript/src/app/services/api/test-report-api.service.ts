@@ -17,8 +17,9 @@
 import { environment as env } from '../../../environments/environment';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /** The resource for test reports. */
 @Injectable()
@@ -46,21 +47,22 @@ export class TestReportApiService extends BaseApiService {
    *
    * @param projectId The id of the project.
    * @param testReportId The id of the report.
-   * @param format How and if the report should be returned in another format.
    */
-  get(projectId: number, testReportId: number, format: string = null): Observable<any> {
+  get(projectId: number, testReportId: number): Observable<any> {
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}`, this.defaultHttpOptions);
+  }
+
+  export(projectId: number, testReportId: number, format: string = 'junit'): Observable<any> {
     const options = {
       headers: this.defaultHttpHeaders,
-      params: {}
+      params: {},
+      responseType: 'text'
     };
 
-    if (format != null) {
-      options.params = {
-        format: encodeURIComponent(format)
-      }
-    }
+    options.params = new HttpParams()
+      .append('format', format);
 
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}`, options);
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/reports/${testReportId}`, options as any);
   }
 
   /**

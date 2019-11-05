@@ -262,7 +262,7 @@ export class TestSuiteViewComponent implements OnInit {
           this.selectedTests.updateAll(this.testSuite.tests);
         }
       );
-    });
+    }).catch(() => {});
   }
 
   executeSelected(): void {
@@ -344,7 +344,7 @@ export class TestSuiteViewComponent implements OnInit {
     modalRef.result.then(data => {
       this.toastService.success('The settings have been updated.');
       this.testConfig = data;
-    });
+    }).catch(() => {});
   }
 
   /**
@@ -374,7 +374,7 @@ export class TestSuiteViewComponent implements OnInit {
         t.type = t.tests ? 'suite' : 'case';
         this.testSuite.tests.push(t);
       });
-    });
+    }).catch(() => {});
   }
 
   copyTests(): void {

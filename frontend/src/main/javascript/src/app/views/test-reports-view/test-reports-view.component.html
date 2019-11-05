@@ -72,13 +72,13 @@
                   <a [routerLink]="['./', report.id]" ngbDropdownItem>
                     <i class="fas fa-fw fa-search"></i> Details
                   </a>
-                  <div (click)="deleteReport(report)" ngbDropdownItem>
+                  <button (click)="deleteReport(report)" ngbDropdownItem>
                     <i class="fas fa-fw fa-trash"></i> Delete
-                  </div>
+                  </button>
                   <div class="dropdown-divider"></div>
-                  <div (click)="downloadReport(report)" ngbDropdownItem>
+                  <button (click)="downloadReport(report)" ngbDropdownItem>
                     <i class="fas fa-fw fa-download"></i> Download
-                  </div>
+                  </button>
                 </div>
               </div>
             </td>

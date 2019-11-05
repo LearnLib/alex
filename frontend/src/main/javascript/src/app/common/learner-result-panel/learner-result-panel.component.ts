@@ -69,7 +69,7 @@ export class LearnerResultPanelComponent implements OnInit {
 
   showSidebar = false;
 
-  constructor(private panelService: LearnerResultPanelService,
+  constructor(public panelService: LearnerResultPanelService,
               private modalService: NgbModal,
               private promptService: PromptService,
               private element: ElementRef,

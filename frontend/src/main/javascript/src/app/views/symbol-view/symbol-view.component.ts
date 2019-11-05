@@ -174,7 +174,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
         ignoreFailure: false,
         pSymbol: ParametrizedSymbol.fromSymbol(symbol)
       });
-    });
+    }).catch(() => {});
   }
 
   /**
@@ -291,7 +291,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.action = this.actionService.create(JSON.parse(JSON.stringify(step.action)));
     modalRef.result.then(updatedAction => {
       step.action = updatedAction;
-    });
+    }).catch(() => {});
   }
 
   editSymbolStep(step: any): void {
@@ -302,7 +302,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
         return;
       }
       step.symbol = ParametrizedSymbol.fromSymbol(selectedSymbol);
-    });
+    }).catch(() => {});
   }
 
   openActionCreateModal(): void {

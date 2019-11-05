@@ -121,14 +121,18 @@ export class SymbolsViewStoreService {
   moveSymbol(symbol: AlphabetSymbol): void {
     const modalRef = this.modalService.open(MoveSymbolsModalComponent);
     modalRef.componentInstance.symbols = [symbol.copy()];
-    modalRef.result.then(targetGroup => this._moveSymbol(symbol, targetGroup));
+    modalRef.result
+      .then(targetGroup => this._moveSymbol(symbol, targetGroup))
+      .catch(() => {});
   }
 
   moveSelectedSymbols(): void {
     const selectedSymbols = this.symbolsSelectable.getSelected();
     const modalRef = this.modalService.open(MoveSymbolsModalComponent);
     modalRef.componentInstance.symbols = selectedSymbols.map(s => s.copy());
-    modalRef.result.then(targetGroup => selectedSymbols.forEach(s => this._moveSymbol(s, targetGroup)));
+    modalRef.result
+      .then(targetGroup => selectedSymbols.forEach(s => this._moveSymbol(s, targetGroup)))
+      .catch(() => {});
   }
 
   deleteSymbol(symbol: AlphabetSymbol): void {
@@ -155,7 +159,7 @@ export class SymbolsViewStoreService {
           this.symbolsSelectable.addItems(g.symbols);
         }, () => {}));
       }
-    });
+    }).catch(() => {});
   }
 
   deleteSelectedSymbols(): void {

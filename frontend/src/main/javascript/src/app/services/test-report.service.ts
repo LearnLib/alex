@@ -21,9 +21,6 @@ import { TestReportApiService } from './api/test-report-api.service';
 import { ToastService } from './toast.service';
 import { Injectable } from '@angular/core';
 
-/**
- * The service for test cases and test suites.
- */
 @Injectable()
 export class TestReportService {
 
@@ -40,15 +37,15 @@ export class TestReportService {
    * @param reportId The id of the report.
    */
   download(projectId: number, reportId: number): void {
-    this.testReportApi.get(projectId, reportId, 'junit+xml').subscribe(
-      xml => {
-        this.promptService.prompt('Enter the name for the report', 'report-' + DateUtils.YYYYMMDD())
-          .then((name) => {
+    this.promptService.prompt('Enter the name for the report', 'report-' + DateUtils.YYYYMMDD())
+      .then((name: string) => {
+        this.testReportApi.export(projectId, reportId).subscribe(
+          xml => {
             this.downloadService.downloadXml(xml, name);
             this.toastService.success('The report has been downloaded.');
-          });
-      },
-      console.error
-    );
+          },
+          console.error
+        );
+      });
   }
 }

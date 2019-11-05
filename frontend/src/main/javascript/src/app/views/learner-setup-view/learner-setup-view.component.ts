@@ -132,14 +132,14 @@ export class LearnerSetupViewComponent {
     const modalRef = this.modalService.open(SelectSymbolModalComponent);
     modalRef.result.then((s: AlphabetSymbol) => {
       this.pResetSymbol = ParametrizedSymbol.fromSymbol(s);
-    });
+    }).catch(() => {});
   }
 
   selectPostSymbol(): void {
     const modalRef = this.modalService.open(SelectSymbolModalComponent);
     modalRef.result.then((s: AlphabetSymbol) => {
       this.pPostSymbol = ParametrizedSymbol.fromSymbol(s);
-    });
+    }).catch(() => {});
   }
 
   handleSymbolSelected(symbol: AlphabetSymbol): void {
@@ -174,7 +174,7 @@ export class LearnerSetupViewComponent {
         // start learning
         this.learnerApi.start(this.project.id, config).subscribe(
           () => {
-            this.toastService.success('Learn process started successfully.');
+            this.toastService.success('Learner process started successfully.');
             this.router.navigate(['/app', 'projects', this.project.id, 'learner', 'learn']);
           },
           res => {
@@ -220,7 +220,9 @@ export class LearnerSetupViewComponent {
   openLearnerConfigurationModal(): void {
     const modalRef = this.modalService.open(LearnerSettingsModalComponent);
     modalRef.componentInstance.learnConfiguration = new LearnerConfiguration(this.learnerConfiguration);
-    modalRef.result.then((config: LearnerConfiguration) => this.learnerConfiguration = config);
+    modalRef.result
+      .then((config: LearnerConfiguration) => this.learnerConfiguration = config)
+      .catch(() => {});
   }
 
   getFirstNLearnerResults(n: number): LearnerResult[] {

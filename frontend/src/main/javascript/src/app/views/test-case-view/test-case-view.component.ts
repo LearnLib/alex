@@ -168,7 +168,7 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     modalRef.result.then(data => {
       this.toastService.success('The settings have been updated.');
       this.testConfig = data;
-    });
+    }).catch(() => {});
   }
 
   addSymbolStep(symbol: AlphabetSymbol): void {

@@ -113,8 +113,8 @@ export class LearnerResultsCompareViewComponent implements OnInit {
         } else {
           const modalRef = this.modalService.open(SeparatingWordModalComponent);
           modalRef.componentInstance.diff = diff;
-          modalRef.componentInstance.result1 = this.panels[0];
-          modalRef.componentInstance.result2 = this.panels[1];
+          modalRef.componentInstance.result1 = this.panels[0].result;
+          modalRef.componentInstance.result2 = this.panels[1].result;
         }
       },
       res => this.toastService.danger(res.error.message)
@@ -133,7 +133,14 @@ export class LearnerResultsCompareViewComponent implements OnInit {
         if (data.edges.length === 0) {
           this.toastService.info('Cannot find a difference.');
         } else {
-          this.addPanel(<any>{hypothesis: data, steps: [{hypothesis: data}], testNo: 'Diff'});
+          this.addPanel(<any>{
+            hypothesis: data,
+            steps: [{hypothesis: data}],
+            testNo: `Diff ${this.panels[0].result.testNo} vs. ${this.panels[1].result.testNo}`,
+            algorithm: {
+              name: ''
+            }
+          });
         }
       },
       res => this.toastService.danger(res.error.message)
@@ -143,7 +150,9 @@ export class LearnerResultsCompareViewComponent implements OnInit {
   openResultListModal(): void {
     const modalRef = this.modalService.open(LearnerResultListModalComponent);
     modalRef.componentInstance.results = this.results;
-    modalRef.result.then((result: LearnerResult) => this.addPanel(result));
+    modalRef.result
+      .then((result: LearnerResult) => this.addPanel(result))
+      .catch(() => {});
   }
 
   private addPanel(result: LearnerResult) {

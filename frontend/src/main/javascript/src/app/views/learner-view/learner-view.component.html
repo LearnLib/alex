@@ -70,7 +70,12 @@
     </div>
 
     <div class="border-top" style="flex-basis: 0; flex-grow: 1">
-      <learner-result-panel [result]="status.result"></learner-result-panel>
+      <learner-result-panel
+        *ngIf="status != null && status.result != null && status.active"
+        [result]="status.result"
+        [pointer]="status.result.steps.length - 1"
+      >
+      </learner-result-panel>
     </div>
   </div>
 
@@ -79,6 +84,7 @@
       <learner-result-panel
         *ngIf="finalResult != null"
         [result]="finalResult"
+        [pointer]="finalResult.steps.length - 1"
         (selectEdge)="store.edgeSelected$.next($event)"
       >
       </learner-result-panel>

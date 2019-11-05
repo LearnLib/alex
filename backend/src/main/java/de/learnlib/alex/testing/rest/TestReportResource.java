@@ -120,7 +120,7 @@ public class TestReportResource {
             return Response.ok(testReport).build();
         } else {
             switch (format) {
-                case "junit+xml":
+                case "junit":
                     final TestResultReporter<String> reporter = new JUnitTestResultReporter();
                     final String report = reporter.createReport(testReport);
 

@@ -93,7 +93,9 @@ export class UserApiService extends BaseApiService {
    * @returns A promise.
    */
   create(user: any): Observable<any> {
-    return this.http.post(`${env.apiUrl}/users`, user, this.defaultHttpOptions);
+    return this.http.post(`${env.apiUrl}/users`, user, this.defaultHttpOptions).pipe(
+      map((body: any) => User.fromData(body))
+    );
   }
 
   /**

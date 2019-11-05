@@ -64,7 +64,7 @@ export class ProjectsViewStoreService {
     modalRef.result.then(createdProject => {
       this.projects.next([...this.projects.value, createdProject]);
       this.projectsSelectable.addItem(createdProject);
-    });
+    }).catch(() => {});
   }
 
   /**
@@ -114,7 +114,7 @@ export class ProjectsViewStoreService {
     modalRef.result.then(updatedProject => {
       this.projects.next(replaceItem(this.projects.value, p => p.id === updatedProject.id, updatedProject));
       this.projectsSelectable.update(updatedProject);
-    });
+    }).catch(() => {});
   }
 
   exportProject(project: Project): void {
@@ -130,7 +130,7 @@ export class ProjectsViewStoreService {
     modalRef.result.then(importedProject => {
       this.projects.next([...this.projects.value, importedProject]);
       this.projectsSelectable.addItem(importedProject);
-    });
+    }).catch(() => {});
   }
 
   get orderedProjects$(): Observable<Project[]> {
