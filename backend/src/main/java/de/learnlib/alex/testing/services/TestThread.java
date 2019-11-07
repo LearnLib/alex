@@ -138,6 +138,8 @@ public class TestThread extends Thread {
 
                 testExecutor.executeTests(user, tests, config, results);
                 final TestReport report = getReport();
+
+                report.setDescription(config.getDescription());
                 report.setEnvironment(config.getEnvironment());
 
                 if (config.isCreateReport()) {

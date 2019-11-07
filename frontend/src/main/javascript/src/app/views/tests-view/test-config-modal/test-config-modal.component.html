@@ -47,6 +47,12 @@
             <input [(ngModel)]="configuration.createReport" class="form-check-input" type="checkbox"> Create report
           </label>
         </div>
+
+        <hr>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea [(ngModel)]="configuration.description" class="form-control"></textarea>
+        </div>
       </ng-template>
     </ngb-tab>
   </ngb-tabset>

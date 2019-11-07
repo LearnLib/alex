@@ -76,6 +76,9 @@ public class TestExecutionConfig implements Serializable {
 
     private boolean isDefault;
 
+    /** The user defined description of the config. */
+    private String description;
+
     /** Constructor. */
     public TestExecutionConfig() {
         this(new ArrayList<>(), new HtmlUnitDriverConfig());
@@ -94,6 +97,7 @@ public class TestExecutionConfig implements Serializable {
         this.driverConfig = driverConfig;
         this.createReport = true;
         this.isDefault = false;
+        this.description = "";
     }
 
     public Long getId() {
@@ -186,6 +190,14 @@ public class TestExecutionConfig implements Serializable {
 
     public void setDefault(boolean aDefault) {
         isDefault = aDefault;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

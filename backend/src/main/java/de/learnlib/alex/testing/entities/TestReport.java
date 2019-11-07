@@ -71,10 +71,14 @@ public class TestReport implements Serializable {
     @OneToOne(fetch = FetchType.EAGER)
     private ProjectEnvironment environment;
 
+    /** The user defined description of the corresponding execution config. */
+    private String description;
+
     /** Constructor. */
     public TestReport() {
         this.testResults = new ArrayList<>();
         this.startDate = ZonedDateTime.now();
+        this.description = "";
     }
 
     public ZonedDateTime getStartDate() {
@@ -119,6 +123,14 @@ public class TestReport implements Serializable {
 
     public void setEnvironment(ProjectEnvironment environment) {
         this.environment = environment;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public List<TestResult> getTestResults() {

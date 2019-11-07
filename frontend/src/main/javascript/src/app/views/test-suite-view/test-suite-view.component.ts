@@ -100,7 +100,8 @@ export class TestSuiteViewComponent implements OnInit {
       tests: [],
       environment: this.project.getDefaultEnvironment(),
       driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
-      createReport: true
+      createReport: true,
+      description: ""
     };
 
     this.settingsApi.getSupportedWebDrivers().subscribe(
