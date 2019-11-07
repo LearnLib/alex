@@ -1,5 +1,5 @@
 <div *ngIf="status?.active">
-  <div class="list-group list-group-flush mb-0">
+  <div class="list-group mb-0" [class.list-group-flush]="flush">
     <div class="list-group-item d-flex flex-row align-items-center" *ngFor="let testRun of allTestRuns">
 
       <a
@@ -26,6 +26,6 @@
   </div>
 </div>
 
-<div class="alert alert-info mb-0 border-0" *ngIf="status == null || !status.active">
+<div class="alert alert-info mb-0" *ngIf="status == null || !status.active" [class.no-border-radius]="flush">
   There is no active test run.
 </div>

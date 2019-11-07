@@ -158,25 +158,6 @@ public class ProjectResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldNotUpdateTheProjectOfAnotherUser() throws Exception {
-        final Response res1 =
-                projectApi.create(createProjectJson("test", "http://localhost:8080"), userJwt);
-
-        final JsonNode projectPre = objectMapper.readTree(res1.readEntity(String.class));
-        final int projectId = projectPre.get("id").asInt();
-        ((ObjectNode) projectPre).put("name", "updatedTest");
-
-        final Response res2 = projectApi.update(projectId, projectPre.toString(), adminJwt);
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), res2.getStatus());
-
-        ((ObjectNode) projectPre).put("name", "test");
-        final Response res3 = projectApi.get(projectId, userJwt);
-        final JsonNode projectPost = objectMapper.readTree(res3.readEntity(String.class));
-
-        JSONAssert.assertEquals(projectPre.toString(), projectPost.toString(), true);
-    }
-
-    @Test
     public void shouldDeleteAProject() throws Exception {
         final Response res1 =
                 projectApi.create(createProjectJson("test", "http://localhost:8080"), adminJwt);

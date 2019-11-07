@@ -67,7 +67,7 @@ export class TestApiService extends BaseApiService {
    */
   getStatus(projectId: number): Observable<TestStatus> {
     return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/status`, this.defaultHttpOptions).pipe(
-      map(data => data as TestStatus)
+      map((data: any) => data as TestStatus)
     );
   }
 

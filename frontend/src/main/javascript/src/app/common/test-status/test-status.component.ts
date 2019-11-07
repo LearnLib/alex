@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { TestApiService } from '../../services/api/test-api.service';
 import { AppStoreService } from '../../services/app-store.service';
 import { TestQueueItem, TestReport, TestReportStatus, TestStatus } from '../../entities/test-status';
@@ -29,6 +29,9 @@ import { ToastService } from '../../services/toast.service';
 export class TestStatusComponent implements OnInit, OnDestroy {
 
   private readonly INTERVAL_TIME = 3000;
+
+  @Input()
+  flush = true;
 
   @Output('status')
   statusChange = new EventEmitter<TestStatus>();

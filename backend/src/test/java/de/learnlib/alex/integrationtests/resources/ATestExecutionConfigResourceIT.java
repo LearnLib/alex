@@ -145,7 +145,6 @@ public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
         return "{"
                 + "\"tests\":[]"
                 + ",\"driverConfig\":{\"name\":\"htmlUnit\"}"
-                + ",\"createReport\":true"
                 + ",\"environment\":" + envId
                 + ",\"project\":" + projectId
                 + "}";
