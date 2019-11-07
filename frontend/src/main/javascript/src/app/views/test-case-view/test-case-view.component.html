@@ -2,14 +2,14 @@
   <action-bar>
     <div class="d-flex flex-row align-items-center">
       <div class="btn-group btn-group-sm ml-auto">
-        <button (click)="execute()" [disabled]="active || testCase.steps.length === 0" class="btn btn-primary">
+        <button (click)="execute()" class="btn btn-primary">
           Execute
         </button>
-        <button (click)="openTestConfigModal()" [disabled]="active" class="btn btn-primary">
+        <button (click)="openTestConfigModal()" class="btn btn-primary">
           <i class="fas fa-fm fa-cog"></i>
         </button>
       </div>
-      <button (click)="save()" [disabled]="active" class="btn btn-sm btn-success ml-2">
+      <button (click)="save()" class="btn btn-sm btn-success ml-2">
         <i class="fas fa-fw fa-save"></i> Save
       </button>
     </div>
@@ -17,30 +17,8 @@
   <div class="view-body">
     <div class="container-fluid">
 
-      <div *ngIf="result">
-        <div *ngIf="!result.passed" class="alert alert-danger">
-          <i (click)="result = null" class="fas fa-fw fa-times float-right"></i>
-          <i class="fas fa-fw fa-exclamation-circle"></i> <strong>The test case failed.</strong>
-          <a *ngIf="testConfig.createReport"
-             href="{{'#!/projects/' + project.id + '/tests/reports/' + report.id}}">(Show report)</a>
-        </div>
-        <div *ngIf="result.passed" class="alert alert-success">
-          <i (click)="result = null" class="fas fa-fw fa-times float-right"></i>
-          <i class="fas fa-fw fa-check"></i> <strong>The test case passed.</strong>
-          <a
-            *ngIf="testConfig.createReport"
-            [routerLink]="['/app', 'projects', project.id, 'tests', 'reports', report.id]"
-          >
-            (Show report)
-          </a>
-        </div>
-        <hr>
-      </div>
-
-      <div *ngIf="active">
-        <div class="alert alert-info">
-          <i class="fas fa-fw fa-circle-notch fa-spin"></i> The test is being executed.
-        </div>
+      <div *ngIf="report != null">
+        <test-report-progress [report]="report"></test-report-progress>
         <hr>
       </div>
 

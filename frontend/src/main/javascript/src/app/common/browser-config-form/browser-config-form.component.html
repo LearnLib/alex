@@ -22,27 +22,19 @@
 <div *ngIf="config.name === 'remote'">
   <div class="form-group">
     <label class="control-label">Platform</label>
+
     <select [(ngModel)]="config.platform" class="form-control" required>
-      <option [value]="" disabled>Select a platform</option>
-      <optgroup label="Defaults">
-        <option *ngFor="let item of platforms.any | keyvalue" [value]="item.v">{{item.k}}</option>
-      </optgroup>
-      <optgroup label="Windows">
-        <option *ngFor="let item of platforms.windows | keyvalue" [value]="item.v">{{item.k}}</option>
-      </optgroup>
-      <optgroup label="Mac OS">
-        <option *ngFor="let item of platforms.mac | keyvalue" [value]="item.v">{{item.k}}</option>
-      </optgroup>
-      <optgroup label="Unix">
-        <option *ngFor="let item of platforms.unix | keyvalue" [value]="item.v">{{item.k}}</option>
+      <option [value]="null" disabled>Select a platform</option>
+      <optgroup [label]="platform.key" *ngFor="let platform of platforms | keyvalue">
+        <option *ngFor="let p of platform.value | keyvalue" [value]="p.value">{{p.key}}</option>
       </optgroup>
     </select>
   </div>
   <div class="form-group">
     <label class="control-label">Browser</label>
     <select [(ngModel)]="config.browser" class="form-control" required>
-      <option [value]="null" disabled>Select a browser</option>
-      <option *ngFor="let item of browsers" [value]="item.v">{{item.k}}</option>
+      <option [value]="''" disabled>Select a browser</option>
+      <option *ngFor="let item of browsers | keyvalue" [value]="item.value">{{item.key}}</option>
     </select>
   </div>
   <div class="form-group">

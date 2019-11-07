@@ -16,50 +16,44 @@
 
 package de.learnlib.alex.testing.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The class that contains the current status of a test process.
  */
 public class TestStatus {
 
-    /** If the test process is active for a given user and project. */
-    private boolean active;
+    private List<TestQueueItem> testRunQueue;
 
-    /** The test report that contains intermediate results. */
-    private TestReport report;
-
-    /** The number of tests in queue. */
-    private int testsInQueue;
+    private TestQueueItem currentTestRun;
 
     /** The test(suite) that is currently being executed. */
     private Test currentTest;
 
     /** Constructor. */
     public TestStatus() {
-        this.testsInQueue = 0;
+        testRunQueue = new ArrayList<>();
     }
 
-    public int getTestsInQueue() {
-        return testsInQueue;
+    public TestQueueItem getCurrentTestRun() {
+        return currentTestRun;
     }
 
-    public void setTestsInQueue(int testsInQueue) {
-        this.testsInQueue = testsInQueue;
+    public void setCurrentTestRun(TestQueueItem currentTestRun) {
+        this.currentTestRun = currentTestRun;
+    }
+
+    public List<TestQueueItem> getTestRunQueue() {
+        return testRunQueue;
+    }
+
+    public void setTestRunQueue(List<TestQueueItem> testRunQueue) {
+        this.testRunQueue = testRunQueue;
     }
 
     public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public TestReport getReport() {
-        return report;
-    }
-
-    public void setReport(TestReport report) {
-        this.report = report;
+        return !(testRunQueue.isEmpty() && currentTestRun == null && currentTest == null);
     }
 
     public Test getCurrentTest() {

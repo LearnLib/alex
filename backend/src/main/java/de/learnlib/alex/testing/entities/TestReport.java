@@ -46,6 +46,13 @@ public class TestReport implements Serializable {
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
 
+    public enum  Status {
+        PENDING,
+        IN_PROGRESS,
+        FINISHED,
+        ABORTED
+    }
+
     /** The id in the database. */
     @Id
     @GeneratedValue
@@ -71,10 +78,13 @@ public class TestReport implements Serializable {
     @OneToOne(fetch = FetchType.EAGER)
     private ProjectEnvironment environment;
 
+    private Status status;
+
     /** Constructor. */
     public TestReport() {
         this.testResults = new ArrayList<>();
         this.startDate = ZonedDateTime.now();
+        this.status = Status.PENDING;
     }
 
     public ZonedDateTime getStartDate() {
@@ -144,7 +154,7 @@ public class TestReport implements Serializable {
      */
     @Transient
     public boolean isPassed() {
-        return this.testResults.stream()
+        return this.status.equals(Status.FINISHED) && this.testResults.stream()
                 .map(TestResult::isPassed)
                 .reduce(true, (a, b) -> a && b);
     }
@@ -198,5 +208,13 @@ public class TestReport implements Serializable {
                 .filter(r -> r instanceof TestCaseResult)
                 .filter(TestResult::isPassed)
                 .count();
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

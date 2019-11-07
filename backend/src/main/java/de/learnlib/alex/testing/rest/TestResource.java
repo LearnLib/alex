@@ -23,6 +23,7 @@ import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.export.ExportableEntity;
+import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.entities.export.TestsExportConfig;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
@@ -77,7 +78,6 @@ public class TestResource {
     private final TestDAO testDAO;
     private final TestService testService;
     private final WebhookService webhookService;
-    private final TestReportDAO testReportDAO;
     private final ProjectDAO projectDAO;
     private final TestsExporter testsExporter;
 
@@ -85,13 +85,11 @@ public class TestResource {
     public TestResource(TestDAO testDAO,
                         TestService testService,
                         WebhookService webhookService,
-                        TestReportDAO testReportDAO,
                         ProjectDAO projectDAO,
                         TestsExporter testsExporter) {
         this.testDAO = testDAO;
         this.testService = testService;
         this.webhookService = webhookService;
-        this.testReportDAO = testReportDAO;
         this.projectDAO = projectDAO;
         this.testsExporter = testsExporter;
     }
@@ -170,51 +168,6 @@ public class TestResource {
     }
 
     /**
-     * Execute a test.
-     *
-     * @param projectId
-     *         The id of the project.
-     * @param testId
-     *         The id of the test.
-     * @param testConfig
-     *         The configuration to run the test with.
-     * @return The result of the test execution.
-     */
-    @POST
-    @Path("/{testId}/execute")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response execute(@PathParam("projectId") Long projectId,
-                            @PathParam("testId") Long testId,
-                            TestExecutionConfig testConfig) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        ThreadContext.put("userId", String.valueOf(user.getId()));
-
-        final Test test = testDAO.get(user, projectId, testId);
-        if (!(test instanceof TestCase)) {
-            final Exception e = new Exception("The test is not a test case.");
-            return ResourceErrorHandler.createRESTErrorMessage("TestResource.execute", Response.Status.BAD_REQUEST, e);
-        } else if (((TestCase) test).getSteps().isEmpty()) {
-            final Exception e = new Exception("The test has no steps to execute");
-            return ResourceErrorHandler.createRESTErrorMessage("TestResource.execute", Response.Status.BAD_REQUEST, e);
-        }
-
-        final Map<Long, TestResult> results = new HashMap<>();
-        testService.createTestExecutor().executeTestCase(user, (TestCase) test, testConfig, results);
-
-        TestReport report = new TestReport();
-        report.setTestResults(new ArrayList<>(results.values()));
-        report.setEnvironment(testConfig.getEnvironment());
-
-        if (testConfig.isCreateReport()) {
-            report = testReportDAO.create(user, projectId, report);
-            webhookService.fireEvent(user, new TestEvent.ExecutionFinished(report));
-        }
-
-        ThreadContext.remove("userId");
-        return Response.ok(report).build();
-    }
-
-    /**
      * Executes a test run that can contains multiple tests.
      *
      * @param projectId
@@ -230,8 +183,8 @@ public class TestResource {
                             TestExecutionConfig testConfig) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
         final Project project = projectDAO.getByID(user, projectId);
-        final TestStatus status = testService.start(user, project, testConfig);
-        return Response.ok(status).build();
+        final TestQueueItem testRun = testService.start(user, project, testConfig);
+        return Response.ok(testRun).build();
     }
 
     /**
@@ -251,24 +204,6 @@ public class TestResource {
         final TestStatus status = testService.getStatus(user, project);
         LOGGER.traceExit("status() with status {}", status);
         return Response.ok(status).build();
-    }
-
-    /**
-     * Abort the testing process.
-     *
-     * @param projectId
-     *         The ID of the project.
-     * @return 200 if the process could be aborted.
-     */
-    @POST
-    @Path("/abort")
-    public Response abort(@PathParam("projectId") Long projectId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("abort(projectId: {}) with user {}", projectId, user);
-
-        testService.abort(user, projectId);
-        LOGGER.traceExit("abort() with status {}", Response.Status.OK.getStatusCode());
-        return Response.ok().build();
     }
 
     @POST
@@ -372,6 +307,15 @@ public class TestResource {
         testDAO.delete(user, projectId, testId);
         webhookService.fireEvent(user, new TestEvent.Deleted(testId));
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    @POST
+    @Path("/abort/{reportId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response abort(@PathParam("projectId") Long projectId, @PathParam("reportId") Long reportId) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        testService.abort(user, projectId, reportId);
+        return Response.status(Response.Status.OK).build();
     }
 
     /**

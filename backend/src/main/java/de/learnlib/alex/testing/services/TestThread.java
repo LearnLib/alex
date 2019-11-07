@@ -23,6 +23,7 @@ import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
+import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestResult;
 import de.learnlib.alex.testing.events.TestEvent;
@@ -34,7 +35,6 @@ import org.apache.logging.log4j.ThreadContext;
 
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -73,14 +73,10 @@ public class TestThread extends Thread {
     /** The finished listener. */
     private final FinishedListener finishedListener;
 
-    /** The map where intermediate results are stored. */
-    private final Map<Long, TestResult> results;
-
     /** The queue of tests to execute. */
-    private final Deque<TestExecutionConfig> queue = new ConcurrentLinkedDeque<>();
+    private final Deque<TestQueueItem> testQueue = new ConcurrentLinkedDeque<>();
 
-    /** If the testing process has been aborted. */
-    private boolean aborted = false;
+    private TestQueueItem currentTest;
 
     /**
      * Constructor.
@@ -88,9 +84,7 @@ public class TestThread extends Thread {
      * @param user
      *         {@link #user}.
      * @param project
-     *         {@link #project}.
-     * @param config
-     *         The configuration to start with.
+     *         {@link #project}..
      * @param webhookService
      *         {@link #webhookService}.
      * @param testDAO
@@ -100,65 +94,89 @@ public class TestThread extends Thread {
      * @param finishedListener
      *         {@link #finishedListener}.
      */
-    public TestThread(User user, Project project, TestExecutionConfig config,
-            WebhookService webhookService, TestDAO testDAO, TestReportDAO testReportDAO,
-            TestExecutor testExecutor, FinishedListener finishedListener) {
+    public TestThread(User user, Project project, WebhookService webhookService,
+                      TestDAO testDAO, TestReportDAO testReportDAO, TestExecutor testExecutor,
+                      FinishedListener finishedListener) {
         this.user = user;
         this.project = project;
         this.webhookService = webhookService;
         this.testDAO = testDAO;
         this.testReportDAO = testReportDAO;
         this.finishedListener = finishedListener;
-        this.results = new HashMap<>();
         this.testExecutor = testExecutor;
-        this.add(config);
     }
 
     @Override
     public void run() {
         ThreadContext.put("userId", String.valueOf(user.getId()));
 
-        while (!queue.isEmpty()) {
-            if (aborted) {
-                break;
+        while (!testQueue.isEmpty()) {
+            currentTest = testQueue.poll();
+            if (currentTest.getReport().getStatus().equals(TestReport.Status.ABORTED)) {
+                testReportDAO.update(user, project.getId(), currentTest.getReport().getId(), currentTest.getReport());
+                continue;
             }
 
+            final TestExecutionConfig config = currentTest.getConfig();
+            final Map<Long, TestResult> results = currentTest.getResults();
+            TestReport report = currentTest.getReport();
+
             try {
-                final TestExecutionConfig config = queue.getFirst();
                 final List<Test> tests = testDAO.get(user, project.getId(), config.getTestIds());
+
+                report.setStatus(TestReport.Status.IN_PROGRESS);
+                report = testReportDAO.update(user, project.getId(), report.getId(), report);
 
                 LOGGER.info(LoggerMarkers.LEARNER, "Start executing tests: {}", config.getTestIds());
 
                 // do not fire the event if the test is only called for testing purposes.
-                if (config.isCreateReport()) {
-                    final TestExecutionStartedEventData data =
-                            new TestExecutionStartedEventData(project.getId(), config);
-                    webhookService.fireEvent(user, new TestEvent.ExecutionStarted(data));
-                }
+                final TestExecutionStartedEventData data = new TestExecutionStartedEventData(project.getId(), config);
+                webhookService.fireEvent(user, new TestEvent.ExecutionStarted(data));
 
                 testExecutor.executeTests(user, tests, config, results);
-                final TestReport report = getReport();
-                report.setEnvironment(config.getEnvironment());
 
-                if (config.isCreateReport()) {
-                    testReportDAO.create(user, project.getId(), report);
-                    webhookService.fireEvent(user, new TestEvent.ExecutionFinished(report));
+                report.setTestResults(new ArrayList<>(results.values()));
+
+                if (!report.getStatus().equals(TestReport.Status.ABORTED)) {
+                    report.setStatus(TestReport.Status.FINISHED);
                 }
+
+                report = testReportDAO.update(user, project.getId(), report.getId(), report);
+                webhookService.fireEvent(user, new TestEvent.ExecutionFinished(report));
 
                 LOGGER.info(LoggerMarkers.LEARNER, "Successfully executed tests");
             } catch (Exception e) {
+                report.setStatus(TestReport.Status.ABORTED);
+                testReportDAO.update(user, project.getId(), report.getId(), report);
+
                 LOGGER.info(LoggerMarkers.LEARNER, "Could not execute all tests", e);
                 e.printStackTrace();
-            } finally {
-                queue.removeFirst();
             }
         }
 
         finishedListener.handleFinished();
-        queue.clear();
+        testQueue.clear();
+        this.currentTest = null;
 
         LOGGER.info(LoggerMarkers.LEARNER, "Finished testing");
         ThreadContext.remove("userId");
+    }
+
+    public void abort(Long reportId) {
+        if (currentTest == null && this.testQueue.isEmpty()) {
+            return;
+        }
+
+        if (currentTest.getReport().getId().equals(reportId)) {
+            currentTest.getReport().setStatus(TestReport.Status.ABORTED);
+            testExecutor.abort();
+        } else {
+            this.testQueue.forEach(item -> {
+                if (item.getReport().getId().equals(reportId)) {
+                    item.getReport().setStatus(TestReport.Status.ABORTED);
+                }
+            });
+        }
     }
 
     /**
@@ -167,36 +185,29 @@ public class TestThread extends Thread {
      * @param config
      *         The test configuration to add to the queue.
      */
-    public void add(TestExecutionConfig config) {
-        this.queue.addLast(config);
+    public TestQueueItem add(TestExecutionConfig config) {
+        final TestReport report = new TestReport();
+        report.setProject(project);
+        report.setEnvironment(config.getEnvironment());
+
+        final TestQueueItem queueItem = new TestQueueItem(
+                testReportDAO.create(user, project.getId(), report),
+                config
+        );
+
+        this.testQueue.addLast(queueItem);
+        return queueItem;
     }
 
-    /**
-     * Get the report for the intermediate results.
-     *
-     * @return The report.
-     */
-    public TestReport getReport() {
-        final TestReport testReport = new TestReport();
-        testReport.setTestResults(new ArrayList<>(results.values()));
-        return testReport;
+    public List<TestQueueItem> getTestQueue() {
+        return new ArrayList<>(testQueue);
+    }
+
+    public TestQueueItem getCurrentTest() {
+        return currentTest;
     }
 
     public TestExecutor getTestExecutor() {
         return testExecutor;
-    }
-
-    public void abort() {
-        aborted = true;
-        testExecutor.abort();
-    }
-
-    /**
-     * Count how many tests there are in the queue.
-     *
-     * @return The number of tests in the queue.
-     */
-    public int getNumberOfTestsInQueue() {
-        return queue.size();
     }
 }

@@ -23,6 +23,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /** The repository for test reports. */
 @Repository
 public interface TestReportRepository extends JpaRepository<TestReport, Long> {
@@ -50,6 +52,9 @@ public interface TestReportRepository extends JpaRepository<TestReport, Long> {
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     Page<TestReport> findAllByProject_Id(Long projectId, Pageable pageable);
+
+    @Transactional(readOnly = true)
+    List<TestReport> findAllByStatusIn(List<TestReport.Status> statusList);
 
     /**
      * Delete all test reports by project id.

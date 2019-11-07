@@ -17,7 +17,6 @@
 package de.learnlib.alex.testing.services;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.ProjectEnvironmentDAO;
 import de.learnlib.alex.data.entities.Project;
@@ -25,6 +24,8 @@ import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHan
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
+import de.learnlib.alex.testing.entities.TestQueueItem;
+import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.entities.TestStatus;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.springframework.stereotype.Service;
@@ -40,8 +41,8 @@ public class TestService {
     /** Factory to create a new ContextHandler. */
     private final PreparedConnectorContextHandlerFactory contextHandlerFactory;
 
-    /** The running testing threads. userId -> (projectId -> TestThread). */
-    private final Map<Long, Map<Long, TestThread>> testingThreads;
+    /** The running testing threads (projectId -> TestThread). */
+    private final Map<Long, TestThread> testThreads;
 
     /** The {@link WebhookService} to use. */
     private final WebhookService webhookService;
@@ -65,7 +66,7 @@ public class TestService {
         this.webhookService = webhookService;
         this.testDAO = testDAO;
         this.testReportDAO = testReportDAO;
-        this.testingThreads = new HashMap<>();
+        this.testThreads = new HashMap<>();
         this.projectDAO = projectDAO;
         this.environmentDAO = environmentDAO;
     }
@@ -81,45 +82,22 @@ public class TestService {
      *         The config for the tests.
      * @return A test status.
      */
-    public TestStatus start(User user, Project project, TestExecutionConfig config) {
-        final TestThread thread = new TestThread(user, project, config, webhookService, testDAO,
-                testReportDAO, createTestExecutor(), () -> {
-            this.testingThreads.get(user.getId()).remove(project.getId());
-            if (this.testingThreads.get(user.getId()).values().size() == 0) {
-                this.testingThreads.remove(user.getId());
-            }
-        });
+    public TestQueueItem start(User user, Project project, TestExecutionConfig config) {
+        final TestReport r = new TestReport();
+        r.setEnvironment(config.getEnvironment());
 
-        if (testingThreads.containsKey(user.getId())) {
-            if (testingThreads.get(user.getId()).containsKey(project.getId())) {
-                testingThreads.get(user.getId()).get(project.getId()).add(config);
-            } else {
-                testingThreads.get(user.getId()).put(project.getId(), thread);
-                thread.start();
-            }
+        if (testThreads.containsKey(project.getId())) {
+            final TestThread testThread = testThreads.get(project.getId());
+            return testThread.add(config);
         } else {
-            this.testingThreads.put(user.getId(), new HashMap<>());
-            this.testingThreads.get(user.getId()).put(project.getId(), thread);
-            thread.start();
-        }
-
-        return getStatus(user, project);
-    }
-
-    /**
-     * Abort the test thread of the user and the project.
-     *
-     * @param user
-     *         The user.
-     * @param projectId
-     *         The ID of the project.
-     * @throws NotFoundException
-     *         If the project cannot be found.
-     */
-    public void abort(User user, Long projectId) throws NotFoundException {
-        final Project project = projectDAO.getByID(user, projectId);
-        if (testingThreads.containsKey(user.getId()) && testingThreads.get(user.getId()).containsKey(project.getId())) {
-            testingThreads.get(user.getId()).get(project.getId()).abort();
+            final TestThread testThread = new TestThread(user, project, webhookService, testDAO,
+                    testReportDAO, createTestExecutor(), () ->
+                this.testThreads.remove(project.getId())
+            );
+            this.testThreads.put(project.getId(), testThread);
+            final TestQueueItem testStatus = testThread.add(config);
+            testThread.start();
+            return testStatus;
         }
     }
 
@@ -134,22 +112,25 @@ public class TestService {
      */
     public TestStatus getStatus(User user, Project project) {
         final TestStatus status = new TestStatus();
+        projectDAO.checkAccess(user, project);
 
-        if (!testingThreads.containsKey(user.getId())) {
-            status.setActive(false);
-        } else {
-            if (!testingThreads.get(user.getId()).containsKey(project.getId())) {
-                status.setActive(false);
-            } else {
-                final TestThread testThread = testingThreads.get(user.getId()).get(project.getId());
-                status.setActive(true);
-                status.setReport(testThread.getReport());
-                status.setTestsInQueue(testThread.getNumberOfTestsInQueue());
-                status.setCurrentTest(testThread.getTestExecutor().getCurrentTest());
-            }
+        if (testThreads.containsKey(project.getId())) {
+            final TestThread testThread = testThreads.get(project.getId());
+            status.setTestRunQueue(testThread.getTestQueue());
+            status.setCurrentTestRun(testThread.getCurrentTest());
+            status.setCurrentTest(testThread.getTestExecutor().getCurrentTest());
         }
 
         return status;
+    }
+
+    public void abort(User user, Long projectId, Long reportId) {
+        testReportDAO.get(user, projectId, reportId);
+
+        if (testThreads.containsKey(projectId)) {
+            final TestThread testThread = testThreads.get(projectId);
+            testThread.abort(reportId);
+        }
     }
 
     public TestExecutor createTestExecutor() {

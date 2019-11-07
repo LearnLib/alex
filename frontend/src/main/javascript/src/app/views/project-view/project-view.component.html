@@ -13,7 +13,16 @@
         </div>
 
         <div class="col-lg-4 col-md-6">
-          <latest-test-report-widget [project]="project"></latest-test-report-widget>
+          <div class="card mb-4">
+            <div class="card-header">
+              <strong>Test status</strong>
+            </div>
+            <div class="card-body p-0">
+              <test-status></test-status>
+            </div>
+          </div>
+
+          <latest-test-report-widget [project]="project" class="d-block mb-4"></latest-test-report-widget>
         </div>
 
       </div>

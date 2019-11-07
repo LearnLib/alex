@@ -19,6 +19,8 @@ import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { TestStatus } from '../../entities/test-status';
+import { map } from 'rxjs/operators';
 
 /**
  * The resource to handle actions with test cases over the API.
@@ -63,17 +65,10 @@ export class TestApiService extends BaseApiService {
    *
    * @param projectId The id of the project.
    */
-  getStatus(projectId: number): Observable<any> {
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/status`, this.defaultHttpOptions);
-  }
-
-  /**
-   * Abort the execution of the current test processes.
-   *
-   * @param projectId The ID of the project.
-   */
-  abort(projectId: number): Observable<any> {
-    return this.http.post(`${env.apiUrl}/projects/${projectId}/tests/abort`, null, this.defaultHttpOptions);
+  getStatus(projectId: number): Observable<TestStatus> {
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/tests/status`, this.defaultHttpOptions).pipe(
+      map(data => data as TestStatus)
+    );
   }
 
   /**
@@ -117,16 +112,6 @@ export class TestApiService extends BaseApiService {
   }
 
   /**
-   * Execute a test.
-   *
-   * @param testCase The test to execute.
-   * @param browserConfig The config to execute the test with.
-   */
-  execute(testCase: any, browserConfig: number): Observable<any> {
-    return this.http.post(`${env.apiUrl}/projects/${testCase.project}/tests/${testCase.id}/execute`, browserConfig, this.defaultHttpOptions);
-  }
-
-  /**
    * Execute multiple tests at once.
    *
    * @param projectId The id of the project
@@ -154,5 +139,9 @@ export class TestApiService extends BaseApiService {
 
   import(projectId: number, data: any): Observable<any> {
     return this.http.post(`${env.apiUrl}/projects/${projectId}/tests/import`, data, this.defaultHttpOptions);
+  }
+
+  abort(projectId: number, reportId: any): Observable<any> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/tests/abort/${reportId}`, null, this.defaultHttpOptions);
   }
 }

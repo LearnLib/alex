@@ -47,13 +47,15 @@ import { DragulaService } from 'ng2-dragula';
 })
 export class SymbolViewComponent implements OnInit, OnDestroy {
 
+  private readonly keyDownHandler: any;
   /** The symbol whose actions are managed. */
   symbol: AlphabetSymbol;
   /** All symbol groups. */
   groups: SymbolGroup[];
   /** The selected actions. */
   selectedSteps: Selectable<any, any>;
-  private readonly keyDownHandler: any;
+
+  showOutputs: boolean;
 
   constructor(private symbolApi: SymbolApiService,
               private appStore: AppStoreService,
@@ -69,6 +71,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
     this.symbol = null;
     this.groups = [];
     this.selectedSteps = null;
+    this.showOutputs = false;
 
     currentRoute.paramMap.subscribe(map => {
       const symbolId = parseInt(map.get('symbolId'));

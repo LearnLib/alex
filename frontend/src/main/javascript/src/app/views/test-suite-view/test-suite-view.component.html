@@ -78,8 +78,7 @@
 
         <div class="btn-group btn-group-sm float-right">
           <button (click)="executeSelected()" class="btn btn-primary" [disabled]="!selectedTests.isAnySelected()">
-            <span *ngIf="!status.active">Execute</span>
-            <span *ngIf="status.active">Enqueue</span>
+            Execute
           </button>
           <button (click)="openTestConfigModal()" class="btn btn-primary">
             <i class="fas fa-fw fa-cog"></i>
@@ -91,16 +90,8 @@
   <div class="view-body">
     <div class="container-fluid">
 
-      <div *ngIf="status.active">
-        <div class="alert alert-info d-flex flex-row">
-          <div class="w-100">
-            <i class="fas fa-circle-notch fa-spin"></i>&nbsp;
-            Tests are being executed. There are <strong>{{status.testsInQueue}}</strong> processes in the queue.
-          </div>
-          <div>
-            <button (click)="abortTesting()" class="btn btn-info btn-sm">Abort</button>
-          </div>
-        </div>
+      <div *ngIf="report != null">
+        <test-report-progress [report]="report"></test-report-progress>
         <hr>
       </div>
 
@@ -132,10 +123,9 @@
                 <div class="test-list-item-content flex-grow-1">
                   <test-tree [results]="results" [root]="test"></test-tree>
                 </div>
-                <div *ngIf="status != null && status.currentTest != null && status.currentTest.id === test.id"
-                     class="pl-2">
+                <div *ngIf="showInProgressLabel(test)" class="pl-2">
                   <span class="badge badge-info">
-                      <i class="fas fa-fw fa-circle-notch fa-spin"></i> In progress
+                    <i class="fas fa-fw fa-circle-notch fa-spin"></i> In progress
                   </span>
                 </div>
                 <div class="pl-2">
@@ -170,21 +160,33 @@
             You haven't created any tests yet.
           </div>
 
-          <div *ngIf="report != null" style="margin-top: 48px">
-            <test-result-report [report]="report"></test-result-report>
-          </div>
-
         </div>
         <div class="col-sm-12 col-md-3">
-          <test-config-list
-            (selected)="selectTestConfig($event)"
-            *ngIf="testConfigs.length > 0"
-            [configs]="testConfigs"
-          >
-          </test-config-list>
+          <div class="card">
+            <div class="card-header">
+              <strong class="text-muted">Test configs</strong>
+            </div>
+            <div class="card-body p-0">
+              <test-config-list
+                (selected)="selectTestConfig($event)"
+                *ngIf="testConfigs.length > 0"
+                [configs]="testConfigs"
+              >
+              </test-config-list>
 
-          <div *ngIf="testConfigs.length === 0" class="alert alert-info">
-            There are no saved configurations yet.
+              <div *ngIf="testConfigs.length === 0" class="alert alert-info border-0">
+                There are no saved configurations yet.
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt-4">
+            <div class="card-header">
+              <strong class="text-muted">Test runs</strong>
+            </div>
+            <div class="card-body p-0">
+              <test-status></test-status>
+            </div>
           </div>
         </div>
       </div>

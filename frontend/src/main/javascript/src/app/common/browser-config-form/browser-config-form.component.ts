@@ -16,7 +16,7 @@
 
 import { DriverConfigService } from '../../services/driver-config.service';
 import { SettingsApiService } from '../../services/api/settings-api.service';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 /**
  * The component to configure the web driver.
@@ -27,8 +27,20 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class BrowserConfigFormComponent implements OnInit {
 
+  configValue: any;
+
+  @Output()
+  configChange = new EventEmitter<any>();
+
   @Input()
-  config: any;
+  get config(): any {
+    return this.configValue
+  }
+
+  set config(val: any) {
+    this.configValue = val;
+    this.configChange.emit(this.configValue);
+  }
 
   /** The list of locally installed web drivers. */
   supportedWebDrivers: string[];
@@ -49,10 +61,10 @@ export class BrowserConfigFormComponent implements OnInit {
     this.timeoutsCollapsed = true;
 
     this.platforms = {
-      any: {
+      'Default': {
         'Any': 'ANY'
       },
-      windows: {
+      'Windows': {
         'Windows': 'WINDOWS',
         'Windows 10': 'WIN10',
         'Windows 8.1': 'WIN8_1',
@@ -60,7 +72,7 @@ export class BrowserConfigFormComponent implements OnInit {
         'Windows Vista': 'VISTA',
         'Windows XP': 'XP'
       },
-      mac: {
+      'Mac OS': {
         'Mac OS': 'MAC',
         'Sierra': 'SIERRA',
         'El Capitan': 'EL_CAPITAN',
@@ -69,7 +81,7 @@ export class BrowserConfigFormComponent implements OnInit {
         'Mountain Lion': 'MOUNTAIN_LION',
         'Snow Leopard': 'SNOW_LEOPARD'
       },
-      unix: {
+      'Unix': {
         'Linux': 'LINUX',
         'Unix': 'UNIX'
       }

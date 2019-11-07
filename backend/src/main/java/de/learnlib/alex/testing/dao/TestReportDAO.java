@@ -73,6 +73,8 @@ public interface TestReportDAO {
      */
     TestReport get(User user, Long projectId, Long testReportId) throws NotFoundException;
 
+    TestReport update(User user, Long projectId, Long reportId, TestReport report) throws NotFoundException;
+
     /**
      * Get the latest test report.
      *

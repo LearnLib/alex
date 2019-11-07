@@ -90,7 +90,6 @@ import { HypothesisComponent } from './common/hypothesis/hypothesis.component';
 import { DiscriminationTreeComponent } from './common/discrimination-tree/discrimination-tree.component';
 import { ObservationTableComponent } from './common/observation-table/observation-table.component';
 import { LearnerResultDownloadService } from './services/learner-result-download.service';
-import { TestResultReportComponent } from './views/test-suite-view/test-result-report/test-result-report.component';
 import { AdminUsersViewComponent } from './views/admin-users-view/admin-users-view.component';
 import { CreateUserModalComponent } from './views/admin-users-view/create-user-modal/create-user-modal.component';
 import { EditUserModalComponent } from './views/admin-users-view/edit-user-modal/edit-user-modal.component';
@@ -231,6 +230,8 @@ import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { JumpToLabelActionFormComponent } from './common/actions/misc/jump-to-label-action-form/jump-to-label-action-form.component';
 import { CreateLabelActionFormComponent } from './common/actions/misc/create-label-action-form/create-label-action-form.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { TestStatusComponent } from './common/test-status/test-status.component';
+import { TestReportProgressComponent } from './common/test-report-progress/test-report-progress.component';
 
 
 @NgModule({
@@ -288,7 +289,6 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     HypothesisComponent,
     DiscriminationTreeComponent,
     ObservationTableComponent,
-    TestResultReportComponent,
     AdminUsersViewComponent,
     CreateUserModalComponent,
     EditUserModalComponent,
@@ -423,7 +423,9 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     AppViewComponent,
     AboutModalComponent,
     JumpToLabelActionFormComponent,
-    CreateLabelActionFormComponent
+    CreateLabelActionFormComponent,
+    TestStatusComponent,
+    TestReportProgressComponent
   ],
   imports: [
     BrowserModule,

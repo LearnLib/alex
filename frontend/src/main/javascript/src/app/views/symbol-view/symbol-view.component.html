@@ -95,12 +95,24 @@
                 <i class="fas fa-paste fa-fw"></i>
               </button>
             </div>
+
+            <div class="btn-group btn-group-sm ml-2" ngbDropdown placement="bottom-right">
+              <button class="btn btn-default no-caret" ngbDropdownToggle>
+                <i class="fas fa-fw fa-cogs"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-right" ngbDropdownMenu role="menu">
+                <button (click)="showOutputs = !showOutputs" ngbDropdownItem>
+                  <i class="far fa-fw" [class.fa-square]="!showOutputs" [class.fa-check-square]="showOutputs"></i> Show outputs
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
         <div class="card-body p-0">
           <div
             class="action-list"
-            dragula="STEPS"
+            dragula="SYMBOL_STEPS"
             [dragulaModel]="symbol.steps"
             (dragulaModelChange)="symbol.steps = $event"
             *ngIf="symbol.steps.length > 0"
@@ -139,9 +151,9 @@
                     <br>
                     <symbol-parameters [parameterValues]="step.pSymbol.parameterValues"></symbol-parameters>
 
-                    <div>
+                    <div *ngIf="showOutputs">
                       <ng-container *ngFor="let out of step.pSymbol.symbol.outputs">
-                        <div *ngIf="out.parameterType === 'STRING'" class="d-flex flex-row align-items-center">
+                        <div *ngIf="out.parameterType === 'STRING'" class="d-flex flex-row align-items-center mt-1">
                           <i class="fas fa-fw fa-level-up-alt fa-rotate-90"></i> <span class="badge badge-secondary ml-1">{{out.name}}</span>
                         </div>
                       </ng-container>
@@ -201,11 +213,11 @@
                       </button>
                       <div class="dropdown-divider"></div>
                       <button (click)="step.negated = !step.negated" ngbDropdownItem>
-                        <i [ngClass]="{'fa-check': step.negated}" class="fas fa-fw"></i>
+                        <i [ngClass]="{'fa-check-square': step.negated, 'fa-square': !step.negated}" class="far fa-fw"></i>
                         Negate result
                       </button>
                       <button (click)="step.ignoreFailure = !step.ignoreFailure" ngbDropdownItem>
-                        <i [ngClass]="{'fa-check': step.ignoreFailure}" class="fas fa-fw"></i>
+                        <i [ngClass]="{'fa-check-square': step.ignoreFailure, 'fa-square': !step.ignoreFailure}" class="far fa-fw"></i>
                         Ignore failure
                       </button>
                     </div>

@@ -52,7 +52,7 @@
             <div *ngIf="configuration.eqOracle.type === eqOracleTypes.SAMPLE"
                  class="form-horizontal form-condensed">
               <counterexamples-widget
-                [counterexamples]="configuration.eqOracle.counterExamples"
+                (counterexamples)="configuration.eqOracle.counterExamples = $event"
                 [result]="result"
               >
               </counterexamples-widget>

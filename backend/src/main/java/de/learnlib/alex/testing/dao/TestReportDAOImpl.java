@@ -129,6 +129,22 @@ public class TestReportDAOImpl implements TestReportDAO {
     }
 
     @Override
+    public TestReport update(User user, Long projectId, Long reportId, TestReport report) throws NotFoundException {
+        final Project project = projectRepository.findById(projectId).orElse(null);
+        final TestReport reportInDb = testReportRepository.findById(reportId).orElse(null);
+        checkAccess(user, project, reportInDb);
+
+        reportInDb.setStatus(report.getStatus());
+        reportInDb.setTestResults(report.getTestResults());
+        reportInDb.getTestResults().forEach((testResult) -> {
+            testResult.setTestReport(reportInDb);
+            testResult.setProject(project);
+        });
+
+        return testReportRepository.save(reportInDb);
+    }
+
+    @Override
     @Transactional
     public void delete(User user, Long projectId, Long testReportId) throws NotFoundException {
         final Project project = projectRepository.findById(projectId).orElse(null);

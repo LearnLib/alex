@@ -54,16 +54,10 @@ public class TestExecutionConfigResource {
     private SecurityContext securityContext;
 
     private final TestExecutionConfigDAO testExecutionConfigDAO;
-    private final ProjectDAO projectDAO;
-    private final TestService testService;
 
     @Inject
-    public TestExecutionConfigResource(TestExecutionConfigDAO testExecutionConfigDAO,
-                                       ProjectDAO projectDAO,
-                                       TestService testService) {
+    public TestExecutionConfigResource(TestExecutionConfigDAO testExecutionConfigDAO) {
         this.testExecutionConfigDAO = testExecutionConfigDAO;
-        this.projectDAO = projectDAO;
-        this.testService = testService;
     }
 
     /**
@@ -143,29 +137,5 @@ public class TestExecutionConfigResource {
 
         LOGGER.traceExit("Config with id " + configId + " deleted.");
         return Response.noContent().build();
-    }
-
-    /**
-     * Execute the tests as defined in a test configuration.
-     *
-     * @param projectId
-     *         The ID of the project.
-     * @param configId
-     *         The ID of the config.
-     * @return The test status.
-     */
-    @POST
-    @Path("/{configId}/execute")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response execute(@PathParam("projectId") Long projectId, @PathParam("configId") Long configId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("execute({}) for user {}.", projectId, user);
-
-        final TestExecutionConfig config = testExecutionConfigDAO.get(user, projectId, configId);
-        final Project project = projectDAO.getByID(user, projectId);
-        final TestStatus status = testService.start(user, project, config);
-
-        LOGGER.traceExit("Config with id " + configId + " deleted.");
-        return Response.ok(status).build();
     }
 }

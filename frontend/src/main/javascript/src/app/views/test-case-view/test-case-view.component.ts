@@ -28,9 +28,10 @@ import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ExecutionResultModalComponent } from '../../common/modals/execution-result-modal/execution-result-modal.component';
 import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestConfigApiService } from '../../services/api/test-config-api.service';
+import { TestQueueItem, TestReportStatus } from '../../entities/test-status';
+import { TestReportApiService } from '../../services/api/test-report-api.service';
 
 @Component({
   selector: 'test-case-view',
@@ -41,19 +42,20 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
   /** The current test. */
   @Input()
   testCase: any;
-  /** The test result. */
-  result: any;
-  /** The test report. */
-  report: any;
   /** Map id -> symbol. */
   symbolMap: any;
-  /** If testing is in progress. */
-  active: boolean;
   /** Display options */
   options: any;
   /** The config used for testing. */
   testConfig: any;
+
   groups: SymbolGroup[];
+
+  currentTestRun: TestQueueItem;
+
+  report: any;
+
+  private pollHandle: number;
 
   constructor(private symbolGroupApi: SymbolGroupApiService,
               private appStore: AppStoreService,
@@ -61,21 +63,15 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
               private testApi: TestApiService,
               private modalService: NgbModal,
               private testConfigApi: TestConfigApiService,
-              private settingsApi: SettingsApiService) {
+              private settingsApi: SettingsApiService,
+              private testReportApi: TestReportApiService) {
 
     this.testCase = null;
-    this.result = null;
-    this.report = null;
     this.symbolMap = {};
-    this.active = false;
 
     this.options = {
       showSymbolOutputs: false
     };
-  }
-
-  get project(): Project {
-    return this.appStore.project;
   }
 
   ngOnInit(): void {
@@ -84,17 +80,8 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     this.testConfig = {
       tests: [this.testCase],
       environment: this.project.getDefaultEnvironment(),
-      driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
-      createReport: true
+      driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT)
     };
-
-    this.testConfigApi.getAll(this.project.id).subscribe((configs: any[]) => {
-      const i = configs.findIndex(c => c.default);
-      if (i > -1) {
-        this.testConfig = configs[i];
-        this.testConfig.environment = this.project.getEnvironmentById(this.testConfig.environment);
-      }
-    });
 
     this.symbolGroupApi.getAll(this.project.id).subscribe(
       groups => {
@@ -105,18 +92,23 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     );
 
     this.settingsApi.getSupportedWebDrivers().subscribe(
-      data => this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver),
+      data => {
+        this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver);
+        this.testConfigApi.getAll(this.project.id).subscribe((configs: any[]) => {
+          const i = configs.findIndex(c => c.default);
+          if (i > -1) {
+            this.testConfig = configs[i];
+            this.testConfig.environment = this.project.getEnvironmentById(this.testConfig.environment);
+          }
+        });
+      },
       console.error
     );
   }
 
   ngOnDestroy(): void {
     window.removeEventListener('keydown', this.keyDownHandler);
-  }
-
-  showResultDetails(result: any): void {
-    const modalRef = this.modalService.open(ExecutionResultModalComponent);
-    modalRef.componentInstance.result = result;
+    window.clearTimeout(this.pollHandle);
   }
 
   /**
@@ -146,17 +138,13 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     config.tests = [this.testCase.id];
     config.environment = config.environment.id;
 
-    this.result = null;
-    this.active = true;
-    this.testApi.execute(this.testCase, config).subscribe(
+    this.testApi.executeMany(this.project.id, config).subscribe(
       data => {
-        this.report = data;
-        this.result = data.testResults[0];
-        this.active = false;
+        this.currentTestRun = data;
+        this.pollForResult();
       },
       res => {
         this.toastService.info('The test case could not be executed. ' + res.error.message);
-        this.active = false;
       }
     );
   }
@@ -175,6 +163,24 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     this.testCase.steps.push(TestCaseStep.fromSymbol(symbol));
   }
 
+  private pollForResult(): void {
+    if (this.pollHandle != null) {
+      window.clearTimeout(this.pollHandle);
+    }
+
+    const f = () => {
+      this.testReportApi.get(this.project.id, this.currentTestRun.report.id).subscribe(
+        report => {
+          this.report = report;
+          if (this.report.status === TestReportStatus.PENDING || this.report.status === TestReportStatus.IN_PROGRESS) {
+            this.pollHandle = window.setTimeout(() => f(), 3000);
+          }
+        }
+      );
+    };
+    f();
+  }
+
   private keyDownHandler = (e) => {
     if (e.ctrlKey && e.which === 83) {
       e.preventDefault();
@@ -182,4 +188,16 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
       return false;
     }
   };
+
+  get result(): any {
+    if (this.report == null || this.report.testResults.length === 0) {
+      return null;
+    } else {
+      return this.report.testResults[0];
+    }
+  }
+
+  get project(): Project {
+    return this.appStore.project;
+  }
 }

@@ -28,6 +28,7 @@
           <thead>
           <tr>
             <th>&nbsp;</th>
+            <th>Status</th>
             <th>Date</th>
             <th>Environment</th>
             <th>Status</th>
@@ -40,9 +41,17 @@
           </thead>
           <tbody>
           <tr *ngFor="let report of reports">
-            <th width="1%">
+            <td width="1%">
               <selectable-checkbox [item]="report" [selectable]="selectedReports"></selectable-checkbox>
-            </th>
+            </td>
+            <td>
+              <span
+                class="badge badge-secondary"
+              >
+                <i class="fa fa-fw fa-circle-notch fa-spin mr-1" *ngIf="report.status === 'IN_PROGRESS'"></i>
+                {{report.status | normalizeUpperCase}}
+              </span>
+            </td>
             <td style="min-width: 140px;" width="1%">{{report.startDate | date : 'EEE, dd.MM.yyyy, HH:mm'}}</td>
             <td width="1%">
               <span class="badge badge-secondary">{{report.environment.name}}</span>

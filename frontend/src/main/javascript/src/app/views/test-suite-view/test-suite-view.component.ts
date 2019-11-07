@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { remove } from 'lodash';
+import { orderBy, remove } from 'lodash';
 import { webBrowser } from '../../constants';
 import { DriverConfigService } from '../../services/driver-config.service';
 import { DateUtils } from '../../utils/date-utils';
@@ -33,25 +33,22 @@ import { Project } from '../../entities/project';
 import { SymbolGroup } from '../../entities/symbol-group';
 import { TestCase } from '../../entities/test-case';
 import { AppStoreService } from '../../services/app-store.service';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TestsImportModalComponent } from './tests-import-modal/tests-import-modal.component';
 import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
-import { orderBy } from 'lodash';
+import { TestQueueItem, TestReportStatus, TestStatus } from '../../entities/test-status';
 
 @Component({
   selector: 'test-suite-view',
   templateUrl: './test-suite-view.component.html'
 })
-export class TestSuiteViewComponent implements OnInit {
+export class TestSuiteViewComponent implements OnInit, OnDestroy {
 
   /** The test suite. */
   @Input()
   testSuite: any;
-
-  /** The result map (id -> result) of the test execution. */
-  results: any;
 
   /** The test report. */
   report: any;
@@ -61,11 +58,13 @@ export class TestSuiteViewComponent implements OnInit {
 
   groups: SymbolGroup[];
 
-  status: any;
-
   testConfigs: any[];
 
   selectedTests: Selectable<any, any>;
+
+  testStatus: TestStatus;
+
+  private pollHandle: number;
 
   constructor(private symbolGroupApi: SymbolGroupApiService,
               private appStore: AppStoreService,
@@ -79,14 +78,9 @@ export class TestSuiteViewComponent implements OnInit {
               private testReportApi: TestReportApiService,
               private notificationService: NotificationService,
               private testConfigApi: TestConfigApiService) {
-    this.results = {};
     this.testConfigs = [];
     this.selectedTests = new Selectable([], t => t.id);
     this.groups = [];
-
-    this.status = {
-      active: false
-    };
   }
 
   get project(): Project {
@@ -99,12 +93,23 @@ export class TestSuiteViewComponent implements OnInit {
     this.testConfig = {
       tests: [],
       environment: this.project.getDefaultEnvironment(),
-      driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
-      createReport: true
+      driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT)
     };
 
     this.settingsApi.getSupportedWebDrivers().subscribe(
-      data => this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver),
+      data => {
+        this.testConfig.driverConfig = DriverConfigService.createFromName(data.defaultWebDriver);
+        this.testConfigApi.getAll(this.project.id).subscribe(
+          testConfigs => {
+            this.testConfigs = testConfigs;
+            const i = this.testConfigs.findIndex(c => c.default);
+            if (i > -1) {
+              this.testConfig = this.testConfigs[i];
+            }
+          },
+          console.error
+        );
+      },
       console.error
     );
 
@@ -112,27 +117,10 @@ export class TestSuiteViewComponent implements OnInit {
       groups => this.groups = groups,
       console.error
     );
+  }
 
-    this.testConfigApi.getAll(this.project.id).subscribe(
-      testConfigs => {
-        this.testConfigs = testConfigs;
-        const i = this.testConfigs.findIndex(c => c.default);
-        if (i > -1) {
-          this.testConfig = this.testConfigs[i];
-        }
-      },
-      console.error
-    );
-
-    // check if a test process is active
-    this.testApi.getStatus(this.project.id).subscribe(
-      data => {
-        this.status = data;
-        if (data.active) {
-          this._pollStatus();
-        }
-      }
-    );
+  ngOnDestroy(): void {
+    window.clearTimeout(this.pollHandle);
   }
 
   createTestSuite(): void {
@@ -210,13 +198,7 @@ export class TestSuiteViewComponent implements OnInit {
       });
   }
 
-  reset(): void {
-    this.results = {};
-  }
-
   deleteTest(test: any): void {
-    this.reset();
-
     this.testApi.remove(test).subscribe(
       () => {
         this.toastService.success(`The test ${test.type} has been deleted.`);
@@ -233,8 +215,6 @@ export class TestSuiteViewComponent implements OnInit {
       this.toastService.info('You have to select at least one test case or test suite.');
       return;
     }
-
-    this.reset();
 
     this.testApi.removeMany(this.project.id, selectedTests).subscribe(
       () => {
@@ -262,28 +242,25 @@ export class TestSuiteViewComponent implements OnInit {
           this.selectedTests.updateAll(this.testSuite.tests);
         }
       );
-    }).catch(() => {});
+    }).catch(() => {
+    });
   }
 
   executeSelected(): void {
     const selectedTests = this.selectedTests.getSelected();
-    if (selectedTests.length === 0) {
-      this.toastService.info('You have to select at least one test case or test suite.');
-      return;
-    }
-
-    this.reset();
 
     const config = JSON.parse(JSON.stringify(this.testConfig));
     config.tests = selectedTests.map(t => t.id);
     config.environment = config.environment.id;
 
+    this.report = null;
+    this.testStatus = null;
+    window.clearTimeout(this.pollHandle);
+
     this.testApi.executeMany(this.project.id, config).subscribe(
-      () => {
+      status => {
         this.toastService.success(`The test execution has been started.`);
-        if (!this.status.active) {
-          this._pollStatus();
-        }
+        this.pollTestReport(status.report.id);
       },
       res => {
         this.toastService.danger(`The test execution failed. ${res.error.message}`);
@@ -291,50 +268,30 @@ export class TestSuiteViewComponent implements OnInit {
     );
   }
 
-  _pollStatus(): void {
-    this.status.active = true;
-    this.report = null;
-
-    const poll = (wait) => {
-      window.setTimeout(() => {
-        this.testApi.getStatus(this.project.id).subscribe(
-          data => {
-            this.status = data;
-            if (data.report != null) {
-              data.report.testResults.forEach((result) => {
-                this.results[result.test.id] = result;
-              });
-              this.report = data.report;
-            }
-            if (!data.active) {
-
-              this.toastService.success('The test process finished');
-              this.notificationService.notify('ALEX has finished executing the tests.');
-
-              this.testReportApi.getLatest(this.project.id).subscribe(
-                data => {
-                  data.testResults.forEach((result) => {
-                    this.results[result.test.id] = result;
-                  });
-                  this.report = data;
-                },
-                console.error
-              );
-            } else {
-              poll(3000);
-            }
-          });
-      }, wait);
-    };
-
-    poll(100);
+  showInProgressLabel(test: any): boolean {
+    return this.testStatus != null
+      && this.testStatus.currentTest != null
+      && this.report != null
+      && this.report.status === TestReportStatus.IN_PROGRESS
+      && this.testStatus.currentTest.id === test.id
   }
 
-  abortTesting(): void {
-    this.testApi.abort(this.project.id).subscribe(
-      () => this.toastService.success('The testing process has been aborted.'),
-      res => this.toastService.danger(`Could not abort the testing process. ${res.error.message}`)
-    );
+  private pollTestReport(reportId: number): void {
+    const f = () => {
+      this.testReportApi.get(this.project.id, reportId).subscribe(
+        report => {
+          this.report = report;
+          this.testApi.getStatus(this.project.id).subscribe(testStatus => {
+            this.testStatus = testStatus;
+            if (report.status === TestReportStatus.FINISHED || report.status === TestReportStatus.ABORTED) {
+              window.clearTimeout(this.pollHandle);
+            } else {
+              this.pollHandle = window.setTimeout(() => f(), 3000);
+            }
+          });
+        });
+    };
+    f();
   }
 
   openTestConfigModal(): void {
@@ -344,7 +301,8 @@ export class TestSuiteViewComponent implements OnInit {
     modalRef.result.then(data => {
       this.toastService.success('The settings have been updated.');
       this.testConfig = data;
-    }).catch(() => {});
+    }).catch(() => {
+    });
   }
 
   /**
@@ -374,7 +332,8 @@ export class TestSuiteViewComponent implements OnInit {
         t.type = t.tests ? 'suite' : 'case';
         this.testSuite.tests.push(t);
       });
-    }).catch(() => {});
+    }).catch(() => {
+    });
   }
 
   copyTests(): void {
@@ -439,5 +398,19 @@ export class TestSuiteViewComponent implements OnInit {
 
   get orderedTests(): any[] {
     return orderBy(this.testSuite.tests, ['type', 'name'], ['desc', 'asc']);
+  }
+
+  get results(): any {
+    if (this.report == null || this.report.status === TestReportStatus.PENDING) {
+      return {};
+    }
+
+    if (this.report.status === TestReportStatus.IN_PROGRESS && this.testStatus != null) {
+      return this.testStatus.currentTestRun.results;
+    }
+
+    const map = {};
+    this.report.testResults.forEach(r => map[r.test.id] = r);
+    return map;
   }
 }

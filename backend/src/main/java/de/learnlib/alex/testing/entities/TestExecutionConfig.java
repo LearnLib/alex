@@ -61,9 +61,6 @@ public class TestExecutionConfig implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     private AbstractWebDriverConfig driverConfig;
 
-    /** If a report should be created. */
-    private boolean createReport;
-
     /** The id of the URL to use for testing. */
     @NotNull
     @OneToOne
@@ -92,7 +89,6 @@ public class TestExecutionConfig implements Serializable {
     public TestExecutionConfig(List<Long> testIds, AbstractWebDriverConfig driverConfig) {
         this.setTestIds(testIds);
         this.driverConfig = driverConfig;
-        this.createReport = true;
         this.isDefault = false;
     }
 
@@ -151,14 +147,6 @@ public class TestExecutionConfig implements Serializable {
 
     public void setDriverConfig(AbstractWebDriverConfig driverConfig) {
         this.driverConfig = driverConfig;
-    }
-
-    public boolean isCreateReport() {
-        return createReport;
-    }
-
-    public void setCreateReport(boolean createReport) {
-        this.createReport = createReport;
     }
 
     public Project getProject() {

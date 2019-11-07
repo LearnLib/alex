@@ -18,9 +18,17 @@ import { LearnerApiService } from '../../../../services/api/learner-api.service'
 import { ToastService } from '../../../../services/toast.service';
 import { SymbolApiService } from '../../../../services/api/symbol-api.service';
 import { LearnerResult } from '../../../../entities/learner-result';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { DragulaService } from 'ng2-dragula';
 import { LearnerViewStoreService } from '../../learner-view-store.service';
+
+interface IOPair {
+  input: string;
+  output: string;
+}
+
+interface Counterexample extends Array<IOPair> {
+}
 
 /**
  * The directive for the content of the counterexample widget that is used to create and test counterexamples.
@@ -31,17 +39,17 @@ import { LearnerViewStoreService } from '../../learner-view-store.service';
 })
 export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
 
-  @Input()
-  counterexamples: any[];
+  @Output()
+  counterexamples = new EventEmitter<Counterexample[]>();
 
   @Input()
   result: LearnerResult;
 
   /** The array of input output pairs of the shared counterexample. */
-  counterExample: any[] = [];
+  counterexample: Counterexample = [];
 
   /** A list of counterexamples for editing purposes without manipulation the actual model. */
-  tmpCounterExamples: any[] = [];
+  tmpCounterexamples: Counterexample[] = [];
 
   constructor(private learnerApi: LearnerApiService,
               private toastService: ToastService,
@@ -50,7 +58,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
               private store: LearnerViewStoreService) {
 
     this.store.edgeSelected$.subscribe((data) => {
-      this.counterExample.push({
+      this.counterexample.push({
         input: data.input,
         output: data.output
       });
@@ -74,7 +82,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
    * Updates the model of the result.
    */
   renewCounterexamples(): void {
-    this.counterexamples = this.tmpCounterExamples;
+    this.counterexamples.emit(this.tmpCounterexamples);
   }
 
   /**
@@ -83,7 +91,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
    * @param {number} i - The index of the pair to remove.
    */
   removeInputOutputAt(i): void {
-    this.counterExample.splice(i, 1);
+    this.counterexample.splice(i, 1);
   }
 
   /**
@@ -94,9 +102,9 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
       .then(counterexample => {
         this.toastService.success('The selected word is a counterexample');
         for (let i = 0; i < counterexample.length; i++) {
-          this.counterExample[i].output = counterexample[i].output;
+          this.counterexample[i].output = counterexample[i].output;
         }
-        this.tmpCounterExamples.push(JSON.parse(JSON.stringify(this.counterExample)));
+        this.tmpCounterexamples.push(JSON.parse(JSON.stringify(this.counterexample)));
         this.renewCounterexamples();
       })
       .catch(() => {
@@ -110,7 +118,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
    * @param i the index of the pair in the temporary list of counterexamples.
    */
   removeCounterExampleAt(i: number): void {
-    this.tmpCounterExamples.splice(i, 1);
+    this.tmpCounterexamples.splice(i, 1);
     this.renewCounterexamples();
   }
 
@@ -125,8 +133,8 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
       const pSymbols = this.result.symbols;
       const pSymbolNames = pSymbols.map(ps => ps.getComputedName());
 
-      for (let i = 0; i < this.counterExample.length; i++) {
-        const j = pSymbolNames.findIndex(name => name === this.counterExample[i].input);
+      for (let i = 0; i < this.counterexample.length; i++) {
+        const j = pSymbolNames.findIndex(name => name === this.counterexample[i].input);
         testSymbols.push(pSymbols[j]);
       }
 
@@ -148,7 +156,7 @@ export class CounterexamplesWidgetComponent implements OnInit, OnDestroy {
         ce => {
           let ceFound = false;
           for (let i = 0; i < ce.length; i++) {
-            if (ce[i].output !== this.counterExample[i].output) {
+            if (ce[i].output !== this.counterexample[i].output) {
               ceFound = true;
               break;
             }

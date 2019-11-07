@@ -21,6 +21,7 @@ import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TestReportStatus } from '../../entities/test-status';
 
 /**
  * The component for a single test report.
@@ -32,8 +33,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class TestReportViewComponent implements OnInit {
 
   /** The report. */
-  @Input()
   report: any;
+
+  loading: boolean;
 
   constructor(private testReportApi: TestReportApiService,
               private appStore: AppStoreService,
@@ -41,20 +43,13 @@ export class TestReportViewComponent implements OnInit {
               private testReportService: TestReportService,
               private route: ActivatedRoute,
               private router: Router) {
-  }
-
-  get project(): Project {
-    return this.appStore.project;
+    this.loading = false;
   }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(
-      map => {
-        this.testReportApi.get(this.project.id, parseInt(map.get('reportId'))).subscribe(
-          data => this.report = data,
-          res => this.toastService.danger(`Failed to load the report. ${res.error.message}`)
-        );
-      });
+      map => this.loadReport(parseInt(map.get('reportId')))
+    );
   }
 
   /** Deletes the report. */
@@ -71,5 +66,28 @@ export class TestReportViewComponent implements OnInit {
   /** Download the report. */
   downloadReport(): void {
     this.testReportService.download(this.project.id, this.report.id);
+  }
+
+  refresh(): void {
+    if (this.report != null) {
+      this.loadReport(this.report.id);
+    }
+  }
+
+  private loadReport(reportId: number): void {
+    this.loading = true;
+    this.testReportApi.get(this.project.id, reportId).subscribe(
+      data => this.report = data,
+      res => this.toastService.danger(`Failed to load the report. ${res.error.message}`),
+      () => this.loading = false
+    );
+  }
+
+  get project(): Project {
+    return this.appStore.project;
+  }
+
+  get showReport(): boolean {
+    return this.report != null && ![TestReportStatus.IN_PROGRESS, TestReportStatus.PENDING].includes(this.report.status);
   }
 }

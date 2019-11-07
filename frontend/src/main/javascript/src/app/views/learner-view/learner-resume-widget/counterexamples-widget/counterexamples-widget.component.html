@@ -4,10 +4,10 @@
       <div class="text-muted">
         <em>Click on the labels of the hypothesis to create a counterexample.</em>
       </div>
-      <div *ngIf="counterExample.length > 0">
+      <div *ngIf="counterexample.length > 0">
         <br>
         <div class="list-group list-group-condensed mb-3">
-          <div *ngFor="let io of counterExample; let i = index" class="list-group-item counterexample-list-item">
+          <div *ngFor="let io of counterexample; let i = index" class="list-group-item counterexample-list-item">
             <i (click)="removeInputOutputAt(i)" class="fas fa-fw fa-times float-right"></i>
             <span class="badge badge-primary mr-1">{{io.input}}</span>
             <span class="badge badge-secondary">{{io.output}}</span>
@@ -16,15 +16,15 @@
         <button class="btn btn-default btn-sm btn-block">Add counterexample</button>
       </div>
     </form>
-    <div *ngIf="tmpCounterExamples.length > 0">
+    <div *ngIf="tmpCounterexamples.length > 0">
       <hr>
       <ul
         class="list-group"
         dragula="CE"
-        (dragulaModelChange)="tmpCounterExamples = $event"
-        [dragulaModel]="tmpCounterExamples"
+        (dragulaModelChange)="tmpCounterexamples = $event"
+        [dragulaModel]="tmpCounterexamples"
       >
-        <li *ngFor="let ce of tmpCounterExamples; let i = index" class="list-group-item">
+        <li *ngFor="let ce of tmpCounterexamples; let i = index" class="list-group-item">
           <span (click)="removeCounterExampleAt(i)" class="float-right">
             <i class="fas fa-fw fa-trash"></i>
           </span>

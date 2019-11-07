@@ -39,6 +39,8 @@ import de.learnlib.alex.data.rest.SymbolResource;
 import de.learnlib.alex.learning.rest.LearnerResource;
 import de.learnlib.alex.learning.rest.LearnerResultResource;
 import de.learnlib.alex.modelchecking.rest.LtsFormulaResource;
+import de.learnlib.alex.testing.entities.TestReport;
+import de.learnlib.alex.testing.repositories.TestReportRepository;
 import de.learnlib.alex.testing.rest.TestExecutionConfigResource;
 import de.learnlib.alex.testing.rest.TestReportResource;
 import de.learnlib.alex.testing.rest.TestResource;
@@ -60,6 +62,8 @@ import javax.validation.ValidationException;
 import javax.ws.rs.ApplicationPath;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Main class of the REST API. Implements the Jersey {@link ResourceConfig} and does some configuration and stuff.
@@ -101,6 +105,9 @@ public class ALEXApplication extends ResourceConfig {
      */
     @Inject
     private Environment environment;
+
+    @Inject
+    private TestReportRepository testReportRepository;
 
     /**
      * Constructor where the magic happens.
@@ -150,6 +157,15 @@ public class ALEXApplication extends ResourceConfig {
             admin.setEncryptedPassword(DEFAULT_ADMIN_PASSWORD);
             userDAO.create(admin);
         }
+    }
+
+    @PostConstruct
+    public void cleanUp() {
+        final List<TestReport> pendingReports = testReportRepository.findAllByStatusIn(
+                Arrays.asList(TestReport.Status.IN_PROGRESS, TestReport.Status.PENDING)
+        );
+        pendingReports.forEach(r -> r.setStatus(TestReport.Status.ABORTED));
+        testReportRepository.saveAll(pendingReports);
     }
 
     /**
