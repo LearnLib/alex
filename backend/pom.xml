@@ -196,6 +196,16 @@
             <artifactId>automata-modelchecking-ltsmin</artifactId>
             <version>${automatalib.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.automatalib</groupId>
+            <artifactId>automata-util</artifactId>
+            <version>${automatalib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.automatalib</groupId>
+            <artifactId>automata-dot-visualizer</artifactId>
+            <version>${automatalib.version}</version>
+        </dependency>
 
         <!-- LearnLib -->
         <dependency>

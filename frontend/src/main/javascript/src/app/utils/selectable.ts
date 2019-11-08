@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { remove } from 'lodash';
+
 /**
  * Manages selectable entities.
  */
@@ -44,7 +46,9 @@ export class Selectable<T, K> {
   }
 
   unselect(item: T) {
-    this.selectedItems.delete(this.keyFn(item));
+    const key = this.keyFn(item);
+    this.selectedItems.delete(key);
+    remove(this.items, u => this.keyFn(u) === this.keyFn(item));
   }
 
   selectAll() {

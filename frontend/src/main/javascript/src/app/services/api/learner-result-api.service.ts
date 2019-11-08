@@ -18,7 +18,7 @@ import { environment as env } from '../../../environments/environment';
 import { LearnerResult } from '../../entities/learner-result';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -55,6 +55,16 @@ export class LearnerResultApiService extends BaseApiService {
       .pipe(
         map((body: any) => new LearnerResult(body))
       );
+  }
+
+  export(projectId: number, testNo: number, stepNo: number, format = 'DOT'): Observable<any> {
+    const options = {
+      headers: this.defaultHttpHeaders,
+      responseType: 'text',
+      params: new HttpParams().append('format', format)
+    };
+
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/results/${testNo}/steps/${stepNo}/export`, null, options as any);
   }
 
   /**

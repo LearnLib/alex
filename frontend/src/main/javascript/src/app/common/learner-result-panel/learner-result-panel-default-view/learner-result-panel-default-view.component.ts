@@ -22,6 +22,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LearnerResultDetailsModalComponent } from '../../modals/learner-result-details-modal/learner-result-details-modal.component';
 import { FormUtilsService } from '../../../services/form-utils.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { LearnerResultApiService } from '../../../services/api/learner-result-api.service';
 
 @Component({
   selector: 'learner-result-panel-default-view',
@@ -51,6 +52,7 @@ export class LearnerResultPanelDefaultViewComponent implements OnInit {
               private promptService: PromptService,
               private downloadService: DownloadService,
               private element: ElementRef,
+              private learnerResultApi: LearnerResultApiService,
               public formUtils: FormUtilsService) {
   }
 
@@ -103,35 +105,11 @@ export class LearnerResultPanelDefaultViewComponent implements OnInit {
 
   /** Downloads the currently visible hypothesis as dot file. */
   exportHypothesisAsDot(): void {
-    const hypothesis = this.result.steps[this.pointer].hypothesis;
-
-    const edges = {};
-    hypothesis.edges.forEach(edge => {
-      if (!edges[edge.from]) {
-        edges[edge.from] = {};
-      }
-      if (!edges[edge.from][edge.to]) {
-        edges[edge.from][edge.to] = '';
-      }
-      edges[edge.from][edge.to] += `${edge.input} / ${edge.output}\\n`;
-    });
-
-    let dot = 'digraph g {\n';
-    dot += '  __start0 [label="" shape="none"];\n\n';
-    hypothesis.nodes.forEach(node => {
-      dot += `  ${node} [shape="circle" label="${node}"];\n`;
-    });
-    dot += '\n';
-    for (let from in edges) {
-      for (let to in edges[from]) {
-        dot += `  ${from} -> ${to} [label="${edges[from][to]}"];\n`;
-      }
-    }
-    dot += '\n';
-    dot += '  __start0 -> 0;\n';
-    dot += '}';
-
     this.promptService.prompt('Enter a name for the dot file')
-      .then(filename => this.downloadService.downloadText(filename, 'dot', dot));
+      .then(filename => {
+        this.learnerResultApi.export(this.result.project, this.result.testNo, this.pointer + 1).subscribe(
+          data => this.downloadService.downloadText(filename, 'dot', data)
+        );
+      });
   }
 }

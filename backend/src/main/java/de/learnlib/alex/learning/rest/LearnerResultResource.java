@@ -22,14 +22,17 @@ import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.learning.entities.ModelExportFormat;
 import de.learnlib.alex.learning.entities.TestSuiteGenerationConfig;
 import de.learnlib.alex.learning.services.Learner;
+import de.learnlib.alex.learning.services.ModelExporter;
 import de.learnlib.alex.learning.services.TestGenerator;
 import de.learnlib.alex.testing.entities.TestSuite;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -63,6 +66,9 @@ public class LearnerResultResource {
     /** The test generator service. */
     @Inject
     private TestGenerator testGenerator;
+
+    @Inject
+    private ModelExporter modelExporter;
 
     /** The security context containing the user of the request. */
     @Context
@@ -181,6 +187,21 @@ public class LearnerResultResource {
             LOGGER.traceExit(e);
             return ResourceErrorHandler.createRESTErrorMessage("LearnerResultResource.clone",
                     Response.Status.BAD_REQUEST, e);
+        }
+    }
+
+    @POST
+    @Path("{testNo}/steps/{stepNo}/export")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response export(@PathParam("projectId") Long projectId,
+                           @PathParam("testNo") Long testNo,
+                           @PathParam("stepNo") Long stepNo,
+                           @QueryParam("format") ModelExportFormat format) {
+        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+
+        switch (format) {
+            case DOT: return Response.ok(modelExporter.exportDot(user, projectId, testNo, stepNo)).build();
+            default: return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
 
