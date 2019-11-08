@@ -93,7 +93,9 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
     this.testConfig = {
       tests: [],
       environment: this.project.getDefaultEnvironment(),
-      driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT)
+      driverConfig: DriverConfigService.createFromName(webBrowser.HTML_UNIT),
+      createReport: true,
+      description: ""
     };
 
     this.settingsApi.getSupportedWebDrivers().subscribe(

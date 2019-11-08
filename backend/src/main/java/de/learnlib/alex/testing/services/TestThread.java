@@ -134,6 +134,10 @@ public class TestThread extends Thread {
                 webhookService.fireEvent(user, new TestEvent.ExecutionStarted(data));
 
                 testExecutor.executeTests(user, tests, config, results);
+                final TestReport report = getReport();
+
+                report.setDescription(config.getDescription());
+                report.setEnvironment(config.getEnvironment());
 
                 report.setTestResults(new ArrayList<>(results.values()));
 
