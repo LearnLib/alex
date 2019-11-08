@@ -134,11 +134,6 @@ public class TestThread extends Thread {
                 webhookService.fireEvent(user, new TestEvent.ExecutionStarted(data));
 
                 testExecutor.executeTests(user, tests, config, results);
-                final TestReport report = getReport();
-
-                report.setDescription(config.getDescription());
-                report.setEnvironment(config.getEnvironment());
-
                 report.setTestResults(new ArrayList<>(results.values()));
 
                 if (!report.getStatus().equals(TestReport.Status.ABORTED)) {
@@ -193,6 +188,7 @@ public class TestThread extends Thread {
         final TestReport report = new TestReport();
         report.setProject(project);
         report.setEnvironment(config.getEnvironment());
+        report.setDescription(config.getDescription());
 
         final TestQueueItem queueItem = new TestQueueItem(
                 testReportDAO.create(user, project.getId(), report),

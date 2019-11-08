@@ -41,45 +41,48 @@
 
         <hr>
 
-      <strong>Description</strong>
-      <p>
-        {{report.description}}
-      </p>
+        <div *ngIf="report.description != null && report.description.trim() !== ''">
+          <strong>Description</strong>
+          <p>
+            {{report.description}}
+          </p>
+        </div>
 
-      <table class="table table-striped">
-        <thead>
-        <tr>
-          <th>Status</th>
-          <th>Name</th>
-          <th>Output</th>
-          <th>Message</th>
-          <th>Time</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let result of report.testResults">
-          <ng-container *ngIf="result.test.type === 'case'">
-            <td width="1%">
-              <span *ngIf="result.passed" class="badge badge-success">Passed</span>
-              <span *ngIf="!result.passed" class="badge badge-danger">Failed</span>
-            </td>
-            <td>
-              <a [title]="['/app', 'projects', result.project, 'tests', result.test.id]">{{result.test.name}}</a>
-            </td>
-            <td>
-              <report-outputs-column [outputs]="result.outputs" [project]="project"></report-outputs-column>
-            </td>
-            <td>
-              <em *ngIf="result.failureMessage">{{result.failureMessage}}</em>
-            </td>
-            <td style="min-width: 68px">
-              {{result.time | formatMilliseconds}}
-            </td>
-          </ng-container>
-        </tr>
-        </tbody>
-      </table>
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th>Status</th>
+            <th>Name</th>
+            <th>Output</th>
+            <th>Message</th>
+            <th>Time</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let result of report.testResults">
+            <ng-container *ngIf="result.test.type === 'case'">
+              <td width="1%">
+                <span *ngIf="result.passed" class="badge badge-success">Passed</span>
+                <span *ngIf="!result.passed" class="badge badge-danger">Failed</span>
+              </td>
+              <td>
+                <a [title]="['/app', 'projects', result.project, 'tests', result.test.id]">{{result.test.name}}</a>
+              </td>
+              <td>
+                <report-outputs-column [outputs]="result.outputs" [project]="project"></report-outputs-column>
+              </td>
+              <td>
+                <em *ngIf="result.failureMessage">{{result.failureMessage}}</em>
+              </td>
+              <td style="min-width: 68px">
+                {{result.time | formatMilliseconds}}
+              </td>
+            </ng-container>
+          </tr>
+          </tbody>
+        </table>
 
+      </ng-container>
     </div>
   </div>
 

@@ -24,7 +24,8 @@ export enum TestReportStatus {
 export interface TestReport {
   id: number,
   status: TestReportStatus,
-  testResults: any[]
+  testResults: any[],
+  description: string
 }
 
 export interface TestQueueItem {

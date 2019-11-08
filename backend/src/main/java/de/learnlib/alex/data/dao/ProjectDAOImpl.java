@@ -333,7 +333,10 @@ public class ProjectDAOImpl implements ProjectDAO {
      */
     private Project loadLazyRelations(Project project) {
         Hibernate.initialize(project.getEnvironments());
-        project.getEnvironments().forEach(env -> Hibernate.initialize(env.getUrls()));
+        project.getEnvironments().forEach(env -> {
+            Hibernate.initialize(env.getUrls());
+            Hibernate.initialize(env.getVariables());
+        });
         return project;
     }
 
