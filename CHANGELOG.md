@@ -3,14 +3,30 @@
 ## Fixes
 
 * Amount of steps to learn is performed correctly
+* Scoping issues with variables
+* Add Flyway support
+
+## Improvements
+
+* Migrate frontend to Angular 8 
+* Server-side import and export
+* Add kind of stack trace for failed tests
+* Abort test processes more quickly 
+* Show symbol references
 
 ## Features
 
 * Support for Java 11
-* Add actions for drag and drop operations
-* Add action for waiting for a script
+* Project environments: create environments and environment variables 
+* New actions:
+    * Drag and drop operations
+    * goto-like jumps
+    * waiting for a script
 * Update a test suite during test generation
 * Extend "switch to" action for handling windows
+* Import and export for projects
+* Specify default test configurations
+* Multiple pre and post steps for test cases
 
 # ALEX 1.7.2
 
