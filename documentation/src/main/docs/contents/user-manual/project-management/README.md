@@ -16,18 +16,12 @@ A new project has the following properties:
 
 | Field       | Description                                                                            | Required |
 |-------------|----------------------------------------------------------------------------------------|----------|
-| Name        | A unique name for your project.                                                        | yes      |
-| URLs        | URLs where the target is reachable. At least one URL is required.                      | (yes)    |
-| Description | A description of your project.                                                         | no       |
+| Name        | A unique name for the  project.                                                        | yes      |
+| URL         | The URL of the system                                                                  | yes      |
+| Description | A description of the  project.                                                         | no       |
 
 The URL of a new project has to start with *http://* or *https://* followed by at least one further character for the host. 
 The URL can, but does not have to end with a trailing '/'. 
-For performance reasons, a local installation of the target application is recommended.
-
-You can specify more than one URL if you have multiple instances of the same applications.
-One of the URLs has to be specified as *Default* which is used by default when learning or executing tests.
-Specifying more than one URL is useful for parallelizing aspects of the learning process, thus, making it faster.
-It is important that these replications do not share the same state, e.g. have their own database.
 
 ![Settings](./assets/settings.jpg)
 
@@ -51,3 +45,15 @@ In order to switch to another project you have to close the current one first.
 The button for this action can be found in the menu under the navigation point with the name of the opened project <span class="label">3</span>. 
 It redirects back to the project overview. 
 Since the current project is persisted per tab, working on multiple projects simultaneously is possible by loading ALEX in another browser tab.
+
+
+## Project environments
+
+Project environments give you the option to execute tests and learning processes against multiple system environments.
+Each environment can have a set of named **base URLs** and **environment variables**.
+URLs are used as a base URL in certain actions, such as in the *Open URL* and *Request* action.
+Variables can used in any action with the following notation, similar to how variables and counters are used:
+
+<div style="text-align: center">
+`{{:VAR_NAME}}`
+</div>
