@@ -7,7 +7,7 @@ On this page, we present some information for developers and maintainers of ALEX
 
 Make sure you have the following software installed on your development machine:
 
-1. Java JDK 8 or greater
+1. Java JDK 8 or JDK 11
 2. Node.js v10 and NPM v6
 3. Git
 4. Maven 3.3.*
@@ -39,21 +39,9 @@ In addition, the following parameters can be used for the build file or the `mvn
 
 ## Frontend development
 
-The frontend is developed with [AngularJS][angular] and written in Typescript.
+The frontend is developed with [Angular][angular], relies on the Angular CLI and is written in Typescript.
 Styling in ALEX is done with [Bootstrap v4][bootstrap] and SASS stylesheets.
 All frontend files can be found in *frontend/src/main/javascript*.
-
-### NPM commands
-
-There are several NPM commands to automate the development workflow.
-In the *frontend/src/main/javascript* directory, use the following commands:
-
-| Command          | Description                                                                         |
-|------------------|-------------------------------------------------------------------------------------|
-| `npm run build`  | Build all the application files for production use                                  |
-| `npm run dev`    | Compile sass, html and js files every time their content changes                    |
-| `npm run serve`  | Serves the frontend at *http://localhost:8080*. For a custom port, add `-- -p XXXX` |
-
 
 ## Performing a release
 
@@ -72,8 +60,6 @@ In the developer branch, perform the following steps:
    Here, append the binary file generated from step 4.
 6. In the developer branch, increment the version in all files from 1. and append the *-SNAPSHOT* suffix.
   
-  
-
-[angular]: https://angularjs.org/
+[angular]: https://angular.io/
 [bootstrap]: https://getbootstrap.com/docs/4.3/
 [docker]: https://www.docker.com

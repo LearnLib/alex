@@ -41,18 +41,4 @@ mvn install package [-DskipTests]
 The bundle can then be found at `build/target/alex-1.8.0-SNAPSHOT.war`.
 Run it using the instructions for running the bundled version from above.
 
-
-## Docker
-
-We also offer a Docker image that contains a Linux environment with the following software:
-
-* ALEX v1.8.0-SNAPSHOT
-* Chrome v73
-* Firefox v66
-
-The image can be found [here](docker).
-The Docker container exposes the **port 8000** under which ALEX is available after the start.
-Note that currently, only the HtmlUnit and the Firefox browser can be used in the Docker container.
-
 [download]: https://github.com/LearnLib/alex/releases/download/v1.8.0-SNAPSHOT/alex-1.8.0-SNAPSHOT.war
-[docker]: https://github.com/scce/docker-images/tree/master/alex-server
