@@ -78,7 +78,7 @@ public class SymbolUsageService {
         final Set<LearnerResult> foundInLearnerResults = new HashSet<>();
         final List<LearnerResult> learnerResults = learnerResultRepository.findByProject_IdOrderByTestNoAsc(symbol.getProjectId());
         for (LearnerResult r: learnerResults) {
-            if (r.getResetSymbol().getSymbol().getId().equals(symbolId) || r.getPostSymbol().getSymbol().getId().equals(symbolId)) {
+            if (r.getResetSymbol().getSymbol().getId().equals(symbolId) || (r.getPostSymbol() != null && r.getPostSymbol().getSymbol().getId().equals(symbolId))) {
                 foundInLearnerResults.add(r);
                 continue;
             }
