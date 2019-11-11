@@ -518,8 +518,7 @@ public class Learner {
         final Alphabet<String> alphabetProxy1 = mealy1.createAlphabet();
         final Alphabet<String> alphabetProxy2 = mealy1.createAlphabet();
         if (alphabetProxy1.size() != alphabetProxy2.size() || !alphabetProxy1.containsAll(alphabetProxy2)) {
-            throw new IllegalArgumentException("The alphabets of the hypotheses are not "
-                    + "identical!");
+            throw new IllegalArgumentException("The alphabets of the hypotheses are not identical!");
         }
 
         final CompactMealy<String, String> mealyMachine1 = mealy1.createMealyMachine(alphabetProxy1);

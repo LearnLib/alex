@@ -71,7 +71,7 @@
 
     <div class="border-top" style="flex-basis: 0; flex-grow: 1">
       <learner-result-panel
-        *ngIf="status != null && status.result != null && status.active"
+        *ngIf="status != null && status.result != null && status.active && status.result.hypothesis != null"
         [result]="status.result"
         [pointer]="status.result.steps.length - 1"
       >

@@ -21,6 +21,7 @@ import { User } from '../../entities/user';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { orderBy } from 'lodash';
 
 @Component({
   selector: 'app-admin-users-view',
@@ -42,13 +43,9 @@ export class AdminUsersViewComponent implements OnInit {
     this.store.load();
   }
 
-  get currentUser(): User {
-    return this.appStore.user;
-  }
-
   get filteredUsers$(): Observable<User[]> {
     return this.store.users$.pipe(map(users =>
-      users.filter(u => u.email.includes(this.searchForm.controls.value.value))
+      orderBy(users.filter(u => u.email.includes(this.searchForm.controls.value.value)), ['role', 'email'], ['asc', 'asc'])
     ));
   }
 }

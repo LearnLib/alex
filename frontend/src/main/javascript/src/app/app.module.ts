@@ -134,7 +134,7 @@ import { TestsImportModalComponent } from './views/test-suite-view/tests-import-
 import { TestSuiteTreeComponent } from './views/test-suite-view/tests-move-modal/test-suite-tree-component/test-suite-tree.component';
 import { TestsMoveModalComponent } from './views/test-suite-view/tests-move-modal/tests-move-modal.component';
 import { BrowserConfigFormComponent } from './common/browser-config-form/browser-config-form.component';
-import { LearnerResultListModalComponent } from './common/modals/learner-result-list-modal/learner-result-list-modal.component';
+import { LearnerResultListModalComponent } from './views/learner-results-compare-view/learner-result-list-modal/learner-result-list-modal.component';
 import { SeparatingWordModalComponent } from './common/modals/separating-word-modal/separating-word-modal.component';
 import { SymbolsViewComponent } from './views/symbols-view/symbols-view.component';
 import { SymbolGroupHeaderComponent } from './views/symbols-view/symbols-symbol-group-tree/symbol-group-header/symbol-group-header.component';

@@ -1,5 +1,5 @@
 <div class="d-flex learner-result-list-item">
-  <selectable-checkbox [item]="result" [selectable]="selectable"></selectable-checkbox>
+  <selectable-checkbox [item]="result" [selectable]="selectable" *ngIf="selectable != null"></selectable-checkbox>
   <div class="flex-grow-1 mr-3 ml-3">
     <span *ngIf="result.error" class="badge badge-danger float-right">Failed</span>
     <strong>
@@ -16,7 +16,7 @@
     <div>
       <span *ngFor="let env of result.environments" class="badge badge-secondary mr-1">{{env.name}}</span>
     </div>
-    <div *ngIf="result.comment" class="comment text-muted">{{result.comment}}</div>
+    <div *ngIf="result.comment" class="comment text-muted pl-2 mt-2" style="border-left: 2px solid #ddd">{{result.comment}}</div>
   </div>
   <div>
     <ng-content></ng-content>

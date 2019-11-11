@@ -134,6 +134,7 @@ export class LearnerViewComponent implements OnInit, OnDestroy {
   getStatus(): void {
     this.learnerApi.getStatus(this.project.id).subscribe(
       status => {
+
         this.status = status;
         if (this.status.result != null) {
           const now = new Date();

@@ -105,7 +105,7 @@ export class LearnerSetupViewComponent {
 
           // load learn results so that their configuration can be reused
           this.learnerResultApi.getAll(this.project.id).subscribe(
-            learnResults => this.learnerResults = learnResults,
+            learnerResults => this.learnerResults = learnerResults,
             console.error
           );
 
@@ -121,11 +121,6 @@ export class LearnerSetupViewComponent {
 
   get project(): Project {
     return this.appStore.project;
-  }
-
-  /** @param config The config to use. */
-  setLearnerConfiguration(config): void {
-    this.learnerConfiguration = config;
   }
 
   selectResetSymbol(): void {

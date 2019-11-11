@@ -25,7 +25,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SeparatingWordModalComponent } from '../../common/modals/separating-word-modal/separating-word-modal.component';
-import { LearnerResultListModalComponent } from '../../common/modals/learner-result-list-modal/learner-result-list-modal.component';
+import { LearnerResultListModalComponent } from './learner-result-list-modal/learner-result-list-modal.component';
 
 interface Panel {
   result: LearnerResult;
