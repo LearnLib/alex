@@ -27,6 +27,7 @@ import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
+import de.learnlib.alex.learning.services.Learner;
 import net.automatalib.automata.transducers.MealyMachine;
 import net.automatalib.words.impl.SimpleAlphabet;
 import org.hibernate.annotations.Cascade;

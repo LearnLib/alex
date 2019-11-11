@@ -39,4 +39,7 @@ public interface ProjectEnvironmentRepository extends JpaRepository<ProjectEnvir
     @Transactional(readOnly = true)
     @Query(nativeQuery = true, value = "select * from PUBLIC.project_environment where project_id = ? and is_default = ? limit 1")
     ProjectEnvironment findByProject_IdAndIs_Default(Long projectId, Boolean isDefault);
+
+    @Transactional(readOnly = true)
+    List<ProjectEnvironment> findAllByIdIn(List<Long> ids);
 }

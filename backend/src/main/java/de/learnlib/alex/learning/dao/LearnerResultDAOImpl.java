@@ -22,12 +22,15 @@ import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.dao.SymbolDAOImpl;
 import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
+import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
+import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.learning.entities.AbstractLearnerConfiguration;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
 import de.learnlib.alex.learning.entities.LearnerStatus;
+import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.learning.services.Learner;
@@ -70,6 +73,8 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     /** The repository for symbol parameter values. */
     private SymbolParameterValueRepository symbolParameterValueRepository;
 
+    private ProjectEnvironmentRepository projectEnvironmentRepository;
+
     /** The entity manager. */
     private EntityManager entityManager;
 
@@ -93,13 +98,15 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     public LearnerResultDAOImpl(ProjectDAO projectDAO, LearnerResultRepository learnerResultRepository,
             LearnerResultStepRepository learnerResultStepRepository, EntityManager entityManager,
             ParameterizedSymbolRepository parameterizedSymbolRepository,
-            SymbolParameterValueRepository symbolParameterValueRepository) {
+            SymbolParameterValueRepository symbolParameterValueRepository,
+            ProjectEnvironmentRepository projectEnvironmentRepository) {
         this.projectDAO = projectDAO;
         this.learnerResultRepository = learnerResultRepository;
         this.learnerResultStepRepository = learnerResultStepRepository;
         this.entityManager = entityManager;
         this.parameterizedSymbolRepository = parameterizedSymbolRepository;
         this.symbolParameterValueRepository = symbolParameterValueRepository;
+        this.projectEnvironmentRepository = projectEnvironmentRepository;
     }
 
     @Override
@@ -239,54 +246,57 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         initializeLazyRelations(Collections.singletonList(result), true);
         checkAccess(user, project, result);
 
-        // temporarily save theses lists here, otherwise we get exceptions from hibernate or
-        // the symbols are removed from the result to be cloned.
-        final List<LearnerResultStep> steps = result.getSteps();
-        final List<ParameterizedSymbol> symbols = result.getSymbols();
+        final LearnerResult resultToClone = new LearnerResult();
+        resultToClone.setTestNo(learnerResultRepository.findHighestTestNo(projectId) + 1);
+        resultToClone.setUseMQCache(result.isUseMQCache());
+        resultToClone.setStatistics(result.getStatistics());
+        resultToClone.setAlgorithm(result.getAlgorithm());
+        resultToClone.setSigma(result.getSigma());
+        resultToClone.setComment(result.getComment());
+        resultToClone.setErrorText(result.getErrorText());
+        resultToClone.setProject(project);
+        resultToClone.setHypothesis(result.getHypothesis());
+        resultToClone.setEnvironments(projectEnvironmentRepository.findAllByIdIn(result.getEnvironments().stream()
+                .map(ProjectEnvironment::getId)
+                .collect(Collectors.toList())));
 
-        entityManager.detach(result);
-        final Long nextTestNo = learnerResultRepository.findHighestTestNo(projectId) + 1;
-        result.setId(null);
-        result.setTestNo(nextTestNo);
-        result.setSteps(new ArrayList<>());
-        result.setSymbols(new ArrayList<>());
+        final AbstractWebDriverConfig driverConfig = result.getDriverConfig();
+        entityManager.detach(driverConfig);
+        driverConfig.setId(null);
+        resultToClone.setDriverConfig(driverConfig);
 
-        entityManager.detach(result.getDriverConfig());
-        result.getDriverConfig().setId(null);
-
-        final LearnerResult clonedResult = learnerResultRepository.save(result);
-
-        steps.forEach(step -> {
-            entityManager.detach(step);
-            step.setId(null);
-            step.setResult(clonedResult);
-        });
-
-        clonedResult.setResetSymbol(result.getResetSymbol().copy());
-        clonedResult.setSymbols(symbols
-                .stream()
+        resultToClone.setResetSymbol(result.getResetSymbol().copy());
+        resultToClone.setSymbols(result.getSymbols().stream()
                 .map(ParameterizedSymbol::copy)
                 .collect(Collectors.toList()));
         if (result.getPostSymbol() != null) {
-            clonedResult.setPostSymbol(result.getPostSymbol().copy());
+            resultToClone.setPostSymbol(result.getPostSymbol().copy());
         }
 
-        symbolParameterValueRepository.saveAll(clonedResult.getResetSymbol().getParameterValues());
-        clonedResult.getSymbols().forEach(s -> symbolParameterValueRepository.saveAll(s.getParameterValues()));
-        parameterizedSymbolRepository.save(clonedResult.getResetSymbol());
-        parameterizedSymbolRepository.saveAll(clonedResult.getSymbols());
-        clonedResult.getSymbols().forEach(ps -> symbolParameterValueRepository.saveAll(ps.getParameterValues()));
-        if (clonedResult.getPostSymbol() != null) {
-            symbolParameterValueRepository.saveAll(clonedResult.getPostSymbol().getParameterValues());
-            parameterizedSymbolRepository.save(clonedResult.getPostSymbol());
+        resultToClone.getSymbols().forEach(s -> symbolParameterValueRepository.saveAll(s.getParameterValues()));
+        parameterizedSymbolRepository.save(resultToClone.getResetSymbol());
+        parameterizedSymbolRepository.saveAll(resultToClone.getSymbols());
+        resultToClone.getSymbols().forEach(ps -> symbolParameterValueRepository.saveAll(ps.getParameterValues()));
+        if (resultToClone.getPostSymbol() != null) {
+            symbolParameterValueRepository.saveAll(resultToClone.getPostSymbol().getParameterValues());
+            parameterizedSymbolRepository.save(resultToClone.getPostSymbol());
         }
 
-        final List<LearnerResultStep> clonedSteps = learnerResultStepRepository.saveAll(steps);
-        clonedResult.setSteps(clonedSteps);
+        learnerResultRepository.save(resultToClone);
 
-        learnerResultRepository.save(clonedResult);
-        initializeLazyRelations(Collections.singletonList(clonedResult), true);
-        return clonedResult;
+        result.getSteps().forEach(step -> {
+            entityManager.detach(step);
+            step.setId(null);
+            step.setResult(resultToClone);
+            resultToClone.getSteps().add(step);
+        });
+
+        learnerResultStepRepository.saveAll(resultToClone.getSteps());
+        learnerResultRepository.save(resultToClone);
+
+        initializeLazyRelations(Collections.singletonList(resultToClone), true);
+
+        return resultToClone;
     }
 
     @Override
