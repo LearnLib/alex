@@ -23,6 +23,7 @@ import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
+import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
@@ -87,13 +88,16 @@ public class LearnerResultDAOImplTest {
     @Mock
     private SymbolParameterValueRepository symbolParameterValueRepository;
 
+    @Mock
+    private ProjectEnvironmentRepository projectEnvironmentRepository;
+
     private LearnerResultDAO learnerResultDAO;
 
 
     @Before
     public void setUp() {
         learnerResultDAO = new LearnerResultDAOImpl(projectDAO, learnerResultRepository, learnerResultStepRepository,
-                entityManager, parameterizedSymbolRepository, symbolParameterValueRepository);
+                entityManager, parameterizedSymbolRepository, symbolParameterValueRepository, projectEnvironmentRepository);
     }
 
     @Test
@@ -297,8 +301,6 @@ public class LearnerResultDAOImplTest {
 
     @Test
     public void shouldCreateAStepFromAPreviousStep() throws NotFoundException {
-        User user = new User();
-
         Project project = new Project();
 
         LearnerResult result = new LearnerResult();
@@ -319,14 +321,12 @@ public class LearnerResultDAOImplTest {
     @Test
     public void shouldSaveAStep() throws NotFoundException {
         Statistics.DetailedStatistics detailedStatistics = new Statistics.DetailedStatistics(1L, 1L);
-        //
-        User user = new User();
-        //
+
         Project project = new Project();
-        //
+
         LearnerResult result = new LearnerResult();
         result.setProject(project);
-        //
+
         LearnerResumeConfiguration configuration = new LearnerResumeConfiguration();
         configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
         configuration.setMaxAmountOfStepsToLearn(-1);
