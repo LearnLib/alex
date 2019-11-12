@@ -91,7 +91,7 @@
         </symbol-search-form>
       </div>
 
-      <div *ngFor="let group of store.groups$ | async" class="mb-4">
+      <div *ngFor="let group of store.orderedGroups$ | async" class="mb-4">
         <symbols-symbol-group-tree [group]="group"></symbols-symbol-group-tree>
       </div>
 

@@ -23,7 +23,7 @@ import { SymbolGroup } from '../../entities/symbol-group';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CreateSymbolGroupModalComponent } from './create-symbol-group-modal/create-symbol-group-modal.component';
 import { removeItems, replaceItem } from '../../utils/list-utils';
-import { remove } from 'lodash';
+import { remove, orderBy } from 'lodash';
 import { EditSymbolGroupModalComponent } from './edit-symbol-group-modal/edit-symbol-group-modal.component';
 import { CreateSymbolModalComponent } from './create-symbol-modal/create-symbol-modal.component';
 import { MoveSymbolGroupModalComponent } from './move-symbol-group-modal/move-symbol-group-modal.component';
@@ -35,6 +35,7 @@ import { MoveSymbolsModalComponent } from './move-symbols-modal/move-symbols-mod
 import { ImportSymbolsModalComponent } from './import-symbols-modal/import-symbols-modal.component';
 import { Selectable } from '../../utils/selectable';
 import { ExportSymbolsModalComponent } from './export-symbols-modal/export-symbols-modal.component';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class SymbolsViewStoreService {
@@ -276,5 +277,11 @@ export class SymbolsViewStoreService {
 
   get groups$(): Observable<SymbolGroup[]> {
     return this.groups.asObservable();
+  }
+
+  get orderedGroups$(): Observable<SymbolGroup[]> {
+    return this.groups.pipe(
+      map(groups => orderBy(groups, ['name']))
+    );
   }
 }
