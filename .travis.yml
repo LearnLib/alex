@@ -3,14 +3,10 @@ language: java
 dist: trusty
 sudo: true
 
-addons:
-  apt:
-    sources:
-      - sourceline: "deb https://deb.nodesource.com/node_12.x trusty main"
-        key_url:    "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
-    packages:
-      - nodejs
-      - chromium-chromedriver
+before_install:
+  - curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+  - sudo apt-get -y install nodejs
+  - sudo apt-get -y install chromium-chromedriver
 
 cache:
   directories:
