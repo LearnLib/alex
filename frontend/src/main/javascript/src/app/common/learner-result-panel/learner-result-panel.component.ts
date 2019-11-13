@@ -15,7 +15,7 @@
  */
 
 import { LearnerResult } from '../../entities/learner-result';
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { LearnerResultPanelService } from './learner-result-panel.service';
 import { Edge } from '../hypothesis/hypothesis.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

@@ -18,12 +18,8 @@ package de.learnlib.alex.testing.rest;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.data.dao.ProjectDAO;
-import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.testing.dao.TestExecutionConfigDAO;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
-import de.learnlib.alex.testing.entities.TestStatus;
-import de.learnlib.alex.testing.services.TestService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

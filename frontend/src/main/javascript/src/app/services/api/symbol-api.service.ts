@@ -54,8 +54,7 @@ export class SymbolApiService extends BaseApiService {
    * @param includeHiddenSymbols If hidden symbols should be included or not.
    */
   getAll(projectId: number, includeHiddenSymbols = false): Observable<AlphabetSymbol[]> {
-    const params = includeHiddenSymbols ? '?visibility=hidden' : '';
-    return this.http.get(`${env.apiUrl}/projects/${projectId}/symbols${params}`, this.defaultHttpOptions)
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/symbols`, this.defaultHttpOptions)
       .pipe(
         map((body: any) => body.map(s => new AlphabetSymbol(s)))
       );

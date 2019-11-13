@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { remove, orderBy } from 'lodash';
+import { orderBy, remove } from 'lodash';
 import { Selectable } from '../../utils/selectable';
 import { LearnerResultApiService } from '../../services/api/learner-result-api.service';
 import { ToastService } from '../../services/toast.service';

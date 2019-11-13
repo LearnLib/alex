@@ -19,7 +19,7 @@ import { Counter } from '../../../entities/counter';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CounterApiService } from '../../../services/api/counter-api.service';
 import { AppStoreService } from '../../../services/app-store.service';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({

@@ -23,7 +23,6 @@ import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 /**
  * The controller for the learn statistics page.

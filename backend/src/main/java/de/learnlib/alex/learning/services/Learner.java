@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.learning.services;
 
-import de.learnlib.acex.AcexAnalyzer;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.LoggerMarkers;
@@ -46,12 +45,6 @@ import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHan
 import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.webhooks.services.WebhookService;
-import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealy;
-import de.learnlib.algorithms.ttt.mealy.TTTLearnerMealyBuilder;
-import de.learnlib.api.oracle.SingleQueryOracle;
-import de.learnlib.api.query.Query;
-import de.learnlib.oracle.equivalence.SimulatorEQOracle;
-import de.learnlib.oracle.membership.SimulatorOracle;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.util.automata.Automata;
 import net.automatalib.util.automata.conformance.WpMethodTestsIterator;

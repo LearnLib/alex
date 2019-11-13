@@ -19,7 +19,7 @@ import { ToastService } from '../../services/toast.service';
 import { TestReportService } from '../../services/test-report.service';
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TestReportStatus } from '../../entities/test-status';
 

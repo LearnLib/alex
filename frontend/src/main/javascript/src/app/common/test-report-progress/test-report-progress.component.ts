@@ -16,7 +16,6 @@
 
 import { Component, Input } from '@angular/core';
 import { AppStoreService } from '../../services/app-store.service';
-import { TestReport } from '../../entities/test-status';
 import { ToastService } from '../../services/toast.service';
 import { TestApiService } from '../../services/api/test-api.service';
 

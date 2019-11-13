@@ -55,54 +55,64 @@
     };
 </script>
 
-<style scoped lang="sass">
-  .slides
-    background: #fff
-    border: 1px solid #dedede
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05)
-    margin: 1rem 0
+<style scoped lang="scss">
+  .slides {
+    background: #fff;
+    border: 1px solid #dedede;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    margin: 1rem 0;
 
-    .slide-image
-      img
-        display: block
-        max-width: 100%
-        margin: auto
+    .slide-image {
+      img {
+        display: block;
+        max-width: 100%;
+        margin: auto;
+      }
+    }
 
-    .slide-content
-      padding: 1rem
-      border-top: 1px solid #dedede
-      border-bottom: 1px solid #dedede
+    .slide-content {
+      padding: 1rem;
+      border-top: 1px solid #dedede;
+      border-bottom: 1px solid #dedede;
 
-      .slide-title
-        margin: 0 0 .5rem 0
+      .slide-title {
+        margin: 0 0 .5rem 0;
+      }
+    }
 
-    .slide-navigation
-      display: flex
-      align-items: baseline
-      padding: 0 .5rem
-      background: #fbfbfb
+    .slide-navigation {
+      display: flex;
+      align-items: baseline;
+      padding: 0 .5rem;
+      background: #fbfbfb;
 
-      .indicator
-        width: 100%
-        margin-left: .5rem
-        color: #8a8a8a
+      .indicator {
+        width: 100%;
+        margin-left: .5rem;
+        color: #8a8a8a;
+      }
 
-      .buttons
-        flex-shrink: 0
+      .buttons {
+        flex-shrink: 0;
+      }
 
-      button
-        display: inline-block
-        outline: none
-        border: none
-        background: none
-        padding: .5rem .75rem
-        margin: .5rem 0
-        font-weight: 700
-        cursor: pointer
-        border-radius: 2rem
-        color: #8a8a8a
+      button {
+        display: inline-block;
+        outline: none;
+        border: none;
+        background: none;
+        padding: .5rem .75rem;
+        margin: .5rem 0;
+        font-weight: 700;
+        cursor: pointer;
+        border-radius: 2rem;
+        color: #8a8a8a;
 
-        &:hover
-          background: #3faf7b
-          color: #fff
+        &:hover {
+          background: #3faf7b;
+          color: #fff;
+        }
+      }
+    }
+  }
 </style>

@@ -16,7 +16,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { Webhook } from '../../../entities/webhook';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({

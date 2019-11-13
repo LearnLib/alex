@@ -15,7 +15,7 @@
  */
 
 import { Component, Input, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormUtilsService } from '../../../services/form-utils.service';
 
 @Component({

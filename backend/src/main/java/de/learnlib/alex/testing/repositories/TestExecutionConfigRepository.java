@@ -16,7 +16,6 @@
 
 package de.learnlib.alex.testing.repositories;
 
-import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -144,7 +144,6 @@ public class SymbolsExporter extends EntityExporter {
     private static abstract class IgnoreFieldsForSymbolMixin extends IgnoreIdFieldMixin {
         @JsonIgnore abstract Long getProjectId();
         @JsonIgnore abstract Long getGroupId();
-        @JsonIgnore abstract boolean isHidden();
     }
 
     private static abstract class IgnoreFieldsForSymbolStepMixin extends IgnoreIdFieldMixin {

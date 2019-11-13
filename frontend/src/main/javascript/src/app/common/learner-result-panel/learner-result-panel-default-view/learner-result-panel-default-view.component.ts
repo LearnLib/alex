@@ -19,7 +19,6 @@ import { PromptService } from '../../../services/prompt.service';
 import { DownloadService } from '../../../services/download.service';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { LearnerResultDetailsModalComponent } from '../../modals/learner-result-details-modal/learner-result-details-modal.component';
 import { FormUtilsService } from '../../../services/form-utils.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { LearnerResultApiService } from '../../../services/api/learner-result-api.service';

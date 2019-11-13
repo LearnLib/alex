@@ -34,7 +34,6 @@ import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;

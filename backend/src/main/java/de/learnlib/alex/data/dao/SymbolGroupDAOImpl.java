@@ -22,7 +22,6 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.entities.SymbolStep;
-import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;
@@ -43,9 +42,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -57,6 +56,9 @@ import java.util.Set;
  */
 @Service
 public class SymbolGroupDAOImpl implements SymbolGroupDAO {
+
+    /** The format for archived symbols. */
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HH:mm:ss");
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -107,7 +109,7 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
 
         // create symbol steps
         final Map<Long, List<SymbolStep>> symbolIdToStepsMap = new HashMap<>();
-        final List<Symbol> symbols = symbolDAO.getAll(user, projectId, SymbolVisibilityLevel.ALL);
+        final List<Symbol> symbols = symbolDAO.getAll(user, projectId);
         symbols.forEach(s -> {
             if (symbolNameToSymbolMap.containsKey(s.getName())) {
                 symbolIdToStepsMap.put(s.getId(), symbolNameToSymbolMap.get(s.getName()).getSteps());
@@ -336,10 +338,10 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
             throw new IllegalArgumentException("You can not delete the default group of a project.");
         }
 
-        hideSymbols(group, defaultGroup);
-        for (SymbolGroup child : group.getGroups()) {
-            hideSymbols(child, defaultGroup);
-        }
+        group.walk(g -> {
+            hideSymbols(g, defaultGroup);
+            return null;
+        }, s -> null);
 
         if (group.getParent() != null) {
             group.getParent().getGroups().remove(group);
@@ -354,6 +356,8 @@ public class SymbolGroupDAOImpl implements SymbolGroupDAO {
         for (Symbol symbol : group.getSymbols()) {
             symbol.setGroup(defaultGroup);
             symbol.setHidden(true);
+            final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            symbol.setName(symbol.getName() + "--" + DATE_FORMAT.format(timestamp));
             symbolRepository.save(symbol);
         }
     }

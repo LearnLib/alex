@@ -22,7 +22,6 @@ import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolUsageResult;
-import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.entities.export.ExportableEntity;
 import de.learnlib.alex.data.entities.export.SymbolsExportConfig;
 import de.learnlib.alex.data.events.SymbolEvent;
@@ -36,14 +35,12 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -131,19 +128,15 @@ public class SymbolResource {
      *
      * @param projectId
      *         The ID of the project.
-     * @param visibilityLevel
-     *         Specify the visibility level of the symbols you want to get. Valid values are: 'all'/ 'unknown',
-     *         'visible', 'hidden'. Optional.
      * @return A list of all Symbols belonging to the project. This list can be empty.
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("projectId") Long projectId,
-                           @QueryParam("visibility") @DefaultValue("VISIBLE") SymbolVisibilityLevel visibilityLevel) {
+    public Response getAll(@PathParam("projectId") Long projectId) {
         final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("getAll({}, {}) for user {}.", projectId, visibilityLevel, user);
+        LOGGER.traceEntry("getAll({}, {}) for user {}.", projectId, user);
 
-        final List<Symbol> symbols = symbolDAO.getAll(user, projectId, visibilityLevel);
+        final List<Symbol> symbols = symbolDAO.getAll(user, projectId);
 
         LOGGER.traceExit(symbols);
         return Response.ok(symbols).build();
@@ -417,7 +410,7 @@ public class SymbolResource {
         LOGGER.traceEntry("show({}, {}) for user {}.", projectId, symbolIds, user);
 
         symbolDAO.show(user, projectId, symbolIds);
-        final List<Symbol> symbols = symbolDAO.getByIds(user, projectId, SymbolVisibilityLevel.ALL, symbolIds);
+        final List<Symbol> symbols = symbolDAO.getByIds(user, projectId, symbolIds);
 
         LOGGER.traceExit(symbols);
         webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(symbols));

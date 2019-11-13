@@ -21,7 +21,6 @@ import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolStep;
-import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.validation.ValidationException;
@@ -88,73 +87,17 @@ public interface SymbolDAO {
     List<Symbol> getByIds(User user, Long projectId, List<Long> ids) throws NotFoundException;
 
     /**
-     * Get a list of symbols by their ids.
-     *
-     * @param user
-     *         The user performing the action.
-     * @param projectId
-     *         The project the symbols should belong to.
-     * @param visibilityLevel
-     *         The visibility level that returned symbols should have.
-     * @param ids
-     *         The ids of the symbols you want to get.
-     * @return A list of symbols. Can be empty.
-     * @throws NotFoundException
-     *         If no Symbol was found.
-     */
-    List<Symbol> getByIds(User user, Long projectId, SymbolVisibilityLevel visibilityLevel,
-            List<Long> ids)
-            throws NotFoundException;
-
-    /**
      * Get all symbols of a Project.
      *
      * @param user
      *         The user performing the action.
      * @param projectID
      *         The project the Symbols should belong to.
-     * @param visibilityLevel
-     *         Include symbols that are currently marked as hidden?
      * @return A list of symbols belonging to the Project. Can be empty.
      * @throws NotFoundException
      *         If the User or Project could not be found.
      */
-    List<Symbol> getAll(User user, Long projectID, SymbolVisibilityLevel visibilityLevel)
-            throws NotFoundException;
-
-    /**
-     * Get a List of Symbols that are within a specific Group within a Project.
-     *
-     * @param user
-     *         The user performing the action.
-     * @param projectId
-     *         The Project of the Symbols.
-     * @param groupId
-     *         The Group of the Symbols.
-     * @return A List of Symbols belonging to the Group. Can be empty.
-     * @throws NotFoundException
-     *         If the User, Project or Group could not be found.
-     */
-    List<Symbol> getAll(User user, Long projectId, Long groupId)
-            throws NotFoundException;
-
-    /**
-     * Get a List of Symbols that are withing a specific Group within a Project and have a specific visibility level.
-     *
-     * @param user
-     *         The user performing the action.
-     * @param projectId
-     *         The Project the Symbols.
-     * @param groupId
-     *         The Group of the Symbols.
-     * @param visibilityLevel
-     *         Only look for Symbols with the given visibility level.
-     * @return A List of Symbols belonging to the Group with the given VisibilityLevel. Can be empty.
-     * @throws NotFoundException
-     *         If the User, Project or Group could not be found.
-     */
-    List<Symbol> getAll(User user, Long projectId, Long groupId, SymbolVisibilityLevel visibilityLevel)
-            throws NotFoundException;
+    List<Symbol> getAll(User user, Long projectID) throws NotFoundException;
 
     /**
      * Get a Symbol by the user, project and a Pair of an ID.

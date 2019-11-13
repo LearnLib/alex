@@ -46,11 +46,9 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Representation of a symbol for the learning process. A Symbol is one unit which will be executed and it is made of a
@@ -111,6 +109,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         this.steps = new ArrayList<>();
         this.expectedResult = "";
         this.description = "";
+        this.hidden = false;
     }
 
     /**
@@ -276,7 +275,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      *
      * @return true if the symbol should be considered hidden; false otherwise.
      */
-    @JsonProperty
     public boolean isHidden() {
         return hidden;
     }
@@ -287,7 +285,6 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
      * @param hidden
      *         true if the symbol should be considered hidden; false otherwise.
      */
-    @JsonProperty
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
     }

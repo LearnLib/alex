@@ -15,7 +15,7 @@
  */
 
 import { Component } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { CreateProjectForm, Project } from '../../../entities/project';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProjectApiService } from '../../../services/api/project-api.service';

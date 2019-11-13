@@ -221,7 +221,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
 
         final Response res2 = symbolApi.archive(projectId1, symbolId, jwtUser1);
         assertEquals(HttpStatus.OK.value(), res2.getStatus());
-        assertEquals(0, getNumberOfSymbols(projectId1, jwtUser1));
+        assertEquals(1, getNumberOfSymbols(projectId1, jwtUser1));
 
         final String archivedSymbol = res2.readEntity(String.class);
         final boolean hidden = JsonPath.read(archivedSymbol, "$.hidden");
@@ -241,7 +241,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
 
         final Response res2 = symbolApi.archiveMany(projectId1, Arrays.asList(symbol1Id, symbol2Id), jwtUser1);
         assertEquals(HttpStatus.OK.value(), res2.getStatus());
-        assertEquals(0, getNumberOfSymbols(projectId1, jwtUser1));
+        assertEquals(2, getNumberOfSymbols(projectId1, jwtUser1));
 
         final String archivedSymbols = res2.readEntity(String.class);
         final boolean hidden1 = JsonPath.read(archivedSymbols, "$.[0].hidden");

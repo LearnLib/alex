@@ -38,7 +38,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TestsImportModalComponent } from './tests-import-modal/tests-import-modal.component';
 import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-config-modal.component';
 import { TestsMoveModalComponent } from './tests-move-modal/tests-move-modal.component';
-import { TestQueueItem, TestReportStatus, TestStatus } from '../../entities/test-status';
+import { TestReportStatus, TestStatus } from '../../entities/test-status';
 
 @Component({
   selector: 'test-suite-view',

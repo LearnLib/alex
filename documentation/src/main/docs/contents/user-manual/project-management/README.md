@@ -52,8 +52,8 @@ Since the current project is persisted per tab, working on multiple projects sim
 Project environments give you the option to execute tests and learning processes against multiple system environments.
 Each environment can have a set of named **base URLs** and **environment variables**.
 URLs are used as a base URL in certain actions, such as in the *Open URL* and *Request* action.
-Variables can used in any action with the following notation, similar to how variables and counters are used:
+Variables can used in any action with the following notation, similar to how variables and counters are used: 
 
-<div style="text-align: center">
+::: v-pre
 `{{:VAR_NAME}}`
-</div>
+:::

@@ -18,7 +18,6 @@ package de.learnlib.alex.data.repositories;
 
 import de.learnlib.alex.data.entities.Symbol;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,40 +43,4 @@ public interface SymbolRepository extends JpaRepository<Symbol, Long> {
     @Transactional(readOnly = true)
     @SuppressWarnings("checkstyle:methodname")
     List<Symbol> findAllByProject_Id(Long projectId);
-
-    /**
-     * Find all symbols with a given visibility level.
-     *
-     * @param projectId
-     *         The ID of the project
-     * @param hidden
-     *         The visibility level to look for. true = hidden, false = visible, {false, true} = both.
-     * @return The symbols that matched the criteria.
-     */
-    @Query("SELECT s "
-            + "FROM  Symbol s "
-            + "WHERE s.project.id = ?1"
-            + "      AND s.hidden IN ?2")
-    @Transactional(readOnly = true)
-    List<Symbol> findAll(Long projectId, Boolean[] hidden);
-
-    /**
-     * Find all symbols in a symbol group.
-     *
-     * @param projectId
-     *         The ID of the project the symbols belong to.
-     * @param groupId
-     *         The ID the group the symbols belong to.
-     * @param hidden
-     *         The visibility level to look for. true = hidden, false = visible, {false, true} = both.
-     * @return The symbols that matched the criteria.
-     */
-    @Query("SELECT s "
-            + "FROM  Symbol s "
-            + "WHERE s.project.id = ?1"
-            + "      AND s.group.id = ?2"
-            + "      AND s.hidden IN ?3")
-    @Transactional(readOnly = true)
-    List<Symbol> findAll(Long projectId, Long groupId, Boolean[] hidden);
-
 }

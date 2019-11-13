@@ -15,7 +15,7 @@
  */
 
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormUtilsService } from '../../../services/form-utils.service';
 

@@ -22,7 +22,6 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolActionStep;
 import de.learnlib.alex.data.entities.SymbolGroup;
-import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.entities.WebElementLocator;
 import de.learnlib.alex.data.entities.actions.misc.WaitAction;
 import de.learnlib.alex.data.entities.actions.web.ClearAction;
@@ -288,58 +287,9 @@ public class SymbolDAOImplTest {
 
         List<Symbol> symbols = createTestSymbolLists(user, project, group);
 
-        given(symbolRepository.findAll(PROJECT_ID, new Boolean[]{false})).willReturn(symbols);
+        given(symbolRepository.findAllByProject_Id(PROJECT_ID)).willReturn(symbols);
 
-        List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId(),
-                SymbolVisibilityLevel.VISIBLE);
-
-        assertThat(symbolsFromDB.size(), is(equalTo(symbols.size())));
-        for (Symbol s : symbolsFromDB) {
-            assertTrue(symbols.contains(s));
-        }
-    }
-
-    @Test
-    public void shouldGetAllSymbolsIncludingHiddenOnes() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-
-        SymbolGroup group = new SymbolGroup();
-        group.setId(GROUP_ID);
-
-        List<Symbol> symbols = createTestSymbolLists(user, project, group);
-
-        given(symbolRepository.findAll(PROJECT_ID, new Boolean[]{true, false})).willReturn(symbols);
-
-        List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId(),
-                SymbolVisibilityLevel.ALL);
-
-        assertThat(symbolsFromDB.size(), is(equalTo(symbols.size())));
-        for (Symbol s : symbolsFromDB) {
-            assertTrue(symbols.contains(s));
-        }
-    }
-
-    @Test
-    public void shouldGetAllSymbolsOfAGroup() throws NotFoundException {
-        User user = new User();
-        user.setId(USER_ID);
-
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-
-        SymbolGroup group = new SymbolGroup();
-        group.setId(GROUP_ID);
-
-        List<Symbol> symbols = createTestSymbolLists(user, project, group);
-
-        given(symbolRepository.findAll(PROJECT_ID, GROUP_ID, new Boolean[]{true, false})).willReturn(symbols);
-
-        List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId(), group.getId(),
-                SymbolVisibilityLevel.ALL);
+        List<Symbol> symbolsFromDB = symbolDAO.getAll(user, project.getId());
 
         assertThat(symbolsFromDB.size(), is(equalTo(symbols.size())));
         for (Symbol s : symbolsFromDB) {

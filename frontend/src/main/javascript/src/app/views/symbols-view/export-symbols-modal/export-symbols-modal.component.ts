@@ -19,7 +19,6 @@ import { DateUtils } from '../../../utils/date-utils';
 import { DownloadService } from '../../../services/download.service';
 import { ToastService } from '../../../services/toast.service';
 import { AlphabetSymbol } from '../../../entities/alphabet-symbol';
-import { Selectable } from '../../../utils/selectable';
 import { SymbolApiService } from '../../../services/api/symbol-api.service';
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';

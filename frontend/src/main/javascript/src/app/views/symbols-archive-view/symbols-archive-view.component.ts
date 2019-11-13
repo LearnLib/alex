@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { remove } from 'lodash';
+import { orderBy, remove } from 'lodash';
 import { AlphabetSymbol } from '../../entities/alphabet-symbol';
 import { Selectable } from '../../utils/selectable';
 import { SymbolApiService } from '../../services/api/symbol-api.service';
@@ -25,7 +25,6 @@ import { EditSymbolModalComponent } from '../symbols-view/edit-symbol-modal/edit
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Component, OnInit } from '@angular/core';
 import { SymbolUsagesModalComponent } from '../../common/modals/symbol-usages-modal/symbol-usages-modal.component';
-import { orderBy } from 'lodash';
 
 /**
  * Lists all deleted symbols, what means the symbols where the property 'visible' == 'hidden'. Handles the recover
@@ -61,9 +60,9 @@ export class SymbolsArchiveViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.symbolApi.getAll(this.project.id, true).subscribe(
+    this.symbolApi.getAll(this.project.id).subscribe(
       symbols => {
-        this.symbols = symbols;
+        this.symbols = symbols.filter(s => s.hidden);
         this.selectedSymbols.addItems(this.symbols);
       },
       res => this.toastService.danger(`Could not get symbols. ${res.error.message}`)

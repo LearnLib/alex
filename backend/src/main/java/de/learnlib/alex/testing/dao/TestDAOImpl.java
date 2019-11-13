@@ -26,7 +26,6 @@ import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolInputParameter;
-import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.repositories.ProjectRepository;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
@@ -191,7 +190,7 @@ public class TestDAOImpl implements TestDAO {
     @Transactional(rollbackFor = Exception.class)
     public List<Test> importTests(User user, Long projectId, List<Test> tests) throws ValidationException, NotFoundException {
         projectDAO.getByID(user, projectId);
-        final Map<String, Symbol> symbolMap = symbolDAO.getAll(user, projectId, SymbolVisibilityLevel.ALL).stream()
+        final Map<String, Symbol> symbolMap = symbolDAO.getAll(user, projectId).stream()
                 .collect(Collectors.toMap(Symbol::getName, Function.identity()));
         mapSymbolsInTests(tests, symbolMap);
 

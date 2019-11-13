@@ -23,7 +23,7 @@ import { SymbolGroup } from '../../entities/symbol-group';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CreateSymbolGroupModalComponent } from './create-symbol-group-modal/create-symbol-group-modal.component';
 import { removeItems, replaceItem } from '../../utils/list-utils';
-import { remove, orderBy } from 'lodash';
+import { orderBy, remove } from 'lodash';
 import { EditSymbolGroupModalComponent } from './edit-symbol-group-modal/edit-symbol-group-modal.component';
 import { CreateSymbolModalComponent } from './create-symbol-modal/create-symbol-modal.component';
 import { MoveSymbolGroupModalComponent } from './move-symbol-group-modal/move-symbol-group-modal.component';
@@ -150,14 +150,14 @@ export class SymbolsViewStoreService {
     modalRef.componentInstance.groups = this.groups.value;
     modalRef.result.then(data => {
       if (data.type === 'symbols') {
-        const symbols: AlphabetSymbol[] = data.symbols;
+        const symbols: AlphabetSymbol[] = data.symbols.filter(s => !s.hidden);
         symbols.forEach(s => this.groupsMap.get(s.group).symbols.push(s));
         this.symbolsSelectable.addItems(symbols);
       } else {
-        const groups: SymbolGroup[] = data.group;
+        const groups: SymbolGroup[] = data.groups;
         groups.forEach(group => group.walk(g => {
-          this.groupsMap.set(g.id, g);
           this.symbolsSelectable.addItems(g.symbols);
+          this._addGroup(group);
         }, () => {}));
       }
     }).catch(() => {});
@@ -184,12 +184,7 @@ export class SymbolsViewStoreService {
   createGroup(): void {
     const modalRef = this.modalService.open(CreateSymbolGroupModalComponent);
     modalRef.result.then(group => {
-      if (group.parent == null) {
-        this.groups.next([...this.groups.value, group]);
-      } else {
-        this.groupsMap.get(group.parent).groups.push(group);
-      }
-      this.groupsMap.set(group.id, group);
+      this._addGroup(group);
     }).catch(() => {
     });
   }
@@ -231,9 +226,9 @@ export class SymbolsViewStoreService {
         } else {
           remove(this.groupsMap.get(group.parent).groups, g => g.id === group.id);
         }
-        this.groupsMap.delete(group.id);
         group.walk(() => {
         }, s => this._deleteSymbol(s));
+        this.groupsMap.delete(group.id);
         this.groupsCollapsedMap.delete(group.id);
       }
     );
@@ -262,6 +257,15 @@ export class SymbolsViewStoreService {
     this.groupsMap.forEach((group, id) => {
         this.groupsCollapsedMap.set(id, collapse);
     });
+  }
+
+  private _addGroup(group: SymbolGroup): void {
+    if (group.parent == null) {
+      this.groups.next([...this.groups.value, group]);
+    } else {
+      this.groupsMap.get(group.parent).groups.push(group);
+    }
+    this.groupsMap.set(group.id, group);
   }
 
   private _deleteSymbol(symbol: AlphabetSymbol): void {

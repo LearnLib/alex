@@ -27,7 +27,6 @@ import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.entities.SymbolPSymbolStep;
 import de.learnlib.alex.data.entities.SymbolParameter;
 import de.learnlib.alex.data.entities.SymbolStep;
-import de.learnlib.alex.data.entities.SymbolVisibilityLevel;
 import de.learnlib.alex.data.entities.actions.misc.CreateLabelAction;
 import de.learnlib.alex.data.entities.actions.misc.JumpToLabelAction;
 import de.learnlib.alex.data.entities.actions.rest.CallAction;
@@ -320,52 +319,13 @@ public class SymbolDAOImpl implements SymbolDAO {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Symbol> getAll(User user, Long projectId, SymbolVisibilityLevel visibilityLevel)
-            throws NotFoundException {
+    public List<Symbol> getAll(User user, Long projectId) throws NotFoundException {
         final Project project = projectRepository.findById(projectId).orElse(null);
         projectDAO.checkAccess(user, project);
 
-        final List<Symbol> symbols = symbolRepository.findAll(projectId, visibilityLevel.getCriterion());
+        final List<Symbol> symbols = symbolRepository.findAllByProject_Id(projectId);
         symbols.forEach(SymbolDAOImpl::loadLazyRelations);
         return symbols;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Symbol> getAll(User user, Long projectId, Long groupId) throws NotFoundException {
-        return getAll(user, projectId, groupId, SymbolVisibilityLevel.VISIBLE);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Symbol> getAll(User user, Long projectId, Long groupId,
-                               SymbolVisibilityLevel visibilityLevel)
-            throws NotFoundException {
-        projectDAO.getByID(user, projectId); // access check
-
-        List<Symbol> symbols = symbolRepository.findAll(projectId, groupId,
-                visibilityLevel.getCriterion());
-
-        symbols.forEach(SymbolDAOImpl::loadLazyRelations);
-
-        return symbols;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Symbol> getByIds(User user, Long projectId, SymbolVisibilityLevel visibilityLevel,
-                                 List<Long> ids) throws NotFoundException {
-        projectDAO.getByID(user, projectId); // access check
-
-        List<Symbol> result = symbolRepository.findAllByIdIn(ids);
-
-        if (result.isEmpty()) {
-            throw new NotFoundException("Could not find symbols in the project " + projectId + ".");
-        }
-
-        result.forEach(SymbolDAOImpl::loadLazyRelations);
-
-        return result;
     }
 
     @Override
