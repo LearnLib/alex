@@ -6,7 +6,7 @@ sudo: true
 addons:
   apt:
     sources:
-      - sourceline: "deb https://deb.nodesource.com/node_10.x trusty main"
+      - sourceline: "deb https://deb.nodesource.com/node_12.x trusty main"
         key_url:    "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
     packages:
       - nodejs
@@ -40,7 +40,7 @@ jobs:
   - jdk: oraclejdk8
   - jdk: oraclejdk11
   - stage: "Coverage"
-    jdk: openjdk8
+    jdk: openjdk11
     script:
     - mvn clean install -Pcode-analysis,integration-tests
     - mvn coveralls:report
