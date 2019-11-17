@@ -6,7 +6,14 @@
     <div class="list-group mb-0">
       <div class="list-group-item">
         <form (ngSubmit)="addManualFormula()">
-          <div class="form-group d-flex flex-row mb-0">
+          <div class="form-group d-flex flex-row align-items-center mb-0">
+            <selectable-checkbox-multiple
+              class="mr-3"
+              [selectable]="selectedFormulas"
+              [items]="formulas"
+              *ngIf="formulas.length > 0"
+            >
+            </selectable-checkbox-multiple>
             <input
               [(ngModel)]="manualFormula"
               class="form-control w-100 mr-2"
@@ -14,7 +21,7 @@
               placeholder="Enter new formula"
               type="text"
             >
-            <button class="btn btn-default btn-sm">
+            <button class="btn btn-default">
               <i class="fas fa-fw fa-plus"></i>
             </button>
           </div>

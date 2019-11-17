@@ -48,7 +48,7 @@ export class TestReportsViewComponent implements OnInit {
 
     this.reports = [];
     this.page = {};
-    this.selectedReports = new Selectable(this.reports, r => r.id);
+    this.selectedReports = new Selectable(r => r.id);
   }
 
   get project(): Project {
@@ -68,11 +68,12 @@ export class TestReportsViewComponent implements OnInit {
   }
 
   loadTestReports(page: number = 0): void {
+    this.selectedReports.clear();
     this.testReportApi.getAll(this.project.id, page).subscribe(
       page => {
         this.page = page;
         this.reports = this.page.content;
-        this.selectedReports = new Selectable(this.reports, r => r.id);
+        this.selectedReports.addItems(this.reports);
       },
       res => this.toastService.danger(`Failed to load reports. ${res.error.message}`)
     );
@@ -122,6 +123,6 @@ export class TestReportsViewComponent implements OnInit {
 
   _deleteReport(report: any): void {
     remove(this.reports, {id: report.id});
-    this.selectedReports.unselect(report);
+    this.selectedReports.remove(report);
   }
 }

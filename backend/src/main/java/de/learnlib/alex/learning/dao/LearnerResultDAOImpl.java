@@ -33,7 +33,7 @@ import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
-import de.learnlib.alex.learning.services.Learner;
+import de.learnlib.alex.learning.services.LearnerService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -248,13 +248,9 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         final LearnerResult resultToClone = new LearnerResult();
         resultToClone.setTestNo(learnerResultRepository.findHighestTestNo(projectId) + 1);
         resultToClone.setUseMQCache(result.isUseMQCache());
-        resultToClone.setStatistics(result.getStatistics());
         resultToClone.setAlgorithm(result.getAlgorithm());
-        resultToClone.setSigma(result.getSigma());
         resultToClone.setComment(result.getComment());
-        resultToClone.setErrorText(result.getErrorText());
         resultToClone.setProject(project);
-        resultToClone.setHypothesis(result.getHypothesis());
         resultToClone.setEnvironments(projectEnvironmentRepository.findAllByIdIn(result.getEnvironments().stream()
                 .map(ProjectEnvironment::getId)
                 .collect(Collectors.toList())));
@@ -317,17 +313,15 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
     public void saveStep(LearnerResult result, LearnerResultStep step)
             throws NotFoundException, ValidationException {
         learnerResultStepRepository.save(step);
-        updateSummary(result, step);
         learnerResultRepository.save(result);
     }
 
     @Override
     @Transactional(rollbackFor = NotFoundException.class)
-    public void delete(Learner learner, Long projectId, List<Long> testNos)
+    public void delete(LearnerService learnerService, Long projectId, List<Long> testNos)
             throws NotFoundException, ValidationException {
-        checkIfResultsCanBeDeleted(learner, projectId, testNos);
-
         final List<LearnerResult> results = learnerResultRepository.findByProject_IdAndTestNoIn(projectId, testNos);
+        checkIfResultsCanBeDeleted(results);
         results.forEach(result -> {
             parameterizedSymbolRepository.delete(result.getResetSymbol());
             parameterizedSymbolRepository.deleteAll(result.getSymbols());
@@ -340,12 +334,6 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         if (amountOfDeletedResults != testNos.size()) {
             throw new NotFoundException("Could not delete all results!");
         }
-    }
-
-    private void updateSummary(LearnerResult result, LearnerResultStep step) {
-        result.setHypothesis(step.getHypothesis());
-        result.setErrorText(step.getErrorText());
-        result.getStatistics().updateBy(step.getStatistics());
     }
 
     private void initializeLazyRelations(List<LearnerResult> results, boolean includeSteps) {
@@ -374,29 +362,10 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         });
     }
 
-    private void checkIfResultsCanBeDeleted(Learner learner, Long projectId, List<Long> testNos)
+    private void checkIfResultsCanBeDeleted(List<LearnerResult> results)
             throws ValidationException {
-        // don't delete the learnResult of the active learning process
-        LearnerStatus status = learner.getStatus(projectId);
-        if (!status.isActive()) {
-            return;
-        }
-
-        Long activeTestNo = status.getTestNo();
-        Long activeProjectId = status.getProjectId();
-
-        if (projectId.equals(activeProjectId)) {
-            if (testNos.size() == 1 && activeTestNo.equals(testNos.get(0))) {
-                throw new ValidationException("Can't delete LearnResult with testNo " + activeTestNo + " because the "
-                        + "learner is active on this one");
-            } else if (testNos.size() > 1) {
-                for (Long t : testNos) {
-                    if (activeTestNo.equals(t)) {
-                        throw new ValidationException("Can't delete all LearnResults because the learner is active "
-                                + "with testNo " + activeTestNo);
-                    }
-                }
-            }
+        if (results.stream().anyMatch(r -> r.getStatus().equals(LearnerResult.Status.IN_PROGRESS))) {
+            throw new ValidationException("Can't delete all LearnResults because the learner is active");
         }
     }
 

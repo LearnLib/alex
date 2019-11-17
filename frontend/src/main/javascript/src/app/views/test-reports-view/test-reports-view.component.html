@@ -45,9 +45,7 @@
               <selectable-checkbox [item]="report" [selectable]="selectedReports"></selectable-checkbox>
             </td>
             <td>
-              <span
-                class="badge badge-secondary"
-              >
+              <span class="badge badge-secondary">
                 <i class="fa fa-fw fa-circle-notch fa-spin mr-1" *ngIf="report.status === 'IN_PROGRESS'"></i>
                 {{report.status | normalizeUpperCase}}
               </span>

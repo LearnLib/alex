@@ -62,7 +62,8 @@ export class LearnerSettingsModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedLearningAlgorithm = this.learnConfiguration.algorithm.name;
-    this.selectedEnvironments = new Selectable(this.project.environments, env => env.id);
+    this.selectedEnvironments = new Selectable<ProjectEnvironment, number>(env => env.id);
+    this.selectedEnvironments.addItems(this.project.environments);
 
     if (this.learnConfiguration.environments.length === 0) {
       this.selectedEnvironments.select(this.project.getDefaultEnvironment());

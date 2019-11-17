@@ -26,6 +26,9 @@ import java.util.Map;
 
 public class ExecuteScriptUtils {
 
+    private ExecuteScriptUtils() {
+    }
+
     public static Map<String, Map<String, ? extends Object>> createScriptStore(ConnectorManager connector) {
         final VariableStoreConnector variableStore = connector.getConnector(VariableStoreConnector.class);
         final CounterStoreConnector counterStore = connector.getConnector(CounterStoreConnector.class);

@@ -22,7 +22,7 @@ import { LearnerApiService } from '../../services/api/learner-api.service';
 import { ToastService } from '../../services/toast.service';
 import { SettingsApiService } from '../../services/api/settings-api.service';
 import { SymbolGroup } from '../../entities/symbol-group';
-import { LearnerResult } from '../../entities/learner-result';
+import { LearnerResult, LearnerResultStatus } from '../../entities/learner-result';
 import { Project } from '../../entities/project';
 import { LearnerResultApiService } from '../../services/api/learner-result-api.service';
 import { AppStoreService } from '../../services/app-store.service';
@@ -84,46 +84,25 @@ export class LearnerSetupViewComponent {
       console.error
     );
 
-    // make sure that there isn't any other learn process active
-    // redirect to the load screen in case there is an active one
-    this.learnerApi.getStatus(this.project.id).subscribe(
-      data => {
-        if (data.active) {
-          if (data.project === this.project.id) {
-            this.toastService.info('There is an active learning process for this project.');
-            this.router.navigate(['/app', 'projects', this.project.id, 'learner', 'learn']);
-          } else {
-            this.toastService.info('There is an active learning process for another project.');
-          }
-        } else {
+    // load all symbols in case there isn't any active learning process
+    this.symbolGroupApi.getAll(this.project.id).subscribe(
+      groups => this.groups = groups,
+      console.error
+    );
 
-          // load all symbols in case there isn't any active learning process
-          this.symbolGroupApi.getAll(this.project.id).subscribe(
-            groups => this.groups = groups,
-            console.error
-          );
+    // load learn results so that their configuration can be reused
+    this.learnerResultApi.getAll(this.project.id).subscribe(
+      learnerResults => this.learnerResults = learnerResults.filter(l => l.status === LearnerResultStatus.FINISHED),
+      console.error
+    );
 
-          // load learn results so that their configuration can be reused
-          this.learnerResultApi.getAll(this.project.id).subscribe(
-            learnerResults => this.learnerResults = learnerResults,
-            console.error
-          );
-
-          this.learnerResultApi.getLatest(this.project.id).subscribe(
-            latestLearnerResult => this.latestLearnerResult = latestLearnerResult,
-            console.error
-          );
-        }
-      },
+    this.learnerResultApi.getLatest(this.project.id).subscribe(
+      latestLearnerResult => this.latestLearnerResult = latestLearnerResult,
       console.error
     );
   }
 
-  get project(): Project {
-    return this.appStore.project;
-  }
-
-  selectResetSymbol(): void {
+   selectResetSymbol(): void {
     const modalRef = this.modalService.open(SelectSymbolModalComponent);
     modalRef.result.then((s: AlphabetSymbol) => {
       this.pResetSymbol = ParametrizedSymbol.fromSymbol(s);
@@ -168,9 +147,13 @@ export class LearnerSetupViewComponent {
 
         // start learning
         this.learnerApi.start(this.project.id, config).subscribe(
-          () => {
+          result => {
             this.toastService.success('Learner process started successfully.');
-            this.router.navigate(['/app', 'projects', this.project.id, 'learner', 'learn']);
+            this.router.navigate(['/app', 'projects', this.project.id, 'learner'], {
+              queryParams: {
+                testNo: result.testNo
+              }
+            });
           },
           res => {
             this.toastService.danger('<p><strong>Start learning failed</strong></p>' + res.error.message);
@@ -224,5 +207,9 @@ export class LearnerSetupViewComponent {
     n = Math.max(1, n);
     n = Math.min(this.learnerResults.length, n);
     return reverse(takeRight(this.learnerResults, n)) as LearnerResult[];
+  }
+
+  get project(): Project {
+    return this.appStore.project;
   }
 }

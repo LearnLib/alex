@@ -124,7 +124,7 @@ public class TestGenerator {
 
         // Restore the state of the learner so that one can access the discrimination tree.
         // Leave the mq oracle null since we don't want to continue learning.
-        final Alphabet<String> alphabet = result.getHypothesis().createAlphabet();
+        final Alphabet<String> alphabet = result.getSteps().get(result.getSteps().size() - 1).getHypothesis().createAlphabet();
         final AbstractLearningAlgorithm<String, String> algorithm = result.getAlgorithm();
         final LearningAlgorithm.MealyLearner<String, String> learner = algorithm.createLearner(alphabet, null);
         algorithm.resume(learner, step.getState());

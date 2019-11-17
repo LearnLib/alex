@@ -26,20 +26,20 @@ import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.data.entities.Symbol;
-import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.learning.entities.LearnerStatus;
+import de.learnlib.alex.learning.entities.LearningProcessStatus;
 import de.learnlib.alex.learning.entities.ReadOutputConfig;
 import de.learnlib.alex.learning.entities.SeparatingWord;
 import de.learnlib.alex.learning.entities.SymbolSet;
 import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
-import de.learnlib.alex.learning.entities.learnlibproxies.DefaultQueryProxy;
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.SampleEQOracleProxy;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.exceptions.LearnerException;
+import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
 import de.learnlib.alex.learning.services.connectors.PreparedConnectorContextHandlerFactory;
 import de.learnlib.alex.learning.services.connectors.PreparedContextHandler;
@@ -52,10 +52,8 @@ import net.automatalib.words.Alphabet;
 import net.automatalib.words.Word;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,19 +62,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
  * Basic class to control and monitor a learn process. This class is a high level abstraction of the LearnLib.
  */
 @Service
-@Scope("singleton")
-public class Learner {
-
-    /** How many concurrent threads the system can handle. */
-    private static final int MAX_CONCURRENT_THREADS = 2;
+public class LearnerService {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -111,49 +103,16 @@ public class Learner {
     private TestDAO testDAO;
 
     @Inject
-    private ProjectEnvironmentRepository environmentRepository;
-
-    @Inject
     private ProjectEnvironmentDAO projectEnvironmentDAO;
 
+    @Inject
+    private LearnerResultRepository learnerResultRepository;
+
     /** The last thread of an user, if one exists. */
-    private final Map<Long, AbstractLearnerThread> userThreads;
+    private final Map<Long, LearnerThread> learnerThreads;
 
-    /** The executor service will take care of creating and scheduling the actual OS threads. */
-    private ExecutorService executorService;
-
-    /**
-     * This constructor creates a new Learner The SymbolDAO and LearnerResultDAO must be externally injected.
-     */
-    public Learner() {
-        this.userThreads = new HashMap<>();
-        this.executorService = Executors.newFixedThreadPool(MAX_CONCURRENT_THREADS);
-    }
-
-    /**
-     * Constructor that sets all fields by the given parameter.
-     *
-     * @param symbolDAO
-     *         The SymbolDAO to use.
-     * @param learnerResultDAO
-     *         The LearnerResultDAO to use.
-     * @param contextHandlerFactory
-     *         The factory that will be used to create new context handler.
-     */
-    public Learner(SymbolDAO symbolDAO, LearnerResultDAO learnerResultDAO,
-                   PreparedConnectorContextHandlerFactory contextHandlerFactory) {
-        this();
-        this.symbolDAO = symbolDAO;
-        this.learnerResultDAO = learnerResultDAO;
-        this.contextHandlerFactory = contextHandlerFactory;
-    }
-
-    /**
-     * Method should be called before the Learner is 'destroyed'. It will shutdown the executor service gracefully.
-     */
-    @PreDestroy
-    public void destroy() {
-        executorService.shutdown();
+    public LearnerService() {
+        this.learnerThreads = new HashMap<>();
     }
 
     /**
@@ -172,24 +131,22 @@ public class Learner {
      * @throws NotFoundException
      *         If the symbols specified in the configuration could not be found.
      */
-    public void start(User user, Project project, LearnerStartConfiguration configuration)
+    public LearnerResult start(User user, Project project, LearnerStartConfiguration configuration)
             throws IllegalArgumentException, IllegalStateException, NotFoundException {
-        if (isActive(project.getId())) {
-            throw new IllegalStateException("You can not start more than one experiment at the same time.");
-        }
-
-        configuration.setEnvironments(projectEnvironmentDAO.getByIds(user, project.getId(), configuration.getEnvironmentIds()));
-        configuration.getEnvironments().forEach(ProjectEnvironmentDAO::loadLazyRelations);
+        final List<ProjectEnvironment> environments = projectEnvironmentDAO.getByIds(user, project.getId(), configuration.getEnvironmentIds());
+        configuration.setEnvironments(environments);
 
         final LearnerResult result = createLearnerResult(user, project, configuration);
 
         final PreparedContextHandler contextHandler = contextHandlerFactory
                 .createPreparedContextHandler(user, project, configuration.getDriverConfig(), result.getResetSymbol(), result.getPostSymbol());
 
-        final AbstractLearnerThread learnThread = new StartingLearnerThread(user, learnerResultDAO, webhookService,
+        final AbstractLearnerProcess learnThread = new StartingLearnerProcess(user, learnerResultDAO, webhookService,
                 testDAO, contextHandler, result, configuration);
 
-        startThread(project.getId(), learnThread);
+        enqueueLearningProcess(project.getId(), learnThread);
+
+        return result;
     }
 
     /**
@@ -212,10 +169,6 @@ public class Learner {
      */
     public void resume(User user, Project project, LearnerResult result, LearnerResumeConfiguration configuration)
             throws IllegalArgumentException, IllegalStateException, NotFoundException {
-        if (isActive(project.getId())) {
-            throw new IllegalStateException("You have to wait until the running experiment is finished.");
-        }
-
         if (result.getSteps().get(configuration.getStepNo() - 1).isError()) {
             throw new IllegalStateException("You cannot resume from a failed step.");
         }
@@ -227,8 +180,9 @@ public class Learner {
         final Symbol resetSymbol = symbolDAO.get(user, project.getId(), result.getResetSymbol().getSymbol().getId());
         result.getResetSymbol().setSymbol(resetSymbol);
 
-        final List<Long> symbolIds =
-                result.getSymbols().stream().map(s -> s.getSymbol().getId()).collect(Collectors.toList());
+        final List<Long> symbolIds = result.getSymbols().stream()
+                .map(s -> s.getSymbol().getId())
+                .collect(Collectors.toList());
         final List<Symbol> symbols = symbolDAO.getByIds(user, project.getId(), symbolIds);
 
         final Map<Long, Symbol> symbolMap = new HashMap<>();
@@ -247,23 +201,16 @@ public class Learner {
         final PreparedContextHandler contextHandler = contextHandlerFactory.createPreparedContextHandler(user, project,
                 result.getDriverConfig(), result.getResetSymbol(), result.getPostSymbol());
 
-        final AbstractLearnerThread learnThread = new ResumingLearnerThread(user, learnerResultDAO, webhookService,
+        final AbstractLearnerProcess learnThread = new ResumingLearnerProcess(user, learnerResultDAO, webhookService,
                 testDAO, contextHandler, result, configuration);
-        startThread(project.getId(), learnThread);
+        enqueueLearningProcess(project.getId(), learnThread);
     }
 
     private LearnerResult createLearnerResult(User user, Project project, LearnerStartConfiguration configuration)
             throws NotFoundException, IllegalArgumentException {
 
         // It is not allowed to start a learning process with predefined counterexamples.
-        if (configuration.getEqOracle() instanceof SampleEQOracleProxy) {
-            SampleEQOracleProxy oracle = (SampleEQOracleProxy) configuration.getEqOracle();
-            if (!oracle.getCounterExamples().isEmpty()) {
-                throw new IllegalArgumentException("You cannot start with predefined counterexamples");
-            }
-        } else {
-            configuration.checkConfiguration();
-        }
+        configuration.checkConfiguration();
 
         final LearnerResult learnerResult = new LearnerResult();
         learnerResult.setProject(project);
@@ -303,7 +250,7 @@ public class Learner {
         final List<ProjectEnvironment> environments = projectEnvironmentDAO.getByIds(user, project.getId(), configuration.getEnvironmentIds());
         learnerResult.setEnvironments(environments);
 
-        return learnerResult;
+        return learnerResultDAO.create(user, learnerResult);
     }
 
     /**
@@ -311,12 +258,21 @@ public class Learner {
      *
      * @param projectId
      *         The id of the project.
-     * @param learnThread
+     * @param learnerProcess
      *         The thread to start.
      */
-    private void startThread(Long projectId, AbstractLearnerThread learnThread) {
-        executorService.submit(learnThread);
-        userThreads.put(projectId, learnThread);
+    private void enqueueLearningProcess(Long projectId, AbstractLearnerProcess learnerProcess) {
+        if (learnerThreads.containsKey(projectId)) {
+            learnerThreads.get(projectId).enqueue(learnerProcess);
+        } else {
+            final LearnerThread thread = new LearnerThread(
+                    learnerResultRepository,
+                    () -> learnerThreads.remove(projectId)
+            );
+            thread.enqueue(learnerProcess);
+            learnerThreads.put(projectId, thread);
+            thread.start();
+        }
     }
 
     /**
@@ -385,11 +341,9 @@ public class Learner {
      * @param projectId
      *         The id of the project that is learned.
      */
-    public void stop(Long projectId) {
-        final AbstractLearnerThread learnerThread = userThreads.get(projectId);
-
-        if (learnerThread != null) {
-            learnerThread.stopLearning();
+    public void stop(Long projectId, Long testNo) {
+        if (isActive(projectId)) {
+            learnerThreads.get(projectId).abort(testNo);
         }
     }
 
@@ -401,8 +355,7 @@ public class Learner {
      * @return true if the learning process is active, false otherwise.
      */
     public boolean isActive(Long projectId) {
-        AbstractLearnerThread learnerThread = userThreads.get(projectId);
-        return learnerThread != null && !learnerThread.isFinished();
+        return learnerThreads.containsKey(projectId);
     }
 
     /**
@@ -413,27 +366,22 @@ public class Learner {
      * @return A snapshot of the Learner status.
      */
     public LearnerStatus getStatus(Long projectId) {
-        boolean active = isActive(projectId);
-        if (!active) {
-            return new LearnerStatus();
-        } else {
-            AbstractLearnerThread thread = userThreads.get(projectId);
-            LearnerPhase phase = thread != null ? thread.getLearnerPhase() : null;
-            List<DefaultQueryProxy> queries = thread != null ? thread.getCurrentQueries() : null;
-            return new LearnerStatus(getResult(projectId), phase, queries);
-        }
-    }
+        if (isActive(projectId)) {
+            final LearnerThread thread = learnerThreads.get(projectId);
+            final AbstractLearnerProcess process = thread.getCurrentProcess();
 
-    /**
-     * Get the current result of the learning process. This must not be a valid step of a test run!
-     *
-     * @param projectId
-     *         The id of the project.
-     * @return The current result of the AbstractLearnerThread.
-     */
-    public LearnerResult getResult(Long projectId) {
-        final AbstractLearnerThread learnerThread = userThreads.get(projectId);
-        return learnerThread != null ? learnerThread.getResult() : null;
+            final LearningProcessStatus processStatus = new LearningProcessStatus();
+            processStatus.setCurrentQueries(process.getCurrentQueries());
+            processStatus.setPhase(process.getLearnerPhase());
+            processStatus.setResult(process.getResult());
+
+            final LearnerStatus status = new LearnerStatus();
+            status.setCurrentProcess(processStatus);
+            status.setQueue(thread.getProcessQueue());
+            return status;
+        } else {
+            return new LearnerStatus();
+        }
     }
 
     /**

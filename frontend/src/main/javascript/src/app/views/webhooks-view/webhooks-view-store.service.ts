@@ -37,7 +37,7 @@ export class WebhooksViewStoreService {
               private toastService: ToastService) {
     this.webhooks = new BehaviorSubject<Webhook[]>([]);
     this.events = new BehaviorSubject<string[]>([]);
-    this.webhooksSelectable = new Selectable<Webhook, number>([], w => w.id);
+    this.webhooksSelectable = new Selectable<Webhook, number>(w => w.id);
   }
 
   get webhooks$(): Observable<Webhook[]> {
@@ -86,7 +86,7 @@ export class WebhooksViewStoreService {
     this.webhookApi.remove(webhook).subscribe(
       () => {
         this.webhooks.next(removeItems(this.webhooks.value, w => w.id === webhook.id));
-        this.webhooksSelectable.unselect(webhook);
+        this.webhooksSelectable.remove(webhook);
       },
       res => this.toastService.danger(`The webhook could not be deleted. ${res.error.message}`)
     );
@@ -99,7 +99,7 @@ export class WebhooksViewStoreService {
       this.webhookApi.removeMany(selected).subscribe(
         () => {
           this.webhooks.next(removeItems(this.webhooks.value, w => ids.indexOf(w.id) > -1));
-          this.webhooksSelectable.unselectMany(selected);
+          this.webhooksSelectable.removeMany(selected);
         },
         res => this.toastService.danger(`The webhooks could not be deleted. ${res.error.message}`)
       );

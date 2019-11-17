@@ -1,116 +1,129 @@
 <div class="learn-result-panel h-100">
   <div class="learn-result-panel-header d-flex flex-shrink-0">
 
-    <ng-container *ngIf="result.algorithm.name !== ''">
-      <div class="w-100 mr-1">
-        <button class="btn btn-sm btn-default" (click)="openResultDetailsModal()">
-          <i class="fas fa-fw fa-info"></i> Details
-        </button>
-      </div>
-
-      <div class="mr-2 flex-shrink-0">
-        <!-- browser -->
-        <div class="btn-group btn-group-sm">
-          <button (click)="firstStep()" class="btn btn-default">
-            <i class="fas fa-angle-double-left fa-fw"></i>
-          </button>
-          <button (click)="previousStep()" class="btn btn-default">
-            <i class="fas fa-angle-left fa-fw"></i>
-          </button>
-          <button class="btn btn-default disabled">
-            Step <span>{{pointer + 1}}</span>/<span>{{result.steps.length}}</span>
-          </button>
-          <button (click)="nextStep()" class="btn btn-default">
-            <i class="fas fa-angle-right fa-fw"></i>
-          </button>
-          <button (click)="lastStep()" class="btn btn-default">
-            <i class="fas fa-angle-double-right fa-fw"></i>
+    <ng-container *ngIf="result.steps.length > 0">
+      <ng-container *ngIf="result.algorithm.name !== ''">
+        <div class="w-100 mr-1">
+          <button class="btn btn-sm btn-default" (click)="openResultDetailsModal()">
+            <i class="fas fa-fw fa-info"></i> Details
           </button>
         </div>
+
+        <div class="mr-2 flex-shrink-0">
+          <!-- browser -->
+          <div class="btn-group btn-group-sm">
+            <button (click)="firstStep()" class="btn btn-default">
+              <i class="fas fa-angle-double-left fa-fw"></i>
+            </button>
+            <button (click)="previousStep()" class="btn btn-default">
+              <i class="fas fa-angle-left fa-fw"></i>
+            </button>
+            <button class="btn btn-default disabled">
+              Step <span>{{pointer + 1}}</span>/<span>{{result.steps.length}}</span>
+            </button>
+            <button (click)="nextStep()" class="btn btn-default">
+              <i class="fas fa-angle-right fa-fw"></i>
+            </button>
+            <button (click)="lastStep()" class="btn btn-default">
+              <i class="fas fa-angle-double-right fa-fw"></i>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="btn-group btn-group-sm mb-0 ml-auto">
+        <select [(ngModel)]="view" class="form-control btn-sm" style="width: 90px; height: 23px">
+          <option [value]="'DEFAULT'">Default</option>
+          <ng-container *ngIf="result.algorithm.name !== ''">
+            <option [value]="'TEST'">Tests</option>
+            <option [value]="'MODEL_CHECKING'">Checking</option>
+            <option [value]="'DATA_STRUCTURE'" *ngIf="['LSTAR', 'DT', 'TTT'].indexOf(result.algorithm.name) > -1">Data
+              Structure
+            </option>
+          </ng-container>
+        </select>
+        <button class="btn btn-default" (click)="showSidebar = !showSidebar">
+          <i
+            class="fas fa-fw"
+            [class.fa-angle-double-left]="!showSidebar"
+            [class.fa-angle-double-right]="showSidebar"
+          >
+          </i>
+        </button>
       </div>
     </ng-container>
 
-    <div class="btn-group btn-group-sm mb-0 ml-auto">
-      <select [(ngModel)]="view" class="form-control btn-sm" style="width: 90px; height: 23px">
-        <option [value]="'DEFAULT'">Default</option>
-        <ng-container *ngIf="result.algorithm.name !== ''">
-          <option [value]="'TEST'">Tests</option>
-          <option [value]="'MODEL_CHECKING'">Checking</option>
-          <option [value]="'DATA_STRUCTURE'" *ngIf="['LSTAR', 'DT', 'TTT'].indexOf(result.algorithm.name) > -1">Data Structure</option>
-        </ng-container>
-      </select>
-      <button class="btn btn-default" (click)="showSidebar = !showSidebar">
-        <i
-          class="fas fa-fw"
-          [class.fa-angle-double-left]="!showSidebar"
-          [class.fa-angle-double-right]="showSidebar"
-        >
-        </i>
-      </button>
-    </div>
-
   </div>
-  <div class="learn-result-panel-body d-flex flex-row position-relative">
-    <div class="h-100 flex-grow-1">
-      <hypothesis
-        *ngIf="view !== 'DATA_STRUCTURE'"
-        (selectEdge)="panelService.edgeSelected$.next($event)"
-        [data]="result.steps[pointer].hypothesis"
-        [layoutSettings]="layoutSettings"
-      >
-      </hypothesis>
 
-      <ng-container *ngIf="view === 'DATA_STRUCTURE'">
-        <discrimination-tree
-          *ngIf="['DT', 'TTT'].indexOf(result.algorithm.name) > -1"
-          [data]="result.steps[pointer].algorithmInformation"
+  <div class="learn-result-panel-body d-flex flex-row position-relative" *ngIf="result.steps.length > 0">
+      <div class="h-100 flex-grow-1">
+        <hypothesis
+          *ngIf="view !== 'DATA_STRUCTURE'"
+          (selectEdge)="panelService.edgeSelected$.next($event)"
+          [data]="result.steps[pointer].hypothesis"
+          [layoutSettings]="layoutSettings"
         >
-        </discrimination-tree>
-        <observation-table
-          *ngIf="['LSTAR'].indexOf(result.algorithm.name) > -1"
-          [data]="result.steps[pointer].algorithmInformation"
-        >
-        </observation-table>
-      </ng-container>
-    </div>
-    <div class="right-sidebar" *ngIf="showSidebar" style="position: absolute; right: 0; width: 320px; bottom: 0; top: 0">
-      <learner-result-panel-default-view
-        *ngIf="view === 'DEFAULT'"
-        [layoutSettings]="layoutSettings"
-        [pointer]="pointer"
-        [result]="result"
-        (layoutSettingsChange)="layoutSettings = $event"
-      >
-      </learner-result-panel-default-view>
+        </hypothesis>
 
-      <div class="card" *ngIf="view === 'DATA_STRUCTURE'">
-        <div class="card-header">
-          <strong>Export</strong>
-        </div>
-        <div class="card-body">
-          <button class="btn btn-default btn-block" (click)="exportObservationTable()" *ngIf="['LSTAR'].indexOf(result.algorithm.name) > -1">
-            <i class="fas fa-fw fa-download"></i> CSV
-          </button>
-          <button class="btn btn-default btn-block" (click)="exportHypothesisAsSvg()" *ngIf="['DT', 'TTT'].indexOf(result.algorithm.name) > -1">
-            <i class="fas fa-fw fa-download"></i> SVG
-          </button>
-        </div>
+        <ng-container *ngIf="view === 'DATA_STRUCTURE'">
+          <discrimination-tree
+            *ngIf="['DT', 'TTT'].indexOf(result.algorithm.name) > -1"
+            [data]="result.steps[pointer].algorithmInformation"
+          >
+          </discrimination-tree>
+          <observation-table
+            *ngIf="['LSTAR'].indexOf(result.algorithm.name) > -1"
+            [data]="result.steps[pointer].algorithmInformation"
+          >
+          </observation-table>
+        </ng-container>
       </div>
+      <div class="right-sidebar" *ngIf="showSidebar">
+        <learner-result-panel-default-view
+          *ngIf="view === 'DEFAULT'"
+          [layoutSettings]="layoutSettings"
+          [pointer]="pointer"
+          [result]="result"
+          (layoutSettingsChange)="layoutSettings = $event"
+        >
+        </learner-result-panel-default-view>
 
-      <learner-result-panel-testing-view
-        *ngIf="view === 'TEST'"
-        [pointer]="pointer"
-        [result]="result"
-      >
-      </learner-result-panel-testing-view>
+        <div class="card" *ngIf="view === 'DATA_STRUCTURE'">
+          <div class="card-header">
+            <strong>Export</strong>
+          </div>
+          <div class="card-body">
+            <button
+              class="btn btn-default btn-block"
+              (click)="exportObservationTable()"
+              *ngIf="['LSTAR'].indexOf(result.algorithm.name) > -1"
+            >
+              <i class="fas fa-fw fa-download"></i> CSV
+            </button>
+            <button
+              class="btn btn-default btn-block"
+              (click)="exportHypothesisAsSvg()"
+              *ngIf="['DT', 'TTT'].indexOf(result.algorithm.name) > -1"
+            >
+              <i class="fas fa-fw fa-download"></i> SVG
+            </button>
+          </div>
+        </div>
 
-      <learner-result-panel-checking-view
-        *ngIf="view === 'MODEL_CHECKING'"
-        [pointer]="pointer"
-        [result]="result"
-      >
-      </learner-result-panel-checking-view>
-    </div>
+        <learner-result-panel-testing-view
+          *ngIf="view === 'TEST'"
+          [pointer]="pointer"
+          [result]="result"
+        >
+        </learner-result-panel-testing-view>
+
+        <learner-result-panel-checking-view
+          *ngIf="view === 'MODEL_CHECKING'"
+          [pointer]="pointer"
+          [result]="result"
+        >
+        </learner-result-panel-checking-view>
+      </div>
   </div>
 </div>
 

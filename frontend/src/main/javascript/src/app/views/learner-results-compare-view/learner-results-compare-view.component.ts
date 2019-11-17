@@ -106,7 +106,7 @@ export class LearnerResultsCompareViewComponent implements OnInit {
     const hypA = this.panels[0].result.steps[this.panels[0].step].hypothesis;
     const hypB = this.panels[1].result.steps[this.panels[1].step].hypothesis;
 
-    this.learnerApi.getSeparatingWord(hypA, hypB).subscribe(
+    this.learnerApi.getSeparatingWord(this.project.id, hypA, hypB).subscribe(
       diff => {
         if (diff.input.length === 0) {
           this.toastService.info('The two hypotheses are identical.');
@@ -128,7 +128,7 @@ export class LearnerResultsCompareViewComponent implements OnInit {
     const hypA = this.panels[0].result.steps[this.panels[0].step].hypothesis;
     const hypB = this.panels[1].result.steps[this.panels[1].step].hypothesis;
 
-    this.learnerApi.getDifferenceTree(hypA, hypB).subscribe(
+    this.learnerApi.getDifferenceTree(this.project.id, hypA, hypB).subscribe(
       data => {
         if (data.edges.length === 0) {
           this.toastService.info('Cannot find a difference.');

@@ -17,6 +17,13 @@
 import { ParametrizedSymbol } from './parametrized-symbol';
 import { ProjectEnvironment } from './project-environment';
 
+export enum LearnerResultStatus {
+  PENDING = 'PENDING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  FINISHED = 'FINISHED',
+  ABORTED = 'ABORTED'
+}
+
 /**
  * The model for a learner result.
  */
@@ -30,9 +37,6 @@ export class LearnerResult {
 
   /** The browser that is used. */
   public driverConfig: any;
-
-  /** The hypothesis. */
-  public hypothesis: any;
 
   /** The project id of the learn result. */
   public project: number;
@@ -58,9 +62,6 @@ export class LearnerResult {
   /** If the learner encountered an error. */
   public error: boolean;
 
-  /** The description of the error that occurred. */
-  public errorText?: string;
-
   /** The comment of the learn result. */
   public comment: string;
 
@@ -72,6 +73,8 @@ export class LearnerResult {
 
   public maxAmountOfStepsToLearn: number;
 
+  public status: LearnerResultStatus;
+
   /**
    * Constructor.
    *
@@ -81,7 +84,6 @@ export class LearnerResult {
     this.id = obj.id;
     this.algorithm = obj.algorithm;
     this.driverConfig = obj.driverConfig;
-    this.hypothesis = obj.hypothesis;
     this.project = obj.project;
     this.resetSymbol = new ParametrizedSymbol(obj.resetSymbol);
     this.postSymbol = obj.postSymbol != null ? new ParametrizedSymbol(obj.postSymbol) : null;
@@ -90,24 +92,10 @@ export class LearnerResult {
     this.symbols = obj.symbols.map(s => new ParametrizedSymbol(s));
     this.testNo = obj.testNo;
     this.error = obj.error;
-    this.errorText = obj.errorText;
     this.comment = obj.comment;
     this.environments = obj.environments || [];
     this.useMQCache = obj.useMQCache;
     this.maxAmountOfStepsToLearn = obj.maxAmountOfStepsToLearn == null ? -1 : obj.maxAmountOfStepsToLearn;
-
-    // convert ns to ms
-    LearnerResult.convertNsToMs(this.statistics.duration);
-
-    if (this.steps != null && this.steps.length > 0) {
-      this.steps.forEach(step => LearnerResult.convertNsToMs(step.statistics.duration));
-    }
+    this.status = obj.status;
   }
-
-  static convertNsToMs(input: any): void {
-    input.total = Math.ceil(input.total / 1000000);
-    input.learner = Math.ceil(input.learner / 1000000);
-    input.eqOracle = Math.ceil(input.eqOracle / 1000000);
-  }
-
 }

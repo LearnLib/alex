@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { LearnerResult } from '../../../entities/learner-result';
+import { LearnerResult, LearnerResultStatus } from '../../../entities/learner-result';
 import { Selectable } from '../../../utils/selectable';
 import { Component, Input } from '@angular/core';
 

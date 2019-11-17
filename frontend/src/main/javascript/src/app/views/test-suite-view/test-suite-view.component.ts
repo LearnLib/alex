@@ -79,7 +79,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
               private notificationService: NotificationService,
               private testConfigApi: TestConfigApiService) {
     this.testConfigs = [];
-    this.selectedTests = new Selectable([], t => t.id);
+    this.selectedTests = new Selectable(t => t.id);
     this.groups = [];
   }
 
@@ -138,6 +138,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
           data => {
             this.toastService.success(`The test suite "${testSuite.name}" has been created.`);
             this.testSuite.tests.push(data);
+            this.selectedTests.addItem(data);
           },
           res => this.toastService.danger('The test suite could not be created. ' + res.error.message)
         );
@@ -156,6 +157,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
           data => {
             this.toastService.success(`The test case "${testCase.name}" has been created.`);
             this.testSuite.tests.push(data);
+            this.selectedTests.addItem(data);
           },
           res => this.toastService.danger('The test suite could not be created. ' + res.error.message)
         );
@@ -204,7 +206,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       () => {
         this.toastService.success(`The test ${test.type} has been deleted.`);
         remove(this.testSuite.tests, {id: test.id});
-        this.selectedTests.unselect(test);
+        this.selectedTests.remove(test);
       },
       res => this.toastService.danger(`The test ${test.type} could not be deleted. ${res.error.message}`)
     );
@@ -221,7 +223,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
       () => {
         this.toastService.success('The tests have been deleted.');
         selectedTests.forEach(test => remove(this.testSuite.tests, {id: test.id}));
-        this.selectedTests.unselectAll();
+        this.selectedTests.removeMany(selectedTests);
       },
       res => this.toastService.danger(`Deleting the tests failed. ${res.error.message}`)
     );

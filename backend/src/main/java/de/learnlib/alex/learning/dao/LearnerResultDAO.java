@@ -22,7 +22,7 @@ import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.learning.entities.AbstractLearnerConfiguration;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
-import de.learnlib.alex.learning.services.Learner;
+import de.learnlib.alex.learning.services.LearnerService;
 import org.apache.shiro.authz.UnauthorizedException;
 
 import javax.validation.ValidationException;
@@ -153,7 +153,7 @@ public interface LearnerResultDAO {
     /**
      * Remove a complete test run of a project.
      *
-     * @param learner
+     * @param learnerService
      *         The learner.
      * @param projectId
      *         The project id.
@@ -162,7 +162,7 @@ public interface LearnerResultDAO {
      * @throws NotFoundException
      *         If the project id or test no. was invalid.
      */
-    void delete(Learner learner, Long projectId, List<Long> testNos) throws NotFoundException;
+    void delete(LearnerService learnerService, Long projectId, List<Long> testNos) throws NotFoundException;
 
     /**
      * Clone learner result.

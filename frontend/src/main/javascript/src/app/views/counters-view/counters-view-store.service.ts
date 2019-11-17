@@ -38,7 +38,7 @@ export class CountersViewStoreService {
               private modalService: NgbModal,
               private toastService: ToastService) {
     this.counters = new BehaviorSubject<Counter[]>([]);
-    this.countersSelectable = new Selectable<Counter, number>([], c => c.id);
+    this.countersSelectable = new Selectable<Counter, number>(c => c.id);
   }
 
   get counters$(): Observable<Counter[]> {
@@ -102,7 +102,7 @@ export class CountersViewStoreService {
       () => {
         const counters = this.counters.value.filter(c => c.id !== counter.id);
         this.counters.next(counters);
-        this.countersSelectable.unselect(counter);
+        this.countersSelectable.remove(counter);
       },
       res => {
         this.toastService.danger('<p><strong>Deleting counter "' + counter.name + '" failed</strong></p>' + res.error.message);
@@ -120,7 +120,7 @@ export class CountersViewStoreService {
         () => {
           const counters = this.counters.value.filter(c => selectedCounters.findIndex(c2 => c.id == c2.id) === -1);
           this.counters.next(counters);
-          this.countersSelectable.unselectMany(selectedCounters);
+          this.countersSelectable.removeMany(selectedCounters);
         },
         res => {
           this.toastService.danger('<p><strong>Deleting counters failed</strong></p>' + res.error.message);

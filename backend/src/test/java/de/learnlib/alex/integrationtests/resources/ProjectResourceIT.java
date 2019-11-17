@@ -24,7 +24,6 @@ import de.learnlib.alex.integrationtests.resources.api.SymbolGroupApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import org.junit.Before;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.http.HttpStatus;
 
 import javax.ws.rs.core.Response;

@@ -26,28 +26,28 @@ import de.learnlib.alex.webhooks.entities.EventType;
 public class LearnerEvent {
 
     /** Event for when the learner started. */
-    public static class Started extends Event<LearnerStartConfiguration> {
+    public static class Started extends Event<LearnerResult> {
 
         /**
          * Constructor.
          *
-         * @param config The configuration used for starting the learner.
+         * @param result The configuration used for starting the learner.
          */
-        public Started(LearnerStartConfiguration config) {
-            super(config, EventType.LEARNER_STARTED);
+        public Started(LearnerResult result) {
+            super(result, EventType.LEARNER_STARTED);
         }
     }
 
     /** Event for when the learner is resumed. */
-    public static class Resumed extends Event<LearnerResumeConfiguration> {
+    public static class Resumed extends Event<LearnerResult> {
 
         /**
          * Constructor.
          *
-         * @param config The configuration used for resuming the learner.
+         * @param result The configuration used for resuming the learner.
          */
-        public Resumed(LearnerResumeConfiguration config) {
-            super(config, EventType.LEARNER_RESUMED);
+        public Resumed(LearnerResult result) {
+            super(result, EventType.LEARNER_RESUMED);
         }
     }
 

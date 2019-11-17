@@ -18,6 +18,7 @@ package de.learnlib.alex.learning.repositories;
 
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.testing.entities.TestReport;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -118,4 +119,7 @@ public interface LearnerResultRepository extends JpaRepository<LearnerResult, Lo
     @Transactional
     @SuppressWarnings("checkstyle:methodname")
     void deleteAllByEnvironmentsContains(ProjectEnvironment env);
+
+    @Transactional(readOnly = true)
+    List<LearnerResult> findAllByStatusIn(List<LearnerResult.Status> statusList);
 }

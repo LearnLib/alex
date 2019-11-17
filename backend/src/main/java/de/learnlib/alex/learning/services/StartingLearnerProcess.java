@@ -28,11 +28,11 @@ import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.ThreadContext;
 
 /** The learner thread that is used for starting a new experiment. */
-public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartConfiguration> {
+public class StartingLearnerProcess extends AbstractLearnerProcess<LearnerStartConfiguration> {
 
-    public StartingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-                                 TestDAO testDAO, PreparedContextHandler contextHandler, LearnerResult result,
-                                 LearnerStartConfiguration configuration) {
+    public StartingLearnerProcess(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
+                                  TestDAO testDAO, PreparedContextHandler contextHandler, LearnerResult result,
+                                  LearnerStartConfiguration configuration) {
         super(user, learnerResultDAO, webhookService, testDAO, contextHandler, result, configuration);
     }
 
@@ -56,21 +56,19 @@ public class StartingLearnerThread extends AbstractLearnerThread<LearnerStartCon
         }
     }
 
-    private void startLearning() throws Exception {
+    private void startLearning() {
         LOGGER.traceEntry();
 
         // variables for measuring the execution time of the learner
         long start, end;
 
         // start learning
-        learnerPhase = Learner.LearnerPhase.LEARNING;
-        start = System.nanoTime();
+        learnerPhase = LearnerService.LearnerPhase.LEARNING;
+        start = System.currentTimeMillis();
         learner.startLearning();
-        end = System.nanoTime();
+        end = System.currentTimeMillis();
 
-        // persist the learner result for the first time.
-        // also persist the first step.
-        result = learnerResultDAO.create(user, result);
+        // persist the first step.
         LearnerResultStep currentStep = createStep(start, end, 0, null);
 
         doLearn(currentStep);

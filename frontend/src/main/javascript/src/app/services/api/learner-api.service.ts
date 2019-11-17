@@ -19,9 +19,10 @@ import { LearnerResult } from '../../entities/learner-result';
 import { LearnerConfiguration } from '../../entities/learner-configuration';
 import { BaseApiService } from './base-api.service';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { LearnerStatus } from '../../entities/learner-status';
 
 /**
  * The service for interacting with the learner.
@@ -39,8 +40,11 @@ export class LearnerApiService extends BaseApiService {
    * @param projectId The id of the project of the test.
    * @param learnConfiguration The configuration to learn with.
    */
-  start(projectId: number, learnConfiguration: LearnerConfiguration): Observable<any> {
-    return this.http.post(`${env.apiUrl}/learner/${projectId}/start`, learnConfiguration, this.defaultHttpOptions);
+  start(projectId: number, learnConfiguration: LearnerConfiguration): Observable<LearnerResult> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/learner/start`, learnConfiguration, this.defaultHttpOptions)
+      .pipe(
+        map(data => new LearnerResult(data))
+      );
   }
 
   /**
@@ -48,9 +52,10 @@ export class LearnerApiService extends BaseApiService {
    * with the thread handling.
    *
    * @param projectId The id of the test to resume with.
+   * @param testNo The number of the test process to abort.
    */
-  stop(projectId: number): Observable<any> {
-    return this.http.get(`${env.apiUrl}/learner/${projectId}/stop`, this.defaultHttpOptions);
+  stop(projectId: number, testNo: number): Observable<any> {
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/learner/${testNo}/stop`, this.defaultHttpOptions);
   }
 
   /**
@@ -62,7 +67,10 @@ export class LearnerApiService extends BaseApiService {
    * @param learnConfiguration The configuration to resume with.
    */
   resume(projectId: number, testNo: number, learnConfiguration: LearnerConfiguration): Observable<any> {
-    return this.http.post(`${env.apiUrl}/learner/${projectId}/resume/${testNo}`, learnConfiguration, this.defaultHttpOptions);
+    return this.http.post(`${env.apiUrl}/${projectId}/learner/${testNo}/resume`, learnConfiguration, this.defaultHttpOptions)
+      .pipe(
+        map(data => new LearnerResult(data))
+      );
   }
 
   /**
@@ -70,15 +78,10 @@ export class LearnerApiService extends BaseApiService {
    *
    * @param projectId The id of the test to resume with.
    */
-  getStatus(projectId: number): Observable<any> {
-    return this.http.get(`${env.apiUrl}/learner/${projectId}/status`, this.defaultHttpOptions)
+  getStatus(projectId: number): Observable<LearnerStatus> {
+    return this.http.get(`${env.apiUrl}/projects/${projectId}/learner/status`, this.defaultHttpOptions)
       .pipe(
-        map((body: any) => {
-          if (body.result != null) {
-            body.result = new LearnerResult(body.result);
-          }
-          return body;
-        })
+        map((data: any) => data as LearnerStatus)
       );
   }
 
@@ -89,27 +92,29 @@ export class LearnerApiService extends BaseApiService {
    * @param outputConfig The id of the reset symbol.
    */
   readOutputs(projectId: number, outputConfig: any): Observable<any> {
-    return this.http.post(`${env.apiUrl}/learner/${projectId}/outputs`, outputConfig, this.defaultHttpOptions)
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/learner/outputs`, outputConfig, this.defaultHttpOptions)
   }
 
   /**
    * Compare two hypotheses and return the separating word.
    *
+   * @param projectId The ID of the project.
    * @param hypA The first hypothesis.
    * @param hypB The second hypothesis.
    */
-  getSeparatingWord(hypA: any, hypB: any): Observable<any> {
-    return this.http.post(`${env.apiUrl}/learner/compare/separatingWord`, [hypA, hypB], this.defaultHttpOptions)
+  getSeparatingWord(projectId: number, hypA: any, hypB: any): Observable<any> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/learner/compare/separatingWord`, [hypA, hypB], this.defaultHttpOptions)
   }
 
   /**
    * Compare two hypotheses and return the difference tree.
    * Test a on b.
    *
+   * @param projectId The ID of the project.
    * @param hypA The first hypothesis.
    * @param hypB The second hypothesis.
    */
-  getDifferenceTree(hypA: any, hypB: any): Observable<any> {
-    return this.http.post(`${env.apiUrl}/learner/compare/differenceTree`, [hypA, hypB], this.defaultHttpOptions)
+  getDifferenceTree(projectId: number, hypA: any, hypB: any): Observable<any> {
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/learner/compare/differenceTree`, [hypA, hypB], this.defaultHttpOptions)
   }
 }

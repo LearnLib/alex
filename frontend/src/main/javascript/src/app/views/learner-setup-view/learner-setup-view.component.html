@@ -5,7 +5,8 @@
       <div class="ml-auto">
         <a
           class="btn btn-info btn-sm"
-          [routerLink]="['..', 'learn']"
+          [routerLink]="['..']"
+          [queryParams]="{testNo: latestLearnerResult.testNo}"
           *ngIf="latestLearnerResult != null"
         >
           Continue learning
@@ -25,21 +26,11 @@
   <div class="view-body">
     <div class="container-fluid">
 
-      <div class="alert alert-info alert-condensed clearfix">
-        <i class="fas fa-fw fa-info-circle"></i>
-
-        Use the <strong>{{learnerConfiguration.algorithm.name | formatLearningAlgorithm}}</strong> algorithm
-        with the <strong>{{learnerConfiguration.eqOracle.type | formatEqOracle}}</strong> equivalence oracle
-        in the <strong>{{learnerConfiguration.driverConfig.name | formatWebBrowser}}</strong> browser.
-      </div>
-
-      <hr>
-
       <div *ngIf="groups.length > 0" class="row">
         <div class="col-md-4 col-lg-3">
           <div class="card mb-4">
             <div class="card-header">
-              <strong class="text-muted">Symbols</strong>
+              <strong>Symbols</strong>
             </div>
             <div class="card-body">
               <div class="mb-2">
@@ -161,9 +152,9 @@
         </div>
 
         <div class="col-md-4 col-lg-3">
-          <div class="card">
+          <div class="card mb-4">
             <div class="card-header">
-              <strong class="text-muted">Reuse a previous configuration</strong>
+              <strong>Reuse a previous configuration</strong>
             </div>
             <div *ngIf="learnerResults.length > 0" class="list-group list-group-flush">
               <div
@@ -184,12 +175,14 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="learnerResults.length === 0" class="card-body p-0">
-              <div class="alert alert-info mb-0 no-border-radius">
+            <div *ngIf="learnerResults.length === 0" class="card-body">
+              <div class="alert alert-info mb-0">
                 There are no learner results yet.
               </div>
             </div>
           </div>
+
+          <learner-status-widget></learner-status-widget>
         </div>
 
       </div>

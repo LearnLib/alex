@@ -32,7 +32,7 @@ import net.automatalib.SupportsGrowingAlphabet;
 import org.apache.logging.log4j.ThreadContext;
 
 /** The learner thread that is used for resuming an old experiment from a given step. */
-public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeConfiguration> {
+public class ResumingLearnerProcess extends AbstractLearnerProcess<LearnerResumeConfiguration> {
 
     /**
      * Constructor.
@@ -40,21 +40,21 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
      * @param user
      *         The user that runs the learning experiment.
      * @param learnerResultDAO
-     *         {@link AbstractLearnerThread#learnerResultDAO}.
+     *         {@link AbstractLearnerProcess#learnerResultDAO}.
      * @param webhookService
-     *         {@link AbstractLearnerThread#}.
+     *         {@link AbstractLearnerProcess#}.
      * @param contextHandler
      *         The context to use.
      * @param result
-     *         {@link AbstractLearnerThread#result}.
+     *         {@link AbstractLearnerProcess#result}.
      * @param configuration
      *         The configuration to use.
      * @param testDAO
      *         The DAO for tests that is passed to the eq oracle.
      */
-    public ResumingLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-                                 TestDAO testDAO, PreparedContextHandler contextHandler, LearnerResult result,
-                                 LearnerResumeConfiguration configuration) {
+    public ResumingLearnerProcess(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
+                                  TestDAO testDAO, PreparedContextHandler contextHandler, LearnerResult result,
+                                  LearnerResumeConfiguration configuration) {
         super(user, learnerResultDAO, webhookService, testDAO, contextHandler, result, configuration);
     }
 
@@ -93,9 +93,9 @@ public class ResumingLearnerThread extends AbstractLearnerThread<LearnerResumeCo
                 }
 
                 // measure how much time and membership queries it takes to add the symbol
-                final long start = System.nanoTime();
+                final long start = System.currentTimeMillis();
                 growingAlphabetLearner.addAlphabetSymbol(symbol.getComputedName());
-                final long end = System.nanoTime();
+                final long end = System.currentTimeMillis();
 
                 final Statistics statistics = new Statistics();
                 statistics.getDuration().setLearner(end - start);

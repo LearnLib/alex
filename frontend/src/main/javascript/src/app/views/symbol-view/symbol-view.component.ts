@@ -70,8 +70,8 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
 
     this.symbol = null;
     this.groups = [];
-    this.selectedSteps = null;
     this.showOutputs = false;
+    this.selectedSteps = new Selectable(s => s._id);
 
     currentRoute.paramMap.subscribe(map => {
       const symbolId = parseInt(map.get('symbolId'));
@@ -79,7 +79,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
         symbol => {
           this.symbol = symbol;
           this.symbol.steps.forEach(step => step._id = uniqueId());
-          this.selectedSteps = new Selectable(this.symbol.steps, s => s._id);
+          this.selectedSteps.addItems(this.symbol.steps);
         },
         () => {
           errorViewStore.navigateToErrorPage(`The symbol with the ID "${symbolId}" could not be found`);
@@ -123,7 +123,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
       steps.forEach(step => {
         remove(this.symbol.steps, {_id: step._id});
       });
-      this.selectedSteps.unselectMany(steps);
+      this.selectedSteps.removeMany(steps);
     }
   }
 
@@ -201,7 +201,8 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
         this.toastService.success('Symbol <strong>' + updatedSymbol.name + '</strong> updated');
         this.symbol = updatedSymbol;
         this.symbol.steps.forEach(step => step._id = uniqueId());
-        this.selectedSteps = new Selectable(this.symbol.steps, s => s._id);
+        this.selectedSteps.clear();
+        this.selectedSteps.updateAll(this.symbol.steps);
       },
       res => {
         this.toastService.danger('<p><strong>Error updating symbol</strong></p>' + res.error.message);

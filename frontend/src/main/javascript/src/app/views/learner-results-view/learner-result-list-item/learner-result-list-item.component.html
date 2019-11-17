@@ -3,7 +3,10 @@
   <div class="flex-grow-1 mr-3 ml-3">
     <span *ngIf="result.error" class="badge badge-danger float-right">Failed</span>
     <strong>
-      <a [routerLink]="[result.id]">
+      <a [routerLink]="[result.id]" *ngIf="result.status !== 'IN_PROGRESS'">
+        Test No {{result.testNo}}
+      </a>
+      <a [routerLink]="['/app', 'projects', result.project, 'learner']" [queryParams]="{testNo: result.testNo}" *ngIf="result.status === 'IN_PROGRESS'">
         Test No {{result.testNo}}
       </a>
     </strong>
@@ -18,7 +21,12 @@
     </div>
     <div *ngIf="result.comment" class="comment text-muted pl-2 mt-2" style="border-left: 2px solid #ddd">{{result.comment}}</div>
   </div>
-  <div>
+  <div *ngIf="result.status === 'IN_PROGRESS'">
+    <span class="badge badge-info p-2">
+      <i class="fas fa-fw fa-circle-notch fa-spin mr-1"></i> In progress
+    </span>
+  </div>
+  <div *ngIf="result.status !== 'IN_PROGRESS'">
     <ng-content></ng-content>
   </div>
 </div>

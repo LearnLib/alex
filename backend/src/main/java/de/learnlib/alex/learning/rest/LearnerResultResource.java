@@ -24,7 +24,7 @@ import de.learnlib.alex.learning.dao.LearnerResultDAO;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.ModelExportFormat;
 import de.learnlib.alex.learning.entities.TestSuiteGenerationConfig;
-import de.learnlib.alex.learning.services.Learner;
+import de.learnlib.alex.learning.services.LearnerService;
 import de.learnlib.alex.learning.services.ModelExporter;
 import de.learnlib.alex.learning.services.TestGenerator;
 import de.learnlib.alex.testing.entities.TestSuite;
@@ -60,7 +60,7 @@ public class LearnerResultResource {
 
     /** The Learner to check if a result is not active before deletion. */
     @Inject
-    private Learner learner;
+    private LearnerService learnerService;
 
     /** The test generator service. */
     @Inject
@@ -252,7 +252,7 @@ public class LearnerResultResource {
         LOGGER.trace("LearnerResultResource.deleteResultSet(" + projectId + ", " + testNumbers + ") "
                 + "for user " + user + ".");
 
-        learnerResultDAO.delete(learner, projectId, testNumbers);
+        learnerResultDAO.delete(learnerService, projectId, testNumbers);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 

@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
  * @param <T>
  *         The type of the configuration.
  */
-public abstract class AbstractLearnerThread<T extends AbstractLearnerConfiguration> extends Thread {
+public abstract class AbstractLearnerProcess<T extends AbstractLearnerConfiguration> {
 
     protected static final Logger LOGGER = LogManager.getLogger();
 
@@ -74,9 +74,6 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     /** The user who is stating the Learning Thread. */
     protected User user;
 
-    /** Is the thread still running? */
-    protected boolean finished;
-
     /** The DAO to remember the learn results. */
     protected final LearnerResultDAO learnerResultDAO;
 
@@ -84,7 +81,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     protected final LearningAlgorithm.MealyLearner<String, String> learner;
 
     /** The phase of the learner. */
-    protected Learner.LearnerPhase learnerPhase;
+    protected LearnerService.LearnerPhase learnerPhase;
 
     /** The learner result. */
     protected LearnerResult result;
@@ -136,8 +133,8 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
      * @param configuration
      *         {@link #configuration}.
      */
-    public AbstractLearnerThread(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
-                                 TestDAO testDAO, PreparedContextHandler context, LearnerResult result, T configuration) {
+    public AbstractLearnerProcess(User user, LearnerResultDAO learnerResultDAO, WebhookService webhookService,
+                                  TestDAO testDAO, PreparedContextHandler context, LearnerResult result, T configuration) {
         this.user = user;
         this.learnerResultDAO = learnerResultDAO;
         this.webhookService = webhookService;
@@ -153,7 +150,6 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         ));
 
         this.preparedContextHandler = context;
-        this.finished = false;
         this.currentQueries = new ArrayList<>();
         this.symbolMapper = new SymbolMapper(result.getSymbols());
 
@@ -197,9 +193,7 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         this.learner = result.getAlgorithm().createLearner(abstractAlphabet, mqOracle);
     }
 
-    @Override
-    public void run() {
-    }
+    abstract void run();
 
     /**
      * Creates and persists a learner step.
@@ -217,7 +211,6 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
     protected LearnerResultStep createStep(long start, long end, long eqs,
                                            DefaultQuery<String, Word<String>> counterexample) {
         final Statistics statistics = new Statistics();
-        statistics.setStartTime(start);
         statistics.getDuration().setLearner(end - start);
         statistics.getMqsUsed().setLearner(counterOracle.getQueryCount());
         statistics.getSymbolsUsed().setLearner(counterOracle.getSymbolCount());
@@ -225,24 +218,25 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
 
         final LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
         step.setStatistics(statistics);
+
         try {
             step.setState(result.getAlgorithm().suspend(learner));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        step.setAlgorithmInformation(result.getAlgorithm().getInternalData(learner));
-        step.setHypothesis(CompactMealyMachineProxy.createFrom(learner.getHypothesisModel(), abstractAlphabet));
-        step.setCounterExample(DefaultQueryProxy.createFrom(counterexample));
-        result.getSteps().add(step);
 
         try {
-            learnerResultDAO.saveStep(result, step);
-        } catch (de.learnlib.alex.common.exceptions.NotFoundException e) {
+            step.setAlgorithmInformation(result.getAlgorithm().getInternalData(learner));
+            step.setCounterExample(DefaultQueryProxy.createFrom(counterexample));
+            result.getSteps().add(step);
+            step.setHypothesis(CompactMealyMachineProxy.createFrom(learner.getHypothesisModel(), abstractAlphabet));
+        } catch (Exception e) {
             e.printStackTrace();
+            step.setErrorText("Failed to save step: " + e.getMessage());
         }
 
+        learnerResultDAO.saveStep(result, step);
         counterOracle.reset();
-
         return step;
     }
 
@@ -265,13 +259,6 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
                 e1.printStackTrace();
             }
         } else {
-            if (result.getId() == null) {
-                try {
-                    result = learnerResultDAO.create(user, result);
-                } catch (de.learnlib.alex.common.exceptions.NotFoundException e1) {
-                    e1.printStackTrace();
-                }
-            }
             createStep(0, 0, 0, null);
         }
     }
@@ -309,11 +296,11 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         while (continueLearning(currentStep, rounds)) {
 
             // search for counterexamples
-            learnerPhase = Learner.LearnerPhase.EQUIVALENCE_TESTING;
-            start = System.nanoTime();
+            learnerPhase = LearnerService.LearnerPhase.EQUIVALENCE_TESTING;
+            start = System.currentTimeMillis();
             DefaultQuery<String, Word<String>> counterexample = eqOracle.findCounterExample(
                     learner.getHypothesisModel(), abstractAlphabet);
-            end = System.nanoTime();
+            end = System.currentTimeMillis();
 
             // after having searched for counterexamples, update the statistics of the current step
             // with the numbers of the equivalence oracle
@@ -321,10 +308,10 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
 
             if (counterexample != null) {
                 // refine the hypothesis
-                learnerPhase = Learner.LearnerPhase.LEARNING;
-                start = System.nanoTime();
+                learnerPhase = LearnerService.LearnerPhase.LEARNING;
+                start = System.currentTimeMillis();
                 learner.refineHypothesis(counterexample);
-                end = System.nanoTime();
+                end = System.currentTimeMillis();
 
                 currentStep = createStep(start, end, 1, counterexample);
             } else {
@@ -345,16 +332,12 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
         this.interruptOracle.interrupt();
     }
 
-    public Learner.LearnerPhase getLearnerPhase() {
+    public LearnerService.LearnerPhase getLearnerPhase() {
         return learnerPhase;
     }
 
     public List<DefaultQueryProxy> getCurrentQueries() {
         return currentQueries;
-    }
-
-    public boolean isFinished() {
-        return finished;
     }
 
     public LearnerResult getResult() {
@@ -363,6 +346,5 @@ public abstract class AbstractLearnerThread<T extends AbstractLearnerConfigurati
 
     protected void shutdown() {
         sulOracles.forEach(ContextAwareSulOracle::shutdown);
-        finished = true;
     }
 }

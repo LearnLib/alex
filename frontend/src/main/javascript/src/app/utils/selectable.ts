@@ -14,27 +14,28 @@
  * limitations under the License.
  */
 
-import { remove } from 'lodash';
+class SelectableItem<T> {
+  constructor(public item: T, public selected: boolean = false) {
+  }
+}
 
 /**
  * Manages selectable entities.
  */
 export class Selectable<T, K> {
 
-  private selectedItems: Map<K, T> = new Map<K, T>();
+  private selectedItems: Map<K, SelectableItem<T>> = new Map();
 
   /**
    * Constructor.
    *
-   * @param items The items that can be selected.
    * @param keyFn The property by which the items can be differentiated.
    */
-  constructor(private items: T[],
-              private keyFn: (item: T) => K) {
+  constructor(private keyFn: (item: T) => K) {
   }
 
   addItem(item: T) {
-    this.items.push(item);
+    this.selectedItems.set(this.keyFn(item), new SelectableItem<T>(item));
   }
 
   addItems(items: T[]) {
@@ -42,21 +43,23 @@ export class Selectable<T, K> {
   }
 
   select(item: T) {
-    this.selectedItems.set(this.keyFn(item), item);
+    this.selectedItems.get(this.keyFn(item)).selected = true;
   }
 
   unselect(item: T) {
-    const key = this.keyFn(item);
-    this.selectedItems.delete(key);
-    remove(this.items, u => this.keyFn(u) === this.keyFn(item));
+    this.selectedItems.get(this.keyFn(item)).selected = false;
   }
 
   selectAll() {
-    this.items.forEach(item => this.select(item));
+    this.selectedItems.forEach(value => {
+      value.selected = true;
+    });
   }
 
   unselectAll() {
-    this.selectedItems.clear();
+    this.selectedItems.forEach(value => {
+      value.selected = false;
+    });
   }
 
   selectMany(items: T[]) {
@@ -65,6 +68,14 @@ export class Selectable<T, K> {
 
   unselectMany(items: T[]) {
     items.forEach(item => this.unselect(item));
+  }
+
+  remove(item: T) {
+    this.selectedItems.delete(this.keyFn(item));
+  }
+
+  removeMany(items: T[]) {
+    items.forEach(i => this.remove(i));
   }
 
   toggleSelect(item: T) {
@@ -80,11 +91,15 @@ export class Selectable<T, K> {
   }
 
   isSelected(item: T) {
-    return this.selectedItems.has(this.keyFn(item));
+    const i = this.selectedItems.get(this.keyFn(item));
+    return i == null ? false : i.selected;
   }
 
   isAnySelected() {
-    return this.selectedItems.size > 0;
+    for (let item of Array.from(this.selectedItems.values())) {
+      if (item.selected) return true;
+    }
+    return false;
   }
 
   isAnySelectedIn(items: T[]) {
@@ -92,19 +107,20 @@ export class Selectable<T, K> {
   }
 
   update(item: T) {
-    if (this.isSelected(item)) {
-      this.select(item);
-    }
+    this.selectedItems.get(this.keyFn(item)).item = item;
   }
 
   updateAll(items) {
-    this.items = items;
-    this.items.forEach(item => {
-      this.isSelected(item) ? this.select(item) : this.unselect(item);
-    });
+    items.forEach(item => this.update(item));
   }
 
   getSelected(): T[] {
-    return Array.from(this.selectedItems.values());
+    return Array.from(this.selectedItems.values())
+      .filter(i => i.selected)
+      .map(i => i.item);
+  }
+
+  clear(): void {
+    this.selectedItems = new Map<K, SelectableItem<T>>();
   }
 }

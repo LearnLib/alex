@@ -44,7 +44,7 @@ export class SymbolsViewStoreService {
 
   private groupsMap = new Map<number, SymbolGroup>();
 
-  readonly symbolsSelectable = new Selectable<AlphabetSymbol, number>([], s => s.id);
+  readonly symbolsSelectable = new Selectable<AlphabetSymbol, number>(s => s.id);
 
   readonly groupsCollapsedMap = new Map<number, boolean>();
 
@@ -270,7 +270,7 @@ export class SymbolsViewStoreService {
 
   private _deleteSymbol(symbol: AlphabetSymbol): void {
     remove(this.groupsMap.get(symbol.group).symbols, s => s.id === symbol.id);
-    this.symbolsSelectable.unselect(symbol);
+    this.symbolsSelectable.remove(symbol);
   }
 
   private _moveSymbol(symbol: AlphabetSymbol, targetGroup: SymbolGroup) {

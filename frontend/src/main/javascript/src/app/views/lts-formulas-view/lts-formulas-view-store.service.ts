@@ -35,7 +35,7 @@ export class LtsFormulasViewStoreService {
               private modalService: NgbModal,
               private appStore: AppStoreService) {
     this.formulas = new BehaviorSubject<any[]>([]);
-    this.formulasSelectable = new Selectable<any, any>([], f => f.id);
+    this.formulasSelectable = new Selectable<any, any>(f => f.id);
   }
 
   get formulas$(): Observable<any> {
@@ -77,7 +77,7 @@ export class LtsFormulasViewStoreService {
         const fs = [...this.formulas.value];
         remove(fs, f => f.id === formula.id);
         this.formulas.next(fs);
-        this.formulasSelectable.unselect(formula);
+        this.formulasSelectable.remove(formula);
       }
     );
   }
@@ -89,7 +89,7 @@ export class LtsFormulasViewStoreService {
       this.ltsFormulaApi.deleteMany(this.appStore.project.id, ids).subscribe(() => {
         const fs = [...this.formulas.value].filter(f => ids.indexOf(f.id) === -1);
         this.formulas.next(fs);
-        this.formulasSelectable.unselectMany(formulas);
+        this.formulasSelectable.removeMany(formulas);
       });
     }
   }

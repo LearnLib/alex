@@ -122,16 +122,12 @@ const routes: Routes = [
                 children: [
                   {
                     path: '',
-                    redirectTo: 'setup',
+                    component: LearnerViewComponent,
                     pathMatch: 'full'
                   },
                   {
                     path: 'setup',
                     component: LearnerSetupViewComponent
-                  },
-                  {
-                    path: 'learn',
-                    component: LearnerViewComponent
                   },
                   {
                     path: 'results',

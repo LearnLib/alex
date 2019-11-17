@@ -24,16 +24,12 @@ import de.learnlib.alex.data.entities.ParameterizedSymbol;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.ProjectEnvironment;
 import de.learnlib.alex.learning.entities.algorithms.AbstractLearningAlgorithm;
-import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachineProxy;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.entities.webdrivers.HtmlUnitDriverConfig;
-import net.automatalib.automata.transducers.MealyMachine;
-import net.automatalib.words.impl.SimpleAlphabet;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -65,6 +61,13 @@ import java.util.stream.Collectors;
 public class LearnerResult implements Serializable {
 
     private static final long serialVersionUID = 4619722174562257862L;
+
+    public enum Status {
+        PENDING,
+        IN_PROGRESS,
+        FINISHED,
+        ABORTED
+    }
 
     /** The id of the LearnerResult in the DB. */
     private Long id;
@@ -99,21 +102,10 @@ public class LearnerResult implements Serializable {
     /** A comment to describe the intention / setting of the learn process. This field is optional. */
     private String comment;
 
-    /** The hypothesis of the result. */
-    private CompactMealyMachineProxy hypothesis;
-
-    /** The statistics of the result. */
-    private Statistics statistics;
-
-    /**
-     * If this field is set some sort of error occurred during the learning. In this case this field stores more
-     * information about the error. All other field can still have data, that are valid to some extend and should only
-     * be used carefully.
-     */
-    private String errorText;
-
     /** If membership queries should be cached. */
     private boolean useMQCache;
+
+    private Status status;
 
     /** Constructor. */
     public LearnerResult() {
@@ -121,9 +113,9 @@ public class LearnerResult implements Serializable {
         this.steps = new ArrayList<>();
         this.driverConfig = new HtmlUnitDriverConfig();
         this.comment = "";
-        this.statistics = new Statistics();
         this.useMQCache = true;
         this.environments = new ArrayList<>();
+        this.status = Status.PENDING;
     }
 
     @Id
@@ -290,48 +282,10 @@ public class LearnerResult implements Serializable {
         this.comment = comment;
     }
 
-    /**
-     * The hypothesis (as proxy) which is one of the core information of the result.
-     *
-     * @return The hypothesis (as proxy) of the result.
-     */
-    @Embedded
-    @JsonProperty("hypothesis")
-    public CompactMealyMachineProxy getHypothesis() {
-        return hypothesis;
-    }
-
-    /**
-     * Set a new hypothesis (as proxy) for the result.
-     *
-     * @param hypothesis
-     *         The new hypothesis (as proxy).
-     */
-    @JsonProperty("hypothesis")
-    public void setHypothesis(CompactMealyMachineProxy hypothesis) {
-        this.hypothesis = hypothesis;
-    }
-
-    /**
-     * Set a new hypothesis (as proxy) for the result based on a MealyMachine from the LearnLib.
-     *
-     * @param mealyMachine
-     *         The new hypothesis as MealyMachine from the LearnLib.
-     */
     @Transient
     @JsonIgnore
-    public void createHypothesisFrom(MealyMachine<?, String, ?, String> mealyMachine) {
-        this.hypothesis = CompactMealyMachineProxy.createFrom(mealyMachine, new SimpleAlphabet<>(getSigma()));
-    }
-
-    @Transient
-    @JsonProperty("sigma")
     public List<String> getSigma() {
         return symbols.stream().map(ParameterizedSymbol::getComputedName).collect(Collectors.toList());
-    }
-
-    @JsonIgnore
-    public void setSigma(List<String> sigma) {
     }
 
     /**
@@ -339,41 +293,15 @@ public class LearnerResult implements Serializable {
      *
      * @return The learning statistics.
      */
-    @Embedded
+    @JsonProperty
+    @Transient
     public Statistics getStatistics() {
+        final Statistics statistics = new Statistics();
+        steps.forEach(s -> statistics.updateBy(s.getStatistics()));
+        if (!steps.isEmpty()) {
+            statistics.setStartDate(steps.get(0).getStatistics().getStartDate());
+        }
         return statistics;
-    }
-
-    /**
-     * Set a new statistics object for the learning result.
-     *
-     * @param statistics
-     *         The new statistics.
-     */
-    public void setStatistics(Statistics statistics) {
-        this.statistics = statistics;
-    }
-
-    /**
-     * Get the current error text of the learning process.
-     *
-     * @return The current error text (can be null).
-     */
-    @Column
-    @JsonProperty("errorText")
-    public String getErrorText() {
-        return errorText;
-    }
-
-    /**
-     * Set an error text as part of the learning result. If a error text is set, it also implies that something during
-     * the learning went wrong and {@link #isError()} will return True.
-     *
-     * @param errorText
-     *         The new error text.
-     */
-    public void setErrorText(String errorText) {
-        this.errorText = errorText;
     }
 
     /**
@@ -384,7 +312,7 @@ public class LearnerResult implements Serializable {
     @Transient
     @JsonProperty("error")
     public Boolean isError() {
-        return errorText != null;
+        return steps.stream().anyMatch(s -> s.getErrorText() != null);
     }
 
     /** @return {@link LearnerResult#useMQCache}. */
@@ -407,6 +335,14 @@ public class LearnerResult implements Serializable {
 
     public void setEnvironments(List<ProjectEnvironment> environments) {
         this.environments = environments;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @SuppressWarnings("checkstyle:needbraces") // Auto generated by IntelliJ

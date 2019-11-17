@@ -19,7 +19,7 @@ import { Selectable } from '../../utils/selectable';
 import { LearnerResultApiService } from '../../services/api/learner-result-api.service';
 import { ToastService } from '../../services/toast.service';
 import { LearnerResultDownloadService } from '../../services/learner-result-download.service';
-import { LearnerResult } from '../../entities/learner-result';
+import { LearnerResult, LearnerResultStatus } from '../../entities/learner-result';
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
 import { Component, OnInit } from '@angular/core';
@@ -50,13 +50,13 @@ export class LearnerResultsViewComponent implements OnInit {
               private router: Router) {
 
     this.results = [];
-    this.selectedResults = new Selectable(this.results, r => r.testNo);
+    this.selectedResults = new Selectable<LearnerResult, number>(r => r.testNo);
   }
 
   ngOnInit(): void {
     this.learnerResultApi.getAll(this.project.id).subscribe(
       results => {
-        this.results = results;
+        this.results = results.filter(r => r.status !== LearnerResultStatus.PENDING);
         this.selectedResults.addItems(this.results);
       },
       console.error
@@ -73,7 +73,7 @@ export class LearnerResultsViewComponent implements OnInit {
       () => {
         this.toastService.success('Learner result for test <strong>' + result.testNo + '</strong> deleted');
         remove(this.results, {testNo: result.testNo});
-        this.selectedResults.unselect(result);
+        this.selectedResults.remove(result);
       },
       res => {
         this.toastService.danger('<p><strong>Could not delete learner result</strong></p>' + res.error.message);
@@ -91,7 +91,7 @@ export class LearnerResultsViewComponent implements OnInit {
         () => {
           this.toastService.success('Learner results deleted');
           selectedResults.forEach(result => remove(this.results, {testNo: result.testNo}));
-          this.selectedResults.unselectAll();
+          this.selectedResults.removeMany(selectedResults);
         },
         res => {
           this.toastService.danger('<p><strong>Could not delete learner results</strong></p>' + res.error.message);

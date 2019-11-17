@@ -36,6 +36,8 @@ import de.learnlib.alex.data.rest.ProjectResource;
 import de.learnlib.alex.data.rest.SymbolGroupResource;
 import de.learnlib.alex.data.rest.SymbolParameterResource;
 import de.learnlib.alex.data.rest.SymbolResource;
+import de.learnlib.alex.learning.entities.LearnerResult;
+import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.rest.LearnerResource;
 import de.learnlib.alex.learning.rest.LearnerResultResource;
 import de.learnlib.alex.modelchecking.rest.LtsFormulaResource;
@@ -109,6 +111,9 @@ public class ALEXApplication extends ResourceConfig {
     @Inject
     private TestReportRepository testReportRepository;
 
+    @Inject
+    private LearnerResultRepository learnerResultRepository;
+
     /**
      * Constructor where the magic happens.
      */
@@ -166,6 +171,12 @@ public class ALEXApplication extends ResourceConfig {
         );
         pendingReports.forEach(r -> r.setStatus(TestReport.Status.ABORTED));
         testReportRepository.saveAll(pendingReports);
+
+        final List<LearnerResult> pendingLearnerProcesses = learnerResultRepository.findAllByStatusIn(
+                Arrays.asList(LearnerResult.Status.IN_PROGRESS, LearnerResult.Status.PENDING)
+        );
+        pendingLearnerProcesses.forEach(p -> p.setStatus(LearnerResult.Status.ABORTED));
+        learnerResultRepository.saveAll(pendingLearnerProcesses);
     }
 
     /**

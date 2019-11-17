@@ -127,14 +127,6 @@ public class Statistics implements Serializable {
     @JsonIgnore
     private ZonedDateTime startDate;
 
-    /**
-     * The 'time' the test started in nanoseconds.
-     * This is just internally user to calculate the duration and the Java value for the used 'nanoTime' has no
-     * real world meaning.
-     */
-    @JsonIgnore
-    private long startTime;
-
     /** The amount of equivalence queries. */
     private long eqsUsed;
 
@@ -152,7 +144,6 @@ public class Statistics implements Serializable {
      */
     public Statistics() {
         this.startDate = ZonedDateTime.now();
-        this.startTime = System.nanoTime();
         this.eqsUsed = 0L;
         this.duration = new DetailedStatistics();
         this.mqsUsed = new DetailedStatistics();
@@ -169,14 +160,6 @@ public class Statistics implements Serializable {
         duration.updateBy(statistics.duration);
         mqsUsed.updateBy(statistics.mqsUsed);
         symbolsUsed.updateBy(statistics.symbolsUsed);
-    }
-
-    public long getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(long startTime) {
-        this.startTime = startTime;
     }
 
     @JsonIgnore

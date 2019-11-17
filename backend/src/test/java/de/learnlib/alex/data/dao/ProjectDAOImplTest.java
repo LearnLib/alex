@@ -19,7 +19,6 @@ package de.learnlib.alex.data.dao;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.ProjectUrl;
 import de.learnlib.alex.data.repositories.ParameterizedSymbolRepository;
 import de.learnlib.alex.data.repositories.ProjectEnvironmentRepository;
 import de.learnlib.alex.data.repositories.ProjectRepository;

@@ -2,24 +2,33 @@
   <div class="card-header">
     <strong>Learner status</strong>
   </div>
-  <div class="card-body">
 
-    <div *ngIf="status == null || !status.active" class="alert alert-info mb-0">
-      The learner is not active. <a [routerLink]="['learner', 'setup']">Start learning</a> your application!
-    </div>
+  <ng-container *ngIf="status != null">
 
-    <div *ngIf="status != null && status.active" class="alert alert-warning mb-0 clearfix">
-      The learner is currently learning an application.
-      <hr>
-      <div>
-        <a class="btn btn-sm btn-warning mr-2" [routerLink]="['learner', 'learn']">
-          <i class="fas fa-eye fa-fw"></i> Show progress
-        </a>
-        <button (click)="abort()" class="btn btn-sm btn-warning">
-          <i class="fas fa-times fa-fw"></i> Abort
-        </button>
+    <div class="card-body" *ngIf="!status.active">
+      <div class="alert alert-info mb-0">
+        There is currently no active learning process.
       </div>
     </div>
 
-  </div>
+    <div class="list-group list-group-flush" *ngIf="status.active">
+      <div class="list-group-item d-flex flex-row align-items-center">
+        <a class="w-100" [routerLink]="['/app', 'projects', project.id, 'learner']"
+           [queryParams]="{testNo: status.currentProcess.result.testNo}">
+          Test {{status.currentProcess.result.testNo}}
+        </a>
+        <span class="badge badge-info p-2">
+          <i class="fas fa-fw fa-circle-notch fa-spin mr-1"></i> In progress
+        </span>
+        <button class="btn btn-sm btn-default ml-1" (click)="abort(status.currentProcess.result.testNo)">Abort</button>
+      </div>
+      <div class="list-group-item d-flex flex-row align-items-center" *ngFor="let r of status.queue">
+        <span class="w-100">Test {{r.testNo}}</span>
+        <span class="badge badge-secondary p-2" *ngIf="r.status === 'PENDING'">Pending</span>
+        <span class="badge badge-danger p-2" *ngIf="r.status === 'ABORTED'">Aborted</span>
+        <button class="btn btn-sm btn-default ml-1" (click)="abort(r.testNo)">Abort</button>
+      </div>
+    </div>
+
+  </ng-container>
 </div>

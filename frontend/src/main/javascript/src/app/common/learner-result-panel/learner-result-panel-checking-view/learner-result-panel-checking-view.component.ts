@@ -47,7 +47,7 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
               private appStore: AppStoreService,
               private ltsFormulaApi: LtsFormulaApiService) {
 
-    this.selectedFormulas = new Selectable([], (f) => f.id);
+    this.selectedFormulas = new Selectable((f) => f.id);
     this.results = {};
     this.formulas = [];
 
@@ -80,6 +80,7 @@ export class LearnerResultPanelCheckingViewComponent implements OnInit {
         projectId: this.project.id
       };
       this.formulas.unshift(formula);
+      this.selectedFormulas.addItem(formula);
       this.selectedFormulas.select(formula);
       this.manualFormula = '';
     }

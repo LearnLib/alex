@@ -42,7 +42,7 @@ export class ProjectsViewStoreService {
               private toastService: ToastService,
               private downloadService: DownloadService) {
     this.projects = new BehaviorSubject<Project[]>([]);
-    this.projectsSelectable = new Selectable<Project, number>([], p => p.id);
+    this.projectsSelectable = new Selectable<Project, number>(p => p.id);
   }
 
   get projects$(): Observable<Project[]> {
@@ -96,7 +96,7 @@ export class ProjectsViewStoreService {
             this.toastService.success(`The projects have been deleted.`);
             const ids = projects.map(p => p.id);
             this.projects.next(removeItems(this.projects.value, (p => ids.indexOf(p.id) > -1)));
-            this.projectsSelectable.unselectMany(projects);
+            this.projectsSelectable.removeMany(projects);
           },
           res => this.toastService.danger(`The projects could not be deleted. ${res.error.message}`)
         );

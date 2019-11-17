@@ -34,7 +34,7 @@ import de.learnlib.alex.learning.entities.learnlibproxies.CompactMealyMachinePro
 import de.learnlib.alex.learning.entities.learnlibproxies.eqproxies.MealyRandomWordsEQOracleProxy;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
-import de.learnlib.alex.learning.services.Learner;
+import de.learnlib.alex.learning.services.LearnerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -78,7 +78,7 @@ public class LearnerResultDAOImplTest {
     private LearnerResultStepRepository learnerResultStepRepository;
 
     @Mock
-    private Learner learner;
+    private LearnerService learnerService;
 
     @Mock
     private EntityManager entityManager;
@@ -128,13 +128,13 @@ public class LearnerResultDAOImplTest {
     public void shouldSaveAValidLearnerResultWhenItIsTheFirstResult() throws Exception {
         User user = new User();
         user.setId(USER_ID);
-        //
+
         Project project = new Project();
         project.setId(PROJECT_ID);
-        //
+
         LearnerResult result = createLearnerResultsList().get(0);
         result.setProject(project);
-        //
+
         given(learnerResultRepository.findHighestTestNo(PROJECT_ID)).willReturn(null);
         given(learnerResultRepository.save(result)).willReturn(result);
 
@@ -184,9 +184,9 @@ public class LearnerResultDAOImplTest {
     @Test(expected = ValidationException.class)
     public void shouldNotSaveALearnerResultWithATestNo() {
         User user = new User();
-        //
+
         Project project = new Project();
-        //
+
         LearnerResult result = new LearnerResult();
         result.setProject(project);
         result.setTestNo(0L);
@@ -201,9 +201,9 @@ public class LearnerResultDAOImplTest {
     @Test
     public void shouldGetAllResultsOfOneProject() throws NotFoundException {
         User user = new User();
-        //
+
         List<LearnerResult> results = createLearnerResultsList();
-        //
+
         given(learnerResultRepository.findByProject_IdOrderByTestNoAsc(PROJECT_ID))
                 .willReturn(results);
 
@@ -282,13 +282,11 @@ public class LearnerResultDAOImplTest {
 
     @Test
     public void shouldCreateAStepFromValidConfiguration() throws NotFoundException {
-        User user = new User();
-        //
         Project project = new Project();
-        //
+
         LearnerResult result = new LearnerResult();
         result.setProject(project);
-        //
+
         LearnerResumeConfiguration configuration = new LearnerResumeConfiguration();
         configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
         configuration.setMaxAmountOfStepsToLearn(-1);
@@ -331,13 +329,13 @@ public class LearnerResultDAOImplTest {
         configuration.setEqOracle(EXAMPLE_EQ_ORACLE);
         configuration.setMaxAmountOfStepsToLearn(-1);
         LearnerResultStep step = learnerResultDAO.createStep(result, configuration);
-        //
+
         Statistics statistics = new Statistics();
         statistics.setEqsUsed(1L);
         statistics.setDuration(detailedStatistics);
         statistics.setMqsUsed(detailedStatistics);
         statistics.setSymbolsUsed(detailedStatistics);
-        //
+
         CompactMealyMachineProxy hypothesis = mock(CompactMealyMachineProxy.class);
         step.setHypothesis(hypothesis);
         step.setStatistics(statistics);
@@ -345,11 +343,6 @@ public class LearnerResultDAOImplTest {
         learnerResultDAO.saveStep(result, step);
 
         verify(learnerResultStepRepository, times(1)).save(step);
-        assertThat(result.getHypothesis(), is(equalTo(hypothesis)));
-        assertThat(result.getStatistics().getEqsUsed(), is(equalTo(1L)));
-        assertThat(result.getStatistics().getDuration(), is(equalTo(detailedStatistics)));
-        assertThat(result.getStatistics().getMqsUsed(), is(equalTo(detailedStatistics)));
-        assertThat(result.getStatistics().getSymbolsUsed(), is(equalTo(detailedStatistics)));
     }
 
     @Test
@@ -357,10 +350,9 @@ public class LearnerResultDAOImplTest {
         List<Long> testNos = Arrays.asList(0L, 1L);
         LearnerStatus status = new LearnerStatus();
 
-        given(learner.getStatus(PROJECT_ID)).willReturn(status);
         given(learnerResultRepository.deleteByProject_IdAndTestNoIn(PROJECT_ID, testNos)).willReturn(2L);
 
-        learnerResultDAO.delete(learner, PROJECT_ID, testNos);
+        learnerResultDAO.delete(learnerService, PROJECT_ID, testNos);
 
         verify(learnerResultRepository).deleteByProject_IdAndTestNoIn(PROJECT_ID, testNos);
     }
@@ -370,26 +362,9 @@ public class LearnerResultDAOImplTest {
         List<Long> testNos = Arrays.asList(0L, 1L);
         LearnerStatus status = new LearnerStatus();
 
-        given(learner.getStatus(PROJECT_ID)).willReturn(status);
         given(learnerResultRepository.deleteByProject_IdAndTestNoIn(PROJECT_ID, testNos)).willReturn(1L);
 
-        learnerResultDAO.delete(learner, PROJECT_ID, testNos);
-    }
-
-    @Test(expected = ValidationException.class)
-    public void shouldThrowAnExceptionIfTheTestResultToDeleteIsActive() throws NotFoundException {
-        Project project = new Project();
-        project.setId(PROJECT_ID);
-
-        LearnerResult result = new LearnerResult();
-        result.setProject(project);
-        result.setTestNo(0L);
-        List<Long> testNos = Arrays.asList(0L, 1L);
-
-        LearnerStatus status = new LearnerStatus(result, Learner.LearnerPhase.LEARNING, new ArrayList<>());
-        given(learner.getStatus(PROJECT_ID)).willReturn(status);
-
-        learnerResultDAO.delete(learner, PROJECT_ID, testNos); // should fail
+        learnerResultDAO.delete(learnerService, PROJECT_ID, testNos);
     }
 
     private List<LearnerResult> createLearnerResultsList() throws NotFoundException {

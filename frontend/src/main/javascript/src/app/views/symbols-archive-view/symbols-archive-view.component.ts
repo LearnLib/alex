@@ -48,7 +48,7 @@ export class SymbolsArchiveViewComponent implements OnInit {
               private modalService: NgbModal) {
 
     this.symbols = [];
-    this.selectedSymbols = new Selectable(this.symbols, s => s.id);
+    this.selectedSymbols = new Selectable<AlphabetSymbol, number>(s => s.id);
   }
 
   get project(): Project {
@@ -78,7 +78,7 @@ export class SymbolsArchiveViewComponent implements OnInit {
     this.symbolApi.recover(symbol).subscribe(
       () => {
         this.toastService.success('Symbol ' + symbol.name + ' recovered');
-        this.selectedSymbols.unselect(symbol);
+        this.selectedSymbols.remove(symbol);
         remove(this.symbols, {id: symbol.id});
       },
       res => {
@@ -101,7 +101,7 @@ export class SymbolsArchiveViewComponent implements OnInit {
       () => {
         this.toastService.success('Symbols recovered');
         selectedSymbols.forEach(symbol => remove(this.symbols, {id: symbol.id}));
-        this.selectedSymbols.unselectAll();
+        this.selectedSymbols.removeMany(selectedSymbols);
       },
       res => {
         this.toastService.danger('<p><strong>Error recovering symbols!</strong></p>' + res.error.message);
@@ -133,7 +133,7 @@ export class SymbolsArchiveViewComponent implements OnInit {
     this.symbolApi.delete(symbol).subscribe(
       () => {
         this.toastService.success('The symbol has been deleted permanently.');
-        this.selectedSymbols.unselect(symbol);
+        this.selectedSymbols.remove(symbol);
         remove(this.symbols, {id: symbol.id});
       },
       res => this.toastService.danger(`The symbol could be deleted permanently. ${res.error.message}`)
@@ -150,7 +150,7 @@ export class SymbolsArchiveViewComponent implements OnInit {
     this.symbolApi.deleteMany(this.project.id, symbols).subscribe(
       () => {
         this.toastService.success('The symbols have been deleted.');
-        this.selectedSymbols.unselectAll();
+        this.selectedSymbols.removeMany(symbols);
         symbols.forEach(s1 => remove(this.symbols, s2 => s2.id === s1.id));
       },
       res => {

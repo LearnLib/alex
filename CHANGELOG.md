@@ -27,6 +27,7 @@
 * Import and export for projects
 * Specify default test configurations
 * Multiple pre and post steps for test cases
+* Queue test and learn processes
 
 # ALEX 1.7.2
 

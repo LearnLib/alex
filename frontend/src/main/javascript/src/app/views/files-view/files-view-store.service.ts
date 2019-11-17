@@ -36,7 +36,7 @@ export class FilesViewStoreService {
               private toastService: ToastService) {
     this.files = new BehaviorSubject<UploadableFile[]>([]);
     this.filesToUpload = new Map();
-    this.filesSelectable = new Selectable<UploadableFile, number>([], f => f.id);
+    this.filesSelectable = new Selectable<UploadableFile, number>(f => f.id);
   }
 
   get noFilesToUploadOrOnlyErrors(): boolean {
@@ -71,7 +71,7 @@ export class FilesViewStoreService {
       () => {
         this.toastService.success(`File "${file.name}" has been deleted.`);
         this.files.next(removeItems(this.files.value, f => f.id === file.id));
-        this.filesSelectable.unselect(file);
+        this.filesSelectable.remove(file);
       },
       res => {
         this.toastService.danger(`The file could not be deleted. ${res.error.message}`);
@@ -92,7 +92,7 @@ export class FilesViewStoreService {
           const ids = selectedFiles.map(f => f.id);
           this.toastService.success(`The files have been deleted.`);
           this.files.next(removeItems(this.files.value, f => ids.indexOf(f.id) > -1));
-          this.filesSelectable.unselectMany(selectedFiles);
+          this.filesSelectable.removeMany(selectedFiles);
         },
         res => {
           this.toastService.danger(`The files could not be deleted. ${res.error.message}`);

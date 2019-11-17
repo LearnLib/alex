@@ -42,7 +42,7 @@ export class AdminUsersViewStoreService {
               private toastService: ToastService,
               private promptService: PromptService) {
     this.users = new BehaviorSubject<User[]>([]);
-    this.usersSelectable = new Selectable<User, number>([], u => u.id);
+    this.usersSelectable = new Selectable<User, number>(u => u.id);
   }
 
   get currentUser(): User {
@@ -85,7 +85,7 @@ export class AdminUsersViewStoreService {
     });
     modalRef.componentInstance.deleted.subscribe(user => {
       this.users.next(removeItems(this.users.value, u => u.id === user.id));
-      this.usersSelectable.unselect(user);
+      this.usersSelectable.remove(user);
     });
     modalRef.result
       .then(() => {
@@ -111,7 +111,7 @@ export class AdminUsersViewStoreService {
           () => {
             this.toastService.success('The users have been deleted');
             this.users.next(removeItems(this.users.value, (u => ids.indexOf(u.id) > -1)));
-            this.usersSelectable.unselectMany(users);
+            this.usersSelectable.removeMany(users);
           },
           res => {
             this.toastService.danger(`Deleting failed! ${res.error.message}`);
