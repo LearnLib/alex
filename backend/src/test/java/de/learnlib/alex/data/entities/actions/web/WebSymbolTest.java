@@ -16,26 +16,19 @@
 
 package de.learnlib.alex.data.entities.actions.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.data.entities.ExecuteResult;
 import de.learnlib.alex.data.entities.Project;
-import de.learnlib.alex.data.entities.PropertyFilterMixIn;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolActionStep;
 import de.learnlib.alex.data.entities.SymbolGroup;
 import de.learnlib.alex.data.entities.actions.misc.WaitAction;
 import de.learnlib.alex.learning.services.connectors.ConnectorManager;
-import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.File;
 import java.io.IOException;
@@ -113,28 +106,6 @@ public class WebSymbolTest {
         assertEquals(symbol.getId(), symbolFromMapper.getId());
         assertEquals(symbol.getName(), symbolFromMapper.getName());
         assertEquals(symbol.getGroupId(), symbolFromMapper.getGroupId());
-    }
-
-    @Test
-    public void ensureThatSerializingASymbolWithoutProjectDoesNotCrash() throws JsonProcessingException, JSONException {
-        String expectedJson = "{\"steps\":" + createActionSteps(symbol.getId()) + ",\"description\":\"\",\"expectedResult\":\"\",\"group\":2,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":null,\"successOutput\":null}";
-        symbol.setProject(null);
-
-        mapper.addMixIn(Object.class, PropertyFilterMixIn.class);
-
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("hidden");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("filter properties by name", filter);
-
-        String json = mapper.writer(filters).writeValueAsString(symbol);
-        JSONAssert.assertEquals(expectedJson, json, true);
-    }
-
-    @Test
-    public void ensureThatSerializingCreatesTheRightJSON() throws JsonProcessingException, JSONException {
-        String expectedJson = "{\"steps\":" + createActionSteps(symbol.getId()) + ",\"description\":\"\",\"expectedResult\":\"\",\"group\":2,\"hidden\":false,\"id\":null,\"inputs\":[],\"name\":\"WebSymbol\",\"outputs\":[],\"project\":1,\"successOutput\":null}";
-        String json = mapper.writeValueAsString(symbol);
-
-        JSONAssert.assertEquals(expectedJson, json, true);
     }
 
     @Test

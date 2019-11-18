@@ -57,6 +57,7 @@ import javax.inject.Inject;
 import javax.validation.ValidationException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -420,6 +421,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbolInDb.setName(symbol.getName());
         symbolInDb.setDescription(symbol.getDescription());
         symbolInDb.setExpectedResult(symbol.getExpectedResult());
+        symbolInDb.setUpdatedOn(ZonedDateTime.now());
 
         // update steps
         if (symbol.getSteps().isEmpty()) {

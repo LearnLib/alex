@@ -57,6 +57,8 @@ export class AlphabetSymbol {
   /** The expected result of the symbol. */
   public expectedResult: string;
 
+  public updatedOn: Date;
+
   /**
    * Constructor.
    *
@@ -71,6 +73,7 @@ export class AlphabetSymbol {
     this.successOutput = obj.successOutput;
     this.inputs = obj.inputs || [];
     this.outputs = obj.outputs || [];
+    this.updatedOn = obj.updatedOn == null ? null : new Date(obj.updatedOn);
 
     this.steps = obj.steps ? obj.steps.map(step => {
       if (step.type === 'symbol') {

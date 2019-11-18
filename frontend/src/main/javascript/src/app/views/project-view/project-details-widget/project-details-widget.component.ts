@@ -25,42 +25,8 @@ import { SymbolGroupUtils } from '../../../utils/symbol-group-utils';
   templateUrl: './project-details-widget.component.html',
   styleUrls: ['./project-details-widget.component.scss']
 })
-export class ProjectDetailsWidgetComponent implements OnInit {
+export class ProjectDetailsWidgetComponent {
 
   @Input()
   project: Project;
-
-  /** The number of symbol groups of the project. */
-  numberOfGroups: number = null;
-
-  /** The number of visible symbols of the project. */
-  numberOfSymbols: number = null;
-
-  /** The number of persisted test runs in the database. */
-  numberOfTests: number = null;
-
-  /**
-   * Constructor.
-   *
-   * @param symbolGroupApi
-   * @param learnerResultApi
-   */
-  constructor(private symbolGroupApi: SymbolGroupApiService,
-              private learnerResultApi: LearnerResultApiService) {
-  }
-
-  ngOnInit(): void {
-    this.symbolGroupApi.getAll(this.project.id).subscribe(
-      groups => {
-        this.numberOfGroups = groups.length;
-        this.numberOfSymbols = SymbolGroupUtils.getSymbols(groups).length;
-      },
-      console.error
-    );
-
-    this.learnerResultApi.getAll(this.project.id).subscribe(
-      results => this.numberOfTests = results.length,
-      console.error
-    );
-  }
 }

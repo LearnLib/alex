@@ -19,6 +19,7 @@ package de.learnlib.alex.learning.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.common.Constants;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -28,7 +29,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /** Embeddable statistics object that contains statistics related to a learning experiment. */
@@ -37,9 +37,6 @@ import java.util.Objects;
 public class Statistics implements Serializable {
 
     private static final long serialVersionUID = -5221139436025380739L;
-
-    /** Standard DateTimeFormatter that will create a nice ISO 8160 string with milliseconds and a time zone. */
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
 
     /** Sub Statistics class to store information by Learner and EqOracle. */
     @Embeddable
@@ -175,7 +172,7 @@ public class Statistics implements Serializable {
     @Transient
     @JsonProperty("startDate")
     public String getStartDateAsString() {
-        return startDate.format(DATE_TIME_FORMATTER);
+        return startDate.format(Constants.DATE_TIME_FORMATTER);
     }
 
     @JsonProperty("startDate")

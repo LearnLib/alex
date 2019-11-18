@@ -111,6 +111,7 @@ public class SymbolResourceIT extends AbstractResourceIT {
         final String symbolRes = res1.readEntity(String.class);
         final JsonNode symbolNode = objectMapper.readTree(symbolJson);
         ((ObjectNode) symbolNode).put("id", objectMapper.readTree(symbolRes).get("id").intValue());
+        ((ObjectNode) symbolNode).put("updatedOn", objectMapper.readTree(symbolRes).get("updatedOn").asText());
         JSONAssert.assertEquals(symbolNode.toString(), symbolRes, true);
 
         final Response res2 = symbolApi.getAll(projectId1, jwtUser1);

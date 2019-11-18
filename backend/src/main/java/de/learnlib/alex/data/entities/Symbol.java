@@ -19,6 +19,7 @@ package de.learnlib.alex.data.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import de.learnlib.alex.common.Constants;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.SearchHelper;
 import de.learnlib.alex.data.entities.actions.misc.CreateLabelAction;
@@ -44,6 +45,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,6 +104,10 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     /** The list of output variables. */
     private List<SymbolOutputParameter> outputs;
 
+    /** The date when the symbol was updated the last time. */
+    @JsonIgnore
+    private ZonedDateTime updatedOn;
+
     /** Constructor. */
     public Symbol() {
         this.inputs = new ArrayList<>();
@@ -110,6 +116,7 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
         this.expectedResult = "";
         this.description = "";
         this.hidden = false;
+        this.updatedOn = ZonedDateTime.now();
     }
 
     /**
@@ -342,6 +349,25 @@ public class Symbol implements ContextExecutableInput<ExecuteResult, ConnectorMa
     @JsonProperty
     public void setSteps(List<SymbolStep> steps) {
         this.steps = steps;
+    }
+
+    public ZonedDateTime getUpdatedOn() {
+        return updatedOn;
+    }
+
+    public void setUpdatedOn(ZonedDateTime updatedOn) {
+        this.updatedOn = updatedOn;
+    }
+
+    @Transient
+    @JsonProperty("updatedOn")
+    public String getUpdatedOnString() {
+        return updatedOn.format(Constants.DATE_TIME_FORMATTER);
+    }
+
+    @JsonProperty("updatedOn")
+    public void setUpdatedOnString(String updatedOnString) {
+        this.updatedOn = updatedOnString == null ? ZonedDateTime.now() : ZonedDateTime.parse(updatedOnString);
     }
 
     @Override

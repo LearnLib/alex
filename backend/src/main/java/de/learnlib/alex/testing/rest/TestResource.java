@@ -55,6 +55,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -250,10 +251,6 @@ public class TestResource {
 
         test.setProjectId(projectId);
 
-        // if a test case is updated by a user remove generated flag
-        if (test instanceof TestCase) {
-            ((TestCase) test).setGenerated(false);
-        }
         testDAO.update(user, test);
 
         webhookService.fireEvent(user, new TestEvent.Updated(test));

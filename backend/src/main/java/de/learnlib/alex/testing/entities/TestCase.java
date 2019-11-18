@@ -16,8 +16,10 @@
 
 package de.learnlib.alex.testing.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import de.learnlib.alex.common.Constants;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -27,6 +29,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.Transient;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +74,10 @@ public class TestCase extends Test {
 
     private boolean generated;
 
+    /** The date when the symbol was updated the last time. */
+    @JsonIgnore
+    private ZonedDateTime updatedOn;
+
     /** Constructor. */
     public TestCase() {
         super();
@@ -78,6 +85,7 @@ public class TestCase extends Test {
         this.preSteps = new ArrayList<>();
         this.postSteps = new ArrayList<>();
         this.generated = false;
+        this.updatedOn = ZonedDateTime.now();
     }
 
     @OneToMany(
@@ -156,6 +164,25 @@ public class TestCase extends Test {
 
     public void setGenerated(boolean generated) {
         this.generated = generated;
+    }
+
+    public ZonedDateTime getUpdatedOn() {
+        return updatedOn;
+    }
+
+    public void setUpdatedOn(ZonedDateTime updatedOn) {
+        this.updatedOn = updatedOn;
+    }
+
+    @Transient
+    @JsonProperty("updatedOn")
+    public String getUpdatedOnString() {
+        return updatedOn.format(Constants.DATE_TIME_FORMATTER);
+    }
+
+    @JsonProperty("updatedOn")
+    public void setUpdatedOnString(String updatedOnString) {
+        this.updatedOn = updatedOnString == null ? ZonedDateTime.now() : ZonedDateTime.parse(updatedOnString);
     }
 
     public boolean behavesLike(TestCase testCase) {

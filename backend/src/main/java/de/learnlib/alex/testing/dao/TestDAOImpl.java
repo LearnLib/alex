@@ -47,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
+import java.time.ZonedDateTime;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -316,6 +317,9 @@ public class TestDAOImpl implements TestDAO {
 
     private void updateTestCase(User user, TestCase testCase, Project project) throws NotFoundException {
         beforeSaving(user, testCase, project);
+
+        testCase.setGenerated(false);
+        testCase.setUpdatedOn(ZonedDateTime.now());
 
         final List<Long> allStepIds = new ArrayList<>(); // all ids that still exist in the db
         allStepIds.addAll(getStepsWithIds(testCase.getPreSteps()));

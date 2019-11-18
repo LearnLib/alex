@@ -31,11 +31,14 @@
             <i class="fas fa-fw fa-level-up-alt"></i>
           </a>
         </div>
-        <h4 class="w-100 m-0">
-          <strong>
-            <i class="fas fa-fw fa-file"></i> {{testCase.name}}
-          </strong>
-        </h4>
+        <div class="w-100 ml-2">
+          <h4 class="m-0">
+            <strong>
+              {{testCase.name}}
+            </strong>
+          </h4>
+          <small class="text-muted">Updated: {{testCase.updatedOn | date : 'EEE, dd.MM.yyyy, HH:mm'}}</small>
+        </div>
         <div>
           <div class="btn-group btn-group-sm" ngbDropdown>
             <button class="btn btn-default" ngbDropdownToggle type="button">
