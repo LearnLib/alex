@@ -32,6 +32,8 @@ import { TestConfigModalComponent } from '../tests-view/test-config-modal/test-c
 import { TestConfigApiService } from '../../services/api/test-config-api.service';
 import { TestQueueItem, TestReportStatus } from '../../entities/test-status';
 import { TestReportApiService } from '../../services/api/test-report-api.service';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'test-case-view',
@@ -111,16 +113,19 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
     window.clearTimeout(this.pollHandle);
   }
 
+  private saveTest(): Observable<any> {
+    const test = JSON.parse(JSON.stringify(this.testCase));
+    return this.testApi.update(test).pipe(
+      tap((updatedTestCase : any) => this.testCase = updatedTestCase)
+    );
+  }
+
   /**
    * Save the state of the test case.
    */
   save(): void {
-    const test = JSON.parse(JSON.stringify(this.testCase));
-    this.testApi.update(test).subscribe(
-      updatedTestCase => {
-        this.toastService.success('The test case has been updated.');
-        this.testCase = updatedTestCase;
-      },
+    this.saveTest().subscribe(
+      () => this.toastService.success('The test case has been updated.'),
       res => this.toastService.danger('The test case could not be updated. ' + res.error.message)
     );
   }
@@ -134,17 +139,21 @@ export class TestCaseViewComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const config = JSON.parse(JSON.stringify(this.testConfig));
-    config.tests = [this.testCase.id];
-    config.environment = config.environment.id;
+    this.saveTest().subscribe(
+      () => {
+        const config = JSON.parse(JSON.stringify(this.testConfig));
+        config.tests = [this.testCase.id];
+        config.environment = config.environment.id;
 
-    this.testApi.executeMany(this.project.id, config).subscribe(
-      data => {
-        this.currentTestRun = data;
-        this.pollForResult();
-      },
-      res => {
-        this.toastService.info('The test case could not be executed. ' + res.error.message);
+        this.testApi.executeMany(this.project.id, config).subscribe(
+          data => {
+            this.currentTestRun = data;
+            this.pollForResult();
+          },
+          res => {
+            this.toastService.info('The test case could not be executed. ' + res.error.message);
+          }
+        );
       }
     );
   }
