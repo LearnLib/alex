@@ -17,8 +17,6 @@
 package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.dao.SymbolDAO;
 import de.learnlib.alex.data.entities.Symbol;
 import de.learnlib.alex.data.entities.SymbolUsageResult;
@@ -27,51 +25,49 @@ import de.learnlib.alex.data.entities.export.SymbolsExportConfig;
 import de.learnlib.alex.data.events.SymbolEvent;
 import de.learnlib.alex.data.services.SymbolUsageService;
 import de.learnlib.alex.data.services.export.SymbolsExporter;
+import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * REST API to manage the symbols.
  */
-@Path("/projects/{projectId}/symbols")
-@RolesAllowed({"REGISTERED"})
+@RestController
+@RequestMapping("/rest/projects/{projectId}/symbols")
 public class SymbolResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** The security context containing the user of the request. */
-    @Context
-    private SecurityContext securityContext;
-
+    private AuthContext authContext;
     private WebhookService webhookService;
     private SymbolDAO symbolDAO;
     private SymbolUsageService symbolUsageService;
     private SymbolsExporter symbolExporter;
 
-    @Inject
-    public SymbolResource(WebhookService webhookService,
+    @Autowired
+    public SymbolResource(AuthContext authContext,
+                          WebhookService webhookService,
                           SymbolDAO symbolDAO,
                           SymbolUsageService symbolUsageService,
                           SymbolsExporter symbolExporter) {
+        this.authContext = authContext;
         this.webhookService = webhookService;
         this.symbolDAO = symbolDAO;
         this.symbolUsageService = symbolUsageService;
@@ -87,17 +83,18 @@ public class SymbolResource {
      *         The symbol to add.
      * @return On success the added symbol (enhanced with information from the DB); An error message on failure.
      */
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createSymbol(@PathParam("projectId") Long projectId, Symbol symbol) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity createSymbol(@PathVariable("projectId") Long projectId, @RequestBody Symbol symbol) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("createSymbol({}, {}) for user {}.", projectId, symbol, user);
 
         final Symbol createdSymbol = symbolDAO.create(user, projectId, symbol);
         LOGGER.traceExit(createdSymbol);
         webhookService.fireEvent(user, new SymbolEvent.Created(createdSymbol));
-        return Response.status(Status.CREATED).entity(createdSymbol).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdSymbol);
     }
 
     /**
@@ -109,18 +106,19 @@ public class SymbolResource {
      *         The symbols to add.
      * @return On success the added symbols (enhanced with information from the DB); An error message on failure.
      */
-    @POST
-    @Path("/batch")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createSymbols(@PathParam("projectId") Long projectId, List<Symbol> symbols) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/batch",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity createSymbols(@PathVariable("projectId") Long projectId, @RequestBody List<Symbol> symbols) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("createSymbols({}, {}) for user {}.", projectId, symbols, user);
 
         final List<Symbol> createdSymbols = symbolDAO.create(user, projectId, symbols);
         LOGGER.traceExit(createdSymbols);
         webhookService.fireEvent(user, new SymbolEvent.CreatedMany(createdSymbols));
-        return Response.status(Status.CREATED).entity(createdSymbols).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdSymbols);
     }
 
     /**
@@ -130,16 +128,17 @@ public class SymbolResource {
      *         The ID of the project.
      * @return A list of all Symbols belonging to the project. This list can be empty.
      */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("projectId") Long projectId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getAll(@PathVariable("projectId") Long projectId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("getAll({}, {}) for user {}.", projectId, user);
 
         final List<Symbol> symbols = symbolDAO.getAll(user, projectId);
 
         LOGGER.traceExit(symbols);
-        return Response.ok(symbols).build();
+        return ResponseEntity.ok(symbols);
     }
 
     /**
@@ -151,17 +150,18 @@ public class SymbolResource {
      *         The non empty list of symbol ids.
      * @return A list of the symbols whose ids were given
      */
-    @GET
-    @Path("/batch/{symbolIds}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getByIds(@PathParam("projectId") Long projectId, @PathParam("symbolIds") IdsList symbolIds) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/batch/{symbolIds}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getByIds(@PathVariable("projectId") Long projectId, @PathVariable("symbolIds") List<Long> symbolIds) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("getByIds({}, {}) for user {}.", projectId, symbolIds, user);
 
         final List<Symbol> symbols = symbolDAO.getByIds(user, projectId, symbolIds);
 
         LOGGER.traceExit(symbols);
-        return Response.ok(symbols).build();
+        return ResponseEntity.ok(symbols);
     }
 
     /**
@@ -171,32 +171,34 @@ public class SymbolResource {
      *         The ID of the project.
      * @param symbolId
      *         The ID of the symbol.
-     * @return A Symbol matching the projectID & ID or a not found response.
+     * @return A Symbol matching the projectID & ID or a not found ResponseEntity.
      */
-    @GET
-    @Path("/{symbolId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("projectId") Long projectId, @PathParam("symbolId") Long symbolId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/{symbolId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity get(@PathVariable("projectId") Long projectId, @PathVariable("symbolId") Long symbolId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("get({}, {})  for user {}.", projectId, symbolId, user);
 
         final Symbol symbol = symbolDAO.get(user, projectId, symbolId);
 
         LOGGER.traceExit(symbol);
-        return Response.ok(symbol).build();
+        return ResponseEntity.ok(symbol);
     }
 
-    @GET
-    @Path("/{symbolId}/usages")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getUsages(@PathParam("projectId") Long projectId, @PathParam("symbolId") Long symbolId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/{symbolId}/usages",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getUsages(@PathVariable("projectId") Long projectId, @PathVariable("symbolId") Long symbolId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("getUsages({}, {})  for user {}.", projectId, symbolId, user);
 
         final SymbolUsageResult result = symbolUsageService.findUsages(user, projectId, symbolId);
 
         LOGGER.traceExit();
-        return Response.ok(result).build();
+        return ResponseEntity.ok(result);
     }
 
     /**
@@ -210,19 +212,22 @@ public class SymbolResource {
      *         The new symbol data.
      * @return On success the updated symbol (maybe enhanced with information from the DB); An error message on failure.
      */
-    @PUT
-    @Path("/{symbolId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("projectId") Long projectId, @PathParam("symbolId") Long symbolId, Symbol symbol) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PutMapping(
+            value = "/{symbolId}",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity update(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("symbolId") Long symbolId,
+                                 @RequestBody Symbol symbol) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("update({}, {}, {}) for user {}.", projectId, symbolId, symbol, user);
 
         final Symbol updatedSymbol = symbolDAO.update(user, projectId, symbol);
 
         LOGGER.traceExit(updatedSymbol);
         webhookService.fireEvent(user, new SymbolEvent.Updated(updatedSymbol));
-        return Response.ok(updatedSymbol).build();
+        return ResponseEntity.ok(updatedSymbol);
     }
 
     /**
@@ -236,20 +241,21 @@ public class SymbolResource {
      *         The ID of the new group.
      * @return On success the moved symbol (enhanced with information from the DB); An error message on failure.
      */
-    @PUT
-    @Path("/{symbolId}/moveTo/{groupId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response moveSymbolToGroup(@PathParam("projectId") Long projectId,
-                                      @PathParam("symbolId") Long symbolId,
-                                      @PathParam("groupId") Long groupId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PutMapping(
+            value = "/{symbolId}/moveTo/{groupId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity moveSymbolToGroup(@PathVariable("projectId") Long projectId,
+                                            @PathVariable("symbolId") Long symbolId,
+                                            @PathVariable("groupId") Long groupId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolId, groupId, user);
 
         final Symbol movedSymbol = symbolDAO.move(user, projectId, symbolId, groupId);
 
         LOGGER.traceExit(movedSymbol);
         webhookService.fireEvent(user, new SymbolEvent.Updated(movedSymbol));
-        return Response.ok(movedSymbol).build();
+        return ResponseEntity.ok(movedSymbol);
     }
 
     /**
@@ -263,20 +269,21 @@ public class SymbolResource {
      *         The ID of the new group.
      * @return On success the moved symbols (enhanced with information from the DB); An error message on failure.
      */
-    @PUT
-    @Path("/batch/{symbolIds}/moveTo/{groupId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response moveSymbolsToGroup(@PathParam("projectId") Long projectId,
-                                       @PathParam("symbolIds") IdsList symbolIds,
-                                       @PathParam("groupId") Long groupId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PutMapping(
+            value = "/batch/{symbolIds}/moveTo/{groupId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity moveSymbolsToGroup(@PathVariable("projectId") Long projectId,
+                                             @PathVariable("symbolIds") List<Long> symbolIds,
+                                             @PathVariable("groupId") Long groupId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("moveSymbolToAnotherGroup({}, {}, {}) for user {}.", projectId, symbolIds, groupId, user);
 
         final List<Symbol> movedSymbols = symbolDAO.move(user, projectId, symbolIds, groupId);
 
         LOGGER.traceExit(movedSymbols);
         webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(movedSymbols));
-        return Response.ok(movedSymbols).build();
+        return ResponseEntity.ok(movedSymbols);
     }
 
     /**
@@ -288,18 +295,19 @@ public class SymbolResource {
      *         The ID of the symbol to hide.
      * @return On success no content will be returned; an error message on failure.
      */
-    @POST
-    @Path("/{symbolId}/hide")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response hide(@PathParam("projectId") Long projectId, @PathParam("symbolId") Long symbolId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/{symbolId}/hide",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity hide(@PathVariable("projectId") Long projectId, @PathVariable("symbolId") Long symbolId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, symbolId, user);
 
         final Symbol archivedSymbol = symbolDAO.hide(user, projectId, Collections.singletonList(symbolId)).get(0);
 
         LOGGER.traceExit(archivedSymbol);
         webhookService.fireEvent(user, new SymbolEvent.Updated(archivedSymbol));
-        return Response.ok(archivedSymbol).build();
+        return ResponseEntity.ok(archivedSymbol);
     }
 
     /**
@@ -311,17 +319,18 @@ public class SymbolResource {
      *         The ID of the symbol.
      * @return 204 No content if the symbol could be deleted.
      */
-    @DELETE
-    @Path("/{symbolId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") Long projectId, @PathParam("symbolId") Long symbolId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @DeleteMapping(
+            value = "/{symbolId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("projectId") Long projectId, @PathVariable("symbolId") Long symbolId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("delete symbol ({}, {}) for user {}.", projectId, symbolId, user);
 
         symbolDAO.delete(user, projectId, symbolId);
         LOGGER.traceExit("deleted symbol {}", symbolId);
         webhookService.fireEvent(user, new SymbolEvent.Deleted(symbolId));
-        return Response.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -333,17 +342,18 @@ public class SymbolResource {
      *         The IDs of the symbols to delete.
      * @return 204 on success.
      */
-    @DELETE
-    @Path("/batch/{symbolIds}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") Long projectId, @PathParam("symbolIds") IdsList symbolIds) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @DeleteMapping(
+            value = "/batch/{symbolIds}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("projectId") Long projectId, @PathVariable("symbolIds") List<Long> symbolIds) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("delete symbols ({}, {}) for user {}.", projectId, symbolIds, user);
 
         symbolDAO.delete(user, projectId, symbolIds);
         LOGGER.traceExit("deleted symbols {}", symbolIds);
         webhookService.fireEvent(user, new SymbolEvent.DeletedMany(symbolIds));
-        return Response.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -355,18 +365,19 @@ public class SymbolResource {
      *         The IDs of the symbols to hide.
      * @return On success no content will be returned; an error message on failure..
      */
-    @POST
-    @Path("/batch/{ids}/hide")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response hide(@PathParam("projectId") long projectId, @PathParam("ids") IdsList ids) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/batch/{ids}/hide",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity hide(@PathVariable("projectId") Long projectId, @PathVariable("ids") List<Long> ids) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("hide({}, {}) for user {}.", projectId, ids, user);
 
         final List<Symbol> archivedSymbols = symbolDAO.hide(user, projectId, ids);
 
         LOGGER.traceExit(archivedSymbols);
         webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(archivedSymbols));
-        return Response.ok(archivedSymbols).build();
+        return ResponseEntity.ok(archivedSymbols);
     }
 
     /**
@@ -378,11 +389,12 @@ public class SymbolResource {
      *         The ID of the symbol to show.
      * @return On success no content will be returned; an error message on failure.
      */
-    @POST
-    @Path("/{symbolId}/show")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response show(@PathParam("projectId") long projectId, @PathParam("symbolId") Long symbolId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/{symbolId}/show",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity show(@PathVariable("projectId") Long projectId, @PathVariable("symbolId") Long symbolId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("show({}, {}) for user {}.", projectId, symbolId, user);
 
         symbolDAO.show(user, projectId, Collections.singletonList(symbolId));
@@ -390,7 +402,7 @@ public class SymbolResource {
 
         LOGGER.traceExit(symbol);
         webhookService.fireEvent(user, new SymbolEvent.Updated(symbol));
-        return Response.ok(symbol).build();
+        return ResponseEntity.ok(symbol);
     }
 
     /**
@@ -402,11 +414,12 @@ public class SymbolResource {
      *         The IDs of the symbols to show.
      * @return On success no content will be returned; an error message on failure.
      */
-    @POST
-    @Path("/batch/{symbolIds}/show")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response show(@PathParam("projectId") long projectId, @PathParam("symbolIds") IdsList symbolIds) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/batch/{symbolIds}/show",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity show(@PathVariable("projectId") Long projectId, @PathVariable("symbolIds") List<Long> symbolIds) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("show({}, {}) for user {}.", projectId, symbolIds, user);
 
         symbolDAO.show(user, projectId, symbolIds);
@@ -414,7 +427,7 @@ public class SymbolResource {
 
         LOGGER.traceExit(symbols);
         webhookService.fireEvent(user, new SymbolEvent.UpdatedMany(symbols));
-        return Response.ok(symbols).build();
+        return ResponseEntity.ok(symbols);
     }
 
     /**
@@ -428,12 +441,14 @@ public class SymbolResource {
      * @throws Exception
      *         If something goes wrong.
      */
-    @POST
-    @Path("/export")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response export(@PathParam("projectId") long projectId, SymbolsExportConfig config) throws Exception {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/export",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity export(@PathVariable("projectId") Long projectId,
+                                 @RequestBody SymbolsExportConfig config) throws Exception {
+        final User user = authContext.getUser();
         final ExportableEntity symbols = symbolExporter.export(user, projectId, config);
-        return Response.ok(symbols).build();
+        return ResponseEntity.ok(symbols);
     }
 }

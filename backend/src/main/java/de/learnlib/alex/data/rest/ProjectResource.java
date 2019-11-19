@@ -17,53 +17,49 @@
 package de.learnlib.alex.data.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.CreateProjectForm;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.export.ProjectExportableEntity;
 import de.learnlib.alex.data.events.ProjectEvent;
 import de.learnlib.alex.data.services.export.ProjectExporter;
+import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
-@Path("/projects")
-@RolesAllowed({"REGISTERED"})
+@RestController
+@RequestMapping("/rest/projects")
 public class ProjectResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    @Context
-    private SecurityContext securityContext;
+    private AuthContext authContext;
 
     private ProjectDAO projectDAO;
     private WebhookService webhookService;
     private ProjectExporter projectExporter;
 
-    @Inject
-    public ProjectResource(ProjectDAO projectDAO,
+    @Autowired
+    public ProjectResource(AuthContext authContext,
+                           ProjectDAO projectDAO,
                            WebhookService webhookService,
                            ProjectExporter projectExporter) {
+        this.authContext = authContext;
         this.projectDAO = projectDAO;
         this.webhookService = webhookService;
         this.projectExporter = projectExporter;
@@ -76,37 +72,35 @@ public class ProjectResource {
      *         The project to create.
      * @return On success the added project (enhanced with information from the DB); an error message on failure.
      */
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response create(CreateProjectForm project) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity create(@RequestBody CreateProjectForm project) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("create({}) for user {}.", project, user);
 
         final Project createdProject = projectDAO.create(user, project);
         webhookService.fireEvent(user, new ProjectEvent.Created(createdProject));
         LOGGER.traceExit(createdProject);
-        return Response.status(Status.CREATED).entity(createdProject).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
     /**
      * Get a list of all the projects owned by the user of the request.
      *
-     * @param embed
-     *         By default no related objects are included in the projects. However you can ask to include them with this
-     *         parameter. Valid values are: 'symbols', 'groups', 'default_group', 'test_results' & 'counters'. You can
-     *         request multiple by just put a ',' between them.
      * @return All projects in a list. This list can be empty.
      */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@QueryParam("embed") String embed) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        LOGGER.traceEntry("getAll({}) for user {}.", embed, user);
+    @GetMapping(
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getAll() {
+        final User user = authContext.getUser();
+        LOGGER.traceEntry("getAll({}) for user {}.", user);
 
         final List<Project> projects = projectDAO.getAll(user);
         LOGGER.traceExit(projects);
-        return Response.ok(projects).build();
+        return ResponseEntity.ok(projects);
     }
 
     /**
@@ -116,15 +110,16 @@ public class ProjectResource {
      *         The ID of the project.
      * @return The project or an error message.
      */
-    @GET
-    @Path("/{projectId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("projectId") long projectId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/{projectId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity get(@PathVariable("projectId") Long projectId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("get({}) for user {}.", projectId, user);
 
         final Project project = projectDAO.getByID(user, projectId);
-        return Response.ok(project).build();
+        return ResponseEntity.ok(project);
     }
 
     /**
@@ -136,18 +131,19 @@ public class ProjectResource {
      *         The new values
      * @return On success the updated project (enhanced with information from the DB); an error message on failure.
      */
-    @PUT
-    @Path("/{projectId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("projectId") Long projectId, Project project) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PutMapping(
+            value = "/{projectId}",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity update(@PathVariable("projectId") Long projectId, @RequestBody Project project) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("update({}, {}) for user {}.", projectId, project, user);
 
         final Project updatedProject = projectDAO.update(user, projectId, project);
         webhookService.fireEvent(user, new ProjectEvent.Updated(updatedProject));
         LOGGER.traceExit(updatedProject);
-        return Response.ok(updatedProject).build();
+        return ResponseEntity.ok(updatedProject);
     }
 
     /**
@@ -157,17 +153,18 @@ public class ProjectResource {
      *         The ID of the project.
      * @return On success no content will be returned; an error message on failure.
      */
-    @DELETE
-    @Path("/{projectId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") long projectId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @DeleteMapping(
+            value = "/{projectId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("projectId") Long projectId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("delete({}) for user {}.", projectId, user);
 
         projectDAO.delete(user, projectId);
         webhookService.fireEvent(user, new ProjectEvent.Deleted(projectId));
         LOGGER.traceExit("Project {} deleted", projectId);
-        return Response.status(Status.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -177,16 +174,17 @@ public class ProjectResource {
      *         The IDs of the projects to delete.
      * @return 204 No content on success
      */
-    @DELETE
-    @Path("/batch/{projectIds}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectIds") IdsList projectIds) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @DeleteMapping(
+            value = "/batch/{projectIds}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("projectIds") List<Long> projectIds) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("delete({}) for user {}.", projectIds, user);
 
         projectDAO.delete(user, projectIds);
         LOGGER.traceExit("Projects {} deleted", projectIds);
-        return Response.status(Status.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -198,12 +196,13 @@ public class ProjectResource {
      * @throws Exception
      *         If something goes wrong.
      */
-    @POST
-    @Path("/{projectId}/export")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response exportProject(@PathParam("projectId") Long projectId) throws Exception {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
-        return Response.status(Status.OK).entity(projectExporter.export(user, projectId)).build();
+    @PostMapping(
+            value = "/{projectId}/export",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity exportProject(@PathVariable("projectId") Long projectId) throws Exception {
+        final User user = authContext.getUser();
+        return ResponseEntity.ok(projectExporter.export(user, projectId));
     }
 
     /**
@@ -213,14 +212,15 @@ public class ProjectResource {
      *         The project to import
      * @return the imported project.
      */
-    @POST
-    @Path("/import")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response importProject(ProjectExportableEntity project) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/import",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity importProject(@RequestBody ProjectExportableEntity project) {
+        final User user = authContext.getUser();
         final Project importedProject = projectDAO.importProject(user, project);
         webhookService.fireEvent(user, new ProjectEvent.Created(importedProject));
-        return Response.status(Status.OK).entity(importedProject).build();
+        return ResponseEntity.ok(importedProject);
     }
 }

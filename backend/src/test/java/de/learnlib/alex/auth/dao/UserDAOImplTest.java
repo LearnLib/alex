@@ -20,7 +20,6 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
 import de.learnlib.alex.auth.repositories.UserRepository;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.dao.FileDAOImpl;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.repositories.ProjectRepository;
@@ -270,8 +269,7 @@ public class UserDAOImplTest {
         BDDMockito.given(userRepository.findAllByIdIn(Arrays.asList(user1.getId(), user2.getId())))
                 .willReturn(Arrays.asList(user1, user2));
 
-        IdsList ids = new IdsList(String.valueOf(user1.getId()) + "," + String.valueOf(user2.getId()));
-        userDAO.delete(ids);
+        userDAO.delete(Arrays.asList(user1.getId(), user2.getId()));
 
         Assert.assertEquals(userDAO.getAllByRole(UserRole.REGISTERED).size(), 0);
     }
@@ -284,9 +282,7 @@ public class UserDAOImplTest {
         user1.setEncryptedPassword("test");
 
         userDAO.create(user1);
-
-        IdsList ids = new IdsList(String.valueOf(user1.getId()) + ",123");
-        userDAO.delete(ids);
+        userDAO.delete(Collections.singletonList(user1.getId()));
     }
 
     @Test(expected = NotFoundException.class)
@@ -317,7 +313,7 @@ public class UserDAOImplTest {
         List<User> users = new ArrayList<>();
         for (int i = 0; i  < TEST_USER_COUNT; i++) {
             User u = new User();
-            u.setEmail("user-" + String.valueOf(i) + "@mail.de");
+            u.setEmail("user-" + i + "@mail.de");
             u.setEncryptedPassword("test");
             users.add(u);
         }

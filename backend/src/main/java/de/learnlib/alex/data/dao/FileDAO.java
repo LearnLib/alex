@@ -20,6 +20,7 @@ import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.data.entities.UploadableFile;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,10 +39,8 @@ public interface FileDAO {
      *         The user that belongs to the project
      * @param projectId
      *         The id of the project that the file belongs to.
-     * @param uploadedInputStream
-     *         The file as input stream.
-     * @param fileDetail
-     *         Other file (meta) data.
+     * @param file
+     *         The file to upload.
      * @throws IOException
      *         If something during the actual writing went wrong.
      * @throws IllegalStateException
@@ -49,7 +48,7 @@ public interface FileDAO {
      * @throws NotFoundException
      *         If one of the required resources could not be found.
      */
-    UploadableFile create(User user, Long projectId, InputStream uploadedInputStream, FormDataContentDisposition fileDetail)
+    UploadableFile create(User user, Long projectId, MultipartFile file)
             throws IllegalStateException, IOException, NotFoundException;
 
     /**

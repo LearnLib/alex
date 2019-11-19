@@ -17,43 +17,40 @@
 package de.learnlib.alex.testing.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
+import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.dao.TestReportDAO;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.services.reporters.JUnitTestResultReporter;
 import de.learnlib.alex.testing.services.reporters.TestResultReporter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
 import javax.validation.ValidationException;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
+import java.util.List;
 
 /** The resource for test reports. */
-@Path("/projects/{projectId}/tests/reports")
-@RolesAllowed({"REGISTERED"})
+@RestController
+@RequestMapping("/rest/projects/{projectId}/tests/reports")
 public class TestReportResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** The security context containing the user of the request. */
-    @Context
-    private SecurityContext securityContext;
+    private AuthContext authContext;
 
     /** The test report DAO. */
     private TestReportDAO testReportDAO;
@@ -64,8 +61,9 @@ public class TestReportResource {
      * @param testReportDAO
      *         {@link #testReportDAO}
      */
-    @Inject
-    public TestReportResource(TestReportDAO testReportDAO) {
+    @Autowired
+    public TestReportResource(AuthContext authContext, TestReportDAO testReportDAO) {
+        this.authContext = authContext;
         this.testReportDAO = testReportDAO;
     }
 
@@ -80,18 +78,20 @@ public class TestReportResource {
      *         The number of items in a page.
      * @return All test reports.
      */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("projectId") Long projectId, @QueryParam("page") int page,
-                        @QueryParam("size") int size) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity get(@PathVariable("projectId") Long projectId,
+                              @RequestParam(name = "page", defaultValue = "1") int page,
+                              @RequestParam(name = "size", defaultValue = "25") int size) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("getAll({}) for user {}.", projectId, user);
 
         final PageRequest pr = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "startDate"));
         final Page<TestReport> testReports = testReportDAO.getAll(user, projectId, pr);
 
         LOGGER.traceExit(testReports.getContent());
-        return Response.ok(testReports).build();
+        return ResponseEntity.ok(testReports);
     }
 
     /**
@@ -105,19 +105,20 @@ public class TestReportResource {
      *         The format to export the report to.
      * @return The report.
      */
-    @GET
-    @Path("/{reportId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("projectId") Long projectId,
-                        @PathParam("reportId") Long reportId,
-                        @QueryParam("format") String format) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/{reportId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity get(@PathVariable("projectId") Long projectId,
+                              @PathVariable("reportId") Long reportId,
+                              @RequestParam(name = "format", defaultValue = "junit") String format) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("get({}, {}) for user {}.", projectId, reportId, user);
 
         final TestReport testReport = testReportDAO.get(user, projectId, reportId);
 
         if (format == null) {
-            return Response.ok(testReport).build();
+            return ResponseEntity.ok(testReport);
         } else {
             switch (format) {
                 case "junit":
@@ -125,16 +126,15 @@ public class TestReportResource {
                     final String report = reporter.createReport(testReport);
 
                     LOGGER.traceExit(report);
-                    return Response.status(Response.Status.OK)
+                    return ResponseEntity.status(HttpStatus.OK)
                             .header("Content-Type", "application/xml")
-                            .entity(report)
-                            .build();
+                            .body(report);
                 default:
                     final Exception e = new ValidationException("format " + format + " does not exist");
                     LOGGER.traceExit(e);
 
                     return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.get",
-                            Response.Status.BAD_REQUEST, e);
+                            HttpStatus.BAD_REQUEST, e);
             }
         }
     }
@@ -146,16 +146,17 @@ public class TestReportResource {
      *         The id of the project.
      * @return 200 if a report is available, 204 otherwise.
      */
-    @GET
-    @Path("/latest")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getLatest(@PathParam("projectId") Long projectId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/latest",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getLatest(@PathVariable("projectId") Long projectId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("getLatest({}) for user {}.", projectId, user);
 
         final TestReport latestReport = testReportDAO.getLatest(user, projectId);
         LOGGER.traceExit(latestReport);
-        return latestReport == null ? Response.noContent().build() : Response.ok(latestReport).build();
+        return latestReport == null ? ResponseEntity.noContent().build() : ResponseEntity.ok(latestReport);
     }
 
     /**
@@ -167,17 +168,19 @@ public class TestReportResource {
      *         The id of the report to delete.
      * @return Status 204 - no content on success.
      */
-    @DELETE
-    @Path("/{reportId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") Long projectId, @PathParam("reportId") Long reportId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @DeleteMapping(
+            value = "/{reportId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("reportId") Long reportId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, reportId, user);
 
         testReportDAO.delete(user, projectId, reportId);
 
         LOGGER.traceExit("Report {} deleted", reportId);
-        return Response.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -189,16 +192,18 @@ public class TestReportResource {
      *         The ids of the reports to delete.
      * @return Status 204 - no content on success.
      */
-    @DELETE
-    @Path("/batch/{reportIds}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") Long projectId, @PathParam("reportIds") IdsList reportIds) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @DeleteMapping(
+            value = "/batch/{reportIds}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("reportIds") List<Long> reportIds) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("delete({}, {}) for user {}.", projectId, reportIds, user);
 
         testReportDAO.delete(user, projectId, reportIds);
 
         LOGGER.traceExit("Reports {} deleted", reportIds);
-        return Response.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 }

@@ -18,7 +18,6 @@ package de.learnlib.alex.testing.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.dao.ParameterizedSymbolDAO;
 import de.learnlib.alex.data.dao.ParameterizedSymbolDAOImpl;
 import de.learnlib.alex.data.dao.ProjectDAO;
@@ -365,7 +364,7 @@ public class TestDAOImpl implements TestDAO {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void delete(User user, Long projectId, IdsList ids) throws NotFoundException, ValidationException {
+    public void delete(User user, Long projectId, List<Long> ids) throws NotFoundException, ValidationException {
         for (long id : ids) {
             delete(user, projectId, id);
         }

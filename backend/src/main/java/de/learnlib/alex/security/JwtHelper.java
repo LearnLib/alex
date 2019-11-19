@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.auth.security;
+package de.learnlib.alex.security;
 
 import de.learnlib.alex.auth.entities.User;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -28,7 +28,7 @@ import org.jose4j.lang.JoseException;
 /**
  * Helper class around the JWTs, including the security aspect.
  */
-public final class JWTHelper {
+public final class JwtHelper {
 
     /** The number of bits used by the JWK lib. */
     public static final int JWK_STRENGTH_IN_BITS = 2048;
@@ -42,7 +42,7 @@ public final class JWTHelper {
     /**
      * Default constructor disabled, because this is just a helper class.
      */
-    private JWTHelper() {
+    private JwtHelper() {
     }
 
     /**

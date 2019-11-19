@@ -27,6 +27,7 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -91,8 +92,7 @@ public class FileDAOImpl implements FileDAO {
     }
 
     @Override
-    public UploadableFile create(User user, Long projectId, InputStream uploadedInputStream,
-            FormDataContentDisposition fileDetail)
+    public UploadableFile create(User user, Long projectId, MultipartFile file)
             throws IllegalStateException, IOException, NotFoundException {
         final Project project = projectDAO.getByID(user, projectId); // access check
 
@@ -108,17 +108,17 @@ public class FileDAOImpl implements FileDAO {
         }
 
         Path uploadedFileLocation = Paths.get(uploadedDirectoryLocation.toString(),
-                fileDetail.getFileName());
+                file.getOriginalFilename());
 
         if (uploadedFileLocation.toFile().exists()) {
             throw new IllegalStateException("The file already exists.");
         }
 
-        writeToFile(uploadedInputStream, uploadedFileLocation.toString());
+        writeToFile(file.getInputStream(), uploadedFileLocation.toString());
 
         final UploadableFile uf = new UploadableFile();
         uf.setProject(project);
-        uf.setName(fileDetail.getFileName());
+        uf.setName(file.getOriginalFilename());
         return fileRepository.save(uf);
     }
 

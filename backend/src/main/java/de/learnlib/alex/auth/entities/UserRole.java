@@ -21,6 +21,8 @@ package de.learnlib.alex.auth.entities;
  */
 public enum UserRole {
 
+    ANONYMOUS,
+
     /**
      * User is default registered user.
      */

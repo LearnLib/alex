@@ -19,37 +19,14 @@ package de.learnlib.alex;
 import de.learnlib.alex.auth.dao.UserDAO;
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.auth.entities.UserRole;
-import de.learnlib.alex.auth.rest.UserResource;
-import de.learnlib.alex.auth.security.AuthenticationFilter;
-import de.learnlib.alex.common.exceptions.NotFoundExceptionMapper;
-import de.learnlib.alex.common.exceptions.TransactionSystemExceptionMapper;
-import de.learnlib.alex.common.exceptions.UnauthorizedExceptionMapper;
-import de.learnlib.alex.common.exceptions.ValidationExceptionMapper;
 import de.learnlib.alex.config.dao.SettingsDAO;
 import de.learnlib.alex.config.entities.DriverSettings;
 import de.learnlib.alex.config.entities.Settings;
-import de.learnlib.alex.config.rest.SettingsResource;
-import de.learnlib.alex.data.rest.CounterResource;
-import de.learnlib.alex.data.rest.FileResource;
-import de.learnlib.alex.data.rest.ProjectEnvironmentResource;
-import de.learnlib.alex.data.rest.ProjectResource;
-import de.learnlib.alex.data.rest.SymbolGroupResource;
-import de.learnlib.alex.data.rest.SymbolParameterResource;
-import de.learnlib.alex.data.rest.SymbolResource;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
-import de.learnlib.alex.learning.rest.LearnerResource;
-import de.learnlib.alex.learning.rest.LearnerResultResource;
-import de.learnlib.alex.modelchecking.rest.LtsFormulaResource;
 import de.learnlib.alex.testing.entities.TestReport;
 import de.learnlib.alex.testing.repositories.TestReportRepository;
-import de.learnlib.alex.testing.rest.TestExecutionConfigResource;
-import de.learnlib.alex.testing.rest.TestReportResource;
-import de.learnlib.alex.testing.rest.TestResource;
-import de.learnlib.alex.webhooks.rest.WebhookResource;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -59,119 +36,59 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import javax.validation.ValidationException;
-import javax.ws.rs.ApplicationPath;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Main class of the REST API. Implements the Jersey {@link ResourceConfig} and does some configuration and stuff.
- */
 @Component
-@ApplicationPath("rest")
-public class ALEXApplication extends ResourceConfig {
+public class AlexComponent {
 
-    /**
-     * The E-Mail for the default admin, i.e. the admin that will be auto created if no other admin exists.
-     */
-    private static final String DEFAULT_ADMIN_EMAIL = "admin@alex.example";
+    private final Environment env;
+    private final UserDAO userDAO;
+    private final SettingsDAO settingsDAO;
+    private final TestReportRepository testReportRepository;
+    private final LearnerResultRepository learnerResultRepository;
 
-    /**
-     * The Password for the default admin, i.e. the admin that will be auto created if no other admin exists.
-     */
-    private static final String DEFAULT_ADMIN_PASSWORD = "admin";
-
-    /**
-     * The spring boot environment.
-     */
-    @Inject
-    private Environment env;
-
-    /**
-     * The UserDAO to create an admin if needed.
-     */
-    @Inject
-    private UserDAO userDAO;
-
-    /**
-     * The SettingsDAO to create the settings object if needed.
-     */
-    @Inject
-    private SettingsDAO settingsDAO;
-
-    /**
-     * Access to environment variables.
-     */
-    @Inject
-    private Environment environment;
-
-    @Inject
-    private TestReportRepository testReportRepository;
-
-    @Inject
-    private LearnerResultRepository learnerResultRepository;
-
-    /**
-     * Constructor where the magic happens.
-     */
-    public ALEXApplication() {
-        // REST Resources
-        register(CounterResource.class);
-        register(FileResource.class);
-        register(LearnerResource.class);
-        register(LearnerResultResource.class);
-        register(ProjectResource.class);
-        register(SettingsResource.class);
-        register(SymbolResource.class);
-        register(SymbolGroupResource.class);
-        register(SymbolParameterResource.class);
-        register(UserResource.class);
-        register(TestResource.class);
-        register(TestReportResource.class);
-        register(WebhookResource.class);
-        register(TestExecutionConfigResource.class);
-        register(LtsFormulaResource.class);
-        register(ProjectEnvironmentResource.class);
-
-        // Exceptions
-        register(NotFoundExceptionMapper.class);
-        register(UnauthorizedExceptionMapper.class);
-        register(ValidationExceptionMapper.class);
-        register(TransactionSystemExceptionMapper.class);
-
-        // Other
-        register(MultiPartFeature.class);
-        register(AuthenticationFilter.class);
-        register(RolesAllowedDynamicFeature.class); // allow protecting routes with user roles
-        register(JacksonConfiguration.class);
+    @Autowired
+    public AlexComponent(Environment env,
+                         UserDAO userDAO,
+                         SettingsDAO settingsDAO,
+                         TestReportRepository testReportRepository,
+                         LearnerResultRepository learnerResultRepository) {
+        this.env = env;
+        this.userDAO = userDAO;
+        this.settingsDAO = settingsDAO;
+        this.testReportRepository = testReportRepository;
+        this.learnerResultRepository = learnerResultRepository;
     }
 
     /**
      * Create an admin at the start of th ALEX if no admin is currently in the DB.
      */
     @PostConstruct
-    public void createAdminIfNeeded() {
-        // create an admin if none exists
+    public void createDefaultAdmin() {
         if (userDAO.getAllByRole(UserRole.ADMIN).size() == 0) {
             User admin = new User();
-            admin.setEmail(DEFAULT_ADMIN_EMAIL);
+            admin.setEmail(env.getProperty("alex.admin.email"));
             admin.setRole(UserRole.ADMIN);
-            admin.setEncryptedPassword(DEFAULT_ADMIN_PASSWORD);
+            admin.setEncryptedPassword(env.getProperty("alex.admin.password"));
             userDAO.create(admin);
         }
     }
 
     @PostConstruct
-    public void cleanUp() {
+    public void abortPendingTestProcesses() {
         final List<TestReport> pendingReports = testReportRepository.findAllByStatusIn(
                 Arrays.asList(TestReport.Status.IN_PROGRESS, TestReport.Status.PENDING)
         );
         pendingReports.forEach(r -> r.setStatus(TestReport.Status.ABORTED));
         testReportRepository.saveAll(pendingReports);
+    }
 
+    @PostConstruct
+    public void abortPendingLearningProcesses() {
         final List<LearnerResult> pendingLearnerProcesses = learnerResultRepository.findAllByStatusIn(
                 Arrays.asList(LearnerResult.Status.IN_PROGRESS, LearnerResult.Status.PENDING)
         );
@@ -179,12 +96,9 @@ public class ALEXApplication extends ResourceConfig {
         learnerResultRepository.saveAll(pendingLearnerProcesses);
     }
 
-    /**
-     * Set properties for ltsmin.
-     */
     @PostConstruct
-    public void handleProperties() {
-        final String ltsminBinDir = environment.getProperty("ltsmin.path");
+    public void configureLtsMin() {
+        final String ltsminBinDir = env.getProperty("ltsmin.path");
         if (ltsminBinDir != null && !ltsminBinDir.trim().equals("")) {
             if (!Files.isDirectory(Paths.get(ltsminBinDir))) {
                 System.err.println("Cannot find directory for ltsmin binaries.");
@@ -199,7 +113,7 @@ public class ALEXApplication extends ResourceConfig {
      * Initialize system properties and create the settings object if needed.
      */
     @PostConstruct
-    public void initSettings() {
+    public void initializeSettings() {
         Settings settings = settingsDAO.get();
         if (settings == null) {
             try {

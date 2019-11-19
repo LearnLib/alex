@@ -16,17 +16,22 @@
 
 package de.learnlib.alex.integrationtests.resources.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.ws.rs.client.Client;
 
 public abstract class AbstractApi {
 
     protected final Client client;
 
+    protected final ObjectMapper objectMapper;
+
     protected final int port;
 
     protected AbstractApi(Client client, int port) {
         this.client = client;
         this.port = port;
+        this.objectMapper = new ObjectMapper();
     }
 
     protected String baseUrl() {

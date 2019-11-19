@@ -95,7 +95,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>de.learnlib.alex.App</mainClass>
+                    <mainClass>de.learnlib.alex.AlexApp</mainClass>
                     <addResources>false</addResources>
                     <finalName>alex-${version}</finalName>
                 </configuration>

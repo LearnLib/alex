@@ -38,7 +38,7 @@
     <!--===== properties ======-->
     <properties>
         <!-- general -->
-        <start-class>de.learnlib.alex.App</start-class>
+        <start-class>de.learnlib.alex.AlexApp</start-class>
 
         <!-- plugin versions -->
         <javadoc-plugin.version>2.10.4</javadoc-plugin.version>
@@ -79,6 +79,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
 
@@ -370,7 +375,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>de.learnlib.alex.App</mainClass>
+                    <mainClass>de.learnlib.alex.AlexApp</mainClass>
                     <addResources>false</addResources>
                 </configuration>
                 <executions>

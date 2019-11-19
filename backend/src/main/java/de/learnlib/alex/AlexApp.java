@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package de.learnlib.alex;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 /**
  * The entry point to ALEX.
  */
-@SpringBootApplication
-public class App extends SpringBootServletInitializer {
-
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(App.class);
-    }
+@SpringBootApplication()
+public class AlexApp extends SpringBootServletInitializer {
 
     /**
      * Starts the standalone version of ALEX.
@@ -38,8 +33,7 @@ public class App extends SpringBootServletInitializer {
      *         Additional commandline parameters.
      */
     public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
+        SpringApplication.run(AlexApp.class, args);
     }
-
 }
 

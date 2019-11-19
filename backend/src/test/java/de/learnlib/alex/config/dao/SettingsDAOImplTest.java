@@ -38,21 +38,16 @@ public class SettingsDAOImplTest {
     @Test
     public void shouldCreateTheSettings() throws ValidationException {
         Settings settings = new Settings();
-
         settingsDAO.create(settings);
-
         verify(settingsRepository).save(settings);
     }
 
     @Test(expected = ValidationException.class)
     public void shouldCreateTheSettingsOnlyOnce() throws ValidationException {
         Settings settings = new Settings();
-        //
         settingsDAO.create(settings);
-        //
         given(settingsRepository.count()).willReturn(1L);
-
-        settingsDAO.create(settings); // should fail
+        settingsDAO.create(settings);
     }
 
     @Test
@@ -72,11 +67,8 @@ public class SettingsDAOImplTest {
     @Test
     public void shouldGetTheSettings() {
         Settings settings = new Settings();
-        //
         given(settingsRepository.get()).willReturn(settings);
-
         Settings s = settingsDAO.get();
-
         assertThat(s, is(equalTo(settings)));
     }
 
@@ -88,11 +80,8 @@ public class SettingsDAOImplTest {
     @Test
     public void shouldUpdateTheSettings() {
         Settings settings = new Settings();
-        //
         settingsDAO.create(settings);
-
         settingsDAO.update(settings);
-
         verify(settingsRepository, times(2)).save(settings); // only 1 x creation & 1 x update should call save
     }
 
@@ -102,9 +91,9 @@ public class SettingsDAOImplTest {
         settings.getDriverSettings().setChrome(PATH_TO_CHROME);
         settings.getDriverSettings().setFirefox(PATH_TO_FIREFOX);
         settings.getDriverSettings().setEdge(PATH_TO_EDGE);
-        //
+
         settingsDAO.create(settings);
-        //
+
         String chromePath  = "new/" + PATH_TO_CHROME;
         String firefoxPath = "new/" + PATH_TO_FIREFOX;
         String edgePath = "new/" + PATH_TO_EDGE;

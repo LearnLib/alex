@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package de.learnlib.alex.auth.security;
+package de.learnlib.alex.security;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.entities.UserRole;
-import org.junit.Assert;
-import org.junit.Test;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
-public class UserPrincipalTest {
+@Component
+public class AuthContext {
 
-    @Test
-    public void shouldGetTheEmailOfTheUserWhenAskedForTheName() {
-        final User user = new User();
-        user.setEmail("user@alex.com");
-        user.setId(1L);
-        user.setEncryptedPassword("test");
-        user.setRole(UserRole.REGISTERED);
-
-        final UserPrincipal principal = new UserPrincipal(user);
-        Assert.assertEquals("user@alex.com", principal.getName());
+    public User getUser() {
+        return (User) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
     }
 }

@@ -29,7 +29,6 @@ import de.learnlib.alex.data.repositories.SymbolParameterValueRepository;
 import de.learnlib.alex.learning.entities.AbstractLearnerConfiguration;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.entities.LearnerResultStep;
-import de.learnlib.alex.learning.entities.LearnerStatus;
 import de.learnlib.alex.learning.entities.webdrivers.AbstractWebDriverConfig;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;

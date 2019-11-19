@@ -17,14 +17,12 @@
 package de.learnlib.alex.testing.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.dao.ProjectDAO;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.data.entities.export.ExportableEntity;
+import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.testing.dao.TestDAO;
 import de.learnlib.alex.testing.entities.Test;
-import de.learnlib.alex.testing.entities.TestCase;
 import de.learnlib.alex.testing.entities.TestExecutionConfig;
 import de.learnlib.alex.testing.entities.TestQueueItem;
 import de.learnlib.alex.testing.entities.TestReport;
@@ -37,51 +35,48 @@ import de.learnlib.alex.testing.services.export.TestsExporter;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
  * REST endpoints for working with tests.
  */
-@Path("/projects/{projectId}/tests")
-@RolesAllowed({"REGISTERED"})
+@RestController
+@RequestMapping("/rest/projects/{projectId}/tests")
 public class TestResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    @Context
-    private SecurityContext securityContext;
-
+    private AuthContext authContext;
     private final TestDAO testDAO;
     private final TestService testService;
     private final WebhookService webhookService;
     private final ProjectDAO projectDAO;
     private final TestsExporter testsExporter;
 
-    @Inject
-    public TestResource(TestDAO testDAO,
+    @Autowired
+    public TestResource(AuthContext authContext,
+                        TestDAO testDAO,
                         TestService testService,
                         WebhookService webhookService,
                         ProjectDAO projectDAO,
                         TestsExporter testsExporter) {
+        this.authContext = authContext;
         this.testDAO = testDAO;
         this.testService = testService;
         this.webhookService = webhookService;
@@ -98,14 +93,16 @@ public class TestResource {
      *         The test to create.
      * @return The created test.
      */
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createTest(@PathParam("projectId") Long projectId, Test test) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity createTest(@PathVariable("projectId") Long projectId,
+                                     @RequestBody Test test) {
+        final User user = authContext.getUser();
         testDAO.create(user, projectId, test);
         webhookService.fireEvent(user, new TestEvent.Created(test));
-        return Response.ok(test).status(Response.Status.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(test);
     }
 
     /**
@@ -117,15 +114,17 @@ public class TestResource {
      *         The tests to create.
      * @return The created tests.
      */
-    @POST
-    @Path("/batch")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createTests(@PathParam("projectId") Long projectId, List<Test> tests) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/batch",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity createTests(@PathVariable("projectId") Long projectId,
+                                      @RequestBody List<Test> tests) {
+        final User user = authContext.getUser();
         final List<Test> createdTests = testDAO.create(user, projectId, tests);
         webhookService.fireEvent(user, new TestEvent.CreatedMany(createdTests));
-        return Response.ok(createdTests).status(Response.Status.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTests);
     }
 
     /**
@@ -137,13 +136,15 @@ public class TestResource {
      *         The id of the test.
      * @return The test.
      */
-    @GET
-    @Path("/{testId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("projectId") Long projectId, @PathParam("testId") Long testId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/{testId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity get(@PathVariable("projectId") Long projectId,
+                              @PathVariable("testId") Long testId) {
+        final User user = authContext.getUser();
         final Test test = testDAO.get(user, projectId, testId);
-        return Response.ok(test).build();
+        return ResponseEntity.ok(test);
     }
 
     /**
@@ -153,13 +154,14 @@ public class TestResource {
      *         The id of the project.
      * @return The test.
      */
-    @GET
-    @Path("/root")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@PathParam("projectId") Long projectId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/root",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity get(@PathVariable("projectId") Long projectId) {
+        final User user = authContext.getUser();
         final Test root = testDAO.getRoot(user, projectId);
-        return Response.ok(root).build();
+        return ResponseEntity.ok(root);
     }
 
     /**
@@ -171,15 +173,17 @@ public class TestResource {
      *         The configuration for the test
      * @return A {@link TestReport}.
      */
-    @POST
-    @Path("/execute")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response execute(@PathParam("projectId") Long projectId,
-                            TestExecutionConfig testConfig) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/execute",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity execute(@PathVariable("projectId") Long projectId,
+                                  @RequestBody TestExecutionConfig testConfig) {
+        final User user = authContext.getUser();
         final Project project = projectDAO.getByID(user, projectId);
         final TestQueueItem testRun = testService.start(user, project, testConfig);
-        return Response.ok(testRun).build();
+        return ResponseEntity.ok(testRun);
     }
 
     /**
@@ -189,36 +193,41 @@ public class TestResource {
      *         The id of the project.
      * @return Status 200 with a {@link TestStatus}.
      */
-    @GET
-    @Path("/status")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response status(@PathParam("projectId") Long projectId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/status",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity status(@PathVariable("projectId") Long projectId) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("status(projectId: {}) with user {}", projectId, user);
         final Project project = projectDAO.getByID(user, projectId);
         final TestStatus status = testService.getStatus(user, project);
         LOGGER.traceExit("status() with status {}", status);
-        return Response.ok(status).build();
+        return ResponseEntity.ok(status);
     }
 
-    @POST
-    @Path("/export")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response exportTests(@PathParam("projectId") Long projectId, TestsExportConfig config) throws Exception {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/export",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity exportTests(@PathVariable("projectId") Long projectId,
+                                      @RequestBody TestsExportConfig config) throws Exception {
+        final User user = authContext.getUser();
         final ExportableEntity exportedTests = testsExporter.export(user, projectId, config);
-        return Response.ok(exportedTests).build();
+        return ResponseEntity.ok(exportedTests);
     }
 
-    @POST
-    @Path("/import")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response importTests(@PathParam("projectId") Long projectId, List<Test> tests) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/import",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity importTests(@PathVariable("projectId") Long projectId,
+                                      @RequestBody List<Test> tests) {
+        final User user = authContext.getUser();
         final List<Test> importedTests = testDAO.importTests(user, projectId, tests);
-        return Response.ok(importedTests).build();
+        return ResponseEntity.ok(importedTests);
     }
 
     /**
@@ -232,17 +241,18 @@ public class TestResource {
      *         The updated test.
      * @return The updated test.
      */
-    @PUT
-    @Path("/{testId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("projectId") Long projectId,
-                           @PathParam("testId") Long testId,
-                           Test test) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PutMapping(
+            value = "/{testId}}",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity update(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("testId") Long testId,
+                                 @RequestBody Test test) {
+        final User user = authContext.getUser();
 
         if (!test.getId().equals(testId)) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
         if (test.getId() == null) {
@@ -254,7 +264,7 @@ public class TestResource {
         testDAO.update(user, test);
 
         webhookService.fireEvent(user, new TestEvent.Updated(test));
-        return Response.ok(test).build();
+        return ResponseEntity.ok(test);
     }
 
     /**
@@ -268,17 +278,18 @@ public class TestResource {
      *         The id of the target test suite.
      * @return 200 If the tests have been moved successfully.
      */
-    @PUT
-    @Path("/batch/{testIds}/moveTo/{targetId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response move(@PathParam("projectId") Long projectId,
-                         @PathParam("testIds") IdsList testIds,
-                         @PathParam("targetId") Long targetId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PutMapping(
+            value = "/batch/{testIds}/moveTo/{targetId}",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity move(@PathVariable("projectId") Long projectId,
+                               @PathVariable("testIds") List<Long> testIds,
+                               @PathVariable("targetId") Long targetId) {
+        final User user = authContext.getUser();
         final List<Test> movedTests = testDAO.move(user, projectId, testIds, targetId);
         webhookService.fireEvent(user, new TestEvent.MovedMany(movedTests));
-        return Response.ok(movedTests).build();
+        return ResponseEntity.ok(movedTests);
     }
 
     /**
@@ -290,23 +301,27 @@ public class TestResource {
      *         The id of the test.
      * @return An empty body if the test has been deleted.
      */
-    @DELETE
-    @Path("/{testId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") Long projectId, @PathParam("testId") Long testId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @DeleteMapping(
+            value = "/{testId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("testId") Long testId) {
+        final User user = authContext.getUser();
         testDAO.delete(user, projectId, testId);
         webhookService.fireEvent(user, new TestEvent.Deleted(testId));
-        return Response.status(Response.Status.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
-    @POST
-    @Path("/abort/{reportId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response abort(@PathParam("projectId") Long projectId, @PathParam("reportId") Long reportId) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/abort/{reportId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity abort(@PathVariable("projectId") Long projectId,
+                                @PathVariable("reportId") Long reportId) {
+        final User user = authContext.getUser();
         testService.abort(user, projectId, reportId);
-        return Response.status(Response.Status.OK).build();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -318,14 +333,16 @@ public class TestResource {
      *         The ids of the tests to delete.
      * @return An empty body if the project has been deleted.
      */
-    @DELETE
-    @Path("/batch/{testIds}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") Long projectId, @PathParam("testIds") IdsList testIds) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @DeleteMapping(
+            value = "/batch/{testIds}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("testIds") List<Long> testIds) {
+        final User user = authContext.getUser();
         testDAO.delete(user, projectId, testIds);
         webhookService.fireEvent(user, new TestEvent.DeletedMany(testIds));
-        return Response.status(Response.Status.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -341,15 +358,17 @@ public class TestResource {
      *         The number of items in the page.
      * @return All test results of a test.
      */
-    @GET
-    @Path("/{testId}/results")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getResults(@PathParam("projectId") Long projectId,
-                               @PathParam("testId") Long testId,
-                               @QueryParam("page") int page, @QueryParam("size") int size) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/{testId}/results",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getResults(@PathVariable("projectId") Long projectId,
+                                     @PathVariable("testId") Long testId,
+                                     @RequestParam(name = "page", defaultValue = "1") int page,
+                                     @RequestParam(name = "size", defaultValue = "25") int size) {
+        final User user = authContext.getUser();
         final PageRequest pr = PageRequest.of(page, size);
         final Page<TestResult> results = testDAO.getResults(user, projectId, testId, pr);
-        return Response.ok(results).build();
+        return ResponseEntity.ok(results);
     }
 }

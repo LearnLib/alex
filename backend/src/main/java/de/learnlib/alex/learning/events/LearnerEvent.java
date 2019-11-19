@@ -17,8 +17,6 @@
 package de.learnlib.alex.learning.events;
 
 import de.learnlib.alex.learning.entities.LearnerResult;
-import de.learnlib.alex.learning.entities.LearnerResumeConfiguration;
-import de.learnlib.alex.learning.entities.LearnerStartConfiguration;
 import de.learnlib.alex.webhooks.entities.Event;
 import de.learnlib.alex.webhooks.entities.EventType;
 

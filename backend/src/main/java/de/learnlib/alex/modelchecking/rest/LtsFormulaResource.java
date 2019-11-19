@@ -17,8 +17,6 @@
 package de.learnlib.alex.modelchecking.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.security.UserPrincipal;
-import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.common.utils.RESTError;
 import de.learnlib.alex.modelchecking.dao.LtsFormulaDAO;
 import de.learnlib.alex.modelchecking.entities.LtsCheckingConfig;
@@ -26,46 +24,45 @@ import de.learnlib.alex.modelchecking.entities.LtsCheckingResult;
 import de.learnlib.alex.modelchecking.entities.LtsFormula;
 import de.learnlib.alex.modelchecking.events.ModelCheckerEvent;
 import de.learnlib.alex.modelchecking.services.LtsCheckingService;
+import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import net.automatalib.exception.ModelCheckingException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import java.util.List;
 
 /** The lts formula endpoints for the REST API. */
-@Path("/projects/{projectId}/ltsFormulas")
-@RolesAllowed({"REGISTERED"})
+@RestController
+@RequestMapping("/rest/projects/{projectId}/ltsFormulas")
 public class LtsFormulaResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     /** The security context containing the user of the request. */
-    @Context
-    private SecurityContext securityContext;
-
+    private AuthContext authContext;
     private LtsFormulaDAO ltsFormulaDAO;
     private LtsCheckingService ltsCheckingService;
     private WebhookService webhookService;
 
-    @Inject
-    public LtsFormulaResource(LtsFormulaDAO ltsFormulaDAO,
+    @Autowired
+    public LtsFormulaResource(AuthContext authContext,
+                              LtsFormulaDAO ltsFormulaDAO,
                               LtsCheckingService ltsCheckingService,
                               WebhookService webhookService) {
+        this.authContext = authContext;
         this.ltsFormulaDAO = ltsFormulaDAO;
         this.ltsCheckingService = ltsCheckingService;
         this.webhookService = webhookService;
@@ -78,15 +75,16 @@ public class LtsFormulaResource {
      *         The ID of the project.
      * @return Status 200 and the list of formulas.
      */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@PathParam("projectId") Long projectId) {
+    @GetMapping(
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getAll(@PathVariable("projectId") Long projectId) {
         LOGGER.traceEntry("enter getAll(projectId: {})", projectId);
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = authContext.getUser();
         final List<LtsFormula> formulas = ltsFormulaDAO.getAll(user, projectId);
 
         LOGGER.traceExit("leave getAll() with formulas: {}", formulas);
-        return Response.ok(formulas).build();
+        return ResponseEntity.ok(formulas);
     }
 
     /**
@@ -98,17 +96,18 @@ public class LtsFormulaResource {
      *         The formula to create.
      * @return Status 201 and the created formula.
      */
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response create(@PathParam("projectId") Long projectId, LtsFormula formula) {
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity create(@PathVariable("projectId") Long projectId, @RequestBody LtsFormula formula) {
         LOGGER.traceEntry("enter create(projectId: {}, formula: {})", projectId, formula);
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = authContext.getUser();
         final LtsFormula createdFormula = ltsFormulaDAO.create(user, projectId, formula);
 
         webhookService.fireEvent(user, new ModelCheckerEvent.Created(createdFormula));
         LOGGER.traceExit("create create() with formula: {}", createdFormula);
-        return Response.status(Response.Status.CREATED).entity(createdFormula).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdFormula);
     }
 
     /**
@@ -122,20 +121,21 @@ public class LtsFormulaResource {
      *         The updated formula object.
      * @return Status 200 and the updated formula.
      */
-    @Path("/{formulaId}")
-    @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@PathParam("projectId") Long projectId,
-                           @PathParam("formulaId") Long formulaId,
-                           LtsFormula formula) {
+    @PutMapping(
+            value = "/{formulaId}",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity update(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("formulaId") Long formulaId,
+                                 @RequestBody LtsFormula formula) {
         LOGGER.traceEntry("enter update(projectId: {}, formulaId: {})", projectId, formulaId);
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = authContext.getUser();
         final LtsFormula updatedFormula = ltsFormulaDAO.update(user, projectId, formula);
 
         webhookService.fireEvent(user, new ModelCheckerEvent.Updated(updatedFormula));
         LOGGER.traceExit("leave update() with formula: {}", updatedFormula);
-        return Response.ok(updatedFormula).build();
+        return ResponseEntity.ok(updatedFormula);
     }
 
     /**
@@ -147,17 +147,18 @@ public class LtsFormulaResource {
      *         The ID of the formula to delete.
      * @return Status 204 on success.
      */
-    @Path("/{formulaId}")
-    @DELETE
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") Long projectId, @PathParam("formulaId") Long formulaId) {
+    @DeleteMapping(
+            value = "/{formulaId}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("projectId") Long projectId, @PathVariable("formulaId") Long formulaId) {
         LOGGER.traceEntry("enter delete(projectId: {}, formulaId: {})", projectId, formulaId);
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = authContext.getUser();
         ltsFormulaDAO.delete(user, projectId, formulaId);
 
         webhookService.fireEvent(user, new ModelCheckerEvent.Deleted(formulaId));
         LOGGER.traceExit("leave delete()");
-        return Response.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -169,17 +170,18 @@ public class LtsFormulaResource {
      *         The IDs of the formulas to delete.
      * @return Status 204 on success.
      */
-    @Path("/batch/{formulaIds}")
-    @DELETE
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("projectId") Long projectId, @PathParam("formulaIds") IdsList formulaIds) {
+    @DeleteMapping(
+            value = "/batch/{formulaIds}",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity delete(@PathVariable("projectId") Long projectId, @PathVariable("formulaIds") List<Long> formulaIds) {
         LOGGER.traceEntry("enter delete(projectId: {}, formulaIds: {})", projectId, formulaIds);
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = authContext.getUser();
         ltsFormulaDAO.delete(user, projectId, formulaIds);
 
         webhookService.fireEvent(user, new ModelCheckerEvent.DeletedMany(formulaIds));
         LOGGER.traceExit("leave delete()");
-        return Response.noContent().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -191,24 +193,23 @@ public class LtsFormulaResource {
      *         The configuration.
      * @return A map of counterexamples.
      */
-    @Path("/check")
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response check(@PathParam("projectId") Long projectId, LtsCheckingConfig config) {
+    @PostMapping(
+            value = "/check",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity check(@PathVariable("projectId") Long projectId, @RequestBody LtsCheckingConfig config) {
         LOGGER.traceEntry("enter check(projectId: {})", projectId);
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+        final User user = authContext.getUser();
 
         config.validate();
         try {
             final List<LtsCheckingResult> results = ltsCheckingService.check(user, projectId, config);
             webhookService.fireEvent(user, new ModelCheckerEvent.CheckedMany(results));
             LOGGER.traceExit("leave check() with {}", results);
-            return Response.ok(results).build();
+            return ResponseEntity.ok(results);
         } catch (ModelCheckingException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new RESTError(Response.Status.BAD_REQUEST, e))
-                    .build();
+            return ResponseEntity.badRequest().body(new RESTError(HttpStatus.BAD_REQUEST, e));
         }
     }
 

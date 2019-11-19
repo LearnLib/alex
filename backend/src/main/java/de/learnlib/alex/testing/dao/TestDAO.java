@@ -18,7 +18,6 @@ package de.learnlib.alex.testing.dao;
 
 import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.common.exceptions.NotFoundException;
-import de.learnlib.alex.common.utils.IdsList;
 import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.testing.entities.Test;
 import de.learnlib.alex.testing.entities.TestCase;
@@ -172,7 +171,7 @@ public interface TestDAO {
      * @throws NotFoundException
      *         If the test could not be found.
      */
-    void delete(User user, Long projectId, IdsList ids) throws NotFoundException;
+    void delete(User user, Long projectId, List<Long> ids) throws NotFoundException;
 
     /**
      * Move tests to a new test suite.

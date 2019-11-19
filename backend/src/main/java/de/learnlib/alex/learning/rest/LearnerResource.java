@@ -17,7 +17,6 @@
 package de.learnlib.alex.learning.rest;
 
 import de.learnlib.alex.auth.entities.User;
-import de.learnlib.alex.auth.security.UserPrincipal;
 import de.learnlib.alex.common.exceptions.NotFoundException;
 import de.learnlib.alex.common.utils.LoggerMarkers;
 import de.learnlib.alex.common.utils.ResourceErrorHandler;
@@ -41,27 +40,24 @@ import de.learnlib.alex.learning.exceptions.LearnerException;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 import de.learnlib.alex.learning.repositories.LearnerResultStepRepository;
 import de.learnlib.alex.learning.services.LearnerService;
+import de.learnlib.alex.security.AuthContext;
 import de.learnlib.alex.webhooks.services.WebhookService;
 import net.automatalib.automata.transducers.impl.compact.CompactMealy;
 import net.automatalib.words.Alphabet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,43 +66,40 @@ import java.util.Map;
 /**
  * REST API to manage the learning.
  */
-@Path("/projects/{projectId}/learner")
-@RolesAllowed({"REGISTERED"})
+@RestController
+@RequestMapping("/rest/projects/{projectId}/learner")
 public class LearnerResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** The {@link ProjectDAO} to use. */
-    @Inject
-    private ProjectDAO projectDAO;
-
-    /** The {@link SymbolDAO} to use. */
-    @Inject
-    private SymbolDAO symbolDAO;
-
-    /** The {@link LearnerResultDAO} to use. */
-    @Inject
-    private LearnerResultDAO learnerResultDAO;
-
-    /** The {@link LearnerResultStepRepository} to use. */
-    @Inject
-    private LearnerResultStepRepository learnerResultStepRepository;
-
-    /** The {@link LearnerResultRepository} to use. */
-    @Inject
-    private LearnerResultRepository learnerResultRepository;
-
-    /** The {@link LearnerService learner} to use. */
-    @Inject
-    private LearnerService learnerService;
-
     /** The security context containing the user of the request. */
-    @Context
-    private SecurityContext securityContext;
-
-    /** The {@link WebhookService} to use. */
-    @Inject
+    private AuthContext authContext;
+    private ProjectDAO projectDAO;
+    private SymbolDAO symbolDAO;
+    private LearnerResultDAO learnerResultDAO;
+    private LearnerResultStepRepository learnerResultStepRepository;
+    private LearnerResultRepository learnerResultRepository;
+    private LearnerService learnerService;
     private WebhookService webhookService;
+
+    @Autowired
+    public LearnerResource(AuthContext authContext,
+                           ProjectDAO projectDAO,
+                           SymbolDAO symbolDAO,
+                           LearnerResultDAO learnerResultDAO,
+                           LearnerResultStepRepository learnerResultStepRepository,
+                           LearnerResultRepository learnerResultRepository,
+                           LearnerService learnerService,
+                           WebhookService webhookService) {
+        this.authContext = authContext;
+        this.projectDAO = projectDAO;
+        this.symbolDAO = symbolDAO;
+        this.learnerResultDAO = learnerResultDAO;
+        this.learnerResultStepRepository = learnerResultStepRepository;
+        this.learnerResultRepository = learnerResultRepository;
+        this.learnerService = learnerService;
+        this.webhookService = webhookService;
+    }
 
     /**
      * Start the learning.
@@ -117,13 +110,15 @@ public class LearnerResource {
      *         The configuration to customize the learning.
      * @return The status of the current learn process.
      */
-    @POST
-    @Path("/start")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @PostMapping(
+            value = "/start",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
     @Transactional
-    public Response start(@PathParam("projectId") long projectId, LearnerStartConfiguration configuration) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    public ResponseEntity start(@PathVariable("projectId") Long projectId,
+                                @RequestBody LearnerStartConfiguration configuration) {
+        User user = authContext.getUser();
         LOGGER.traceEntry("start({}, {}) for user {}.", projectId, configuration, user);
 
         try {
@@ -145,13 +140,13 @@ public class LearnerResource {
 
             LOGGER.traceExit(learnerResult);
             webhookService.fireEvent(user, new LearnerEvent.Started(learnerResult));
-            return Response.ok(learnerResult).build();
+            return ResponseEntity.ok(learnerResult);
         } catch (IllegalStateException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.NOT_MODIFIED, e);
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", HttpStatus.NOT_MODIFIED, e);
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.start", HttpStatus.BAD_REQUEST, e);
         }
     }
 
@@ -167,15 +162,16 @@ public class LearnerResource {
      *         The configuration to specify the settings for the next learning steps.
      * @return The status of the current learn process.
      */
-    @POST
-    @Path("/{testNo}/resume")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @PostMapping(
+            value = "/{testNo}/resume",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
     @Transactional
-    public Response resume(@PathParam("projectId") Long projectId,
-                           @PathParam("testNo") Long testNo,
-                           LearnerResumeConfiguration configuration) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    public ResponseEntity resume(@PathVariable("projectId") Long projectId,
+                                 @PathVariable("testNo") Long testNo,
+                                 @RequestBody LearnerResumeConfiguration configuration) {
+        User user = authContext.getUser();
         LOGGER.traceEntry("resume({}, {}, {}) for user {}.", projectId, testNo, configuration, user);
 
         try {
@@ -229,14 +225,14 @@ public class LearnerResource {
 
             learnerService.resume(user, project, result, configuration);
             webhookService.fireEvent(user, new LearnerEvent.Resumed(result));
-            return Response.ok(result).build();
+            return ResponseEntity.ok(result);
         } catch (IllegalStateException e) {
             LOGGER.info(LoggerMarkers.LEARNER, "tried to restart the learning while the learner is running.");
             LOGGER.traceExit(e);
-            return Response.status(Status.NOT_MODIFIED).build();
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
         } catch (IllegalArgumentException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.resume", Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.resume", HttpStatus.BAD_REQUEST, e);
         }
     }
 
@@ -249,15 +245,15 @@ public class LearnerResource {
      *         The project to stop.
      * @return The status of the current learn process.
      */
-    @GET
-    @Path("/{testNo}/stop")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response stop(@PathParam("projectId") Long projectId, @PathParam("testNo") Long testNo) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/{testNo}/stop"
+    )
+    public ResponseEntity stop(@PathVariable("projectId") Long projectId, @PathVariable("testNo") Long testNo) {
+        User user = authContext.getUser();
         LOGGER.traceEntry("stop() for user {}.", user);
         projectDAO.getByID(user, projectId); // access check
         learnerService.stop(projectId, testNo);
-        return Response.ok().build();
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -267,17 +263,18 @@ public class LearnerResource {
      *         The project to get the Status of.
      * @return The information of the learning
      */
-    @GET
-    @Path("/status")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getStatus(@PathParam("projectId") Long projectId) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @GetMapping(
+            value = "/status",
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity getStatus(@PathVariable("projectId") Long projectId) {
+        User user = authContext.getUser();
         LOGGER.traceEntry("getStatus() for user {}.", user);
 
         LearnerStatus status = learnerService.getStatus(projectId);
 
         LOGGER.traceExit(status);
-        return Response.ok(status).build();
+        return ResponseEntity.ok(status);
     }
 
     /**
@@ -289,18 +286,20 @@ public class LearnerResource {
      *         The output config.
      * @return The observed output of the given input set.
      */
-    @POST
-    @Path("/outputs")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response readOutput(@PathParam("projectId") Long projectId, ReadOutputConfig outputConfig) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/outputs",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity readOutput(@PathVariable("projectId") Long projectId,
+                                     @RequestBody ReadOutputConfig outputConfig) {
+        User user = authContext.getUser();
         LOGGER.traceEntry("readOutput({}, {}) for user {}.", projectId, outputConfig, user);
 
         try {
             if (outputConfig.getSymbols().getSymbols().isEmpty()) {
                 final Exception e = new Exception("You have to specify at least one symbol.");
-                return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
+                return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", HttpStatus.BAD_REQUEST, e);
             }
 
             Project project = projectDAO.getByID(user, projectId);
@@ -321,10 +320,10 @@ public class LearnerResource {
             List<ExecuteResult> outputs = learnerService.readOutputs(user, project, outputConfig);
 
             LOGGER.traceExit(outputs);
-            return Response.ok(outputs).build();
+            return ResponseEntity.ok(outputs);
         } catch (LearnerException e) {
             LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.readOutput", HttpStatus.BAD_REQUEST, e);
         }
     }
 
@@ -346,12 +345,14 @@ public class LearnerResource {
      *         A List of two (!) hypotheses, which will be compared.
      * @return '{"separatingWord": "separating word, if any"}'
      */
-    @POST
-    @Path("/compare/separatingWord")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response separatingWord(@PathParam("projectId") Long projectId, List<CompactMealyMachineProxy> mealyMachineProxies) {
-        User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/compare/separatingWord",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity separatingWord(@PathVariable("projectId") Long projectId,
+                                         @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies) {
+        User user = authContext.getUser();
         LOGGER.traceEntry("calculate separating word for models ({}) and user {}.", mealyMachineProxies, user);
 
         try {
@@ -362,9 +363,9 @@ public class LearnerResource {
             final SeparatingWord diff = learnerService.separatingWord(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
 
             LOGGER.traceExit(diff);
-            return Response.ok(diff).build();
+            return ResponseEntity.ok(diff);
         } catch (IllegalArgumentException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.separatingWord", Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.separatingWord", HttpStatus.BAD_REQUEST, e);
         }
     }
 
@@ -375,12 +376,14 @@ public class LearnerResource {
      *         A List of two (!) hypotheses, which will be compared.
      * @return The difference tree
      */
-    @POST
-    @Path("/compare/differenceTree")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response differenceTree(@PathParam("projectId") Long projectId, List<CompactMealyMachineProxy> mealyMachineProxies) {
-        final User user = ((UserPrincipal) securityContext.getUserPrincipal()).getUser();
+    @PostMapping(
+            value = "/compare/differenceTree",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity differenceTree(@PathVariable("projectId") Long projectId,
+                                         @RequestBody List<CompactMealyMachineProxy> mealyMachineProxies) {
+        final User user = authContext.getUser();
         LOGGER.traceEntry("calculate the difference tree for models ({}) and user {}.", mealyMachineProxies, user);
 
         try {
@@ -392,9 +395,9 @@ public class LearnerResource {
                     learnerService.differenceTree(mealyMachineProxies.get(0), mealyMachineProxies.get(1));
 
             LOGGER.traceExit(diffTree);
-            return Response.ok(CompactMealyMachineProxy.createFrom(diffTree, diffTree.getInputAlphabet())).build();
+            return ResponseEntity.ok(CompactMealyMachineProxy.createFrom(diffTree, diffTree.getInputAlphabet()));
         } catch (IllegalArgumentException e) {
-            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.differenceTree", Status.BAD_REQUEST, e);
+            return ResourceErrorHandler.createRESTErrorMessage("LearnerResource.differenceTree", HttpStatus.BAD_REQUEST, e);
         }
     }
 }
