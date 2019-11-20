@@ -67,6 +67,17 @@ public interface UserDAO {
     User getByEmail(String email) throws NotFoundException;
 
     /**
+     * Gets a user by its username.
+     *
+     * @param username
+     *         The users username
+     * @return The user with the given username.
+     * @throws NotFoundException
+     *         If no user was found.
+     */
+    User getByUsername(String username) throws NotFoundException;
+
+    /**
      * Gets a user by its id.
      *
      * @param id

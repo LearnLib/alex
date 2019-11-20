@@ -1,4 +1,19 @@
-<form [formGroup]="form" (ngSubmit)="login()" id="user-login-form" name="form">
+<form [formGroup]="form" (ngSubmit)="signUp()" id="user-registration-form" name="form">
+  <div class="form-group">
+    <label>Username</label>
+    <input
+      autofocus
+      class="form-control"
+      placeholder="Username"
+      required
+      type="text"
+      [formControl]="form.controls.username"
+      [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.username)"
+    >
+    <div class="invalid-feedback">
+      Please provide an username.
+    </div>
+  </div>
   <div class="form-group">
     <label>Email</label>
     <input
@@ -29,6 +44,12 @@
     </div>
   </div>
   <div *ngIf="settings != null" class="d-flex flex-row">
-    <button class="btn btn-primary w-100" [disabled]="form.invalid">Login</button>
+    <button
+      class="btn btn-primary w-100"
+      [disabled]="form.invalid"
+      *ngIf="settings.allowUserRegistration"
+    >
+      Sign Up
+    </button>
   </div>
 </form>

@@ -17,10 +17,11 @@
 import { User } from '../../entities/user';
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
-import { Component, OnInit } from '@angular/core';
+import {Component, ContentChild, OnInit, ViewChild, AfterViewInit} from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AboutModalComponent } from './about-modal/about-modal.component';
+import { UserLoginFormComponent } from "../../common/user-login-form/user-login-form.component";
 
 /**
  * The controller of the index page.
@@ -31,6 +32,10 @@ import { AboutModalComponent } from './about-modal/about-modal.component';
   styleUrls: ['./root-view.component.scss']
 })
 export class RootViewComponent implements OnInit {
+
+  @ViewChild('userLoginTabset', {static: false}) tabset;
+
+  credentials: any;
 
   constructor(private appStore: AppStoreService,
               private router: Router,
@@ -57,6 +62,11 @@ export class RootViewComponent implements OnInit {
 
   handleLoggedIn(): void {
     this.router.navigate(['app', 'projects']);
+  }
+
+  handleSignedUp(credentials): void {
+    this.credentials = credentials;
+    this.tabset.select('login');
   }
 
   showAboutModal(): void {

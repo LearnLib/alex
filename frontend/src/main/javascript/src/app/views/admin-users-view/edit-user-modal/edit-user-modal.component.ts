@@ -23,6 +23,7 @@ import { AppStoreService } from '../../../services/app-store.service';
 import { userRole } from '../../../constants';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import {isNotNullOrUndefined} from "codelyzer/util/isNotNullOrUndefined";
 
 @Component({
   selector: 'edit-user-modal',
@@ -41,7 +42,10 @@ export class EditUserModalComponent implements OnInit {
   error: string = null;
 
   /** The email of the user. */
-  form: FormGroup;
+  emailForm: FormGroup;
+
+  /** The username of the user. */
+  usernameForm: FormGroup;
 
   updated: EventEmitter<User>;
   deleted: EventEmitter<User>;
@@ -54,8 +58,12 @@ export class EditUserModalComponent implements OnInit {
     this.updated = new EventEmitter<User>();
     this.deleted = new EventEmitter<User>();
 
-    this.form = new FormGroup({
+    this.emailForm = new FormGroup({
       'email': new FormControl('', [Validators.required, Validators.email])
+    });
+
+    this.usernameForm = new FormGroup({
+      'username': new FormControl('', [Validators.required, Validators.pattern("[a-zA-Z][a-zA-Z0-9]*"), Validators.maxLength(32)]),
     });
   }
 
@@ -64,7 +72,25 @@ export class EditUserModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.controls.email.setValue(this.user.email);
+    this.usernameForm.controls.username.setValue(this.user.username);
+    this.emailForm.controls.email.setValue(this.user.email);
+  }
+
+  /**
+   * Changes the username of an user.
+   */
+  changeUsername(): void {
+    this.error = null;
+    this.userApi.changeUsername(this.user, this.usernameForm.controls.username.value).subscribe(
+      user => {
+        this.toastService.success('The username has been changed.');
+        this.updated.emit(user);
+        this.modal.dismiss();
+      },
+      response => {
+        this.error = response.error.message;
+      }
+    )
   }
 
   /**
@@ -72,7 +98,7 @@ export class EditUserModalComponent implements OnInit {
    */
   changeEmail(): void {
     this.error = null;
-    this.userApi.changeEmail(this.user, this.form.controls.email.value).subscribe(
+    this.userApi.changeEmail(this.user, this.emailForm.controls.email.value).subscribe(
       user => {
         if (this.currentUser.id === this.user.id) {
           this.appStore.login(user);
@@ -150,4 +176,5 @@ export class EditUserModalComponent implements OnInit {
   isInvalidFormControl(c: AbstractControl): boolean {
     return c.invalid && (c.dirty || c.touched);
   }
+
 }

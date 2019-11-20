@@ -18,27 +18,24 @@ import { UserApiService } from '../../services/api/user-api.service';
 import { ToastService } from '../../services/toast.service';
 import { SettingsApiService } from '../../services/api/settings-api.service';
 import { AppStoreService } from '../../services/app-store.service';
-import {Component, EventEmitter, Input, Output, AfterViewInit} from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormUtilsService } from '../../services/form-utils.service';
-import {isNotNullOrUndefined} from "codelyzer/util/isNotNullOrUndefined";
 
 /**
- * The component controller for the user login form.
+ * The component controller for the user registration form.
  */
 @Component({
-  selector: 'user-login-form',
-  templateUrl: './user-login-form.component.html'
+  selector: 'user-registration-form',
+  templateUrl: './user-registration-form.component.html'
 })
-export class UserLoginFormComponent {
+export class UserRegistrationFormComponent {
 
   @Output()
-  loggedIn = new EventEmitter<any>();
-
-  @Input()
-  credentials: any;
+  signedUp = new EventEmitter<any>();
 
   form = new FormGroup({
+    username: new FormControl('', [Validators.required, Validators.pattern("[a-zA-Z][a-zA-Z0-9]*"), Validators.maxLength(32)]),
     email: new FormControl('', [Validators.email, Validators.required]),
     password: new FormControl('', [Validators.required])
   });
@@ -48,7 +45,6 @@ export class UserLoginFormComponent {
   constructor(private userApi: UserApiService,
               private toastService: ToastService,
               private settingsApi: SettingsApiService,
-              private appStore: AppStoreService,
               public formUtils: FormUtilsService) {
 
     this.settingsApi.get().subscribe(
@@ -57,35 +53,18 @@ export class UserLoginFormComponent {
     );
   }
 
-  ngOnInit(): void {
-    if (isNotNullOrUndefined(this.credentials)) {
-      this.form.setValue(this.credentials);
-    }
-  }
-
   /**
-   * Logs in the user.
+   * Creates a new user.
    */
-  login(): void {
+  signUp(): void {
     const value = this.form.value;
 
-    this.userApi.login(value.email, value.password).subscribe(data => {
-        this.toastService.info('You have logged in!');
-
-        // decode the token and create a user from it
-        const token = data.token;
-        localStorage.setItem('jwt', token);
-        this.userApi.myself().subscribe(
-          user => {
-            this.appStore.login(user, token);
-            this.loggedIn.emit();
-          },
-          console.error
-        );
-      },
+    this.userApi.create(<any>{username: value.username, email: value.email, password: value.password}).subscribe(
       () => {
-        this.toastService.danger('Login failed');
-      }
+        this.toastService.success('Registration successful. You can now use the credentials to login.');
+        this.signedUp.emit({email: value.email, password: value.password});
+      },
+      response => this.toastService.danger(`Registration failed. ${response.error.message}`)
     );
   }
 }

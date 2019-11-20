@@ -72,6 +72,7 @@ public class AlexComponent {
         if (userDAO.getAllByRole(UserRole.ADMIN).size() == 0) {
             User admin = new User();
             admin.setEmail(env.getProperty("alex.admin.email"));
+            admin.setUsername(env.getProperty("alex.admin.username"));
             admin.setRole(UserRole.ADMIN);
             admin.setEncryptedPassword(env.getProperty("alex.admin.password"));
             userDAO.create(admin);

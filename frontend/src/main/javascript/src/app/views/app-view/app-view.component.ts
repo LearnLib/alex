@@ -27,6 +27,6 @@ export class AppViewComponent {
   constructor(public appStore: AppStoreService) { }
 
   get username(): string {
-    return this.appStore.user.email.split('@')[0];
+    return this.appStore.user.username;
   }
 }

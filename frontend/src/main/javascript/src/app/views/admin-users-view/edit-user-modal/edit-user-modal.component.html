@@ -12,12 +12,32 @@
     <span>{{error}}</span>
   </div>
 
-  <h5><strong>Email</strong></h5>
-  <form (ngSubmit)="changeEmail()" [formGroup]="form">
+  <h5><strong>Username</strong></h5>
+  <form (ngSubmit)="changeUsername()" [formGroup]="usernameForm">
     <div class="form-group">
       <input
-        [class.is-invalid]="isInvalidFormControl(form.controls.email)"
-        [formControl]="form.controls.email"
+        [class.is-invalid]="isInvalidFormControl(usernameForm.controls.username)"
+        [formControl]="usernameForm.controls.username"
+        class="form-control"
+        name="username"
+        placeholder="Enter an username"
+        required
+        type="text"
+      />
+      <div class="invalid-feedback">
+        Please enter an username.
+      </div>
+    </div>
+    <button [disabled]="usernameForm.invalid" class="btn btn-primary btn-sm">Change username</button>
+  </form>
+
+  <hr>
+  <h5><strong>Email</strong></h5>
+  <form (ngSubmit)="changeEmail()" [formGroup]="emailForm">
+    <div class="form-group">
+      <input
+        [class.is-invalid]="isInvalidFormControl(emailForm.controls.email)"
+        [formControl]="emailForm.controls.email"
         class="form-control"
         name="mail"
         placeholder="Enter an email address"
@@ -28,7 +48,7 @@
         Please enter an email address.
       </div>
     </div>
-    <button [disabled]="form.invalid" class="btn btn-primary btn-sm">Change email</button>
+    <button [disabled]="emailForm.invalid" class="btn btn-primary btn-sm">Change email</button>
   </form>
 
   <hr>

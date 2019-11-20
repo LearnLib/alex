@@ -31,6 +31,9 @@ export class User {
   /** The email of the user. */
   public email: string;
 
+  /** The username of the user. */
+  public username: string;
+
   constructor() {
     this.role = UserRole.REGISTERED;
   }
@@ -40,6 +43,7 @@ export class User {
     u.id = data.id;
     u.role = data.role;
     u.email = data.email;
+    u.username = data.username;
     return u;
   }
 
