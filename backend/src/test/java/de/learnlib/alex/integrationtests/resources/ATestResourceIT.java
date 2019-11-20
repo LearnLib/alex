@@ -17,14 +17,17 @@
 package de.learnlib.alex.integrationtests.resources;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolApi;
 import de.learnlib.alex.integrationtests.resources.api.TestApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
+import de.learnlib.alex.testing.entities.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.ws.rs.core.Response;
 import java.util.Arrays;
@@ -197,8 +200,24 @@ public class ATestResourceIT extends AbstractResourceIT {
     }
 
     @Test
-    public void shouldUpdateTest() {
-        // TODO
+    public void shouldUpdateTest() throws Exception {
+        final String tc = "{\"name\": \"tc\", \"type\": \"case\"}";
+        final Response res1 = testApi.create(projectId, tc, jwtUser1);
+
+        final TestCase testCase = res1.readEntity(TestCase.class);
+        testCase.setName("abc");
+
+        final Response res2 = testApi.update(testCase.getProjectId(), testCase.getId(), objectMapper.writeValueAsString(testCase), jwtUser1);
+        Assert.assertEquals(Response.Status.OK.getStatusCode(), res2.getStatus());
+
+        // get updated test case
+        final TestCase updatedTestCase = res2.readEntity(TestCase.class);
+        Assert.assertEquals(testCase.getName(), updatedTestCase.getName());
+
+        // updated test case is in db
+        final TestCase testCaseIdDb = testApi.get(projectId, testCase.getId().intValue(), jwtUser1)
+                .readEntity(TestCase.class);
+        Assert.assertEquals(testCase.getName(), testCaseIdDb.getName());
     }
 
     @Test

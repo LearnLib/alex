@@ -58,7 +58,7 @@ public class TestApi extends AbstractApi {
                 .get();
     }
 
-    public Response update(int projectId, int testId, String test, String jwt) {
+    public Response update(Long projectId, Long testId, String test, String jwt) {
         return client.target(url(projectId) + "/" + testId).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)

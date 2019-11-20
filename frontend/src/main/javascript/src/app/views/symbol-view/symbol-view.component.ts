@@ -202,7 +202,7 @@ export class SymbolViewComponent implements OnInit, OnDestroy {
         this.symbol = updatedSymbol;
         this.symbol.steps.forEach(step => step._id = uniqueId());
         this.selectedSteps.clear();
-        this.selectedSteps.updateAll(this.symbol.steps);
+        this.selectedSteps.addItems(this.symbol.steps);
       },
       res => {
         this.toastService.danger('<p><strong>Error updating symbol</strong></p>' + res.error.message);

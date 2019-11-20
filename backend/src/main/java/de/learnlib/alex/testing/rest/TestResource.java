@@ -242,7 +242,7 @@ public class TestResource {
      * @return The updated test.
      */
     @PutMapping(
-            value = "/{testId}}",
+            value = "/{testId}",
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )

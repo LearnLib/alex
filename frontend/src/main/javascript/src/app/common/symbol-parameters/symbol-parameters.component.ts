@@ -27,6 +27,6 @@ export class SymbolParametersComponent {
   parameterValues: any[];
 
   get publicParameterValues(): any[] {
-    return this.parameterValues.filter(pv => !pv.private);
+    return this.parameterValues.filter(pv => !pv.parameter.private);
   }
 }
