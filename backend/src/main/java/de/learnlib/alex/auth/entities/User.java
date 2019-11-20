@@ -55,6 +55,10 @@ public class User implements Serializable {
     @GeneratedValue
     private Long id;
 
+    /** The username of the user. */
+    @Column(unique = true)
+    private String username;
+
     /** The email address of the user he uses to login. */
     @NotBlank
     @Email
@@ -111,6 +115,20 @@ public class User implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * @return The current username of the user.
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * @param username The new username of the user.
+     */
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**

@@ -65,12 +65,13 @@ public class UserTest {
     public void shouldSerializeCorrectly() throws JsonProcessingException, JSONException {
         final User user = new User();
         user.setId(1L);
+        user.setUsername("user1");
         user.setEncryptedPassword("password123");
         user.setRole(UserRole.ADMIN);
         user.setEmail("admin@alex.com");
 
         final String userString = om.writeValueAsString(user);
-        final String expectedUserString = "{\"id\":1, \"email\": \"admin@alex.com\", \"role\": \"ADMIN\"}";
+        final String expectedUserString = "{\"id\":1, \"username\": \"user1\", \"email\": \"admin@alex.com\", \"role\": \"ADMIN\"}";
         JSONAssert.assertEquals(expectedUserString, userString, true);
     }
 

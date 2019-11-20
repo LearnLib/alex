@@ -13,6 +13,22 @@
     </div>
 
     <div class="form-group">
+      <label>Username</label>
+      <input
+        class="form-control"
+        name="username"
+        placeholder="Username"
+        required
+        type="text"
+        [class.is-invalid]="formUtils.isInvalidFormControl(form.controls.username)"
+        [formControl]="form.controls.username"
+      >
+      <div class="invalid-feedback">
+        Please enter an username.
+      </div>
+    </div>
+
+    <div class="form-group">
       <label>Email</label>
       <input
         class="form-control"

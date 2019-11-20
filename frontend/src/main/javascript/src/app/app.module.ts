@@ -142,6 +142,7 @@ import { SymbolsSymbolGroupTreeComponent } from './views/symbols-view/symbols-sy
 import { SymbolItemComponent } from './views/symbols-view/symbols-symbol-group-tree/symbol-item/symbol-item.component';
 import { SidebarComponent } from './common/sidebar/sidebar.component';
 import { UserLoginFormComponent } from './common/user-login-form/user-login-form.component';
+import { UserRegistrationFormComponent } from "./common/user-registration-form/user-registration-form.component";
 import { RootViewComponent } from './views/root-view/root-view.component';
 import { NodeFormGroupComponent } from './common/node-form-group/node-form-group.component';
 import { LearnerSettingsModalComponent } from './views/learner-setup-view/learner-settings-modal/learner-settings-modal.component';
@@ -340,6 +341,7 @@ import { TestReportProgressComponent } from './common/test-report-progress/test-
     SymbolItemComponent,
     SidebarComponent,
     UserLoginFormComponent,
+    UserRegistrationFormComponent,
     RootViewComponent,
     NodeFormGroupComponent,
     LearnerSetupViewComponent,

@@ -184,6 +184,25 @@ public class UserDAOImplTest {
     }
 
     @Test
+    public void shouldGetByUsername() throws NotFoundException {
+        User user = createUser();
+        BDDMockito.given(userRepository.findOneByUsername(user.getUsername())).willReturn(user);
+
+        User userFromDB = userDAO.getByUsername(user.getUsername());
+
+        Assert.assertEquals(user, userFromDB);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void shouldThrowAnExceptionIfTheUserCanNotBeFoundByUsername() throws NotFoundException {
+        User user = createUser();
+
+        BDDMockito.given(userRepository.findOneByUsername(user.getUsername())).willReturn(null);
+
+        userDAO.getByUsername(user.getUsername());
+    }
+
+    @Test
     public void shouldUpdateAUser() throws NotFoundException {
         User user = createUser();
 
@@ -279,6 +298,7 @@ public class UserDAOImplTest {
         User user1 = new User();
         user1.setId(42L);
         user1.setEmail("user1@mail.de");
+        user1.setUsername("user1");
         user1.setEncryptedPassword("test");
 
         userDAO.create(user1);
@@ -298,6 +318,7 @@ public class UserDAOImplTest {
 
     private User createUser() {
         User user = new User();
+        user.setUsername("user");
         user.setEmail("user@text.example");
         user.setEncryptedPassword("alex");
         return user;

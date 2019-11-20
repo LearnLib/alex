@@ -84,6 +84,10 @@ public class UserDAOImpl implements UserDAO {
             throw new ValidationException("A user with the email already exists");
         }
 
+        if (userRepository.findOneByUsername(user.getUsername()) != null) {
+            throw new ValidationException("A user with this username already exists");
+        }
+
         saveUser(user);
     }
 
@@ -117,6 +121,17 @@ public class UserDAOImpl implements UserDAO {
 
         if (user == null) {
             throw new NotFoundException("Could not find the user with the email '" + email + "'!");
+        }
+        return user;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public User getByUsername(String username) throws NotFoundException {
+        User user = userRepository.findOneByUsername(username);
+
+        if (user == null) {
+            throw new NotFoundException("Could not find the user with the username '" + username + "'!");
         }
         return user;
     }

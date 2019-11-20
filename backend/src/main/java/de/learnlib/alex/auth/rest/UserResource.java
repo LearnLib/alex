@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.print.attribute.standard.Media;
 import javax.validation.ValidationException;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
@@ -98,6 +99,14 @@ public class UserResource {
 
         if (!new EmailValidator().isValid(newUser.getEmail(), null)) {
             throw new ValidationException("The email is not valid");
+        }
+
+        if (newUser.getUsername().length() > 32 || !newUser.getUsername().matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
+            throw new ValidationException("The username is not valid!");
+        }
+
+        if (usernameIsAlreadyTaken(newUser.getUsername())) {
+            throw new ValidationException("The username is already taken!");
         }
 
         final Settings settings = settingsDAO.get();
@@ -268,6 +277,54 @@ public class UserResource {
     private boolean emailIsAlreadyTaken(String email) {
         try {
             userDAO.getByEmail(email);
+            return true;
+        } catch (NotFoundException e) {
+            return false;
+        }
+    }
+
+    @PutMapping(
+            value = "/{id}/username",
+            consumes = MediaType.APPLICATION_JSON,
+            produces = MediaType.APPLICATION_JSON
+    )
+    public ResponseEntity changeUsername(@PathVariable("id") Long userId, @RequestBody JSONObject json) {
+        final User user = authContext.getUser();
+        LOGGER.traceEntry("changeUsername({}, {}) for user {}.", userId, json, user);
+
+        if (!user.getRole().equals(UserRole.ADMIN)) {
+            LOGGER.traceExit("Only the admin is allowed to change the username.");
+            return ResourceErrorHandler.createRESTErrorMessage("UserResource.changeUsername", HttpStatus.FORBIDDEN,
+                    new UnauthorizedException("You are not allowed to do this."));
+        }
+
+        String username = (String) json.get("username");
+        User realUser = userDAO.getById(userId);
+
+        if (username.length() > 32 || !username.matches("^[a-zA-Z][a-zA-Z0-9]*$")) {
+            throw new ValidationException("The username is invalid!");
+        }
+
+        if (username.equals(user.getUsername())) {
+            throw new ValidationException("The username is the same as the current one!");
+        }
+
+        if (usernameIsAlreadyTaken(username)) {
+            throw new ValidationException("The username is already taken!");
+        }
+
+        realUser.setUsername(username);
+        userDAO.update(realUser);
+
+        LOGGER.traceExit(realUser);
+
+        webhookService.fireEvent(user, new UserEvent.CredentialsUpdated(userId));
+        return ResponseEntity.ok(realUser);
+    }
+
+    private boolean usernameIsAlreadyTaken(String username) {
+        try {
+            userDAO.getByUsername(username);
             return true;
         } catch (NotFoundException e) {
             return false;
