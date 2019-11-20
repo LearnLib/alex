@@ -46,9 +46,6 @@ public abstract class AbstractRepositoryIT {
     protected UserRepository userRepository;
 
     @Inject
-    protected ProjectDAO projectDAO;
-
-    @Inject
     protected ProjectRepository projectRepository;
 
     @After
@@ -64,6 +61,7 @@ public abstract class AbstractRepositoryIT {
 
     User createUser(String email) {
         User user = new User();
+        user.setUsername(email.split("@")[0]);
         user.setEmail(email);
         user.setPassword("test");
         return user;

@@ -53,8 +53,8 @@ public class WebhookResourceIT extends AbstractResourceIT {
         userApi = new UserApi(client, port);
         webhookApi = new WebhookApi(client, port);
 
-        userApi.create("{\"email\":\"test1@test.de\",\"password\":\"test\"}");
-        userApi.create("{\"email\":\"test2@test.de\",\"password\":\"test\"}");
+        userApi.create("{\"email\":\"test1@test.de\",\"username\":\"test1\",\"password\":\"test\"}");
+        userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test\"}");
 
         jwtUser1 = userApi.login("test1@test.de", "test");
         jwtUser2 = userApi.login("test2@test.de", "test");

@@ -19,6 +19,7 @@ package de.learnlib.alex.integrationtests.resources;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import de.learnlib.alex.config.entities.Settings;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -74,6 +75,19 @@ public abstract class AbstractResourceIT {
 
         deleteAllUsersExceptTheDefaultAdmin(token);
         deleteAllProjectsOfDefaultAdmin(token);
+        resetSettings(token);
+    }
+
+    private void resetSettings(String token) throws Exception {
+        final Settings settings = new Settings();
+        settings.setAllowUserRegistration(true);
+
+        final Response res = client.target(baseUrl() + "/settings").request()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .put(Entity.json(objectMapper.writeValueAsString(settings)));
+
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
     }
 
     private void deleteAllUsersExceptTheDefaultAdmin(String token) throws Exception {

@@ -50,7 +50,7 @@ public class SymbolParameterResourceIT extends AbstractResourceIT {
         this.symbolParameterApi = new SymbolParameterApi(client, port);
 
         final UserApi userApi = new UserApi(client, port);
-        userApi.create("{\"email\":\"test1@test.de\",\"password\":\"test\"}");
+        userApi.create("{\"email\":\"test1@test.de\",\"username\":\"test1\",\"password\":\"test\"}");
         jwtUser1 = userApi.login("test1@test.de", "test");
 
         final ProjectApi projectApi = new ProjectApi(client, port);

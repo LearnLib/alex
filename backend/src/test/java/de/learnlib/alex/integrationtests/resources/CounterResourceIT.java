@@ -54,8 +54,8 @@ public class CounterResourceIT extends AbstractResourceIT {
         projectApi = new ProjectApi(client, port);
         counterApi = new CounterApi(client, port);
 
-        userApi.create("{\"email\":\"test1@test.de\",\"password\":\"test\"}");
-        userApi.create("{\"email\":\"test2@test.de\",\"password\":\"test\"}");
+        userApi.create("{\"email\":\"test1@test.de\",\"username\":\"test1\",\"password\":\"test\"}");
+        userApi.create("{\"email\":\"test2@test.de\",\"username\":\"test2\",\"password\":\"test\"}");
 
         jwtUser1 = userApi.login("test1@test.de", "test");
         jwtUser2 = userApi.login("test2@test.de", "test");

@@ -311,14 +311,16 @@ public class UserResourceIT extends AbstractResourceIT {
 
     private String createUserJson(String email, String password) {
         return "{"
-                + "\"email\":\"" + email + "\""
+                + "\"username\":\"" + email.split("@")[0] + "\""
+                + ",\"email\":\"" + email + "\""
                 + ",\"password\":\"" + password + "\""
                 + "}";
     }
 
     private String createUserJson(String email, String password, String role) {
         return "{"
-                + "\"email\":\"" + email + "\""
+                + "\"username\":\"" + email.split("@")[0] + "\""
+                + ",\"email\":\"" + email + "\""
                 + ",\"password\":\"" + password + "\""
                 + ",\"role\":\"" + role + "\""
                 + "}";

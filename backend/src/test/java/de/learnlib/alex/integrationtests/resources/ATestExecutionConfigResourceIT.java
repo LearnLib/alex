@@ -47,8 +47,8 @@ public class ATestExecutionConfigResourceIT extends AbstractResourceIT {
         this.api = new TestExecutionConfigApi(client, port);
 
         final UserApi userApi = new UserApi(client, port);
-        userApi.create("{\"email\":\"user1@alex.com\",\"password\":\"password123\"}");
-        userApi.create("{\"email\":\"user2@alex.com\",\"password\":\"password123\"}");
+        userApi.create("{\"email\":\"user1@alex.com\", \"username\":\"user1\", \"password\":\"password123\"}");
+        userApi.create("{\"email\":\"user2@alex.com\", \"username\":\"user2\", \"password\":\"password123\"}");
         this.jwtUser1 = userApi.login("user1@alex.com", "password123");
         this.jwtUser2 = userApi.login("user2@alex.com", "password123");
 

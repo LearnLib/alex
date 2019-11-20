@@ -48,7 +48,7 @@ public class ProjectResourceIT extends AbstractResourceIT {
         projectApi = new ProjectApi(client, port);
         symbolGroupApi = new SymbolGroupApi(client, port);
 
-        userApi.create("{\"email\":\"test@test.de\",\"password\":\"test\"}");
+        userApi.create("{\"email\":\"test@test.de\",\"username\":\"test\",\"password\":\"test\"}");
 
         adminJwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
         userJwt = userApi.login("test@test.de", "test");

@@ -41,7 +41,7 @@ public class SettingsResource extends AbstractResourceIT {
         this.settingsApi = new SettingsApi(client, port);
 
         final UserApi userApi = new UserApi(client, port);
-        userApi.create("{\"email\":\"test@test.de\",\"password\":\"test\"}");
+        userApi.create("{\"email\":\"test@test.de\",\"username\":\"test\",\"password\":\"test\"}");
 
         adminJwt = userApi.login("admin@alex.example", "admin");
         userJwt = userApi.login("test@test.de", "test");
