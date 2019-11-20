@@ -45,7 +45,10 @@ export class AdminUsersViewComponent implements OnInit {
 
   get filteredUsers$(): Observable<User[]> {
     return this.store.users$.pipe(map(users =>
-      orderBy(users.filter(u => u.email.includes(this.searchForm.controls.value.value)), ['role', 'email'], ['asc', 'asc'])
+      orderBy(users.filter(u => {
+        const value = this.searchForm.controls.value.value;
+        return u.email.includes(value) || u.username.includes(value);
+      }), ['role', 'email'], ['asc', 'asc'])
     ));
   }
 }

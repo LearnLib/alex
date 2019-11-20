@@ -67,8 +67,11 @@ export class UserApiService extends BaseApiService {
    * @param user The user whose username should be changed.
    * @param username The new username.
    */
-  changeUsername(user: User, username: string): Observable<any> {
-    return this.http.put(`${env.apiUrl}/users/${user.id}/username`, {username}, this.defaultHttpOptions);
+  changeUsername(user: User, username: string): Observable<User> {
+    return this.http.put(`${env.apiUrl}/users/${user.id}/username`, {username}, this.defaultHttpOptions)
+      .pipe(
+        map((body: any) => User.fromData(body))
+      );
   }
 
   /**

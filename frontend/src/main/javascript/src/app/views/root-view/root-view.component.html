@@ -14,7 +14,7 @@
               </user-login-form>
             </ng-template>
           </ngb-tab>
-          <ngb-tab id="registration" title="Sign Up">
+          <ngb-tab id="registration" title="Sign Up" *ngIf="settings != null && settings.allowUserRegistration">
             <ng-template ngbTabContent>
               <br>
               <user-registration-form
@@ -29,7 +29,7 @@
     <hr>
     <div class="text-center links">
       <a (click)="showAboutModal(); $event.preventDefault()" href="#" class="mx-2 cursor-pointer">About</a>
-      <a href="https://learnlib.github.io/alex/book/1.7.0/" class="mx-2" target="_blank">Docs</a>
+      <a href="https://learnlib.github.io/alex/book/1.8.0/" class="mx-2" target="_blank">Docs</a>
       <a href="https://github.com/LearnLib/alex" class="mx-2" target="_blank">GitHub</a>
     </div>
   </div>

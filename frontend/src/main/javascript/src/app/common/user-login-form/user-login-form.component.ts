@@ -16,12 +16,10 @@
 
 import { UserApiService } from '../../services/api/user-api.service';
 import { ToastService } from '../../services/toast.service';
-import { SettingsApiService } from '../../services/api/settings-api.service';
 import { AppStoreService } from '../../services/app-store.service';
-import {Component, EventEmitter, Input, Output, AfterViewInit} from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormUtilsService } from '../../services/form-utils.service';
-import {isNotNullOrUndefined} from "codelyzer/util/isNotNullOrUndefined";
 
 /**
  * The component controller for the user login form.
@@ -43,22 +41,14 @@ export class UserLoginFormComponent {
     password: new FormControl('', [Validators.required])
   });
 
-  settings: any;
-
   constructor(private userApi: UserApiService,
               private toastService: ToastService,
-              private settingsApi: SettingsApiService,
               private appStore: AppStoreService,
               public formUtils: FormUtilsService) {
-
-    this.settingsApi.get().subscribe(
-      settings => this.settings = settings,
-      res => this.toastService.danger(`Could not get settings. ${res.error.message}`)
-    );
   }
 
   ngOnInit(): void {
-    if (isNotNullOrUndefined(this.credentials)) {
+    if (this.credentials != null) {
       this.form.setValue(this.credentials);
     }
   }

@@ -43,13 +43,7 @@
       Please enter a password.
     </div>
   </div>
-  <div *ngIf="settings != null" class="d-flex flex-row">
-    <button
-      class="btn btn-primary w-100"
-      [disabled]="form.invalid"
-      *ngIf="settings.allowUserRegistration"
-    >
-      Sign Up
-    </button>
-  </div>
+  <button class="btn btn-primary w-100" [disabled]="form.invalid">
+    Sign Up
+  </button>
 </form>

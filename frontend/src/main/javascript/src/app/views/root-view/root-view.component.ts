@@ -17,11 +17,11 @@
 import { User } from '../../entities/user';
 import { Project } from '../../entities/project';
 import { AppStoreService } from '../../services/app-store.service';
-import {Component, ContentChild, OnInit, ViewChild, AfterViewInit} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AboutModalComponent } from './about-modal/about-modal.component';
-import { UserLoginFormComponent } from "../../common/user-login-form/user-login-form.component";
+import { SettingsApiService } from '../../services/api/settings-api.service';
 
 /**
  * The controller of the index page.
@@ -37,7 +37,10 @@ export class RootViewComponent implements OnInit {
 
   credentials: any;
 
+  settings: any;
+
   constructor(private appStore: AppStoreService,
+              private settingsApi: SettingsApiService,
               private router: Router,
               private modalService: NgbModal) {
   }
@@ -58,6 +61,11 @@ export class RootViewComponent implements OnInit {
         this.router.navigate(['app', 'projects']);
       }
     }
+
+    this.settingsApi.get().subscribe(
+      settings => this.settings = settings,
+      console.error
+    );
   }
 
   handleLoggedIn(): void {

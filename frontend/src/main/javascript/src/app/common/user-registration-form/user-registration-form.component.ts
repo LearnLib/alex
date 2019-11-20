@@ -16,8 +16,6 @@
 
 import { UserApiService } from '../../services/api/user-api.service';
 import { ToastService } from '../../services/toast.service';
-import { SettingsApiService } from '../../services/api/settings-api.service';
-import { AppStoreService } from '../../services/app-store.service';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FormUtilsService } from '../../services/form-utils.service';
@@ -40,17 +38,9 @@ export class UserRegistrationFormComponent {
     password: new FormControl('', [Validators.required])
   });
 
-  settings: any;
-
   constructor(private userApi: UserApiService,
               private toastService: ToastService,
-              private settingsApi: SettingsApiService,
               public formUtils: FormUtilsService) {
-
-    this.settingsApi.get().subscribe(
-      settings => this.settings = settings,
-      res => this.toastService.danger(`Could not get settings. ${res.error.message}`)
-    );
   }
 
   /**

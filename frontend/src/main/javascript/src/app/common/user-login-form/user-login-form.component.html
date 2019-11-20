@@ -28,7 +28,5 @@
       Please enter a password.
     </div>
   </div>
-  <div *ngIf="settings != null" class="d-flex flex-row">
-    <button class="btn btn-primary w-100" [disabled]="form.invalid">Login</button>
-  </div>
+  <button class="btn btn-primary w-100" [disabled]="form.invalid">Login</button>
 </form>
