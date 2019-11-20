@@ -97,7 +97,7 @@
                 <configuration>
                     <mainClass>de.learnlib.alex.AlexApp</mainClass>
                     <addResources>false</addResources>
-                    <finalName>alex-${version}</finalName>
+                    <finalName>alex-${project.version}</finalName>
                 </configuration>
                 <executions>
                     <execution>

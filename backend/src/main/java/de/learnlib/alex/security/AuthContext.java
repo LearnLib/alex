@@ -20,9 +20,17 @@ import de.learnlib.alex.auth.entities.User;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Component that makes the user of the current request available for DI.
+ */
 @Component
 public class AuthContext {
 
+    /**
+     * Get the user of the current request.
+     *
+     * @return The user of the current request.
+     */
     public User getUser() {
         return (User) SecurityContextHolder.getContext()
                 .getAuthentication()

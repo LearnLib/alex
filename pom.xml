@@ -180,6 +180,13 @@
                     <groupId>org.eluder.coveralls</groupId>
                     <artifactId>coveralls-maven-plugin</artifactId>
                     <version>${coveralls-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>javax.xml.bind</groupId>
+                            <artifactId>jaxb-api</artifactId>
+                            <version>2.4.0-b180830.0359</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
 
                 <!-- Version / Update -->

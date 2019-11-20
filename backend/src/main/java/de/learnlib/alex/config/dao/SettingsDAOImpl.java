@@ -53,7 +53,6 @@ public class SettingsDAOImpl implements SettingsDAO {
         }
 
         settingsRepository.save(settings);
-
         updateDriverSystemProperties(settings.getDriverSettings());
     }
 
@@ -67,7 +66,6 @@ public class SettingsDAOImpl implements SettingsDAO {
     @Transactional
     public void update(Settings settings) {
         settingsRepository.save(settings);
-
         updateDriverSystemProperties(settings.getDriverSettings());
     }
 

@@ -73,6 +73,19 @@ public class SettingsResource extends AbstractResourceIT {
     }
 
     @Test
+    public void shouldNotUpdateWithInvalidDefaultDriver() throws Exception {
+        final Settings settings = settingsApi.get().readEntity(Settings.class);
+        final String defaultDriver = settings.getDriverSettings().getDefaultDriver();
+        settings.getDriverSettings().setDefaultDriver("qwertz");
+
+        final Response res = settingsApi.update(settings, adminJwt);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+
+        final Settings settingsPost = settingsApi.get().readEntity(Settings.class);
+        assertEquals(defaultDriver, settingsPost.getDriverSettings().getDefaultDriver());
+    }
+
+    @Test
     public void adminShouldUpdateSettings() throws Exception {
         final Response res = settingsApi.get();
         final Settings settings = res.readEntity(Settings.class);

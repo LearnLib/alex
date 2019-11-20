@@ -16,13 +16,11 @@
 
 package de.learnlib.alex.config.rest;
 
-import de.learnlib.alex.common.utils.ResourceErrorHandler;
 import de.learnlib.alex.config.dao.SettingsDAO;
 import de.learnlib.alex.config.entities.Settings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -59,20 +57,9 @@ public class SettingsResource {
     )
     public ResponseEntity get() {
         LOGGER.traceEntry("get()");
-
-        try {
-            Settings settings = settingsDAO.get();
-            if (settings == null) {
-                throw new Exception("The settings have not been created yet.");
-            }
-
-            LOGGER.traceExit(settings);
-            return ResponseEntity.ok(settings);
-        } catch (Exception e) {
-            LOGGER.traceExit(e);
-            return ResourceErrorHandler.createRESTErrorMessage("SettingsResource.get",
-                    HttpStatus.BAD_REQUEST, e);
-        }
+        final Settings settings = settingsDAO.get();
+        LOGGER.traceExit(settings);
+        return ResponseEntity.ok(settings);
     }
 
     /**
@@ -88,16 +75,9 @@ public class SettingsResource {
     )
     public ResponseEntity update(@RequestBody Settings settings) {
         LOGGER.traceEntry("update({})", settings);
-
-        try {
-            settings.checkValidity();
-            settingsDAO.update(settings);
-
-            LOGGER.traceExit(settings);
-            return ResponseEntity.ok(settings);
-        } catch (Exception e) {
-            return ResourceErrorHandler.createRESTErrorMessage("SettingsResource.update",
-                    HttpStatus.BAD_REQUEST, e);
-        }
+        settings.checkValidity();
+        settingsDAO.update(settings);
+        LOGGER.traceExit(settings);
+        return ResponseEntity.ok(settings);
     }
 }
