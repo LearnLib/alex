@@ -1,12 +1,7 @@
 language: java
 
-dist: trusty
+dist: bionic
 sudo: true
-
-before_install:
-  - curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-  - sudo apt-get -y install nodejs
-  - sudo apt-get -y install chromium-chromedriver
 
 cache:
   directories:
