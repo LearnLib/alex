@@ -21,6 +21,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 public class ProjectApi extends AbstractApi {
 
@@ -56,6 +57,12 @@ public class ProjectApi extends AbstractApi {
 
     public Response delete(int projectId, String jwt) {
         return client.target(url() + "/" + projectId).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .delete();
+    }
+
+    public Response delete(List<String> projectIds, String jwt) {
+        return client.target(url() + "/batch/" + String.join(",", projectIds)).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .delete();
     }

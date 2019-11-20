@@ -19,6 +19,7 @@ package de.learnlib.alex.integrationtests.resources;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
+import de.learnlib.alex.data.entities.Project;
 import de.learnlib.alex.integrationtests.resources.api.ProjectApi;
 import de.learnlib.alex.integrationtests.resources.api.SymbolGroupApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
@@ -27,6 +28,11 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -80,6 +86,25 @@ public class ProjectResourceIT extends AbstractResourceIT {
         final Response res = projectApi.create(project, adminJwt);
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), res.getStatus());
+    }
+
+    @Test
+    public void shouldDeleteMultipleProjects() {
+        final String project1 = createProjectJson("p1", "http://localhost:8080");
+        final String project2 = createProjectJson("p2", "http://localhost:8080");
+
+        final Response res1 = projectApi.create(project1, adminJwt);
+        final Response res2 = projectApi.create(project2, adminJwt);
+
+        final List<String> ids = Stream.of(res1, res2)
+                .map(res -> res.readEntity(Project.class).getId().toString())
+                .collect(Collectors.toList());
+
+        final Response res3 = projectApi.delete(ids, adminJwt);
+        assertEquals(HttpStatus.NO_CONTENT.value(), res3.getStatus());
+
+        final Response res4 = projectApi.getAll(adminJwt);
+        assertEquals("[]", res4.readEntity(String.class));
     }
 
     @Test

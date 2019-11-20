@@ -37,6 +37,12 @@ public class UserApi extends AbstractApi {
                 .post(Entity.json(user));
     }
 
+    public Response changeUsername(Long userId, String username, String jwt) {
+        return client.target(url() + "/" + userId + "/username").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .put(Entity.json("{\"username\": \"" + username + "\"}"));
+    }
+
     public String login(String email, String password) {
         final Response res = client.target(url() + "/login").request()
                 .post(Entity.json("{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}"));
@@ -63,6 +69,13 @@ public class UserApi extends AbstractApi {
 
     public Response getAll(String jwt) {
         return client.target(url()).request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .get();
+    }
+
+    public Response get(Long id, String jwt) {
+        return client.target(url() + "/" + id).request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .get();

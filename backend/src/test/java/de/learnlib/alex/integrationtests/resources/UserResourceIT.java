@@ -19,6 +19,7 @@ package de.learnlib.alex.integrationtests.resources;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+import de.learnlib.alex.auth.entities.User;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,9 +38,12 @@ public class UserResourceIT extends AbstractResourceIT {
 
     private UserApi userApi;
 
+    private String adminJwt;
+
     @Before
     public void pre() {
         userApi = new UserApi(client, port);
+        adminJwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
     }
 
     @Test
@@ -79,8 +83,7 @@ public class UserResourceIT extends AbstractResourceIT {
 
     @Test
     public void adminShouldCreateAnAdminAccount() {
-        final String jwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
-        final Response res = userApi.create(createUserJson("test@test.de", "test", "ADMIN"), jwt);
+        final Response res = userApi.create(createUserJson("test@test.de", "test", "ADMIN"), adminJwt);
 
         assertEquals(HttpStatus.CREATED.value(), res.getStatus());
         assertEquals("ADMIN", JsonPath.read(res.readEntity(String.class), "role"));
@@ -124,8 +127,7 @@ public class UserResourceIT extends AbstractResourceIT {
         final Response res1 = userApi.create(createUserJson("test@test.de", "test"));
         final int userId = JsonPath.read(res1.readEntity(String.class), "id");
 
-        final String jwtAdmin = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
-        userApi.promote(userId, jwtAdmin);
+        userApi.promote(userId, adminJwt);
 
         final String jwtUser = userApi.login("test@test.de", "test");
         final Response res2 = userApi.getProfile(jwtUser);
@@ -135,12 +137,10 @@ public class UserResourceIT extends AbstractResourceIT {
 
     @Test
     public void adminShouldMakeOtherAdminsUsers() {
-        final String jwtAdmin = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
-
-        final Response res1 = userApi.create(createUserJson("test@test.de", "test", "ADMIN"), jwtAdmin);
+        final Response res1 = userApi.create(createUserJson("test@test.de", "test", "ADMIN"), adminJwt);
         final int userId = JsonPath.read(res1.readEntity(String.class), "id");
 
-        userApi.demote(userId, jwtAdmin);
+        userApi.demote(userId, adminJwt);
 
         final String jwtUser = userApi.login("test@test.de", "test");
         final Response res2 = userApi.getProfile(jwtUser);
@@ -150,13 +150,12 @@ public class UserResourceIT extends AbstractResourceIT {
 
     @Test
     public void adminShouldNotMakeHimselfUserIfHeIsOnlyAdmin() {
-        final String jwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
-        final Response res1 = userApi.getProfile(jwt);
+        final Response res1 = userApi.getProfile(adminJwt);
         final int userId = JsonPath.read(res1.readEntity(String.class), "id");
 
-        userApi.demote(userId, jwt);
+        userApi.demote(userId, adminJwt);
 
-        final Response res2 = userApi.getProfile(jwt);
+        final Response res2 = userApi.getProfile(adminJwt);
         assertEquals("ADMIN", JsonPath.read(res2.readEntity(String.class), "role"));
     }
 
@@ -196,25 +195,22 @@ public class UserResourceIT extends AbstractResourceIT {
         final Response res1 = userApi.create(createUserJson("test@test.de", "test"));
 
         final int userId = JsonPath.read(res1.readEntity(String.class), "id");
-        final String jwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
 
-        final Response res = userApi.delete(userId, jwt);
+        final Response res = userApi.delete(userId, adminJwt);
 
         assertEquals(HttpStatus.NO_CONTENT.value(), res.getStatus());
     }
 
     @Test
     public void adminShouldNotDeleteHimselfIfHeIsTheOnlyAdmin() {
-        final String jwt = userApi.login(ADMIN_EMAIL, "admin");
-        final Response res = userApi.delete(1, jwt);
+        final Response res = userApi.delete(1, adminJwt);
 
         assertEquals(HttpStatus.NOT_FOUND.value(), res.getStatus());
     }
 
     @Test
     public void adminShouldDeleteHimselfIfHeIsNotTheOnlyAdmin() {
-        final String jwtAdmin1 = userApi.login(ADMIN_EMAIL, "admin");
-        final Response res1 = userApi.create(createUserJson("admin2@alex.example", "admin", "ADMIN"), jwtAdmin1);
+        final Response res1 = userApi.create(createUserJson("admin2@alex.example", "admin", "ADMIN"), adminJwt);
 
         final int id = JsonPath.read(res1.readEntity(String.class), "id");
         final String jwtAdmin2 = userApi.login("admin2@alex.example", "admin");
@@ -237,13 +233,10 @@ public class UserResourceIT extends AbstractResourceIT {
         userApi.create(createUserJson("test1@test.de", "test"));
         userApi.create(createUserJson("test2@test.de", "test"));
 
-        final String jwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
-        final Response res = userApi.getAll(jwt);
-
+        final Response res = userApi.getAll(adminJwt);
         assertEquals(HttpStatus.OK.value(), res.getStatus());
 
         final JsonNode users = objectMapper.readTree(res.readEntity(String.class));
-
         assertEquals(3, users.size());
     }
 
@@ -256,57 +249,122 @@ public class UserResourceIT extends AbstractResourceIT {
         final int userId2 = JsonPath.read(res2.readEntity(String.class), "id");
         final List<Integer> userIds = Arrays.asList(userId1, userId2);
 
-        final String jwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
-        final Response res3 = userApi.delete(userIds, jwt);
+        final Response res3 = userApi.delete(userIds, adminJwt);
         assertEquals(HttpStatus.NO_CONTENT.value(), res3.getStatus());
 
-        final Response res4 = userApi.getAll(jwt);
+        final Response res4 = userApi.getAll(adminJwt);
         assertEquals(1, objectMapper.readTree(res4.readEntity(String.class)).size());
     }
 
     @Test
     public void adminShouldNotDeleteMultipleUsersIfItContainsAnInvalidId() throws Exception {
-        final String jwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
-
         final Response res1 = userApi.create(createUserJson("test1@test.de", "test"));
         final Response res2 = userApi.create(createUserJson("test2@test.de", "test"));
-        final Response res3 = userApi.getAll(jwt);
+        final Response res3 = userApi.getAll(adminJwt);
 
         final int userId1 = JsonPath.read(res1.readEntity(String.class), "id");
         final int userId2 = JsonPath.read(res2.readEntity(String.class), "id");
         final List<Integer> userIds = Arrays.asList(userId1, userId2, 10);
 
-        final Response res4 = userApi.delete(userIds, jwt);
+        final Response res4 = userApi.delete(userIds, adminJwt);
         assertEquals(HttpStatus.NOT_FOUND.value(), res4.getStatus());
 
-        final Response res5 = userApi.getAll(jwt);
+        final Response res5 = userApi.getAll(adminJwt);
 
         JSONAssert.assertEquals(res3.readEntity(String.class), res5.readEntity(String.class), true);
     }
 
     @Test
+    public void userShouldNotChangeHisUsername() {
+        final String user = createUserJson("test@test.de", "test", "test", "REGISTERED");
+
+        final Response res1 = userApi.create(user);
+        final String jwt = userApi.login("test@test.de", "test");
+
+        final User userPre = res1.readEntity(User.class);
+
+        final Response res2 = userApi.changeUsername(userPre.getId(), "test2", jwt);
+        assertEquals(HttpStatus.FORBIDDEN.value(), res2.getStatus());
+
+        final Response res3 = userApi.get(userPre.getId(), jwt);
+        assertEquals("test", JsonPath.read(res3.readEntity(String.class), "username"));
+    }
+
+    @Test
+    public void adminShouldChangeUsername() {
+        final String user = createUserJson("test@test.de", "test", "test", "REGISTERED");
+
+        final Response res1 = userApi.create(user);
+        final String jwt = userApi.login("test@test.de", "test");
+
+        final User userPre = res1.readEntity(User.class);
+
+        final Response res2 = userApi.changeUsername(userPre.getId(), "test2", adminJwt);
+        assertEquals(HttpStatus.OK.value(), res2.getStatus());
+
+        final Response res3 = userApi.get(userPre.getId(), jwt);
+        assertEquals("test2", JsonPath.read(res3.readEntity(String.class), "username"));
+    }
+
+    @Test
+    public void cannotCreateUserWithoutUsernameAsAnonymousUser() throws Exception {
+        cannotCreateUser(null);
+    }
+
+    @Test
+    public void cannotCreateUserWithoutUsernameAsAdmin() throws Exception {
+        cannotCreateUser(adminJwt);
+    }
+
+    @Test
+    public void cannotCreateUserWithSameUsernameTwice() throws Exception {
+        final String user1 = createUserJson("test1@test.de", "test", "test", "REGISTERED");
+        final String user2 = createUserJson("test2@test.de", "test", "test", "REGISTERED");
+
+        final Response res1 = userApi.create(user1);
+        assertEquals(HttpStatus.CREATED.value(), res1.getStatus());
+
+        final String usersPre = userApi.getAll(adminJwt).readEntity(String.class);
+
+        final Response res2 = userApi.create(user2);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), res2.getStatus());
+
+        final String usersPost = userApi.getAll(adminJwt).readEntity(String.class);
+        JSONAssert.assertEquals(usersPre, usersPost, true);
+    }
+
+    @Test
     public void shouldGetTheCurrentProfileAsAdmin() throws Exception {
-        final String jwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
-        final Response res = userApi.getProfile(jwt);
+        final Response res = userApi.getProfile(adminJwt);
         final String email = JsonPath.read(res.readEntity(String.class), "email");
         assertEquals(email, ADMIN_EMAIL);
     }
 
     @Test
     public void shouldFailToDeleteUsersWhenContainingOwnId() throws Exception {
-        final String jwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
-
         final Response res1 = userApi.create(createUserJson("test1@test.de", "test"));
         final Response res2 = userApi.create(createUserJson("test2@test.de", "test"));
-        final Response res3 = userApi.getProfile(jwt);
+        final Response res3 = userApi.getProfile(adminJwt);
 
         final int adminId = JsonPath.read(res3.readEntity(String.class), "id");
         final int userId1 = JsonPath.read(res1.readEntity(String.class), "id");
         final int userId2 = JsonPath.read(res2.readEntity(String.class), "id");
         final List<Integer> userIds = Arrays.asList(userId1, userId2, adminId);
 
-        final Response res4 = userApi.delete(userIds, jwt);
+        final Response res4 = userApi.delete(userIds, adminJwt);
         assertEquals(3, objectMapper.readTree(res4.readEntity(String.class)).size());
+    }
+
+    private void cannotCreateUser(String jwt) throws Exception {
+        final String user = "{\"email\":\"test@test.de\",\"password\":\"test\"}";
+
+        final String usersPre = userApi.getAll(adminJwt).readEntity(String.class);
+
+        final Response res = jwt == null ? userApi.create(user) : userApi.create(user, jwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+
+        final String usersPost = userApi.getAll(adminJwt).readEntity(String.class);
+        JSONAssert.assertEquals(usersPre, usersPost, true);
     }
 
     private String createUserJson(String email, String password) {
@@ -318,8 +376,12 @@ public class UserResourceIT extends AbstractResourceIT {
     }
 
     private String createUserJson(String email, String password, String role) {
+        return createUserJson(email, email.split("@")[0], password, role);
+    }
+
+    private String createUserJson(String email, String username, String password, String role) {
         return "{"
-                + "\"username\":\"" + email.split("@")[0] + "\""
+                + "\"username\":\"" + username + "\""
                 + ",\"email\":\"" + email + "\""
                 + ",\"password\":\"" + password + "\""
                 + ",\"role\":\"" + role + "\""
