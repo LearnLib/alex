@@ -34,7 +34,7 @@ In order to build ALEX from source make sure your system matches the following r
 
 * Java JDK 8 or 11
 * Maven 3
-* Node.js (v10.0.0) and the NPM (v6.0.0)
+* Node.js (v12.*.*) and the NPM (v6.*.*)
 
 To build ALEX, open a terminal and follow the instructions below:
 
