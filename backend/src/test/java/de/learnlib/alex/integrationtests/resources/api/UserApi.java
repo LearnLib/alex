@@ -37,6 +37,12 @@ public class UserApi extends AbstractApi {
                 .post(Entity.json(user));
     }
 
+    public Response changePassword(Long userId, String oldPassword, String newPassword, String jwt) {
+        return client.target(url() + "/" + userId + "/password").request()
+                .header(HttpHeaders.AUTHORIZATION, jwt)
+                .put(Entity.json("{\"oldPassword\": \"" + oldPassword + "\", \"newPassword\":\"" + newPassword + "\"}"));
+    }
+
     public Response changeUsername(Long userId, String username, String jwt) {
         return client.target(url() + "/" + userId + "/username").request()
                 .header(HttpHeaders.AUTHORIZATION, jwt)

@@ -138,9 +138,6 @@ public class SampleEQOracleProxy extends AbstractEquivalenceOracleProxy implemen
 
     @Override
     public void checkParameters() throws IllegalArgumentException {
-        if (counterExamples.isEmpty()) {
-            throw new IllegalArgumentException("You need to specify at least one counterexample!");
-        }
     }
 
     /**

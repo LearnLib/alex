@@ -111,31 +111,29 @@ public class TestReportResource {
     )
     public ResponseEntity get(@PathVariable("projectId") Long projectId,
                               @PathVariable("reportId") Long reportId,
-                              @RequestParam(name = "format", defaultValue = "junit") String format) {
+                              @RequestParam(name = "format", defaultValue = "") String format) {
         final User user = authContext.getUser();
         LOGGER.traceEntry("get({}, {}) for user {}.", projectId, reportId, user);
 
         final TestReport testReport = testReportDAO.get(user, projectId, reportId);
 
-        if (format == null) {
-            return ResponseEntity.ok(testReport);
-        } else {
-            switch (format) {
-                case "junit":
-                    final TestResultReporter<String> reporter = new JUnitTestResultReporter();
-                    final String report = reporter.createReport(testReport);
+        switch (format) {
+            case "":
+                return ResponseEntity.ok(testReport);
+            case "junit":
+                final TestResultReporter<String> reporter = new JUnitTestResultReporter();
+                final String report = reporter.createReport(testReport);
 
-                    LOGGER.traceExit(report);
-                    return ResponseEntity.status(HttpStatus.OK)
-                            .header("Content-Type", "application/xml")
-                            .body(report);
-                default:
-                    final Exception e = new ValidationException("format " + format + " does not exist");
-                    LOGGER.traceExit(e);
+                LOGGER.traceExit(report);
+                return ResponseEntity.status(HttpStatus.OK)
+                        .header("Content-Type", "application/xml")
+                        .body(report);
+            default:
+                final Exception e = new ValidationException("format " + format + " does not exist");
+                LOGGER.traceExit(e);
 
-                    return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.get",
-                            HttpStatus.BAD_REQUEST, e);
-            }
+                return ResourceErrorHandler.createRESTErrorMessage("TestReportResource.get",
+                        HttpStatus.BAD_REQUEST, e);
         }
     }
 

@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import de.learnlib.alex.auth.entities.User;
+import de.learnlib.alex.config.entities.Settings;
+import de.learnlib.alex.integrationtests.resources.api.SettingsApi;
 import de.learnlib.alex.integrationtests.resources.api.UserApi;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,11 +40,14 @@ public class UserResourceIT extends AbstractResourceIT {
 
     private UserApi userApi;
 
+    private SettingsApi settingsApi;
+
     private String adminJwt;
 
     @Before
     public void pre() {
         userApi = new UserApi(client, port);
+        settingsApi = new SettingsApi(client, port);
         adminJwt = userApi.login(ADMIN_EMAIL, ADMIN_PASSWORD);
     }
 
@@ -272,6 +277,85 @@ public class UserResourceIT extends AbstractResourceIT {
         final Response res5 = userApi.getAll(adminJwt);
 
         JSONAssert.assertEquals(res3.readEntity(String.class), res5.readEntity(String.class), true);
+    }
+
+    @Test
+    public void shouldNotCreateAnonymousUserIfRegistrationIsDisabled() throws Exception {
+        final Settings settings = settingsApi.get().readEntity(Settings.class);
+        settings.setAllowUserRegistration(false);
+        settingsApi.update(settings, adminJwt);
+
+        final Response res1 = userApi.create(createUserJson("test@test.de","test"));
+        assertEquals(HttpStatus.FORBIDDEN.value(), res1.getStatus());
+        JsonPath.read(res1.readEntity(String.class), "message");
+
+        shouldNotLoginWith404("test@test.de", "test");
+    }
+
+    private void shouldLogin(String email, String password) throws Exception {
+        final Response res = userApi.loginRaw(email, password);
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+        JsonPath.read(res.readEntity(String.class), "token");
+    }
+
+    private void shouldNotLoginWith404(String email, String password) throws Exception {
+        final Response res = userApi.loginRaw(email, password);
+        assertEquals(HttpStatus.NOT_FOUND.value(), res.getStatus());
+        checkIsRestError(res.readEntity(String.class));
+    }
+
+    private void shouldNotLoginWith401(String email, String password) throws Exception {
+        final Response res = userApi.loginRaw(email, password);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+        checkIsRestError(res.readEntity(String.class));
+    }
+
+    @Test
+    public void registeredUserShouldNotCreateOtherUsers() throws Exception {
+        userApi.create(createUserJson("test@test.de", "test"));
+        final String jwt = userApi.login("test@test.de", "test");
+        final Response res = userApi.create(createUserJson("test2@test.de", "test"), jwt);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), res.getStatus());
+
+        shouldNotLoginWith404("test2@test.de", "test");
+    }
+
+    @Test
+    public void userShouldNotGetAnotherUser() throws Exception {
+        final Long userId = userApi.create(createUserJson("test2@test.de", "test"))
+                .readEntity(User.class)
+                .getId();
+
+        userApi.create(createUserJson("test1@test.de", "test"));
+        final String jwt = userApi.login("test1@test.de", "test");
+
+        final Response res = userApi.get(userId, jwt);
+        assertEquals(HttpStatus.FORBIDDEN.value(), res.getStatus());
+        checkIsRestError(res.readEntity(String.class));
+    }
+
+    @Test
+    public void shouldChangePassword() throws Exception {
+        final User user = userApi.create(createUserJson("test@test.de", "test")).readEntity(User.class);
+        final String jwt = userApi.login(user.getEmail(), "test");
+
+        final Response res = userApi.changePassword(user.getId(), "test", "new", jwt);
+        assertEquals(HttpStatus.OK.value(), res.getStatus());
+
+        shouldNotLoginWith401("test@test.de", "test");
+        shouldLogin("test@test.de", "new");
+    }
+
+    @Test
+    public void userShouldNotChangePasswordOfAnotherUser() throws Exception {
+        final User user1 = userApi.create(createUserJson("test1@test.de", "test")).readEntity(User.class);
+        final User user2 = userApi.create(createUserJson("test2@test.de", "test")).readEntity(User.class);
+
+        final String jwt = userApi.login(user1.getEmail(), "test");
+
+        final Response res = userApi.changePassword(user2.getId(), "test", "new", jwt);
+        assertEquals(HttpStatus.FORBIDDEN.value(), res.getStatus());
+        shouldLogin("test2@test.de", "test");
     }
 
     @Test

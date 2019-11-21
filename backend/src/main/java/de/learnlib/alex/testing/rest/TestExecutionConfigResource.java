@@ -44,7 +44,7 @@ public class TestExecutionConfigResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private AuthContext authContext;
+    private final AuthContext authContext;
     private final TestExecutionConfigDAO testExecutionConfigDAO;
 
     @Autowired
