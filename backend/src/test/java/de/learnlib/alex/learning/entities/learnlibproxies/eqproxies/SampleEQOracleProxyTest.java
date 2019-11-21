@@ -60,12 +60,4 @@ public class SampleEQOracleProxyTest {
     public void ensureThatIfTheParametersAreValidNoExceptionWillBeThrown() {
         eqOracle.checkParameters(); // nothing should happen
     }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void ensureThatIfTheParametersAreInvalidAnExceptionWillBeThrown() {
-        eqOracle.getCounterExamples().clear();
-
-        eqOracle.checkParameters(); // should fail
-    }
-
 }
