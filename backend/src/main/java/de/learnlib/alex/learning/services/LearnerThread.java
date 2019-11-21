@@ -19,7 +19,6 @@ package de.learnlib.alex.learning.services;
 import de.learnlib.alex.learning.entities.LearnerResult;
 import de.learnlib.alex.learning.repositories.LearnerResultRepository;
 
-import javax.transaction.Transactional;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -56,7 +55,6 @@ public class LearnerThread extends Thread {
         this.processQueue.offer(learnerProcess);
     }
 
-    @Transactional
     public void abort(Long testNo) {
         if (currentProcess != null && currentProcess.getResult().getTestNo().equals(testNo)) {
             this.currentProcess.stopLearning();
@@ -77,7 +75,6 @@ public class LearnerThread extends Thread {
     }
 
     @Override
-    @Transactional
     public void run() {
         while (!processQueue.isEmpty()) {
             currentProcess = processQueue.poll();

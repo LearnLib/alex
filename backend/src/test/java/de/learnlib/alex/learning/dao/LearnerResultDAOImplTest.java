@@ -120,7 +120,7 @@ public class LearnerResultDAOImplTest {
             e.printStackTrace();
         }
 
-        verify(learnerResultRepository).save(result);
+        verify(learnerResultRepository).saveAndFlush(result);
         assertThat(result.getTestNo(), is(equalTo(2L)));
     }
 
@@ -144,7 +144,7 @@ public class LearnerResultDAOImplTest {
             e.printStackTrace();
         }
 
-        verify(learnerResultRepository).save(result);
+        verify(learnerResultRepository).saveAndFlush(result);
         assertThat(result.getTestNo(), is(equalTo(0L)));
     }
 
@@ -159,7 +159,7 @@ public class LearnerResultDAOImplTest {
         LearnerResult result = createLearnerResultsList().get(0);
         result.setProject(project);
 
-        given(learnerResultRepository.save(result)).willThrow(DataIntegrityViolationException.class);
+        given(learnerResultRepository.saveAndFlush(result)).willThrow(DataIntegrityViolationException.class);
 
         try {
             learnerResultDAO.create(user, result); // should fail

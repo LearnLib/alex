@@ -68,6 +68,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/rest/projects/{projectId}/learner")
+@Transactional
 public class LearnerResource {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -115,7 +116,6 @@ public class LearnerResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    @Transactional
     public ResponseEntity start(@PathVariable("projectId") Long projectId,
                                 @RequestBody LearnerStartConfiguration configuration) {
         User user = authContext.getUser();
@@ -167,7 +167,6 @@ public class LearnerResource {
             consumes = MediaType.APPLICATION_JSON,
             produces = MediaType.APPLICATION_JSON
     )
-    @Transactional
     public ResponseEntity resume(@PathVariable("projectId") Long projectId,
                                  @PathVariable("testNo") Long testNo,
                                  @RequestBody LearnerResumeConfiguration configuration) {

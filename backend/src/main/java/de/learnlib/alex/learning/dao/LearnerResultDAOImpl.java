@@ -139,7 +139,7 @@ public class LearnerResultDAOImpl implements LearnerResultDAO {
         }
 
         try {
-            LearnerResult createdLearnerResult = learnerResultRepository.save(learnerResult);
+            LearnerResult createdLearnerResult = learnerResultRepository.saveAndFlush(learnerResult);
             initializeLazyRelations(Collections.singletonList(learnerResult), true);
             return createdLearnerResult;
         } catch (DataIntegrityViolationException e) {

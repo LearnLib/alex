@@ -38,9 +38,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
-import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,9 +51,6 @@ import java.util.stream.Collectors;
  * (duration, #EQ, ...).
  */
 @Entity
-@Table(
-        uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "testNo"})
-)
 @JsonPropertyOrder(alphabetic = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LearnerResult implements Serializable {
