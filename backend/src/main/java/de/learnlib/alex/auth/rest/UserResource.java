@@ -158,7 +158,7 @@ public class UserResource {
             return ResourceErrorHandler.createRESTErrorMessage("UserResource.get", HttpStatus.FORBIDDEN, new UnauthorizedException("You are not allowed to get this information."));
         }
 
-        User userById = userDAO.getById(userId);
+        final User userById = userDAO.getById(userId);
         LOGGER.traceExit(userById);
         return ResponseEntity.ok(userById);
     }

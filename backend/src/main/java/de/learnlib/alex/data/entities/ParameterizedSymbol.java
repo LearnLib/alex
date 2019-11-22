@@ -108,6 +108,7 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
             for (final SymbolInputParameter in : symbol.getInputs()) {
                 if (in.getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
                     final String userValue = pvMap.get(in.getName());
+
                     if (userValue == null) {
                         localVariableStore.set(in.getName(), variableStore.get(in.getName()));
                     } else {
@@ -129,10 +130,14 @@ public class ParameterizedSymbol implements ContextExecutableInput<ExecuteResult
         // update global scope
         try {
             for (final SymbolOutputParameter out : symbol.getOutputs()) {
-                if (out.getParameterType().equals(SymbolParameter.ParameterType.STRING)) {
-                    variableStore.set(out.getName(), localVariableStore.get(out.getName()));
+                if (out.getParameterType().equals(SymbolParameter.ParameterType.STRING) && result.isSuccess()) {
+                    if (localVariableStore.contains(out.getName())) {
+                        variableStore.set(out.getName(), localVariableStore.get(out.getName()));
+                    }
                 } else {
-                    counterStore.set(symbol.getProjectId(), out.getName(), localCounterStore.get(out.getName()));
+                    if (localCounterStore.contains(out.getName())) {
+                        counterStore.set(symbol.getProjectId(), out.getName(), localCounterStore.get(out.getName()));
+                    }
                 }
             }
         } catch (IllegalStateException e) {

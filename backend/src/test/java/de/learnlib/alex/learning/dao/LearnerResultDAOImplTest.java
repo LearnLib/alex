@@ -112,7 +112,7 @@ public class LearnerResultDAOImplTest {
         result.setProject(project);
 
         given(learnerResultRepository.findHighestTestNo(PROJECT_ID)).willReturn(1L);
-        given(learnerResultRepository.save(result)).willReturn(result);
+        given(learnerResultRepository.saveAndFlush(result)).willReturn(result);
 
         try {
             learnerResultDAO.create(user, result);
@@ -136,7 +136,7 @@ public class LearnerResultDAOImplTest {
         result.setProject(project);
 
         given(learnerResultRepository.findHighestTestNo(PROJECT_ID)).willReturn(null);
-        given(learnerResultRepository.save(result)).willReturn(result);
+        given(learnerResultRepository.saveAndFlush(result)).willReturn(result);
 
         try {
             learnerResultDAO.create(user, result);

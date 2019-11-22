@@ -422,6 +422,7 @@ public class SymbolDAOImpl implements SymbolDAO {
         symbolInDb.setDescription(symbol.getDescription());
         symbolInDb.setExpectedResult(symbol.getExpectedResult());
         symbolInDb.setUpdatedOn(ZonedDateTime.now());
+        symbolInDb.setSuccessOutput(symbol.getSuccessOutput());
 
         // update steps
         if (symbol.getSteps().isEmpty()) {

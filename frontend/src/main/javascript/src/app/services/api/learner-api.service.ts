@@ -67,7 +67,7 @@ export class LearnerApiService extends BaseApiService {
    * @param learnConfiguration The configuration to resume with.
    */
   resume(projectId: number, testNo: number, learnConfiguration: LearnerConfiguration): Observable<any> {
-    return this.http.post(`${env.apiUrl}/${projectId}/learner/${testNo}/resume`, learnConfiguration, this.defaultHttpOptions)
+    return this.http.post(`${env.apiUrl}/projects/${projectId}/learner/${testNo}/resume`, learnConfiguration, this.defaultHttpOptions)
       .pipe(
         map(data => new LearnerResult(data))
       );

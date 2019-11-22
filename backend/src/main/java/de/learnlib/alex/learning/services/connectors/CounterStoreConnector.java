@@ -171,6 +171,10 @@ public class CounterStoreConnector implements Connector {
         return countersMap.get(name);
     }
 
+    public boolean contains(String name) {
+        return countersMap.containsKey(name);
+    }
+
     /**
      * Get the store as read only map.
      * @return The store.
