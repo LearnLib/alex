@@ -79,7 +79,7 @@ export class TestSuiteViewComponent implements OnInit, OnDestroy {
               private notificationService: NotificationService,
               private testConfigApi: TestConfigApiService) {
     this.testConfigs = [];
-    this.selectedTests = new Selectable(t => t.id);
+    this.selectedTests = new Selectable<any, any>(t => t.id);
     this.groups = [];
   }
 
