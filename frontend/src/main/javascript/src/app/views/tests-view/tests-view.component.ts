@@ -43,6 +43,7 @@ export class TestsViewComponent implements OnInit {
 
     this.route.paramMap.subscribe(
       map => {
+        this.test = null;
         if (map.has('testId')) {
           const testId: number = parseInt(map.get('testId'));
           this.testApi.get(project.id, testId).subscribe(
